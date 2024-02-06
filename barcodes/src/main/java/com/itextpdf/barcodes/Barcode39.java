@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,12 +22,22 @@
  */
 package com.itextpdf.barcodes;
 
+import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 
+/**
+ * This class represents the barcode Code 39.
+ * <p>
+ * Code 39 is a variable length, discrete
+ * barcode symbology defined in ISO/IEC 16388:2007.
+ * <p>
+ * The Code 39 specification defines 43 characters, consisting of uppercase letters (A through Z), numeric digits (0
+ * through 9) and a number of special characters (-, ., $, /, +, %, and space). An additional character (denoted '*') is
+ * used for both start and stop delimiters. Each character is composed of nine elements: five bars and four spaces.
+ */
 public class Barcode39 extends Barcode1D {
 
     /**

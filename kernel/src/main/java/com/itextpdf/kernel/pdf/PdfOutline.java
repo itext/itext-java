@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -210,6 +210,14 @@ public class PdfOutline {
      * @param action instance of {@link PdfAction}.
      */
     public void addAction(PdfAction action) {
+        PdfName actionType = action.getPdfObject().getAsName(PdfName.S);
+        if (PdfName.GoTo.equals(actionType)) {
+            PdfObject destObject = action.getPdfObject().get(PdfName.D);
+            if (destObject != null) {
+                setDestination(PdfDestination.makeDestination(destObject));
+            }
+        }
+
         content.put(PdfName.A, action.getPdfObject());
     }
 

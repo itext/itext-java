@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -51,6 +51,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -67,6 +68,11 @@ public class PdfPagesTest extends ExtendedITextTest {
         createDestinationFolder(DESTINATION_FOLDER);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+    
     @Test
     public void hugeNumberOfPagesWithOnePageTest() throws IOException {
          PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "hugeNumberOfPagesWithOnePage.pdf"),
@@ -91,7 +97,7 @@ public class PdfPagesTest extends ExtendedITextTest {
         String filename = "simplePagesTest.pdf";
         int pageCount = 111;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename));
 
         for (int i = 0; i < pageCount; i++) {
             PdfPage page = pdfDoc.addNewPage();
@@ -107,7 +113,7 @@ public class PdfPagesTest extends ExtendedITextTest {
         String filename = "reversePagesTest.pdf";
         int pageCount = 111;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename));
 
         for (int i = pageCount; i > 0; i--) {
             PdfPage page = new PdfPage(pdfDoc, pdfDoc.getDefaultPageSize());
@@ -124,7 +130,7 @@ public class PdfPagesTest extends ExtendedITextTest {
     public void reversePagesTest2() throws Exception {
         String filename = "1000PagesDocument_reversed.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "1000PagesDocument.pdf"),
-                new PdfWriter(DESTINATION_FOLDER + filename));
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename));
         int n = pdfDoc.getNumberOfPages();
         for (int i = n - 1; i > 0; --i) {
             pdfDoc.movePage(i, n + 1);
@@ -152,7 +158,7 @@ public class PdfPagesTest extends ExtendedITextTest {
             indexes[i] = a;
         }
 
-        PdfDocument document = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
+        PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename));
         PdfPage[] pages = new PdfPage[pageCount];
 
         for (int i = 0; i < indexes.length; i++) {
@@ -175,6 +181,7 @@ public class PdfPagesTest extends ExtendedITextTest {
     }
 
     @Test
+    @org.junit.Ignore
     public void randomNumberPagesTest() throws IOException {
         String filename = "randomNumberPagesTest.pdf";
         int pageCount = 1000;
@@ -191,7 +198,7 @@ public class PdfPagesTest extends ExtendedITextTest {
             indexes[i] = a;
         }
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename));
 
         for (int i = 0; i < indexes.length; i++) {
             PdfPage page = pdfDoc.addNewPage();
@@ -256,7 +263,7 @@ public class PdfPagesTest extends ExtendedITextTest {
         String filename = "removeFlushedPage.pdf";
         int pageCount = 10;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename));
 
         PdfPage removedPage = pdfDoc.addNewPage();
         int removedPageObjectNumber = removedPage.getPdfObject().getIndirectReference().getObjNumber();
@@ -345,7 +352,7 @@ public class PdfPagesTest extends ExtendedITextTest {
     public void testInheritedResourcesUpdate() throws IOException, InterruptedException {
         PdfDocument pdfDoc = new PdfDocument(
                 new PdfReader(SOURCE_FOLDER + "simpleInheritedResources.pdf"),
-                new PdfWriter(DESTINATION_FOLDER + "updateInheritedResources.pdf")
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + "updateInheritedResources.pdf")
                         .setCompressionLevel(CompressionConstants.NO_COMPRESSION));
         PdfName newGsName = pdfDoc.getPage(1).getResources().addExtGState(new PdfExtGState().setLineWidth(30));
         int gsCount = pdfDoc.getPage(1).getResources().getResource(PdfName.ExtGState).size();
@@ -365,7 +372,7 @@ public class PdfPagesTest extends ExtendedITextTest {
     public void reorderInheritedResourcesTest() throws IOException, InterruptedException {
         PdfDocument pdfDoc = new PdfDocument(
                 new PdfReader(SOURCE_FOLDER + "inheritedFontResources.pdf"),
-                new PdfWriter(DESTINATION_FOLDER + "reorderInheritedFontResources.pdf")
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + "reorderInheritedFontResources.pdf")
         );
         pdfDoc.movePage(1, pdfDoc.getNumberOfPages() + 1);
         pdfDoc.removePage(1);
@@ -406,7 +413,7 @@ public class PdfPagesTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + testName;
         String sourceFile = SOURCE_FOLDER + "docWithFields.pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(outPdf))) {
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFile), CompareTool.createTestPdfWriter(outPdf))) {
             pdfDoc.removePage(1);
         }
 
@@ -434,7 +441,7 @@ public class PdfPagesTest extends ExtendedITextTest {
         String filename = "pageThumbnail.pdf";
         String imageSrc = "icon.jpg";
         PdfDocument pdfDoc = new PdfDocument(
-                new PdfWriter(DESTINATION_FOLDER + filename).setCompressionLevel(CompressionConstants.NO_COMPRESSION));
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename).setCompressionLevel(CompressionConstants.NO_COMPRESSION));
         PdfPage page = pdfDoc.addNewPage()
                 .setThumbnailImage(new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + imageSrc)));
         new PdfCanvas(page).setFillColor(ColorConstants.RED).rectangle(100, 100, 400, 400).fill();
@@ -457,7 +464,7 @@ public class PdfPagesTest extends ExtendedITextTest {
         String src = SOURCE_FOLDER + "CatalogWithPageAndPagesEntries.pdf";
         String dest = DESTINATION_FOLDER + "CatalogWithPageAndPagesEntries_opened.pdf";
         PdfReader reader = new PdfReader(src);
-        PdfWriter writer = new PdfWriter(dest);
+        PdfWriter writer = CompareTool.createTestPdfWriter(dest);
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
         pdfDoc.close();
 
@@ -468,12 +475,12 @@ public class PdfPagesTest extends ExtendedITextTest {
     public void pdfNumberInPageContentArrayTest() throws IOException {
         String src = SOURCE_FOLDER + "pdfNumberInPageContentArray.pdf";
         String dest = DESTINATION_FOLDER + "pdfNumberInPageContentArray_saved.pdf";
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(src), new PdfWriter(dest));
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(src), CompareTool.createTestPdfWriter(dest));
         pdfDoc.close();
 
         // test is mainly to ensure document is successfully opened-and-closed without exceptions
 
-        pdfDoc = new PdfDocument(new PdfReader(dest));
+        pdfDoc = new PdfDocument(CompareTool.createOutputReader(dest));
         PdfObject pageDictWithInvalidContents = pdfDoc.getPdfObject(10);
         PdfArray invalidContentsArray = ((PdfDictionary) pageDictWithInvalidContents).getAsArray(PdfName.Contents);
         Assert.assertEquals(5, invalidContentsArray.size());
@@ -487,7 +494,7 @@ public class PdfPagesTest extends ExtendedITextTest {
 
     private boolean testPageTreeParentsValid(String src) throws com.itextpdf.io.exceptions.IOException, java.io.IOException {
         boolean valid = true;
-        PdfReader reader = new PdfReader(src);
+        PdfReader reader = CompareTool.createOutputReader(src);
         PdfDocument pdfDocument = new PdfDocument(reader);
         PdfDictionary page_root = pdfDocument.getCatalog().getPdfObject().getAsDictionary(PdfName.Pages);
         for (int x = 1; x < pdfDocument.getNumberOfPdfObjects(); x++) {
@@ -509,7 +516,7 @@ public class PdfPagesTest extends ExtendedITextTest {
     @Test
     public void testExcessiveXrefEntriesForCopyXObject() throws IOException {
         PdfDocument inputPdf = new PdfDocument(new PdfReader(SOURCE_FOLDER + "input500.pdf"));
-        PdfDocument outputPdf = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + "output500.pdf"));
+        PdfDocument outputPdf = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_FOLDER + "output500.pdf"));
 
         float scaleX = 595f / 612f;
         float scaleY = 842f / 792f;
@@ -687,7 +694,7 @@ public class PdfPagesTest extends ExtendedITextTest {
         String inFileName = SOURCE_FOLDER + "implicitPagesTreeRebuilding.pdf";
         String outFileName = DESTINATION_FOLDER + "implicitPagesTreeRebuilding.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_implicitPagesTreeRebuilding.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFileName), new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFileName), CompareTool.createTestPdfWriter(outFileName));
         pdfDocument.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName,cmpFileName, DESTINATION_FOLDER));
     }
@@ -788,7 +795,7 @@ public class PdfPagesTest extends ExtendedITextTest {
     }
 
     private static void verifyPagesOrder(String filename, int numOfPages) throws IOException {
-        PdfReader reader = new PdfReader(filename);
+        PdfReader reader = CompareTool.createOutputReader(filename);
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
 

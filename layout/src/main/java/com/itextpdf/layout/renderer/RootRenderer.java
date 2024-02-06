@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,11 +22,11 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
-import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.commons.actions.EventManager;
-import com.itextpdf.kernel.actions.events.LinkDocumentIdEvent;
 import com.itextpdf.commons.actions.sequence.AbstractIdentifiableElement;
+import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.kernel.actions.events.LinkDocumentIdEvent;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.layout.IPropertyContainer;
@@ -500,12 +500,8 @@ public abstract class RootRenderer extends AbstractRenderer {
         if (toDisableKeepTogether == null) {
             return false;
         }
-
-        // Ideally the disabling of keep together property should be done on the renderers layer,
-        // but due to the problem with renderers tree (parent links from causeOfNothing
-        // may not lead to overflowRenderer) such approach does not work now. So we are
-        // disabling keep together on the models layer.
-        toDisableKeepTogether.getModelElement().setProperty(Property.KEEP_TOGETHER, false);
+        
+        toDisableKeepTogether.setProperty(Property.KEEP_TOGETHER, false);
         Logger logger = LoggerFactory.getLogger(RootRenderer.class);
         if (logger.isWarnEnabled()) {
             logger.warn(MessageFormatUtil.format(

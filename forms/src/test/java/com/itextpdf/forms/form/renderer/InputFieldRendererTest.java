@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -24,6 +24,10 @@ package com.itextpdf.forms.form.renderer;
 
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.InputField;
+import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.properties.Property;
@@ -92,7 +96,29 @@ public class InputFieldRendererTest extends ExtendedITextTest {
         Assert.assertEquals(122, minMaxWidth.getChildrenMaxWidth(), EPS);
         Assert.assertEquals(0, minMaxWidth.getChildrenMinWidth(), EPS);
     }
-    
+
+
+    @Test
+    public void pdfAConformanceLevelTest() {
+        InputFieldRenderer inputFieldRenderer = new InputFieldRenderer(new InputField(""));
+        Assert.assertNull(inputFieldRenderer.getConformanceLevel(null));
+    }
+
+    @Test
+    public void pdfAConformanceLevelWithDocumentTest() {
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        InputFieldRenderer inputFieldRenderer = new InputFieldRenderer(new InputField(""));
+        Assert.assertNull(inputFieldRenderer.getConformanceLevel(pdfDocument));
+    }
+
+    @Test
+    public void pdfAConformanceLevelWithConformanceLevelTest() {
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        InputFieldRenderer inputFieldRenderer = new InputFieldRenderer(new InputField(""));
+        inputFieldRenderer.setProperty(FormProperty.FORM_CONFORMANCE_LEVEL, PdfAConformanceLevel.PDF_A_1B);
+        Assert.assertEquals(PdfAConformanceLevel.PDF_A_1B, inputFieldRenderer.getConformanceLevel(pdfDocument));
+    }
+
     @Test
     public void createParagraphRendererTest() {
         InputFieldRenderer inputFieldRendererWithoutPlaceholder = new InputFieldRenderer(new InputField(""));

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -24,14 +24,17 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.IElement;
+import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
@@ -385,7 +388,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         // in this case layout result need to be changed
         if (overflowRenderer != null || processOverflowedFloats) {
-            layoutResult = !anythingPlaced && !waitingOverflowFloatRenderers.isEmpty()
+            layoutResult = !anythingPlaced && (!waitingOverflowFloatRenderers.isEmpty()
+                    || !isAnythingOccupied())
                     // nothing was placed and there are some overflowed floats
                     ? LayoutResult.NOTHING
                     // either something was placed or (since there are no overflowed floats) there is overflow renderer
@@ -668,7 +672,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         AbstractRenderer overflowRenderer = createOverflowRenderer(layoutStatus);
         overflowRenderer.childRenderers.addAll(waitingOverflowFloatRenderers);
         if (childResult.getOverflowRenderer() != null) {
-            overflowRenderer.childRenderers.add(childResult.getOverflowRenderer());
+            overflowRenderer.addChildRenderer(childResult.getOverflowRenderer());
         }
         overflowRenderer.childRenderers.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
 
@@ -855,6 +859,29 @@ public abstract class BlockRenderer extends AbstractRenderer {
         }
     }
 
+    /**
+     * Get the font set in properties, if it is not set, then resolves the first {@link PdfFont} from
+     * {@link FontProvider}.
+     * If {@link FontProvider} is not set, then returns null.
+     *
+     * @param pdfDocument the {@link PdfDocument} to get default font from.
+     *
+     * @return the font or null if it is not set and {@link FontProvider} is not set.
+     */
+    protected PdfFont getResolvedFont(PdfDocument pdfDocument) {
+        final Object retrievedFont = this.<Object>getProperty(Property.FONT);
+        if (retrievedFont instanceof PdfFont) {
+            return (PdfFont) retrievedFont;
+        }
+        if (this.<FontProvider>getProperty(Property.FONT_PROVIDER) != null && retrievedFont != null) {
+            return resolveFirstPdfFont();
+        }
+        if (pdfDocument != null) {
+            return pdfDocument.getDefaultFont();
+        }
+        return null;
+    }
+
     boolean stopLayoutingChildrenIfChildResultNotFull(LayoutResult returnResult) {
         return true;
     }
@@ -913,7 +940,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             if (keepTogether) {
                 splitRenderer = null;
                 overflowRenderer.childRenderers.clear();
-                overflowRenderer.childRenderers = new ArrayList<>(childRenderers);
+                overflowRenderer.addAllChildRenderers(childRenderers);
             }
 
             correctFixedLayout(layoutBox);
@@ -1106,6 +1133,10 @@ public abstract class BlockRenderer extends AbstractRenderer {
         if (anythingPlaced && hasOwnProperty(Property.FORCED_PLACEMENT)) {
             deleteOwnProperty(Property.FORCED_PLACEMENT);
         }
+    }
+
+    private boolean isAnythingOccupied() {
+        return !(occupiedArea.getBBox().getHeight() < EPS);
     }
 
     private void replaceSplitRendererKidFloats(Map<Integer, IRenderer> waitingFloatsSplitRenderers, IRenderer splitRenderer) {

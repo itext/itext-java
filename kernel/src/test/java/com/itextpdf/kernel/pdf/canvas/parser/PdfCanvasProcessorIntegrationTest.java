@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -76,7 +76,8 @@ public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
 
     @Test
     public void contentStreamProcessorTest() throws IOException {
-        PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "tableWithImageAndText.pdf"), new PdfWriter(new ByteArrayOutputStream()));
+        PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "tableWithImageAndText.pdf"),
+                new PdfWriter(new ByteArrayOutputStream()));
 
         StringBuilder pageEventsLog = new StringBuilder();
         for (int i = 1; i <= document.getNumberOfPages(); ++i) {

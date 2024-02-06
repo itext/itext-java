@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,14 +22,14 @@
  */
 package com.itextpdf.forms.form.renderer;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.forms.fields.ChoiceFormFieldBuilder;
+import com.itextpdf.forms.fields.PdfChoiceFormField;
 import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.AbstractSelectField;
-import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.forms.PdfAcroForm;
-import com.itextpdf.forms.fields.ChoiceFormFieldBuilder;
-import com.itextpdf.forms.fields.PdfChoiceFormField;
 import com.itextpdf.forms.form.element.ListBoxField;
+import com.itextpdf.forms.util.BorderStyleUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceRgb;
@@ -181,8 +181,7 @@ public class SelectFieldListBoxRenderer extends AbstractSelectFieldRenderer {
     @Override
     protected void applyAcroField(DrawContext drawContext) {
         // Retrieve font properties
-        Object retrievedFont = this.<Object>getProperty(Property.FONT);
-        PdfFont font = retrievedFont instanceof PdfFont ? (PdfFont) retrievedFont : null;
+        PdfFont font = getResolvedFont(drawContext.getDocument());
         UnitValue fontSize = (UnitValue) this.getPropertyAsUnitValue(Property.FONT_SIZE);
         if (!fontSize.isPointValue()) {
             Logger logger = LoggerFactory.getLogger(SelectFieldListBoxRenderer.class);
@@ -202,13 +201,14 @@ public class SelectFieldListBoxRenderer extends AbstractSelectFieldRenderer {
 
         ListBoxField lbModelElement = (ListBoxField) modelElement;
         List<String> selectedOptions = lbModelElement.getSelectedStrings();
-        ChoiceFormFieldBuilder builder = new ChoiceFormFieldBuilder(doc, getModelId()).setWidgetRectangle(area);
+        ChoiceFormFieldBuilder builder = new ChoiceFormFieldBuilder(doc, getModelId())
+                .setConformanceLevel(getConformanceLevel(doc))
+                .setFont(font)
+                .setWidgetRectangle(area);
         setupBuilderValues(builder, lbModelElement);
         PdfChoiceFormField choiceField = builder.createList();
         choiceField.disableFieldRegeneration();
-        if (font != null) {
-            choiceField.setFont(font);
-        }
+
         choiceField.setFontSize(fontSize.getValue());
         choiceField.setMultiSelect(isMultiple());
         choiceField.setListSelected(selectedOptions.toArray(new String[selectedOptions.size()]));
@@ -219,7 +219,7 @@ public class SelectFieldListBoxRenderer extends AbstractSelectFieldRenderer {
         }
         choiceField.setJustification(this.<TextAlignment>getProperty(Property.TEXT_ALIGNMENT));
 
-        AbstractFormFieldRenderer.applyBorderProperty(this, choiceField.getFirstFormAnnotation());
+        BorderStyleUtil.applyBorderProperty(this, choiceField.getFirstFormAnnotation());
 
         Background background = this.<Background>getProperty(Property.BACKGROUND);
         if (background != null) {

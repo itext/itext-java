@@ -4,14 +4,15 @@
   <parent>
     <groupId>com.itextpdf.android</groupId>
     <artifactId>root-android</artifactId>
-    <version>8.0.2</version>
+    <version>8.0.3</version>
   </parent>
   <artifactId>commons-android</artifactId>
   <name>iText - commons</name>
   <url>https://itextpdf.com/</url>
 
   <properties>
-    <jackson.core.version>2.13.4.2</jackson.core.version>
+    <jackson.core.version>2.16.1</jackson.core.version>
+    <sonar.coverage.exclusions>**/com/itextpdf/commons/bouncycastle/**</sonar.coverage.exclusions>
   </properties>
 
   <dependencies>

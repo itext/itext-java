@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -24,6 +24,7 @@ package com.itextpdf.signatures.testutils;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.asn1.pkcs.IPrivateKeyInfo;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
 import com.itextpdf.commons.bouncycastle.cert.jcajce.IJcaX509CertificateConverter;
 import com.itextpdf.commons.bouncycastle.openssl.IPEMParser;
@@ -67,12 +68,17 @@ public final class PemFileHelper {
 
     public static PrivateKey readFirstKey(String pemFileName, char[] keyPass)
             throws IOException, AbstractOperatorCreationException, AbstractPKCSException {
-        IPKCS8EncryptedPrivateKeyInfo key = readPrivateKey(pemFileName);
-        if (key != null) {
+        IPKCS8EncryptedPrivateKeyInfo pkcs8Key = readPkcs8PrivateKey(pemFileName);
+        if (pkcs8Key != null) {
             IInputDecryptorProvider decProv = FACTORY.createJceOpenSSLPKCS8DecryptorProviderBuilder()
                     .setProvider(FACTORY.getProvider()).build(keyPass);
             IJcaPEMKeyConverter keyConverter = FACTORY.createJcaPEMKeyConverter().setProvider(FACTORY.getProvider());
-            return keyConverter.getPrivateKey(key.decryptPrivateKeyInfo(decProv));
+            return keyConverter.getPrivateKey(pkcs8Key.decryptPrivateKeyInfo(decProv));
+        }
+        IPrivateKeyInfo key = readPrivateKey(pemFileName);
+        if (key != null) {
+            IJcaPEMKeyConverter keyConverter = FACTORY.createJcaPEMKeyConverter().setProvider(FACTORY.getProvider());
+            return keyConverter.getPrivateKey(key);
         }
         return null;
     }
@@ -105,13 +111,23 @@ public final class PemFileHelper {
         }
     }
 
-    private static IPKCS8EncryptedPrivateKeyInfo readPrivateKey(String pemFileName) throws IOException {
+    private static IPKCS8EncryptedPrivateKeyInfo readPkcs8PrivateKey(String pemFileName) throws IOException {
         try (IPEMParser parser = FACTORY.createPEMParser(new FileReader(pemFileName))) {
             Object readObject = parser.readObject();
             while (!(readObject instanceof IPKCS8EncryptedPrivateKeyInfo) && readObject != null) {
                 readObject = parser.readObject();
             }
             return (IPKCS8EncryptedPrivateKeyInfo) readObject;
+        }
+    }
+
+    private static IPrivateKeyInfo readPrivateKey(String pemFileName) throws IOException {
+        try (IPEMParser parser = FACTORY.createPEMParser(new FileReader(pemFileName))) {
+            Object readObject = parser.readObject();
+            while (!(readObject instanceof IPrivateKeyInfo) && readObject != null) {
+                readObject = parser.readObject();
+            }
+            return (IPrivateKeyInfo) readObject;
         }
     }
 }

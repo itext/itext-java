@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,6 +22,9 @@
  */
 package com.itextpdf.commons.utils;
 
+/**
+ * Dependency injection configuration loader class.
+ */
 public class DIContainerConfigurations {
 
     private DIContainerConfigurations() {
@@ -32,6 +35,9 @@ public class DIContainerConfigurations {
             "com.itextpdf.forms.util.RegisterDefaultDiContainer"
     };
 
+    /**
+     * load default configuration class.
+     */
     public static void loadDefaultConfigurations() {
         for (final String defaultConfigurationClass : DEFAULT_CONFIGURATIONS_CLASS) {
             try {

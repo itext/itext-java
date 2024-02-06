@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,6 +22,18 @@
  */
 package com.itextpdf.layout.tagging;
 
+/**
+ * Implementation of the interface is used to create required children
+ * structure for the specified role. E.g. table must have TRs as children.
+ */
 interface ITaggingRule {
+    /**
+     * Action which creates required children structure for the role.
+     *
+     * @param taggingHelper tagging helper.
+     * @param taggingHintKey element for which children structure will be created.
+     *
+     * @return {@code true} if the structure was created successfully, {@code false} otherwise.
+     */
     boolean onTagFinish(LayoutTaggingHelper taggingHelper, TaggingHintKey taggingHintKey);
 }

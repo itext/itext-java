@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -60,6 +60,7 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -80,13 +81,18 @@ public class PdfFontTest extends ExtendedITextTest {
         createDestinationFolder(destinationFolder);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+    
     @Test
     public void createDocumentWithKozmin() throws IOException, InterruptedException {
         String filename = destinationFolder + "DocumentWithKozmin.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithKozmin.pdf";
         String title = "Type 0 test";
 
-        PdfWriter writer = new PdfWriter(filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
 
@@ -118,7 +124,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String cmpFilename = sourceFolder + "cmp_DocumentWithKozminDifferentCodespaceRanges.pdf";
         String title = "Type 0 test";
 
-        PdfWriter writer = new PdfWriter(filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
 
@@ -150,7 +156,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String cmpFilename = sourceFolder + "cmp_DocumentWithStSongUni.pdf";
         String title = "Type0 test";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename).setCompressionLevel(CompressionConstants.NO_COMPRESSION));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(filename).setCompressionLevel(CompressionConstants.NO_COMPRESSION));
 
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
@@ -181,7 +187,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String cmpFilename = sourceFolder + "cmp_DocumentWithStSong.pdf";
         String title = "Type0 test";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename).setCompressionLevel(CompressionConstants.NO_COMPRESSION));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(filename).setCompressionLevel(CompressionConstants.NO_COMPRESSION));
 
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
@@ -211,7 +217,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String cmpFilename = sourceFolder + "cmp_DocumentWithTrueTypeAsType0.pdf";
         String title = "Type0 test";
 
-        PdfWriter writer = new PdfWriter(filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
 
@@ -277,7 +283,7 @@ public class PdfFontTest extends ExtendedITextTest {
         //writing type3 font characters
         String title = "Type3 font iText Document";
 
-        PdfWriter writer = new PdfWriter(filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
 
@@ -370,7 +376,7 @@ public class PdfFontTest extends ExtendedITextTest {
         //writing type3 font characters
         String title = "Type3 font iText Document";
 
-        PdfWriter writer = new PdfWriter(filename, new WriterProperties());
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename, new WriterProperties());
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer).setTagged();
 
@@ -435,7 +441,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String cmpFilename = sourceFolder + "cmp_DocumentWithHelvetica.pdf";
         String title = "Type3 test";
 
-        PdfWriter writer = new PdfWriter(filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
 
@@ -468,7 +474,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String cmpFilename = sourceFolder + "cmp_DocumentWithHelveticaOblique.pdf";
         String title = "Empty iText Document";
 
-        PdfWriter writer = new PdfWriter(filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
@@ -503,7 +509,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         String title = "Empty iText Document";
 
-        PdfWriter writer = new PdfWriter(filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
@@ -537,7 +543,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String cmpFilename = sourceFolder + "cmp_DocumentWithCourierBold.pdf";
         String title = "Empty iText Document";
 
-        PdfWriter writer = new PdfWriter(filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
@@ -571,7 +577,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String cmpFilename = sourceFolder + "cmp_DocumentWithCMR10Afm.pdf";
         String title = "Empty iText Document";
 
-        PdfWriter writer = new PdfWriter(filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
@@ -619,7 +625,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String cmpFilename = sourceFolder + "cmp_DocumentWithCMR10Pfm.pdf";
         String title = "Empty iText Document";
 
-        PdfWriter writer = new PdfWriter(filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
@@ -652,7 +658,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String filename = destinationFolder + "DocumentWithTrueTypeFont1.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithTrueTypeFont1.pdf";
         String title = "Empty iText Document";
-        PdfWriter writer = new PdfWriter(filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
@@ -703,7 +709,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String filename = destinationFolder + "createDocumentWithTrueTypeFont1NotEmbedded.pdf";
         String cmpFilename = sourceFolder + "cmp_createDocumentWithTrueTypeFont1NotEmbedded.pdf";
         String title = "Empty iText Document";
-        PdfWriter writer = new PdfWriter(filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
@@ -755,7 +761,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String cmpFilename = sourceFolder + "cmp_DocumentWithTrueTypeOtfFont.pdf";
         String title = "Empty iText Document";
 
-        PdfWriter writer = new PdfWriter(filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
@@ -810,7 +816,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String filename = destinationFolder + "DocumentWithTrueTypeOtfFontPdf20.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithTrueTypeOtfFontPdf20.pdf";
 
-        PdfWriter writer = new PdfWriter(filename, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
 
@@ -833,7 +839,7 @@ public class PdfFontTest extends ExtendedITextTest {
         pdfDoc.close();
 
         // Assert no CIDSet is written. It is deprecated in PDF 2.0
-        PdfDocument generatedDoc = new PdfDocument(new PdfReader(filename));
+        PdfDocument generatedDoc = new PdfDocument(CompareTool.createOutputReader(filename));
         PdfFont pdfFont = PdfFontFactory.createFont(generatedDoc.getPage(1).getResources().getResource(PdfName.Font).getAsDictionary(new PdfName("F1")));
         PdfDictionary descriptor = pdfFont.getPdfObject().getAsArray(PdfName.DescendantFonts).getAsDictionary(0).getAsDictionary(PdfName.FontDescriptor);
         Assert.assertFalse("CIDSet is deprecated in PDF 2.0 and should not be written", descriptor.containsKey(PdfName.CIDSet));
@@ -848,7 +854,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String cmpFilename = sourceFolder + "cmp_DocumentWithType0OtfFont.pdf";
         String title = "Empty iText Document";
 
-        PdfWriter writer = new PdfWriter(filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
@@ -905,7 +911,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         int numberOfGlyphs = 0;
         try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(inputFileName),
-                new PdfWriter(outputFileName).setCompressionLevel(CompressionConstants.NO_COMPRESSION))) {
+                CompareTool.createTestPdfWriter(outputFileName).setCompressionLevel(CompressionConstants.NO_COMPRESSION))) {
 
             pdfDoc.getDocumentInfo().setAuthor(author).
                     setCreator(creator).
@@ -946,7 +952,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         int numberOfGlyphs = 0;
         try (PdfDocument inputPdfDoc = new PdfDocument(new PdfReader(inputFileName));
-                PdfDocument outputPdfDoc = new PdfDocument(new PdfWriter(outputFileName)
+                PdfDocument outputPdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outputFileName)
                         .setCompressionLevel(CompressionConstants.NO_COMPRESSION))) {
 
             outputPdfDoc.getDocumentInfo().setAuthor(author).
@@ -1025,7 +1031,7 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
         PdfDictionary pdfDictionary = (PdfDictionary) inputPdfDoc1.getPdfObject(4);
 
-        PdfWriter writer = new PdfWriter(filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
@@ -1061,7 +1067,7 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfReader reader1 = new PdfReader(inputFileName1);
         PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
 
-        PdfWriter writer = new PdfWriter(filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
@@ -1097,7 +1103,7 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
         PdfDictionary pdfDictionary = (PdfDictionary) inputPdfDoc1.getPdfObject(4);
 
-        PdfWriter writer = new PdfWriter(filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
@@ -1130,7 +1136,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String cmpFilename = sourceFolder + "cmp_DocumentWithTrueTypeFont1_updated.pdf";
 
         PdfReader reader1 = new PdfReader(inputFileName1);
-        PdfWriter writer = new PdfWriter(filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(reader1, writer);
 
@@ -1162,7 +1168,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String title = "Type0 font iText Document";
 
         PdfReader reader = new PdfReader(inputFileName1);
-        PdfWriter writer = new PdfWriter(filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
@@ -1200,7 +1206,7 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
         PdfDictionary pdfDictionary = (PdfDictionary) inputPdfDoc1.getPdfObject(6);
 
-        PdfWriter writer = new PdfWriter(filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
@@ -1237,7 +1243,7 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
         PdfDictionary pdfDictionary = (PdfDictionary) inputPdfDoc1.getPdfObject(6);
 
-        PdfWriter writer = new PdfWriter(filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
@@ -1271,7 +1277,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String title = "Type0 font iText Document";
 
         PdfReader reader = new PdfReader(inputFileName1);
-        PdfWriter writer = new PdfWriter(filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
@@ -1308,7 +1314,7 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
         PdfDictionary pdfDictionary = (PdfDictionary) inputPdfDoc1.getPdfObject(4);
 
-        PdfWriter writer = new PdfWriter(filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
@@ -1340,7 +1346,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String cmpFilename = sourceFolder + "cmp_DocumentWithCMR10Afm_updated.pdf";
 
         PdfReader reader = new PdfReader(inputFileName1);
-        PdfWriter writer = new PdfWriter(filename).setCompressionLevel(CompressionConstants.NO_COMPRESSION);
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename).setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
 
         PdfDictionary pdfDictionary = (PdfDictionary) pdfDoc.getPdfObject(4);
@@ -1370,7 +1376,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String cmpFilename = sourceFolder + "cmp_DocumentWithCMR10Afm2_updated.pdf";
 
         PdfReader reader = new PdfReader(inputFileName1);
-        PdfWriter writer = new PdfWriter(filename).setCompressionLevel(CompressionConstants.NO_COMPRESSION);
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename).setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
 
         PdfDictionary pdfDictionary = (PdfDictionary) pdfDoc.getPdfObject(4);
@@ -1479,7 +1485,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         String txt = "The quick brown fox";
 
-        PdfDocument doc = new PdfDocument(new PdfWriter(filename));
+        PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(filename));
         PdfPage page = doc.addNewPage();
 
         PdfFont font = PdfFontFactory.createFont(fontsFolder + "uming.ttc,1");
@@ -1503,7 +1509,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String cmpFilename = sourceFolder + "cmp_DocumentWithTTC.pdf";
         String title = "Empty iText Document";
 
-        PdfWriter writer = new PdfWriter(filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
@@ -1558,7 +1564,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String cmpFilename = sourceFolder + "cmp_testWriteTTCNotEmbedded.pdf";
         String title = "Empty iText Document";
 
-        PdfWriter writer = new PdfWriter(filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
@@ -1614,7 +1620,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         String japanese = "\u713C";
 
-        PdfDocument doc = new PdfDocument(new PdfWriter(filename));
+        PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(filename));
         PdfPage page = doc.addNewPage();
 
         PdfFont font = PdfFontFactory.createFont(fontsFolder + "NotoSansCJKjp-Bold.otf",
@@ -1640,7 +1646,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         String helloWorld = "Hello world";
 
-        PdfDocument doc = new PdfDocument(new PdfWriter(filename));
+        PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(filename));
         PdfPage page = doc.addNewPage();
 
         PdfFont font = PdfFontFactory.createFont(fontsFolder + "SourceSerif4-Black.woff",
@@ -1665,7 +1671,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String filename = destinationFolder + "NotoSansCJKjpTest.pdf";
         String cmpFilename = sourceFolder + "cmp_NotoSansCJKjpTest.pdf";
 
-        PdfDocument doc = new PdfDocument(new PdfWriter(filename));
+        PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(filename));
         PdfPage page = doc.addNewPage();
         // Identity-H must be embedded
         PdfFont font = PdfFontFactory.createFont(fontsFolder + "NotoSansCJKjp-Bold.otf", "Identity-H");
@@ -1689,7 +1695,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String filename = destinationFolder + "NotoSansCJKjpTest02.pdf";
         String cmpFilename = sourceFolder + "cmp_NotoSansCJKjpTest02.pdf";
 
-        PdfDocument doc = new PdfDocument(new PdfWriter(filename));
+        PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(filename));
         PdfPage page = doc.addNewPage();
         // Identity-H must be embedded
         PdfFont font = PdfFontFactory.createFont(fontsFolder + "NotoSansCJKjp-Bold.otf", "Identity-H");
@@ -1713,7 +1719,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String filename = destinationFolder + "NotoSansCJKjpTest03.pdf";
         String cmpFilename = sourceFolder + "cmp_NotoSansCJKjpTest03.pdf";
 
-        PdfDocument doc = new PdfDocument(new PdfWriter(filename));
+        PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(filename));
         PdfPage page = doc.addNewPage();
 
         // Identity-H must be embedded
@@ -1741,7 +1747,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String filename = destinationFolder + "SourceHanSansHWTest.pdf";
         String cmpFilename = sourceFolder + "cmp_SourceHanSansHWTest.pdf";
 
-        PdfDocument doc = new PdfDocument(new PdfWriter(filename));
+        PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(filename));
         PdfPage page = doc.addNewPage();
 
         // Identity-H must be embedded
@@ -1764,7 +1770,7 @@ public class PdfFontTest extends ExtendedITextTest {
     public void sourceHanSerifKRRegularTest() throws IOException, InterruptedException {
         String filename = destinationFolder + "SourceHanSerifKRRegularTest.pdf";
         String cmpFilename = sourceFolder + "cmp_SourceHanSerifKRRegularTest.pdf";
-        PdfDocument doc = new PdfDocument(new PdfWriter(filename));
+        PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(filename));
         PdfPage page = doc.addNewPage();
         // Identity-H must be embedded
         PdfFont font = PdfFontFactory.createFont(fontsFolder + "SourceHanSerifKR-Regular.otf");
@@ -1788,7 +1794,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String filename = destinationFolder + "SourceHanSerifKRRegularFullTest.pdf";
         String cmpFilename = sourceFolder + "cmp_SourceHanSerifKRRegularFullTest.pdf";
 
-        PdfDocument doc = new PdfDocument(new PdfWriter(filename));
+        PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(filename));
         PdfPage page = doc.addNewPage();
         // Identity-H must be embedded
         PdfFont font = PdfFontFactory.createFont(fontsFolder + "SourceHanSerifKR-Regular.otf");
@@ -1825,7 +1831,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String filename = destinationFolder + "mmtype1_res.pdf";
         String cmpFilename = sourceFolder + "cmp_mmtype1.pdf";
 
-        PdfDocument doc = new PdfDocument(new PdfReader(src), new PdfWriter(filename));
+        PdfDocument doc = new PdfDocument(new PdfReader(src), CompareTool.createTestPdfWriter(filename));
         PdfFont font = PdfFontFactory.createFont((PdfDictionary) doc.getPdfObject(335));
 
         PdfCanvas canvas = new PdfCanvas(doc.getPage(1));
@@ -1849,7 +1855,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String filename = destinationFolder + "testFontStyleProcessing.pdf";
         String cmpFilename = sourceFolder + "cmp_testFontStyleProcessing.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(filename));
         PdfFont romanDefault = PdfFontFactory.createRegisteredFont("Times-Roman", PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_NOT_EMBEDDED);
         PdfFont romanNormal = PdfFontFactory.createRegisteredFont("Times-Roman", PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_NOT_EMBEDDED, FontStyles.NORMAL);
         PdfFont romanBold = PdfFontFactory.createRegisteredFont("Times-Roman", PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_NOT_EMBEDDED, FontStyles.BOLD);
@@ -1996,7 +2002,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String filename = destinationFolder + "mSungLightFontRanges.pdf";
         String cmpFilename = sourceFolder + "cmp_mSungLightFontRanges.pdf";
 
-        PdfWriter writer = new PdfWriter(filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
 
@@ -2025,7 +2031,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 + "UniJIS-UTF8-H UniJIS2004-UTF16-H UniJIS2004-UTF32-H UniJIS2004-UTF8-H "
                 + "UniJISX0213-UTF32-H UniJISX02132004-UTF32-H";
         String jpFonts = "HeiseiMin-W3 HeiseiKakuGo-W5 KozMinPro-Regular";
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName))) {
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             String msg = "あいうえおアイウエオ fufufufufuf 012345678917 更ッ一  平成20年12月31日";
             PdfPage page = pdfDoc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
@@ -2054,7 +2060,7 @@ public class PdfFontTest extends ExtendedITextTest {
     public void utf16ToUcs2HWFontTest() throws IOException {
         String outFileName = destinationFolder + "utf16ToUcs2HWFont.pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName))) {
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             // Surrogate pair
             String msg = "\ud83c\udd00 f";
             PdfPage page = pdfDoc.addNewPage();
@@ -2075,7 +2081,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "uniJIS2004UTF16Font.pdf";
         String cmpFileName = sourceFolder + "cmp_uniJIS2004UTF16Font.pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName))) {
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             // Surrogate pair
             String msg = "\ud83c\udd00 fffff";
             PdfPage page = pdfDoc.addNewPage();

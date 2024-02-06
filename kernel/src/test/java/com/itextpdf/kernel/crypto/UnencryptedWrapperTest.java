@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -42,6 +42,8 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
+
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -59,6 +61,11 @@ public class UnencryptedWrapperTest extends ExtendedITextTest {
     @BeforeClass
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
+    }
+
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
     }
 
     @Test
@@ -89,7 +96,7 @@ public class UnencryptedWrapperTest extends ExtendedITextTest {
         String outPath = destinationFolder + wrapperName;
         String diff = "diff_" + wrapperName + "_";
 
-        PdfDocument document = new PdfDocument(new PdfWriter(outPath, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
+        PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(outPath, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
         PdfFileSpec fs = PdfEncryptedPayloadFileSpecFactory.create(document, inPath, new PdfEncryptedPayload(cryptoFilter));
         document.setEncryptedPayload(fs);
 

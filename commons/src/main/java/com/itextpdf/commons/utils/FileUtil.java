@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -187,15 +187,41 @@ public final class FileUtil {
         }
     }
 
+    /**
+     * Creates {@code PrintWriter} instance.
+     *
+     * @param output output stream where data will be written.
+     * @param encoding encoding in which data will be written.
+     *
+     * @return {@code PrintWriter} instance.
+     *
+     * @throws UnsupportedEncodingException in case of unknown encoding.
+     */
     public static PrintWriter createPrintWriter(OutputStream output,
                                                 String encoding) throws UnsupportedEncodingException {
         return new PrintWriter(new OutputStreamWriter(output, encoding));
     }
 
+    /**
+     * Creates {@code OutputStream} instance for filename.
+     *
+     * @param filename name of the file for which output stream will be created.
+     *
+     * @return {@code OutputStream} instance.
+     *
+     * @throws FileNotFoundException if file not found.
+     */
     public static java.io.OutputStream getBufferedOutputStream(String filename) throws FileNotFoundException {
         return new BufferedOutputStream(new FileOutputStream(filename));
     }
 
+    /**
+     * Wraps provided output stream with buffered one.
+     *
+     * @param outputStream output stream to wrap.
+     *
+     * @return {@code BufferedOutputStream} instance if provided stream was not buffered before.
+     */
     public static java.io.OutputStream wrapWithBufferedOutputStream(OutputStream outputStream) {
         if (outputStream instanceof ByteArrayOutputStream || (outputStream instanceof BufferedOutputStream)) {
             return outputStream;
@@ -204,6 +230,14 @@ public final class FileUtil {
         }
     }
 
+    /**
+     * Create {@code File} instance.
+     *
+     * @param directory the parent pathname string.
+     * @param fileName The child pathname string.
+     *
+     * @return {@code File} instance.
+     */
     public static File constructFileByDirectoryAndName(String directory, String fileName) {
         return new File(directory, fileName);
     }
@@ -226,22 +260,67 @@ public final class FileUtil {
         return tempFile;
     }
 
+    /**
+     * Creates {@code FileOutputStream} instance.
+     *
+     * @param tempFile filename for which output stream will be created.
+     *
+     * @return {@code FileOutputStream} instance.
+     *
+     * @throws FileNotFoundException in case file not found.
+     */
     public static FileOutputStream getFileOutputStream(File tempFile) throws FileNotFoundException {
         return new FileOutputStream(tempFile);
     }
 
+    /**
+     * Creates {@code InputStream} instance.
+     *
+     * @param path filename for which output stream will be created.
+     *
+     * @return {@code InputStream} instance.
+     *
+     * @throws IOException in file reading errors.
+     */
     public static InputStream getInputStreamForFile(String path) throws IOException {
         return Files.newInputStream(Paths.get(path));
     }
 
+    /**
+     * Creates {@code InputStream} instance.
+     *
+     * @param file filename for which output stream will be created.
+     *
+     * @return {@code InputStream} instance.
+     *
+     * @throws IOException in file reading errors.
+     */
     public static InputStream getInputStreamForFile(File file) throws IOException {
         return Files.newInputStream(file.toPath());
     }
 
+    /**
+     * Creates {@code OutputStream} instance.
+     *
+     * @param path filename for which output stream will be created.
+     *
+     * @return {@code OutputStream} instance.
+     *
+     * @throws IOException in file r/w errors.
+     */
     public static OutputStream getFileOutputStream(String path) throws IOException {
         return Files.newOutputStream(Paths.get(path));
     }
 
+    /**
+     * Creates {@code RandomAccessFile} instance.
+     *
+     * @param tempFile file for which RAF will be created.
+     *
+     * @return {@code RandomAccessFile} instance.
+     *
+     * @throws FileNotFoundException in case file not found.
+     */
     public static RandomAccessFile getRandomAccessFile(File tempFile) throws FileNotFoundException {
         return new RandomAccessFile(tempFile, "rw");
     }
@@ -255,6 +334,16 @@ public final class FileUtil {
         new File(outPath).mkdirs();
     }
 
+    /**
+     * Returns an URI of the parent directory for the resource.
+     *
+     * @param file for which an URI of the parent will be constructed.
+     *
+     * @return parent directory URI.
+     *
+     * @throws MalformedURLException If a protocol handler for the URL could not be found,
+     *                               or if some other error occurred while constructing the URL.
+     */
     public static String getParentDirectoryUri(File file) throws MalformedURLException {
         return file != null ? Paths.get(file.getParent()).toUri().toURL().toExternalForm() : "";
     }

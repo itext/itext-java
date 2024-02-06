@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,11 +22,20 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.LogLevelConstants;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -35,19 +44,46 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class PdfXrefTableTest extends ExtendedITextTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfXrefTableTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfXrefTableTest/";
+    public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/PdfXrefTableTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/PdfXrefTableTest/";
 
     @BeforeClass
     public static void beforeClass() {
-        createOrClearDestinationFolder(destinationFolder);
+        createOrClearDestinationFolder(DESTINATION_FOLDER);
+    }
+
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT, logLevel = LogLevelConstants.ERROR)
+    })
+    public void openInvalidDocWithHugeRefTest() {
+        String inputFile = SOURCE_FOLDER + "invalidDocWithHugeRef.pdf";
+        AssertUtil.doesNotThrow(() -> new PdfDocument(new PdfReader(inputFile)));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT, logLevel = LogLevelConstants.ERROR)
+    })
+    public void openWithWriterInvalidDocWithHugeRefTest() {
+        String inputFile = SOURCE_FOLDER + "invalidDocWithHugeRef.pdf";
+        ByteArrayOutputStream outputStream = new com.itextpdf.io.source.ByteArrayOutputStream();
+
+        Exception e = Assert.assertThrows(PdfException.class, () ->
+                new PdfDocument(new PdfReader(inputFile), new PdfWriter(outputStream)));
+        Assert.assertEquals(KernelExceptionMessageConstant.XREF_STRUCTURE_SIZE_EXCEEDED_THE_LIMIT, e.getMessage());
     }
 
     @Test
     public void testCreateAndUpdateXMP() throws IOException {
-        String created = destinationFolder + "testCreateAndUpdateXMP_create.pdf";
-        String updated = destinationFolder + "testCreateAndUpdateXMP_update.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(created));
+        String created = DESTINATION_FOLDER + "testCreateAndUpdateXMP_create.pdf";
+        String updated = DESTINATION_FOLDER + "testCreateAndUpdateXMP_update.pdf";
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(created));
         pdfDocument.addNewPage();
 
         // create XMP metadata
@@ -55,7 +91,7 @@ public class PdfXrefTableTest extends ExtendedITextTest {
         pdfDocument.close();
 
 
-        pdfDocument = new PdfDocument(new PdfReader(created), new PdfWriter(updated));
+        pdfDocument = new PdfDocument(CompareTool.createOutputReader(created), CompareTool.createTestPdfWriter(updated));
         PdfXrefTable xref = pdfDocument.getXref();
 
         PdfDictionary catalog = pdfDocument.getCatalog().getPdfObject();
@@ -86,10 +122,10 @@ public class PdfXrefTableTest extends ExtendedITextTest {
 
     @Test
     public void testCreateAndUpdateTwiceXMP() throws IOException {
-        String created = destinationFolder + "testCreateAndUpdateTwiceXMP_create.pdf";
-        String updated = destinationFolder + "testCreateAndUpdateTwiceXMP_update.pdf";
-        String updatedAgain = destinationFolder + "testCreateAndUpdateTwiceXMP_updatedAgain.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(created));
+        String created = DESTINATION_FOLDER + "testCreateAndUpdateTwiceXMP_create.pdf";
+        String updated = DESTINATION_FOLDER + "testCreateAndUpdateTwiceXMP_update.pdf";
+        String updatedAgain = DESTINATION_FOLDER + "testCreateAndUpdateTwiceXMP_updatedAgain.pdf";
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(created));
         pdfDocument.addNewPage();
 
         // create XMP metadata
@@ -97,7 +133,7 @@ public class PdfXrefTableTest extends ExtendedITextTest {
         pdfDocument.close();
 
 
-        pdfDocument = new PdfDocument(new PdfReader(created), new PdfWriter(updated));
+        pdfDocument = new PdfDocument(CompareTool.createOutputReader(created), CompareTool.createTestPdfWriter(updated));
 
         PdfDictionary catalog = pdfDocument.getCatalog().getPdfObject();
         ((PdfIndirectReference)catalog.remove(PdfName.Metadata)).setFree();
@@ -105,7 +141,7 @@ public class PdfXrefTableTest extends ExtendedITextTest {
         pdfDocument.close();
 
 
-        pdfDocument = new PdfDocument(new PdfReader(updated), new PdfWriter(updatedAgain));
+        pdfDocument = new PdfDocument(CompareTool.createOutputReader(updated), CompareTool.createTestPdfWriter(updatedAgain));
 
         catalog = pdfDocument.getCatalog().getPdfObject();
         ((PdfIndirectReference)catalog.remove(PdfName.Metadata)).setFree();

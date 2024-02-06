@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -134,6 +134,11 @@ public final class OID {
          * from https://www.ietf.org/rfc/rfc2560.txt.
          */
         public static final String ID_PKIX_OCSP_NOCHECK = "1.3.6.1.5.5.7.48.1.5";
+
+        /**
+         * Extension for certificates from ETSI EN 319 412-1 V1.4.4.
+         */
+        public static final String VALIDITY_ASSURED_SHORT_TERM = "0.4.0.194121.2.1";
 
 
         /**

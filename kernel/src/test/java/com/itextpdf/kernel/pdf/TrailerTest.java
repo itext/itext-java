@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -28,6 +28,7 @@ import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.actions.data.ITextCoreProductData;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -65,8 +66,7 @@ public class TrailerTest extends ExtendedITextTest {
 
     @Test
     public void trailerFingerprintTest() throws IOException {
-        FileOutputStream fos = new FileOutputStream(destinationFolder + "output.pdf");
-        PdfDocument pdf = new PdfDocument(new PdfWriter(fos));
+        PdfDocument pdf = new PdfDocument(new PdfWriter(destinationFolder + "output.pdf"));
         pdf.registerProduct(this.productData);
         PdfPage page = pdf.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -85,21 +85,23 @@ public class PushButtonFormFieldBuilder extends TerminalFormFieldBuilder<PushBut
                 annotation.setFlag(PdfAnnotation.PRINT);
             }
         }
+        field.disableFieldRegeneration();
+        if (this.getFont() != null) {
+            field.setFont(this.getFont());
+        }
         field.pdfAConformanceLevel = getConformanceLevel();
         field.setPushButton(true);
         field.setFieldName(getFormFieldName());
         field.text = caption;
-
         if (annotation != null) {
             field.getFirstFormAnnotation().backgroundColor = ColorConstants.LIGHT_GRAY;
-            field.getFirstFormAnnotation().drawPushButtonFieldAndSaveAppearance();
             PdfDictionary mk = new PdfDictionary();
             mk.put(PdfName.CA, new PdfString(caption));
             mk.put(PdfName.BG, new PdfArray(field.getFirstFormAnnotation().backgroundColor.getColorValue()));
             annotation.setAppearanceCharacteristics(mk);
-
             setPageToField(field);
         }
+        field.enableFieldRegeneration();
 
         return field;
     }

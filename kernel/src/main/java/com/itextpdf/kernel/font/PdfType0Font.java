@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -164,7 +164,7 @@ public class PdfType0Font extends PdfFont {
             embeddedToUnicode = toUnicodeCMap;
         }
 
-        if (cmap.isName() && (PdfEncodings.IDENTITY_H.equals(((PdfName) cmap).getValue()) ||
+        if (cmap.isName() && ((toUnicodeCMap != null) || PdfEncodings.IDENTITY_H.equals(((PdfName) cmap).getValue()) ||
                 PdfEncodings.IDENTITY_V.equals(((PdfName) cmap).getValue()))) {
 
             if (toUnicodeCMap == null) {
@@ -259,7 +259,7 @@ public class PdfType0Font extends PdfFont {
 
     @Override
     public Glyph getGlyph(int unicode) {
-        // TODO handle unicode value with cmap and use only glyphByCode
+        // TODO DEVSIX-7568 handle unicode value with cmap and use only glyphByCode
         Glyph glyph = getFontProgram().getGlyph(unicode);
         if (glyph == null && (glyph = notdefGlyphs.get(unicode)) == null) {
             // Handle special layout characters like sfthyphen (00AD).
@@ -585,7 +585,6 @@ public class PdfType0Font extends PdfFont {
         return process;
     }
 
-    //TODO what if Glyphs contains only whitespaces and ignorable identifiers?
     private boolean isAppendableGlyph(Glyph glyph) {
         // If font is specific and glyph.getCode() = 0, unicode value will be also 0.
         // Character.isIdentifierIgnorable(0) gets true.
@@ -745,25 +744,30 @@ public class PdfType0Font extends PdfFont {
     }
 
     private static boolean containsCodeInCodeSpaceRange(List<byte[]> codeSpaceRanges, int code, int length) {
+        long unsignedCode = code & 0xffffffff;
         for (int i = 0; i < codeSpaceRanges.size(); i += 2) {
             if (length == codeSpaceRanges.get(i).length) {
-                int mask = 0xff;
-                int totalShift = 0;
                 byte[] low = codeSpaceRanges.get(i);
                 byte[] high = codeSpaceRanges.get(i + 1);
-                boolean fitsIntoRange = true;
-                for (int ind = length - 1; ind >= 0; ind--, totalShift += 8, mask <<= 8) {
-                    int actualByteValue = (code & mask) >> totalShift;
-                    if (!(actualByteValue >= (0xff & low[ind]) && actualByteValue <= (0xff & high[ind]))) {
-                        fitsIntoRange = false;
-                    }
-                }
-                if (fitsIntoRange) {
+                long lowValue = bytesToLong(low);
+                long highValue = bytesToLong(high);
+                if (unsignedCode >= lowValue && unsignedCode <= highValue) {
                     return true;
                 }
             }
         }
         return false;
+    }
+
+    private static long bytesToLong(byte[] bytes) {
+        long res = 0;
+        int shift = 0;
+        for (int i = bytes.length - 1; i >= 0; --i) {
+            res += (bytes[i] & 0xff) << shift;
+            shift += 8;
+        }
+
+        return res;
     }
 
     private void flushFontData() {

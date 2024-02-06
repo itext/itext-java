@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -41,6 +41,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -57,12 +58,17 @@ public class AddScreenAnnotationTest extends ExtendedITextTest {
         createOrClearDestinationFolder(destinationFolder);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+    
     @Test
     public void screenEmbeddedWavFromPathTest() throws IOException, InterruptedException {
         String filename = destinationFolder + "screenEmbeddedWavFromPathTest.pdf";
         String cmp = sourceFolder + "cmp_" + "screenEmbeddedWavFromPathTest.pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename))) {
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(filename))) {
 
             PdfFileSpec spec = PdfFileSpec
                     .createEmbeddedFileSpec(pdfDoc, sourceFolder + "sample.wav", null, "sample.wav", null, null);
@@ -82,7 +88,7 @@ public class AddScreenAnnotationTest extends ExtendedITextTest {
         String cmp = sourceFolder + "cmp_" + "screenEmbeddedWavFromStreamTest.pdf";
 
         try (FileInputStream is = new FileInputStream(sourceFolder + "sample.wav")) {
-            try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename))) {
+            try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(filename))) {
 
                 PdfFileSpec spec = PdfFileSpec
                         .createEmbeddedFileSpec(pdfDoc, is, null, "sample.wav", null, null);
@@ -102,7 +108,7 @@ public class AddScreenAnnotationTest extends ExtendedITextTest {
         String filename = destinationFolder + "screenEmbeddedWavFromBytesTest.pdf";
         String cmp = sourceFolder + "cmp_" + "screenEmbeddedWavFromBytesTest.pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename))) {
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(filename))) {
 
             byte[] fileStore = Files.readAllBytes(Paths.get(sourceFolder + "sample.wav"));
             PdfFileSpec spec = PdfFileSpec
@@ -122,7 +128,7 @@ public class AddScreenAnnotationTest extends ExtendedITextTest {
         String filename = destinationFolder + "screenExternalWavTest.pdf";
         String cmp = sourceFolder + "cmp_" + "screenExternalWavTest.pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename))) {
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(filename))) {
             FileUtil.copy(sourceFolder + "sample.wav", destinationFolder + "sample.wav");
             PdfFileSpec spec = PdfFileSpec.createExternalFileSpec(pdfDoc, "sample.wav");
 

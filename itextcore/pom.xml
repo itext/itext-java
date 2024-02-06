@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.itextpdf.android</groupId>
   <artifactId>itext-core-android</artifactId>
-  <version>8.0.2</version>
+  <version>8.0.3</version>
   <packaging>pom</packaging>
   <name>iText Core</name>
   <description>A Free Java-PDF library</description>
@@ -128,6 +128,11 @@
     <dependency>
       <groupId>com.itextpdf.android</groupId>
       <artifactId>bouncy-castle-connector-android</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>pdfua-android</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>

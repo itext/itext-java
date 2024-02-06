@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -33,6 +33,7 @@ import com.itextpdf.forms.form.renderer.checkboximpl.HtmlCheckBoxRenderingStrate
 import com.itextpdf.forms.form.renderer.checkboximpl.ICheckBoxRenderingStrategy;
 import com.itextpdf.forms.form.renderer.checkboximpl.PdfACheckBoxRenderingStrategy;
 import com.itextpdf.forms.form.renderer.checkboximpl.PdfCheckBoxRenderingStrategy;
+import com.itextpdf.forms.util.BorderStyleUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -242,7 +243,7 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
         }
         final PdfButtonFormField checkBox = builder.createCheckBox();
         checkBox.disableFieldRegeneration();
-        applyBorderProperty(checkBox.getFirstFormAnnotation());
+        BorderStyleUtil.applyBorderProperty(this, checkBox.getFirstFormAnnotation());
         final Background background = this.modelElement.<Background>getProperty(Property.BACKGROUND);
         if (background != null) {
             checkBox.getFirstFormAnnotation().setBackgroundColor(background.getColor());

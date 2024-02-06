@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -39,6 +39,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -55,9 +56,14 @@ public class PdfActionTest extends ExtendedITextTest {
         createDestinationFolder(destinationFolder);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+    
     @Test
     public void actionTest01() throws Exception {
-        PdfDocument document = createDocument(new PdfWriter(destinationFolder + "actionTest01.pdf"), true);
+        PdfDocument document = createDocument(CompareTool.createTestPdfWriter(destinationFolder + "actionTest01.pdf"), true);
 
         document.getCatalog().setOpenAction(PdfAction.createURI("http://itextpdf.com/"));
 
@@ -68,7 +74,7 @@ public class PdfActionTest extends ExtendedITextTest {
 
     @Test
     public void actionTest02() throws Exception {
-        PdfDocument document = createDocument(new PdfWriter(destinationFolder + "actionTest02.pdf"), false);
+        PdfDocument document = createDocument(CompareTool.createTestPdfWriter(destinationFolder + "actionTest02.pdf"), false);
 
         document.getPage(2).setAdditionalAction(PdfName.O, PdfAction.createURI("http://itextpdf.com/"));
 
@@ -80,7 +86,7 @@ public class PdfActionTest extends ExtendedITextTest {
     @Test
     public void soundActionTest() throws Exception {
         String fileName = "soundActionTest.pdf";
-        PdfDocument document = createDocument(new PdfWriter(destinationFolder + fileName), false);
+        PdfDocument document = createDocument(CompareTool.createTestPdfWriter(destinationFolder + fileName), false);
 
         InputStream is = new FileInputStream(sourceFolder + "sample.aif");
         PdfStream sound1 = new PdfStream(document, is);
@@ -99,7 +105,7 @@ public class PdfActionTest extends ExtendedITextTest {
     @Test
     public void soundActionWithRepeatFlagTest() throws Exception {
         String fileName = "soundActionWithRepeatFlagTest.pdf";
-        PdfDocument document = createDocument(new PdfWriter(destinationFolder + fileName), false);
+        PdfDocument document = createDocument(CompareTool.createTestPdfWriter(destinationFolder + fileName), false);
 
         InputStream is = new FileInputStream(sourceFolder + "sample.aif");
         PdfStream sound1 = new PdfStream(document, is);
@@ -178,7 +184,7 @@ public class PdfActionTest extends ExtendedITextTest {
         ocgStates.add(new PdfActionOcgState(stateName, dicts));
 
         String fileName = "ocgStateTest.pdf";
-        PdfDocument document = createDocument(new PdfWriter(destinationFolder + fileName), false);
+        PdfDocument document = createDocument(CompareTool.createTestPdfWriter(destinationFolder + fileName), false);
         document.getPage(1).setAdditionalAction(PdfName.O, PdfAction.createSetOcgState(ocgStates));
         document.close();
 
@@ -189,7 +195,7 @@ public class PdfActionTest extends ExtendedITextTest {
     @Test
     public void launchActionTest() throws Exception {
         String fileName = "launchActionTest.pdf";
-        PdfDocument document = createDocument(new PdfWriter(destinationFolder + fileName), false);
+        PdfDocument document = createDocument(CompareTool.createTestPdfWriter(destinationFolder + fileName), false);
 
         document.getPage(1).setAdditionalAction(PdfName.O, PdfAction.createLaunch(new PdfStringFS("launch.sh")));
         document.close();
@@ -201,7 +207,7 @@ public class PdfActionTest extends ExtendedITextTest {
     @Test
     public void launchActionOnNewWindowTest() throws Exception {
         String fileName = "launchActionOnNewWindowTest.pdf";
-        PdfDocument document = createDocument(new PdfWriter(destinationFolder + fileName), false);
+        PdfDocument document = createDocument(CompareTool.createTestPdfWriter(destinationFolder + fileName), false);
 
         document.getPage(1).setAdditionalAction(PdfName.O,
                 PdfAction.createLaunch(new PdfStringFS("launch.sh"), true));
@@ -214,7 +220,7 @@ public class PdfActionTest extends ExtendedITextTest {
     @Test
     public void createHiddenAnnotationTest() throws Exception {
         String fileName = "createHiddenAnnotationTest.pdf";
-        PdfDocument document = createDocument(new PdfWriter(destinationFolder + fileName), false);
+        PdfDocument document = createDocument(CompareTool.createTestPdfWriter(destinationFolder + fileName), false);
 
         PdfAnnotation annotation = new PdfLineAnnotation(new Rectangle(10, 10, 200, 200),
                 new float[] {50, 750, 50, 750});
@@ -228,7 +234,7 @@ public class PdfActionTest extends ExtendedITextTest {
     @Test
     public void createHiddenAnnotationsTest() throws Exception {
         String fileName = "createHiddenAnnotationsTest.pdf";
-        PdfDocument document = createDocument(new PdfWriter(destinationFolder + fileName), false);
+        PdfDocument document = createDocument(CompareTool.createTestPdfWriter(destinationFolder + fileName), false);
 
         PdfAnnotation[] annotations = new PdfAnnotation[] {
                 new PdfLineAnnotation(new Rectangle(10, 10, 200, 200), new float[] {50, 750, 50, 750}),
@@ -244,7 +250,7 @@ public class PdfActionTest extends ExtendedITextTest {
     @Test
     public void createHiddenByFieldNameTest() throws Exception {
         String fileName = "createHiddenByFieldNameTest.pdf";
-        PdfDocument document = createDocument(new PdfWriter(destinationFolder + fileName), false);
+        PdfDocument document = createDocument(CompareTool.createTestPdfWriter(destinationFolder + fileName), false);
 
         document.getPage(1).setAdditionalAction(PdfName.O, PdfAction.createHide("name", true));
         document.close();
@@ -256,7 +262,7 @@ public class PdfActionTest extends ExtendedITextTest {
     @Test
     public void createHiddenByFieldNamesTest() throws Exception {
         String fileName = "createHiddenByFieldNamesTest.pdf";
-        PdfDocument document = createDocument(new PdfWriter(destinationFolder + fileName), false);
+        PdfDocument document = createDocument(CompareTool.createTestPdfWriter(destinationFolder + fileName), false);
 
         document.getPage(1).setAdditionalAction(PdfName.O, PdfAction.createHide(new String[] {"name1", "name2"}, true));
         document.close();
@@ -268,7 +274,7 @@ public class PdfActionTest extends ExtendedITextTest {
     @Test
     public void createNamedTest() throws Exception {
         String fileName = "createNamedTest.pdf";
-        PdfDocument document = createDocument(new PdfWriter(destinationFolder + fileName), false);
+        PdfDocument document = createDocument(CompareTool.createTestPdfWriter(destinationFolder + fileName), false);
 
         document.getPage(1).setAdditionalAction(PdfName.O, PdfAction.createNamed(PdfName.LastPage));
         document.close();
@@ -280,7 +286,7 @@ public class PdfActionTest extends ExtendedITextTest {
     @Test
     public void createJavaScriptTest() throws Exception {
         String fileName = "createJavaScriptTest.pdf";
-        PdfDocument document = createDocument(new PdfWriter(destinationFolder + fileName), false);
+        PdfDocument document = createDocument(CompareTool.createTestPdfWriter(destinationFolder + fileName), false);
 
         String javaScriptRotatePages = "this.setPageRotations(0,2,90)";
         document.getPage(1).setAdditionalAction(PdfName.O, PdfAction.createJavaScript(javaScriptRotatePages));
@@ -293,7 +299,7 @@ public class PdfActionTest extends ExtendedITextTest {
     @Test
     public void soundAndNextJavaScriptActionTest() throws Exception {
         String fileName = "soundAndNextJavaScriptActionTest.pdf";
-        PdfDocument document = createDocument(new PdfWriter(destinationFolder + fileName), false);
+        PdfDocument document = createDocument(CompareTool.createTestPdfWriter(destinationFolder + fileName), false);
 
         InputStream is = new FileInputStream(sourceFolder + "sample.aif");
         PdfStream sound1 = new PdfStream(document, is);
@@ -314,7 +320,7 @@ public class PdfActionTest extends ExtendedITextTest {
     @Test
     public void soundAndTwoNextJavaScriptActionTest() throws Exception {
         String fileName = "soundAndTwoNextJavaScriptActionTest.pdf";
-        PdfDocument document = createDocument(new PdfWriter(destinationFolder + fileName), false);
+        PdfDocument document = createDocument(CompareTool.createTestPdfWriter(destinationFolder + fileName), false);
 
         InputStream is = new FileInputStream(sourceFolder + "sample.aif");
         PdfStream sound1 = new PdfStream(document, is);

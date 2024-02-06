@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -23,6 +23,7 @@
 package com.itextpdf.kernel.crypto;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.crypto.fips.AbstractFipsUnapprovedOperationError;
 import com.itextpdf.commons.utils.Base64;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.constants.StandardFonts;
@@ -53,6 +54,7 @@ import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.spec.PKCS8EncodedKeySpec;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -73,6 +75,11 @@ public class PdfEncryptingTest extends ExtendedITextTest {
     public static void setUpBeforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
         Security.addProvider(BouncyCastleFactoryCreator.getFactory().getProvider());
+    }
+
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
     }
 
     @Test
@@ -113,7 +120,13 @@ public class PdfEncryptingTest extends ExtendedITextTest {
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT), ignore = true)
     public void encryptWithCertificateAes256Rsa() throws GeneralSecurityException, IOException, InterruptedException {
-        encryptWithCertificate("encryptWithCertificateAes256Rsa.pdf", "SHA256withRSA.crt");
+        if (BouncyCastleFactoryCreator.getFactory().isInApprovedOnlyMode()) {
+            // RSA PKCS1.5 encryption disallowed
+            Assert.assertThrows(AbstractFipsUnapprovedOperationError.class,
+                    () -> encryptWithCertificate("encryptWithCertificateAes256Rsa.pdf", "SHA256withRSA.crt"));
+        } else {
+            encryptWithCertificate("encryptWithCertificateAes256Rsa.pdf", "SHA256withRSA.crt");
+        }
     }
 
     @Test
@@ -145,7 +158,7 @@ public class PdfEncryptingTest extends ExtendedITextTest {
             writerProperties.setPdfVersion(PdfVersion.PDF_2_0);
         }
 
-        try (PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + fileName, writerProperties.addXmpMetadata());
+        try (PdfWriter writer = CompareTool.createTestPdfWriter(DESTINATION_FOLDER + fileName, writerProperties.addXmpMetadata());
                 PdfDocument document = new PdfDocument(writer)) {
             writeTextToDocument(document);
         }
@@ -158,7 +171,7 @@ public class PdfEncryptingTest extends ExtendedITextTest {
         Certificate certificate = CryptoUtil.readPublicCertificate(new FileInputStream(CERTS_SRC + certificatePath));
         WriterProperties writerProperties = new WriterProperties().setPublicKeyEncryption(
                 new Certificate[] {certificate}, new int[] {-1}, EncryptionConstants.ENCRYPTION_AES_256);
-        try (PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + fileName, writerProperties.addXmpMetadata());
+        try (PdfWriter writer = CompareTool.createTestPdfWriter(DESTINATION_FOLDER + fileName, writerProperties.addXmpMetadata());
                 PdfDocument document = new PdfDocument(writer)) {
             writeTextToDocument(document);
         }

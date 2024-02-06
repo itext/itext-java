@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -21,6 +21,10 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.itextpdf.pdfa;
+
+import java.nio.ByteBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Utilities to construct an XMP for a PDF/A file.
@@ -65,4 +69,21 @@ public class PdfAXMPUtil {
                     "        </rdf:Description>\n" +
                     "      </rdf:RDF>\n" +
                     "    </x:xmpmeta>";
+
+    /**
+     * Check whether the given byte array is an UTF-8 encoded character sequence.
+     *
+     * @param array array to check
+     *
+     * @return true if array is UTF-8 encoded data, false otherwise
+     */
+    public static boolean isUtf8(byte[] array) {
+        try {
+            StandardCharsets.UTF_8.newDecoder().decode(ByteBuffer.wrap(array));
+        }
+        catch (CharacterCodingException e) {
+            return false;
+        }
+        return true;
+    }
 }

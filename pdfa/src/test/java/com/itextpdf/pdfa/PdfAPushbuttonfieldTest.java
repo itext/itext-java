@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,7 +22,6 @@
  */
 package com.itextpdf.pdfa;
 
-import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfFormField;
@@ -36,18 +35,16 @@ import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
-import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class PdfAPushbuttonfieldTest extends ExtendedITextTest {
@@ -62,7 +59,6 @@ public class PdfAPushbuttonfieldTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO: DEVSIX-3913 update this test after the ticket will be resolved
     public void pdfA1bButtonAppearanceTest() throws IOException, InterruptedException {
         String name = "pdfA1b_ButtonAppearanceTest";
         String outPath = destinationFolder + name + ".pdf";
@@ -87,15 +83,12 @@ public class PdfAPushbuttonfieldTest extends ExtendedITextTest {
         button.setFont(font).setFontSize(12);
         form.addField(button);
 
-        Exception exception = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outPath, cmpPath, destinationFolder, diff));
 
-        Assert.assertEquals(MessageFormatUtil.format(
-                PdfaExceptionMessageConstant.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "Helvetica"),
-                exception.getMessage());
     }
 
     @Test
-    // TODO: DEVSIX-3913 update this test after the ticket will be resolved
     public void pdfA1bButtonAppearanceRegenerateTest() throws IOException, InterruptedException {
         String name = "pdfA1b_ButtonAppearanceRegenerateTest";
         String outPath = destinationFolder + name + ".pdf";
@@ -121,15 +114,11 @@ public class PdfAPushbuttonfieldTest extends ExtendedITextTest {
         button.regenerateField();
         form.addField(button);
 
-        Exception exception = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-
-        Assert.assertEquals(MessageFormatUtil.format(
-                PdfaExceptionMessageConstant.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "Helvetica"),
-                exception.getMessage());
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outPath, cmpPath, destinationFolder, diff));
     }
 
     @Test
-    // TODO: DEVSIX-3913 update this test after the ticket will be resolved
     public void pdfA1bButtonAppearanceSetValueTest() throws IOException, InterruptedException {
         String name = "pdfA1b_ButtonAppearanceSetValueTest";
         String outPath = destinationFolder + name + ".pdf";
@@ -154,11 +143,8 @@ public class PdfAPushbuttonfieldTest extends ExtendedITextTest {
         button.setFont(font).setFontSize(12);
         button.setValue("button");
         form.addField(button);
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outPath, cmpPath, destinationFolder, diff));
 
-        Exception exception = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-
-        Assert.assertEquals(MessageFormatUtil.format(
-                PdfaExceptionMessageConstant.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "Helvetica"),
-                exception.getMessage());
     }
 }

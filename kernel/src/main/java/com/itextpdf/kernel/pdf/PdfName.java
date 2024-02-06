@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -797,6 +797,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Subtype = createDirectName("Subtype");
     public static final PdfName Subtype2 = createDirectName("Subtype2");
     public static final PdfName Supplement = createDirectName("Supplement");
+    public static final PdfName Suspects = createDirectName("Suspects");
     public static final PdfName SV = createDirectName("SV");
     public static final PdfName Sy = createDirectName("Sy");
     public static final PdfName Symbol = createDirectName("Symbol");

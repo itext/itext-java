@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -101,7 +101,9 @@ public final class PdfFormAnnotationUtil {
         if (tagged) {
             tagPointer = document.getTagStructureContext().getAutoTaggingPointer();
             //TODO DEVSIX-4117 PrintField attributes
-            tagPointer.addTag(StandardRoles.FORM);
+            if (!StandardRoles.FORM.equals(tagPointer.getRole())) {
+                tagPointer.addTag(StandardRoles.FORM);
+            }
         }
 
         page.addAnnotation(index, annotation, true);

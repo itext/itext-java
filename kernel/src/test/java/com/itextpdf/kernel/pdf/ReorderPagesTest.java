@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -25,6 +25,8 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -47,13 +49,18 @@ public class ReorderPagesTest extends ExtendedITextTest {
         createOrClearDestinationFolder(destinationFolder);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+    
     @Test
     public void reorderTaggedHasCommonStructElem01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         String inPath = sourceFolder + "taggedHasCommonStructElem.pdf";
         String outPath = destinationFolder + "reorderTaggedHasCommonStructElem01.pdf";
         String cmpPath = sourceFolder + "cmp_reorderTaggedHasCommonStructElem.pdf";
 
-        PdfDocument pdf = new PdfDocument(new PdfReader(inPath), new PdfWriter(outPath));
+        PdfDocument pdf = new PdfDocument(new PdfReader(inPath), CompareTool.createTestPdfWriter(outPath));
         pdf.setTagged();
 
         pdf.movePage(2,1);
@@ -68,7 +75,7 @@ public class ReorderPagesTest extends ExtendedITextTest {
         String outPath = destinationFolder + "reorderTaggedHasCommonStructElem02.pdf";
         String cmpPath = sourceFolder + "cmp_reorderTaggedHasCommonStructElem.pdf";
 
-        PdfDocument pdf = new PdfDocument(new PdfReader(inPath), new PdfWriter(outPath));
+        PdfDocument pdf = new PdfDocument(new PdfReader(inPath), CompareTool.createTestPdfWriter(outPath));
         pdf.movePage(1,3);
         pdf.close();
 
@@ -81,7 +88,7 @@ public class ReorderPagesTest extends ExtendedITextTest {
         String outPath = destinationFolder + "reorderTaggedHasCommonStructElemBigger.pdf";
         String cmpPath = sourceFolder + "cmp_reorderTaggedHasCommonStructElemBigger.pdf";
 
-        PdfDocument pdf = new PdfDocument(new PdfReader(inPath), new PdfWriter(outPath));
+        PdfDocument pdf = new PdfDocument(new PdfReader(inPath), CompareTool.createTestPdfWriter(outPath));
         pdf.movePage(2,5);
         pdf.close();
 
@@ -95,7 +102,7 @@ public class ReorderPagesTest extends ExtendedITextTest {
         String cmpPath = sourceFolder + "cmp_copyReorderTaggedHasCommonStructElem.pdf";
 
         PdfDocument sourceDoc = new PdfDocument(new PdfReader(inPath));
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPath));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outPath));
         pdfDoc.setTagged();
 
         sourceDoc.copyPagesTo(Arrays.asList(2, 1, 3), pdfDoc);

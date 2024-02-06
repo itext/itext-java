@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -36,6 +36,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -54,11 +55,16 @@ public class AddTextMarkupAnnotationTest extends ExtendedITextTest {
         createOrClearDestinationFolder(destinationFolder);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+    
     @Test
     public void textMarkupTest01() throws IOException, InterruptedException {
         String filename = destinationFolder + "textMarkupAnnotation01.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(filename));
 
         PdfPage page1 = pdfDoc.addNewPage();
 
@@ -96,7 +102,7 @@ public class AddTextMarkupAnnotationTest extends ExtendedITextTest {
     public void textMarkupTest02() throws IOException, InterruptedException {
         String filename = destinationFolder + "textMarkupAnnotation02.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(filename));
 
         PdfPage page1 = pdfDoc.addNewPage();
 
@@ -134,7 +140,7 @@ public class AddTextMarkupAnnotationTest extends ExtendedITextTest {
     public void textMarkupTest03() throws IOException, InterruptedException {
         String filename = destinationFolder + "textMarkupAnnotation03.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(filename));
 
         PdfPage page1 = pdfDoc.addNewPage();
 
@@ -172,7 +178,7 @@ public class AddTextMarkupAnnotationTest extends ExtendedITextTest {
     public void textMarkupTest04() throws IOException, InterruptedException {
         String filename = destinationFolder + "textMarkupAnnotation04.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(filename));
 
         PdfPage page1 = pdfDoc.addNewPage();
 

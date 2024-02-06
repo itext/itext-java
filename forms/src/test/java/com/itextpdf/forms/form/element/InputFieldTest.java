@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -361,6 +361,22 @@ public class InputFieldTest extends ExtendedITextTest {
             document.add(flattenInputField2);
         }
 
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void setFontInputFieldTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "setFontInputField.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_setFontInputField.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+            InputField inputField = new InputField("inputField");
+            inputField.setInteractive(true);
+            inputField.setFont(PdfFontFactory.createFont(StandardFonts.COURIER));
+            inputField.setFontSize(10);
+            inputField.setValue("Some value");
+            document.add(inputField);
+        }
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,6 +22,7 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.commons.datastructures.Tuple2;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.NumberUtil;
@@ -37,12 +38,17 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
+import com.itextpdf.kernel.pdf.navigation.PdfStructureDestination;
+import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
+import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
+import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 import com.itextpdf.layout.Document;
@@ -134,6 +140,10 @@ public abstract class AbstractRenderer implements IRenderer {
     private static final int ARC_BOTTOM_DEGREE = 270;
 
     private static final int ARC_QUARTER_CLOCKWISE_EXTENT = -90;
+
+    // For autoport
+    private static final Tuple2<String, PdfDictionary> CHECK_TUPLE2_TYPE =
+            new Tuple2<String, PdfDictionary>("", new PdfDictionary());
 
     protected List<IRenderer> childRenderers = new ArrayList<>();
     protected List<IRenderer> positionedRenderers = new ArrayList<>();
@@ -1918,8 +1928,22 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     protected void applyDestination(PdfDocument document) {
-        String destination = this.<String>getProperty(Property.DESTINATION);
-        if (destination != null) {
+        Object destination = this.<Object>getProperty(Property.DESTINATION);
+        if (destination == null) {
+            return;
+        }
+        String destinationName = null;
+        PdfDictionary linkActionDict = null;
+        if (destination instanceof String) {
+            destinationName = (String)destination;
+        } else if (CHECK_TUPLE2_TYPE.getClass().equals(destination.getClass())) {
+            // 'If' above is the only autoportable way it seems
+            Tuple2<String, PdfDictionary> destTuple = (Tuple2<String, PdfDictionary>)destination;
+            destinationName = destTuple.getFirst();
+            linkActionDict = destTuple.getSecond();
+        }
+
+        if (destinationName != null) {
             int pageNumber = occupiedArea.getPageNumber();
             if (pageNumber < 1 || pageNumber > document.getNumberOfPages()) {
                 Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
@@ -1929,16 +1953,25 @@ public abstract class AbstractRenderer implements IRenderer {
                         logMessageArg));
                 return;
             }
+
             PdfArray array = new PdfArray();
             array.add(document.getPage(pageNumber).getPdfObject());
             array.add(PdfName.XYZ);
             array.add(new PdfNumber(occupiedArea.getBBox().getX()));
             array.add(new PdfNumber(occupiedArea.getBBox().getY() + occupiedArea.getBBox().getHeight()));
             array.add(new PdfNumber(0));
-            document.addNamedDestination(destination, array.makeIndirect(document));
-
-            deleteProperty(Property.DESTINATION);
+            document.addNamedDestination(destinationName, array.makeIndirect(document));
         }
+
+        final boolean isPdf20 = document.getPdfVersion().compareTo(PdfVersion.PDF_2_0) >= 0;
+        if (linkActionDict != null && isPdf20 && document.isTagged()) {
+            // Add structure destination for the action for tagged pdf 2.0
+            PdfStructElem structElem = getCurrentStructElem(document);
+            PdfStructureDestination dest = PdfStructureDestination.createFit(structElem);
+            linkActionDict.put(PdfName.SD, dest.getPdfObject());
+        }
+
+        deleteProperty(Property.DESTINATION);
     }
 
     protected void applyAction(PdfDocument document) {
@@ -1962,32 +1995,35 @@ public abstract class AbstractRenderer implements IRenderer {
     protected void applyLinkAnnotation(PdfDocument document) {
         Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
         PdfLinkAnnotation linkAnnotation = this.<PdfLinkAnnotation>getProperty(Property.LINK_ANNOTATION);
-        if (linkAnnotation != null) {
-            int pageNumber = occupiedArea.getPageNumber();
-            if (pageNumber < 1 || pageNumber > document.getNumberOfPages()) {
-                String logMessageArg = "Property.LINK_ANNOTATION, which specifies a link associated with this element content area, see com.itextpdf.layout.element.Link.";
-                logger.warn(MessageFormatUtil.format(
-                        IoLogMessageConstant.UNABLE_TO_APPLY_PAGE_DEPENDENT_PROP_UNKNOWN_PAGE_ON_WHICH_ELEMENT_IS_DRAWN,
-                        logMessageArg));
-                return;
-            }
-            // If an element with a link annotation occupies more than two pages,
-            // then a NPE might occur, because of the annotation being partially flushed.
-            // That's why we create and use an annotation's copy.
-            PdfDictionary oldAnnotation = (PdfDictionary) linkAnnotation.getPdfObject().clone();
-            linkAnnotation = (PdfLinkAnnotation) PdfAnnotation.makeAnnotation(oldAnnotation);
-            Rectangle pdfBBox = calculateAbsolutePdfBBox();
-            linkAnnotation.setRectangle(new PdfArray(pdfBBox));
+        if (linkAnnotation == null) {
+            return;
+        }
 
-            PdfPage page = document.getPage(pageNumber);
-            // TODO DEVSIX-1655 This check is necessary because, in some cases, our renderer's hierarchy may contain
-            //  a renderer from the different page that was already flushed
-            if (page.isFlushed()) {
-                logger.error(MessageFormatUtil.format(
-                        IoLogMessageConstant.PAGE_WAS_FLUSHED_ACTION_WILL_NOT_BE_PERFORMED, "link annotation applying"));
-            } else {
-                page.addAnnotation(linkAnnotation);
-            }
+        int pageNumber = occupiedArea.getPageNumber();
+        if (pageNumber < 1 || pageNumber > document.getNumberOfPages()) {
+            String logMessageArg = "Property.LINK_ANNOTATION, which specifies a link associated with this element content area, see com.itextpdf.layout.element.Link.";
+            logger.warn(MessageFormatUtil.format(
+                    IoLogMessageConstant.UNABLE_TO_APPLY_PAGE_DEPENDENT_PROP_UNKNOWN_PAGE_ON_WHICH_ELEMENT_IS_DRAWN,
+                    logMessageArg));
+            return;
+        }
+
+        // If an element with a link annotation occupies more than two pages,
+        // then a NPE might occur, because of the annotation being partially flushed.
+        // That's why we create and use an annotation's copy.
+        PdfDictionary newAnnotation = (PdfDictionary) linkAnnotation.getPdfObject().clone();
+        linkAnnotation = (PdfLinkAnnotation) PdfAnnotation.makeAnnotation(newAnnotation);
+        Rectangle pdfBBox = calculateAbsolutePdfBBox();
+        linkAnnotation.setRectangle(new PdfArray(pdfBBox));
+
+        PdfPage page = document.getPage(pageNumber);
+        // TODO DEVSIX-1655 This check is necessary because, in some cases, our renderer's hierarchy may contain
+        //  a renderer from the different page that was already flushed
+        if (page.isFlushed()) {
+            logger.error(MessageFormatUtil.format(
+                    IoLogMessageConstant.PAGE_WAS_FLUSHED_ACTION_WILL_NOT_BE_PERFORMED, "link annotation applying"));
+        } else {
+            page.addAnnotation(linkAnnotation);
         }
     }
 
@@ -2805,5 +2841,11 @@ public abstract class AbstractRenderer implements IRenderer {
 
     private static boolean hasOwnOrModelProperty(IRenderer renderer, int property) {
         return renderer.hasOwnProperty(property) || (null != renderer.getModelElement() && renderer.getModelElement().hasProperty(property));
+    }
+
+    private static PdfStructElem getCurrentStructElem(PdfDocument document) {
+        TagStructureContext context = document.getTagStructureContext();
+        TagTreePointer tagPointer = context.getAutoTaggingPointer();
+        return context.getPointerStructElem(tagPointer);
     }
 }

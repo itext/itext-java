@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -65,6 +65,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
+import java.security.Provider;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.SignatureException;
@@ -75,6 +76,7 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.security.cert.X509CRL;
 import java.security.spec.MGF1ParameterSpec;
 import java.security.spec.PSSParameterSpec;
 import java.text.ParseException;
@@ -116,6 +118,10 @@ final class SignUtils {
         return certificate.getExtensionValue(oid);
     }
 
+    static byte[] getExtensionValueByOid(CRL crl, String oid) {
+        return ((X509CRL) crl).getExtensionValue(oid);
+    }
+
     static MessageDigest getMessageDigest(String hashAlgorithm) throws GeneralSecurityException {
         return new BouncyCastleDigest().getMessageDigest(hashAlgorithm);
     }
@@ -134,7 +140,7 @@ final class SignUtils {
     }
 
     static InputStream getHttpResponse(URL urlt) throws IOException {
-        HttpURLConnection con = (HttpURLConnection)urlt.openConnection();
+        HttpURLConnection con = (HttpURLConnection) urlt.openConnection();
         if (con.getResponseCode() / 100 != 2) {
             throw new PdfException(SignExceptionMessageConstant.INVALID_HTTP_RESPONSE)
                     .setMessageParams(con.getResponseCode());
@@ -235,8 +241,25 @@ final class SignUtils {
     }
 
     static Collection<Certificate> readAllCerts(byte[] contentsKey) throws CertificateException {
+        return SignUtils.readAllCerts(new ByteArrayInputStream(contentsKey), FACTORY.getProvider());
+    }
+
+    static Collection<Certificate> readAllCerts(InputStream contentsKey, Provider provider)
+            throws CertificateException {
+        final CertificateFactory factory = provider == null ? CertificateFactory.getInstance("X509") :
+                CertificateFactory.getInstance("X509", provider);
+        return new ArrayList<>(factory.generateCertificates(contentsKey));
+    }
+
+    static Certificate generateCertificate(InputStream data, Provider provider) throws CertificateException {
+        final CertificateFactory factory = provider == null ? CertificateFactory.getInstance("X509") :
+                CertificateFactory.getInstance("X509", provider);
+        return factory.generateCertificate(data);
+    }
+
+    static Collection<CRL> readAllCRLs(byte[] contentsKey) throws CertificateException, CRLException {
         final CertificateFactory factory = CertificateFactory.getInstance("X509", FACTORY.getProvider());
-        return new ArrayList<>(factory.generateCertificates(new ByteArrayInputStream(contentsKey)));
+        return new ArrayList<>(factory.generateCRLs(new ByteArrayInputStream(contentsKey)));
     }
 
     static <T> T getFirstElement(Iterable<T> iterable) {
@@ -258,8 +281,7 @@ final class SignUtils {
         URLConnection tsaConnection;
         try {
             tsaConnection = url.openConnection();
-        }
-        catch (IOException ioe) {
+        } catch (IOException ioe) {
             throw new PdfException(SignExceptionMessageConstant.FAILED_TO_GET_TSA_RESPONSE).setMessageParams(tsaUrl);
         }
         tsaConnection.setDoInput(true);
@@ -269,7 +291,7 @@ final class SignUtils {
         //tsaConnection.setRequestProperty("Content-Transfer-Encoding", "base64");
         tsaConnection.setRequestProperty("Content-Transfer-Encoding", "binary");
 
-        if ((tsaUsername != null) && !tsaUsername.equals("") ) {
+        if ((tsaUsername != null) && !tsaUsername.equals("")) {
             String userPassword = tsaUsername + ":" + tsaPassword;
             tsaConnection.setRequestProperty("Authorization", "Basic " +
                     Base64.encodeBytes(userPassword.getBytes(StandardCharsets.UTF_8), Base64.DONT_BREAK_LINES));
@@ -366,6 +388,7 @@ final class SignUtils {
             public Iterator<X509Certificate> iterator() {
                 return new Iterator<X509Certificate>() {
                     private X509Certificate nextCert;
+
                     @Override
                     public boolean hasNext() {
                         if (nextCert == null) {

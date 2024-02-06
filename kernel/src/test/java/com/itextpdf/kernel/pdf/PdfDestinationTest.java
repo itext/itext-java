@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -41,6 +41,7 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -64,12 +65,17 @@ public class PdfDestinationTest extends ExtendedITextTest {
         createOrClearDestinationFolder(destinationFolder);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+    
     @Test
     public void destTest01() throws IOException, InterruptedException {
         String srcFile = sourceFolder + "simpleNoLinks.pdf";
         String outFile = destinationFolder + "destTest01.pdf";
         String cmpFile = sourceFolder + "cmp_destTest01.pdf";
-        PdfDocument document = new PdfDocument(new PdfReader(srcFile), new PdfWriter(outFile));
+        PdfDocument document = new PdfDocument(new PdfReader(srcFile), CompareTool.createTestPdfWriter(outFile));
         PdfPage firstPage = document.getPage(1);
         
         PdfLinkAnnotation linkExplicitDest = new PdfLinkAnnotation(new Rectangle(35, 785, 160, 15));
@@ -95,7 +101,7 @@ public class PdfDestinationTest extends ExtendedITextTest {
         String cmpFile = sourceFolder + "cmp_destCopyingTest01.pdf";
         PdfDocument srcDoc = new PdfDocument(new PdfReader(srcFile));
 
-        PdfDocument destDoc = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument destDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         srcDoc.copyPagesTo(Arrays.asList(1, 2, 3), destDoc);
         destDoc.close();
         
@@ -111,7 +117,7 @@ public class PdfDestinationTest extends ExtendedITextTest {
         String cmpFile = sourceFolder + "cmp_destCopyingTest02.pdf";
         PdfDocument srcDoc = new PdfDocument(new PdfReader(srcFile));
 
-        PdfDocument destDoc = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument destDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         srcDoc.copyPagesTo(Arrays.asList(1), destDoc);
         destDoc.close();
         
@@ -127,7 +133,7 @@ public class PdfDestinationTest extends ExtendedITextTest {
         String cmpFile = sourceFolder + "cmp_destCopyingTest03.pdf";
         PdfDocument srcDoc = new PdfDocument(new PdfReader(srcFile));
 
-        PdfDocument destDoc = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument destDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         srcDoc.copyPagesTo(Arrays.asList(1, 2), destDoc);
         destDoc.close();
         
@@ -143,7 +149,7 @@ public class PdfDestinationTest extends ExtendedITextTest {
         String cmpFile = sourceFolder + "cmp_destCopyingTest04.pdf";
         PdfDocument srcDoc = new PdfDocument(new PdfReader(srcFile));
 
-        PdfDocument destDoc = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument destDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         srcDoc.copyPagesTo(Arrays.asList(1, 3), destDoc);
         destDoc.close();
         
@@ -159,7 +165,7 @@ public class PdfDestinationTest extends ExtendedITextTest {
         String cmpFile = sourceFolder + "cmp_destCopyingTest05.pdf";
         PdfDocument srcDoc = new PdfDocument(new PdfReader(srcFile));
 
-        PdfDocument destDoc = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument destDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         srcDoc.copyPagesTo(Arrays.asList(1, 2, 3, 1), destDoc);
         destDoc.close();
 
@@ -175,7 +181,7 @@ public class PdfDestinationTest extends ExtendedITextTest {
         String cmpFile = sourceFolder + "cmp_destCopyingTest06.pdf";
         PdfDocument srcDoc = new PdfDocument(new PdfReader(srcFile));
 
-        PdfDocument destDoc = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument destDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         srcDoc.copyPagesTo(Arrays.asList(1, 2, 1), destDoc);
         destDoc.close();
 
@@ -191,7 +197,7 @@ public class PdfDestinationTest extends ExtendedITextTest {
         String cmpFile = sourceFolder + "cmp_destCopyingTest07.pdf";
         PdfDocument srcDoc = new PdfDocument(new PdfReader(srcFile));
 
-        PdfDocument destDoc = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument destDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         srcDoc.copyPagesTo(Arrays.asList(1, 2, 1), destDoc);
         destDoc.close();
 
@@ -222,7 +228,7 @@ public class PdfDestinationTest extends ExtendedITextTest {
         String srcFile = sourceFolder + "customRolesMappingPdf2.pdf";
         String outFile = destinationFolder + "structureDestination01Test.pdf";
         String cmpFile = sourceFolder + "cmp_structureDestination01Test.pdf";
-        PdfDocument document = new PdfDocument(new PdfReader(srcFile), new PdfWriter(outFile));
+        PdfDocument document = new PdfDocument(new PdfReader(srcFile), CompareTool.createTestPdfWriter(outFile));
 
         PdfStructElem imgElement = new PdfStructElem((PdfDictionary) document.getPdfObject(13));
         PdfStructureDestination dest = PdfStructureDestination.createFit(imgElement);
@@ -243,7 +249,7 @@ public class PdfDestinationTest extends ExtendedITextTest {
         String srcFile = sourceFolder + "customRolesMappingPdf2.pdf";
         String outFile = destinationFolder + "structureDestination02Test.pdf";
         String cmpFile = sourceFolder + "cmp_structureDestination02Test.pdf";
-        PdfDocument document = new PdfDocument(new PdfReader(srcFile), new PdfWriter(outFile));
+        PdfDocument document = new PdfDocument(new PdfReader(srcFile), CompareTool.createTestPdfWriter(outFile));
 
         PdfStructElem imgElement = new PdfStructElem((PdfDictionary) document.getPdfObject(13));
         PdfStructureDestination dest = PdfStructureDestination.createFit(imgElement);
@@ -276,7 +282,7 @@ public class PdfDestinationTest extends ExtendedITextTest {
         String cmpFile = sourceFolder + "cmp_remoteGoToDestinationTest01.pdf";
         String outFile = destinationFolder + "remoteGoToDestinationTest01.pdf";
 
-        PdfDocument out = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument out = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         out.addNewPage();
 
         List<PdfDestination> destinations = new ArrayList<>(7);
@@ -305,7 +311,7 @@ public class PdfDestinationTest extends ExtendedITextTest {
         String cmpFile = sourceFolder + "cmp_remoteGoToDestinationTest02.pdf";
         String outFile = destinationFolder + "remoteGoToDestinationTest02.pdf";
 
-        PdfDocument out = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument out = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         out.addNewPage();
         out.addNewPage();
 
@@ -323,7 +329,7 @@ public class PdfDestinationTest extends ExtendedITextTest {
     public void remoteGoToRIllegalDestinationTest() throws IOException {
         String outFile = destinationFolder + "remoteGoToDestinationTest01.pdf";
 
-        PdfDocument document = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         document.addNewPage();
         document.addNewPage();
 
@@ -342,7 +348,7 @@ public class PdfDestinationTest extends ExtendedITextTest {
         String cmpFile = sourceFolder + "cmp_remoteGoToRByIntDestinationTest.pdf";
         String outFile = destinationFolder + "remoteGoToRByIntDestinationTest.pdf";
 
-        PdfDocument out = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument out = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         out.addNewPage();
         out.addNewPage();
 
@@ -360,7 +366,7 @@ public class PdfDestinationTest extends ExtendedITextTest {
         String cmpFile = sourceFolder + "cmp_remoteGoToRByStringDestinationTest.pdf";
         String outFile = destinationFolder + "remoteGoToRByStringDestinationTest.pdf";
 
-        PdfDocument out = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument out = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         out.addNewPage();
 
         PdfLinkAnnotation linkExplicitDest = new PdfLinkAnnotation(new Rectangle(35, 785, 160, 15));
@@ -378,7 +384,7 @@ public class PdfDestinationTest extends ExtendedITextTest {
         String cmpFile = sourceFolder + "cmp_remoteGoToNotValidExplicitDestinationTest.pdf";
         String outFile = destinationFolder + "remoteGoToNotValidExplicitDestinationTest.pdf";
 
-        PdfDocument document = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         document.addNewPage();
 
         PdfLinkAnnotation linkExplicitDest = new PdfLinkAnnotation(new Rectangle(35, 785, 160, 15));

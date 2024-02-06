@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -34,6 +34,7 @@ import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -50,6 +51,7 @@ import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
 import com.itextpdf.layout.properties.AlignmentPropertyValue;
 import com.itextpdf.layout.properties.BoxSizingPropertyValue;
 import com.itextpdf.layout.properties.FlexDirectionPropertyValue;
@@ -64,12 +66,13 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class SignatureFieldAppearanceTest extends ExtendedITextTest {
@@ -388,6 +391,42 @@ public class SignatureFieldAppearanceTest extends ExtendedITextTest {
         }
 
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void fontSizeTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "fontSizeTest.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_fontSizeTest.pdf";
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+            SignatureFieldAppearance sigField = new SignatureFieldAppearance("SigField");
+            sigField.setFontSize(20);
+            sigField.setContent("test");
+            document.add(sigField);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void fontNullCustomCheck() throws FileNotFoundException {
+        String outPdf = DESTINATION_FOLDER + "fontNullCustomCheck.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf)) {
+            @Override
+            public PdfFont getDefaultFont() {
+                return null;
+            }
+        };
+        Document document = new Document(pdfDoc);
+
+        SignatureFieldAppearance sigField = new SignatureFieldAppearance("SigField");
+        sigField.setContent("test");
+        sigField.setInteractive(true);
+        sigField.setBorder(new SolidBorder(ColorConstants.GREEN, 1));
+
+        Exception e = Assert.assertThrows(IllegalStateException.class, () -> {
+            document.add(sigField);
+        });
+        Assert.assertEquals(LayoutExceptionMessageConstant.INVALID_FONT_PROPERTY_VALUE, e.getMessage());
+
     }
 
     @Test

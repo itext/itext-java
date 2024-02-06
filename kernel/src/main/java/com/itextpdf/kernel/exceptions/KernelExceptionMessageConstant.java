@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -385,6 +385,11 @@ public final class KernelExceptionMessageConstant {
     public static final String XREF_STRUCTURE_SIZE_EXCEEDED_THE_LIMIT = "Xref structure contains too many elements "
             + "and may cause OOM exception. You can increase number of elements by setting custom "
             + "MemoryLimitsAwareHandler.";
+
+    public static final String TOTAL_XOBJECT_SIZE_ONE_PAGE_EXCEEDED_THE_LIMIT =
+            "Pdf contains too many xObject elements on a page "
+            + "and may cause OOM exception. You can increase page size limit by setting custom "
+            + "MemoryLimitsAwareHandler.";
     public static final String XREF_TABLE_HAS_CYCLED_REFERENCES =
             "Xref table has cycled references. Prev pointer indicates an already visited xref table.";
     public static final String YOU_HAVE_TO_DEFINE_A_BOOLEAN_ARRAY_FOR_THIS_COLLECTION_SORT_DICTIONARY = "You have to "
@@ -430,5 +435,10 @@ public final class KernelExceptionMessageConstant {
             "Failed to open the document. Security handler {0} is not supported";
 
     public static final String ARG_SHOULD_NOT_BE_NULL = "{0} should not be null.";
-    private KernelExceptionMessageConstant(){}
+    public static final String XREF_HAS_AN_ENTRY_WITH_TOO_BIG_OFFSET = "Pdf document is to large to "
+            + "use normal cross reference table. Use cross reference streams instead. To enable feature use com.itextpdf"
+            + ".kernel.pdf.WriterProperties#setFullCompressionMode(true). ";
+
+    private KernelExceptionMessageConstant() {
+    }
 }

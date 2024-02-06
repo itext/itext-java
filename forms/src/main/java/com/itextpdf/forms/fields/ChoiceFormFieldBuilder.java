@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -24,7 +24,6 @@ package com.itextpdf.forms.fields;
 
 import com.itextpdf.forms.exceptions.FormsExceptionMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -32,7 +31,6 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
-import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 
 /**
  * Builder for choice form field.
@@ -130,8 +128,11 @@ public class ChoiceFormFieldBuilder extends TerminalFormFieldBuilder<ChoiceFormF
             }
             field = PdfFormCreator.createChoiceFormField(annotation, getDocument());
         }
+        field.disableFieldRegeneration();
         field.pdfAConformanceLevel = getConformanceLevel();
-
+        if (this.getFont() != null) {
+            field.setFont(this.getFont());
+        }
         field.setFieldFlags(flags);
         field.setFieldName(getFormFieldName());
 
@@ -141,20 +142,11 @@ public class ChoiceFormFieldBuilder extends TerminalFormFieldBuilder<ChoiceFormF
         } else {
             field.put(PdfName.Opt, options);
             field.setListSelected(new String[0], false);
-            String optionsArrayString = "";
-            if ((flags & PdfChoiceFormField.FF_COMBO) == 0) {
-                optionsArrayString = PdfFormField.optionsArrayToString(options);
-            }
-
             if (annotation != null) {
-                PdfFormXObject xObject = new PdfFormXObject(
-                        new Rectangle(0, 0, getWidgetRectangle().getWidth(), getWidgetRectangle().getHeight()));
-                TextAndChoiceLegacyDrawer.drawChoiceAppearance(field.getFirstFormAnnotation(), getWidgetRectangle(),
-                        field.fontSize, optionsArrayString, xObject, 0);
-                annotation.setNormalAppearance(xObject.getPdfObject());
                 setPageToField(field);
             }
         }
+        field.enableFieldRegeneration();
 
         return field;
     }

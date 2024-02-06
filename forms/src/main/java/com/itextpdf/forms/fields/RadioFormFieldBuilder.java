@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -53,9 +53,11 @@ public class RadioFormFieldBuilder extends TerminalFormFieldBuilder<RadioFormFie
      */
     public PdfButtonFormField createRadioGroup() {
         PdfButtonFormField radioGroup = PdfFormCreator.createButtonFormField(getDocument());
+        radioGroup.disableFieldRegeneration();
         radioGroup.pdfAConformanceLevel = getConformanceLevel();
         radioGroup.setFieldName(getFormFieldName());
         radioGroup.setFieldFlags(PdfButtonFormField.FF_RADIO);
+        radioGroup.enableFieldRegeneration();
         return radioGroup;
     }
 

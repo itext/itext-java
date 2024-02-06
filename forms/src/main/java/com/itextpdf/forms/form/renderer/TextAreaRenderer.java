@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -202,10 +202,12 @@ public class TextAreaRenderer extends AbstractTextFieldRenderer {
         // That's why we got rid of several properties we set by default during TextArea instance creation.
         modelElement.setProperty(Property.BOX_SIZING, BoxSizingPropertyValue.BORDER_BOX);
         final PdfFormField inputField = new TextFormFieldBuilder(doc, name).setWidgetRectangle(area)
-                    .createMultilineText();
+                .setConformanceLevel(getConformanceLevel(doc))
+                .setFont(font)
+                .createMultilineText();
         inputField.disableFieldRegeneration();
         inputField.setValue(value);
-        inputField.setFont(font).setFontSize(fontSizeValue);
+        inputField.setFontSize(fontSizeValue);
         inputField.setDefaultValue(defaultValue);
         applyDefaultFieldProperties(inputField);
         inputField.getFirstFormAnnotation().setFormFieldElement((TextArea) modelElement);

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -66,7 +66,7 @@ public class TSAClientBouncyCastleTest extends ExtendedITextTest {
         Assert.assertEquals(url, tsaClientBouncyCastle.tsaURL);
         Assert.assertEquals(userName, tsaClientBouncyCastle.tsaUsername);
         Assert.assertEquals(password, tsaClientBouncyCastle.tsaPassword);
-        Assert.assertEquals(TSAClientBouncyCastle.DEFAULTTOKENSIZE, tsaClientBouncyCastle.tokenSizeEstimate);
+        Assert.assertEquals(TSAClientBouncyCastle.DEFAULTTOKENSIZE, tsaClientBouncyCastle.getTokenSizeEstimate());
         Assert.assertEquals(TSAClientBouncyCastle.DEFAULTHASHALGORITHM, tsaClientBouncyCastle.digestAlgorithm);
     }
 
@@ -83,7 +83,8 @@ public class TSAClientBouncyCastleTest extends ExtendedITextTest {
         Assert.assertEquals(url, tsaClientBouncyCastle.tsaURL);
         Assert.assertEquals(userName, tsaClientBouncyCastle.tsaUsername);
         Assert.assertEquals(password, tsaClientBouncyCastle.tsaPassword);
-        Assert.assertEquals(tokenSize, tsaClientBouncyCastle.tokenSizeEstimate);
+        Assert.assertEquals(TSAClientBouncyCastle.DEFAULTTOKENSIZE, tsaClientBouncyCastle.tokenSizeEstimate);
+        Assert.assertEquals(tokenSize, tsaClientBouncyCastle.getTokenSizeEstimate());
         Assert.assertEquals(digestAlgorithm, tsaClientBouncyCastle.digestAlgorithm);
     }
 
@@ -176,7 +177,8 @@ public class TSAClientBouncyCastleTest extends ExtendedITextTest {
                 () -> tsaClientBouncyCastle.getTimeStampToken(digest)
         );
 
-        Assert.assertEquals(MessageFormatUtil.format(SignExceptionMessageConstant.INVALID_TSA_RESPONSE, url, "128"),
+        Assert.assertEquals(MessageFormatUtil.format(SignExceptionMessageConstant.INVALID_TSA_RESPONSE, url,
+                        "128: request contains unknown algorithm"),
                 e.getMessage());
     }
 

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,7 +22,6 @@
  */
 package com.itextpdf.io.image;
 
-import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.codec.CCITTG4Encoder;
 import com.itextpdf.io.codec.TIFFConstants;
 import com.itextpdf.io.codec.TIFFDirectory;
@@ -30,12 +29,13 @@ import com.itextpdf.io.codec.TIFFFaxDecoder;
 import com.itextpdf.io.codec.TIFFField;
 import com.itextpdf.io.codec.TIFFLZWDecoder;
 import com.itextpdf.io.colors.IccProfile;
+import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.DeflaterOutputStream;
-import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.IRandomAccessSource;
+import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.io.util.FilterUtil;
 
@@ -445,7 +445,6 @@ class TiffImageHelper {
                         tablelength -= 2;
                     byte[] tables = new byte[tablelength];
                     System.arraycopy(temp, tableoffset, tables, 0, tablelength);
-                    // TODO insert after JFIF header, instead of at the start
                     byte[] jpegwithtables = new byte[jpeg.length + tables.length];
                     System.arraycopy(jpeg, 0, jpegwithtables, 0, 2);
                     System.arraycopy(tables, 0, jpegwithtables, 2, tables.length);

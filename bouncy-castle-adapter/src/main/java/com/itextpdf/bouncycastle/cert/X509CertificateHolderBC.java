@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,10 +22,13 @@
  */
 package com.itextpdf.bouncycastle.cert;
 
+import com.itextpdf.bouncycastle.asn1.x509.AlgorithmIdentifierBC;
+import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
 
 import java.io.IOException;
 import java.util.Objects;
+
 import org.bouncycastle.cert.X509CertificateHolder;
 
 /**
@@ -60,6 +63,16 @@ public class X509CertificateHolderBC implements IX509CertificateHolder {
      */
     public X509CertificateHolder getCertificateHolder() {
         return certificateHolder;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
+    @Override
+    public IAlgorithmIdentifier getSignatureAlgorithm() {
+        return new AlgorithmIdentifierBC(certificateHolder.getSignatureAlgorithm());
     }
 
     /**

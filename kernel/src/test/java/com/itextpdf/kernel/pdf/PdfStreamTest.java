@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -40,6 +40,7 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.util.Collections;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -57,6 +58,11 @@ public class PdfStreamTest extends ExtendedITextTest {
         createOrClearDestinationFolder(destinationFolder);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+    
     @Test
     public void streamAppendDataOnJustCopiedWithCompression() throws IOException, InterruptedException {
         String srcFile = sourceFolder + "pageWithContent.pdf";
@@ -64,7 +70,7 @@ public class PdfStreamTest extends ExtendedITextTest {
         String destFile = destinationFolder + "streamAppendDataOnJustCopiedWithCompression.pdf";
 
         PdfDocument srcDocument = new PdfDocument(new PdfReader(srcFile));
-        PdfDocument document = new PdfDocument(new PdfWriter(destFile));
+        PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(destFile));
         srcDocument.copyPagesTo(1, 1, document);
         srcDocument.close();
 
@@ -108,10 +114,10 @@ public class PdfStreamTest extends ExtendedITextTest {
         String outFile = destinationFolder + "destIndirectRefInFilterAndNoTaggedPdf.pdf";
 
         PdfDocument srcDoc = new PdfDocument(new PdfReader(inFile));
-        PdfDocument outDoc = new PdfDocument(new PdfReader(inFile), new PdfWriter(outFile));
+        PdfDocument outDoc = new PdfDocument(new PdfReader(inFile), CompareTool.createTestPdfWriter(outFile));
         outDoc.close();
 
-        PdfDocument doc = new PdfDocument(new PdfReader(outFile));
+        PdfDocument doc = new PdfDocument(CompareTool.createOutputReader(outFile));
 
         PdfStream outStreamIm1 = doc.getFirstPage().getResources().getResource(PdfName.XObject)
                 .getAsStream(new PdfName("Im1"));
@@ -144,7 +150,7 @@ public class PdfStreamTest extends ExtendedITextTest {
         WriterProperties writerProperties = new WriterProperties().setStandardEncryption(
                 "World".getBytes(StandardCharsets.ISO_8859_1),
                 "Hello".getBytes(StandardCharsets.ISO_8859_1), permissions, encryptionType);
-        PdfWriter writer = new PdfWriter(destFile, writerProperties.addXmpMetadata());
+        PdfWriter writer = CompareTool.createTestPdfWriter(destFile, writerProperties.addXmpMetadata());
 
         PdfDocument doc = new PdfDocument(reader, writer);
         ((PdfStream)doc.getPdfObject(5)).getBytes();
@@ -170,7 +176,7 @@ public class PdfStreamTest extends ExtendedITextTest {
         WriterProperties writerProperties = new WriterProperties().setStandardEncryption(
                 "World".getBytes(StandardCharsets.ISO_8859_1),
                 "Hello".getBytes(StandardCharsets.ISO_8859_1), permissions, encryptionType);
-        PdfWriter writer = new PdfWriter(destFile, writerProperties.addXmpMetadata());
+        PdfWriter writer = CompareTool.createTestPdfWriter(destFile, writerProperties.addXmpMetadata());
 
         PdfDocument doc = new PdfDocument(reader, writer);
         //Simulating that this flush happened automatically before normal stream flushing in close method
@@ -197,7 +203,7 @@ public class PdfStreamTest extends ExtendedITextTest {
         int permissions = EncryptionConstants.ALLOW_SCREENREADERS;
         WriterProperties writerProperties = new WriterProperties().setStandardEncryption(user, owner, permissions,
                 encryptionType);
-        PdfWriter writer = new PdfWriter(destFile, writerProperties.addXmpMetadata());
+        PdfWriter writer = CompareTool.createTestPdfWriter(destFile, writerProperties.addXmpMetadata());
         writer.setCompressionLevel(-1);
 
         PdfDocument doc = new PdfDocument(reader, writer);
@@ -223,7 +229,7 @@ public class PdfStreamTest extends ExtendedITextTest {
         String cmpFile = sourceFolder + "cmp_indFilterInCatalog.pdf";
         String destFile = destinationFolder + "indFilterInCatalog.pdf";
 
-        PdfDocument doc = new PdfDocument(new PdfReader(file), new PdfWriter(destFile));
+        PdfDocument doc = new PdfDocument(new PdfReader(file), CompareTool.createTestPdfWriter(destFile));
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder));
     }
@@ -238,7 +244,7 @@ public class PdfStreamTest extends ExtendedITextTest {
         String cmpFile = sourceFolder + "cmp_indFilterInCatalog.pdf";
         String destFile = destinationFolder + "indFilterInCatalog.pdf";
 
-        PdfDocument doc = new PdfDocument(new PdfReader(file), new PdfWriter(destFile));
+        PdfDocument doc = new PdfDocument(new PdfReader(file), CompareTool.createTestPdfWriter(destFile));
         PdfStream stream = (PdfStream) doc.getPdfObject(5);
         stream.setCompressionLevel(CompressionConstants.BEST_COMPRESSION);
         doc.close();
@@ -255,7 +261,7 @@ public class PdfStreamTest extends ExtendedITextTest {
         String cmpFile = sourceFolder + "cmp_indFilterInCatalog.pdf";
         String destFile = destinationFolder + "indFilterInCatalog.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(file), new PdfWriter(destFile));
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(file), CompareTool.createTestPdfWriter(destFile));
 
         // Simulate the case in which filter is somehow already flushed before stream.
         // Either directly by user or because of any other reason.
@@ -276,7 +282,7 @@ public class PdfStreamTest extends ExtendedITextTest {
         String cmpFile = sourceFolder + "cmp_indFilterInCatalog.pdf";
         String destFile = destinationFolder + "indFilterInCatalog.pdf";
 
-        PdfWriter writer = new PdfWriter(destFile);
+        PdfWriter writer = CompareTool.createTestPdfWriter(destFile);
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(file), writer);
 
         // Simulate the case when indirect filter object is marked to be flushed before the stream itself.
@@ -303,7 +309,7 @@ public class PdfStreamTest extends ExtendedITextTest {
         String cmpFile = sourceFolder + "cmp_decodeParamsTest.pdf";
         String destFile = destinationFolder + "decodeParamsTest.pdf";
 
-        PdfDocument doc = new PdfDocument(new PdfReader(file), new PdfWriter(destFile));
+        PdfDocument doc = new PdfDocument(new PdfReader(file), CompareTool.createTestPdfWriter(destFile));
         PdfStream stream = (PdfStream) doc.getPdfObject(7);
         stream.setCompressionLevel(CompressionConstants.BEST_COMPRESSION);
         //Simulating that this flush happened automatically before normal stream flushing in close method
@@ -322,7 +328,7 @@ public class PdfStreamTest extends ExtendedITextTest {
         String cmpFile = sourceFolder + "cmp_decodeParamsPredictorTest.pdf";
         String destFile = destinationFolder + "decodeParamsPredictorTest.pdf";
 
-        PdfDocument doc = new PdfDocument(new PdfReader(file), new PdfWriter(destFile));
+        PdfDocument doc = new PdfDocument(new PdfReader(file), CompareTool.createTestPdfWriter(destFile));
         PdfStream stream = (PdfStream) doc.getPdfObject(7);
         stream.setCompressionLevel(CompressionConstants.BEST_COMPRESSION);
         //Simulating that this flush happened automatically before normal stream flushing in close method
@@ -342,7 +348,7 @@ public class PdfStreamTest extends ExtendedITextTest {
         String cmpFile = sourceFolder + "cmp_decodeParamsColumnsTest.pdf";
         String destFile = destinationFolder + "decodeParamsColumnsTest.pdf";
 
-        PdfDocument doc = new PdfDocument(new PdfReader(file), new PdfWriter(destFile));
+        PdfDocument doc = new PdfDocument(new PdfReader(file), CompareTool.createTestPdfWriter(destFile));
         PdfStream stream = (PdfStream) doc.getPdfObject(7);
         stream.setCompressionLevel(CompressionConstants.BEST_COMPRESSION);
         //Simulating that this flush happened automatically before normal stream flushing in close method
@@ -362,7 +368,7 @@ public class PdfStreamTest extends ExtendedITextTest {
         String cmpFile = sourceFolder + "cmp_decodeParamsColorsTest.pdf";
         String destFile = destinationFolder + "decodeParamsColorsTest.pdf";
 
-        PdfDocument doc = new PdfDocument(new PdfReader(file), new PdfWriter(destFile));
+        PdfDocument doc = new PdfDocument(new PdfReader(file), CompareTool.createTestPdfWriter(destFile));
         PdfStream stream = (PdfStream) doc.getPdfObject(7);
         stream.setCompressionLevel(CompressionConstants.BEST_COMPRESSION);
         //Simulating that this flush happened automatically before normal stream flushing in close method
@@ -382,7 +388,7 @@ public class PdfStreamTest extends ExtendedITextTest {
         String cmpFile = sourceFolder + "cmp_decodeParamsBitsPerComponentTest.pdf";
         String destFile = destinationFolder + "decodeParamsBitsPerComponentTest.pdf";
 
-        PdfDocument doc = new PdfDocument(new PdfReader(file), new PdfWriter(destFile));
+        PdfDocument doc = new PdfDocument(new PdfReader(file), CompareTool.createTestPdfWriter(destFile));
         PdfStream stream = (PdfStream) doc.getPdfObject(7);
         stream.setCompressionLevel(CompressionConstants.BEST_COMPRESSION);
         //Simulating that this flush happened automatically before normal stream flushing in close method
@@ -402,7 +408,7 @@ public class PdfStreamTest extends ExtendedITextTest {
         String cmpFile = sourceFolder + "cmp_flateFilterFlushedWhileDecodeTest.pdf";
         String destFile = destinationFolder + "flateFilterFlushedWhileDecodeTest.pdf";
 
-        PdfDocument doc = new PdfDocument(new PdfReader(file), new PdfWriter(destFile));
+        PdfDocument doc = new PdfDocument(new PdfReader(file), CompareTool.createTestPdfWriter(destFile));
         PdfStream stream = (PdfStream) doc.getPdfObject(7);
         stream.setCompressionLevel(CompressionConstants.BEST_COMPRESSION);
         stream.remove(PdfName.Filter);
@@ -423,7 +429,7 @@ public class PdfStreamTest extends ExtendedITextTest {
         String cmpFile = sourceFolder + "cmp_arrayFlateFilterFlushedWhileDecodeTest.pdf";
         String destFile = destinationFolder + "arrayFlateFilterFlushedWhileDecodeTest.pdf";
 
-        PdfDocument doc = new PdfDocument(new PdfReader(file), new PdfWriter(destFile));
+        PdfDocument doc = new PdfDocument(new PdfReader(file), CompareTool.createTestPdfWriter(destFile));
         PdfStream stream = (PdfStream) doc.getPdfObject(7);
         stream.setCompressionLevel(CompressionConstants.BEST_COMPRESSION);
         stream.remove(PdfName.Filter);

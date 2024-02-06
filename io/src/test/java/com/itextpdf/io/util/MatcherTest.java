@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -460,43 +460,6 @@ public class MatcherTest extends ExtendedITextTest {
     public void findAfterMatchesSuccess() {
         Matcher matcher = PATTERN.matcher("aaabbb");
         Assert.assertTrue(matcher.matches());
-        Assert.assertFalse(matcher.find());
-    }
-
-    @Test
-    @org.junit.Ignore
-    public void matchesFailAfterFindFinish() {
-        Matcher matcher = PATTERN.matcher("aaabbbccaabbccaab");
-        Assert.assertTrue(matcher.find());
-        Assert.assertTrue(matcher.find());
-        Assert.assertTrue(matcher.find());
-        Assert.assertFalse(matcher.find());
-
-        Assert.assertFalse(matcher.matches());
-        Assert.assertTrue(matcher.find());
-        Assert.assertTrue(matcher.find());
-        Assert.assertFalse(matcher.find());
-    }
-
-    @Test
-    @org.junit.Ignore
-    public void findAfterMatchesFail() {
-        Matcher matcher = PATTERN.matcher("aaabbbccaabbccaab");
-        Assert.assertFalse(matcher.matches());
-        Assert.assertTrue(matcher.find());
-        Assert.assertTrue(matcher.find());
-        Assert.assertFalse(matcher.find());
-    }
-
-    @Test
-    @org.junit.Ignore
-    public void matchesFailAfterSeveralFind() {
-        Matcher matcher = PATTERN.matcher("aaabbbccaabbccaab");
-        Assert.assertTrue(matcher.find());
-        Assert.assertTrue(matcher.find());
-        Assert.assertFalse(matcher.matches());
-        Assert.assertTrue(matcher.find());
-        Assert.assertTrue(matcher.find());
         Assert.assertFalse(matcher.find());
     }
 

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -40,8 +40,11 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -56,16 +59,21 @@ public class PdfStringTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfStringTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfStringTest/";
 
-    @Before
-    public void before() {
+    @BeforeClass
+    public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+    
     @Test
     public void testPdfDocumentInfoStringEncoding01() throws IOException, InterruptedException {
         String fileName = "testPdfDocumentInfoStringEncoding01.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + fileName, new WriterProperties().setCompressionLevel(CompressionConstants.NO_COMPRESSION)));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + fileName, new WriterProperties().setCompressionLevel(CompressionConstants.NO_COMPRESSION)));
         pdfDocument.addNewPage();
 
         String author = "Алексей";
@@ -82,7 +90,7 @@ public class PdfStringTest extends ExtendedITextTest {
 
         pdfDocument.close();
 
-        PdfDocument readDoc = new PdfDocument(new PdfReader(destinationFolder + fileName));
+        PdfDocument readDoc = new PdfDocument(CompareTool.createOutputReader(destinationFolder + fileName));
         Assert.assertEquals(author, readDoc.getDocumentInfo().getAuthor());
         Assert.assertEquals(title, readDoc.getDocumentInfo().getTitle());
         Assert.assertEquals(subject, readDoc.getDocumentInfo().getSubject());
@@ -115,7 +123,7 @@ public class PdfStringTest extends ExtendedITextTest {
     })
     public void readUtf8AltText() throws java.io.IOException {
         String filename = sourceFolder + "utf-8-alt-text.pdf";
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(filename), new PdfWriter(destinationFolder + "whatever"));
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(filename), CompareTool.createTestPdfWriter(destinationFolder + "whatever"));
         TagTreePointer tagTreePointer = new TagTreePointer(pdfDoc);
         String alternateDescription = tagTreePointer.moveToKid(0).moveToKid(0).moveToKid(0).getProperties().getAlternateDescription();
         pdfDoc.close();
@@ -164,7 +172,7 @@ public class PdfStringTest extends ExtendedITextTest {
     @Test
     public void writeUtf8AltText() throws java.io.IOException, InterruptedException {
         String RESOURCE = sourceFolder + "Space Odyssey.jpg";
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + "writeUtf8AltText.pdf"));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "writeUtf8AltText.pdf"));
         pdfDoc.setTagged();
 
         PdfPage page = pdfDoc.addNewPage();
@@ -190,7 +198,7 @@ public class PdfStringTest extends ExtendedITextTest {
 
     @Test
     public void writeUtf8Bookmarks() throws java.io.IOException, InterruptedException {
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + "writeUtf8Bookmarks.pdf"));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "writeUtf8Bookmarks.pdf"));
 
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
@@ -221,7 +229,7 @@ public class PdfStringTest extends ExtendedITextTest {
 
     @Test
     public void writeUtf8PageLabelPrefix() throws java.io.IOException, InterruptedException {
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + "writeUtf8PageLabelPrefix.pdf"));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "writeUtf8PageLabelPrefix.pdf"));
 
         PdfPage page = pdfDoc.addNewPage();;
         PdfDictionary pageLabel = new PdfDictionary();
@@ -245,7 +253,7 @@ public class PdfStringTest extends ExtendedITextTest {
 
     @Test
     public void writeUtf8ActualText() throws java.io.IOException, InterruptedException {
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + "writeUtf8ActualText.pdf"));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "writeUtf8ActualText.pdf"));
         pdfDoc.setTagged();
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);

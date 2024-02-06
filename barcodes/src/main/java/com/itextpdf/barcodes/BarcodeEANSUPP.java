@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -24,11 +24,14 @@ package com.itextpdf.barcodes;
 
 import com.itextpdf.barcodes.exceptions.BarcodesExceptionMessageConstant;
 import com.itextpdf.io.font.FontProgram;
+import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.colors.Color;
 
-
+/**
+ * Implements the most commonly used EAN standard is the thirteen-digit EAN-13, a superset of the original 12-digit
+ * Universal Product Code (UPC-A)
+ */
 public class BarcodeEANSUPP extends Barcode1D {
 
     /**

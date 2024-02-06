@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -24,6 +24,7 @@ package com.itextpdf.layout;
 
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.pdf.IsoKey;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
@@ -344,6 +345,7 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
             taggingHelper.addKidsHint(pdfDocument.getTagStructureContext().getAutoTaggingPointer(), Collections.<IRenderer>singletonList(rendererSubTreeRoot));
         }
         ensureRootRendererNotNull().addChild(rendererSubTreeRoot);
+        traverseAndCallIso(pdfDocument, rendererSubTreeRoot);
     }
 
     private LayoutTaggingHelper initTaggingHelperIfNeeded() {
@@ -357,5 +359,19 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
             childElements.remove(childElements.size() - 1);
         }
         return (T) (Object) this;
+    }
+
+    private static void traverseAndCallIso(PdfDocument pdfDocument, IRenderer renderer) {
+        if (renderer == null) {
+            return;
+        }
+        pdfDocument.checkIsoConformance(renderer.getModelElement(), IsoKey.LAYOUT);
+        List<IRenderer> renderers = renderer.getChildRenderers();
+        if (renderers == null) {
+            return;
+        }
+        for (IRenderer childRenderer : renderers) {
+            traverseAndCallIso(pdfDocument, childRenderer);
+        }
     }
 }

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -40,6 +40,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -57,10 +58,15 @@ public class XMPMetadataTest extends ExtendedITextTest{
         createOrClearDestinationFolder(destinationFolder);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+    
     @Test
     public void createEmptyDocumentWithXmp() throws Exception {
         String filename = "emptyDocumentWithXmp.pdf";
-        PdfWriter writer = new PdfWriter(destinationFolder + filename,  new WriterProperties().addXmpMetadata());
+        PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + filename,  new WriterProperties().addXmpMetadata());
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor("Alexander Chingarev").
                 setCreator("iText").
@@ -70,7 +76,7 @@ public class XMPMetadataTest extends ExtendedITextTest{
         PdfPage page = pdfDoc.addNewPage();
         page.flush();
         pdfDoc.close();
-        PdfReader reader = new PdfReader(destinationFolder + filename);
+        PdfReader reader = CompareTool.createOutputReader(destinationFolder + filename);
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
         byte[] outBytes = pdfDocument.getXmpMetadata();
@@ -89,19 +95,19 @@ public class XMPMetadataTest extends ExtendedITextTest{
         String created = destinationFolder + "emptyDocumentWithXmpAppendMode01.pdf";
         String updated = destinationFolder + "emptyDocumentWithXmpAppendMode01_updated.pdf";
         String updatedAgain = destinationFolder + "emptyDocumentWithXmpAppendMode01_updatedAgain.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(created));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(created));
         pdfDocument.addNewPage();
 
         // create XMP metadata
         pdfDocument.getXmpMetadata(true);
         pdfDocument.close();
 
-        pdfDocument = new PdfDocument(new PdfReader(created), new PdfWriter(updated), new StampingProperties().useAppendMode());
+        pdfDocument = new PdfDocument(CompareTool.createOutputReader(created), CompareTool.createTestPdfWriter(updated), new StampingProperties().useAppendMode());
         pdfDocument.close();
-        pdfDocument = new PdfDocument(new PdfReader(updated), new PdfWriter(updatedAgain), new StampingProperties().useAppendMode());
+        pdfDocument = new PdfDocument(CompareTool.createOutputReader(updated), CompareTool.createTestPdfWriter(updatedAgain), new StampingProperties().useAppendMode());
         pdfDocument.close();
 
-        PdfReader reader = new PdfReader(updatedAgain);
+        PdfReader reader = CompareTool.createOutputReader(updatedAgain);
         pdfDocument = new PdfDocument(reader);
 
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
@@ -128,19 +134,19 @@ public class XMPMetadataTest extends ExtendedITextTest{
         String created = destinationFolder + "emptyDocumentWithXmpAppendMode02.pdf";
         String updated = destinationFolder + "emptyDocumentWithXmpAppendMode02_updated.pdf";
         String updatedAgain = destinationFolder + "emptyDocumentWithXmpAppendMode02_updatedAgain.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(created));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(created));
         pdfDocument.addNewPage();
         pdfDocument.close();
 
-        pdfDocument = new PdfDocument(new PdfReader(created), new PdfWriter(updated), new StampingProperties().useAppendMode());
+        pdfDocument = new PdfDocument(CompareTool.createOutputReader(created), CompareTool.createTestPdfWriter(updated), new StampingProperties().useAppendMode());
         // create XMP metadata
         pdfDocument.getXmpMetadata(true);
         pdfDocument.close();
 
-        pdfDocument = new PdfDocument(new PdfReader(updated), new PdfWriter(updatedAgain), new StampingProperties().useAppendMode());
+        pdfDocument = new PdfDocument(CompareTool.createOutputReader(updated), CompareTool.createTestPdfWriter(updatedAgain), new StampingProperties().useAppendMode());
         pdfDocument.close();
 
-        PdfReader reader = new PdfReader(updatedAgain);
+        PdfReader reader = CompareTool.createOutputReader(updatedAgain);
         pdfDocument = new PdfDocument(reader);
 
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
@@ -231,7 +237,7 @@ public class XMPMetadataTest extends ExtendedITextTest{
         String outPath = destinationFolder + name + ".pdf";
         String cmpPath = sourceFolder + "cmp_" + name + ".pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPath));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outPath));
         PdfPage page = pdfDoc.addNewPage();
         page.flush();
         pdfDoc.setXmpMetadata(xmp.getBytes(StandardCharsets.ISO_8859_1));

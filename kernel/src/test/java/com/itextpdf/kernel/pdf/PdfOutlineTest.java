@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -30,6 +30,7 @@ import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfReader.StrictnessLevel;
+import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfStringDestination;
@@ -41,13 +42,13 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import javax.xml.parsers.ParserConfigurationException;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -66,10 +67,15 @@ public class PdfOutlineTest extends ExtendedITextTest {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+    
     @Test
     public void createSimpleDocWithOutlines() throws IOException, InterruptedException {
         String filename = "simpleDocWithOutlines.pdf";
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename));
         pdfDoc.getCatalog().setPageMode(PdfName.UseOutlines);
 
         PdfPage firstPage = pdfDoc.addNewPage();
@@ -116,7 +122,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
     public void addOutlinesToDocumentTest() throws IOException, InterruptedException {
         PdfReader reader = new PdfReader(SOURCE_FOLDER + "iphone_user_guide.pdf");
         String filename = "addOutlinesToDocumentTest.pdf";
-        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename);
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
         pdfDoc.setTagged();
 
@@ -157,7 +163,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
     // TODO DEVSIX-1643: destinations are not removed along with page
     public void removePageWithOutlinesTest() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         String filename = "removePageWithOutlinesTest.pdf";
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "iphone_user_guide.pdf"), new PdfWriter(
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "iphone_user_guide.pdf"), CompareTool.createTestPdfWriter(
                 DESTINATION_FOLDER + filename));
         // TODO DEVSIX-1643 (this causes log message errors. It's because of destinations pointing to removed page (freed reference, replaced by PdfNull))
         pdfDoc.removePage(102);
@@ -194,7 +200,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
     public void updateOutlineTitle() throws IOException, InterruptedException {
         PdfReader reader = new PdfReader(SOURCE_FOLDER + "iphone_user_guide.pdf");
         String filename = "updateOutlineTitle.pdf";
-        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename);
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
 
         PdfOutline outlines = pdfDoc.getOutlines(false);
@@ -210,7 +216,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
     public void getOutlinesInvalidParentLink() throws IOException {
         PdfReader reader = new PdfReader(SOURCE_FOLDER + "outlinesInvalidParentLink.pdf");
         String filename = "updateOutlineTitleInvalidParentLink.pdf";
-        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename);
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
         PdfOutline outlines = pdfDoc.getOutlines(true);
         PdfOutline firstOutline = outlines.getAllChildren().get(0);
@@ -244,7 +250,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
     public void addOutlineInNotOutlineMode() throws IOException, InterruptedException {
         String filename = "addOutlineInNotOutlineMode.pdf";
         PdfReader reader = new PdfReader(SOURCE_FOLDER + "iphone_user_guide.pdf");
-        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename);
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
 
         PdfOutline outlines = new PdfOutline(pdfDoc);
@@ -299,7 +305,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
     })
     public void copyPagesWithOutlines() throws IOException {
         PdfReader reader = new PdfReader(SOURCE_FOLDER + "iphone_user_guide.pdf");
-        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + "copyPagesWithOutlines01.pdf");
+        PdfWriter writer = CompareTool.createTestPdfWriter(DESTINATION_FOLDER + "copyPagesWithOutlines01.pdf");
 
         PdfDocument pdfDoc = new PdfDocument(reader);
         PdfDocument pdfDoc1 = new PdfDocument(writer);
@@ -325,7 +331,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
         String filename = DESTINATION_FOLDER + "outlinesWithNamedDestinations01.pdf";
 
         PdfReader reader = new PdfReader(SOURCE_FOLDER + "iphone_user_guide.pdf");
-        PdfWriter writer = new PdfWriter(filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename);
 
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
         PdfArray array1 = new PdfArray();
@@ -371,7 +377,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
     public void addOutlinesWithNamedDestinations02() throws IOException, InterruptedException {
         String filename = DESTINATION_FOLDER + "outlinesWithNamedDestinations02.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(filename));
         PdfArray array1 = new PdfArray();
         array1.add(pdfDoc.addNewPage().getPdfObject());
         array1.add(PdfName.XYZ);
@@ -427,7 +433,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
         String filename = "outlineTypeNull";
         String outputFile = DESTINATION_FOLDER + filename + ".pdf";
         PdfReader reader = new PdfReader(SOURCE_FOLDER + filename + ".pdf");
-        PdfWriter writer = new PdfWriter(new FileOutputStream(outputFile));
+        PdfWriter writer = CompareTool.createTestPdfWriter(outputFile);
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
         pdfDoc.removePage(3);
         pdfDoc.close();
@@ -442,7 +448,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
         String output = DESTINATION_FOLDER + "cmp_" + filename;
         String cmp = SOURCE_FOLDER + "cmp_" + filename;
         PdfReader reader = new PdfReader(input);
-        PdfWriter writer = new PdfWriter(output);
+        PdfWriter writer = CompareTool.createTestPdfWriter(output);
         PdfDocument pdfDocument = new PdfDocument(reader, writer);
         pdfDocument.getOutlines(true).removeOutline();
         pdfDocument.close();
@@ -457,7 +463,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
         String output = DESTINATION_FOLDER + "cmp_" + filename;
         String cmp = SOURCE_FOLDER + "cmp_" + filename;
         PdfReader reader = new PdfReader(input);
-        PdfWriter writer = new PdfWriter(output);
+        PdfWriter writer = CompareTool.createTestPdfWriter(output);
         PdfDocument pdfDocument = new PdfDocument(reader, writer);
         PdfOutline root = pdfDocument.getOutlines(true);
         PdfOutline toRemove = root.getAllChildren().get(2);
@@ -485,7 +491,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
         String output = DESTINATION_FOLDER + "simpleOutlineTreeStructure.pdf";
         String cmp = SOURCE_FOLDER + "cmp_simpleOutlineTreeStructure.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(input), new PdfWriter(output));
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(input), CompareTool.createTestPdfWriter(output));
         pdfDocument.removePage(2);
         Assert.assertEquals(2, pdfDocument.getNumberOfPages());
 
@@ -500,7 +506,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
         String output = DESTINATION_FOLDER + "complexOutlineTreeStructure.pdf";
         String cmp = SOURCE_FOLDER + "cmp_complexOutlineTreeStructure.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(input), new PdfWriter(output));
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(input), CompareTool.createTestPdfWriter(output));
         pdfDocument.removePage(2);
         Assert.assertEquals(2, pdfDocument.getNumberOfPages());
 
@@ -793,6 +799,52 @@ public class PdfOutlineTest extends ExtendedITextTest {
             Assert.assertTrue(resultedF.getAllChildren().get(0).getAllChildren().isEmpty());
             Assert.assertTrue(resultedF.getAllChildren().get(1).getAllChildren().isEmpty());
         }
+    }
+
+    @Test
+    public void createOutlinesWithActionsTest() throws IOException, InterruptedException {
+        String filename = "createOutlinesWithActions.pdf";
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename))) {
+            pdfDoc.getCatalog().setPageMode(PdfName.UseOutlines);
+
+            PdfPage firstPage = pdfDoc.addNewPage();
+            PdfPage secondPage = pdfDoc.addNewPage();
+
+            PdfOutline rootOutline = pdfDoc.getOutlines(false);
+            PdfOutline firstOutline = rootOutline.addOutline("First Page");
+            PdfOutline secondOutline = rootOutline.addOutline("Second Page");
+
+            PdfDestination page1Dest = PdfExplicitDestination.createFit(firstPage);
+            PdfAction page1Action = PdfAction.createGoTo(page1Dest);
+            firstOutline.addAction(page1Action);
+            Assert.assertEquals(page1Dest.getPdfObject(), firstOutline.getDestination().getPdfObject());
+
+            PdfAction page2Action = PdfAction.createGoTo(PdfExplicitDestination.createFit(secondPage));
+            secondOutline.addAction(page2Action);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename,
+                DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void createOutlinesWithURIActionTest() throws IOException, InterruptedException {
+        String filename = "createOutlinesWithURIAction.pdf";
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename))) {
+            pdfDoc.getCatalog().setPageMode(PdfName.UseOutlines);
+
+            PdfOutline rootOutline = pdfDoc.getOutlines(false);
+            PdfOutline firstOutline = rootOutline.addOutline("First Page");
+
+            // The test was created to improve the coverage but
+            // Apparently it works!
+            PdfAction action1 = PdfAction.createURI("https://example.com");
+            firstOutline.addAction(action1);
+            Assert.assertNull(firstOutline.getDestination());
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename,
+                DESTINATION_FOLDER, "diff_"));
     }
 
     private static final class EmptyNameTree implements IPdfNameTreeAccess {

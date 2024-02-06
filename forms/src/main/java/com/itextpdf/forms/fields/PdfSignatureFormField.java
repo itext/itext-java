@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -42,6 +42,11 @@ public class PdfSignatureFormField extends PdfFormField {
     private boolean reuseAppearance = false;
 
     /**
+     * Indicates if we need to ignore page rotation for the signature field annotation.
+     */
+    private boolean ignorePageRotation = true;
+
+    /**
      * Background level of the signature appearance.
      */
     private PdfFormXObject n0;
@@ -51,14 +56,31 @@ public class PdfSignatureFormField extends PdfFormField {
      */
     private PdfFormXObject n2;
 
+    /**
+     * Creates a minimal {@link PdfSignatureFormField}.
+     *
+     * @param pdfDocument The {@link PdfDocument} instance.
+     */
     protected PdfSignatureFormField(PdfDocument pdfDocument) {
         super(pdfDocument);
     }
 
+    /**
+     * Creates a signature form field as a parent of a {@link PdfWidgetAnnotation}.
+     *
+     * @param widget The widget which will be a kid of the {@link PdfSignatureFormField}.
+     * @param pdfDocument The {@link PdfDocument} instance.
+     */
     protected PdfSignatureFormField(PdfWidgetAnnotation widget, PdfDocument pdfDocument) {
         super(widget, pdfDocument);
     }
 
+    /**
+     * Creates a signature form field as a wrapper object around a {@link PdfDictionary}.
+     * This {@link PdfDictionary} must be an indirect object.
+     *
+     * @param pdfObject the dictionary to be wrapped, must have an indirect reference.
+     */
     protected PdfSignatureFormField(PdfDictionary pdfObject) {
         super(pdfObject);
     }
@@ -127,10 +149,26 @@ public class PdfSignatureFormField extends PdfFormField {
      * Indicates that the existing appearances needs to be reused as a background.
      *
      * @param reuseAppearance is an appearances reusing flag value to set.
+     *
      * @return this same {@link PdfSignatureFormField} instance.
      */
     public PdfSignatureFormField setReuseAppearance(boolean reuseAppearance) {
         this.reuseAppearance = reuseAppearance;
+        return this;
+    }
+
+    /**
+     * Sets the boolean value which indicates if page rotation should be ignored for the signature appearance.
+     *
+     * <p>
+     * Default value is {@code true}.
+     *
+     * @param ignore boolean value to set.
+     *
+     * @return this same {@link PdfSignatureFormField} instance.
+     */
+    public PdfSignatureFormField setIgnorePageRotation(boolean ignore) {
+        this.ignorePageRotation = ignore;
         return this;
     }
 
@@ -161,4 +199,12 @@ public class PdfSignatureFormField extends PdfFormField {
         return reuseAppearance;
     }
 
+    /**
+     * Indicates if page rotation should be ignored for the signature appearance.
+     *
+     * @return the boolean value which indicates if we need to ignore page rotation for the signature appearance.
+     */
+    boolean isPageRotationIgnored() {
+        return this.ignorePageRotation;
+    }
 }

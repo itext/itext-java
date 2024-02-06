@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -24,6 +24,7 @@ package com.itextpdf.kernel.crypto;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.crypto.fips.AbstractFipsUnapprovedOperationError;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.io.font.constants.StandardFonts;
@@ -58,6 +59,7 @@ import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -103,6 +105,10 @@ public class PdfEncryptionManuallyPortedTest extends ExtendedITextTest {
         Security.addProvider(FACTORY.getProvider());
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
@@ -111,7 +117,13 @@ public class PdfEncryptionManuallyPortedTest extends ExtendedITextTest {
             AbstractPKCSException, AbstractOperatorCreationException {
         String filename = "encryptWithCertificateStandard128.pdf";
         int encryptionType = EncryptionConstants.STANDARD_ENCRYPTION_128;
-        encryptWithCertificate(filename, encryptionType, CompressionConstants.DEFAULT_COMPRESSION);
+        if (FACTORY.isInApprovedOnlyMode()) {
+            // RSA PKCS1.5 encryption disallowed
+            Assert.assertThrows(AbstractFipsUnapprovedOperationError.class,
+                    () -> encryptWithCertificate(filename, encryptionType, CompressionConstants.DEFAULT_COMPRESSION));
+        } else {
+            encryptWithCertificate(filename, encryptionType, CompressionConstants.DEFAULT_COMPRESSION);
+        }
     }
 
     @Test
@@ -121,7 +133,13 @@ public class PdfEncryptionManuallyPortedTest extends ExtendedITextTest {
             AbstractPKCSException, AbstractOperatorCreationException {
         String filename = "encryptWithCertificateStandard40.pdf";
         int encryptionType = EncryptionConstants.STANDARD_ENCRYPTION_40;
-        encryptWithCertificate(filename, encryptionType, CompressionConstants.DEFAULT_COMPRESSION);
+        if (FACTORY.isInApprovedOnlyMode()) {
+            // RSA PKCS1.5 encryption disallowed
+            Assert.assertThrows(AbstractFipsUnapprovedOperationError.class,
+                    () -> encryptWithCertificate(filename, encryptionType, CompressionConstants.DEFAULT_COMPRESSION));
+        } else {
+            encryptWithCertificate(filename, encryptionType, CompressionConstants.DEFAULT_COMPRESSION);
+        }
     }
 
     @Test
@@ -131,7 +149,13 @@ public class PdfEncryptionManuallyPortedTest extends ExtendedITextTest {
             GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
         String filename = "encryptWithCertificateStandard128NoCompression.pdf";
         int encryptionType = EncryptionConstants.STANDARD_ENCRYPTION_128;
-        encryptWithCertificate(filename, encryptionType, CompressionConstants.NO_COMPRESSION);
+        if (FACTORY.isInApprovedOnlyMode()) {
+            // RSA PKCS1.5 encryption disallowed
+            Assert.assertThrows(AbstractFipsUnapprovedOperationError.class,
+                    () -> encryptWithCertificate(filename, encryptionType, CompressionConstants.NO_COMPRESSION));
+        } else {
+            encryptWithCertificate(filename, encryptionType, CompressionConstants.NO_COMPRESSION);
+        }
     }
 
     @Test
@@ -141,7 +165,13 @@ public class PdfEncryptionManuallyPortedTest extends ExtendedITextTest {
             GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
         String filename = "encryptWithCertificateStandard40NoCompression.pdf";
         int encryptionType = EncryptionConstants.STANDARD_ENCRYPTION_40;
-        encryptWithCertificate(filename, encryptionType, CompressionConstants.NO_COMPRESSION);
+        if (FACTORY.isInApprovedOnlyMode()) {
+            // RSA PKCS1.5 encryption disallowed
+            Assert.assertThrows(AbstractFipsUnapprovedOperationError.class,
+                    () -> encryptWithCertificate(filename, encryptionType, CompressionConstants.NO_COMPRESSION));
+        } else {
+            encryptWithCertificate(filename, encryptionType, CompressionConstants.NO_COMPRESSION);
+        }
     }
 
     @Test
@@ -151,7 +181,13 @@ public class PdfEncryptionManuallyPortedTest extends ExtendedITextTest {
             AbstractPKCSException, AbstractOperatorCreationException {
         String filename = "encryptWithCertificateAes128.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_128;
-        encryptWithCertificate(filename, encryptionType, CompressionConstants.DEFAULT_COMPRESSION);
+        if (FACTORY.isInApprovedOnlyMode()) {
+            // RSA PKCS1.5 encryption disallowed
+            Assert.assertThrows(AbstractFipsUnapprovedOperationError.class,
+                    () -> encryptWithCertificate(filename, encryptionType, CompressionConstants.DEFAULT_COMPRESSION));
+        } else {
+            encryptWithCertificate(filename, encryptionType, CompressionConstants.DEFAULT_COMPRESSION);
+        }
     }
 
     @Test
@@ -161,7 +197,13 @@ public class PdfEncryptionManuallyPortedTest extends ExtendedITextTest {
             AbstractPKCSException, AbstractOperatorCreationException {
         String filename = "encryptWithCertificateAes256.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_256;
-        encryptWithCertificate(filename, encryptionType, CompressionConstants.DEFAULT_COMPRESSION);
+        if (FACTORY.isInApprovedOnlyMode()) {
+            // RSA PKCS1.5 encryption disallowed
+            Assert.assertThrows(AbstractFipsUnapprovedOperationError.class,
+                    () -> encryptWithCertificate(filename, encryptionType, CompressionConstants.DEFAULT_COMPRESSION));
+        } else {
+            encryptWithCertificate(filename, encryptionType, CompressionConstants.DEFAULT_COMPRESSION);
+        }
     }
 
     @Test
@@ -171,7 +213,13 @@ public class PdfEncryptionManuallyPortedTest extends ExtendedITextTest {
             GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
         String filename = "encryptWithCertificateAes128NoCompression.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_128;
-        encryptWithCertificate(filename, encryptionType, CompressionConstants.NO_COMPRESSION);
+        if (FACTORY.isInApprovedOnlyMode()) {
+            // RSA PKCS1.5 encryption disallowed
+            Assert.assertThrows(AbstractFipsUnapprovedOperationError.class,
+                    () -> encryptWithCertificate(filename, encryptionType, CompressionConstants.NO_COMPRESSION));
+        } else {
+            encryptWithCertificate(filename, encryptionType, CompressionConstants.NO_COMPRESSION);
+        }
     }
 
     @Test
@@ -181,7 +229,13 @@ public class PdfEncryptionManuallyPortedTest extends ExtendedITextTest {
             GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
         String filename = "encryptWithCertificateAes256NoCompression.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_256;
-        encryptWithCertificate(filename, encryptionType, CompressionConstants.NO_COMPRESSION);
+        if (FACTORY.isInApprovedOnlyMode()) {
+            // RSA PKCS1.5 encryption disallowed
+            Assert.assertThrows(AbstractFipsUnapprovedOperationError.class,
+                    () -> encryptWithCertificate(filename, encryptionType, CompressionConstants.NO_COMPRESSION));
+        } else {
+            encryptWithCertificate(filename, encryptionType, CompressionConstants.NO_COMPRESSION);
+        }
     }
 
     @Test
@@ -205,6 +259,21 @@ public class PdfEncryptionManuallyPortedTest extends ExtendedITextTest {
         }
     }
 
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
+    public void openEncryptedWithCertificateDocWithDefaultKeyLength() throws IOException, CertificateException,
+            AbstractOperatorCreationException, AbstractPKCSException {
+        Certificate cert = getPublicCertificate(CERT);
+        try (PdfReader reader = new PdfReader(sourceFolder + "encryptedWithCertificateWithDefaultKeyLength.pdf",
+                new ReaderProperties().setPublicKeySecurityParams(cert, getPrivateKey(),
+                        FACTORY.getProviderName(), null));
+             PdfDocument document = new PdfDocument(reader)) {
+            Assert.assertFalse(document.getTrailer().getAsDictionary(PdfName.Encrypt).containsKey(PdfName.Length));
+        }
+    }
+
     public void encryptWithCertificate(String filename, int encryptionType, int compression) throws IOException,
             InterruptedException, GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
         ITextTest.removeCryptographyRestrictions();
@@ -212,7 +281,7 @@ public class PdfEncryptionManuallyPortedTest extends ExtendedITextTest {
         String outFileName = destinationFolder + filename;
         int permissions = EncryptionConstants.ALLOW_SCREENREADERS;
         Certificate cert = getPublicCertificate(CERT);
-        PdfWriter writer = new PdfWriter(outFileName, new WriterProperties()
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName, new WriterProperties()
                 .setPublicKeyEncryption(new Certificate[] {cert}, new int[] {permissions}, encryptionType)
                 .addXmpMetadata());
         writer.setCompressionLevel(compression);
@@ -258,7 +327,7 @@ public class PdfEncryptionManuallyPortedTest extends ExtendedITextTest {
     public void checkDecryptedWithCertificateContent(String filename, Certificate certificate, String pageContent)
             throws IOException, AbstractPKCSException, AbstractOperatorCreationException {
         String src = destinationFolder + filename;
-        PdfReader reader = new PdfReader(src, new ReaderProperties()
+        PdfReader reader = CompareTool.createOutputReader(src, new ReaderProperties()
                 .setPublicKeySecurityParams(certificate, getPrivateKey(), FACTORY.getProviderName(), null));
         PdfDocument document = new PdfDocument(reader);
         PdfPage page = document.getPage(1);
@@ -277,9 +346,10 @@ public class PdfEncryptionManuallyPortedTest extends ExtendedITextTest {
             throws IOException, InterruptedException, AbstractPKCSException, AbstractOperatorCreationException {
         String srcFileName = destinationFolder + filename;
         String outFileName = destinationFolder + "stamped_" + filename;
-        PdfReader reader = new PdfReader(srcFileName, new ReaderProperties()
+        PdfReader reader = CompareTool.createOutputReader(srcFileName, new ReaderProperties()
                 .setPublicKeySecurityParams(certificate, getPrivateKey(), FACTORY.getProviderName(), null));
-        PdfDocument document = new PdfDocument(reader, new PdfWriter(outFileName));
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
+        PdfDocument document = new PdfDocument(reader, writer);
         document.close();
 
         CompareTool compareTool = new CompareTool();
@@ -297,9 +367,10 @@ public class PdfEncryptionManuallyPortedTest extends ExtendedITextTest {
             throws IOException, InterruptedException, AbstractPKCSException, AbstractOperatorCreationException {
         String srcFileName = destinationFolder + filename;
         String outFileName = destinationFolder + "appended_" + filename;
-        PdfReader reader = new PdfReader(srcFileName, new ReaderProperties()
+        PdfReader reader = CompareTool.createOutputReader(srcFileName, new ReaderProperties()
                 .setPublicKeySecurityParams(certificate, getPrivateKey(), FACTORY.getProviderName(), null));
-        PdfDocument document = new PdfDocument(reader, new PdfWriter(outFileName),
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
+        PdfDocument document = new PdfDocument(reader, writer,
                 new StampingProperties().useAppendMode());
         PdfPage newPage = document.addNewPage();
         String helloWorldStringValue = "Hello world string";
@@ -307,7 +378,7 @@ public class PdfEncryptionManuallyPortedTest extends ExtendedITextTest {
         writeTextBytesOnPageContent(newPage, "Hello world page_2!");
         document.close();
 
-        PdfReader appendedDocReader = new PdfReader(outFileName, new ReaderProperties()
+        PdfReader appendedDocReader = CompareTool.createOutputReader(outFileName, new ReaderProperties()
                 .setPublicKeySecurityParams(certificate, getPrivateKey(), FACTORY.getProviderName(), null));
         PdfDocument appendedDoc = new PdfDocument(appendedDocReader);
         PdfPage secondPage = appendedDoc.getPage(2);

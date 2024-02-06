@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -71,6 +71,11 @@ public final class Property {
     public static final int COLUMN_WIDTH = 142;
     public static final int COLUMN_GAP = 143;
     public static final int COLUMN_GAP_BORDER = 144;
+    /**
+     * Can be either destination name (id) as String or
+     * a Tuple2(String, PdfDictionary) where String is destination name (id) and PdfDictionary is a dictionary of
+     * goto PdfAction. This second variant allow to create structure destination in tagged pdf.
+     */
     public static final int DESTINATION = 17;
     public static final int FILL_AVAILABLE_AREA = 86;
     public static final int FILL_AVAILABLE_AREA_ON_SPLIT = 87;

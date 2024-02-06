@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -25,6 +25,7 @@ package com.itextpdf.forms.form.renderer;
 import com.itextpdf.forms.fields.AbstractPdfFormField;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.form.element.IFormField;
+import com.itextpdf.forms.util.BorderStyleUtil;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
@@ -95,7 +96,7 @@ public abstract class AbstractTextFieldRenderer extends AbstractFormFieldRendere
             inputField.setColor(color.getColor());
         }
         inputField.setJustification(this.<TextAlignment>getProperty(Property.TEXT_ALIGNMENT));
-        applyBorderProperty(inputField.getFirstFormAnnotation());
+        BorderStyleUtil.applyBorderProperty(this, inputField.getFirstFormAnnotation());
         Background background = this.<Background>getProperty(Property.BACKGROUND);
         if (background != null) {
             inputField.getFirstFormAnnotation().setBackgroundColor(background.getColor());

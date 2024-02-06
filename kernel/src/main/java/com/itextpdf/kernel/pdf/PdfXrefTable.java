@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -27,6 +27,8 @@ import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.kernel.actions.data.ITextCoreProductData;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,6 +50,15 @@ public class PdfXrefTable {
     private static final int INITIAL_CAPACITY = 32;
     private static final int MAX_GENERATION = 65535;
 
+    /**
+     * The maximum offset in a cross-reference stream. This is a limitation of the PDF specification.
+     * SPEC1.7: 7.5.4 Cross reference trailer
+     * <p>
+     *
+     * It states that the offset should be a 10-digit byte, so the maximum value is 9999999999.
+     * This is the max value that can be represented in 10 bytes.
+     */
+    private static final long MAX_OFFSET_IN_CROSS_REFERENCE_STREAM = 9_999_999_999L;
     private static final byte[] freeXRefEntry = ByteUtils.getIsoBytes("f \n");
     private static final byte[] inUseXRefEntry = ByteUtils.getIsoBytes("n \n");
 
@@ -366,7 +377,9 @@ public class PdfXrefTable {
                 writer.writeInteger(first).writeSpace().writeInteger(len).writeByte((byte) '\n');
                 for (int i = first; i < first + len; i++) {
                     PdfIndirectReference reference = xrefTable.get(i);
-
+                    if (reference.getOffset() > MAX_OFFSET_IN_CROSS_REFERENCE_STREAM) {
+                        throw new PdfException(KernelExceptionMessageConstant.XREF_HAS_AN_ENTRY_WITH_TOO_BIG_OFFSET);
+                    }
                     StringBuilder off = new StringBuilder("0000000000").append(reference.getOffset());
                     StringBuilder gen = new StringBuilder("00000").append(reference.getGenNumber());
                     writer.writeString(off.substring(off.length() - 10, off.length())).writeSpace().
@@ -435,7 +448,7 @@ public class PdfXrefTable {
         // ensure zero object is free
         xref[0].setState(PdfObject.FREE);
         TreeSet<Integer> freeReferences = new TreeSet<>();
-        for (int i = 1; i < size(); ++i) {
+        for (int i = 1; i < size() && i < xref.length; ++i) {
             PdfIndirectReference ref = xref[i];
             if (ref == null || ref.isFree()) {
                 freeReferences.add(i);

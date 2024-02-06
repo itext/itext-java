@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -254,6 +254,7 @@ import java.util.List;
 import java.util.Set;
 import javax.crypto.Cipher;
 import org.bouncycastle.asn1.ASN1BitString;
+import org.bouncycastle.asn1.ASN1Enumerated;
 import org.bouncycastle.asn1.ASN1GeneralizedTime;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -310,6 +311,7 @@ import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.bouncycastle.openssl.jcajce.JceOpenSSLPKCS8DecryptorProviderBuilder;
 import org.bouncycastle.operator.DefaultAlgorithmNameFinder;
+import org.bouncycastle.operator.DefaultDigestAlgorithmIdentifierFinder;
 import org.bouncycastle.operator.DefaultSignatureAlgorithmIdentifierFinder;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
@@ -348,6 +350,22 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
         } catch (IllegalArgumentException ignored) {
             return null;
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getDigestAlgorithmOid(String name) {
+        try {
+            AlgorithmIdentifier algorithmIdentifier = new DefaultDigestAlgorithmIdentifierFinder().find(name);
+            if (algorithmIdentifier != null) {
+                return algorithmIdentifier.getAlgorithm().getId();
+            }
+        } catch (IllegalArgumentException ignored) {
+            // Do nothing.
+        }
+        return null;
     }
 
     /**
@@ -684,6 +702,18 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
      * {@inheritDoc}
      */
     @Override
+    public IASN1Enumerated createASN1Enumerated(IASN1Encodable object) {
+        ASN1EncodableBC encodable = (ASN1EncodableBC) object;
+        if (encodable.getEncodable() instanceof ASN1Enumerated) {
+            return new ASN1EnumeratedBC((ASN1Enumerated) encodable.getEncodable());
+        }
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public IASN1Encoding createASN1Encoding() {
         return ASN1EncodingBC.getInstance();
     }
@@ -770,6 +800,14 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     public IBasicOCSPResponse createBasicOCSPResponse(IASN1Primitive primitive) {
         ASN1PrimitiveBC primitiveBC = (ASN1PrimitiveBC) primitive;
         return new BasicOCSPResponseBC(BasicOCSPResponse.getInstance(primitiveBC.getPrimitive()));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IBasicOCSPResponse createBasicOCSPResponse(byte[] bytes) {
+        return new BasicOCSPResponseBC(BasicOCSPResponse.getInstance(bytes));
     }
 
     /**
@@ -1264,6 +1302,15 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
      * {@inheritDoc}
      */
     @Override
+    public ITBSCertificate createTBSCertificate(byte[] bytes) {
+        return new TBSCertificateBC(TBSCertificate.getInstance((bytes)));
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public IIssuerAndSerialNumber createIssuerAndSerialNumber(IX500Name issuer, BigInteger value) {
         return new IssuerAndSerialNumberBC(issuer, value);
     }
@@ -1656,6 +1703,14 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     @Override
     public boolean isNullExtension(IExtension ext) {
         return ((ExtensionBC) ext).getExtension() == null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isNull(IASN1Encodable encodable) {
+        return ((ASN1EncodableBC) encodable).getEncodable() == null;
     }
 
     /**

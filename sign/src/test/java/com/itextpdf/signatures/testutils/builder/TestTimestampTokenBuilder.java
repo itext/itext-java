@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -75,12 +75,6 @@ public class TestTimestampTokenBuilder {
         ITimeStampTokenGenerator tsTokGen = createTimeStampTokenGenerator(tsaPrivateKey,
                 tsaCertificateChain.get(0), SIGN_ALG, "SHA1", POLICY_OID);
         tsTokGen.setAccuracySeconds(1);
-
-        // TODO setting this is somewhat wrong. Acrobat and openssl recognize timestamp tokens generated with this
-        //  line as corrupted
-        // openssl error message: 2304:error:2F09506F:time stamp routines:INT_TS_RESP_VERIFY_TOKEN:tsa name
-        // mismatch:ts_rsp_verify.c:476:
-//        tsTokGen.setTSA(new GeneralName(new X500Name(PrincipalUtil.getIssuerX509Principal(tsCertificate).getName())));
 
         tsTokGen.addCertificates(FACTORY.createJcaCertStore(tsaCertificateChain));
 

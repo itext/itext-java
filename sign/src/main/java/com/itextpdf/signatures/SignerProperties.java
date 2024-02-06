@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -41,10 +41,10 @@ public class SignerProperties {
     private String fieldName;
     private int pageNumber = 1;
     private Rectangle pageRect = new Rectangle(0, 0);
-
     private String signatureCreator = "";
-
     private String contact = "";
+    private String reason = "";
+    private String location = "";
 
     /**
      * Create instance of {@link SignerProperties}.
@@ -56,7 +56,7 @@ public class SignerProperties {
     /**
      * Gets the signature date.
      *
-     * @return Calendar set to the signature date
+     * @return Calendar set to the signature date.
      */
     public java.util.Calendar getSignDate() {
         return signDate;
@@ -65,7 +65,9 @@ public class SignerProperties {
     /**
      * Sets the signature date.
      *
-     * @param signDate the signature date
+     * @param signDate the signature date.
+     *
+     * @return this instance to support fluent interface.
      */
     public SignerProperties setSignDate(java.util.Calendar signDate) {
         this.signDate = signDate;
@@ -77,6 +79,8 @@ public class SignerProperties {
      * be set.
      *
      * @param appearance the {@link SignatureFieldAppearance} layout element.
+     *
+     * @return this instance to support fluent interface.
      */
     public SignerProperties setSignatureAppearance(SignatureFieldAppearance appearance) {
         this.appearance = appearance;
@@ -86,7 +90,7 @@ public class SignerProperties {
     /**
      * Gets signature field layout element, which customizes the appearance of a signature.
      *
-     * @return {@link SignatureFieldAppearance} layout element
+     * @return {@link SignatureFieldAppearance} layout element.
      */
     public SignatureFieldAppearance getSignatureAppearance() {
         return this.appearance;
@@ -112,6 +116,8 @@ public class SignerProperties {
      *                           <li>{@link PdfSigner#CERTIFIED_FORM_FILLING}
      *                           <li>{@link PdfSigner#CERTIFIED_FORM_FILLING_AND_ANNOTATIONS}
      *                           </ul>
+     *
+     * @return this instance to support fluent interface.
      */
     public SignerProperties setCertificationLevel(int certificationLevel) {
         this.certificationLevel = certificationLevel;
@@ -121,7 +127,7 @@ public class SignerProperties {
     /**
      * Gets the field name.
      *
-     * @return the field name
+     * @return the field name.
      */
     public String getFieldName() {
         return fieldName;
@@ -132,6 +138,8 @@ public class SignerProperties {
      * document but shall not be signed. If the field is not presented in the document, it will be created.
      *
      * @param fieldName The name indicating the field to be signed.
+     *
+     * @return this instance to support fluent interface.
      */
     public SignerProperties setFieldName(String fieldName) {
         this.fieldName = fieldName;
@@ -204,7 +212,9 @@ public class SignerProperties {
      * <strong>Be aware:</strong> if a signature is created on an existing signature field,
      * then its /Lock dictionary takes the precedence (if it exists).
      *
-     * @param fieldLock Field lock dictionary
+     * @param fieldLock Field lock dictionary.
+     *
+     * @return this instance to support fluent interface.
      */
     public SignerProperties setFieldLockDict(PdfSigFieldLock fieldLock) {
         this.fieldLock = fieldLock;
@@ -250,6 +260,48 @@ public class SignerProperties {
      */
     public SignerProperties setContact(String contact) {
         this.contact = contact;
+        return this;
+    }
+
+    /**
+     * Returns the signing reason.
+     *
+     * @return The signing reason.
+     */
+    public String getReason() {
+        return this.reason;
+    }
+
+    /**
+     * Sets the signing reason.
+     *
+     * @param reason A new signing reason.
+     *
+     * @return this instance to support fluent interface.
+     */
+    public SignerProperties setReason(String reason) {
+        this.reason = reason;
+        return this;
+    }
+
+    /**
+     * Returns the signing location.
+     *
+     * @return The signing location.
+     */
+    public String getLocation() {
+        return this.location;
+    }
+
+    /**
+     * Sets the signing location.
+     *
+     * @param location A new signing location.
+     *
+     * @return this instance to support fluent interface.
+     */
+    public SignerProperties setLocation(String location) {
+        this.location = location;
         return this;
     }
 }

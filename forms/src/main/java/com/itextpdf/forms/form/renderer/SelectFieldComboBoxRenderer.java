@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -23,7 +23,6 @@
 package com.itextpdf.forms.form.renderer;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.ChoiceFormFieldBuilder;
 import com.itextpdf.forms.fields.PdfChoiceFormField;
 import com.itextpdf.forms.fields.PdfFormCreator;
@@ -31,10 +30,10 @@ import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.AbstractSelectField;
 import com.itextpdf.forms.form.element.ComboBoxField;
 import com.itextpdf.forms.form.element.SelectFieldItem;
+import com.itextpdf.forms.util.BorderStyleUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
@@ -112,8 +111,11 @@ public class SelectFieldComboBoxRenderer extends AbstractSelectFieldRenderer {
         final PdfDocument doc = drawContext.getDocument();
         final Rectangle area = getOccupiedAreaBBox();
         final PdfPage page = doc.getPage(occupiedArea.getPageNumber());
+        PdfFont font = getResolvedFont(doc);
+
         final ChoiceFormFieldBuilder builder = new ChoiceFormFieldBuilder(doc, name).setWidgetRectangle(area)
-                .setConformanceLevel(this.<PdfAConformanceLevel>getProperty(FormProperty.FORM_CONFORMANCE_LEVEL));
+                .setFont(font)
+                .setConformanceLevel(getConformanceLevel(doc));
 
         modelElement.setProperty(Property.FONT_PROVIDER, this.<FontProvider>getProperty(Property.FONT_PROVIDER));
         modelElement.setProperty(Property.RENDERING_MODE, this.<RenderingMode>getProperty(Property.RENDERING_MODE));
@@ -125,11 +127,8 @@ public class SelectFieldComboBoxRenderer extends AbstractSelectFieldRenderer {
         if (background != null) {
             comboBoxField.getFirstFormAnnotation().setBackgroundColor(background.getColor());
         }
-        AbstractFormFieldRenderer.applyBorderProperty(this, comboBoxField.getFirstFormAnnotation());
-        PdfFont font = getRetrievedFont();
-        if (font != null) {
-            comboBoxField.setFont(font);
-        }
+        BorderStyleUtil.applyBorderProperty(this, comboBoxField.getFirstFormAnnotation());
+
         UnitValue fontSize = getFontSize();
         if (fontSize != null) {
             comboBoxField.setFontSize(fontSize.getValue());
@@ -158,10 +157,6 @@ public class SelectFieldComboBoxRenderer extends AbstractSelectFieldRenderer {
         writeAcroFormFieldLangAttribute(doc);
     }
 
-    private PdfFont getRetrievedFont() {
-        Object retrievedFont = this.<Object>getProperty(Property.FONT);
-        return retrievedFont instanceof PdfFont ? (PdfFont) retrievedFont : null;
-    }
 
     private UnitValue getFontSize() {
         if (!this.hasProperty(Property.FONT_SIZE)) {
@@ -311,7 +306,7 @@ public class SelectFieldComboBoxRenderer extends AbstractSelectFieldRenderer {
             paragraph.setFontSize(fontSize.getValue());
         }
 
-        PdfFont font = getRetrievedFont();
+        PdfFont font = getResolvedFont(null);
         if (font != null) {
             paragraph.setFont(font);
         }

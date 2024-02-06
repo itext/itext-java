@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -38,6 +38,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -58,6 +59,11 @@ public class AddSoundAnnotationTest extends ExtendedITextTest {
         createOrClearDestinationFolder(destinationFolder);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+    
     @Test
     public void soundTestAif() throws IOException, InterruptedException {
         String filename = destinationFolder + "soundAnnotation02.pdf";
@@ -65,7 +71,7 @@ public class AddSoundAnnotationTest extends ExtendedITextTest {
         String cmp = sourceFolder + "cmp_soundAnnotation02.pdf";
 
         try (InputStream is = prepareAudioFileStream(audioFile)) {
-            try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename))) {
+            try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(filename))) {
                 PdfStream sound1 = new PdfStream(pdfDoc, is);
                 sound1.put(PdfName.R, new PdfNumber(32117));
                 sound1.put(PdfName.E, PdfName.Signed);
@@ -89,7 +95,7 @@ public class AddSoundAnnotationTest extends ExtendedITextTest {
         String cmpPdf = sourceFolder + "cmp_soundAnnotation03.pdf";
 
         try (InputStream is = prepareAudioFileStream(audioFile)) {
-            try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename))) {
+            try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(filename))) {
                 PdfStream sound1 = new PdfStream(pdfDoc, is);
                 sound1.put(PdfName.R, new PdfNumber(44100));
                 sound1.put(PdfName.E, PdfName.Signed);
@@ -114,7 +120,7 @@ public class AddSoundAnnotationTest extends ExtendedITextTest {
         String cmpPdf = sourceFolder + "cmp_soundAnnotation05.pdf";
 
         try (InputStream is = prepareAudioFileStream(audioFile)) {
-            try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename))) {
+            try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(filename))) {
                 PdfStream soundStream = new PdfStream(pdfDoc, is);
 
                 soundStream.put(PdfName.R, new PdfNumber(48000));
@@ -143,7 +149,7 @@ public class AddSoundAnnotationTest extends ExtendedITextTest {
 
 
         try (InputStream is = new FileInputStream(audioFile)) {
-            try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename))) {
+            try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(filename))) {
                 Rectangle rect = new Rectangle(100, 100, 100, 100);
                 PdfSoundAnnotation sound = new PdfSoundAnnotation(pdfDoc, rect, is, 44100, PdfName.Signed, 2, 16);
 
@@ -164,7 +170,7 @@ public class AddSoundAnnotationTest extends ExtendedITextTest {
         String cmpPdf = sourceFolder + "cmp_soundAnnotation01.pdf";
 
         try (InputStream is = new FileInputStream(audioFile)) {
-            try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename))) {
+            try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(filename))) {
                 Rectangle rect = new Rectangle(100, 100, 100, 100);
                 PdfSoundAnnotation sound = new PdfSoundAnnotation(pdfDoc, rect, is, 48000, PdfName.Signed, 2, 16);
 

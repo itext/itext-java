@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -23,12 +23,12 @@
 package com.itextpdf.forms.form.renderer;
 
 import com.itextpdf.forms.fields.ChoiceFormFieldBuilder;
-import com.itextpdf.forms.form.element.SelectFieldItem;
-import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.AbstractSelectField;
 import com.itextpdf.forms.form.element.IFormField;
+import com.itextpdf.forms.form.element.SelectFieldItem;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
@@ -224,6 +224,28 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
             return -1;
         }
         return actualHeight;
+    }
+
+    /**
+     * Gets the conformance level. If the conformance level is not set, the conformance level of the document is used.
+     *
+     * @param document the document
+     *
+     * @return the conformance level or null if the conformance level is not set.
+     */
+    protected PdfAConformanceLevel getConformanceLevel(PdfDocument document) {
+        final PdfAConformanceLevel conformanceLevel = this.<PdfAConformanceLevel>getProperty(
+                FormProperty.FORM_CONFORMANCE_LEVEL);
+        if (conformanceLevel != null) {
+            return conformanceLevel;
+        }
+        if (document == null) {
+            return null;
+        }
+        if (document.getConformanceLevel() instanceof PdfAConformanceLevel) {
+            return (PdfAConformanceLevel) document.getConformanceLevel();
+        }
+        return null;
     }
 
     protected List<IRenderer> getOptionsMarkedSelected(IRenderer optionsSubTree) {

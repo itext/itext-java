@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,15 +22,22 @@
  */
 package com.itextpdf.barcodes;
 
+import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 
 import java.util.Arrays;
 
+/**
+ * The implementation of the barcode EAN.
+ * <p>
+ * The International Article Number (also known as European Article Number or EAN) is a standard describing a barcode
+ * symbology and numbering system used in global trade to identify a specific retail product type, in a specific
+ * packaging configuration, from a specific manufacturer
+ */
 public class BarcodeEAN extends Barcode1D {
 
     /** A type of barcode */

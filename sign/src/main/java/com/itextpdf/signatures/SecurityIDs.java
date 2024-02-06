@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -35,9 +35,10 @@ public class SecurityIDs {
     public static final String ID_RSA_WITH_SHA3_512 = "2.16.840.1.101.3.4.3.16";
     public static final String ID_DSA = "1.2.840.10040.4.1";
     public static final String ID_ECDSA = "1.2.840.10045.2.1";
-
     public static final String ID_ED25519 = "1.3.101.112";
     public static final String ID_ED448 = "1.3.101.113";
+    public static final String ID_SHA256 = "2.16.840.1.101.3.4.2.1";
+    public static final String ID_SHA384 = "2.16.840.1.101.3.4.2.2";
     public static final String ID_SHA512 = "2.16.840.1.101.3.4.2.3";
     public static final String ID_SHAKE256 = "2.16.840.1.101.3.4.2.12";
     public static final String ID_CONTENT_TYPE = "1.2.840.113549.1.9.3";
@@ -46,7 +47,10 @@ public class SecurityIDs {
     public static final String ID_ADBE_REVOCATION = "1.2.840.113583.1.1.8";
     public static final String ID_TSA = "1.2.840.113583.1.1.9.1";
     public static final String ID_OCSP = "1.3.6.1.5.5.7.48.1";
+    public static final String ID_CA_ISSUERS = "1.3.6.1.5.5.7.48.2";
     public static final String ID_AA_SIGNING_CERTIFICATE_V1 = "1.2.840.113549.1.9.16.2.12";
     public static final String ID_AA_SIGNING_CERTIFICATE_V2 = "1.2.840.113549.1.9.16.2.47";
     public static final String ID_MGF1 = "1.2.840.113549.1.1.8";
+    public static final String ID_AA_TIME_STAMP_TOKEN = "1.2.840.113549.1.9.16.2.14";
+    public static final String ID_RI_OCSP_RESPONSE = "1.3.6.1.5.5.7.16.2";
 }

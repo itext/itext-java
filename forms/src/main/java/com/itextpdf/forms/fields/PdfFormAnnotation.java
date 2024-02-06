@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -641,13 +641,16 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         if (rectangle == null) {
             return;
         }
+        final int fieldRotation = getRotation();
+        PdfArray matrix = getRotationMatrix(fieldRotation, rectangle.getHeight(), rectangle.getWidth());
+        rectangle = applyRotation(fieldRotation, rectangle);
         float width = rectangle.getWidth();
         float height = rectangle.getHeight();
 
         createInputButton();
+        setModelElementProperties(rectangle);
 
         PdfFormXObject xObject = new PdfFormXObject(new Rectangle(0, 0, width, height));
-        PdfArray matrix = getRotationMatrix(getRotation(), height, width);
         if (matrix != null) {
             xObject.put(PdfName.Matrix, matrix);
         }
@@ -717,21 +720,26 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             put(PdfName.AP, appearanceDictionary);
             return;
         }
+        // Rotation
         PdfPage page = getWidget().getPage();
-        boolean rotateRect = page != null && (page.getRotation() / 90) % 2 == 1;
-        float width = rotateRect ? rectangle.getHeight() : rectangle.getWidth();
-        float height = rotateRect ? rectangle.getWidth() : rectangle.getHeight();
-        if (rotateRect) {
-            rectangle.setWidth(width).setHeight(height);
-        }
+        final int pageRotation = page == null ? 0 : page.getRotation();
+        final int additionalFieldRotation =
+                ((PdfSignatureFormField) parent).isPageRotationIgnored() ? 0 : -pageRotation;
+        final int fieldRotation = getRotation() + additionalFieldRotation;
+        PdfArray matrix = getRotationMatrix(fieldRotation, rectangle.getHeight(), rectangle.getWidth());
+        rectangle = applyRotation(fieldRotation + pageRotation, rectangle);
 
         createSigField();
         setModelElementProperties(rectangle);
 
-        PdfFormXObject normalAppearance = new PdfFormXObject(new Rectangle(0, 0, width, height));
+        PdfFormXObject normalAppearance = new PdfFormXObject(
+                new Rectangle(0, 0, rectangle.getWidth(), rectangle.getHeight()));
         PdfCanvas normalAppearanceCanvas = new PdfCanvas(normalAppearance, getDocument());
+        if (matrix != null) {
+            normalAppearance.put(PdfName.Matrix, matrix);
+        }
 
-        PdfFormXObject topLayerXObject = createTopLayer(width, height);
+        PdfFormXObject topLayerXObject = createTopLayer(rectangle.getWidth(), rectangle.getHeight());
         normalAppearance.getResources().addForm(topLayerXObject, new PdfName("FRM"));
         normalAppearanceCanvas.addXObjectAt(topLayerXObject,
                 topLayerXObject.getBBox().getAsNumber(0).floatValue(),
@@ -823,7 +831,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
                 continue;
             }
 
-            final boolean selected = indices == null ? false : indices.contains(new PdfNumber(index));
+            final boolean selected = indices != null && indices.contains(new PdfNumber(index));
             SelectFieldItem existingItem = ((ListBoxField) formFieldElement).getOption(exportValue);
             if (existingItem == null) {
                 existingItem = new SelectFieldItem(exportValue, displayValue);
@@ -892,12 +900,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         // Rotation
         final int fieldRotation = getRotation();
         PdfArray matrix = getRotationMatrix(fieldRotation, rectangle.getHeight(), rectangle.getWidth());
-        if (fieldRotation == 90 || fieldRotation == 270) {
-            Rectangle invertedRectangle = rectangle.clone();
-            invertedRectangle.setWidth(rectangle.getHeight());
-            invertedRectangle.setHeight(rectangle.getWidth());
-            rectangle = invertedRectangle;
-        }
+        rectangle = applyRotation(fieldRotation, rectangle);
 
         setModelElementProperties(rectangle);
 
@@ -914,7 +917,6 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         formFieldElement.setInteractive(true);
         getWidget().setNormalAppearance(xObject.getPdfObject());
     }
-
 
     /**
      * Draws the appearance of a Combo box form field and saves it into an appearance stream.
@@ -1045,6 +1047,10 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
     }
 
     boolean regenerateWidget() {
+        if (fontRequiredForRegeneration()) {
+            return false;
+        }
+
         if (!isFieldRegenerationEnabled()) {
             return false;
         }
@@ -1087,6 +1093,19 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         return false;
     }
 
+    private boolean fontRequiredForRegeneration() {
+        if (getFont() != null) {
+            return false;
+        }
+        if (parent instanceof PdfButtonFormField) {
+            return ((PdfButtonFormField) parent).isPushButton();
+        }
+        if (parent instanceof PdfSignatureFormField) {
+            return false;
+        }
+        return true;
+    }
+
     void createInputButton() {
         if (!(formFieldElement instanceof Button)) {
             // Create it one time and re-set properties during each widget regeneration.
@@ -1099,8 +1118,6 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         if (getColor() != null) {
             ((Button) formFieldElement).setFontColor(color);
         }
-
-        setModelElementProperties(getRect(getPdfObject()));
     }
 
     void createSigField() {
@@ -1108,14 +1125,12 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             // Create it one time and re-set properties during each widget regeneration.
             formFieldElement = new SignatureFieldAppearance(parent.getPartialFieldName().toUnicodeString());
         }
-
         if (formFieldElement.<Object>getProperty(Property.FONT) == null) {
             ((SignatureFieldAppearance) formFieldElement).setFont(getFont());
         }
         if (getColor() != null) {
             ((SignatureFieldAppearance) formFieldElement).setFontColor(color);
         }
-
         if (((SignatureFieldAppearance) formFieldElement).getContentElements().isEmpty()) {
             final SignedAppearanceText description = new SignedAppearanceText();
             final PdfName name = parent.getPdfObject().getAsName(PdfName.Name);
@@ -1263,11 +1278,11 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             case 0:
                 return null;
             case 90:
-                return new PdfArray(new float[] {0, 1, -1, 0, height, 0});
+                return new PdfArray(new float[]{0, 1, -1, 0, height, 0});
             case 180:
-                return new PdfArray(new float[] {-1, 0, 0, -1, width, height});
+                return new PdfArray(new float[]{-1, 0, 0, -1, width, height});
             case 270:
-                return new PdfArray(new float[] {0, -1, 1, 0, 0, width});
+                return new PdfArray(new float[]{0, -1, 1, 0, 0, width});
             default:
                 Logger logger = LoggerFactory.getLogger(PdfFormAnnotation.class);
                 logger.error(FormsLogMessageConstants.INCORRECT_WIDGET_ROTATION);
@@ -1337,10 +1352,6 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
      */
     private PdfFormXObject createTopLayer(float width, float height) {
         PdfFormXObject topLayerXObject = new PdfFormXObject(new Rectangle(0, 0, width, height));
-        PdfArray matrix = getRotationMatrix(getRotation(), height, width);
-        if (matrix != null) {
-            topLayerXObject.put(PdfName.Matrix, matrix);
-        }
         PdfCanvas topLayerCanvas = new PdfCanvas(topLayerXObject, this.getDocument());
 
         PdfFormXObject n0LayerXObject = createN0Layer(width, height);
@@ -1429,5 +1440,15 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         n2LayerCanvas.setProperty(Property.TAGGING_HELPER, null);
         n2LayerCanvas.close();
         return n2LayerXObject;
+    }
+
+    private Rectangle applyRotation(int fieldRotation, Rectangle rectangle) {
+        if ((fieldRotation / 90) % 2 != 0) {
+            Rectangle invertedRectangle = rectangle.clone();
+            invertedRectangle.setWidth(rectangle.getHeight());
+            invertedRectangle.setHeight(rectangle.getWidth());
+            rectangle = invertedRectangle;
+        }
+        return rectangle;
     }
 }

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -161,6 +161,15 @@ public interface IBouncyCastleFactory {
      * @return algorithm oid
      */
     String getAlgorithmOid(String name);
+
+    /**
+     * Get hash algorithm oid from its name.
+     *
+     * @param name name of the algorithm
+     *
+     * @return algorithm oid
+     */
+    String getDigestAlgorithmOid(String name);
 
     /**
      * Get signing algorithm name from its oid.
@@ -489,6 +498,15 @@ public interface IBouncyCastleFactory {
     IASN1Enumerated createASN1Enumerated(int i);
 
     /**
+     * Create ASN1 Enumerated wrapper from {@code IASN1Encodable} value.
+     *
+     * @param object {@code IASN1Encodable} to create ASN1 Enumerated wrapper from
+     *
+     * @return created ASN1 Enumerated wrapper.
+     */
+    IASN1Enumerated createASN1Enumerated(IASN1Encodable object);
+
+    /**
      * Create ASN1 Encoding without parameters.
      *
      * @return created ASN1 Encoding
@@ -578,6 +596,15 @@ public interface IBouncyCastleFactory {
      * @return created basic OCSP response wrapper
      */
     IBasicOCSPResponse createBasicOCSPResponse(IASN1Primitive primitive);
+
+    /**
+     * Create basic OCSP Response wrapper from {@code byte[]} array.
+     * 
+     * @param bytes {@code byte[]} array to create basic OCSP response wrapper from
+     * 
+     * @return created basic OCSP response wrapper
+     */
+    IBasicOCSPResponse createBasicOCSPResponse(byte[] bytes);
 
     /**
      * Create basic OCSP Resp wrapper from basic OCSP Response wrapper.
@@ -1075,6 +1102,15 @@ public interface IBouncyCastleFactory {
     ITBSCertificate createTBSCertificate(IASN1Encodable encodable);
 
     /**
+     * Create TBS Certificate wrapper from ASN1 Encoded data.
+     *
+     * @param bytes ASN1 Encoded TBS Certificate
+     *
+     * @return created TBS Certificate wrapper
+     */
+    ITBSCertificate createTBSCertificate(byte[] bytes);
+
+    /**
      * Create issuer and serial number wrapper from X500 Name wrapper and {@link BigInteger}.
      *
      * @param issuer X500 Name wrapper to create issuer and serial number wrapper from
@@ -1485,6 +1521,15 @@ public interface IBouncyCastleFactory {
      * @return {@code true} if provided extension wrapper wraps {@code null}, {@code false} otherwise
      */
     boolean isNullExtension(IExtension extNonce);
+
+    /**
+     * Check if provided encodable wrapper wrap {@code null}.
+     * 
+     * @param encodable encodable wrapper to be checked
+     * 
+     * @return {@code true} if provided encodable wrapper wraps {@code null}, {@code false} otherwise
+     */
+    boolean isNull(IASN1Encodable encodable);
 
     /**
      * Get {@link SecureRandom} implementation from the factory.

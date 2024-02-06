@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -82,6 +82,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
@@ -103,7 +104,7 @@ public class PdfPKCS7 {
     /**
      * The encryption provider, e.g. "BC" if you use BouncyCastle.
      */
-    private String provider;
+    private final String provider;
 
     // Signature info
 
@@ -126,6 +127,11 @@ public class PdfPKCS7 {
      * Holds value of property signDate.
      */
     private Calendar signDate = (Calendar) TimestampConstants.UNDEFINED_TIMESTAMP_DATE;
+
+    /**
+     * Collection to store revocation info other than OCSP and CRL responses, e.g. SCVP Request and Response.
+     */
+    private final Collection<IASN1Sequence> signedDataRevocationInfo = new ArrayList<>();
 
     // Constructors for creating new signatures
 
@@ -157,9 +163,7 @@ public class PdfPKCS7 {
         // Copy the certificates
         signCert = (X509Certificate) certChain[0];
         certs = new ArrayList<>();
-        for (Certificate element : certChain) {
-            certs.add(element);
-        }
+        Collections.addAll(certs, certChain);
 
         // initialize and add the digest algorithms.
         digestalgos = new HashSet<>();
@@ -289,12 +293,18 @@ public class PdfPKCS7 {
             }
 
             int next = 3;
-            while (BOUNCY_CASTLE_FACTORY.createASN1TaggedObject(content.getObjectAt(next)) != null) {
+            IASN1TaggedObject taggedObj;
+            while ((taggedObj = BOUNCY_CASTLE_FACTORY.createASN1TaggedObject(content.getObjectAt(next))) != null) {
                 ++next;
+                if (taggedObj.getTagNo() == 1) {
+                    // the crls
+                    CertificateUtil.retrieveRevocationInfoFromSignedData(taggedObj, this.signedDataCrls,
+                            this.signedDataOcsps, this.signedDataRevocationInfo);
+                }
             }
 
             // the certificates
-            certs = SignUtils.readAllCerts(contentsKey);
+            this.certs = SignUtils.readAllCerts(contentsKey);
 
             // the signerInfos
             IASN1Set signerInfos = BOUNCY_CASTLE_FACTORY.createASN1Set(content.getObjectAt(next));
@@ -419,10 +429,11 @@ public class PdfPKCS7 {
                     IAttributeTable attble = BOUNCY_CASTLE_FACTORY.createAttributeTable(unat);
                     IPKCSObjectIdentifiers ipkcsObjectIdentifiers = BOUNCY_CASTLE_FACTORY.createPKCSObjectIdentifiers();
                     IAttribute ts = attble.get(ipkcsObjectIdentifiers.getIdAaSignatureTimeStampToken());
-                    if (ts != null && ts.getAttrValues().size() > 0) {
+                    if (!BOUNCY_CASTLE_FACTORY.isNull(ts) && ts.getAttrValues().size() > 0) {
                         IASN1Set attributeValues = ts.getAttrValues();
                         IASN1Sequence tokenSequence =
                                 BOUNCY_CASTLE_FACTORY.createASN1SequenceInstance(attributeValues.getObjectAt(0));
+                        this.timestampCerts = SignUtils.readAllCerts(tokenSequence.getEncoded());
                         IContentInfo contentInfo = BOUNCY_CASTLE_FACTORY.createContentInfo(tokenSequence);
                         this.timeStampTokenInfo = BOUNCY_CASTLE_FACTORY.createTSTInfo(contentInfo);
                     }
@@ -431,6 +442,7 @@ public class PdfPKCS7 {
             if (isTsp) {
                 IContentInfo contentInfoTsp = BOUNCY_CASTLE_FACTORY.createContentInfo(signedData);
                 this.timeStampTokenInfo = BOUNCY_CASTLE_FACTORY.createTSTInfo(contentInfoTsp);
+                this.timestampCerts = this.certs;
                 String algOID = timeStampTokenInfo.getMessageImprint().getHashAlgorithm().getAlgorithm().getId();
                 messageDigest = DigestAlgorithms.getMessageDigestFromOid(algOID, null);
             } else {
@@ -569,7 +581,7 @@ public class PdfPKCS7 {
     /**
      * The ID of the digest algorithm, e.g. "2.16.840.1.101.3.4.2.1".
      */
-    private String digestAlgorithmOid;
+    private final String digestAlgorithmOid;
 
     /**
      * The object that will create the digest
@@ -928,9 +940,9 @@ public class PdfPKCS7 {
 
             // Create the set of Hash algorithms
             IASN1EncodableVector digestAlgorithms = BOUNCY_CASTLE_FACTORY.createASN1EncodableVector();
-            for (Object element : digestalgos) {
+            for (String element : digestalgos) {
                 IASN1EncodableVector algos = BOUNCY_CASTLE_FACTORY.createASN1EncodableVector();
-                algos.add(BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier((String) element));
+                algos.add(BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(element));
                 algos.add(BOUNCY_CASTLE_FACTORY.createDERNull());
                 digestAlgorithms.add(BOUNCY_CASTLE_FACTORY.createDERSequence(algos));
             }
@@ -945,7 +957,6 @@ public class PdfPKCS7 {
             IDERSequence contentinfo = BOUNCY_CASTLE_FACTORY.createDERSequence(v);
 
             // Get all the certificates
-            //
             v = BOUNCY_CASTLE_FACTORY.createASN1EncodableVector();
             for (Object element : certs) {
                 try (IASN1InputStream tempstream = BOUNCY_CASTLE_FACTORY.createASN1InputStream(
@@ -956,27 +967,31 @@ public class PdfPKCS7 {
 
             IDERSet dercertificates = BOUNCY_CASTLE_FACTORY.createDERSet(v);
 
-            // Create signerinfo structure.
-            IASN1EncodableVector signerinfo = BOUNCY_CASTLE_FACTORY.createASN1EncodableVector();
+            // Get the revocation info (crls field)
+            IDERSet revInfoChoices = CertificateUtil.createRevocationInfoChoices(this.signedDataCrls,
+                    this.signedDataOcsps, this.signedDataRevocationInfo);
+
+            // Create signerInfo structure
+            IASN1EncodableVector signerInfo = BOUNCY_CASTLE_FACTORY.createASN1EncodableVector();
 
             // Add the signerInfo version
-            signerinfo.add(BOUNCY_CASTLE_FACTORY.createASN1Integer(signerversion));
+            signerInfo.add(BOUNCY_CASTLE_FACTORY.createASN1Integer(signerversion));
 
             v = BOUNCY_CASTLE_FACTORY.createASN1EncodableVector();
 
             v.add(CertificateInfo.getIssuer(signCert.getTBSCertificate()));
             v.add(BOUNCY_CASTLE_FACTORY.createASN1Integer(signCert.getSerialNumber()));
-            signerinfo.add(BOUNCY_CASTLE_FACTORY.createDERSequence(v));
+            signerInfo.add(BOUNCY_CASTLE_FACTORY.createDERSequence(v));
 
             // Add the digestAlgorithm
             v = BOUNCY_CASTLE_FACTORY.createASN1EncodableVector();
             v.add(BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(digestAlgorithmOid));
             v.add(BOUNCY_CASTLE_FACTORY.createDERNull());
-            signerinfo.add(BOUNCY_CASTLE_FACTORY.createDERSequence(v));
+            signerInfo.add(BOUNCY_CASTLE_FACTORY.createDERSequence(v));
 
             // add the authenticated attribute if present
             if (secondDigest != null) {
-                signerinfo.add(BOUNCY_CASTLE_FACTORY.createDERTaggedObject(false, 0,
+                signerInfo.add(BOUNCY_CASTLE_FACTORY.createDERTaggedObject(false, 0,
                         getAuthenticatedAttributeSet(secondDigest, ocsp, crlBytes, sigtype)));
             }
             // Add the digestEncryptionAlgorithm
@@ -987,10 +1002,10 @@ public class PdfPKCS7 {
             } else {
                 v.add(this.signatureMechanismParameters.toASN1Primitive());
             }
-            signerinfo.add(BOUNCY_CASTLE_FACTORY.createDERSequence(v));
+            signerInfo.add(BOUNCY_CASTLE_FACTORY.createDERSequence(v));
 
             // Add the digest
-            signerinfo.add(BOUNCY_CASTLE_FACTORY.createDEROctetString(signatureValue));
+            signerInfo.add(BOUNCY_CASTLE_FACTORY.createDEROctetString(signatureValue));
 
             // When requested, go get and add the timestamp. May throw an exception.
             // Added by Martin Brunecky, 07/12/2007 folowing Aiken Sam, 2006-11-15
@@ -1001,7 +1016,7 @@ public class PdfPKCS7 {
                 if (tsToken != null) {
                     IASN1EncodableVector unauthAttributes = buildUnauthenticatedAttributes(tsToken);
                     if (unauthAttributes != null) {
-                        signerinfo.add(BOUNCY_CASTLE_FACTORY.createDERTaggedObject(
+                        signerInfo.add(BOUNCY_CASTLE_FACTORY.createDERTaggedObject(
                                 false, 1, BOUNCY_CASTLE_FACTORY.createDERSet(unauthAttributes)));
                     }
                 }
@@ -1013,9 +1028,12 @@ public class PdfPKCS7 {
             body.add(BOUNCY_CASTLE_FACTORY.createDERSet(digestAlgorithms));
             body.add(contentinfo);
             body.add(BOUNCY_CASTLE_FACTORY.createDERTaggedObject(false, 0, dercertificates));
+            if (revInfoChoices != null) {
+                body.add(BOUNCY_CASTLE_FACTORY.createDERTaggedObject(false, 1, revInfoChoices));
+            }
 
             // Only allow one signerInfo
-            body.add(BOUNCY_CASTLE_FACTORY.createDERSet(BOUNCY_CASTLE_FACTORY.createDERSequence(signerinfo)));
+            body.add(BOUNCY_CASTLE_FACTORY.createDERSet(BOUNCY_CASTLE_FACTORY.createDERSequence(signerInfo)));
 
             // Now we have the body, wrap it in it's PKCS7Signed shell
             // and return it
@@ -1046,20 +1064,17 @@ public class PdfPKCS7 {
      *
      * @return {@link IASN1EncodableVector}
      *
-     * @throws IOException
+     * @throws IOException if an I/O error occurs.
      */
     private IASN1EncodableVector buildUnauthenticatedAttributes(byte[] timeStampToken) throws IOException {
         if (timeStampToken == null) {
             return null;
         }
 
-        // @todo: move this together with the rest of the defintions
-        String ID_TIME_STAMP_TOKEN = "1.2.840.113549.1.9.16.2.14"; // RFC 3161 id-aa-timeStampToken
-
         IASN1EncodableVector unauthAttributes = BOUNCY_CASTLE_FACTORY.createASN1EncodableVector();
 
         IASN1EncodableVector v = BOUNCY_CASTLE_FACTORY.createASN1EncodableVector();
-        v.add(BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(ID_TIME_STAMP_TOKEN)); // id-aa-timeStampToken
+        v.add(BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(SecurityIDs.ID_AA_TIME_STAMP_TOKEN));
         try (IASN1InputStream tempstream =
                 BOUNCY_CASTLE_FACTORY.createASN1InputStream(new ByteArrayInputStream(timeStampToken))) {
             IASN1Sequence seq = BOUNCY_CASTLE_FACTORY.createASN1Sequence(tempstream.readObject());
@@ -1201,9 +1216,11 @@ public class PdfPKCS7 {
                 v.add(BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(SecurityIDs.ID_AA_SIGNING_CERTIFICATE_V2));
 
                 IASN1EncodableVector aaV2 = BOUNCY_CASTLE_FACTORY.createASN1EncodableVector();
-                IAlgorithmIdentifier algoId = BOUNCY_CASTLE_FACTORY.createAlgorithmIdentifier(
-                        BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(digestAlgorithmOid));
-                aaV2.add(algoId);
+                if (!SecurityIDs.ID_SHA256.equals(digestAlgorithmOid)) {
+                    IAlgorithmIdentifier algoId = BOUNCY_CASTLE_FACTORY.createAlgorithmIdentifier(
+                            BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(digestAlgorithmOid));
+                    aaV2.add(algoId);
+                }
                 MessageDigest md = SignUtils.getMessageDigest(getDigestAlgorithmName(), interfaceDigest);
                 byte[] dig = md.digest(signCert.getEncoded());
                 aaV2.add(BOUNCY_CASTLE_FACTORY.createDEROctetString(dig));
@@ -1342,6 +1359,8 @@ public class PdfPKCS7 {
      * All the X.509 certificates in no particular order.
      */
     private Collection<Certificate> certs;
+    
+    private Collection<Certificate> timestampCerts;
 
     /**
      * All the X.509 certificates used for the main signature.
@@ -1360,7 +1379,16 @@ public class PdfPKCS7 {
      * @return the X.509 certificates associated with this PKCS#7 object
      */
     public Certificate[] getCertificates() {
-        return certs.toArray(new X509Certificate[certs.size()]);
+        return certs.toArray(new Certificate[0]);
+    }
+
+    /**
+     * Get all X.509 certificates associated with this PKCS#7 object timestamp in no particular order.
+     * 
+     * @return {@link Certificate[]} array
+     */
+    public Certificate[] getTimestampCertificates() {
+        return timestampCerts.toArray(new Certificate[0]);
     }
 
     /**
@@ -1371,7 +1399,7 @@ public class PdfPKCS7 {
      * @return the X.509 certificates associated with this PKCS#7 object
      */
     public Certificate[] getSignCertificateChain() {
-        return signCerts.toArray(new X509Certificate[signCerts.size()]);
+        return signCerts.toArray(new Certificate[0]);
     }
 
     /**
@@ -1417,15 +1445,28 @@ public class PdfPKCS7 {
 
     // Certificate Revocation Lists
 
+    // Stored in the SignerInfo.
     private Collection<CRL> crls;
 
+    // Stored in crls field of th SignedData.
+    private final Collection<CRL> signedDataCrls = new ArrayList<>();
+
     /**
-     * Get the X.509 certificate revocation lists associated with this PKCS#7 object
+     * Get the X.509 certificate revocation lists associated with this PKCS#7 object (stored in Signer Info).
      *
-     * @return the X.509 certificate revocation lists associated with this PKCS#7 object
+     * @return the X.509 certificate revocation lists associated with this PKCS#7 object.
      */
     public Collection<CRL> getCRLs() {
         return crls;
+    }
+
+    /**
+     * Get the X.509 certificate revocation lists associated with this PKCS#7 Signed Data object.
+     *
+     * @return the X.509 certificate revocation lists associated with this PKCS#7 Signed Data object.
+     */
+    public Collection<CRL> getSignedDataCRLs() {
+        return signedDataCrls;
     }
 
     /**
@@ -1452,10 +1493,21 @@ public class PdfPKCS7 {
      */
     IBasicOCSPResponse basicResp;
 
+    private final Collection<IBasicOCSPResponse> signedDataOcsps = new ArrayList<>();
+
     /**
-     * Gets the OCSP basic response if there is one.
+     * Gets the OCSP basic response collection retrieved from SignedData structure.
      *
-     * @return the OCSP basic response or null
+     * @return the OCSP basic response collection.
+     */
+    public Collection<IBasicOCSPResponse> getSignedDataOcsps() {
+        return signedDataOcsps;
+    }
+
+    /**
+     * Gets the OCSP basic response from the SignerInfo if there is one.
+     *
+     * @return the OCSP basic response or null.
      */
     public IBasicOCSPResponse getOcsp() {
         return basicResp;
@@ -1474,11 +1526,11 @@ public class PdfPKCS7 {
             return false;
         }
         try {
-            X509Certificate[] cs = (X509Certificate[]) getSignCertificateChain();
+            Certificate[] cs = getSignCertificateChain();
             ISingleResp sr = BOUNCY_CASTLE_FACTORY.createSingleResp(basicResp);
             ICertificateID cid = sr.getCertID();
             X509Certificate sigcer = getSigningCertificate();
-            X509Certificate isscer = cs[1];
+            X509Certificate isscer = (X509Certificate) cs[1];
             ICertificateID tis = SignUtils.generateCertificateId(isscer, sigcer.getSerialNumber(), cid.getHashAlgOID());
             return tis.equals(cid);
         } catch (Exception ignored) {
@@ -1489,13 +1541,13 @@ public class PdfPKCS7 {
     /**
      * Helper method that creates the IBasicOCSPResp object.
      *
-     * @param seq
+     * @param seq {@link IASN1Sequence} wrapper
      *
-     * @throws IOException
+     * @throws IOException if some I/O error occurred.
      */
     private void findOcsp(IASN1Sequence seq) throws IOException {
         basicResp = null;
-        boolean ret = false;
+        boolean ret;
         while (true) {
             IASN1ObjectIdentifier objectIdentifier = BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(
                     seq.getObjectAt(0));

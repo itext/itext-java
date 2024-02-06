@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -73,6 +73,13 @@ public class PdfAAgnosticPdfDocumentUnitTest extends ExtendedITextTest {
         Assert.assertNull(xmpMeta.getProperty(XMPConst.NS_PDFA_ID, XMPConst.CONFORMANCE));
 
         pdfDoc.close();
+    }
+
+    @Test
+    public void getDefaultFont() throws IOException {
+        TestAgnosticPdfDocument pdfDoc = new TestAgnosticPdfDocument(new PdfReader(sourceFolder + "pdfs/simpleDoc.pdf"),
+                new PdfWriter(new ByteArrayOutputStream()));
+        Assert.assertNotNull(pdfDoc.getDefaultFont());
     }
 
     @Test

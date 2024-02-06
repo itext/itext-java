@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -38,6 +38,7 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
+import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -45,6 +46,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Map;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -60,6 +62,11 @@ public class PageFlushingTest extends ExtendedITextTest {
         createOrClearDestinationFolder(destinationFolder);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+    
     @Test
     public void baseWriting01() throws IOException {
         // not all objects are made indirect before closing
@@ -287,7 +294,7 @@ public class PageFlushingTest extends ExtendedITextTest {
         String input = sourceFolder + "100pages.pdf";
         String output = destinationFolder + "modifyAnnotOnly.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(input), new PdfWriter(output), new StampingProperties().useAppendMode());
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(input), CompareTool.createTestPdfWriter(output), new StampingProperties().useAppendMode());
 
         PdfPage page = pdfDoc.getPage(1);
         PdfIndirectReference pageIndRef = page.getPdfObject().getIndirectReference();
@@ -315,7 +322,7 @@ public class PageFlushingTest extends ExtendedITextTest {
         String input = sourceFolder + "100pages.pdf";
         String output = destinationFolder + "setLinkDestinationToPageAppendMode.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(input), new PdfWriter(output), new StampingProperties().useAppendMode());
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(input), CompareTool.createTestPdfWriter(output), new StampingProperties().useAppendMode());
 
         PdfPage page1 = pdfDoc.getPage(1);
         PdfPage page2 = pdfDoc.getPage(2);
@@ -379,7 +386,7 @@ public class PageFlushingTest extends ExtendedITextTest {
     public void flushingPageResourcesMadeIndependent() throws IOException {
         String inputFile = sourceFolder + "100pagesSharedResDict.pdf";
         String outputFile = destinationFolder + "flushingPageResourcesMadeIndependent.pdf";
-        PdfDocument pdf = new PdfDocument(new PdfReader(inputFile), new PdfWriter(outputFile));
+        PdfDocument pdf = new PdfDocument(new PdfReader(inputFile), CompareTool.createTestPdfWriter(outputFile));
         int numOfAddedXObjectsPerPage = 10;
         for (int i = 1; i <= pdf.getNumberOfPages(); ++i) {
             PdfPage sourcePage = pdf.getPage(i);
@@ -409,7 +416,7 @@ public class PageFlushingTest extends ExtendedITextTest {
         pdf.close();
 
         printOutputPdfNameAndDir(outputFile);
-        PdfDocument result = new PdfDocument(new PdfReader(outputFile));
+        PdfDocument result = new PdfDocument(CompareTool.createOutputReader(outputFile));
         PdfObject page15Res = result.getPage(15).getPdfObject().get(PdfName.Resources, false);
         PdfObject page34Res = result.getPage(34).getPdfObject().get(PdfName.Resources, false);
         Assert.assertTrue(page15Res.isDictionary());
@@ -427,16 +434,16 @@ public class PageFlushingTest extends ExtendedITextTest {
         PdfDocument pdfDoc;
         switch (docMode) {
             case WRITING:
-                pdfDoc = new PdfDocument(new PdfWriter(output));
+                pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(output));
                 break;
             case READING:
                 pdfDoc = new PdfDocument(new PdfReader(input));
                 break;
             case STAMPING:
-                pdfDoc = new PdfDocument(new PdfReader(input), new PdfWriter(output));
+                pdfDoc = new PdfDocument(new PdfReader(input), CompareTool.createTestPdfWriter(output));
                 break;
             case APPEND:
-                pdfDoc = new PdfDocument(new PdfReader(input), new PdfWriter(output), new StampingProperties().useAppendMode());
+                pdfDoc = new PdfDocument(new PdfReader(input), CompareTool.createTestPdfWriter(output), new StampingProperties().useAppendMode());
                 break;
             default:
                 throw new IllegalStateException();

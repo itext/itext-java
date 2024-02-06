@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -33,20 +33,52 @@ import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
  */
 public class PdfTextFormField extends PdfFormField {
 
+    /**
+     * constant which determines whether field currently represents a path.
+     */
     public static final int FF_FILE_SELECT = makeFieldFlag(21);
+    /**
+     * constant which determines whether spell-checking is currently enabled
+     */
     public static final int FF_DO_NOT_SPELL_CHECK = makeFieldFlag(23);
+    /**
+     * constant which determines whether longer texts are currently allowed.
+     */
     public static final int FF_DO_NOT_SCROLL = makeFieldFlag(24);
+    /**
+     * constant which determines maximum length of the field's text.
+     */
     public static final int FF_COMB = makeFieldFlag(25);
+    /**
+     * constant which determines whether text is currently represented as rich text.
+     */
     public static final int FF_RICH_TEXT = makeFieldFlag(26);
 
+    /**
+     * Creates a minimal {@link PdfTextFormField}.
+     *
+     * @param pdfDocument The {@link PdfDocument} instance.
+     */
     protected PdfTextFormField(PdfDocument pdfDocument) {
         super(pdfDocument);
     }
 
+    /**
+     * Creates a text form field as a parent of a {@link PdfWidgetAnnotation}.
+     *
+     * @param widget The widget which will be a kid of the {@link PdfTextFormField}.
+     * @param pdfDocument The {@link PdfDocument} instance.
+     */
     protected PdfTextFormField(PdfWidgetAnnotation widget, PdfDocument pdfDocument) {
         super(widget, pdfDocument);
     }
 
+    /**
+     * Creates a text form field as a wrapper object around a {@link PdfDictionary}.
+     * This {@link PdfDictionary} must be an indirect object.
+     *
+     * @param pdfObject the dictionary to be wrapped, must have an indirect reference.
+     */
     protected PdfTextFormField(PdfDictionary pdfObject) {
         super(pdfObject);
     }

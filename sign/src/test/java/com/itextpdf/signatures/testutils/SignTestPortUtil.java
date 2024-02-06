@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -33,6 +33,7 @@ import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPReqBuilder;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.kernel.pdf.PdfEncryption;
 import com.itextpdf.signatures.BouncyCastleDigest;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
@@ -46,12 +47,16 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.Collection;
 
+/**
+ * Util class for internal usage only.
+ */
 public class SignTestPortUtil {
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     public static ICertificateID generateCertificateId(X509Certificate issuerCert, BigInteger serialNumber,
-            IAlgorithmIdentifier digestAlgorithmIdentifier)
+                                                       IAlgorithmIdentifier digestAlgorithmIdentifier)
             throws AbstractOperatorCreationException, CertificateEncodingException, AbstractOCSPException {
         return BOUNCY_CASTLE_FACTORY.createCertificateID(
                 BOUNCY_CASTLE_FACTORY.createJcaDigestCalculatorProviderBuilder().build().get(digestAlgorithmIdentifier),
@@ -82,5 +87,9 @@ public class SignTestPortUtil {
         KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
         keyGen.initialize(2048);
         return keyGen;
+    }
+
+    public static <T> T getFirstElement(Collection<T> collection) {
+        return collection.iterator().next();
     }
 }

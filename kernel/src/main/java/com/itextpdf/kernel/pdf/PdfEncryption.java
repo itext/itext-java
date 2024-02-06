@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -23,6 +23,7 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.commons.utils.SystemUtil;
+import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.kernel.crypto.IDecryptor;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
 import com.itextpdf.kernel.crypto.securityhandler.PubKeySecurityHandler;
@@ -53,6 +54,7 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
     private static final int STANDARD_ENCRYPTION_128 = 3;
     private static final int AES_128 = 4;
     private static final int AES_256 = 5;
+    private static final int DEFAULT_KEY_LENGTH = 40;
 
     private static long seq = SystemUtil.getTimeBasedSeed();
 
@@ -289,20 +291,39 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param firstId the first id
      * @param secondId the second id
+     *
+     * @return PdfObject containing the two entries.
+     * @deprecated Use {@link #createInfoId(byte[], byte[], boolean)} instead
+     */
+    @Deprecated
+    public static PdfObject createInfoId(byte[] firstId, byte[] secondId) {
+        return createInfoId(firstId, secondId, false);
+    }
+
+    /**
+     * Creates a PdfLiteral that contains an array of two id entries. These entries are both hexadecimal
+     * strings containing up to 16 hex characters. The first entry is the original id, the second entry
+     * should be different from the first one if the document has changed.
+     *
+     * @param firstId the first id
+     * @param secondId the second id
+     * @param preserveEncryption the encryption preserve
+     *
      * @return PdfObject containing the two entries.
      */
-    public static PdfObject createInfoId(byte[] firstId, byte[] secondId) {
-        if ( firstId.length < 16 ) {
-            firstId = padByteArrayTo16(firstId);
+    public static PdfObject createInfoId(byte[] firstId, byte[] secondId, boolean preserveEncryption) {
+        if (!preserveEncryption) {
+            if (firstId.length < 16) {
+                firstId = padByteArrayTo16(firstId);
+            }
+
+            if (secondId.length < 16) {
+                secondId = padByteArrayTo16(secondId);
+            }
         }
 
-        if ( secondId.length < 16 ) {
-            secondId = padByteArrayTo16(secondId);
-        }
-
-        com.itextpdf.io.source.ByteBuffer buf = new com.itextpdf.io.source.ByteBuffer(90);
+        ByteBuffer buf = new ByteBuffer(90);
         buf.append('[').append('<');
-
         for (int k = 0; k < firstId.length; ++k)
             buf.appendHex(firstId[k]);
         buf.append('>').append('<');
@@ -434,8 +455,7 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
     }
 
     private void setKeyLength(int keyLength) {
-        // 40 - is default value;
-        if (keyLength != 40) {
+        if (keyLength != DEFAULT_KEY_LENGTH) {
             getPdfObject().put(PdfName.Length, new PdfNumber(keyLength));
         }
     }
@@ -494,9 +514,7 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
                 break;
             case 3:
                 PdfNumber lengthValue = encDict.getAsNumber(PdfName.Length);
-                if (lengthValue == null)
-                    throw new PdfException(KernelExceptionMessageConstant.ILLEGAL_LENGTH_VALUE);
-                length = lengthValue.intValue();
+                length = lengthValue == null ? DEFAULT_KEY_LENGTH : lengthValue.intValue();
                 if (length > 128 || length < 40 || length % 8 != 0)
                     throw new PdfException(KernelExceptionMessageConstant.ILLEGAL_LENGTH_VALUE);
                 cryptoMode = EncryptionConstants.STANDARD_ENCRYPTION_128;
@@ -559,9 +577,7 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
                 break;
             case 2:
                 PdfNumber lengthValue = encDict.getAsNumber(PdfName.Length);
-                if (lengthValue == null)
-                    throw new PdfException(KernelExceptionMessageConstant.ILLEGAL_LENGTH_VALUE);
-                length = lengthValue.intValue();
+                length = lengthValue == null ? DEFAULT_KEY_LENGTH : lengthValue.intValue();
                 if (length > 128 || length < 40 || length % 8 != 0)
                     throw new PdfException(KernelExceptionMessageConstant.ILLEGAL_LENGTH_VALUE);
                 cryptoMode = EncryptionConstants.STANDARD_ENCRYPTION_128;

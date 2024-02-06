@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -295,5 +295,38 @@ public class CssDimensionParsingUtilsTest extends ExtendedITextTest {
 
         Assert.assertEquals(expected.getColor(), actual.getColor());
         Assert.assertEquals(expected.getOpacity(), actual.getOpacity(), 0.0001f);
+    }
+
+    @Test
+    public void parseLengthAbsoluteTest() {
+        float result = CssDimensionParsingUtils.parseLength("10pt", 1, 2, 1, 1);
+        Assert.assertEquals(10, result, 0.0001f);
+
+        result = CssDimensionParsingUtils.parseLength("10px", 1, 1, 2, 1);
+        Assert.assertEquals(7.5, result, 0.0001f);
+
+        result = CssDimensionParsingUtils.parseLength("10in", 1, 1, 2, 1);
+        Assert.assertEquals(720, result, 0.0001f);
+    }
+
+    @Test
+    public void parseLengthPercentTest() {
+        final float result = CssDimensionParsingUtils.parseLength("10%", 10, 2, 1, 1);
+        Assert.assertEquals(1, result, 0.0001f);
+    }
+
+    @Test
+    public void parseLengthFontTest() {
+        float result = CssDimensionParsingUtils.parseLength("10em", 10, 2, 8, 9);
+        Assert.assertEquals(80, result, 0.0001f);
+
+        result = CssDimensionParsingUtils.parseLength("10rem", 10, 2, 8, 9);
+        Assert.assertEquals(90, result, 0.0001f);
+    }
+
+    @Test
+    public void parseLengthInvalidTest() {
+        final float result = CssDimensionParsingUtils.parseLength("10cmm", 10, 2, 8, 9);
+        Assert.assertEquals(2, result, 0.0001f);
     }
 }

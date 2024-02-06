@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -29,6 +29,7 @@ import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.signatures.PdfSigner;
+import com.itextpdf.signatures.TestSignUtils;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.signatures.testutils.client.TestTsaClient;
@@ -80,7 +81,7 @@ public class TimestampSigTest extends ExtendedITextTest {
         TestTsaClient testTsa = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
         signer.timestamp(testTsa, "timestampSig1");
 
-        PadesSigTest.basicCheckSignedDoc(destinationFolder + "timestampTest01.pdf", "timestampSig1");
+        TestSignUtils.basicCheckSignedDoc(destinationFolder + "timestampTest01.pdf", "timestampSig1");
 
         Assert.assertNull(
                 SignaturesCompareTool.compareSignatures(outFileName, sourceFolder + "cmp_timestampTest01.pdf"));
