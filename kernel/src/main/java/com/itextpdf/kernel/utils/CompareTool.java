@@ -179,7 +179,7 @@ public class CompareTool {
      *                               be created, or cannot be opened for any other reason.
      */
     public static PdfWriter createTestPdfWriter(String filename, WriterProperties properties) throws FileNotFoundException {
-        return new MemoryFirstPdfWriter(filename, properties);
+        return new MemoryFirstPdfWriter(filename, properties); // Android-Conversion-Replace return new PdfWriter(filename, properties);
     }
 
     /**
