@@ -23,6 +23,16 @@
       <url>https://artifactory.openpreservation.org/artifactory/vera-dev</url>
     </repository>
   </repositories>
+  <dependencyManagement>
+  <dependencies>
+      <!-- remove when VeraPdf uses the same or a newer version -->
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>2.16.0</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
   <dependencies>
     <dependency>
       <groupId>org.verapdf</groupId>

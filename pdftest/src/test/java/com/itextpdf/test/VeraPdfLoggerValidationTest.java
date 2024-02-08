@@ -45,10 +45,29 @@ public class VeraPdfLoggerValidationTest extends ExtendedITextTest {
     }
 
     @Test
-    public void checkValidatorLogsTest() throws IOException {
+    public void checkValidatorLogsNoOutputTest() throws IOException {
+        String source = "pdfA2b_checkValidatorLogsTest.pdf";
+        String target = "checkValidatorLogsNoOutputTest.pdf";
+        FileUtil.copy(SOURCE_FOLDER + source, DESTINATION_FOLDER + target);
+        Assert.assertNull(new VeraPdfValidator().validate(DESTINATION_FOLDER + target)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+    }
 
-        String fileNameWithWarnings = "cmp_pdfA2b_checkValidatorLogsTest_with_warnings.pdf";
-        String fileNameWithoutWarnings = "cmp_pdfA2b_checkValidatorLogsTest.pdf";
+    @Test
+    public void checkValidatorLogsWithWarningTest() throws IOException {
+        String source = "pdfA2b_checkValidatorLogsTest_with_warnings.pdf";
+        String target = "checkValidatorLogsWitWarningTest.pdf";
+        FileUtil.copy(SOURCE_FOLDER + source, DESTINATION_FOLDER + target);
+        String expectedWarningsForFileWithWarnings = "The following warnings and errors were logged during validation:\n"
+                + "WARNING: Invalid embedded cff font. Charset range exceeds number of glyphs\n"
+                + "WARNING: Missing OutputConditionIdentifier in an output intent dictionary\n"
+                + "WARNING: The Top DICT does not begin with ROS operator";
+        Assert.assertEquals(expectedWarningsForFileWithWarnings, new VeraPdfValidator().validate(DESTINATION_FOLDER + target)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+    }
+
+    @Test
+    public void checkValidatorLogsCleanupTest() throws IOException {
+        String fileNameWithWarnings = "pdfA2b_checkValidatorLogsTest_with_warnings.pdf";
+        String fileNameWithoutWarnings = "pdfA2b_checkValidatorLogsTest.pdf";
         FileUtil.copy(SOURCE_FOLDER + fileNameWithWarnings, DESTINATION_FOLDER + fileNameWithWarnings);
         FileUtil.copy(SOURCE_FOLDER + fileNameWithoutWarnings, DESTINATION_FOLDER + fileNameWithoutWarnings);
 
@@ -60,5 +79,16 @@ public class VeraPdfLoggerValidationTest extends ExtendedITextTest {
 
         //We check that the logs are empty after the first check
         Assert.assertNull(new VeraPdfValidator().validate(DESTINATION_FOLDER + fileNameWithoutWarnings)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+    }
+
+    @Test
+    public void checkValidatorLogsForFileContainingErrorsTest() throws IOException {
+        String source = "pdfA2b_checkValidatorLogsTest_with_errors.pdf";
+        String target = "checkValidatorLogsForFileContainingErrorsTest.pdf";
+        FileUtil.copy(SOURCE_FOLDER + source, DESTINATION_FOLDER + target);
+
+        String expectedResponseForErrors = "VeraPDF verification failed. See verification results: file:";
+        String result =  new VeraPdfValidator().validate(DESTINATION_FOLDER + target); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android));
+        Assert.assertTrue(result.startsWith(expectedResponseForErrors)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 }
