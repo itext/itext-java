@@ -516,8 +516,6 @@
                   <excludeModule>bouncy-castle-fips-adapter</excludeModule>
                 </excludeModules>
               </parameter>
-              <!-- TODO DEVSIX-7811 Enable japicmp after release -->
-              <skip>true</skip>
             </configuration>
           </plugin>
           <plugin>
