@@ -49,6 +49,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import org.slf4j.LoggerFactory;
 
 /**
@@ -73,7 +74,7 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
     /**
      * Checks if form fields need to be flattened.
      *
-     * @return true, if fields need to be flattened
+     * @return true, if fields need to be flattened.
      */
     public boolean isFlatten() {
         if (parent != null) {
@@ -96,7 +97,7 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
     /**
      * Gets the default value of the form field.
      *
-     * @return the default value of the form field
+     * @return the default value of the form field.
      */
     public String getDefaultValue() {
         String defaultValue = this.<String>getProperty(FormProperty.FORM_FIELD_VALUE);
@@ -214,6 +215,7 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
 
     /**
      * Adjusts the field layout.
+     *
      * @param layoutContext layout context
      */
     protected abstract void adjustFieldLayout(LayoutContext layoutContext);
@@ -221,7 +223,7 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
     /**
      * Creates the flat renderer instance.
      *
-     * @return the renderer instance
+     * @return the renderer instance.
      */
     protected abstract IRenderer createFlatRenderer();
 
@@ -235,7 +237,7 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
     /**
      * Gets the model id.
      *
-     * @return the model id
+     * @return the model id.
      */
     protected String getModelId() {
         return ((IFormField) getModelElement()).getId();
@@ -246,7 +248,8 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
      *
      * @param availableWidth  the available width
      * @param availableHeight the available height
-     * @return true, if the renderer fits
+     *
+     * @return true, if the renderer fits.
      */
     protected boolean isRendererFit(float availableWidth, float availableHeight) {
         if (occupiedArea == null) {
@@ -261,12 +264,11 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
     /**
      * Gets the accessibility language.
      *
-     * @return the accessibility language
+     * @return the accessibility language.
      */
     protected String getLang() {
         return this.<String>getProperty(FormProperty.FORM_ACCESSIBILITY_LANGUAGE);
     }
-
 
     /**
      * Gets the conformance level. If the conformance level is not set, the conformance level of the document is used.
@@ -292,13 +294,18 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
 
     /**
      * Determines, whether the layout is based in the renderer itself or flat renderer.
-     * 
-     * @return {@code true} if layout is based on flat renderer, false otherwise
+     *
+     * @return {@code true} if layout is based on flat renderer, false otherwise.
      */
     protected boolean isLayoutBasedOnFlatRenderer() {
         return true;
     }
 
+    /**
+     * Sets the form accessibility language identifier of the form element in case the document is tagged.
+     *
+     * @param pdfDoc the document which contains form field
+     */
     protected void writeAcroFormFieldLangAttribute(PdfDocument pdfDoc) {
         if (pdfDoc.isTagged()) {
             TagTreePointer formParentPointer = pdfDoc.getTagStructureContext().getAutoTaggingPointer();
@@ -318,7 +325,7 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
      * with margins applied (margins shouldn't be an interactive part of the field, i.e. included into its occupied
      * area).
      *
-     * @return the map of deleted margins
+     * @return the map of deleted margins.
      */
     Map<Integer, Object> deleteMargins() {
 

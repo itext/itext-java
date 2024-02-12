@@ -37,6 +37,11 @@ public abstract class AbstractSelectField extends FormField<AbstractSelectField>
 
     protected List<SelectFieldItem> options = new ArrayList<>();
 
+    /**
+     * Instantiates a new {@link AbstractSelectField} instance.
+     *
+     * @param id the id of the field
+     */
     protected AbstractSelectField(String id) {
         super(id);
     }
@@ -44,7 +49,7 @@ public abstract class AbstractSelectField extends FormField<AbstractSelectField>
     /**
      * Add a container with options. This might be a container for options group.
      *
-     * @param optionElement a container with options.
+     * @param optionElement a container with options
      *
      * @deprecated starting from 8.0.1.
      */
@@ -57,7 +62,7 @@ public abstract class AbstractSelectField extends FormField<AbstractSelectField>
     /**
      * Add an option to the element.
      *
-     * @param option a {@link SelectFieldItem}.
+     * @param option a {@link SelectFieldItem}
      */
     public void addOption(SelectFieldItem option) {
         options.add(option);
@@ -66,8 +71,8 @@ public abstract class AbstractSelectField extends FormField<AbstractSelectField>
     /**
      * Add an option to the element.
      *
-     * @param option   a {@link SelectFieldItem}.
-     * @param selected {@code true} is the option if selected, {@code false} otherwise.
+     * @param option   a {@link SelectFieldItem}
+     * @param selected {@code true} is the option if selected, {@code false} otherwise
      */
     public void addOption(SelectFieldItem option, boolean selected) {
         option.getElement().setProperty(FormProperty.FORM_FIELD_SELECTED, selected);
@@ -105,7 +110,7 @@ public abstract class AbstractSelectField extends FormField<AbstractSelectField>
     /**
      * Get an option {@link SelectFieldItem} by its string value.
      *
-     * @param value string value to find an option by.
+     * @param value string value to find an option by
      *
      * @return a {@link SelectFieldItem}.
      */

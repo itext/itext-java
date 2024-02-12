@@ -34,6 +34,9 @@ import com.itextpdf.layout.renderer.DrawContext;
  */
 public final class HtmlCheckBoxRenderingStrategy implements ICheckBoxRenderingStrategy {
 
+    /**
+     * Creates a new {@link HtmlCheckBoxRenderingStrategy} instance.
+     */
     public HtmlCheckBoxRenderingStrategy() {
         // empty constructor
     }

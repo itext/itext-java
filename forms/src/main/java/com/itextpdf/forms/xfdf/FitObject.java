@@ -37,7 +37,7 @@ public class FitObject {
      * Represents the page displayed by current Fit element.
      * Attribute of Fit, FitB, FitBH, FitBV, FitH, FitR, FitV, XYZ elements.
      */
-    private PdfObject page;
+    private final PdfObject page;
 
     /**
      * Vertical coordinate positioned at the top edge of the window.
@@ -65,8 +65,13 @@ public class FitObject {
      */
     private float zoom;
 
+    /**
+     * Creates an instance of {@link FitObject}.
+     *
+     * @param page the page displayed by current Fit element
+     */
     public FitObject(PdfObject page) {
-        if(page == null) {
+        if (page == null) {
             throw new XfdfException(XfdfException.PAGE_IS_MISSING);
         }
         this.page = page;
@@ -76,7 +81,7 @@ public class FitObject {
      * Gets the PdfObject representing the page displayed by current Fit element.
      * Attribute of Fit, FitB, FitBH, FitBV, FitH, FitR, FitV, XYZ elements.
      *
-     * @return {@link PdfObject page} of the current Fit element
+     * @return {@link PdfObject page} of the current Fit element.
      */
     public PdfObject getPage() {
         return page;
@@ -85,7 +90,7 @@ public class FitObject {
     /**
      * Gets a float vertical coordinate positioned at the top edge of the window.
      *
-     * @return top vertical coordinate
+     * @return top vertical coordinate.
      */
     public float getTop() {
         return top;
@@ -93,8 +98,10 @@ public class FitObject {
 
     /**
      * Sets a float vertical coordinate positioned at the top edge of the window.
+     *
      * @param top vertical coordinate value
-     * @return current {@link FitObject fit object}
+     *
+     * @return current {@link FitObject fit object}.
      */
     public FitObject setTop(float top) {
         this.top = top;
@@ -104,7 +111,7 @@ public class FitObject {
     /**
      * Gets a float horizontal coordinate positioned at the left edge of the window.
      *
-     * @return left horizontal coordinate
+     * @return left horizontal coordinate.
      */
     public float getLeft() {
         return left;
@@ -112,8 +119,10 @@ public class FitObject {
 
     /**
      * Sets a float horizontal coordinate positioned at the left edge of the window.
+     *
      * @param left horizontal coordinate value
-     * @return current {@link FitObject fit object}
+     *
+     * @return current {@link FitObject fit object}.
      */
     public FitObject setLeft(float left) {
         this.left = left;
@@ -123,7 +132,7 @@ public class FitObject {
     /**
      * Gets a float vertical coordinate positioned at the bottom edge of the window.
      *
-     * @return bottom vertical coordinate
+     * @return bottom vertical coordinate.
      */
     public float getBottom() {
         return bottom;
@@ -133,7 +142,8 @@ public class FitObject {
      * Sets a float vertical coordinate positioned at the bottom edge of the window.
      *
      * @param bottom vertical coordinate value
-     * @return current {@link FitObject fit object}
+     *
+     * @return current {@link FitObject fit object}.
      */
     public FitObject setBottom(float bottom) {
         this.bottom = bottom;
@@ -143,7 +153,7 @@ public class FitObject {
     /**
      * Gets a float horizontal coordinate positioned at the right edge of the window.
      *
-     * @return right horizontal coordinate
+     * @return right horizontal coordinate.
      */
     public float getRight() {
         return right;
@@ -153,7 +163,8 @@ public class FitObject {
      * Sets a float horizontal coordinate positioned at the right edge of the window.
      *
      * @param right horizontal coordinate
-     * @return current {@link FitObject fit object}
+     *
+     * @return current {@link FitObject fit object}.
      */
     public FitObject setRight(float right) {
         this.right = right;
@@ -164,7 +175,7 @@ public class FitObject {
      * Gets a float representing the zoom ratio.
      * Attribute of XYZ object.
      *
-     * @return zoom ratio value
+     * @return zoom ratio value.
      */
     public float getZoom() {
         return zoom;
@@ -175,7 +186,8 @@ public class FitObject {
      * Attribute of XYZ object.
      *
      * @param zoom ratio value
-     * @return current {@link FitObject fit object}
+     *
+     * @return current {@link FitObject fit object}.
      */
     public FitObject setZoom(float zoom) {
         this.zoom = zoom;

@@ -59,6 +59,9 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
         addChild(createFlatRenderer());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
         // Resolve width here in case it's relative, while parent width is still intact.
@@ -124,6 +127,9 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void drawChildren(DrawContext drawContext) {
         if (isFlatten()) {
@@ -136,12 +142,17 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
     /**
      * Gets the accessibility language.
      *
-     * @return the accessibility language
+     * @return the accessibility language.
      */
     protected String getLang() {
         return this.<String>getProperty(FormProperty.FORM_ACCESSIBILITY_LANGUAGE);
     }
 
+    /**
+     * Sets the form accessibility language identifier of the form element in case the document is tagged.
+     *
+     * @param pdfDoc the document which contains form field.
+     */
     protected void writeAcroFormFieldLangAttribute(PdfDocument pdfDoc) {
         if (pdfDoc.isTagged()) {
             TagTreePointer formParentPointer = pdfDoc.getTagStructureContext().getAutoTaggingPointer();
@@ -156,14 +167,24 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
         }
     }
 
+    /**
+     * Creates the flat renderer instance.
+     *
+     * @return {@link IRenderer} instance.
+     */
     protected abstract IRenderer createFlatRenderer();
 
+    /**
+     * Applies the AcroField widget.
+     *
+     * @param drawContext the draw context
+     */
     protected abstract void applyAcroField(DrawContext drawContext);
 
     /**
      * Checks if form fields need to be flattened.
      *
-     * @return true, if fields need to be flattened
+     * @return true, if fields need to be flattened.
      */
     protected boolean isFlatten() {
         return (boolean) getPropertyAsBoolean(FormProperty.FORM_FIELD_FLATTEN);
@@ -172,7 +193,7 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
     /**
      * Gets the model id.
      *
-     * @return the model id
+     * @return the model id.
      */
     protected String getModelId() {
         return ((IFormField) getModelElement()).getId();
@@ -182,8 +203,8 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
      * Retrieve the options from select field (can be combo box or list box field) and set them
      * to the form field builder.
      *
-     * @param builder {@link ChoiceFormFieldBuilder} to set options to.
-     * @param field {@link AbstractSelectField} to retrieve the options from.
+     * @param builder {@link ChoiceFormFieldBuilder} to set options to
+     * @param field   {@link AbstractSelectField} to retrieve the options from
      */
     protected void setupBuilderValues(ChoiceFormFieldBuilder builder, AbstractSelectField field) {
         List<SelectFieldItem> options = field.getItems();
@@ -215,6 +236,15 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
         }
     }
 
+    /**
+     * Returns final height of the select field.
+     *
+     * @param availableHeight available height of the layout area
+     * @param actualHeight    actual occupied height of the select field
+     * @param isClippedHeight indicates whether the layout area's height is clipped or not
+     *
+     * @return final height of the select field.
+     */
     protected float getFinalSelectFieldHeight(float availableHeight, float actualHeight, boolean isClippedHeight) {
         boolean isForcedPlacement = Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT));
         if (!isClippedHeight && actualHeight > availableHeight) {
@@ -248,6 +278,14 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
         return null;
     }
 
+
+    /**
+     * Gets options that are marked as selected from the select field options subtree.
+     *
+     * @param optionsSubTree options subtree to get selected options
+     *
+     * @return selected options list.
+     */
     protected List<IRenderer> getOptionsMarkedSelected(IRenderer optionsSubTree) {
         List<IRenderer> selectedOptions = new ArrayList<>();
         for (IRenderer option : optionsSubTree.getChildRenderers()) {

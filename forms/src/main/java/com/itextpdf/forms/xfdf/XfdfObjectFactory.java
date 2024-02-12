@@ -61,15 +61,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+/**
+ * A factory for creating {@link XfdfObject} objects.
+ */
 public class XfdfObjectFactory {
 
     private static final Logger logger = LoggerFactory.getLogger(XfdfObjectFactory.class);
 
     /**
      * Extracts data from pdf document acroform and annotations into XfdfObject.
-     * *
-     * @param document Pdf document for data extraction.
-     * @param filename The name od pdf document for data extraction.
+     *
+     * @param document Pdf document for data extraction
+     * @param filename The name od pdf document for data extraction
+     *
      * @return XfdfObject containing data from pdf forms and annotations.
      */
     public XfdfObject createXfdfObject(PdfDocument document, String filename) {
@@ -83,13 +87,13 @@ public class XfdfObjectFactory {
                 String delims = ".";
                 StringTokenizer st = new StringTokenizer(fieldName, delims);
                 List<String> nameParts = new ArrayList<>();
-                while(st.hasMoreTokens()) {
+                while (st.hasMoreTokens()) {
                     nameParts.add(st.nextToken());
                 }
                 String name = nameParts.get(nameParts.size() - 1);
                 String value = form.getField(fieldName).getValueAsString();
                 FieldObject childField = new FieldObject(name, value, false);
-                if(nameParts.size() > 1) {
+                if (nameParts.size() > 1) {
                     FieldObject parentField = new FieldObject();
                     parentField.setName(nameParts.get(nameParts.size() - 2));
                     childField.setParent(parentField);
@@ -117,15 +121,17 @@ public class XfdfObjectFactory {
     }
 
     /**
-     * Extracts data from input stream into XfdfObject. Typically input stream is based on .xfdf file
+     * Extracts data from input stream into XfdfObject. Typically input stream is based on .xfdf file.
      *
-     * @param xfdfInputStream The input stream containing xml-styled xfdf data.
+     * @param xfdfInputStream the input stream containing xml-styled xfdf data
+     *
      * @return XfdfObject containing original xfdf data.
+     *
      * @throws ParserConfigurationException if a XfdfObject cannot be created which satisfies the configuration
      *                                      requested.
      * @throws SAXException                 if any parse errors occurs.
      */
-     public XfdfObject createXfdfObject(InputStream xfdfInputStream) throws ParserConfigurationException, SAXException {
+    public XfdfObject createXfdfObject(InputStream xfdfInputStream) throws ParserConfigurationException, SAXException {
         XfdfObject xfdfObject = new XfdfObject();
 
         Document document = XfdfFileUtils.createXfdfDocumentFromStream(xfdfInputStream);
@@ -198,18 +204,18 @@ public class XfdfObjectFactory {
     }
 
     private static boolean isAnnotSupported(String nodeName) {
-       return XfdfConstants.TEXT.equalsIgnoreCase(nodeName) ||
-               XfdfConstants.HIGHLIGHT.equalsIgnoreCase(nodeName) ||
-               XfdfConstants.UNDERLINE.equalsIgnoreCase(nodeName) ||
-               XfdfConstants.STRIKEOUT.equalsIgnoreCase(nodeName) ||
-               XfdfConstants.SQUIGGLY.equalsIgnoreCase(nodeName) ||
-               XfdfConstants.CIRCLE.equalsIgnoreCase(nodeName) ||
-               XfdfConstants.SQUARE.equalsIgnoreCase(nodeName) ||
-               XfdfConstants.POLYLINE.equalsIgnoreCase(nodeName) ||
-               XfdfConstants.POLYGON.equalsIgnoreCase(nodeName) ||
-               XfdfConstants.STAMP.equalsIgnoreCase(nodeName) ||
+        return XfdfConstants.TEXT.equalsIgnoreCase(nodeName) ||
+                XfdfConstants.HIGHLIGHT.equalsIgnoreCase(nodeName) ||
+                XfdfConstants.UNDERLINE.equalsIgnoreCase(nodeName) ||
+                XfdfConstants.STRIKEOUT.equalsIgnoreCase(nodeName) ||
+                XfdfConstants.SQUIGGLY.equalsIgnoreCase(nodeName) ||
+                XfdfConstants.CIRCLE.equalsIgnoreCase(nodeName) ||
+                XfdfConstants.SQUARE.equalsIgnoreCase(nodeName) ||
+                XfdfConstants.POLYLINE.equalsIgnoreCase(nodeName) ||
+                XfdfConstants.POLYGON.equalsIgnoreCase(nodeName) ||
+                XfdfConstants.STAMP.equalsIgnoreCase(nodeName) ||
 //               XfdfConstants.FREETEXT.equalsIgnoreCase(nodeName) ||
-               XfdfConstants.LINE.equalsIgnoreCase(nodeName);
+                XfdfConstants.LINE.equalsIgnoreCase(nodeName);
     }
 
     private void readAnnotsList(Node node, AnnotsObject annotsObject) {
@@ -220,7 +226,7 @@ public class XfdfObjectFactory {
             if (currentNode.getNodeType() == Node.ELEMENT_NODE &&
                     isAnnotationSubtype(currentNode.getNodeName()) &&
                     isAnnotSupported(currentNode.getNodeName())) {
-                        visitAnnotationNode(currentNode, annotsObject);
+                visitAnnotationNode(currentNode, annotsObject);
             }
         }
     }
@@ -348,7 +354,8 @@ public class XfdfObjectFactory {
                 case XfdfConstants.INTENSITY:
                     annotObject.addAttribute(new AttributeObject(attributeName, attributeNode.getNodeValue()));
                     break;
-                default: logger.warn(IoLogMessageConstant.XFDF_UNSUPPORTED_ANNOTATION_ATTRIBUTE);
+                default:
+                    logger.warn(IoLogMessageConstant.XFDF_UNSUPPORTED_ANNOTATION_ATTRIBUTE);
                     break;
             }
         }
@@ -443,18 +450,18 @@ public class XfdfObjectFactory {
     }
 
     private static void addPopup(PdfAnnotation pdfAnnot, AnnotsObject annots, int pageNumber) {
-        if(((PdfPopupAnnotation)pdfAnnot).getParentObject() != null) {
-            PdfAnnotation parentAnnotation = ((PdfPopupAnnotation)pdfAnnot).getParent();
+        if (((PdfPopupAnnotation) pdfAnnot).getParentObject() != null) {
+            PdfAnnotation parentAnnotation = ((PdfPopupAnnotation) pdfAnnot).getParent();
             PdfIndirectReference parentRef = parentAnnotation.getPdfObject().getIndirectReference();
             boolean hasParentAnnot = false;
-            for(AnnotObject annot: annots.getAnnotsList()) {
-                if(parentRef.equals(annot.getRef())) {
+            for (AnnotObject annot : annots.getAnnotsList()) {
+                if (parentRef.equals(annot.getRef())) {
                     hasParentAnnot = true;
                     annot.setHasPopup(true);
                     annot.setPopup(createXfdfAnnotation(pdfAnnot, pageNumber));
                 }
             }
-            if(!hasParentAnnot) {
+            if (!hasParentAnnot) {
                 AnnotObject parentAnnot = new AnnotObject();
                 parentAnnot.setRef(parentRef);
                 parentAnnot.addFdfAttributes(pageNumber);
@@ -469,13 +476,13 @@ public class XfdfObjectFactory {
 
     private static void addAnnotation(PdfAnnotation pdfAnnot, AnnotsObject annots, int pageNumber) {
         boolean hasCorrecpondingAnnotObject = false;
-        for(AnnotObject annot : annots.getAnnotsList()) {
-            if(pdfAnnot.getPdfObject().getIndirectReference().equals(annot.getRef())) {
+        for (AnnotObject annot : annots.getAnnotsList()) {
+            if (pdfAnnot.getPdfObject().getIndirectReference().equals(annot.getRef())) {
                 hasCorrecpondingAnnotObject = true;
                 updateXfdfAnnotation(annot, pdfAnnot, pageNumber);
             }
         }
-        if(!hasCorrecpondingAnnotObject) {
+        if (!hasCorrecpondingAnnotObject) {
             annots.addAnnot(createXfdfAnnotation(pdfAnnot, pageNumber));
         }
     }
@@ -487,10 +494,10 @@ public class XfdfObjectFactory {
             PdfPage page = pdfDoc.getPage(i);
             List<PdfAnnotation> pdfAnnots = page.getAnnotations();
             for (PdfAnnotation pdfAnnot : pdfAnnots) {
-                if(pdfAnnot.getSubtype() == PdfName.Popup) {
+                if (pdfAnnot.getSubtype() == PdfName.Popup) {
                     addPopup(pdfAnnot, annots, i);
                 } else {
-                   addAnnotation(pdfAnnot, annots, i);
+                    addAnnotation(pdfAnnot, annots, i);
                 }
             }
         }
@@ -498,7 +505,7 @@ public class XfdfObjectFactory {
     }
 
     private static void updateXfdfAnnotation(AnnotObject annotObject, PdfAnnotation pdfAnnotation, int pageNumber) {
-        //TODO DEVSIX-4132 implement update, refactor createXfdfAnnotation() method to accommodate the change
+        // TODO DEVSIX-4132 implement update, refactor createXfdfAnnotation() method to accommodate the change.
     }
 
     private static void addCommonAnnotationAttributes(AnnotObject annot, PdfAnnotation pdfAnnotation) {
@@ -509,7 +516,7 @@ public class XfdfObjectFactory {
         }
         annot.addAttribute(XfdfConstants.DATE, pdfAnnotation.getDate());
         String flagsString = XfdfObjectUtils.convertFlagsToString(pdfAnnotation);
-        if(flagsString != null) {
+        if (flagsString != null) {
             annot.addAttribute(new AttributeObject(XfdfConstants.FLAGS, flagsString));
         }
 
@@ -526,7 +533,7 @@ public class XfdfObjectFactory {
     }
 
     private static void addBorderStyleAttributes(AnnotObject annotObject, PdfNumber width,
-            PdfArray dashes, PdfName style) {
+                                                 PdfArray dashes, PdfName style) {
         annotObject.addAttribute(XfdfConstants.WIDTH, width);
         annotObject.addAttribute(XfdfConstants.DASHES, XfdfObjectUtils.convertDashesFromArray(dashes));
         annotObject.addAttribute(XfdfConstants.STYLE, XfdfObjectUtils.getStyleFullValue(style));
@@ -596,7 +603,7 @@ public class XfdfObjectFactory {
             annot.addAttribute(new AttributeObject(XfdfConstants.INTERIOR_COLOR, XfdfObjectUtils.convertColorToString(pdfCircleAnnotation.getInteriorColor().getColorValue())));
         }
 
-        if(pdfCircleAnnotation.getRectangleDifferences() != null) {
+        if (pdfCircleAnnotation.getRectangleDifferences() != null) {
             annot.addAttribute(new AttributeObject(XfdfConstants.FRINGE, XfdfObjectUtils.convertFringeToString(
                     pdfCircleAnnotation.getRectangleDifferences().toFloatArray())));
         }
@@ -627,7 +634,7 @@ public class XfdfObjectFactory {
         if (pdfSquareAnnotation.getInteriorColor() != null && pdfSquareAnnotation.getInteriorColor().getColorValue() != null) {
             annot.addAttribute(new AttributeObject(XfdfConstants.INTERIOR_COLOR, XfdfObjectUtils.convertColorToString(pdfSquareAnnotation.getInteriorColor().getColorValue())));
         }
-        if(pdfSquareAnnotation.getRectangleDifferences() != null) {
+        if (pdfSquareAnnotation.getRectangleDifferences() != null) {
             annot.addAttribute(new AttributeObject(XfdfConstants.FRINGE, XfdfObjectUtils.convertFringeToString(
                     pdfSquareAnnotation.getRectangleDifferences().toFloatArray())));
         }
@@ -765,28 +772,28 @@ public class XfdfObjectFactory {
         //in iText pdfLinkAnnotation doesn't have a popup sub-element
 
         PdfDictionary action = pdfLinkAnnotation.getAction();
-        if(pdfLinkAnnotation.getAction() != null) {
+        if (pdfLinkAnnotation.getAction() != null) {
             PdfName type = action.getAsName(PdfName.S);
             ActionObject actionObject = new ActionObject(type);
 
-            if(PdfName.URI.equals(type)) {
+            if (PdfName.URI.equals(type)) {
                 actionObject.setUri(action.getAsString(PdfName.URI));
-                if(action.get(PdfName.IsMap) != null) {
+                if (action.get(PdfName.IsMap) != null) {
                     actionObject.setMap((boolean) action.getAsBool(PdfName.IsMap));
                 }
             }
 
             annot.setAction(actionObject);
         }
-        PdfArray dest =  (PdfArray) pdfLinkAnnotation.getDestinationObject();
+        PdfArray dest = (PdfArray) pdfLinkAnnotation.getDestinationObject();
         if (dest != null) {
             createDestElement(dest, annot);
         }
 
         PdfArray border = pdfLinkAnnotation.getBorder();
-        if(border != null) {
+        if (border != null) {
             BorderStyleAltObject borderStyleAltObject = new BorderStyleAltObject(border.getAsNumber(0).floatValue(),
-                    border.getAsNumber(1).floatValue(),border.getAsNumber(2).floatValue());
+                    border.getAsNumber(1).floatValue(), border.getAsNumber(2).floatValue());
             annot.setBorderStyleAlt(borderStyleAltObject);
         }
     }
@@ -794,38 +801,38 @@ public class XfdfObjectFactory {
     private static void createDestElement(PdfArray dest, AnnotObject annot) {
         DestObject destObject = new DestObject();
         PdfName type = dest.getAsName(1);
-        if(PdfName.XYZ.equals(type)) {
+        if (PdfName.XYZ.equals(type)) {
             FitObject xyz = new FitObject(dest.get(0));
             xyz.setLeft(dest.getAsNumber(2).floatValue())
                     .setTop(dest.getAsNumber(3).floatValue())
                     .setZoom(dest.getAsNumber(4).floatValue());
             destObject.setXyz(xyz);
-        } else if(PdfName.Fit.equals(type)) {
+        } else if (PdfName.Fit.equals(type)) {
             FitObject fit = new FitObject(dest.get(0));
             destObject.setFit(fit);
-        } else if(PdfName.FitB.equals(type)) {
+        } else if (PdfName.FitB.equals(type)) {
             FitObject fitB = new FitObject(dest.get(0));
             destObject.setFitB(fitB);
-        } else if(PdfName.FitR.equals(type)) {
+        } else if (PdfName.FitR.equals(type)) {
             FitObject fitR = new FitObject(dest.get(0));
             fitR.setLeft(dest.getAsNumber(2).floatValue());
             fitR.setBottom(dest.getAsNumber(3).floatValue());
             fitR.setRight(dest.getAsNumber(4).floatValue());
             fitR.setTop(dest.getAsNumber(5).floatValue());
             destObject.setFitR(fitR);
-        } else if(PdfName.FitH.equals(type)) {
+        } else if (PdfName.FitH.equals(type)) {
             FitObject fitH = new FitObject(dest.get(0));
             fitH.setTop(dest.getAsNumber(2).floatValue());
             destObject.setFitH(fitH);
-        } else if(PdfName.FitBH.equals(type)) {
+        } else if (PdfName.FitBH.equals(type)) {
             FitObject fitBH = new FitObject(dest.get(0));
             fitBH.setTop(dest.getAsNumber(2).floatValue());
             destObject.setFitBH(fitBH);
-        } else if(PdfName.FitBV.equals(type)) {
+        } else if (PdfName.FitBV.equals(type)) {
             FitObject fitBV = new FitObject(dest.get(0));
             fitBV.setLeft(dest.getAsNumber(2).floatValue());
             destObject.setFitBV(fitBV);
-        } else if(PdfName.FitV.equals(type)) {
+        } else if (PdfName.FitV.equals(type)) {
             FitObject fitV = new FitObject(dest.get(0));
             fitV.setLeft(dest.getAsNumber(2).floatValue());
             destObject.setFitV(fitV);
@@ -898,13 +905,13 @@ public class XfdfObjectFactory {
             createCircleAnnotation(pdfAnnotation, annot, pageNumber);
         }
         if (pdfAnnotation instanceof PdfSquareAnnotation) {
-           createSquareAnnotation(pdfAnnotation, annot, pageNumber);
+            createSquareAnnotation(pdfAnnotation, annot, pageNumber);
         }
         if (pdfAnnotation instanceof PdfStampAnnotation) {
-           createStampAnnotation(pdfAnnotation, annot, pageNumber);
+            createStampAnnotation(pdfAnnotation, annot, pageNumber);
         }
         if (pdfAnnotation instanceof PdfFreeTextAnnotation) {
-           createFreeTextAnnotation(pdfAnnotation, annot);
+            createFreeTextAnnotation(pdfAnnotation, annot);
         }
         if (pdfAnnotation instanceof PdfLineAnnotation) {
             createLineAnnotation(pdfAnnotation, annot, pageNumber);
@@ -916,7 +923,7 @@ public class XfdfObjectFactory {
             createLinkAnnotation(pdfAnnotation, annot);
         }
 
-        if (isSupportedAnnotation(pdfAnnotation)){
+        if (isSupportedAnnotation(pdfAnnotation)) {
             addCommonAnnotationAttributes(annot, pdfAnnotation);
             if (pdfAnnotation instanceof PdfMarkupAnnotation) {
                 addMarkupAnnotationAttributes(annot, (PdfMarkupAnnotation) pdfAnnotation);
@@ -937,7 +944,7 @@ public class XfdfObjectFactory {
     }
 
     private static boolean isSupportedAnnotation(PdfAnnotation pdfAnnotation) {
-         return pdfAnnotation instanceof PdfTextMarkupAnnotation ||
+        return pdfAnnotation instanceof PdfTextMarkupAnnotation ||
                 pdfAnnotation instanceof PdfTextAnnotation ||
                 pdfAnnotation instanceof PdfCircleAnnotation ||
                 pdfAnnotation instanceof PdfSquareAnnotation ||
