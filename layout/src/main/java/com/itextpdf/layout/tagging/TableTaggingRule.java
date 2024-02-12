@@ -118,7 +118,7 @@ class TableTaggingRule implements ITaggingRule {
      * Creates a dummy element with {@link StandardRoles#TBODY} role if needed.
      * Otherwise, returns a dummy element with a null role.
      *
-     * @param tableHintKey the hint key of the table
+     * @param tableHintKey the hint key of the table.
      *
      * @return a dummy element with {@link StandardRoles#TBODY} role if needed.
      */

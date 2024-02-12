@@ -79,6 +79,9 @@ public final class GraphicsCheckUtil {
         return new ITagTreeIteratorHandler() {
             @Override
             public void nextElement(IStructureNode elem) {
+                if (elem == null){
+                    return;
+                }
                 if (!PdfName.Figure.equals(elem.getRole())) {
                     return;
                 }

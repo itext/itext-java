@@ -41,7 +41,6 @@ import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.IRoleMappingResolver;
 import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
 import com.itextpdf.kernel.pdf.tagutils.TagTreeIterator;
-import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.utils.IValidationChecker;
 import com.itextpdf.kernel.utils.ValidationContext;
 import com.itextpdf.pdfua.checkers.utils.GraphicsCheckUtil;

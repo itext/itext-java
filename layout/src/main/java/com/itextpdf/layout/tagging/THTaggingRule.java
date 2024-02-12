@@ -4,6 +4,7 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.tagging.PdfStructureAttributes;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
+import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
 
 import java.util.List;
 
@@ -33,12 +34,14 @@ class THTaggingRule implements ITaggingRule {
     @Override
     public boolean onTagFinish(LayoutTaggingHelper taggingHelper, TaggingHintKey taggingHintKey) {
         if (taggingHintKey.getAccessibilityProperties() == null) {
-            throw new IllegalArgumentException("TaggingHintKey should have accessibility properties");
+            throw new IllegalArgumentException(LayoutExceptionMessageConstant.TAGGING_HINTKEY_SHOULD_HAVE_ACCES);
         }
-        List<PdfStructureAttributes> attributesList = taggingHintKey.getAccessibilityProperties().getAttributesList();
+        final List<PdfStructureAttributes> attributesList = taggingHintKey.getAccessibilityProperties().getAttributesList();
 
         for (PdfStructureAttributes attributes : attributesList) {
-            PdfName scopeValue = attributes.getPdfObject().getAsName(PdfName.Scope);
+            final PdfName scopeValue = attributes.getPdfObject().getAsName(PdfName.Scope);
+            // the scope None is used to build complicated tables where TD cells don't refer to
+            // the TH cell in the TD cells column or row
             if (scopeValue != null && !PdfName.None.equals(scopeValue)) {
                 return true;
             }
@@ -51,8 +54,8 @@ class THTaggingRule implements ITaggingRule {
             return true;
         }
 
-        AccessibilityProperties properties = taggingHintKey.getAccessibilityProperties();
-        PdfStructureAttributes atr = new PdfStructureAttributes(StandardRoles.TABLE);
+        final AccessibilityProperties properties = taggingHintKey.getAccessibilityProperties();
+        final PdfStructureAttributes atr = new PdfStructureAttributes(StandardRoles.TABLE);
         atr.addEnumAttribute(PdfName.Scope.getValue(), PdfName.Column.getValue());
         properties.addAttributes(atr);
         taggingHintKey.getTagPointer().applyProperties(properties);

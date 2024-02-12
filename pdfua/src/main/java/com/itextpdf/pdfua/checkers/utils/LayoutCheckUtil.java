@@ -23,6 +23,8 @@
 package com.itextpdf.pdfua.checkers.utils;
 
 import com.itextpdf.layout.element.Image;
+import com.itextpdf.layout.element.Table;
+import com.itextpdf.pdfua.checkers.utils.tables.TableCheckUtil;
 
 /**
  * Utility class for delegating the layout checks to the correct checking logic.
@@ -44,6 +46,10 @@ public final class LayoutCheckUtil {
     public static void checkLayoutElements(Object layoutElement) {
         if (layoutElement instanceof Image) {
             GraphicsCheckUtil.checkLayoutImage((Image) layoutElement);
+            return;
+        }
+        if (layoutElement instanceof Table){
+            TableCheckUtil.checkLayoutTable((Table) layoutElement);
             return;
         }
     }
