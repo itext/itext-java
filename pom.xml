@@ -509,6 +509,7 @@
                 <ignoreMissingClasses>true</ignoreMissingClasses>
                 <excludes>
                   <exclude>com.itextpdf.commons.bouncycastle</exclude>
+                  <exclude>com.itextpdf.pdfua.exceptions.PdfUAConformanceException</exclude>
                 </excludes>
                 <excludeModules>
                   <excludeModule>bouncy-castle-adapter</excludeModule>

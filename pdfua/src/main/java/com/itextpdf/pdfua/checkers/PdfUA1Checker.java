@@ -34,6 +34,7 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfStream;
+import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.tagging.PdfMcr;
 import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
@@ -45,6 +46,10 @@ import com.itextpdf.kernel.utils.IValidationChecker;
 import com.itextpdf.kernel.utils.ValidationContext;
 import com.itextpdf.kernel.utils.checkers.FontCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.FormulaCheckUtil;
+import com.itextpdf.kernel.xmp.XMPConst;
+import com.itextpdf.kernel.xmp.XMPException;
+import com.itextpdf.kernel.xmp.XMPMeta;
+import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.pdfua.checkers.utils.GraphicsCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.LayoutCheckUtil;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
@@ -115,6 +120,30 @@ public class PdfUA1Checker implements IValidationChecker {
         }
     }
 
+    protected void checkMetadata(PdfCatalog catalog) {
+        if (catalog.getDocument().getPdfVersion().compareTo(PdfVersion.PDF_1_7) > 0) {
+            throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.INVALID_PDF_VERSION);
+        }
+
+        PdfObject pdfMetadata = catalog.getPdfObject().get(PdfName.Metadata);
+        if (pdfMetadata == null || !pdfMetadata.isStream()) {
+            throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.DOCUMENT_SHALL_CONTAIN_XMP_METADATA_STREAM);
+        }
+        byte[] metaBytes = ((PdfStream) pdfMetadata).getBytes();
+
+        try {
+            XMPMeta metadata = XMPMetaFactory.parseFromBuffer(metaBytes);
+            Integer part = metadata.getPropertyInteger(XMPConst.NS_PDFUA_ID, XMPConst.PART);
+            if (!Integer.valueOf(1).equals(part)) {
+                throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.METADATA_SHALL_CONTAIN_UA_VERSION_IDENTIFIER);
+            }
+            if (metadata.getProperty(XMPConst.NS_DC, XMPConst.TITLE) == null) {
+                throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.METADATA_SHALL_CONTAIN_DC_TITLE_ENTRY);
+            }
+        } catch (XMPException e) {
+            throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.DOCUMENT_SHALL_CONTAIN_XMP_METADATA_STREAM, e);
+        }
+    }
 
     private void checkOnWritingCanvasToContent(Object data) {
         Stack<Tuple2<PdfName, PdfDictionary>> tagStack = getTagStack(data);
@@ -219,6 +248,7 @@ public class PdfUA1Checker implements IValidationChecker {
                                 SUSPECTS_ENTRY_IN_MARK_INFO_DICTIONARY_SHALL_NOT_HAVE_A_VALUE_OF_TRUE);
             }
         }
+        checkMetadata(catalog);
     }
 
     private void checkStructureTreeRoot(PdfStructTreeRoot structTreeRoot) {
