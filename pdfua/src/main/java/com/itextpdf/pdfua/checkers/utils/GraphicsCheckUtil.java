@@ -34,6 +34,7 @@ import com.itextpdf.layout.element.Image;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 
+
 /**
  * Class that provides methods for checking PDF/UA compliance of graphics elements.
  */
@@ -79,17 +80,10 @@ public final class GraphicsCheckUtil {
         return new ITagTreeIteratorHandler() {
             @Override
             public void nextElement(IStructureNode elem) {
-                if (elem == null){
+                final PdfStructElem structElem = TagTreeHandlerUtil.getElementIfRoleMatches(PdfName.Figure, elem);
+                if (structElem == null) {
                     return;
                 }
-                if (!PdfName.Figure.equals(elem.getRole())) {
-                    return;
-                }
-                // we only need to check struct elems, not MCR numbers as they don't contain any useful info
-                if (!(elem instanceof PdfStructElem)) {
-                    return;
-                }
-                final PdfStructElem structElem = ((PdfStructElem) elem);
                 final PdfDictionary pdfObject = structElem.getPdfObject();
 
                 if (!hasAtleastOneValidValue(pdfObject.getAsString(PdfName.Alt),

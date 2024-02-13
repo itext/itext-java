@@ -43,6 +43,8 @@ import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
 import com.itextpdf.kernel.pdf.tagutils.TagTreeIterator;
 import com.itextpdf.kernel.utils.IValidationChecker;
 import com.itextpdf.kernel.utils.ValidationContext;
+import com.itextpdf.kernel.utils.checkers.FontCheckUtil;
+import com.itextpdf.pdfua.checkers.utils.FormulaCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.GraphicsCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.LayoutCheckUtil;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
@@ -100,6 +102,16 @@ public class PdfUA1Checker implements IValidationChecker {
             case CANVAS_BEGIN_MARKED_CONTENT:
                 checkOnOpeningBeginMarkedContent(obj, extra);
                 break;
+            case FONT:
+                checkText((String) obj, (PdfFont) extra);
+                break;
+        }
+    }
+
+    private void checkText(String str, PdfFont font) {
+        if (!FontCheckUtil.doesFontContainAllUsedGlyphs(str, font)) {
+            throw new PdfUAConformanceException(
+                    PdfUAExceptionMessageConstants.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS);
         }
     }
 
@@ -203,7 +215,8 @@ public class PdfUA1Checker implements IValidationChecker {
             PdfBoolean markInfoSuspects = markInfo.getAsBoolean(PdfName.Suspects);
             if (markInfoSuspects != null && markInfoSuspects.getValue()) {
                 throw new PdfUAConformanceException(
-                        PdfUAExceptionMessageConstants.SUSPECTS_ENTRY_IN_MARK_INFO_DICTIONARY_SHALL_NOT_HAVE_A_VALUE_OF_TRUE);
+                        PdfUAExceptionMessageConstants.
+                                SUSPECTS_ENTRY_IN_MARK_INFO_DICTIONARY_SHALL_NOT_HAVE_A_VALUE_OF_TRUE);
             }
         }
     }
@@ -222,6 +235,7 @@ public class PdfUA1Checker implements IValidationChecker {
 
         TagTreeIterator tagTreeIterator = new TagTreeIterator(structTreeRoot);
         tagTreeIterator.addHandler(GraphicsCheckUtil.createFigureTagHandler());
+        tagTreeIterator.addHandler(FormulaCheckUtil.createFormulaTagHandler());
         tagTreeIterator.traverse();
 
 

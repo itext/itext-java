@@ -53,6 +53,7 @@ import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
+import com.itextpdf.kernel.utils.checkers.FontCheckUtil;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.pdfa.logs.PdfAConformanceLogMessageConstant;
@@ -365,19 +366,9 @@ public class PdfA1Checker extends PdfAChecker {
      */
     @Override
     public void checkText(String text, PdfFont font) {
-        for (int i = 0; i < text.length(); ++i) {
-            int ch;
-            if (TextUtil.isSurrogatePair(text, i)) {
-                ch = TextUtil.convertToUtf32(text, i);
-                i++;
-            } else {
-                ch = text.charAt(i);
-            }
-
-            if (!font.containsGlyph(ch)) {
-                throw new PdfAConformanceException(
-                        PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS);
-            }
+        if (!FontCheckUtil.doesFontContainAllUsedGlyphs(text, font)) {
+            throw new PdfAConformanceException(
+                    PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS);
         }
     }
 
