@@ -67,6 +67,10 @@ public final class PdfUAExceptionMessageConstants {
             = "Metadata shall contain dc:title entry.";
     public static final String INVALID_PDF_VERSION
             = "Specified document pdf version isn't supported in pdf/ua.";
+    public static final String H1_IS_SKIPPED = "Heading level 1 is skipped in a descending sequence of header levels.";
+    public static final String HN_IS_SKIPPED = "Heading level {0} is skipped in a descending sequence of header levels.";
+    public static final String MORE_THAN_ONE_H_TAG = "A node contains more than one H tag.";
+    public static final String DOCUMENT_USES_BOTH_H_AND_HN = "Document uses both H and H# tags.";
 
     private PdfUAExceptionMessageConstants() {
         // Empty constructor

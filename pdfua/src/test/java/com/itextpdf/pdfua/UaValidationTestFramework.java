@@ -24,6 +24,7 @@ package com.itextpdf.pdfua;
 
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.ValidationContainer;
 import com.itextpdf.layout.Document;
@@ -43,13 +44,19 @@ import org.junit.Assert;
  * one with our checkers enabled to check for exceptions.
  * It then compares if our checkers and veraPDF produce the same result.
  */
-public class TestFramework {
+public class UaValidationTestFramework {
 
+    private final boolean defaultCheckDocClosingByReopening;
     private final String destinationFolder;
     private final List<Generator<IBlockElement>> elementProducers = new ArrayList<>();
 
-    public TestFramework(String destinationFolder) {
+    public UaValidationTestFramework(String destinationFolder) {
+        this(destinationFolder, true);
+    }
+
+    public UaValidationTestFramework(String destinationFolder, boolean defaultCheckDocClosingByReopening) {
         this.destinationFolder = destinationFolder;
+        this.defaultCheckDocClosingByReopening = defaultCheckDocClosingByReopening;
     }
 
     public void addSuppliers(Generator<IBlockElement>... suppliers) {
@@ -57,16 +64,28 @@ public class TestFramework {
     }
 
     public void assertBothFail(String filename) throws FileNotFoundException {
-        Exception e = checkErrorLayout("layout_" + filename + ".pdf");
-        String veraPdf = verAPdfResult("vera_" + filename + ".pdf");
+        assertBothFail(filename, null);
+    }
+
+    public void assertBothFail(String filename, boolean checkDocClosing) throws FileNotFoundException {
+        assertBothFail(filename, null, checkDocClosing);
+    }
+
+    public void assertBothFail(String filename, String expectedMsg) throws FileNotFoundException {
+        assertBothFail(filename, expectedMsg, defaultCheckDocClosingByReopening);
+    }
+
+    public void assertBothFail(String filename, String expectedMsg, boolean checkDocClosing) throws FileNotFoundException {
+        checkError(checkErrorLayout("layout_" + filename + ".pdf"), expectedMsg);
+
+        final String createdFileName = "vera_" + filename + ".pdf";
+        String veraPdf = verAPdfResult(createdFileName);
         System.out.println(veraPdf);
-        if (!(e instanceof PdfUAConformanceException) && e != null) {
-            System.out.println(printStackTrace(e));
-            Assert.fail();
+        Assert.assertNotNull(veraPdf);// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+
+        if (checkDocClosing) {
+            checkError(checkErrorOnClosing(createdFileName), expectedMsg);
         }
-        Assert.assertNotNull(e);
-        System.out.println(printStackTrace(e));
-        Assert.assertNotNull(veraPdf);
     }
 
     public void assertBothValid(String fileName) throws FileNotFoundException {
@@ -108,24 +127,52 @@ public class TestFramework {
             document.add(blockElementSupplier.generate());
         }
         document.close();
-        VeraPdfValidator validator = new VeraPdfValidator();// Android-Conversion-Skip-Line (TODO DEVSIX-7377
-        // introduce pdf/ua validation on Android)
-        return validator.validate(destinationFolder
-                + filename);// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        VeraPdfValidator validator = new VeraPdfValidator();// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        String validate = null;
+        validate = validator.validate(destinationFolder + filename); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        return validate;
     }
 
-    public Exception checkErrorLayout(String filename) {
+    private void checkError(Exception e, String expectedMsg) {
+        Assert.assertNotNull(e);
+        if (!(e instanceof PdfUAConformanceException)) {
+            System.out.println(printStackTrace(e));
+            Assert.fail();
+        }
+        if (expectedMsg != null) {
+            Assert.assertEquals(expectedMsg, e.getMessage());
+        }
+        System.out.println(printStackTrace(e));
+    }
+
+    private Exception checkErrorLayout(String filename) {
         try {
-            String outfile = UrlUtil.getNormalizedFileUriString(destinationFolder + filename);
-            System.out.println(outfile);
+            final String outPath = destinationFolder + filename;
+            System.out.println(UrlUtil.getNormalizedFileUriString(outPath));
             PdfDocument pdfDoc = new PdfUATestPdfDocument(
-                    new PdfWriter(destinationFolder + filename, PdfUATestPdfDocument.createWriterProperties()));
+                    new PdfWriter(outPath, PdfUATestPdfDocument.createWriterProperties()));
 
             Document document = new Document(pdfDoc);
             for (Generator<IBlockElement> blockElementSupplier : elementProducers) {
                 document.add(blockElementSupplier.generate());
             }
             document.close();
+        } catch (Exception e) {
+            return e;
+        }
+        return null;
+    }
+
+    private Exception checkErrorOnClosing(String filename) {
+        try {
+            final String outPath = destinationFolder + "reopen_" + filename;
+            final String inPath = destinationFolder + filename;
+            System.out.println(UrlUtil.getNormalizedFileUriString(inPath));
+            PdfDocument pdfDoc = new PdfUATestPdfDocument(
+                    new PdfReader(inPath),
+                    new PdfWriter(outPath, PdfUATestPdfDocument.createWriterProperties()));
+
+            pdfDoc.close();
         } catch (Exception e) {
             return e;
         }

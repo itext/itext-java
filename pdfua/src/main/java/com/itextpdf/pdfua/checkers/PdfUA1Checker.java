@@ -35,11 +35,13 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfVersion;
+import com.itextpdf.kernel.pdf.tagging.IStructureNode;
 import com.itextpdf.kernel.pdf.tagging.PdfMcr;
 import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.IRoleMappingResolver;
+import com.itextpdf.kernel.pdf.tagutils.ITagTreeIteratorHandler;
 import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
 import com.itextpdf.kernel.pdf.tagutils.TagTreeIterator;
 import com.itextpdf.kernel.utils.IValidationChecker;
@@ -52,6 +54,7 @@ import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.pdfua.checkers.utils.GraphicsCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.LayoutCheckUtil;
+import com.itextpdf.pdfua.checkers.utils.headings.HeadingsChecker;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 
@@ -71,6 +74,8 @@ public class PdfUA1Checker implements IValidationChecker {
     private final PdfDocument pdfDocument;
 
     private final TagStructureContext tagStructureContext;
+
+    private final HeadingsChecker headingsChecker = new HeadingsChecker();
 
     /**
      * Creates PdfUA1Checker instance with PDF document which will be validated against PDF/UA-1 standard.
@@ -100,6 +105,7 @@ public class PdfUA1Checker implements IValidationChecker {
         switch (key) {
             case LAYOUT:
                 LayoutCheckUtil.checkLayoutElements(obj);
+                headingsChecker.checkLayoutElement(obj);
                 break;
             case CANVAS_WRITING_CONTENT:
                 checkOnWritingCanvasToContent(obj);
@@ -266,9 +272,8 @@ public class PdfUA1Checker implements IValidationChecker {
         TagTreeIterator tagTreeIterator = new TagTreeIterator(structTreeRoot);
         tagTreeIterator.addHandler(GraphicsCheckUtil.createFigureTagHandler());
         tagTreeIterator.addHandler(FormulaCheckUtil.createFormulaTagHandler());
+        tagTreeIterator.addHandler(createHeadingsTagHandler());
         tagTreeIterator.traverse();
-
-
     }
 
     private void checkFonts(Collection<PdfFont> fontsInDocument) {
@@ -285,5 +290,15 @@ public class PdfUA1Checker implements IValidationChecker {
                             String.join(", ", fontNamesThatAreNotEmbedded)
                     ));
         }
+    }
+
+    private static ITagTreeIteratorHandler createHeadingsTagHandler() {
+        return new ITagTreeIteratorHandler() {
+            private final HeadingsChecker checker = new HeadingsChecker();
+            @Override
+            public void nextElement(IStructureNode elem) {
+                checker.checkStructElement(elem);
+            }
+        };
     }
 }

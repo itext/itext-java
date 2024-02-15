@@ -44,9 +44,9 @@ import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.properties.VerticalAlignment;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.RootRenderer;
-import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 import com.itextpdf.layout.splitting.DefaultSplitCharacters;
 import com.itextpdf.layout.splitting.ISplitCharacters;
+import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -365,7 +365,7 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
         if (renderer == null) {
             return;
         }
-        pdfDocument.checkIsoConformance(renderer.getModelElement(), IsoKey.LAYOUT);
+        pdfDocument.checkIsoConformance(renderer, IsoKey.LAYOUT);
         List<IRenderer> renderers = renderer.getChildRenderers();
         if (renderers == null) {
             return;

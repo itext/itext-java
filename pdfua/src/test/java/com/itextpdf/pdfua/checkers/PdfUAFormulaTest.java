@@ -33,8 +33,8 @@ import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.pdfua.PdfUATestPdfDocument;
-import com.itextpdf.pdfua.TestFramework;
-import com.itextpdf.pdfua.TestFramework.Generator;
+import com.itextpdf.pdfua.UaValidationTestFramework;
+import com.itextpdf.pdfua.UaValidationTestFramework.Generator;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
@@ -54,7 +54,7 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
 
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfua/PdfUAFormulaTest/";
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/FreeSans.ttf";
-    private TestFramework framework;
+    private UaValidationTestFramework framework;
 
     @BeforeClass
     public static void before() {
@@ -63,7 +63,7 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
 
     @Before
     public void initializeFramework() {
-        framework = new TestFramework(DESTINATION_FOLDER);
+        framework = new UaValidationTestFramework(DESTINATION_FOLDER);
     }
 
     @Test
@@ -148,7 +148,7 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
                 return p;
             }
         });
-        framework.assertBothFail("layout06");
+        framework.assertBothFail("layout06", false);
     }
 
     @Test
@@ -162,7 +162,7 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
                 return p;
             }
         });
-        framework.assertBothFail("layout07");
+        framework.assertBothFail("layout07", false);
     }
 
     @Test

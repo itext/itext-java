@@ -22,8 +22,10 @@
  */
 package com.itextpdf.pdfua.checkers.utils;
 
+import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.pdfua.checkers.utils.tables.TableCheckUtil;
 
 /**
@@ -41,9 +43,13 @@ public final class LayoutCheckUtil {
     /**
      * Checks if a layout element is valid against the PDF/UA specification.
      *
-     * @param layoutElement layout element to check
+     * @param rendererObj layout element to check
      */
-    public static void checkLayoutElements(Object layoutElement) {
+    public static void checkLayoutElements(Object rendererObj) {
+        if (rendererObj == null) {
+            return;
+        }
+        IPropertyContainer layoutElement = ((IRenderer) rendererObj).getModelElement();
         if (layoutElement instanceof Image) {
             GraphicsCheckUtil.checkLayoutImage((Image) layoutElement);
             return;

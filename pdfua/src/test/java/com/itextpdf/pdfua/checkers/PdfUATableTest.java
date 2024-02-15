@@ -33,8 +33,8 @@ import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
-import com.itextpdf.pdfua.TestFramework;
-import com.itextpdf.pdfua.TestFramework.Generator;
+import com.itextpdf.pdfua.UaValidationTestFramework;
+import com.itextpdf.pdfua.UaValidationTestFramework.Generator;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -63,10 +63,10 @@ public class PdfUATableTest extends ExtendedITextTest {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
-    private TestFramework framework;
+    private UaValidationTestFramework framework;
     @Before
     public void initializeFramework(){
-        framework = new TestFramework(DESTINATION_FOLDER);
+        framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
     }
 
     @Test
