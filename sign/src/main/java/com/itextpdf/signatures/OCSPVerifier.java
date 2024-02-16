@@ -26,9 +26,12 @@ import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.AbstractOCSPException;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateStatus;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IRevokedStatus;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.ISingleResp;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.signatures.logs.SignLogMessageConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +47,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Class that allows you to verify a certificate against
@@ -147,17 +149,18 @@ public class OCSPVerifier extends RootStoreVerifier {
         }
         // Then check online if allowed.
         boolean online = false;
-        if (onlineCheckingAllowed && validOCSPsFound == 0) {
-            if (verify(getOcspResponse(signCert, issuerCert), signCert, issuerCert, signDate)) {
-                validOCSPsFound++;
-                online = true;
-            }
+        int validOCSPsFoundOnline = 0;
+        if (onlineCheckingAllowed && verify(getOcspResponse(signCert, issuerCert), signCert, issuerCert, signDate)) {
+            validOCSPsFound++;
+            validOCSPsFoundOnline++;
+            online = true;
         }
         // Show how many valid OCSP responses were found.
         LOGGER.info("Valid OCSPs found: " + validOCSPsFound);
         if (validOCSPsFound > 0) {
             result.add(new VerificationOK(signCert, this.getClass(),
-                    "Valid OCSPs Found: " + validOCSPsFound + (online ? " (online)" : "")));
+                    "Valid OCSPs Found: " + validOCSPsFound + (online ?
+                            (" (" + validOCSPsFoundOnline + " online)") : "")));
         }
         // Verify using the previous verifier in the chain (if any).
         if (verifier != null) {
@@ -210,12 +213,8 @@ public class OCSPVerifier extends RootStoreVerifier {
             // So, since the issuer name and serial number identify a unique certificate, we found the single response
             // for the signCert.
 
-            // Check if the OCSP response was valid at the time of signing:
-            Date thisUpdate = iSingleResp.getThisUpdate();
-            if (signDate.before(thisUpdate)) {
-                LOGGER.info(MessageFormatUtil.format("OCSP is not valid yet: {0} before {1}", signDate, thisUpdate));
-                continue;
-            }
+            // OCSP response can be created after the signing, so we won't compare signDate with thisUpdate.
+
             // If nextUpdate is not set, the responder is indicating that newer revocation information
             // is available all the time.
             if (iSingleResp.getNextUpdate() != null && signDate.after(iSingleResp.getNextUpdate())) {
@@ -224,10 +223,16 @@ public class OCSPVerifier extends RootStoreVerifier {
                 continue;
             }
             // Check the status of the certificate:
-            Object status = iSingleResp.getCertStatus();
-            if (Objects.equals(status, BOUNCY_CASTLE_FACTORY.createCertificateStatus().getGood())) {
+            ICertificateStatus status = iSingleResp.getCertStatus();
+            IRevokedStatus revokedStatus = BOUNCY_CASTLE_FACTORY.createRevokedStatus(status);
+            boolean isStatusGood = BOUNCY_CASTLE_FACTORY.createCertificateStatus().getGood().equals(status);
+            if (isStatusGood || (revokedStatus != null && signDate.before(revokedStatus.getRevocationTime()))) {
                 // Check if the OCSP response was genuine.
                 isValidResponse(ocspResp, issuerCert, signDate);
+                if (!isStatusGood) {
+                    LOGGER.warn(MessageFormatUtil.format(SignLogMessageConstant.VALID_CERTIFICATE_IS_REVOKED,
+                            revokedStatus.getRevocationTime()));
+                }
                 return true;
             }
         }
@@ -290,8 +295,11 @@ public class OCSPVerifier extends RootStoreVerifier {
                 // and "This certificate MUST be issued directly by the CA that is identified in the request".
                 responderCert.verify(issuerCert.getPublicKey());
 
-                // Check if the lifetime of the certificate is valid.
-                responderCert.checkValidity(signDate);
+                // Check if the lifetime of the certificate is valid. Responder cert could be created after the signing.
+                if (signDate.after(responderCert.getNotAfter())) {
+                    throw new VerificationException(responderCert,
+                            "Authorized OCSP responder certificate expired on " + responderCert.getNotAfter());
+                }
 
                 // Validating ocsp signer's certificate (responderCert).
                 // See RFC6960 4.2.2.2.1. Revocation Checking of an Authorized Responder.
@@ -315,21 +323,22 @@ public class OCSPVerifier extends RootStoreVerifier {
                         } catch (IOException ignored) {
                         }
                     }
-                    if (verifyOcsp(responderOcspResp, responderCert, issuerCert, signDate)) {
+                    if (verifyOcsp(responderOcspResp, responderCert, issuerCert, ocspResp.getProducedAt())) {
                         return;
                     }
                 }
-                if (crlClient != null && checkCrlResponses(crlClient, responderCert, issuerCert, signDate)) {
+                if (crlClient != null &&
+                        checkCrlResponses(crlClient, responderCert, issuerCert, ocspResp.getProducedAt())) {
                     return;
                 }
                 // 2.2. Try to check responderCert for revocation using Authority Information Access for OCSP responses
                 // or CRL Distribution Points for CRL responses using default clients.
                 IBasicOCSPResp responderOcspResp = new OcspClientBouncyCastle(null)
                         .getBasicOCSPResp(responderCert, issuerCert, null);
-                if (verifyOcsp(responderOcspResp, responderCert, issuerCert, signDate)) {
+                if (verifyOcsp(responderOcspResp, responderCert, issuerCert, ocspResp.getProducedAt())) {
                     return;
                 }
-                if (checkCrlResponses(new CrlClientOnline(), responderCert, issuerCert, signDate)) {
+                if (checkCrlResponses(new CrlClientOnline(), responderCert, issuerCert, ocspResp.getProducedAt())) {
                     return;
                 }
 
@@ -385,8 +394,7 @@ public class OCSPVerifier extends RootStoreVerifier {
     }
 
     /**
-     * Gets an OCSP response online and returns it if the status is GOOD
-     * (without further checking!).
+     * Gets an OCSP response online and returns it without further checking.
      *
      * @param signCert   the signing certificate
      * @param issuerCert the issuer certificate
@@ -398,18 +406,7 @@ public class OCSPVerifier extends RootStoreVerifier {
             return null;
         }
         OcspClientBouncyCastle ocsp = new OcspClientBouncyCastle(null);
-        IBasicOCSPResp ocspResp = ocsp.getBasicOCSPResp(signCert, issuerCert, null);
-        if (ocspResp == null) {
-            return null;
-        }
-        ISingleResp[] resps = ocspResp.getResponses();
-        for (ISingleResp resp : resps) {
-            Object status = resp.getCertStatus();
-            if (Objects.equals(status, BOUNCY_CASTLE_FACTORY.createCertificateStatus().getGood())) {
-                return ocspResp;
-            }
-        }
-        return null;
+        return ocsp.getBasicOCSPResp(signCert, issuerCert, null);
     }
 
     private boolean verifyOcsp(IBasicOCSPResp ocspResp, X509Certificate certificate, X509Certificate issuerCert,

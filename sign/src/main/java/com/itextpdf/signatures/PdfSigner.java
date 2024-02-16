@@ -22,6 +22,7 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISignaturePolicyIdentifier;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.PdfAcroForm;
@@ -68,7 +69,6 @@ import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.TransparentColor;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.pdfa.PdfAAgnosticPdfDocument;
-import com.itextpdf.signatures.cms.CMSContainer;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 
 import java.io.ByteArrayOutputStream;
@@ -873,7 +873,8 @@ public class PdfSigner {
         if (chain.length > 1 && ocspClient != null) {
             for (int j = 0; j < chain.length - 1; ++j) {
                 byte[] ocsp = ocspClient.getEncoded((X509Certificate) chain[j], (X509Certificate) chain[j + 1], null);
-                if (ocsp != null) {
+                if (ocsp != null && BouncyCastleFactoryCreator.getFactory().createCertificateStatus().getGood().equals(
+                        OcspClientBouncyCastle.getCertificateStatus(ocsp))) {
                     ocspList.add(ocsp);
                 }
             }

@@ -37,6 +37,8 @@ public final class SignLogMessageConstant {
             "Revocation data for certificate: \"{0}\" is not added due to validity assured - short term extension.";
     public static final String UNABLE_TO_PARSE_REV_INFO = "Unable to parse signed data revocation info item " +
             "since it is incorrect or unsupported (e.g. SCVP Request and Response).";
+    public static final String VALID_CERTIFICATE_IS_REVOKED = "The certificate was valid on the signing date, " +
+            "but has been revoked since {0}.";
 
     private SignLogMessageConstant() {
         // Private constructor will prevent the instantiation of this class directly

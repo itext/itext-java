@@ -30,8 +30,10 @@ import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.DateTimeUtil;
+import com.itextpdf.signatures.CertificateVerifier;
 import com.itextpdf.signatures.OCSPVerifier;
 import com.itextpdf.signatures.VerificationException;
+import com.itextpdf.signatures.logs.SignLogMessageConstant;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignTestPortUtil;
 import com.itextpdf.signatures.testutils.TimeTestUtil;
@@ -41,6 +43,8 @@ import com.itextpdf.signatures.testutils.cert.TestCertificateBuilder;
 import com.itextpdf.signatures.testutils.client.TestCrlClient;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
 import java.io.IOException;
@@ -55,7 +59,9 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateExpiredException;
 import java.security.cert.X509Certificate;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -100,7 +106,7 @@ public class OcspVerifierTest extends ExtendedITextTest {
     }
 
     @Test
-    public void invalidRevokedOcspTest01()
+    public void verifyOcspWhenCertificateWasRevokedBeforeSignDateTest()
             throws GeneralSecurityException, IOException, AbstractPKCSException, AbstractOperatorCreationException {
         X509Certificate caCert = (X509Certificate) PemFileHelper.readFirstChain(caCertFileName)[0];
         PrivateKey caPrivateKey = PemFileHelper.readFirstKey(caCertFileName, password);
@@ -110,6 +116,22 @@ public class OcspVerifierTest extends ExtendedITextTest {
                 DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, -20),
                 FACTORY.createCRLReason().getKeyCompromise()));
         Assert.assertFalse(verifyTest(builder));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = SignLogMessageConstant.VALID_CERTIFICATE_IS_REVOKED))
+    public void verifyOcspWhenCertificateWasRevokedAfterSignDateTest()
+            throws GeneralSecurityException, IOException, AbstractPKCSException, AbstractOperatorCreationException {
+        String rootCertFileName = src + "rootCert.pem";
+        String checkCertFileName = src + "signCert.pem";
+        X509Certificate caCert = (X509Certificate) PemFileHelper.readFirstChain(rootCertFileName)[0];
+        PrivateKey caPrivateKey = PemFileHelper.readFirstKey(rootCertFileName, password);
+        TestOcspResponseBuilder builder = new TestOcspResponseBuilder(caCert, caPrivateKey);
+
+        builder.setCertificateStatus(FACTORY.createRevokedStatus(
+                DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, 20),
+                FACTORY.createCRLReason().getKeyCompromise()));
+        Assert.assertTrue(verifyTest(builder, checkCertFileName, TimeTestUtil.TEST_DATE_TIME));
     }
 
     @Test
@@ -138,17 +160,19 @@ public class OcspVerifierTest extends ExtendedITextTest {
     }
 
     @Test
-    public void invalidNotValidYetOcspTest01()
+    public void validOcspCreatedAfterSignDateTest01()
             throws GeneralSecurityException, IOException, AbstractPKCSException, AbstractOperatorCreationException {
-        X509Certificate caCert = (X509Certificate) PemFileHelper.readFirstChain(caCertFileName)[0];
-        PrivateKey caPrivateKey = PemFileHelper.readFirstKey(caCertFileName, password);
+        String rootCertFileName = src + "rootCert.pem";
+        String checkCertFileName = src + "signCert.pem";
+        X509Certificate caCert = (X509Certificate) PemFileHelper.readFirstChain(rootCertFileName)[0];
+        PrivateKey caPrivateKey = PemFileHelper.readFirstKey(rootCertFileName, password);
         TestOcspResponseBuilder builder = new TestOcspResponseBuilder(caCert, caPrivateKey);
 
         Calendar thisUpdate = DateTimeUtil.addDaysToCalendar(DateTimeUtil.getCalendar(TimeTestUtil.TEST_DATE_TIME), 15);
         Calendar nextUpdate = DateTimeUtil.addDaysToCalendar(DateTimeUtil.getCalendar(TimeTestUtil.TEST_DATE_TIME), 30);
         builder.setThisUpdate(thisUpdate);
         builder.setNextUpdate(nextUpdate);
-        Assert.assertFalse(verifyTest(builder));
+        Assert.assertTrue(verifyTest(builder, checkCertFileName, TimeTestUtil.TEST_DATE_TIME));
     }
 
     @Test
@@ -210,7 +234,7 @@ public class OcspVerifierTest extends ExtendedITextTest {
         Date ocspResponderCertEndDate = DateTimeUtil.addYearsToDate(TimeTestUtil.TEST_DATE_TIME, -1);
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
 
-        Assert.assertThrows(CertificateExpiredException.class, () -> verifyAuthorizedOCSPResponderWithOCSPNoCheckTest(
+        Assert.assertThrows(VerificationException.class, () -> verifyAuthorizedOCSPResponderWithOCSPNoCheckTest(
                 ocspResponderCertStartDate, ocspResponderCertEndDate, checkDate)
         );
     }
@@ -238,7 +262,19 @@ public class OcspVerifierTest extends ExtendedITextTest {
         String checkCertFileName = src + "signCertForOcspTest.pem";
         String ocspResponderCertFileName = src + "ocspResponderCertForOcspTest.pem";
         boolean verifyRes = verifyOcspResponseWithRevocationCheckTest(rootCertFileName, checkCertFileName,
-                ocspResponderCertFileName, true);
+                ocspResponderCertFileName, true, false);
+        Assert.assertTrue(verifyRes);
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = SignLogMessageConstant.VALID_CERTIFICATE_IS_REVOKED))
+    public void authorizedOCSPResponderWithOcspRevokedStatusTest()
+            throws AbstractOperatorCreationException, GeneralSecurityException, IOException, AbstractPKCSException {
+        String rootCertFileName = src + "rootCertForOcspTest.pem";
+        String checkCertFileName = src + "signCertForOcspTest.pem";
+        String ocspResponderCertFileName = src + "ocspResponderCertForOcspTest.pem";
+        boolean verifyRes = verifyOcspResponseWithRevocationCheckTest(rootCertFileName, checkCertFileName,
+                ocspResponderCertFileName, true, true);
         Assert.assertTrue(verifyRes);
     }
 
@@ -249,7 +285,7 @@ public class OcspVerifierTest extends ExtendedITextTest {
         String checkCertFileName = src + "signCertForCrlTest.pem";
         String ocspResponderCertFileName = src + "ocspResponderCertForCrlTest.pem";
         boolean verifyRes = verifyOcspResponseWithRevocationCheckTest(rootCertFileName, checkCertFileName,
-                ocspResponderCertFileName, false);
+                ocspResponderCertFileName, false, false);
         Assert.assertTrue(verifyRes);
     }
 
@@ -311,7 +347,7 @@ public class OcspVerifierTest extends ExtendedITextTest {
         String ocspResponderCertFileName = src + "ocspResponderCertForOcspTest.pem";
         Assert.assertThrows(SignatureException.class, () ->
                 verifyOcspResponseWithRevocationCheckTest(rootCertFileName, checkCertFileName,
-                        ocspResponderCertFileName, true));
+                        ocspResponderCertFileName, true, false));
     }
 
     @Test
@@ -337,6 +373,59 @@ public class OcspVerifierTest extends ExtendedITextTest {
 
         OCSPVerifier ocspVerifier = new OCSPVerifier(null, null);
         Assert.assertFalse(ocspVerifier.verify(basicOCSPResp, checkCert, wrongCaCert, checkDate));
+    }
+
+    @Test
+    public void checkBothOnlineAndProvidedOcspsTest()
+            throws GeneralSecurityException, IOException, AbstractOperatorCreationException, AbstractPKCSException {
+        String rootCertFileName = src + "rootCert.pem";
+        String checkCertFileName = src + "signCert.pem";
+        String ocspResponderCertFileName = src + "ocspResponderCert.pem";
+        Date checkDate = TimeTestUtil.TEST_DATE_TIME;
+
+        X509Certificate caCert = (X509Certificate) PemFileHelper.readFirstChain(rootCertFileName)[0];
+        X509Certificate checkCert = (X509Certificate) PemFileHelper.readFirstChain(checkCertFileName)[0];
+        X509Certificate responderCert = (X509Certificate) PemFileHelper.readFirstChain(ocspResponderCertFileName)[0];
+        PrivateKey ocspRespPrivateKey = PemFileHelper.readFirstKey(ocspResponderCertFileName, password);
+
+        TestOcspResponseBuilder builder = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
+        builder.setThisUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(checkDate, -5)));
+        builder.setNextUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(checkDate, 5)));
+        builder.setOcspCertsChain(new IX509CertificateHolder[0]);
+        TestOcspClient ocspClient = new TestOcspClient().addBuilderForCertIssuer(caCert, builder);
+        byte[] basicOcspRespBytes = ocspClient.getEncoded(checkCert, caCert, null);
+        IBasicOCSPResp basicOCSPResp = FACTORY.createBasicOCSPResp(
+                FACTORY.createBasicOCSPResponse(FACTORY.createASN1Primitive(basicOcspRespBytes)));
+
+        OCSPVerifier ocspVerifier = new CustomOCSPVerifier(null, Collections.singletonList(basicOCSPResp));
+        ocspVerifier.setRootStore(PemFileHelper.initStore(ocspResponderCertFileName, password, FACTORY.getProvider()));
+
+        Assert.assertTrue(ocspVerifier.verify(checkCert, caCert, checkDate).get(0).toString()
+                .contains("Valid OCSPs Found: 2 (1 online)"));
+    }
+
+    @Test
+    public void authorizedOCSPResponderCreatedAfterSignDateTest()
+            throws AbstractOperatorCreationException, GeneralSecurityException, IOException, AbstractPKCSException {
+        String rootCertFileName = src + "rootCert2.pem";
+        String checkCertFileName = src + "signCert2.pem";
+        String ocspResponderCertFileName = src + "responderCreatedIn2001.pem";
+        Date checkDate = TimeTestUtil.TEST_DATE_TIME; // Feb 14, 2000 14:14:02 UTC
+
+        X509Certificate caCert = (X509Certificate) PemFileHelper.readFirstChain(rootCertFileName)[0];
+        X509Certificate checkCert = (X509Certificate) PemFileHelper.readFirstChain(checkCertFileName)[0];
+        X509Certificate responderCert = (X509Certificate) PemFileHelper.readFirstChain(ocspResponderCertFileName)[0];
+        PrivateKey ocspRespPrivateKey = PemFileHelper.readFirstKey(ocspResponderCertFileName, password);
+
+        TestOcspResponseBuilder builder = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
+        builder.setThisUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(checkDate, 365)));
+        builder.setNextUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(checkDate, 370)));
+        TestOcspClient ocspClient = new TestOcspClient().addBuilderForCertIssuer(caCert, builder);
+        IBasicOCSPResp basicOCSPResp = FACTORY.createBasicOCSPResp(FACTORY.createBasicOCSPResponse(
+                FACTORY.createASN1Primitive(ocspClient.getEncoded(checkCert, caCert, null))));
+
+        OCSPVerifier ocspVerifier = new OCSPVerifier(null, null);
+        Assert.assertTrue(ocspVerifier.verify(basicOCSPResp, checkCert, caCert, checkDate));
     }
 
     private boolean verifyTest(TestOcspResponseBuilder rootRsaOcspBuilder) throws IOException, GeneralSecurityException {
@@ -408,9 +497,10 @@ public class OcspVerifierTest extends ExtendedITextTest {
                                                       boolean setResponderOcsps, boolean setResponderCrls,
                                                       IX509CertificateHolder[] ocspCertsChain)
             throws IOException, AbstractOperatorCreationException, GeneralSecurityException, AbstractPKCSException {
-        X509Certificate caCert = (X509Certificate) PemFileHelper.readFirstChain(certsSrc + "intermediateRsa.pem")[0];
-        PrivateKey caPrivateKey = PemFileHelper.readFirstKey(certsSrc + "intermediateRsa.pem", password);
-        String checkCertFileName = certsSrc + "signCertRsaWithChain.pem";
+        String rootCertFileName = src + "rootCert.pem";
+        String checkCertFileName = src + "signCert.pem";
+        X509Certificate caCert = (X509Certificate) PemFileHelper.readFirstChain(rootCertFileName)[0];
+        PrivateKey caPrivateKey = PemFileHelper.readFirstKey(rootCertFileName, password);
         X509Certificate checkCert = (X509Certificate) PemFileHelper.readFirstChain(checkCertFileName)[0];
 
         KeyPairGenerator keyGen = SignTestPortUtil.buildRSA2048KeyPairGenerator();
@@ -483,7 +573,8 @@ public class OcspVerifierTest extends ExtendedITextTest {
     }
 
     private boolean verifyOcspResponseWithRevocationCheckTest(String rootCertFileName, String checkCertFileName,
-                                                              String ocspResponderCertFileName, boolean checkOcsp)
+                                                              String ocspResponderCertFileName, boolean checkOcsp,
+                                                              boolean revokedOcsp)
             throws AbstractOperatorCreationException, GeneralSecurityException, IOException, AbstractPKCSException {
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
 
@@ -503,9 +594,13 @@ public class OcspVerifierTest extends ExtendedITextTest {
 
         OCSPVerifier ocspVerifier = new OCSPVerifier(null, null);
         if (checkOcsp) {
-            TestOcspResponseBuilder builder2 = new TestOcspResponseBuilder(caCert, caPrivateKey);
-            builder2.setThisUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(checkDate, -5)));
-            builder2.setNextUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(checkDate, 5)));
+            TestOcspResponseBuilder builder2 = revokedOcsp ? new TestOcspResponseBuilder(caCert, caPrivateKey,
+                    FACTORY.createRevokedStatus(
+                            DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, 20),
+                            FACTORY.createCRLReason().getKeyCompromise())) :
+                    new TestOcspResponseBuilder(caCert, caPrivateKey);
+            builder2.setThisUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(checkDate, 20)));
+            builder2.setNextUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(checkDate, 30)));
             TestOcspClient ocspClient2 = new TestOcspClient().addBuilderForCertIssuer(caCert, builder2);
             ocspVerifier.setOcspClient(ocspClient2);
         } else {
@@ -516,5 +611,40 @@ public class OcspVerifierTest extends ExtendedITextTest {
             ocspVerifier.setCrlClient(crlClient);
         }
         return ocspVerifier.verify(basicOCSPResp, checkCert, caCert, checkDate);
+    }
+
+    private static class CustomOCSPVerifier extends OCSPVerifier {
+        /**
+         * Creates an OCSPVerifier instance.
+         *
+         * @param verifier the next verifier in the chain
+         * @param ocsps    a list of {@link IBasicOCSPResp} OCSP response wrappers for the certificate verification
+         */
+        public CustomOCSPVerifier(CertificateVerifier verifier, List<IBasicOCSPResp> ocsps) {
+            super(verifier, ocsps);
+        }
+
+        @Override
+        public IBasicOCSPResp getOcspResponse(X509Certificate signCert, X509Certificate issuerCert) {
+            String rootCertFileName = src + "rootCert.pem";
+            String checkCertFileName = src + "signCert.pem";
+            String ocspResponderCertFileName = src + "ocspResponderCert.pem";
+            Date checkDate = TimeTestUtil.TEST_DATE_TIME;
+            try {
+                X509Certificate caCert = (X509Certificate) PemFileHelper.readFirstChain(rootCertFileName)[0];
+                PrivateKey caPrivateKey = PemFileHelper.readFirstKey(rootCertFileName, password);
+                X509Certificate checkCert = (X509Certificate) PemFileHelper.readFirstChain(checkCertFileName)[0];
+                X509Certificate responderCert = (X509Certificate) PemFileHelper.readFirstChain(ocspResponderCertFileName)[0];
+                TestOcspResponseBuilder builder = new TestOcspResponseBuilder(responderCert, caPrivateKey);
+                builder.setThisUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(checkDate, 5)));
+                builder.setNextUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(checkDate, 15)));
+                TestOcspClient ocspClient2 = new TestOcspClient().addBuilderForCertIssuer(caCert, builder);
+                byte[] basicOcspRespBytes = ocspClient2.getEncoded(checkCert, caCert, null);
+                return FACTORY.createBasicOCSPResp(
+                        FACTORY.createBasicOCSPResponse(FACTORY.createASN1Primitive(basicOcspRespBytes)));
+            } catch (Exception ignored) {
+            }
+            return null;
+        }
     }
 }

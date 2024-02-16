@@ -26,6 +26,8 @@ import com.itextpdf.commons.bouncycastle.cert.ocsp.IRevokedStatus;
 
 import org.bouncycastle.cert.ocsp.RevokedStatus;
 
+import java.util.Date;
+
 /**
  * Wrapper class for {@link RevokedStatus}.
  */
@@ -46,5 +48,15 @@ public class RevokedStatusBCFips extends CertificateStatusBCFips implements IRev
      */
     public RevokedStatus getRevokedStatus() {
         return (RevokedStatus) super.getCertificateStatus();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
+    @Override
+    public Date getRevocationTime() {
+        return getRevokedStatus().getRevocationTime();
     }
 }

@@ -44,7 +44,6 @@ import java.security.GeneralSecurityException;
 import java.security.Security;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
-import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -114,13 +113,14 @@ public class OcspClientBouncyCastle implements IOcspClient {
                 if (responses.length == 1) {
                     ISingleResp resp = responses[0];
                     ICertificateStatus status = resp.getCertStatus();
-                    if (Objects.equals(status, BOUNCY_CASTLE_FACTORY.createCertificateStatus().getGood())) {
-                        return basicResponse.getEncoded();
-                    } else if (BOUNCY_CASTLE_FACTORY.createRevokedStatus(status) == null) {
-                        throw new IOException(IoLogMessageConstant.OCSP_STATUS_IS_UNKNOWN);
-                    } else {
-                        throw new IOException(IoLogMessageConstant.OCSP_STATUS_IS_REVOKED);
+                    if (!BOUNCY_CASTLE_FACTORY.createCertificateStatus().getGood().equals(status)) {
+                        if (BOUNCY_CASTLE_FACTORY.createRevokedStatus(status) == null) {
+                            LOGGER.info(IoLogMessageConstant.OCSP_STATUS_IS_UNKNOWN);
+                        } else {
+                            LOGGER.info(IoLogMessageConstant.OCSP_STATUS_IS_REVOKED);
+                        }
                     }
+                    return basicResponse.getEncoded();
                 }
             }
         } catch (Exception ex) {
@@ -154,6 +154,30 @@ public class OcspClientBouncyCastle implements IOcspClient {
 
         // basic request generation with nonce
         return SignUtils.generateOcspRequestWithNonce(id);
+    }
+
+    /**
+     * Retrieves certificate status from the OCSP response.
+     *
+     * @param basicOcspRespBytes encoded basic OCSP response
+     *
+     * @return good, revoked or unknown certificate status retrieved from the OCSP response, or null if an error occurs.
+     */
+    protected static ICertificateStatus getCertificateStatus(byte[] basicOcspRespBytes) {
+        try {
+            IBasicOCSPResp basicResponse = BOUNCY_CASTLE_FACTORY.createBasicOCSPResp(
+                    BOUNCY_CASTLE_FACTORY.createBasicOCSPResponse(BOUNCY_CASTLE_FACTORY.createASN1Primitive(
+                            basicOcspRespBytes)));
+            if (basicResponse != null) {
+                ISingleResp[] responses = basicResponse.getResponses();
+                if (responses.length >= 1) {
+                    return responses[0].getCertStatus();
+                }
+            }
+        } catch (Exception ignored) {
+            // Ignore exception.
+        }
+        return null;
     }
 
     /**

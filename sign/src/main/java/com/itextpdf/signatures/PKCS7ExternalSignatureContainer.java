@@ -37,7 +37,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-
 public class PKCS7ExternalSignatureContainer implements IExternalSignatureContainer {
 
     private final Certificate[] chain;
@@ -85,7 +84,8 @@ public class PKCS7ExternalSignatureContainer implements IExternalSignatureContai
         if (chain.length > 1 && ocspClient != null) {
             for (int j = 0; j < chain.length - 1; ++j) {
                 byte[] ocsp = ocspClient.getEncoded((X509Certificate) chain[j], (X509Certificate) chain[j + 1], null);
-                if (ocsp != null) {
+                if (ocsp != null && BouncyCastleFactoryCreator.getFactory().createCertificateStatus().getGood().equals(
+                        OcspClientBouncyCastle.getCertificateStatus(ocsp))) {
                     ocspList.add(ocsp);
                 }
             }

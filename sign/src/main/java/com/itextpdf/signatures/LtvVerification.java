@@ -24,8 +24,6 @@ package com.itextpdf.signatures;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
-import com.itextpdf.commons.bouncycastle.asn1.IASN1InputStream;
-import com.itextpdf.commons.bouncycastle.asn1.IASN1Primitive;
 import com.itextpdf.commons.bouncycastle.asn1.IDEROctetString;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponse;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponseStatus;
@@ -289,7 +287,7 @@ public class LtvVerification {
         ValidationData vd = new ValidationData();
         if (ocsps != null) {
             for (byte[] ocsp : ocsps) {
-                vd.ocsps.add(buildOCSPResponse(ocsp));
+                vd.ocsps.add(LtvVerification.buildOCSPResponse(ocsp));
             }
         }
         if (crls != null) {
@@ -392,14 +390,17 @@ public class LtvVerification {
         boolean revocationDataAdded = false;
         if (ocsp != null && level != Level.CRL) {
             ocspEnc = ocsp.getEncoded(cert, getParent(cert, certificateChain), null);
-            if (ocspEnc != null) {
-                validationData.ocsps.add(buildOCSPResponse(ocspEnc));
+            if (ocspEnc != null && BOUNCY_CASTLE_FACTORY.createCertificateStatus().getGood().equals(
+                    OcspClientBouncyCastle.getCertificateStatus(ocspEnc))) {
+                validationData.ocsps.add(LtvVerification.buildOCSPResponse(ocspEnc));
                 revocationDataAdded = true;
                 LOGGER.info("OCSP added");
                 if (certOption == CertificateOption.ALL_CERTIFICATES) {
                     addRevocationDataForOcspCert(ocspEnc, signingCert, ocsp, crl, level, certInclude, certOption,
                             validationData, processedCerts);
                 }
+            } else {
+                ocspEnc = null;
             }
         }
         if (crl != null
@@ -434,7 +435,7 @@ public class LtvVerification {
             throw new PdfException(SignExceptionMessageConstant.NO_REVOCATION_DATA_FOR_SIGNING_CERTIFICATE);
         }
     }
-    
+
     private void addRevocationDataForOcspCert(byte[] ocspEnc, X509Certificate signingCert, IOcspClient ocsp,
             ICrlClient crl, Level level, CertificateInclusion certInclude, CertificateOption certOption,
             ValidationData validationData, Set<X509Certificate> processedCerts)
