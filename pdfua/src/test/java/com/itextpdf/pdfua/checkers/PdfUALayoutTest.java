@@ -81,6 +81,23 @@ public class PdfUALayoutTest extends ExtendedITextTest {
     }
 
     @Test
+    public void simpleParagraphWithUnderlineTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "simpleParagraphTest.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_simpleParagraphWithUnderlineTest.pdf";
+
+        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
+                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+
+        PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
+        Document doc = new Document(pdfDoc);
+        doc.add(new Paragraph("Simple layout PDF/UA-1 with underline test").setFont(font).setUnderline());
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+    }
+
+    @Test
     public void simpleBorderTest() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "simpleBorderTest.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_simpleBorderTest.pdf";

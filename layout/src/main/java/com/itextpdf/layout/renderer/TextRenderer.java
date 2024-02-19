@@ -983,19 +983,19 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             canvas.endText().restoreState();
             endElementOpacityApplying(drawContext);
 
+            if (isTagged) {
+                canvas.closeTag();
+            }
+
             Object underlines = this.<Object>getProperty(Property.UNDERLINE);
             if (underlines instanceof List) {
                 for (Object underline : (List) underlines) {
                     if (underline instanceof Underline) {
-                        drawSingleUnderline((Underline) underline, fontColor, canvas, fontSize.getValue(), italicSimulation ? ITALIC_ANGLE : 0);
+                        drawAndTagSingleUnderline(drawContext.isTaggingEnabled(), (Underline) underline, fontColor, canvas, fontSize.getValue(), italicSimulation ? ITALIC_ANGLE : 0);
                     }
                 }
             } else if (underlines instanceof Underline) {
-                drawSingleUnderline((Underline) underlines, fontColor, canvas, fontSize.getValue(), italicSimulation ? ITALIC_ANGLE : 0);
-            }
-
-            if (isTagged) {
-                canvas.closeTag();
+                drawAndTagSingleUnderline(drawContext.isTaggingEnabled(), (Underline) underlines, fontColor, canvas, fontSize.getValue(), italicSimulation ? ITALIC_ANGLE : 0);
             }
         }
 
@@ -1663,6 +1663,18 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 endsWithBreak = specialScriptsWordBreakPoints.contains(line.end);
             }
             return new boolean[]{startsWithBreak, endsWithBreak};
+        }
+    }
+
+    private void drawAndTagSingleUnderline(boolean isTagged, Underline underline,
+                                           TransparentColor fontStrokeColor, PdfCanvas canvas,
+                                           float fontSize, float italicAngleTan) {
+        if (isTagged) {
+            canvas.openTag(new CanvasArtifact());
+        }
+        drawSingleUnderline(underline, fontStrokeColor, canvas, fontSize, italicAngleTan);
+        if (isTagged) {
+            canvas.closeTag();
         }
     }
 
