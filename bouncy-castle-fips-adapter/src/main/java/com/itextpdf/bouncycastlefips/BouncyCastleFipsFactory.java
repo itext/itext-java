@@ -289,6 +289,7 @@ import org.bouncycastle.asn1.x509.CRLDistPoint;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.Extensions;
 import org.bouncycastle.asn1.x509.GeneralNames;
+import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.asn1.x509.KeyUsage;
 import org.bouncycastle.asn1.x509.TBSCertificate;
 import org.bouncycastle.asn1.x509.Time;
@@ -1571,6 +1572,14 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
      * {@inheritDoc}
      */
     @Override
+    public IBasicConstraints createBasicConstraints(int pathLength) {
+        return new BasicConstraintsBCFips(new BasicConstraints(pathLength));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public IKeyUsage createKeyUsage() {
         return KeyUsageBCFips.getInstance();
     }
@@ -1595,8 +1604,25 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
      * {@inheritDoc}
      */
     @Override
+    public IKeyPurposeId createKeyPurposeId(IASN1ObjectIdentifier objectIdentifier) {
+        return new KeyPurposeIdBCFips(KeyPurposeId.getInstance(
+                ((ASN1ObjectIdentifierBCFips) objectIdentifier).getASN1ObjectIdentifier()));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public IExtendedKeyUsage createExtendedKeyUsage(IKeyPurposeId purposeId) {
         return new ExtendedKeyUsageBCFips(purposeId);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IExtendedKeyUsage createExtendedKeyUsage(IKeyPurposeId[] purposeIds) {
+        return new ExtendedKeyUsageBCFips(purposeIds);
     }
 
     /**

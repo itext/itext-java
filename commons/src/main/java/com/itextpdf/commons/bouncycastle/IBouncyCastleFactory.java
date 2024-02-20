@@ -1381,6 +1381,15 @@ public interface IBouncyCastleFactory {
     IBasicConstraints createBasicConstraints(boolean b);
 
     /**
+     * Create basic constraints wrapper from {@code int} value.
+     *
+     * @param pathLength {@code int} flag to create basic constraints wrapper from
+     *
+     * @return created basic constraints wrapper
+     */
+    IBasicConstraints createBasicConstraints(int pathLength);
+
+    /**
      * Create key usage wrapper without parameters.
      *
      * @return created key usage wrapper
@@ -1404,6 +1413,15 @@ public interface IBouncyCastleFactory {
     IKeyPurposeId createKeyPurposeId();
 
     /**
+     * Create key purpose id wrapper from {@link IASN1ObjectIdentifier}.
+     *
+     * @param objectIdentifier {@link IASN1ObjectIdentifier} to create key purpose id wrapper from
+     *
+     * @return created key purpose id wrapper
+     */
+    IKeyPurposeId createKeyPurposeId(IASN1ObjectIdentifier objectIdentifier);
+
+    /**
      * Create extended key usage wrapper from key purpose id wrapper.
      *
      * @param purposeId key purpose id wrapper to create extended key usage wrapper from
@@ -1411,6 +1429,15 @@ public interface IBouncyCastleFactory {
      * @return created extended key usage wrapper
      */
     IExtendedKeyUsage createExtendedKeyUsage(IKeyPurposeId purposeId);
+
+    /**
+     * Create extended key usage wrapper from key purpose id wrappers array.
+     *
+     * @param purposeIds {@link IKeyPurposeId} array to create extended key usage wrapper from
+     *
+     * @return created extended key usage wrapper
+     */
+    IExtendedKeyUsage createExtendedKeyUsage(IKeyPurposeId[] purposeIds);
 
     /**
      * Create X509 Extension utils wrapper from digest calculator wrapper.

@@ -93,6 +93,9 @@ public class BasicOCSPRespBC implements IBasicOCSPResp {
     @Override
     public IX509CertificateHolder[] getCerts() {
         X509CertificateHolder[] certs = basicOCSPResp.getCerts();
+        if (certs == null) {
+            return new IX509CertificateHolder[0];
+        }
         IX509CertificateHolder[] certsBC = new IX509CertificateHolder[certs.length];
         for (int i = 0; i < certs.length; i++) {
             certsBC[i] = new X509CertificateHolderBC(certs[i]);

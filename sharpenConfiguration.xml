@@ -469,6 +469,9 @@
                 <file path="com/itextpdf/signatures/sign/RSASSAPSSTest.java"/>
                 <file path="com/itextpdf/signatures/sign/TwoPhaseSigningTest.java"/>
             </fileset>
+            <fileset reason="KeyPurposeId creation logic is different in java and .NET">
+                <file path="com/itextpdf/signatures/validation/extensions/ExtendedKeyUsageExtension.java" />
+            </fileset>
             <fileset reason="Date and DateTime UTC time constructors difference in Java and .NET">
                 <file path="com/itextpdf/signatures/testutils/TimeTestUtil.java"/>
             </fileset>

@@ -47,7 +47,8 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
 
     private static final Logger LOGGER = LoggerFactory.getLogger(IssuingCertificateRetriever.class);
 
-    private final Map<String, Certificate> certificateMap = new HashMap<>();
+    private final Map<String, Certificate> trustedCertificates = new HashMap<>();
+    private final Map<String, Certificate> knownCertificates = new HashMap<>();
 
     /**
      * Creates {@link IssuingCertificateRetriever} instance.
@@ -72,7 +73,7 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
         int i = 1;
         X509Certificate lastAddedCert = signingCertificate;
         while (!CertificateUtil.isSelfSigned(lastAddedCert)) {
-            //  Check if there are any missing certificates with isSignedByNext
+            // Check if there are any missing certificates with isSignedByNext
             if (i < chain.length &&
                     CertificateUtil.isIssuerCertificate(lastAddedCert, (X509Certificate) chain[i])) {
                 fullChain.add(chain[i]);
@@ -83,14 +84,17 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
                 Collection<Certificate> certificatesFromAIA = processCertificatesFromAIA(url);
                 if (certificatesFromAIA == null || certificatesFromAIA.isEmpty()) {
                     // Retrieve Issuer from the certificate store
-                    Certificate issuer = certificateMap.get(lastAddedCert.getIssuerX500Principal().getName());
+                    Certificate issuer = trustedCertificates.get(lastAddedCert.getIssuerX500Principal().getName());
                     if (issuer == null) {
-                        // Unable to retrieve missing certificates
-                        while (i < chain.length) {
-                            fullChain.add(chain[i]);
-                            i++;
+                        issuer = knownCertificates.get(lastAddedCert.getIssuerX500Principal().getName());
+                        if (issuer == null) {
+                            // Unable to retrieve missing certificates
+                            while (i < chain.length) {
+                                fullChain.add(chain[i]);
+                                i++;
+                            }
+                            return fullChain.toArray(new Certificate[0]);
                         }
-                        return fullChain.toArray(new Certificate[0]);
                     }
                     fullChain.add(issuer);
                 } else {
@@ -101,6 +105,21 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
         }
 
         return fullChain.toArray(new Certificate[0]);
+    }
+
+    /**
+     * Retrieve issuer certificate for the provided certificate.
+     *
+     * @param certificate {@link Certificate} for which issuer certificate shall be retrieved
+     *
+     * @return issuer certificate. {@code null} if there is no issuer certificate, or it cannot be retrieved.
+     */
+    public Certificate retrieveIssuerCertificate(Certificate certificate) {
+        Certificate[] certificateChain = retrieveMissingCertificates(new Certificate[]{certificate});
+        if (certificateChain.length > 1) {
+            return certificateChain[1];
+        }
+        return null;
     }
 
     /**
@@ -123,10 +142,13 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
         List<Certificate> certificatesFromAIA = (List<Certificate>) processCertificatesFromAIA(url);
         if (certificatesFromAIA == null) {
             // Retrieve Issuer from the certificate store
-            Certificate issuer = certificateMap.get(((X509CRL) crl).getIssuerX500Principal().getName());
+            Certificate issuer = trustedCertificates.get(((X509CRL) crl).getIssuerX500Principal().getName());
             if (issuer == null) {
-                // Unable to retrieve CRL issuer
-                return new Certificate[0];
+                issuer = knownCertificates.get(((X509CRL) crl).getIssuerX500Principal().getName());
+                if (issuer == null) {
+                    // Unable to retrieve CRL issuer
+                    return new Certificate[0];
+                }
             }
             return retrieveMissingCertificates(new Certificate[]{issuer});
         }
@@ -140,9 +162,40 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
      */
     @Override
     public void setTrustedCertificates(Collection<Certificate> certificates) {
+        addTrustedCertificates(certificates);
+    }
+
+    /**
+     * Add trusted certificates collection to trusted certificates storage.
+     *
+     * @param certificates certificates {@link Collection} to be added
+     */
+    public void addTrustedCertificates(Collection<Certificate> certificates) {
         for (Certificate certificate : certificates) {
-            certificateMap.put(((X509Certificate) certificate).getSubjectX500Principal().getName(), certificate);
+            trustedCertificates.put(((X509Certificate) certificate).getSubjectX500Principal().getName(), certificate);
         }
+    }
+
+    /**
+     * Add certificates collection to known certificates storage, which is used for issuer certificates retrieval.
+     *
+     * @param certificates certificates {@link Collection} to be added
+     */
+    public void addKnownCertificates(Collection<Certificate> certificates) {
+        for (Certificate certificate : certificates) {
+            knownCertificates.put(((X509Certificate) certificate).getSubjectX500Principal().getName(), certificate);
+        }
+    }
+
+    /**
+     * Check if provided certificate is present in trusted certificates storage.
+     *
+     * @param certificate {@link Certificate} to be checked
+     *
+     * @return {@code true} if certificate is present in trusted certificates storage, {@code false} otherwise
+     */
+    public boolean isCertificateTrusted(Certificate certificate) {
+        return trustedCertificates.containsKey(((X509Certificate) certificate).getSubjectX500Principal().getName());
     }
 
     /**
