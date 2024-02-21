@@ -115,7 +115,7 @@ public class SelectFieldComboBoxRenderer extends AbstractSelectFieldRenderer {
 
         final ChoiceFormFieldBuilder builder = new ChoiceFormFieldBuilder(doc, name).setWidgetRectangle(area)
                 .setFont(font)
-                .setConformanceLevel(getConformanceLevel(doc));
+                .setGenericConformanceLevel(getGenericConformanceLevel(doc));
 
         modelElement.setProperty(Property.FONT_PROVIDER, this.<FontProvider>getProperty(Property.FONT_PROVIDER));
         modelElement.setProperty(Property.RENDERING_MODE, this.<RenderingMode>getProperty(Property.RENDERING_MODE));

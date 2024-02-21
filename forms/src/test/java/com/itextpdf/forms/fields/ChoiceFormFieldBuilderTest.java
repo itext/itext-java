@@ -129,7 +129,7 @@ public class ChoiceFormFieldBuilderTest extends ExtendedITextTest {
     @Test
     public void createComboBoxWithConformanceLevelTest() {
         PdfChoiceFormField choiceFormField = new ChoiceFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME)
-                .setWidgetRectangle(DUMMY_RECTANGLE).setConformanceLevel(PdfAConformanceLevel.PDF_A_1A)
+                .setWidgetRectangle(DUMMY_RECTANGLE).setGenericConformanceLevel(PdfAConformanceLevel.PDF_A_1A)
                 .createComboBox();
 
         compareChoices(new PdfDictionary(), choiceFormField, true);
@@ -179,7 +179,7 @@ public class ChoiceFormFieldBuilderTest extends ExtendedITextTest {
     public void createListWithConformanceLevelTest() {
         PdfChoiceFormField choiceFormField = new ChoiceFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME)
                 .setWidgetRectangle(DUMMY_RECTANGLE)
-                .setConformanceLevel(PdfAConformanceLevel.PDF_A_1A).createList();
+                .setGenericConformanceLevel(PdfAConformanceLevel.PDF_A_1A).createList();
 
         PdfDictionary expectedDictionary = new PdfDictionary();
         expectedDictionary.put(PdfName.Ff, new PdfNumber(0));

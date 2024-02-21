@@ -26,6 +26,7 @@ import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.IFormField;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.IConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
@@ -276,9 +277,25 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
      * @param document the document
      *
      * @return the conformance level or null if the conformance level is not set.
+     * @deprecated since 8.0.4 will return {@link IConformanceLevel}
      */
+    @Deprecated
     protected PdfAConformanceLevel getConformanceLevel(PdfDocument document) {
-        final PdfAConformanceLevel conformanceLevel = this.<PdfAConformanceLevel>getProperty(
+        return PdfAConformanceLevel.getPDFAConformance(this.<IConformanceLevel>getProperty(
+                FormProperty.FORM_CONFORMANCE_LEVEL),document);
+    }
+
+    /**
+     * Gets the conformance level. If the conformance level is not set, the conformance level of the document is used.
+     *
+     * @param document the document
+     *
+     * @return the conformance level or null if the conformance level is not set.
+     * @deprecated since 8.0.4 will be renamed to getConformanceLevel()
+     */
+    @Deprecated
+    protected IConformanceLevel getGenericConformanceLevel(PdfDocument document) {
+        final IConformanceLevel conformanceLevel = this.<IConformanceLevel>getProperty(
                 FormProperty.FORM_CONFORMANCE_LEVEL);
         if (conformanceLevel != null) {
             return conformanceLevel;
@@ -286,10 +303,7 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
         if (document == null) {
             return null;
         }
-        if (document.getConformanceLevel() instanceof PdfAConformanceLevel) {
-            return (PdfAConformanceLevel) document.getConformanceLevel();
-        }
-        return null;
+        return document.getConformanceLevel();
     }
 
     /**

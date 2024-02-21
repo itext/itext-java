@@ -31,6 +31,7 @@ import com.itextpdf.kernel.colors.DeviceCmyk;
 import com.itextpdf.kernel.colors.DeviceGray;
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.pdf.IConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -82,7 +83,14 @@ public abstract class AbstractPdfFormField extends PdfObjectWrapper<PdfDictionar
     protected PdfFont font;
     protected float fontSize = -1;
     protected Color color;
+
+    /**
+     * @deprecated since 8.0.4, this is not used anymore! Use pdfConformanceLevel instead
+     */
+    @Deprecated()
     protected PdfAConformanceLevel pdfAConformanceLevel;
+
+    protected IConformanceLevel pdfConformanceLevel;
 
     /**
      * Parent form field.
@@ -223,12 +231,29 @@ public abstract class AbstractPdfFormField extends PdfObjectWrapper<PdfDictionar
     }
 
     /**
-     * Gets the declared PDF/A conformance level.
+     * Gets the declared conformance level.
+     * Deprecated  use {@link AbstractPdfFormField} getPdfConformanceLevel
      *
      * @return the {@link PdfAConformanceLevel}
      */
+    @Deprecated()
     public PdfAConformanceLevel getPdfAConformanceLevel() {
-        return pdfAConformanceLevel == null && parent != null ? parent.getPdfAConformanceLevel() : pdfAConformanceLevel;
+        if (pdfConformanceLevel == null && parent != null) {
+            return parent.getPdfAConformanceLevel();
+        }
+        if (pdfConformanceLevel instanceof PdfAConformanceLevel){
+            return (PdfAConformanceLevel) pdfConformanceLevel;
+        }
+        return null;
+    }
+
+    /**
+     * Gets the declared conformance level.
+     *
+     * @return the {@link IConformanceLevel}
+     */
+    public IConformanceLevel getPdfConformanceLevel() {
+        return pdfConformanceLevel == null && parent != null ? parent.getPdfConformanceLevel() : pdfConformanceLevel;
     }
 
     /**

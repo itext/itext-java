@@ -56,6 +56,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -499,6 +500,17 @@ public class ListBoxFieldTest extends ExtendedITextTest {
         }
 
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    @Ignore("DEVSIX-8158")
+    public void testListBoxInfiniteLoop() {
+        Document document = new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) ;
+        ListBoxField list = (ListBoxField) new ListBoxField("name", 200, false).setInteractive(true);
+        list.addOption("value1");
+        list.addOption("value2");
+        document.add(list);
+        document.close();
     }
 
     @Test
