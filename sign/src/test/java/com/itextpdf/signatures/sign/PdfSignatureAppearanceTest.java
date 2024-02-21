@@ -652,6 +652,30 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareVisually(dest, cmp, DESTINATION_FOLDER, "diff_"));
     }
 
+    @Test
+    public void emptySignatureAppearanceTest() throws GeneralSecurityException, IOException, InterruptedException {
+        String srcFile = SOURCE_FOLDER + "simpleDocument.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_emptySignatureAppearance.pdf";
+        String outPdf = DESTINATION_FOLDER + "emptySignatureAppearance.pdf";
+
+        Rectangle rect = new Rectangle(36, 648, 200, 100);
+        String fieldName = "Signature1";
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(fieldName);
+
+        PdfSigner signer = new PdfSigner(new PdfReader(srcFile), new FileOutputStream(outPdf), new StampingProperties());
+        signer.setCertificationLevel(PdfSigner.NOT_CERTIFIED);
+        signer.setFieldName(fieldName);
+        signer.setReason("test reason").setLocation("test location").setSignatureAppearance(appearance);
+        signer.setPageRect(rect);
+
+        // Creating the signature
+        IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, FACTORY.getProviderName());
+        signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
+
+        Assert.assertNull(new CompareTool().compareVisually(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+        Assert.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf));
+    }
+
     private static void compareSignatureAppearances(String outPdf, String cmpPdf) throws IOException {
         ITextTest.printOutCmpPdfNameAndDir(outPdf, cmpPdf);
         try (PdfDocument outDoc = new PdfDocument(new PdfReader(outPdf))) {

@@ -999,10 +999,10 @@ public class PdfSignatureAppearance {
         SignedAppearanceText signedAppearanceText = modelElement.getSignedAppearanceText();
         if (signedAppearanceText != null) {
             signedAppearanceText.setSignedBy(getSignerName()).setSignDate(signDate);
-            if (reasonCaption.equals(signedAppearanceText.getReasonLine())) {
+            if (signedAppearanceText.getReasonLine().isEmpty()) {
                 signedAppearanceText.setReasonLine(reasonCaption + reason);
             }
-            if (locationCaption.equals(signedAppearanceText.getLocationLine())) {
+            if (signedAppearanceText.getLocationLine().isEmpty()) {
                 signedAppearanceText.setLocationLine(locationCaption + location);
             }
         }
