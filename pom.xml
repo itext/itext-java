@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <groupId>com.itextpdf</groupId>
   <artifactId>root</artifactId>
   <version>8.0.4-SNAPSHOT</version>
   <packaging>pom</packaging>
+
   <name>iText</name>
   <description>A Free Java-PDF library</description>
   <url>https://itextpdf.com/</url>
@@ -19,6 +21,7 @@
       <url>http://www.fsf.org/licensing/licenses/agpl-3.0.html</url>
     </license>
   </licenses>
+
   <developers>
     <developer>
       <id>itext</id>
@@ -27,6 +30,7 @@
       <url>https://www.itextpdf.com</url>
     </developer>
   </developers>
+
   <mailingLists>
     <mailingList>
       <name>iText on StackOverflow</name>
@@ -41,6 +45,7 @@
       </otherArchives>
     </mailingList>
   </mailingLists>
+
   <modules>
     <module>commons</module>
     <module>barcodes</module>
@@ -62,6 +67,7 @@
     <module>bouncy-castle-connector</module>
     <module>pdfua</module>
   </modules>
+
   <scm>
     <connection>scm:git:ssh://git@git.itextsupport.com:7999/i7j/itextcore.git</connection>
     <url>https://git.itextsupport.com/projects/I7J/repos/itextcore</url>
@@ -108,30 +114,6 @@
     <unittests>com.itextpdf.test.annotations.type.UnitTest</unittests>
   </properties>
 
-  <repositories>
-    <repository>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <id>itext-snapshot</id>
-      <name>iText Repository - snapshots</name>
-      <url>https://repo.itextsupport.com/snapshot</url>
-    </repository>
-    <repository>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <id>itext-releases</id>
-      <name>iText Repository - releases</name>
-      <url>https://repo.itextsupport.com/releases</url>
-    </repository>
-  </repositories>
   <dependencies>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -157,6 +139,41 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <repositories>
+    <repository>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <id>itext-snapshot</id>
+      <name>iText Repository - snapshots</name>
+      <url>https://repo.itextsupport.com/snapshot</url>
+    </repository>
+    <repository>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>itext-releases</id>
+      <name>iText Repository - releases</name>
+      <url>https://repo.itextsupport.com/releases</url>
+    </repository>
+  </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>itext-releases</id>
+      <name>iText Repository - releases</name>
+      <url>https://repo.itextsupport.com/artifactory/releases</url>
+    </pluginRepository>
+  </pluginRepositories>
 
   <build>
     <finalName>itext-${project.artifactId}-${project.version}</finalName>
@@ -193,32 +210,6 @@
       </plugins>
     </pluginManagement>
     <plugins>
-      <plugin>
-        <groupId>com.github.ekryd.sortpom</groupId>
-        <artifactId>sortpom-maven-plugin</artifactId>
-        <version>2.9.0</version>
-        <executions>
-          <execution>
-            <phase>verify</phase>
-            <goals>
-              <goal>sort</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <encoding>${project.build.sourceEncoding}</encoding>
-          <expandEmptyElements>false</expandEmptyElements>
-          <sortDependencies>scope,groupId,artifactId</sortDependencies>
-          <sortPlugins>groupId,artifactId</sortPlugins>
-          <sortProperties>true</sortProperties>
-          <sortModules>true</sortModules>
-          <createBackupFile>false</createBackupFile>
-          <lineSeparator>\n</lineSeparator>
-          <keepBlankLines>true</keepBlankLines>
-          <nrOfIndentSpace>2</nrOfIndentSpace>
-          <skip>${skipSortPom}</skip>
-        </configuration>
-      </plugin>
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
@@ -482,13 +473,6 @@
       <id>qa</id>
       <build>
         <plugins>
-          <plugin>
-            <groupId>com.github.ekryd.sortpom</groupId>
-            <artifactId>sortpom-maven-plugin</artifactId>
-            <configuration>
-              <skip>true</skip>
-            </configuration>
-          </plugin>
           <!-- Compares current version to the latest released version to prevent breaking changes -->
           <plugin>
             <groupId>com.github.siom79.japicmp</groupId>
@@ -600,13 +584,6 @@
       <id>test</id>
       <build>
         <plugins>
-          <plugin>
-            <groupId>com.github.ekryd.sortpom</groupId>
-            <artifactId>sortpom-maven-plugin</artifactId>
-            <configuration>
-              <skip>true</skip>
-            </configuration>
-          </plugin>
           <!-- Run integration tests -->
           <plugin>
             <artifactId>maven-failsafe-plugin</artifactId>
@@ -703,6 +680,15 @@
               measured correctly. -->
             </configuration>
           </plugin>
+          <plugin><!-- A fork of https://github.com/sparebank1utvikling/turbo-maven-plugin; available at https://repo.itextsupport.com/artifactory/releases -->
+            <groupId>com.apryse</groupId>
+            <artifactId>apryse-turbo-maven-plugin</artifactId>
+            <version>1.0.0</version>
+            <extensions>true</extensions>
+            <configuration>
+              <enabled>false</enabled>
+            </configuration>
+          </plugin>
         </plugins>
       </build>
     </profile>
@@ -790,13 +776,6 @@
       <id>artifactory</id>
       <build>
         <plugins>
-          <plugin>
-            <groupId>com.github.ekryd.sortpom</groupId>
-            <artifactId>sortpom-maven-plugin</artifactId>
-            <configuration>
-              <skip>true</skip>
-            </configuration>
-          </plugin>
           <plugin>
             <artifactId>maven-javadoc-plugin</artifactId>
             <configuration>
