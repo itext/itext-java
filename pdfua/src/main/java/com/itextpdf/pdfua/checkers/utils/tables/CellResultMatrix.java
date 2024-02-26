@@ -32,7 +32,6 @@ import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Table;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -44,53 +43,10 @@ final class CellResultMatrix extends AbstractResultMatrix<Cell> {
     /**
      * Creates a new {@link CellResultMatrix} instance.
      *
-     * @param cols  The number of columns in the table.
      * @param table The table that needs to be checked.
      */
-    public CellResultMatrix(int cols, Table table) {
-        super(cols, new TableCellIterator(table));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    int getCol(Cell cell) {
-        return cell.getCol();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    int getRow(Cell cell) {
-        PdfName location = this.iterator.getLocation();
-        int row = cell.getRow();
-        if (location == PdfName.TBody) {
-            row += this.iterator.getAmountOfRowsHeader();
-        }
-        if (location == PdfName.TFoot) {
-            row += this.iterator.getAmountOfRowsHeader();
-            row += this.iterator.getAmountOfRowsBody();
-        }
-
-        return row;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getRowspan(Cell data) {
-        return data.getRowspan();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getColspan(Cell data) {
-        return data.getColspan();
+    public CellResultMatrix(Table table) {
+        super(new TableCellIterator(table));
     }
 
     /**

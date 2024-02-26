@@ -55,6 +55,7 @@ import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.pdfua.checkers.utils.GraphicsCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.LayoutCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.headings.HeadingsChecker;
+import com.itextpdf.pdfua.checkers.utils.tables.TableCheckUtil;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 
@@ -273,6 +274,7 @@ public class PdfUA1Checker implements IValidationChecker {
         tagTreeIterator.addHandler(GraphicsCheckUtil.createFigureTagHandler());
         tagTreeIterator.addHandler(FormulaCheckUtil.createFormulaTagHandler());
         tagTreeIterator.addHandler(createHeadingsTagHandler());
+        tagTreeIterator.addHandler(TableCheckUtil.createTagTreeHandler());
         tagTreeIterator.traverse();
     }
 

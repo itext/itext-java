@@ -42,6 +42,8 @@ final class TableCellIterator implements ITableIterator<Cell> {
     private Table table;
     private PdfName location;
 
+    private Cell currentCell;
+
     /**
      * Creates a new {@link TableCellIterator} instance.
      *
@@ -81,15 +83,18 @@ final class TableCellIterator implements ITableIterator<Cell> {
     public Cell next() {
         if (headerIterator != null && headerIterator.hasNext()) {
             location = PdfName.THead;
-            return headerIterator.next();
+            currentCell = headerIterator.next();
+            return currentCell;
         }
         if (children != null && index < children.size()) {
             location = PdfName.TBody;
-            return (Cell) children.get(index++);
+            currentCell = (Cell) children.get(index++);
+            return currentCell;
         }
         if (footerIterator != null && footerIterator.hasNext()) {
             location = PdfName.TFoot;
-            return footerIterator.next();
+            currentCell = footerIterator.next();
+            return currentCell;
         }
         return null;
     }
@@ -128,8 +133,54 @@ final class TableCellIterator implements ITableIterator<Cell> {
      * {@inheritDoc}
      */
     @Override
-    public PdfName getLocation() {
-        return this.location;
+    public int getNumberOfColumns() {
+        return this.table.getNumberOfColumns();
     }
 
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getRow() {
+        PdfName location = getLocation();
+        int row = currentCell.getRow();
+        if (location == PdfName.TBody) {
+            row += this.getAmountOfRowsHeader();
+        }
+        if (location == PdfName.TFoot) {
+            row += this.getAmountOfRowsHeader();
+            row += this.getAmountOfRowsBody();
+        }
+        return row;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getCol() {
+        return currentCell.getCol();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getRowspan() {
+        return currentCell.getRowspan();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getColspan() {
+        return currentCell.getColspan();
+    }
+
+
+    private PdfName getLocation() {
+        return this.location;
+    }
 }

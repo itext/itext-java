@@ -22,7 +22,6 @@
  */
 package com.itextpdf.pdfua.checkers.utils.tables;
 
-import com.itextpdf.kernel.pdf.PdfName;
 
 /**
  * Interface that provides methods for iterating over the elements of a table.
@@ -66,10 +65,41 @@ interface ITableIterator<T> {
     int getAmountOfRowsFooter();
 
     /**
-     * Gets the location of the current element in the table.
+     * Returns the amount of columns the table has.
+     * All rows in a table in UA specification must have the same column count.
+     * So return the max column count for correctly generated error messages.
      *
-     * @return The location of the current element in the table.
+     * @return the amount of columns
      */
-    PdfName getLocation();
+    int getNumberOfColumns();
+
+    /**
+     * Gets the row index of the current position.
+     *
+     * @return The row index.
+     */
+    int getRow();
+
+    /**
+     * Gets the column index of current position.
+     *
+     * @return The column index.
+     */
+    int getCol();
+
+    /**
+     * Gets the rowspan of current position.
+     *
+     * @return the rowspan
+     */
+    int getRowspan();
+
+    /**
+     * Gets the colspan of the current position
+     *
+     * @return the colspan of current position
+     */
+    int getColspan();
+
 
 }

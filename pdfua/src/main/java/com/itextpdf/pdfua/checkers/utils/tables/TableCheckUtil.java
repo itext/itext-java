@@ -22,6 +22,10 @@
  */
 package com.itextpdf.pdfua.checkers.utils.tables;
 
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.tagging.IStructureNode;
+import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
+import com.itextpdf.kernel.pdf.tagutils.ITagTreeIteratorHandler;
 import com.itextpdf.layout.element.Table;
 
 /**
@@ -42,7 +46,27 @@ public final class TableCheckUtil {
      * @param table the table to check.
      */
     public static void checkLayoutTable(Table table) {
-        new CellResultMatrix(table.getNumberOfColumns(), table).checkValidTableTagging();
+        new CellResultMatrix(table).checkValidTableTagging();
+    }
+
+    /**
+     * Creates a {@link ITagTreeIteratorHandler} that handles the PDF/UA1 verification
+     * of table elements on closing.
+     *
+     * @return The created handler.
+     */
+    public static ITagTreeIteratorHandler createTagTreeHandler() {
+        return new ITagTreeIteratorHandler() {
+            @Override
+            public void nextElement(IStructureNode elem) {
+                if (elem == null) {
+                    return;
+                }
+                if (elem instanceof PdfStructElem && PdfName.Table.equals(elem.getRole())) {
+                    new StructTreeResultMatrix((PdfStructElem) elem).checkValidTableTagging();
+                }
+            }
+        };
     }
 
 

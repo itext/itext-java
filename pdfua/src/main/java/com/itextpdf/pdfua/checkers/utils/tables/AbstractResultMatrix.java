@@ -51,13 +51,12 @@ abstract class AbstractResultMatrix<T> {
     /**
      * Creates a new {@link AbstractResultMatrix} instance.
      *
-     * @param cols     The number of columns in the table.
      * @param iterator The iterator that will be used to iterate over the cells.
      */
-    protected AbstractResultMatrix(int cols, ITableIterator<T> iterator) {
+    protected AbstractResultMatrix(ITableIterator<T> iterator) {
         this.rows = iterator.getAmountOfRowsHeader() + iterator.getAmountOfRowsBody() +
                 iterator.getAmountOfRowsFooter();
-        this.cols = cols;
+        this.cols = iterator.getNumberOfColumns();
         this.iterator = iterator;
         cellMatrix = this.<T>createFixedSizedList(rows * cols, null);
     }
@@ -77,10 +76,10 @@ abstract class AbstractResultMatrix<T> {
         while (iterator.hasNext()) {
             final T cell = iterator.next();
             final String role = getRole(cell);
-            final int rowspan = getRowspan(cell);
-            final int colspan = getColspan(cell);
-            final int colIdx = getCol(cell);
-            final int rowIdx = getRow(cell);
+            final int rowspan = iterator.getRowspan();
+            final int colspan = iterator.getColspan();
+            final int colIdx = iterator.getCol();
+            final int rowIdx = iterator.getRow();
 
             this.setCell(rowIdx, rowspan, colIdx, colspan, cellMatrix, cell);
 
@@ -110,31 +109,10 @@ abstract class AbstractResultMatrix<T> {
         validateTableCells(knownIds, scopeMatrix, hasUnknownHeaders);
     }
 
-    /**
-     * Gets the colum index of the cell.
-     *
-     * @param cell The cell from which the column index is needed.
-     *
-     * @return The column index.
-     */
-    abstract int getCol(T cell);
-
-    /**
-     * Gets the absolute row index of the cell including header, footer, body offset.
-     *
-     * @param cell The cell from which the row index is needed.
-     *
-     * @return The absolute row index.
-     */
-    abstract int getRow(T cell);
-
-    void setRowValue(int row, int rowSpan, List<Boolean> arr, boolean value) {
+    private void setRowValue(int row, int rowSpan, List<Boolean> arr, boolean value) {
         setCell(row, rowSpan, 0, this.cols, arr, value);
     }
 
-    abstract int getRowspan(T data);
-
-    abstract int getColspan(T data);
 
     abstract List<byte[]> getHeaders(T cell);
 

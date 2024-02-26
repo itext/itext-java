@@ -66,7 +66,7 @@ public class PdfUATableTest extends ExtendedITextTest {
     private UaValidationTestFramework framework;
     @Before
     public void initializeFramework(){
-        framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
+        framework = new UaValidationTestFramework(DESTINATION_FOLDER);
     }
 
     @Test
