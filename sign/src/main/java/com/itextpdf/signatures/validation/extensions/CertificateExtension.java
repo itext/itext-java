@@ -85,4 +85,17 @@ public class CertificateExtension {
         }
         return Objects.equals(providedExtensionValue, extensionValue);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CertificateExtension that = (CertificateExtension) o;
+        return Objects.equals(extensionOid, that.extensionOid) && Objects.equals(extensionValue, that.extensionValue);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash((Object)extensionOid, extensionValue);
+    }
 }

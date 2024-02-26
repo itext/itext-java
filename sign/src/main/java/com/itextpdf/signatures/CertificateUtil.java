@@ -144,7 +144,21 @@ public class CertificateUtil {
         if (url == null) {
             return null;
         }
-        return SignUtils.parseCrlFromStream(new URL(url).openStream());
+        return CertificateUtil.parseCrlFromStream(new URL(url).openStream());
+    }
+
+    /**
+     * Parses a CRL from an InputStream.
+     *
+     * @param input the InputStream holding the unparsed CRL
+     *
+     * @return the parsed CRL object.
+     *
+     * @throws CertificateException thrown if there's no X509 implementation in the provider.
+     * @throws CRLException         thrown when encountering errors when parsing the CRL.
+     */
+    public static CRL parseCrlFromStream(InputStream input) throws CertificateException, CRLException {
+        return SignUtils.parseCrlFromStream(input);
     }
 
     /**

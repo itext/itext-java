@@ -264,7 +264,7 @@ public class CertificateChainValidator {
     }
 
     private void validateCRL(ValidationReport result, X509Certificate certificate, Date validationDate) {
-        // TODO DEVSIX-8122 Implement CRLValidator
+        // TODO DEVSIX-8176 Implement RevocationDataValidator class
     }
 
     private void validateOCSP(ValidationReport result, X509Certificate certificate, Date validationDate) {

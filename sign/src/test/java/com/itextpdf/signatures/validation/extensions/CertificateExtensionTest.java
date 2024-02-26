@@ -109,4 +109,94 @@ public class CertificateExtensionTest extends ExtendedITextTest {
 
         Assert.assertFalse(extension.existsInCertificate(certificate));
     }
+
+    @Test
+    public void equalsTest() {
+        CertificateExtension extension1 = new CertificateExtension(
+                OID.X509Extensions.KEY_USAGE, FACTORY.createKeyUsage(32802).toASN1Primitive());
+
+        CertificateExtension extension2 = new CertificateExtension(
+                OID.X509Extensions.KEY_USAGE, FACTORY.createKeyUsage(32802).toASN1Primitive());
+
+        Assert.assertEquals(extension1, extension2);
+    }
+
+    @Test
+    public void equalsOtherTypeTest() {
+        CertificateExtension extension1 = new CertificateExtension(
+                OID.X509Extensions.KEY_USAGE, FACTORY.createKeyUsage(32802).toASN1Primitive());
+
+        Assert.assertNotEquals("extension1", extension1);
+    }
+
+    @Test
+    public void equalsOtherExtensionTest() {
+        CertificateExtension extension1 = new CertificateExtension(
+                OID.X509Extensions.KEY_USAGE, FACTORY.createKeyUsage(32802).toASN1Primitive());
+
+        CertificateExtension extension2 = new CertificateExtension(
+                X509Extensions.EXTENDED_KEY_USAGE, FACTORY.createKeyUsage(32802).toASN1Primitive());
+
+        Assert.assertNotEquals(extension1, extension2);
+    }
+
+    @Test
+    public void equalsOtherValueTest() {
+        CertificateExtension extension1 = new CertificateExtension(
+                OID.X509Extensions.KEY_USAGE, FACTORY.createKeyUsage(32802).toASN1Primitive());
+
+        CertificateExtension extension2 = new CertificateExtension(
+                OID.X509Extensions.KEY_USAGE, FACTORY.createKeyUsage(32800).toASN1Primitive());
+
+        Assert.assertNotEquals(extension1, extension2);
+    }
+
+    @Test
+    public void sameHashCode() {
+        CertificateExtension extension1 = new CertificateExtension(
+                OID.X509Extensions.KEY_USAGE, FACTORY.createKeyUsage(32802).toASN1Primitive());
+
+        CertificateExtension extension2 = new CertificateExtension(
+                OID.X509Extensions.KEY_USAGE, FACTORY.createKeyUsage(32802).toASN1Primitive());
+
+        Assert.assertEquals(extension1.hashCode(), extension2.hashCode());
+    }
+
+    @Test
+    public void hashOtherValueTest() {
+        CertificateExtension extension1 = new CertificateExtension(
+                OID.X509Extensions.KEY_USAGE, FACTORY.createKeyUsage(32802).toASN1Primitive());
+
+        CertificateExtension extension2 = new CertificateExtension(
+                OID.X509Extensions.KEY_USAGE, FACTORY.createKeyUsage(32800).toASN1Primitive());
+
+        Assert.assertNotEquals(extension1.hashCode(), extension2.hashCode());
+    }
+
+    @Test
+    public void hashOtherExtensionTest() {
+        CertificateExtension extension1 = new CertificateExtension(
+                OID.X509Extensions.KEY_USAGE, FACTORY.createKeyUsage(32802).toASN1Primitive());
+
+        CertificateExtension extension2 = new CertificateExtension(
+                X509Extensions.EXTENDED_KEY_USAGE, FACTORY.createKeyUsage(32802).toASN1Primitive());
+
+        Assert.assertNotEquals(extension1.hashCode(), extension2.hashCode());
+    }
+
+
+    @Test
+    public void getExtensionValueTest() {
+        CertificateExtension extension = new CertificateExtension(
+                OID.X509Extensions.KEY_USAGE, FACTORY.createKeyUsage(32802).toASN1Primitive());
+        Assert.assertEquals(FACTORY.createKeyUsage(32802).toASN1Primitive(), extension.getExtensionValue());
+    }
+
+    @Test
+    public void getExtensionOidTest() {
+        CertificateExtension extension = new CertificateExtension(
+                OID.X509Extensions.KEY_USAGE, FACTORY.createKeyUsage(32802).toASN1Primitive());
+        Assert.assertEquals(OID.X509Extensions.KEY_USAGE, extension.getExtensionOid());
+    }
+
 }
