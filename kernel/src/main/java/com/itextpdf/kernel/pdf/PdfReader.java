@@ -46,6 +46,7 @@ import com.itextpdf.kernel.xmp.XMPMetaFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.Closeable;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -180,6 +181,17 @@ public class PdfReader implements Closeable {
     public PdfReader(String filename) throws IOException {
         this(filename, new ReaderProperties());
 
+    }
+
+    /**
+     * Reads and parses a PDF document.
+     *
+     * @param file   the file of the document
+     * @param properties properties of the created reader
+     * @throws IOException on error
+     */
+    public PdfReader(File file, ReaderProperties properties) throws IOException {
+        this(file.getAbsolutePath(), properties);
     }
 
     PdfReader(IRandomAccessSource byteSource, ReaderProperties properties, boolean closeStream) throws IOException {
