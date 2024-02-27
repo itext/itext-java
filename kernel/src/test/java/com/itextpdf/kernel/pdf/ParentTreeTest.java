@@ -23,6 +23,7 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
@@ -34,11 +35,13 @@ import com.itextpdf.kernel.pdf.tagging.PdfMcrNumber;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.utils.CompareTool.CompareResult;
+import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -378,6 +381,19 @@ public class ParentTreeTest extends ExtendedITextTest {
         taggedPdf.close();
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
     }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.CREATED_ROOT_TAG_HAS_MAPPING)
+    })
+    public void copyPageWithMultipleDocumentTagsTest() throws IOException {
+        PdfDocument pdfDoc = new PdfDocument(
+                new PdfReader(sourceFolder + "pdfWithMultipleDocumentTags.pdf"),
+                new PdfWriter(new ByteArrayOutputStream()));
+
+        AssertUtil.doesNotThrow(() -> pdfDoc.getTagStructureContext().normalizeDocumentRootTag());
+    }
+
 
     private boolean checkParentTree(String outFileName, String cmpFileName) throws IOException {
         PdfReader outReader = CompareTool.createOutputReader(outFileName);

@@ -147,10 +147,7 @@ class RootTagNormalizer {
     }
 
     private void removeOldRoot(PdfStructElem oldRoot) {
-        TagTreePointer tagPointer = new TagTreePointer(document);
-        tagPointer
-                .setCurrentStructElem(oldRoot)
-                .removeTag();
+        new TagTreePointer(oldRoot, document).removeTag();
     }
 
     private void logCreatedRootTagHasMappingIssue(PdfNamespace rootTagOriginalNs, IRoleMappingResolver mapping) {
