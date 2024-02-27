@@ -2171,11 +2171,12 @@ public class PdfCanvas {
         PdfOutputStream out = contentStream.getOutputStream().write(tag).writeSpace();
         if (properties == null) {
             out.writeBytes(BMC);
-        } else if (properties.getIndirectReference() == null) {
-            out.write(properties).writeSpace().writeBytes(BDC);
-        } else {
+        } else if (properties.containsIndirectReference()) {
             out.write(resources.addProperties(properties)).writeSpace().writeBytes(BDC);
+        } else {
+            out.write(properties).writeSpace().writeBytes(BDC);
         }
+
         final Tuple2<PdfName, PdfDictionary> tuple2 = new Tuple2<>(tag, properties);
         if (this.drawingOnPage){
             document.checkIsoConformance(new CanvasBmcValidationContext(tagStructureStack, tuple2));
