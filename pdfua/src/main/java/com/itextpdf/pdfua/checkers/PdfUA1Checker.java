@@ -152,6 +152,21 @@ public class PdfUA1Checker implements IValidationChecker {
         }
     }
 
+    private void checkViewerPreferences(PdfCatalog catalog) {
+        PdfDictionary viewerPreferences = catalog.getPdfObject().getAsDictionary(PdfName.ViewerPreferences);
+        if (viewerPreferences == null) {
+            throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.MISSING_VIEWER_PREFERENCES);
+        }
+        PdfObject displayDocTitle = viewerPreferences.get(PdfName.DisplayDocTitle);
+        if (!(displayDocTitle instanceof PdfBoolean)) {
+            throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.MISSING_VIEWER_PREFERENCES);
+        }
+        if (PdfBoolean.FALSE.equals(displayDocTitle)) {
+            throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.VIEWER_PREFERENCES_IS_FALSE);
+        }
+
+    }
+
     private void checkOnWritingCanvasToContent(Object data) {
         Stack<Tuple2<PdfName, PdfDictionary>> tagStack = getTagStack(data);
         if (tagStack.isEmpty()) {
@@ -255,6 +270,7 @@ public class PdfUA1Checker implements IValidationChecker {
                                 SUSPECTS_ENTRY_IN_MARK_INFO_DICTIONARY_SHALL_NOT_HAVE_A_VALUE_OF_TRUE);
             }
         }
+        checkViewerPreferences(catalog);
         checkMetadata(catalog);
     }
 

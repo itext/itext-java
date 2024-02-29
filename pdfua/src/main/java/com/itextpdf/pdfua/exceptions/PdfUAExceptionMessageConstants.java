@@ -71,6 +71,10 @@ public final class PdfUAExceptionMessageConstants {
     public static final String HN_IS_SKIPPED = "Heading level {0} is skipped in a descending sequence of header levels.";
     public static final String MORE_THAN_ONE_H_TAG = "A node contains more than one H tag.";
     public static final String DOCUMENT_USES_BOTH_H_AND_HN = "Document uses both H and H# tags.";
+    public static final String MISSING_VIEWER_PREFERENCES = "ViewerPreferences dictionary of the Catalog dictionary " +
+            "does not contain a DisplayDocTitle entry.";
+    public static final String VIEWER_PREFERENCES_IS_FALSE = "ViewerPreferences dictionary of the Catalog dictionary " +
+            "contains a DisplayDocTitle entry with a value of false.";
 
     private PdfUAExceptionMessageConstants() {
         // Empty constructor
