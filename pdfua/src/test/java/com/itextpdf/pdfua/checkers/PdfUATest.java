@@ -119,6 +119,62 @@ public class PdfUATest extends ExtendedITextTest {
     }
 
     @Test
+    public void documentWithNoLangEntryTest() throws IOException {
+        final String outPdf = DESTINATION_FOLDER + "documentWithNoLangEntryTest.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf,
+                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+        pdfDoc.setTagged();
+        ValidationContainer validationContainer = new ValidationContainer();
+        validationContainer.addChecker(new PdfUA1Checker(pdfDoc));
+        pdfDoc.getDiContainer().register(ValidationContainer.class, validationContainer);
+
+        pdfDoc.getCatalog().setViewerPreferences(new PdfViewerPreferences().setDisplayDocTitle(true));
+        PdfDocumentInfo info = pdfDoc.getDocumentInfo();
+        info.setTitle("English pangram");
+
+        Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> pdfDoc.close());
+        Assert.assertEquals(PdfUAExceptionMessageConstants.DOCUMENT_SHALL_CONTAIN_VALID_LANG_ENTRY,
+                e.getMessage());
+    }
+
+    @Test
+    public void documentWithEmptyStringLangEntryTest() throws IOException {
+        final String outPdf = DESTINATION_FOLDER + "documentWithEmptyStringLangEntryTest.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf,
+                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+        pdfDoc.setTagged();
+        ValidationContainer validationContainer = new ValidationContainer();
+        validationContainer.addChecker(new PdfUA1Checker(pdfDoc));
+        pdfDoc.getDiContainer().register(ValidationContainer.class, validationContainer);
+        pdfDoc.getCatalog().setLang(new PdfString(""));
+        pdfDoc.getCatalog().setViewerPreferences(new PdfViewerPreferences().setDisplayDocTitle(true));
+        PdfDocumentInfo info = pdfDoc.getDocumentInfo();
+        info.setTitle("English pangram");
+        Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> pdfDoc.close());
+        Assert.assertEquals(PdfUAExceptionMessageConstants.DOCUMENT_SHALL_CONTAIN_VALID_LANG_ENTRY,
+                e.getMessage());
+    }
+
+    @Test
+    public void documentWithComplexLangEntryTest() throws IOException, InterruptedException {
+        final String outPdf = DESTINATION_FOLDER + "documentWithComplexLangEntryTest.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf,
+                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+        pdfDoc.setTagged();
+        ValidationContainer validationContainer = new ValidationContainer();
+        validationContainer.addChecker(new PdfUA1Checker(pdfDoc));
+        pdfDoc.getDiContainer().register(ValidationContainer.class, validationContainer);
+        pdfDoc.getCatalog().setLang(new PdfString("qaa-Qaaa-QM-x-southern"));
+        pdfDoc.getCatalog().setViewerPreferences(new PdfViewerPreferences().setDisplayDocTitle(true));
+        PdfDocumentInfo info = pdfDoc.getDocumentInfo();
+        info.setTitle("English pangram");
+        pdfDoc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, SOURCE_FOLDER + "cmp_documentWithComplexLangEntryTest.pdf",
+                DESTINATION_FOLDER, "diff_"));
+        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+    }
+
+    @Test
     public void documentWithoutViewerPreferencesTest() throws IOException {
         final String outPdf = DESTINATION_FOLDER + "documentWithoutViewerPreferencesTest.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf,
