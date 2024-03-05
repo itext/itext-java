@@ -293,7 +293,7 @@ public class CMSContainer {
     }
 
     /**
-     * Sets the  Signed Attributes of the signer info to this serialized version.
+     * Sets the Signed Attributes of the signer info to this serialized version.
      * The signed attributes will become read-only.
      *
      * @param signedAttributesData the serialized Signed Attributes

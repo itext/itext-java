@@ -28,12 +28,13 @@ import com.itextpdf.signatures.ICrlClient;
 import com.itextpdf.signatures.IOcspClient;
 import com.itextpdf.signatures.IssuingCertificateRetriever;
 import com.itextpdf.signatures.OcspClientBouncyCastle;
-import com.itextpdf.signatures.validation.CertificateValidationReport.ValidationResult;
+import com.itextpdf.signatures.validation.ValidationReport.ValidationResult;
 import com.itextpdf.signatures.validation.extensions.BasicConstraintsExtension;
 import com.itextpdf.signatures.validation.extensions.CertificateExtension;
 import com.itextpdf.signatures.validation.extensions.KeyUsage;
 import com.itextpdf.signatures.validation.extensions.KeyUsageExtension;
 
+import java.security.GeneralSecurityException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateNotYetValidException;
@@ -58,6 +59,8 @@ public class CertificateChainValidator {
     private static final String ISSUER_MISSING = "Certificate {0} isn't trusted and issuer certificate isn't provided.";
     private static final String EXPIRED_CERTIFICATE = "Certificate {0} is expired.";
     private static final String NOT_YET_VALID_CERTIFICATE = "Certificate {0} is not yet valid.";
+    private static final String ISSUER_CANNOT_BE_VERIFIED =
+            "Issuer certificate {0} for subject certificate {1} cannot be mathematically verified.";
 
     private IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
     private IOcspClient ocspClient = new OcspClientBouncyCastle(null);
@@ -134,9 +137,9 @@ public class CertificateChainValidator {
     }
 
     /**
-     * Set {@link CertificateChainValidator} to be as a validator for the next certificate in the chain.
+     * Set {@link CertificateChainValidator} to be used as a validator for the next certificate in the chain.
      *
-     * @param nextValidator {@link CertificateChainValidator} to be as a validator for the next certificate in the chain
+     * @param nextValidator {@link CertificateChainValidator} to be a validator for the next certificate in the chain
      *
      * @return same instance of {@link CertificateChainValidator}
      */
@@ -176,11 +179,11 @@ public class CertificateChainValidator {
      * @param validationDate {@link Date} against which certificate is expected to be validated. Usually signing date
      * @param requiredExtensions certificate extension {@link List}, which are required for the provided certificate
      *
-     * @return {@link CertificateValidationReport} which contains detailed validation results
+     * @return {@link ValidationReport} which contains detailed validation results
      */
-    public CertificateValidationReport validateCertificate(X509Certificate certificate, Date validationDate,
+    public ValidationReport validateCertificate(X509Certificate certificate, Date validationDate,
             List<CertificateExtension> requiredExtensions) {
-        CertificateValidationReport result = new CertificateValidationReport(certificate);
+        ValidationReport result = new ValidationReport();
         return validate(result, certificate, validationDate, requiredExtensions);
     }
 
@@ -189,23 +192,23 @@ public class CertificateChainValidator {
      * Validate given certificate using provided validation date and required extensions.
      * Result is added into provided report.
      *
-     * @param result {@link CertificateValidationReport} which is populated with detailed validation results
+     * @param result {@link ValidationReport} which is populated with detailed validation results
      * @param certificate {@link X509Certificate} to be validated
      * @param validationDate {@link Date} against which certificate is expected to be validated. Usually signing date
      * @param requiredExtensions certificate extension {@link List}, which are required for the provided certificate
      *
-     * @return {@link CertificateValidationReport} which contains both provided and new validation results
+     * @return {@link ValidationReport} which contains both provided and new validation results
      */
-    public CertificateValidationReport validate(CertificateValidationReport result, X509Certificate certificate,
-            Date validationDate, List<CertificateExtension> requiredExtensions) {
+    public ValidationReport validate(ValidationReport result, X509Certificate certificate, Date validationDate,
+            List<CertificateExtension> requiredExtensions) {
         validateValidityPeriod(result, certificate, validationDate);
         validateRequiredExtensions(result, certificate, requiredExtensions);
         if (stopValidation(result)) {
             return result;
         }
         if (certificateRetriever.isCertificateTrusted(certificate)) {
-            result.addLog(certificate, CERTIFICATE_CHECK, MessageFormatUtil.format(
-                    CERTIFICATE_TRUSTED, certificate.getSubjectX500Principal()));
+            result.addReportItem(new CertificateReportItem(certificate, CERTIFICATE_CHECK, MessageFormatUtil.format(
+                    CERTIFICATE_TRUSTED, certificate.getSubjectX500Principal()), ValidationResult.VALID));
             return result;
         }
         validateRevocationData(result, certificate, validationDate);
@@ -216,58 +219,58 @@ public class CertificateChainValidator {
         return result;
     }
 
-    private boolean stopValidation(CertificateValidationReport result) {
+    private boolean stopValidation(ValidationReport result) {
         return !proceedValidationAfterFail && result.getValidationResult() != ValidationResult.VALID;
     }
 
-    private void validateValidityPeriod(CertificateValidationReport result, X509Certificate certificate,
+    private void validateValidityPeriod(ValidationReport result, X509Certificate certificate,
             Date validationDate) {
         try {
             certificate.checkValidity(validationDate);
         } catch (CertificateExpiredException e) {
-            result.addFailure(certificate, VALIDITY_CHECK, MessageFormatUtil.format(
-                    EXPIRED_CERTIFICATE, certificate.getSubjectX500Principal()), e);
+            result.addReportItem(new CertificateReportItem(certificate, VALIDITY_CHECK, MessageFormatUtil.format(
+                    EXPIRED_CERTIFICATE, certificate.getSubjectX500Principal()), e, ValidationResult.INVALID));
         } catch (CertificateNotYetValidException e) {
-            result.addFailure(certificate, VALIDITY_CHECK, MessageFormatUtil.format(
-                    NOT_YET_VALID_CERTIFICATE, certificate.getSubjectX500Principal()), e);
+            result.addReportItem(new CertificateReportItem(certificate, VALIDITY_CHECK, MessageFormatUtil.format(
+                    NOT_YET_VALID_CERTIFICATE, certificate.getSubjectX500Principal()), e, ValidationResult.INVALID));
         }
     }
 
-    private void validateRequiredExtensions(CertificateValidationReport result, X509Certificate certificate,
+    private void validateRequiredExtensions(ValidationReport result, X509Certificate certificate,
                                           List<CertificateExtension> requiredExtensions) {
         if (requiredExtensions != null) {
             for (CertificateExtension requiredExtension : requiredExtensions) {
                 if (!requiredExtension.existsInCertificate(certificate)) {
-                    result.addFailure(certificate, EXTENSIONS_CHECK, MessageFormatUtil.format(
-                            EXTENSION_MISSING, requiredExtension.getExtensionOid()));
+                    result.addReportItem(new CertificateReportItem(certificate, EXTENSIONS_CHECK, MessageFormatUtil.format(
+                            EXTENSION_MISSING, requiredExtension.getExtensionOid()), ValidationResult.INVALID));
                 }
             }
         }
         if (globalRequiredExtensions != null) {
             for (CertificateExtension requiredExtension : globalRequiredExtensions) {
                 if (!requiredExtension.existsInCertificate(certificate)) {
-                    result.addFailure(certificate, EXTENSIONS_CHECK, MessageFormatUtil.format(
-                            GLOBAL_EXTENSION_MISSING, requiredExtension.getExtensionOid()));
+                    result.addReportItem(new CertificateReportItem(certificate, EXTENSIONS_CHECK, MessageFormatUtil.format(
+                            GLOBAL_EXTENSION_MISSING, requiredExtension.getExtensionOid()), ValidationResult.INVALID));
                 }
             }
         }
     }
 
-    private void validateRevocationData(CertificateValidationReport result, X509Certificate certificate,
+    private void validateRevocationData(ValidationReport result, X509Certificate certificate,
             Date validationDate) {
         validateOCSP(result, certificate, validationDate);
         validateCRL(result, certificate, validationDate);
     }
 
-    private void validateCRL(CertificateValidationReport result, X509Certificate certificate, Date validationDate) {
+    private void validateCRL(ValidationReport result, X509Certificate certificate, Date validationDate) {
         // TODO DEVSIX-8122 Implement CRLValidator
     }
 
-    private void validateOCSP(CertificateValidationReport result, X509Certificate certificate, Date validationDate) {
+    private void validateOCSP(ValidationReport result, X509Certificate certificate, Date validationDate) {
         // TODO DEVSIX-8170 Implement OCSPValidator
     }
 
-    private void validateChain(CertificateValidationReport result, X509Certificate certificate, Date validationDate) {
+    private void validateChain(ValidationReport result, X509Certificate certificate, Date validationDate) {
         List<CertificateExtension> requiredCertificateExtensions = new ArrayList<>();
         requiredCertificateExtensions.add(new KeyUsageExtension(KeyUsage.KEY_CERT_SIGN));
         requiredCertificateExtensions.add(new BasicConstraintsExtension(true));
@@ -275,11 +278,19 @@ public class CertificateChainValidator {
         X509Certificate issuerCertificate =
                 (X509Certificate) certificateRetriever.retrieveIssuerCertificate(certificate);
         if (issuerCertificate == null) {
-            result.addFailure(certificate, CERTIFICATE_CHECK, MessageFormatUtil.format(
-                    ISSUER_MISSING, certificate.getSubjectX500Principal()), ValidationResult.INDETERMINATE);
-        } else {
-            nextCertificateChainValidator.validate(result, issuerCertificate, validationDate,
-                    requiredCertificateExtensions);
+            result.addReportItem(new CertificateReportItem(certificate, CERTIFICATE_CHECK, MessageFormatUtil.format(
+                    ISSUER_MISSING, certificate.getSubjectX500Principal()), ValidationResult.INDETERMINATE));
+            return;
         }
+        try {
+            certificate.verify(issuerCertificate.getPublicKey());
+        } catch (GeneralSecurityException e) {
+            result.addReportItem(new CertificateReportItem(certificate, CERTIFICATE_CHECK,
+                    MessageFormatUtil.format(ISSUER_CANNOT_BE_VERIFIED, issuerCertificate.getSubjectX500Principal(),
+                            certificate.getSubjectX500Principal()), e, ValidationResult.INVALID));
+            return;
+        }
+        nextCertificateChainValidator.validate(result, issuerCertificate,
+                validationDate, requiredCertificateExtensions);
     }
 }
