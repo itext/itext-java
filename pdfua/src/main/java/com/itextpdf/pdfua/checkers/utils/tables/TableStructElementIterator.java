@@ -30,6 +30,7 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.tagging.IStructureNode;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
+import com.itextpdf.pdfua.checkers.utils.PdfUAValidationContext;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,6 +41,7 @@ import java.util.List;
  * Creates an iterator to iterate over the table structures.
  */
 public class TableStructElementIterator implements ITableIterator<PdfStructElem> {
+    final PdfUAValidationContext context;
     private final List<PdfStructElem> all = new ArrayList<>();
     private final HashMap<PdfStructElem, Tuple2<Integer, Integer>> locationCache = new HashMap<>();
     private int amountOfCols = 0;
@@ -47,16 +49,16 @@ public class TableStructElementIterator implements ITableIterator<PdfStructElem>
     private int amountOfRowsBody = 0;
     private int amountOfRowsFooter = 0;
     private int iterIndex = 0;
-
     private PdfStructElem currentValue;
-
 
     /**
      * Creates a new {@link TableStructElementIterator} instance.
      *
-     * @param tableStructElem The root table struct element.
+     * @param tableStructElem the root table struct element.
+     * @param context the validation context.
      */
-    public TableStructElementIterator(PdfStructElem tableStructElem) {
+    public TableStructElementIterator(PdfStructElem tableStructElem, PdfUAValidationContext context) {
+        this.context = context;
         flattenElements(tableStructElem);
     }
 
@@ -147,6 +149,14 @@ public class TableStructElementIterator implements ITableIterator<PdfStructElem>
         build2DRepresentationOfTagTreeStructures(rows);
     }
 
+    private PdfName getRole(IStructureNode node) {
+        final String roleStr = this.context.resolveToStandardRole(node);
+        if (roleStr == null) {
+            return null;
+        }
+        return new PdfName(roleStr);
+    }
+
     private List<PdfStructElem> extractTableRows(PdfStructElem table) {
         final List<IStructureNode> kids = table.getKids();
         final List<PdfStructElem> rows = new ArrayList<>();
@@ -154,19 +164,20 @@ public class TableStructElementIterator implements ITableIterator<PdfStructElem>
             if (kid == null) {
                 continue;
             }
-            if (PdfName.THead.equals(kid.getRole())) {
+            final PdfName kidRole = getRole(kid);
+            if (PdfName.THead.equals(kidRole)) {
                 final List<PdfStructElem> headerRows = extractAllTrTags(kid.getKids());
                 this.amountOfRowsHeader = headerRows.size();
                 rows.addAll(headerRows);
-            } else if (PdfName.TBody.equals(kid.getRole())) {
+            } else if (PdfName.TBody.equals(kidRole)) {
                 final List<PdfStructElem> bodyRows = extractAllTrTags(kid.getKids());
                 this.amountOfRowsBody += bodyRows.size();
                 rows.addAll(bodyRows);
-            } else if (PdfName.TFoot.equals(kid.getRole())) {
+            } else if (PdfName.TFoot.equals(kidRole)) {
                 final List<PdfStructElem> footerRows = extractAllTrTags(kid.getKids());
                 this.amountOfRowsFooter = footerRows.size();
                 rows.addAll(footerRows);
-            } else if (PdfName.TR.equals(kid.getRole())) {
+            } else if (PdfName.TR.equals(kidRole)) {
                 final List<PdfStructElem> bodyRows = extractAllTrTags(Collections.singletonList(kid));
                 this.amountOfRowsBody += bodyRows.size();
                 rows.addAll(bodyRows);
@@ -226,6 +237,19 @@ public class TableStructElementIterator implements ITableIterator<PdfStructElem>
         }
     }
 
+    private List<PdfStructElem> extractCells(PdfStructElem row) {
+        final List<PdfStructElem> elems = new ArrayList<>();
+        for (final IStructureNode kid : row.getKids()) {
+            if (kid instanceof PdfStructElem ) {
+                final PdfName kidRole = this.getRole(kid);
+                if ((PdfName.TH.equals(kidRole) || PdfName.TD.equals(kidRole))){
+                    elems.add((PdfStructElem) kid);
+                }
+            }
+        }
+        return elems;
+    }
+
     private static int getColspan(PdfStructElem structElem) {
         return getIntValueFromAttributes(structElem, PdfName.ColSpan);
     }
@@ -256,25 +280,14 @@ public class TableStructElementIterator implements ITableIterator<PdfStructElem>
         return 1;
     }
 
-    private static List<PdfStructElem> extractCells(PdfStructElem row) {
-        final List<PdfStructElem> elems = new ArrayList<>();
-        for (final IStructureNode kid : row.getKids()) {
-            if (kid instanceof PdfStructElem && (PdfName.TH.equals(kid.getRole()) || PdfName.TD.equals(
-                    kid.getRole()))) {
-                elems.add((PdfStructElem) kid);
-            }
-        }
-        return elems;
-    }
-
-    private static List<PdfStructElem> extractAllTrTags(List<IStructureNode> possibleTrs) {
+    private List<PdfStructElem> extractAllTrTags(List<IStructureNode> possibleTrs) {
         final List<PdfStructElem> elems = new ArrayList<>();
         for (final IStructureNode possibleTr : possibleTrs) {
-            if (possibleTr instanceof PdfStructElem && PdfName.TR.equals(possibleTr.getRole())) {
+            final String resolvedRole = context.resolveToStandardRole(possibleTr);
+            if (possibleTr instanceof PdfStructElem && PdfName.TR.getValue().equals(resolvedRole)) {
                 elems.add((PdfStructElem) possibleTr);
             }
         }
         return elems;
     }
-
 }

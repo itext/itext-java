@@ -35,13 +35,11 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfVersion;
-import com.itextpdf.kernel.pdf.tagging.IStructureNode;
 import com.itextpdf.kernel.pdf.tagging.PdfMcr;
 import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.IRoleMappingResolver;
-import com.itextpdf.kernel.pdf.tagutils.ITagTreeIteratorHandler;
 import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
 import com.itextpdf.kernel.pdf.tagutils.TagTreeIterator;
 import com.itextpdf.kernel.utils.IValidationChecker;
@@ -54,6 +52,7 @@ import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.pdfua.checkers.utils.GraphicsCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.LayoutCheckUtil;
+import com.itextpdf.pdfua.checkers.utils.PdfUAValidationContext;
 import com.itextpdf.pdfua.checkers.utils.headings.HeadingsChecker;
 import com.itextpdf.pdfua.checkers.utils.tables.TableCheckUtil;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
@@ -76,8 +75,9 @@ public class PdfUA1Checker implements IValidationChecker {
 
     private final TagStructureContext tagStructureContext;
 
-    private final HeadingsChecker headingsChecker = new HeadingsChecker();
+    private final HeadingsChecker headingsChecker;
 
+    private final PdfUAValidationContext context;
     /**
      * Creates PdfUA1Checker instance with PDF document which will be validated against PDF/UA-1 standard.
      *
@@ -86,6 +86,8 @@ public class PdfUA1Checker implements IValidationChecker {
     public PdfUA1Checker(PdfDocument pdfDocument) {
         this.pdfDocument = pdfDocument;
         this.tagStructureContext = new TagStructureContext(pdfDocument);
+        this.context = new PdfUAValidationContext(pdfDocument);
+        this.headingsChecker = new HeadingsChecker(context);
     }
 
     /**
@@ -105,7 +107,7 @@ public class PdfUA1Checker implements IValidationChecker {
     public void validateObject(Object obj, IsoKey key, PdfResources resources, PdfStream contentStream, Object extra) {
         switch (key) {
             case LAYOUT:
-                LayoutCheckUtil.checkLayoutElements(obj);
+                new LayoutCheckUtil(context).checkRenderer(obj);
                 headingsChecker.checkLayoutElement(obj);
                 break;
             case CANVAS_WRITING_CONTENT:
@@ -287,10 +289,10 @@ public class PdfUA1Checker implements IValidationChecker {
         }
 
         TagTreeIterator tagTreeIterator = new TagTreeIterator(structTreeRoot);
-        tagTreeIterator.addHandler(GraphicsCheckUtil.createFigureTagHandler());
-        tagTreeIterator.addHandler(FormulaCheckUtil.createFormulaTagHandler());
-        tagTreeIterator.addHandler(createHeadingsTagHandler());
-        tagTreeIterator.addHandler(TableCheckUtil.createTagTreeHandler());
+        tagTreeIterator.addHandler(new GraphicsCheckUtil.GraphicsHandler(context));
+        tagTreeIterator.addHandler(new FormulaCheckUtil.FormulaTagHandler(context));
+        tagTreeIterator.addHandler(new HeadingsChecker.HeadingHandler(context));
+        tagTreeIterator.addHandler(new TableCheckUtil.TableHandler(context));
         tagTreeIterator.traverse();
     }
 
@@ -308,15 +310,5 @@ public class PdfUA1Checker implements IValidationChecker {
                             String.join(", ", fontNamesThatAreNotEmbedded)
                     ));
         }
-    }
-
-    private static ITagTreeIteratorHandler createHeadingsTagHandler() {
-        return new ITagTreeIteratorHandler() {
-            private final HeadingsChecker checker = new HeadingsChecker();
-            @Override
-            public void nextElement(IStructureNode elem) {
-                checker.checkStructElement(elem);
-            }
-        };
     }
 }

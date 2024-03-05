@@ -31,15 +31,19 @@ import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Div;
+import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.pdfua.PdfUATestPdfDocument;
+import com.itextpdf.pdfua.UaValidationTestFramework;
+import com.itextpdf.pdfua.UaValidationTestFramework.Generator;
 import com.itextpdf.pdfua.checkers.utils.LayoutCheckUtil;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
@@ -49,9 +53,11 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.pdfa.VeraPdfValidator;// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -68,9 +74,16 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
 
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/FreeSans.ttf";
 
+    private UaValidationTestFramework framework;
+
     @BeforeClass
     public static void before() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
+    }
+
+    @Before
+    public void initializeFramework() {
+        framework = new UaValidationTestFramework(DESTINATION_FOLDER);
     }
 
     @Test
@@ -87,7 +100,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
 
     @Test
     public void layoutCheckUtilTest() {
-        AssertUtil.doesNotThrow(() -> LayoutCheckUtil.checkLayoutElements(null));
+        AssertUtil.doesNotThrow(() -> new LayoutCheckUtil(null).checkRenderer(null));
     }
 
     @Test
@@ -103,6 +116,98 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
             document.add(img);
         });
         Assert.assertEquals(PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT, e.getMessage());
+    }
+
+    @Test
+    public void imageCustomRole_Ok() throws FileNotFoundException {
+        framework.addBeforeGenerationHook((pdfDocument) -> {
+            PdfStructTreeRoot root = pdfDocument.getStructTreeRoot();
+            root.addRoleMapping("CustomImage", StandardRoles.FIGURE);
+        });
+        framework.addSuppliers(new Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Image img = null;
+                try {
+                    img = new Image(ImageDataFactory.create(DOG));
+                } catch (MalformedURLException e) {
+                    throw new RuntimeException();
+                }
+                img.getAccessibilityProperties().setRole("CustomImage");
+                img.getAccessibilityProperties().setAlternateDescription("ff");
+                return new Div().add(img);
+            }
+        });
+        framework.assertBothValid("imageWithCustomRoleOk");
+    }
+
+    @Test
+    public void imageCustomDoubleMapping_Ok() throws FileNotFoundException {
+        framework.addBeforeGenerationHook((pdfDocument) -> {
+            PdfStructTreeRoot root = pdfDocument.getStructTreeRoot();
+            root.addRoleMapping("CustomImage", StandardRoles.FIGURE);
+            root.addRoleMapping("CustomImage2", "CustomImage");
+        });
+        framework.addSuppliers(new Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Image img = null;
+                try {
+                    img = new Image(ImageDataFactory.create(DOG));
+                } catch (MalformedURLException e) {
+                    throw new RuntimeException();
+                }
+                img.getAccessibilityProperties().setRole("CustomImage2");
+                img.getAccessibilityProperties().setAlternateDescription("ff");
+                return new Div().add(img);
+            }
+        });
+        framework.assertBothValid("imageWithDoubleMapping");
+    }
+
+    @Test
+    public void imageCustomRoleNoAlternateDescription_Throws() throws FileNotFoundException {
+        framework.addBeforeGenerationHook((pdfDocument) -> {
+            PdfStructTreeRoot root = pdfDocument.getStructTreeRoot();
+            root.addRoleMapping("CustomImage", StandardRoles.FIGURE);
+        });
+        framework.addSuppliers(new Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Image img = null;
+                try {
+                    img = new Image(ImageDataFactory.create(DOG));
+                } catch (MalformedURLException e) {
+                    throw new RuntimeException();
+                }
+                img.getAccessibilityProperties().setRole("CustomImage");
+                return new Div().add(img);
+            }
+        });
+        framework.assertBothFail("imageWithCustomRoleAndNoDescription");
+    }
+
+    @Test
+    public void imageCustomDoubleMapping_Throws() throws FileNotFoundException {
+        framework.addBeforeGenerationHook((pdfDocument) -> {
+            PdfStructTreeRoot root = pdfDocument.getStructTreeRoot();
+            root.addRoleMapping("CustomImage", StandardRoles.FIGURE);
+            root.addRoleMapping("CustomImage2", "CustomImage");
+        });
+        framework.addSuppliers(new Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Image img = null;
+                try {
+                    img = new Image(ImageDataFactory.create(DOG));
+                } catch (MalformedURLException e) {
+                    throw new RuntimeException();
+                }
+                img.getAccessibilityProperties().setRole("CustomImage2");
+                return new Div().add(img);
+            }
+        });
+        framework.assertBothFail("imageCustomDoubleMapping_Throws");
     }
 
     @Test

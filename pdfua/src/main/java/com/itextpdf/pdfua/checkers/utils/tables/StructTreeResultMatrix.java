@@ -28,23 +28,25 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
+import com.itextpdf.pdfua.checkers.utils.PdfUAValidationContext;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The result matrix to validate PDF UA1 tables with based on the TagTreeStructure of the document.
+ * The result matrix to validate PDF UA1 tables based on the TagTreeStructure of the document.
  */
 class StructTreeResultMatrix extends AbstractResultMatrix<PdfStructElem> {
 
-
     /**
      * Creates a new {@link StructTreeResultMatrix} instance.
+     *
+     * @param elem a table structure element.
+     * @param context The validation context.
      */
-    public StructTreeResultMatrix(PdfStructElem elem) {
-        super(new TableStructElementIterator(elem));
+    public StructTreeResultMatrix(PdfStructElem elem, PdfUAValidationContext context) {
+        super(new TableStructElementIterator(elem, context));
     }
-
 
     /**
      * {@inheritDoc}
@@ -118,11 +120,7 @@ class StructTreeResultMatrix extends AbstractResultMatrix<PdfStructElem> {
      */
     @Override
     String getRole(PdfStructElem cell) {
-        PdfName role = cell.getRole();
-        if (role != null) {
-            return role.getValue();
-        }
-        return null;
+        return ((TableStructElementIterator)iterator).context.resolveToStandardRole(cell);
     }
 
 }

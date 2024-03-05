@@ -40,26 +40,53 @@ import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
  */
 public final class GraphicsCheckUtil {
 
+    private final PdfUAValidationContext context;
 
     /**
      * Creates a new {@link GraphicsCheckUtil} instance.
+     *
+     * @param context The validation context.
      */
-    private GraphicsCheckUtil() {
-        // Empty constructor
+    public GraphicsCheckUtil(PdfUAValidationContext context) {
+        this.context = context;
+    }
+
+    /**
+     * WARNING! This method is an artifact and currently does nothing.
+     * It is kept to ensure backward binary compatibility
+     *
+     * @param image image to check
+     *
+     * @throws PdfUAConformanceException if image doesn't have alternative description or actual text
+     * @deprecated This method is an artifact and will be removed.
+     */
+    @Deprecated
+    public static void checkLayoutImage(Image image) {
+        //No impl
+    }
+
+    /**
+     * WARNING! This method is an artifact and currently does nothing.
+     * It is kept to ensure backward binary compatibility
+     *
+     * @return {@link ITagTreeIteratorHandler} always null
+     * @deprecated This method is an artifact and will be removed.
+     */
+    @Deprecated
+    public static ITagTreeIteratorHandler createFigureTagHandler() {
+        return null;
     }
 
     /**
      * Checks if image has alternative description or actual text.
      *
-     * @param image image to check
-     *
-     * @throws PdfUAConformanceException if image doesn't have alternative description or actual text
+     * @param image The image to check
      */
-    public static void checkLayoutImage(Image image) {
+    public void checkLayoutElement(Image image) {
         if (image.getAccessibilityProperties() == null) {
             throw new IllegalStateException();
         }
-        if (!StandardRoles.FIGURE.equals(image.getAccessibilityProperties().getRole())) {
+        if (!StandardRoles.FIGURE.equals(context.resolveToStandardRole(image.getAccessibilityProperties().getRole()))) {
             // image is not a figure tag, so we don't need to check it
             return;
         }
@@ -68,30 +95,6 @@ public final class GraphicsCheckUtil {
         if (!hasSomeValue) {
             throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT);
         }
-    }
-
-    /**
-     * Checks if figure tag has alternative description or actual text.
-     *
-     * @return {@link ITagTreeIteratorHandler} handler implementation that checks if figure tag has alternative
-     * description or actual text
-     */
-    public static ITagTreeIteratorHandler createFigureTagHandler() {
-        return new ITagTreeIteratorHandler() {
-            @Override
-            public void nextElement(IStructureNode elem) {
-                final PdfStructElem structElem = TagTreeHandlerUtil.getElementIfRoleMatches(PdfName.Figure, elem);
-                if (structElem == null) {
-                    return;
-                }
-                final PdfDictionary pdfObject = structElem.getPdfObject();
-
-                if (!hasAtleastOneValidValue(pdfObject.getAsString(PdfName.Alt),
-                        pdfObject.getAsString(PdfName.ActualText))) {
-                    throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT);
-                }
-            }
-        };
     }
 
     private static boolean hasAtleastOneValidValue(Object altText, Object actualText) {
@@ -113,4 +116,35 @@ public final class GraphicsCheckUtil {
         return !(altTextValue == null || altTextValue.isEmpty()) || actualTextValue != null;
     }
 
+    /**
+     * Helper class that checks the conformance of graphics tags while iterating the tag tree structure.
+     */
+    public static class GraphicsHandler extends ContextAwareTagTreeIteratorHandler {
+
+        /**
+         * Creates a new instance of the {@link GraphicsHandler}.
+         *
+         * @param context The validation context.
+         */
+        public GraphicsHandler(PdfUAValidationContext context) {
+            super(context);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void nextElement(IStructureNode elem) {
+            final PdfStructElem structElem = context.getElementIfRoleMatches(PdfName.Figure, elem);
+            if (structElem == null) {
+                return;
+            }
+            final PdfDictionary pdfObject = structElem.getPdfObject();
+
+            if (!hasAtleastOneValidValue(pdfObject.getAsString(PdfName.Alt),
+                    pdfObject.getAsString(PdfName.ActualText))) {
+                throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT);
+            }
+        }
+    }
 }

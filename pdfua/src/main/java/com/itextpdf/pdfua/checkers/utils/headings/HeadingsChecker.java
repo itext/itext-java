@@ -31,6 +31,8 @@ import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.tagging.IAccessibleElement;
+import com.itextpdf.pdfua.checkers.utils.ContextAwareTagTreeIteratorHandler;
+import com.itextpdf.pdfua.checkers.utils.PdfUAValidationContext;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 
@@ -44,11 +46,20 @@ import java.util.regex.Pattern;
  */
 public final class HeadingsChecker {
     private static final Pattern Hn_PATTERN = Pattern.compile("^H([1-6])$");
-
-    private int previousHn = -1;
-    private boolean wasAtLeastOneH = false;
+    private final PdfUAValidationContext context;
     private final Set<IRenderer> hRendererParents = new HashSet<>();
     private final Set<PdfDictionary> hPdfDictParents = new HashSet<>();
+    private int previousHn = -1;
+    private boolean wasAtLeastOneH = false;
+
+    /**
+     * Creates a new instance of {@link HeadingsChecker}.
+     *
+     * @param context The validation context.
+     */
+    public HeadingsChecker(PdfUAValidationContext context) {
+        this.context = context;
+    }
 
     /**
      * Checks if layout element has correct heading.
@@ -62,7 +73,7 @@ public final class HeadingsChecker {
         IPropertyContainer element = renderer.getModelElement();
         if (element instanceof IAccessibleElement) {
             IAccessibleElement accessibleElement = (IAccessibleElement) element;
-            String role = accessibleElement.getAccessibilityProperties().getRole();
+            String role = context.resolveToStandardRole(accessibleElement.getAccessibilityProperties().getRole());
 
             checkHnSequence(role);
 
@@ -88,11 +99,10 @@ public final class HeadingsChecker {
      * @throws PdfUAConformanceException if headings sequence is incorrect
      */
     public void checkStructElement(IStructureNode structNode) {
-        if (structNode.getRole() == null) {
+        final String role = context.resolveToStandardRole(structNode);
+        if (role == null) {
             return;
         }
-
-        final String role = structNode.getRole().getValue();
         checkHnSequence(role);
 
         if (StandardRoles.H.equals(role)) {
@@ -154,5 +164,30 @@ public final class HeadingsChecker {
             return ((PdfStructElem) node).getPdfObject();
         }
         return null;
+    }
+
+    /**
+     * Handler class that checks heading tags while traversing the tag tree.
+     */
+    public static class HeadingHandler extends ContextAwareTagTreeIteratorHandler {
+        private final HeadingsChecker checker;
+
+        /**
+         * Creates a new instance of {@link HeadingsChecker}.
+         *
+         * @param context The validation context.
+         */
+        public HeadingHandler(PdfUAValidationContext context) {
+            super(context);
+            checker = new HeadingsChecker(context);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void nextElement(IStructureNode elem) {
+            checker.checkStructElement(elem);
+        }
     }
 }

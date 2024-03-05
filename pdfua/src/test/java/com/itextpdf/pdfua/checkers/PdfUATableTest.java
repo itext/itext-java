@@ -23,10 +23,12 @@
 package com.itextpdf.pdfua.checkers;
 
 import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagging.PdfStructureAttributes;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.layout.element.Cell;
@@ -1014,6 +1016,38 @@ public class PdfUATableTest extends ExtendedITextTest {
         framework.assertBothValid("combination09");
     }
 
+    @Test
+    public void roleMapping01() throws FileNotFoundException {
+        TableBuilder tableBuilder = new TableBuilder(2);
+        framework.addBeforeGenerationHook((pdfDocument -> {
+            PdfStructTreeRoot root = pdfDocument.getStructTreeRoot();
+            root.addRoleMapping("FancyHeading", StandardRoles.TH);
+            root.addRoleMapping("FancyTD", StandardRoles.TD);
+        }));
+        tableBuilder.addBodyCell(new Generator<Cell>() {
+            @Override
+            public Cell generate() {
+                Cell c = new Cell();
+                c.add(new Paragraph("Heading 1").setFont(getFont()));
+                c.getAccessibilityProperties().setRole("FancyHeading");
+                return c;
+            }
+        });
+
+        tableBuilder.addBodyCell(new Generator<Cell>() {
+            @Override
+            public Cell generate() {
+                Cell c = new Cell();
+                c.add(new Paragraph("Heading 2").setFont(getFont()));
+                c.getAccessibilityProperties().setRole("FancyHeading");
+                return c;
+            }
+        });
+
+        framework.addSuppliers(tableBuilder);
+        framework.assertBothValid("tableCustomRoles");
+    }
+
 
     static class TableBuilder implements Generator<IBlockElement> {
         private final int amountOfColumns;
@@ -1148,6 +1182,14 @@ public class PdfUATableTest extends ExtendedITextTest {
             } catch (IOException e) {
                 throw new RuntimeException(e.getMessage());
             }
+        }
+    }
+
+    private static PdfFont getFont(){
+        try {
+            return PdfFontFactory.createFont(FONT);
+        } catch (IOException e) {
+            throw new RuntimeException();
         }
     }
 }

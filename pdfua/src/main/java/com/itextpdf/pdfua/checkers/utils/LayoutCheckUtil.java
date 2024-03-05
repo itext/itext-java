@@ -33,30 +33,41 @@ import com.itextpdf.pdfua.checkers.utils.tables.TableCheckUtil;
  */
 public final class LayoutCheckUtil {
 
+    private final PdfUAValidationContext context;
+
     /**
      * Creates a new {@link LayoutCheckUtil} instance.
+     *
+     * @param context The validation context.
      */
-    private LayoutCheckUtil() {
-        // Empty constructor
+    public LayoutCheckUtil(PdfUAValidationContext context) {
+        this.context = context;
     }
 
     /**
-     * Checks if a layout element is valid against the PDF/UA specification.
+     * WARNING! This method is an artifact and currently does nothing.
+     * It is kept to ensure backward binary compatibility
      *
      * @param rendererObj layout element to check
      */
+    @Deprecated
     public static void checkLayoutElements(Object rendererObj) {
+    }
+
+    /**
+     * Checks renderer for PDF UA compliance.
+     *
+     * @param rendererObj The renderer to check.
+     */
+    public void checkRenderer(Object rendererObj) {
         if (rendererObj == null) {
             return;
         }
         IPropertyContainer layoutElement = ((IRenderer) rendererObj).getModelElement();
         if (layoutElement instanceof Image) {
-            GraphicsCheckUtil.checkLayoutImage((Image) layoutElement);
-            return;
-        }
-        if (layoutElement instanceof Table){
-            TableCheckUtil.checkLayoutTable((Table) layoutElement);
-            return;
+            new GraphicsCheckUtil(context).checkLayoutElement((Image) layoutElement);
+        } else if (layoutElement instanceof Table) {
+            new TableCheckUtil(context).checkTable((Table) layoutElement);
         }
     }
 }

@@ -30,6 +30,7 @@ import com.itextpdf.kernel.pdf.tagging.PdfStructureAttributes;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Table;
+import com.itextpdf.pdfua.checkers.utils.PdfUAValidationContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,10 +44,11 @@ final class CellResultMatrix extends AbstractResultMatrix<Cell> {
     /**
      * Creates a new {@link CellResultMatrix} instance.
      *
-     * @param table The table that needs to be checked.
+     * @param table   The table that needs to be checked.
+     * @param context The validation context.
      */
-    public CellResultMatrix(Table table) {
-        super(new TableCellIterator(table));
+    public CellResultMatrix(Table table, PdfUAValidationContext context) {
+        super(new TableCellIterator(table, context));
     }
 
     /**
@@ -92,7 +94,8 @@ final class CellResultMatrix extends AbstractResultMatrix<Cell> {
      */
     @Override
     String getRole(Cell cell) {
-        return cell.getAccessibilityProperties().getRole();
+        return ((TableCellIterator) iterator).context.resolveToStandardRole(
+                cell.getAccessibilityProperties().getRole());
     }
 
     private static PdfObject getAttribute(AccessibilityProperties props, PdfName name) {

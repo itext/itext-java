@@ -25,19 +25,36 @@ package com.itextpdf.pdfua.checkers.utils.tables;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.tagging.IStructureNode;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
-import com.itextpdf.kernel.pdf.tagutils.ITagTreeIteratorHandler;
 import com.itextpdf.layout.element.Table;
+import com.itextpdf.pdfua.checkers.utils.ContextAwareTagTreeIteratorHandler;
+import com.itextpdf.pdfua.checkers.utils.PdfUAValidationContext;
 
 /**
  * Class that provides methods for checking PDF/UA compliance of table elements.
  */
 public final class TableCheckUtil {
 
+    private final PdfUAValidationContext context;
+
     /**
      * Creates a new {@link TableCheckUtil} instance.
+     *
+     * @param context the validation context.
      */
-    private TableCheckUtil() {
-        // Empty constructor
+    public TableCheckUtil(PdfUAValidationContext context) {
+        this.context = context;
+    }
+
+    /**
+     * WARNING! This method is an artifact and currently does nothing.
+     * It is kept to ensure backward binary compatibility
+     *
+     * @param table the table to check.
+     * @deprecated This method is an artifact and will be removed.
+     */
+    @Deprecated
+    public static void checkLayoutTable(Table table) {
+        //No impl
     }
 
     /**
@@ -45,30 +62,36 @@ public final class TableCheckUtil {
      *
      * @param table the table to check.
      */
-    public static void checkLayoutTable(Table table) {
-        new CellResultMatrix(table).checkValidTableTagging();
+    public void checkTable(Table table) {
+        new CellResultMatrix(table, this.context);
     }
 
     /**
-     * Creates a {@link ITagTreeIteratorHandler} that handles the PDF/UA1 verification
-     * of table elements on closing.
-     *
-     * @return The created handler.
+     * Handler class that checks table tags.
      */
-    public static ITagTreeIteratorHandler createTagTreeHandler() {
-        return new ITagTreeIteratorHandler() {
-            @Override
-            public void nextElement(IStructureNode elem) {
-                if (elem == null) {
-                    return;
-                }
-                if (elem instanceof PdfStructElem && PdfName.Table.equals(elem.getRole())) {
-                    new StructTreeResultMatrix((PdfStructElem) elem).checkValidTableTagging();
-                }
-            }
-        };
-    }
+    public static class TableHandler extends ContextAwareTagTreeIteratorHandler {
 
+        /**
+         * Creates a new instance of {@link TableHandler}.
+         *
+         * @param context the validationContext
+         */
+        public TableHandler(PdfUAValidationContext context) {
+            super(context);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void nextElement(IStructureNode elem) {
+            PdfStructElem table = context.getElementIfRoleMatches(PdfName.Table, elem);
+            if (table == null) {
+                return;
+            }
+            new StructTreeResultMatrix((PdfStructElem) elem, context).checkValidTableTagging();
+        }
+    }
 
 }
 

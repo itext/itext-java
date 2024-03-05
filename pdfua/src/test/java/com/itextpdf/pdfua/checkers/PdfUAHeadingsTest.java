@@ -312,34 +312,53 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void roleMappingTest() throws IOException, InterruptedException {
-        String outPdf = DESTINATION_FOLDER + "roleMappingTest.pdf";
-        String cmpPdf = SOURCE_FOLDER + "cmp_roleMappingTest.pdf";
+    public void roleMappingTest() throws IOException {
+        framework.addSuppliers(new Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Paragraph h1 = new Paragraph("Header level 1");
+                h1.setFont(loadFont());
+                h1.getAccessibilityProperties().setRole("header1");
 
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+                Paragraph h2 = new Paragraph("Header level 5");
+                h2.setFont(loadFont());
+                h2.getAccessibilityProperties().setRole("header5");
+                h1.add(h2);
+                return h1;
+            }
+        });
+        framework.addBeforeGenerationHook((pdfDocument)->{
+            PdfStructTreeRoot root = pdfDocument.getStructTreeRoot();
+            root.addRoleMapping("header1", StandardRoles.H1);
+            root.addRoleMapping("header5", StandardRoles.H5);
 
-        Document doc = new Document(pdfDoc);
+        });
+        framework.assertBothFail("rolemappingTest");
+    }
 
-        PdfStructTreeRoot root = pdfDoc.getStructTreeRoot();
-        root.addRoleMapping("header1", StandardRoles.H1);
-        root.addRoleMapping("header5", StandardRoles.H5);
+    @Test
+    public void roleMappingTestValid() throws IOException {
+        framework.addSuppliers(new Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Paragraph h1 = new Paragraph("Header level 1");
+                h1.setFont(loadFont());
+                h1.getAccessibilityProperties().setRole("header1");
 
-        Paragraph h1 = new Paragraph("Header level 1");
-        h1.setFont(loadFont());
-        h1.getAccessibilityProperties().setRole("header1");
+                Paragraph h2 = new Paragraph("Header level 5");
+                h2.setFont(loadFont());
+                h2.getAccessibilityProperties().setRole("header5");
+                h1.add(h2);
+                return h1;
+            }
+        });
+        framework.addBeforeGenerationHook((pdfDocument)->{
+            PdfStructTreeRoot root = pdfDocument.getStructTreeRoot();
+            root.addRoleMapping("header1", StandardRoles.H1);
+            root.addRoleMapping("header5", StandardRoles.H2);
 
-        Paragraph h2 = new Paragraph("Header level 5");
-        h2.setFont(loadFont());
-        h2.getAccessibilityProperties().setRole("header5");
-        h1.add(h2);
-
-        // TODO DEVSIX-8166 exception should be thrown on layout and closing levels. after the fix use framework.assertBothFail
-        doc.add(h1);
-
-        doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
-        Assert.assertNotNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        });
+        framework.assertBothValid("rolemappingValid");
     }
 
     @Test
@@ -535,7 +554,6 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
                 h2.setFont(loadFont());
                 h2.getAccessibilityProperties().setRole(StandardRoles.H2);
                 h1.add(h2);
-
 
                 Paragraph h3 = new Paragraph("Header level 3");
                 h3.setFont(loadFont());

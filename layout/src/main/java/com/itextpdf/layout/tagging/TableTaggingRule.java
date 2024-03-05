@@ -44,7 +44,7 @@ class TableTaggingRule implements ITaggingRule {
         List<TaggingHintKey> tableCellTagsUnindexed = new ArrayList<>();
         List<TaggingHintKey> nonCellKids = new ArrayList<>();
         for (TaggingHintKey kidKey : kidKeys) {
-            final String kidRole = getKidRole(kidKey);
+            final String kidRole = getKidRole(kidKey,taggingHelper);
             final boolean isCell = StandardRoles.TD.equals(kidRole) || StandardRoles.TH.equals(kidRole);
             if (isCell && kidKey.getAccessibleElement() instanceof Cell) {
                 final Cell cell = (Cell) kidKey.getAccessibleElement();
@@ -66,7 +66,7 @@ class TableTaggingRule implements ITaggingRule {
         TaggingDummyElement tbodyTag = getTbodyTag(tableHintKey);
 
         for (TaggingHintKey nonCellKid : nonCellKids) {
-            String kidRole = getKidRole(nonCellKid);
+            String kidRole = getKidRole(nonCellKid,taggingHelper);
             if (!StandardRoles.THEAD.equals(kidRole) && !StandardRoles.TFOOT.equals(kidRole)
                     && !StandardRoles.CAPTION.equals(kidRole)) {
                 // In usual cases it isn't expected that this for loop will work, but it is possible to
@@ -75,14 +75,14 @@ class TableTaggingRule implements ITaggingRule {
             }
         }
         for (TaggingHintKey nonCellKid : nonCellKids) {
-            if (StandardRoles.THEAD.equals(getKidRole(nonCellKid))) {
+            if (StandardRoles.THEAD.equals(getKidRole(nonCellKid,taggingHelper))) {
                 taggingHelper.moveKidHint(nonCellKid, tableHintKey);
             }
         }
         taggingHelper.addKidsHint(tableHintKey,
                 Collections.<TaggingHintKey>singletonList(LayoutTaggingHelper.getOrCreateHintKey(tbodyTag)), -1);
         for (TaggingHintKey nonCellKid : nonCellKids) {
-            if (StandardRoles.TFOOT.equals(getKidRole(nonCellKid))) {
+            if (StandardRoles.TFOOT.equals(getKidRole(nonCellKid,taggingHelper))) {
                 taggingHelper.moveKidHint(nonCellKid, tableHintKey);
             }
         }
@@ -102,7 +102,7 @@ class TableTaggingRule implements ITaggingRule {
         }
 
         for (TaggingHintKey nonCellKid : nonCellKids) {
-            if (StandardRoles.CAPTION.equals(getKidRole(nonCellKid))) {
+            if (StandardRoles.CAPTION.equals(getKidRole(nonCellKid,taggingHelper))) {
                 moveCaption(taggingHelper, nonCellKid, tableHintKey);
             }
         }
@@ -110,8 +110,12 @@ class TableTaggingRule implements ITaggingRule {
         return true;
     }
 
-    private static String getKidRole(TaggingHintKey kidKey) {
-        return kidKey.getAccessibilityProperties().getRole();
+    private static String getKidRole(TaggingHintKey kidKey, LayoutTaggingHelper helper) {
+        return helper
+                .getPdfDocument()
+                .getTagStructureContext()
+                .resolveMappingToStandardOrDomainSpecificRole(kidKey.getAccessibilityProperties().getRole(),null)
+                .getRole();
     }
 
     /**

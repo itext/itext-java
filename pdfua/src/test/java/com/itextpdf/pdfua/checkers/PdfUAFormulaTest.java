@@ -28,6 +28,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.element.IBlockElement;
@@ -163,6 +164,42 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
             }
         });
         framework.assertBothFail("layout07", false);
+    }
+
+    @Test
+    public void layoutWithValidRole() throws IOException {
+        framework.addSuppliers(new Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Paragraph p = new Paragraph("e = mc^2").setFont(loadFont(FONT));
+                p.getAccessibilityProperties().setRole("BING");
+                p.getAccessibilityProperties().setAlternateDescription("Alternate " + "description");
+                return p;
+            }
+        });
+        framework.addBeforeGenerationHook((pdfDocument) -> {
+            PdfStructTreeRoot tagStructureContext = pdfDocument.getStructTreeRoot();
+            tagStructureContext.addRoleMapping("BING", StandardRoles.FORMULA);
+        });
+        framework.assertBothValid("layoutWithValidRole");
+    }
+
+
+    @Test
+    public void layoutWithValidRoleButNoAlternateDescription() throws IOException {
+        framework.addSuppliers(new Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Paragraph p = new Paragraph("e = mc^2").setFont(loadFont(FONT));
+                p.getAccessibilityProperties().setRole("BING");
+                return p;
+            }
+        });
+        framework.addBeforeGenerationHook((pdfDocument) -> {
+            PdfStructTreeRoot tagStructureContext = pdfDocument.getStructTreeRoot();
+            tagStructureContext.addRoleMapping("BING", StandardRoles.FORMULA);
+        });
+        framework.assertBothFail("layoutWithValidRoleButNoDescription");
     }
 
     @Test

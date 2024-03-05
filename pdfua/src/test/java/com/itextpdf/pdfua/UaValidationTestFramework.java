@@ -36,6 +36,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 import org.junit.Assert;
 
 /**
@@ -50,6 +51,7 @@ public class UaValidationTestFramework {
     private final String destinationFolder;
     private final List<Generator<IBlockElement>> elementProducers = new ArrayList<>();
 
+    private final List<Consumer<PdfDocument>> beforeGeneratorHook = new ArrayList<>();
     public UaValidationTestFramework(String destinationFolder) {
         this(destinationFolder, true);
     }
@@ -84,6 +86,7 @@ public class UaValidationTestFramework {
         Assert.assertNotNull(veraPdf);// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 
         if (checkDocClosing) {
+            System.out.println("Checking closing");
             checkError(checkErrorOnClosing(createdFileName), expectedMsg);
         }
     }
@@ -91,7 +94,8 @@ public class UaValidationTestFramework {
     public void assertBothValid(String fileName) throws FileNotFoundException {
         Exception e = checkErrorLayout("layout_" + fileName + ".pdf");
         String veraPdf = verAPdfResult("vera_" + fileName + ".pdf");
-        if (e == null && veraPdf == null) {
+        Exception eClosing =  checkErrorOnClosing("vera_" + fileName + ".pdf");
+        if (e == null && veraPdf == null && eClosing == null) {
             return;
         }
         int counter = 0;
@@ -109,7 +113,11 @@ public class UaValidationTestFramework {
             counter++;
             sb.append("Expected no vera pdf message but was: \n").append(veraPdf).append("\n");
         }
-        if (counter != 2) {
+        if (eClosing != null){
+            counter++;
+            sb.append("OnClosing no expection expected but was:\n").append(eClosing);
+        }
+        if (counter != 3) {
             Assert.fail("One of the checks did not throw\n\n" + sb.toString());
         }
         Assert.fail(sb.toString());
@@ -123,6 +131,9 @@ public class UaValidationTestFramework {
 
         Document document = new Document(pdfDoc);
         document.getPdfDocument().getDiContainer().register(ValidationContainer.class, new ValidationContainer());
+        for (Consumer<PdfDocument> pdfDocumentConsumer : this.beforeGeneratorHook) {
+            pdfDocumentConsumer.accept(pdfDoc);
+        }
         for (Generator<IBlockElement> blockElementSupplier : elementProducers) {
             document.add(blockElementSupplier.generate());
         }
@@ -131,6 +142,10 @@ public class UaValidationTestFramework {
         String validate = null;
         validate = validator.validate(destinationFolder + filename); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
         return validate;
+    }
+
+    public void addBeforeGenerationHook(Consumer<PdfDocument> action) {
+        this.beforeGeneratorHook.add(action);
     }
 
     private void checkError(Exception e, String expectedMsg) {
@@ -151,7 +166,9 @@ public class UaValidationTestFramework {
             System.out.println(UrlUtil.getNormalizedFileUriString(outPath));
             PdfDocument pdfDoc = new PdfUATestPdfDocument(
                     new PdfWriter(outPath, PdfUATestPdfDocument.createWriterProperties()));
-
+            for (Consumer<PdfDocument> pdfDocumentConsumer : this.beforeGeneratorHook) {
+                pdfDocumentConsumer.accept(pdfDoc);
+            }
             Document document = new Document(pdfDoc);
             for (Generator<IBlockElement> blockElementSupplier : elementProducers) {
                 document.add(blockElementSupplier.generate());
@@ -167,7 +184,7 @@ public class UaValidationTestFramework {
         try {
             final String outPath = destinationFolder + "reopen_" + filename;
             final String inPath = destinationFolder + filename;
-            System.out.println(UrlUtil.getNormalizedFileUriString(inPath));
+            System.out.println(UrlUtil.getNormalizedFileUriString(outPath));
             PdfDocument pdfDoc = new PdfUATestPdfDocument(
                     new PdfReader(inPath),
                     new PdfWriter(outPath, PdfUATestPdfDocument.createWriterProperties()));

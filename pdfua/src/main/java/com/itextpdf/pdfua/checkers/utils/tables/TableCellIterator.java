@@ -26,6 +26,7 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.element.Table;
+import com.itextpdf.pdfua.checkers.utils.PdfUAValidationContext;
 
 import java.util.List;
 
@@ -34,29 +35,30 @@ import java.util.List;
  */
 final class TableCellIterator implements ITableIterator<Cell> {
 
+    final PdfUAValidationContext context;
     private List<IElement> children;
     private int index;
     private TableCellIterator headerIterator;
     private TableCellIterator footerIterator;
-
     private Table table;
     private PdfName location;
-
     private Cell currentCell;
 
     /**
      * Creates a new {@link TableCellIterator} instance.
      *
      * @param table the table that will be iterated.
+     * @param context the validation context.
      */
-    public TableCellIterator(Table table) {
+    public TableCellIterator(Table table, PdfUAValidationContext context) {
+        this.context = context;
         if (table == null) {
             return;
         }
         this.table = table;
         this.children = table.getChildren();
-        headerIterator = new TableCellIterator(table.getHeader());
-        footerIterator = new TableCellIterator(table.getFooter());
+        headerIterator = new TableCellIterator(table.getHeader(), context);
+        footerIterator = new TableCellIterator(table.getFooter(), context);
     }
 
     /**

@@ -29,6 +29,7 @@ import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 /**
  * Utility class that contains utility methods used  when working with the TagTreeHandler
  */
+@Deprecated
 public final class TagTreeHandlerUtil {
 
     private TagTreeHandlerUtil() {
@@ -44,16 +45,8 @@ public final class TagTreeHandlerUtil {
      *
      * @return The {@link PdfStructElem}  if the structure matches the role.
      */
+    @Deprecated
     public static PdfStructElem getElementIfRoleMatches(PdfName role, IStructureNode structureNode) {
-        if (structureNode == null) {
-            return null;
-        }
-        if (!(structureNode instanceof PdfStructElem)) {
-            return null;
-        }
-        if (!role.equals(structureNode.getRole())) {
-            return null;
-        }
-        return (PdfStructElem) structureNode;
+       return null;
     }
 }
