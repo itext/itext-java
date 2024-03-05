@@ -22,7 +22,10 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.signatures.logs.SignLogMessageConstant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,8 +40,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * {@link IIssuingCertificateRetriever} default implementation.
@@ -118,6 +119,45 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
         Certificate[] certificateChain = retrieveMissingCertificates(new Certificate[]{certificate});
         if (certificateChain.length > 1) {
             return certificateChain[1];
+        }
+        return null;
+    }
+
+    /**
+     * Retrieves OCSP responder certificate either from the response certs or
+     * trusted store in case responder certificate isn't found in /Certs.
+     *
+     * @param ocspResp basic OCSP response to get responder certificate for
+     *
+     * @return retrieved OCSP responder certificate or null in case it wasn't found.
+     */
+    public Certificate retrieveOCSPResponderCertificate(IBasicOCSPResp ocspResp) {
+        // Look for the existence of an Authorized OCSP responder inside the cert chain in the ocsp response.
+        Iterable<X509Certificate> certs = SignUtils.getCertsFromOcspResponse(ocspResp);
+        for (X509Certificate cert : certs) {
+            try {
+                if (CertificateUtil.isSignatureValid(ocspResp, cert)) {
+                    return cert;
+                }
+            } catch (Exception ignored) {
+                // Ignore.
+            }
+        }
+        // Certificate chain is not present in the response.
+        // Try to verify using trusted store according to RFC 6960 2.2. Response:
+        // "The key used to sign the response MUST belong to one of the following:
+        // - ...
+        // - a Trusted Responder whose public key is trusted by the requester;
+        // - ..."
+        try {
+            for (Certificate anchor : trustedCertificates.values()) {
+                if (CertificateUtil.isSignatureValid(ocspResp, anchor)) {
+                    // Certificate from the root store is considered trusted and valid by this method.
+                    return anchor;
+                }
+            }
+        } catch (Exception ignored) {
+            // Ignore.
         }
         return null;
     }

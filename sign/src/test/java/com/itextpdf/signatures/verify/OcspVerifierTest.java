@@ -92,6 +92,7 @@ public class OcspVerifierTest extends ExtendedITextTest {
         Calendar nextUpdate = DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(caCert.getNotAfter(), 2));
         builder.setThisUpdate(thisUpdate);
         builder.setNextUpdate(nextUpdate);
+        builder.setProducedAt(caCert.getNotBefore());
         Assert.assertTrue(verifyTest(builder, certsSrc + "signCertRsa01.pem", caCert.getNotAfter()));
     }
 
@@ -185,6 +186,7 @@ public class OcspVerifierTest extends ExtendedITextTest {
         Calendar nextUpdate = DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(caCert.getNotAfter(), 2));
         builder.setThisUpdate(thisUpdate);
         builder.setNextUpdate(nextUpdate);
+        builder.setProducedAt(caCert.getNotBefore());
         Assert.assertTrue(verifyTest(builder, certsSrc + "signCertRsaWithExpiredChain.pem",
                 DateTimeUtil.addDaysToDate(caCert.getNotAfter(), -1)));
     }
@@ -199,6 +201,7 @@ public class OcspVerifierTest extends ExtendedITextTest {
         Calendar nextUpdate = DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(caCert.getNotAfter(), 2));
         builder.setThisUpdate(thisUpdate);
         builder.setNextUpdate(nextUpdate);
+        builder.setProducedAt(DateTimeUtil.addDaysToDate(caCert.getNotAfter(), 1));
         Assert.assertThrows(CertificateExpiredException.class, () ->
                 verifyTest(builder, certsSrc + "signCertRsaWithExpiredChain.pem",
                         DateTimeUtil.addDaysToDate(caCert.getNotAfter(), 1)));
@@ -234,7 +237,7 @@ public class OcspVerifierTest extends ExtendedITextTest {
         Date ocspResponderCertEndDate = DateTimeUtil.addYearsToDate(TimeTestUtil.TEST_DATE_TIME, -1);
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
 
-        Assert.assertThrows(VerificationException.class, () -> verifyAuthorizedOCSPResponderWithOCSPNoCheckTest(
+        Assert.assertThrows(CertificateExpiredException.class, () -> verifyAuthorizedOCSPResponderWithOCSPNoCheckTest(
                 ocspResponderCertStartDate, ocspResponderCertEndDate, checkDate)
         );
     }
@@ -418,6 +421,7 @@ public class OcspVerifierTest extends ExtendedITextTest {
         PrivateKey ocspRespPrivateKey = PemFileHelper.readFirstKey(ocspResponderCertFileName, password);
 
         TestOcspResponseBuilder builder = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
+        builder.setProducedAt(DateTimeUtil.addDaysToDate(checkDate, 365));
         builder.setThisUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(checkDate, 365)));
         builder.setNextUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(checkDate, 370)));
         TestOcspClient ocspClient = new TestOcspClient().addBuilderForCertIssuer(caCert, builder);
@@ -558,6 +562,7 @@ public class OcspVerifierTest extends ExtendedITextTest {
         PrivateKey ocspRespPrivateKey = PemFileHelper.readFirstKey(ocspResponderCertFileName, password);
 
         TestOcspResponseBuilder builder = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
+        builder.setProducedAt(DateTimeUtil.addDaysToDate(checkDate, -5));
         builder.setThisUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(checkDate, -5)));
         builder.setNextUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(checkDate, 5)));
         builder.setOcspCertsChain(new IX509CertificateHolder[0]);

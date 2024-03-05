@@ -42,6 +42,10 @@ import com.itextpdf.commons.bouncycastle.asn1.x509.IDistributionPoint;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IDistributionPointName;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IGeneralName;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IGeneralNames;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.AbstractOCSPException;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateID;
+import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.signatures.logs.SignLogMessageConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +58,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.cert.CRL;
 import java.security.cert.CRLException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.security.cert.X509CRL;
@@ -347,6 +352,60 @@ public class CertificateUtil {
         }
 
         return FACTORY.createDERSet(revocationInfoChoices);
+    }
+
+    /**
+     * Checks if the issuer of the provided certID (specified in the OCSP response) and provided issuer of the
+     * certificate in question matches, i.e. checks that issuerNameHash and issuerKeyHash fields of the certID
+     * is the hash of the issuer's name and public key.
+     *
+     * <p>
+     * SingleResp contains the basic information of the status of the certificate identified by the certID. The issuer
+     * name and serial number identify a unique certificate, so if serial numbers of the certificate in question and
+     * certID serial number are equals and issuers match, then SingleResp contains the information about the status of
+     * the certificate in question.
+     *
+     * @param certID     certID specified in the OCSP response
+     * @param issuerCert the issuer of the certificate in question
+     *
+     * @return true if the issuers are the same, false otherwise.
+     *
+     * @throws AbstractOperatorCreationException in case some digest calculator creation error.
+     * @throws AbstractOCSPException             in case some digest calculator creation error.
+     * @throws CertificateEncodingException      if an encoding error occurs.
+     * @throws IOException                       if input-output exception occurs.
+     */
+    public static boolean checkIfIssuersMatch(ICertificateID certID, X509Certificate issuerCert)
+            throws AbstractOperatorCreationException, AbstractOCSPException, CertificateEncodingException, IOException {
+        return SignUtils.checkIfIssuersMatch(certID, issuerCert);
+    }
+
+    /**
+     * Retrieves certificate extension value by its OID.
+     *
+     * @param certificate to get extension from
+     * @param id          extension OID to retrieve
+     *
+     * @return encoded extension value.
+     */
+    public static byte[] getExtensionValueByOid(X509Certificate certificate, String id) {
+        return SignUtils.getExtensionValueByOid(certificate, id);
+    }
+
+    /**
+     * Checks if an OCSP response is genuine.
+     *
+     * @param ocspResp      {@link IBasicOCSPResp} the OCSP response wrapper
+     * @param responderCert the responder certificate
+     *
+     * @return true if the OCSP response verifies against the responder certificate.
+     */
+    public static boolean isSignatureValid(IBasicOCSPResp ocspResp, Certificate responderCert) {
+        try {
+            return SignUtils.isSignatureValid(ocspResp, responderCert, FACTORY.getProviderName());
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     /**

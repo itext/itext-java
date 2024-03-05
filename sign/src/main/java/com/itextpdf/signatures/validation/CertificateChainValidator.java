@@ -48,13 +48,13 @@ import java.util.List;
  * Validator class, which is expected to be used for certificates chain validation.
  */
 public class CertificateChainValidator {
-    private static final String CERTIFICATE_CHECK = "Certificate check.";
-    private static final String VALIDITY_CHECK = "Certificate validity period check.";
-    private static final String EXTENSIONS_CHECK = "Required certificate extensions check.";
+    static final String CERTIFICATE_CHECK = "Certificate check.";
+    static final String VALIDITY_CHECK = "Certificate validity period check.";
+    static final String EXTENSIONS_CHECK = "Required certificate extensions check.";
 
-    private static final String CERTIFICATE_TRUSTED =
+    static final String CERTIFICATE_TRUSTED =
             "Certificate {0} is trusted, revocation data checks are not required.";
-    private static final String EXTENSION_MISSING = "Required extension {0} is missing or incorrect.";
+    static final String EXTENSION_MISSING = "Required extension {0} is missing or incorrect.";
     private static final String GLOBAL_EXTENSION_MISSING = "Globally required extension {0} is missing or incorrect.";
     private static final String ISSUER_MISSING = "Certificate {0} isn't trusted and issuer certificate isn't provided.";
     private static final String EXPIRED_CERTIFICATE = "Certificate {0} is expired.";
@@ -257,7 +257,8 @@ public class CertificateChainValidator {
     }
 
     private void validateRevocationData(ValidationReport result, X509Certificate certificate,
-            Date validationDate) {
+                                        Date validationDate) {
+        // TODO DEVSIX-8176 Implement RevocationDataValidator class: take into account ID_PKIX_OCSP_NOCHECK extension
         validateOCSP(result, certificate, validationDate);
         validateCRL(result, certificate, validationDate);
     }
@@ -267,7 +268,7 @@ public class CertificateChainValidator {
     }
 
     private void validateOCSP(ValidationReport result, X509Certificate certificate, Date validationDate) {
-        // TODO DEVSIX-8170 Implement OCSPValidator
+        // TODO DEVSIX-8176 Implement RevocationDataValidator class
     }
 
     private void validateChain(ValidationReport result, X509Certificate certificate, Date validationDate) {

@@ -246,7 +246,7 @@ public class OCSPVerifier extends RootStoreVerifier {
      *
      * @param ocspResp   {@link IBasicOCSPResp} the OCSP response wrapper
      * @param issuerCert the issuer certificate. This certificate is considered trusted and valid by this method.
-     * @param signDate   sign date
+     * @param signDate   sign date for backwards compatibility
      *
      * @throws GeneralSecurityException if OCSP response verification cannot be done or failed.
      */
@@ -296,10 +296,7 @@ public class OCSPVerifier extends RootStoreVerifier {
                 responderCert.verify(issuerCert.getPublicKey());
 
                 // Check if the lifetime of the certificate is valid. Responder cert could be created after the signing.
-                if (signDate.after(responderCert.getNotAfter())) {
-                    throw new VerificationException(responderCert,
-                            "Authorized OCSP responder certificate expired on " + responderCert.getNotAfter());
-                }
+                responderCert.checkValidity(ocspResp.getProducedAt());
 
                 // Validating ocsp signer's certificate (responderCert).
                 // See RFC6960 4.2.2.2.1. Revocation Checking of an Authorized Responder.
@@ -374,7 +371,7 @@ public class OCSPVerifier extends RootStoreVerifier {
             }
         }
         // Check if the lifetime of the certificate is valid.
-        responderCert.checkValidity(signDate);
+        responderCert.checkValidity(ocspResp.getProducedAt());
     }
 
     /**
