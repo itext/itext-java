@@ -124,6 +124,23 @@ public class PdfMergerTest extends ExtendedITextTest {
     }
 
     @Test
+    public void mergeDocumentWithLinkAnnotationTest() throws IOException, InterruptedException {
+        String filename = sourceFolder + "documentWithLinkAnnotation.pdf";
+        String resultFile = destinationFolder + "mergedDocumentWithLinkAnnotation.pdf";
+
+        PdfReader reader = new PdfReader(filename);
+
+        PdfWriter writer1 = CompareTool.createTestPdfWriter(resultFile);
+        PdfDocument pdfDoc = new PdfDocument(reader);
+        PdfDocument result = new PdfDocument(writer1);
+        PdfMerger merger = new PdfMerger(result).setCloseSourceDocuments(true);
+
+        merger.merge(pdfDoc, 1, 1).close();
+
+        Assert.assertNull(new CompareTool().compareByContent(resultFile, sourceFolder + "cmp_mergedDocumentWithLinkAnnotation.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
     public void mergeDocumentTest02() throws IOException, InterruptedException {
         String filename = sourceFolder + "doc1.pdf";
         String filename1 = sourceFolder + "doc2.pdf";

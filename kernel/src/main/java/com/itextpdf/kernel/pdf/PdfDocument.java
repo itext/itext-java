@@ -2460,7 +2460,8 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     }
 
     private void resolveDestinations(PdfDocument toDocument, Map<PdfPage, PdfPage> page2page) {
-        for (final DestinationMutationInfo mutation : pendingDestinationMutations) {
+        for (int i = 0; i < pendingDestinationMutations.size(); ++i) {
+            PdfDocument.DestinationMutationInfo mutation = pendingDestinationMutations.get(i);
             PdfDestination copiedDest = null;
             copiedDest = getCatalog().copyDestination(mutation.getOriginalDestination().getPdfObject(), page2page,
                     toDocument);
