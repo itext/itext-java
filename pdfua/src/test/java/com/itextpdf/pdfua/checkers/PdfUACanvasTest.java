@@ -32,7 +32,9 @@ import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.CanvasTag;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -43,6 +45,7 @@ import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.pdfua.PdfUATestPdfDocument;
+import com.itextpdf.pdfua.UaValidationTestFramework;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
@@ -52,6 +55,7 @@ import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -63,9 +67,16 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfua/PdfUACanvasTest/";
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfua/PdfUACanvasTest/";
 
+    private UaValidationTestFramework framework;
+
     @BeforeClass
     public static void before() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
+    }
+
+    @Before
+    public void initializeFramework() {
+        framework = new UaValidationTestFramework(DESTINATION_FOLDER);
     }
 
     @Test
@@ -770,5 +781,75 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         });
         Assert.assertEquals(MessageFormatUtil.format(PdfUAExceptionMessageConstants.FONT_SHOULD_BE_EMBEDDED, "Courier"),
                 e.getMessage());
+    }
+
+    @Test
+    public void checkPoint_19_003_iDEntryInNoteTagIsNotPresent() throws IOException, InterruptedException {
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfFont font = null;
+            try {
+                font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
+            } catch (IOException e) {
+                throw new RuntimeException();
+            }
+
+            PdfPage page1 = pdfDoc.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page1);
+
+            PdfStructElem doc = pdfDoc.getStructTreeRoot().addKid(new PdfStructElem(pdfDoc, PdfName.Document));
+            PdfStructElem paragraph = doc.addKid(new PdfStructElem(pdfDoc, PdfName.P, page1));
+            PdfMcr mcr = paragraph.addKid(new PdfMcrNumber(page1, paragraph));
+            doc.addKid(new PdfStructElem(pdfDoc, PdfName.Note, page1));
+
+            canvas
+                    .openTag(new CanvasTag(mcr))
+                    .saveState()
+                    .beginText()
+                    .setFontAndSize(font, 12)
+                    .moveText(200, 200)
+                    .showText("Hello World!")
+                    .endText()
+                    .restoreState()
+                    .closeTag();
+        });
+        framework.assertBothFail("invalidNoteTag02", PdfUAExceptionMessageConstants.NOTE_TAG_SHALL_HAVE_ID_ENTRY);
+    }
+
+    @Test
+    public void checkPoint_19_003_validNoteTagIsPresent() throws IOException, InterruptedException {
+        framework.addBeforeGenerationHook((pdfDocument) -> {
+            PdfFont font = null;
+            try {
+                font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
+            } catch (IOException e) {
+                throw new RuntimeException();
+            }
+            PdfPage page1 = pdfDocument.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page1);
+
+            PdfStructElem doc = pdfDocument.getStructTreeRoot().addKid(new PdfStructElem(pdfDocument, PdfName.Document));
+            PdfStructElem paragraph = doc.addKid(new PdfStructElem(pdfDocument, PdfName.P, page1));
+            PdfMcr mcr = paragraph.addKid(new PdfMcrNumber(page1, paragraph));
+            PdfStructElem note = doc.addKid(new PdfStructElem(pdfDocument, PdfName.Note, page1));
+            note.put(PdfName.ID, new PdfString("1"));
+
+
+            canvas.openTag(new CanvasTag(mcr))
+                    .saveState()
+                    .beginText()
+                    .setFontAndSize(font, 12)
+                    .moveText(200, 200)
+                    .showText("Hello World!")
+                    .endText()
+                    .restoreState()
+                    .closeTag();
+        });
+        framework.assertBothValid("validNoteTagPresent");
+
+        String outPdf = DESTINATION_FOLDER + "layout_validNoteTagPresent.pdf";
+        Assert.assertNull(new CompareTool().compareByContent(outPdf,
+                SOURCE_FOLDER + "cmp_validNoteTagPresent.pdf",
+                DESTINATION_FOLDER, "diff_")
+        );
     }
 }

@@ -55,7 +55,9 @@ import com.itextpdf.pdfua.checkers.utils.BCP47Validator;
 import com.itextpdf.pdfua.checkers.utils.FormulaCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.GraphicsCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.LayoutCheckUtil;
+import com.itextpdf.pdfua.checkers.utils.NoteCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.PdfUAValidationContext;
+import com.itextpdf.pdfua.checkers.utils.TagTreeHandlerUtil;
 import com.itextpdf.pdfua.checkers.utils.XfaCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.headings.HeadingsChecker;
 import com.itextpdf.pdfua.checkers.utils.tables.TableCheckUtil;
@@ -127,6 +129,9 @@ public class PdfUA1Checker implements IValidationChecker {
             case FONT:
                 checkText((String) obj, (PdfFont) extra);
                 break;
+            case DUPLICATE_ID_ENTRY:
+                throw new PdfUAConformanceException(MessageFormatUtil.format(
+                        PdfUAExceptionMessageConstants.NON_UNIQUE_ID_ENTRY_IN_STRUCT_TREE_ROOT, obj));
             case PDF_OBJECT:
                 checkPdfObject((PdfObject) obj);
                 break;
@@ -320,6 +325,7 @@ public class PdfUA1Checker implements IValidationChecker {
         TagTreeIterator tagTreeIterator = new TagTreeIterator(structTreeRoot);
         tagTreeIterator.addHandler(new GraphicsCheckUtil.GraphicsHandler(context));
         tagTreeIterator.addHandler(new FormulaCheckUtil.FormulaTagHandler(context));
+        tagTreeIterator.addHandler(new NoteCheckUtil.NoteTagHandler(context));
         tagTreeIterator.addHandler(new HeadingsChecker.HeadingHandler(context));
         tagTreeIterator.addHandler(new TableCheckUtil.TableHandler(context));
         tagTreeIterator.traverse();

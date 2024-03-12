@@ -887,26 +887,6 @@ public class PdfUATableTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(
-            messages = {
-                    @LogMessage(messageTemplate = IoLogMessageConstant.NAME_ALREADY_EXISTS_IN_THE_NAME_TREE, count =
-                            22),
-            }
-    )
-    public void combination03() throws FileNotFoundException {
-        TableBuilder tableBuilder = new TableBuilder(3);
-        for (int i = 0; i < 12; i++) {
-            tableBuilder.addBodyCell(new HeaderCellSupplier("id", "Header1", 1, 1, "None"));
-        }
-        for (int i = 0; i < 3; i++) {
-            tableBuilder.addBodyCell(new DataCellSupplier("Data1", 1, 1, Collections.singletonList("id")));
-        }
-
-        framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("combination03");
-    }
-
-    @Test
     public void combination04() throws FileNotFoundException {
         TableBuilder tableBuilder = new TableBuilder(3);
 

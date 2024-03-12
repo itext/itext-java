@@ -22,8 +22,11 @@
  */
 package com.itextpdf.pdfua.checkers;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
@@ -34,11 +37,18 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfDocumentInfo;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfViewerPreferences;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
+import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
+import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
+import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.utils.ValidationContainer;
 import com.itextpdf.layout.Document;
@@ -52,18 +62,29 @@ import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+
+import java.nio.charset.StandardCharsets;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import static org.junit.Assert.assertTrue;
 
 @Category(IntegrationTest.class)
 public class PdfUATest extends ExtendedITextTest {
@@ -355,6 +376,52 @@ public class PdfUATest extends ExtendedITextTest {
             pdfDocument.getCatalog().put(PdfName.OCProperties, ocProperties);
         });
         framework.assertBothValid("pdfuaOCGsPropertiesCheck");
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.NAME_ALREADY_EXISTS_IN_THE_NAME_TREE, count = 1)})
+    public void documentWithDuplicatingIdInStructTree() throws IOException {
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PdfWriter writer = new PdfWriter(os, PdfUATestPdfDocument.createWriterProperties());
+        PdfDocument document = new PdfUATestPdfDocument(writer);
+
+        PdfPage page1 = document.addNewPage();
+        TagTreePointer tagPointer = new TagTreePointer(document);
+        tagPointer.setPageForTagging(page1);
+
+        PdfCanvas canvas = new PdfCanvas(page1);
+
+        PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.PREFER_EMBEDDED);
+        canvas.beginText()
+                .setFontAndSize(font, 12)
+                .setTextMatrix(1, 0, 0, 1, 32, 512);
+
+        DefaultAccessibilityProperties paraProps
+                = new DefaultAccessibilityProperties(StandardRoles.P);
+        tagPointer.addTag(paraProps).addTag(StandardRoles.SPAN);
+
+        tagPointer.getProperties().setStructureElementIdString("hello-element");
+        canvas.openTag(tagPointer.getTagReference())
+                .showText("Hello ")
+                .closeTag();
+        tagPointer.moveToParent().addTag(StandardRoles.SPAN);
+
+        tagPointer.getProperties().setStructureElementIdString("world-element");
+
+        Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> tagPointer.getProperties().setStructureElementIdString("hello-element"));
+        Assert.assertEquals(MessageFormatUtil.format(
+                PdfUAExceptionMessageConstants.NON_UNIQUE_ID_ENTRY_IN_STRUCT_TREE_ROOT, "hello-element"),
+                e.getMessage());
+    }
+
+    @Test
+    public void openDocumentWithDuplicatingIdInStructTree() throws IOException {
+        String source = SOURCE_FOLDER + "documentWithDuplicatingIdsInStructTree.pdf";
+        try (PdfDocument pdfDocument = new PdfUATestPdfDocument(
+                new PdfReader(new File(source)))) {
+        }
+        //Vera pdf doesn't complain on this document
+        Assert.assertNull(new VeraPdfValidator().validate(source)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
     @Test

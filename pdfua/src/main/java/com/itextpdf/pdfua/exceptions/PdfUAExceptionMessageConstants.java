@@ -57,6 +57,8 @@ public final class PdfUAExceptionMessageConstants {
             + " not contain a valid Headers attribute, and Headers for this cell cannot be determined algorithmically.";
     public static final String FORMULA_SHALL_HAVE_ALT = "Formula tags shall include an alternative representation or "
             + "replacement text.";
+
+    public static final String NOTE_TAG_SHALL_HAVE_ID_ENTRY = "Note tags shall include a unique ID entry.";
     public static final String EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS = "Embedded fonts shall define all " +
             "glyphs referenced for rendering within the conforming file.";
     public static final String DOCUMENT_SHALL_CONTAIN_XMP_METADATA_STREAM
@@ -84,6 +86,8 @@ public final class PdfUAExceptionMessageConstants {
     public static final String DYNAMIC_XFA_FORMS_SHALL_NOT_BE_USED = "Dynamic XFA forms shall not be used.";
     public static final String FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_F_KEY_AND_UF_KEY =
             "File specification dictionary shall contain f key and uf key.";
+    public static final String NON_UNIQUE_ID_ENTRY_IN_STRUCT_TREE_ROOT = "ID entry '{0}' shall be unique among all elements " +
+            "in the document’s structure hierarchy";
 
     private PdfUAExceptionMessageConstants() {
         // Empty constructor
