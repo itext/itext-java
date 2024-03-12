@@ -76,6 +76,11 @@ public final class PdfUAExceptionMessageConstants {
             "does not contain a DisplayDocTitle entry.";
     public static final String VIEWER_PREFERENCES_IS_FALSE = "ViewerPreferences dictionary of the Catalog dictionary " +
             "contains a DisplayDocTitle entry with a value of false.";
+    public static final String NAME_ENTRY_IS_MISSING_OR_EMPTY_IN_OCG = "Name entry is missing or has " +
+            "an empty string as its value in an Optional Content Configuration Dictionary.";
+    public static final String OCG_SHALL_NOT_CONTAIN_AS_ENTRY = "An AS entry appears in an Optional Content.";
+    public static final String OCG_PROPERTIES_CONFIG_SHALL_BE_AN_ARRAY = "Optional Content properties " +
+            "configs shall be an array.";
     public static final String DYNAMIC_XFA_FORMS_SHALL_NOT_BE_USED = "Dynamic XFA forms shall not be used.";
 
     private PdfUAExceptionMessageConstants() {

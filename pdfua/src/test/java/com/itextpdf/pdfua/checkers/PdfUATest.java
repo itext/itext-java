@@ -28,6 +28,7 @@ import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -46,6 +47,7 @@ import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.pdfua.PdfUATestPdfDocument;
+import com.itextpdf.pdfua.UaValidationTestFramework;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.AssertUtil;
@@ -54,8 +56,11 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -70,10 +75,18 @@ public class PdfUATest extends ExtendedITextTest {
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/FreeSans.ttf";
     private static final String FOX = "./src/test/resources/com/itextpdf/pdfua/img/FOX.bmp";
 
+    private UaValidationTestFramework framework;
+
     @BeforeClass
     public static void before() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
+
+    @Before
+    public void initializeFramework() {
+        framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    }
+
 
     @Test
     public void checkPoint01_007_suspectsHasEntryTrue() {
@@ -231,6 +244,117 @@ public class PdfUATest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> pdfDoc.close());
         Assert.assertEquals(PdfUAExceptionMessageConstants.VIEWER_PREFERENCES_IS_FALSE,
                 e.getMessage());
+    }
+
+    @Test
+    public void checkNameEntryShouldPresentInAllOCGDictionariesTest() throws FileNotFoundException {
+        framework.addBeforeGenerationHook((pdfDocument) -> {
+            pdfDocument.addNewPage();
+            PdfDictionary ocProperties = new PdfDictionary();
+            PdfDictionary d = new PdfDictionary();
+            PdfArray configs = new PdfArray();
+            PdfDictionary config = new PdfDictionary();
+            config.put(PdfName.Name, new PdfString("CustomName"));
+            configs.add(config);
+            ocProperties.put(PdfName.D, d);
+            ocProperties.put(PdfName.Configs, configs);
+            pdfDocument.getCatalog().put(PdfName.OCProperties, ocProperties);
+        });
+        framework.assertBothFail("pdfuaOCGPropertiesCheck01",
+                PdfUAExceptionMessageConstants.NAME_ENTRY_IS_MISSING_OR_EMPTY_IN_OCG);
+    }
+
+    @Test
+    public void checkAsKeyInContentConfigDictTest() throws FileNotFoundException {
+        framework.addBeforeGenerationHook((pdfDocument) -> {
+            pdfDocument.addNewPage();
+            PdfDictionary ocProperties = new PdfDictionary();
+            PdfArray configs = new PdfArray();
+            PdfDictionary config = new PdfDictionary();
+            config.put(PdfName.Name, new PdfString("CustomName"));
+            config.put(PdfName.AS, new PdfArray());
+            configs.add(config);
+            ocProperties.put(PdfName.Configs, configs);
+            pdfDocument.getCatalog().put(PdfName.OCProperties, ocProperties);
+        });
+        framework.assertBothFail("pdfuaOCGPropertiesCheck02",
+                PdfUAExceptionMessageConstants.OCG_SHALL_NOT_CONTAIN_AS_ENTRY);
+    }
+
+    @Test
+    public void nameEntryisEmptyTest() throws FileNotFoundException {
+        framework.addBeforeGenerationHook((pdfDocument) -> {
+            PdfDictionary ocProperties = new PdfDictionary();
+            PdfDictionary d = new PdfDictionary();
+            d.put(PdfName.Name, new PdfString(""));
+            PdfArray configs = new PdfArray();
+            PdfDictionary config = new PdfDictionary();
+            config.put(PdfName.Name, new PdfString(""));
+            configs.add(config);
+            ocProperties.put(PdfName.D, d);
+            ocProperties.put(PdfName.Configs, configs);
+
+            pdfDocument.getCatalog().put(PdfName.OCProperties, ocProperties);
+        });
+        framework.assertBothFail("pdfuaOCGPropertiesCheck03",
+                PdfUAExceptionMessageConstants.NAME_ENTRY_IS_MISSING_OR_EMPTY_IN_OCG);
+    }
+
+    @Test
+    public void configsEntryisNotAnArrayTest() throws FileNotFoundException {
+        framework.addBeforeGenerationHook((pdfDocument) -> {
+            PdfDictionary ocProperties = new PdfDictionary();
+            PdfDictionary d = new PdfDictionary();
+            d.put(PdfName.Name, new PdfString(""));
+            PdfDictionary configs = new PdfDictionary();
+            ocProperties.put(PdfName.D, d);
+            ocProperties.put(PdfName.Configs, configs);
+
+            pdfDocument.getCatalog().put(PdfName.OCProperties, ocProperties);
+        });
+        framework.assertBothFail("pdfuaOCGPropertiesCheck04",
+                PdfUAExceptionMessageConstants.OCG_PROPERTIES_CONFIG_SHALL_BE_AN_ARRAY);
+    }
+
+    @Test
+    public void nameEntryShouldBeUniqueBetweenDefaultAndAdditionalConfigsTest() throws IOException, InterruptedException {
+        framework.addBeforeGenerationHook((pdfDocument) -> {
+            PdfDictionary ocProperties = new PdfDictionary();
+            PdfDictionary d = new PdfDictionary();
+            d.put(PdfName.Name, new PdfString("CustomName"));
+            PdfArray configs = new PdfArray();
+            PdfDictionary config = new PdfDictionary();
+            config.put(PdfName.Name, new PdfString("CustomName"));
+            configs.add(config);
+            ocProperties.put(PdfName.D, d);
+            ocProperties.put(PdfName.Configs, configs);
+
+            pdfDocument.getCatalog().put(PdfName.OCProperties, ocProperties);
+        });
+        framework.assertBothValid("pdfuaOCGPropertiesCheck");
+    }
+
+    @Test
+    public void validOCGsTest() throws IOException, InterruptedException {
+        framework.addBeforeGenerationHook((pdfDocument) -> {
+            PdfDictionary ocProperties = new PdfDictionary();
+            PdfDictionary d = new PdfDictionary();
+            d.put(PdfName.Name, new PdfString("CustomName"));
+            PdfArray configs = new PdfArray();
+            PdfArray ocgs = new PdfArray();
+            PdfDictionary config = new PdfDictionary();
+            config.put(PdfName.Name, new PdfString("CustomName"));
+            configs.add(config);
+            PdfDictionary ocg = new PdfDictionary();
+            ocg.put(PdfName.Name, new PdfString("CustomName"));
+            ocgs.add(ocg);
+            ocProperties.put(PdfName.D, d);
+            ocProperties.put(PdfName.Configs, configs);
+            ocProperties.put(PdfName.OCGs, configs);
+
+            pdfDocument.getCatalog().put(PdfName.OCProperties, ocProperties);
+        });
+        framework.assertBothValid("pdfuaOCGsPropertiesCheck");
     }
 
     @Test

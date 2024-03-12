@@ -26,6 +26,7 @@ import com.itextpdf.commons.datastructures.Tuple2;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.pdf.IsoKey;
+import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfCatalog;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -61,8 +62,10 @@ import com.itextpdf.pdfua.checkers.utils.tables.TableCheckUtil;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
@@ -282,6 +285,7 @@ public class PdfUA1Checker implements IValidationChecker {
         }
         checkViewerPreferences(catalog);
         checkMetadata(catalog);
+        checkOCProperties(catalogDict.getAsDictionary(PdfName.OCProperties));
     }
 
     private void checkStructureTreeRoot(PdfStructTreeRoot structTreeRoot) {
@@ -302,6 +306,41 @@ public class PdfUA1Checker implements IValidationChecker {
         tagTreeIterator.addHandler(new HeadingsChecker.HeadingHandler(context));
         tagTreeIterator.addHandler(new TableCheckUtil.TableHandler(context));
         tagTreeIterator.traverse();
+    }
+
+    private void checkOCProperties(PdfDictionary ocProperties) {
+        if (ocProperties == null) {
+            return;
+        }
+        if (!(ocProperties.get(PdfName.Configs) instanceof PdfArray)) {
+            throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.OCG_PROPERTIES_CONFIG_SHALL_BE_AN_ARRAY);
+        }
+        PdfArray configs = ocProperties.getAsArray(PdfName.Configs);
+        if (configs != null && !configs.isEmpty()) {
+            PdfDictionary d = ocProperties.getAsDictionary(PdfName.D);
+            checkOCGNameAndASKey(d);
+            for (PdfObject config : configs) {
+                checkOCGNameAndASKey((PdfDictionary) config);
+            }
+            PdfArray ocgsArray = ocProperties.getAsArray(PdfName.OCGs);
+            if (ocgsArray != null) {
+                for (PdfObject ocg : ocgsArray) {
+                    checkOCGNameAndASKey((PdfDictionary) ocg);
+                }
+            }
+        }
+    }
+
+    private void checkOCGNameAndASKey(PdfDictionary dict) {
+        if (dict == null) {
+            return;
+        }
+        if (dict.get(PdfName.AS) != null) {
+            throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.OCG_SHALL_NOT_CONTAIN_AS_ENTRY);
+        }
+        if (!(dict.get(PdfName.Name) instanceof PdfString) || (((PdfString)dict.get(PdfName.Name)).toString().isEmpty())) {
+            throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.NAME_ENTRY_IS_MISSING_OR_EMPTY_IN_OCG);
+        }
     }
 
     private void checkFonts(Collection<PdfFont> fontsInDocument) {
