@@ -76,6 +76,7 @@ public final class PdfUAExceptionMessageConstants {
             "does not contain a DisplayDocTitle entry.";
     public static final String VIEWER_PREFERENCES_IS_FALSE = "ViewerPreferences dictionary of the Catalog dictionary " +
             "contains a DisplayDocTitle entry with a value of false.";
+    public static final String DYNAMIC_XFA_FORMS_SHALL_NOT_BE_USED = "Dynamic XFA forms shall not be used.";
 
     private PdfUAExceptionMessageConstants() {
         // Empty constructor

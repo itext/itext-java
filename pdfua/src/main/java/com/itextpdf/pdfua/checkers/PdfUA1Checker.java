@@ -46,15 +46,16 @@ import com.itextpdf.kernel.pdf.tagutils.TagTreeIterator;
 import com.itextpdf.kernel.utils.IValidationChecker;
 import com.itextpdf.kernel.utils.ValidationContext;
 import com.itextpdf.kernel.utils.checkers.FontCheckUtil;
-import com.itextpdf.pdfua.checkers.utils.BCP47Validator;
-import com.itextpdf.pdfua.checkers.utils.FormulaCheckUtil;
 import com.itextpdf.kernel.xmp.XMPConst;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
+import com.itextpdf.pdfua.checkers.utils.BCP47Validator;
+import com.itextpdf.pdfua.checkers.utils.FormulaCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.GraphicsCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.LayoutCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.PdfUAValidationContext;
+import com.itextpdf.pdfua.checkers.utils.XfaCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.headings.HeadingsChecker;
 import com.itextpdf.pdfua.checkers.utils.tables.TableCheckUtil;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
@@ -100,6 +101,7 @@ public class PdfUA1Checker implements IValidationChecker {
         checkCatalog(validationContext.getPdfDocument().getCatalog());
         checkStructureTreeRoot(validationContext.getPdfDocument().getStructTreeRoot());
         checkFonts(validationContext.getFonts());
+        XfaCheckUtil.check(validationContext.getPdfDocument());
     }
 
     /**
