@@ -84,6 +84,7 @@ public class PdfUA1Checker implements IValidationChecker {
     private final HeadingsChecker headingsChecker;
 
     private final PdfUAValidationContext context;
+
     /**
      * Creates PdfUA1Checker instance with PDF document which will be validated against PDF/UA-1 standard.
      *
@@ -126,6 +127,22 @@ public class PdfUA1Checker implements IValidationChecker {
             case FONT:
                 checkText((String) obj, (PdfFont) extra);
                 break;
+            case PDF_OBJECT:
+                checkPdfObject((PdfObject) obj);
+                break;
+        }
+    }
+
+    /**
+     * Verify the conformity of the file specification dictionary.
+     *
+     * @param fileSpec the {@link PdfDictionary} containing file specification to be checked
+     */
+    protected void checkFileSpec(PdfDictionary fileSpec) {
+        if (fileSpec.containsKey(PdfName.EF)) {
+            if (!fileSpec.containsKey(PdfName.F) || !fileSpec.containsKey(PdfName.UF)) {
+                throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_F_KEY_AND_UF_KEY);
+            }
         }
     }
 
@@ -356,6 +373,22 @@ public class PdfUA1Checker implements IValidationChecker {
                             PdfUAExceptionMessageConstants.FONT_SHOULD_BE_EMBEDDED,
                             String.join(", ", fontNamesThatAreNotEmbedded)
                     ));
+        }
+    }
+
+    /**
+     * This method checks the requirements that must be fulfilled by a COS
+     * object in a PDF/UA document.
+     *
+     * @param obj the COS object that must be checked
+     */
+    private void checkPdfObject(PdfObject obj) {
+        if (obj.getType() == PdfObject.DICTIONARY) {
+            PdfDictionary dict = (PdfDictionary) obj;
+            PdfName type = dict.getAsName(PdfName.Type);
+            if (PdfName.Filespec.equals(type)) {
+                checkFileSpec(dict);
+            }
         }
     }
 }

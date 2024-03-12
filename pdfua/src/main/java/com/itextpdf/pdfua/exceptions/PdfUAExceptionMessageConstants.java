@@ -82,6 +82,8 @@ public final class PdfUAExceptionMessageConstants {
     public static final String OCG_PROPERTIES_CONFIG_SHALL_BE_AN_ARRAY = "Optional Content properties " +
             "configs shall be an array.";
     public static final String DYNAMIC_XFA_FORMS_SHALL_NOT_BE_USED = "Dynamic XFA forms shall not be used.";
+    public static final String FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_F_KEY_AND_UF_KEY =
+            "File specification dictionary shall contain f key and uf key.";
 
     private PdfUAExceptionMessageConstants() {
         // Empty constructor
