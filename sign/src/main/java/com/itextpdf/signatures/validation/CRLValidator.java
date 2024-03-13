@@ -96,6 +96,7 @@ public class CRLValidator {
      *
      * @param report           to store all the chain verification results
      * @param certificate      the certificate to check for
+     * @param encodedCrl       the crl response to be validated
      * @param verificationDate verification date to check for
      */
     public void validate(ValidationReport report, X509Certificate certificate, byte[] encodedCrl,
