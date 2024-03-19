@@ -37,11 +37,12 @@ import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.TimeTestUtil;
 import com.itextpdf.signatures.testutils.builder.TestOcspResponseBuilder;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
+import com.itextpdf.signatures.validation.report.CertificateReportItem;
+import com.itextpdf.signatures.validation.report.ValidationReport;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -60,6 +61,7 @@ public class OCSPValidatorTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/validation/OCSPValidatorTest/";
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
     private static final char[] PASSWORD = "testpassphrase".toCharArray();
+    private static final long MILLISECONDS_PER_DAY = 86400000L;
 
     private static X509Certificate caCert;
     private static PrivateKey caPrivateKey;
@@ -88,8 +90,11 @@ public class OCSPValidatorTest extends ExtendedITextTest {
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
         ValidationReport report = validateTest(checkDate);
         Assert.assertEquals(0, report.getFailures().size());
-        Assert.assertEquals(1, report.getLogs().size());
+        Assert.assertEquals(2, report.getLogs().size());
         CertificateReportItem item = (CertificateReportItem) report.getLogs().get(0);
+        Assert.assertEquals(RevocationDataValidator.REVOCATION_DATA_CHECK, item.getCheckName());
+        Assert.assertEquals(RevocationDataValidator.TRUSTED_OCSP_RESPONDER, item.getMessage());
+        item = (CertificateReportItem) report.getLogs().get(1);
         Assert.assertEquals(CertificateChainValidator.CERTIFICATE_CHECK, item.getCheckName());
         Assert.assertEquals(MessageFormatUtil.format(CertificateChainValidator.CERTIFICATE_TRUSTED,
                 item.getCertificate().getSubjectX500Principal()), item.getMessage());
@@ -97,7 +102,6 @@ public class OCSPValidatorTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-8176: Implement RevocationDataValidator class")
     public void validateAuthorizedOCSPResponderWithOcspTest()
             throws AbstractOperatorCreationException, GeneralSecurityException, IOException, AbstractPKCSException {
         ValidationReport report = verifyResponderWithOcsp(false);
@@ -116,7 +120,6 @@ public class OCSPValidatorTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-8176: Implement RevocationDataValidator class")
     public void validateAuthorizedOCSPResponderWithOcspRevokedTest()
             throws AbstractOperatorCreationException, GeneralSecurityException, IOException, AbstractPKCSException {
         String ocspResponderCertFileName = SOURCE_FOLDER + "ocspResponderCertForOcspTest.pem";
@@ -128,9 +131,10 @@ public class OCSPValidatorTest extends ExtendedITextTest {
         Assert.assertEquals(1, report.getLogs().size());
         CertificateReportItem item = (CertificateReportItem) report.getFailures().get(0);
         Assert.assertEquals(OCSPValidator.OCSP_CHECK, item.getCheckName());
+        Assert.assertEquals(responderCert, item.getCertificate());
         Assert.assertEquals(OCSPValidator.CERT_IS_REVOKED, item.getMessage());
         Assert.assertEquals(responderCert, item.getCertificate());
-        Assert.assertEquals(ValidationReport.ValidationResult.INVALID, report.getValidationResult());
+        Assert.assertEquals(ValidationReport.ValidationResult.INDETERMINATE, report.getValidationResult());
     }
 
     @Test
@@ -159,7 +163,8 @@ public class OCSPValidatorTest extends ExtendedITextTest {
         certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
 
         OCSPValidator validator = new OCSPValidator().setIssuingCertificateRetriever(certificateRetriever);
-        validator.validate(report, checkCert, basicOCSPResp, TimeTestUtil.TEST_DATE_TIME);
+        validator.validate(report, checkCert, basicOCSPResp.getResponses()[0], basicOCSPResp,
+                TimeTestUtil.TEST_DATE_TIME);
 
         Assert.assertEquals(1, report.getFailures().size());
         Assert.assertEquals(1, report.getLogs().size());
@@ -188,14 +193,11 @@ public class OCSPValidatorTest extends ExtendedITextTest {
         Date checkDate = DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, 45);
         ValidationReport report = validateTest(checkDate, TimeTestUtil.TEST_DATE_TIME, 50);
         Assert.assertEquals(1, report.getFailures().size());
-        Assert.assertEquals(2, report.getLogs().size());
-        CertificateReportItem logItem = (CertificateReportItem) report.getLogs().get(0);
-        Assert.assertEquals(OCSPValidator.OCSP_CHECK, logItem.getCheckName());
+        Assert.assertEquals(1, report.getLogs().size());
+        CertificateReportItem item = (CertificateReportItem) report.getLogs().get(0);
+        Assert.assertEquals(OCSPValidator.OCSP_CHECK, item.getCheckName());
         Assert.assertEquals(MessageFormatUtil.format(OCSPValidator.OCSP_IS_NO_LONGER_VALID, checkDate, nextUpdate),
-                logItem.getMessage());
-        CertificateReportItem failureItem = (CertificateReportItem) report.getFailures().get(0);
-        Assert.assertEquals(OCSPValidator.OCSP_CHECK, failureItem.getCheckName());
-        Assert.assertEquals(OCSPValidator.NO_USABLE_OCSP_WAS_FOUND, failureItem.getMessage());
+                item.getMessage());
         Assert.assertEquals(ValidationReport.ValidationResult.INDETERMINATE, report.getValidationResult());
     }
 
@@ -207,12 +209,15 @@ public class OCSPValidatorTest extends ExtendedITextTest {
         ValidationReport report = validateRevokedTest(checkDate, revocationDate);
 
         Assert.assertEquals(0, report.getFailures().size());
-        Assert.assertEquals(2, report.getLogs().size());
-        CertificateReportItem certificateCheckItem = (CertificateReportItem) report.getLogs().get(0);
+        Assert.assertEquals(3, report.getLogs().size());
+        CertificateReportItem item = (CertificateReportItem) report.getLogs().get(0);
+        Assert.assertEquals(RevocationDataValidator.REVOCATION_DATA_CHECK, item.getCheckName());
+        Assert.assertEquals(RevocationDataValidator.TRUSTED_OCSP_RESPONDER, item.getMessage());
+        CertificateReportItem certificateCheckItem = (CertificateReportItem) report.getLogs().get(1);
         Assert.assertEquals(CertificateChainValidator.CERTIFICATE_CHECK, certificateCheckItem.getCheckName());
         Assert.assertEquals(MessageFormatUtil.format(CertificateChainValidator.CERTIFICATE_TRUSTED,
                 certificateCheckItem.getCertificate().getSubjectX500Principal()), certificateCheckItem.getMessage());
-        CertificateReportItem ocspCheckItem = (CertificateReportItem) report.getLogs().get(1);
+        CertificateReportItem ocspCheckItem = (CertificateReportItem) report.getLogs().get(2);
         Assert.assertEquals(OCSPValidator.OCSP_CHECK, ocspCheckItem.getCheckName());
         Assert.assertEquals(MessageFormatUtil.format(SignLogMessageConstant.VALID_CERTIFICATE_IS_REVOKED,
                 revocationDate), ocspCheckItem.getMessage());
@@ -249,7 +254,7 @@ public class OCSPValidatorTest extends ExtendedITextTest {
         certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
 
         OCSPValidator validator = new OCSPValidator().setIssuingCertificateRetriever(certificateRetriever);
-        validator.validate(report, checkCert, basicOCSPResp, checkDate);
+        validator.validate(report, checkCert, basicOCSPResp.getResponses()[0], basicOCSPResp, checkDate);
         Assert.assertEquals(1, report.getFailures().size());
         Assert.assertEquals(1, report.getLogs().size());
         CertificateReportItem ocspCheckItem = (CertificateReportItem) report.getLogs().get(0);
@@ -275,12 +280,12 @@ public class OCSPValidatorTest extends ExtendedITextTest {
         OCSPValidator validator = new OCSPValidator()
                 .setIssuingCertificateRetriever(certificateRetriever);
 
-        validator.validate(report, checkCert, caBasicOCSPResp, checkDate);
+        validator.validate(report, checkCert, caBasicOCSPResp.getResponses()[0], caBasicOCSPResp, checkDate);
         Assert.assertEquals(1, report.getFailures().size());
         Assert.assertEquals(1, report.getLogs().size());
         CertificateReportItem item = (CertificateReportItem) report.getFailures().get(0);
         Assert.assertEquals(OCSPValidator.OCSP_CHECK, item.getCheckName());
-        Assert.assertEquals(OCSPValidator.NO_USABLE_OCSP_WAS_FOUND, item.getMessage());
+        Assert.assertEquals(OCSPValidator.SERIAL_NUMBERS_DO_NOT_MATCH, item.getMessage());
         Assert.assertEquals(ValidationReport.ValidationResult.INDETERMINATE, report.getValidationResult());
     }
 
@@ -296,13 +301,13 @@ public class OCSPValidatorTest extends ExtendedITextTest {
         certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
 
         OCSPValidator validator = new OCSPValidator().setIssuingCertificateRetriever(certificateRetriever);
-        validator.validate(report, caCert, caBasicOCSPResp, TimeTestUtil.TEST_DATE_TIME);
+        validator.validate(report, caCert, caBasicOCSPResp.getResponses()[0], caBasicOCSPResp,
+                TimeTestUtil.TEST_DATE_TIME);
         Assert.assertEquals(0, report.getFailures().size());
         Assert.assertEquals(1, report.getLogs().size());
         CertificateReportItem item = (CertificateReportItem) report.getLogs().get(0);
-        Assert.assertEquals(CertificateChainValidator.CERTIFICATE_CHECK, item.getCheckName());
-        Assert.assertEquals(MessageFormatUtil.format(CertificateChainValidator.CERTIFICATE_TRUSTED,
-                item.getCertificate().getSubjectX500Principal()), item.getMessage());
+        Assert.assertEquals(OCSPValidator.OCSP_CHECK, item.getCheckName());
+        Assert.assertEquals(RevocationDataValidator.SELF_SIGNED_CERTIFICATE, item.getMessage());
         Assert.assertEquals(ValidationReport.ValidationResult.VALID, report.getValidationResult());
     }
 
@@ -320,15 +325,14 @@ public class OCSPValidatorTest extends ExtendedITextTest {
         OCSPValidator validator = new OCSPValidator()
                 .setIssuingCertificateRetriever(new TestIssuingCertificateRetriever(wrongRootCertFileName));
 
-        validator.validate(report, checkCert, basicOCSPResp, TimeTestUtil.TEST_DATE_TIME);
+        validator.validate(report, checkCert, basicOCSPResp.getResponses()[0], basicOCSPResp,
+                TimeTestUtil.TEST_DATE_TIME);
         Assert.assertEquals(1, report.getFailures().size());
-        Assert.assertEquals(2, report.getLogs().size());
+        Assert.assertEquals(1, report.getLogs().size());
 
         CertificateReportItem logItem = (CertificateReportItem) report.getLogs().get(0);
         Assert.assertEquals(OCSPValidator.OCSP_CHECK, logItem.getCheckName());
-        Assert.assertEquals(OCSPValidator.ISSUERS_DOES_NOT_MATCH, logItem.getMessage());
-
-        Assert.assertEquals(OCSPValidator.NO_USABLE_OCSP_WAS_FOUND, report.getFailures().get(0).getMessage());
+        Assert.assertEquals(OCSPValidator.ISSUERS_DO_NOT_MATCH, logItem.getMessage());
         Assert.assertEquals(ValidationReport.ValidationResult.INDETERMINATE, report.getValidationResult());
     }
 
@@ -349,7 +353,8 @@ public class OCSPValidatorTest extends ExtendedITextTest {
         certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
 
         OCSPValidator validator = new OCSPValidator().setIssuingCertificateRetriever(certificateRetriever);
-        validator.validate(report, checkCert, basicOCSPResp, TimeTestUtil.TEST_DATE_TIME);
+        validator.validate(report, checkCert, basicOCSPResp.getResponses()[0], basicOCSPResp,
+                TimeTestUtil.TEST_DATE_TIME);
 
         Assert.assertEquals(1, report.getFailures().size());
         Assert.assertEquals(1, report.getLogs().size());
@@ -360,20 +365,51 @@ public class OCSPValidatorTest extends ExtendedITextTest {
     }
 
     @Test
-    public void ocspResponderDoesNotHaveOcspSigningExtensionTest() throws GeneralSecurityException, IOException {
+    public void trustedOcspResponderDoesNotHaveOcspSigningExtensionTest() throws GeneralSecurityException, IOException {
         TestOcspResponseBuilder builder = new TestOcspResponseBuilder(caCert, caPrivateKey);
         TestOcspClient ocspClient = new TestOcspClient().addBuilderForCertIssuer(caCert, builder);
         IBasicOCSPResp caBasicOCSPResp = FACTORY.createBasicOCSPResp(FACTORY.createBasicOCSPResponse(
-                FACTORY.createASN1Primitive(ocspClient.getEncoded(caCert, caCert, null))));
+                FACTORY.createASN1Primitive(ocspClient.getEncoded(checkCert, caCert, null))));
+
+        ValidationReport report = new ValidationReport();
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        // Configure OCSP signing authority for the certificate in question
+        certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
+
+        OCSPValidator validator = new OCSPValidator().setIssuingCertificateRetriever(certificateRetriever);
+        validator.validate(report, checkCert, caBasicOCSPResp.getResponses()[0], caBasicOCSPResp,
+                TimeTestUtil.TEST_DATE_TIME);
+        Assert.assertEquals(0, report.getFailures().size());
+        Assert.assertEquals(1, report.getLogs().size());
+
+        CertificateReportItem item = (CertificateReportItem) report.getLogs().get(0);
+        Assert.assertEquals(CertificateChainValidator.CERTIFICATE_CHECK, item.getCheckName());
+        Assert.assertEquals(MessageFormatUtil.format(CertificateChainValidator.CERTIFICATE_TRUSTED,
+                item.getCertificate().getSubjectX500Principal()), item.getMessage());
+        Assert.assertEquals(ValidationReport.ValidationResult.VALID, report.getValidationResult());
+    }
+
+    @Test
+    public void authorizedOcspResponderDoesNotHaveOcspSigningExtensionTest()
+            throws GeneralSecurityException, IOException {
+        String ocspResponderCertFileName = SOURCE_FOLDER + "ocspResponderCertWithoutOcspSigning.pem";
+        X509Certificate responderCert = (X509Certificate) PemFileHelper.readFirstChain(ocspResponderCertFileName)[0];
+
+        TestOcspResponseBuilder builder = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
+        builder.setThisUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, 1)));
+        TestOcspClient ocspClient = new TestOcspClient().addBuilderForCertIssuer(caCert, builder);
+        IBasicOCSPResp basicOCSPResp = FACTORY.createBasicOCSPResp(FACTORY.createBasicOCSPResponse(
+                FACTORY.createASN1Primitive(ocspClient.getEncoded(checkCert, caCert, null))));
 
         ValidationReport report = new ValidationReport();
         IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
         certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
 
         OCSPValidator validator = new OCSPValidator().setIssuingCertificateRetriever(certificateRetriever);
-        validator.validate(report, caCert, caBasicOCSPResp, TimeTestUtil.TEST_DATE_TIME);
+        validator.validate(report, checkCert, basicOCSPResp.getResponses()[0], basicOCSPResp,
+                TimeTestUtil.TEST_DATE_TIME);
         Assert.assertEquals(1, report.getFailures().size());
-        Assert.assertEquals(2, report.getLogs().size());
+        Assert.assertEquals(3, report.getLogs().size());
 
         CertificateReportItem item = (CertificateReportItem) report.getLogs().get(0);
         Assert.assertEquals(CertificateChainValidator.EXTENSIONS_CHECK, item.getCheckName());
@@ -382,20 +418,13 @@ public class OCSPValidatorTest extends ExtendedITextTest {
                 OID.X509Extensions.EXTENDED_KEY_USAGE), item.getMessage());
 
         item = (CertificateReportItem) report.getLogs().get(1);
+        Assert.assertEquals(RevocationDataValidator.REVOCATION_DATA_CHECK, item.getCheckName());
+        Assert.assertEquals(RevocationDataValidator.TRUSTED_OCSP_RESPONDER, item.getMessage());
+        item = (CertificateReportItem) report.getLogs().get(2);
         Assert.assertEquals(CertificateChainValidator.CERTIFICATE_CHECK, item.getCheckName());
         Assert.assertEquals(MessageFormatUtil.format(CertificateChainValidator.CERTIFICATE_TRUSTED,
                 item.getCertificate().getSubjectX500Principal()), item.getMessage());
-        Assert.assertEquals(ValidationReport.ValidationResult.INVALID, report.getValidationResult());
-    }
-
-    @Test
-    public void validateNullTest() {
-        X509Certificate certificate = null;
-        ValidationReport report = new ValidationReport();
-        new OCSPValidator().validate(report, certificate, null, TimeTestUtil.TEST_DATE_TIME);
-        Assert.assertEquals(0, report.getFailures().size());
-        Assert.assertEquals(0, report.getLogs().size());
-        Assert.assertEquals(ValidationReport.ValidationResult.VALID, report.getValidationResult());
+        Assert.assertEquals(ValidationReport.ValidationResult.INDETERMINATE, report.getValidationResult());
     }
 
     @Test
@@ -403,8 +432,11 @@ public class OCSPValidatorTest extends ExtendedITextTest {
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
         ValidationReport report = validateTest(checkDate, DateTimeUtil.addDaysToDate(checkDate, -3), 5);
         Assert.assertEquals(0, report.getFailures().size());
-        Assert.assertEquals(1, report.getLogs().size());
+        Assert.assertEquals(2, report.getLogs().size());
         CertificateReportItem item = (CertificateReportItem) report.getLogs().get(0);
+        Assert.assertEquals(RevocationDataValidator.REVOCATION_DATA_CHECK, item.getCheckName());
+        Assert.assertEquals(RevocationDataValidator.TRUSTED_OCSP_RESPONDER, item.getMessage());
+        item = (CertificateReportItem) report.getLogs().get(1);
         Assert.assertEquals(CertificateChainValidator.CERTIFICATE_CHECK, item.getCheckName());
         Assert.assertEquals(MessageFormatUtil.format(CertificateChainValidator.CERTIFICATE_TRUSTED,
                 item.getCertificate().getSubjectX500Principal()), item.getMessage());
@@ -412,17 +444,17 @@ public class OCSPValidatorTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO DEVSIX-8176 Implement RevocationDataValidator class: fix asserts
     public void positiveFreshnessNegativeTest() throws GeneralSecurityException, IOException {
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
-        ValidationReport report = validateTest(checkDate, DateTimeUtil.addDaysToDate(checkDate, -3), 2);
-        Assert.assertEquals(0, report.getFailures().size());
+        Date thisUpdate = DateTimeUtil.addDaysToDate(checkDate, -3);
+        ValidationReport report = validateTest(checkDate, thisUpdate, 2);
+        Assert.assertEquals(1, report.getFailures().size());
         Assert.assertEquals(1, report.getLogs().size());
         CertificateReportItem item = (CertificateReportItem) report.getLogs().get(0);
-        Assert.assertEquals(CertificateChainValidator.CERTIFICATE_CHECK, item.getCheckName());
-        Assert.assertEquals(MessageFormatUtil.format(CertificateChainValidator.CERTIFICATE_TRUSTED,
-                item.getCertificate().getSubjectX500Principal()), item.getMessage());
-        Assert.assertEquals(ValidationReport.ValidationResult.VALID, report.getValidationResult());
+        Assert.assertEquals(OCSPValidator.OCSP_CHECK, item.getCheckName());
+        Assert.assertEquals(MessageFormatUtil.format(OCSPValidator.FRESHNESS_CHECK,
+                thisUpdate, checkDate, 2 * MILLISECONDS_PER_DAY), item.getMessage());
+        Assert.assertEquals(ValidationReport.ValidationResult.INDETERMINATE, report.getValidationResult());
     }
 
     @Test
@@ -430,8 +462,11 @@ public class OCSPValidatorTest extends ExtendedITextTest {
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
         ValidationReport report = validateTest(checkDate, DateTimeUtil.addDaysToDate(checkDate, 5), -3);
         Assert.assertEquals(0, report.getFailures().size());
-        Assert.assertEquals(1, report.getLogs().size());
+        Assert.assertEquals(2, report.getLogs().size());
         CertificateReportItem item = (CertificateReportItem) report.getLogs().get(0);
+        Assert.assertEquals(RevocationDataValidator.REVOCATION_DATA_CHECK, item.getCheckName());
+        Assert.assertEquals(RevocationDataValidator.TRUSTED_OCSP_RESPONDER, item.getMessage());
+        item = (CertificateReportItem) report.getLogs().get(1);
         Assert.assertEquals(CertificateChainValidator.CERTIFICATE_CHECK, item.getCheckName());
         Assert.assertEquals(MessageFormatUtil.format(CertificateChainValidator.CERTIFICATE_TRUSTED,
                 item.getCertificate().getSubjectX500Principal()), item.getMessage());
@@ -439,24 +474,24 @@ public class OCSPValidatorTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO DEVSIX-8176 Implement RevocationDataValidator class: fix asserts
     public void negativeFreshnessNegativeTest() throws GeneralSecurityException, IOException {
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
-        ValidationReport report = validateTest(checkDate, DateTimeUtil.addDaysToDate(checkDate, 2), -3);
-        Assert.assertEquals(0, report.getFailures().size());
+        Date thisUpdate = DateTimeUtil.addDaysToDate(checkDate, 2);
+        ValidationReport report = validateTest(checkDate, thisUpdate, -3);
+        Assert.assertEquals(1, report.getFailures().size());
         Assert.assertEquals(1, report.getLogs().size());
         CertificateReportItem item = (CertificateReportItem) report.getLogs().get(0);
-        Assert.assertEquals(CertificateChainValidator.CERTIFICATE_CHECK, item.getCheckName());
-        Assert.assertEquals(MessageFormatUtil.format(CertificateChainValidator.CERTIFICATE_TRUSTED,
-                item.getCertificate().getSubjectX500Principal()), item.getMessage());
-        Assert.assertEquals(ValidationReport.ValidationResult.VALID, report.getValidationResult());
+        Assert.assertEquals(OCSPValidator.OCSP_CHECK, item.getCheckName());
+        Assert.assertEquals(MessageFormatUtil.format(OCSPValidator.FRESHNESS_CHECK,
+                thisUpdate, checkDate, -3 * MILLISECONDS_PER_DAY), item.getMessage());
+        Assert.assertEquals(ValidationReport.ValidationResult.INDETERMINATE, report.getValidationResult());
     }
 
     private ValidationReport validateTest(Date checkDate) throws CertificateException, IOException {
         return validateTest(checkDate, DateTimeUtil.addDaysToDate(checkDate, 1), 0);
     }
 
-    private ValidationReport validateTest(Date checkDate, Date thisUpdate, int freshness)
+    private ValidationReport validateTest(Date checkDate, Date thisUpdate, long freshness)
             throws CertificateException, IOException {
         TestOcspResponseBuilder builder = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
         builder.setThisUpdate(DateTimeUtil.getCalendar(thisUpdate));
@@ -469,8 +504,8 @@ public class OCSPValidatorTest extends ExtendedITextTest {
         certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
 
         OCSPValidator validator = new OCSPValidator().setIssuingCertificateRetriever(certificateRetriever);
-        // TODO DEVSIX-8176 Implement RevocationDataValidator class: set up freshness
-        validator.validate(report, checkCert, basicOCSPResp, checkDate);
+        validator.setFreshness(freshness * MILLISECONDS_PER_DAY);
+        validator.validate(report, checkCert, basicOCSPResp.getResponses()[0], basicOCSPResp, checkDate);
         return report;
     }
 
@@ -488,7 +523,7 @@ public class OCSPValidatorTest extends ExtendedITextTest {
         certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
 
         OCSPValidator validator = new OCSPValidator().setIssuingCertificateRetriever(certificateRetriever);
-        validator.validate(report, checkCert, basicOCSPResp, checkDate);
+        validator.validate(report, checkCert, basicOCSPResp.getResponses()[0], basicOCSPResp, checkDate);
         return report;
     }
 
@@ -508,12 +543,11 @@ public class OCSPValidatorTest extends ExtendedITextTest {
         }
 
         OCSPValidator validator = new OCSPValidator().setIssuingCertificateRetriever(certificateRetriever);
-        validator.validate(report, checkCert, basicOCSPResp, TimeTestUtil.TEST_DATE_TIME);
+        validator.validate(report, checkCert, basicOCSPResp.getResponses()[0], basicOCSPResp,
+                TimeTestUtil.TEST_DATE_TIME);
         return report;
     }
 
-    // TODO DEVSIX-8176 Implement RevocationDataValidator class: make sure that any tests for any
-    //  certificates with CRLs (valid result) and without revocation data (indeterminate result) are added
     private ValidationReport verifyResponderWithOcsp(boolean revokedOcsp)
             throws IOException, CertificateException, AbstractOperatorCreationException, AbstractPKCSException {
         String rootCertFileName = SOURCE_FOLDER + "rootCertForOcspTest.pem";
@@ -549,13 +583,15 @@ public class OCSPValidatorTest extends ExtendedITextTest {
         TestOcspClient ocspClient2 = new TestOcspClient().addBuilderForCertIssuer(caCert, builder2);
 
         CertificateChainValidator certificateChainValidator = new CertificateChainValidator()
-                .setOcspClient(ocspClient2);
+                .addOcspClient(ocspClient2);
+        certificateChainValidator.getRevocationDataValidator()
+                .setOnlineFetching(RevocationDataValidator.OnlineFetching.NEVER_FETCH);
         if (revokedOcsp) {
             certificateChainValidator.proceedValidationAfterFail(false);
         }
         validator.setCertificateChainValidator(certificateChainValidator);
         validator.setIssuingCertificateRetriever(certificateRetriever);
-        validator.validate(report, checkCert, basicOCSPResp, checkDate);
+        validator.validate(report, checkCert, basicOCSPResp.getResponses()[0], basicOCSPResp, checkDate);
         return report;
     }
 

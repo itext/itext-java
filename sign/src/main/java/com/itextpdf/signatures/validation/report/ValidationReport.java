@@ -20,7 +20,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.signatures.validation;
+package com.itextpdf.signatures.validation.report;
+
+import com.itextpdf.signatures.validation.report.ReportItem.ReportItemStatus;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,10 +48,10 @@ public class ValidationReport {
      * @return {@link ValidationResult}, which represents the result of a validation
      */
     public ValidationResult getValidationResult() {
-        if (reportItems.stream().anyMatch(reportItem -> reportItem.result == ValidationResult.INVALID)) {
+        if (reportItems.stream().anyMatch(reportItem -> reportItem.getStatus() == ReportItemStatus.INVALID)) {
             return ValidationResult.INVALID;
         }
-        if (reportItems.stream().anyMatch(reportItem -> reportItem.result == ValidationResult.INDETERMINATE)) {
+        if (reportItems.stream().anyMatch(reportItem -> reportItem.getStatus() == ReportItemStatus.INDETERMINATE)) {
             return ValidationResult.INDETERMINATE;
         }
         return ValidationResult.VALID;
@@ -61,7 +63,8 @@ public class ValidationReport {
      * @return report items {@link List}, which contains all recognized failures
      */
     public List<ReportItem> getFailures() {
-        return reportItems.stream().filter(item -> item.result != ValidationResult.VALID).collect(Collectors.toList());
+        return reportItems.stream().filter(item -> item.getStatus() != ReportItemStatus.INFO)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -107,15 +110,15 @@ public class ValidationReport {
      */
     public enum ValidationResult {
         /**
-         * Result for valid certificate.
+         * Valid validation result.
          */
         VALID,
         /**
-         * Result for invalid certificate.
+         * Invalid validation result.
          */
         INVALID,
         /**
-         * Result for certificate, which status is indeterminate.
+         * Indeterminate validation result.
          */
         INDETERMINATE
     }

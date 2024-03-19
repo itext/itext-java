@@ -28,17 +28,24 @@ import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateStatus;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IRevokedStatus;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.ISingleResp;
+import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.signatures.CertificateUtil;
 import com.itextpdf.signatures.IssuingCertificateRetriever;
 import com.itextpdf.signatures.logs.SignLogMessageConstant;
 import com.itextpdf.signatures.validation.extensions.CertificateExtension;
 import com.itextpdf.signatures.validation.extensions.ExtendedKeyUsageExtension;
+import com.itextpdf.signatures.validation.report.CertificateReportItem;
+import com.itextpdf.signatures.validation.report.ReportItem;
+import com.itextpdf.signatures.validation.report.ReportItem.ReportItemStatus;
+import com.itextpdf.signatures.validation.report.ValidationReport;
 
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
 import java.util.Date;
+
+import static com.itextpdf.signatures.validation.RevocationDataValidator.SELF_SIGNED_CERTIFICATE;
 
 /**
  * Class that allows you to validate a single OCSP response.
@@ -47,25 +54,47 @@ public class OCSPValidator {
     static final String CERT_IS_REVOKED = "Certificate status is revoked.";
     static final String CERT_STATUS_IS_UNKNOWN = "Certificate status is unknown.";
     static final String INVALID_OCSP = "OCSP response is invalid.";
-    static final String ISSUERS_DOES_NOT_MATCH = "OCSP: Issuers doesn't match.";
-    static final String NO_USABLE_OCSP_WAS_FOUND = "No usable OCSP response was found.";
+    static final String ISSUERS_DO_NOT_MATCH = "OCSP: Issuers don't match.";
+    static final String FRESHNESS_CHECK = "OCSP response is not fresh enough: " +
+            "this update: {0}, validation date: {1}, freshness: {2}.";
     static final String OCSP_COULD_NOT_BE_VERIFIED = "OCSP response could not be verified: " +
             "it does not contain responder in the certificate chain and response is not signed " +
             "by issuer certificate or any from the trusted store.";
     static final String OCSP_IS_NO_LONGER_VALID = "OCSP is no longer valid: {0} after {1}";
+    static final String SERIAL_NUMBERS_DO_NOT_MATCH = "OCSP: Serial numbers don't match.";
+    static final String UNABLE_TO_CHECK_IF_ISSUERS_MATCH = "OCSP response could not be verified: unable to check" +
+            " if issuers match.";
 
     static final String OCSP_CHECK = "OCSP response check.";
 
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     private IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
-    private CertificateChainValidator certificateChainValidator = new CertificateChainValidator();
+    private CertificateChainValidator certificateChainValidator;
+    private long freshness = 3024000000L; // 35 days
 
     /**
      * Creates new {@link OCSPValidator} instance.
      */
     public OCSPValidator() {
         // Empty constructor.
+    }
+
+    /**
+     * Sets the revocation freshness value which is a time interval in milliseconds indicating that the validation
+     * accepts revocation data responses that were emitted at a point in time after the validation time minus the
+     * freshness: thisUpdate not before (validationTime - freshness).
+     *
+     * <p>
+     * If the revocation freshness constraint is respected by a revocation data then it can be used.
+     *
+     * @param freshness time interval in milliseconds identifying revocation freshness constraint
+     *
+     * @return this same {@link OCSPValidator} instance.
+     */
+    public OCSPValidator setFreshness(long freshness) {
+        this.freshness = freshness;
+        return this;
     }
 
     /**
@@ -78,12 +107,12 @@ public class OCSPValidator {
      */
     public OCSPValidator setIssuingCertificateRetriever(IssuingCertificateRetriever certificateRetriever) {
         this.certificateRetriever = certificateRetriever;
-        this.certificateChainValidator.setIssuingCertificateRetriever(certificateRetriever);
+        getCertificateChainValidator().setIssuingCertificateRetriever(certificateRetriever);
         return this;
     }
 
     /**
-     * Set {@link CertificateChainValidator} for the OCSP responder certificate.
+     * Sets {@link CertificateChainValidator} for the OCSP responder certificate.
      *
      * @param validator {@link CertificateChainValidator} to be a validator for the OCSP responder certificate
      *
@@ -95,82 +124,92 @@ public class OCSPValidator {
     }
 
     /**
-     * Validates a certificate against OCSP Response.
+     * Gets {@link CertificateChainValidator} for the OCSP responder certificate.
      *
-     * @param report           to store all the chain verification results
-     * @param certificate      the certificate to check for
-     * @param ocspResp         basic OCSP response to check
-     * @param verificationDate verification date to check for
+     * @return {@link CertificateChainValidator} to be a validator for the OCSP responder certificate.
      */
-    public void validate(ValidationReport report, X509Certificate certificate, IBasicOCSPResp ocspResp,
-                         Date verificationDate) {
-        if (ocspResp == null) {
+    public CertificateChainValidator getCertificateChainValidator() {
+        if (certificateChainValidator == null) {
+            certificateChainValidator = new CertificateChainValidator();
+        }
+        return certificateChainValidator;
+    }
+
+    /**
+     * Validates a certificate against single OCSP Response.
+     *
+     * @param report         to store all the chain verification results
+     * @param certificate    the certificate to check for
+     * @param singleResp     single response to check
+     * @param ocspResp       basic OCSP response which contains single response to check
+     * @param validationDate validation date to check for
+     */
+    public void validate(ValidationReport report, X509Certificate certificate, ISingleResp singleResp,
+                         IBasicOCSPResp ocspResp, Date validationDate) {
+        if (CertificateUtil.isSelfSigned(certificate)) {
+            report.addReportItem(new CertificateReportItem(certificate, OCSP_CHECK, SELF_SIGNED_CERTIFICATE,
+                    ReportItemStatus.INFO));
             return;
         }
-        // Getting the responses.
-        ISingleResp[] resp = ocspResp.getResponses();
-        boolean workingOcspAvailable = false;
-        for (ISingleResp iSingleResp : resp) {
-            // SingleResp contains the basic information of the status of the certificate identified by the certID.
-            // Check if the serial numbers of the signCert and certID corresponds:
-            if (!certificate.getSerialNumber().equals(iSingleResp.getCertID().getSerialNumber())) {
-                continue;
-            }
-            Certificate issuerCert = certificateRetriever.retrieveIssuerCertificate(certificate);
-            // Check if the issuer of the certID and signCert matches, i.e. check that issuerNameHash and issuerKeyHash
-            // fields of the certID is the hash of the issuer's name and public key:
-            if (issuerCert == null) {
-                issuerCert = certificate;
-            }
-            try {
-                if (!CertificateUtil.checkIfIssuersMatch(iSingleResp.getCertID(), (X509Certificate) issuerCert)) {
-                    report.addReportItem(new CertificateReportItem(certificate, OCSP_CHECK, ISSUERS_DOES_NOT_MATCH,
-                            ValidationReport.ValidationResult.VALID));
-                    continue;
-                }
-            } catch (Exception e) {
-                continue;
-            }
-            // So, since the issuer name and serial number identify a unique certificate, we found the single response
-            // for the signCert.
-
-            // TODO DEVSIX-8176 Implement RevocationDataValidator class: thisUpdate >= (verificationDate - freshness)
-
-            // If nextUpdate is not set, the responder is indicating that newer revocation information
-            // is available all the time.
-            if (iSingleResp.getNextUpdate() != null && verificationDate.after(iSingleResp.getNextUpdate())) {
-                report.addReportItem(new CertificateReportItem(certificate, OCSP_CHECK,
-                        MessageFormatUtil.format(OCSP_IS_NO_LONGER_VALID, verificationDate,
-                                iSingleResp.getNextUpdate()), ValidationReport.ValidationResult.VALID));
-                continue;
-            }
-
-            workingOcspAvailable = true;
-
-            // Check the status of the certificate:
-            ICertificateStatus status = iSingleResp.getCertStatus();
-            IRevokedStatus revokedStatus = BOUNCY_CASTLE_FACTORY.createRevokedStatus(status);
-            boolean isStatusGood = BOUNCY_CASTLE_FACTORY.createCertificateStatus().getGood().equals(status);
-            if (isStatusGood || (revokedStatus != null && verificationDate.before(revokedStatus.getRevocationTime()))) {
-                // Check if the OCSP response is genuine.
-                verifyOcspResponder(report, ocspResp, (X509Certificate) issuerCert);
-                if (!isStatusGood) {
-                    report.addReportItem(new CertificateReportItem(certificate, OCSP_CHECK,
-                            MessageFormatUtil.format(SignLogMessageConstant.VALID_CERTIFICATE_IS_REVOKED,
-                                    revokedStatus.getRevocationTime()), ValidationReport.ValidationResult.VALID));
-                }
-            } else if (revokedStatus != null) {
-                report.addReportItem(new CertificateReportItem(certificate, OCSP_CHECK, CERT_IS_REVOKED,
-                        ValidationReport.ValidationResult.INVALID));
-            } else {
-                report.addReportItem(new CertificateReportItem(certificate, OCSP_CHECK, CERT_STATUS_IS_UNKNOWN,
-                        ValidationReport.ValidationResult.INDETERMINATE));
-            }
+        // SingleResp contains the basic information of the status of the certificate identified by the certID.
+        // Check if the serial numbers of the signCert and certID corresponds:
+        if (!certificate.getSerialNumber().equals(singleResp.getCertID().getSerialNumber())) {
+            report.addReportItem(new CertificateReportItem(certificate, OCSP_CHECK, SERIAL_NUMBERS_DO_NOT_MATCH,
+                    ReportItemStatus.INDETERMINATE));
+            return;
         }
-        if (!workingOcspAvailable) {
-            // TODO DEVSIX-8176 Implement RevocationDataValidator class: crls could be valid, it shouldn't be a failure.
-            report.addReportItem(new CertificateReportItem(certificate, OCSP_CHECK, NO_USABLE_OCSP_WAS_FOUND,
-                    ValidationReport.ValidationResult.INDETERMINATE));
+        Certificate issuerCert = certificateRetriever.retrieveIssuerCertificate(certificate);
+        // Check if the issuer of the certID and signCert matches, i.e. check that issuerNameHash and issuerKeyHash
+        // fields of the certID is the hash of the issuer's name and public key:
+        try {
+            if (!CertificateUtil.checkIfIssuersMatch(singleResp.getCertID(), (X509Certificate) issuerCert)) {
+                report.addReportItem(new CertificateReportItem(certificate, OCSP_CHECK, ISSUERS_DO_NOT_MATCH,
+                        ReportItemStatus.INDETERMINATE));
+                return;
+            }
+        } catch (Exception e) {
+            report.addReportItem(new CertificateReportItem(certificate, OCSP_CHECK, UNABLE_TO_CHECK_IF_ISSUERS_MATCH,
+                    ReportItemStatus.INDETERMINATE));
+            return;
+        }
+        // So, since the issuer name and serial number identify a unique certificate, we found the single response
+        // for the provided certificate.
+
+        // Check that thisUpdate >= (validationDate - freshness).
+        if (singleResp.getThisUpdate().before(DateTimeUtil.addMillisToDate(validationDate, -freshness))) {
+            report.addReportItem(new CertificateReportItem(certificate, OCSP_CHECK,
+                    MessageFormatUtil.format(FRESHNESS_CHECK, singleResp.getThisUpdate(), validationDate, freshness),
+                    ReportItemStatus.INDETERMINATE));
+            return;
+        }
+
+        // If nextUpdate is not set, the responder is indicating that newer revocation information
+        // is available all the time.
+        if (singleResp.getNextUpdate() != null && validationDate.after(singleResp.getNextUpdate())) {
+            report.addReportItem(new CertificateReportItem(certificate, OCSP_CHECK,
+                    MessageFormatUtil.format(OCSP_IS_NO_LONGER_VALID, validationDate,
+                            singleResp.getNextUpdate()), ReportItemStatus.INDETERMINATE));
+            return;
+        }
+
+        // Check the status of the certificate:
+        ICertificateStatus status = singleResp.getCertStatus();
+        IRevokedStatus revokedStatus = BOUNCY_CASTLE_FACTORY.createRevokedStatus(status);
+        boolean isStatusGood = BOUNCY_CASTLE_FACTORY.createCertificateStatus().getGood().equals(status);
+        if (isStatusGood || (revokedStatus != null && validationDate.before(revokedStatus.getRevocationTime()))) {
+            // Check if the OCSP response is genuine.
+            verifyOcspResponder(report, ocspResp, (X509Certificate) issuerCert);
+            if (!isStatusGood) {
+                report.addReportItem(new CertificateReportItem(certificate, OCSP_CHECK,
+                        MessageFormatUtil.format(SignLogMessageConstant.VALID_CERTIFICATE_IS_REVOKED,
+                                revokedStatus.getRevocationTime()), ReportItemStatus.INFO));
+            }
+        } else if (revokedStatus != null) {
+            report.addReportItem(new CertificateReportItem(certificate, OCSP_CHECK, CERT_IS_REVOKED,
+                    ReportItemStatus.INVALID));
+        } else {
+            report.addReportItem(new CertificateReportItem(certificate, OCSP_CHECK, CERT_STATUS_IS_UNKNOWN,
+                    ReportItemStatus.INDETERMINATE));
         }
     }
 
@@ -183,8 +222,9 @@ public class OCSPValidator {
      * @param ocspResp   {@link IBasicOCSPResp} the OCSP response wrapper
      * @param issuerCert the issuer of the certificate for which the OCSP is checked
      */
-    private void verifyOcspResponder(ValidationReport report, IBasicOCSPResp ocspResp,
-                                     X509Certificate issuerCert) {
+    private void verifyOcspResponder(ValidationReport report, IBasicOCSPResp ocspResp, X509Certificate issuerCert) {
+        ValidationReport responderReport = new ValidationReport();
+
         // OCSP response might be signed by the issuer certificate or
         // the Authorized OCSP responder certificate containing the id-kp-OCSPSigning extended key usage extension.
         X509Certificate responderCert = null;
@@ -200,7 +240,7 @@ public class OCSPValidator {
             responderCert = (X509Certificate) certificateRetriever.retrieveOCSPResponderCertificate(ocspResp);
             if (responderCert == null) {
                 report.addReportItem(new CertificateReportItem(issuerCert, OCSP_CHECK, OCSP_COULD_NOT_BE_VERIFIED,
-                        ValidationReport.ValidationResult.INDETERMINATE));
+                        ReportItemStatus.INDETERMINATE));
                 return;
             }
             if (!certificateRetriever.isCertificateTrusted(responderCert)) {
@@ -213,17 +253,28 @@ public class OCSPValidator {
                     responderCert.verify(issuerCert.getPublicKey());
                 } catch (Exception e) {
                     report.addReportItem(new CertificateReportItem(responderCert, OCSP_CHECK, INVALID_OCSP, e,
-                            ValidationReport.ValidationResult.INVALID));
+                            ReportItemStatus.INVALID));
                     return;
                 }
 
                 // Validating of the ocsp signer's certificate (responderCert) described in the
                 // RFC6960 4.2.2.2.1. Revocation Checking of an Authorized Responder.
+                getCertificateChainValidator().getRevocationDataValidator().checkOcspResponder();
+                getCertificateChainValidator().validate(responderReport, responderCert, ocspResp.getProducedAt(),
+                        Collections.singletonList((CertificateExtension) new ExtendedKeyUsageExtension(
+                                Collections.singletonList(ExtendedKeyUsageExtension.OCSP_SIGNING))));
+                addResponderValidationReport(report, responderReport);
+                return;
             }
         }
+        getCertificateChainValidator().validate(responderReport, responderCert, ocspResp.getProducedAt(), null);
+        addResponderValidationReport(report, responderReport);
+    }
 
-        certificateChainValidator.validate(report, responderCert, ocspResp.getProducedAt(),
-                Collections.singletonList((CertificateExtension) new ExtendedKeyUsageExtension(
-                        Collections.singletonList(ExtendedKeyUsageExtension.OCSP_SIGNING))));
+    private void addResponderValidationReport(ValidationReport report, ValidationReport responderReport) {
+        for (ReportItem reportItem : responderReport.getLogs()) {
+            report.addReportItem(ReportItemStatus.INVALID == reportItem.getStatus() ?
+                    reportItem.setStatus(ReportItemStatus.INDETERMINATE) : reportItem);
+        }
     }
 }

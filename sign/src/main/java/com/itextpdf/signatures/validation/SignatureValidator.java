@@ -32,11 +32,13 @@ import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.signatures.CertificateUtil;
 import com.itextpdf.signatures.PdfPKCS7;
 import com.itextpdf.signatures.SignatureUtil;
-import com.itextpdf.signatures.validation.ValidationReport.ValidationResult;
 import com.itextpdf.signatures.validation.extensions.CertificateExtension;
 import com.itextpdf.signatures.validation.extensions.ExtendedKeyUsageExtension;
 import com.itextpdf.signatures.validation.extensions.KeyUsage;
 import com.itextpdf.signatures.validation.extensions.KeyUsageExtension;
+import com.itextpdf.signatures.validation.report.ReportItem;
+import com.itextpdf.signatures.validation.report.ReportItem.ReportItemStatus;
+import com.itextpdf.signatures.validation.report.ValidationReport;
 
 import java.io.ByteArrayInputStream;
 import java.security.GeneralSecurityException;
@@ -156,11 +158,11 @@ class SignatureValidator {
             try {
                 if (!pkcs7.verifyTimestampImprint()) {
                     validationReport.addReportItem(new ReportItem(TIMESTAMP_VERIFICATION, CANNOT_VERIFY_TIMESTAMP,
-                            ValidationResult.INVALID));
+                            ReportItemStatus.INVALID));
                 }
             } catch (GeneralSecurityException e) {
                 validationReport.addReportItem(new ReportItem(TIMESTAMP_VERIFICATION, CANNOT_VERIFY_TIMESTAMP, e,
-                        ValidationResult.INVALID));
+                        ReportItemStatus.INVALID));
             }
             if (stopValidation(validationReport)) {
                 return validationReport;
@@ -190,22 +192,22 @@ class SignatureValidator {
         PdfPKCS7 pkcs7 = signatureUtil.readSignatureData(latestSignatureName);
         if (!signatureUtil.signatureCoversWholeDocument(latestSignatureName)) {
             validationReport.addReportItem(new ReportItem(SIGNATURE_VERIFICATION,
-                    MessageFormatUtil.format(DOCUMENT_IS_NOT_COVERED, latestSignatureName), ValidationResult.INVALID));
+                    MessageFormatUtil.format(DOCUMENT_IS_NOT_COVERED, latestSignatureName), ReportItemStatus.INVALID));
         }
         try {
             if (!pkcs7.verifySignatureIntegrityAndAuthenticity()) {
                 validationReport.addReportItem(new ReportItem(SIGNATURE_VERIFICATION, MessageFormatUtil.format(
-                        CANNOT_VERIFY_SIGNATURE, latestSignatureName), ValidationResult.INVALID));
+                        CANNOT_VERIFY_SIGNATURE, latestSignatureName), ReportItemStatus.INVALID));
             }
         } catch (GeneralSecurityException e) {
             validationReport.addReportItem(new ReportItem(SIGNATURE_VERIFICATION, MessageFormatUtil.format(
-                    CANNOT_VERIFY_SIGNATURE, latestSignatureName), e, ValidationResult.INVALID));
+                    CANNOT_VERIFY_SIGNATURE, latestSignatureName), e, ReportItemStatus.INVALID));
         }
         return pkcs7;
     }
 
     private ValidationReport validateTimestampChain(ValidationReport validationReport, Certificate[] knownCerts,
-            X509Certificate signingCert) {
+                                                    X509Certificate signingCert) {
         List<CertificateExtension> requiredTimestampExtensions = new ArrayList<>();
         requiredTimestampExtensions.add(new ExtendedKeyUsageExtension(
                 Collections.singletonList(ExtendedKeyUsageExtension.TIME_STAMPING)));
@@ -229,7 +231,7 @@ class SignatureValidator {
                                 new ByteArrayInputStream(certStream.getBytes())));
                     } catch (GeneralSecurityException e) {
                         validationReport.addReportItem(new ReportItem(CERTS_FROM_DSS, MessageFormatUtil.format(
-                                CANNOT_PARSE_CERT_FROM_DSS, certStream), e, ValidationResult.VALID));
+                                CANNOT_PARSE_CERT_FROM_DSS, certStream), e, ReportItemStatus.INFO));
                     }
                 }
             }
@@ -238,6 +240,6 @@ class SignatureValidator {
     }
 
     private boolean stopValidation(ValidationReport result) {
-        return !proceedValidationAfterFail && result.getValidationResult() != ValidationResult.VALID;
+        return !proceedValidationAfterFail && result.getValidationResult() != ValidationReport.ValidationResult.VALID;
     }
 }

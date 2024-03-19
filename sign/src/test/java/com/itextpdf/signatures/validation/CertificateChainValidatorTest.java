@@ -26,10 +26,12 @@ import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.signatures.OID.X509Extensions;
 import com.itextpdf.signatures.testutils.PemFileHelper;
-import com.itextpdf.signatures.validation.ValidationReport.ValidationResult;
 import com.itextpdf.signatures.validation.extensions.CertificateExtension;
 import com.itextpdf.signatures.validation.extensions.KeyUsage;
 import com.itextpdf.signatures.validation.extensions.KeyUsageExtension;
+import com.itextpdf.signatures.validation.report.CertificateReportItem;
+import com.itextpdf.signatures.validation.report.ValidationReport;
+import com.itextpdf.signatures.validation.report.ValidationReport.ValidationResult;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
@@ -41,6 +43,8 @@ import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -58,6 +62,7 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         X509Certificate rootCert = (X509Certificate) certificateChain[2];
 
         CertificateChainValidator validator = new CertificateChainValidator();
+        validator.setRevocationDataValidator(new MockRevocationDataValidator());
         validator.setKnownCertificates(Collections.singletonList(intermediateCert));
         validator.setTrustedCertificates(Collections.singletonList(rootCert));
 
@@ -85,9 +90,11 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         X509Certificate rootCert = (X509Certificate) certificateChain[2];
 
         CertificateChainValidator validator = new CertificateChainValidator();
+        validator.setRevocationDataValidator(new MockRevocationDataValidator());
         validator.setKnownCertificates(Collections.singletonList(intermediateCert));
         validator.setTrustedCertificates(Collections.singletonList(rootCert));
-        validator.setGlobalRequiredExtensions(Collections.<CertificateExtension>singletonList(new KeyUsageExtension(KeyUsage.DIGITAL_SIGNATURE)));
+        validator.setGlobalRequiredExtensions(Collections.<CertificateExtension>singletonList(
+                new KeyUsageExtension(KeyUsage.DIGITAL_SIGNATURE)));
 
         validator.proceedValidationAfterFail(true);
 
@@ -138,7 +145,8 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         CertificateChainValidator validator = new CertificateChainValidator();
         validator.setKnownCertificates(Collections.singletonList(intermediateCert));
         validator.setTrustedCertificates(Collections.singletonList(rootCert));
-        validator.setGlobalRequiredExtensions(Collections.<CertificateExtension>singletonList(new KeyUsageExtension(KeyUsage.DIGITAL_SIGNATURE)));
+        validator.setGlobalRequiredExtensions(Collections.<CertificateExtension>singletonList(
+                new KeyUsageExtension(KeyUsage.DIGITAL_SIGNATURE)));
 
         validator.proceedValidationAfterFail(false);
 
@@ -165,6 +173,7 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         X509Certificate intermediateCert = (X509Certificate) certificateChain[1];
 
         CertificateChainValidator validator = new CertificateChainValidator();
+        validator.setRevocationDataValidator(new MockRevocationDataValidator());
         validator.setTrustedCertificates(Collections.singletonList(intermediateCert));
 
         ValidationReport report =
@@ -191,6 +200,7 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         X509Certificate rootCert = (X509Certificate) certificateChain[2];
 
         CertificateChainValidator validator = new CertificateChainValidator();
+        validator.setRevocationDataValidator(new MockRevocationDataValidator());
         validator.setKnownCertificates(Collections.singletonList(intermediateCert));
         validator.setTrustedCertificates(Collections.singletonList(rootCert));
 
@@ -218,6 +228,7 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         X509Certificate rootCert = (X509Certificate) certificateChain[2];
 
         CertificateChainValidator validator = new CertificateChainValidator();
+        validator.setRevocationDataValidator(new MockRevocationDataValidator());
         validator.setKnownCertificates(Collections.singletonList(intermediateCert));
         validator.setTrustedCertificates(Collections.singletonList(rootCert));
         validator.setGlobalRequiredExtensions(Collections.<CertificateExtension>singletonList(new KeyUsageExtension(0)));
@@ -245,6 +256,7 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         X509Certificate rootCert = (X509Certificate) certificateChain[2];
 
         CertificateChainValidator validator = new CertificateChainValidator();
+        validator.setRevocationDataValidator(new MockRevocationDataValidator());
         validator.setKnownCertificates(Collections.singletonList(intermediateCert));
         validator.setTrustedCertificates(Collections.singletonList(rootCert));
 
@@ -279,6 +291,7 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         X509Certificate rootCert = (X509Certificate) certificateChain[2];
 
         CertificateChainValidator validator = new CertificateChainValidator();
+        validator.setRevocationDataValidator(new MockRevocationDataValidator());
         validator.setKnownCertificates(Collections.singletonList(intermediateCert));
         validator.setTrustedCertificates(Collections.singletonList(rootCert));
         validator.setGlobalRequiredExtensions(Collections.<CertificateExtension>singletonList(new KeyUsageExtension(KeyUsage.DIGITAL_SIGNATURE)));
@@ -320,6 +333,7 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         X509Certificate rootCert = (X509Certificate) certificateChain[2];
 
         CertificateChainValidator validator = new CertificateChainValidator();
+        validator.setRevocationDataValidator(new MockRevocationDataValidator());
         validator.setKnownCertificates(Arrays.asList(intermediateCert, rootCert));
 
         ValidationReport report =
@@ -348,6 +362,7 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         X509Certificate rootCert = (X509Certificate) certificateChain[2];
 
         CertificateChainValidator validator = new CertificateChainValidator();
+        validator.setRevocationDataValidator(new MockRevocationDataValidator());
         validator.setKnownCertificates(Collections.singletonList(intermediateCert));
         validator.setTrustedCertificates(Collections.singletonList(rootCert));
 
@@ -385,6 +400,7 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         X509Certificate rootCert = (X509Certificate) certificateChain[2];
 
         CertificateChainValidator validator = new CertificateChainValidator();
+        validator.setRevocationDataValidator(new MockRevocationDataValidator());
         validator.setKnownCertificates(Collections.singletonList(intermediateCert));
         validator.setTrustedCertificates(Collections.singletonList(rootCert));
 
@@ -410,5 +426,12 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
                 "Certificate {0} is expired.", intermediateCert.getSubjectX500Principal()), item.getMessage());
         Exception exception = item.getExceptionCause();
         Assert.assertTrue(exception instanceof CertificateExpiredException);
+    }
+
+    private static class MockRevocationDataValidator extends RevocationDataValidator {
+        @Override
+        public void validate(ValidationReport report, X509Certificate certificate, Date validationDate) {
+            return;
+        }
     }
 }

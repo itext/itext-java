@@ -441,7 +441,7 @@ public class CertificateUtil {
      *
      * @return true if the certificate is self-signed.
      */
-    static boolean isSelfSigned(X509Certificate certificate) {
+    public static boolean isSelfSigned(X509Certificate certificate) {
         return certificate.getIssuerX500Principal().equals(certificate.getSubjectX500Principal());
     }
 

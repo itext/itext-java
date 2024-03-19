@@ -20,9 +20,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.signatures.validation;
-
-import com.itextpdf.signatures.validation.ValidationReport.ValidationResult;
+package com.itextpdf.signatures.validation.report;
 
 import java.security.cert.X509Certificate;
 
@@ -36,34 +34,34 @@ public class CertificateReportItem extends ReportItem {
      * Create {@link ReportItem} instance.
      *
      * @param certificate {@link X509Certificate} processing which report item occurred
-     * @param checkName {@link String}, which represents a check name during which report item occurred
-     * @param message {@link String} with the exact report item message
-     * @param result {@link ValidationResult}, which this report item leads to
+     * @param checkName   {@link String}, which represents a check name during which report item occurred
+     * @param message     {@link String} with the exact report item message
+     * @param status      {@link ReportItemStatus} report item status that determines validation result
      */
     public CertificateReportItem(X509Certificate certificate, String checkName, String message,
-            ValidationResult result) {
-        this(certificate, checkName, message, null, result);
+                                 ReportItemStatus status) {
+        this(certificate, checkName, message, null, status);
     }
 
     /**
      * Create {@link ReportItem} instance.
      *
      * @param certificate {@link X509Certificate} processing which report item occurred
-     * @param checkName {@link String}, which represents a check name during which report item occurred
-     * @param message {@link String} with the exact report item message
-     * @param cause {@link Exception}, which caused this report item
-     * @param result {@link ValidationResult}, which this report item leads to
+     * @param checkName   {@link String}, which represents a check name during which report item occurred
+     * @param message     {@link String} with the exact report item message
+     * @param cause       {@link Exception}, which caused this report item
+     * @param status      {@link ReportItemStatus} report item status that determines validation result
      */
     public CertificateReportItem(X509Certificate certificate, String checkName, String message, Exception cause,
-            ValidationResult result) {
-        super(checkName, message, cause, result);
+                                 ReportItemStatus status) {
+        super(checkName, message, cause, status);
         this.certificate = certificate;
     }
 
     /**
      * Get the certificate related to this report item.
      *
-     * @return {@link X509Certificate} related to this report item
+     * @return {@link X509Certificate} related to this report item.
      */
     public X509Certificate getCertificate() {
         return certificate;

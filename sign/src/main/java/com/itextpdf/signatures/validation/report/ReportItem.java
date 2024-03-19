@@ -20,9 +20,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.signatures.validation;
-
-import com.itextpdf.signatures.validation.ValidationReport.ValidationResult;
+package com.itextpdf.signatures.validation.report;
 
 /**
  * Report item to be used for single failure or log message.
@@ -31,39 +29,38 @@ public class ReportItem {
     private final String checkName;
     private final String message;
     private final Exception cause;
-    final ValidationResult result;
+    private ReportItemStatus status;
 
     /**
      * Create {@link ReportItem} instance.
      *
      * @param checkName {@link String}, which represents a check name during which report item occurred
-     * @param message {@link String} with the exact report item message
-     * @param result {@link ValidationResult}, which this report item leads to
+     * @param message   {@link String} with the exact report item message
+     * @param status    {@link ReportItemStatus} report item status that determines validation result
      */
-    public ReportItem(String checkName, String message, ValidationResult result) {
-        this(checkName, message, null, result);
+    public ReportItem(String checkName, String message, ReportItemStatus status) {
+        this(checkName, message, null, status);
     }
 
     /**
      * Create {@link ReportItem} instance.
      *
      * @param checkName {@link String}, which represents a check name during which report item occurred
-     * @param message {@link String} with the exact report item message
-     * @param cause {@link Exception}, which caused this report item
-     * @param result {@link ValidationResult}, which this report item leads to
+     * @param message   {@link String} with the exact report item message
+     * @param cause     {@link Exception}, which caused this report item
+     * @param status    {@link ReportItemStatus} report item status that determines validation result
      */
-    public ReportItem(String checkName, String message, Exception cause,
-            ValidationResult result) {
+    public ReportItem(String checkName, String message, Exception cause, ReportItemStatus status) {
         this.checkName = checkName;
         this.message = message;
         this.cause = cause;
-        this.result = result;
+        this.status = status;
     }
 
     /**
      * Get the check name related to this report item.
      *
-     * @return {@link String} check name related to this report item
+     * @return {@link String} check name related to this report item.
      */
     public String getCheckName() {
         return checkName;
@@ -72,7 +69,7 @@ public class ReportItem {
     /**
      * Get the message related to this report item.
      *
-     * @return {@link String} message related to this report item
+     * @return {@link String} message related to this report item.
      */
     public String getMessage() {
         return message;
@@ -81,18 +78,48 @@ public class ReportItem {
     /**
      * Get the exception, which caused this report item.
      *
-     * @return {@link Exception}, which cause this report item
+     * @return {@link Exception}, which cause this report item.
      */
     public Exception getExceptionCause() {
         return cause;
     }
 
     /**
-     * Get validation result this report item leads to.
+     * Get report item status that determines validation result this report item corresponds to.
      *
-     * @return {@link ValidationResult} this report item leads to
+     * @return {@link ReportItemStatus} report item status that determines validation result.
      */
-    public ValidationResult getValidationResult() {
-        return result;
+    public ReportItemStatus getStatus() {
+        return status;
+    }
+
+    /**
+     * Set report item status that determines validation result this report item corresponds to.
+     *
+     * @param status {@link ReportItemStatus} report item status that determines validation result
+     *
+     * @return this {@link ReportItem} instance.
+     */
+    public ReportItem setStatus(ReportItemStatus status) {
+        this.status = status;
+        return this;
+    }
+
+    /**
+     * Enum representing possible report item statuses that determine validation result.
+     */
+    public enum ReportItemStatus {
+        /**
+         * Report item status for info messages.
+         */
+        INFO,
+        /**
+         * Report item status that leads to invalid validation result.
+         */
+        INVALID,
+        /**
+         * Report item status that leads to indeterminate validation result.
+         */
+        INDETERMINATE
     }
 }
