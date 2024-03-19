@@ -429,6 +429,14 @@ public class PdfXrefTable {
     }
 
     /**
+     * Change the state of the cross-reference table to unmark that reading of the document
+     * was completed.
+     */
+    void unmarkReadingCompleted() {
+        readingCompleted = false;
+    }
+
+    /**
      * Check if reading of the document was completed.
      *
      * @return true if reading was completed and false otherwise
@@ -506,13 +514,23 @@ public class PdfXrefTable {
     }
 
     /**
-     * Clear the state of the cross-reference table.
+     * Clear the state of the cross-reference table without free references removal.
      */
     void clear() {
         for (int i = 1; i <= count; i++) {
             if (xref[i] != null && xref[i].isFree()) {
                 continue;
             }
+            xref[i] = null;
+        }
+        count = 1;
+    }
+
+    /**
+     * Clear the state of the cross-reference table including free references.
+     */
+    void clearAllReferences() {
+        for (int i = 1; i <= count; i++) {
             xref[i] = null;
         }
         count = 1;

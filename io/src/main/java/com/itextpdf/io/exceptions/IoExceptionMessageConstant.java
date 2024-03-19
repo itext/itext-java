@@ -140,6 +140,7 @@ public final class IoExceptionMessageConstant {
     public static final String PAGE_NUMBER_MUST_BE_GT_EQ_1 = "Page number must be >= 1.";
     public static final String PDF_HEADER_NOT_FOUND = "PDF header not found.";
     public static final String PDF_STARTXREF_NOT_FOUND = "PDF startxref not found.";
+    public static final String PDF_EOF_NOT_FOUND = "PDF \"%%EOF\" marker is not found.";
     public static final String PHOTOMETRIC_IS_NOT_SUPPORTED = "Photometric {0} is not supported.";
     public static final String PLANAR_IMAGES_ARE_NOT_SUPPORTED = "Planar images are not supported.";
     public static final String PNG_IMAGE_EXCEPTION = "PNG image exception.";
