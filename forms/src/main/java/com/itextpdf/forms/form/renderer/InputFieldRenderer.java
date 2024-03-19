@@ -192,6 +192,7 @@ public class InputFieldRenderer extends AbstractOneLineTextFieldRenderer {
             inputField.getFirstFormAnnotation().setRotation(rotation);
         }
         applyDefaultFieldProperties(inputField);
+        applyAccessibilityProperties(inputField,doc);
         inputField.getFirstFormAnnotation().setFormFieldElement((InputField) modelElement);
         inputField.enableFieldRegeneration();
         PdfFormCreator.getAcroForm(doc, true).addField(inputField, page);

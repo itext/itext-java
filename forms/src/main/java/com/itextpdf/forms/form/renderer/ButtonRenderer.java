@@ -277,6 +277,7 @@ public class ButtonRenderer extends AbstractOneLineTextFieldRenderer {
         button.setFontSize(fontSizeValue);
         button.getFirstFormAnnotation().setBackgroundColor(backgroundColor);
         applyDefaultFieldProperties(button);
+        applyAccessibilityProperties(button,doc);
         button.getFirstFormAnnotation().setFormFieldElement((Button) modelElement);
         button.enableFieldRegeneration();
         PdfAcroForm forms = PdfFormCreator.getAcroForm(doc, true);

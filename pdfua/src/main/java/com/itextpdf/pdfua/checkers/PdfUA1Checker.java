@@ -24,6 +24,7 @@ package com.itextpdf.pdfua.checkers;
 
 import com.itextpdf.commons.datastructures.Tuple2;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.pdf.IsoKey;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -150,6 +151,7 @@ public class PdfUA1Checker implements IValidationChecker {
             }
         }
     }
+
 
     private void checkText(String str, PdfFont font) {
         if (!FontCheckUtil.doesFontContainAllUsedGlyphs(str, font)) {

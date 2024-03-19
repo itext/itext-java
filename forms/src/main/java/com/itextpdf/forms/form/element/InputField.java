@@ -22,9 +22,11 @@
  */
 package com.itextpdf.forms.form.element;
 
+import com.itextpdf.forms.FormDefaultAccessibilityProperties;
 import com.itextpdf.forms.exceptions.FormsExceptionMessageConstant;
-import com.itextpdf.forms.form.renderer.InputFieldRenderer;
 import com.itextpdf.forms.form.FormProperty;
+import com.itextpdf.forms.form.renderer.InputFieldRenderer;
+import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.properties.BoxSizingPropertyValue;
 import com.itextpdf.layout.properties.Property;
@@ -97,8 +99,8 @@ public class InputField extends FormField<InputField> implements IPlaceholderabl
     }
 
     /* (non-Javadoc)
-         * @see FormField#getDefaultProperty(int)
-         */
+     * @see FormField#getDefaultProperty(int)
+     */
     @Override
     public <T1> T1 getDefaultProperty(int property) {
         switch (property) {
@@ -112,10 +114,20 @@ public class InputField extends FormField<InputField> implements IPlaceholderabl
     }
 
     /**
+     * Get rotation.
+     *
+     * @return rotation value.
+     */
+    public int getRotation() {
+        return this.rotation;
+    }
+
+    /**
      * Set rotation of the input field.
      *
      * @param rotation new rotation value, counterclockwise. Must be a multiple of 90 degrees.
-     *                It has sense only in interactive mode, see {@link FormField#setInteractive}.
+     *                 It has sense only in interactive mode, see {@link FormField#setInteractive}.
+     *
      * @return the edited {@link InputField}.
      */
     public InputField setRotation(int rotation) {
@@ -128,12 +140,15 @@ public class InputField extends FormField<InputField> implements IPlaceholderabl
     }
 
     /**
-     * Get rotation.
-     *
-     * @return rotation value.
+     * {@inheritDoc}
      */
-    public int getRotation() {
-        return this.rotation;
+    @Override
+    public AccessibilityProperties getAccessibilityProperties() {
+        if (tagProperties == null) {
+            tagProperties = new FormDefaultAccessibilityProperties(FormDefaultAccessibilityProperties.FORM_FIELD_TEXT);
+        }
+
+        return tagProperties;
     }
 
     /* (non-Javadoc)

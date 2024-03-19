@@ -22,35 +22,34 @@
  */
 package com.itextpdf.pdfua.checkers;
 
-import com.itextpdf.forms.PdfAcroForm;
-import com.itextpdf.forms.fields.CheckBoxFormFieldBuilder;
-import com.itextpdf.forms.fields.ChoiceFormFieldBuilder;
-import com.itextpdf.forms.fields.PdfFormField;
-import com.itextpdf.forms.fields.PushButtonFormFieldBuilder;
-import com.itextpdf.forms.fields.RadioFormFieldBuilder;
-import com.itextpdf.forms.fields.TextFormFieldBuilder;
 import com.itextpdf.forms.fields.properties.CheckBoxType;
+import com.itextpdf.forms.fields.properties.SignedAppearanceText;
 import com.itextpdf.forms.form.element.Button;
 import com.itextpdf.forms.form.element.CheckBox;
+import com.itextpdf.forms.form.element.ComboBoxField;
 import com.itextpdf.forms.form.element.InputField;
 import com.itextpdf.forms.form.element.ListBoxField;
 import com.itextpdf.forms.form.element.Radio;
+import com.itextpdf.forms.form.element.SelectFieldItem;
+import com.itextpdf.forms.form.element.SignatureFieldAppearance;
 import com.itextpdf.forms.form.element.TextArea;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
-import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfUAConformanceLevel;
-import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.layout.Document;
-import com.itextpdf.pdfua.PdfUATestPdfDocument;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
+import com.itextpdf.layout.borders.SolidBorder;
+import com.itextpdf.layout.element.Div;
+import com.itextpdf.layout.element.IBlockElement;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.pdfua.UaValidationTestFramework;
+import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -64,359 +63,1627 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfua/PdfUAFormFieldTest/";
 
 
+    private UaValidationTestFramework framework;
+
     @BeforeClass
     public static void before() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
+    @Before
+    public void setUp() {
+        framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
+    }
+
     @Test
-    @Ignore("DEVSIX-8128")
     public void testCheckBox() throws FileNotFoundException {
-        String dest = DESTINATION_FOLDER + "checkBoxLayout.pdf";
-        Document document = createDocument(dest);
-        CheckBox checkBox = new CheckBox("name");
-        document.add(checkBox);
-        document.close();
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                return new CheckBox("name");
+            }
+        });
+        framework.assertBothValid("testCheckBox.pdf");
+    }
+
+    @Test
+    public void testCheckBoxWithCustomAppearance() throws FileNotFoundException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                CheckBox cb = new CheckBox("name");
+                cb.setPdfConformanceLevel(PdfUAConformanceLevel.PDFUA_1);
+                cb.setBorder(new SolidBorder(ColorConstants.MAGENTA, 2));
+                cb.setBackgroundColor(ColorConstants.YELLOW);
+                return cb;
+            }
+        });
+        framework.assertBothValid("testCheckBoxWithCustomAppearance.pdf");
+    }
+
+    @Test
+    public void testCheckBoxChecked() throws FileNotFoundException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                CheckBox cb = new CheckBox("name");
+                cb.setPdfConformanceLevel(PdfUAConformanceLevel.PDFUA_1);
+                cb.setChecked(true);
+                return cb;
+            }
+        });
+        framework.assertBothValid("testCheckBox");
+    }
+
+    @Test
+    public void testCheckBoxCheckedAlternativeDescription() throws FileNotFoundException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                CheckBox cb = new CheckBox("name");
+                cb.setPdfConformanceLevel(PdfUAConformanceLevel.PDFUA_1);
+                cb.getAccessibilityProperties().setAlternateDescription("Yello");
+                cb.setChecked(true);
+                return cb;
+            }
+        });
+        framework.assertBothValid("testCheckBoxCheckedAlternativeDescription");
+    }
+
+    @Test
+    public void testCheckBoxCheckedCustomAppearance() throws FileNotFoundException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                CheckBox cb = new CheckBox("name");
+                cb.setPdfConformanceLevel(PdfUAConformanceLevel.PDFUA_1);
+                cb.setChecked(true);
+                cb.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
+                cb.setBackgroundColor(ColorConstants.GREEN);
+                cb.setCheckBoxType(CheckBoxType.STAR);
+                cb.setSize(20);
+                return cb;
+            }
+        });
+        framework.assertBothValid("testCheckBoxCheckedCustomAppearance");
+    }
+
+    @Test
+    public void testCheckBoxInteractive() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                CheckBox checkBox = (CheckBox) new CheckBox("name").setInteractive(true);
+                checkBox.setPdfConformanceLevel(PdfUAConformanceLevel.PDFUA_1);
+                checkBox.getAccessibilityProperties().setAlternateDescription("Alternative description");
+                return checkBox;
+            }
+        });
+        framework.assertBothValid("testCheckBoxInteractive");
+    }
+
+    @Test
+    public void testCheckBoxInteractiveCustomAppearance() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                CheckBox checkBox = (CheckBox) new CheckBox("name").setInteractive(true);
+                checkBox.setPdfConformanceLevel(PdfUAConformanceLevel.PDFUA_1);
+                checkBox.getAccessibilityProperties().setAlternateDescription("Alternative description");
+                checkBox.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
+                checkBox.setBackgroundColor(ColorConstants.GREEN);
+                checkBox.setSize(20);
+                checkBox.setCheckBoxType(CheckBoxType.SQUARE);
+                return checkBox;
+            }
+        });
+        framework.assertBothValid("testCheckBoxInteractiveCustomAppearance");
+    }
+
+    @Test
+    public void testCheckBoxInteractiveCustomAppearanceChecked() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                CheckBox checkBox = (CheckBox) new CheckBox("name").setInteractive(true);
+                checkBox.setPdfConformanceLevel(PdfUAConformanceLevel.PDFUA_1);
+                checkBox.getAccessibilityProperties().setAlternateDescription("Alternative description");
+                checkBox.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
+                checkBox.setBackgroundColor(ColorConstants.GREEN);
+                checkBox.setSize(20);
+                checkBox.setChecked(true);
+                checkBox.setCheckBoxType(CheckBoxType.SQUARE);
+                return checkBox;
+            }
+        });
+        framework.assertBothValid("testCheckBoxInteractiveCustomAppearanceChecked");
+    }
+
+    @Test
+    public void testRadioButton() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                return new Radio("name");
+            }
+        });
+        framework.assertBothValid("testRadioButton");
+    }
+
+    @Test
+    public void testRadioButtonChecked() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Radio radio = new Radio("name");
+                radio.setChecked(true);
+                return radio;
+            }
+        });
+        framework.assertBothValid("testRadioButtonChecked");
+    }
+
+    @Test
+    public void testRadioButtonCustomAppearance() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Radio radio = new Radio("name");
+                radio.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
+                radio.setBackgroundColor(ColorConstants.GREEN);
+                radio.setSize(20);
+                return radio;
+            }
+        });
+        framework.assertBothValid("testRadioButtonCustomAppearance");
+    }
+
+    @Test
+    public void testRadioButtonCustomAppearanceChecked() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Radio radio = new Radio("name");
+                radio.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
+                radio.setBackgroundColor(ColorConstants.GREEN);
+                radio.setSize(20);
+                radio.setChecked(true);
+                return radio;
+            }
+        });
+        framework.assertBothValid("testRadioButtonCustomAppearanceChecked");
+    }
+
+    @Test
+    public void testRadioButtonGroup() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                return new Radio("name", "group");
+            }
+        });
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                return new Radio("name2", "group");
+            }
+        });
+        framework.assertBothValid("testRadioButtonGroup");
     }
 
 
     @Test
-    public void testCheckBoxInteractive() throws IOException, InterruptedException {
-        String dest = DESTINATION_FOLDER + "checkBoxLayoutI.pdf";
-        String cmp = SOURCE_FOLDER + "cmp_checkBoxLayoutI.pdf";
-        Document document = createDocument(dest);
-        CheckBox checkBox = (CheckBox) new CheckBox("name").setInteractive(true);
-        checkBox.setPdfConformanceLevel(PdfUAConformanceLevel.PDFUA_1);
-        document.add(checkBox);
-        document.close();
-        assertPdf(dest, cmp);
+    public void testRadioButtonGroupCustomAppearance() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Radio r = new Radio("name", "group");
+                r.setSize(20);
+                r.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
+                r.setBackgroundColor(ColorConstants.GREEN);
+                return r;
+            }
+        });
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Radio r = new Radio("name2", "group");
+                r.setSize(20);
+                r.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
+                r.setBackgroundColor(ColorConstants.GREEN);
+                return r;
+            }
+        });
+        framework.assertBothValid("testRadioButtonGroup");
     }
 
     @Test
-    @Ignore("DEVSIX-8128")
-    public void testRadioButton() throws IOException, InterruptedException {
-        String dest = DESTINATION_FOLDER + "radioButtonLayout.pdf";
-        String cmp = SOURCE_FOLDER + "cmp_radioButtonLayout.pdf";
-        Document document = createDocument(dest);
-        Radio radioButton = new Radio("name");
-        document.add(radioButton);
-        document.close();
-        assertPdf(dest, cmp);
+    public void testRadioButtonGroupCustomAppearanceChecked() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Radio r = new Radio("name", "group");
+                r.setSize(20);
+                r.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
+                r.setBackgroundColor(ColorConstants.GREEN);
+                return r;
+            }
+        });
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Radio r = new Radio("name2", "group");
+                r.setSize(20);
+                r.setChecked(true);
+                r.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
+                r.setBackgroundColor(ColorConstants.GREEN);
+                return r;
+            }
+        });
+        framework.assertBothValid("testRadioButtonGroupCustomAppearanceChecked");
+    }
+
+
+    @Test
+    public void testRadioButtonInteractive() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Radio r = new Radio("name", "group");
+                r.setInteractive(true);
+                r.getAccessibilityProperties().setAlternateDescription("Hello");
+                return r;
+            }
+        });
+        framework.assertBothValid("testRadioButtonInteractive");
     }
 
     @Test
-    public void testRadioButtonInteractive() throws IOException, InterruptedException {
-        String dest = DESTINATION_FOLDER + "radioButtonLayoutI.pdf";
-        String cmp = SOURCE_FOLDER + "cmp_radioButtonLayoutI.pdf";
-        Document document = createDocument(dest);
-        Radio radioButton = (Radio) new Radio("name", "empty").setInteractive(true);
-        document.add(radioButton);
-        document.close();
-        assertPdf(dest, cmp);
+    public void testRadioButtonCheckedInteractive() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Radio radio = new Radio("name", "group");
+                radio.setInteractive(true);
+                radio.setChecked(true);
+                radio.getAccessibilityProperties().setAlternateDescription("Hello");
+                return radio;
+            }
+        });
+        framework.assertBothValid("testRadioButtonChecked");
     }
 
     @Test
-    @Ignore("DEVSIX-8128")
-    public void testRadioButtonGroup() throws IOException, InterruptedException {
-        String dest = DESTINATION_FOLDER + "radioButtonGroup.pdf";
-        String cmp = SOURCE_FOLDER + "cmp_radioButtonGroup.pdf";
-        Document document = createDocument(dest);
-        Radio radioButton = new Radio("name", "group");
-        Radio radioButton2 = new Radio("name2", "group");
-        document.add(radioButton);
-        document.add(radioButton2);
-        document.close();
-        assertPdf(dest, cmp);
+    public void testRadioButtonCustomAppearanceInteractive() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Radio radio = new Radio("name", "group");
+                radio.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
+                radio.setBackgroundColor(ColorConstants.GREEN);
+                radio.setSize(20);
+                radio.setInteractive(true);
+                radio.getAccessibilityProperties().setAlternateDescription("Hello");
+                return radio;
+            }
+        });
+        framework.assertBothValid("testRadioButtonCustomAppearance");
     }
 
     @Test
-    public void testRadioButtonGroupInteractive() throws IOException, InterruptedException {
-        String dest = DESTINATION_FOLDER + "radioButtonGroupInteractiveI.pdf";
-        String cmp = SOURCE_FOLDER + "cmp_radioButtonGroupInteractiveI.pdf";
-        Document document = createDocument(dest);
-        Radio radioButton = (Radio) new Radio("name", "group").setInteractive(true);
-        Radio radioButton2 = (Radio) new Radio("name2", "group").setInteractive(true);
-        document.add(radioButton);
-        document.add(radioButton2);
-        document.close();
-        assertPdf(dest, cmp);
+    public void testRadioButtonCustomAppearanceCheckedInteractive() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Radio radio = new Radio("name", "Group");
+                radio.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
+                radio.setBackgroundColor(ColorConstants.GREEN);
+                radio.setSize(20);
+                radio.setChecked(true);
+                radio.getAccessibilityProperties().setAlternateDescription("Hello");
+                radio.setInteractive(true);
+                return radio;
+            }
+        });
+        framework.assertBothValid("testRadioButtonCustomAppearanceCheckedInteractive");
     }
 
     @Test
-    @Ignore("DEVSIX-8128")
-    public void testButton() throws IOException, InterruptedException {
-        String dest = DESTINATION_FOLDER + "buttonLayout.pdf";
-        String cmp = SOURCE_FOLDER + "cmp_buttonLayout.pdf";
-        Document document = createDocument(dest);
-        Button button = new Button("name");
-        button.setFont(PdfFontFactory.createFont(FONT));
-        button.setValue("Click me");
-        document.add(button);
-        document.close();
-        assertPdf(dest, cmp);
+    public void testRadioButtonGroupInteractive() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Radio r = new Radio("name", "group");
+                r.setInteractive(true);
+                r.getAccessibilityProperties().setAlternateDescription("Hello");
+                return r;
+            }
+        });
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Radio r = new Radio("name2", "group");
+                r.setInteractive(true);
+                r.getAccessibilityProperties().setAlternateDescription("Hello2");
+                return r;
+            }
+        });
+        framework.assertBothValid("testRadioButtonGroupInteractive");
+    }
+
+
+    @Test
+    public void testRadioButtonGroupCustomAppearanceInteractive() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Radio r = new Radio("name", "group");
+                r.setSize(20);
+                r.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
+                r.getAccessibilityProperties().setAlternateDescription("Hello");
+                r.setBackgroundColor(ColorConstants.GREEN);
+                r.setInteractive(true);
+                return r;
+            }
+        });
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Radio r = new Radio("name2", "group");
+                r.setSize(20);
+                r.setInteractive(true);
+                r.getAccessibilityProperties().setAlternateDescription("Hello2");
+                r.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
+                r.setBackgroundColor(ColorConstants.GREEN);
+                return r;
+            }
+        });
+        framework.assertBothValid("testRadioButtonGroupInteractive");
     }
 
     @Test
-    public void testButtonInteractive() throws IOException, InterruptedException {
-        String dest = DESTINATION_FOLDER + "buttonLayoutI.pdf";
-        String cmp = SOURCE_FOLDER + "cmp_buttonLayoutI.pdf";
-        Document document = createDocument(dest);
-        Button button = (Button) new Button("name").setInteractive(true);
-        button.setFont(PdfFontFactory.createFont(FONT));
-        button.setValue("Click me");
-        document.add(button);
-        document.close();
-        assertPdf(dest, cmp);
+    public void testRadioButtonGroupCustomAppearanceCheckedInteractive() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Radio r = new Radio("name", "group");
+                r.setSize(20);
+                r.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
+                r.getAccessibilityProperties().setAlternateDescription("Hello");
+                r.setBackgroundColor(ColorConstants.GREEN);
+                r.setInteractive(true);
+                return r;
+            }
+        });
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Radio r = new Radio("name2", "group");
+                r.setSize(20);
+                r.setChecked(true);
+                r.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
+                r.getAccessibilityProperties().setAlternateDescription("Hello2");
+                r.setInteractive(true);
+                r.setBackgroundColor(ColorConstants.GREEN);
+                return r;
+            }
+        });
+        framework.assertBothValid("testRadioButtonGroupCustomAppearanceCheckedInteractive");
+    }
+
+
+    @Test
+    public void testButton() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Button b = new Button("name");
+                b.setValue("Click me");
+                b.setFont(getFont());
+                return b;
+            }
+        });
+        framework.assertBothValid("testButton");
     }
 
     @Test
-    @Ignore("DEVSIX-8128")
-    public void testInputField() throws IOException, InterruptedException {
-        String dest = DESTINATION_FOLDER + "inputFieldLayout.pdf";
-        String cmp = SOURCE_FOLDER + "cmp_inputFieldLayout.pdf";
-        Document document = createDocument(dest);
-        InputField text = new InputField("name");
-        document.add(text);
-        document.close();
-        assertPdf(dest, cmp);
+    public void testButtonCustomAppearance() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Button b = new Button("name");
+                b.setValue("Click me");
+                b.setFont(getFont());
+                b.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
+                b.setBackgroundColor(ColorConstants.GREEN);
+                return b;
+            }
+        });
+        framework.assertBothValid("testButtonCustomAppearance");
     }
 
     @Test
-    public void testInputFieldInteractive() throws IOException, InterruptedException {
-        String dest = DESTINATION_FOLDER + "inputFieldLayoutI.pdf";
-        String cmp = SOURCE_FOLDER + "cmp_inputFieldLayoutI.pdf";
-        Document document = createDocument(dest);
-        PdfFont font = PdfFontFactory.createFont(FONT);
-        InputField text = (InputField) new InputField("name").setFont(font).setInteractive(true);
-        document.add(text);
-        document.close();
-        assertPdf(dest, cmp);
+    public void testButtonSingleLine() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Button b = new Button("name");
+                b.setFont(getFont());
+                b.setSingleLineValue("Click me?");
+                return b;
+            }
+        });
+        framework.assertBothValid("testButtonSingleLine");
     }
 
     @Test
-    @Ignore("DEVSIX-8128")
-    public void testTextArea() throws IOException, InterruptedException {
-        String dest = DESTINATION_FOLDER + "textAreaLayout.pdf";
-        String cmp = SOURCE_FOLDER + "cmp_textAreaLayout.pdf";
-        Document document = createDocument(dest);
-        TextArea text = new TextArea("name");
-        document.add(text);
-        document.close();
-        assertPdf(dest, cmp);
+    public void testButtonCustomContent() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Button b = new Button("name");
+                Paragraph p = new Paragraph("Click me?").setFont(getFont())
+                        .setBorder(new SolidBorder(ColorConstants.CYAN, 2));
+                b.add(p);
+                return b;
+            }
+        });
+        framework.assertBothValid("testButtonSingleLine");
     }
 
     @Test
-    public void testTextAreaInteractive() throws IOException, InterruptedException {
-        String dest = DESTINATION_FOLDER + "textAreaLayoutI.pdf";
-        String cmp = DESTINATION_FOLDER + "textAreaLayoutI.pdf";
-        Document document = createDocument(dest);
-        PdfFont font = PdfFontFactory.createFont(FONT);
-        TextArea text = (TextArea) new TextArea("name").setFont(font).setInteractive(true);
-        document.add(text);
-        document.close();
-        assertPdf(dest, cmp);
+    public void testButtonCustomContentIsAlsoForm() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Button b = new Button("name");
+                CheckBox cb = new CheckBox("name2");
+                cb.setChecked(true);
+                b.add(cb);
+                return b;
+            }
+        });
+        framework.assertBothValid("testButtonSingleLine");
     }
 
     @Test
-    @Ignore("DEVSIX-8128")
+    public void testButtonInteractive() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Button b = new Button("name");
+                b.setValue("Click me");
+                b.setFont(getFont());
+
+                b.setInteractive(true);
+                b.getAccessibilityProperties().setAlternateDescription("Click me button");
+                return b;
+            }
+        });
+        framework.assertBothValid("testButtonInteractive");
+    }
+
+    @Test
+    public void testButtonCustomAppearanceInteractive() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Button b = new Button("name");
+                b.setValue("Click me");
+                b.setFont(getFont());
+                b.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
+                b.setInteractive(true);
+                b.setBackgroundColor(ColorConstants.GREEN);
+
+                b.getAccessibilityProperties().setAlternateDescription("Click me button");
+                return b;
+            }
+        });
+        framework.assertBothValid("testButtonCustomAppearanceInteractive");
+    }
+
+    @Test
+    public void testButtonSingleLineInteractive() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Button b = new Button("name");
+                b.setFont(getFont());
+                b.setSingleLineValue("Click me?");
+
+                b.getAccessibilityProperties().setAlternateDescription("Click me button");
+                b.setInteractive(true);
+                return b;
+            }
+        });
+        framework.assertBothValid("testButtonSingleLineInteractive");
+    }
+
+    @Test
+    public void testButtonCustomContentInteractive() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Button b = new Button("name");
+                Paragraph p = new Paragraph("Click me?").setFont(getFont())
+                        .setBorder(new SolidBorder(ColorConstants.CYAN, 2));
+                b.add(p);
+                b.setFont(getFont());
+                b.getAccessibilityProperties().setAlternateDescription("Click me button");
+                b.setInteractive(true);
+                return b;
+            }
+        });
+        framework.assertBothValid("testButtonSingleLineInteractive");
+    }
+
+    @Test
+    public void testButtonCustomContentIsAlsoFormInteractive() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Button b = new Button("name");
+                b.setFont(getFont());
+                CheckBox cb = new CheckBox("name2");
+                cb.setChecked(true);
+                cb.setInteractive(true);
+                b.add(cb);
+                b.setInteractive(true);
+                b.getAccessibilityProperties().setAlternateDescription("Click me button");
+                cb.getAccessibilityProperties().setAlternateDescription("Check me checkbox");
+                return b;
+            }
+        });
+        framework.assertBothValid("testButtonSingleLineInteractive");
+    }
+
+    @Test
+    public void testInputField() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                InputField inputField = new InputField("name");
+                inputField.setFont(getFont());
+                return inputField;
+            }
+        });
+        framework.assertBothValid("testInputField");
+    }
+
+    @Test
+    public void testInputFieldWithValue() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                InputField inputField = new InputField("name");
+                inputField.setFont(getFont());
+                inputField.setValue("Hello");
+                return inputField;
+            }
+        });
+        framework.assertBothValid("testInputFieldWithValue");
+    }
+
+    @Test
+    public void testInputFieldWithCustomAppearance() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                InputField inputField = new InputField("name");
+                inputField.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
+                inputField.setBackgroundColor(ColorConstants.GREEN);
+                inputField.setFont(getFont());
+                return inputField;
+            }
+        });
+        framework.assertBothValid("testInputFieldWithCustomAppearance");
+    }
+
+    @Test
+    public void testInputFieldWithCustomAppearanceAndValue() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                InputField inputField = new InputField("name");
+                inputField.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
+                inputField.setBackgroundColor(ColorConstants.GREEN);
+                inputField.setFont(getFont());
+                inputField.setValue("Hello");
+                return inputField;
+            }
+        });
+        framework.assertBothValid("testInputFieldWithCustomAppearanceAndValue");
+    }
+
+    @Test
+    public void testInputFieldWithCustomAppearanceAndPlaceHolder() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                InputField inputField = new InputField("name");
+                inputField.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
+                inputField.setBackgroundColor(ColorConstants.GREEN);
+                inputField.setFont(getFont());
+                inputField.setPlaceholder(new Paragraph("Placeholder").setFont(getFont()));
+                return inputField;
+            }
+        });
+        framework.assertBothValid("testInputFieldWithCustomAppearanceAndValue");
+    }
+
+    @Test
+    public void testInputFieldInteractive() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                InputField inputField = new InputField("name");
+                inputField.setFont(getFont());
+                inputField.setInteractive(true);
+                inputField.getAccessibilityProperties().setAlternateDescription("Name of the cat");
+                return inputField;
+            }
+        });
+        framework.assertBothValid("testInputFieldInteractive");
+    }
+
+    @Test
+    public void testInputFieldWithValueInteractive() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                InputField inputField = new InputField("name");
+                inputField.setFont(getFont());
+                inputField.setValue("Hello");
+                inputField.setInteractive(true);
+                inputField.getAccessibilityProperties().setAlternateDescription("Name of the cat");
+                return inputField;
+            }
+        });
+        framework.assertBothValid("testInputFieldWithValueInteractive");
+    }
+
+    @Test
+    public void testInputFieldWithCustomAppearanceInteractive() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                InputField inputField = new InputField("name");
+                inputField.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
+                inputField.setBackgroundColor(ColorConstants.GREEN);
+                inputField.setFont(getFont());
+                inputField.setInteractive(true);
+                inputField.getAccessibilityProperties().setAlternateDescription("Name of the cat");
+                return inputField;
+            }
+        });
+        framework.assertBothValid("testInputFieldWithCustomAppearanceInteractive");
+    }
+
+    @Test
+    public void testInputFieldWithCustomAppearanceAndValueInteractive() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                InputField inputField = new InputField("name");
+                inputField.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
+                inputField.setBackgroundColor(ColorConstants.GREEN);
+                inputField.setFont(getFont());
+                inputField.setValue("Hello");
+                inputField.setInteractive(true);
+                inputField.getAccessibilityProperties().setAlternateDescription("Name of the cat");
+                return inputField;
+            }
+        });
+        framework.assertBothValid("testInputFieldWithCustomAppearanceAndValueInteractive");
+    }
+
+    @Test
+    public void testInputFieldWithCustomAppearanceAndPlaceHolderInteractive() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                InputField inputField = new InputField("name");
+                inputField.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
+                inputField.setBackgroundColor(ColorConstants.GREEN);
+                inputField.setFont(getFont());
+                inputField.setPlaceholder(new Paragraph("Placeholder").setFont(getFont()));
+                inputField.setInteractive(true);
+                inputField.getAccessibilityProperties().setAlternateDescription("Name of the cat");
+                return inputField;
+            }
+        });
+        framework.assertBothValid("testInputFieldWithCustomAppearanceAndPlaceHolderInteractive");
+    }
+
+    @Test
+    public void testTextArea() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                TextArea textArea = new TextArea("name");
+                textArea.setFont(getFont());
+                return textArea;
+            }
+        });
+        framework.assertBothValid("testTextArea");
+    }
+
+    @Test
+    public void testTextAreaWithValue() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                TextArea textArea = new TextArea("name");
+                textArea.setFont(getFont());
+                textArea.setValue("Hello");
+                return textArea;
+            }
+        });
+        framework.assertBothValid("testTextAreaWithValue");
+    }
+
+    @Test
+    public void testTextAreaWithCustomAppearance() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                TextArea textArea = new TextArea("name");
+                textArea.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
+                textArea.setBackgroundColor(ColorConstants.GREEN);
+                textArea.setFont(getFont());
+                return textArea;
+            }
+        });
+        framework.assertBothValid("testTextAreaWithCustomAppearance");
+    }
+
+    @Test
+    public void testTextAreaWithCustomAppearanceAndValue() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                TextArea textArea = new TextArea("name");
+                textArea.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
+                textArea.setBackgroundColor(ColorConstants.GREEN);
+                textArea.setFont(getFont());
+                textArea.setValue("Hello");
+                return textArea;
+            }
+        });
+        framework.assertBothValid("testTextAreaWithCustomAppearanceAndValue");
+    }
+
+    @Test
+    public void testTextAreaWithCustomAppearanceAndPlaceHolder() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                TextArea textArea = new TextArea("name");
+                textArea.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
+                textArea.setBackgroundColor(ColorConstants.GREEN);
+                textArea.setFont(getFont());
+                textArea.setPlaceholder(new Paragraph("Placeholder").setFont(getFont()));
+                return textArea;
+            }
+        });
+        framework.assertBothValid("testTextAreaWithCustomAppearanceAndValue");
+    }
+
+    @Test
+    public void testTextAreaInteractive() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                TextArea textArea = new TextArea("name");
+                textArea.setFont(getFont());
+                textArea.setInteractive(true);
+                textArea.getAccessibilityProperties().setAlternateDescription("Name of the cat");
+                return textArea;
+            }
+        });
+        framework.assertBothValid("testTextAreaInteractive");
+    }
+
+    @Test
+    public void testTextAreaWithValueInteractive() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                TextArea textArea = new TextArea("name");
+                textArea.setFont(getFont());
+                textArea.setValue("Hello");
+                textArea.setInteractive(true);
+                textArea.getAccessibilityProperties().setAlternateDescription("Name of the cat");
+                return textArea;
+            }
+        });
+        framework.assertBothValid("testTextAreaWithValueInteractive");
+    }
+
+    @Test
+    public void testTextAreaWithCustomAppearanceInteractive() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                TextArea textArea = new TextArea("name");
+                textArea.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
+                textArea.setBackgroundColor(ColorConstants.GREEN);
+                textArea.setFont(getFont());
+                textArea.setInteractive(true);
+                textArea.getAccessibilityProperties().setAlternateDescription("Name of the cat");
+                return textArea;
+            }
+        });
+        framework.assertBothValid("testTextAreaWithCustomAppearanceInteractive");
+    }
+
+    @Test
+    public void testTextAreaWithCustomAppearanceAndValueInteractive() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                TextArea textArea = new TextArea("name");
+                textArea.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
+                textArea.setBackgroundColor(ColorConstants.GREEN);
+                textArea.setFont(getFont());
+                textArea.setValue("Hello");
+                textArea.setInteractive(true);
+                textArea.getAccessibilityProperties().setAlternateDescription("Name of the cat");
+                return textArea;
+            }
+        });
+        framework.assertBothValid("testTextAreaWithCustomAppearanceAndValueInteractive");
+    }
+
+    @Test
+    public void testTextAreaWithCustomAppearanceAndPlaceHolderInteractive() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                TextArea textArea = new TextArea("name");
+                textArea.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
+                textArea.setBackgroundColor(ColorConstants.GREEN);
+                textArea.setFont(getFont());
+                textArea.setPlaceholder(new Paragraph("Placeholder").setFont(getFont()));
+                textArea.setInteractive(true);
+                textArea.getAccessibilityProperties().setAlternateDescription("Name of the cat");
+                return textArea;
+            }
+        });
+        framework.assertBothValid("testTextAreaWithCustomAppearanceAndPlaceHolderInteractive");
+    }
+
+    @Test
     public void testListBox() throws IOException, InterruptedException {
-        String dest = DESTINATION_FOLDER + "listBoxLayout.pdf";
-        String cmp = DESTINATION_FOLDER + "cmp_listBoxLayout.pdf";
-        Document document = createDocument(dest);
-        ListBoxField list = new ListBoxField("name", 1, false);
-        list.addOption("value1");
-        list.addOption("value2");
-        document.add(list);
-        document.close();
-        assertPdf(dest, cmp);
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                ListBoxField list = new ListBoxField("name", 1, false);
+                list.setFont(getFont());
+                list.addOption("value1");
+                list.addOption("value2");
+                return list;
+            }
+        });
+        framework.assertBothValid("testListBox");
+    }
+
+    @Test
+    public void testListBoxCustomAppearance() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                ListBoxField list = new ListBoxField("name", 1, false);
+                list.setBackgroundColor(ColorConstants.GREEN);
+                list.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
+                list.setSize(200);
+                list.setFont(getFont());
+                list.addOption("value1");
+                list.addOption("value2");
+                return list;
+            }
+        });
+        framework.assertBothValid("testListBoxCustomAppearance");
+    }
+
+    @Test
+    public void testListBoxCustomAppearanceSelected() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                ListBoxField list = new ListBoxField("name", 1, false);
+                list.setBackgroundColor(ColorConstants.GREEN);
+                list.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
+                list.setSize(200);
+                list.setFont(getFont());
+                list.addOption("value1", true);
+                list.addOption("value2");
+                return list;
+            }
+        });
+        framework.assertBothValid("testListBoxCustomAppearanceSelected");
     }
 
     @Test
     public void testListBoxInteractive() throws IOException, InterruptedException {
-        String dest = DESTINATION_FOLDER + "listBoxLayoutI.pdf";
-        String cmp = SOURCE_FOLDER + "cmp_listBoxLayoutI.pdf";
-        Document document = createDocument(dest);
-        PdfFont font = PdfFontFactory.createFont(FONT);
-        ListBoxField list = (ListBoxField) new ListBoxField("name", 1, false).setFont(font).setInteractive(true);
-        list.addOption("value1");
-        list.addOption("value2");
-        document.add(list);
-        document.close();
-        assertPdf(dest, cmp);
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                ListBoxField list = new ListBoxField("name", 1, false);
+                list.setFont(getFont());
+                list.addOption("value1");
+                list.getAccessibilityProperties().setAlternateDescription("Hello");
+                list.addOption("value2");
+                list.setInteractive(true);
+                return list;
+            }
+        });
+        framework.assertBothValid("testListBoxInteractive");
     }
 
     @Test
-    @Ignore("DEVSIX-8128")
-    public void testSelectField() throws IOException, InterruptedException {
-        String dest = DESTINATION_FOLDER + "selectFieldLayout.pdf";
-        String cmp = SOURCE_FOLDER + "cmp_selectFieldLayout.pdf";
-        Document document = createDocument(dest);
-        ListBoxField list = new ListBoxField("name", 1, false);
-        list.addOption("value1");
-        list.addOption("value2");
-        document.add(list);
-        document.close();
-        assertPdf(dest, cmp);
+    public void testListBoxCustomAppearanceInteractive() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                ListBoxField list = new ListBoxField("name", 1, false);
+                list.setBackgroundColor(ColorConstants.GREEN);
+                list.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
+                list.setSize(200);
+                list.getAccessibilityProperties().setAlternateDescription("Hello");
+                list.setFont(getFont());
+                list.setInteractive(true);
+                list.addOption("value1");
+                list.addOption("value2");
+                return list;
+            }
+        });
+        framework.assertBothValid("testListBoxCustomAppearanceInteractive");
     }
 
     @Test
-    public void testSelectFieldInteractive() throws IOException, InterruptedException {
-        String dest = DESTINATION_FOLDER + "selectFieldLayoutI.pdf";
-        String cmp = SOURCE_FOLDER + "cmp_selectFieldLayoutI.pdf";
-        Document document = createDocument(dest);
-        PdfFont font = PdfFontFactory.createFont(FONT);
-        ListBoxField list = (ListBoxField) new ListBoxField("name", 1, false).setFont(font).setInteractive(true);
-        list.addOption("value1");
-        list.addOption("value2");
-        document.add(list);
-        document.close();
-        assertPdf(dest, cmp);
+    public void testListBoxCustomAppearanceSelectedInteractive() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                ListBoxField list = new ListBoxField("name", 1, false);
+                list.setBackgroundColor(ColorConstants.GREEN);
+                list.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
+                list.setSize(200);
+                list.setFont(getFont());
+                list.setInteractive(true);
+                list.getAccessibilityProperties().setAlternateDescription("Hello");
+                list.addOption("value1", true);
+                list.addOption("value2");
+                return list;
+            }
+        });
+        framework.assertBothValid("testListBoxCustomAppearanceSelectedInteractive");
     }
 
     @Test
-    public void checkBoxBuilderTest() throws IOException, InterruptedException {
-        String dest = DESTINATION_FOLDER + "checkBoxBuilderTest.pdf";
-        String cmp = SOURCE_FOLDER + "cmp_checkBoxBuilderTest.pdf";
-        PdfDocument document = new PdfUATestPdfDocument(
-                new PdfWriter(dest, PdfUATestPdfDocument.createWriterProperties()));
-
-        CheckBoxFormFieldBuilder builder = new CheckBoxFormFieldBuilder(document, "chk");
-        builder.setGenericConformanceLevel(PdfUAConformanceLevel.PDFUA_1);
-        builder.setCheckType(CheckBoxType.CHECK);
-        builder.setWidgetRectangle(new Rectangle(200, 200, 20, 20));
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(document, true);
-        acroForm.addField(builder.createCheckBox().setValue("Yes"));
-        document.close();
-        Assert.assertNull(new CompareTool().compareByContent(dest, cmp, DESTINATION_FOLDER, "diff_"));
-        // TODO-DEVSIX-8160   Assert.assertNull(new VeraPdfValidator().validate(dest));
+    public void testComboBox() throws IOException, InterruptedException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                ComboBoxField list = new ComboBoxField("name");
+                list.setFont(getFont());
+                list.addOption(new SelectFieldItem("value1"));
+                list.addOption(new SelectFieldItem("value2"));
+                return list;
+            }
+        });
+        framework.assertBothValid("testComboBox");
     }
 
     @Test
-    public void radioBuilderTest() throws IOException, InterruptedException {
-        String dest = DESTINATION_FOLDER + "radioBuilder.pdf";
-        String cmp = SOURCE_FOLDER + "cmp_radioBuilder.pdf";
-        PdfDocument document = new PdfUATestPdfDocument(
-                new PdfWriter(dest, PdfUATestPdfDocument.createWriterProperties()));
-
-        RadioFormFieldBuilder builder = new RadioFormFieldBuilder(document, "radio");
-        builder.setGenericConformanceLevel(PdfUAConformanceLevel.PDFUA_1);
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(document, true);
-        PdfFormField group = builder.createRadioGroup().setValue("bing");
-        group.addKid(builder.createRadioButton("bing", new Rectangle(200, 200, 20, 20)));
-        group.addKid(builder.createRadioButton("bong", new Rectangle(230, 200, 20, 20)));
-        acroForm.addField(group);
-        document.close();
-        Assert.assertNull(new CompareTool().compareByContent(dest, cmp, DESTINATION_FOLDER, "diff_"));
-        // TODO-DEVSIX-8160 Assert.assertNull(new VeraPdfValidator().validate(dest));
+    public void testComboBoxCustomAppearance() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                ComboBoxField list = new ComboBoxField("name");
+                list.setBackgroundColor(ColorConstants.GREEN);
+                list.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
+                list.setSize(200);
+                list.setFont(getFont());
+                list.addOption(new SelectFieldItem("value1"));
+                list.addOption(new SelectFieldItem("value2"));
+                return list;
+            }
+        });
+        framework.assertBothValid("testComboBoxCustomAppearance");
     }
 
     @Test
-    public void inputTextFieldTest() throws IOException, InterruptedException {
-        String dest = DESTINATION_FOLDER + "inputTextBuilder.pdf";
-        String cmp = SOURCE_FOLDER + "cmp_inputTextBuilder.pdf";
-        PdfDocument document = new PdfUATestPdfDocument(
-                new PdfWriter(dest, PdfUATestPdfDocument.createWriterProperties()));
-
-        TextFormFieldBuilder builder = new TextFormFieldBuilder(document, "txt");
-        builder.setGenericConformanceLevel(PdfUAConformanceLevel.PDFUA_1);
-        builder.setWidgetRectangle(new Rectangle(200, 200, 100, 20));
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(document, true);
-        PdfFormField f = builder.setFont(PdfFontFactory.createFont(FONT)).createText();
-        f.setValue("Hello from text box");
-        acroForm.addField(f);
-        document.close();
-        Assert.assertNull(new CompareTool().compareByContent(dest, cmp, DESTINATION_FOLDER, "diff_"));
-        // TODO-DEVSIX-8160  Assert.assertNull(new VeraPdfValidator().validate(dest));
+    public void testComboBoxCustomAppearanceSelected() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                ComboBoxField list = new ComboBoxField("name");
+                list.setBackgroundColor(ColorConstants.GREEN);
+                list.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
+                list.setSize(200);
+                list.setFont(getFont());
+                list.addOption(new SelectFieldItem("Value 1"), true);
+                list.addOption(new SelectFieldItem("Value 1"), false);
+                return list;
+            }
+        });
+        framework.assertBothValid("testListBoxCustomAppearanceSelected");
     }
 
     @Test
-    public void inputAreaFieldTest() throws IOException, InterruptedException {
-        String dest = DESTINATION_FOLDER + "inputAreaBuilder.pdf";
-        String cmp = SOURCE_FOLDER + "cmp_inputAreaBuilder.pdf";
-        PdfDocument document = new PdfUATestPdfDocument(
-                new PdfWriter(dest, PdfUATestPdfDocument.createWriterProperties()));
-
-        TextFormFieldBuilder builder = new TextFormFieldBuilder(document, "txt");
-        builder.setGenericConformanceLevel(PdfUAConformanceLevel.PDFUA_1);
-        builder.setWidgetRectangle(new Rectangle(200, 200, 100, 200));
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(document, true);
-        PdfFormField f = builder.setFont(PdfFontFactory.createFont(FONT)).createMultilineText();
-        f.setValue("Hello from text box");
-        acroForm.addField(f);
-        document.close();
-        Assert.assertNull(new CompareTool().compareByContent(dest, cmp, DESTINATION_FOLDER, "diff_"));
-        // TODO-DEVSIX-8160  Assert.assertNull(new VeraPdfValidator().validate(dest));
+    public void testComboBoxInteractive() throws IOException, InterruptedException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                ComboBoxField list = new ComboBoxField("name");
+                list.setFont(getFont());
+                list.addOption(new SelectFieldItem("Value 1"));
+                list.addOption(new SelectFieldItem("Value 2"));
+                list.getAccessibilityProperties().setAlternateDescription("Hello");
+                list.setInteractive(true);
+                return list;
+            }
+        });
+        framework.assertBothValid("testComboBoxInteractive");
     }
 
     @Test
-    public void listBoxFieldTest() throws IOException, InterruptedException {
-        String dest = DESTINATION_FOLDER + "listBoxBuilder.pdf";
-        String cmp = SOURCE_FOLDER + "cmp_ListboxBuilder.pdf";
-        PdfDocument document = new PdfUATestPdfDocument(
-                new PdfWriter(dest, PdfUATestPdfDocument.createWriterProperties()));
-
-        ChoiceFormFieldBuilder builder = new ChoiceFormFieldBuilder(document, "txt");
-        builder.setGenericConformanceLevel(PdfUAConformanceLevel.PDFUA_1);
-        builder.setWidgetRectangle(new Rectangle(200, 200, 100, 200));
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(document, true);
-        builder.setOptions(new String[] {"opt 1", "opt 2", "opt 3"});
-        PdfFormField f = builder.setFont(PdfFontFactory.createFont(FONT)).createList();
-        f.setValue("opt 2");
-        acroForm.addField(f);
-        document.close();
-        Assert.assertNull(new CompareTool().compareByContent(dest, cmp, DESTINATION_FOLDER, "diff_"));
-        // TODO-DEVSIX-8160  Assert.assertNull(new VeraPdfValidator().validate(dest));
+    public void testComboBoxCustomAppearanceInteractive() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                ComboBoxField list = new ComboBoxField("name");
+                list.setBackgroundColor(ColorConstants.GREEN);
+                list.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
+                list.setSize(200);
+                list.getAccessibilityProperties().setAlternateDescription("Hello");
+                list.setFont(getFont());
+                list.setInteractive(true);
+                list.addOption(new SelectFieldItem("Value 1"));
+                list.addOption(new SelectFieldItem("Value 2"));
+                return list;
+            }
+        });
+        framework.assertBothValid("testComboBoxCustomAppearanceInteractive");
     }
 
     @Test
-    public void comboBoxFieldTest() throws IOException, InterruptedException {
-        String dest = DESTINATION_FOLDER + "comboboxBuilder.pdf";
-        String cmp = SOURCE_FOLDER + "cmp_comboboxBuilder.pdf";
-        PdfDocument document = new PdfUATestPdfDocument(
-                new PdfWriter(dest, PdfUATestPdfDocument.createWriterProperties()));
-
-        ChoiceFormFieldBuilder builder = new ChoiceFormFieldBuilder(document, "txt");
-        builder.setGenericConformanceLevel(PdfUAConformanceLevel.PDFUA_1);
-        builder.setWidgetRectangle(new Rectangle(200, 200, 100, 200));
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(document, true);
-        builder.setOptions(new String[] {"opt 1", "opt 2", "opt 3"});
-        PdfFormField f = builder.setFont(PdfFontFactory.createFont(FONT)).createComboBox();
-        f.setValue("opt 2");
-        acroForm.addField(f);
-        document.close();
-        Assert.assertNull(new CompareTool().compareByContent(dest, cmp, DESTINATION_FOLDER, "diff_"));
-        // TODO-DEVSIX-8160  Assert.assertNull(new VeraPdfValidator().validate(dest));
+    public void testComboBoxCustomAppearanceSelectedInteractive() throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                ComboBoxField list = new ComboBoxField("name");
+                list.setBackgroundColor(ColorConstants.GREEN);
+                list.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
+                list.setSize(200);
+                list.setFont(getFont());
+                list.setInteractive(true);
+                list.getAccessibilityProperties().setAlternateDescription("Hello");
+                list.addOption(new SelectFieldItem("hello1"), true);
+                list.addOption(new SelectFieldItem("hello1"), false);
+                return list;
+            }
+        });
+        framework.assertBothValid("testComboBoxCustomAppearanceSelectedInteractive");
     }
 
     @Test
-    public void buttonTest() throws IOException, InterruptedException {
-        String dest = DESTINATION_FOLDER + "buttonBuilder.pdf";
-        String cmp = SOURCE_FOLDER + "cmp_buttonBuilder.pdf";
-        PdfDocument document = new PdfUATestPdfDocument(
-                new PdfWriter(dest, PdfUATestPdfDocument.createWriterProperties()));
-
-        PushButtonFormFieldBuilder builder = new PushButtonFormFieldBuilder(document, "txt");
-        builder.setGenericConformanceLevel(PdfUAConformanceLevel.PDFUA_1);
-        builder.setWidgetRectangle(new Rectangle(200, 200, 100, 200));
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(document, true);
-        PdfFormField f = builder.setFont(PdfFontFactory.createFont(FONT)).createPushButton();
-        f.setValue("Click me");
-        acroForm.addField(f);
-        document.close();
-        Assert.assertNull(new CompareTool().compareByContent(dest, cmp, DESTINATION_FOLDER, "diff_"));
-        // TODO-DEVSIX-8160  formfield TU entry Assert.assertNull(new VeraPdfValidator().validate(dest));
+    public void testSignatureAppearance() throws FileNotFoundException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                SignatureFieldAppearance appearance = new SignatureFieldAppearance("name");
+                appearance.setFont(getFont());
+                appearance.setContent("Hello");
+                return appearance;
+            }
+        });
+        framework.assertBothValid("testSignatureAppearance");
     }
 
-    private static Document createDocument(String dest) throws FileNotFoundException {
-        PdfDocument doc = new PdfUATestPdfDocument(new PdfWriter(dest, PdfUATestPdfDocument.createWriterProperties()));
-        return new Document(doc);
+    @Test
+    public void testSignatureAppearanceWithSignedAppearanceText() throws FileNotFoundException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                SignatureFieldAppearance appearance = new SignatureFieldAppearance("name");
+                appearance.setFont(getFont());
+                SignedAppearanceText signedAppearanceText = new SignedAppearanceText();
+                signedAppearanceText.setLocationLine("Location");
+                signedAppearanceText.setSignedBy("Leelah");
+                signedAppearanceText.setReasonLine("Cuz I can");
+                appearance.setContent(signedAppearanceText);
+                return appearance;
+            }
+        });
+        framework.assertBothValid("testSignatureAppearanceWithSignedAppearanceText");
     }
 
-    private static void assertPdf(String dest, String cmp) throws IOException, InterruptedException {
-        // TODO-DEVSIX-8160 formfield TU entry Assert.assertNull(new VeraPdfValidator().validate(dest)); //
-        //  Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
-        Assert.assertNull(new CompareTool().compareByContent(dest, cmp, DESTINATION_FOLDER, "diff_"));
+    @Test
+    public void testSignatureAppearanceWithCustomContent() throws FileNotFoundException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                SignatureFieldAppearance appearance = new SignatureFieldAppearance("name");
+                appearance.setFont(getFont());
+                Div div = new Div();
+                div.add(new Paragraph("Hello").setFont(getFont()));
+                appearance.setContent(div);
 
+                return appearance;
+            }
+        });
+        framework.assertBothValid("testSignatureAppearanceWithSignedAppearanceText");
+    }
+
+    @Test
+    public void testSignatureAppearanceWithSignedAppearanceAndCustomAppearanceText() throws FileNotFoundException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                SignatureFieldAppearance appearance = new SignatureFieldAppearance("name");
+                appearance.setFont(getFont());
+                SignedAppearanceText signedAppearanceText = new SignedAppearanceText();
+                signedAppearanceText.setLocationLine("Location");
+                signedAppearanceText.setSignedBy("Leelah");
+                signedAppearanceText.setReasonLine("Cuz I can");
+                appearance.setContent(signedAppearanceText);
+                appearance.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
+                appearance.setBackgroundColor(ColorConstants.GREEN);
+                return appearance;
+            }
+        });
+        framework.assertBothValid("testSignatureAppearanceWithSignedAppearanceAndCustomAppearanceText");
+    }
+
+    @Test
+    public void testSignatureAppearanceInteractive() throws FileNotFoundException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                SignatureFieldAppearance appearance = new SignatureFieldAppearance("name");
+                appearance.setFont(getFont());
+                appearance.setContent("Hello");
+                appearance.setInteractive(true);
+                appearance.getAccessibilityProperties().setAlternateDescription("Hello");
+                return appearance;
+            }
+        });
+        framework.assertBothValid("testSignatureAppearanceInteractive");
+    }
+
+    @Test
+    public void testSignatureAppearanceWithSignedAppearanceTextInteractive() throws FileNotFoundException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                SignatureFieldAppearance appearance = new SignatureFieldAppearance("name");
+                appearance.setFont(getFont());
+                SignedAppearanceText signedAppearanceText = new SignedAppearanceText();
+                signedAppearanceText.setLocationLine("Location");
+                signedAppearanceText.setSignedBy("Leelah");
+                signedAppearanceText.setReasonLine("Cuz I can");
+                appearance.setContent(signedAppearanceText);
+                appearance.setInteractive(true);
+                appearance.getAccessibilityProperties().setAlternateDescription("Hello");
+                return appearance;
+            }
+        });
+
+        framework.assertBothValid("testSignatureAppearanceWithSignedAppearanceTextInteractive");
+    }
+
+    @Test
+    public void testSignatureAppearanceWithCustomContentInteractive() throws FileNotFoundException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                SignatureFieldAppearance appearance = new SignatureFieldAppearance("name");
+                appearance.setFont(getFont());
+                Div div = new Div();
+                div.add(new Paragraph("Hello").setFont(getFont()));
+                appearance.setContent(div);
+                appearance.setInteractive(true);
+                appearance.getAccessibilityProperties().setAlternateDescription("Hello");
+
+                return appearance;
+            }
+        });
+        framework.assertBothValid("testSignatureAppearanceWithSignedAppearanceTextInteractive");
+    }
+
+    @Test
+    public void testSignatureAppearanceWithSignedAppearanceAndCustomAppearanceTextInteractive()
+            throws FileNotFoundException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                SignatureFieldAppearance appearance = new SignatureFieldAppearance("name");
+                appearance.setFont(getFont());
+                SignedAppearanceText signedAppearanceText = new SignedAppearanceText();
+                signedAppearanceText.setLocationLine("Location");
+                signedAppearanceText.setSignedBy("Leelah");
+                signedAppearanceText.setReasonLine("Cuz I can");
+                appearance.setContent(signedAppearanceText);
+                appearance.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
+                appearance.setBackgroundColor(ColorConstants.GREEN);
+                appearance.setInteractive(true);
+                appearance.getAccessibilityProperties().setAlternateDescription("Hello");
+                return appearance;
+            }
+        });
+        framework.assertBothValid("testSignatureAppearanceWithSignedAppearanceAndCustomAppearanceTextInteractive");
+    }
+
+    @Test
+    @Ignore("DEVSIX-8160")
+    public void testInteractiveCheckBoxNoAlternativedDescription() throws FileNotFoundException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                CheckBox cb = new CheckBox("name");
+                cb.setPdfConformanceLevel(PdfUAConformanceLevel.PDFUA_1);
+                cb.setInteractive(true);
+                return cb;
+            }
+        });
+        framework.assertBothFail("testInteractiveCheckBoxNoAlternativedDescription",
+                PdfUAExceptionMessageConstants.FORM_FIELD_SHALL_CONTAIN_ALT_ENTRY);
+    }
+
+    @Test
+    @Ignore("DEVSIX-8160")
+    public void testInteractiveRadioButtonNoAlternativedDescription() throws FileNotFoundException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Radio radio = new Radio("name", "group");
+                radio.setInteractive(true);
+                return radio;
+            }
+        });
+        framework.assertBothFail("testInteractiveRadioButtonNoAlternativedDescription",
+                PdfUAExceptionMessageConstants.FORM_FIELD_SHALL_CONTAIN_ALT_ENTRY);
+    }
+
+    @Test
+    @Ignore("DEVSIX-8160")
+    public void testInteractiveButtonNoAlternativedDescription() throws FileNotFoundException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Button b = new Button("name");
+                b.setInteractive(true);
+                b.setFont(getFont());
+                return b;
+            }
+        });
+        framework.assertBothFail("testInteractiveButtonNoAlternativedDescription",
+                PdfUAExceptionMessageConstants.FORM_FIELD_SHALL_CONTAIN_ALT_ENTRY);
+    }
+
+    @Test
+    @Ignore("DEVSIX-8160")
+    public void testInteractiveInputFieldNoAlternativedDescription() throws FileNotFoundException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                InputField inputField = new InputField("name");
+                inputField.setInteractive(true);
+                inputField.setFont(getFont());
+                return inputField;
+            }
+        });
+        framework.assertBothFail("testInteractiveInputFieldNoAlternativedDescription",
+                PdfUAExceptionMessageConstants.FORM_FIELD_SHALL_CONTAIN_ALT_ENTRY);
+    }
+
+    @Test
+    @Ignore("DEVSIX-8160")
+    public void testInteractiveTextAreaNoAlternativedDescription() throws FileNotFoundException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                TextArea textArea = new TextArea("name");
+                textArea.setInteractive(true);
+                textArea.setFont(getFont());
+                return textArea;
+            }
+        });
+        framework.assertBothFail("testInteractiveTextAreaNoAlternativedDescription",
+                PdfUAExceptionMessageConstants.FORM_FIELD_SHALL_CONTAIN_ALT_ENTRY);
+    }
+
+    @Test
+    @Ignore("DEVSIX-8160")
+    public void testInteractiveListBoxNoAlternativedDescription() throws FileNotFoundException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                ListBoxField list = new ListBoxField("name", 1, false);
+                list.setInteractive(true);
+                list.setFont(getFont());
+                return list;
+            }
+        });
+        framework.assertBothFail("testInteractiveListBoxNoAlternativedDescription",
+                PdfUAExceptionMessageConstants.FORM_FIELD_SHALL_CONTAIN_ALT_ENTRY);
+    }
+
+    @Test
+    @Ignore("DEVSIX-8160")
+    public void testInteractiveComboBoxNoAlternativedDescription() throws FileNotFoundException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                ComboBoxField list = new ComboBoxField("name");
+                list.setInteractive(true);
+                list.setFont(getFont());
+                return list;
+            }
+        });
+        framework.assertBothFail("testInteractiveComboBoxNoAlternativedDescription",
+                PdfUAExceptionMessageConstants.FORM_FIELD_SHALL_CONTAIN_ALT_ENTRY);
+    }
+
+    @Test
+    @Ignore("DEVSIX-8160")
+    public void testInteractiveSignatureAppearanceNoAlternativedDescription() throws FileNotFoundException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                SignatureFieldAppearance appearance = new SignatureFieldAppearance("name");
+                appearance.setInteractive(true);
+                appearance.setFont(getFont());
+                return appearance;
+            }
+        });
+        framework.assertBothFail("testInteractiveSignatureAppearanceNoAlternativedDescription",
+                PdfUAExceptionMessageConstants.FORM_FIELD_SHALL_CONTAIN_ALT_ENTRY);
+    }
+
+    @Test
+    public void testCheckBoxDifferentRole() throws FileNotFoundException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                CheckBox cb = new CheckBox("name");
+                cb.setPdfConformanceLevel(PdfUAConformanceLevel.PDFUA_1);
+                cb.getAccessibilityProperties().setRole(StandardRoles.FIGURE);
+                cb.getAccessibilityProperties().setAlternateDescription("Hello");
+                return cb;
+            }
+        });
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                CheckBox cb = new CheckBox("name");
+                cb.setPdfConformanceLevel(PdfUAConformanceLevel.PDFUA_1);
+                cb.getAccessibilityProperties().setRole(StandardRoles.ARTIFACT);
+                return cb;
+            }
+        });
+        framework.assertBothValid("testCheckBoxDifferentRole");
+    }
+
+    @Test
+    public void testRadioButtonDifferentRole() throws FileNotFoundException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Radio radio = new Radio("name", "group");
+                radio.getAccessibilityProperties().setRole(StandardRoles.FIGURE);
+                radio.getAccessibilityProperties()
+                        .setAlternateDescription("Radio " + "that " + "was " + "not " + "checked");
+                return radio;
+            }
+        });
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Radio radio = new Radio("name", "group");
+                radio.setChecked(true);
+                radio.getAccessibilityProperties().setRole(StandardRoles.FIGURE);
+                radio.getAccessibilityProperties().setAlternateDescription("Radio that was not checked");
+                return radio;
+            }
+        });
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Radio radio = new Radio("name", "group");
+                radio.getAccessibilityProperties().setRole(StandardRoles.ARTIFACT);
+                return radio;
+            }
+        });
+        framework.assertBothValid("testRadioButtonDifferentRole");
+    }
+
+    @Test
+    public void testButtonDifferentRole() throws FileNotFoundException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Button b = new Button("name");
+                b.getAccessibilityProperties().setRole(StandardRoles.FIGURE);
+                b.setValue("Click me");
+                b.getAccessibilityProperties().setAlternateDescription("Hello");
+                b.setFont(getFont());
+                return b;
+            }
+        });
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Button b = new Button("name");
+                b.setValue("Click me");
+                b.getAccessibilityProperties().setRole(StandardRoles.ARTIFACT);
+                b.setFont(getFont());
+                return b;
+            }
+        });
+        framework.assertBothValid("testButtonDifferentRole");
+    }
+
+    @Test
+    public void testInputFieldDifferentRole() throws FileNotFoundException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                InputField inputField = new InputField("name");
+                inputField.setFont(getFont());
+                inputField.getAccessibilityProperties().setRole(StandardRoles.FIGURE);
+                inputField.getAccessibilityProperties().setAlternateDescription("Hello");
+                inputField.setValue("Hello");
+                return inputField;
+            }
+        });
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                InputField inputField = new InputField("name");
+                inputField.setFont(getFont());
+                inputField.getAccessibilityProperties().setRole(StandardRoles.P);
+                inputField.setValue("Hello");
+                return inputField;
+            }
+        });
+
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                InputField inputField = new InputField("name");
+                inputField.setFont(getFont());
+                inputField.getAccessibilityProperties().setRole(StandardRoles.ARTIFACT);
+                inputField.setValue("Hello");
+                return inputField;
+            }
+        });
+        framework.assertBothValid("testInputFieldDifferentRole");
+    }
+
+    @Test
+    public void testTextAreaDifferentRole() throws FileNotFoundException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                TextArea textArea = new TextArea("name");
+                textArea.setFont(getFont());
+                textArea.getAccessibilityProperties().setRole(StandardRoles.FIGURE);
+                textArea.getAccessibilityProperties().setAlternateDescription("Hello");
+                return textArea;
+            }
+        });
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                TextArea textArea = new TextArea("name");
+                textArea.setFont(getFont());
+                textArea.getAccessibilityProperties().setRole(StandardRoles.ARTIFACT);
+                return textArea;
+            }
+        });
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                TextArea textArea = new TextArea("name");
+                textArea.setFont(getFont());
+                textArea.getAccessibilityProperties().setRole(StandardRoles.P);
+                return textArea;
+            }
+        });
+        framework.assertBothValid("testTextAreaDifferentRole");
+
+    }
+
+    @Test
+    public void testListBoxDifferentRole() throws FileNotFoundException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                ListBoxField list = new ListBoxField("name", 1, false);
+                list.setFont(getFont());
+                list.getAccessibilityProperties().setAlternateDescription("Hello");
+                list.getAccessibilityProperties().setRole(StandardRoles.FIGURE);
+                return list;
+            }
+        });
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                ListBoxField list = new ListBoxField("name", 1, false);
+                list.setFont(getFont());
+                list.getAccessibilityProperties().setRole(StandardRoles.ARTIFACT);
+                return list;
+            }
+        });
+
+        framework.assertBothValid("testListBoxDifferentRole");
+
+    }
+
+    @Test
+    public void testComboBoxDifferentRole() throws FileNotFoundException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                ComboBoxField list = new ComboBoxField("name");
+                list.setFont(getFont());
+                list.getAccessibilityProperties().setRole(StandardRoles.FIGURE);
+                list.addOption(new SelectFieldItem("value1"));
+                list.addOption(new SelectFieldItem("value2"));
+                list.getAccessibilityProperties().setAlternateDescription("Hello");
+                return list;
+            }
+        });
+
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                ComboBoxField list = new ComboBoxField("name");
+                list.setFont(getFont());
+                list.getAccessibilityProperties().setRole(StandardRoles.ARTIFACT);
+                return list;
+            }
+        });
+        framework.assertBothValid("testComboBoxDifferentRole");
+    }
+
+    @Test
+    public void testSignatureAppearanceDifferentRole() throws FileNotFoundException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                SignatureFieldAppearance appearance = new SignatureFieldAppearance("name");
+                appearance.setFont(getFont());
+                appearance.getAccessibilityProperties().setRole(StandardRoles.FIGURE);
+                appearance.setContent("Hello");
+                appearance.getAccessibilityProperties().setAlternateDescription("Hello");
+                return appearance;
+            }
+        });
+
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                SignatureFieldAppearance appearance = new SignatureFieldAppearance("name");
+                appearance.setFont(getFont());
+                appearance.getAccessibilityProperties().setRole(StandardRoles.ARTIFACT);
+                appearance.setContent("Hello");
+                return appearance;
+            }
+        });
+        framework.assertBothValid("testSignatureAppearanceDifferentRole");
+    }
+
+    private PdfFont getFont() {
+        try {
+            return PdfFontFactory.createFont(FONT);
+        } catch (IOException e) {
+            throw new RuntimeException();
+        }
     }
 
 }

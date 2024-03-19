@@ -22,8 +22,10 @@
  */
 package com.itextpdf.forms.form.element;
 
+import com.itextpdf.forms.FormDefaultAccessibilityProperties;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.renderer.RadioRenderer;
+import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.layout.properties.BorderRadius;
 import com.itextpdf.layout.properties.BoxSizingPropertyValue;
 import com.itextpdf.layout.properties.Property;
@@ -86,6 +88,20 @@ public class Radio extends FormField<Radio> {
             return (T1)(Object)UnitValue.createPointValue(0);
         }
         return super.<T1>getProperty(property);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public AccessibilityProperties getAccessibilityProperties() {
+        if (tagProperties == null){
+            tagProperties = new FormDefaultAccessibilityProperties(FormDefaultAccessibilityProperties.FORM_FIELD_RADIO);
+        }
+        if (tagProperties instanceof FormDefaultAccessibilityProperties){
+            ((FormDefaultAccessibilityProperties)tagProperties).updateCheckedValue(this);
+        }
+        return tagProperties;
     }
 
     /* (non-Javadoc)

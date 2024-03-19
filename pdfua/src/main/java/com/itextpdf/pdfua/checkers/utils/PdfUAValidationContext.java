@@ -77,6 +77,9 @@ public class PdfUAValidationContext {
         }
         IRoleMappingResolver resolver = pdfDocument.getTagStructureContext()
                 .resolveMappingToStandardOrDomainSpecificRole(role, null);
+        if (resolver == null) {
+            return role;
+        }
         return resolver.getRole();
     }
 

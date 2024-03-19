@@ -39,6 +39,8 @@ import com.itextpdf.kernel.pdf.IConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.layout.LayoutContext;
@@ -104,6 +106,7 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
      * Returns whether or not the checkbox is in PDF/A mode.
      *
      * @return true if the checkbox is in PDF/A mode, false otherwise
+     *
      * @deprecated since 8.0.4 will be removed
      */
     @Deprecated
@@ -258,6 +261,8 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
         if (!isBoxChecked()) {
             checkBox.setValue(PdfFormAnnotation.OFF_STATE_VALUE);
         }
+
+        applyAccessibilityProperties(checkBox, doc);
         checkBox.getFirstFormAnnotation().setFormFieldElement((CheckBox) modelElement);
         checkBox.enableFieldRegeneration();
 
@@ -294,7 +299,17 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
         @Override
         public void drawChildren(DrawContext drawContext) {
             final Rectangle rectangle = this.getInnerAreaBBox().clone();
+            PdfCanvas canvas = drawContext.getCanvas();
+            boolean isTaggingEnabled = drawContext.isTaggingEnabled();
+            if (isTaggingEnabled) {
+                TagTreePointer tp = drawContext.getDocument().getTagStructureContext().getAutoTaggingPointer();
+                canvas.openTag(tp.getTagReference());
+            }
             createCheckBoxRenderStrategy().drawCheckBoxContent(drawContext, CheckBoxRenderer.this, rectangle);
+            if (isTaggingEnabled) {
+                canvas.closeTag();
+            }
+
         }
     }
 

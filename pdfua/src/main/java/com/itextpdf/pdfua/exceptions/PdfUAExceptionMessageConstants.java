@@ -70,7 +70,8 @@ public final class PdfUAExceptionMessageConstants {
     public static final String INVALID_PDF_VERSION
             = "Specified document pdf version isn't supported in pdf/ua.";
     public static final String H1_IS_SKIPPED = "Heading level 1 is skipped in a descending sequence of header levels.";
-    public static final String HN_IS_SKIPPED = "Heading level {0} is skipped in a descending sequence of header levels.";
+    public static final String HN_IS_SKIPPED = "Heading level {0} is skipped in a descending sequence of header "
+            + "levels.";
     public static final String MORE_THAN_ONE_H_TAG = "A node contains more than one H tag.";
     public static final String DOCUMENT_USES_BOTH_H_AND_HN = "Document uses both H and H# tags.";
     public static final String DOCUMENT_SHALL_CONTAIN_VALID_LANG_ENTRY = "Document does not contain valid lang entry.";
@@ -88,6 +89,11 @@ public final class PdfUAExceptionMessageConstants {
             "File specification dictionary shall contain f key and uf key.";
     public static final String NON_UNIQUE_ID_ENTRY_IN_STRUCT_TREE_ROOT = "ID entry '{0}' shall be unique among all elements " +
             "in the document’s structure hierarchy";
+    public static final String FORM_FIELD_SHALL_CONTAIN_ALT_ENTRY =
+            "Interactive formfields should have an alternative " +
+                    "description. You can set it using FormField#getAccessibilityProperties().setAlternateDescription"
+                    + "(\"your alternative description\").";
+
 
     private PdfUAExceptionMessageConstants() {
         // Empty constructor

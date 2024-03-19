@@ -208,7 +208,7 @@ public class SelectFieldListBoxRenderer extends AbstractSelectFieldRenderer {
         setupBuilderValues(builder, lbModelElement);
         PdfChoiceFormField choiceField = builder.createList();
         choiceField.disableFieldRegeneration();
-
+        applyAccessibilityProperties(choiceField,drawContext.getDocument());
         choiceField.setFontSize(fontSize.getValue());
         choiceField.setMultiSelect(isMultiple());
         choiceField.setListSelected(selectedOptions.toArray(new String[selectedOptions.size()]));

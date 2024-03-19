@@ -319,6 +319,8 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
             flattenComboBoxField.addOption(new SelectFieldItem("option 1"));
             flattenComboBoxField.addOption(new SelectFieldItem("option 2"));
             flattenComboBoxField.setSelected("option 1");
+
+            //TODO DEVSIX-8205 Use setLanguage method from AccessibilityProperties
             flattenComboBoxField.setProperty(FormProperty.FORM_ACCESSIBILITY_LANGUAGE, "random_lang");
             document.add(flattenComboBoxField);
         }
@@ -541,6 +543,44 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
         ComboBoxField comboBoxField = new ComboBoxField("test");
         Assert.assertThrows(IllegalArgumentException.class,
                 () -> comboBoxField.addOption(new SelectFieldItem("option 1", (String) null)));
+    }
+
+    @Test
+    public void basicComboBoxFieldTaggedTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "basicComboBoxFieldTagged.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_basicComboBoxFieldTagged.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+            document.getPdfDocument().setTagged();
+            ComboBoxField formComboBoxField = new ComboBoxField("form combo box field");
+            formComboBoxField.setInteractive(true);
+            formComboBoxField.addOption(new SelectFieldItem("option 1"));
+            formComboBoxField.addOption(new SelectFieldItem("option 2"));
+            document.add(formComboBoxField);
+
+            ComboBoxField flattenComboBoxField = new ComboBoxField("flatten combo box field");
+            flattenComboBoxField.setInteractive(false);
+            flattenComboBoxField.addOption(new SelectFieldItem("option 1"));
+            flattenComboBoxField.addOption(new SelectFieldItem("option 2"));
+            document.add(flattenComboBoxField);
+
+            ComboBoxField formComboBoxFieldSelected = new ComboBoxField("form combo box field selected");
+            formComboBoxFieldSelected.setInteractive(true);
+            formComboBoxFieldSelected.addOption(new SelectFieldItem("option 1"));
+            formComboBoxFieldSelected.addOption(new SelectFieldItem("option 2"));
+            formComboBoxFieldSelected.setSelected("option 1");
+            document.add(formComboBoxFieldSelected);
+
+            ComboBoxField flattenComboBoxFieldSelected = new ComboBoxField("flatten combo box field selected");
+            flattenComboBoxFieldSelected.setInteractive(false);
+            flattenComboBoxFieldSelected.addOption(new SelectFieldItem("option 1"));
+            flattenComboBoxFieldSelected.addOption(new SelectFieldItem("option 2"));
+            flattenComboBoxFieldSelected.setSelected("option 1");
+            document.add(flattenComboBoxFieldSelected);
+
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
 

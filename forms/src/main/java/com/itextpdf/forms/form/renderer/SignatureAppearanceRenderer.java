@@ -261,6 +261,7 @@ public class SignatureAppearanceRenderer extends AbstractTextFieldRenderer {
         sigField.setFontSize(fontSizeValue);
         sigField.getFirstFormAnnotation().setBackgroundColor(backgroundColor);
         applyDefaultFieldProperties(sigField);
+        applyAccessibilityProperties(sigField,doc);
         sigField.getFirstFormAnnotation().setFormFieldElement((SignatureFieldAppearance) modelElement);
         sigField.enableFieldRegeneration();
         PdfAcroForm forms = PdfFormCreator.getAcroForm(doc, true);

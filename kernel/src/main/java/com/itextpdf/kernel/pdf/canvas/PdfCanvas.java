@@ -962,7 +962,6 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas lineTo(double x, double y) {
-        this.checkIsoConformanceWritingOnContent();
         contentStream.getOutputStream()
                 .writeDouble(x)
                 .writeSpace()
@@ -983,7 +982,6 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas curveTo(double x1, double y1, double x2, double y2, double x3, double y3) {
-        this.checkIsoConformanceWritingOnContent();
         contentStream.getOutputStream()
                 .writeDouble(x1)
                 .writeSpace()
@@ -1011,7 +1009,6 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas curveTo(double x2, double y2, double x3, double y3) {
-        this.checkIsoConformanceWritingOnContent();
         contentStream.getOutputStream()
                 .writeDouble(x2)
                 .writeSpace()
@@ -1034,7 +1031,6 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas curveFromTo(double x1, double y1, double x3, double y3) {
-        this.checkIsoConformanceWritingOnContent();
         contentStream.getOutputStream()
                 .writeDouble(x1)
                 .writeSpace()
@@ -1192,7 +1188,6 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas rectangle(double x, double y, double width, double height) {
-        this.checkIsoConformanceWritingOnContent();
         contentStream.getOutputStream().writeDouble(x).
                 writeSpace().
                 writeDouble(y).
@@ -1296,6 +1291,7 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas closePathEoFillStroke() {
+        checkIsoConformanceWritingOnContent();
         checkDefaultDeviceGrayBlackColor(CheckColorMode.FILL_AND_STROKE);
 
         contentStream.getOutputStream().writeBytes(bStar);
@@ -1364,6 +1360,7 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas closePathStroke() {
+        checkIsoConformanceWritingOnContent();
         contentStream.getOutputStream().writeBytes(s);
         return this;
     }
@@ -1374,6 +1371,7 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas fill() {
+        checkIsoConformanceWritingOnContent();
         checkDefaultDeviceGrayBlackColor(CheckColorMode.FILL);
 
         contentStream.getOutputStream().writeBytes(f);
@@ -1386,6 +1384,7 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas fillStroke() {
+        checkIsoConformanceWritingOnContent();
         checkDefaultDeviceGrayBlackColor(CheckColorMode.FILL_AND_STROKE);
 
         contentStream.getOutputStream().writeBytes(B);
@@ -1398,6 +1397,7 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas eoFill() {
+        checkIsoConformanceWritingOnContent();
         checkDefaultDeviceGrayBlackColor(CheckColorMode.FILL);
 
         contentStream.getOutputStream().writeBytes(fStar);
@@ -1410,6 +1410,7 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas eoFillStroke() {
+        checkIsoConformanceWritingOnContent();
         checkDefaultDeviceGrayBlackColor(CheckColorMode.FILL_AND_STROKE);
 
         contentStream.getOutputStream().writeBytes(BStar);
@@ -2481,7 +2482,6 @@ public class PdfCanvas {
 
     private PdfCanvas drawArc(double x1, double y1, double x2, double y2,
             double startAng, double extent, boolean continuous) {
-        this.checkIsoConformanceWritingOnContent();
         List<double[]> ar = bezierArc(x1, y1, x2, y2, startAng, extent);
         if (ar.isEmpty()) {
             return this;

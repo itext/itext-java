@@ -122,7 +122,7 @@ public class SelectFieldComboBoxRenderer extends AbstractSelectFieldRenderer {
         setupBuilderValues(builder, comboBoxFieldModelElement);
         final PdfChoiceFormField comboBoxField = builder.createComboBox();
         comboBoxField.disableFieldRegeneration();
-
+        applyAccessibilityProperties(comboBoxField, doc);
         final Background background = this.modelElement.<Background>getProperty(Property.BACKGROUND);
         if (background != null) {
             comboBoxField.getFirstFormAnnotation().setBackgroundColor(background.getColor());

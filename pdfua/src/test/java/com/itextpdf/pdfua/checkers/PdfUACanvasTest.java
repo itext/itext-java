@@ -50,9 +50,11 @@ import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua
+// validation on Android)
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.junit.Assert;
 import org.junit.Before;
@@ -81,19 +83,31 @@ public class PdfUACanvasTest extends ExtendedITextTest {
 
     @Test
     public void checkPoint_01_005_TextContentIsNotTagged() throws IOException {
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(new ByteArrayOutputStream(), PdfUATestPdfDocument.createWriterProperties()));
-        PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
-        canvas.saveState()
-                .beginText()
-                .setFontAndSize(PdfFontFactory.createFont(StandardFonts.COURIER), 12);
-        Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> {
-            canvas.showText("Hello World!");
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+            canvas.saveState()
+                    .beginText()
+                    .setFontAndSize(getFont(), 10)
+                    .showText("Hello World!");
+
         });
-        Assert.assertEquals(
-                PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING,
-                e.getMessage());
+        framework.assertBothFail("checkPoint_01_005_TextContentIsNotTagged",
+                PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false);
     }
+
+    @Test
+    public void checkPoint_01_005_TextNoContentIsNotTagged() throws IOException {
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+            canvas.saveState()
+                    .beginText()
+                    .setFontAndSize(getFont(), 10)
+                    .endText();
+
+        });
+        framework.assertBothValid("checkPoint_01_005_TextNoContentIsNotTagged");
+    }
+
 
     @Test
     public void checkPoint_01_005_TextContentIsCorrectlyTaggedAsContent() throws IOException, InterruptedException {
@@ -175,7 +189,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         pdfDoc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outPdf,
-                        SOURCE_FOLDER + "cmp_01_005_TextArtifactIsNotInTagTree.pdf",
+                SOURCE_FOLDER + "cmp_01_005_TextArtifactIsNotInTagTree.pdf",
                 DESTINATION_FOLDER, "diff_"));
         Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
@@ -248,7 +262,8 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outPdf,
                 SOURCE_FOLDER + "cmp_01_005_TextGlyphLineContentIsArtifact.pdf",
                 DESTINATION_FOLDER, "diff_"));
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        Assert.assertNull(new VeraPdfValidator().validate(
+                outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
     @Test
@@ -341,33 +356,59 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     }
 
     @Test
-    public void checkPoint_01_005_LineContentThatIsContentIsNotTagged() {
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(new ByteArrayOutputStream(), PdfUATestPdfDocument.createWriterProperties()));
-        PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
-        canvas.setColor(ColorConstants.RED, true)
-                .setLineWidth(2);
-        Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> {
-            canvas.lineTo(200, 200);
+    public void checkPoint_01_005_LineContentThatIsContentIsNotTagged() throws FileNotFoundException {
+
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+            canvas.setColor(ColorConstants.RED, true)
+                    .setLineWidth(2);
+                canvas.lineTo(200, 200).fill();
         });
-        Assert.assertEquals(
-                PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING,
-                e.getMessage());
+        framework.assertBothFail("checkPoint_01_005_LineContentThatIsContentIsNotTagged",
+                PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false);
     }
 
     @Test
-    public void checkPoint_01_005_LineContentThatIsContentIsTaggedButIsNotAnArtifact() {
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(new ByteArrayOutputStream(), PdfUATestPdfDocument.createWriterProperties()));
-        PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
-        canvas.openTag(new CanvasTag(PdfName.H1))
-                .setColor(ColorConstants.RED, true)
-                .setLineWidth(2);
-        Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> {
+    public void checkPoint_01_005_LineContentThatIsContentIsNotTagged_noContent() throws FileNotFoundException {
+
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+            canvas.setColor(ColorConstants.RED, true)
+                    .setLineWidth(2);
             canvas.lineTo(200, 200);
         });
-        Assert.assertEquals(PdfUAExceptionMessageConstants.CONTENT_IS_NOT_REAL_CONTENT_AND_NOT_ARTIFACT,
-                e.getMessage());
+        framework.assertBothValid("checkPoint_01_005_LineContentThatIsContentIsNotTagged_noContent");
+    }
+
+    @Test
+    public void checkPoint_01_005_LineContentThatIsContentIsTaggedButIsNotAnArtifact() throws FileNotFoundException {
+
+        framework.addBeforeGenerationHook((pdfDocument) -> {
+            PdfCanvas canvas = new PdfCanvas(pdfDocument.addNewPage());
+            canvas.openTag(new CanvasTag(PdfName.P))
+                    .setColor(ColorConstants.RED, true)
+                    .setLineWidth(2);
+                canvas.lineTo(200, 200).fill();
+        });
+
+        framework.assertBothFail("checkPoint_01_005_LineContentThatIsContentIsTaggedButIsNotAnArtifact",
+                PdfUAExceptionMessageConstants.CONTENT_IS_NOT_REAL_CONTENT_AND_NOT_ARTIFACT, false);
+    }
+
+
+    @Test
+    public void checkPoint_01_005_LineContentThatIsContentIsTaggedButIsNotAnArtifact_no_drawing() throws FileNotFoundException {
+
+        framework.addBeforeGenerationHook((pdfDocument) -> {
+            PdfCanvas canvas = new PdfCanvas(pdfDocument.addNewPage());
+            canvas.openTag(new CanvasTag(PdfName.P))
+                    .setColor(ColorConstants.RED, true)
+                    .setLineWidth(2);
+            canvas.lineTo(200, 200);
+            canvas.lineTo(300, 200);
+
+        });
+        framework.assertBothValid("checkPoint_01_005_LineContentThatIsContentIsTaggedButIsNotAnArtifact_no_drawing");
     }
 
     @Test
@@ -399,18 +440,108 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     }
 
     @Test
-    public void checkPoint_01_005_RectangleNotMarked() {
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(new ByteArrayOutputStream(), PdfUATestPdfDocument.createWriterProperties()));
-        PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
-        canvas.setColor(ColorConstants.RED, true)
-                .setLineWidth(2);
-        Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> {
+    public void checkPoint_01_005_RectangleNotMarked() throws FileNotFoundException {
+
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+            canvas.setColor(ColorConstants.RED, true)
+                    .setLineWidth(2);
+            canvas.rectangle(new Rectangle(200, 200, 100, 100));
+            canvas.fill();
+        });
+        framework.assertBothFail("checkPoint_01_005_RectangleNotMarked",
+                PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false);
+    }
+
+
+    @Test
+    public void checkPoint_01_005_RectangleNoContent() throws FileNotFoundException {
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+            canvas.setColor(ColorConstants.RED, true)
+                    .setLineWidth(2);
             canvas.rectangle(new Rectangle(200, 200, 100, 100));
         });
-        Assert.assertEquals(
-                PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING,
-                e.getMessage());
+        framework.assertBothValid("checkPoint_01_005_RectangleNoContent");
+    }
+
+
+    @Test
+    public void checkPoint_01_005_RectangleClip() throws FileNotFoundException {
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+            canvas.setColor(ColorConstants.RED, true)
+                    .setLineWidth(2);
+            canvas.rectangle(new Rectangle(200, 200, 100, 100));
+            canvas.clip();
+        });
+        framework.assertBothValid("checkPoint_01_005_RectangleNoContent");
+    }
+
+    @Test
+    public void checkPoint_01_005_RectangleClosePathStroke() throws FileNotFoundException {
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+            canvas.setColor(ColorConstants.RED, true)
+                    .setLineWidth(2);
+            canvas.rectangle(new Rectangle(200, 200, 100, 100));
+            canvas.closePathStroke();
+        });
+
+        framework.assertBothFail("checkPoint_01_005_RectangleClosePathStroke",
+                PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false);
+    }
+
+    @Test
+    public void checkPoint_01_005_Rectangle_EOFIllStroke() throws FileNotFoundException {
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+            canvas.setColor(ColorConstants.RED, true)
+                    .setLineWidth(2);
+            canvas.rectangle(new Rectangle(200, 200, 100, 100));
+            canvas.closePathEoFillStroke();
+        });
+        framework.assertBothFail("checkPoint_01_005_Rectangle_ClosPathEOFIllStroke",
+                PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false);
+    }
+
+    @Test
+    public void checkPoint_01_005_Rectangle_FillStroke() throws FileNotFoundException {
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+            canvas.setColor(ColorConstants.RED, true)
+                    .setLineWidth(2);
+            canvas.rectangle(new Rectangle(200, 200, 100, 100));
+            canvas.fillStroke();
+        });
+        framework.assertBothFail("checkPoint_01_005_Rectangle_FillStroke",
+                PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false);
+    }
+
+    @Test
+    public void checkPoint_01_005_Rectangle_eoFill() throws FileNotFoundException {
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+            canvas.setColor(ColorConstants.RED, true)
+                    .setLineWidth(2);
+            canvas.rectangle(new Rectangle(200, 200, 100, 100));
+            canvas.eoFill();
+        });
+        framework.assertBothFail("checkPoint_01_005_Rectangle_eoFill",
+                PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false);
+    }
+
+    @Test
+    public void checkPoint_01_005_Rectangle_eoFillStroke() throws FileNotFoundException {
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+            canvas.setColor(ColorConstants.RED, true)
+                    .setLineWidth(2);
+            canvas.rectangle(new Rectangle(200, 200, 100, 100));
+            canvas.eoFillStroke();
+        });
+        framework.assertBothFail("checkPoint_01_005_Rectangle_eoFillStroke",
+                PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false);
     }
 
     @Test
@@ -438,19 +569,32 @@ public class PdfUACanvasTest extends ExtendedITextTest {
 
     @Test
     public void checkPoint_01_005_RectangleMarkedContentWithoutMcid() throws IOException {
-        String outPdf = DESTINATION_FOLDER + "01_005_RectangleMarkedContentWithoutMcid.pdf";
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
-        PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
-        canvas
-                .saveState()
-                .openTag(new CanvasTag(PdfName.Art))
-                .setFillColor(ColorConstants.RED);
-        Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> {
+
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+            canvas
+                    .saveState()
+                    .openTag(new CanvasTag(PdfName.P))
+                    .setFillColor(ColorConstants.RED);
+                canvas.rectangle(new Rectangle(200, 200, 100, 100)).fill();
+        });
+
+        framework.assertBothFail("checkPoint_01_005_RectangleMarkedContentWithoutMcid",
+                PdfUAExceptionMessageConstants.CONTENT_IS_NOT_REAL_CONTENT_AND_NOT_ARTIFACT, false);
+    }
+
+    @Test
+    public void checkPoint_01_005_RectangleMarkedContentWithoutMcid_NoContent() throws IOException {
+
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+            canvas
+                    .saveState()
+                    .openTag(new CanvasTag(PdfName.P))
+                    .setFillColor(ColorConstants.RED);
             canvas.rectangle(new Rectangle(200, 200, 100, 100));
         });
-        Assert.assertEquals(PdfUAExceptionMessageConstants.CONTENT_IS_NOT_REAL_CONTENT_AND_NOT_ARTIFACT,
-                e.getMessage());
+        framework.assertBothValid("checkPoint_01_005_RectangleMarkedContentWithoutMcid_NoContent");
     }
 
     @Test
@@ -537,22 +681,36 @@ public class PdfUACanvasTest extends ExtendedITextTest {
 
     @Test
     public void checkPoint_01_004_bezierCurveInvalidMCID() throws IOException {
-        String outPdf = DESTINATION_FOLDER + "01_004_bezierCurveInvalidMCID.pdf";
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
-        PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
-
-        canvas
-                .saveState()
-                .openTag(new CanvasTag(PdfName.P, 420))
-                .setColor(ColorConstants.RED, true)
-                .setLineWidth(5)
-                .setStrokeColor(ColorConstants.RED);
-        Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> {
-            canvas.arc(400, 400, 500, 500, 30, 50);
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+            canvas
+                    .saveState()
+                    .openTag(new CanvasTag(PdfName.P, 420))
+                    .setColor(ColorConstants.RED, true)
+                    .setLineWidth(5)
+                    .moveTo(20, 20)
+                    .lineTo(300, 300)
+                    .setStrokeColor(ColorConstants.RED)
+                    .fill();
         });
-        Assert.assertEquals(PdfUAExceptionMessageConstants.CONTENT_WITH_MCID_BUT_MCID_NOT_FOUND_IN_STRUCT_TREE_ROOT,
-                e.getMessage());
+        framework.assertBothFail("checkPoint_01_004_bezierCurveInvalidMCID",
+                PdfUAExceptionMessageConstants.CONTENT_WITH_MCID_BUT_MCID_NOT_FOUND_IN_STRUCT_TREE_ROOT, false);
+    }
+
+    @Test
+    public void checkPoint_01_004_bezierCurveInvalidMCID_NoContent() throws IOException {
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+            canvas
+                    .saveState()
+                    .openTag(new CanvasTag(PdfName.P, 420))
+                    .setColor(ColorConstants.RED, true)
+                    .setLineWidth(5)
+                    .moveTo(20, 20)
+                    .lineTo(300, 300)
+                    .setStrokeColor(ColorConstants.RED);
+        });
+        framework.assertBothValid("checkPoint_01_004_bezierCurveInvalidMCID_NoContent");
     }
 
     @Test
@@ -851,5 +1009,13 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                 SOURCE_FOLDER + "cmp_validNoteTagPresent.pdf",
                 DESTINATION_FOLDER, "diff_")
         );
+    }
+
+    private PdfFont getFont() {
+        try {
+            return PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
+        } catch (IOException e) {
+            throw new RuntimeException();
+        }
     }
 }

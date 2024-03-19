@@ -133,7 +133,10 @@ public class InputFieldTest extends ExtendedITextTest {
             InputField flattenInputField = new InputField("input field with lang");
             flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
             flattenInputField.setProperty(FormProperty.FORM_FIELD_VALUE, "input field with lang");
+
+            //TODO DEVSIX-8205 Use setLanguage method from AccessibilityProperties
             flattenInputField.setProperty(FormProperty.FORM_ACCESSIBILITY_LANGUAGE, "random_lang");
+            flattenInputField.getAccessibilityProperties().setLanguage("random_lang");
             flattenInputField.setProperty(Property.BORDER, new SolidBorder(2f));
             document.add(flattenInputField);
         }
@@ -151,6 +154,8 @@ public class InputFieldTest extends ExtendedITextTest {
             InputField flattenInputField = new InputField("input field with null lang");
             flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
             flattenInputField.setProperty(FormProperty.FORM_FIELD_VALUE, "input field with null lang");
+
+            //TODO DEVSIX-8205 Use setLanguage method from AccessibilityProperties
             flattenInputField.setProperty(FormProperty.FORM_ACCESSIBILITY_LANGUAGE, null);
             flattenInputField.setProperty(Property.BORDER, new SolidBorder(2f));
             document.add(flattenInputField);

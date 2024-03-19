@@ -22,13 +22,17 @@
  */
 package com.itextpdf.forms.form.renderer;
 
+import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.form.FormProperty;
+import com.itextpdf.forms.form.element.FormField;
 import com.itextpdf.forms.form.element.IFormField;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.IConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
@@ -50,7 +54,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import org.slf4j.LoggerFactory;
 
 /**
@@ -189,22 +192,6 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
      * {@inheritDoc}
      */
     @Override
-    public void drawChildren(DrawContext drawContext) {
-        drawContext.getCanvas().saveState();
-        boolean flatten = isFlatten();
-        if (flatten) {
-            drawContext.getCanvas().rectangle(applyBorderBox(occupiedArea.getBBox(), false)).clip().endPath();
-            flatRenderer.draw(drawContext);
-        } else {
-            applyAcroField(drawContext);
-        }
-        drawContext.getCanvas().restoreState();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public MinMaxWidth getMinMaxWidth() {
         childRenderers.clear();
         flatRenderer = null;
@@ -213,6 +200,42 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
         MinMaxWidth minMaxWidth = super.getMinMaxWidth();
         return minMaxWidth;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void drawChildren(DrawContext drawContext) {
+        drawContext.getCanvas().saveState();
+        boolean flatten = isFlatten();
+        if (flatten) {
+            PdfCanvas canvas = drawContext.getCanvas();
+            canvas.rectangle(applyBorderBox(occupiedArea.getBBox(), false)).clip().endPath();
+            flatRenderer.draw(drawContext);
+        } else {
+            applyAcroField(drawContext);
+        }
+        drawContext.getCanvas().restoreState();
+    }
+
+    /**
+     * Applies the accessibility properties to the form field.
+     *
+     * @param formField The form field to which the accessibility properties should be applied.
+     * @param pdfDocument The document to which the form field belongs.
+     */
+    protected void applyAccessibilityProperties(PdfFormField formField, PdfDocument pdfDocument) {
+        if (!pdfDocument.isTagged()) {
+            return;
+        }
+        final AccessibilityProperties properties = ((IAccessibleElement) this.modelElement)
+                .getAccessibilityProperties();
+        final String alternativeDescription = properties.getAlternateDescription();
+        if (alternativeDescription != null && !alternativeDescription.isEmpty()) {
+            formField.setAlternativeName(alternativeDescription);
+        }
+    }
+
 
     /**
      * Adjusts the field layout.
@@ -268,6 +291,7 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
      * @return the accessibility language.
      */
     protected String getLang() {
+        //TODO DEVSIX-8205 Use setLanguage method from AccessibilityProperties
         return this.<String>getProperty(FormProperty.FORM_ACCESSIBILITY_LANGUAGE);
     }
 
@@ -277,12 +301,13 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
      * @param document the document
      *
      * @return the conformance level or null if the conformance level is not set.
+     *
      * @deprecated since 8.0.4 will return {@link IConformanceLevel}
      */
     @Deprecated
     protected PdfAConformanceLevel getConformanceLevel(PdfDocument document) {
         return PdfAConformanceLevel.getPDFAConformance(this.<IConformanceLevel>getProperty(
-                FormProperty.FORM_CONFORMANCE_LEVEL),document);
+                FormProperty.FORM_CONFORMANCE_LEVEL), document);
     }
 
     /**
@@ -291,6 +316,7 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
      * @param document the document
      *
      * @return the conformance level or null if the conformance level is not set.
+     *
      * @deprecated since 8.0.4 will be renamed to getConformanceLevel()
      */
     @Deprecated

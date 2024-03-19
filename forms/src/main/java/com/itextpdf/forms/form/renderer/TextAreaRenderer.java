@@ -212,6 +212,7 @@ public class TextAreaRenderer extends AbstractTextFieldRenderer {
         applyDefaultFieldProperties(inputField);
         inputField.getFirstFormAnnotation().setFormFieldElement((TextArea) modelElement);
         inputField.enableFieldRegeneration();
+        applyAccessibilityProperties(inputField, doc);
         PdfFormCreator.getAcroForm(doc, true).addField(inputField, page);
 
         writeAcroFormFieldLangAttribute(doc);
