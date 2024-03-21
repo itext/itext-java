@@ -33,6 +33,7 @@ import com.itextpdf.kernel.pdf.PdfCatalog;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfStream;
@@ -133,6 +134,9 @@ public class PdfUA1Checker implements IValidationChecker {
                         PdfUAExceptionMessageConstants.NON_UNIQUE_ID_ENTRY_IN_STRUCT_TREE_ROOT, obj));
             case PDF_OBJECT:
                 checkPdfObject((PdfObject) obj);
+                break;
+            case CRYPTO:
+                checkCrypto((PdfDictionary) obj);
                 break;
         }
     }
@@ -380,6 +384,20 @@ public class PdfUA1Checker implements IValidationChecker {
                             PdfUAExceptionMessageConstants.FONT_SHOULD_BE_EMBEDDED,
                             String.join(", ", fontNamesThatAreNotEmbedded)
                     ));
+        }
+    }
+
+    private void checkCrypto(PdfDictionary encryptionDictionary) {
+        if (encryptionDictionary != null) {
+            if (!(encryptionDictionary.get(PdfName.P) instanceof PdfNumber)) {
+                throw new PdfUAConformanceException(
+                        PdfUAExceptionMessageConstants.P_VALUE_IS_ABSENT_IN_ENCRYPTION_DICTIONARY);
+            }
+            long permissions = ((PdfNumber) encryptionDictionary.get(PdfName.P)).longValue();
+            if ((permissions & (1L << 8)) == 0) {
+                throw new PdfUAConformanceException(
+                        PdfUAExceptionMessageConstants.TENTH_BIT_OF_P_VALUE_IN_ENCRYPTION_SHOULD_BE_NON_ZERO);
+            }
         }
     }
 

@@ -97,6 +97,10 @@ public final class PdfUAExceptionMessageConstants {
     public static final String ANNOT_TRAP_NET_IS_NOT_PERMITTED = "Annotations of subtype TrapNet shall not be permitted.";
     public static final String PAGE_WITH_ANNOT_DOES_NOT_HAVE_TABS_WITH_S = "A page with annotation(s) doesn't contains Tabs key with S value.";
 
+    public static final String P_VALUE_IS_ABSENT_IN_ENCRYPTION_DICTIONARY = "Permissions are absent " +
+            "in pdf encryption dictionary.";
+    public static final String TENTH_BIT_OF_P_VALUE_IN_ENCRYPTION_SHOULD_BE_NON_ZERO = "10th bit of P value of " +
+            "Encryption dictionary should be 1 if the document is tagged.";
 
     private PdfUAExceptionMessageConstants() {
         // Empty constructor
