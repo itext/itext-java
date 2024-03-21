@@ -93,6 +93,7 @@ public final class PdfUAExceptionMessageConstants {
             "Interactive formfields should have an alternative " +
                     "description. You can set it using FormField#getAccessibilityProperties().setAlternateDescription"
                     + "(\"your alternative description\").";
+    public static final String LINK_ANNOT_IS_NOT_NESTED_WITHIN_LINK = "A link annotation is not nested within a <Link> tag.";
 
 
     private PdfUAExceptionMessageConstants() {

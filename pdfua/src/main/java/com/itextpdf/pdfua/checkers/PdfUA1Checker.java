@@ -52,23 +52,21 @@ import com.itextpdf.kernel.xmp.XMPConst;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
+import com.itextpdf.pdfua.checkers.utils.AnnotationCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.BCP47Validator;
 import com.itextpdf.pdfua.checkers.utils.FormulaCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.GraphicsCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.LayoutCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.NoteCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.PdfUAValidationContext;
-import com.itextpdf.pdfua.checkers.utils.TagTreeHandlerUtil;
 import com.itextpdf.pdfua.checkers.utils.XfaCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.headings.HeadingsChecker;
 import com.itextpdf.pdfua.checkers.utils.tables.TableCheckUtil;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
@@ -330,6 +328,7 @@ public class PdfUA1Checker implements IValidationChecker {
         tagTreeIterator.addHandler(new NoteCheckUtil.NoteTagHandler(context));
         tagTreeIterator.addHandler(new HeadingsChecker.HeadingHandler(context));
         tagTreeIterator.addHandler(new TableCheckUtil.TableHandler(context));
+        tagTreeIterator.addHandler(new AnnotationCheckUtil.AnnotationHandler(context));
         tagTreeIterator.traverse();
     }
 

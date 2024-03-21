@@ -30,6 +30,9 @@ import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 
+/**
+ * Class that provides methods for checking PDF/UA compliance of Formula elements.
+ */
 public final class FormulaCheckUtil {
 
     /**

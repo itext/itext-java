@@ -31,7 +31,10 @@ import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfMarkupAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfPrinterMarkAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
@@ -50,7 +53,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -858,9 +860,18 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (getDocument().isTagged()) {
             if (tagAnnotation) {
                 TagTreePointer tagPointer = getDocument().getTagStructureContext().getAutoTaggingPointer();
-                if (annotation instanceof PdfMarkupAnnotation && StandardRoles.DOCUMENT.equals(tagPointer.getRole())
+                if (!StandardRoles.ANNOT.equals(tagPointer.getRole())
+                        // "Annot" tag was added starting from PDF 1.5
                         && PdfVersion.PDF_1_4.compareTo(getDocument().getPdfVersion()) < 0) {
-                    tagPointer.addTag(StandardRoles.ANNOT);
+
+                    if (PdfVersion.PDF_2_0.compareTo(getDocument().getPdfVersion()) > 0) {
+                        if (!(annotation instanceof PdfWidgetAnnotation) && !(annotation instanceof PdfLinkAnnotation)
+                                && !(annotation instanceof PdfPrinterMarkAnnotation)) {
+                            tagPointer.addTag(StandardRoles.ANNOT);
+                        }
+                    } else if (annotation instanceof PdfMarkupAnnotation) {
+                        tagPointer.addTag(StandardRoles.ANNOT);
+                    }
                 }
                 PdfPage prevPage = tagPointer.getCurrentPage();
                 tagPointer.setPageForTagging(this).addAnnotationTag(annotation);
