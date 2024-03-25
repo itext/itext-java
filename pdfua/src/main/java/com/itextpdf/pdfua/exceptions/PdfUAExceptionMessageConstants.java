@@ -94,6 +94,8 @@ public final class PdfUAExceptionMessageConstants {
                     "description. You can set it using FormField#getAccessibilityProperties().setAlternateDescription"
                     + "(\"your alternative description\").";
     public static final String LINK_ANNOT_IS_NOT_NESTED_WITHIN_LINK = "A link annotation is not nested within a <Link> tag.";
+    public static final String ANNOT_TRAP_NET_IS_NOT_PERMITTED = "Annotations of subtype TrapNet shall not be permitted.";
+    public static final String PAGE_WITH_ANNOT_DOES_NOT_HAVE_TABS_WITH_S = "A page with annotation(s) doesn't contains Tabs key with S value.";
 
 
     private PdfUAExceptionMessageConstants() {

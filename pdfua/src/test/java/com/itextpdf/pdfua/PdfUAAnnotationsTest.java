@@ -70,7 +70,6 @@ import com.itextpdf.kernel.pdf.tagging.PdfObjRef;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
-import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.Link;
@@ -81,14 +80,13 @@ import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator;  // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+import com.itextpdf.test.pdfa.VeraPdfValidator;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -264,13 +262,8 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("TODO DEVSIX-8208 should be complain here about TrapNetwork annot")
-    public void ua1TrapNAnnotDirectChildOfAnnotTest() throws IOException, InterruptedException {
-        String outPdf = DESTINATION_FOLDER + "ua1TrapNAnnotDirectChildOfAnnotTest.pdf";
-        String cmpPdf = SOURCE_FOLDER + "cmp_ua1TrapNAnnotDirectChildOfAnnotTest.pdf";
-
-        try (PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()))) {
+    public void trapNetAnnotNotPermittedTest() throws IOException {
+        framework.addBeforeGenerationHook((pdfDoc) -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
             PdfFormXObject form = new PdfFormXObject(PageSize.A4);
             PdfCanvas canvas = new PdfCanvas(form, pdfDoc);
@@ -285,9 +278,30 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             PdfTrapNetworkAnnotation annot = new PdfTrapNetworkAnnotation(PageSize.A4, form);
             annot.setContents("Some content");
             pdfPage.addAnnotation(annot);
-        }
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+        });
+        framework.assertBothFail("trapNetAnnotNotPermittedTest", PdfUAExceptionMessageConstants.ANNOT_TRAP_NET_IS_NOT_PERMITTED);
+    }
+
+    @Test
+    public void invisibleTrapNetAnnotTest() throws IOException {
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfPage pdfPage = pdfDoc.addNewPage();
+            PdfFormXObject form = new PdfFormXObject(PageSize.A4);
+            PdfCanvas canvas = new PdfCanvas(form, pdfDoc);
+            canvas
+                    .saveState()
+                    .circle(272, 795, 5)
+                    .setColor(ColorConstants.GREEN, true)
+                    .fill()
+                    .restoreState();
+            canvas.release();
+            form.setProcessColorModel(PdfName.DeviceN);
+            PdfTrapNetworkAnnotation annot = new PdfTrapNetworkAnnotation(PageSize.A4, form);
+            annot.setContents("Some content");
+            annot.setFlag(PdfAnnotation.HIDDEN);
+            pdfPage.addAnnotation(annot);
+        });
+        framework.assertBothValid("invisibleTrapNetAnnotTest");
     }
 
     @Test
@@ -435,6 +449,52 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
         Assert.assertEquals(PdfUAExceptionMessageConstants.LINK_ANNOT_IS_NOT_NESTED_WITHIN_LINK, e.getMessage());
     }
 
+    @Test
+    public void undefinedAnnotTest() throws IOException {
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfPage page = pdfDoc.addNewPage();
+
+            PdfCustomAnnot annot = new PdfCustomAnnot(new Rectangle(100, 650, 400, 100));
+            annot.setContents("Content of unique annot");
+            page.addAnnotation(annot);
+        });
+        framework.assertBothValid("undefinedAnnotTest");
+    }
+
+    @Test
+    public void tabsEntryAbsentInPageTest() throws IOException {
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfPage pdfPage = pdfDoc.addNewPage();
+            PdfTextAnnotation annot = createRichTextAnnotation();
+            pdfPage.addAnnotation(annot);
+            pdfPage.getPdfObject().remove(PdfName.Tabs);
+        });
+        framework.assertBothFail("tabsEntryAbsentInPageTest", PdfUAExceptionMessageConstants.PAGE_WITH_ANNOT_DOES_NOT_HAVE_TABS_WITH_S);
+    }
+
+    @Test
+    public void tabsEntryNotSInPageTest() throws IOException {
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfPage pdfPage = pdfDoc.addNewPage();
+            PdfTextAnnotation annot = createRichTextAnnotation();
+            pdfPage.addAnnotation(annot);
+            pdfPage.setTabOrder(PdfName.O);
+        });
+        framework.assertBothFail("tabsEntryNotSInPageTest", PdfUAExceptionMessageConstants.PAGE_WITH_ANNOT_DOES_NOT_HAVE_TABS_WITH_S);
+    }
+
+    @Test
+    public void invalidTabsEntryButAnnotInvisibleTest() throws IOException {
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfPage pdfPage = pdfDoc.addNewPage();
+            PdfTextAnnotation annot = createRichTextAnnotation();
+            annot.setFlag(PdfAnnotation.HIDDEN);
+            pdfPage.addAnnotation(annot);
+            pdfPage.setTabOrder(PdfName.O);
+        });
+        framework.assertBothFail("invalidTabsEntryButAnnotInvisibleTest", PdfUAExceptionMessageConstants.PAGE_WITH_ANNOT_DOES_NOT_HAVE_TABS_WITH_S);
+    }
+
     private PdfTextAnnotation createRichTextAnnotation() {
         PdfTextAnnotation annot = new PdfTextAnnotation(new Rectangle(100, 100, 100, 100));
         annot.setContents("Rich media annot");
@@ -505,6 +565,18 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             return PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    private static class PdfCustomAnnot extends PdfAnnotation {
+
+        protected PdfCustomAnnot(Rectangle rect) {
+            super(rect);
+        }
+
+        @Override
+        public PdfName getSubtype() {
+            return new PdfName("CustomUniqueAnnot");
         }
     }
 }

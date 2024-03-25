@@ -97,10 +97,30 @@ public final class AnnotationCheckUtil {
             }
             PdfObjRef objRef = (PdfObjRef) elem;
             PdfDictionary annotObj = objRef.getReferencedObject();
-            if (annotObj != null && PdfName.Link.equals(annotObj.get(PdfName.Subtype)) && isAnnotationVisible(annotObj)) {
+            if (annotObj == null) {
+                return;
+            }
+
+            if (annotObj.getAsDictionary(PdfName.P) != null) {
+                PdfDictionary pageDict = annotObj.getAsDictionary(PdfName.P);
+                if (!PdfName.S.equals(pageDict.getAsName(PdfName.Tabs))) {
+                    throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.PAGE_WITH_ANNOT_DOES_NOT_HAVE_TABS_WITH_S);
+                }
+            }
+
+            if (!isAnnotationVisible(annotObj)) {
+                return;
+            }
+
+            if (PdfName.TrapNet.equals(annotObj.get(PdfName.Subtype))) {
+                throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.ANNOT_TRAP_NET_IS_NOT_PERMITTED);
+            }
+
+            if (PdfName.Link.equals(annotObj.get(PdfName.Subtype))) {
                 PdfStructElem parentLink = context.getElementIfRoleMatches(PdfName.Link, objRef.getParent());
                 if (parentLink == null) {
-                    throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.LINK_ANNOT_IS_NOT_NESTED_WITHIN_LINK);
+                    throw new PdfUAConformanceException(
+                            PdfUAExceptionMessageConstants.LINK_ANNOT_IS_NOT_NESTED_WITHIN_LINK);
                 }
             }
         }
