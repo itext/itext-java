@@ -75,6 +75,10 @@ public final class PdfUAExceptionMessageConstants {
     public static final String MORE_THAN_ONE_H_TAG = "A node contains more than one H tag.";
     public static final String DOCUMENT_USES_BOTH_H_AND_HN = "Document uses both H and H# tags.";
     public static final String DOCUMENT_SHALL_CONTAIN_VALID_LANG_ENTRY = "Document does not contain valid lang entry.";
+    public static final String MISSING_FORM_FIELD_DESCRIPTION = "Document form fields missing both TU entry and " +
+            "alternative description. For PdfFormfields use PdfFormfield#setAlternativeName" +
+            "(\"Your alternative description\"); For the layout engine use Element#getAccesibilityProperties()" +
+            ".setAlternateDescription(\"your alternative description\")";
     public static final String MISSING_VIEWER_PREFERENCES = "ViewerPreferences dictionary of the Catalog dictionary " +
             "does not contain a DisplayDocTitle entry.";
     public static final String VIEWER_PREFERENCES_IS_FALSE = "ViewerPreferences dictionary of the Catalog dictionary " +
@@ -89,10 +93,6 @@ public final class PdfUAExceptionMessageConstants {
             "File specification dictionary shall contain f key and uf key.";
     public static final String NON_UNIQUE_ID_ENTRY_IN_STRUCT_TREE_ROOT = "ID entry '{0}' shall be unique among all elements " +
             "in the document’s structure hierarchy";
-    public static final String FORM_FIELD_SHALL_CONTAIN_ALT_ENTRY =
-            "Interactive formfields should have an alternative " +
-                    "description. You can set it using FormField#getAccessibilityProperties().setAlternateDescription"
-                    + "(\"your alternative description\").";
     public static final String LINK_ANNOT_IS_NOT_NESTED_WITHIN_LINK = "A link annotation is not nested within a <Link> tag.";
     public static final String ANNOT_TRAP_NET_IS_NOT_PERMITTED = "Annotations of subtype TrapNet shall not be permitted.";
     public static final String PAGE_WITH_ANNOT_DOES_NOT_HAVE_TABS_WITH_S = "A page with annotation(s) doesn't contains Tabs key with S value.";

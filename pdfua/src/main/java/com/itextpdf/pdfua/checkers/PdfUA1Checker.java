@@ -55,6 +55,7 @@ import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.pdfua.checkers.utils.AnnotationCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.BCP47Validator;
+import com.itextpdf.pdfua.checkers.utils.FormCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.FormulaCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.GraphicsCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.LayoutCheckUtil;
@@ -335,6 +336,7 @@ public class PdfUA1Checker implements IValidationChecker {
         tagTreeIterator.addHandler(new HeadingsChecker.HeadingHandler(context));
         tagTreeIterator.addHandler(new TableCheckUtil.TableHandler(context));
         tagTreeIterator.addHandler(new AnnotationCheckUtil.AnnotationHandler(context));
+        tagTreeIterator.addHandler(new FormCheckUtil.FormTagHandler(context));
         tagTreeIterator.traverse();
     }
 

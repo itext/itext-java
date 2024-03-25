@@ -100,7 +100,6 @@ public final class PdfFormAnnotationUtil {
         boolean tagged = document.isTagged();
         if (tagged) {
             tagPointer = document.getTagStructureContext().getAutoTaggingPointer();
-            //TODO DEVSIX-4117 PrintField attributes
             if (!StandardRoles.FORM.equals(tagPointer.getRole())) {
                 tagPointer.addTag(StandardRoles.FORM);
             }
