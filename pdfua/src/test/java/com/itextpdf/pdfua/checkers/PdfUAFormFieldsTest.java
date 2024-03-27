@@ -1295,7 +1295,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testSignatureAppearanceWithSignedAppearanceAndCustomAppearanceTextInteractive()
+    public void testSignedAndCustomAppearanceTextInteractive()
             throws FileNotFoundException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
@@ -1314,7 +1314,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return appearance;
             }
         });
-        framework.assertBothValid("testSignatureAppearanceWithSignedAppearanceAndCustomAppearanceTextInteractive");
+        framework.assertBothValid("testSignedAndCustomAppearanceTextInteractive");
     }
 
     @Test
