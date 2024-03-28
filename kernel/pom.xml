@@ -42,6 +42,17 @@
     </dependency>
   </dependencies>
 
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <includes>
+          <include>**/*.json</include>
+        </includes>
+      </resource>
+    </resources>
+  </build>
+
   <profiles>
     <profile>
       <id>bouncy-castle-test</id>

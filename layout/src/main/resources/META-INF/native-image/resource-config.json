@@ -1,0 +1,349 @@
+{
+  "resources":{
+  "includes":[{
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/external/classes.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/af.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/as.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/bg.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/bn.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/ca.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/cop.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/cs.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/cy.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/da.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/de.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/de_1901.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/de_CH.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/de_DR.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/el.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/el_Polyton.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/en.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/en_GB.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/en_US.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/eo.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/es.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/et.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/eu.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/fi.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/fr.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/ga.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/gl.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/grc.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/gu.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/hi.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/hr.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/hsb.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/hu.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/hy.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/ia.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/id.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/is.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/it.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/kmr.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/kn.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/la.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/lo.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/lt.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/lv.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/ml.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/mn.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/mr.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/nb.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/nl.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/nn.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/no.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/or.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/pa.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/pl.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/pt.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/ro.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/ru.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/sa.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/sk.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/sl.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/sr_Cyrl.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/sr_Latn.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/sv.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/ta.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/te.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/tk.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/tr.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/uk.xml\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.hyphenation.Hyphenator"
+    },
+    "pattern":"\\Qcom/itextpdf/hyph/zh_Latn.xml\\E"
+  }]}
+}

@@ -1,0 +1,8 @@
+{
+  "resources":{
+    "includes":[{
+      "pattern":"\\Qcom/itextpdf/nativeimage/BouncyCastleTest/encrypted.pdf\\E"
+    }, {
+      "pattern":"\\Qcom/itextpdf/nativeimage/BouncyCastleTest/isa.pdf\\E"
+    }]}
+}

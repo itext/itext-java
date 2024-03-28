@@ -66,6 +66,7 @@
     <module>bouncy-castle-adapter</module>
     <module>bouncy-castle-connector</module>
     <module>pdfua</module>
+    <module>native-image-test</module>
   </modules>
 
   <scm>
@@ -349,6 +350,10 @@
               <packages>com.itextpdf.layout*</packages>
             </group>
             <group>
+              <title>Native Image Test</title>
+              <packages>com.itextpdf.nativeimage*</packages>
+            </group>
+            <group>
               <title>PDF/A</title>
               <packages>com.itextpdf.pdfa*</packages>
             </group>
@@ -499,6 +504,8 @@
                   <excludeModule>bouncy-castle-adapter</excludeModule>
                   <excludeModule>bouncy-castle-connector</excludeModule>
                   <excludeModule>bouncy-castle-fips-adapter</excludeModule>
+                  <!-- TODO DEVSIX-8072 Enable japicmp after release -->
+                  <excludeModule>native-image-test</excludeModule>
                 </excludeModules>
               </parameter>
             </configuration>
@@ -521,7 +528,7 @@
           </plugin>
           <plugin>
             <artifactId>maven-resources-plugin</artifactId>
-            <version>3.1.0</version>
+            <version>3.3.1</version>
             <executions>
               <execution>
                 <id>default-resources</id>
@@ -621,14 +628,6 @@
           <!-- Run unit tests -->
           <plugin>
             <artifactId>maven-surefire-plugin</artifactId>
-            <dependencies>
-              <dependency>
-                <groupId>org.apache.maven.surefire</groupId>
-                <artifactId>surefire-junit47</artifactId>
-                <version>${surefire.version}</version>
-                <scope>compile</scope>
-              </dependency>
-            </dependencies>
             <configuration>
               <skipTests>false</skipTests>
               <groups>${unittests}</groups>

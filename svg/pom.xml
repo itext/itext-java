@@ -39,6 +39,7 @@
         <directory>${basedir}/src/main/resources</directory>
         <includes>
           <include>**/*.css</include>
+          <include>**/*.json</include>
         </includes>
       </resource>
     </resources>

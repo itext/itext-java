@@ -656,6 +656,7 @@
         <module name="pdftest" />
         <module name="font-asian" />
         <module name="hyph" />
+        <module name="native-image-test" />
     </src>
 
     <test>

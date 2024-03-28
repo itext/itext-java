@@ -43,6 +43,7 @@
           <include>**/*.html</include>
           <include>**/*.txt</include>
           <include>**/*.properties</include>
+          <include>**/*.json</include>
         </includes>
       </resource>
     </resources>
