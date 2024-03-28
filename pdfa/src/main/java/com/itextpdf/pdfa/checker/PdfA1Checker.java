@@ -28,7 +28,6 @@ import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
-import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.PatternColor;
 import com.itextpdf.kernel.exceptions.PdfException;
@@ -366,7 +365,8 @@ public class PdfA1Checker extends PdfAChecker {
      */
     @Override
     public void checkText(String text, PdfFont font) {
-        if (!FontCheckUtil.doesFontContainAllUsedGlyphs(text, font)) {
+        int index = FontCheckUtil.checkGlyphsOfText(text, font, new ACharacterChecker());
+        if (index != -1) {
             throw new PdfAConformanceException(
                     PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS);
         }
@@ -822,5 +822,12 @@ public class PdfA1Checker extends PdfAChecker {
 
     private int getMaxDictionaryCapacity() {
         return 4095;
+    }
+
+    private static final class ACharacterChecker implements FontCheckUtil.CharacterChecker {
+        @Override
+        public boolean check(int ch, PdfFont font) {
+            return !font.containsGlyph(ch);
+        }
     }
 }

@@ -59,8 +59,8 @@ public final class PdfUAExceptionMessageConstants {
             + "replacement text.";
 
     public static final String NOTE_TAG_SHALL_HAVE_ID_ENTRY = "Note tags shall include a unique ID entry.";
-    public static final String EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS = "Embedded fonts shall define all " +
-            "glyphs referenced for rendering within the conforming file.";
+    public static final String GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE =
+            "The '{0}' glyph either isn't defined in embedded font or doesn't have unicode mapping.";
     public static final String DOCUMENT_SHALL_CONTAIN_XMP_METADATA_STREAM
             = "Document shall contain a XMP metadata stream.";
     public static final String METADATA_SHALL_CONTAIN_UA_VERSION_IDENTIFIER

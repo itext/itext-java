@@ -35,14 +35,15 @@ public final class FontCheckUtil {
     }
 
     /**
-     * Checks if all characters in the string contain a valid glyph in the font.
+     * Checks the text by the passed checker and the font.
      *
-     * @param text The string we want to compare.
-     * @param font The font we want to check
+     * @param text the text to check
+     * @param font the font to check
+     * @param checker the checker which checks the text according to the font
      *
-     * @return {@code true} if all glyphs in the string are available in the font.
+     * @return {@code -1} if no character passes the check, or index of the first symbol which passes the check
      */
-    public static boolean doesFontContainAllUsedGlyphs(String text, PdfFont font) {
+    public static int checkGlyphsOfText(String text, PdfFont font, CharacterChecker checker) {
         for (int i = 0; i < text.length(); ++i) {
             int ch;
             if (TextUtil.isSurrogatePair(text, i)) {
@@ -51,10 +52,25 @@ public final class FontCheckUtil {
             } else {
                 ch = text.charAt(i);
             }
-            if (!font.containsGlyph(ch)) {
-                return false;
+            if (checker.check(ch, font)) {
+                return i;
             }
         }
-        return true;
+        return -1;
+    }
+
+    /**
+     * Character checker which performs check of passed symbol against the font.
+     */
+    public static interface CharacterChecker {
+        /**
+         * Checks passed symbol against the font
+         *
+         * @param ch character to check
+         * @param font font to check
+         *
+         * @return {@code true} if check passes, otherwise {@code false}
+         */
+        boolean check(int ch, PdfFont font);
     }
 }

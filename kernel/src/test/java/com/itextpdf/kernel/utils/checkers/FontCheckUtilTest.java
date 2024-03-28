@@ -22,9 +22,13 @@
  */
 package com.itextpdf.kernel.utils.checkers;
 
+import com.itextpdf.io.font.FontEncoding;
+import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
+import com.itextpdf.kernel.utils.checkers.FontCheckUtil.CharacterChecker;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
@@ -36,17 +40,64 @@ import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
 public class FontCheckUtilTest extends ExtendedITextTest {
+    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/fonts/";
 
     @Test
     public void checkFontAvailable() throws IOException {
         PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA);
-        Assert.assertTrue(FontCheckUtil.doesFontContainAllUsedGlyphs("123", font));
+        Assert.assertEquals(-1, FontCheckUtil.checkGlyphsOfText("123", font, new CharacterChecker() {
+            @Override
+            public boolean check(int ch, PdfFont fontToCheck) {
+                return !fontToCheck.containsGlyph(ch);
+            }
+        }));
     }
 
 
     @Test
     public void checkFontNotAvailable() throws IOException {
         PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA);
-        Assert.assertFalse(FontCheckUtil.doesFontContainAllUsedGlyphs("⫊", font));
+        Assert.assertEquals(2, FontCheckUtil.checkGlyphsOfText("hi⫊", font, new CharacterChecker() {
+            @Override
+            public boolean check(int ch, PdfFont fontToCheck) {
+                return !fontToCheck.containsGlyph(ch);
+            }
+        }));
+    }
+
+    @Test
+    public void checkUnicodeMappingNotAvailable() throws IOException {
+        PdfFont font = PdfFontFactory.createFont(
+                FontProgramFactory.createType1Font(FONTS_FOLDER + "cmr10.afm", FONTS_FOLDER + "cmr10.pfb"),
+                FontEncoding.FONT_SPECIFIC, EmbeddingStrategy.FORCE_EMBEDDED);
+        int index  = FontCheckUtil.checkGlyphsOfText("h i", font, new CharacterChecker() {
+            @Override
+            public boolean check(int ch, PdfFont fontToCheck) {
+                if (fontToCheck.containsGlyph(ch)) {
+                    return !fontToCheck.getGlyph(ch).hasValidUnicode();
+                } else {
+                    return true;
+                }
+            }
+        });
+        Assert.assertEquals(1, index);
+    }
+
+    @Test
+    public void checkUnicodeMappingAvailable() throws IOException {
+        PdfFont font = PdfFontFactory.createFont(
+                FontProgramFactory.createType1Font(FONTS_FOLDER + "cmr10.afm", FONTS_FOLDER + "cmr10.pfb"),
+                FontEncoding.FONT_SPECIFIC, EmbeddingStrategy.FORCE_EMBEDDED);
+        int index  = FontCheckUtil.checkGlyphsOfText("hi", font, new CharacterChecker() {
+            @Override
+            public boolean check(int ch, PdfFont fontToCheck) {
+                if (fontToCheck.containsGlyph(ch)) {
+                    return !fontToCheck.getGlyph(ch).hasValidUnicode();
+                } else {
+                    return true;
+                }
+            }
+        });
+        Assert.assertEquals(-1, index);
     }
 }

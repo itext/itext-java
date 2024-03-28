@@ -24,7 +24,6 @@ package com.itextpdf.pdfua.checkers;
 
 import com.itextpdf.commons.datastructures.Tuple2;
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.pdf.IsoKey;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -156,9 +155,11 @@ public class PdfUA1Checker implements IValidationChecker {
 
 
     private void checkText(String str, PdfFont font) {
-        if (!FontCheckUtil.doesFontContainAllUsedGlyphs(str, font)) {
-            throw new PdfUAConformanceException(
-                    PdfUAExceptionMessageConstants.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS);
+        int index = FontCheckUtil.checkGlyphsOfText(str, font, new UaCharacterChecker());
+
+        if (index != -1) {
+            throw new PdfUAConformanceException(MessageFormatUtil.format(
+                    PdfUAExceptionMessageConstants.GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE, str.charAt(index)));
         }
     }
 
@@ -413,6 +414,17 @@ public class PdfUA1Checker implements IValidationChecker {
             PdfName type = dict.getAsName(PdfName.Type);
             if (PdfName.Filespec.equals(type)) {
                 checkFileSpec(dict);
+            }
+        }
+    }
+
+    private static final class UaCharacterChecker implements FontCheckUtil.CharacterChecker {
+        @Override
+        public boolean check(int ch, PdfFont font) {
+            if (font.containsGlyph(ch)) {
+                return !font.getGlyph(ch).hasValidUnicode();
+            } else {
+                return true;
             }
         }
     }

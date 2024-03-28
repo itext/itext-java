@@ -23,6 +23,8 @@
 package com.itextpdf.pdfua.checkers;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.io.font.FontEncoding;
+import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.font.otf.GlyphLine;
@@ -32,7 +34,6 @@ import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -65,6 +66,7 @@ import org.junit.experimental.categories.Category;
 @Category(UnitTest.class)
 public class PdfUACanvasTest extends ExtendedITextTest {
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/FreeSans.ttf";
+    private static final String FONT_FOLDER = "./src/test/resources/com/itextpdf/pdfua/font/";
 
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfua/PdfUACanvasTest/";
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfua/PdfUACanvasTest/";
@@ -1009,6 +1011,39 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                 SOURCE_FOLDER + "cmp_validNoteTagPresent.pdf",
                 DESTINATION_FOLDER, "diff_")
         );
+    }
+
+    @Test
+    public void usingCharacterWithoutUnicodeMappingTest() throws IOException {
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfFont font;
+            try {
+                font = PdfFontFactory.createFont(
+                        FontProgramFactory.createType1Font(FONT_FOLDER + "cmr10.afm", FONT_FOLDER + "cmr10.pfb"),
+                        FontEncoding.FONT_SPECIFIC, EmbeddingStrategy.FORCE_EMBEDDED);
+            } catch (IOException e) {
+                throw new RuntimeException();
+            }
+
+            final PdfPage page = pdfDoc.addNewPage();
+            TagTreePointer tagPointer = new TagTreePointer(pdfDoc)
+                    .setPageForTagging(page)
+                    .addTag(StandardRoles.P);
+
+            new PdfCanvas(page)
+                    .openTag(tagPointer.getTagReference())
+                    .saveState()
+                    .beginText()
+                    .moveText(36, 700)
+                    .setFontAndSize(font, 72)
+                    // space symbol isn't defined in the font
+                    .showText("Hello world")
+                    .endText()
+                    .restoreState()
+                    .closeTag();
+        });
+        framework.assertBothFail("usingCharacterWithoutUnicodeMappingTest",
+                MessageFormatUtil.format(PdfUAExceptionMessageConstants.GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE, " "), false);
     }
 
     private PdfFont getFont() {

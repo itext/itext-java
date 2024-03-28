@@ -22,6 +22,7 @@
  */
 package com.itextpdf.pdfua.checkers;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -37,6 +38,7 @@ import com.itextpdf.pdfua.PdfUATestPdfDocument;
 import com.itextpdf.pdfua.UaValidationTestFramework;
 import com.itextpdf.pdfua.UaValidationTestFramework.Generator;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
+import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
@@ -149,7 +151,8 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
                 return p;
             }
         });
-        framework.assertBothFail("layout06", false);
+        framework.assertBothFail("layout06",
+                MessageFormatUtil.format(PdfUAExceptionMessageConstants.GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE, "⫊"), false);
     }
 
     @Test
@@ -163,7 +166,8 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
                 return p;
             }
         });
-        framework.assertBothFail("layout07", false);
+        framework.assertBothFail("layout07",
+                MessageFormatUtil.format(PdfUAExceptionMessageConstants.GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE, "⫊"), false);
     }
 
     @Test
@@ -256,9 +260,10 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
         tagPointer.setPageForTagging(document.getFirstPage());
         tagPointer.addTag(StandardRoles.FORMULA);
         canvas.openTag(tagPointer.getTagReference()).saveState().beginText().setFontAndSize(font, 12);
-        Assert.assertThrows(PdfUAConformanceException.class, () -> {
-            canvas.showText("⫊");
-        });
+        Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> canvas.showText("⫊"));
+        Assert.assertEquals(
+                MessageFormatUtil.format(PdfUAExceptionMessageConstants.GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE, "⫊"),
+                e.getMessage());
     }
 
     private static PdfFont loadFont(String fontPath) {
