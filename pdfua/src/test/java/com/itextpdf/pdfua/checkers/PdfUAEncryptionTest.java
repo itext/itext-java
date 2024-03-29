@@ -25,6 +25,7 @@ package com.itextpdf.pdfua.checkers;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.pdf.EncryptionConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfPage;
@@ -68,7 +69,7 @@ public class PdfUAEncryptionTest extends ExtendedITextTest {
             throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "encryptWithPassword.pdf";
         WriterProperties writerProperties = PdfUATestPdfDocument.createWriterProperties()
-                .setStandardEncryption(USER_PASSWORD, OWNER_PASSWORD, -1, 3);
+                .setStandardEncryption(USER_PASSWORD, OWNER_PASSWORD, EncryptionConstants.ALLOW_SCREENREADERS, 3);
         try (PdfWriter writer = new PdfWriter(outPdf,
                 writerProperties);
              PdfUATestPdfDocument document = new PdfUATestPdfDocument(writer)) {
@@ -83,7 +84,7 @@ public class PdfUAEncryptionTest extends ExtendedITextTest {
             throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "encryptWithPassword2.pdf";
         WriterProperties writerProperties = PdfUATestPdfDocument.createWriterProperties()
-                .setStandardEncryption(USER_PASSWORD, OWNER_PASSWORD, 0, 3);
+                .setStandardEncryption(USER_PASSWORD, OWNER_PASSWORD,  ~EncryptionConstants.ALLOW_SCREENREADERS, 3);
         PdfUATestPdfDocument document = new PdfUATestPdfDocument(new PdfWriter(outPdf, writerProperties));
         writeTextToDocument(document);
         Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> document.close());

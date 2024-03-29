@@ -22,6 +22,7 @@
  */
 package com.itextpdf.pdfua;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.CheckBoxFormFieldBuilder;
 import com.itextpdf.forms.fields.PdfButtonFormField;
@@ -47,13 +48,16 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfUAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.Pdf3DAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfFileAttachmentAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfInkAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfPopupAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfPrinterMarkAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfRedactAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfScreenAnnotation;
@@ -70,6 +74,8 @@ import com.itextpdf.kernel.pdf.tagging.PdfObjRef;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
+import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.Link;
@@ -216,6 +222,67 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             pdfPage.addAnnotation(screen);
         });
         framework.assertBothValid("ua1ScreenAnnotDirectChildOfAnnotTest");
+    }
+
+    @Test
+    public void ua1ScreenAnnotWithoutContentsAndAltTest() throws IOException {
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfPage pdfPage = pdfDoc.addNewPage();
+            PdfScreenAnnotation screen = new PdfScreenAnnotation(new Rectangle(100, 100));
+            pdfPage.addAnnotation(screen);
+        });
+        framework.assertBothFail("ua1ScreenWithoutContentsTest",
+                MessageFormatUtil.format(PdfUAExceptionMessageConstants.ANNOTATION_OF_TYPE_0_SHOULD_HAVE_CONTENTS_OR_ALT_KEY, "Screen"));
+    }
+
+    @Test
+    public void ua1PopupWithoutContentOrAltTest() throws IOException {
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfPage pdfPage = pdfDoc.addNewPage();
+            PdfPopupAnnotation popup = new PdfPopupAnnotation(new Rectangle(0f, 0f));
+            pdfPage.addAnnotation(popup);
+        });
+        framework.assertBothValid("ua1PopupWithoutContentOrAltTest");
+    }
+
+    @Test
+    public void ua1StampAnnotWithAltTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "ua1StampAnnotWithAltTest.pdf";
+        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
+                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+        PdfPage pdfPage = pdfDoc.addNewPage();
+        PdfStampAnnotation stamp = new PdfStampAnnotation(new Rectangle(0, 0, 100, 50));
+        stamp.setStampName(PdfName.Approved);
+        stamp.getPdfObject().put(PdfName.Type, PdfName.Annot);
+
+        pdfPage.addAnnotation(stamp);
+        stamp.getPdfObject().put(PdfName.Alt, new PdfString("Alt description"));
+        pdfPage.addAnnotation(stamp);
+        AssertUtil.doesNotThrow(() -> {
+            pdfDoc.close();
+        });
+        Assert.assertNull(new CompareTool().compareByContent(outPdf,
+                SOURCE_FOLDER + "cmp_ua1StampAnnotWithAltTest.pdf",
+                DESTINATION_FOLDER, "diff_"));
+        Assert.assertNotNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+    }
+
+    @Test
+    public void ua1ScreenAnnotWithAltTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "ua1ScreenAnnotWithAltTest.pdf";
+        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
+                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+        PdfPage pdfPage = pdfDoc.addNewPage();
+        PdfScreenAnnotation screen = new PdfScreenAnnotation(new Rectangle(100, 100));
+        pdfPage.addAnnotation(screen);
+        screen.getPdfObject().put(PdfName.Alt, new PdfString("Alt description"));
+        AssertUtil.doesNotThrow(() -> {
+                    pdfDoc.close();
+                });
+        Assert.assertNull(new CompareTool().compareByContent(outPdf,
+                SOURCE_FOLDER + "cmp_ua1ScreenAnnotWithAltTest.pdf",
+                DESTINATION_FOLDER, "diff_"));
+        Assert.assertNotNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
     @Test
@@ -387,6 +454,25 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             doc.add(p2);
         });
         framework.assertBothValid("linkAnnotNestedWithinLinkTest");
+    }
+
+    @Test
+    public void linkAnnotWithoutContentsTest() throws IOException {
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            Rectangle rect = new Rectangle(100, 650, 400, 100);
+            PdfLinkAnnotation annot = new PdfLinkAnnotation(rect).setAction(PdfAction.createURI("https://itextpdf.com/"));
+
+            Document doc = new Document(pdfDoc);
+            Paragraph p2 = new Paragraph("Text");
+            p2.setFont(loadFont());
+            p2.getAccessibilityProperties().setRole(StandardRoles.LINK);
+            p2.setProperty(Property.LINK_ANNOTATION, annot);
+
+            doc.add(p2);
+            doc.getPdfDocument().getPage(1).getPdfObject().getAsArray(PdfName.Annots)
+                    .getAsDictionary(0).put(PdfName.Alt, new PdfString("Alt description"));
+        });
+        framework.assertBothFail("linkAnnotNestedWithinLinkWithAnAlternateDescriptionTest");
     }
 
     @Test

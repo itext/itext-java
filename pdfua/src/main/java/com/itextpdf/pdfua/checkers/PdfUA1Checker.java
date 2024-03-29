@@ -25,6 +25,7 @@ package com.itextpdf.pdfua.checkers;
 import com.itextpdf.commons.datastructures.Tuple2;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.pdf.EncryptionConstants;
 import com.itextpdf.kernel.pdf.IsoKey;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
@@ -394,8 +395,8 @@ public class PdfUA1Checker implements IValidationChecker {
                 throw new PdfUAConformanceException(
                         PdfUAExceptionMessageConstants.P_VALUE_IS_ABSENT_IN_ENCRYPTION_DICTIONARY);
             }
-            long permissions = ((PdfNumber) encryptionDictionary.get(PdfName.P)).longValue();
-            if ((permissions & (1L << 8)) == 0) {
+            int permissions = ((PdfNumber) encryptionDictionary.get(PdfName.P)).intValue();
+            if ((EncryptionConstants.ALLOW_SCREENREADERS & permissions) == 0) {
                 throw new PdfUAConformanceException(
                         PdfUAExceptionMessageConstants.TENTH_BIT_OF_P_VALUE_IN_ENCRYPTION_SHOULD_BE_NON_ZERO);
             }
