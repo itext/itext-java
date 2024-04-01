@@ -62,8 +62,10 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.security.cert.X509CRL;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.List;
 
 /**
  * This class contains a series of static methods that
@@ -99,17 +101,7 @@ public class CertificateUtil {
      * @return the String where you can check if the certificate was revoked
      */
     public static String getCRLURL(X509Certificate certificate) {
-        IASN1Primitive obj;
-        try {
-            obj = getExtensionValue(certificate, FACTORY.createExtension().getCRlDistributionPoints().getId());
-        } catch (IOException e) {
-            obj = null;
-        }
-        if (obj == null) {
-            return null;
-        }
-        ICRLDistPoint dist = FACTORY.createCRLDistPoint(obj);
-        IDistributionPoint[] dists = dist.getDistributionPoints();
+        IDistributionPoint[] dists = getDistributionPoints(certificate);
         for (IDistributionPoint p : dists) {
             IDistributionPointName distributionPointName = p.getDistributionPoint();
             if (FACTORY.createDistributionPointName().getFullName() != distributionPointName.getType()) {
@@ -124,6 +116,34 @@ public class CertificateUtil {
                 IDERIA5String derStr = FACTORY
                         .createDERIA5String(FACTORY.createASN1TaggedObject(name.toASN1Primitive()), false);
                 return derStr.getString();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Gets the Distribution Point from the certificate by name specified in the Issuing Distribution Point from the
+     * Certificate Revocation List for a Certificate.
+     *
+     * @param certificate                  the certificate to retrieve Distribution Points
+     * @param issuingDistributionPointName distributionPointName retrieved from the IDP of the CRL
+     *
+     * @return distribution point withthe same name as specified in the IDP.
+     */
+    public static IDistributionPoint getDistributionPointByName(X509Certificate certificate,
+                                                                IDistributionPointName issuingDistributionPointName) {
+        IDistributionPoint[] distributionPoints = getDistributionPoints(certificate);
+        List<IGeneralName> issuingNames = Arrays.asList(
+                FACTORY.createGeneralNames(issuingDistributionPointName.getName()).getNames());
+        for (IDistributionPoint distributionPoint : distributionPoints) {
+            IDistributionPointName distributionPointName = distributionPoint.getDistributionPoint();
+            IGeneralNames generalNames = distributionPointName.isNull() ? distributionPoint.getCRLIssuer() :
+                    FACTORY.createGeneralNames(distributionPointName.getName());
+            IGeneralName[] names = generalNames.getNames();
+            for (IGeneralName name : names) {
+                if (issuingNames.contains(name)) {
+                    return distributionPoint;
+                }
             }
         }
         return null;
@@ -448,26 +468,30 @@ public class CertificateUtil {
     // helper methods
 
     /**
+     * Gets certificate extension value.
+     *
      * @param certificate the certificate from which we need the ExtensionValue
-     * @param oid         the Object Identifier value for the extension.
+     * @param oid         the Object Identifier value for the extension
      *
      * @return the extension value as an {@link IASN1Primitive} object.
      * 
-     * @throws IOException on processing exception
+     * @throws IOException on processing exception.
      */
     public static IASN1Primitive getExtensionValue(X509Certificate certificate, String oid) throws IOException {
         return getExtensionValueFromByteArray(SignUtils.getExtensionValueByOid(certificate, oid));
     }
 
     /**
+     * Gets CRL extension value.
+     *
      * @param crl the CRL from which we need the ExtensionValue
-     * @param oid the Object Identifier value for the extension.
+     * @param oid the Object Identifier value for the extension
      *
      * @return the extension value as an {@link IASN1Primitive} object.
      *
-     * @throws IOException on processing exception
+     * @throws IOException on processing exception.
      */
-    private static IASN1Primitive getExtensionValue(CRL crl, String oid) throws IOException {
+    public static IASN1Primitive getExtensionValue(CRL crl, String oid) throws IOException {
         return getExtensionValueFromByteArray(SignUtils.getExtensionValueByOid(crl, oid));
     }
 
@@ -550,5 +574,19 @@ public class CertificateUtil {
             }
         }
         return null;
+    }
+
+    private static IDistributionPoint[] getDistributionPoints(X509Certificate certificate) {
+        IASN1Primitive obj;
+        try {
+            obj = getExtensionValue(certificate, FACTORY.createExtension().getCRlDistributionPoints().getId());
+        } catch (IOException e) {
+            obj = null;
+        }
+        if (obj == null) {
+            return new IDistributionPoint[0];
+        }
+        ICRLDistPoint dist = FACTORY.createCRLDistPoint(obj);
+        return dist.getDistributionPoints();
     }
 }

@@ -34,6 +34,7 @@ public class CRLReasonBCFips extends ASN1EncodableBCFips implements ICRLReason {
     private static final CRLReasonBCFips INSTANCE = new CRLReasonBCFips(null);
 
     private static final int KEY_COMPROMISE = CRLReason.keyCompromise;
+    private static final int REMOVE_FROM_CRL = CRLReason.removeFromCRL;
 
     /**
      * Creates new wrapper instance for {@link CRLReason}.
@@ -68,5 +69,13 @@ public class CRLReasonBCFips extends ASN1EncodableBCFips implements ICRLReason {
     @Override
     public int getKeyCompromise() {
         return KEY_COMPROMISE;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getRemoveFromCRL() {
+        return REMOVE_FROM_CRL;
     }
 }

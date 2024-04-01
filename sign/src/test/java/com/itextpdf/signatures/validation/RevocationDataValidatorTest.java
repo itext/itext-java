@@ -37,6 +37,7 @@ import com.itextpdf.signatures.testutils.builder.TestOcspResponseBuilder;
 import com.itextpdf.signatures.testutils.client.TestCrlClient;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
 import com.itextpdf.signatures.validation.report.CertificateReportItem;
+import com.itextpdf.signatures.validation.report.ReportItem;
 import com.itextpdf.signatures.validation.report.ValidationReport;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
@@ -403,5 +404,39 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
         Assert.assertEquals(ValidationReport.ValidationResult.VALID, report.getValidationResult());
 
         Assert.assertEquals(ValidationReport.ValidationResult.VALID, report.getValidationResult());
+    }
+
+    @Test
+    public void crlWithOnlySomeReasonsTest() throws Exception {
+        TestCrlBuilder builder1 = new TestCrlBuilder(caCert, caPrivateKey);
+        builder1.addExtension(FACTORY.createExtension().getIssuingDistributionPoint(), true,
+                FACTORY.createIssuingDistributionPoint(null, false, false,
+                        FACTORY.createReasonFlags(CRLValidator.ALL_REASONS - 31), false, false));
+        TestCrlBuilder builder2 = new TestCrlBuilder(caCert, caPrivateKey);
+        builder2.addExtension(FACTORY.createExtension().getIssuingDistributionPoint(), true,
+                FACTORY.createIssuingDistributionPoint(null, false, false,
+                        FACTORY.createReasonFlags(31), false, false));
+        TestCrlClient crlClient = new TestCrlClient()
+                .addBuilderForCertIssuer(builder1)
+                .addBuilderForCertIssuer(builder2);
+        TestOcspResponseBuilder ocspBuilder = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
+        ocspBuilder.setProducedAt(DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, -100));
+
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        certificateRetriever.setTrustedCertificates(Collections.singletonList(caCert));
+        ValidationReport report = new ValidationReport();
+        RevocationDataValidator validator = new RevocationDataValidator();
+        validator.setIssuingCertificateRetriever(certificateRetriever)
+                .setOnlineFetching(RevocationDataValidator.OnlineFetching.NEVER_FETCH)
+                .addOcspClient(new TestOcspClient().addBuilderForCertIssuer(caCert, ocspBuilder))
+                .addCrlClient(crlClient);
+        validator.validate(report, checkCert, TimeTestUtil.TEST_DATE_TIME);
+
+        Assert.assertEquals(ValidationReport.ValidationResult.VALID, report.getValidationResult());
+        Assert.assertEquals(0, report.getFailures().size());
+        CertificateReportItem reportItem = (CertificateReportItem) report.getLogs().get(2);
+        Assert.assertEquals(ReportItem.ReportItemStatus.INFO, reportItem.getStatus());
+        Assert.assertEquals(checkCert, reportItem.getCertificate());
+        Assert.assertEquals(CRLValidator.ONLY_SOME_REASONS_CHECKED, reportItem.getMessage());
     }
 }

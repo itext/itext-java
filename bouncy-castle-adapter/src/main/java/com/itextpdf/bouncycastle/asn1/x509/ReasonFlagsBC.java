@@ -20,26 +20,31 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.commons.bouncycastle.asn1.x509;
+package com.itextpdf.bouncycastle.asn1.x509;
 
-import com.itextpdf.commons.bouncycastle.asn1.IASN1Encodable;
+import com.itextpdf.bouncycastle.asn1.ASN1BitStringBC;
+import com.itextpdf.commons.bouncycastle.asn1.x509.IReasonFlags;
+import org.bouncycastle.asn1.x509.ReasonFlags;
 
 /**
- * This interface represents the wrapper for CRLReason that provides the ability
- * to switch between bouncy-castle and bouncy-castle FIPS implementations.
+ * Wrapper class for {@link ReasonFlags}.
  */
-public interface ICRLReason extends IASN1Encodable {
+public class ReasonFlagsBC extends ASN1BitStringBC implements IReasonFlags {
     /**
-     * Gets {@code keyCompromise} constant for the wrapped CRLReason.
+     * Creates new wrapper instance for {@link ReasonFlags}.
      *
-     * @return CRLReason.keyCompromise value.
+     * @param reasonFlags {@link ReasonFlags} to be wrapped
      */
-    int getKeyCompromise();
+    public ReasonFlagsBC(ReasonFlags reasonFlags) {
+        super(reasonFlags);
+    }
 
     /**
-     * Gets {@code removeFromCRL} constant for the wrapped CRLReason.
+     * Gets actual org.bouncycastle object being wrapped.
      *
-     * @return CRLReason.removeFromCRL value.
+     * @return wrapped {@link ReasonFlags}.
      */
-    int getRemoveFromCRL();
+    public ReasonFlags getReasonFlags() {
+        return (ReasonFlags) getEncodable();
+    }
 }

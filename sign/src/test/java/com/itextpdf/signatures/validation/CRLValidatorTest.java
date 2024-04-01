@@ -25,6 +25,7 @@ package com.itextpdf.signatures.validation;
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.utils.DateTimeUtil;
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.signatures.CertificateUtil;
 import com.itextpdf.signatures.IssuingCertificateRetriever;
@@ -36,6 +37,8 @@ import com.itextpdf.signatures.testutils.builder.TestCrlBuilder;
 import com.itextpdf.signatures.validation.extensions.CertificateExtension;
 import com.itextpdf.signatures.validation.extensions.KeyUsage;
 import com.itextpdf.signatures.validation.extensions.KeyUsageExtension;
+import com.itextpdf.signatures.validation.report.CertificateReportItem;
+import com.itextpdf.signatures.validation.report.ReportItem;
 import com.itextpdf.signatures.validation.report.ValidationReport;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
@@ -53,6 +56,7 @@ import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -228,6 +232,158 @@ public class CRLValidatorTest extends ExtendedITextTest {
         Assert.assertEquals(CRLValidator.CRL_INVALID, report.getFailures().get(0).getMessage());
     }
 
+    @Test
+    public void crlContainsOnlyCACertsTest() throws Exception {
+        String crlPath = SOURCE_FOLDER + "issuingDistributionPointTest/onlyCA.crl";
+        ValidationReport report = checkCrlScope(crlPath);
+        Assert.assertEquals(ValidationReport.ValidationResult.INDETERMINATE, report.getValidationResult());
+        Assert.assertEquals(1, report.getFailures().size());
+        Assert.assertEquals(CRLValidator.CERTIFICATE_IS_NOT_IN_THE_CRL_SCOPE, report.getFailures().get(0).getMessage());
+    }
+
+    @Test
+    public void crlContainsOnlyUserCertsTest() throws Exception {
+        String crlPath = SOURCE_FOLDER + "issuingDistributionPointTest/onlyUser.crl";
+        ValidationReport report = checkCrlScope(crlPath);
+        Assert.assertEquals(ValidationReport.ValidationResult.VALID, report.getValidationResult());
+        Assert.assertEquals(0, report.getFailures().size());
+    }
+
+    @Test
+    public void crlContainsOnlyAttributeCertsTest() throws Exception {
+        String crlPath = SOURCE_FOLDER + "issuingDistributionPointTest/onlyAttr.crl";
+        ValidationReport report = checkCrlScope(crlPath);
+        Assert.assertEquals(ValidationReport.ValidationResult.INDETERMINATE, report.getValidationResult());
+        Assert.assertEquals(1, report.getFailures().size());
+        Assert.assertEquals(CRLValidator.ATTRIBUTE_CERTS_ASSERTED, report.getFailures().get(0).getMessage());
+    }
+
+    @Test
+    public void onlySomeReasonsTest() throws Exception {
+        String root = SOURCE_FOLDER + "issuingDistributionPointTest/root.pem";
+        String sign = SOURCE_FOLDER + "issuingDistributionPointTest/sign.pem";
+        X509Certificate rootCert = (X509Certificate) PemFileHelper.readFirstChain(root)[0];
+        PrivateKey rootKey = PemFileHelper.readFirstKey(root, KEY_PASSWORD);
+        X509Certificate signCert = (X509Certificate) PemFileHelper.readFirstChain(sign)[0];
+        TestCrlBuilder builder = new TestCrlBuilder(rootCert, rootKey);
+        builder.addExtension(FACTORY.createExtension().getIssuingDistributionPoint(), true,
+                FACTORY.createIssuingDistributionPoint(null, false, false,
+                        FACTORY.createReasonFlags(CRLValidator.ALL_REASONS - 31), false, false));
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        certificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
+        ValidationReport report = new ValidationReport();
+        validator.setIssuingCertificateRetriever(certificateRetriever);
+        validator.validate(report, signCert,
+                (X509CRL) CertificateUtil.parseCrlFromStream(new ByteArrayInputStream(builder.makeCrl())),
+                TimeTestUtil.TEST_DATE_TIME);
+        Assert.assertEquals(ValidationReport.ValidationResult.INDETERMINATE, report.getValidationResult());
+        Assert.assertEquals(1, report.getFailures().size());
+        CertificateReportItem reportItem = (CertificateReportItem) report.getFailures().get(0);
+        Assert.assertEquals(signCert, reportItem.getCertificate());
+        Assert.assertEquals(CRLValidator.ONLY_SOME_REASONS_CHECKED, reportItem.getMessage());
+    }
+
+    @Test
+    public void checkLessReasonsTest() throws Exception {
+        String fullCrlPath = SOURCE_FOLDER + "issuingDistributionPointTest/onlyUser.crl";
+        String root = SOURCE_FOLDER + "issuingDistributionPointTest/root.pem";
+        String sign = SOURCE_FOLDER + "issuingDistributionPointTest/sign.pem";
+        X509Certificate rootCert = (X509Certificate) PemFileHelper.readFirstChain(root)[0];
+        PrivateKey rootKey = PemFileHelper.readFirstKey(root, KEY_PASSWORD);
+        X509Certificate signCert = (X509Certificate) PemFileHelper.readFirstChain(sign)[0];
+        TestCrlBuilder builder = new TestCrlBuilder(rootCert, rootKey);
+        builder.addExtension(FACTORY.createExtension().getIssuingDistributionPoint(), true,
+                FACTORY.createIssuingDistributionPoint(null, false, false,
+                        FACTORY.createReasonFlags(CRLValidator.ALL_REASONS - 31), false, false));
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        certificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
+        ValidationReport report = new ValidationReport();
+        validator.setIssuingCertificateRetriever(certificateRetriever);
+        // Validate full CRL.
+        validator.validate(report, signCert,
+                (X509CRL) CertificateUtil.parseCrlFromStream(FileUtil.getInputStreamForFile(fullCrlPath)),
+                TimeTestUtil.TEST_DATE_TIME);
+        // Validate CRL with onlySomeReasons.
+        validator.validate(report, signCert,
+                (X509CRL) CertificateUtil.parseCrlFromStream(new ByteArrayInputStream(builder.makeCrl())),
+                TimeTestUtil.TEST_DATE_TIME);
+        Assert.assertEquals(ValidationReport.ValidationResult.VALID, report.getValidationResult());
+        Assert.assertEquals(0, report.getFailures().size());
+        CertificateReportItem reportItem = (CertificateReportItem) report.getLogs().get(1);
+        Assert.assertEquals(signCert, reportItem.getCertificate());
+        Assert.assertEquals(CRLValidator.SAME_REASONS_CHECK, reportItem.getMessage());
+    }
+
+    @Test
+    public void removeFromCrlTest() throws Exception {
+        String root = SOURCE_FOLDER + "issuingDistributionPointTest/root.pem";
+        String sign = SOURCE_FOLDER + "issuingDistributionPointTest/sign.pem";
+        X509Certificate rootCert = (X509Certificate) PemFileHelper.readFirstChain(root)[0];
+        PrivateKey rootKey = PemFileHelper.readFirstKey(root, KEY_PASSWORD);
+        X509Certificate signCert = (X509Certificate) PemFileHelper.readFirstChain(sign)[0];
+        TestCrlBuilder builder = new TestCrlBuilder(rootCert, rootKey);
+        builder.addCrlEntry(signCert, DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, -1),
+                FACTORY.createCRLReason().getRemoveFromCRL());
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        certificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
+        ValidationReport report = new ValidationReport();
+        validator.setIssuingCertificateRetriever(certificateRetriever);
+        validator.validate(report, signCert,
+                (X509CRL) CertificateUtil.parseCrlFromStream(new ByteArrayInputStream(builder.makeCrl())),
+                TimeTestUtil.TEST_DATE_TIME);
+        Assert.assertEquals(ValidationReport.ValidationResult.VALID, report.getValidationResult());
+        Assert.assertEquals(0, report.getFailures().size());
+        CertificateReportItem reportItem = (CertificateReportItem) report.getLogs().get(1);
+        Assert.assertEquals(signCert, reportItem.getCertificate());
+        Assert.assertEquals(CRLValidator.CERTIFICATE_IS_UNREVOKED, reportItem.getMessage());
+    }
+
+    @Test
+    public void fullCrlButDistributionPointWithReasonsTest() throws Exception {
+        Date checkDate = TimeTestUtil.TEST_DATE_TIME;
+        X509Certificate caCert = (X509Certificate)
+                PemFileHelper.readFirstChain(SOURCE_FOLDER + "issuingDistributionPointTest/rootCert.pem")[0];
+        PrivateKey caPrivateKey =
+                PemFileHelper.readFirstKey(SOURCE_FOLDER + "issuingDistributionPointTest/rootCert.pem", KEY_PASSWORD);
+        X509Certificate cert = (X509Certificate)
+                PemFileHelper.readFirstChain(SOURCE_FOLDER + "issuingDistributionPointTest/certWithDPReasons.pem")[0];
+        TestCrlBuilder builder = new TestCrlBuilder(caCert, caPrivateKey);
+        builder.addExtension(FACTORY.createExtension().getIssuingDistributionPoint(), true,
+                FACTORY.createIssuingDistributionPoint(FACTORY.createDistributionPointName(FACTORY.createCRLDistPoint(
+                                CertificateUtil.getExtensionValue(cert,
+                                        FACTORY.createExtension().getCRlDistributionPoints().getId()))
+                        .getDistributionPoints()[0].getCRLIssuer()), false, false, null, false, false));
+
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        certificateRetriever.setTrustedCertificates(Collections.singletonList(caCert));
+        ValidationReport report = new ValidationReport();
+
+        validator.setIssuingCertificateRetriever(certificateRetriever);
+        validator.validate(report, cert,
+                (X509CRL) CertificateUtil.parseCrlFromStream(new ByteArrayInputStream(builder.makeCrl())), checkDate);
+
+        Assert.assertEquals(ValidationReport.ValidationResult.INDETERMINATE, report.getValidationResult());
+        Assert.assertEquals(1, report.getFailures().size());
+        CertificateReportItem reportItem = (CertificateReportItem) report.getLogs().get(1);
+        Assert.assertEquals(ReportItem.ReportItemStatus.INDETERMINATE, reportItem.getStatus());
+        Assert.assertEquals(cert, reportItem.getCertificate());
+        Assert.assertEquals(CRLValidator.ONLY_SOME_REASONS_CHECKED, reportItem.getMessage());
+    }
+
+    private ValidationReport checkCrlScope(String crlPath) throws Exception {
+        String root = SOURCE_FOLDER + "issuingDistributionPointTest/root.pem";
+        String sign = SOURCE_FOLDER + "issuingDistributionPointTest/sign.pem";
+        X509Certificate rootCert = (X509Certificate) PemFileHelper.readFirstChain(root)[0];
+        X509Certificate signCert = (X509Certificate) PemFileHelper.readFirstChain(sign)[0];
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        certificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
+        ValidationReport report = new ValidationReport();
+        validator.setIssuingCertificateRetriever(certificateRetriever);
+        validator.validate(report, signCert,
+                (X509CRL) CertificateUtil.parseCrlFromStream(FileUtil.getInputStreamForFile(crlPath)),
+                TimeTestUtil.TEST_DATE_TIME);
+        return report;
+    }
 
     private void retrieveTestResources(String path) throws Exception {
         String resourcePath = SOURCE_FOLDER + path + "/";

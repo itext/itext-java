@@ -81,8 +81,10 @@ import com.itextpdf.commons.bouncycastle.asn1.x509.IExtension;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IExtensions;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IGeneralName;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IGeneralNames;
+import com.itextpdf.commons.bouncycastle.asn1.x509.IIssuingDistributionPoint;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IKeyPurposeId;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IKeyUsage;
+import com.itextpdf.commons.bouncycastle.asn1.x509.IReasonFlags;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ISubjectPublicKeyInfo;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ITBSCertificate;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ITime;
@@ -989,11 +991,57 @@ public interface IBouncyCastleFactory {
     ICRLDistPoint createCRLDistPoint(Object object);
 
     /**
+     * Create Issuing Distribution Point wrapper from {@link Object}.
+     *
+     * @param point {@link Object} to create Issuing Distribution Point wrapper from
+     *
+     * @return created Issuing Distribution Point wrapper.
+     */
+    IIssuingDistributionPoint createIssuingDistributionPoint(Object point);
+
+    /**
+     * Create Issuing Distribution Point wrapper with specified values.
+     *
+     * @param distributionPoint     one of names from the corresponding distributionPoint from the cRLDistributionPoints
+     *                              extension of every certificate that is within the scope of this CRL
+     * @param onlyContainsUserCerts true if the scope of the CRL only includes end entity public key certificates
+     * @param onlyContainsCACerts   true if the scope of the CRL only includes CA certificates
+     * @param onlySomeReasons       reason codes associated with a distribution point
+     * @param indirectCRL           true if CRL includes certificates issued by authorities other than the CRL issuer,
+     *                              false if the scope of the CRL only includes certificates issued by the CRL issuer
+     * @param onlyContainsAttrCerts true if the scope of the CRL only includes attribute certificates
+     *
+     * @return created Issuing Distribution Point wrapper.
+     */
+    IIssuingDistributionPoint createIssuingDistributionPoint(IDistributionPointName distributionPoint,
+                                                  boolean onlyContainsUserCerts, boolean onlyContainsCACerts,
+                                                  IReasonFlags onlySomeReasons, boolean indirectCRL,
+                                                  boolean onlyContainsAttrCerts);
+
+    /**
+     * Creates the wrapper for ReasonFlags.
+     *
+     * @param reasons the bitwise OR of the Key Reason flags giving the allowed uses for the key
+     *
+     * @return created ReasonFlags wrapper.
+     */
+    IReasonFlags createReasonFlags(int reasons);
+
+    /**
      * Create distribution point name wrapper without parameters.
      *
-     * @return created distribution point name wrapper
+     * @return created distribution point name wrapper.
      */
     IDistributionPointName createDistributionPointName();
+
+    /**
+     * Create distribution point name wrapper by passing general names.
+     *
+     * @param generalNames general names to create distribution point name from
+     *
+     * @return created distribution point name wrapper.
+     */
+    IDistributionPointName createDistributionPointName(IGeneralNames generalNames);
 
     /**
      * Cast ASN1 Encodable wrapper to general names wrapper.

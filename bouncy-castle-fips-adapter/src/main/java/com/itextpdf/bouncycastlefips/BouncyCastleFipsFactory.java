@@ -81,8 +81,10 @@ import com.itextpdf.bouncycastlefips.asn1.x509.ExtensionBCFips;
 import com.itextpdf.bouncycastlefips.asn1.x509.ExtensionsBCFips;
 import com.itextpdf.bouncycastlefips.asn1.x509.GeneralNameBCFips;
 import com.itextpdf.bouncycastlefips.asn1.x509.GeneralNamesBCFips;
+import com.itextpdf.bouncycastlefips.asn1.x509.IssuingDistributionPointBCFips;
 import com.itextpdf.bouncycastlefips.asn1.x509.KeyPurposeIdBCFips;
 import com.itextpdf.bouncycastlefips.asn1.x509.KeyUsageBCFips;
+import com.itextpdf.bouncycastlefips.asn1.x509.ReasonFlagsBCFips;
 import com.itextpdf.bouncycastlefips.asn1.x509.SubjectPublicKeyInfoBCFips;
 import com.itextpdf.bouncycastlefips.asn1.x509.TBSCertificateBCFips;
 import com.itextpdf.bouncycastlefips.asn1.x509.TimeBCFips;
@@ -187,8 +189,10 @@ import com.itextpdf.commons.bouncycastle.asn1.x509.IExtension;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IExtensions;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IGeneralName;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IGeneralNames;
+import com.itextpdf.commons.bouncycastle.asn1.x509.IIssuingDistributionPoint;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IKeyPurposeId;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IKeyUsage;
+import com.itextpdf.commons.bouncycastle.asn1.x509.IReasonFlags;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ISubjectPublicKeyInfo;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ITBSCertificate;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ITime;
@@ -286,11 +290,14 @@ import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.BasicConstraints;
 import org.bouncycastle.asn1.x509.CRLDistPoint;
+import org.bouncycastle.asn1.x509.DistributionPointName;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.Extensions;
 import org.bouncycastle.asn1.x509.GeneralNames;
+import org.bouncycastle.asn1.x509.IssuingDistributionPoint;
 import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.asn1.x509.KeyUsage;
+import org.bouncycastle.asn1.x509.ReasonFlags;
 import org.bouncycastle.asn1.x509.TBSCertificate;
 import org.bouncycastle.asn1.x509.Time;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
@@ -1211,8 +1218,49 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
      * {@inheritDoc}
      */
     @Override
+    public IIssuingDistributionPoint createIssuingDistributionPoint(Object point) {
+        return new IssuingDistributionPointBCFips(IssuingDistributionPoint.getInstance(
+                point instanceof ASN1EncodableBCFips ? ((ASN1EncodableBCFips) point).getEncodable() : point));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IIssuingDistributionPoint createIssuingDistributionPoint(IDistributionPointName distributionPoint,
+                                                                    boolean onlyContainsUserCerts,
+                                                                    boolean onlyContainsCACerts,
+                                                                    IReasonFlags onlySomeReasons, boolean indirectCRL,
+                                                                    boolean onlyContainsAttributeCerts) {
+        return new IssuingDistributionPointBCFips(new IssuingDistributionPoint(distributionPoint == null ? null :
+                ((DistributionPointNameBCFips) distributionPoint).getDistributionPointName(), onlyContainsUserCerts,
+                onlyContainsCACerts, onlySomeReasons == null ? null :
+                ((ReasonFlagsBCFips) onlySomeReasons).getReasonFlags(), indirectCRL, onlyContainsAttributeCerts));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IReasonFlags createReasonFlags(int reasons) {
+        return new ReasonFlagsBCFips(new ReasonFlags(reasons));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public IDistributionPointName createDistributionPointName() {
         return DistributionPointNameBCFips.getInstance();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IDistributionPointName createDistributionPointName(IGeneralNames generalNames) {
+        return new DistributionPointNameBCFips(
+                new DistributionPointName(((GeneralNamesBCFips)generalNames).getGeneralNames()));
     }
 
     /**

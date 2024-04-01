@@ -27,4 +27,10 @@ package com.itextpdf.commons.bouncycastle.asn1;
  * to switch between bouncy-castle and bouncy-castle FIPS implementations.
  */
 public interface IASN1BitString extends IASN1Primitive, IASN1String {
+    /**
+     * Calls actual {@code intValue} method for the wrapped ASN1BitString object.
+     *
+     * @return int value of the wrapped ASN1BitString.
+     */
+    int intValue();
 }

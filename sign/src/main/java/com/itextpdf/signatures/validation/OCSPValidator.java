@@ -32,6 +32,7 @@ import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.signatures.CertificateUtil;
 import com.itextpdf.signatures.IssuingCertificateRetriever;
+import com.itextpdf.signatures.TimestampConstants;
 import com.itextpdf.signatures.logs.SignLogMessageConstant;
 import com.itextpdf.signatures.validation.extensions.CertificateExtension;
 import com.itextpdf.signatures.validation.extensions.ExtendedKeyUsageExtension;
@@ -185,7 +186,8 @@ public class OCSPValidator {
 
         // If nextUpdate is not set, the responder is indicating that newer revocation information
         // is available all the time.
-        if (singleResp.getNextUpdate() != null && validationDate.after(singleResp.getNextUpdate())) {
+        if (singleResp.getNextUpdate() != TimestampConstants.UNDEFINED_TIMESTAMP_DATE &&
+                validationDate.after(singleResp.getNextUpdate())) {
             report.addReportItem(new CertificateReportItem(certificate, OCSP_CHECK,
                     MessageFormatUtil.format(OCSP_IS_NO_LONGER_VALID, validationDate,
                             singleResp.getNextUpdate()), ReportItemStatus.INDETERMINATE));

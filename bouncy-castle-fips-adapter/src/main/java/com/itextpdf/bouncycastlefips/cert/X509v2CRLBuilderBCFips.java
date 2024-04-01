@@ -22,13 +22,18 @@
  */
 package com.itextpdf.bouncycastlefips.cert;
 
+import com.itextpdf.bouncycastlefips.asn1.ASN1EncodableBCFips;
+import com.itextpdf.bouncycastlefips.asn1.ASN1ObjectIdentifierBCFips;
 import com.itextpdf.bouncycastlefips.asn1.x500.X500NameBCFips;
 import com.itextpdf.bouncycastlefips.operator.ContentSignerBCFips;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1Encodable;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1ObjectIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.x500.IX500Name;
 import com.itextpdf.commons.bouncycastle.cert.IX509CRLHolder;
 import com.itextpdf.commons.bouncycastle.cert.IX509v2CRLBuilder;
 import com.itextpdf.commons.bouncycastle.operator.IContentSigner;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.Objects;
@@ -74,6 +79,17 @@ public class X509v2CRLBuilderBCFips implements IX509v2CRLBuilder {
     @Override
     public IX509v2CRLBuilder addCRLEntry(BigInteger bigInteger, Date date, int i) {
         builder.addCRLEntry(bigInteger, date, i);
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IX509v2CRLBuilder addExtension(IASN1ObjectIdentifier objectIdentifier, boolean isCritical,
+                                          IASN1Encodable extension) throws IOException {
+        builder.addExtension(((ASN1ObjectIdentifierBCFips) objectIdentifier).getASN1ObjectIdentifier(), isCritical,
+                ((ASN1EncodableBCFips) extension).getEncodable());
         return this;
     }
 

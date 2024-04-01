@@ -22,24 +22,11 @@
  */
 package com.itextpdf.commons.bouncycastle.asn1.x509;
 
-import com.itextpdf.commons.bouncycastle.asn1.IASN1Encodable;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1BitString;
 
 /**
- * This interface represents the wrapper for CRLReason that provides the ability
+ * This interface represents the wrapper for ReasonFlags that provides the ability
  * to switch between bouncy-castle and bouncy-castle FIPS implementations.
  */
-public interface ICRLReason extends IASN1Encodable {
-    /**
-     * Gets {@code keyCompromise} constant for the wrapped CRLReason.
-     *
-     * @return CRLReason.keyCompromise value.
-     */
-    int getKeyCompromise();
-
-    /**
-     * Gets {@code removeFromCRL} constant for the wrapped CRLReason.
-     *
-     * @return CRLReason.removeFromCRL value.
-     */
-    int getRemoveFromCRL();
+public interface IReasonFlags extends IASN1BitString {
 }

@@ -22,8 +22,11 @@
  */
 package com.itextpdf.commons.bouncycastle.cert;
 
+import com.itextpdf.commons.bouncycastle.asn1.IASN1Encodable;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1ObjectIdentifier;
 import com.itextpdf.commons.bouncycastle.operator.IContentSigner;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Date;
 
@@ -42,6 +45,20 @@ public interface IX509v2CRLBuilder {
      * @return {@link IX509v2CRLBuilder} the current wrapper object.
      */
     IX509v2CRLBuilder addCRLEntry(BigInteger bigInteger, Date date, int i);
+
+    /**
+     * Calls actual {@code addExtension} method for the wrapped X509v2CRLBuilder object.
+     *
+     * @param objectIdentifier extension object identifier
+     * @param isCritical       specifies if extension is critical or not
+     * @param extension        encoded extension value
+     *
+     * @return {@link IX509v2CRLBuilder} the current wrapper object.
+     *
+     * @throws IOException if an I/O error occurs.
+     */
+    IX509v2CRLBuilder addExtension(IASN1ObjectIdentifier objectIdentifier, boolean isCritical,
+                                   IASN1Encodable extension) throws IOException;
 
     /**
      * Calls actual {@code setNextUpdate} method for the wrapped X509v2CRLBuilder object.
