@@ -267,7 +267,6 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
         checkBox.enableFieldRegeneration();
 
         PdfFormCreator.getAcroForm(doc, true).addField(checkBox, page);
-        writeAcroFormFieldLangAttribute(doc);
         applyProperties(margins);
     }
 

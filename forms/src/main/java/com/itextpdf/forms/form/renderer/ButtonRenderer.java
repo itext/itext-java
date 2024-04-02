@@ -285,7 +285,6 @@ public class ButtonRenderer extends AbstractOneLineTextFieldRenderer {
         // with the same names (and add all the widgets as kids to that merged field), so we can add it anyway.
         forms.addField(button, page);
 
-        writeAcroFormFieldLangAttribute(doc);
         applyProperties(margins);
     }
 

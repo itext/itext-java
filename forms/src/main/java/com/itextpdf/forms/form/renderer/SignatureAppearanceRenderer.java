@@ -267,7 +267,6 @@ public class SignatureAppearanceRenderer extends AbstractTextFieldRenderer {
         PdfAcroForm forms = PdfFormCreator.getAcroForm(doc, true);
         forms.addField(sigField, page);
 
-        writeAcroFormFieldLangAttribute(doc);
     }
 
     private void adjustChildrenLayout(RenderingMode renderingMode,

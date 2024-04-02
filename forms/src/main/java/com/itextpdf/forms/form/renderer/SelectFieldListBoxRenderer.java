@@ -230,7 +230,6 @@ public class SelectFieldListBoxRenderer extends AbstractSelectFieldRenderer {
         choiceField.enableFieldRegeneration();
         PdfFormCreator.getAcroForm(doc, true).addField(choiceField, page);
 
-        writeAcroFormFieldLangAttribute(doc);
     }
 
     private float getCalculatedHeight(IRenderer flatRenderer) {

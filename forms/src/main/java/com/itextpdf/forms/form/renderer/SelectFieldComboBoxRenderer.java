@@ -154,7 +154,6 @@ public class SelectFieldComboBoxRenderer extends AbstractSelectFieldRenderer {
         comboBoxField.enableFieldRegeneration();
 
         PdfFormCreator.getAcroForm(doc, true).addField(comboBoxField, page);
-        writeAcroFormFieldLangAttribute(doc);
     }
 
 

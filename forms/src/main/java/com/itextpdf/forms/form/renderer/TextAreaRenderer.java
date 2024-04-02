@@ -215,7 +215,6 @@ public class TextAreaRenderer extends AbstractTextFieldRenderer {
         applyAccessibilityProperties(inputField, doc);
         PdfFormCreator.getAcroForm(doc, true).addField(inputField, page);
 
-        writeAcroFormFieldLangAttribute(doc);
         applyProperties(margins);
     }
 

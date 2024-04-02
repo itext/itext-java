@@ -443,11 +443,12 @@ public class PdfUATest extends ExtendedITextTest {
     @Test
     public void openDocumentWithDuplicatingIdInStructTree() throws IOException {
         String source = SOURCE_FOLDER + "documentWithDuplicatingIdsInStructTree.pdf";
+        String outPdf = DESTINATION_FOLDER + "documentWithDuplicatingIdsInStructTree.pdf";
         try (PdfDocument pdfDocument = new PdfUATestPdfDocument(
-                new PdfReader(new File(source)))) {
+                new PdfReader(new File(source)), new PdfWriter(outPdf))) {
         }
         //Vera pdf doesn't complain on this document
-        Assert.assertNull(new VeraPdfValidator().validate(source)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
     @Test

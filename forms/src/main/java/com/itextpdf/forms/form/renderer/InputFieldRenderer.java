@@ -197,7 +197,6 @@ public class InputFieldRenderer extends AbstractOneLineTextFieldRenderer {
         inputField.enableFieldRegeneration();
         PdfFormCreator.getAcroForm(doc, true).addField(inputField, page);
 
-        writeAcroFormFieldLangAttribute(doc);
         applyProperties(margins);
     }
 

@@ -26,13 +26,10 @@ import com.itextpdf.forms.fields.ChoiceFormFieldBuilder;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.AbstractSelectField;
-import com.itextpdf.forms.form.element.FormField;
 import com.itextpdf.forms.form.element.IFormField;
 import com.itextpdf.forms.form.element.SelectFieldItem;
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.IConformanceLevel;
-import com.itextpdf.kernel.pdf.IsoKey;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
@@ -143,6 +140,7 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
             super.drawChildren(drawContext);
         } else {
             applyAcroField(drawContext);
+            writeAcroFormFieldLangAttribute(drawContext.getDocument());
         }
     }
 
@@ -152,8 +150,14 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
      * @return the accessibility language.
      */
     protected String getLang() {
-        //TODO DEVSIX-8205 Use setLanguage method from AccessibilityProperties
-        return this.<String>getProperty(FormProperty.FORM_ACCESSIBILITY_LANGUAGE);
+        String language = null;
+        if (this.getModelElement() instanceof IAccessibleElement) {
+            language = ((IAccessibleElement) this.getModelElement()).getAccessibilityProperties().getLanguage();
+        }
+        if (language == null){
+            language = this.<String>getProperty(FormProperty.FORM_ACCESSIBILITY_LANGUAGE);
+        }
+        return language;
     }
 
     /**
@@ -164,12 +168,16 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
     protected void writeAcroFormFieldLangAttribute(PdfDocument pdfDoc) {
         if (pdfDoc.isTagged()) {
             TagTreePointer formParentPointer = pdfDoc.getTagStructureContext().getAutoTaggingPointer();
+            List<String> kidsRoles = formParentPointer.getKidsRoles();
+            int lastFormIndex = kidsRoles.lastIndexOf(StandardRoles.FORM);
+            TagTreePointer formPointer = formParentPointer.moveToKid(lastFormIndex);
+
             if (getLang() != null) {
-                formParentPointer.getProperties().setLanguage(getLang());
+                formPointer.getProperties().setLanguage(getLang());
             }
+            formParentPointer.moveToParent();
         }
     }
-
 
     /**
      * Applies the accessibility properties to the form field.

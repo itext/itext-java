@@ -332,7 +332,6 @@ public class ListBoxFieldTest extends ExtendedITextTest {
             listBoxField.setBackgroundColor(ColorConstants.RED);
             listBoxField.addOption("option 1");
             listBoxField.addOption("option 2");
-            //TODO DEVSIX-8205 Use setLanguage method from AccessibilityProperties
             listBoxField.setProperty(FormProperty.FORM_ACCESSIBILITY_LANGUAGE, "random_lang");
             document.add(listBoxField);
 

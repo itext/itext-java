@@ -24,10 +24,8 @@ package com.itextpdf.forms.form.renderer;
 
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.form.FormProperty;
-import com.itextpdf.forms.form.element.FormField;
 import com.itextpdf.forms.form.element.IFormField;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.IConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
@@ -214,6 +212,7 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
             flatRenderer.draw(drawContext);
         } else {
             applyAcroField(drawContext);
+            writeAcroFormFieldLangAttribute(drawContext.getDocument());
         }
         drawContext.getCanvas().restoreState();
     }
@@ -289,10 +288,18 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
      * Gets the accessibility language.
      *
      * @return the accessibility language.
+     * @deprecated use {@link IAccessibleElement#getAccessibilityProperties()} instead
      */
+    @Deprecated()
     protected String getLang() {
-        //TODO DEVSIX-8205 Use setLanguage method from AccessibilityProperties
-        return this.<String>getProperty(FormProperty.FORM_ACCESSIBILITY_LANGUAGE);
+        String language = null;
+        if (this.getModelElement() instanceof IAccessibleElement) {
+            language = ((IAccessibleElement) this.getModelElement()).getAccessibilityProperties().getLanguage();
+        }
+        if (language == null) {
+            language = this.<String>getProperty(FormProperty.FORM_ACCESSIBILITY_LANGUAGE);
+        }
+        return language;
     }
 
     /**
@@ -398,13 +405,14 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
     }
 
     private void processLangAttribute() {
-        IPropertyContainer propertyContainer = flatRenderer.getModelElement();
-        String lang = getLang();
-        if (propertyContainer instanceof IAccessibleElement && lang != null) {
-            AccessibilityProperties properties = ((IAccessibleElement) propertyContainer).getAccessibilityProperties();
-            if (properties.getLanguage() == null) {
-                properties.setLanguage(lang);
-            }
-        }
+         IPropertyContainer propertyContainer = flatRenderer.getModelElement();
+         String lang = getLang();
+         if (propertyContainer instanceof IAccessibleElement && lang != null) {
+             AccessibilityProperties properties = ((IAccessibleElement) propertyContainer)
+             .getAccessibilityProperties();
+             if (properties.getLanguage() == null) {
+                 properties.setLanguage(lang);
+             }
+         }
     }
 }

@@ -212,7 +212,6 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
 
         applyAccessibilityProperties(radioGroup, doc);
         form.addField(radioGroup, page);
-        writeAcroFormFieldLangAttribute(doc);
         applyProperties(margins);
     }
 
