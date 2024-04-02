@@ -209,7 +209,7 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
     @Test
     public void canvasTest01() throws IOException {
         PdfDocument document = new PdfUATestPdfDocument(
-                new PdfWriter(new ByteArrayOutputStream(), PdfUATestPdfDocument.createWriterProperties()));
+                new PdfWriter(new ByteArrayOutputStream()));
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
 
@@ -229,7 +229,7 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
     @Test
     public void canvasTest02() throws IOException {
         PdfDocument document = new PdfUATestPdfDocument(
-                new PdfWriter(new ByteArrayOutputStream(), PdfUATestPdfDocument.createWriterProperties()));
+                new PdfWriter(new ByteArrayOutputStream()));
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
 
@@ -250,7 +250,7 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
     @Test
     public void canvasTest03() throws IOException {
         PdfDocument document = new PdfUATestPdfDocument(
-                new PdfWriter(new ByteArrayOutputStream(), PdfUATestPdfDocument.createWriterProperties()));
+                new PdfWriter(new ByteArrayOutputStream()));
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
 

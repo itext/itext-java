@@ -55,6 +55,9 @@ public abstract class FormFieldBuilder<T extends FormFieldBuilder<T>> {
     protected FormFieldBuilder(PdfDocument document, String formFieldName) {
         this.document = document;
         this.formFieldName = formFieldName;
+        if (document != null) {
+            this.conformanceLevel = document.getConformanceLevel();
+        }
     }
 
     /**

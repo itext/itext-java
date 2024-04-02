@@ -127,7 +127,7 @@ public class UaValidationTestFramework {
         String outfile = UrlUtil.getNormalizedFileUriString(destinationFolder + filename);
         System.out.println(outfile);
         PdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(destinationFolder + filename, PdfUATestPdfDocument.createWriterProperties()));
+                new PdfWriter(destinationFolder + filename));
 
         Document document = new Document(pdfDoc);
         document.getPdfDocument().getDiContainer().register(ValidationContainer.class, new ValidationContainer());
@@ -165,7 +165,7 @@ public class UaValidationTestFramework {
             final String outPath = destinationFolder + filename;
             System.out.println(UrlUtil.getNormalizedFileUriString(outPath));
             PdfDocument pdfDoc = new PdfUATestPdfDocument(
-                    new PdfWriter(outPath, PdfUATestPdfDocument.createWriterProperties()));
+                    new PdfWriter(outPath));
             for (Consumer<PdfDocument> pdfDocumentConsumer : this.beforeGeneratorHook) {
                 pdfDocumentConsumer.accept(pdfDoc);
             }
@@ -187,7 +187,7 @@ public class UaValidationTestFramework {
             System.out.println(UrlUtil.getNormalizedFileUriString(outPath));
             PdfDocument pdfDoc = new PdfUATestPdfDocument(
                     new PdfReader(inPath),
-                    new PdfWriter(outPath, PdfUATestPdfDocument.createWriterProperties()));
+                    new PdfWriter(outPath));
 
             pdfDoc.close();
         } catch (Exception e) {

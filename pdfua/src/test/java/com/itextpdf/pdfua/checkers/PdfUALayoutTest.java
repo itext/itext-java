@@ -90,7 +90,7 @@ public class PdfUALayoutTest extends ExtendedITextTest {
         String cmpPdf = SOURCE_FOLDER + "cmp_simpleParagraphTest.pdf";
 
         PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+                new PdfWriter(outPdf));
 
         PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
         Document doc = new Document(pdfDoc);
@@ -107,7 +107,7 @@ public class PdfUALayoutTest extends ExtendedITextTest {
         String cmpPdf = SOURCE_FOLDER + "cmp_simpleParagraphWithUnderlineTest.pdf";
 
         PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+                new PdfWriter(outPdf));
 
         PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
         Document doc = new Document(pdfDoc);
@@ -124,7 +124,7 @@ public class PdfUALayoutTest extends ExtendedITextTest {
         String cmpPdf = SOURCE_FOLDER + "cmp_simpleBorderTest.pdf";
 
         try (PdfDocument pdfDocument = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()))) {
+                new PdfWriter(outPdf))) {
 
             PdfPage page = pdfDocument.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
@@ -144,7 +144,7 @@ public class PdfUALayoutTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "simpleTableTest.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_simpleTableTest.pdf";
 
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(outPdf));
         Document doc = new Document(pdfDoc);
 
         PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);

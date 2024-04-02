@@ -37,6 +37,7 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.pdfua.UaValidationTestFramework;
 import com.itextpdf.pdfua.UaValidationTestFramework.Generator;
+import com.itextpdf.pdfua.exceptions.PdfUALogMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -876,6 +877,7 @@ public class PdfUATableTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = PdfUALogMessageConstants.PAGE_FLUSHING_DISABLED, count = 2)})
     public void combination02() throws FileNotFoundException {
         TableBuilder tableBuilder = new TableBuilder(3);
         for (int i = 0; i < 201; i++) {
@@ -887,6 +889,7 @@ public class PdfUATableTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = PdfUALogMessageConstants.PAGE_FLUSHING_DISABLED, count = 2)})
     public void combination04() throws FileNotFoundException {
         TableBuilder tableBuilder = new TableBuilder(3);
 

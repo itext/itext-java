@@ -76,7 +76,7 @@ public class PdfUARoleMappingTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "nonStandardMappingViaTagTreePointer1Test.pdf";
 
         PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+                new PdfWriter(outPdf));
         PdfPage page1 = pdfDoc.addNewPage();
 
         TagTreePointer tagPointer = new TagTreePointer(pdfDoc).setPageForTagging(page1);
@@ -92,7 +92,7 @@ public class PdfUARoleMappingTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "nonStandardMappingViaTagTreePointer2Test.pdf";
 
         PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+                new PdfWriter(outPdf));
         PdfPage page1 = pdfDoc.addNewPage();
 
         PdfStructTreeRoot root = pdfDoc.getStructTreeRoot();
@@ -112,7 +112,7 @@ public class PdfUARoleMappingTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "nonStandardMappingViaTagTreePointer3Test.pdf";
 
         PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+                new PdfWriter(outPdf));
         PdfPage page1 = pdfDoc.addNewPage();
 
         TagTreePointer tagPointer = new TagTreePointer(pdfDoc).setPageForTagging(page1);
@@ -131,7 +131,7 @@ public class PdfUARoleMappingTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "nonStandardMappingViaPdfNameTest.pdf";
 
         PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+                new PdfWriter(outPdf));
         PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
 
         PdfPage page1 = pdfDoc.addNewPage();
@@ -150,7 +150,7 @@ public class PdfUARoleMappingTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "nonStandardMappingViaPdfMcrTest.pdf";
 
         PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+                new PdfWriter(outPdf));
 
         PdfPage page1 = pdfDoc.addNewPage();
 
@@ -172,7 +172,7 @@ public class PdfUARoleMappingTest extends ExtendedITextTest {
         String cmpPdf = SOURCE_FOLDER + "cmp_standardMappingViaTagTreePointerTest.pdf";
 
         PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+                new PdfWriter(outPdf));
         PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
 
         PdfStructTreeRoot root = pdfDoc.getStructTreeRoot();
@@ -208,7 +208,7 @@ public class PdfUARoleMappingTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "standardMappingViaNamespaceTest.pdf";
 
         PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+                new PdfWriter(outPdf));
         PdfPage page1 = pdfDoc.addNewPage();
 
         PdfStructElem doc = pdfDoc.getStructTreeRoot().addKid(new PdfStructElem(pdfDoc, PdfName.Document));
@@ -240,7 +240,7 @@ public class PdfUARoleMappingTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "cycleMappingViaTagTreePointer1Test.pdf";
 
         PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+                new PdfWriter(outPdf));
         PdfPage page1 = pdfDoc.addNewPage();
 
         PdfStructTreeRoot root = pdfDoc.getStructTreeRoot();
@@ -260,7 +260,7 @@ public class PdfUARoleMappingTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "cycleMappingViaTagTreePointer2Test.pdf";
 
         PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+                new PdfWriter(outPdf));
         PdfPage page1 = pdfDoc.addNewPage();
         PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
 
@@ -290,7 +290,7 @@ public class PdfUARoleMappingTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "mappingStandardRolesTest.pdf";
 
         PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+                new PdfWriter(outPdf));
         PdfPage page1 = pdfDoc.addNewPage();
         PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
 

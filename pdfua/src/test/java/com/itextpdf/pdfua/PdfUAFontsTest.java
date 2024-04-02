@@ -151,7 +151,7 @@ public class PdfUAFontsTest extends ExtendedITextTest {
     @Test
     public void trueTypeFontWithDifferencesTest() throws IOException {
         String outPdf = DESTINATION_FOLDER + "trueTypeFontWithDifferencesTest.pdf";
-        try (PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()))) {
+        try (PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(outPdf))) {
             PdfFont font;
             try {
                 font = PdfFontFactory.createFont(FONT, "# simple 32 0077 006f 0072 006c 0064", EmbeddingStrategy.PREFER_EMBEDDED);
@@ -188,6 +188,7 @@ public class PdfUAFontsTest extends ExtendedITextTest {
 
             Paragraph paragraph = new Paragraph("Helloworld");
             document.add(paragraph);
+            document.close();
         });
         framework.assertBothFail("tryToUseStandardFontsTest",
                 MessageFormatUtil.format(PdfUAExceptionMessageConstants.FONT_SHOULD_BE_EMBEDDED, "Courier"), false);

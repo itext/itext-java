@@ -29,6 +29,7 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.pdfua.checkers.PdfUA1Checker;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
@@ -51,7 +52,7 @@ public class PdfUAMetadataUnitTest extends ExtendedITextTest {
     @Test
     public void documentWithNoTitleInMetadataTest() throws IOException, InterruptedException, XMPException {
         try (PdfDocument pdfDocument = new PdfUATestPdfDocument(
-                new PdfWriter(new ByteArrayOutputStream(), PdfUATestPdfDocument.createWriterProperties()))) {
+                new PdfWriter(new ByteArrayOutputStream()))) {
             pdfDocument.addNewPage();
             PdfCatalog catalog = pdfDocument.getCatalog();
 
@@ -69,7 +70,7 @@ public class PdfUAMetadataUnitTest extends ExtendedITextTest {
     @Test
     public void documentWithInvalidMetadataVersionTest() throws IOException, InterruptedException, XMPException {
         try (PdfDocument pdfDocument = new PdfUATestPdfDocument(
-                new PdfWriter(new ByteArrayOutputStream(), PdfUATestPdfDocument.createWriterProperties()))) {
+                new PdfWriter(new ByteArrayOutputStream()))) {
             pdfDocument.addNewPage();
             PdfCatalog catalog = pdfDocument.getCatalog();
 
@@ -87,7 +88,7 @@ public class PdfUAMetadataUnitTest extends ExtendedITextTest {
     @Test
     public void documentWithNoMetadataVersionTest() throws IOException, InterruptedException, XMPException {
         try (PdfDocument pdfDocument = new PdfUATestPdfDocument(
-                new PdfWriter(new ByteArrayOutputStream(), PdfUATestPdfDocument.createWriterProperties()))) {
+                new PdfWriter(new ByteArrayOutputStream()))) {
             pdfDocument.addNewPage();
             PdfCatalog catalog = pdfDocument.getCatalog();
 
@@ -105,7 +106,7 @@ public class PdfUAMetadataUnitTest extends ExtendedITextTest {
     @Test
     public void documentWithInvalidMetadataTypeTest() throws IOException, InterruptedException, XMPException {
         try (PdfDocument pdfDocument = new PdfUATestPdfDocument(
-                new PdfWriter(new ByteArrayOutputStream(), PdfUATestPdfDocument.createWriterProperties()))) {
+                new PdfWriter(new ByteArrayOutputStream()))) {
             pdfDocument.addNewPage();
             PdfCatalog catalog = pdfDocument.getCatalog();
             catalog.put(PdfName.Metadata, new PdfDictionary());
@@ -121,7 +122,7 @@ public class PdfUAMetadataUnitTest extends ExtendedITextTest {
     public void documentWithInvalidPdfVersionTest() throws IOException, InterruptedException, XMPException {
         PdfDocument pdfDocument = new PdfUATestPdfDocument(
                 new PdfWriter(new ByteArrayOutputStream(),
-                        PdfUATestPdfDocument.createWriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
+                        new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
         pdfDocument.addNewPage();
         Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> pdfDocument.close());
         Assert.assertEquals(PdfUAExceptionMessageConstants.INVALID_PDF_VERSION,
@@ -131,7 +132,7 @@ public class PdfUAMetadataUnitTest extends ExtendedITextTest {
     @Test
     public void documentWithBrokenMetadataTest() throws IOException, InterruptedException, XMPException {
         try (PdfDocument pdfDocument = new PdfUATestPdfDocument(
-                new PdfWriter(new ByteArrayOutputStream(), PdfUATestPdfDocument.createWriterProperties()))) {
+                new PdfWriter(new ByteArrayOutputStream()))) {
             pdfDocument.addNewPage();
             PdfCatalog catalog = pdfDocument.getCatalog();
 

@@ -68,7 +68,7 @@ public class PdfUAEncryptionTest extends ExtendedITextTest {
     public void encryptWithPassword()
             throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "encryptWithPassword.pdf";
-        WriterProperties writerProperties = PdfUATestPdfDocument.createWriterProperties()
+        WriterProperties writerProperties = new WriterProperties()
                 .setStandardEncryption(USER_PASSWORD, OWNER_PASSWORD, EncryptionConstants.ALLOW_SCREENREADERS, 3);
         try (PdfWriter writer = new PdfWriter(outPdf,
                 writerProperties);
@@ -81,9 +81,9 @@ public class PdfUAEncryptionTest extends ExtendedITextTest {
 
     @Test
     public void encryptWithPasswordWithInvalidPermissionsTest()
-            throws IOException, InterruptedException {
+            throws IOException {
         String outPdf = DESTINATION_FOLDER + "encryptWithPassword2.pdf";
-        WriterProperties writerProperties = PdfUATestPdfDocument.createWriterProperties()
+        WriterProperties writerProperties = new WriterProperties()
                 .setStandardEncryption(USER_PASSWORD, OWNER_PASSWORD,  ~EncryptionConstants.ALLOW_SCREENREADERS, 3);
         PdfUATestPdfDocument document = new PdfUATestPdfDocument(new PdfWriter(outPdf, writerProperties));
         writeTextToDocument(document);

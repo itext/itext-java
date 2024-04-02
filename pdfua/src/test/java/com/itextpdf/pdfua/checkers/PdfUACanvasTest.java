@@ -114,8 +114,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     @Test
     public void checkPoint_01_005_TextContentIsCorrectlyTaggedAsContent() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "01_005_TextContentIsCorrectlyTaggedAsContent.pdf";
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(outPdf));
         PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
 
         PdfPage page1 = pdfDoc.addNewPage();
@@ -148,8 +147,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     @Test
     public void checkPoint_01_005_TextContentIsNotInTagTree() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "01_005_TextContentIsNotInTagTree.pdf";
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(outPdf));
         PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
 
         PdfPage page1 = pdfDoc.addNewPage();
@@ -172,7 +170,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     public void checkPoint_01_005_TextArtifactIsNotInTagTree() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "01_005_TextArtifactIsNotInTagTree.pdf";
         PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+                new PdfWriter(outPdf));
         PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
 
         PdfPage page1 = pdfDoc.addNewPage();
@@ -200,7 +198,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     public void checkPoint_01_005_TextContentWithMCIDButNotInTagTree() throws IOException {
         String outPdf = DESTINATION_FOLDER + "01_005_TextContentWithMCIDButNotInTagTree.pdf";
         PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+                new PdfWriter(outPdf));
         PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
 
         PdfPage page1 = pdfDoc.addNewPage();
@@ -224,7 +222,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     public void checkPoint_01_005_TextGlyphLineContentIsTaggedButNotInTagTree() throws IOException {
         String outPdf = DESTINATION_FOLDER + "01_005_TextGlyphLineContentIsTagged.pdf";
         PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+                new PdfWriter(outPdf));
         PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
         PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
         GlyphLine glyphLine = font.createGlyphLine("Hello World!");
@@ -245,7 +243,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     public void checkPoint_01_005_TextGlyphLineContentIsArtifact() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "01_005_TextGlyphLineContentIsArtifact.pdf";
         PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+                new PdfWriter(outPdf));
         PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
         PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
         GlyphLine glyphLine = font.createGlyphLine("Hello World!");
@@ -272,7 +270,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     public void checkPoint_01_005_TextGlyphLineContentIsContentCorrect() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "01_005_TextGlyphLineContentIsContentCorrect.pdf";
         PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+                new PdfWriter(outPdf));
         PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
         PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
         GlyphLine glyphLine = font.createGlyphLine("Hello World!");
@@ -303,7 +301,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     public void checkPoint_01_005_allowPureBmcInArtifact() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "01_005_allowPureBmcInArtifact.pdf";
         PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+                new PdfWriter(outPdf));
         PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
         PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
         GlyphLine glyphLine = font.createGlyphLine("Hello World!");
@@ -331,7 +329,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     public void checkPoint_01_005_allowNestedPureBmcInArtifact() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "01_005_allowNestedPureBmcInArtifact.pdf";
         PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+                new PdfWriter(outPdf));
         PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
         PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
         GlyphLine glyphLine = font.createGlyphLine("Hello World!");
@@ -417,7 +415,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     public void checkPoint_01_005_LineContentThatIsMarkedAsArtifact() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "01_005_LineContentThatIsMarkedAsArtifact.pdf";
         PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+                new PdfWriter(outPdf));
 
         PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
 
@@ -550,7 +548,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     public void checkPoint_01_005_RectangleMarkedArtifact() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "01_005_RectangleMarkedArtifact.pdf";
         PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+                new PdfWriter(outPdf));
         PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
         canvas
                 .saveState()
@@ -603,7 +601,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     public void checkPoint_01_005_RectangleMarkedContent() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "01_005_RectangleMarkedContent.pdf";
         PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+                new PdfWriter(outPdf));
         PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
 
         TagTreePointer tagPointer = new TagTreePointer(pdfDoc)
@@ -631,7 +629,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     public void checkPoint_01_004_bezierMarkedAsContent() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "01_004_bezierCurveShouldBeTagged.pdf";
         PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+                new PdfWriter(outPdf));
         PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
 
         TagTreePointer tagPointer = new TagTreePointer(pdfDoc)
@@ -660,7 +658,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     public void checkPoint_01_004_bezierMarkedAsArtifact() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "01_004_bezierMarkedAsArtifact.pdf";
         PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+                new PdfWriter(outPdf));
         PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
 
         canvas
@@ -720,7 +718,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
             throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "01_005_RandomOperationsWithoutActuallyAddingContent.pdf";
         PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+                new PdfWriter(outPdf));
         PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
 
         canvas
@@ -741,7 +739,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     public void checkPoint_01_003_ContentMarkedAsArtifactsPresentInsideTaggedContent() throws IOException {
         String outPdf = DESTINATION_FOLDER + "01_003_ContentMarkedAsArtifactsPresentInsideTaggedContent.pdf";
         PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+                new PdfWriter(outPdf));
         PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
 
         PdfPage page1 = pdfDoc.addNewPage();
@@ -771,7 +769,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     public void checkPoint_validRoleAddedInsideMarkedContent() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "validRoleAddedInsideMarkedContent.pdf";
         PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+                new PdfWriter(outPdf));
         PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
 
         PdfPage page1 = pdfDoc.addNewPage();
@@ -808,7 +806,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
 
         String outPdf = DESTINATION_FOLDER + "validRoleAddedInsideMarkedContentMultiple.pdf";
         PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+                new PdfWriter(outPdf));
         PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
 
         PdfPage page1 = pdfDoc.addNewPage();
@@ -849,7 +847,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     public void checkPoint_validRoleAddedInsideMarkedContentMCR_IN_MCR() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "validRoleAddedInsideMarkedContentMCR_IN_MCR.pdf";
         PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+                new PdfWriter(outPdf));
         PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
 
         PdfPage page1 = pdfDoc.addNewPage();
@@ -895,7 +893,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     public void checkPoint_01_004_TaggedContentShouldNotBeInsideArtifact() throws IOException {
         String outPdf = DESTINATION_FOLDER + "01_004_TaggedContentShouldNotBeInsideArtifact.pdf";
         PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+                new PdfWriter(outPdf));
         PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
 
         PdfPage page1 = pdfDoc.addNewPage();
@@ -924,7 +922,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     @Test
     public void checkPoint_31_009_FontIsNotEmbedded() throws IOException {
         PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(new ByteArrayOutputStream(), PdfUATestPdfDocument.createWriterProperties()));
+                new PdfWriter(new ByteArrayOutputStream()));
         PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
         PdfFont font = PdfFontFactory.createFont(StandardFonts.COURIER);
         TagTreePointer tagPointer = new TagTreePointer(pdfDoc);

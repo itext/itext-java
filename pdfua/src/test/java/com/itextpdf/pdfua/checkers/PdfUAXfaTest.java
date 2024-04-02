@@ -58,7 +58,7 @@ public class PdfUAXfaTest extends ExtendedITextTest {
 
         PdfDocument pdfDoc = new PdfUATestPdfDocument(
                 new PdfReader(input),
-                new PdfWriter(output, PdfUATestPdfDocument.createWriterProperties()));
+                new PdfWriter(output));
 
         Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> pdfDoc.close());
         Assert.assertEquals(PdfUAExceptionMessageConstants.DYNAMIC_XFA_FORMS_SHALL_NOT_BE_USED, e.getMessage());
@@ -77,7 +77,7 @@ public class PdfUAXfaTest extends ExtendedITextTest {
 
         PdfDocument pdfDoc = new PdfUATestPdfDocument(
                 new PdfReader(input),
-                new PdfWriter(output, PdfUATestPdfDocument.createWriterProperties()));
+                new PdfWriter(output));
 
         AssertUtil.doesNotThrow(() -> pdfDoc.close());
 

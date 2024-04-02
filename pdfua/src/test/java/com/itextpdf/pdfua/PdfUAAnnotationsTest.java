@@ -155,11 +155,25 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
     }
 
     @Test
+    public void ua1WidgetAnnotNoDirectChildOfAnnotAutomaticConformanceLevelTest() throws IOException {
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(pdfDoc, true);
+            PdfButtonFormField checkBox = new CheckBoxFormFieldBuilder(pdfDoc, "checkbox")
+                    .setWidgetRectangle(new Rectangle(10, 650, 40, 20))
+                    .createCheckBox();
+
+            checkBox.setAlternativeName("widget");
+
+            acroForm.addField(checkBox);
+        });
+        framework.assertBothValid("ua1WidgetAnnotNoDirectChildOfAnnotAutomaticConformanceLevelTest");
+    }
+
+    @Test
     public void ua1PrinterMAnnotNoDirectChildOfAnnotTest() throws IOException {
         String outPdf = DESTINATION_FOLDER + "ua1PrinterMAnnotNoDirectChildOfAnnotTest.pdf";
 
-        try (PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()))) {
+        try (PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(outPdf))) {
             PdfPage pdfPage = pdfDoc.addNewPage();
 
             PdfFormXObject form = new PdfFormXObject(PageSize.A4);
@@ -251,8 +265,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
     @Test
     public void ua1StampAnnotWithAltTest() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "ua1StampAnnotWithAltTest.pdf";
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(outPdf));
         PdfPage pdfPage = pdfDoc.addNewPage();
         PdfStampAnnotation stamp = new PdfStampAnnotation(new Rectangle(0, 0, 100, 50));
         stamp.setStampName(PdfName.Approved);
@@ -273,8 +286,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
     @Test
     public void ua1ScreenAnnotWithAltTest() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "ua1ScreenAnnotWithAltTest.pdf";
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(outPdf));
         PdfPage pdfPage = pdfDoc.addNewPage();
         PdfScreenAnnotation screen = new PdfScreenAnnotation(new Rectangle(100, 100));
         pdfPage.addAnnotation(screen);
@@ -554,7 +566,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
     @Test
     public void screenAnnotationWithBEMediaDataTest() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "screenAnnotationWithBEMediaDataTest.pdf";
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(outPdf));
         PdfPage page = pdfDoc.addNewPage();
         String file = "sample.wav";
         String mimeType = "audio/x-wav";
@@ -588,7 +600,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
     @Test
     public void screenAnnotationWithMHMediaDataTest() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "screenAnnotationWithMHMediaDataTest.pdf";
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(outPdf));
         PdfPage page = pdfDoc.addNewPage();
         String file = "sample.wav";
         String mimeType = "audio/x-wav";
@@ -622,7 +634,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
     @Test
     public void screenAnnotationWithMHWithoutAltMediaDataTest() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "screenAnnotationWithInvalidMHMediaDataTest.pdf";
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(outPdf));
         PdfPage page = pdfDoc.addNewPage();
         String file = "sample.wav";
         String mimeType = "audio/x-wav";
@@ -705,7 +717,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "linkAnnotNotDirectChildOfLinkInvalidCropTest.pdf";
 
         PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+                new PdfWriter(outPdf));
         PdfPage page = pdfDoc.addNewPage();
         PdfArray array = new PdfArray();
         array.add(new PdfString("hey"));
@@ -792,7 +804,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
     @Test
     public void ua1PrinterMAnnotNotInTagStructureTest() throws IOException {
         final String outPdf = DESTINATION_FOLDER + "ua1PrinterMAnnotNotInTagStructureTest.pdf";
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(outPdf));
         PdfPage pdfPage = pdfDoc.addNewPage();
 
         PdfFormXObject form = new PdfFormXObject(PageSize.A4);

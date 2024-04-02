@@ -44,7 +44,10 @@ import com.itextpdf.pdfua.UaValidationTestFramework;
 import com.itextpdf.pdfua.UaValidationTestFramework.Generator;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
+import com.itextpdf.pdfua.exceptions.PdfUALogMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.pdfa.VeraPdfValidator;
 
@@ -366,7 +369,7 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "directWritingToCanvasTest.pdf";
 
         PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+                new PdfWriter(outPdf));
 
         TagTreePointer pointer = new TagTreePointer(pdfDoc);
         PdfPage page = pdfDoc.addNewPage();
@@ -383,12 +386,13 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
 
     // -------- Positive tests --------
     @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = PdfUALogMessageConstants.PAGE_FLUSHING_DISABLED)})
     public void flushPreviousPageTest() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "hugeDocumentTest.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_hugeDocumentTest.pdf";
 
         PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+                new PdfWriter(outPdf));
 
         Document doc = new Document(pdfDoc);
 
@@ -435,7 +439,6 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
                 pdfDoc.getPage(pdfDoc.getNumberOfPages() - 1).flush();
             }
         }
-
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
         Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
@@ -608,7 +611,7 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
         String cmpPdf = SOURCE_FOLDER + "cmp_usualHTest.pdf";
 
         PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+                new PdfWriter(outPdf));
 
         Document doc = new Document(pdfDoc);
 
