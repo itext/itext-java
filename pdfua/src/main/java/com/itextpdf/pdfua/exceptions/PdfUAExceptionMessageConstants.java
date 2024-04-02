@@ -101,6 +101,7 @@ public final class PdfUAExceptionMessageConstants {
             "in pdf encryption dictionary.";
     public static final String TENTH_BIT_OF_P_VALUE_IN_ENCRYPTION_SHOULD_BE_NON_ZERO = "10th bit of P value of " +
             "Encryption dictionary should be 1 if the document is tagged.";
+    public static final String PRINTER_MARK_IS_NOT_PERMITTED = "Annotations of subtype PrinterMark shall not be included in logical structure.";
 
     private PdfUAExceptionMessageConstants() {
         // Empty constructor

@@ -78,6 +78,7 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.pdfua.UaValidationTestFramework.Generator;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
+import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.pdfa.VeraPdfValidator;
@@ -493,6 +494,61 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             pdfPage.setTabOrder(PdfName.O);
         });
         framework.assertBothFail("invalidTabsEntryButAnnotInvisibleTest", PdfUAExceptionMessageConstants.PAGE_WITH_ANNOT_DOES_NOT_HAVE_TABS_WITH_S);
+    }
+
+    @Test
+    public void ua1PrinterMAnnotIsInLogicalStructureTest() throws IOException {
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfPage pdfPage = pdfDoc.addNewPage();
+
+            PdfFormXObject form = new PdfFormXObject(PageSize.A4);
+            PdfCanvas canvas = new PdfCanvas(form, pdfDoc);
+            canvas
+                    .saveState()
+                    .circle(265, 795, 5)
+                    .setColor(ColorConstants.GREEN, true)
+                    .fill()
+                    .restoreState();
+            canvas.release();
+
+            PdfPrinterMarkAnnotation annot = new PdfPrinterMarkAnnotation(PageSize.A4, form);
+            annot.setContents("link annot");
+            pdfPage.addAnnotation(annot);
+        });
+        framework.assertBothFail("ua1PrinterMAnnotIsInLogicalStructureTest",
+                PdfUAExceptionMessageConstants.PRINTER_MARK_IS_NOT_PERMITTED);
+    }
+
+    @Test
+    public void ua1PrinterMAnnotNotInTagStructureTest() throws IOException {
+        final String outPdf = DESTINATION_FOLDER + "ua1PrinterMAnnotNotInTagStructureTest.pdf";
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()));
+        PdfPage pdfPage = pdfDoc.addNewPage();
+
+        PdfFormXObject form = new PdfFormXObject(PageSize.A4);
+        PdfCanvas canvas = new PdfCanvas(form, pdfDoc);
+        canvas
+                .saveState()
+                .circle(265, 795, 5)
+                .setColor(ColorConstants.GREEN, true)
+                .fill()
+                .restoreState();
+        canvas.release();
+
+        PdfPrinterMarkAnnotation annot = new PdfPrinterMarkAnnotation(PageSize.A4, form);
+        annot.setContents("link annot");
+        // Put false as 3rd parameter to not tag annotation
+        pdfPage.addAnnotation(-1, annot, false);
+
+
+        PdfCustomAnnot annot2 = new PdfCustomAnnot(new Rectangle(100, 650, 400, 100));
+        annot2.setContents("Content of unique annot");
+        pdfPage.addAnnotation(annot2);
+
+        AssertUtil.doesNotThrow(() -> pdfDoc.close());
+        // VeraPdf complains about the fact that PrinterMark annotation isn't wrapped by Annot tag.
+        // But in that test we don't put PrinterMark annot in tag structure at all.
+        Assert.assertNotNull(new VeraPdfValidator().validate(outPdf));
     }
 
     private PdfTextAnnotation createRichTextAnnotation() {

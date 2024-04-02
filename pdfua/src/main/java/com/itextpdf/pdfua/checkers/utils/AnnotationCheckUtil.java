@@ -112,6 +112,10 @@ public final class AnnotationCheckUtil {
                 return;
             }
 
+            if (PdfName.PrinterMark.equals(annotObj.get(PdfName.Subtype))) {
+                throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.PRINTER_MARK_IS_NOT_PERMITTED);
+            }
+
             if (PdfName.TrapNet.equals(annotObj.get(PdfName.Subtype))) {
                 throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.ANNOT_TRAP_NET_IS_NOT_PERMITTED);
             }
