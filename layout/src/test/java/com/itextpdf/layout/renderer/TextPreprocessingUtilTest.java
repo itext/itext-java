@@ -24,6 +24,7 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
+import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.test.ExtendedITextTest;
@@ -86,6 +87,9 @@ public class TextPreprocessingUtilTest extends ExtendedITextTest {
 
         Glyph glyph = glyphLine.get(0);
         Glyph space = pdfFont.getGlyph('\u0020');
-        Assert.assertTrue(space.getCode() == glyph.getCode() && space.getWidth() == glyph.getWidth());
+        Assert.assertEquals(space.getCode(), glyph.getCode());
+        Assert.assertEquals(space.getWidth(), glyph.getWidth());
+        Assert.assertEquals(space.getUnicode(), glyph.getUnicode());
+        Assert.assertArrayEquals(TextUtil.convertFromUtf32(unicode), glyph.getChars());
     }
 }
