@@ -7,18 +7,18 @@
   <jobs>
     <job>
       <item size="15920">
-        <name>C:\Development\itext\java\itextcore\pdfua\.\src\test\resources\com\itextpdf\pdfua\PdfUATest\documentWithDuplicatingIdsInStructTree.pdf</name>
+        <name>E:\Work\iText\java\itextcore\pdfua\.\src\test\resources\com\itextpdf\pdfua\PdfUATest\documentWithDuplicatingIdsInStructTree.pdf</name>
       </item>
       <validationReport jobEndStatus="normal" profileName="PDF/UA-1 validation profile" statement="PDF file is compliant with Validation Profile requirements." isCompliant="true">
         <details passedRules="103" failedRules="0" passedChecks="106" failedChecks="0"></details>
       </validationReport>
-      <duration start="1712267865844" finish="1712267865847">00:00:00.003</duration>
+      <duration start="1711447154404" finish="1711447154419">00:00:00.015</duration>
     </job>
   </jobs>
   <batchSummary totalJobs="1" failedToParse="0" encrypted="0" outOfMemory="0" veraExceptions="0">
     <validationReports compliant="1" nonCompliant="0" failedJobs="0">1</validationReports>
     <featureReports failedJobs="0">0</featureReports>
     <repairReports failedJobs="0">0</repairReports>
-    <duration start="1712267865842" finish="1712267865849">00:00:00.007</duration>
+    <duration start="1711447154398" finish="1711447154426">00:00:00.028</duration>
   </batchSummary>
 </report>

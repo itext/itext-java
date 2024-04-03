@@ -105,6 +105,8 @@ public final class PdfUAExceptionMessageConstants {
             "have contents or alternate description.";
     public static final String LINK_ANNOTATION_SHOULD_HAVE_CONTENTS_KEY = "Annotation of type Link " +
             "shall contain an alternate description via their Contents key.";
+    public static final String CT_OR_ALT_ENTRY_IS_MISSING_IN_MEDIA_CLIP = "CT or Alt entry is missing from the media " +
+            "clip data dictionary.";
     public static final String PRINTER_MARK_IS_NOT_PERMITTED = "Annotations of subtype PrinterMark shall not be included in logical structure.";
 
     private PdfUAExceptionMessageConstants() {

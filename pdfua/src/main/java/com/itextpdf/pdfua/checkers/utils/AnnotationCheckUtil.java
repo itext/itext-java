@@ -27,6 +27,7 @@ import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.tagging.IStructureNode;
 import com.itextpdf.kernel.pdf.tagging.PdfObjRef;
@@ -137,6 +138,23 @@ public final class AnnotationCheckUtil {
                 }
                 if (!annotObj.containsKey(PdfName.Contents)) {
                     throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.LINK_ANNOTATION_SHOULD_HAVE_CONTENTS_KEY);
+                }
+            }
+
+            if (PdfName.Screen.equals(subtype)) {
+                PdfDictionary action = annotObj.getAsDictionary(PdfName.A);
+                PdfDictionary additionalActions = annotObj.getAsDictionary(PdfName.AA);
+                ActionCheckUtil.checkAction(action);
+                checkAAEntry(additionalActions);
+            }
+        }
+
+        private static void checkAAEntry(PdfDictionary additionalActions) {
+            if (additionalActions != null) {
+                for (PdfObject val : additionalActions.values()) {
+                    if (val instanceof PdfDictionary) {
+                        ActionCheckUtil.checkAction((PdfDictionary) val);
+                    }
                 }
             }
         }

@@ -31,6 +31,7 @@ import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -44,7 +45,10 @@ import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfViewerPreferences;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
+import com.itextpdf.kernel.pdf.action.PdfAction;
+import com.itextpdf.kernel.pdf.annot.PdfScreenAnnotation;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
@@ -150,6 +154,28 @@ public class PdfUATest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outPdf, SOURCE_FOLDER + "cmp_emptyPageDocument.pdf",
                 DESTINATION_FOLDER, "diff_"));
         Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+    }
+
+    @Test
+    public void invalidUA1DocumentWithFlushedPageTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "invalidDocWithFlushedPageTest.pdf";
+        try (PdfDocument pdfDocument = new PdfUATestPdfDocument(
+                new PdfWriter(outPdf, PdfUATestPdfDocument.createWriterProperties()))) {
+            PdfPage page = pdfDocument.addNewPage();
+            PdfFileSpec spec = PdfFileSpec.createExternalFileSpec(pdfDocument, "sample.wav");
+            PdfScreenAnnotation screen = new PdfScreenAnnotation(new Rectangle(100, 100));
+            PdfAction action = PdfAction.createRendition("sample.wav",
+                    spec, "audio/x-wav", screen);
+            screen.setAction(action);
+            screen.setContents("screen annotation");
+            page.addAnnotation(screen);
+            AssertUtil.doesNotThrow(() -> {
+                page.flush();
+            });
+        }
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, SOURCE_FOLDER + "cmp_invalidDocWithFlushedPageTest.pdf",
+                DESTINATION_FOLDER, "diff_"));
+        Assert.assertNotNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
     @Test
