@@ -14,7 +14,7 @@
   <url>https://itextpdf.com/</url>
 
   <properties>
-    <jackson.core.version>2.16.1</jackson.core.version>
+    <jackson.core.version>2.17.0</jackson.core.version>
     <sonar.coverage.exclusions>**/com/itextpdf/commons/bouncycastle/**</sonar.coverage.exclusions>
   </properties>
 
