@@ -275,9 +275,76 @@ public class PdfMergerTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO DEVSIX-5974 Empty tr isn't copied.
     public void emptyTrTableTest() throws ParserConfigurationException, SAXException, IOException, InterruptedException {
         mergeAndCompareTagStructures("emptyTrTable.pdf", 1, 1);
+    }
+
+    @Test
+    public void splitEmptyTrTableFirstPageTest() throws ParserConfigurationException, SAXException, IOException, InterruptedException {
+        mergeAndCompareTagStructures("splitTableWithEmptyTrFirstPage.pdf", 1, 1);
+    }
+
+    @Test
+    public void splitEmptyTrTableSecondPageTest() throws ParserConfigurationException, SAXException, IOException, InterruptedException {
+        mergeAndCompareTagStructures("splitTableWithEmptyTrSecondPage.pdf", 2, 2);
+    }
+
+    @Test
+    public void splitEmptyTrTableFullTest() throws ParserConfigurationException, SAXException, IOException, InterruptedException {
+        mergeAndCompareTagStructures("splitTableWithEmptyTrFull.pdf", 1, 2);
+    }
+
+    @Test
+    public void emptyFirstTrTableTest() throws ParserConfigurationException, SAXException, IOException, InterruptedException {
+        mergeAndCompareTagStructures("emptyFirstTrTable.pdf", 1, 1);
+    }
+
+    @Test
+    public void emptyLastTrTableTest() throws ParserConfigurationException, SAXException, IOException, InterruptedException {
+        mergeAndCompareTagStructures("emptyLastTrTable.pdf", 1, 1);
+    }
+
+    @Test
+    public void emptyTwoAdjacentTrTableTest() throws ParserConfigurationException, SAXException, IOException, InterruptedException {
+        mergeAndCompareTagStructures("emptyTwoAdjacentTrTable.pdf", 1, 1);
+    }
+
+    @Test
+    public void emptyAllTrTableTest() throws ParserConfigurationException, SAXException, IOException, InterruptedException {
+        mergeAndCompareTagStructures("emptyAllTrTable.pdf", 1, 1);
+    }
+
+    @Test
+    public void emptySingleTrTableTest() throws ParserConfigurationException, SAXException, IOException, InterruptedException {
+        mergeAndCompareTagStructures("emptySingleTrTable.pdf", 1, 1);
+    }
+
+    @Test
+    public void splitAndMergeEmptyTrTableTest() throws ParserConfigurationException, SAXException, IOException, InterruptedException {
+        String sourceFilename = sourceFolder + "splitTableWithEmptyTrFull.pdf";
+        String firstPageFilename = destinationFolder + "firstPageDoc.pdf";
+        String secondPageFilename = destinationFolder + "secondPageDoc.pdf";
+        String resultFilename = destinationFolder + "splitAndMergeEmptyTrTable.pdf";
+        String cmpFilename = sourceFolder + "cmp_splitAndMergeEmptyTrTable.pdf";
+
+        PdfDocument sourceDoc = new PdfDocument(new PdfReader(sourceFilename));
+
+        PdfDocument firstPageDoc = new PdfDocument(new PdfWriter(firstPageFilename));
+        PdfMerger mergerFirstPage =  new PdfMerger(firstPageDoc);
+        mergerFirstPage.merge(sourceDoc, 1, 1);
+        mergerFirstPage.close();
+
+        PdfDocument secondPageDoc = new PdfDocument(new PdfWriter(secondPageFilename));
+        PdfMerger mergerSecondPage = new PdfMerger(secondPageDoc);
+        mergerSecondPage.merge(sourceDoc, 2, 2);
+        mergerSecondPage.close();
+
+        List<File> sources = new ArrayList<File>();
+        sources.add(new File(firstPageFilename));
+        sources.add(new File(secondPageFilename));
+        mergePdfs(sources, resultFilename, new PdfMergerProperties(), false);
+
+        Assert.assertNull(new CompareTool().compareTagStructures(resultFilename, cmpFilename));
     }
 
     @Test

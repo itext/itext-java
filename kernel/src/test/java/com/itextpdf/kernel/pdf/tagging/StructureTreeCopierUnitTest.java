@@ -76,7 +76,7 @@ public class StructureTreeCopierUnitTest extends ExtendedITextTest {
         PdfDictionary obj = new PdfDictionary(tr);
         PdfDictionary parent = new PdfDictionary(td);
 
-        Assert.assertFalse(StructureTreeCopier.shouldTableElementBeCopied(obj, parent));
+        Assert.assertTrue(StructureTreeCopier.shouldTableElementBeCopied(obj, parent));
     }
 
     @Test
@@ -84,7 +84,7 @@ public class StructureTreeCopierUnitTest extends ExtendedITextTest {
         PdfDictionary obj = new PdfDictionary(tr);
         PdfDictionary parent = new PdfDictionary(tr);
 
-        Assert.assertFalse(StructureTreeCopier.shouldTableElementBeCopied(obj, parent));
+        Assert.assertTrue(StructureTreeCopier.shouldTableElementBeCopied(obj, parent));
     }
 
     @Test
