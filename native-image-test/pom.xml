@@ -116,7 +116,10 @@
               <buildArgs>
                 <arg>
                   --initialize-at-build-time=org.junit.validator.PublicClassValidator
-                  -H:ResourceConfigurationFiles=src/test/resources/resource-config.json
+                  -H:ResourceConfigurationFiles=${basedir}/src/test/resources/resource-config.json
+                  <!-- Graalvm requires VisualStudio 2022 on Windows but it also works with earlier versions.
+                       So this is a workaround to run tests on TC agents having earlier VS versions installed. -->
+                  -H:-CheckToolchain
                 </arg>
               </buildArgs>
               <skipTests>false</skipTests>
