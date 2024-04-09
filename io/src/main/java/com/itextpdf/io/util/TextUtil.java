@@ -39,6 +39,17 @@ public final class TextUtil {
     }
 
     /**
+     * Checks if the passed code point corresponds to diacritic.
+     *
+     * @param codePoint the code point to check
+     *
+     * @return {@code true} if passed code point is diacritic, {@code false} otherwise
+     */
+    public static boolean isDiacritic(int codePoint) {
+        return codePoint > 0x0300 && codePoint <= 0x036F;
+    }
+
+    /**
      * Check if the value of a character belongs to a certain interval
      * that indicates it's the higher part of a surrogate pair.
      *
@@ -71,7 +82,7 @@ public final class TextUtil {
 
     /**
      * Checks if two subsequent characters in a String are
-     * are the higher and the lower character in a surrogate
+     * the higher and the lower character in a surrogate
      * pair (and therefore eligible for conversion to a UTF 32 character).
      *
      * @param text the String with the high and low surrogate characters
@@ -86,7 +97,7 @@ public final class TextUtil {
 
     /**
      * Checks if two subsequent characters in a character array are
-     * are the higher and the lower character in a surrogate
+     * the higher and the lower character in a surrogate
      * pair (and therefore eligible for conversion to a UTF 32 character).
      *
      * @param text the character array with the high and low surrogate characters

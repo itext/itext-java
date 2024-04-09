@@ -22,19 +22,22 @@
  */
 package com.itextpdf.layout.font;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.font.FontCache;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.Type1Font;
 import com.itextpdf.io.font.constants.StandardFonts;
-import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
+import com.itextpdf.layout.font.selectorstrategy.FirstMatchFontSelectorStrategy.FirstMathFontSelectorStrategyFactory;
+import com.itextpdf.layout.font.selectorstrategy.IFontSelectorStrategy;
+import com.itextpdf.layout.font.selectorstrategy.IFontSelectorStrategyFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -53,7 +56,7 @@ import java.util.Map;
  * <p>
  * It is allowed to use only one {@link FontProvider} per document. If additional fonts per element needed,
  * another instance of  {@link FontSet} can be used. For more details see {@link com.itextpdf.layout.properties.Property#FONT_SET},
- * {@link #getPdfFont(FontInfo, FontSet)}, {@link #getStrategy(String, List, FontCharacteristics, FontSet)}.
+ * {@link #getPdfFont(FontInfo, FontSet)}, {@link #createFontSelectorStrategy(List, FontCharacteristics, FontSet)}.
  * <p>
  * Note, FontProvider does not close created {@link FontProgram}s, because of possible conflicts with {@link FontCache}.
  */
@@ -68,6 +71,8 @@ public class FontProvider {
      */
     protected final String defaultFontFamily;
     protected final Map<FontInfo, PdfFont> pdfFonts;
+
+    private IFontSelectorStrategyFactory fontSelectorStrategyFactory;
 
     /**
      * Creates a new instance of FontProvider.
@@ -105,6 +110,7 @@ public class FontProvider {
         pdfFonts = new HashMap<>();
         fontSelectorCache = new FontSelectorCache(this.fontSet);
         this.defaultFontFamily = defaultFontFamily;
+        this.fontSelectorStrategyFactory = new FirstMathFontSelectorStrategyFactory();
     }
 
     /**
@@ -364,7 +370,9 @@ public class FontProvider {
      *                        font selector strategy instance and will not be otherwise preserved in font provider.
      *
      * @return {@link FontSelectorStrategy} instance.
+     * @deprecated use {@link #createFontSelectorStrategy(List, FontCharacteristics, FontSet)}
      */
+    @Deprecated
     public FontSelectorStrategy getStrategy(String text, List<String> fontFamilies, FontCharacteristics fc, FontSet additionalFonts) {
         return new ComplexFontSelectorStrategy(text, getFontSelector(fontFamilies, fc, additionalFonts), this, additionalFonts);
     }
@@ -379,7 +387,9 @@ public class FontProvider {
      * @param fc instance of {@link FontCharacteristics} to create {@link FontSelector} for sequences of glyphs.
      *
      * @return {@link FontSelectorStrategy} instance.
+     * @deprecated use {@link #createFontSelectorStrategy(List, FontCharacteristics, FontSet)}
      */
+    @Deprecated
     public FontSelectorStrategy getStrategy(String text, List<String> fontFamilies, FontCharacteristics fc) {
         return getStrategy(text, fontFamilies, fc, null);
     }
@@ -393,9 +403,42 @@ public class FontProvider {
      * @param fontFamilies target font families to create {@link FontSelector} for sequences of glyphs.
      *
      * @return {@link FontSelectorStrategy} instance.
+     * @deprecated use {@link #createFontSelectorStrategy(List, FontCharacteristics, FontSet)}
      */
+    @Deprecated
     public FontSelectorStrategy getStrategy(String text, List<String> fontFamilies) {
         return getStrategy(text, fontFamilies, null);
+    }
+
+    /**
+     * Sets factory which will be used in {@link #createFontSelectorStrategy(List, FontCharacteristics, FontSet)}
+     * method.
+     *
+     * @param factory the factory which will be used to create font selector strategies
+     */
+    public void setFontSelectorStrategyFactory(IFontSelectorStrategyFactory factory) {
+        this.fontSelectorStrategyFactory = factory;
+    }
+
+    /**
+     * Creates the {@link IFontSelectorStrategy} to split text into sequences of glyphs, already tied
+     * to the fonts which contain them. The fonts can be taken from the added fonts to the font provider and
+     * are chosen based on font-families list and desired font characteristics.
+     *
+     * @param fontFamilies target font families to create {@link FontSelector} for sequences of glyphs.
+     * @param fc instance of {@link FontCharacteristics} to create {@link FontSelector} for sequences of glyphs.
+     * @param additionalFonts set which provides fonts additionally to the fonts added to font provider.
+     *                        Combined set of font provider fonts and additional fonts is used when choosing
+     *                        a single font for a sequence of glyphs. Additional fonts will only be used for the given
+     *                        font selector strategy instance and will not be otherwise preserved in font provider.
+     *
+     * @return {@link IFontSelectorStrategy} instance
+     */
+    public IFontSelectorStrategy createFontSelectorStrategy(List<String> fontFamilies,
+            FontCharacteristics fc, FontSet additionalFonts) {
+
+        final FontSelector fontSelector = getFontSelector(fontFamilies, fc, additionalFonts);
+        return fontSelectorStrategyFactory.createFontSelectorStrategy(this, fontSelector, additionalFonts);
     }
 
     /**

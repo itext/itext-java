@@ -25,6 +25,7 @@ package com.itextpdf.layout.font;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.layout.font.selectorstrategy.FirstMatchFontSelectorStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +34,9 @@ import java.util.List;
  * Complex FontSelectorStrategy split text based on {@link java.lang.Character.UnicodeScript}.
  * If unicode script changes, a new font will be found.
  * If there is no suitable font, only one notdef glyph from {@link FontSelector#bestMatch()} will be added.
+ * @deprecated was replaced by {@link FirstMatchFontSelectorStrategy}.
  */
+@Deprecated
 public class ComplexFontSelectorStrategy extends FontSelectorStrategy {
 
     private PdfFont font;
