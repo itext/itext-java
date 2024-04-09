@@ -44,6 +44,7 @@ import com.itextpdf.layout.borders.DashedBorder;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
@@ -56,7 +57,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -503,14 +503,37 @@ public class ListBoxFieldTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-8158")
-    public void testListBoxInfiniteLoop() {
-        Document document = new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) ;
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1))
+    public void listBoxIsBiggerThanPage() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "listBoxIsBiggerThenPage.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_listBoxIsBiggerThenPage.pdf";
+        Document document = new Document(new PdfDocument(new PdfWriter(outPdf))) ;
         ListBoxField list = (ListBoxField) new ListBoxField("name", 200, false).setInteractive(true);
+        list.setBackgroundColor(ColorConstants.RED);
         list.addOption("value1");
         list.addOption("value2");
+        document.add(new Paragraph("s\no\nm\ne\nl\no\nn\ng\nt\ne\nx\nt\n"));
         document.add(list);
         document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1))
+    public void listBoxIsBiggerThanPageNonI() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "listBoxIsBiggerThenPageNonI.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_listBoxIsBiggerThenPageNonI.pdf";
+        Document document = new Document(new PdfDocument(new PdfWriter(outPdf))) ;
+        ListBoxField list = (ListBoxField) new ListBoxField("name", 200, false);
+        list.setBackgroundColor(ColorConstants.RED);
+        list.addOption("value1");
+        list.addOption("value2");
+        document.add(new Paragraph("s\no\nm\ne\nl\no\nn\ng\nt\ne\nx\nt\n"));
+        document.add(list);
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test

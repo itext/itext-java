@@ -84,7 +84,10 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
         final boolean isForcedPlacement = Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT));
         LayoutResult layoutResult = super.layout(new LayoutContext(area, layoutContext.getMarginsCollapseInfo(),
                 layoutContext.getFloatRendererAreas(), layoutContext.isClippedHeight()));
-
+        if (isForcedPlacement){
+            // Restore the Property.FORCED_PLACEMENT value as it was before super.layout
+            setProperty(Property.FORCED_PLACEMENT, true);
+        }
         if (layoutResult.getStatus() != LayoutResult.FULL) {
             if (isForcedPlacement) {
                 layoutResult = makeLayoutResultFull(layoutContext.getArea(), layoutResult);
