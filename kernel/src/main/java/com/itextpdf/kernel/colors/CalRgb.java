@@ -24,21 +24,50 @@ package com.itextpdf.kernel.colors;
 
 import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
 
+/**
+ * Representation of a CalRgb color space.
+ */
 public class CalRgb extends Color {
 
 
+    /**
+     * Creates a new CalRgb color using the given {@link PdfCieBasedCs} color space.
+     *
+     * @param cs Color space
+     */
     public CalRgb(PdfCieBasedCs.CalRgb cs) {
         this(cs, new float[cs.getNumberOfComponents()]);
     }
 
+    /**
+     * Creates a new CalRgb color using the given {@link PdfCieBasedCs} color space and RGB color values.
+     *
+     * @param cs    Color space
+     * @param value RGB color values
+     */
     public CalRgb(PdfCieBasedCs.CalRgb cs, float[] value) {
         super(cs, value);
     }
 
+    /**
+     * Creates a new CalRgb color using the given white point and RGB color values.
+     *
+     * @param whitePoint Color values for defining the white point
+     * @param value      RGB color values
+     */
     public CalRgb(float[] whitePoint, float[] value) {
         super(new PdfCieBasedCs.CalRgb(whitePoint), value);
     }
 
+    /**
+     * Creates a new CalRgb color using the given white point, black point, gamma, matrix and RGB color values.
+     *
+     * @param whitePoint Color values for defining the white point
+     * @param blackPoint Color values for defining the black point
+     * @param gamma      Gamma correction
+     * @param matrix     Matrix correction
+     * @param value      RGB color value
+     */
     public CalRgb(float[] whitePoint, float[] blackPoint, float[] gamma, float[] matrix, float[] value) {
         this(new PdfCieBasedCs.CalRgb(whitePoint, blackPoint, gamma, matrix), value);
     }

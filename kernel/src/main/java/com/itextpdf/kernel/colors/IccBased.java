@@ -28,13 +28,27 @@ import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
 
 import java.io.InputStream;
 
+/**
+ * Representation on an ICC Based color space.
+ */
 public class IccBased extends Color {
 
 
+    /**
+     * Creates an ICC Based color using the given {@link PdfCieBasedCs} color space.
+     *
+     * @param cs Color space
+     */
     public IccBased(PdfCieBasedCs.IccBased cs) {
         this(cs, new float[cs.getNumberOfComponents()]);
     }
 
+    /**
+     * Creates an ICC Based color using the given {@link PdfCieBasedCs} color space and color values.
+     *
+     * @param cs    Color space
+     * @param value Color values
+     */
     public IccBased(PdfCieBasedCs.IccBased cs, float[] value) {
         super(cs, value);
     }
@@ -61,6 +75,13 @@ public class IccBased extends Color {
         this(new PdfCieBasedCs.IccBased(iccStream), value);
     }
 
+    /**
+     * Creates an ICC Based color using the given ICC profile stream, range and color values.
+     *
+     * @param iccStream ICC profile stream. User is responsible for closing the stream.
+     * @param range     Range for color
+     * @param value     Color values
+     */
     public IccBased(InputStream iccStream, float[] range, float[] value) {
         this(new PdfCieBasedCs.IccBased(iccStream, range), value);
         if (getNumberOfComponents() * 2 != range.length)

@@ -29,13 +29,27 @@ import com.itextpdf.kernel.pdf.function.IPdfFunction;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Representation of a DeviceN color space.
+ */
 public class DeviceN extends Color {
 
 
+    /**
+     * Creates a DeviceN color using the given {@link PdfSpecialCs} color space.
+     *
+     * @param cs Color space
+     */
     public DeviceN(PdfSpecialCs.DeviceN cs) {
         this(cs, getDefaultColorants(cs.getNumberOfComponents()));
     }
 
+    /**
+     * Creates a DeviceN color using the given {@link PdfSpecialCs} color space and color values.
+     *
+     * @param cs    Color space
+     * @param value Color component values
+     */
     public DeviceN(PdfSpecialCs.DeviceN cs, float[] value) {
         super(cs, value);
     }
@@ -43,10 +57,10 @@ public class DeviceN extends Color {
     /**
      * Creates a color in a new DeviceN color space.
      *
-     * @param names the names oif the components
-     * @param alternateCs the alternate color space
+     * @param names         the names oif the components
+     * @param alternateCs   the alternate color space
      * @param tintTransform the function to transform color to the alternate color space
-     * @param value the values for the components of this color
+     * @param value         the values for the components of this color
      */
     public DeviceN(List<String> names, PdfColorSpace alternateCs, IPdfFunction tintTransform, float[] value) {
         this(new PdfSpecialCs.DeviceN(names, alternateCs, tintTransform), value);

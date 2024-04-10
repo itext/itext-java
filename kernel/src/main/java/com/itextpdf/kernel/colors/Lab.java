@@ -24,21 +24,49 @@ package com.itextpdf.kernel.colors;
 
 import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
 
+/**
+ * Representation of a lab color space.
+ */
 public class Lab extends Color {
 
 
+    /**
+     * Creates a lab color using the given {@link PdfCieBasedCs} color space.
+     *
+     * @param cs Color space
+     */
     public Lab(PdfCieBasedCs.Lab cs) {
         this(cs, new float[cs.getNumberOfComponents()]);
     }
 
+    /**
+     * Creates a lab color using the given {@link PdfCieBasedCs} color space and color values.
+     *
+     * @param cs    Color space
+     * @param value Color values
+     */
     public Lab(PdfCieBasedCs.Lab cs, float[] value) {
         super(cs, value);
     }
 
+    /**
+     * Creates a lab color using the given white point and color values.
+     *
+     * @param whitePoint Color values for defining the white point
+     * @param value      Color values
+     */
     public Lab(float[] whitePoint, float[] value) {
         super(new PdfCieBasedCs.Lab(whitePoint), value);
     }
 
+    /**
+     * Creates a lab color using the given white point, black point and color values.
+     *
+     * @param whitePoint Color values for defining the white point
+     * @param blackPoint Color values for defining the black point
+     * @param range      Range for color
+     * @param value      Color values
+     */
     public Lab(float[] whitePoint, float[] blackPoint, float[] range, float[] value) {
         this(new PdfCieBasedCs.Lab(whitePoint, blackPoint, range), value);
     }

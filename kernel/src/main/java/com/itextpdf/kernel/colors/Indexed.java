@@ -24,13 +24,26 @@ package com.itextpdf.kernel.colors;
 
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 
+/**
+ * Representation of an indexed color space.
+ */
 public class Indexed extends Color {
 
-
+    /**
+     * Creates an indexed color using the given {@link PdfColorSpace}.
+     *
+     * @param colorSpace Object containing the most common properties of color spaces
+     */
     public Indexed(PdfColorSpace colorSpace) {
         this(colorSpace, 0);
     }
 
+    /**
+     * Creates an indexed color using the given {@link PdfColorSpace} and color values.
+     *
+     * @param colorSpace Object containing the most common properties of color spaces
+     * @param colorValue Color values
+     */
     public Indexed(PdfColorSpace colorSpace, int colorValue) {
         super(colorSpace, new float[] {colorValue});
     }
