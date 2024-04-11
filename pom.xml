@@ -84,7 +84,7 @@
 
   <properties>
     <argLine>-Xmx1024m</argLine>
-    <bouncycastle.version>1.75</bouncycastle.version>
+    <bouncycastle.version>1.78</bouncycastle.version>
     <bouncycastleintegrationtests>com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest</bouncycastleintegrationtests>
     <bouncycastleunittests>com.itextpdf.test.annotations.type.BouncyCastleUnitTest</bouncycastleunittests>
     <dependencyCheck.version>7.0.0</dependencyCheck.version>
