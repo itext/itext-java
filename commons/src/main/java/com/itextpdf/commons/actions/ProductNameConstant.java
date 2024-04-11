@@ -36,6 +36,10 @@ public final class ProductNameConstant {
      */
     public static final String ITEXT_CORE = "itext-core";
     /**
+     * itext-core sign module constant.
+     */
+    public static final String ITEXT_CORE_SIGN = "itext-core-sign";
+    /**
      * pdfhtml constant.
      */
     public static final String PDF_HTML = "pdfHtml";

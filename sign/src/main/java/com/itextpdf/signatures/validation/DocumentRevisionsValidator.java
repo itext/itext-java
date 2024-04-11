@@ -22,10 +22,12 @@
  */
 package com.itextpdf.signatures.validation;
 
+import com.itextpdf.commons.actions.contexts.IMetaInfo;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.source.RASInputStream;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.WindowRandomAccessSource;
+import com.itextpdf.kernel.pdf.DocumentProperties;
 import com.itextpdf.kernel.pdf.DocumentRevision;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -69,8 +71,19 @@ class DocumentRevisionsValidator {
     static final String UNEXPECTED_ENTRY_IN_XREF =
             "New PDF document revision contains unexpected entry \"{0}\" in XREF table.";
 
+    private IMetaInfo metaInfo;
+
     DocumentRevisionsValidator() {
         // Empty constructor.
+    }
+
+    /**
+     * Sets the {@link IMetaInfo} that will be used during {@link PdfDocument} creation.
+     *
+     * @param metaInfo meta info to set
+     */
+    public void setEventCountingMetaInfo(IMetaInfo metaInfo) {
+        this.metaInfo = metaInfo;
     }
 
     ValidationReport validateRevision(PdfDocument originalDocument, PdfDocument documentWithoutRevision,
@@ -78,7 +91,8 @@ class DocumentRevisionsValidator {
         ValidationReport validationReport = new ValidationReport();
         try (InputStream inputStream = createInputStreamFromRevision(originalDocument, revision);
                 PdfReader newReader = new PdfReader(inputStream);
-                PdfDocument documentWithRevision = new PdfDocument(newReader)) {
+                PdfDocument documentWithRevision = new PdfDocument(newReader,
+                        new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
             Set<PdfIndirectReference> indirectReferences = revision.getModifiedObjects();
             if (!compareCatalogs(documentWithoutRevision, documentWithRevision, validationReport)) {
                 return validationReport;

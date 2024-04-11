@@ -50,7 +50,7 @@ public abstract class AbstractContextManagerConfigurationEvent extends AbstractI
     /**
      * Unregisters certain namespaces.
      *
-     * @param namespaces the namespaces to be unregisted
+     * @param namespaces the namespaces to be unregistered
      */
     protected void unregisterContext(Collection<String> namespaces) {
         ContextManager.getInstance().unregisterContext(namespaces);

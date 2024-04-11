@@ -61,13 +61,15 @@ import java.util.List;
  */
 public class PadesTwoPhaseSigningHelper {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
-    
+
     private IOcspClient ocspClient;
     private ICrlClient crlClient;
     private ITSAClient tsaClient;
     private String temporaryDirectoryPath;
     private String timestampSignatureName;
     private StampingProperties stampingProperties = new StampingProperties().useAppendMode();
+    private StampingProperties stampingPropertiesWithMetaInfo = (StampingProperties) new StampingProperties()
+            .useAppendMode().setEventCountingMetaInfo(new SignMetaInfo());
     private IIssuingCertificateRetriever issuingCertificateRetriever = new IssuingCertificateRetriever();
     private int estimatedSize = -1;
 
@@ -92,7 +94,7 @@ public class PadesTwoPhaseSigningHelper {
      *
      * @return same instance of {@link PadesTwoPhaseSigningHelper}
      */
-    public PadesTwoPhaseSigningHelper setOcspClient(IOcspClient ocspClient){
+    public PadesTwoPhaseSigningHelper setOcspClient(IOcspClient ocspClient) {
         this.ocspClient = ocspClient;
         return this;
     }
@@ -121,7 +123,7 @@ public class PadesTwoPhaseSigningHelper {
      *
      * @return same instance of {@link PadesTwoPhaseSigningHelper}
      */
-    public PadesTwoPhaseSigningHelper setCrlClient(ICrlClient crlClient){
+    public PadesTwoPhaseSigningHelper setCrlClient(ICrlClient crlClient) {
         this.crlClient = crlClient;
         return this;
     }
@@ -215,6 +217,9 @@ public class PadesTwoPhaseSigningHelper {
      */
     public PadesTwoPhaseSigningHelper setStampingProperties(StampingProperties stampingProperties) {
         this.stampingProperties = stampingProperties;
+        if (stampingProperties.isEventCountingMetaInfoSet()) {
+            this.stampingPropertiesWithMetaInfo = stampingProperties;
+        }
         return this;
     }
 
@@ -238,8 +243,9 @@ public class PadesTwoPhaseSigningHelper {
             throws IOException, GeneralSecurityException {
         Certificate[] fullChain = issuingCertificateRetriever.retrieveMissingCertificates(certificates);
         X509Certificate[] x509FullChain = Arrays.asList(fullChain).toArray(new X509Certificate[0]);
-        PdfTwoPhaseSigner pdfTwoPhaseSigner =  new PdfTwoPhaseSigner(inputDocument, outputStream);
-        
+        PdfTwoPhaseSigner pdfTwoPhaseSigner = new PdfTwoPhaseSigner(inputDocument, outputStream);
+        pdfTwoPhaseSigner.setStampingProperties(stampingProperties);
+
         CMSContainer cms = new CMSContainer();
         SignerInfo signerInfo = new SignerInfo();
         String digestAlgorithmOid = DigestAlgorithms.getAllowedDigest(digestAlgorithm);
@@ -254,11 +260,11 @@ public class PadesTwoPhaseSigningHelper {
             realSignatureSize += tsaClient.getTokenSizeEstimate();
         }
         int expectedSignatureSize = estimatedSize < 0 ? realSignatureSize : estimatedSize;
-        
+
         byte[] digestedDocumentBytes = pdfTwoPhaseSigner.prepareDocumentForSignature(signerProperties, digestAlgorithm,
                 PdfName.Adobe_PPKLite, PdfName.ETSI_CAdES_DETACHED, expectedSignatureSize, true);
         signerInfo.setMessageDigest(digestedDocumentBytes);
-        
+
         return cms;
     }
 
@@ -277,7 +283,7 @@ public class PadesTwoPhaseSigningHelper {
             OutputStream outputStream, String signatureFieldName, CMSContainer cmsContainer) throws Exception {
         setSignatureAlgorithmAndSignature(externalSignature, cmsContainer);
 
-        try (PdfDocument document = new PdfDocument(inputDocument)) {
+        try (PdfDocument document = new PdfDocument(inputDocument, stampingProperties)) {
             PdfTwoPhaseSigner.addSignatureToPreparedDocument(document, signatureFieldName, outputStream, cmsContainer);
         } finally {
             outputStream.close();
@@ -311,7 +317,7 @@ public class PadesTwoPhaseSigningHelper {
             cmsContainer.getSignerInfo().addUnSignedAttribute(timestampAttribute);
         }
 
-        try (PdfDocument document = new PdfDocument(inputDocument)) {
+        try (PdfDocument document = new PdfDocument(inputDocument, stampingProperties)) {
             PdfTwoPhaseSigner.addSignatureToPreparedDocument(document, signatureFieldName, outputStream, cmsContainer);
         } finally {
             outputStream.close();
@@ -337,8 +343,8 @@ public class PadesTwoPhaseSigningHelper {
             signCMSContainerWithBaselineTProfile(externalSignature, inputDocument, tempOutput, signatureFieldName,
                     cmsContainer);
             try (InputStream inputStream = padesSigner.createInputStream();
-                    PdfDocument pdfDocument = new PdfDocument(new PdfReader(inputStream),
-                            new PdfWriter(outputStream), new StampingProperties().useAppendMode())) {
+                 PdfDocument pdfDocument = new PdfDocument(new PdfReader(inputStream), new PdfWriter(outputStream),
+                         stampingPropertiesWithMetaInfo)) {
                 padesSigner.performLtvVerification(pdfDocument,
                         Collections.singletonList(signatureFieldName),
                         LtvVerification.RevocationDataNecessity.REQUIRED_FOR_SIGNING_CERTIFICATE);
@@ -367,9 +373,8 @@ public class PadesTwoPhaseSigningHelper {
             signCMSContainerWithBaselineTProfile(externalSignature, inputDocument, tempOutput, signatureFieldName,
                     cmsContainer);
             try (InputStream inputStream = padesSigner.createInputStream();
-                    PdfDocument pdfDocument = new PdfDocument(new PdfReader(inputStream),
-                            new PdfWriter(padesSigner.createOutputStream()),
-                            new StampingProperties().useAppendMode())) {
+                 PdfDocument pdfDocument = new PdfDocument(new PdfReader(inputStream),
+                         new PdfWriter(padesSigner.createOutputStream()), stampingPropertiesWithMetaInfo)) {
                 padesSigner.performLtvVerification(pdfDocument,
                         Collections.singletonList(signatureFieldName),
                         LtvVerification.RevocationDataNecessity.REQUIRED_FOR_SIGNING_CERTIFICATE);
@@ -399,13 +404,13 @@ public class PadesTwoPhaseSigningHelper {
                     SignatureMechanisms.getSignatureMechanismOid(providedSignatureAlgorithm, signatureDigest),
                     signatureMechanismParams.toEncodable().toASN1Primitive()));
         }
-        
+
         byte[] signedAttributes = cmsContainer.getSerializedSignedAttributes();
         byte[] signature = externalSignature.sign(signedAttributes);
         cmsContainer.getSignerInfo().setSignature(signature);
         return signature;
     }
-    
+
     private PdfPadesSigner createPadesSigner(PdfReader inputDocument, OutputStream outputStream) {
         PdfPadesSigner padesSigner = new PdfPadesSigner(inputDocument, outputStream);
         padesSigner.setOcspClient(ocspClient);

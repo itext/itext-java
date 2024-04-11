@@ -42,8 +42,15 @@ import java.security.MessageDigest;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Class that prepares document and adds the signature to it while performing signing operation in two steps
+ * (see {@link PadesTwoPhaseSigningHelper} for more info).
+ *
+ * <p>
+ * Firstly, this class allows to prepare the document for signing and calculate the document digest to sign.
+ * Secondly, it adds an existing signature to a PDF where space was already reserved.
+ */
 public class PdfTwoPhaseSigner {
-
 
     private final PdfReader reader;
     private final OutputStream outputStream;
@@ -51,6 +58,12 @@ public class PdfTwoPhaseSigner {
     private StampingProperties stampingProperties = new StampingProperties().useAppendMode();
     private boolean closed;
 
+    /**
+     * Creates new {@link PdfTwoPhaseSigner} instance.
+     *
+     * @param reader       {@link PdfReader} instance to read the original PDF file
+     * @param outputStream {@link OutputStream} output stream to write the resulting PDF file into
+     */
     public PdfTwoPhaseSigner(PdfReader reader, OutputStream outputStream) {
         this.reader = reader;
         this.outputStream = outputStream;
