@@ -416,6 +416,7 @@
             <file path="com/itextpdf/kernel/xmp/XmlDomWriter.java"/>
             <file path="com/itextpdf/kernel/xmp/XMPDateTime.java"/>
             <file path="com/itextpdf/kernel/xmp/XMPDateTimeFactory.java"/>
+            <file path="com/itextpdf/kernel/xmp/impl/XMPNodeTest.java"/>
             <!-- layout -->
             <fileset reason="XMLReader has different implementation in .NET and Java">
                 <file path="com/itextpdf/layout/hyphenation/PatternParser.java"/>
