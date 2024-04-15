@@ -32,6 +32,7 @@ import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.Radio;
 import com.itextpdf.forms.util.BorderStyleUtil;
 import com.itextpdf.forms.util.DrawingUtil;
+import com.itextpdf.forms.util.FormFieldRendererUtil;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.exceptions.PdfException;
@@ -173,7 +174,7 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
         PdfDocument doc = drawContext.getDocument();
         PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
         Rectangle area = flatRenderer.getOccupiedArea().getBBox().clone();
-        final Map<Integer, Object> margins = deleteMargins();
+        final Map<Integer, Object> properties = FormFieldRendererUtil.removeProperties(this.modelElement);
 
         PdfPage page = doc.getPage(occupiedArea.getPageNumber());
         String groupName = this.<String>getProperty(FormProperty.FORM_FIELD_RADIO_GROUP_NAME);
@@ -212,7 +213,7 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
 
         applyAccessibilityProperties(radioGroup, doc);
         form.addField(radioGroup, page);
-        applyProperties(margins);
+        FormFieldRendererUtil.reapplyProperties(this.modelElement, properties);
     }
 
     /**

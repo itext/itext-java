@@ -30,6 +30,7 @@ import com.itextpdf.forms.fields.TextFormFieldBuilder;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.TextArea;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
+import com.itextpdf.forms.util.FormFieldRendererUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -193,7 +194,7 @@ public class TextAreaRenderer extends AbstractTextFieldRenderer {
         PdfDocument doc = drawContext.getDocument();
         Rectangle area = getOccupiedArea().getBBox().clone();
         applyMargins(area, false);
-        final Map<Integer, Object> margins = deleteMargins();
+        final Map<Integer, Object> properties = FormFieldRendererUtil.removeProperties(modelElement);
         PdfPage page = doc.getPage(occupiedArea.getPageNumber());
         final float fontSizeValue = fontSize.getValue();
         final PdfString defaultValue = new PdfString(getDefaultValue());
@@ -215,7 +216,7 @@ public class TextAreaRenderer extends AbstractTextFieldRenderer {
         applyAccessibilityProperties(inputField, doc);
         PdfFormCreator.getAcroForm(doc, true).addField(inputField, page);
 
-        applyProperties(margins);
+        FormFieldRendererUtil.reapplyProperties(modelElement, properties);
     }
 
     /**

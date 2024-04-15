@@ -29,6 +29,7 @@ import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfSignatureFormField;
 import com.itextpdf.forms.fields.SignatureFormFieldBuilder;
 import com.itextpdf.forms.form.element.SignatureFieldAppearance;
+import com.itextpdf.forms.util.FormFieldRendererUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -53,6 +54,7 @@ import com.itextpdf.layout.renderer.ImageRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
 
 import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -128,6 +130,8 @@ public class SignatureAppearanceRenderer extends AbstractTextFieldRenderer {
         Rectangle bBox = getOccupiedArea().getBBox().clone();
         applyPaddings(bBox, false);
         applyBorderBox(bBox, false);
+        applyMargins(bBox, false);
+
         if (bBox.getY() < 0) {
             bBox.setHeight(bBox.getY() + bBox.getHeight());
             bBox.setY(0);
@@ -194,7 +198,6 @@ public class SignatureAppearanceRenderer extends AbstractTextFieldRenderer {
             default:
                 return;
         }
-
         adjustChildrenLayout(renderingMode, signatureRect, descriptionRect, layoutContext.getArea().getPageNumber());
     }
 
@@ -236,7 +239,7 @@ public class SignatureAppearanceRenderer extends AbstractTextFieldRenderer {
         PdfDocument doc = drawContext.getDocument();
         Rectangle area = getOccupiedArea().getBBox().clone();
         applyMargins(area, false);
-        deleteMargins();
+        Map<Integer,Object> properties = FormFieldRendererUtil.removeProperties(this.modelElement);
         PdfPage page = doc.getPage(occupiedArea.getPageNumber());
 
         Background background = this.<Background>getProperty(Property.BACKGROUND);
@@ -266,6 +269,7 @@ public class SignatureAppearanceRenderer extends AbstractTextFieldRenderer {
         sigField.enableFieldRegeneration();
         PdfAcroForm forms = PdfFormCreator.getAcroForm(doc, true);
         forms.addField(sigField, page);
+        FormFieldRendererUtil.reapplyProperties(modelElement, properties);
 
     }
 

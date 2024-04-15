@@ -34,6 +34,7 @@ import com.itextpdf.forms.form.renderer.checkboximpl.ICheckBoxRenderingStrategy;
 import com.itextpdf.forms.form.renderer.checkboximpl.PdfACheckBoxRenderingStrategy;
 import com.itextpdf.forms.form.renderer.checkboximpl.PdfCheckBoxRenderingStrategy;
 import com.itextpdf.forms.util.BorderStyleUtil;
+import com.itextpdf.forms.util.FormFieldRendererUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.IConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
@@ -193,6 +194,24 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
     }
 
     /**
+     * Applies given paddings to the given rectangle.
+     *
+     * Checkboxes don't support setting of paddings as they are always centered.
+     * So that this method returns the rectangle as is.
+     *
+     * @param rect     a rectangle paddings will be applied on.
+     * @param paddings the paddings to be applied on the given rectangle
+     * @param reverse  indicates whether paddings will be applied
+     *                 inside (in case of false) or outside (in case of true) the rectangle.
+     *
+     * @return The rectangle NOT modified by the paddings.
+     */
+    @Override
+    protected Rectangle applyPaddings(Rectangle rect, UnitValue[] paddings, boolean reverse) {
+        return rect;
+    }
+
+    /**
      * Creates a flat renderer for the checkbox.
      *
      * @return an IRenderer object for the flat renderer
@@ -242,7 +261,7 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
         final PdfDocument doc = drawContext.getDocument();
         final Rectangle area = flatRenderer.getOccupiedArea().getBBox().clone();
 
-        final Map<Integer, Object> margins = deleteMargins();
+        final Map<Integer, Object> properties = FormFieldRendererUtil.removeProperties(this.modelElement);
         final PdfPage page = doc.getPage(occupiedArea.getPageNumber());
         final CheckBoxFormFieldBuilder builder = new CheckBoxFormFieldBuilder(doc, name).setWidgetRectangle(area)
                 .setGenericConformanceLevel(this.<IConformanceLevel>getProperty(FormProperty.FORM_CONFORMANCE_LEVEL));
@@ -267,7 +286,7 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
         checkBox.enableFieldRegeneration();
 
         PdfFormCreator.getAcroForm(doc, true).addField(checkBox, page);
-        applyProperties(margins);
+        FormFieldRendererUtil.reapplyProperties(modelElement, properties);
     }
 
     /**

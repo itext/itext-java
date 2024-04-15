@@ -29,6 +29,7 @@ import com.itextpdf.forms.fields.TextFormFieldBuilder;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.InputField;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
+import com.itextpdf.forms.util.FormFieldRendererUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -163,7 +164,7 @@ public class InputFieldRenderer extends AbstractOneLineTextFieldRenderer {
         final PdfDocument doc = drawContext.getDocument();
         final Rectangle area = this.getOccupiedArea().getBBox().clone();
         applyMargins(area, false);
-        final Map<Integer, Object> margins = deleteMargins();
+        final Map<Integer, Object> properties = FormFieldRendererUtil.removeProperties(this.modelElement);
         final PdfPage page = doc.getPage(occupiedArea.getPageNumber());
         final float fontSizeValue = fontSize.getValue();
 
@@ -197,7 +198,7 @@ public class InputFieldRenderer extends AbstractOneLineTextFieldRenderer {
         inputField.enableFieldRegeneration();
         PdfFormCreator.getAcroForm(doc, true).addField(inputField, page);
 
-        applyProperties(margins);
+        FormFieldRendererUtil.reapplyProperties(modelElement, properties);
     }
 
     /**

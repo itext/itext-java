@@ -31,6 +31,7 @@ import com.itextpdf.forms.form.element.AbstractSelectField;
 import com.itextpdf.forms.form.element.ComboBoxField;
 import com.itextpdf.forms.form.element.SelectFieldItem;
 import com.itextpdf.forms.util.BorderStyleUtil;
+import com.itextpdf.forms.util.FormFieldRendererUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -56,6 +57,7 @@ import com.itextpdf.layout.tagging.IAccessibleElement;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -117,6 +119,9 @@ public class SelectFieldComboBoxRenderer extends AbstractSelectFieldRenderer {
                 .setFont(font)
                 .setGenericConformanceLevel(getGenericConformanceLevel(doc));
 
+        applyMargins(area, false);
+        final Map<Integer, Object> properties =  FormFieldRendererUtil.removeProperties(this.modelElement);
+
         modelElement.setProperty(Property.FONT_PROVIDER, this.<FontProvider>getProperty(Property.FONT_PROVIDER));
         modelElement.setProperty(Property.RENDERING_MODE, this.<RenderingMode>getProperty(Property.RENDERING_MODE));
         setupBuilderValues(builder, comboBoxFieldModelElement);
@@ -154,6 +159,7 @@ public class SelectFieldComboBoxRenderer extends AbstractSelectFieldRenderer {
         comboBoxField.enableFieldRegeneration();
 
         PdfFormCreator.getAcroForm(doc, true).addField(comboBoxField, page);
+        FormFieldRendererUtil.reapplyProperties(this.modelElement, properties);
     }
 
 
