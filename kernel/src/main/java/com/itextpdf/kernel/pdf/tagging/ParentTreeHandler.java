@@ -36,6 +36,7 @@ import com.itextpdf.kernel.pdf.PdfNumTree;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfStream;
 
 import java.util.ArrayList;
@@ -185,12 +186,14 @@ class ParentTreeHandler {
                 if (registeringOnInit) {
                     xObjectStream.release();
                 }
-            } else {
+            } else if (isModificationAllowed()) {
                 maxStructParentIndex++;
                 xObjectToStructParentsInd.put(stmIndRef, maxStructParentIndex);
                 xObjectStream.put(PdfName.StructParents, new PdfNumber(maxStructParentIndex));
                 structTreeRoot.getPdfObject().put(PdfName.ParentTreeNextKey, new PdfNumber(maxStructParentIndex + 1));
                 LOGGER.warn(KernelLogMessageConstant.XOBJECT_STRUCT_PARENT_INDEX_MISSED_AND_RECREATED);
+            } else {
+                throw new PdfException(KernelExceptionMessageConstant.XOBJECT_STRUCT_PARENT_INDEX_MISSED);
             }
             pageMcrs.putXObjectMcr(stmIndRef, mcr);
         } else if (mcr instanceof PdfObjRef) {
@@ -202,12 +205,14 @@ class ParentTreeHandler {
             PdfNumber n = obj.getAsNumber(PdfName.StructParent);
             if (n != null) {
                 pageMcrs.putObjectReferenceMcr(n.intValue(), mcr);
-            } else {
+            } else if (isModificationAllowed()) {
                 maxStructParentIndex++;
                 pageMcrs.putObjectReferenceMcr(maxStructParentIndex, mcr);
                 obj.put(PdfName.StructParent, new PdfNumber(maxStructParentIndex));
                 structTreeRoot.getPdfObject().put(PdfName.ParentTreeNextKey, new PdfNumber(maxStructParentIndex + 1));
                 LOGGER.warn(KernelLogMessageConstant.STRUCT_PARENT_INDEX_MISSED_AND_RECREATED);
+            } else {
+                throw new PdfException(KernelExceptionMessageConstant.STRUCT_PARENT_INDEX_NOT_FOUND_IN_TAGGED_OBJECT);
             }
         } else {
             pageMcrs.putPageContentStreamMcr(mcr.getMcid(), mcr);
@@ -262,6 +267,15 @@ class ParentTreeHandler {
                 pageMcrs.getPageContentStreamsMcrs().remove(mcrToUnregister.getMcid());
                 structTreeRoot.setModified();
             }
+        }
+    }
+
+    private boolean isModificationAllowed() {
+        PdfReader reader = this.structTreeRoot.getDocument().getReader();
+        if (reader != null){
+            return PdfReader.StrictnessLevel.CONSERVATIVE.isStricter(reader.getStrictnessLevel());
+        } else {
+            return true;
         }
     }
 

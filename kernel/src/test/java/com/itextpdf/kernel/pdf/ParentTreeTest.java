@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -30,9 +31,11 @@ import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.canvas.CanvasTag;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.tagging.PdfMcr;
 import com.itextpdf.kernel.pdf.tagging.PdfMcrDictionary;
 import com.itextpdf.kernel.pdf.tagging.PdfMcrNumber;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
+import com.itextpdf.kernel.pdf.tagging.PdfObjRef;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.utils.CompareTool.CompareResult;
 import com.itextpdf.test.AssertUtil;
@@ -48,7 +51,8 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import static org.junit.Assert.assertTrue;
+
+import static org.junit.Assert.*;
 
 @Category(IntegrationTest.class)
 public class ParentTreeTest extends ExtendedITextTest {
@@ -384,6 +388,106 @@ public class ParentTreeTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.TAG_STRUCTURE_INIT_FAILED)
+    })
+    public void objRefNoStructParentNoModificationTest() throws IOException {
+        String pdf = sourceFolder + "objRefNoStructParent.pdf";
+        String outPdf = destinationFolder + "objRefNoStructParentNoModification.pdf";
+
+        PdfReader reader = new PdfReader(pdf).setStrictnessLevel(PdfReader.StrictnessLevel.CONSERVATIVE);
+        PdfDocument doc = new PdfDocument(reader, CompareTool.createTestPdfWriter(outPdf));
+        PdfArray nums =  doc.getCatalog().getPdfObject().getAsDictionary(PdfName.StructTreeRoot)
+                .getAsDictionary(PdfName.ParentTree).getAsArray(PdfName.Nums);
+
+        assertNull(getStructParentEntry(nums.get(3)));
+        assertNull(getStructParentEntry(nums.get(5)));
+        assertNull(getStructParentEntry(nums.get(7)));
+        assertNull(getStructParentEntry(nums.get(9)));
+        doc.close();
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = KernelLogMessageConstant.STRUCT_PARENT_INDEX_MISSED_AND_RECREATED, count = 4)
+    })
+    public void objRefNoStructParentModificationTest() throws IOException, InterruptedException {
+        String pdf = sourceFolder + "objRefNoStructParent.pdf";
+        String outPdf = destinationFolder + "objRefNoStructParentModification.pdf";
+        String cmpPdf = sourceFolder + "cmp_objRefNoStructParentModification.pdf";
+
+        PdfDocument doc = new PdfDocument(new PdfReader(pdf), CompareTool.createTestPdfWriter(outPdf));
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.TAG_STRUCTURE_INIT_FAILED)
+    })
+    public void xObjNoStructParentNoModificationTest() throws IOException {
+        String pdf = sourceFolder + "xObjNoStructParent.pdf";
+        String outPdf = destinationFolder + "xObjNoStructParentNoModification.pdf";
+
+        PdfReader reader = new PdfReader(pdf).setStrictnessLevel(PdfReader.StrictnessLevel.CONSERVATIVE);
+        PdfDocument doc = new PdfDocument(reader, new PdfWriter(outPdf));
+        PdfObject obj =  doc.getCatalog().getPdfObject().getAsDictionary(PdfName.StructTreeRoot)
+                .getAsDictionary(PdfName.ParentTree).getAsArray(PdfName.Nums).get(1);
+        PdfStream xObj = ((PdfDictionary) ((PdfArray) obj).get(0)).getAsDictionary(PdfName.K).getAsStream(PdfName.Stm);
+
+        assertNull(xObj.get(PdfName.StructParent));
+        doc.close();
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = KernelLogMessageConstant.XOBJECT_STRUCT_PARENT_INDEX_MISSED_AND_RECREATED)
+    })
+    public void xObjNoStructParentModificationTest() throws IOException, InterruptedException {
+        String pdf = sourceFolder + "xObjNoStructParent.pdf";
+        String outPdf = destinationFolder + "xObjNoStructParentModification.pdf";
+        String cmpPdf = sourceFolder + "cmp_xObjNoStructParentModification.pdf";
+
+        PdfDocument doc = new PdfDocument(new PdfReader(pdf), CompareTool.createTestPdfWriter(outPdf));
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = KernelLogMessageConstant.STRUCT_PARENT_INDEX_MISSED_AND_RECREATED)
+    })
+    public void objRefNoStructParentNoReaderTest() throws IOException, InterruptedException {
+        String outPdf = destinationFolder + "objRefNoStructParentNoReader.pdf";
+        String cmpPdf = sourceFolder + "cmp_objRefNoStructParentNoReader.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outPdf));
+        pdfDoc.setTagged();
+
+        PdfPage page = pdfDoc.addNewPage();
+
+        PdfDictionary mcrDic = new PdfDictionary();
+        mcrDic.put(PdfName.Pg, page.getPdfObject());
+        mcrDic.put(PdfName.MCID, new PdfNumber(0));
+        mcrDic.put(PdfName.Obj, new PdfDictionary());
+
+        PdfDictionary elemDic = new PdfDictionary();
+        elemDic.put(PdfName.P,pdfDoc.getStructTreeRoot().getPdfObject());
+
+        PdfStructElem elem = new PdfStructElem(elemDic);
+        elem.makeIndirect(pdfDoc);
+
+        PdfMcr mcr = new PdfObjRef(mcrDic, elem);
+        elem.addKid(0,mcr);
+
+        pdfDoc.getStructTreeRoot().addKid(elem);
+        pdfDoc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {
             @LogMessage(messageTemplate = IoLogMessageConstant.CREATED_ROOT_TAG_HAS_MAPPING)
     })
     public void copyPageWithMultipleDocumentTagsTest() throws IOException {
@@ -394,6 +498,9 @@ public class ParentTreeTest extends ExtendedITextTest {
         AssertUtil.doesNotThrow(() -> pdfDoc.getTagStructureContext().normalizeDocumentRootTag());
     }
 
+    private PdfObject getStructParentEntry(PdfObject obj){
+        return ((PdfDictionary) obj).getAsDictionary(PdfName.K).getAsDictionary(PdfName.Obj).get(PdfName.StructParent);
+    }
 
     private boolean checkParentTree(String outFileName, String cmpFileName) throws IOException {
         PdfReader outReader = CompareTool.createOutputReader(outFileName);

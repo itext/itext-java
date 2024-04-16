@@ -321,8 +321,6 @@ public final class KernelExceptionMessageConstant {
     public static final String SHADING_TYPE_NOT_FOUND = "Shading type not found.";
     public static final String STDCF_NOT_FOUND_ENCRYPTION = "/StdCF not found (encryption)";
     public static final String STREAM_SHALL_END_WITH_ENDSTREAM = "Stream shall end with endstream keyword.";
-    @Deprecated
-    // Replaced with log message
     public static final String STRUCT_PARENT_INDEX_NOT_FOUND_IN_TAGGED_OBJECT = "StructParent index not found in "
             + "tagged object.";
     public static final String STRUCTURE_ELEMENT_IN_STRUCTURE_DESTINATION_SHALL_BE_AN_INDIRECT_OBJECT = "Structure "
@@ -387,6 +385,7 @@ public final class KernelExceptionMessageConstant {
     public static final String XREF_STRUCTURE_SIZE_EXCEEDED_THE_LIMIT = "Xref structure contains too many elements "
             + "and may cause OOM exception. You can increase number of elements by setting custom "
             + "MemoryLimitsAwareHandler.";
+    public static final String XOBJECT_STRUCT_PARENT_INDEX_MISSED = "XObject has no StructParents index in its stream.";
 
     public static final String TOTAL_XOBJECT_SIZE_ONE_PAGE_EXCEEDED_THE_LIMIT =
             "Pdf contains too many xObject elements on a page "
