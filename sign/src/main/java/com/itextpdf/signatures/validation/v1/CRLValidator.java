@@ -80,6 +80,8 @@ public class CRLValidator {
             "not all reason codes are covered by the current CRL.";
     static final String SAME_REASONS_CHECK = "CRLs that cover the same reason codes were already verified.";
     static final String UPDATE_DATE_BEFORE_CHECK_DATE = "nextUpdate: {0} of CRLResponse is before validation date {1}.";
+    static final String NEXT_UPDATE_VALIDATION = "Using crl nextUpdate date as validation date.";
+    static final String THIS_UPDATE_VALIDATION = "Using crl thisUpdate date as validation date.";
 
     // All reasons without unspecified.
     static final int ALL_REASONS = 32895;
@@ -297,11 +299,11 @@ public class CRLValidator {
         if (TimestampConstants.UNDEFINED_TIMESTAMP_DATE != crl.getNextUpdate()) {
             crlIssuerDate = crl.getNextUpdate();
             report.addReportItem(new CertificateReportItem((X509Certificate) crlIssuer, CRL_CHECK,
-                    "Using crl nextUpdate date as validation date", ReportItemStatus.INFO));
+                    NEXT_UPDATE_VALIDATION, ReportItemStatus.INFO));
         } else {
             crlIssuerDate = crl.getThisUpdate();
             report.addReportItem(new CertificateReportItem((X509Certificate) crlIssuer, CRL_CHECK,
-                    "Using crl thisUpdate date as validation date", ReportItemStatus.INFO));
+                    THIS_UPDATE_VALIDATION, ReportItemStatus.INFO));
         }
 
         builder.getCertificateChainValidator().validate(report,

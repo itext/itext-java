@@ -56,12 +56,12 @@ public class AssertValidationReport {
         return this;
     }
 
-    public AssertValidationReport hasLogItem( Function<ReportItem, Boolean> check, String itemDescription) {
+    public AssertValidationReport hasLogItem(Function<ReportItem, Boolean> check, String itemDescription) {
         chain.setNext(new ItemCheck(check, 1, itemDescription));
         return this;
     }
 
-    public AssertValidationReport hasLogItems( Function<ReportItem, Boolean> check, int count, String itemDescription) {
+    public AssertValidationReport hasLogItems(Function<ReportItem, Boolean> check, int count, String itemDescription) {
         chain.setNext(new ItemCheck(check, count, itemDescription));
         return this;
     }
@@ -158,7 +158,7 @@ public class AssertValidationReport {
         private final String message;
         private final int expectedCount;
 
-        public ItemCheck(Function<ReportItem, Boolean>check, int count, String itemDescription) {
+        public ItemCheck(Function<ReportItem, Boolean> check, int count, String itemDescription) {
             super();
             this.check = check;
             this.expectedCount = count;

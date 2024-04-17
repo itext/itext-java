@@ -202,7 +202,8 @@ public class OCSPValidator {
                         ReportItemStatus.INDETERMINATE));
                 return;
             }
-            if (!certificateRetriever.isCertificateTrusted(responderCert)) {
+            if (!certificateRetriever.isCertificateTrusted(responderCert) &&
+                    !certificateRetriever.getTrustedCertificatesStore().isCertificateTrustedForOcsp(responderCert)) {
                 // RFC 6960 4.2.2.2. Authorized Responders:
                 // "Systems relying on OCSP responses MUST recognize a delegation certificate as being issued
                 // by the CA that issued the certificate in question only if the delegation certificate and the

@@ -97,10 +97,10 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
                 .hasNumberOfLogs(1)
                 .hasLogItem(l -> l.getCheckName().equals("Certificate check.")
                         && l.getMessage().equals(MessageFormatUtil.format(
-                                "Certificate {0} is trusted, revocation data checks are not required.",
+                                CertificateChainValidator.CERTIFICATE_TRUSTED,
                                 rootCert.getSubjectX500Principal()))
-                        && ((CertificateReportItem) l ).getCertificate().equals(rootCert),
-                        "Certificate {0} is trusted, revocation data checks are not required.")
+                        && ((CertificateReportItem) l).getCertificate().equals(rootCert),
+                        CertificateChainValidator.CERTIFICATE_TRUSTED)
                 .doAssert();
     }
 
@@ -195,11 +195,11 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         new AssertValidationReport(report)
                         .hasNumberOfFailures(0)
                         .hasNumberOfLogs(1)
-                        .hasLogItem(l->l.getCheckName().equals("Certificate check.")
+                        .hasLogItem(l -> l.getCheckName().equals("Certificate check.")
                                 && l.getMessage().equals(MessageFormatUtil.format(
-                                "Certificate {0} is trusted, revocation data checks are not required.",
+                                CertificateChainValidator.CERTIFICATE_TRUSTED,
                                 intermediateCert.getSubjectX500Principal())),
-                                "Certificate {0} is trusted, revocation data checks are not required.")
+                                CertificateChainValidator.CERTIFICATE_TRUSTED)
                         .doAssert();
     }
 
@@ -223,10 +223,10 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
                 .hasNumberOfLogs(1)
                 .hasLogItem(l -> l.getCheckName().equals("Certificate check.")
                         && l.getMessage().equals(MessageFormatUtil.format(
-                        "Certificate {0} is trusted, revocation data checks are not required.",
+                        CertificateChainValidator.CERTIFICATE_TRUSTED,
                         rootCert.getSubjectX500Principal()))
-                        && ((CertificateReportItem) l ).getCertificate().equals(rootCert),
-                        "Certificate {0} is trusted, revocation data checks are not required.")
+                        && ((CertificateReportItem) l).getCertificate().equals(rootCert),
+                        CertificateChainValidator.CERTIFICATE_TRUSTED)
                 .doAssert();
     }
 
@@ -248,23 +248,23 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         new AssertValidationReport(report)
                 .hasNumberOfFailures(2)
                 .hasNumberOfLogs(3)
-                .hasLogItem(l->l.getCheckName().equals("Certificate check.")
+                .hasLogItem(l -> l.getCheckName().equals("Certificate check.")
                                 && l.getMessage().equals(MessageFormatUtil.format(
-                                "Certificate {0} is trusted, revocation data checks are not required.",
+                                CertificateChainValidator.CERTIFICATE_TRUSTED,
                                 rootCert.getSubjectX500Principal()))
-                                && ((CertificateReportItem) l ).getCertificate().equals(rootCert),
-                                "Certificate {0} is trusted, revocation data checks are not required.")
-                .hasLogItem(l->l.getCheckName().equals("Required certificate extensions check.")
+                                && ((CertificateReportItem) l).getCertificate().equals(rootCert),
+                                CertificateChainValidator.CERTIFICATE_TRUSTED)
+                .hasLogItem(l -> l.getCheckName().equals("Required certificate extensions check.")
                                 && l.getMessage().equals(MessageFormatUtil.format(
                                         "Required extension {0} is missing or incorrect.",
                                         X509Extensions.KEY_USAGE))
-                                        && ((CertificateReportItem) l ).getCertificate().equals(signingCert),
+                                        && ((CertificateReportItem) l).getCertificate().equals(signingCert),
                         "Required extension {0} is missing or incorrect.")
-                .hasLogItem(l->l.getCheckName().equals("Required certificate extensions check.")
+                .hasLogItem(l -> l.getCheckName().equals("Required certificate extensions check.")
                                 && l.getMessage().equals(MessageFormatUtil.format(
                                 "Required extension {0} is missing or incorrect.",
                                 X509Extensions.BASIC_CONSTRAINTS))
-                                && ((CertificateReportItem) l ).getCertificate().equals(signingCert),
+                                && ((CertificateReportItem) l).getCertificate().equals(signingCert),
                         "Required extension {0} is missing or incorrect.")
                 .doAssert();
 
@@ -286,12 +286,12 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
                 .hasStatus(ValidationResult.INDETERMINATE)
                 .hasNumberOfFailures(1)
                 .hasNumberOfLogs(1)
-                .hasLogItem(l->l.getCheckName().equals("Certificate check.")
+                .hasLogItem(l -> l.getCheckName().equals("Certificate check.")
                         && l.getMessage().equals(MessageFormatUtil.format(
-                                "Certificate {0} isn't trusted and issuer certificate isn't provided."
+                                CertificateChainValidator.ISSUER_MISSING
                                         ,intermediateCert.getSubjectX500Principal()))
-                        && ((CertificateReportItem) l ).getCertificate().equals( intermediateCert),
-        "Certificate {0} isn't trusted and issuer certificate isn't provided.")
+                        && ((CertificateReportItem) l).getCertificate().equals( intermediateCert),
+        CertificateChainValidator.ISSUER_MISSING)
                 .doAssert();
     }
 
@@ -314,16 +314,16 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         new AssertValidationReport(report)
                 .hasNumberOfFailures(1)
                 .hasNumberOfLogs(2)
-                .hasLogItem(l->l.getCheckName().equals("Certificate check.")
+                .hasLogItem(l -> l.getCheckName().equals("Certificate check.")
                         && l.getMessage().equals(MessageFormatUtil.format(
-                                "Certificate {0} is trusted, revocation data checks are not required.",
+                                CertificateChainValidator.CERTIFICATE_TRUSTED,
                                 rootCert.getSubjectX500Principal()))
-                        && ((CertificateReportItem) l ).getCertificate().equals(rootCert),
-                        "Certificate {0} is trusted, revocation data checks are not required.")
-                .hasLogItem(l->l.getCheckName().equals("Certificate validity period check.")
+                        && ((CertificateReportItem) l).getCertificate().equals(rootCert),
+                        CertificateChainValidator.CERTIFICATE_TRUSTED)
+                .hasLogItem(l -> l.getCheckName().equals("Certificate validity period check.")
                                 && l.getMessage().equals(MessageFormatUtil.format(
                                 "Certificate {0} is not yet valid.", intermediateCert.getSubjectX500Principal()))
-                                && ((CertificateReportItem) l ).getCertificate().equals(intermediateCert)
+                                && ((CertificateReportItem) l).getCertificate().equals(intermediateCert)
                                 && l.getExceptionCause() instanceof CertificateNotYetValidException,
                         "Certificate {0} is not yet valid.")
                 .doAssert();
@@ -348,18 +348,328 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
                 .hasStatus(ValidationResult.INVALID)
                 .hasNumberOfFailures(1)
                 .hasNumberOfLogs(2)
-                .hasLogItem(l->l.getCheckName().equals("Certificate check.")
+                .hasLogItem(l -> l.getCheckName().equals("Certificate check.")
                                 && l.getMessage().equals(MessageFormatUtil.format
-                                        ("Certificate {0} is trusted, revocation data checks are not required.",
+                                        (CertificateChainValidator.CERTIFICATE_TRUSTED,
                                         rootCert.getSubjectX500Principal()))
-                                && ((CertificateReportItem) l ).getCertificate().equals(rootCert),
-                        "Certificate {0} isn't trusted and issuer certificate isn't provided.")
-                .hasLogItem(l->l.getCheckName().equals("Certificate validity period check.")
+                                && ((CertificateReportItem) l).getCertificate().equals(rootCert), CertificateChainValidator.ISSUER_MISSING)
+                .hasLogItem(l -> l.getCheckName().equals("Certificate validity period check.")
                                 && l.getMessage().equals(MessageFormatUtil.format
                                 ("Certificate {0} is expired.", intermediateCert.getSubjectX500Principal()))
-                                && ((CertificateReportItem) l ).getCertificate().equals(intermediateCert)
-                                && l.getExceptionCause()    instanceof CertificateExpiredException,
-                        "Certificate {0} isn't trusted and issuer certificate isn't provided.")
+                                && ((CertificateReportItem) l).getCertificate().equals(intermediateCert)
+                                && l.getExceptionCause() instanceof CertificateExpiredException,
+                        CertificateChainValidator.ISSUER_MISSING)
+                .doAssert();
+    }
+
+    @Test
+    public void certificateGenerallyTrustedTest() throws CertificateException, IOException {
+        String chainName = CERTS_SRC + "chain.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+        X509Certificate signingCert = (X509Certificate) certificateChain[0];
+        X509Certificate intermediateCert = (X509Certificate) certificateChain[1];
+        X509Certificate rootCert = (X509Certificate) certificateChain[2];
+
+        CertificateChainValidator validator = validatorChainBuilder.buildCertificateChainValidator();
+        certificateRetriever.addKnownCertificates(Collections.singletonList(intermediateCert));
+        certificateRetriever.getTrustedCertificatesStore().addGenerallyTrustedCertificates(Collections.singletonList(rootCert));
+
+        // Remove required extensions to make test pass.
+        properties.setRequiredExtensions(CertificateSources.all(), Collections.<CertificateExtension>emptyList());
+
+        ValidationReport report1 = validator.validateCertificate(baseContext, signingCert, DateTimeUtil.getCurrentTimeDate());
+
+        new AssertValidationReport(report1)
+                .hasStatus(ValidationResult.VALID)
+                .hasNumberOfFailures(0)
+                .hasNumberOfLogs(1)
+                .hasLogItem(l -> l.getCheckName().equals("Certificate check.")
+                                && l.getMessage().equals(MessageFormatUtil.format
+                                (CertificateChainValidator.CERTIFICATE_TRUSTED, rootCert.getSubjectX500Principal()))
+                                && ((CertificateReportItem) l).getCertificate().equals(rootCert),
+                        "Certificate {0} is trusted.")
+                .doAssert();
+
+        ValidationReport report2 = validator.validateCertificate(baseContext.setCertificateSource(CertificateSource.OCSP_ISSUER),
+                signingCert, DateTimeUtil.getCurrentTimeDate());
+
+        new AssertValidationReport(report2)
+                .hasStatus(ValidationResult.VALID)
+                .hasNumberOfFailures(0)
+                .hasNumberOfLogs(1)
+                .hasLogItem(l -> l.getCheckName().equals("Certificate check.")
+                                && l.getMessage().equals(MessageFormatUtil.format
+                                (CertificateChainValidator.CERTIFICATE_TRUSTED, rootCert.getSubjectX500Principal()))
+                                && ((CertificateReportItem) l).getCertificate().equals(rootCert),
+                        "Certificate {0} is trusted.")
+                .doAssert();
+
+        ValidationReport report3 = validator.validateCertificate(baseContext.setCertificateSource(CertificateSource.TIMESTAMP),
+                signingCert, DateTimeUtil.getCurrentTimeDate());
+
+        new AssertValidationReport(report3)
+                .hasStatus(ValidationResult.VALID)
+                .hasNumberOfFailures(0)
+                .hasNumberOfLogs(1)
+                .hasLogItem(l -> l.getCheckName().equals("Certificate check.")
+                                && l.getMessage().equals(MessageFormatUtil.format
+                                (CertificateChainValidator.CERTIFICATE_TRUSTED,
+                                        rootCert.getSubjectX500Principal()))
+                                && ((CertificateReportItem) l).getCertificate().equals(rootCert),
+                        "Certificate {0} is trusted.")
+                .doAssert();
+    }
+
+    @Test
+    public void rootCertificateTrustedForCATest() throws CertificateException, IOException {
+        String chainName = CERTS_SRC + "chain.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+        X509Certificate signingCert = (X509Certificate) certificateChain[0];
+        X509Certificate intermediateCert = (X509Certificate) certificateChain[1];
+        X509Certificate rootCert = (X509Certificate) certificateChain[2];
+
+        CertificateChainValidator validator = validatorChainBuilder.buildCertificateChainValidator();
+        certificateRetriever.addKnownCertificates(Collections.singletonList(intermediateCert));
+        certificateRetriever.getTrustedCertificatesStore().addCATrustedCertificates(Collections.singletonList(rootCert));
+
+        // Remove required extensions to make test pass.
+        properties.setRequiredExtensions(CertificateSources.all(), Collections.<CertificateExtension>emptyList());
+
+        ValidationReport report1 = validator.validateCertificate(baseContext, signingCert, DateTimeUtil.getCurrentTimeDate());
+
+        new AssertValidationReport(report1)
+                .hasStatus(ValidationResult.VALID)
+                .hasNumberOfFailures(0)
+                .hasNumberOfLogs(1)
+                .hasLogItem(l -> l.getCheckName().equals("Certificate check.")
+                                && l.getMessage().equals(MessageFormatUtil.format
+                                (CertificateChainValidator.CERTIFICATE_TRUSTED,
+                                        rootCert.getSubjectX500Principal()))
+                                && ((CertificateReportItem) l).getCertificate().equals(rootCert),
+                        "Certificate {0} is trusted.")
+                .doAssert();
+
+        ValidationReport report2 = validator.validateCertificate(baseContext.setCertificateSource(CertificateSource.OCSP_ISSUER),
+                signingCert, DateTimeUtil.getCurrentTimeDate());
+
+        new AssertValidationReport(report2)
+                .hasStatus(ValidationResult.VALID)
+                .hasNumberOfFailures(0)
+                .hasNumberOfLogs(1)
+                .hasLogItem(l -> l.getCheckName().equals("Certificate check.")
+                                && l.getMessage().equals(MessageFormatUtil.format
+                                (CertificateChainValidator.CERTIFICATE_TRUSTED,
+                                        rootCert.getSubjectX500Principal()))
+                                && ((CertificateReportItem) l).getCertificate().equals(rootCert),
+                        "Certificate {0} is trusted.")
+                .doAssert();
+
+        ValidationReport report3 = validator.validateCertificate(baseContext.setCertificateSource(CertificateSource.TIMESTAMP),
+                signingCert, DateTimeUtil.getCurrentTimeDate());
+
+        new AssertValidationReport(report3)
+                .hasStatus(ValidationResult.VALID)
+                .hasNumberOfFailures(0)
+                .hasNumberOfLogs(1)
+                .hasLogItem(l -> l.getCheckName().equals("Certificate check.")
+                                && l.getMessage().equals(MessageFormatUtil.format
+                                (CertificateChainValidator.CERTIFICATE_TRUSTED,
+                                        rootCert.getSubjectX500Principal()))
+                                && ((CertificateReportItem) l).getCertificate().equals(rootCert),
+                        "Certificate {0} is trusted.")
+                .doAssert();
+    }
+
+    @Test
+    public void firstCertificateTrustedForCATest() throws CertificateException, IOException {
+        String chainName = CERTS_SRC + "chain.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+        X509Certificate signingCert = (X509Certificate) certificateChain[0];
+        X509Certificate intermediateCert = (X509Certificate) certificateChain[1];
+
+        CertificateChainValidator validator = validatorChainBuilder.buildCertificateChainValidator();
+        certificateRetriever.addKnownCertificates(Collections.singletonList(intermediateCert));
+        certificateRetriever.getTrustedCertificatesStore().addCATrustedCertificates(Collections.singletonList(signingCert));
+
+        // Remove required extensions to make test pass.
+        properties.setRequiredExtensions(CertificateSources.all(), Collections.<CertificateExtension>emptyList());
+
+        ValidationReport report1 = validator.validateCertificate(baseContext.setCertificateSource(CertificateSource.CERT_ISSUER),
+                signingCert, DateTimeUtil.getCurrentTimeDate());
+
+        // This works fine because certificate in question has CertificateSource.CERT_ISSUER context.
+        new AssertValidationReport(report1)
+                .hasStatus(ValidationResult.VALID)
+                .hasNumberOfFailures(0)
+                .hasNumberOfLogs(1)
+                .hasLogItem(l -> l.getCheckName().equals("Certificate check.")
+                                && l.getMessage().equals(MessageFormatUtil.format
+                                (CertificateChainValidator.CERTIFICATE_TRUSTED,
+                                        signingCert.getSubjectX500Principal()))
+                                && ((CertificateReportItem) l).getCertificate().equals(signingCert),
+                        "Certificate {0} is trusted.")
+                .doAssert();
+
+        ValidationReport report2 = validator.validateCertificate(baseContext.setCertificateSource(CertificateSource.TIMESTAMP),
+                signingCert, DateTimeUtil.getCurrentTimeDate());
+
+        // This doesn't work because certificate in question has CertificateSource.TIMESTAMP context.
+        new AssertValidationReport(report2)
+                .hasStatus(ValidationResult.INDETERMINATE)
+                .hasNumberOfFailures(1)
+                .hasNumberOfLogs(2)
+                .hasLogItem(l -> l.getMessage().equals(MessageFormatUtil.format(CertificateChainValidator.CERTIFICATE_TRUSTED_FOR_DIFFERENT_CONTEXT,
+                                signingCert.getSubjectX500Principal(), "certificates generation")),
+                        CertificateChainValidator.CERTIFICATE_TRUSTED_FOR_DIFFERENT_CONTEXT)
+                .hasLogItem(l -> l.getMessage().equals(MessageFormatUtil.format(CertificateChainValidator.ISSUER_MISSING,
+                        intermediateCert.getSubjectX500Principal())), CertificateChainValidator.ISSUER_MISSING)
+                .doAssert();
+    }
+
+    @Test
+    public void rootCertificateTrustedForOCSPTest() throws CertificateException, IOException {
+        String chainName = CERTS_SRC + "chain.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+        X509Certificate signingCert = (X509Certificate) certificateChain[0];
+        X509Certificate intermediateCert = (X509Certificate) certificateChain[1];
+        X509Certificate rootCert = (X509Certificate) certificateChain[2];
+
+        CertificateChainValidator validator = validatorChainBuilder.buildCertificateChainValidator();
+        certificateRetriever.addKnownCertificates(Collections.singletonList(intermediateCert));
+        certificateRetriever.getTrustedCertificatesStore().addOcspTrustedCertificates(Collections.singletonList(rootCert));
+
+        // Remove required extensions to make test pass.
+        properties.setRequiredExtensions(CertificateSources.all(), Collections.<CertificateExtension>emptyList());
+
+        ValidationReport report1 = validator.validateCertificate(baseContext.setCertificateSource(CertificateSource.OCSP_ISSUER),
+                signingCert, DateTimeUtil.getCurrentTimeDate());
+
+        // This works fine because even though root certificate has CertificateSource.CERT_ISSUER context,
+        // the chain contains initial certificate with CertificateSource.OCSP_ISSUER context.
+        new AssertValidationReport(report1)
+                .hasStatus(ValidationResult.VALID)
+                .hasNumberOfFailures(0)
+                .hasNumberOfLogs(1)
+                .hasLogItem(l -> l.getCheckName().equals("Certificate check.")
+                                && l.getMessage().equals(MessageFormatUtil.format
+                                (CertificateChainValidator.CERTIFICATE_TRUSTED,
+                                        rootCert.getSubjectX500Principal()))
+                                && ((CertificateReportItem) l).getCertificate().equals(rootCert),
+                        "Certificate {0} is trusted.")
+                .doAssert();
+
+        ValidationReport report2 = validator.validateCertificate(baseContext.setCertificateSource(CertificateSource.TIMESTAMP),
+                signingCert, DateTimeUtil.getCurrentTimeDate());
+
+        // This doesn't work because root certificate has CertificateSource.CERT_ISSUER context and
+        // the chain doesn't contain any certificate with CertificateSource.OCSP_ISSUER context.
+        new AssertValidationReport(report2)
+                .hasStatus(ValidationResult.INDETERMINATE)
+                .hasNumberOfFailures(1)
+                .hasNumberOfLogs(2)
+                .hasLogItem(l -> l.getMessage().equals(MessageFormatUtil.format(CertificateChainValidator.CERTIFICATE_TRUSTED_FOR_DIFFERENT_CONTEXT,
+                                rootCert.getSubjectX500Principal(), "OCSP response generation")),
+                        CertificateChainValidator.CERTIFICATE_TRUSTED_FOR_DIFFERENT_CONTEXT)
+                .hasLogItem(l -> l.getMessage().equals(MessageFormatUtil.format(CertificateChainValidator.ISSUER_MISSING,
+                        rootCert.getSubjectX500Principal())), CertificateChainValidator.ISSUER_MISSING)
+                .doAssert();
+    }
+
+    @Test
+    public void rootCertificateTrustedForCRLTest() throws CertificateException, IOException {
+        String chainName = CERTS_SRC + "chain.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+        X509Certificate signingCert = (X509Certificate) certificateChain[0];
+        X509Certificate intermediateCert = (X509Certificate) certificateChain[1];
+        X509Certificate rootCert = (X509Certificate) certificateChain[2];
+
+        CertificateChainValidator validator = validatorChainBuilder.buildCertificateChainValidator();
+        certificateRetriever.addKnownCertificates(Collections.singletonList(intermediateCert));
+        certificateRetriever.getTrustedCertificatesStore().addCrlTrustedCertificates(Collections.singletonList(rootCert));
+
+        // Remove required extensions to make test pass.
+        properties.setRequiredExtensions(CertificateSources.all(), Collections.<CertificateExtension>emptyList());
+
+        ValidationReport report1 = validator.validateCertificate(baseContext.setCertificateSource(CertificateSource.CRL_ISSUER),
+                signingCert, DateTimeUtil.getCurrentTimeDate());
+
+        // This works fine because even though root certificate has CertificateSource.CERT_ISSUER context,
+        // the chain contains initial certificate with CertificateSource.CRL_ISSUER context.
+        new AssertValidationReport(report1)
+                .hasStatus(ValidationResult.VALID)
+                .hasNumberOfFailures(0)
+                .hasNumberOfLogs(1)
+                .hasLogItem(l -> l.getCheckName().equals("Certificate check.")
+                                && l.getMessage().equals(MessageFormatUtil.format
+                                (CertificateChainValidator.CERTIFICATE_TRUSTED,
+                                        rootCert.getSubjectX500Principal()))
+                                && ((CertificateReportItem) l).getCertificate().equals(rootCert),
+                        "Certificate {0} is trusted.")
+                .doAssert();
+
+        ValidationReport report2 = validator.validateCertificate(baseContext.setCertificateSource(CertificateSource.OCSP_ISSUER),
+                signingCert, DateTimeUtil.getCurrentTimeDate());
+
+        // This doesn't work because root certificate has CertificateSource.CERT_ISSUER context and
+        // the chain doesn't contain any certificate with CertificateSource.CRL_ISSUER context.
+        new AssertValidationReport(report2)
+                .hasStatus(ValidationResult.INDETERMINATE)
+                .hasNumberOfFailures(1)
+                .hasNumberOfLogs(2)
+                .hasLogItem(l -> l.getMessage().equals(MessageFormatUtil.format(CertificateChainValidator.CERTIFICATE_TRUSTED_FOR_DIFFERENT_CONTEXT,
+                                rootCert.getSubjectX500Principal(), "CRL generation")),
+                        CertificateChainValidator.CERTIFICATE_TRUSTED_FOR_DIFFERENT_CONTEXT)
+                .hasLogItem(l -> l.getMessage().equals(MessageFormatUtil.format(CertificateChainValidator.ISSUER_MISSING,
+                        rootCert.getSubjectX500Principal())), CertificateChainValidator.ISSUER_MISSING)
+                .doAssert();
+    }
+
+    @Test
+    public void rootCertificateTrustedForTimestampTest() throws CertificateException, IOException {
+        String chainName = CERTS_SRC + "chain.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+        X509Certificate signingCert = (X509Certificate) certificateChain[0];
+        X509Certificate intermediateCert = (X509Certificate) certificateChain[1];
+        X509Certificate rootCert = (X509Certificate) certificateChain[2];
+
+        CertificateChainValidator validator = validatorChainBuilder.buildCertificateChainValidator();
+        certificateRetriever.addKnownCertificates(Collections.singletonList(intermediateCert));
+        certificateRetriever.getTrustedCertificatesStore().addTimestampTrustedCertificates(Collections.singletonList(rootCert));
+
+        // Remove required extensions to make test pass.
+        properties.setRequiredExtensions(CertificateSources.all(), Collections.<CertificateExtension>emptyList());
+
+        ValidationReport report1 = validator.validateCertificate(baseContext.setCertificateSource(CertificateSource.TIMESTAMP),
+                signingCert, DateTimeUtil.getCurrentTimeDate());
+
+        // This works fine because even though root certificate has CertificateSource.CERT_ISSUER context,
+        // the chain contains initial certificate with CertificateSource.TIMESTAMP context.
+        new AssertValidationReport(report1)
+                .hasStatus(ValidationResult.VALID)
+                .hasNumberOfFailures(0)
+                .hasNumberOfLogs(1)
+                .hasLogItem(l -> l.getCheckName().equals("Certificate check.")
+                                && l.getMessage().equals(MessageFormatUtil.format
+                                (CertificateChainValidator.CERTIFICATE_TRUSTED,
+                                        rootCert.getSubjectX500Principal()))
+                                && ((CertificateReportItem) l).getCertificate().equals(rootCert),
+                        "Certificate {0} is trusted.")
+                .doAssert();
+
+        ValidationReport report2 = validator.validateCertificate(baseContext.setCertificateSource(CertificateSource.CRL_ISSUER),
+                signingCert, DateTimeUtil.getCurrentTimeDate());
+
+        // This doesn't work because root certificate has CertificateSource.CERT_ISSUER context and
+        // the chain doesn't contain any certificate with CertificateSource.TIMESTAMP context.
+        new AssertValidationReport(report2)
+                .hasStatus(ValidationResult.INDETERMINATE)
+                .hasNumberOfFailures(1)
+                .hasNumberOfLogs(2)
+                .hasLogItem(l -> l.getMessage().equals(MessageFormatUtil.format(CertificateChainValidator.CERTIFICATE_TRUSTED_FOR_DIFFERENT_CONTEXT,
+                                rootCert.getSubjectX500Principal(), "timestamp generation")),
+                        CertificateChainValidator.CERTIFICATE_TRUSTED_FOR_DIFFERENT_CONTEXT)
+                .hasLogItem(l -> l.getMessage().equals(MessageFormatUtil.format(CertificateChainValidator.ISSUER_MISSING,
+                        rootCert.getSubjectX500Principal())), CertificateChainValidator.ISSUER_MISSING)
                 .doAssert();
     }
 

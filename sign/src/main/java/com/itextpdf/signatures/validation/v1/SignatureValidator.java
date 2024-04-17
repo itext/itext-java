@@ -72,7 +72,7 @@ class SignatureValidator {
     /**
      * Create new instance of {@link SignatureValidator}.
      *
-     * @param builder See {@link  ValidatorChainBuilder}
+     * @param builder See {@link ValidatorChainBuilder}
      */
     SignatureValidator(PdfDocument document, ValidatorChainBuilder builder) {
         this.document = document;

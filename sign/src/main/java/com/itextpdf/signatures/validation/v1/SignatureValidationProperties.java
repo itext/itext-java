@@ -45,6 +45,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
+/**
+ * Class which stores properties, which are related to signature validation process.
+ */
 public class SignatureValidationProperties {
     public static final boolean DEFAULT_CONTINUE_AFTER_FAILURE = true;
     public static final Duration DEFAULT_FRESHNESS_PRESENT_CRL = Duration.ofDays(30);
@@ -54,6 +57,9 @@ public class SignatureValidationProperties {
 
     private final HashMap<ValidationContext, ContextProperties> properties = new HashMap<>();
 
+    /**
+     * Create {@link SignatureValidationProperties} with default values.
+     */
     public SignatureValidationProperties() {
         setContinueAfterFailure(ValidatorContexts.all(),CertificateSources.all(), DEFAULT_CONTINUE_AFTER_FAILURE);
         setRevocationOnlineFetching(ValidatorContexts.all(),CertificateSources.all(), TimeBasedContexts.all(),

@@ -171,7 +171,7 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
         CertificateReportItem item = (CertificateReportItem) report.getLogs().get(0);
         Assert.assertEquals(caCert, item.getCertificate());
         Assert.assertEquals(CRLValidator.CRL_CHECK, item.getCheckName());
-        Assert.assertEquals("Using crl nextUpdate date as validation date", item.getMessage());
+        Assert.assertEquals(CRLValidator.NEXT_UPDATE_VALIDATION, item.getMessage());
         item = (CertificateReportItem) report.getLogs().get(1);
         Assert.assertEquals(caCert, item.getCertificate());
         Assert.assertEquals(CertificateChainValidator.CERTIFICATE_CHECK, item.getCheckName());
@@ -222,7 +222,7 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
         CertificateReportItem item = (CertificateReportItem) report.getLogs().get(0);
         Assert.assertEquals(caCert, item.getCertificate());
         Assert.assertEquals(CRLValidator.CRL_CHECK, item.getCheckName());
-        Assert.assertEquals("Using crl nextUpdate date as validation date", item.getMessage());
+        Assert.assertEquals(CRLValidator.NEXT_UPDATE_VALIDATION, item.getMessage());
         item = (CertificateReportItem) report.getLogs().get(1);
         Assert.assertEquals(caCert, item.getCertificate());
         Assert.assertEquals(CertificateChainValidator.CERTIFICATE_CHECK, item.getCheckName());

@@ -136,7 +136,7 @@ public class RevocationDataValidator {
                     ReportItemStatus.INFO));
             return;
         }
-        if (CertificateSource.OCSP_ISSUER == context.getCertificateSource()) {
+        if (CertificateSource.OCSP_ISSUER == localContext.getCertificateSource()) {
             // Check if Authorised OCSP Responder certificate has id-pkix-ocsp-nocheck extension, in which case we
             // do not perform revocation check for it.
             if (CertificateUtil.getExtensionValueByOid(certificate, BOUNCY_CASTLE_FACTORY.createOCSPObjectIdentifiers()
