@@ -60,6 +60,23 @@ public class FirstMatchFontSelectorStrategyTest extends ExtendedITextTest {
     }
 
     @Test
+    public void diacriticFontDoesnotContainPreviousSymbolTest() {
+        IFontSelectorStrategy strategy = FontSelectorTestsUtil.createStrategyWithNotoSans(new FirstMathFontSelectorStrategyFactory());
+
+        final List<Tuple2<GlyphLine, PdfFont>> result = strategy.getGlyphLines(
+                "Ми\u0301ръ (mírə)");
+        Assert.assertEquals(6, result.size());
+        Assert.assertEquals("Ми", result.get(0).getFirst().toString());
+        Assert.assertEquals("\u0301", result.get(1).getFirst().toString());
+        Assert.assertEquals("ръ (", result.get(2).getFirst().toString());
+        Assert.assertEquals("mír", result.get(3).getFirst().toString());
+        Assert.assertEquals("ə", result.get(4).getFirst().toString());
+        Assert.assertEquals(")", result.get(5).getFirst().toString());
+        Assert.assertEquals(result.get(0).getSecond(), result.get(2).getSecond());
+        Assert.assertEquals(result.get(2).getSecond(), result.get(3).getSecond());
+    }
+
+    @Test
     public void oneDiacriticWithUnsupportedFontTest() {
         IFontSelectorStrategy strategy = FontSelectorTestsUtil.createStrategyWithTNR(new FirstMathFontSelectorStrategyFactory());
 

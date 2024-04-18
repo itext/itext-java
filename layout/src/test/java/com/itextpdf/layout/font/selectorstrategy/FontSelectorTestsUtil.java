@@ -22,6 +22,7 @@
  */
 package com.itextpdf.layout.font.selectorstrategy;
 
+import com.itextpdf.io.font.constants.StandardFontFamilies;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.layout.font.FontCharacteristics;
 import com.itextpdf.layout.font.FontProvider;
@@ -39,6 +40,18 @@ public class FontSelectorTestsUtil {
         fs.addFont(StandardFonts.TIMES_ROMAN);
         fs.addFont(FONTS_FOLDER + "FreeSans.ttf");
         final FontProvider fontProvider = new FontProvider(fs);
+        fontProvider.setFontSelectorStrategyFactory(factory);
+        List<String> fontFamilies = new ArrayList<>();
+        fontFamilies.add("random");
+        return fontProvider.createFontSelectorStrategy(fontFamilies, new FontCharacteristics(), null);
+    }
+
+    public static IFontSelectorStrategy createStrategyWithNotoSans(IFontSelectorStrategyFactory factory) {
+        FontSet fs = new FontSet();
+        fs.addFont(FONTS_FOLDER + "NotoKufiArabic-Regular.ttf");
+        fs.addFont(FONTS_FOLDER + "NotoSansCJKjp-Regular.otf");
+        fs.addFont(FONTS_FOLDER + "NotoSansCherokee-Regular.ttf");
+        final FontProvider fontProvider = new FontProvider(fs, StandardFontFamilies.TIMES);
         fontProvider.setFontSelectorStrategyFactory(factory);
         List<String> fontFamilies = new ArrayList<>();
         fontFamilies.add("random");

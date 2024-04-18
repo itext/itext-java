@@ -11,6 +11,9 @@ Please notice that the following fonts are used with the mentioned below license
 * NotoSansThai-Regular - SIL Open Font License v1.1
 * Puritan2 - SIL Open Font License v1.1
 * NotoSansOldItalic-Regular.ttf - SIL Open Font License v1.1. Based on commit 20bc5918912503bc1537a407a694738c33c048aa (07.31.2020) from "https://github.com/googlefonts/noto-fonts"
+* NotoSansCJKjp-Regular.otf - SIL Open Font License v1.1
+* NotoSansCherokee-Regular.ttf - SIL Open Font License v1.1
+* NotoKufiArabic-Regular.ttf - SIL Open Font License v1.1
 
 
 

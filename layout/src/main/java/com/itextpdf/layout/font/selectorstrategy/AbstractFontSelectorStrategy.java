@@ -112,9 +112,13 @@ public abstract class AbstractFontSelectorStrategy implements IFontSelectorStrat
                     if (i > indexDiacritic) {
                         if (TextUtil.isDiacritic(codePoint)) {
                             final PdfFont diacriticFont = matchFont(codePoint, fontSelector, fontProvider, additionalFonts);
+                            // Diacritic font must contain previous symbol, if not, don't
+                            // enable special logic for diacritic and process it as usual symbol
+                            boolean isPreviousMatchFont =
+                                    i == 0 || diacriticFont == null || diacriticFont.containsGlyph(extractCodePoint(text, i - 1));
                             // If diacritic font equals to the current font or null, don't
                             // enable special logic for diacritic and process it as usual symbol
-                            if (diacriticFont != null && diacriticFont != currentFont) {
+                            if (diacriticFont != null && diacriticFont != currentFont && isPreviousMatchFont) {
                                 // If it's the first diacritic in a row, we want to break to try to find a better font for
                                 // the previous letter during the next iteration
                                 if (indexDiacritic != i - 1) {
