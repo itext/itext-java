@@ -44,6 +44,9 @@ public class ContextManager {
         local.registerGenericContext(NamespaceConstant.ITEXT_CORE_NAMESPACES,
                 Collections.singleton(ProductNameConstant.ITEXT_CORE));
 
+        local.registerGenericContext(Collections.singleton(NamespaceConstant.CORE_SIGN),
+                Collections.singleton(ProductNameConstant.ITEXT_CORE_SIGN));
+
         local.registerGenericContext(Collections.singletonList(NamespaceConstant.PDF_HTML),
                 Collections.singleton(ProductNameConstant.PDF_HTML));
 

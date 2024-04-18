@@ -55,4 +55,12 @@ public class ASN1BitStringBCFips extends ASN1PrimitiveBCFips implements IASN1Bit
     public String getString() {
         return getASN1BitString().getString();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int intValue() {
+        return getASN1BitString().intValue();
+    }
 }

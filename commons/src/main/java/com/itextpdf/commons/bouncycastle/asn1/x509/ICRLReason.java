@@ -35,4 +35,11 @@ public interface ICRLReason extends IASN1Encodable {
      * @return CRLReason.keyCompromise value.
      */
     int getKeyCompromise();
+
+    /**
+     * Gets {@code removeFromCRL} constant for the wrapped CRLReason.
+     *
+     * @return CRLReason.removeFromCRL value.
+     */
+    int getRemoveFromCRL();
 }

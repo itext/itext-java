@@ -267,7 +267,7 @@ public class TextAreaTest extends ExtendedITextTest {
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             TextArea textArea = new TextArea("text area");
             textArea.setInteractive(true);
-            textArea.setProperty(FormProperty.FORM_FIELD_VALUE, "Font\n size \nof this\nText Area will not " 
+            textArea.setProperty(FormProperty.FORM_FIELD_VALUE, "Font\n size \nof this\nText Area will not "
                     + "\nbe approximated\nbased on the content\nbecause height is not set");
             textArea.setProperty(Property.BORDER, new SolidBorder(1f));
             textArea.setFontSize(0);
@@ -275,7 +275,7 @@ public class TextAreaTest extends ExtendedITextTest {
 
             TextArea flattenTextArea = new TextArea("text area");
             flattenTextArea.setInteractive(false);
-            flattenTextArea.setProperty(FormProperty.FORM_FIELD_VALUE, "Font\n size \nof this\nText Area will not " 
+            flattenTextArea.setProperty(FormProperty.FORM_FIELD_VALUE, "Font\n size \nof this\nText Area will not "
                     + "\nbe approximated\nbased on the content\nbecause height is not set");
             flattenTextArea.setProperty(Property.BORDER, new SolidBorder(1f));
             flattenTextArea.setFontSize(0);
@@ -337,7 +337,8 @@ public class TextAreaTest extends ExtendedITextTest {
             document.add(textArea);
 
             TextArea flattenedTextArea = new TextArea("flattened text area");
-            flattenedTextArea.setValue("text area with custom border\nBorder shall be orange, 10 points wide and dashed");
+            flattenedTextArea.setValue(
+                    "text area with custom border\nBorder shall be orange, 10 points wide and dashed");
             flattenedTextArea.setInteractive(false);
             flattenedTextArea.setBorder(new DashedBorder(ColorConstants.ORANGE, 10));
             document.add(flattenedTextArea);

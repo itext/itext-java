@@ -24,6 +24,8 @@ package com.itextpdf.signatures.testutils.builder;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1Encodable;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1ObjectIdentifier;
 import com.itextpdf.commons.bouncycastle.cert.IX509CRLHolder;
 import com.itextpdf.commons.bouncycastle.cert.IX509v2CRLBuilder;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
@@ -70,6 +72,11 @@ public class TestCrlBuilder {
 
     public void addCrlEntry(X509Certificate certificate, int reason) {
         crlBuilder.addCRLEntry(certificate.getSerialNumber(), nextUpdate, reason);
+    }
+
+    public void addExtension(IASN1ObjectIdentifier objectIdentifier, boolean isCritical,
+                             IASN1Encodable extension) throws IOException {
+        crlBuilder.addExtension(objectIdentifier, isCritical, extension);
     }
 
     public byte[] makeCrl() throws IOException, AbstractOperatorCreationException {

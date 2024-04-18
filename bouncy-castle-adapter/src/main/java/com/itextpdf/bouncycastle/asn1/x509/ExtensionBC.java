@@ -35,8 +35,11 @@ import org.bouncycastle.asn1.x509.Extension;
 public class ExtensionBC extends ASN1EncodableBC implements IExtension {
     private static final ExtensionBC INSTANCE = new ExtensionBC(null);
 
-    private static final ASN1ObjectIdentifierBC C_RL_DISTRIBUTION_POINTS =
+    private static final ASN1ObjectIdentifierBC CRL_DISTRIBUTION_POINTS =
             new ASN1ObjectIdentifierBC(Extension.cRLDistributionPoints);
+
+    private static final ASN1ObjectIdentifierBC ISSUING_DISTRIBUTION_POINT =
+            new ASN1ObjectIdentifierBC(Extension.issuingDistributionPoint);
 
     private static final ASN1ObjectIdentifierBC AUTHORITY_INFO_ACCESS =
             new ASN1ObjectIdentifierBC(Extension.authorityInfoAccess);
@@ -88,7 +91,15 @@ public class ExtensionBC extends ASN1EncodableBC implements IExtension {
      */
     @Override
     public IASN1ObjectIdentifier getCRlDistributionPoints() {
-        return C_RL_DISTRIBUTION_POINTS;
+        return CRL_DISTRIBUTION_POINTS;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IASN1ObjectIdentifier getIssuingDistributionPoint() {
+        return ISSUING_DISTRIBUTION_POINT;
     }
 
     /**

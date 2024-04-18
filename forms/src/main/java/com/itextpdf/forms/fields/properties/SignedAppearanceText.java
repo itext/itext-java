@@ -33,12 +33,12 @@ public class SignedAppearanceText {
     /**
      * The reason for signing.
      */
-    private String reason = "Reason: ";
+    private String reason = "";
 
     /**
      * Holds value of property location.
      */
-    private String location = "Location: ";
+    private String location = "";
 
     /**
      * The name of the signer from the certificate.
@@ -79,7 +79,7 @@ public class SignedAppearanceText {
      * @return this same {@link SignedAppearanceText} instance.
      */
     public SignedAppearanceText setReasonLine(String reason) {
-        this.reason = reason;
+        this.reason = reason.trim();
         return this;
     }
 
@@ -104,7 +104,7 @@ public class SignedAppearanceText {
      * @return this same {@link SignedAppearanceText} instance.
      */
     public SignedAppearanceText setLocationLine(String location) {
-        this.location = location;
+        this.location = location.trim();
         return this;
     }
 
@@ -119,7 +119,7 @@ public class SignedAppearanceText {
      * @return this same {@link SignedAppearanceText} instance.
      */
     public SignedAppearanceText setSignedBy(String signedBy) {
-        this.signedBy = signedBy;
+        this.signedBy = signedBy.trim();
         return this;
     }
 
@@ -163,16 +163,16 @@ public class SignedAppearanceText {
      */
     public String generateDescriptionText() {
         final StringBuilder buf = new StringBuilder();
-        if (!signedBy.isEmpty()) {
+        if (signedBy != null && !signedBy.isEmpty()) {
             buf.append("Digitally signed by ").append(signedBy);
         }
         if (isSignDateSet) {
             buf.append('\n').append("Date: ").append(DateTimeUtil.dateToString(signDate));
         }
-        if (reason != null) {
+        if (reason != null && !reason.isEmpty()) {
             buf.append('\n').append(reason);
         }
-        if (location != null) {
+        if (location != null && !location.isEmpty()) {
             buf.append('\n').append(location);
         }
         return buf.toString();

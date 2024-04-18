@@ -908,13 +908,13 @@ public class TableRenderer extends AbstractRenderer {
                             ? this
                             : firstCauseOfNothing);
                 } else {
-                    int status = ((occupiedArea.getBBox().getHeight()
-                            - (null == footerRenderer ? 0 : footerRenderer.getOccupiedArea().getBBox().getHeight())
-                            - (null == headerRenderer ? 0 : headerRenderer.getOccupiedArea().getBBox().getHeight() - headerRenderer.bordersHandler.getMaxBottomWidth())
-                            == 0)
-                            && (isAndWasComplete || isFirstOnThePage))
-                            ? LayoutResult.NOTHING
-                            : LayoutResult.PARTIAL;
+                    float footerHeight = null == footerRenderer ? 0 : footerRenderer.getOccupiedArea().getBBox().getHeight();
+                    float headerHeight = null == headerRenderer ? 0 : headerRenderer.getOccupiedArea().getBBox().getHeight()
+                            - headerRenderer.bordersHandler.getMaxBottomWidth();
+                    float captionHeight = null == captionRenderer ? 0 : captionRenderer.getOccupiedArea().getBBox().getHeight();
+                    float heightDiff = occupiedArea.getBBox().getHeight() - footerHeight - headerHeight - captionHeight;
+                    int status = Float.compare(0,heightDiff) == 0 && (isAndWasComplete || isFirstOnThePage) ?
+                            LayoutResult.NOTHING : LayoutResult.PARTIAL;
                     if ((status == LayoutResult.NOTHING && Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)))
                             || wasHeightClipped) {
                         if (wasHeightClipped) {

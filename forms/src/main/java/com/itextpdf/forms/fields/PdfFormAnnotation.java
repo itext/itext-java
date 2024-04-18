@@ -163,7 +163,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
 
         if (document != null && document.getReader() != null
                 && document.getReader().getPdfAConformanceLevel() != null) {
-            field.pdfAConformanceLevel = document.getReader().getPdfAConformanceLevel();
+            field.pdfConformanceLevel = document.getReader().getPdfAConformanceLevel();
         }
 
         return field;
@@ -1007,7 +1007,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         final Canvas canvasOff = new Canvas(xObjectOff, getDocument());
         setMetaInfoToCanvas(canvasOff);
         canvasOff.add(formFieldElement);
-        if (getPdfAConformanceLevel() == null) {
+        if (getPdfConformanceLevel() == null) {
             xObjectOff.getResources().addFont(getDocument(), getFont());
         }
         normalAppearance.put(new PdfName(OFF_STATE_VALUE), xObjectOff.getPdfObject());
@@ -1227,7 +1227,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
 
         formFieldElement.setProperty(Property.FONT_SIZE, UnitValue.createPointValue(getFontSize()));
         setModelElementProperties(getRect(getPdfObject()));
-        ((CheckBox) formFieldElement).setPdfAConformanceLevel(getPdfAConformanceLevel());
+        ((CheckBox) formFieldElement).setPdfConformanceLevel(getPdfConformanceLevel());
         ((CheckBox) formFieldElement).setCheckBoxType(parent.checkType.getValue());
     }
 

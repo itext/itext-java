@@ -98,4 +98,5 @@ public class ValidationContainer {
     public boolean containsChecker(IValidationChecker checker) {
         return validationCheckers.contains(checker);
     }
+
 }

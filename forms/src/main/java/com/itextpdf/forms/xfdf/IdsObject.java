@@ -51,6 +51,9 @@ public class IdsObject {
      */
     private String modified;
 
+    /**
+     * Creates an instance of {@link IdsObject}.
+     */
     public IdsObject() {
     }
 
@@ -60,7 +63,7 @@ public class IdsObject {
      * This value does not change when the file is incrementally updated.
      * The value shall be a hexadecimal number.
      *
-     * @return the permanent identifier value
+     * @return the permanent identifier value.
      */
     public String getOriginal() {
         return original;
@@ -74,7 +77,8 @@ public class IdsObject {
      * A common value for this is an MD5 checksum.
      *
      * @param original the permanent identifier value
-     * @return current {@link IdsObject ids object}
+     *
+     * @return current {@link IdsObject ids object}.
      */
     public IdsObject setOriginal(String original) {
         this.original = original;
@@ -88,7 +92,7 @@ public class IdsObject {
      * on the file's contents at the time it was last updated.
      * The value shall be a hexadecimal number.
      *
-     * @return the unique identifier value
+     * @return the unique identifier value.
      */
     public String getModified() {
         return modified;
@@ -103,7 +107,8 @@ public class IdsObject {
      * A common value for this is an MD5 checksum.
      *
      * @param modified the unique identifier value
-     * @return current {@link IdsObject ids object}
+     *
+     * @return current {@link IdsObject ids object}.
      */
     public IdsObject setModified(String modified) {
         this.modified = modified;

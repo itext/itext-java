@@ -60,7 +60,7 @@ public class PdfCopyTest extends ExtendedITextTest {
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
-    
+
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = IoLogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY),
@@ -379,6 +379,22 @@ public class PdfCopyTest extends ExtendedITextTest {
 
         linkAnotPdf.close();
         targetPdf.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    public void copyDocWithFullDDictionary() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "copyDocWithDDictionary.pdf";
+        String cmpFileName = sourceFolder + "cmp_copyDocWithDDictionary.pdf";
+
+        PdfDocument inPdf = new PdfDocument(new PdfReader(sourceFolder + "DocWithDDictionary.pdf"));
+        PdfDocument outPdf = new PdfDocument(new PdfWriter(outFileName));
+
+        inPdf.copyPagesTo(1, 1, outPdf);
+
+        inPdf.close();
+        outPdf.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }

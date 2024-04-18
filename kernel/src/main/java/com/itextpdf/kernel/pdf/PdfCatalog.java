@@ -80,6 +80,9 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     // If this flag is false all outline operations will be ignored
     private boolean outlineMode;
 
+    private boolean ocgCopied = false;
+
+
     /**
      * Create {@link PdfCatalog} dictionary.
      *
@@ -454,9 +457,12 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      * @return boolean indicating if the dictionary needs to be reconstructed
      */
     protected boolean isOCPropertiesMayHaveChanged() {
-        return ocProperties != null;
+        return ocProperties != null || ocgCopied;
     }
 
+    void setOcgCopied(boolean ocgCopied) {
+        this.ocgCopied = ocgCopied;
+    }
     PdfPagesTree getPageTree() {
         return pageTree;
     }

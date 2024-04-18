@@ -1,0 +1,78 @@
+external-url-prefix: "http://localhost.test"
+keysets:
+  testkeys:
+    keys:
+      ca:
+        path: keys/root_key.pem
+        password: testpassphrase
+      intermediate:
+        path: keys/im_key.pem
+        password: testpassphrase
+      expired-intermediate:
+        path: keys/im_key.pem
+        password: testpassphrase
+      not-yet-valid-intermediate:
+        path: keys/im_key.pem
+        password: testpassphrase
+      sign:
+        path: keys/sign-key.pem
+        password: testpassphrase
+
+
+pki-architectures:
+  default:
+    keyset: testkeys
+    entity-defaults:
+      country-name: BE
+      organization-name: iText
+    entities:
+      ca:
+        common-name: iTextTestRoot
+      intermediate:
+        common-name: iTextTestIntermediate
+      sign:
+        common-name: iTextTestSign
+    certs:
+      ca:
+        subject: ca
+        issuer: ca
+        validity:
+          valid-from: "2000-01-01T00:00:00+0000"
+          valid-to: "2500-01-01T00:00:00+0000"
+        profiles:
+          - id: simple-ca
+        extensions:
+          - id: basic_constraints
+            critical: true
+            value:
+              ca: true
+          - id: key_usage
+            critical: true
+            smart-value:
+              schema: key-usage
+              params: [digital_signature, non_repudiation, key_encipherment, key_cert_sign]
+      intermediate:
+        issuer: ca
+        validity:
+          valid-from: "2002-01-01T00:00:00+0000"
+          valid-to: "2003-01-01T00:00:00+0000"
+        profiles:
+          - id:
+              simple-ca
+        extensions:
+          - id: key_usage
+            critical: true
+            smart-value:
+              schema: key-usage
+              params: [digital_signature, non_repudiation, key_encipherment, key_cert_sign, crl_sign]
+      sign:
+        issuer: intermediate
+        validity:
+          valid-from: "2000-01-01T00:00:00+0000"
+          valid-to: "2400-01-01T00:00:00+0000"
+        extensions:
+          - id: key_usage
+            critical: true
+            smart-value:
+              schema: key-usage
+              params: [digital_signature, non_repudiation]

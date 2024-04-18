@@ -35,7 +35,6 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -122,6 +121,23 @@ public class PdfMergerTest extends ExtendedITextTest {
         Assert.assertNull(
                 new CompareTool().compareByContent(resultFile, sourceFolder + "cmp_resultFileWithoutStackOverflow.pdf",
                         destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void mergeDocumentWithLinkAnnotationTest() throws IOException, InterruptedException {
+        String filename = sourceFolder + "documentWithLinkAnnotation.pdf";
+        String resultFile = destinationFolder + "mergedDocumentWithLinkAnnotation.pdf";
+
+        PdfReader reader = new PdfReader(filename);
+
+        PdfWriter writer1 = CompareTool.createTestPdfWriter(resultFile);
+        PdfDocument pdfDoc = new PdfDocument(reader);
+        PdfDocument result = new PdfDocument(writer1);
+        PdfMerger merger = new PdfMerger(result).setCloseSourceDocuments(true);
+
+        merger.merge(pdfDoc, 1, 1).close();
+
+        Assert.assertNull(new CompareTool().compareByContent(resultFile, sourceFolder + "cmp_mergedDocumentWithLinkAnnotation.pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -259,9 +275,76 @@ public class PdfMergerTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO DEVSIX-5974 Empty tr isn't copied.
     public void emptyTrTableTest() throws ParserConfigurationException, SAXException, IOException, InterruptedException {
         mergeAndCompareTagStructures("emptyTrTable.pdf", 1, 1);
+    }
+
+    @Test
+    public void splitEmptyTrTableFirstPageTest() throws ParserConfigurationException, SAXException, IOException, InterruptedException {
+        mergeAndCompareTagStructures("splitTableWithEmptyTrFirstPage.pdf", 1, 1);
+    }
+
+    @Test
+    public void splitEmptyTrTableSecondPageTest() throws ParserConfigurationException, SAXException, IOException, InterruptedException {
+        mergeAndCompareTagStructures("splitTableWithEmptyTrSecondPage.pdf", 2, 2);
+    }
+
+    @Test
+    public void splitEmptyTrTableFullTest() throws ParserConfigurationException, SAXException, IOException, InterruptedException {
+        mergeAndCompareTagStructures("splitTableWithEmptyTrFull.pdf", 1, 2);
+    }
+
+    @Test
+    public void emptyFirstTrTableTest() throws ParserConfigurationException, SAXException, IOException, InterruptedException {
+        mergeAndCompareTagStructures("emptyFirstTrTable.pdf", 1, 1);
+    }
+
+    @Test
+    public void emptyLastTrTableTest() throws ParserConfigurationException, SAXException, IOException, InterruptedException {
+        mergeAndCompareTagStructures("emptyLastTrTable.pdf", 1, 1);
+    }
+
+    @Test
+    public void emptyTwoAdjacentTrTableTest() throws ParserConfigurationException, SAXException, IOException, InterruptedException {
+        mergeAndCompareTagStructures("emptyTwoAdjacentTrTable.pdf", 1, 1);
+    }
+
+    @Test
+    public void emptyAllTrTableTest() throws ParserConfigurationException, SAXException, IOException, InterruptedException {
+        mergeAndCompareTagStructures("emptyAllTrTable.pdf", 1, 1);
+    }
+
+    @Test
+    public void emptySingleTrTableTest() throws ParserConfigurationException, SAXException, IOException, InterruptedException {
+        mergeAndCompareTagStructures("emptySingleTrTable.pdf", 1, 1);
+    }
+
+    @Test
+    public void splitAndMergeEmptyTrTableTest() throws ParserConfigurationException, SAXException, IOException, InterruptedException {
+        String sourceFilename = sourceFolder + "splitTableWithEmptyTrFull.pdf";
+        String firstPageFilename = destinationFolder + "firstPageDoc.pdf";
+        String secondPageFilename = destinationFolder + "secondPageDoc.pdf";
+        String resultFilename = destinationFolder + "splitAndMergeEmptyTrTable.pdf";
+        String cmpFilename = sourceFolder + "cmp_splitAndMergeEmptyTrTable.pdf";
+
+        PdfDocument sourceDoc = new PdfDocument(new PdfReader(sourceFilename));
+
+        PdfDocument firstPageDoc = new PdfDocument(new PdfWriter(firstPageFilename));
+        PdfMerger mergerFirstPage =  new PdfMerger(firstPageDoc);
+        mergerFirstPage.merge(sourceDoc, 1, 1);
+        mergerFirstPage.close();
+
+        PdfDocument secondPageDoc = new PdfDocument(new PdfWriter(secondPageFilename));
+        PdfMerger mergerSecondPage = new PdfMerger(secondPageDoc);
+        mergerSecondPage.merge(sourceDoc, 2, 2);
+        mergerSecondPage.close();
+
+        List<File> sources = new ArrayList<File>();
+        sources.add(new File(firstPageFilename));
+        sources.add(new File(secondPageFilename));
+        mergePdfs(sources, resultFilename, new PdfMergerProperties(), false);
+
+        Assert.assertNull(new CompareTool().compareTagStructures(resultFilename, cmpFilename));
     }
 
     @Test
@@ -550,43 +633,52 @@ public class PdfMergerTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.TAG_STRUCTURE_INIT_FAILED)
+            @LogMessage(messageTemplate = KernelLogMessageConstant.STRUCT_PARENT_INDEX_MISSED_AND_RECREATED)
     })
-    public void mergePdfWithMissingStructElemBeginningOfTreeTest() throws IOException {
-        //TODO change assertion after DEVSIX-7478 is fixed
-        Assert.assertNull(mergeSinglePdfAndGetResultingStructTreeRoot("structParentMissingFirstElement.pdf"));
+    public void mergePdfWithMissingStructElemBeginningOfTreeTest() throws IOException, InterruptedException {
+        String name = "structParentMissingFirstElement.pdf";
+        Assert.assertNotNull(mergeSinglePdfAndGetResultingStructTreeRoot(name));
+        Assert.assertNull(new CompareTool().compareByContent(
+                destinationFolder + name,
+                sourceFolder + "cmp_" + name, destinationFolder));
     }
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.TAG_STRUCTURE_INIT_FAILED),
-            @LogMessage(messageTemplate = IoLogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
+            @LogMessage(messageTemplate = IoLogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY),
+            @LogMessage(messageTemplate = KernelLogMessageConstant.STRUCT_PARENT_INDEX_MISSED_AND_RECREATED)
     })
-    public void mergePdfWithMissingStructElemEndOfTreeTest() throws IOException {
-        //TODO change assertion after DEVSIX-7478 is fixed
-        Assert.assertNull(
-                mergeSinglePdfAndGetResultingStructTreeRoot("structParentMissingLastElement.pdf"));
+    public void mergePdfWithMissingStructElemEndOfTreeTest() throws IOException, InterruptedException {
+        String name = "structParentMissingLastElement.pdf";
+        Assert.assertNotNull(mergeSinglePdfAndGetResultingStructTreeRoot(name));
+        Assert.assertNull(new CompareTool().compareByContent(
+                destinationFolder + name,
+                sourceFolder + "cmp_" + name, destinationFolder));
     }
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.TAG_STRUCTURE_INIT_FAILED),
-            @LogMessage(messageTemplate = IoLogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
+            @LogMessage(messageTemplate = IoLogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY),
+            @LogMessage(messageTemplate = KernelLogMessageConstant.STRUCT_PARENT_INDEX_MISSED_AND_RECREATED, count = 4)
     })
-    public void mergePdfAllObjectsMissingStructParentTest() throws IOException {
-        //TODO change assertion after DEVSIX-7478 is fixed
-        Assert.assertNull(mergeSinglePdfAndGetResultingStructTreeRoot(
-                "allObjectsHaveStructParent.pdf"));
+    public void mergePdfAllObjectsMissingStructParentTest() throws IOException, InterruptedException {
+        String name = "allObjectsHaveStructParent.pdf";
+        Assert.assertNotNull(mergeSinglePdfAndGetResultingStructTreeRoot(name));
+        Assert.assertNull(new CompareTool().compareByContent(
+                destinationFolder + name,
+                sourceFolder + "cmp_" + name, destinationFolder));
     }
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.TAG_STRUCTURE_INIT_FAILED)
+            @LogMessage(messageTemplate = KernelLogMessageConstant.STRUCT_PARENT_INDEX_MISSED_AND_RECREATED, count = 2)
     })
-    public void mergePdfChildObjectsOfSameStructElemMissingStructParentTest() throws IOException {
-        //TODO change assertion after DEVSIX-7478 is fixed
-        Assert.assertNull(mergeSinglePdfAndGetResultingStructTreeRoot(
-                "SameStructElemNoParent.pdf"));
+    public void mergePdfChildObjectsOfSameStructElemMissingStructParentTest() throws IOException, InterruptedException {
+        String name = "SameStructElemNoParent.pdf";
+        Assert.assertNotNull(mergeSinglePdfAndGetResultingStructTreeRoot(name));
+        Assert.assertNull(new CompareTool().compareByContent(
+                destinationFolder + name,
+                sourceFolder + "cmp_" + name, destinationFolder));
     }
 
     @Test

@@ -1,0 +1,9 @@
+{
+  "resources":{
+  "includes":[{
+    "condition": {
+      "typeReachable": "com.itextpdf.svg.css.impl.SvgStyleResolver"
+    },
+    "pattern":"\\Qcom/itextpdf/svg/default.css\\E"
+  }]}
+}

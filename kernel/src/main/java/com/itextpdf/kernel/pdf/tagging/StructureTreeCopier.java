@@ -244,11 +244,13 @@ class StructureTreeCopier {
      * @param page2page  association between original page and copied page.
      * @param copyFromDestDocument indicates if <code>page2page</code> keys and values represent pages from {@code destDocument}.
      */
-    private static void copyTo(PdfDocument destDocument, Map<PdfPage, PdfPage> page2page, PdfDocument callingDocument, boolean copyFromDestDocument) {
+    private static void copyTo(PdfDocument destDocument, Map<PdfPage, PdfPage> page2page, PdfDocument callingDocument
+            , boolean copyFromDestDocument) {
         copyTo(destDocument, page2page, callingDocument, copyFromDestDocument, -1);
     }
 
-    private static void copyTo(PdfDocument destDocument, Map<PdfPage, PdfPage> page2page, PdfDocument callingDocument, boolean copyFromDestDocument, int insertIndex) {
+    private static void copyTo(PdfDocument destDocument, Map<PdfPage, PdfPage> page2page, PdfDocument callingDocument
+            , boolean copyFromDestDocument, int insertIndex) {
         CopyStructureResult copiedStructure = copyStructure(destDocument, page2page, callingDocument, copyFromDestDocument);
         PdfStructTreeRoot destStructTreeRoot = destDocument.getStructTreeRoot();
         destStructTreeRoot.makeIndirect(destDocument);
@@ -283,7 +285,8 @@ class StructureTreeCopier {
         }
     }
 
-    private static CopyStructureResult copyStructure(PdfDocument destDocument, Map<PdfPage, PdfPage> page2page, PdfDocument callingDocument, boolean copyFromDestDocument) {
+    private static CopyStructureResult copyStructure(PdfDocument destDocument, Map<PdfPage, PdfPage> page2page
+            , PdfDocument callingDocument, boolean copyFromDestDocument) {
         PdfDocument fromDocument = copyFromDestDocument ? destDocument : callingDocument;
         Map<PdfDictionary, PdfDictionary> topsToFirstDestPage = new HashMap<>();
         Set<PdfObject> objectsToCopy = new HashSet<>();
@@ -380,16 +383,23 @@ class StructureTreeCopier {
         }
 
         PdfObject k = source.get(PdfName.K);
+        PdfDictionary lastCopiedTrPage = null;
         if (k != null) {
             if (k.isArray()) {
                 PdfArray kArr = (PdfArray) k;
                 PdfArray newArr = new PdfArray();
                 for (int i = 0; i < kArr.size(); i++) {
-                    PdfObject copiedKid = copyObjectKid(kArr.get(i), copied, destPage, parentChangePg, copyingParams);
+                    PdfObject copiedKid = copyObjectKid(kArr.get(i), copied, destPage, parentChangePg, copyingParams
+                            , lastCopiedTrPage);
                     if (copiedKid != null) {
                         newArr.add(copiedKid);
+                        if (copiedKid instanceof PdfDictionary
+                                && PdfName.TR.equals(((PdfDictionary) copiedKid).getAsName(PdfName.S))) {
+                            lastCopiedTrPage = destPage;
+                        }
                     }
                 }
+
                 if (!newArr.isEmpty()) {
                     if (newArr.size() == 1) {
                         copied.put(PdfName.K, newArr.get(0));
@@ -398,7 +408,8 @@ class StructureTreeCopier {
                     }
                 }
             } else {
-                PdfObject copiedKid = copyObjectKid(k, copied, destPage, parentChangePg, copyingParams);
+                PdfObject copiedKid = copyObjectKid(k, copied, destPage, parentChangePg, copyingParams
+                        , lastCopiedTrPage);
                 if (copiedKid != null) {
                     copied.put(PdfName.K, copiedKid);
                 }
@@ -407,7 +418,9 @@ class StructureTreeCopier {
         return copied;
     }
 
-    private static PdfObject copyObjectKid(PdfObject kid, PdfDictionary copiedParent, PdfDictionary destPage, boolean parentChangePg, StructElemCopyingParams copyingParams) {
+    private static PdfObject copyObjectKid(PdfObject kid, PdfDictionary copiedParent, PdfDictionary destPage,
+                                           boolean parentChangePg, StructElemCopyingParams copyingParams,
+                                           PdfDictionary lastCopiedTrPage) {
         if (kid.isNumber()) {
             if (!parentChangePg) {
                 copyingParams.getToDocument().getStructTreeRoot().getParentTreeHandler()
@@ -416,11 +429,27 @@ class StructureTreeCopier {
             }
         } else if (kid.isDictionary()) {
             PdfDictionary kidAsDict = (PdfDictionary) kid;
-            // if element is TD and its parent is TR which was copied, then we copy it in any case
+            //if element is TD and its parent is TR which was copied, then we copy it in any case
             if (copyingParams.getObjectsToCopy().contains(kidAsDict) ||
                     shouldTableElementBeCopied(kidAsDict, copiedParent)) {
+                //if TR element is not connected to any page,
+                //it should be copied to the same page as the last copied TR which connected to page
+                PdfDictionary destination = destPage;
+                if (PdfName.TR.equals(kidAsDict.getAsName(PdfName.S))
+                        && !copyingParams.getObjectsToCopy().contains(kidAsDict)) {
+                    if (McrCheckUtil.isTrContainsMcr(kidAsDict)){
+                        return null;
+                    }
+
+                    if (lastCopiedTrPage == null) {
+                        return null;
+                    } else {
+                        destination = lastCopiedTrPage;
+                    }
+                }
                 boolean hasParent = kidAsDict.containsKey(PdfName.P);
-                PdfDictionary copiedKid = copyObject(kidAsDict, destPage, parentChangePg, copyingParams);
+                PdfDictionary copiedKid = copyObject(kidAsDict, destination, parentChangePg, copyingParams);
+
                 if (hasParent) {
                     copiedKid.put(PdfName.P, copiedParent);
                 } else {
@@ -446,8 +475,9 @@ class StructureTreeCopier {
     }
 
     static boolean shouldTableElementBeCopied(PdfDictionary obj, PdfDictionary parent) {
-        return (PdfName.TD.equals(obj.get(PdfName.S)) || PdfName.TH.equals(obj.get(PdfName.S)))
-                && PdfName.TR.equals(parent.get(PdfName.S));
+        PdfName role = obj.getAsName(PdfName.S);
+        return ((PdfName.TD.equals(role) || PdfName.TH.equals(role)) && PdfName.TR.equals(parent.get(PdfName.S)))
+                || PdfName.TR.equals(role);
     }
 
     private static PdfDictionary copyNamespaceDict(PdfDictionary srcNsDict, StructElemCopyingParams copyingParams) {

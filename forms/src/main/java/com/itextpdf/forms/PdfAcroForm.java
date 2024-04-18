@@ -39,6 +39,7 @@ import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.IsoKey;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -258,7 +259,6 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                 return;
             }
         }
-
         PdfFormFieldMergeUtil.mergeKidsWithSameNames(field, throwExceptionOnError);
 
         // PdfPageFormCopier expects that we replace existed field by a new one in case they have the same names.

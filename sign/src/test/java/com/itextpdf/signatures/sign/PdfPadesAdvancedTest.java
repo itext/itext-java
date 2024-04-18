@@ -141,7 +141,6 @@ public class PdfPadesAdvancedTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.OCSP_STATUS_IS_REVOKED), ignore = true)
     public void signWithAdvancedClientsTest()
             throws IOException, GeneralSecurityException, AbstractOperatorCreationException, AbstractPKCSException, AbstractOCSPException {
         String srcFileName = SOURCE_FOLDER + "helloWorldDoc.pdf";

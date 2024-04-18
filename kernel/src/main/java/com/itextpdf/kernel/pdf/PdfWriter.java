@@ -147,6 +147,15 @@ public class PdfWriter extends PdfOutputStream {
     }
 
     /**
+     * Gets the writer properties.
+     *
+     * @return The {@link WriterProperties} of the current PdfWriter.
+     */
+    public WriterProperties getProperties() {
+        return properties;
+    }
+
+    /**
      * Sets the smart mode.
      * <br>
      * In smart mode when resources (such as fonts, images,...) are
@@ -220,9 +229,10 @@ public class PdfWriter extends PdfOutputStream {
     /**
      * Copies a PdfObject either stand alone or as part of the PdfDocument passed as documentTo.
      *
-     * @param obj object to copy
-     * @param documentTo optional target document
+     * @param obj              object to copy
+     * @param documentTo       optional target document
      * @param allowDuplicating allow that some objects will become duplicated by this action
+     *
      * @return the copies object
      */
     protected PdfObject copyObject(PdfObject obj, PdfDocument documentTo, boolean allowDuplicating) {
@@ -232,11 +242,12 @@ public class PdfWriter extends PdfOutputStream {
     /**
      * Copies a PdfObject either stand alone or as part of the PdfDocument passed as documentTo.
      *
-     * @param obj object to copy
-     * @param documentTo optional target document
+     * @param obj              object to copy
+     * @param documentTo       optional target document
      * @param allowDuplicating allow that some objects will become duplicated by this action
-     * @param copyFilter  {@link  ICopyFilter} a filter to apply while copying arrays and dictionaries
-     *      *             Use {@link NullCopyFilter} for no filtering
+     * @param copyFilter       {@link  ICopyFilter} a filter to apply while copying arrays and dictionaries
+     *                         *             Use {@link NullCopyFilter} for no filtering
+     *
      * @return the copies object
      */
     protected PdfObject copyObject(PdfObject obj, PdfDocument documentTo, boolean allowDuplicating,

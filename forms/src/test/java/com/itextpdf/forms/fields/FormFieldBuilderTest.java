@@ -24,6 +24,7 @@ package com.itextpdf.forms.fields;
 
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfUAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
@@ -46,12 +47,27 @@ public class FormFieldBuilderTest extends ExtendedITextTest {
         Assert.assertSame(DUMMY_NAME, builder.getFormFieldName());
     }
 
+
     @Test
     public void getSetConformanceLevelTest() {
         TestBuilder builder = new TestBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
-        builder.setConformanceLevel(PdfAConformanceLevel.PDF_A_1A);
+        builder.setGenericConformanceLevel(PdfAConformanceLevel.PDF_A_1A);
+        Assert.assertSame(PdfAConformanceLevel.PDF_A_1A, builder.getGenericConformanceLevel());
+    }
 
+    @Test
+    public void getSetConformanceLevelDepreceatedTest() {
+        TestBuilder builder = new TestBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
+        builder.setConformanceLevel(PdfAConformanceLevel.PDF_A_1A);
         Assert.assertSame(PdfAConformanceLevel.PDF_A_1A, builder.getConformanceLevel());
+    }
+
+
+    @Test
+    public void getSetConformanceLevelDifferentTest() {
+        TestBuilder builder = new TestBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
+        builder.setGenericConformanceLevel(PdfUAConformanceLevel.PDFUA_1);
+        Assert.assertNull(builder.getConformanceLevel());
     }
 
     private static class TestBuilder extends FormFieldBuilder<TestBuilder> {

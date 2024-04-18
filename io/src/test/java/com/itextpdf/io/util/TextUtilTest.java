@@ -112,6 +112,12 @@ public class TextUtilTest extends ExtendedITextTest {
         Assert.assertFalse(TextUtil.isMark(glyph));
     }
 
+    @Test
+    public void isDiacriticTest() {
+        Assert.assertTrue(TextUtil.isDiacritic("\u0303".charAt(0)));
+        Assert.assertFalse(TextUtil.isDiacritic("\u006b".charAt(0)));
+    }
+
     private void helper(boolean expected, int currentCRPosition, Glyph...glyphs) {
         GlyphLine glyphLine = new GlyphLine(Arrays.asList(glyphs));
         Assert.assertTrue(expected == TextUtil.isCarriageReturnFollowedByLineFeed(glyphLine, currentCRPosition));

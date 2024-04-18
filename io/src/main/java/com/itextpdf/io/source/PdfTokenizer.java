@@ -241,6 +241,28 @@ public class PdfTokenizer implements Closeable {
         throw new IOException(IoExceptionMessageConstant.PDF_STARTXREF_NOT_FOUND, this);
     }
 
+    /**
+     * Gets next %%EOF marker in current PDF file.
+     *
+     * @return next %%EOF marker position
+     *
+     * @throws java.io.IOException in case of input-output related exceptions during PDF document reading
+     */
+    public long getNextEof() throws java.io.IOException {
+        int arrLength = 128;
+        String str;
+        do {
+            long currentPosition = file.getPosition();
+            str = readString(arrLength);
+            long eofPosition = str.indexOf("%%EOF");
+            if (eofPosition >= 0) {
+                // 6 stands for '%%EOF' length + 1
+                return currentPosition + eofPosition + 6;
+            }
+        } while (!str.isEmpty());
+        throw new IOException(IoExceptionMessageConstant.PDF_EOF_NOT_FOUND, this);
+    }
+
     public void nextValidToken() throws java.io.IOException {
         int level = 0;
         byte[] n1 = null;

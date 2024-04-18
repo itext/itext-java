@@ -22,6 +22,7 @@
  */
 package com.itextpdf.layout;
 
+import com.itextpdf.commons.utils.PlaceHolderTextUtil;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.UrlUtil;
@@ -2047,9 +2048,6 @@ public class TableTest extends AbstractTableTest {
     }
 
 	@Test
-	@LogMessages(messages = {
-	        @LogMessage(messageTemplate = IoLogMessageConstant.UNEXPECTED_BEHAVIOUR_DURING_TABLE_ROW_COLLAPSING)
-    })
 	public void tableWithEmptyRowsBetweenFullRowsTest() throws IOException, InterruptedException {
 		String testName = "tableWithEmptyRowsBetweenFullRowsTest.pdf";
 		String outFileName = destinationFolder + testName;
@@ -2072,7 +2070,6 @@ public class TableTest extends AbstractTableTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.UNEXPECTED_BEHAVIOUR_DURING_TABLE_ROW_COLLAPSING, count = 2),
             @LogMessage(messageTemplate = IoLogMessageConstant.LAST_ROW_IS_NOT_COMPLETE)
     })
     public void tableWithEmptyRowAfterJustOneCellTest() throws IOException, InterruptedException {
@@ -2098,7 +2095,6 @@ public class TableTest extends AbstractTableTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.UNEXPECTED_BEHAVIOUR_DURING_TABLE_ROW_COLLAPSING, count = 39),
             @LogMessage(messageTemplate = IoLogMessageConstant.LAST_ROW_IS_NOT_COMPLETE)
     })
     public void tableWithAlternatingRowsTest() throws IOException, InterruptedException {
@@ -2145,9 +2141,30 @@ public class TableTest extends AbstractTableTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.UNEXPECTED_BEHAVIOUR_DURING_TABLE_ROW_COLLAPSING, count = 2)
-    })
+    public void tableWithEmptyRowsAndSpansTest() throws IOException, InterruptedException {
+        String testName = "tableWithEmptyRowsAndSpansTest.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(UnitValue.createPercentArray(new float[]{30, 30, 30}));
+        table.addCell(new Cell().add(new Paragraph("Hello")));
+        table.addCell(new Cell().add(new Paragraph("Lovely")));
+        table.addCell(new Cell().add(new Paragraph("World")));
+        startSeveralEmptyRows(table);
+        table.addCell(new Cell(2, 2).add(new Paragraph("Hello")));
+        table.addCell(new Cell().add(new Paragraph("Lovely")));
+        table.addCell(new Cell().add(new Paragraph("World")));
+
+        doc.add(table);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
     public void tableWithEmptyRowsAndSeparatedBordersTest() throws IOException, InterruptedException {
         String testName = "tableWithEmptyRowsAndSeparatedBordersTest.pdf";
         String outFileName = destinationFolder + testName;
@@ -2170,10 +2187,6 @@ public class TableTest extends AbstractTableTest {
     }
 
     @Test
-    // TODO DEVSIX-6020:Border-collapsing doesn't work in case startNewRow has been called
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.UNEXPECTED_BEHAVIOUR_DURING_TABLE_ROW_COLLAPSING)
-    })
     public void tableWithCollapsedBordersTest() throws IOException, InterruptedException {
         String testName = "tableWithCollapsedBordersTest.pdf";
         String outFileName = destinationFolder + testName;
@@ -3245,7 +3258,7 @@ public class TableTest extends AbstractTableTest {
         // of the table will be calculated by the header.
         table.addHeaderCell(new Cell().add(new Paragraph("Hello")));
         table.addCell(new Cell().add(new Paragraph("He")));
-        
+
         // If this property is not inherited while calculating min/max widths,
         // then while layouting header will request more space than the layout box's width
         table.getHeader().setBold();
@@ -3573,6 +3586,90 @@ public class TableTest extends AbstractTableTest {
         doc.add(new Table(new float[]{1, 1}).addCell(new Cell().setHeight(10.0f)));
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, logLevel = LogLevelConstants.WARN),
+    })
+    public void keepTogetherCaptionAndHugeCellTest() throws IOException, InterruptedException {
+        String fileName = "keepTogetherCaptionAndHugeCell.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + fileName));
+        Document document = new Document(pdfDocument, PageSize.A4);
+
+        Table table = new Table(1)
+                .setCaption(new Div().add(new Paragraph("hello world")));
+
+        Cell dataCell = new Cell()
+                .setKeepTogether(true)
+                .add(new Paragraph(PlaceHolderTextUtil
+                        .getPlaceHolderText(PlaceHolderTextUtil.PlaceHolderTextBy.WORDS, 600)));
+
+        table.addCell(dataCell);
+        document.add(table);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
+                sourceFolder + "cmp_" + fileName, destinationFolder));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, logLevel = LogLevelConstants.WARN),
+    })
+    public void keepTogetherCaptionDoesntFitPageTest() throws IOException, InterruptedException {
+        String fileName = "keepTogetherCaptionDoesntFitPage.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + fileName));
+        Document document = new Document(pdfDocument, PageSize.A4);
+
+        document.add(new Paragraph(PlaceHolderTextUtil
+                .getPlaceHolderText(PlaceHolderTextUtil.PlaceHolderTextBy.WORDS, 580)));
+
+        Table table = new Table(1)
+                .setCaption(new Div().add(new Paragraph("hello world")));
+
+        Cell dataCell = new Cell()
+                .setKeepTogether(true)
+                .add(new Paragraph(PlaceHolderTextUtil
+                        .getPlaceHolderText(PlaceHolderTextUtil.PlaceHolderTextBy.WORDS, 600)));
+
+        table.addCell(dataCell);
+        document.add(table);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
+                sourceFolder + "cmp_" + fileName, destinationFolder));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, logLevel = LogLevelConstants.WARN),
+    })
+    public void keepTogetherCaptionAndSplitCellTest() throws IOException, InterruptedException {
+        String fileName = "keepTogetherCaptionAndSplitCell.pdf";
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + fileName));
+        Document document = new Document(pdfDocument, PageSize.A4);
+
+        Table table = new Table(1)
+                .setCaption(new Div().add(new Paragraph("hello world").setFontSize(40)),CaptionSide.BOTTOM);
+
+
+        Cell dataCell = new Cell()
+                .setKeepTogether(true)
+                .add(new Paragraph(PlaceHolderTextUtil
+                        .getPlaceHolderText(PlaceHolderTextUtil.PlaceHolderTextBy.WORDS, 540)));
+
+        table.addCell(dataCell);
+        document.add(table);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
+                sourceFolder + "cmp_" + fileName, destinationFolder));
     }
 
     private static class RotatedDocumentRenderer extends DocumentRenderer {

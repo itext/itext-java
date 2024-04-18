@@ -81,7 +81,7 @@ public class PushButtonFormFieldBuilder extends TerminalFormFieldBuilder<PushBut
         } else {
             annotation = new PdfWidgetAnnotation(getWidgetRectangle());
             field = PdfFormCreator.createButtonFormField(annotation, getDocument());
-            if (null != getConformanceLevel()) {
+            if (null != getGenericConformanceLevel()) {
                 annotation.setFlag(PdfAnnotation.PRINT);
             }
         }
@@ -89,7 +89,7 @@ public class PushButtonFormFieldBuilder extends TerminalFormFieldBuilder<PushBut
         if (this.getFont() != null) {
             field.setFont(this.getFont());
         }
-        field.pdfAConformanceLevel = getConformanceLevel();
+        field.pdfConformanceLevel = getGenericConformanceLevel();
         field.setPushButton(true);
         field.setFieldName(getFormFieldName());
         field.text = caption;

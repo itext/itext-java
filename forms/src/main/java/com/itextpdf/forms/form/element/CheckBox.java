@@ -23,11 +23,15 @@
 package com.itextpdf.forms.form.element;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.forms.FormDefaultAccessibilityProperties;
 import com.itextpdf.forms.fields.properties.CheckBoxType;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.renderer.CheckBoxRenderer;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
+import com.itextpdf.kernel.pdf.IConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.tagging.PdfStructureAttributes;
+import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.layout.properties.BoxSizingPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
@@ -70,15 +74,29 @@ public class CheckBox extends FormField<CheckBox> {
 
     /**
      * Sets the PDF/A conformance level for the checkbox.
+     * This method is deprecated use setPdfConformanceLevel.
+     * @param conformanceLevel The PDF/A conformance level to set.
      *
-     * @param conformanceLevel the PDF/A conformance level to set
-     *
-     * @return this checkbox instance
+     * @return This checkbox instance.
      */
+    @Deprecated()
     public CheckBox setPdfAConformanceLevel(PdfAConformanceLevel conformanceLevel) {
         setProperty(FormProperty.FORM_CONFORMANCE_LEVEL, conformanceLevel);
         return this;
     }
+
+    /**
+     * Sets the conformance level for the checkbox.
+     *
+     * @param conformanceLevel The PDF/A conformance level to set.
+     *
+     * @return tThis checkbox instance.
+     */
+    public CheckBox setPdfConformanceLevel(IConformanceLevel conformanceLevel) {
+        setProperty(FormProperty.FORM_CONFORMANCE_LEVEL, conformanceLevel);
+        return this;
+    }
+
 
 
     /**
@@ -115,6 +133,21 @@ public class CheckBox extends FormField<CheckBox> {
         setProperty(Property.HEIGHT, UnitValue.createPointValue(size));
 
         return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public AccessibilityProperties getAccessibilityProperties() {
+        if (tagProperties == null){
+            tagProperties = new FormDefaultAccessibilityProperties(FormDefaultAccessibilityProperties.FORM_FIELD_CHECK);
+        }
+        if (tagProperties instanceof FormDefaultAccessibilityProperties){
+            ((FormDefaultAccessibilityProperties)tagProperties).updateCheckedValue(this);
+        }
+
+        return tagProperties;
     }
 
     /* (non-Javadoc)

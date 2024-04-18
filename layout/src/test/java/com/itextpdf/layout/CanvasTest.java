@@ -33,6 +33,8 @@ import com.itextpdf.kernel.actions.events.ITextCoreProductEvent;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfResources;
+import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -374,6 +376,45 @@ public class CanvasTest extends ExtendedITextTest {
 
             Assert.assertTrue(events.get(0) instanceof ITextCoreProductEvent);
             Assert.assertTrue(events.get(1) instanceof TestProductEvent);
+        }
+    }
+
+    @Test
+    public void drawingOnPageReuseCanvas() {
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            ExposedPdfCanvas canvas = new ExposedPdfCanvas(pdfDocument.addNewPage());
+            Assert.assertTrue(canvas.getDrawingOnPage());
+            try (Canvas canvas1 = new Canvas(canvas, new Rectangle(200, 200, 200, 200))) {
+                Assert.assertTrue(((ExposedPdfCanvas) canvas1.pdfCanvas).getDrawingOnPage());
+            }
+        }
+    }
+
+    @Test
+    public void notDrawingOnPageReuseCanvas() {
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            PdfStream stream = new PdfStream();
+            ExposedPdfCanvas canvas = new ExposedPdfCanvas(stream, new PdfResources(), pdfDocument);
+            Assert.assertFalse(canvas.getDrawingOnPage());
+            try (Canvas canvas1 = new Canvas(canvas, new Rectangle(200, 200, 200, 200))) {
+                Assert.assertFalse(((ExposedPdfCanvas) canvas1.pdfCanvas).getDrawingOnPage());
+            }
+        }
+    }
+
+    static class ExposedPdfCanvas extends PdfCanvas{
+
+        public ExposedPdfCanvas(PdfStream contentStream, PdfResources resources, PdfDocument document) {
+            super(contentStream, resources, document);
+        }
+
+        public ExposedPdfCanvas(PdfPage page) {
+            super(page);
+        }
+
+
+        public boolean getDrawingOnPage(){
+            return this.drawingOnPage;
         }
     }
 }

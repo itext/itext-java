@@ -59,6 +59,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -81,6 +82,8 @@ public class PdfReaderTest extends ExtendedITextTest {
     static final String author = "Alexander Chingarev";
     static final String creator = "iText 6";
     static final String title = "Empty iText 6 Document";
+
+    static final byte[] USER_PASSWORD = "Hello".getBytes(StandardCharsets.ISO_8859_1);
 
     @BeforeClass
     public static void beforeClass() {
@@ -2756,6 +2759,61 @@ public class PdfReaderTest extends ExtendedITextTest {
             Assert.assertEquals(goodTrailer.get(PdfName.Info).toString(), badTrailer.get(PdfName.Info).toString());
             Assert.assertEquals(goodTrailer.get(PdfName.Root).toString(), badTrailer.get(PdfName.Root).toString());
         }
+    }
+
+    @Test
+    public void newPdfReaderConstructorTest() throws IOException {
+        String filename = SOURCE_FOLDER + "simpleDoc.pdf";
+
+        PdfReader reader = new PdfReader(new File(filename), new ReaderProperties());
+        PdfDocument pdfDoc = new PdfDocument(reader);
+        Assert.assertEquals(author, pdfDoc.getDocumentInfo().getAuthor());
+        Assert.assertEquals(creator, pdfDoc.getDocumentInfo().getCreator());
+        Assert.assertEquals(title, pdfDoc.getDocumentInfo().getTitle());
+        PdfObject object = pdfDoc.getPdfObject(1);
+        Assert.assertEquals(PdfObject.DICTIONARY, object.getType());
+        Assert.assertTrue(objectTypeEqualTo(object, PdfName.Catalog));
+
+        object = pdfDoc.getPdfObject(2);
+        Assert.assertEquals(PdfObject.DICTIONARY, object.getType());
+        Assert.assertTrue(objectTypeEqualTo(object, PdfName.Pages));
+
+        object = pdfDoc.getPdfObject(3);
+        Assert.assertEquals(PdfObject.DICTIONARY, object.getType());
+
+        object = pdfDoc.getPdfObject(4);
+        Assert.assertEquals(PdfObject.DICTIONARY, object.getType());
+        Assert.assertTrue(objectTypeEqualTo(object, PdfName.Page));
+
+        Assert.assertEquals(PdfObject.STREAM, pdfDoc.getPdfObject(5).getType());
+    }
+
+    @Test
+    public void newPdfReaderConstructorPropertiesTest() throws IOException {
+        String fileName = SOURCE_FOLDER + "simpleDocWithPassword.pdf";
+        PdfReader reader = new PdfReader(new File(fileName),new ReaderProperties()
+                .setPassword(USER_PASSWORD));
+
+        PdfDocument pdfDoc = new PdfDocument(reader);
+        Assert.assertEquals(author, pdfDoc.getDocumentInfo().getAuthor());
+        Assert.assertEquals(creator, pdfDoc.getDocumentInfo().getCreator());
+        Assert.assertEquals(title, pdfDoc.getDocumentInfo().getTitle());
+        PdfObject object = pdfDoc.getPdfObject(1);
+        Assert.assertEquals(PdfObject.DICTIONARY, object.getType());
+        Assert.assertTrue(objectTypeEqualTo(object, PdfName.Catalog));
+
+        object = pdfDoc.getPdfObject(2);
+        Assert.assertEquals(PdfObject.DICTIONARY, object.getType());
+        Assert.assertTrue(objectTypeEqualTo(object, PdfName.Pages));
+
+        object = pdfDoc.getPdfObject(3);
+        Assert.assertEquals(PdfObject.DICTIONARY, object.getType());
+
+        object = pdfDoc.getPdfObject(4);
+        Assert.assertEquals(PdfObject.DICTIONARY, object.getType());
+        Assert.assertTrue(objectTypeEqualTo(object, PdfName.Page));
+
+        Assert.assertEquals(PdfObject.STREAM, pdfDoc.getPdfObject(5).getType());
     }
 
     private static PdfDictionary getTestPdfDictionary() {

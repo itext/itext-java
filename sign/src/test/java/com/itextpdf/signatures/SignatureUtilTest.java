@@ -102,8 +102,8 @@ public class SignatureUtilTest extends ExtendedITextTest {
     }
 
     @Test
-    public void bytesAreNotCoveredTest01() throws IOException {
-        String inPdf = sourceFolder + "bytesAreNotCoveredTest01.pdf";
+    public void exclusionSmallerThenContentsTest01() throws IOException {
+        String inPdf = sourceFolder + "exclusionSmallerThenContentsTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
         SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
 
@@ -129,12 +129,58 @@ public class SignatureUtilTest extends ExtendedITextTest {
     }
 
     @Test
+    public void indirectBytesAreCoveredTest01() throws IOException {
+        String inPdf = sourceFolder + "indirectBytesAreCoveredTest01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
+        SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
+
+        Assert.assertTrue(signatureUtil.signatureCoversWholeDocument("Signature1"));
+    }
+
+    @Test
+    public void commentsBytesAreCoveredTest01() throws IOException {
+        String inPdf = sourceFolder + "commentsBytesAreCoveredTest01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
+        SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
+
+        Assert.assertTrue(signatureUtil.signatureCoversWholeDocument("Signature1"));
+    }
+
+    @Test
+    public void commentsBytesAreNotCoveredTest01() throws IOException {
+        String inPdf = sourceFolder + "commentsBytesAreNotCoveredTest01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
+        SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
+
+        Assert.assertFalse(signatureUtil.signatureCoversWholeDocument("Signature1"));
+    }
+
+    @Test
+    public void indirectBytesAreCoveredTest02() throws IOException {
+        String inPdf = sourceFolder + "indirectBytesAreCoveredTest02.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
+        SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
+
+        Assert.assertTrue(signatureUtil.signatureCoversWholeDocument("Signature1"));
+    }
+
+    @Test
+    public void indirectBytesAreNotCoveredTest01() throws IOException {
+        String inPdf = sourceFolder + "indirectBytesAreNotCoveredTest01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
+        SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
+
+        Assert.assertFalse(signatureUtil.signatureCoversWholeDocument("Signature1"));
+    }
+
+
+    @Test
     public void twoContentsTest01() throws IOException {
         String inPdf = sourceFolder + "twoContentsTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
         SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
 
-        Assert.assertTrue(signatureUtil.signatureCoversWholeDocument("Signature1"));
+        Assert.assertFalse(signatureUtil.signatureCoversWholeDocument("Signature1"));
     }
 
     @Test
@@ -144,15 +190,6 @@ public class SignatureUtilTest extends ExtendedITextTest {
         SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
 
         Assert.assertFalse(signatureUtil.signatureCoversWholeDocument("Signature1"));
-    }
-
-    @Test
-    public void spacesBeforeContentsTest02() throws IOException {
-        String inPdf = sourceFolder + "spacesBeforeContentsTest02.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
-        SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
-
-        Assert.assertTrue(signatureUtil.signatureCoversWholeDocument("Signature1"));
     }
 
     @Test

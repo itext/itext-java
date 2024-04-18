@@ -22,9 +22,11 @@
  */
 package com.itextpdf.forms.form.element;
 
+import com.itextpdf.forms.FormDefaultAccessibilityProperties;
 import com.itextpdf.forms.form.renderer.ButtonRenderer;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.layout.element.BlockElement;
 import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.Image;
@@ -151,6 +153,19 @@ public class Button extends FormField<Button> {
         }
         return super.<T1>getDefaultProperty(property);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public AccessibilityProperties getAccessibilityProperties() {
+        if (tagProperties == null){
+            tagProperties = new FormDefaultAccessibilityProperties(
+                    FormDefaultAccessibilityProperties.FORM_FIELD_PUSH_BUTTON);
+        }
+        return tagProperties;
+    }
+
 
     /**
      * {@inheritDoc}

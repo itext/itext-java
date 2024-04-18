@@ -37,6 +37,11 @@ public class FObject {
      */
     private String href;
 
+    /**
+     * Creates an instance of {@link FObject}.
+     *
+     * @param href the name of the source or target file
+     */
     public FObject(String href) {
         this.href = href;
     }
@@ -44,7 +49,7 @@ public class FObject {
     /**
      * Gets the name of the source or target file.
      *
-     * @return the name of the source or target file
+     * @return the name of the source or target file.
      */
     public String getHref() {
         return href;
@@ -54,7 +59,8 @@ public class FObject {
      * Sets the name of the source or target file.
      *
      * @param href the name of the source or target file
-     * @return current {@link FObject f object}
+     *
+     * @return current {@link FObject f object}.
      */
     public FObject setHref(String href) {
         this.href = href;

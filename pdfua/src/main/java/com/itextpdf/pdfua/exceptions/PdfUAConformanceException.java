@@ -36,4 +36,14 @@ public class PdfUAConformanceException extends PdfException {
     public PdfUAConformanceException(String message) {
         super(message);
     }
+
+    /**
+     * Creates a PdfUAConformanceException.
+     *
+     * @param message the detail message.
+     * @param cause   the cause.
+     */
+    public PdfUAConformanceException(String message, Exception cause) {
+        super(message, cause);
+    }
 }

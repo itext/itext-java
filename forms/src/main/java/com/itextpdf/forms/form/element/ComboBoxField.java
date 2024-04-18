@@ -23,10 +23,12 @@
 package com.itextpdf.forms.form.element;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.forms.FormDefaultAccessibilityProperties;
 import com.itextpdf.forms.exceptions.FormsExceptionMessageConstant;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.renderer.SelectFieldComboBoxRenderer;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
+import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.layout.renderer.IRenderer;
 
 import org.slf4j.Logger;
@@ -154,6 +156,18 @@ public class ComboBoxField extends AbstractSelectField {
             }
         }
         return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public AccessibilityProperties getAccessibilityProperties() {
+        if (tagProperties == null){
+            tagProperties = new FormDefaultAccessibilityProperties(
+                    FormDefaultAccessibilityProperties.FORM_FIELD_LIST_BOX);
+        }
+        return tagProperties;
     }
 
     @Override

@@ -22,10 +22,10 @@
  */
 package com.itextpdf.forms.form.element;
 
+import com.itextpdf.forms.FormDefaultAccessibilityProperties;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.renderer.SelectFieldListBoxRenderer;
-import com.itextpdf.kernel.pdf.navigation.PdfDestination;
-import com.itextpdf.layout.element.IBlockElement;
+import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.layout.properties.BoxSizingPropertyValue;
 import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
@@ -34,7 +34,6 @@ import com.itextpdf.layout.renderer.IRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * A field that represents a control for selecting one or several of the provided options.
@@ -118,6 +117,18 @@ public class ListBoxField extends AbstractSelectField {
         }
 
         return selectedStrings;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public AccessibilityProperties getAccessibilityProperties() {
+        if (tagProperties == null) {
+            tagProperties = new FormDefaultAccessibilityProperties(
+                    FormDefaultAccessibilityProperties.FORM_FIELD_LIST_BOX);
+        }
+        return tagProperties;
     }
 
     @Override

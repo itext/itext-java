@@ -39,13 +39,10 @@ import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.font.FontSelector;
 import com.itextpdf.layout.font.FontSet;
 import com.itextpdf.layout.font.RangeBuilder;
+import com.itextpdf.layout.font.selectorstrategy.BestMatchFontSelectorStrategy.BestMatchFontSelectorStrategyFactory;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -58,6 +55,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class FontSelectorTest extends ExtendedITextTest {
@@ -468,12 +469,12 @@ public class FontSelectorTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO update cmp after fix DEVSIX-2052
     public void notSignificantCharacterOfTheFontWithUnicodeRange() throws Exception {
         String outFileName = destinationFolder + "notSignificantCharacterOfTheFontWithUnicodeRange.pdf";
         String cmpFileName = sourceFolder + "cmp_notSignificantCharacterOfTheFontWithUnicodeRange.pdf";
 
         FontProvider sel = new FontProvider();
+        sel.setFontSelectorStrategyFactory(new BestMatchFontSelectorStrategyFactory());
         Assert.assertTrue(sel.getFontSet().addFont(fontsFolder + "NotoSansCJKjp-Bold.otf", null, "FontAlias", new RangeBuilder(117, 117).create())); // just 'u' letter
         Assert.assertTrue(sel.getFontSet().addFont(fontsFolder + "FreeSans.ttf", null, "FontAlias", new RangeBuilder(106, 113).create()));// 'j', 'm' and 'p' are in that interval
 
@@ -491,15 +492,18 @@ public class FontSelectorTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO update cmp after fix DEVSIX-2052
     public void checkThreeFontsInOneLineWithUnicodeRange() throws Exception {
         String outFileName = destinationFolder + "checkThreeFontsInOneLineWithUnicodeRange.pdf";
         String cmpFileName = sourceFolder + "cmp_checkThreeFontsInOneLineWithUnicodeRange.pdf";
 
         FontProvider sel = new FontProvider();
-        Assert.assertTrue(sel.getFontSet().addFont(fontsFolder + "NotoSansCJKjp-Bold.otf", null, "FontAlias", new RangeBuilder(97, 99).create())); // 'a', 'b' and 'c' are in that interval
-        Assert.assertTrue(sel.getFontSet().addFont(fontsFolder + "FreeSans.ttf", null, "FontAlias", new RangeBuilder(100, 102).create()));// 'd', 'e' and 'f' are in that interval
-        Assert.assertTrue(sel.getFontSet().addFont(fontsFolder + "Puritan2.otf", null, "FontAlias", new RangeBuilder(120, 122).create()));// 'x', 'y' and 'z' are in that interval
+        sel.setFontSelectorStrategyFactory(new BestMatchFontSelectorStrategyFactory());
+        // 'a', 'b' and 'c' are in that interval
+        Assert.assertTrue(sel.getFontSet().addFont(fontsFolder + "NotoSansCJKjp-Bold.otf", null, "FontAlias", new RangeBuilder(97, 99).create()));
+        // 'd', 'e' and 'f' are in that interval
+        Assert.assertTrue(sel.getFontSet().addFont(fontsFolder + "FreeSans.ttf", null, "FontAlias", new RangeBuilder(100, 102).create()));
+        // 'x', 'y' and 'z' are in that interval
+        Assert.assertTrue(sel.getFontSet().addFont(fontsFolder + "Puritan2.otf", null, "FontAlias", new RangeBuilder(120, 122).create()));
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);

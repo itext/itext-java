@@ -213,6 +213,11 @@ public interface XMPConst
 	String PART = "part";
 
 	/**
+	 * XMP meta title
+	 */
+	String TITLE = "title";
+
+	/**
 	 * ISO 19005 revision
 	 */
 	String REV = "rev";

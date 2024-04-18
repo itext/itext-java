@@ -48,6 +48,6 @@ public final class SignaturesTestUtils {
      * @return expected string.
      */
     public static String getExpiredMessage(X509Certificate certificate) {
-        return EXPIRED_CERTIFICATE_DATE_PREFIX_MESSAGE + FACTORY.createTime(certificate.getNotAfter());
+        return EXPIRED_CERTIFICATE_DATE_PREFIX_MESSAGE + FACTORY.createEndDate(certificate);
     }
 }

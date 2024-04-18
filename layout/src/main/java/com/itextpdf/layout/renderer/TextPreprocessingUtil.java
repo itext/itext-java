@@ -53,7 +53,8 @@ public final class TextPreprocessingUtil {
                 final Integer xAdvance = calculateXAdvancement(spaceWidth, isMonospaceFont, glyph);
                 final boolean isSpecialWhitespaceGlyph = xAdvance != null;
                 if (isSpecialWhitespaceGlyph) {
-                    Glyph newGlyph = new Glyph(space, glyph.getUnicode());
+                    Glyph newGlyph = new Glyph(space);
+                    newGlyph.setChars(glyph.getChars());
                     assert xAdvance <= Short.MAX_VALUE && xAdvance >= Short.MIN_VALUE;
                     newGlyph.setXAdvance((short) (int) xAdvance);
                     line.set(i, newGlyph);

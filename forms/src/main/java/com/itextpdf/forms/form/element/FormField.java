@@ -23,19 +23,26 @@
 package com.itextpdf.forms.form.element;
 
 import com.itextpdf.forms.form.FormProperty;
+import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
 import com.itextpdf.layout.element.AbstractElement;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
+import com.itextpdf.layout.tagging.IAccessibleElement;
 
 /**
  * Implementation of the {@link AbstractElement} class for form fields.
  *
  * @param <T> the generic type of the form field (e.g. input field, button, text area)
  */
-public abstract class FormField<T extends IFormField> extends AbstractElement<T> implements IFormField {
+public abstract class FormField<T extends IFormField> extends AbstractElement<T> implements IFormField,
+        IAccessibleElement {
 
     /** The id. */
     private final String id;
+
+
+    /** The tag properties. */
+    protected DefaultAccessibilityProperties tagProperties;
 
     /**
      * Instantiates a new {@link FormField} instance.

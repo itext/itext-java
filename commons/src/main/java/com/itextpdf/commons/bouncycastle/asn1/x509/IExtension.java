@@ -38,6 +38,13 @@ public interface IExtension extends IASN1Encodable {
     IASN1ObjectIdentifier getCRlDistributionPoints();
 
     /**
+     * Gets {@code issuingDistributionPoint} constant for the wrapped Extension.
+     *
+     * @return Extension.issuingDistributionPoint wrapper.
+     */
+    IASN1ObjectIdentifier getIssuingDistributionPoint();
+
+    /**
      * Gets {@code authorityInfoAccess} constant for the wrapped Extension.
      *
      * @return Extension.authorityInfoAccess wrapper.

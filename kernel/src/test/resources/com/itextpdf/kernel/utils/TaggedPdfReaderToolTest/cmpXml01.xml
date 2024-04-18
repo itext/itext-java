@@ -1773,12 +1773,12 @@ that letter. Drag your finger along the index to scroll quickly through the list
 :end description.]]></alt>
 Index </P>
 <P>
-m Tap an item in the list to choose it. Depending on the list, tapping an item can do 
+m	 Tap an item in the list to choose it. Depending on the list, tapping an item can do 
 different things&#8212;for example, it may open a new list, play a song, open an email, 
 or show someone&#8217;s contact information so you can call that person. 
-m The back button in the upper-left corner shows the name of the previous list. Tap it to 
+m	 The back button in the upper-left corner shows the name of the previous list. Tap it to 
 go back. 
-m When viewing photos, web pages, email, or maps, you can zoom in and out. Pinch your 
+m	 When viewing photos, web pages, email, or maps, you can zoom in and out. Pinch your 
 fingers together or apart. For photos and web pages, you can double-tap (tap twice 
 quickly) to zoom in, then double-tap again to zoom out. For maps, double-tap to zoom 
 in and tap once with two fingers to zoom out. </P>
@@ -1798,9 +1798,9 @@ mistyped words. </P>
 iPhone provides keyboards in multiple languages, and supports the following keyboard 
 formats: </P>
 <P>
-&#194; QWERTY </P>
+&#194;	 QWERTY </P>
 <P>
-&#194; QWERTZ </P>
+&#194;	 QWERTZ </P>
 <Sect>
 <P>
 Chapter 2 Basics </P>
@@ -2073,7 +2073,7 @@ Chapter 2 Basics </P>
 25 </P>
 </Sect>
 <P>
-&#194; If no Wi-Fi networks are available or you choose not to join any, iPhone connects to 
+&#194;	 If no Wi-Fi networks are available or you choose not to join any, iPhone connects to 
 the Internet over a cellular data network ( or ). You cannot access the iTunes Wi-
 Fi Music Store over a cellular network. </P>
 <Sect>
@@ -2377,7 +2377,7 @@ You can double-click the Home button to quickly go to Favorites. See &#8220;Home
 <P>
 Call someone you&#8217;ve recently called or who has recently called you </P>
 <P>
- Tap Recents and choose a person or number. Calls you&#8217;ve missed are shown in red. 
+	 Tap Recents and choose a person or number. Calls you&#8217;ve missed are shown in red. 
 Tap Missed to see only missed calls. </P>
 <P>
 Dial a call </P>
@@ -2520,7 +2520,7 @@ Chapter 3 Phone </P>
 <P>
 Decline a call </P>
 <P>
- Do one of the following: 
+	 Do one of the following: 
 &#194; Press the Sleep/Wake button twice quickly. </P>
 <P>
 <alt><![CDATA[begin artwork description:  The upper portion of iPhone with a close-up of the Sleep/Wake button.
@@ -2528,10 +2528,10 @@ Decline a call </P>
 Sleep/Wake 
 button </P>
 <P>
-&#194; Press and hold the mic button on the headset for about two seconds, then let go. 
+&#194;	 Press and hold the mic button on the headset for about two seconds, then let go. 
 When you let go, two low beeps confirm that the call was declined. </P>
 <P>
-&#194; Tap Decline. Decline appears only when you&#8217;re using iPhone. </P>
+&#194;	 Tap Decline. Decline appears only when you&#8217;re using iPhone. </P>
 </Sect>
 <Sect>
 <H2>
@@ -2564,11 +2564,11 @@ Tap Add Call and make a second call. </P>
 <P>
 Respond to an incoming call </P>
 <P>
- Do one of the following: </P>
+	 Do one of the following: </P>
 <P>
-&#194; To ignore the call and send it to voicemail, tap Ignore. </P>
+&#194;	 To ignore the call and send it to voicemail, tap Ignore. </P>
 <P>
-&#194; To hold the first call and answer the new call, tap Hold Call + Answer. </P>
+&#194;	 To hold the first call and answer the new call, tap Hold Call + Answer. </P>
 <P>
 Chapter 3 Phone </P>
 <P>
@@ -2938,9 +2938,9 @@ If you&#8217;ve set up iTunes to sync contacts automatically, iTunes keeps your 
 to-date&#8212;whether you make changes on your computer or on iPhone. iTunes supports 
 syncing with the following applications on your computer. </P>
 <P>
-&#194; On a Mac: Mac OS X Address Book, Microsoft Entourage, and Yahoo! Address Book </P>
+&#194;	 On a Mac: Mac OS X Address Book, Microsoft Entourage, and Yahoo! Address Book </P>
 <P>
-&#194; On a PC: Yahoo! Address Book, Windows Address Book (Outlook Express), or 
+&#194;	 On a PC: Yahoo! Address Book, Windows Address Book (Outlook Express), or 
 
 Microsoft Outlook 2003 or 2007
 </P>
@@ -3135,7 +3135,7 @@ From the Home screen choose Settings &gt; Sounds &gt; Ringtone, then choose a ri
 <P>
 Assign a ringtone to a contact </P>
 <P>
- From Phone, tap Contacts and choose a contact. Tap Ringtone and choose a ringtone. 
+	 From Phone, tap Contacts and choose a contact. Tap Ringtone and choose a ringtone. 
 When that person calls, you hear that ringtone. </P>
 </Sect>
 <Sect>
@@ -3210,7 +3210,7 @@ headset, preventing connections with other headsets. </P>
 <P>
 Pair iPhone with the iPhone Bluetooth Headset </P>
 <P>
- Connect the iPhone Dual Dock to your computer, then place iPhone and the headset in 
+	 Connect the iPhone Dual Dock to your computer, then place iPhone and the headset in 
 the dock. </P>
 <P>
 <alt><![CDATA[begin artwork description:  The bottom portion of iPhone placed in a Dock and an iPhone Bluetooth headset with a callout showing where to place the headset in the Dock.
@@ -3351,7 +3351,7 @@ Chapter 3 Phone </P>
 <P>
 Route calls through iPhone </P>
 <P>
-m </P>
+m	</P>
 <P>
 Answer a call by tapping the iPhone touchscreen. </P>
 <P>
@@ -3363,10 +3363,10 @@ Bluetooth device. </P>
 <P>
 m</P>
 <P>
- Turn off Bluetooth. From the Home screen choose Settings &gt; General &gt; Bluetooth and 
+	 Turn off Bluetooth. From the Home screen choose Settings &gt; General &gt; Bluetooth and 
 drag the switch to Off. </P>
 <P>
-m Turn off the headset or car kit, or move out of range. You must be within about 30 feet 
+m	 Turn off the headset or car kit, or move out of range. You must be within about 30 feet 
 of a Bluetooth device for it to be connected to iPhone. </P>
 <P>
 To turn off the iPhone Bluetooth Headset, press and hold the button until you hear the 
@@ -3392,7 +3392,7 @@ Until you pair the device with iPhone again, iPhone doesn&#8217;t route calls th
 <H3>
 Turning Bluetooth on iPhone On or Off </H3>
 <P>
- From the Home screen choose Settings &gt; General &gt; Bluetooth, then turn Bluetooth on 
+	 From the Home screen choose Settings &gt; General &gt; Bluetooth, then turn Bluetooth on 
 or off. </P>
 </Sect>
 </Sect>
@@ -3435,9 +3435,9 @@ is turned off.
 For information about making international calls, including rates and other charges 
 that may apply, contact your carrier or go to your carrier&#8217;s website. 
 Make a call from outside your home country 
- Contact your carrier to enable your iPhone account for international roaming. 
+	 Contact your carrier to enable your iPhone account for international roaming. 
 Set iPhone to add the correct prefix when dialing from another country 
- From the Home screen choose Settings &gt; Phone, then turn International Assist on or </P>
+	 From the Home screen choose Settings &gt; Phone, then turn International Assist on or </P>
 <P>
 1 
 off. By default, International Assist is on.</P>
@@ -3539,7 +3539,7 @@ apply. </P>
 <P>
 Free accounts are also available online: </P>
 <P>
-&#194; <Link>
+&#194;	<Link>
 /Linkwww.mail.yahoo.com </Link>
 </P>
 <P>
@@ -3549,11 +3549,11 @@ transferred to iPhone as soon as it is received by the mail server. </P>
 <P>
 To receive push email, you must first set up a Yahoo! account on iPhone. </P>
 <P>
-&#194; <Link>
+&#194;	<Link>
 /Linkwww.google.com/mail </Link>
 </P>
 <P>
-&#194; <Link>
+&#194;	<Link>
 /Linkwww.aol.com </Link>
 </P>
 </Sect>
@@ -3589,16 +3589,16 @@ email address, and password. After that, you&#8217;re done. </P>
 Otherwise, click Other, select a server type&#8212;IMAP, POP, or Exchange&#8212;and enter your 
 account information: </P>
 <P>
-&#194; Your email address </P>
+&#194;	 Your email address </P>
 <P>
-&#194; The email server type (IMAP, POP, or Exchange) </P>
+&#194;	 The email server type (IMAP, POP, or Exchange) </P>
 <P>
-&#194; The Internet host name for your incoming mail server (which may look like 
+&#194;	 The Internet host name for your incoming mail server (which may look like 
 
 &#8220;mail.example.com&#8221;)
 </P>
 <P>
-&#194; The Internet host name for your outgoing mail server (which may look like 
+&#194;	 The Internet host name for your outgoing mail server (which may look like 
 
 &#8220;smtp.example.com&#8221;)
 </P>
@@ -3609,7 +3609,7 @@ Chapter 4 Mail </P>
 48 </P>
 <Sect>
 <P>
-&#194; Your user name and password for incoming and outgoing servers (you may not need 
+&#194;	 Your user name and password for incoming and outgoing servers (you may not need 
 to enter a user name and password for an outgoing server) </P>
 <P>
 Note: Exchange email accounts must be configured for IMAP in order to work with </P>
@@ -3774,7 +3774,7 @@ Chapter 4 Mail </P>
 <P>
 See all the recipients of a message </P>
 <P>
-m Open the message and tap Details. 
+m	 Open the message and tap Details. 
 Tap a name or email address to see the recipient&#8217;s contact information. Then tap a 
 phone number, email address, or text message to contact the person. Tap Hide to hide 
 the recipients. </P>
@@ -3786,7 +3786,7 @@ email address and tap Create New Contact or &#8220;Add to Existing Contact.&#822
 <P>
 Mark a message as unread </P>
 <P>
- Open the message and tap &#8220;Mark as Unread.&#8221; 
+	 Open the message and tap &#8220;Mark as Unread.&#8221; 
 A blue dot </P>
 <P lineHeight="17" o="/Layout" startIndent="57.375">
 <Figure bBox="[220 522 232 531 ]" o="/Layout" placement="/Start">
@@ -4152,12 +4152,12 @@ Edit. Then do one of the following:
 &#194; To make a new folder, tap New Folder.
 </P>
 <P>
-&#194; To delete a bookmark or folder, tap  next to the bookmark or folder, then tap 
+&#194;	 To delete a bookmark or folder, tap  next to the bookmark or folder, then tap 
 Delete. </P>
 <P>
-&#194; To reposition a bookmark or folder, drag  next to the item you want to move. </P>
+&#194;	 To reposition a bookmark or folder, drag  next to the item you want to move. </P>
 <P>
-&#194; To edit the name or address of a bookmark or folder, or to put it in a different folder, 
+&#194;	 To edit the name or address of a bookmark or folder, or to put it in a different folder, 
 tap the bookmark or folder. </P>
 <P>
 When you finish, tap Done. </P>
@@ -4429,7 +4429,7 @@ onscreen, then disappear automatically after you finish using them. </P>
 <P>
 Additional Controls </P>
 <P>
- From the Now Playing screen tap the album cover. 
+	 From the Now Playing screen tap the album cover. 
 The repeat and shuffle controls and the scrubber bar appear. You can see time elapsed, 
 time remaining, and the song number. The song&#8217;s lyrics appear also, if you&#8217;ve added 
 them to the song in iTunes. </P>
@@ -4591,7 +4591,7 @@ rated songs. </P>
 <P>
 Rate a song </P>
 <P>
- Drag your thumb across the ratings bar to give the song zero to five stars. </P>
+	 Drag your thumb across the ratings bar to give the song zero to five stars. </P>
 </Sect>
 <H3>
 Making Playlists Directly on iPhone </H3>
@@ -5013,7 +5013,7 @@ Chapter 7 Applications </P>
 <P>
 Follow a link in a message </P>
 <P>
-m Tap the link. 
+m	 Tap the link. 
 Tap a web address to open a webpage in Safari, a phone number to make a call, an 
 email address to open a preaddressed email in Mail, or a street address to see a map in 
 Maps. To return to your text messages, press the Home button and tap Text. </P>
@@ -5085,7 +5085,7 @@ Adding and Editing Calendar Events Directly on iPhone </P>
 <P>
 Add an event </P>
 <P>
- </P>
+	</P>
 <P lineHeight="17" o="/Layout" startIndent="11.125" textIndent="29">
 You can enter any of the following:
 
@@ -5110,7 +5110,7 @@ iPhone may not sound your alert at the correct local time. To manually set iPhon
 /Linkthe correct time, see page 96. </Link>
 </P>
 <P>
-&#194; Notes </P>
+&#194;	 Notes </P>
 <P>
 Set iPhone to make a sound when you get a calendar alert </P>
 <P>
@@ -5124,7 +5124,7 @@ Tap the event and tap Edit. </P>
 <P>
 Delete an event </P>
 <P>
- Tap the event, tap Edit, then scroll down and tap Delete Event. </P>
+	 Tap the event, tap Edit, then scroll down and tap Delete Event. </P>
 <H3>
 Viewing Your Calendar </H3>
 <P>
@@ -5149,7 +5149,7 @@ Chapter 7 Applications </P>
 72 </P>
 <Sect>
 <P lineHeight="13" o="/Layout" startIndent="91.625" textAlign="/Justify" textIndent="-9">
-&#194; Month view: Days with events show a dot below the date. Tap a day to see its events </P>
+&#194;	 Month view: Days with events show a dot below the date. Tap a day to see its events </P>
 <P>
 in a list below the calendar. Tap or  to see the previous or next month. </P>
 <P>
@@ -5164,7 +5164,7 @@ Tap Today. </P>
 <P>
 See the details of an event </P>
 <P>
- Tap the event. </P>
+	 Tap the event. </P>
 <P>
 Set iPhone to adjust event times for a selected time zone </P>
 <P>
@@ -5201,9 +5201,9 @@ If you&#8217;ve set iTunes to sync photos automatically, iTunes copies or update
 library (or selected albums) from your computer to iPhone whenever you connect 
 iPhone to your computer. iTunes can sync your photos from the following applications: </P>
 <P>
-&#194; On a Mac: iPhoto 4.0.3 or later </P>
+&#194;	 On a Mac: iPhoto 4.0.3 or later </P>
 <P>
-&#194; On a PC: Adobe Photoshop Album 2.0 or later or Adobe Photoshop Elements 3.0 
+&#194;	 On a PC: Adobe Photoshop Album 2.0 or later or Adobe Photoshop Elements 3.0 
 or later </P>
 <P>
 For information about syncing iPhone with photos and other information on your </P>
@@ -5224,7 +5224,7 @@ contacts, and upload them to your computer.
 <P>
 Take a picture </P>
 <P>
- </P>
+	</P>
 <P>
 Tap Camera, then aim iPhone and tap . </P>
 <P>
@@ -5237,9 +5237,9 @@ Import photos from iPhone to your computer </P>
 <P>
 Connect iPhone to your computer. Then: </P>
 <P>
-&#194; On a Mac: In iPhoto, click Import. iPhoto should open automatically. </P>
+&#194;	 On a Mac: In iPhoto, click Import. iPhoto should open automatically. </P>
 <P>
-&#194; On a PC: Follow the instructions that came with your camera or photo application. </P>
+&#194;	 On a PC: Follow the instructions that came with your camera or photo application. </P>
 </Sect>
 <H3>
 Viewing Photos </H3>
@@ -5272,17 +5272,17 @@ Tap a picture in the Camera Roll album, then tap . </P>
 <P>
 Delete a picture </P>
 <P>
-m </P>
+m	</P>
 <P>
 View photos from your computer </P>
 <P>
-m From the Home screen choose Photos. 
+m	 From the Home screen choose Photos. 
 &#194; Tap Photo Library to see all your photos. 
 &#194; Tap any photo album, or Camera Roll to see pictures you&#8217;ve taken with iPhone. </P>
 <P>
 See a photo at full screen </P>
 <P>
-m Tap a thumbnail photo to see it at full screen. Tap the full screen photo to hide 
+m	 Tap a thumbnail photo to see it at full screen. Tap the full screen photo to hide 
 the controls. </P>
 <P>
 <alt><![CDATA[begin screenshot description:  The thumbnail photo screen showing thumbnails of the current roll album. A title bar at the top of the screen contains the Photo Albums button on the left and the current album title in the center. Below the title bar are 20 photo thumbnails. Below the thumbnails is a Right Arrow to continue to the next screen of thumbnails.  To the right is another screenshot showing one of the thumbnails in full screen view. At the top of the photo screen is a title bar with a button on the left to return to the album thumbnails and the number of the current photo (such as 3 of 26). Below the photo from left to right are: the photo options button, Left Arrow to go back, Play button, Right Arrow to go forward. To the right is another screenshot showing the same 
@@ -5294,7 +5294,7 @@ Tap the screen again to show the controls. </P>
 <P>
 See the next or previous photo </P>
 <P>
-m </P>
+m	</P>
 <P>
 Flick left or right. Or tap the screen to show the controls, then tap or . </P>
 <P>
@@ -5322,11 +5322,11 @@ format, expands to fit the screen. </P>
 <P>
 Zoom in on part of a photo </P>
 <P>
- Double-tap the part you want to zoom in on. Double-tap again to zoom out. </P>
+	 Double-tap the part you want to zoom in on. Double-tap again to zoom out. </P>
 <P>
 Zoom in or out </P>
 <P>
- Pinch to zoom in or out. </P>
+	 Pinch to zoom in or out. </P>
 <P>
 <alt><![CDATA[begin artwork description:  A hand with the forefinger and thumb pinched together (as indicated by inward pointing arrows) to zoom out (or make smaller) a photo. To the right is another image of a hand with the forefinger and thumb pinched apart (as indicated 
 by outward pointing arrows) to zoom in (or make larger) a photo. 
@@ -5377,16 +5377,16 @@ Set slideshow settings
 <P>
 2	 To set: </P>
 <P>
-&#194; The length of time each slide is shown, tap Play Each Slide For and choose a time. </P>
+&#194;	 The length of time each slide is shown, tap Play Each Slide For and choose a time. </P>
 <P>
-&#194; Transition effects when moving from photo to photo, tap Transition and choose a 
+&#194;	 Transition effects when moving from photo to photo, tap Transition and choose a 
 
 transition type.
 </P>
 <P>
-&#194; Whether slideshows repeat, turn Repeat on or off. </P>
+&#194;	 Whether slideshows repeat, turn Repeat on or off. </P>
 <P>
-&#194; Whether photos are shown in random order, turn Shuffle on or off. </P>
+&#194;	 Whether photos are shown in random order, turn Shuffle on or off. </P>
 <P>
 Play music during a slideshow </P>
 <P>
@@ -5433,12 +5433,12 @@ that person has enabled email contributions. </P>
 <P>
 To send photos to a Web Gallery, you need to do the following: </P>
 <P>
-&#194; Set up your .Mac mail account on iPhone </P>
+&#194;	 Set up your .Mac mail account on iPhone </P>
 <P>
-&#194; Publish an iPhoto &#8216;08 album to a .Mac Web Gallery </P>
+&#194;	 Publish an iPhoto &#8216;08 album to a .Mac Web Gallery </P>
 <P>
 <ParagraphSpan>
-&#194; Select &#8220;Allow photo uploading by email&#8221; in the Publish Settings pane of iPhoto &#8216;08 </ParagraphSpan>
+&#194;	 Select &#8220;Allow photo uploading by email&#8221; in the Publish Settings pane of iPhoto &#8216;08 </ParagraphSpan>
 </P>
 <P>
 Chapter 7 Applications </P>
@@ -5814,7 +5814,7 @@ To quickly move the pin to the area currently displayed, tap , then tap Replace 
 <P>
 Zoom in to a part of a map </P>
 <P>
-m </P>
+m	</P>
 <P>
 Pinch the map with two fingers. Or double-tap the part you want to zoom in on. 
 Double-tap again to zoom in even closer. </P>
@@ -5872,7 +5872,7 @@ Tap  in the search field, then tap Bookmarks or Recents. </P>
 <P>
 Add a location to your contacts list </P>
 <P>
- </P>
+	</P>
 <P>
 Find a location, tap the pin that points to it, tap  next to the name or description, </P>
 <P>
@@ -5990,7 +5990,7 @@ Type things like:
 <P>
 Contact a business or get directions </P>
 <P>
- </P>
+	</P>
 <P>
 Tap the pin that marks a business, then tap  next to the name. </P>
 </Sect>
@@ -6003,12 +6003,12 @@ Tap the pin that marks a business, then tap  next to the name. </P>
 <P>
 From there, you can do the following: </P>
 <P endIndent="16.125" lineHeight="15" o="/Layout" startIndent="9" textAlign="/Justify" textIndent="-9">
-&#194; Depending on what information is stored for that business, you can tap a phone 
+&#194;	 Depending on what information is stored for that business, you can tap a phone 
 number to call, email address to email, or web address to visit a website. </P>
 <P>
-&#194; For directions, tap Directions To Here or Directions From Here. </P>
+&#194;	 For directions, tap Directions To Here or Directions From Here. </P>
 <P>
-&#194; To add the business to your contacts list, scroll down and tap Create New Contact or </P>
+&#194;	 To add the business to your contacts list, scroll down and tap Create New Contact or </P>
 <P lineHeight="15" o="/Layout" startIndent="9" textAlign="/Justify">
 &#8220;Add to Existing Contact.&#8221; </P>
 <P>
@@ -6138,11 +6138,11 @@ Set an alarm </P>
 <P>
 Tap Alarm and tap , then adjust any of the following settings: </P>
 <P>
-&#194; To set the alarm to repeat on certain days, tap Repeat and choose the days. </P>
+&#194;	 To set the alarm to repeat on certain days, tap Repeat and choose the days. </P>
 <P o="/Layout" startIndent="22.375" textIndent="-11.125">
-&#194; To choose the ringtone that sounds when the alarm goes off, tap Sound. </P>
+&#194;	 To choose the ringtone that sounds when the alarm goes off, tap Sound. </P>
 <P>
-&#194; To set whether the alarm gives you the option to hit snooze, turn Snooze on or off. 
+&#194;	 To set whether the alarm gives you the option to hit snooze, turn Snooze on or off. 
 If Snooze is on and you tap Snooze when the alarm sounds, the alarm stops and then 
 sounds again in ten minutes. </P>
 </Sect>
@@ -6387,7 +6387,7 @@ the iTunes Wi-Fi Music Store. </P>
 <P>
 Turn Wi-Fi on or off </P>
 <P>
- Choose Wi-Fi and turn Wi-Fi on or off. </P>
+	 Choose Wi-Fi and turn Wi-Fi on or off. </P>
 <P>
 Join a Wi-Fi network </P>
 <P>
@@ -6586,26 +6586,26 @@ About </H3>
 <P>
 Choose General &gt; About to get information about iPhone, including: </P>
 <P>
-&#194; Name of your phone network </P>
+&#194;	 Name of your phone network </P>
 <P>
-&#194; Number of songs, videos, and photos </P>
+&#194;	 Number of songs, videos, and photos </P>
 <P>
-&#194; Total storage capacity </P>
+&#194;	 Total storage capacity </P>
 <P>
-&#194; Space available </P>
+&#194;	 Space available </P>
 <P>
-&#194; Software version </P>
+&#194;	 Software version </P>
 <P>
-&#194; Serial and model numbers </P>
+&#194;	 Serial and model numbers </P>
 <P>
-&#194; Wi-Fi and Bluetooth addresses </P>
+&#194;	 Wi-Fi and Bluetooth addresses </P>
 <P>
-&#194; IMEI (International Mobile Equipment Identity) and ICCID (Integrated Circuit Card 
+&#194;	 IMEI (International Mobile Equipment Identity) and ICCID (Integrated Circuit Card 
 Identifier, or Smart Card) numbers </P>
 <P>
-&#194; Modem firmware version of the cellular transmitter </P>
+&#194;	 Modem firmware version of the cellular transmitter </P>
 <P>
-&#194; Legal information </P>
+&#194;	 Legal information </P>
 </Sect>
 <Sect>
 <H3>
@@ -6671,7 +6671,7 @@ for your region. </P>
 <P>
 Set the language for iPhone </P>
 <P>
- Choose General &gt; International &gt; Language, choose the language you want to use, 
+	 Choose General &gt; International &gt; Language, choose the language you want to use, 
 and tap Done. </P>
 <P>
 Turn international keyboards on or off </P>
@@ -6717,7 +6717,7 @@ music or on a call. </P>
 <P>
 Set the amount of time before iPhone locks </P>
 <P>
- Choose General &gt; Auto-Lock and choose a time. </P>
+	 Choose General &gt; Auto-Lock and choose a time. </P>
 </Sect>
 <Sect>
 <H3>
@@ -6732,7 +6732,7 @@ you to enter the passcode to unlock it. </P>
 <P>
 Turn passcode lock off </P>
 <P>
- Choose General &gt; Passcode Lock and tap Turn Passcode Off, then enter your passcode. </P>
+	 Choose General &gt; Passcode Lock and tap Turn Passcode Off, then enter your passcode. </P>
 <P>
 Change the passcode </P>
 <P>
@@ -6803,7 +6803,7 @@ when you&#8217;re in an area not covered by your carrier&#8217;s network. For ex
 traveling, you can turn off Data Roaming to avoid potential roaming charges. By 
 default, Data Roaming is turned off. </P>
 <P>
- Choose General &gt; Network and turn Data Roaming on or off. </P>
+	 Choose General &gt; Network and turn Data Roaming on or off. </P>
 </Sect>
 <Sect>
 <H2>
@@ -6816,7 +6816,7 @@ information. </P>
 <P>
 Turn Bluetooth on or off </P>
 <P>
- Choose General &gt; Network and turn Bluetooth on or off. </P>
+	 Choose General &gt; Network and turn Bluetooth on or off. </P>
 </Sect>
 <Sect>
 <H2>
@@ -6936,7 +6936,7 @@ Adjust advanced settings </P>
 <P>
 Choose Mail &gt; Accounts, choose an account, then do one of the following: </P>
 <P endIndent="10" lineHeight="13" o="/Layout" startIndent="20.125" textIndent="-9">
-&#194; To set whether drafts, sent messages, and deleted messages are stored on iPhone or 
+&#194;	 To set whether drafts, sent messages, and deleted messages are stored on iPhone or 
 remotely on your email server (IMAP accounts only), tap Advanced and choose Drafts 
 Mailbox, Sent Mailbox, or Deleted Mailbox. </P>
 <P>
@@ -6944,14 +6944,14 @@ If you store messages on iPhone, you can see them even when iPhone isn&#8217;t <
 <P>
 connected to the Internet. </P>
 <P>
-&#194; To set when deleted messages are removed permanently from iPhone, tap Advanced and 
+&#194;	 To set when deleted messages are removed permanently from iPhone, tap Advanced and 
 tap Remove, then choose a time:  Never, or after one day, one week, or one month. </P>
 <P>
-&#194; To adjust email server settings, tap Host Name, User Name, or Password under 
+&#194;	 To adjust email server settings, tap Host Name, User Name, or Password under 
 Incoming Mail Server or Outgoing Mail Server. Ask your network administrator or 
 Internet service provider for the correct settings. </P>
 <P>
-&#194; To adjust SSL and password settings, tap Advanced. Ask your network administrator or 
+&#194;	 To adjust SSL and password settings, tap Advanced. Ask your network administrator or 
 Internet service provider for the correct settings. </P>
 <P>
 Delete an email account from iPhone </P>
@@ -6970,7 +6970,7 @@ when you don&#8217;t have Mail open. </P>
 <P>
 Set whether iPhone checks for new messages automatically </P>
 <P>
- Choose Mail &gt; Auto-Check, then tap Manual,&#8220;Every 15 minutes,&#8221;&#8220;Every 30 minutes,&#8221; or 
+	 Choose Mail &gt; Auto-Check, then tap Manual,&#8220;Every 15 minutes,&#8221;&#8220;Every 30 minutes,&#8221; or 
 &#8220;Every hour.&#8221; </P>
 <P>
 If you have a Yahoo! email account, email is instantly transferred to iPhone as it arrives 
@@ -6978,7 +6978,7 @@ at the Yahoo! server. </P>
 <P>
 Set whether iPhone plays an alert sound when you have new email </P>
 <P>
- Choose Sound, then turn New Mail on or off. </P>
+	 Choose Sound, then turn New Mail on or off. </P>
 <P>
 Set the number of messages shown on iPhone </P>
 <P>
@@ -6999,19 +6999,19 @@ Chapter 8 Settings </P>
 <P>
 Set a minimum font size for messages </P>
 <P>
- Choose Mail &gt; Minimum Font Size, then choose Small, Medium, Large, Extra Large, or 
+	 Choose Mail &gt; Minimum Font Size, then choose Small, Medium, Large, Extra Large, or 
 Giant. </P>
 <P>
 Setting whether iPhone shows To and Cc labels in message lists </P>
 <P>
- Choose Mail, then turn Show To/Cc Label on or off. <P lineHeight="15" o="/Layout">
+	 Choose Mail, then turn Show To/Cc Label on or off. <P lineHeight="15" o="/Layout">
 To Cc 
 If Show To/Cc Label is on, or  next to each message in a list indicates whether </P>
 the message was sent directly to you or you were Cc&#8217;ed. </P>
 <P>
 Setting iPhone to confirm that you want to delete a message </P>
 <P endIndent="101.75" lineHeight="17" o="/Layout" startIndent="11.125" textIndent="-11.125">
- Choose Mail and turn Ask Before Deleting on or off. </P>
+	 Choose Mail and turn Ask Before Deleting on or off. </P>
 <P endIndent="22" lineHeight="13" o="/Layout" startIndent="3.875">
 tapping Delete. </P>
 </Sect>
@@ -7021,18 +7021,18 @@ Settings for Sending Email </H4>
 <P>
 Set an alert to sound when you successfully send a message </P>
 <P>
- Choose Sound, then turn Sent Mail on or off. </P>
+	 Choose Sound, then turn Sent Mail on or off. </P>
 <P>
 Set whether iPhone sends you a copy of every message you send </P>
 <P>
- Choose Mail, then turn Always Bcc Myself on or off. </P>
+	 Choose Mail, then turn Always Bcc Myself on or off. </P>
 <P>
 Add a signature to your messages </P>
 <P>
 You can set iPhone to add a signature&#8212;your favorite quote, or your name, title, and 
 phone number, for example&#8212;that appears in every message you send. </P>
 <P>
- Choose Mail &gt; Signature, then type a signature. </P>
+	 Choose Mail &gt; Signature, then type a signature. </P>
 <P>
 Set the default email account </P>
 <P>
@@ -7043,7 +7043,7 @@ sending a photo from Photos or tapping a business&#8217; email address in Maps, 
 message is sent from your default email account.
 </P>
 <P>
- Choose Mail &gt; Default Account, then choose an account. </P>
+	 Choose Mail &gt; Default Account, then choose an account. </P>
 </Sect>
 <P>
 If Ask Before Deleting is on, to delete a message you must tap , then confirm by </P>
@@ -7061,7 +7061,7 @@ Setting How Contacts Are Displayed </H4>
 <P>
 Set how contacts are sorted and displayed </P>
 <P>
- Choose Phone, then do one of the following: 
+	 Choose Phone, then do one of the following: 
 &#194; To sort alphabetically by first or last name, tap Sort Order. 
 &#194; To display first name first or last name first, tap Display Order. </P>
 </Sect>
@@ -7240,21 +7240,21 @@ Change security settings </P>
 <P>
 Choose Safari, then do one of the following: </P>
 <P>
-&#194; To enable or disable JavaScript, turn JavaScript on or off. </P>
+&#194;	 To enable or disable JavaScript, turn JavaScript on or off. </P>
 <P>
 JavaScript lets web programmers control elements of the page&#8212;for example, a page 
 that uses JavaScript might display the current date and time or cause a linked page 
 to appear in a new pop-up page. </P>
 <P>
-&#194; To enable or disable plug-ins, turn Plug-ins on or off. Plug-ins allow Safari to play some 
+&#194;	 To enable or disable plug-ins, turn Plug-ins on or off. Plug-ins allow Safari to play some 
 types of audio and video files and to display Microsoft Word files and Microsoft Excel 
 documents. </P>
 <P>
-&#194; To block or allow pop-ups, turn Block Pop-ups on or off. Blocking pop-ups stops only 
+&#194;	 To block or allow pop-ups, turn Block Pop-ups on or off. Blocking pop-ups stops only 
 pop-ups that appear when you close a page or open a page by typing its address. 
 It doesn&#8217;t block pop-ups that open when you click a link. </P>
 <P>
-&#194; To set whether Safari accepts cookies, tap Accept Cookies and choose Never,
+&#194;	 To set whether Safari accepts cookies, tap Accept Cookies and choose Never,
 
 &#8220;From visited,&#8221; or Always.
 </P>
@@ -7265,11 +7265,11 @@ based on information you may have provided. </P>
 <P>
 Some pages won&#8217;t work correctly unless iPhone is set to accept cookies. </P>
 <P>
-&#194; To clear the history of webpages you&#8217;ve visited, tap Clear History. </P>
+&#194;	 To clear the history of webpages you&#8217;ve visited, tap Clear History. </P>
 <P>
-&#194; To clear all cookies from Safari, tap Clear Cookies. </P>
+&#194;	 To clear all cookies from Safari, tap Clear Cookies. </P>
 <P>
-&#194; To clear the browser cache, tap Clear Cache. </P>
+&#194;	 To clear the browser cache, tap Clear Cache. </P>
 <P>
 The browser cache stores the content of pages so the pages open faster the next 
 time you visit them. If a page you open isn&#8217;t showing new content, clearing the 
@@ -7453,10 +7453,10 @@ Restore or transfer settings </P>
 <P>
 Do one of the following: </P>
 <P>
- Connect a new iPhone to the same computer you used with your other iPhone, 
+	 Connect a new iPhone to the same computer you used with your other iPhone, 
 open iTunes, and follow the onscreen instructions. </P>
 <P>
- Reset the information on iPhone. In Settings, choose General &gt; Reset, then choose 
+	 Reset the information on iPhone. In Settings, choose General &gt; Reset, then choose 
 &#8220;Reset All Settings,&#8221;&#8220;Erase All Content and Settings,&#8221; or &#8220;Reset Network Settings.&#8221;Then 
 connect iPhone to your computer, open iTunes, and follow the onscreen instructions. 
 When you reset network settings, your list of previously used networks and your VPN 
@@ -7756,14 +7756,14 @@ or </P>
 <P>
 If iPhone doesn&#8217;t appear in iTunes or you can&#8217;t sync iPhone </P>
 <P>
-&#194; The iPhone battery might need to be recharged. For information about charging <Link>
+&#194;	 The iPhone battery might need to be recharged. For information about charging <Link>
 /LinkiPhone, see &#8220;Charging the Battery&#8221; on page 27. </Link>
 </P>
 <P>
-&#194; Disconnect other USB devices from your computer and connect iPhone to a different 
+&#194;	 Disconnect other USB devices from your computer and connect iPhone to a different 
 USB 2.0 port on your computer (not on your keyboard). </P>
 <P endIndent="3.125" lineHeight="13" o="/Layout" startIndent="9" textIndent="-9">
-&#194; Turn iPhone off and back on again. Press and hold the Sleep/Wake button on top of 
+&#194;	 Turn iPhone off and back on again. Press and hold the Sleep/Wake button on top of 
 iPhone for a few seconds until a red slider appears, then drag the slider. Then press 
 and hold the Sleep/Wake button until the Apple logo appears. Tap Unlock and enter 
 your SIM&#8217;s PIN if the SIM is locked. </P>
@@ -7773,7 +7773,7 @@ Note: If you enter the PIN incorrectly three times, you may need to contact your
 carrier for a Personal Unlocking Key (PUK) to enable your SIM card again.
 </P>
 <P>
-&#194; Restart your computer and reconnect iPhone to your computer. </P>
+&#194;	 Restart your computer and reconnect iPhone to your computer. </P>
 <P>
 <Link>
 /Link</Link>
@@ -7795,7 +7795,7 @@ Appendix A Tips and Troubleshooting </P>
 <P>
 115 </P>
 <P>
-&#194; Download and install (or reinstall) the latest version of iTunes from </P>
+&#194;	 Download and install (or reinstall) the latest version of iTunes from </P>
 <Link>
 www.apple.com/ </Link>
 <P>
@@ -7809,17 +7809,17 @@ the web </P>
 are no bars, or if it says &#8220;No service,&#8221; try moving to a different location. If you&#8217;re 
 indoors, try going outdoors or moving closer to a window. </P>
 <P>
-&#194; Check to make sure you&#8217;re in an area with network coverage. Go to your carrier&#8217;s 
+&#194;	 Check to make sure you&#8217;re in an area with network coverage. Go to your carrier&#8217;s 
 website to see network coverage areas. </P>
 <P>
-&#194; Make sure airplane mode isn&#8217;t on. From the Home screen choose Settings, then turn 
+&#194;	 Make sure airplane mode isn&#8217;t on. From the Home screen choose Settings, then turn 
 airplane mode off. If that doesn&#8217;t work, turn airplane mode on, wait 15 seconds, then 
 turn airplane mode off again. </P>
 <P>
-&#194; Make sure to include an area code for every phone number in your contacts list that 
+&#194;	 Make sure to include an area code for every phone number in your contacts list that 
 you use to send or receive text messages. </P>
 <P>
-&#194; Turn iPhone off and back on again. Press and hold the Sleep/Wake button on top of 
+&#194;	 Turn iPhone off and back on again. Press and hold the Sleep/Wake button on top of 
 iPhone for a few seconds until a red slider appears, then drag the slider. Then press 
 and hold the Sleep/Wake button until the Apple logo appears. Tap Unlock and enter 
 your SIM&#8217;s PIN if the SIM is locked. </P>
@@ -7827,10 +7827,10 @@ your SIM&#8217;s PIN if the SIM is locked. </P>
 Note: If you enter the PIN incorrectly three times, you may need to contact your 
 carrier for a Personal Unlocking Key (PUK) to enable your SIM card again. </P>
 <P>
-&#194; There may be a problem with your wireless service. Call your carrier or go to your 
+&#194;	 There may be a problem with your wireless service. Call your carrier or go to your 
 carrier&#8217;s website. </P>
 <P endIndent="21.125" lineHeight="14.25" o="/Layout" startIndent="9" textIndent="-9">
-&#194; </P>
+&#194;	</P>
 </Sect>
 <Link>
 Restore the iPhone software. See &#8220;Updating and Restoring iPhone Software&#8221; on </Link>
@@ -7840,19 +7840,19 @@ page 120. </Link>
 <P>
 If iPhone won&#8217;t turn on, or if the display freezes or doesn&#8217;t respond </P>
 <P>
-&#194; Press and hold the Home </P>
+&#194;	 Press and hold the Home </P>
 <P>
 <Figure bBox="[289 318 297 326 ]" o="/Layout" placement="/Start">
 </Figure>
  button below the screen for at least six seconds, until 
 the application you were using quits. </P>
 <P>
-&#194; If that doesn&#8217;t work, turn iPhone off and turn it on again. Press and hold the Sleep/ 
+&#194;	 If that doesn&#8217;t work, turn iPhone off and turn it on again. Press and hold the Sleep/ 
 Wake button on top of iPhone for a few seconds until a red slider appears, and then 
 drag the slider. Then press and hold the Sleep/Wake button until the Apple logo 
 appears. </P>
 <P>
-&#194; If that doesn&#8217;t work, reset iPhone. Press and hold both the Sleep/Wake button and 
+&#194;	 If that doesn&#8217;t work, reset iPhone. Press and hold both the Sleep/Wake button and 
 the Home </P>
 <P>
 <Figure bBox="[227 223 240 231 ]" o="/Layout" placement="/Start">
@@ -7867,14 +7867,14 @@ Appendix A Tips and Troubleshooting </P>
 <P>
 If iPhone continues to freeze or not respond after you reset it </P>
 <P>
-&#194; Reset iPhone settings. From the Home screen choose Settings &gt; General &gt; Reset &gt; 
+&#194;	 Reset iPhone settings. From the Home screen choose Settings &gt; General &gt; Reset &gt; 
 Reset All Settings. All your preferences are reset, but no data or media is deleted. </P>
 <P>
-&#194; If that doesn&#8217;t work, erase all content on iPhone. From the Home screen choose 
+&#194;	 If that doesn&#8217;t work, erase all content on iPhone. From the Home screen choose 
 Settings &gt; General &gt; Reset &gt; &#8220;Erase All Content and Settings.&#8221; All your preferences 
 and other data are removed from iPhone. </P>
 <P endIndent="30.25" lineHeight="13" o="/Layout" startIndent="9" textIndent="-9">
-&#194; </P>
+&#194;	</P>
 </Sect>
 <Link>
 If that doesn&#8217;t work, restore the iPhone software. See &#8220;Updating and Restoring </Link>
@@ -8137,10 +8137,10 @@ You can use iTunes to update or restore iPhone software. You should always updat
 iPhone to use the latest software. You can also restore the software, which returns 
 iPhone to its original state. </P>
 <P>
-&#194; If you update, the iPhone software is updated but your settings and songs are not 
+&#194;	 If you update, the iPhone software is updated but your settings and songs are not 
 affected. </P>
 <P>
-&#194; If you restore, all data is erased from iPhone, including songs, videos, contacts, photos, 
+&#194;	 If you restore, all data is erased from iPhone, including songs, videos, contacts, photos, 
 calendar information, and any other data. All iPhone settings are restored to their 
 original state. </P>
 <P>

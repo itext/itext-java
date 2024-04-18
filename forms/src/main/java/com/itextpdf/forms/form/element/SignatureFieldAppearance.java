@@ -22,9 +22,11 @@
  */
 package com.itextpdf.forms.form.element;
 
+import com.itextpdf.forms.FormDefaultAccessibilityProperties;
 import com.itextpdf.forms.fields.properties.SignedAppearanceText;
 import com.itextpdf.forms.form.renderer.SignatureAppearanceRenderer;
 import com.itextpdf.io.image.ImageData;
+import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.element.Image;
@@ -232,6 +234,17 @@ public class SignatureFieldAppearance extends FormField<SignatureFieldAppearance
     @Override
     public String getId() {
         return idWithDots == null? super.getId() : idWithDots;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public AccessibilityProperties getAccessibilityProperties() {
+        if (tagProperties ==  null){
+           tagProperties = new FormDefaultAccessibilityProperties(FormDefaultAccessibilityProperties.FORM_FIELD_TEXT);
+        }
+        return tagProperties;
     }
 
     /**

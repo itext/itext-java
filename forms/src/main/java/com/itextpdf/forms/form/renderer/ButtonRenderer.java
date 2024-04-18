@@ -30,6 +30,7 @@ import com.itextpdf.forms.fields.PushButtonFormFieldBuilder;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.Button;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
+import com.itextpdf.forms.util.FormFieldRendererUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -251,7 +252,7 @@ public class ButtonRenderer extends AbstractOneLineTextFieldRenderer {
         PdfDocument doc = drawContext.getDocument();
         Rectangle area = getOccupiedArea().getBBox().clone();
         applyMargins(area, false);
-        final Map<Integer, Object> margins = deleteMargins();
+        final Map<Integer, Object> properties = FormFieldRendererUtil.removeProperties(modelElement);
         PdfPage page = doc.getPage(occupiedArea.getPageNumber());
 
         Background background = this.<Background>getProperty(Property.BACKGROUND);
@@ -271,12 +272,13 @@ public class ButtonRenderer extends AbstractOneLineTextFieldRenderer {
         modelElement.setProperty(Property.RENDERING_MODE, this.<RenderingMode>getProperty(Property.RENDERING_MODE));
         final PdfButtonFormField button = new PushButtonFormFieldBuilder(doc, name).setWidgetRectangle(area)
                 .setFont(font)
-                .setConformanceLevel(getConformanceLevel(doc))
+                .setGenericConformanceLevel(getGenericConformanceLevel(doc))
                 .createPushButton();
         button.disableFieldRegeneration();
         button.setFontSize(fontSizeValue);
         button.getFirstFormAnnotation().setBackgroundColor(backgroundColor);
         applyDefaultFieldProperties(button);
+        applyAccessibilityProperties(button,doc);
         button.getFirstFormAnnotation().setFormFieldElement((Button) modelElement);
         button.enableFieldRegeneration();
         PdfAcroForm forms = PdfFormCreator.getAcroForm(doc, true);
@@ -284,8 +286,7 @@ public class ButtonRenderer extends AbstractOneLineTextFieldRenderer {
         // with the same names (and add all the widgets as kids to that merged field), so we can add it anyway.
         forms.addField(button, page);
 
-        writeAcroFormFieldLangAttribute(doc);
-        applyProperties(margins);
+        FormFieldRendererUtil.reapplyProperties(modelElement, properties);
     }
 
     /**

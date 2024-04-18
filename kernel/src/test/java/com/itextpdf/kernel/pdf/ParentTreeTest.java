@@ -23,8 +23,10 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.canvas.CanvasTag;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -33,17 +35,19 @@ import com.itextpdf.kernel.pdf.tagging.PdfMcrNumber;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.utils.CompareTool.CompareResult;
+import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.io.IOException;
-
 import static org.junit.Assert.assertTrue;
 
 @Category(IntegrationTest.class)
@@ -349,6 +353,47 @@ public class ParentTreeTest extends ExtendedITextTest {
         document.close();
         assertTrue(checkParentTree(outFile, cmpFile));
     }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = KernelLogMessageConstant.STRUCT_PARENT_INDEX_MISSED_AND_RECREATED, count = 4)
+    })
+    public void allObjRefDontHaveStructParentTest() throws IOException, InterruptedException {
+        String pdf = sourceFolder + "allObjRefDontHaveStructParent.pdf";
+        String outPdf = destinationFolder + "allObjRefDontHaveStructParent.pdf";
+        String cmpPdf = sourceFolder + "cmp_allObjRefDontHaveStructParent.pdf";
+
+        PdfDocument taggedPdf = new PdfDocument(new PdfReader(pdf), new PdfWriter(outPdf));
+        taggedPdf.close();
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = KernelLogMessageConstant.XOBJECT_STRUCT_PARENT_INDEX_MISSED_AND_RECREATED)
+    })
+    public void xObjDoesntHaveStructParentTest() throws IOException, InterruptedException {
+        String pdf = sourceFolder + "xObjDoesntHaveStructParentTest.pdf";
+        String outPdf = destinationFolder + "xObjDoesntHaveStructParentTest.pdf";
+        String cmpPdf = sourceFolder + "cmp_xObjDoesntHaveStructParentTest.pdf";
+
+        PdfDocument taggedPdf = new PdfDocument(new PdfReader(pdf), new PdfWriter(outPdf));
+        taggedPdf.close();
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.CREATED_ROOT_TAG_HAS_MAPPING)
+    })
+    public void copyPageWithMultipleDocumentTagsTest() throws IOException {
+        PdfDocument pdfDoc = new PdfDocument(
+                new PdfReader(sourceFolder + "pdfWithMultipleDocumentTags.pdf"),
+                new PdfWriter(new ByteArrayOutputStream()));
+
+        AssertUtil.doesNotThrow(() -> pdfDoc.getTagStructureContext().normalizeDocumentRootTag());
+    }
+
 
     private boolean checkParentTree(String outFileName, String cmpFileName) throws IOException {
         PdfReader outReader = CompareTool.createOutputReader(outFileName);
