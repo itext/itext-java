@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.itextpdf</groupId>
     <artifactId>root</artifactId>
-    <version>8.0.4-SNAPSHOT</version>
+    <version>8.0.5-SNAPSHOT</version>
   </parent>
 
   <artifactId>native-image-test</artifactId>
@@ -21,7 +21,7 @@
     <junit.platform.version>1.10.2</junit.platform.version>
     <!-- This is to suppress the parent value. In junit 5 there is no category and
     test filtering mechanism is a bit different (@Tag should be used) -->
-    <unittests></unittests>
+    <unittests />
   </properties>
 
   <dependencies>

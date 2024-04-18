@@ -4,7 +4,7 @@
 
   <groupId>com.itextpdf</groupId>
   <artifactId>root</artifactId>
-  <version>8.0.4-SNAPSHOT</version>
+  <version>8.0.5-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>iText</name>
