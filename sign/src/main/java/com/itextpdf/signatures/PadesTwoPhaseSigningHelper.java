@@ -255,7 +255,7 @@ public class PadesTwoPhaseSigningHelper {
         cms.setSignerInfo(signerInfo);
 
         MessageDigest messageDigest = MessageDigest.getInstance(DigestAlgorithms.getDigest(digestAlgorithmOid));
-        int realSignatureSize = messageDigest.getDigestLength() + (int) cms.getSizeEstimation();
+        int realSignatureSize = (messageDigest.getDigestLength() + (int) cms.getSizeEstimation()) * 2 + 2;
         if (tsaClient != null) {
             realSignatureSize += tsaClient.getTokenSizeEstimate();
         }
