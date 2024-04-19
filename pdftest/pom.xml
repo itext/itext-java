@@ -16,6 +16,7 @@
   <properties>
     <sonar.skip>true</sonar.skip>
     <verapdf.version>1.25.125</verapdf.version>
+    <junit.jupiter.version>5.10.2</junit.jupiter.version>
   </properties>
 
   <dependencyManagement>
@@ -43,6 +44,16 @@
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>${junit.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>${junit.jupiter.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.vintage</groupId>
+      <artifactId>junit-vintage-engine</artifactId>
+      <version>${junit.jupiter.version}</version>
     </dependency>
   </dependencies>
 

@@ -37,6 +37,7 @@ import org.junit.rules.Timeout;
  * This is a generic class for testing. Subclassing it, or its subclasses is considered a good practice of
  * creating your own tests.
  */
+@org.junit.jupiter.api.Timeout(value = 5, unit = TimeUnit.MINUTES)
 public abstract class ITextTest {
 
     @Rule

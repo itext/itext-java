@@ -33,16 +33,23 @@ import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.classic.spi.StackTraceElementProxy;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.read.ListAppender;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.junit.jupiter.api.extension.AfterEachCallback;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.SubstituteLoggerFactory;
+import java.lang.annotation.Annotation;
 
-public class LogListener extends TestWatcher {
+public class LogListener extends TestWatcher implements BeforeEachCallback, AfterEachCallback {
 
     private static final String ROOT_ITEXT_PACKAGE = "com.itextpdf";
     private static final String ITEXT_LICENCING_PACKAGE = "com.itextpdf.licensing";
@@ -57,6 +64,36 @@ public class LogListener extends TestWatcher {
     public LogListener() {
        String logLevel = getPropertyOrEnvironmentVariable(TOKEN_ITEXT_LOGLEVEL);
        listAppender = new CustomListAppender<>(parseSilentMode(logLevel));
+    }
+
+    @Override
+    public void beforeEach(ExtensionContext extensionContext) throws Exception {
+        Description description = convertToDescription(extensionContext);
+        before(description);
+    }
+
+    @Override
+    public void afterEach(ExtensionContext extensionContext) throws Exception {
+        Description description = convertToDescription(extensionContext);
+        checkLogMessages(description);
+        after();
+    }
+
+    private static Description convertToDescription(ExtensionContext extensionContext) {
+        Method testMethod = extensionContext.getRequiredTestMethod();
+        Class<?> testClass = extensionContext.getRequiredTestClass();
+
+        Annotation[] methodAnnotations = testMethod.getAnnotations();
+        Annotation[] classAnnotations = testClass.getAnnotations();
+
+        List<Annotation> allAnnotations = new ArrayList<>();
+
+        Collections.addAll(allAnnotations, methodAnnotations);
+
+        Collections.addAll(allAnnotations, classAnnotations);
+
+        Annotation[] annotationsArray = allAnnotations.toArray(new Annotation[0]);
+        return Description.createTestDescription(testClass, testMethod.getName(), annotationsArray);
     }
 
     @Override
