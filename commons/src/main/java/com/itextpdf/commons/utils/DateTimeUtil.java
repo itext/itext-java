@@ -63,6 +63,9 @@ public final class DateTimeUtil {
      * @return the date as {@link Calendar}
      */
     public static Calendar getCalendar(Date date) {
+        if (date == null) {
+            return null;
+        }
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         return calendar;

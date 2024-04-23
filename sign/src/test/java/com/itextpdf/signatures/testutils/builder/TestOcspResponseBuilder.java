@@ -36,6 +36,7 @@ import com.itextpdf.commons.bouncycastle.cert.ocsp.IReq;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.operator.IContentSigner;
 import com.itextpdf.commons.utils.DateTimeUtil;
+import com.itextpdf.signatures.TimestampConstants;
 import com.itextpdf.signatures.testutils.TimeTestUtil;
 
 import java.io.IOException;
@@ -112,10 +113,11 @@ public class TestOcspResponseBuilder {
         if (!FACTORY.isNullExtension(extNonce)) {
             responseBuilder.setResponseExtensions(FACTORY.createExtensions(extNonce));
         }
-
         for (IReq req : requestList) {
             responseBuilder.addResponse(req.getCertID(), certificateStatus, thisUpdate.getTime(),
-                    nextUpdate.getTime(), FACTORY.createNullExtensions());
+                    nextUpdate == TimestampConstants.UNDEFINED_TIMESTAMP_DATE ?
+                            (Date) TimestampConstants.UNDEFINED_TIMESTAMP_DATE : nextUpdate.getTime(),
+                    FACTORY.createNullExtensions());
         }
 
         if (!chainSet) {

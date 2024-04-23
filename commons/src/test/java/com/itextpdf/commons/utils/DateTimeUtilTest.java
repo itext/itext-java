@@ -63,7 +63,21 @@ public class DateTimeUtilTest extends ExtendedITextTest {
 
         Assert.assertEquals(1588636800000d - offset, millisFromEpochTo2020_05_05, ZERO_DELTA);
     }
-    
+
+    @Test
+    public void getCalenderForNullDateTest() {
+        Calendar result = DateTimeUtil.getCalendar(null);
+        Assert.assertNull(result);
+    }
+
+    @Test
+    public void getCalenderTest() {
+        Date testDate = DateTimeUtil.getCurrentTimeDate();
+        Calendar result = DateTimeUtil.getCalendar(testDate);
+        Assert.assertNotNull(result);
+        Assert.assertEquals(testDate, result.getTime());
+    }
+
     @Test
     public void addMillisToDateTest() {
         Date almostCurrentTime = new Date(new Date().getTime() - 2000);

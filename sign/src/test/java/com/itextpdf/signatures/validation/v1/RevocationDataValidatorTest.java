@@ -27,13 +27,14 @@ import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.DateTimeUtil;
-import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.signatures.ICrlClient;
 import com.itextpdf.signatures.IssuingCertificateRetriever;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.TimeTestUtil;
 import com.itextpdf.signatures.testutils.builder.TestCrlBuilder;
 import com.itextpdf.signatures.testutils.builder.TestOcspResponseBuilder;
+import com.itextpdf.signatures.testutils.client.TestCrlClientWrapper;
+import com.itextpdf.signatures.testutils.client.TestOcspClientWrapper;
 import com.itextpdf.signatures.testutils.client.TestCrlClient;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
 import com.itextpdf.signatures.validation.v1.context.CertificateSource;
@@ -43,7 +44,6 @@ import com.itextpdf.signatures.validation.v1.context.TimeBasedContexts;
 import com.itextpdf.signatures.validation.v1.context.ValidationContext;
 import com.itextpdf.signatures.validation.v1.context.ValidatorContext;
 import com.itextpdf.signatures.validation.v1.context.ValidatorContexts;
-import com.itextpdf.signatures.validation.v1.report.CertificateReportItem;
 import com.itextpdf.signatures.validation.v1.report.ReportItem;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport;
 import com.itextpdf.test.ExtendedITextTest;
@@ -58,6 +58,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.Security;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.time.Duration;
@@ -71,18 +72,21 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER =
             "./src/test/resources/com/itextpdf/signatures/validation/v1/RevocationDataValidatorTest/";
     private static final char[] PASSWORD = "testpassphrase".toCharArray();
-    private static final long MILLISECONDS_PER_DAY = 86_400_000L;
-
     private static X509Certificate caCert;
     private static PrivateKey caPrivateKey;
     private static X509Certificate checkCert;
     private static X509Certificate responderCert;
     private static PrivateKey ocspRespPrivateKey;
+    private static X509Certificate trustedOcspResponderCert;
+
     private IssuingCertificateRetriever certificateRetriever;
     private SignatureValidationProperties parameters;
     private ValidationContext baseContext = new ValidationContext(ValidatorContext.SIGNATURE_VALIDATOR, CertificateSource.SIGNER_CERT,
             TimeBasedContext.PRESENT);
     private ValidatorChainBuilder validatorChainBuilder;
+    private MockCrlValidator mockCrlValidator;
+    private MockOCSPValidator mockOCSPValidator;
+    private MockSignatureValidationProperties mockParameters;
 
     @BeforeClass
     public static void before()
@@ -98,188 +102,191 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
         checkCert = (X509Certificate) PemFileHelper.readFirstChain(checkCertFileName)[0];
         responderCert = (X509Certificate) PemFileHelper.readFirstChain(ocspResponderCertFileName)[0];
         ocspRespPrivateKey = PemFileHelper.readFirstKey(ocspResponderCertFileName, PASSWORD);
+
+        trustedOcspResponderCert = (X509Certificate) PemFileHelper.readFirstChain(ocspResponderCertFileName)[0];
     }
 
     @Before
     public void setUp() {
         certificateRetriever = new IssuingCertificateRetriever();
         parameters = new SignatureValidationProperties();
+        mockCrlValidator = new MockCrlValidator();
+        mockOCSPValidator = new MockOCSPValidator();
+        mockParameters = new MockSignatureValidationProperties(parameters);
         validatorChainBuilder = new ValidatorChainBuilder()
                 .withIssuingCertificateRetriever(certificateRetriever)
-                .withSignatureValidationProperties(parameters);
+                .withSignatureValidationProperties(mockParameters)
+                .withCRLValidator(mockCrlValidator)
+                .withOCSPValidator(mockOCSPValidator);
     }
 
     @Test
-    public void basicValidationWithOcspClientTest() throws GeneralSecurityException, IOException {
+    public void basicOCSPValidatorUsageTest() throws GeneralSecurityException, IOException {
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
         TestOcspResponseBuilder builder = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
         builder.setProducedAt(DateTimeUtil.addDaysToDate(checkDate, 5));
         builder.setThisUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(checkDate, 5)));
         builder.setNextUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(checkDate, 10)));
-        TestOcspClient ocspClient = new TestOcspClient().addBuilderForCertIssuer(caCert, builder);
+        TestOcspClientWrapper ocspClient = new TestOcspClientWrapper(new TestOcspClient().addBuilderForCertIssuer(caCert, builder));
 
         ValidationReport report = new ValidationReport();
         certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
-
-        parameters.setRevocationOnlineFetching(ValidatorContexts.all(), CertificateSources.all(),
-                        TimeBasedContexts.all(), SignatureValidationProperties.OnlineFetching.NEVER_FETCH)
-                .setFreshness(ValidatorContexts.all(), CertificateSources.all(),TimeBasedContexts.all(),
-                        Duration.ofDays(-2));
+        mockParameters.addRevocationOnlineFetchingResponse(SignatureValidationProperties.OnlineFetching.NEVER_FETCH);
+        mockParameters.addRevocationOnlineFetchingResponse(SignatureValidationProperties.OnlineFetching.NEVER_FETCH);
+        mockParameters.addFreshnessResponse(Duration.ofDays(-2));
         RevocationDataValidator validator = validatorChainBuilder.buildRevocationDataValidator();
+
         validator.addOcspClient(ocspClient);
+
+        ReportItem reportItem = new ReportItem("validator", "message",
+                ReportItem.ReportItemStatus.INFO);
+        mockOCSPValidator.onCallDo(c -> c.report.addReportItem(reportItem));
+
 
         validator.validate(report, baseContext, checkCert, checkDate);
 
-        Assert.assertEquals(0, report.getFailures().size());
-        Assert.assertEquals(2, report.getLogs().size());
-        CertificateReportItem item = (CertificateReportItem) report.getLogs().get(0);
-        Assert.assertEquals(RevocationDataValidator.REVOCATION_DATA_CHECK, item.getCheckName());
-        Assert.assertEquals(RevocationDataValidator.TRUSTED_OCSP_RESPONDER, item.getMessage());
-        item = (CertificateReportItem) report.getLogs().get(1);
-        Assert.assertEquals(CertificateChainValidator.CERTIFICATE_CHECK, item.getCheckName());
-        Assert.assertEquals(MessageFormatUtil.format(CertificateChainValidator.CERTIFICATE_TRUSTED,
-                item.getCertificate().getSubjectX500Principal()), item.getMessage());
-        Assert.assertEquals(ValidationReport.ValidationResult.VALID, report.getValidationResult());
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationReport.ValidationResult.VALID)
+                // the logitem from the OCSP valdiation should be copied to the final report
+                .hasNumberOfLogs(1)
+                .hasLogItem(reportItem));
+        // there should be one call per ocspClient
+        Assert.assertEquals(1, ocspClient.getCalls().size());
+
+        // There was only one ocsp response so we expect 1 call to the ocsp validator
+        Assert.assertEquals(1,mockOCSPValidator.calls.size());
+
+        // the validationDate should be passed as is
+        Assert.assertEquals(checkDate, mockOCSPValidator.calls.get(0).validationDate);
+
+        // the response should be passed as is
+        Assert.assertEquals(ocspClient.getCalls().get(0).response , mockOCSPValidator.calls.get(0).ocspResp);
+
+        // There should be a new report generated and any logs must be copied the actual report.
+        Assert.assertNotEquals(report, mockOCSPValidator.calls.get(0).report);
     }
 
     @Test
-    public void basicValidationWithCrlClientTest() throws GeneralSecurityException {
-        // TODO what is being tested here?
+    public void basicCrlValidatorUsageTest() throws GeneralSecurityException, AbstractOperatorCreationException, IOException {
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
         Date revocationDate = DateTimeUtil.addDaysToDate(checkDate, -1);
         TestCrlBuilder builder = new TestCrlBuilder(caCert, caPrivateKey, checkDate);
         builder.setNextUpdate(DateTimeUtil.addDaysToDate(checkDate, 10));
         builder.addCrlEntry(checkCert, revocationDate, FACTORY.createCRLReason().getKeyCompromise());
-        TestCrlClient crlClient = new TestCrlClient().addBuilderForCertIssuer(builder);
+        TestCrlClientWrapper crlClient = new TestCrlClientWrapper(new TestCrlClient().addBuilderForCertIssuer(builder));
 
         ValidationReport report = new ValidationReport();
         certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
 
-        parameters.setRevocationOnlineFetching(ValidatorContexts.all(), CertificateSources.all(),
-                        TimeBasedContexts.all(), SignatureValidationProperties.OnlineFetching.NEVER_FETCH)
-                .setFreshness(ValidatorContexts.all(), CertificateSources.all(),TimeBasedContexts.all(),
-                        Duration.ofDays(-2));
-        parameters.setFreshness(ValidatorContexts.all(), CertificateSources.all(),
-                TimeBasedContexts.all(),Duration.ofDays(0));
-        RevocationDataValidator validator = validatorChainBuilder.buildRevocationDataValidator()
+        mockParameters.addRevocationOnlineFetchingResponse(SignatureValidationProperties.OnlineFetching.NEVER_FETCH);
+        mockParameters.addRevocationOnlineFetchingResponse(SignatureValidationProperties.OnlineFetching.NEVER_FETCH);
+        mockParameters.addFreshnessResponse(Duration.ofDays(0));
+
+        ReportItem reportItem = new ReportItem("validator", "message",
+                ReportItem.ReportItemStatus.INFO);
+        mockCrlValidator.onCallDo(c -> c.report.addReportItem(reportItem));
+
+         RevocationDataValidator validator = validatorChainBuilder.buildRevocationDataValidator()
                 .addCrlClient(crlClient);
         validator.validate(report, baseContext, checkCert, checkDate);
 
-        Assert.assertEquals(1, report.getFailures().size());
-        Assert.assertEquals(3, report.getLogs().size());
-        Assert.assertEquals(report.getFailures().get(0), report.getLogs().get(2));
-        CertificateReportItem item = (CertificateReportItem) report.getLogs().get(0);
-        Assert.assertEquals(caCert, item.getCertificate());
-        Assert.assertEquals(CRLValidator.CRL_CHECK, item.getCheckName());
-        Assert.assertEquals(CRLValidator.NEXT_UPDATE_VALIDATION, item.getMessage());
-        item = (CertificateReportItem) report.getLogs().get(1);
-        Assert.assertEquals(caCert, item.getCertificate());
-        Assert.assertEquals(CertificateChainValidator.CERTIFICATE_CHECK, item.getCheckName());
-        Assert.assertEquals(MessageFormatUtil.format(CertificateChainValidator.CERTIFICATE_TRUSTED,
-                item.getCertificate().getSubjectX500Principal()), item.getMessage());
-        item = (CertificateReportItem) report.getLogs().get(2);
-        Assert.assertEquals(checkCert, item.getCertificate());
-        Assert.assertEquals(CRLValidator.CRL_CHECK, item.getCheckName());
-        Assert.assertEquals(MessageFormatUtil.format(CRLValidator.CERTIFICATE_REVOKED,
-                caCert.getSubjectX500Principal(), revocationDate), item.getMessage());
-
-        Assert.assertEquals(ValidationReport.ValidationResult.INVALID, report.getValidationResult());
+        AssertValidationReport.assertThat(report, a -> a
+                .hasNumberOfFailures(0)
+                // the logitem from the CRL valdiation should be copied to the final report
+                .hasNumberOfLogs(1)
+                .hasLogItem(reportItem));
+        // there should be one call per CrlClient
+        Assert.assertEquals(1, crlClient.getCalls().size());
+        // since there was one response there should be one validator call
+        Assert.assertEquals(1 , mockCrlValidator.calls.size());
+        Assert.assertEquals(checkCert, mockCrlValidator.calls.get(0).certificate);
+        Assert.assertEquals(checkDate, mockCrlValidator.calls.get(0).validationDate);
+        // There should be a new report generated and any logs must be copied the actual report.
+        Assert.assertNotEquals(report, mockCrlValidator.calls.get(0).report);
+        Assert.assertEquals(crlClient.getCalls().get(0).responses.get(0), mockCrlValidator.calls.get(0).crl);
     }
 
     @Test
-    public void useFreshCrlResponseTest() throws GeneralSecurityException {
-        // Add client with indeterminate CRL, then with CRL which contains revoked checkCert.
+    public void crlResponseOrderingTest() throws CertificateEncodingException {
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
-        Date revocationDate = DateTimeUtil.addDaysToDate(checkDate, -1);
 
-        TestCrlBuilder builder1 = new TestCrlBuilder(caCert, caPrivateKey, checkDate);
-        builder1.setNextUpdate(DateTimeUtil.addDaysToDate(checkDate, 2));
-        builder1.addCrlEntry(checkCert, revocationDate, FACTORY.createCRLReason().getKeyCompromise());
-        TestCrlClient crlClient1 = new TestCrlClient().addBuilderForCertIssuer(builder1);
+        Date thisUpdate1 = DateTimeUtil.addDaysToDate(checkDate, -2);
+        TestCrlBuilder builder1 = new TestCrlBuilder(caCert, caPrivateKey, thisUpdate1);
+        builder1.setNextUpdate(DateTimeUtil.addDaysToDate(checkDate, -2));
+        TestCrlClientWrapper crlClient1 = new TestCrlClientWrapper(
+                new TestCrlClient().addBuilderForCertIssuer(builder1));
 
-        Date thisUpdate2 = DateTimeUtil.addDaysToDate(checkDate, -2);
+        Date thisUpdate2 = checkDate;
         TestCrlBuilder builder2 = new TestCrlBuilder(caCert, caPrivateKey, thisUpdate2);
         builder2.setNextUpdate(checkDate);
-        TestCrlClient crlClient2 = new TestCrlClient().addBuilderForCertIssuer(builder2);
+        TestCrlClientWrapper crlClient2 =new TestCrlClientWrapper(
+                new TestCrlClient().addBuilderForCertIssuer(builder2));
 
-        ValidationReport report = new ValidationReport();
-        certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
+        Date thisUpdate3 = DateTimeUtil.addDaysToDate(checkDate, +2);
+        TestCrlBuilder builder3 = new TestCrlBuilder(caCert, caPrivateKey, thisUpdate3);
+        builder3.setNextUpdate(DateTimeUtil.addDaysToDate(checkDate, -2));
+        TestCrlClientWrapper crlClient3 =new TestCrlClientWrapper(
+                new TestCrlClient().addBuilderForCertIssuer(builder3));
 
-        parameters.setRevocationOnlineFetching(ValidatorContexts.all(), CertificateSources.all(),
-                        TimeBasedContexts.all(), SignatureValidationProperties.OnlineFetching.NEVER_FETCH)
-                .setFreshness(ValidatorContexts.all(), CertificateSources.all(),TimeBasedContexts.all(),
-                        Duration.ofDays(-2));
-        parameters.setFreshness(ValidatorContexts.all(), CertificateSources.all(),
-                TimeBasedContexts.all(),Duration.ofDays(0));
         RevocationDataValidator validator = validatorChainBuilder.buildRevocationDataValidator()
                 .addCrlClient(crlClient1)
-                .addCrlClient(crlClient2);
+                .addCrlClient(crlClient2)
+                .addCrlClient(crlClient3);
+
+        mockCrlValidator.onCallDo(c -> c.report.addReportItem(new ReportItem("test", "test", ReportItem.ReportItemStatus.INDETERMINATE)));
+
+        ValidationReport report = new ValidationReport();
         validator.validate(report, baseContext, checkCert, checkDate);
 
-        Assert.assertEquals(1, report.getFailures().size());
-        Assert.assertEquals(3, report.getLogs().size());
-        Assert.assertEquals(report.getFailures().get(0), report.getLogs().get(2));
-        CertificateReportItem item = (CertificateReportItem) report.getLogs().get(0);
-        Assert.assertEquals(caCert, item.getCertificate());
-        Assert.assertEquals(CRLValidator.CRL_CHECK, item.getCheckName());
-        Assert.assertEquals(CRLValidator.NEXT_UPDATE_VALIDATION, item.getMessage());
-        item = (CertificateReportItem) report.getLogs().get(1);
-        Assert.assertEquals(caCert, item.getCertificate());
-        Assert.assertEquals(CertificateChainValidator.CERTIFICATE_CHECK, item.getCheckName());
-        Assert.assertEquals(MessageFormatUtil.format(CertificateChainValidator.CERTIFICATE_TRUSTED,
-                item.getCertificate().getSubjectX500Principal()), item.getMessage());
-        item = (CertificateReportItem) report.getLogs().get(2);
-        Assert.assertEquals(checkCert, item.getCertificate());
-        Assert.assertEquals(CRLValidator.CRL_CHECK, item.getCheckName());
-        Assert.assertEquals(MessageFormatUtil.format(CRLValidator.CERTIFICATE_REVOKED,
-                caCert.getSubjectX500Principal(), revocationDate), item.getMessage());
-
-        Assert.assertEquals(ValidationReport.ValidationResult.INVALID, report.getValidationResult());
+        Assert.assertEquals(crlClient3.getCalls().get(0).responses.get(0), mockCrlValidator.calls.get(0).crl);
+        Assert.assertEquals(crlClient2.getCalls().get(0).responses.get(0), mockCrlValidator.calls.get(1).crl);
+        Assert.assertEquals(crlClient1.getCalls().get(0).responses.get(0), mockCrlValidator.calls.get(2).crl);
     }
 
     @Test
-    public void useFreshOcspResponseTest() throws GeneralSecurityException, IOException {
-        // Add client with indeterminate OCSP, then with valid OCSP.
+    public void ocspResponseOrderingTest() throws GeneralSecurityException, IOException {
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
 
         TestOcspResponseBuilder builder1 = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
         builder1.setProducedAt(checkDate);
         builder1.setThisUpdate(DateTimeUtil.getCalendar(checkDate));
         builder1.setNextUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(checkDate, 5)));
-        builder1.setCertificateStatus(FACTORY.createUnknownStatus());
-        TestOcspClient ocspClient1 = new TestOcspClient().addBuilderForCertIssuer(caCert, builder1);
+        TestOcspClientWrapper ocspClient1 =  new TestOcspClientWrapper(
+                new TestOcspClient().addBuilderForCertIssuer(caCert, builder1));
 
         TestOcspResponseBuilder builder2 = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
         builder2.setProducedAt(DateTimeUtil.addDaysToDate(checkDate, 5));
         builder2.setThisUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(checkDate, 5)));
         builder2.setNextUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(checkDate, 10)));
-        TestOcspClient ocspClient2 = new TestOcspClient().addBuilderForCertIssuer(caCert, builder2);
+        TestOcspClientWrapper ocspClient2 = new TestOcspClientWrapper(
+                new TestOcspClient().addBuilderForCertIssuer(caCert, builder2));
+
+        TestOcspResponseBuilder builder3 = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
+        builder3.setProducedAt(DateTimeUtil.addDaysToDate(checkDate, 2));
+        builder3.setThisUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(checkDate, 2)));
+        builder3.setNextUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(checkDate, 8)));
+        TestOcspClientWrapper ocspClient3 = new TestOcspClientWrapper(
+                new TestOcspClient().addBuilderForCertIssuer(caCert, builder3));
+
+        mockOCSPValidator.onCallDo(c -> c.report.addReportItem(
+                new ReportItem("","", ReportItem.ReportItemStatus.INDETERMINATE)));
 
         ValidationReport report = new ValidationReport();
         certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
 
-        parameters.setRevocationOnlineFetching(ValidatorContexts.all(), CertificateSources.all(),
-                        TimeBasedContexts.all(), SignatureValidationProperties.OnlineFetching.NEVER_FETCH)
-                .setFreshness(ValidatorContexts.all(), CertificateSources.all(),TimeBasedContexts.all(),
-                        Duration.ofDays(-2));
-        parameters.setFreshness(ValidatorContexts.all(), CertificateSources.all(),
-                TimeBasedContexts.all(),Duration.ofDays(-2));
+        mockParameters.addRevocationOnlineFetchingResponse(SignatureValidationProperties .OnlineFetching.NEVER_FETCH)
+                .addFreshnessResponse(Duration.ofDays(-2));
         RevocationDataValidator validator = validatorChainBuilder.buildRevocationDataValidator()
                 .addOcspClient(ocspClient1)
-                .addOcspClient(ocspClient2);
+                .addOcspClient(ocspClient2)
+                .addOcspClient(ocspClient3);
+
         validator.validate(report, baseContext, checkCert, checkDate);
 
-        Assert.assertEquals(0, report.getFailures().size());
-        Assert.assertEquals(2, report.getLogs().size());
-        CertificateReportItem item = (CertificateReportItem) report.getLogs().get(0);
-        Assert.assertEquals(RevocationDataValidator.REVOCATION_DATA_CHECK, item.getCheckName());
-        Assert.assertEquals(RevocationDataValidator.TRUSTED_OCSP_RESPONDER, item.getMessage());
-        item = (CertificateReportItem) report.getLogs().get(1);
-        Assert.assertEquals(CertificateChainValidator.CERTIFICATE_CHECK, item.getCheckName());
-        Assert.assertEquals(MessageFormatUtil.format(CertificateChainValidator.CERTIFICATE_TRUSTED,
-                item.getCertificate().getSubjectX500Principal()), item.getMessage());
+        Assert.assertEquals(ocspClient2.getCalls().get(0).response, mockOCSPValidator.calls.get(0).ocspResp);
+        Assert.assertEquals(ocspClient3.getCalls().get(0).response, mockOCSPValidator.calls.get(1).ocspResp);
+        Assert.assertEquals(ocspClient1.getCalls().get(0).response, mockOCSPValidator.calls.get(2).ocspResp);
 
-        Assert.assertEquals(ValidationReport.ValidationResult.VALID, report.getValidationResult());
     }
 
     @Test
@@ -293,13 +300,50 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
 
         validator.validate(report, baseContext, certificate, checkDate);
 
-        Assert.assertEquals(0, report.getFailures().size());
-        Assert.assertEquals(1, report.getLogs().size());
-        CertificateReportItem item = (CertificateReportItem) report.getLogs().get(0);
-        Assert.assertEquals(certificate, item.getCertificate());
-        Assert.assertEquals(RevocationDataValidator.REVOCATION_DATA_CHECK, item.getCheckName());
-        Assert.assertEquals(RevocationDataValidator.VALIDITY_ASSURED, item.getMessage());
-        Assert.assertEquals(ValidationReport.ValidationResult.VALID, report.getValidationResult());
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationReport.ValidationResult.VALID)
+                .hasLogItem(la -> la
+                    .withCheckName(RevocationDataValidator.REVOCATION_DATA_CHECK)
+                    .withMessage(RevocationDataValidator.VALIDITY_ASSURED)
+                    .withCertificate(certificate)
+                   ));
+    }
+
+    @Test
+    public void selfSignedCertificateIsNotValidatedTest() {
+        Date checkDate = TimeTestUtil.TEST_DATE_TIME;
+
+        ValidationReport report = new ValidationReport();
+        RevocationDataValidator validator = validatorChainBuilder.buildRevocationDataValidator();
+
+        validator.validate(report, baseContext, caCert, checkDate);
+
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationReport.ValidationResult.VALID)
+                .hasLogItem(la -> la
+                        .withCheckName(RevocationDataValidator.REVOCATION_DATA_CHECK)
+                        .withMessage(RevocationDataValidator.SELF_SIGNED_CERTIFICATE)
+                        .withCertificate(caCert)
+                ));
+    }
+
+    @Test
+    public void nocheckExtensionShouldNotFurtherValdiateTest() {
+        ValidationReport report = new ValidationReport();
+
+        parameters.setRevocationOnlineFetching(ValidatorContexts.all(), CertificateSources.all(),
+                        TimeBasedContexts.all(), SignatureValidationProperties .OnlineFetching.NEVER_FETCH);
+        RevocationDataValidator validator = validatorChainBuilder.buildRevocationDataValidator();
+
+        validator.validate(report, baseContext.setCertificateSource(CertificateSource.OCSP_ISSUER),
+                trustedOcspResponderCert, TimeTestUtil.TEST_DATE_TIME);
+
+        AssertValidationReport.assertThat(report, a -> a
+                .hasLogItem(la -> la
+                        .withStatus(ReportItem.ReportItemStatus.INFO)
+                        .withCheckName(RevocationDataValidator.REVOCATION_DATA_CHECK)
+                        .withMessage(RevocationDataValidator.TRUSTED_OCSP_RESPONDER)
+                ));
     }
 
     @Test
@@ -307,37 +351,36 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
         ValidationReport report = new ValidationReport();
 
         parameters.setRevocationOnlineFetching(ValidatorContexts.all(), CertificateSources.all(),
-                        TimeBasedContexts.all(), SignatureValidationProperties.OnlineFetching.NEVER_FETCH)
+                        TimeBasedContexts.all(), SignatureValidationProperties .OnlineFetching.NEVER_FETCH)
                 .setFreshness(ValidatorContexts.all(), CertificateSources.all(),TimeBasedContexts.all(),
                         Duration.ofDays(-2));
         RevocationDataValidator validator = validatorChainBuilder.buildRevocationDataValidator();
 
         validator.validate(report, baseContext, checkCert, TimeTestUtil.TEST_DATE_TIME);
 
-        Assert.assertEquals(1, report.getFailures().size());
-        Assert.assertEquals(1, report.getLogs().size());
-        CertificateReportItem item = (CertificateReportItem) report.getLogs().get(0);
-        Assert.assertEquals(RevocationDataValidator.REVOCATION_DATA_CHECK, item.getCheckName());
-        Assert.assertEquals(RevocationDataValidator.NO_REVOCATION_DATA, item.getMessage());
-        Assert.assertEquals(ValidationReport.ValidationResult.INDETERMINATE, report.getValidationResult());
+        AssertValidationReport.assertThat(report, a -> a
+                .hasLogItem(la -> la
+                    .withStatus(ReportItem.ReportItemStatus.INDETERMINATE)
+                    .withCheckName(RevocationDataValidator.REVOCATION_DATA_CHECK)
+                    .withMessage(RevocationDataValidator.NO_REVOCATION_DATA)
+                   ));
     }
 
     @Test
     public void tryFetchRevocationDataOnlineTest() {
         ValidationReport report = new ValidationReport();
         parameters.setRevocationOnlineFetching(ValidatorContexts.all(), CertificateSources.all(),
-                        TimeBasedContexts.all(), SignatureValidationProperties.OnlineFetching.NEVER_FETCH)
+                        TimeBasedContexts.all(), SignatureValidationProperties .OnlineFetching.FETCH_IF_NO_OTHER_DATA_AVAILABLE)
                 .setFreshness(ValidatorContexts.all(), CertificateSources.all(),TimeBasedContexts.all(),
                         Duration.ofDays(-2));
         RevocationDataValidator validator = validatorChainBuilder.buildRevocationDataValidator();
         validator.validate(report, baseContext, checkCert, TimeTestUtil.TEST_DATE_TIME);
 
-        Assert.assertEquals(1, report.getFailures().size());
-        Assert.assertEquals(1, report.getLogs().size());
-        CertificateReportItem item = (CertificateReportItem) report.getLogs().get(0);
-        Assert.assertEquals(RevocationDataValidator.REVOCATION_DATA_CHECK, item.getCheckName());
-        Assert.assertEquals(RevocationDataValidator.NO_REVOCATION_DATA, item.getMessage());
-        Assert.assertEquals(ValidationReport.ValidationResult.INDETERMINATE, report.getValidationResult());
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationReport.ValidationResult.INDETERMINATE)
+                    .hasLogItem(la -> la.withCheckName(RevocationDataValidator.REVOCATION_DATA_CHECK)
+                    .withMessage(RevocationDataValidator.NO_REVOCATION_DATA)
+                   ));
     }
 
     @Test
@@ -346,7 +389,7 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
         crl[5] = 0;
         ValidationReport report = new ValidationReport();
         parameters.setRevocationOnlineFetching(ValidatorContexts.all(), CertificateSources.all(),
-                        TimeBasedContexts.all(), SignatureValidationProperties.OnlineFetching.NEVER_FETCH)
+                        TimeBasedContexts.all(), SignatureValidationProperties .OnlineFetching.NEVER_FETCH)
                 .setFreshness(ValidatorContexts.all(), CertificateSources.all(),TimeBasedContexts.all(),
                         Duration.ofDays(-2));
         parameters.setFreshness(ValidatorContexts.all(), CertificateSources.all(),
@@ -360,13 +403,17 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
                 })
                 .validate(report, baseContext, checkCert, TimeTestUtil.TEST_DATE_TIME);
 
-        CertificateReportItem item = (CertificateReportItem) report.getLogs().get(0);
-        Assert.assertEquals(RevocationDataValidator.REVOCATION_DATA_CHECK, item.getCheckName());
-        Assert.assertEquals(RevocationDataValidator.CRL_PARSING_ERROR, item.getMessage());
-        item = (CertificateReportItem) report.getLogs().get(1);
-        Assert.assertEquals(RevocationDataValidator.REVOCATION_DATA_CHECK, item.getCheckName());
-        Assert.assertEquals(RevocationDataValidator.NO_REVOCATION_DATA, item.getMessage());
-        Assert.assertEquals(ValidationReport.ValidationResult.INDETERMINATE, report.getValidationResult());
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationReport.ValidationResult.INDETERMINATE)
+                .hasLogItem(la -> la
+                    .withCheckName(RevocationDataValidator.REVOCATION_DATA_CHECK)
+                    .withMessage(RevocationDataValidator.CRL_PARSING_ERROR)
+                   )
+                .hasLogItem(la -> la
+                    .withCheckName(RevocationDataValidator.REVOCATION_DATA_CHECK)
+                    .withMessage(RevocationDataValidator.NO_REVOCATION_DATA)
+                   ));
+
     }
 
     @Test
@@ -378,36 +425,39 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
         ocspBuilder1.setProducedAt(checkDate);
         ocspBuilder1.setThisUpdate(DateTimeUtil.getCalendar(checkDate));
         ocspBuilder1.setNextUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(checkDate, 3)));
-        TestOcspClient ocspClient1 = new TestOcspClient().addBuilderForCertIssuer(caCert, ocspBuilder1);
+        TestOcspClientWrapper ocspClient1 = new TestOcspClientWrapper(
+                new TestOcspClient().addBuilderForCertIssuer(caCert, ocspBuilder1));
 
         TestOcspResponseBuilder ocspBuilder2 = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
         ocspBuilder2.setProducedAt(DateTimeUtil.addDaysToDate(checkDate, 3));
         ocspBuilder2.setThisUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(checkDate, 3)));
         ocspBuilder2.setNextUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(checkDate, 5)));
         ocspBuilder2.setCertificateStatus(FACTORY.createUnknownStatus());
-        TestOcspClient ocspClient2 = new TestOcspClient().addBuilderForCertIssuer(caCert, ocspBuilder2);
+        TestOcspClientWrapper ocspClient2 = new TestOcspClientWrapper(
+                new TestOcspClient().addBuilderForCertIssuer(caCert, ocspBuilder2));
 
         TestOcspResponseBuilder ocspBuilder3 = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
         ocspBuilder3.setProducedAt(DateTimeUtil.addDaysToDate(checkDate, 5));
         ocspBuilder3.setThisUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(checkDate, 5)));
         ocspBuilder3.setNextUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(checkDate, 10)));
         ocspBuilder3.setCertificateStatus(FACTORY.createUnknownStatus());
-        TestOcspClient ocspClient3 = new TestOcspClient().addBuilderForCertIssuer(caCert, ocspBuilder3);
+        TestOcspClientWrapper ocspClient3 = new TestOcspClientWrapper(
+                new TestOcspClient().addBuilderForCertIssuer(caCert, ocspBuilder3));
 
         TestCrlBuilder crlBuilder1 = new TestCrlBuilder(caCert, caPrivateKey, checkDate);
         crlBuilder1.setNextUpdate(DateTimeUtil.addDaysToDate(checkDate, 2));
 
         TestCrlBuilder crlBuilder2 = new TestCrlBuilder(caCert, caPrivateKey, DateTimeUtil.addDaysToDate(checkDate, 2));
         crlBuilder2.setNextUpdate(DateTimeUtil.addDaysToDate(checkDate, 5));
-        TestCrlClient crlClient = new TestCrlClient()
+        TestCrlClientWrapper crlClient = new TestCrlClientWrapper(new TestCrlClient()
                 .addBuilderForCertIssuer(crlBuilder1)
-                .addBuilderForCertIssuer(crlBuilder2);
+                .addBuilderForCertIssuer(crlBuilder2));
 
         ValidationReport report = new ValidationReport();
         certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
 
         parameters.setRevocationOnlineFetching(ValidatorContexts.all(), CertificateSources.all(),
-                        TimeBasedContexts.all(), SignatureValidationProperties.OnlineFetching.NEVER_FETCH)
+                        TimeBasedContexts.all(), SignatureValidationProperties .OnlineFetching.NEVER_FETCH)
                 .setFreshness(ValidatorContexts.of(ValidatorContext.CRL_VALIDATOR), CertificateSources.all(),
                         TimeBasedContexts.all(), Duration.ofDays(-5));
         RevocationDataValidator validator = validatorChainBuilder.buildRevocationDataValidator()
@@ -415,72 +465,30 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
                 .addOcspClient(ocspClient1)
                 .addOcspClient(ocspClient2)
                 .addOcspClient(ocspClient3);
+
+        mockCrlValidator.onCallDo(c -> {
+                c.report.addReportItem(new ReportItem("1","2", ReportItem.ReportItemStatus.INDETERMINATE));
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {}
+        });
+        mockOCSPValidator.onCallDo(c -> {
+            c.report.addReportItem(new ReportItem("1","2", ReportItem.ReportItemStatus.INDETERMINATE));
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {}
+        });
         validator.validate(report, baseContext, checkCert, checkDate);
 
-        Assert.assertEquals(0, report.getFailures().size());
-        Assert.assertEquals(6, report.getLogs().size());
-        CertificateReportItem item = (CertificateReportItem) report.getLogs().get(0);
-        Assert.assertEquals(checkCert, item.getCertificate());
-        Assert.assertEquals(OCSPValidator.OCSP_CHECK, item.getCheckName());
-        Assert.assertEquals(OCSPValidator.CERT_STATUS_IS_UNKNOWN, item.getMessage());
-        item = (CertificateReportItem) report.getLogs().get(1);
-        Assert.assertEquals(checkCert, item.getCertificate());
-        Assert.assertEquals(OCSPValidator.OCSP_CHECK, item.getCheckName());
-        Assert.assertEquals(OCSPValidator.CERT_STATUS_IS_UNKNOWN, item.getMessage());
+        Assert.assertTrue (mockOCSPValidator.calls.get(0).timeStamp.before(mockOCSPValidator.calls.get(1).timeStamp));
+        Assert.assertTrue (mockOCSPValidator.calls.get(1).timeStamp.before(mockCrlValidator.calls.get(0).timeStamp));
+        Assert.assertTrue (mockCrlValidator.calls.get(0).timeStamp.before( mockCrlValidator.calls.get(1).timeStamp));
+        Assert.assertTrue (mockCrlValidator.calls.get(1).timeStamp.before( mockOCSPValidator.calls.get(2).timeStamp));
 
-        item = (CertificateReportItem) report.getLogs().get(2);
-        Assert.assertEquals(checkCert, item.getCertificate());
-        Assert.assertEquals(CRLValidator.CRL_CHECK, item.getCheckName());
-        Assert.assertEquals(MessageFormatUtil.format(CRLValidator.FRESHNESS_CHECK,
-                DateTimeUtil.addDaysToDate(checkDate, 2), checkDate, Duration.ofDays(-5)), item.getMessage());
-        item = (CertificateReportItem) report.getLogs().get(3);
-        Assert.assertEquals(checkCert, item.getCertificate());
-        Assert.assertEquals(CRLValidator.CRL_CHECK, item.getCheckName());
-        Assert.assertEquals(MessageFormatUtil.format(CRLValidator.FRESHNESS_CHECK,
-                checkDate, checkDate, Duration.ofDays(-5)), item.getMessage());
-
-        item = (CertificateReportItem) report.getLogs().get(4);
-        Assert.assertEquals(RevocationDataValidator.REVOCATION_DATA_CHECK, item.getCheckName());
-        Assert.assertEquals(RevocationDataValidator.TRUSTED_OCSP_RESPONDER, item.getMessage());
-        item = (CertificateReportItem) report.getLogs().get(5);
-        Assert.assertEquals(CertificateChainValidator.CERTIFICATE_CHECK, item.getCheckName());
-        Assert.assertEquals(MessageFormatUtil.format(CertificateChainValidator.CERTIFICATE_TRUSTED,
-                item.getCertificate().getSubjectX500Principal()), item.getMessage());
-        Assert.assertEquals(ValidationReport.ValidationResult.VALID, report.getValidationResult());
-
-        Assert.assertEquals(ValidationReport.ValidationResult.VALID, report.getValidationResult());
-    }
-
-    @Test
-    public void crlWithOnlySomeReasonsTest() throws Exception {
-        TestCrlBuilder builder1 = new TestCrlBuilder(caCert, caPrivateKey);
-        builder1.addExtension(FACTORY.createExtension().getIssuingDistributionPoint(), true,
-                FACTORY.createIssuingDistributionPoint(null, false, false,
-                        FACTORY.createReasonFlags(CRLValidator.ALL_REASONS - 31), false, false));
-        TestCrlBuilder builder2 = new TestCrlBuilder(caCert, caPrivateKey);
-        builder2.addExtension(FACTORY.createExtension().getIssuingDistributionPoint(), true,
-                FACTORY.createIssuingDistributionPoint(null, false, false,
-                        FACTORY.createReasonFlags(31), false, false));
-        TestCrlClient crlClient = new TestCrlClient()
-                .addBuilderForCertIssuer(builder1)
-                .addBuilderForCertIssuer(builder2);
-        TestOcspResponseBuilder ocspBuilder = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
-        ocspBuilder.setProducedAt(DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, -100));
-
-        certificateRetriever.setTrustedCertificates(Collections.singletonList(caCert));
-        ValidationReport report = new ValidationReport();
-        RevocationDataValidator validator = validatorChainBuilder.buildRevocationDataValidator();
-        parameters.setRevocationOnlineFetching(ValidatorContexts.all(), CertificateSources.all(),
-                TimeBasedContexts.all(), SignatureValidationProperties.OnlineFetching.NEVER_FETCH);
-        validator.addOcspClient(new TestOcspClient().addBuilderForCertIssuer(caCert, ocspBuilder))
-                .addCrlClient(crlClient);
-        validator.validate(report, baseContext,  checkCert, TimeTestUtil.TEST_DATE_TIME);
-
-        Assert.assertEquals(ValidationReport.ValidationResult.VALID, report.getValidationResult());
-        Assert.assertEquals(0, report.getFailures().size());
-        CertificateReportItem reportItem = (CertificateReportItem) report.getLogs().get(2);
-        Assert.assertEquals(ReportItem.ReportItemStatus.INFO, reportItem.getStatus());
-        Assert.assertEquals(checkCert, reportItem.getCertificate());
-        Assert.assertEquals(CRLValidator.ONLY_SOME_REASONS_CHECKED, reportItem.getMessage());
+        Assert.assertEquals(ocspClient1.getCalls().get(0).response, mockOCSPValidator.calls.get(2).ocspResp);
+        Assert.assertEquals(ocspClient2.getCalls().get(0).response, mockOCSPValidator.calls.get(1).ocspResp);
+        Assert.assertEquals(ocspClient3.getCalls().get(0).response, mockOCSPValidator.calls.get(0).ocspResp);
+        Assert.assertEquals(crlClient.getCalls().get(0).responses.get(0), mockCrlValidator.calls.get(1).crl);
+        Assert.assertEquals(crlClient.getCalls().get(0).responses.get(1), mockCrlValidator.calls.get(0).crl);
     }
 }

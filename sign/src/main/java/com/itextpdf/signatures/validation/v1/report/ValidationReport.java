@@ -107,9 +107,14 @@ public class ValidationReport {
 
     @Override
     public String toString() {
-        return "ValidationReport{" +
-                "reportItems=" + reportItems +
-                '}';
+        StringBuilder sb = new StringBuilder("ValidationReport{validationResult=");
+        sb.append(getValidationResult())
+                .append("\nreportItems=");
+        for (ReportItem i : reportItems) {
+            sb.append(i).append(", ");
+        }
+        sb.append("}");
+        return sb.toString();
     }
 
     /**

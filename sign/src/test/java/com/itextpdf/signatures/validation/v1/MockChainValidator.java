@@ -29,10 +29,12 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Consumer;
 
-class MockChainValidator extends CertificateChainValidator {
+public class MockChainValidator extends CertificateChainValidator {
 
     public List<ValidationCallBack> verificationCalls = new ArrayList<ValidationCallBack>();
+    private Consumer<ValidationCallBack> onCallHandler;
 
     MockChainValidator() {
         super(new ValidatorChainBuilder());
@@ -40,16 +42,29 @@ class MockChainValidator extends CertificateChainValidator {
 
     @Override
     public ValidationReport validate(ValidationReport result, ValidationContext context, X509Certificate certificate, Date verificationDate) {
-        verificationCalls.add(new ValidationCallBack(certificate, verificationDate));
+        ValidationCallBack call = new ValidationCallBack(certificate, context, result, verificationDate);
+        if (onCallHandler != null) {
+            onCallHandler.accept(call);
+        }
+        verificationCalls.add(call);
         return result;
     }
 
-    public static class ValidationCallBack {
-        public X509Certificate certificate;
-        public Date checkDate;
+    public void onCallDo(Consumer<ValidationCallBack> c) {
+        onCallHandler = c;
+    }
 
-        public ValidationCallBack(X509Certificate certificate, Date checkDate) {
+    public final static class ValidationCallBack {
+
+        public final X509Certificate certificate;
+        public final ValidationContext context;
+        public final ValidationReport report;
+        public final Date checkDate;
+
+        public ValidationCallBack(X509Certificate certificate, ValidationContext context, ValidationReport report, Date checkDate) {
             this.certificate = certificate;
+            this.context = context;
+            this.report = report;
             this.checkDate = checkDate;
         }
     }

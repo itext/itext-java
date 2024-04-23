@@ -34,7 +34,6 @@ import com.itextpdf.signatures.validation.v1.extensions.CertificateExtension;
 import com.itextpdf.signatures.validation.v1.extensions.KeyUsageExtension;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -142,9 +141,9 @@ public class SignatureValidationPropertiesTest extends ExtendedITextTest {
     public void setAndGetContinueAfterFailure() {
         SignatureValidationProperties sut = new SignatureValidationProperties();
         sut.setContinueAfterFailure(ValidatorContexts.of(ValidatorContext.SIGNATURE_VALIDATOR),
-               CertificateSources.of(CertificateSource.CERT_ISSUER), true);
+                CertificateSources.of(CertificateSource.CERT_ISSUER), true);
         sut.setContinueAfterFailure(ValidatorContexts.of(ValidatorContext.SIGNATURE_VALIDATOR),
-               CertificateSources.of(CertificateSource.OCSP_ISSUER), false);
+                CertificateSources.of(CertificateSource.OCSP_ISSUER), false);
 
         Assert.assertEquals(Boolean.TRUE, sut.getContinueAfterFailure(
                 new ValidationContext(ValidatorContext.SIGNATURE_VALIDATOR, CertificateSource.CERT_ISSUER,
@@ -175,11 +174,11 @@ public class SignatureValidationPropertiesTest extends ExtendedITextTest {
     public void setRequiredExtensionsTest() {
         SignatureValidationProperties sut = new SignatureValidationProperties();
         sut.setRequiredExtensions(CertificateSources.all(),
-                Collections.<CertificateExtension> singletonList(new KeyUsageExtension(1)));
+                Collections.<CertificateExtension>singletonList(new KeyUsageExtension(1)));
         sut.setRequiredExtensions(CertificateSources.of(CertificateSource.CERT_ISSUER),
-                Collections.<CertificateExtension> singletonList(new KeyUsageExtension(2)));
+                Collections.<CertificateExtension>singletonList(new KeyUsageExtension(2)));
         sut.setRequiredExtensions(CertificateSources.of(CertificateSource.OCSP_ISSUER),
-                Collections.<CertificateExtension> singletonList(new KeyUsageExtension(3)));
+                Collections.<CertificateExtension>singletonList(new KeyUsageExtension(3)));
 
         Assert.assertEquals(Collections.singletonList(new KeyUsageExtension(1)),
                 sut.getRequiredExtensions(new ValidationContext(ValidatorContext.CERTIFICATE_CHAIN_VALIDATOR,
@@ -193,8 +192,8 @@ public class SignatureValidationPropertiesTest extends ExtendedITextTest {
     }
 
     private static class IncrementalFreshnessValueSetter {
-        private int value;
         private final int increment;
+        private int value;
 
         public IncrementalFreshnessValueSetter(int initialValue, int increment) {
             this.value = initialValue;

@@ -1,0 +1,122 @@
+package com.itextpdf.signatures.validation.v1;
+
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
+import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
+import com.itextpdf.commons.utils.DateTimeUtil;
+import com.itextpdf.signatures.IssuingCertificateRetriever;
+import com.itextpdf.signatures.testutils.PemFileHelper;
+import com.itextpdf.signatures.testutils.TimeTestUtil;
+import com.itextpdf.signatures.testutils.builder.TestCrlBuilder;
+import com.itextpdf.signatures.testutils.builder.TestOcspResponseBuilder;
+import com.itextpdf.signatures.testutils.client.TestCrlClient;
+import com.itextpdf.signatures.testutils.client.TestOcspClient;
+import com.itextpdf.signatures.validation.v1.context.CertificateSource;
+import com.itextpdf.signatures.validation.v1.context.CertificateSources;
+import com.itextpdf.signatures.validation.v1.context.TimeBasedContext;
+import com.itextpdf.signatures.validation.v1.context.TimeBasedContexts;
+import com.itextpdf.signatures.validation.v1.context.ValidationContext;
+import com.itextpdf.signatures.validation.v1.context.ValidatorContext;
+import com.itextpdf.signatures.validation.v1.context.ValidatorContexts;
+import com.itextpdf.signatures.validation.v1.report.ReportItem;
+import com.itextpdf.signatures.validation.v1.report.ValidationReport;
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+
+import java.io.IOException;
+import java.security.PrivateKey;
+import java.security.Security;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import java.util.Collections;
+
+@Category(BouncyCastleUnitTest.class)
+public class RevocationDataValidatorIntegrationTest extends ExtendedITextTest {
+    private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
+    private static final String SOURCE_FOLDER =
+            "./src/test/resources/com/itextpdf/signatures/validation/v1/RevocationDataValidatorTest/";
+    private static final char[] PASSWORD = "testpassphrase".toCharArray();
+
+
+    private static X509Certificate caCert;
+    private static PrivateKey caPrivateKey;
+    private static X509Certificate checkCert;
+    private static X509Certificate responderCert;
+    private static PrivateKey ocspRespPrivateKey;
+    private IssuingCertificateRetriever certificateRetriever;
+    private SignatureValidationProperties parameters;
+    private ValidatorChainBuilder validatorChainBuilder;
+    private ValidationContext baseContext = new ValidationContext(ValidatorContext.SIGNATURE_VALIDATOR,
+            CertificateSource.SIGNER_CERT, TimeBasedContext.PRESENT);
+
+    @BeforeClass
+    public static void before()
+            throws CertificateException, IOException, AbstractOperatorCreationException, AbstractPKCSException {
+        Security.addProvider(FACTORY.getProvider());
+
+        String rootCertFileName = SOURCE_FOLDER + "rootCert.pem";
+        String checkCertFileName = SOURCE_FOLDER + "signCert.pem";
+        String ocspResponderCertFileName = SOURCE_FOLDER + "ocspResponderCert.pem";
+
+        caCert = (X509Certificate) PemFileHelper.readFirstChain(rootCertFileName)[0];
+        caPrivateKey = PemFileHelper.readFirstKey(rootCertFileName, PASSWORD);
+        checkCert = (X509Certificate) PemFileHelper.readFirstChain(checkCertFileName)[0];
+        responderCert = (X509Certificate) PemFileHelper.readFirstChain(ocspResponderCertFileName)[0];
+        ocspRespPrivateKey = PemFileHelper.readFirstKey(ocspResponderCertFileName, PASSWORD);
+    }
+
+    @Before
+    public void setUp() {
+        certificateRetriever = new IssuingCertificateRetriever();
+        parameters = new SignatureValidationProperties();
+        validatorChainBuilder = new ValidatorChainBuilder()
+                .withIssuingCertificateRetriever(certificateRetriever)
+                .withSignatureValidationProperties(parameters);
+    }
+
+
+    @Test
+    public void crlWithOnlySomeReasonsTest() throws Exception {
+        TestCrlBuilder builder1 = new TestCrlBuilder(caCert, caPrivateKey);
+        builder1.addExtension(FACTORY.createExtension().getIssuingDistributionPoint(), true,
+                FACTORY.createIssuingDistributionPoint(null, false, false,
+                        FACTORY.createReasonFlags(CRLValidator.ALL_REASONS - 31), false, false));
+        TestCrlBuilder builder2 = new TestCrlBuilder(caCert, caPrivateKey);
+        builder2.addExtension(FACTORY.createExtension().getIssuingDistributionPoint(), true,
+                FACTORY.createIssuingDistributionPoint(null, false, false,
+                        FACTORY.createReasonFlags(31), false, false));
+        TestCrlClient crlClient = new TestCrlClient()
+                .addBuilderForCertIssuer(builder1)
+                .addBuilderForCertIssuer(builder2);
+        TestOcspResponseBuilder ocspBuilder = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
+        ocspBuilder.setProducedAt(DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, -100));
+
+        certificateRetriever.setTrustedCertificates(Collections.singletonList(caCert));
+
+        parameters.setRevocationOnlineFetching(ValidatorContexts.all(), CertificateSources.all(),
+                TimeBasedContexts.all(), SignatureValidationProperties.OnlineFetching.NEVER_FETCH);
+
+
+        ValidationReport report = new ValidationReport();
+        RevocationDataValidator validator = validatorChainBuilder.buildRevocationDataValidator();
+        validator
+                .addOcspClient(new TestOcspClient().addBuilderForCertIssuer(caCert, ocspBuilder))
+                .addCrlClient(crlClient);
+
+        validator.validate(report, baseContext, checkCert, TimeTestUtil.TEST_DATE_TIME);
+
+        AssertValidationReport.assertThat(report, a -> a
+                .hasNumberOfFailures(0)
+                .hasLogItem(la -> la
+                        .withCertificate(checkCert)
+                        .withStatus(ReportItem.ReportItemStatus.INFO)
+                        .withMessage(CRLValidator.ONLY_SOME_REASONS_CHECKED)
+                ));
+
+    }
+}

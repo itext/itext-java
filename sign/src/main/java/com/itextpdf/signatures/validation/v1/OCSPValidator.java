@@ -121,7 +121,7 @@ public class OCSPValidator {
                 return;
             }
         } catch (Exception e) {
-            report.addReportItem(new CertificateReportItem(certificate, OCSP_CHECK, UNABLE_TO_CHECK_IF_ISSUERS_MATCH,
+            report.addReportItem(new CertificateReportItem(certificate, OCSP_CHECK, UNABLE_TO_CHECK_IF_ISSUERS_MATCH, e,
                     ReportItemStatus.INDETERMINATE));
             return;
         }

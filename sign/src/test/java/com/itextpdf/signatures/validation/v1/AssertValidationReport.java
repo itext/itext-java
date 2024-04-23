@@ -22,25 +22,41 @@
  */
 package com.itextpdf.signatures.validation.v1;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.signatures.validation.v1.report.CertificateReportItem;
 import com.itextpdf.signatures.validation.v1.report.ReportItem;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport;
 
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
-public class AssertValidationReport {
+public class AssertValidationReport implements AutoCloseable {
     private final ValidationReport report;
 
     private final CheckChain chain = new StartOfChain();
-    public AssertValidationReport(ValidationReport report) {
+    private boolean asserted = false;
+
+    private AssertValidationReport(ValidationReport report) {
         this.report = report;
     }
 
-    public void doAssert() {
+    public static void assertThat(ValidationReport report, Consumer<AssertValidationReport> c) {
+        AssertValidationReport assertion = new AssertValidationReport(report);
+        c.accept(assertion);
+        assertion.doAssert();
+    }
+
+    private void doAssert() {
+        asserted = true;
         CheckResult result = new CheckResult();
         chain.run(report, result);
         if (!result.success) {
-            result.messageBuilder.append("\n For item: ").append(report);
+            result.messageBuilder.append("\n For report: ").append(report);
             throw new AssertionError(result.messageBuilder.toString());
         }
     }
@@ -56,19 +72,77 @@ public class AssertValidationReport {
         return this;
     }
 
-    public AssertValidationReport hasLogItem(Function<ReportItem, Boolean> check, String itemDescription) {
-        chain.setNext(new ItemCheck(check, 1, itemDescription));
+    public AssertValidationReport hasLogItem(ReportItem logItem) {
+        chain.setNext(new LogItemCheck(logItem));
         return this;
     }
 
-    public AssertValidationReport hasLogItems(Function<ReportItem, Boolean> check, int count, String itemDescription) {
-        chain.setNext(new ItemCheck(check, count, itemDescription));
+    public AssertValidationReport hasLogItem(Consumer<AssertValidationReportLogItem> c) {
+        AssertValidationReportLogItem asserter = new AssertValidationReportLogItem(1, 1);
+        c.accept(asserter);
+        asserter.addToChain(this);
         return this;
     }
+
+    public AssertValidationReport hasLogItems(int minCount, int maxCount, Consumer<AssertValidationReportLogItem> c) {
+        AssertValidationReportLogItem asserter = new AssertValidationReportLogItem(minCount, maxCount);
+        c.accept(asserter);
+        asserter.addToChain(this);
+        return this;
+    }
+
 
     public AssertValidationReport hasStatus(ValidationReport.ValidationResult expectedStatus) {
         chain.setNext((new StatusCheck(expectedStatus)));
         return this;
+    }
+
+    @Override
+    public void close() throws Exception {
+        if (!asserted) {
+            throw new IllegalStateException("AssertValidationReport not asserted!");
+        }
+    }
+
+    public static class AssertValidationReportLogItem {
+
+
+        private final ValidationReportLogItemCheck check;
+
+        public AssertValidationReportLogItem(int minCount, int maxCount) {
+            this.check = new ValidationReportLogItemCheck(minCount, maxCount);
+        }
+
+
+        public AssertValidationReportLogItem withCheckName(String checkName) {
+            check.withCheckName(checkName);
+            return this;
+        }
+
+        @SafeVarargs
+        public final AssertValidationReportLogItem withMessage(String message, Function<ReportItem, Object>... params) {
+            check.withMessage(message, params);
+            return this;
+        }
+
+        public AssertValidationReportLogItem withStatus(ReportItem.ReportItemStatus status) {
+            check.withStatus(status);
+            return this;
+        }
+
+        public AssertValidationReportLogItem withCertificate(X509Certificate certificate) {
+            check.withCertificate(certificate);
+            return this;
+        }
+
+        public AssertValidationReportLogItem withExceptionCauseType(Class exceptionType) {
+            check.withExceptionCauseType(exceptionType);
+            return this;
+        }
+
+        public void addToChain(AssertValidationReport asserter) {
+            asserter.chain.setNext(check);
+        }
     }
 
     private static class CheckResult {
@@ -132,6 +206,124 @@ public class AssertValidationReport {
         }
     }
 
+    private static class ValidationReportLogItemCheck extends CheckChain {
+
+        private final int minCount;
+        private final int maxCount;
+        private final List<Function<ReportItem, Object>> messageParams = new ArrayList<Function<ReportItem, Object>>();
+        private final StringBuilder errorMessage = new StringBuilder();
+        private String checkName;
+        private String message;
+        private ReportItem.ReportItemStatus status;
+        private boolean checkStatus = false;
+        private X509Certificate certificate;
+        private Class exceptionType;
+
+
+        public ValidationReportLogItemCheck(int minCount, int maxCount) {
+            this.minCount = minCount;
+            this.maxCount = maxCount;
+            errorMessage.append("\nExpected between ")
+                    .append(minCount)
+                    .append(" and ")
+                    .append(maxCount)
+                    .append(" message with ");
+        }
+
+
+        public void withCheckName(String checkName) {
+            this.checkName = checkName;
+            errorMessage.append(" check name '")
+                    .append(checkName)
+                    .append("'");
+        }
+
+        public void withMessage(String message, Function<ReportItem, Object>... params) {
+            this.message = message;
+            Collections.addAll(messageParams, params);
+            errorMessage.append(" message '")
+                    .append(message)
+                    .append("'");
+        }
+
+        public void withStatus(ReportItem.ReportItemStatus status) {
+            this.status = status;
+            checkStatus = true;
+            errorMessage.append(" status '")
+                    .append(status)
+                    .append("'");
+        }
+
+        public void withCertificate(X509Certificate certificate) {
+            this.certificate = certificate;
+            errorMessage.append(" certificate '")
+                    .append(certificate.getSubjectX500Principal())
+                    .append("'");
+        }
+
+        public void withExceptionCauseType(Class exceptionType) {
+            this.exceptionType = exceptionType;
+            errorMessage.append(" with exception cause '")
+                    .append(exceptionType.getName())
+                    .append("'");
+        }
+
+        @Override
+        protected void check(ValidationReport report, final CheckResult result) {
+            errorMessage.append("\n");
+            List<ReportItem> prefiltered;
+            if (message != null) {
+                prefiltered = report.getLogs().stream().filter(i -> {
+                    Object[] params = new Object[messageParams.size()];
+                    for (int p = 0; p < messageParams.size(); p++) {
+                        params[p] = messageParams.get(p).apply(i);
+                    }
+                    return i.getMessage().equals(MessageFormatUtil.format(message, params));
+                }).collect(Collectors.toList());
+                errorMessage.append("found ").append(prefiltered.size()).append(" matches after message filter\n");
+            } else {
+                prefiltered = report.getLogs();
+            }
+            if (checkName != null) {
+                prefiltered = prefiltered.stream().filter(i -> (checkName.equals(i.getCheckName())))
+                        .collect(Collectors.toList());
+                errorMessage.append("found ").append(prefiltered.size()).append(" matches after check name filter\n");
+            }
+            if (checkStatus) {
+                prefiltered = prefiltered.stream().filter(i -> (status.equals(i.getStatus())))
+                        .collect(Collectors.toList());
+                errorMessage.append("found ").append(prefiltered.size()).append(" matches after status filter\n");
+            }
+            if (certificate != null) {
+                prefiltered = prefiltered.stream().filter(i ->
+                        certificate.equals(((CertificateReportItem) i).getCertificate())).collect(Collectors.toList());
+                errorMessage.append("found ").append(prefiltered.size()).append(" matches after certificate filter\n");
+            }
+            if (exceptionType != null) {
+                prefiltered = prefiltered.stream().filter(i -> i.getExceptionCause() != null
+                                && exceptionType.isAssignableFrom(i.getExceptionCause().getClass()))
+                        .collect(Collectors.toList());
+                errorMessage.append("found ").append(prefiltered.size()).append(" matches after exception cause filter\n");
+            }
+            long foundCount = prefiltered.size();
+            if (foundCount < minCount || foundCount > maxCount) {
+                result.success = false;
+                result.messageBuilder
+                        .append(errorMessage);
+            }
+        }
+
+        @Override
+        public String toString() {
+            return
+                    "checkName='" + checkName + '\'' +
+                            ", message='" + message + '\'' +
+                            ", status=" + status +
+                            ", certificate=" + (certificate == null ? "null" : certificate.getSubjectX500Principal().toString()) +
+                            ", exceptionType=" + (exceptionType == null ? "null" : exceptionType.getName());
+        }
+    }
+
     private static class LogCountCheck extends CheckChain {
         private final int expected;
 
@@ -153,30 +345,23 @@ public class AssertValidationReport {
         }
     }
 
-    private static class ItemCheck extends CheckChain {
-        private final Function<ReportItem, Boolean> check;
-        private final String message;
-        private final int expectedCount;
+    private static class LogItemCheck extends CheckChain {
 
-        public ItemCheck(Function<ReportItem, Boolean> check, int count, String itemDescription) {
+        private final ReportItem expectedItem;
+
+        public LogItemCheck(ReportItem expectedItem) {
             super();
-            this.check = check;
-            this.expectedCount = count;
-            this.message = itemDescription;
+            this.expectedItem = expectedItem;
         }
 
         @Override
         protected void check(ValidationReport report, CheckResult result) {
-            long foundCount = report.getLogs().stream().filter(i -> check.apply(i)).count();
-            if (foundCount != expectedCount) {
+
+            if (!report.getLogs().contains(expectedItem)) {
                 result.success = false;
                 result.messageBuilder
-                        .append("\nExpected ")
-                        .append(expectedCount)
-                        .append(" report logs like '")
-                        .append(message)
-                        .append("' but found ")
-                        .append(foundCount);
+                        .append("\nExpected report item not found:")
+                        .append(expectedItem);
             }
         }
     }
