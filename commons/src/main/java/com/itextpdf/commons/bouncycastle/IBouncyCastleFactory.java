@@ -1269,6 +1269,15 @@ public interface IBouncyCastleFactory {
     IASN1GeneralizedTime createASN1GeneralizedTime(IASN1Encodable encodable);
 
     /**
+     * Cast {@link Date} to ASN1 Generalized time wrapper.
+     *
+     * @param date {@link Date} to be cast
+     *
+     * @return ASN1 Generalized time wrapper
+     */
+    IASN1GeneralizedTime createASN1GeneralizedTime(Date date);
+
+    /**
      * Cast ASN1 Encodable wrapper to ASN1 UTC Time wrapper.
      *
      * @param encodable ASN1 Encodable wrapper to be cast

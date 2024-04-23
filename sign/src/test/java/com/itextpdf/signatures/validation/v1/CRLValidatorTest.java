@@ -139,7 +139,6 @@ public class CRLValidatorTest extends ExtendedITextTest {
         Assert.assertEquals(crlIssuerCert, mockChainValidator.verificationCalls.get(0).certificate);
     }
 
-
     @Test
     public void issuerCertificateIsNotFoundTest() throws Exception {
         retrieveTestResources("missingIssuer");
@@ -190,7 +189,6 @@ public class CRLValidatorTest extends ExtendedITextTest {
                         crlIssuerCert.getSubjectX500Principal(), revocationDate),
                 report.getFailures().get(0).getMessage());
     }
-
 
     @Test
     // CRL has the certificate revoked after signing date
@@ -372,6 +370,64 @@ public class CRLValidatorTest extends ExtendedITextTest {
         Assert.assertEquals(ReportItem.ReportItemStatus.INDETERMINATE, reportItem.getStatus());
         Assert.assertEquals(cert, reportItem.getCertificate());
         Assert.assertEquals(CRLValidator.ONLY_SOME_REASONS_CHECKED, reportItem.getMessage());
+    }
+
+    @Test
+    public void noExpiredCertOnCrlExtensionTest() throws Exception {
+        // Certificate is expired on 01/01/2400.
+        retrieveTestResources("happyPath");
+        TestCrlBuilder builder = new TestCrlBuilder(crlIssuerCert, crlIssuerKey,
+                DateTimeUtil.addYearsToDate(TimeTestUtil.TEST_DATE_TIME, 401));
+        byte[] crl = builder.makeCrl();
+        ValidationReport report = performValidation("happyPath", TimeTestUtil.TEST_DATE_TIME, crl);
+        new AssertValidationReport(report)
+                .hasStatus(ValidationReport.ValidationResult.INDETERMINATE)
+                .hasNumberOfFailures(1)
+                .hasNumberOfLogs(1)
+                .hasLogItem(l -> l.getCheckName().equals(CRLValidator.CRL_CHECK)
+                                && l.getMessage().equals(MessageFormatUtil.format(CRLValidator.CERTIFICATE_IS_EXPIRED,
+                                signCert.getNotAfter()))
+                                && ((CertificateReportItem) l).getCertificate().equals(signCert),
+                        CRLValidator.CERTIFICATE_IS_EXPIRED)
+                .doAssert();
+    }
+
+    @Test
+    public void certExpiredBeforeDateFromExpiredCertOnCrlTest() throws Exception {
+        // Certificate is expired on 01/01/2400.
+        retrieveTestResources("happyPath");
+        TestCrlBuilder builder = new TestCrlBuilder(crlIssuerCert, crlIssuerKey,
+                DateTimeUtil.addYearsToDate(TimeTestUtil.TEST_DATE_TIME, 401));
+        builder.addExtension(FACTORY.createExtension().getExpiredCertsOnCRL(), false,
+                FACTORY.createASN1GeneralizedTime(DateTimeUtil.addYearsToDate(TimeTestUtil.TEST_DATE_TIME, 400)));
+        byte[] crl = builder.makeCrl();
+        ValidationReport report = performValidation("happyPath", TimeTestUtil.TEST_DATE_TIME, crl);
+        new AssertValidationReport(report)
+                .hasStatus(ValidationReport.ValidationResult.INDETERMINATE)
+                .hasNumberOfFailures(1)
+                .hasNumberOfLogs(1)
+                .hasLogItem(l -> l.getCheckName().equals(CRLValidator.CRL_CHECK)
+                                && l.getMessage().equals(MessageFormatUtil.format(CRLValidator.CERTIFICATE_IS_EXPIRED,
+                                signCert.getNotAfter()))
+                                && ((CertificateReportItem) l).getCertificate().equals(signCert),
+                        CRLValidator.CERTIFICATE_IS_EXPIRED)
+                .doAssert();
+    }
+
+    @Test
+    public void certExpiredAfterDateFromExpiredCertOnCrlExtensionTest() throws Exception {
+        // Certificate is expired on 01/01/2400.
+        retrieveTestResources("happyPath");
+        TestCrlBuilder builder = new TestCrlBuilder(crlIssuerCert, crlIssuerKey,
+                DateTimeUtil.addYearsToDate(TimeTestUtil.TEST_DATE_TIME, 401));
+        builder.addExtension(FACTORY.createExtension().getExpiredCertsOnCRL(), false,
+                FACTORY.createASN1GeneralizedTime(DateTimeUtil.addYearsToDate(TimeTestUtil.TEST_DATE_TIME, 399)));
+        byte[] crl = builder.makeCrl();
+        ValidationReport report = performValidation("happyPath", TimeTestUtil.TEST_DATE_TIME, crl);
+        new AssertValidationReport(report)
+                .hasStatus(ValidationReport.ValidationResult.VALID)
+                .hasNumberOfFailures(0)
+                .doAssert();
     }
 
     private ValidationReport checkCrlScope(String crlPath) throws Exception {

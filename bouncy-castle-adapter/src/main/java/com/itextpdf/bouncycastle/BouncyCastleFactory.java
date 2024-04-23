@@ -1472,6 +1472,14 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
      * {@inheritDoc}
      */
     @Override
+    public IASN1GeneralizedTime createASN1GeneralizedTime(Date date) {
+        return new ASN1GeneralizedTimeBC(new ASN1GeneralizedTime(date));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public IASN1UTCTime createASN1UTCTime(IASN1Encodable encodable) {
         ASN1EncodableBC encodableBC = (ASN1EncodableBC) encodable;
         if (encodableBC.getEncodable() instanceof ASN1UTCTime) {

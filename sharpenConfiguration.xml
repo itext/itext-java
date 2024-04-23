@@ -151,6 +151,7 @@
             <fileset reason="Logic of some methods in BC and BCFips differs at Java and .NET.">
                 <file path="com/itextpdf/bouncycastleconnector/BouncyCastleDefaultFactory.java"/>
                 <file path="com/itextpdf/bouncycastle/BouncyCastleFactory.java"/>
+                <file path="com/itextpdf/bouncycastle/asn1/ASN1GeneralizedTimeBC.java"/>
                 <file path="com/itextpdf/bouncycastle/asn1/ASN1IntegerBC.java"/>
                 <file path="com/itextpdf/bouncycastle/asn1/ASN1OctetStringBC.java"/>
                 <file path="com/itextpdf/bouncycastle/asn1/ASN1TaggedObjectBC.java"/>

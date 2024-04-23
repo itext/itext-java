@@ -59,6 +59,9 @@ public class ExtensionBC extends ASN1EncodableBC implements IExtension {
     private static final ASN1ObjectIdentifierBC SUBJECT_KEY_IDENTIFIER =
             new ASN1ObjectIdentifierBC(Extension.subjectKeyIdentifier);
 
+    private static final IASN1ObjectIdentifier EXPIRED_CERTS_ON_CRL =
+            new ASN1ObjectIdentifierBC(Extension.expiredCertsOnCRL);
+
     /**
      * Creates new wrapper instance for {@link Extension}.
      *
@@ -148,5 +151,13 @@ public class ExtensionBC extends ASN1EncodableBC implements IExtension {
     @Override
     public IASN1ObjectIdentifier getSubjectKeyIdentifier() {
         return SUBJECT_KEY_IDENTIFIER;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IASN1ObjectIdentifier getExpiredCertsOnCRL() {
+        return EXPIRED_CERTS_ON_CRL;
     }
 }

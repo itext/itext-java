@@ -24,6 +24,7 @@ package com.itextpdf.signatures.validation.v1;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1Encodable;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Primitive;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IDistributionPoint;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IIssuingDistributionPoint;
@@ -48,6 +49,7 @@ import java.security.cert.CRLReason;
 import java.security.cert.X509CRL;
 import java.security.cert.X509CRLEntry;
 import java.security.cert.X509Certificate;
+import java.text.ParseException;
 import java.time.Duration;
 import java.util.Date;
 import java.util.HashMap;
@@ -63,6 +65,8 @@ public class CRLValidator {
 
     static final String ATTRIBUTE_CERTS_ASSERTED = "The onlyContainsAttributeCerts is asserted. Conforming CRLs " +
             "issuers MUST set the onlyContainsAttributeCerts boolean to FALSE.";
+    static final String CERTIFICATE_IS_EXPIRED =
+            "Certificate is expired on {0} and could have been removed from the CRL.";
     static final String CERTIFICATE_IS_UNREVOKED = "The certificate was unrevoked.";
     static final String CERTIFICATE_IS_NOT_IN_THE_CRL_SCOPE = "Certificate isn't in the current CRL scope.";
     static final String CERTIFICATE_REVOKED = "Certificate was revoked by {0} on {1}.";
@@ -131,6 +135,18 @@ public class CRLValidator {
                     ReportItemStatus.INDETERMINATE));
             return;
         }
+
+        // Check expiredCertOnCrl extension in case the certificate is expired.
+        if (certificate.getNotAfter().before(crl.getThisUpdate())) {
+            Date startExpirationDate = getExpiredCertsOnCRLExtensionDate(crl);
+            if (TimestampConstants.UNDEFINED_TIMESTAMP_DATE == startExpirationDate ||
+                    certificate.getNotAfter().before(startExpirationDate)) {
+                report.addReportItem(new CertificateReportItem(certificate, CRL_CHECK, MessageFormatUtil.format(
+                        CERTIFICATE_IS_EXPIRED, certificate.getNotAfter()), ReportItemStatus.INDETERMINATE));
+                return;
+            }
+        }
+
         IIssuingDistributionPoint issuingDistPoint = getIssuingDistributionPointExtension(crl);
         IDistributionPoint distributionPoint = null;
         if (!issuingDistPoint.isNull()) {
@@ -214,6 +230,26 @@ public class CRLValidator {
             // Ignore exception.
         }
         return FACTORY.createIssuingDistributionPoint(issuingDistPointExtension);
+    }
+
+    private static Date getExpiredCertsOnCRLExtensionDate(X509CRL crl) {
+        IASN1Encodable expiredCertsOnCRL = null;
+        try {
+            // The scope of a CRL containing this extension is extended to include the revocation status of the
+            // certificates that expired after the date specified in ExpiredCertsOnCRL or at that date.
+            expiredCertsOnCRL = CertificateUtil.getExtensionValue(crl,
+                    FACTORY.createExtension().getExpiredCertsOnCRL().getId());
+        } catch (IOException e) {
+            // Ignore exception.
+        }
+        if (expiredCertsOnCRL != null) {
+            try {
+                return FACTORY.createASN1GeneralizedTime(expiredCertsOnCRL).getDate();
+            } catch (Exception e) {
+                // Ignore exception.
+            }
+        }
+        return (Date) TimestampConstants.UNDEFINED_TIMESTAMP_DATE;
     }
 
     private static int computeInterimReasonsMask(IIssuingDistributionPoint issuingDistPoint,

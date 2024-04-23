@@ -58,7 +58,7 @@ public class SignatureValidationPropertiesTest extends ExtendedITextTest {
                         ValidatorContext.SIGNATURE_VALIDATOR).getSet(),
                 CertificateSources.of(CertificateSource.CRL_ISSUER, CertificateSource.SIGNER_CERT,
                         CertificateSource.TIMESTAMP).getSet(), TimeBasedContexts.of(TimeBasedContext.HISTORICAL).getSet(),
-                new IncrementralFreshnessValueSetter(10, 1).getAction());
+                new IncrementalFreshnessValueSetter(10, 1).getAction());
 
         // test the last value added
         Assert.assertEquals(Duration.ofDays(18),
@@ -89,7 +89,7 @@ public class SignatureValidationPropertiesTest extends ExtendedITextTest {
                 CertificateSources.of(CertificateSource.CRL_ISSUER, CertificateSource.SIGNER_CERT,
                         CertificateSource.TIMESTAMP).getSet(),
                 TimeBasedContexts.of(TimeBasedContext.HISTORICAL).getSet(),
-                new IncrementralFreshnessValueSetter(10, 1).getAction());
+                new IncrementalFreshnessValueSetter(10, 1).getAction());
 
         // test the general default
         Assert.assertEquals(SignatureValidationProperties.DEFAULT_FRESHNESS_PRESENT_OCSP,
@@ -192,11 +192,11 @@ public class SignatureValidationPropertiesTest extends ExtendedITextTest {
                         CertificateSource.OCSP_ISSUER, TimeBasedContext.HISTORICAL)));
     }
 
-    private static class IncrementralFreshnessValueSetter {
+    private static class IncrementalFreshnessValueSetter {
         private int value;
         private final int increment;
 
-        public IncrementralFreshnessValueSetter(int initialValue, int increment) {
+        public IncrementalFreshnessValueSetter(int initialValue, int increment) {
             this.value = initialValue;
             this.increment = increment;
         }

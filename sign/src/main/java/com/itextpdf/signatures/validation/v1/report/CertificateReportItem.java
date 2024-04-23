@@ -67,6 +67,11 @@ public class CertificateReportItem extends ReportItem {
         return certificate;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
     @Override
     public String toString() {
         return "\nCertificateReportItem{" +

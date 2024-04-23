@@ -52,7 +52,6 @@ public class ValidationContext {
         return new ValidationContext(validatorContext, certificateSource, timeBasedContext);
     }
 
-
     public ValidatorContext getValidatorContext() {
         return validatorContext;
     }
