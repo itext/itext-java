@@ -202,6 +202,11 @@ public class CrlClientOnline implements ICrlClient {
         LOGGER.info("Added CRL url: " + url);
     }
 
+    /**
+     * Get an amount of URLs provided for this CRL.
+     *
+     * @return {@code int} number of URLs
+     */
     public int getUrlsSize() {
         return urls.size();
     }

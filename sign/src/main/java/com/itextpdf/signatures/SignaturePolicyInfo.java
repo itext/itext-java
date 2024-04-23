@@ -45,10 +45,10 @@ public class SignaturePolicyInfo {
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
-    private String policyIdentifier;
-    private byte[] policyHash;
-    private String policyDigestAlgorithm;
-    private String policyUri;
+    private final String policyIdentifier;
+    private final byte[] policyHash;
+    private final String policyDigestAlgorithm;
+    private final String policyUri;
 
     /**
      * Constructs a new {@link SignaturePolicyInfo} instance
@@ -60,13 +60,13 @@ public class SignaturePolicyInfo {
      */
     public SignaturePolicyInfo(String policyIdentifier, byte[] policyHash, String policyDigestAlgorithm,
             String policyUri) {
-        if (policyIdentifier == null || policyIdentifier.length() == 0) {
+        if (policyIdentifier == null || policyIdentifier.isEmpty()) {
             throw new IllegalArgumentException("Policy identifier cannot be null");
         }
         if (policyHash == null) {
             throw new IllegalArgumentException("Policy hash cannot be null");
         }
-        if (policyDigestAlgorithm == null || policyDigestAlgorithm.length() == 0) {
+        if (policyDigestAlgorithm == null || policyDigestAlgorithm.isEmpty()) {
             throw new IllegalArgumentException("Policy digest algorithm cannot be null");
         }
 
@@ -90,18 +90,38 @@ public class SignaturePolicyInfo {
                 policyDigestAlgorithm, policyUri);
     }
 
+    /**
+     * Get the ID of the signature policy.
+     *
+     * @return the ID of the signature policy
+     */
     public String getPolicyIdentifier() {
         return policyIdentifier;
     }
 
+    /**
+     * Get the hash of the signature policy.
+     *
+     * @return the hash of the signature policy
+     */
     public byte[] getPolicyHash() {
         return policyHash;
     }
 
+    /**
+     * Get the digestion algorithm of the signature policy.
+     *
+     * @return the digestion algorithm of the signature policy
+     */
     public String getPolicyDigestAlgorithm() {
         return policyDigestAlgorithm;
     }
 
+    /**
+     * Get the uri of the full policy description.
+     *
+     * @return the uri of the full policy description
+     */
     public String getPolicyUri() {
         return policyUri;
     }
@@ -109,14 +129,12 @@ public class SignaturePolicyInfo {
     ISignaturePolicyIdentifier toSignaturePolicyIdentifier() {
         String algId = DigestAlgorithms.getAllowedDigest(this.policyDigestAlgorithm);
 
-        if (algId == null || algId.length() == 0) {
+        if (algId == null || algId.isEmpty()) {
             throw new IllegalArgumentException("Invalid policy hash algorithm");
         }
-
-        ISignaturePolicyIdentifier signaturePolicyIdentifier = null;
         ISigPolicyQualifierInfo spqi = null;
 
-        if (this.policyUri != null && this.policyUri.length() > 0) {
+        if (this.policyUri != null && !this.policyUri.isEmpty()) {
             spqi = FACTORY.createSigPolicyQualifierInfo(FACTORY.createPKCSObjectIdentifiers().getIdSpqEtsUri(),
                     FACTORY.createDERIA5String(this.policyUri));
         }
@@ -127,8 +145,7 @@ public class SignaturePolicyInfo {
                 FACTORY.createAlgorithmIdentifier(FACTORY.createASN1ObjectIdentifier(algId)),
                 FACTORY.createDEROctetString(this.policyHash));
         ISignaturePolicyId signaturePolicyId = FACTORY.createSignaturePolicyId(identifier, otherHashAlgAndValue, spqi);
-        signaturePolicyIdentifier = FACTORY.createSignaturePolicyIdentifier(signaturePolicyId);
 
-        return signaturePolicyIdentifier;
+        return FACTORY.createSignaturePolicyIdentifier(signaturePolicyId);
     }
 }

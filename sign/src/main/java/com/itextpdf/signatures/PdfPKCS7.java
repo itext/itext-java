@@ -219,7 +219,6 @@ public class PdfPKCS7 {
      * @param certsKey    the /Cert key
      * @param provider    the provider or <code>null</code> for the default provider
      */
-    @SuppressWarnings("unchecked")
     public PdfPKCS7(byte[] contentsKey, byte[] certsKey, String provider) {
         try {
             this.provider = provider;
@@ -251,7 +250,6 @@ public class PdfPKCS7 {
      * @param filterSubtype the filtersubtype
      * @param provider      the provider or <code>null</code> for the default provider
      */
-    @SuppressWarnings({"unchecked"})
     public PdfPKCS7(byte[] contentsKey, PdfName filterSubtype, String provider) {
         this.filterSubtype = filterSubtype;
         isTsp = PdfName.ETSI_RFC3161.equals(filterSubtype);
@@ -479,10 +477,20 @@ public class PdfPKCS7 {
         }
     }
 
+    /**
+     * Set signature policy identifier to be used during signature creation.
+     *
+     * @param signaturePolicy {@link SignaturePolicyInfo} to be used during signature creation
+     */
     public void setSignaturePolicy(SignaturePolicyInfo signaturePolicy) {
         this.signaturePolicyIdentifier = signaturePolicy.toSignaturePolicyIdentifier();
     }
 
+    /**
+     * Set signature policy identifier to be used during signature creation.
+     *
+     * @param signaturePolicy {@link ISignaturePolicyIdentifier} to be used during signature creation
+     */
     public void setSignaturePolicy(ISignaturePolicyIdentifier signaturePolicy) {
         this.signaturePolicyIdentifier = signaturePolicy;
     }
@@ -1375,7 +1383,7 @@ public class PdfPKCS7 {
     /**
      * All the X.509 certificates in no particular order.
      */
-    private Collection<Certificate> certs;
+    private final Collection<Certificate> certs;
     
     private Collection<Certificate> timestampCerts;
 

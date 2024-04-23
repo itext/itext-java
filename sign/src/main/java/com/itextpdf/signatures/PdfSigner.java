@@ -305,6 +305,15 @@ public class PdfSigner {
         this.appearance.setSignDate(this.signDate);
     }
 
+    /**
+     * Initialize new {@link PdfDocument} instance by using provided parameters.
+     *
+     * @param reader {@link PdfReader} to be used as a reader in the new document
+     * @param writer {@link PdfWriter} to be used as a writer in the new document
+     * @param properties {@link StampingProperties} to be provided in the new document
+     *
+     * @return new {@link PdfDocument} instance
+     */
     protected PdfDocument initDocument(PdfReader reader, PdfWriter writer, StampingProperties properties) {
         return new PdfAAgnosticPdfDocument(reader, writer, properties);
     }
@@ -1056,6 +1065,11 @@ public class PdfSigner {
         return crlBytes.size() == 0 ? null : crlBytes;
     }
 
+    /**
+     * Add developer extension to the current {@link PdfDocument}.
+     *
+     * @param extension {@link PdfDeveloperExtension} to be added
+     */
     protected void addDeveloperExtension(PdfDeveloperExtension extension) {
         document.getCatalog().addDeveloperExtension(extension);
     }
@@ -1428,6 +1442,11 @@ public class PdfSigner {
         types.add(reference);
     }
 
+    /**
+     * Check if current document instance already contains certification or approval signatures.
+     *
+     * @return {@code true} if document contains certification or approval signatures, {@code false} otherwise
+     */
     protected boolean documentContainsCertificationOrApprovalSignatures() {
         boolean containsCertificationOrApprovalSignature = false;
 
@@ -1506,7 +1525,7 @@ public class PdfSigner {
                 }
 
                 List<PdfWidgetAnnotation> widgets = field.getWidgets();
-                if (widgets.size() > 0) {
+                if (!widgets.isEmpty()) {
                     PdfWidgetAnnotation widget = widgets.get(0);
                     setPageRect(getWidgetRectangle(widget));
                     setPageNumber(getWidgetPageNumber(widget));

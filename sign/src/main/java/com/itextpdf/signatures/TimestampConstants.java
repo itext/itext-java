@@ -22,8 +22,10 @@
  */
 package com.itextpdf.signatures;
 
+/**
+ * Timestamp constants util class for internal usage only.
+ */
 public class TimestampConstants {
-
     /**
      * The timestamp which is returned in case the signed document doesn't contain timestamp.
      * The constant's value is different in Java and .NET.

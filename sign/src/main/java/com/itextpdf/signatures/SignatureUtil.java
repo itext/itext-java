@@ -155,6 +155,13 @@ public class SignatureUtil {
         }
     }
 
+    /**
+     * Get {@link PdfSignature} dictionary based on the provided name.
+     *
+     * @param name signature name
+     *
+     * @return {@link PdfSignature} instance corresponding to the provided name. {@code null} otherwise
+     */
     public PdfSignature getSignature(String name) {
         PdfDictionary sigDict = getSignatureDictionary(name);
         return sigDict != null
@@ -244,11 +251,23 @@ public class SignatureUtil {
         return sigs;
     }
 
+    /**
+     * Get the amount of signed document revisions.
+     *
+     * @return {@code int} amount of signed document revisions
+     */
     public int getTotalRevisions() {
         getSignatureNames();
         return totalRevisions;
     }
 
+    /**
+     * Get signed document revision number, which corresponds to the provided signature name.
+     *
+     * @param field signature name
+     *
+     * @return {@code int} revision number
+     */
     public int getRevision(String field) {
         getSignatureNames();
         field = getTranslatedFieldName(field);
@@ -258,6 +277,13 @@ public class SignatureUtil {
         return sigNames.get(field)[1];
     }
 
+    /**
+     * Get field name, translated using XFA, if any present in the document.
+     *
+     * @param name field name to be translated
+     *
+     * @return translated field name if XFA is present, original name otherwise
+     */
     public String getTranslatedFieldName(String name) {
         if (acroForm != null && acroForm.getXfaForm().isXfaPresent()) {
             String namex = acroForm.getXfaForm().findFieldName(name);
@@ -349,7 +375,7 @@ public class SignatureUtil {
             sorter.add(new Object[]{entry.getKey(), new int[]{length, 0}});
         }
         Collections.sort(sorter, new SorterComparator());
-        if (sorter.size() > 0) {
+        if (!sorter.isEmpty()) {
             if (((int[]) sorter.get(sorter.size() - 1)[1])[0] == document.getReader().getFileLength()) {
                 totalRevisions = sorter.size();
             } else {
