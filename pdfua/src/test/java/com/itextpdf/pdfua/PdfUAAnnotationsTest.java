@@ -90,7 +90,7 @@ import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator;
+import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -830,7 +830,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
         AssertUtil.doesNotThrow(() -> pdfDoc.close());
         // VeraPdf complains about the fact that PrinterMark annotation isn't wrapped by Annot tag.
         // But in that test we don't put PrinterMark annot in tag structure at all.
-        Assert.assertNotNull(new VeraPdfValidator().validate(outPdf));
+        Assert.assertNotNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
     private PdfTextAnnotation createRichTextAnnotation() {
