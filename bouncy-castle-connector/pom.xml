@@ -26,11 +26,11 @@
       <exclusions>
         <exclusion>
           <groupId>org.bouncycastle</groupId>
-          <artifactId>bcpkix-jdk18on</artifactId>
+          <artifactId>bcpkix-jdk15to18<!--Different version is needed because of METAF-INF collisions in bc--></artifactId>
         </exclusion>
         <exclusion>
           <groupId>org.bouncycastle</groupId>
-          <artifactId>bcprov-jdk18on</artifactId>
+          <artifactId>bcprov-jdk15to18<!--Different version is needed because of METAF-INF collisions in bc--></artifactId>
         </exclusion>
       </exclusions>
       <optional>true</optional>
