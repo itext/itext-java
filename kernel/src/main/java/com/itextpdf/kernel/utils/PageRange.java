@@ -38,7 +38,7 @@ public class PageRange {
     private static final Pattern SEQUENCE_PATTERN = Pattern.compile("(\\d+)-(\\d+)?");
     private static final Pattern SINGLE_PAGE_PATTERN = Pattern.compile("(\\d+)");
 
-    private List<IPageRangePart> sequences = new ArrayList<>();
+    private final List<IPageRangePart> sequences = new ArrayList<>();
 
     /**
      * Constructs an empty {@link PageRange} instance.
@@ -202,18 +202,38 @@ public class PageRange {
 
         //public List<Integer> getAllPages();
 
+        /**
+         * Gets the list of pages that have been added to the range part so far.
+         *
+         * @param nbPages number of pages of the document to get the pages,
+         *                to list only the pages eligible for this document
+         *
+         * @return the list containing page numbers added to the range part matching this document
+         */
         public List<Integer> getAllPagesInRange(int nbPages);
 
+        /**
+         * Checks if a given page is present in the range part built so far.
+         *
+         * @param pageNumber the page number to check
+         *
+         * @return <code>true</code> if the page is present in this range, <code>false</code> otherwise
+         */
         public boolean isPageInRange(int pageNumber);
     }
 
     /**
-     * Class for range part containing a single page
+     * Class for range part containing a single page.
      */
     public static class PageRangePartSingle implements IPageRangePart {
 
         private final int page;
 
+        /**
+         * Creates new {@link PageRangePartSingle} instance.
+         *
+         * @param page a single page for a range part
+         */
         public PageRangePartSingle(int page) {
             this.page = page;
         }
@@ -256,13 +276,19 @@ public class PageRange {
 
     /**
      * Class for range part containing a range of pages represented by a start
-     * and an end page
+     * and an end page.
      */
     public static class PageRangePartSequence implements IPageRangePart {
 
         private final int start;
         private final int end;
 
+        /**
+         * Creates new {@link PageRangePartSequence} instance.
+         *
+         * @param start the number of the first page in a range part
+         * @param end   the number of the last page in a range part
+         */
         public PageRangePartSequence(int start, int end) {
             this.start = start;
             this.end = end;
@@ -306,12 +332,17 @@ public class PageRange {
 
     /**
      * Class for range part containing a range of pages for all pages after a
-     * given start page
+     * given start page.
      */
     public static class PageRangePartAfter implements IPageRangePart {
 
         private final int start;
 
+        /**
+         * Creates new {@link PageRangePartAfter} instance.
+         *
+         * @param start the number of the first page in a range part
+         */
         public PageRangePartAfter(int start) {
             this.start = start;
         }
@@ -421,6 +452,12 @@ public class PageRange {
 
         private final List<IPageRangePart> conditions = new ArrayList<>();
 
+        /**
+         * Creates new {@link PageRangePartAnd} instance.
+         *
+         * @param conditions {@link IPageRangePart} conditions to combine several range parts,
+         *                   e.g. to configure odd pages between page 19 and 25
+         */
         public PageRangePartAnd(IPageRangePart... conditions) {
             this.conditions.addAll(Arrays.asList(conditions));
         }

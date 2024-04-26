@@ -39,6 +39,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Helper class to split the document based on some condition.
+ */
 public class PdfSplitter {
 
     private PdfDocument pdfDocument;
@@ -219,6 +222,11 @@ public class PdfSplitter {
         return extractPageRanges(Collections.singletonList(pageRange)).get(0);
     }
 
+    /**
+     * Gets the document to be split.
+     *
+     * @return {@link PdfDocument} to be split.
+     */
     public PdfDocument getPdfDocument() {
         return pdfDocument;
     }
@@ -245,7 +253,16 @@ public class PdfSplitter {
         return newDocument;
     }
 
+    /**
+     * The event listener which is called when another document is ready.
+     */
     public interface IDocumentReadyListener {
+        /**
+         * Performs some action in case document is ready, e.g. closes the document.
+         *
+         * @param pdfDocument the current document created as a result of the original document split
+         * @param pageRange   original document page range corresponding to the current document
+         */
         void documentReady(PdfDocument pdfDocument, PageRange pageRange);
     }
 

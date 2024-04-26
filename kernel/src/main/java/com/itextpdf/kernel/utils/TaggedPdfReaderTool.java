@@ -68,6 +68,7 @@ public class TaggedPdfReaderTool {
 
     /**
      * Constructs a {@link TaggedPdfReaderTool} via a given {@link PdfDocument}.
+     *
      * @param document the document to read tag structure from
      */
     public TaggedPdfReaderTool(PdfDocument document) {
@@ -77,8 +78,9 @@ public class TaggedPdfReaderTool {
     /**
      * Checks if a character value should be escaped/unescaped.
      *
-     * @param    c    a character value
-     * @return true if it's OK to escape or unescape this value
+     * @param c a character value
+     *
+     * @return true if it's OK to escape or unescape this value.
      */
     public static boolean isValidCharacterValue(int c) {
         return (c == 0x9 || c == 0xA || c == 0xD
@@ -132,6 +134,11 @@ public class TaggedPdfReaderTool {
         return this;
     }
 
+    /**
+     * Inspect the children of the StructTreeRoot.
+     *
+     * @param kids list of the direct kids of the StructTreeRoot
+     */
     protected void inspectKids(List<IStructureNode> kids) {
         if (kids == null)
             return;
@@ -141,6 +148,11 @@ public class TaggedPdfReaderTool {
         }
     }
 
+    /**
+     * Inspect the child of the StructTreeRoot.
+     *
+     * @param kid the direct kid of the StructTreeRoot
+     */
     protected void inspectKid(IStructureNode kid) {
         try {
             if (kid instanceof PdfStructElem) {
@@ -177,6 +189,11 @@ public class TaggedPdfReaderTool {
         }
     }
 
+    /**
+     * Inspects attributes dictionary of the StructTreeRoot child.
+     *
+     * @param kid the direct kid of the StructTreeRoot
+     */
     protected void inspectAttributes(PdfStructElem kid) {
         PdfObject attrObj = kid.getAttributes(false);
 
@@ -202,6 +219,11 @@ public class TaggedPdfReaderTool {
         }
     }
 
+    /**
+     * Parses tag of the Marked Content Reference (MCR) kid of the StructTreeRoot.
+     *
+     * @param kid the direct {@link PdfMcr} kid of the StructTreeRoot
+     */
     protected void parseTag(PdfMcr kid) {
         int mcid = kid.getMcid();
         PdfDictionary pageDic = kid.getPageObject();
@@ -236,6 +258,13 @@ public class TaggedPdfReaderTool {
         }
     }
 
+    /**
+     * Fixes specified tag name to be valid XML tag.
+     *
+     * @param tag tag name to fix
+     *
+     * @return fixed tag name.
+     */
     protected static String fixTagName(String tag) {
         StringBuilder sb = new StringBuilder();
         for (int k = 0; k < tag.length(); ++k) {

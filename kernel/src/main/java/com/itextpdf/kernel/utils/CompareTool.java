@@ -147,6 +147,9 @@ public class CompareTool {
     private String gsExec;
     private String compareExec;
 
+    /**
+     * Create new {@link CompareTool} instance.
+     */
     public CompareTool() {
     }
 
@@ -1520,6 +1523,16 @@ public class CompareTool {
         return null;
     }
 
+    /**
+     * Compare PDF objects.
+     *
+     * @param outObj        out object corresponding to the output file, which is to be compared with cmp object
+     * @param cmpObj        cmp object corresponding to the cmp-file, which is to be compared with out object
+     * @param currentPath   current objects {@link ObjectPath} path
+     * @param compareResult {@link CompareResult} for the results of the comparison of the two documents
+     *
+     * @return true if objects are equal, false otherwise.
+     */
     protected boolean compareObjects(PdfObject outObj, PdfObject cmpObj, ObjectPath currentPath, CompareResult compareResult) {
         PdfObject outDirectObj = null;
         PdfObject cmpDirectObj = null;
@@ -2048,10 +2061,21 @@ public class CompareTool {
             XmlUtils.writeXmlDocToStream(xmlReport, stream);
         }
 
+        /**
+         * Checks whether maximum number of difference messages to be handled by this CompareResult is reached.
+         *
+         * @return true if limit of difference messages is reached, false otherwise.
+         */
         protected boolean isMessageLimitReached() {
             return differences.size() >= messageLimit;
         }
 
+        /**
+         * Adds an error message for the {@link ObjectPath}.
+         *
+         * @param path    {@link ObjectPath} for the two corresponding objects in the compared documents
+         * @param message an error message
+         */
         protected void addError(ObjectPath path, String message) {
             if (differences.size() < messageLimit) {
                 differences.put(new ObjectPath(path), message);

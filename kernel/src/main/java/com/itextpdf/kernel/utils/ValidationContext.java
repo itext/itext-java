@@ -35,23 +35,50 @@ public class ValidationContext {
     private PdfDocument PdfDocument = null;
     private Collection<PdfFont> fonts = null;
 
+    /**
+     * Creates new {@link ValidationContext} instance.
+     */
     public ValidationContext() {
     }
 
+    /**
+     * Sets {@link PdfDocument} for this {@link ValidationContext} instance.
+     *
+     * @param pdfDocument document to validate.
+     *
+     * @return this {@link ValidationContext} instance.
+     */
     public ValidationContext withPdfDocument(PdfDocument pdfDocument) {
         this.PdfDocument = pdfDocument;
         return this;
     }
 
+    /**
+     * Sets fonts for this {@link ValidationContext} instance.
+     *
+     * @param fonts collection of the {@link PdfFont} fonts to validate.
+     *
+     * @return this {@link ValidationContext} instance.
+     */
     public ValidationContext withFonts(Collection<PdfFont> fonts) {
         this.fonts = fonts;
         return this;
     }
 
+    /**
+     * Gets {@link PdfDocument} related to this {@link ValidationContext}.
+     *
+     * @return {@link PdfDocument} document to validate.
+     */
     public PdfDocument getPdfDocument() {
         return PdfDocument;
     }
 
+    /**
+     * Gets fonts related to this {@link ValidationContext}.
+     *
+     * @return fonts to validate.
+     */
     public Collection<PdfFont> getFonts() {
         return fonts;
     }
