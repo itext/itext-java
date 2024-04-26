@@ -74,7 +74,6 @@ import com.itextpdf.layout.properties.ListNumberingType;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -672,7 +671,6 @@ public class PdfUA2Test extends ExtendedITextTest {
             pdfDocument.getCatalog().setViewerPreferences(new PdfViewerPreferences().setDisplayDocTitle(true));
             pdfDocument.getCatalog().setLang(new PdfString("en-US"));
         }
-        Assert.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -688,7 +686,6 @@ public class PdfUA2Test extends ExtendedITextTest {
             PdfDocumentInfo info = pdfDocument.getDocumentInfo();
             info.setTitle("PdfUA2 Title");
         }
-        Assert.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -703,7 +700,6 @@ public class PdfUA2Test extends ExtendedITextTest {
             PdfDocumentInfo info = pdfDocument.getDocumentInfo();
             info.setTitle("PdfUA2 Title");
         }
-        Assert.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -732,7 +728,6 @@ public class PdfUA2Test extends ExtendedITextTest {
             ((PdfDictionary) spec.getPdfObject()).remove(PdfName.Desc);
             pdfDocument.addFileAttachment("specificname", spec);
         }
-        Assert.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -867,7 +862,6 @@ public class PdfUA2Test extends ExtendedITextTest {
     }
 
     private void compareAndValidate(String outPdf, String cmpPdf) throws IOException, InterruptedException {
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
         String result = new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_");
         if (result != null) {
             fail(result);

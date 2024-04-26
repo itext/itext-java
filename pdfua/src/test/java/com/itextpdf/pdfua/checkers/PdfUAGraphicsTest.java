@@ -50,7 +50,6 @@ import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator;// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -220,7 +219,6 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
         img.getAccessibilityProperties().setAlternateDescription("Alternative description");
         document.add(img);
         document.close();
-        Assert.assertNull(new VeraPdfValidator().validate(OUTPUT_FILE));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
         Assert.assertNull(new CompareTool().compareByContent(OUTPUT_FILE,
                 SOURCE_FOLDER + "cmp_imageWithValidAlternativeDescription_OK.pdf",
                 DESTINATION_FOLDER, "diff_"));
@@ -236,7 +234,6 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
         img.getAccessibilityProperties().setActualText("Actual text");
         document.add(img);
         document.close();
-        Assert.assertNull(new VeraPdfValidator().validate(OUTPUT_FILE));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
         Assert.assertNull(
                 new CompareTool().compareByContent(OUTPUT_FILE, SOURCE_FOLDER + "cmp_imageWithValidActualText_OK.pdf",
                         DESTINATION_FOLDER, "diff_"));
@@ -264,7 +261,6 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
 
         document.add(imgWithCaption);
         document.close();
-        Assert.assertNull(new VeraPdfValidator().validate(OUTPUT_FILE)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
         Assert.assertNull(
                 new CompareTool().compareByContent(OUTPUT_FILE, SOURCE_FOLDER + "cmp_imageWithCaption_OK.pdf",
                         DESTINATION_FOLDER, "diff_"));
@@ -351,7 +347,6 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
         canvas.closeTag();
 
         pdfDoc.close();
-        Assert.assertNull(new VeraPdfValidator().validate(OUTPUT_FILE)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
         new CompareTool().compareByContent(OUTPUT_FILE, SOURCE_FOLDER + "cmp_imageDirectlyOnCanvas_OK.pdf",
                 DESTINATION_FOLDER, "diff_");
     }

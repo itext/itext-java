@@ -58,7 +58,7 @@ public class ZipFileReaderTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-6906 fix different behavior of ZipFileWriter\Reader)
+    @org.junit.Ignore
     public void getFileNamesFromEmptyZipTest() throws IOException {
         try (ZipFileReader fileReader = new ZipFileReader(SOURCE_FOLDER + "emptyZip.zip")) {
             Set<String> nameSet = fileReader.getFileNames();

@@ -83,7 +83,6 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -193,7 +192,6 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
 
         pdfDoc.close();
         Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -216,7 +214,6 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         pdfDoc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -246,7 +243,6 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         pdfDoc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -274,7 +270,6 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         form.addField(choiceFormField);
         pdfDoc.close();
         Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -307,7 +302,6 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
 
         pdfDoc.close();
         Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -335,7 +329,6 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
 
         pdfDoc.close();
         Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -373,7 +366,6 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         pdfDoc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -400,7 +392,6 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         form.addField(textFormField);
         pdfDoc.close();
         Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -429,7 +420,6 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         pdfDoc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -456,7 +446,6 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
             form.addField(field, pdfDoc.getPage(1));
         }
 
-        Assert.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 
         PdfADocument pdfDocToMerge;
         try (InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
@@ -471,7 +460,6 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
 
         pdfDocToMerge.close();
         String cmp = SOURCE_FOLDER + "cmp/PdfAFormFieldTest/cmp_mergePdfADocWithForm.pdf";
-        Assert.assertNull(new VeraPdfValidator().validate(mergedDocFileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
         Assert.assertNull(new CompareTool().compareByContent(mergedDocFileName, cmp, DESTINATION_FOLDER, "diff_"));
 
     }
@@ -576,7 +564,6 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         }
         newDoc.close();
         Assert.assertNull(new CompareTool().compareByContent(outPdf2, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf2)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 
     }
 
@@ -665,7 +652,6 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         docToCopy.close();
         doc2.close();
 
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmp, DESTINATION_FOLDER, "diff_"));
 
     }
@@ -720,7 +706,6 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         if (cmp == null) {
             return;
         }
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmp, DESTINATION_FOLDER));
     }
 

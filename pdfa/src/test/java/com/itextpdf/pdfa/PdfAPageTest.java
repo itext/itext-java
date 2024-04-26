@@ -38,7 +38,6 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -89,7 +88,6 @@ public class PdfAPageTest extends ExtendedITextTest {
         // During the closing event was called on each document page
         Assert.assertEquals(pageCount, eventHandler.getCounter());
 
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -119,7 +117,6 @@ public class PdfAPageTest extends ExtendedITextTest {
 
         Assert.assertEquals(pageCount, eventHandler.getCounter());
 
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -147,7 +144,6 @@ public class PdfAPageTest extends ExtendedITextTest {
 
         Assert.assertEquals(pageCount, eventHandler.getCounter());
 
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -175,7 +171,6 @@ public class PdfAPageTest extends ExtendedITextTest {
 
         Assert.assertEquals(pageCount, eventHandler.getCounter());
 
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -205,7 +200,6 @@ public class PdfAPageTest extends ExtendedITextTest {
 
         Assert.assertEquals(pageCount, eventHandler.getCounter());
 
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     static class EndPageEventHandler implements IEventHandler {
