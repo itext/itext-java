@@ -1,6 +1,0 @@
-[{
-  "condition": {
-    "typeReachable": "com.itextpdf.forms.fields.merging.OnDuplicateFormFieldNameStrategy"
-  },
-  "name":"com.itextpdf.forms.util.RegisterDefaultDiContainer"
-}]
