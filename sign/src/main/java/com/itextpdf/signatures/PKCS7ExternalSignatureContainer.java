@@ -68,8 +68,11 @@ public class PKCS7ExternalSignatureContainer implements IExternalSignatureContai
     /**
      * {@inheritDoc}
      *
+     * @param data {@inheritDoc}
+     *
      * @return {@inheritDoc}
-     * @throws {@inheritDoc}
+     *
+     * @throws GeneralSecurityException {@inheritDoc}
      */
     @Override
     public byte[] sign(InputStream data) throws GeneralSecurityException {
@@ -119,7 +122,7 @@ public class PKCS7ExternalSignatureContainer implements IExternalSignatureContai
     /**
      * {@inheritDoc}
      *
-     * @return {@inheritDoc}
+     * @param signDic {@inheritDoc}
      */
     @Override
     public void modifySigningDictionary(PdfDictionary signDic) {
