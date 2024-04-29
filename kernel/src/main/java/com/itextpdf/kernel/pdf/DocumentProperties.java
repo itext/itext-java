@@ -58,4 +58,13 @@ public class DocumentProperties {
         this.metaInfo = metaInfo;
         return this;
     }
+
+    /**
+     * Checks if the document event counting meta info was already set.
+     *
+     * @return true if the document event counting meta info is set, false otherwise.
+     */
+    public boolean isEventCountingMetaInfoSet() {
+        return this.metaInfo != null;
+    }
 }

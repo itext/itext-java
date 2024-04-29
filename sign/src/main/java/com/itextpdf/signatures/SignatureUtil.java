@@ -37,8 +37,8 @@ import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDate;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfIndirectReference;
 import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfNull;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfString;
@@ -300,7 +300,7 @@ public class SignatureUtil {
         }
         try {
             ContentsChecker signatureReader = new ContentsChecker(
-                    document.getReader().getSafeFile().createSourceView());
+                    document.getReader().getSafeFile().createSourceView(), document);
             return signatureReader.checkWhetherSignatureCoversWholeDocument(acroForm.getField(name));
         } catch (IOException e) {
             throw new PdfException(e);
@@ -377,8 +377,9 @@ public class SignatureUtil {
 
     private static class ContentsChecker extends PdfReader {
 
-        private long contentsStart;
-        private long contentsEnd;
+        public static final int OBJECT_HEADER_OFFSET = 6;
+        private long rangeExclusionStart;
+        private long rangeExlusionEnd;
 
         private int currentLevel = 0;
         private int contentsLevel = 1;
@@ -387,8 +388,9 @@ public class SignatureUtil {
         private boolean rangeIsCorrect = false;
 
 
-        public ContentsChecker(IRandomAccessSource byteSource) throws IOException {
+        public ContentsChecker(IRandomAccessSource byteSource, PdfDocument doc ) throws IOException {
             super(byteSource, null);
+            pdfDocument = doc;
         }
 
         public boolean checkWhetherSignatureCoversWholeDocument(PdfFormField signatureField) {
@@ -400,8 +402,8 @@ public class SignatureUtil {
                 return false;
             }
 
-            contentsStart = byteRange[1];
-            contentsEnd = byteRange[2];
+            rangeExclusionStart = byteRange[1];
+            rangeExlusionEnd = byteRange[2];
 
             long signatureOffset;
             if (null != signature.getIndirectReference()) {
@@ -431,6 +433,7 @@ public class SignatureUtil {
         protected PdfDictionary readDictionary(boolean objStm) throws IOException {
             currentLevel++;
             PdfDictionary dic = new PdfDictionary();
+            int contentsEntryCount = 0;
             while (!rangeIsCorrect) {
                 tokens.nextValidToken();
                 if (tokens.getTokenType() == PdfTokenizer.TokenType.EndDic) {
@@ -444,17 +447,28 @@ public class SignatureUtil {
                 PdfName name = readPdfName(true);
                 PdfObject obj;
                 if (PdfName.Contents.equals(name) && searchInV && contentsLevel == currentLevel) {
-                    long startPosition = tokens.getPosition();
-                    int ch;
-                    int whiteSpacesCount = -1;
-                    do {
-                        ch = tokens.read();
-                        whiteSpacesCount++;
-                    } while (ch != -1 && PdfTokenizer.isWhitespace(ch));
-                    tokens.seek(startPosition);
+                    contentsEntryCount++;
+                    if (contentsEntryCount > 1) {
+                        rangeIsCorrect = false;
+                        break;
+                    }
+                    long contentsValueStart;
                     obj = readObject(true, objStm);
-                    long endPosition = tokens.getPosition();
-                    if (endPosition == contentsEnd && startPosition + whiteSpacesCount == contentsStart) {
+                    long contentsValueEnd;
+                    if (obj.isIndirectReference()) {
+                        PdfIndirectReference ref = (PdfIndirectReference) obj;
+                        contentsValueStart = ref.getOffset() + countDigits(ref.getObjNumber()) +
+                                countDigits(ref.getGenNumber()) + OBJECT_HEADER_OFFSET;
+                        contentsValueEnd = contentsValueStart +
+                                //*2 + 2 to account for hex encoding
+                                ((PdfString) ref.getRefersTo()).getValueBytes().length * 2L + 2L;
+
+                    } else {
+                        contentsValueEnd = tokens.getPosition();
+                        //*2 + 2 to account for hex encoding
+                        contentsValueStart = contentsValueEnd -(((PdfString)obj).getValueBytes().length * 2L + 2L);
+                    }
+                    if (contentsValueEnd == rangeExlusionEnd && contentsValueStart  == rangeExclusionStart) {
                         rangeIsCorrect = true;
                     }
                 } else if (PdfName.V.equals(name) && !searchInV && 1 == currentLevel) {
@@ -475,9 +489,18 @@ public class SignatureUtil {
             return dic;
         }
 
-        @Override
-        protected PdfObject readReference(boolean readAsDirect) {
-            return new PdfNull();
+        private static long countDigits(int number) {
+            int x = number;
+            if (x == 0) {
+                x = 1;
+            }
+            int l = 0;
+            while (x>0) {
+                x /= 10;
+                l++;
+            }
+            return l;
+
         }
     }
 }

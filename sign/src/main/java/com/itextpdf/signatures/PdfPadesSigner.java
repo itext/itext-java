@@ -70,6 +70,8 @@ public class PdfPadesSigner {
     private String temporaryDirectoryPath = null;
     private IExternalDigest externalDigest = new BouncyCastleDigest();
     private StampingProperties stampingProperties = new StampingProperties().useAppendMode();
+    private StampingProperties stampingPropertiesWithMetaInfo = (StampingProperties) new StampingProperties()
+            .useAppendMode().setEventCountingMetaInfo(new SignMetaInfo());
 
     private ByteArrayOutputStream tempOutputStream;
     private File tempFile;
@@ -173,7 +175,7 @@ public class PdfPadesSigner {
             performSignDetached(signerProperties, false, externalSignature, chain, tsaClient);
             try (InputStream inputStream = createInputStream();
                     PdfDocument pdfDocument = new PdfDocument(new PdfReader(inputStream),
-                            new PdfWriter(outputStream), new StampingProperties().useAppendMode())) {
+                            new PdfWriter(outputStream), stampingPropertiesWithMetaInfo)) {
                 performLtvVerification(pdfDocument, Collections.singletonList(signerProperties.getFieldName()),
                         LtvVerification.RevocationDataNecessity.REQUIRED_FOR_SIGNING_CERTIFICATE);
             }
@@ -218,7 +220,7 @@ public class PdfPadesSigner {
             performSignDetached(signerProperties, false, externalSignature, chain, tsaClient);
             try (InputStream inputStream = createInputStream();
                     PdfDocument pdfDocument = new PdfDocument(new PdfReader(inputStream),
-                            new PdfWriter(createOutputStream()), new StampingProperties().useAppendMode())) {
+                            new PdfWriter(createOutputStream()), stampingPropertiesWithMetaInfo)) {
                 performLtvVerification(pdfDocument, Collections.singletonList(signerProperties.getFieldName()),
                         LtvVerification.RevocationDataNecessity.REQUIRED_FOR_SIGNING_CERTIFICATE);
                 performTimestamping(pdfDocument, outputStream, tsaClient);
@@ -259,7 +261,7 @@ public class PdfPadesSigner {
             throws IOException, GeneralSecurityException {
         OutputStream documentOutputStream = tsaClient == null ? outputStream : createOutputStream();
         try (PdfDocument pdfDocument = new PdfDocument(reader, new PdfWriter(documentOutputStream),
-                new StampingProperties().useAppendMode())) {
+                stampingProperties)) {
             SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
             List<String> signatureNames = signatureUtil.getSignatureNames();
             if (signatureNames.isEmpty()) {
@@ -326,6 +328,9 @@ public class PdfPadesSigner {
      */
     public PdfPadesSigner setStampingProperties(StampingProperties stampingProperties) {
         this.stampingProperties = stampingProperties;
+        if (stampingProperties.isEventCountingMetaInfoSet()) {
+            this.stampingPropertiesWithMetaInfo = stampingProperties;
+        }
         return this;
     }
 

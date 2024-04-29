@@ -28,7 +28,6 @@ import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
-import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.PatternColor;
 import com.itextpdf.kernel.exceptions.PdfException;
@@ -53,6 +52,7 @@ import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
+import com.itextpdf.kernel.utils.checkers.FontCheckUtil;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.pdfa.logs.PdfAConformanceLogMessageConstant;
@@ -365,19 +365,10 @@ public class PdfA1Checker extends PdfAChecker {
      */
     @Override
     public void checkText(String text, PdfFont font) {
-        for (int i = 0; i < text.length(); ++i) {
-            int ch;
-            if (TextUtil.isSurrogatePair(text, i)) {
-                ch = TextUtil.convertToUtf32(text, i);
-                i++;
-            } else {
-                ch = text.charAt(i);
-            }
-
-            if (!font.containsGlyph(ch)) {
-                throw new PdfAConformanceException(
-                        PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS);
-            }
+        int index = FontCheckUtil.checkGlyphsOfText(text, font, new ACharacterChecker());
+        if (index != -1) {
+            throw new PdfAConformanceException(
+                    PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS);
         }
     }
 
@@ -831,5 +822,12 @@ public class PdfA1Checker extends PdfAChecker {
 
     private int getMaxDictionaryCapacity() {
         return 4095;
+    }
+
+    private static final class ACharacterChecker implements FontCheckUtil.CharacterChecker {
+        @Override
+        public boolean check(int ch, PdfFont font) {
+            return !font.containsGlyph(ch);
+        }
     }
 }

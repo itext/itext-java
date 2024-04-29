@@ -42,6 +42,10 @@ import com.itextpdf.commons.bouncycastle.asn1.x509.IDistributionPoint;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IDistributionPointName;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IGeneralName;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IGeneralNames;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.AbstractOCSPException;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateID;
+import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.signatures.logs.SignLogMessageConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,11 +58,14 @@ import java.nio.charset.StandardCharsets;
 import java.security.cert.CRL;
 import java.security.cert.CRLException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.security.cert.X509CRL;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.List;
 
 /**
  * This class contains a series of static methods that
@@ -94,17 +101,7 @@ public class CertificateUtil {
      * @return the String where you can check if the certificate was revoked
      */
     public static String getCRLURL(X509Certificate certificate) {
-        IASN1Primitive obj;
-        try {
-            obj = getExtensionValue(certificate, FACTORY.createExtension().getCRlDistributionPoints().getId());
-        } catch (IOException e) {
-            obj = null;
-        }
-        if (obj == null) {
-            return null;
-        }
-        ICRLDistPoint dist = FACTORY.createCRLDistPoint(obj);
-        IDistributionPoint[] dists = dist.getDistributionPoints();
+        IDistributionPoint[] dists = getDistributionPoints(certificate);
         for (IDistributionPoint p : dists) {
             IDistributionPointName distributionPointName = p.getDistributionPoint();
             if (FACTORY.createDistributionPointName().getFullName() != distributionPointName.getType()) {
@@ -125,6 +122,34 @@ public class CertificateUtil {
     }
 
     /**
+     * Gets the Distribution Point from the certificate by name specified in the Issuing Distribution Point from the
+     * Certificate Revocation List for a Certificate.
+     *
+     * @param certificate                  the certificate to retrieve Distribution Points
+     * @param issuingDistributionPointName distributionPointName retrieved from the IDP of the CRL
+     *
+     * @return distribution point withthe same name as specified in the IDP.
+     */
+    public static IDistributionPoint getDistributionPointByName(X509Certificate certificate,
+                                                                IDistributionPointName issuingDistributionPointName) {
+        IDistributionPoint[] distributionPoints = getDistributionPoints(certificate);
+        List<IGeneralName> issuingNames = Arrays.asList(
+                FACTORY.createGeneralNames(issuingDistributionPointName.getName()).getNames());
+        for (IDistributionPoint distributionPoint : distributionPoints) {
+            IDistributionPointName distributionPointName = distributionPoint.getDistributionPoint();
+            IGeneralNames generalNames = distributionPointName.isNull() ? distributionPoint.getCRLIssuer() :
+                    FACTORY.createGeneralNames(distributionPointName.getName());
+            IGeneralName[] names = generalNames.getNames();
+            for (IGeneralName name : names) {
+                if (issuingNames.contains(name)) {
+                    return distributionPoint;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * Gets the CRL object using a CRL URL.
      *
      * @param url the URL where the CRL is located
@@ -139,7 +164,21 @@ public class CertificateUtil {
         if (url == null) {
             return null;
         }
-        return SignUtils.parseCrlFromStream(new URL(url).openStream());
+        return CertificateUtil.parseCrlFromStream(new URL(url).openStream());
+    }
+
+    /**
+     * Parses a CRL from an InputStream.
+     *
+     * @param input the InputStream holding the unparsed CRL
+     *
+     * @return the parsed CRL object.
+     *
+     * @throws CertificateException thrown if there's no X509 implementation in the provider.
+     * @throws CRLException         thrown when encountering errors when parsing the CRL.
+     */
+    public static CRL parseCrlFromStream(InputStream input) throws CertificateException, CRLException {
+        return SignUtils.parseCrlFromStream(input);
     }
 
     /**
@@ -350,6 +389,60 @@ public class CertificateUtil {
     }
 
     /**
+     * Checks if the issuer of the provided certID (specified in the OCSP response) and provided issuer of the
+     * certificate in question matches, i.e. checks that issuerNameHash and issuerKeyHash fields of the certID
+     * is the hash of the issuer's name and public key.
+     *
+     * <p>
+     * SingleResp contains the basic information of the status of the certificate identified by the certID. The issuer
+     * name and serial number identify a unique certificate, so if serial numbers of the certificate in question and
+     * certID serial number are equals and issuers match, then SingleResp contains the information about the status of
+     * the certificate in question.
+     *
+     * @param certID     certID specified in the OCSP response
+     * @param issuerCert the issuer of the certificate in question
+     *
+     * @return true if the issuers are the same, false otherwise.
+     *
+     * @throws AbstractOperatorCreationException in case some digest calculator creation error.
+     * @throws AbstractOCSPException             in case some digest calculator creation error.
+     * @throws CertificateEncodingException      if an encoding error occurs.
+     * @throws IOException                       if input-output exception occurs.
+     */
+    public static boolean checkIfIssuersMatch(ICertificateID certID, X509Certificate issuerCert)
+            throws AbstractOperatorCreationException, AbstractOCSPException, CertificateEncodingException, IOException {
+        return SignUtils.checkIfIssuersMatch(certID, issuerCert);
+    }
+
+    /**
+     * Retrieves certificate extension value by its OID.
+     *
+     * @param certificate to get extension from
+     * @param id          extension OID to retrieve
+     *
+     * @return encoded extension value.
+     */
+    public static byte[] getExtensionValueByOid(X509Certificate certificate, String id) {
+        return SignUtils.getExtensionValueByOid(certificate, id);
+    }
+
+    /**
+     * Checks if an OCSP response is genuine.
+     *
+     * @param ocspResp      {@link IBasicOCSPResp} the OCSP response wrapper
+     * @param responderCert the responder certificate
+     *
+     * @return true if the OCSP response verifies against the responder certificate.
+     */
+    public static boolean isSignatureValid(IBasicOCSPResp ocspResp, Certificate responderCert) {
+        try {
+            return SignUtils.isSignatureValid(ocspResp, responderCert, FACTORY.getProviderName());
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
      * Checks if the certificate is signed by provided issuer certificate.
      *
      * @param subjectCertificate a certificate to check
@@ -368,33 +461,37 @@ public class CertificateUtil {
      *
      * @return true if the certificate is self-signed.
      */
-    static boolean isSelfSigned(X509Certificate certificate) {
+    public static boolean isSelfSigned(X509Certificate certificate) {
         return certificate.getIssuerX500Principal().equals(certificate.getSubjectX500Principal());
     }
 
     // helper methods
 
     /**
+     * Gets certificate extension value.
+     *
      * @param certificate the certificate from which we need the ExtensionValue
-     * @param oid         the Object Identifier value for the extension.
+     * @param oid         the Object Identifier value for the extension
      *
      * @return the extension value as an {@link IASN1Primitive} object.
      * 
-     * @throws IOException on processing exception
+     * @throws IOException on processing exception.
      */
     public static IASN1Primitive getExtensionValue(X509Certificate certificate, String oid) throws IOException {
         return getExtensionValueFromByteArray(SignUtils.getExtensionValueByOid(certificate, oid));
     }
 
     /**
+     * Gets CRL extension value.
+     *
      * @param crl the CRL from which we need the ExtensionValue
-     * @param oid the Object Identifier value for the extension.
+     * @param oid the Object Identifier value for the extension
      *
      * @return the extension value as an {@link IASN1Primitive} object.
      *
-     * @throws IOException on processing exception
+     * @throws IOException on processing exception.
      */
-    private static IASN1Primitive getExtensionValue(CRL crl, String oid) throws IOException {
+    public static IASN1Primitive getExtensionValue(CRL crl, String oid) throws IOException {
         return getExtensionValueFromByteArray(SignUtils.getExtensionValueByOid(crl, oid));
     }
 
@@ -477,5 +574,19 @@ public class CertificateUtil {
             }
         }
         return null;
+    }
+
+    private static IDistributionPoint[] getDistributionPoints(X509Certificate certificate) {
+        IASN1Primitive obj;
+        try {
+            obj = getExtensionValue(certificate, FACTORY.createExtension().getCRlDistributionPoints().getId());
+        } catch (IOException e) {
+            obj = null;
+        }
+        if (obj == null) {
+            return new IDistributionPoint[0];
+        }
+        ICRLDistPoint dist = FACTORY.createCRLDistPoint(obj);
+        return dist.getDistributionPoints();
     }
 }

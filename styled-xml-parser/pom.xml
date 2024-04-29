@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <groupId>com.itextpdf.android</groupId>
     <artifactId>root-android</artifactId>
-    <version>8.0.3</version>
+    <version>8.0.4</version>
   </parent>
+
   <artifactId>styled-xml-parser-android</artifactId>
+
   <name>iText - Styled XML Parser</name>
   <description>Styled XML parser is used by iText modules to parse HTML and XML</description>
   <url>https://itextpdf.com/</url>
+
   <dependencies>
     <dependency>
       <groupId>com.itextpdf.android</groupId>

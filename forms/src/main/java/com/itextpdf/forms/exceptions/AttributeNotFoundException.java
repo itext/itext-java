@@ -24,10 +24,15 @@ package com.itextpdf.forms.exceptions;
 
 import com.itextpdf.commons.exceptions.ITextException;
 
+/**
+ * This class represents iText exception that should be thrown when the attribute with given name
+ * is not found in the object attributes list.
+ */
 public class AttributeNotFoundException extends ITextException {
 
     /**
      * The exception thrown when the attribute with given name is not found in the object attributes list.
+     *
      * @param attribute the name of missing attribute.
      */
     public AttributeNotFoundException(String attribute) {

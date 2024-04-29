@@ -45,7 +45,6 @@ import java.util.Set;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -240,11 +239,20 @@ public class HighlightItemsTest extends ExtendedITextTest {
     }
 
     @Test
-    //TODO: DEVSIX-4784 (incorrect displaying of highlights)
-    public void invalidHighlightTest() throws IOException, InterruptedException {
-        String input = sourceFolder + "invalidHighlight.pdf";
-        String output = outputPath + "invalidHighlightOutput.pdf";
-        String cmp = sourceFolder + "cmp_invalidHighlight.pdf";
+    public void doubleMappingSimpleFontTest() throws IOException, InterruptedException {
+        String input = sourceFolder + "doubleMappingSimpleFont.pdf";
+        String output = outputPath + "doubleMappingSimpleFont.pdf";
+        String cmp = sourceFolder + "cmp_doubleMappingSimpleFont.pdf";
+        PdfWriter writer = CompareTool.createTestPdfWriter(output);
+        parseAndHighlight(input, writer, false);
+        Assert.assertNull(new CompareTool().compareByContent(output, cmp, outputPath));
+    }
+
+    @Test
+    public void doubleMappingSimpleFontTest2() throws IOException, InterruptedException {
+        String input = sourceFolder + "doubleMappingSimpleFont2.pdf";
+        String output = outputPath + "doubleMappingSimpleFont2.pdf";
+        String cmp = sourceFolder + "cmp_doubleMappingSimpleFont2.pdf";
         PdfWriter writer = CompareTool.createTestPdfWriter(output);
         parseAndHighlight(input, writer, true);
         Assert.assertNull(new CompareTool().compareByContent(output, cmp, outputPath));

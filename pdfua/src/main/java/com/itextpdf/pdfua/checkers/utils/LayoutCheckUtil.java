@@ -22,29 +22,52 @@
  */
 package com.itextpdf.pdfua.checkers.utils;
 
+import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.element.Image;
+import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.renderer.IRenderer;
+import com.itextpdf.pdfua.checkers.utils.tables.TableCheckUtil;
 
 /**
  * Utility class for delegating the layout checks to the correct checking logic.
  */
 public final class LayoutCheckUtil {
 
+    private final PdfUAValidationContext context;
+
     /**
      * Creates a new {@link LayoutCheckUtil} instance.
+     *
+     * @param context The validation context.
      */
-    private LayoutCheckUtil() {
-        // Empty constructor
+    public LayoutCheckUtil(PdfUAValidationContext context) {
+        this.context = context;
     }
 
     /**
-     * Checks if a layout element is valid against the PDF/UA specification.
+     * WARNING! This method is an artifact and currently does nothing.
+     * It is kept to ensure backward binary compatibility
      *
-     * @param layoutElement layout element to check
+     * @param rendererObj layout element to check
      */
-    public static void checkLayoutElements(Object layoutElement) {
-        if (layoutElement instanceof Image) {
-            GraphicsCheckUtil.checkLayoutImage((Image) layoutElement);
+    @Deprecated
+    public static void checkLayoutElements(Object rendererObj) {
+    }
+
+    /**
+     * Checks renderer for PDF UA compliance.
+     *
+     * @param rendererObj The renderer to check.
+     */
+    public void checkRenderer(Object rendererObj) {
+        if (rendererObj == null) {
             return;
+        }
+        IPropertyContainer layoutElement = ((IRenderer) rendererObj).getModelElement();
+        if (layoutElement instanceof Image) {
+            new GraphicsCheckUtil(context).checkLayoutElement((Image) layoutElement);
+        } else if (layoutElement instanceof Table) {
+            new TableCheckUtil(context).checkTable((Table) layoutElement);
         }
     }
 }

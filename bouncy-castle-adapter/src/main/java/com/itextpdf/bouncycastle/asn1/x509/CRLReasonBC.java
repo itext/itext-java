@@ -34,6 +34,7 @@ public class CRLReasonBC extends ASN1EncodableBC implements ICRLReason {
     private static final CRLReasonBC INSTANCE = new CRLReasonBC(null);
 
     private static final int KEY_COMPROMISE = CRLReason.keyCompromise;
+    private static final int REMOVE_FROM_CRL = CRLReason.removeFromCRL;
 
     /**
      * Creates new wrapper instance for {@link CRLReason}.
@@ -68,5 +69,13 @@ public class CRLReasonBC extends ASN1EncodableBC implements ICRLReason {
     @Override
     public int getKeyCompromise() {
         return KEY_COMPROMISE;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getRemoveFromCRL() {
+        return REMOVE_FROM_CRL;
     }
 }

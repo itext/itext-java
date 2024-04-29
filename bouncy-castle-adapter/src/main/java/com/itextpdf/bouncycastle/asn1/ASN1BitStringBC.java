@@ -55,4 +55,12 @@ public class ASN1BitStringBC extends ASN1PrimitiveBC implements IASN1BitString {
     public String getString() {
         return getASN1BitString().getString();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int intValue() {
+        return getASN1BitString().intValue();
+    }
 }

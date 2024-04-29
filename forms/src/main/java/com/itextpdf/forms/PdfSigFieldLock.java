@@ -45,8 +45,9 @@ public class PdfSigFieldLock extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Creates an instance of {@link PdfSigFieldLock}.
-     * @param dict The dictionary whose entries should be added to
-     *             the signature field lock dictionary.
+     *
+     * @param dict the dictionary whose entries should be added to
+     *             the signature field lock dictionary
      */
     public PdfSigFieldLock(PdfDictionary dict) {
         super(dict);
@@ -57,8 +58,10 @@ public class PdfSigFieldLock extends PdfObjectWrapper<PdfDictionary> {
      * Sets the permissions granted for the document when the corresponding signature
      * field is signed. See {@link PdfSigFieldLock.LockPermissions}
      * for getting more info.
-     * @param permissions The permissions granted for the document.
-     * @return This {@link PdfSigFieldLock} object.
+     *
+     * @param permissions the permissions granted for the document
+     *
+     * @return this {@link PdfSigFieldLock} object.
      */
     public PdfSigFieldLock setDocumentPermissions(LockPermissions permissions) {
         getPdfObject().put(PdfName.P, getLockPermission(permissions));
@@ -67,10 +70,12 @@ public class PdfSigFieldLock extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Sets signature lock for specific fields in the document.
-     * @param action Indicates the set of fields that should be locked after the actual
-     *               signing of the corresponding signature takes place.
-     * @param fields Names indicating the fields.
-     * @return This {@link PdfSigFieldLock} object.
+     *
+     * @param action indicates the set of fields that should be locked after the actual
+     *               signing of the corresponding signature takes place
+     * @param fields names indicating the fields
+     *
+     * @return this {@link PdfSigFieldLock} object.
      */
     public PdfSigFieldLock setFieldLock(LockAction action, String... fields) {
         PdfArray fieldsArray = new PdfArray();
@@ -82,6 +87,13 @@ public class PdfSigFieldLock extends PdfObjectWrapper<PdfDictionary> {
         return this;
     }
 
+    /**
+     * Returns the specified action of a signature field lock as {@link PdfName} value.
+     *
+     * @param action the action as {@link LockAction}
+     *
+     * @return the specified action of a signature field lock as {@link PdfName}.
+     */
     public static PdfName getLockActionValue(LockAction action) {
         switch (action) {
             case ALL:
@@ -95,6 +107,12 @@ public class PdfSigFieldLock extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
+    /**
+     * Returns the specified level of access permissions granted for the document as {@link PdfNumber} value.
+     *
+     * @param permissions the level of access permissions as {@link LockPermissions}
+     * @return the specified level of access permissions as {@link PdfNumber}.
+     */
     public static PdfNumber getLockPermission(LockPermissions permissions) {
         switch (permissions) {
             case NO_CHANGES_ALLOWED:

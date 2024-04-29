@@ -638,9 +638,9 @@ public class OcgPropertiesCopierTest extends ExtendedITextTest {
 
         Assert.assertNull(dDict.getAsArray(PdfName.Creator));
 
-        Assert.assertEquals("OCConfigName0", dDict.getAsString(PdfName.Name).toUnicodeString());
+        Assert.assertEquals("Name", dDict.getAsString(PdfName.Name).toUnicodeString());
 
-        Assert.assertNull(dDict.getAsName(PdfName.BaseState));
+        Assert.assertEquals(PdfName.ON, dDict.getAsName(PdfName.BaseState));
 
         PdfArray asArray = dDict.getAsArray(PdfName.AS);
         Assert.assertEquals(1, asArray.size());
@@ -648,9 +648,9 @@ public class OcgPropertiesCopierTest extends ExtendedITextTest {
         Assert.assertEquals(PdfName.Print, asArray.getAsDictionary(0).getAsArray(PdfName.Category).getAsName(0));
         Assert.assertEquals("noPrint1", asArray.getAsDictionary(0).getAsArray(PdfName.OCGs).getAsDictionary(0).getAsString(PdfName.Name).toUnicodeString());
 
-        Assert.assertNull(dDict.getAsName(PdfName.Intent));
+        Assert.assertEquals(PdfName.View, dDict.getAsName(PdfName.Intent));
 
-        Assert.assertNull(dDict.getAsName(PdfName.ListMode));
+        Assert.assertEquals(PdfName.VisiblePages, dDict.getAsName(PdfName.ListMode));
     }
 
     @Test
@@ -764,9 +764,9 @@ public class OcgPropertiesCopierTest extends ExtendedITextTest {
 
         Assert.assertNull(dDict.getAsArray(PdfName.Creator));
 
-        Assert.assertEquals("OCConfigName0", dDict.getAsString(PdfName.Name).toUnicodeString());
+        Assert.assertEquals("Name", dDict.getAsString(PdfName.Name).toUnicodeString());
 
-        Assert.assertNull(dDict.getAsName(PdfName.BaseState));
+        Assert.assertEquals(PdfName.ON, dDict.getAsName(PdfName.BaseState));
 
         PdfArray asArray = dDict.getAsArray(PdfName.AS);
         Assert.assertEquals(1, asArray.size());
@@ -776,9 +776,9 @@ public class OcgPropertiesCopierTest extends ExtendedITextTest {
         Assert.assertEquals("noPrint1", asArray.getAsDictionary(0).getAsArray(PdfName.OCGs).getAsDictionary(0).getAsString(PdfName.Name).toUnicodeString());
         Assert.assertEquals("from_noPrint1", asArray.getAsDictionary(0).getAsArray(PdfName.OCGs).getAsDictionary(1).getAsString(PdfName.Name).toUnicodeString());
 
-        Assert.assertNull(dDict.getAsName(PdfName.Intent));
+        Assert.assertEquals(PdfName.View, dDict.getAsName(PdfName.Intent));
 
-        Assert.assertNull(dDict.getAsName(PdfName.ListMode));
+        Assert.assertEquals(PdfName.VisiblePages, dDict.getAsName(PdfName.ListMode));
     }
 
     // Copy OCGs from different locations (OCMDs, annotations, content streams, xObjects) test block
@@ -1113,12 +1113,13 @@ public class OcgPropertiesCopierTest extends ExtendedITextTest {
 
                 pdfResource.makeIndirect(fromDocument);
                 PdfOCProperties ocProperties = fromDocument.getCatalog().getOCProperties(true);
+                PdfDictionary dDictionary = ocProperties.getPdfObject().getAsDictionary(PdfName.D);
                 // Creator (will be not copied)
-                ocProperties.getPdfObject().put(PdfName.Creator, new PdfString("CreatorName", PdfEncodings.UNICODE_BIG));
+                dDictionary.put(PdfName.Creator, new PdfString("CreatorName", PdfEncodings.UNICODE_BIG));
                 // Name (will be automatically changed)
-                ocProperties.getPdfObject().put(PdfName.Name, new PdfString("Name", PdfEncodings.UNICODE_BIG));
+                dDictionary.put(PdfName.Name, new PdfString("Name", PdfEncodings.UNICODE_BIG));
                 // BaseState (will be not copied)
-                ocProperties.getPdfObject().put(PdfName.BaseState, PdfName.OFF);
+                dDictionary.put(PdfName.BaseState, PdfName.ON);
                 // AS (will be automatically changed)
                 PdfArray asArray = new PdfArray();
                 PdfDictionary dict = new PdfDictionary();
@@ -1130,15 +1131,15 @@ public class OcgPropertiesCopierTest extends ExtendedITextTest {
                 ocgs.add(locked1.getPdfObject());
                 dict.put(PdfName.OCGs, ocgs);
                 asArray.add(dict);
-                ocProperties.getPdfObject().put(PdfName.AS, asArray);
+                dDictionary.put(PdfName.AS, asArray);
 
                 PdfLayer noPrint1 = new PdfLayer("noPrint1", fromDocument);
                 pdfResource.addProperties(noPrint1.getPdfObject());
                 noPrint1.setPrint("Print", false);
                 // Intent (will be not copied)
-                ocProperties.getPdfObject().put(PdfName.Intent, PdfName.Design);
+                dDictionary.put(PdfName.Intent, PdfName.View);
                 // ListMode (will be not copied)
-                ocProperties.getPdfObject().put(PdfName.ListMode, PdfName.VisiblePages);
+                dDictionary.put(PdfName.ListMode, PdfName.VisiblePages);
             }
             fromDocBytes = outputStream.toByteArray();
         }

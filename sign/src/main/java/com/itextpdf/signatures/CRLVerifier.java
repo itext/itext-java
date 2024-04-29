@@ -57,7 +57,7 @@ public class CRLVerifier extends RootStoreVerifier {
     }
 
     /**
-     * Verifies if a a valid CRL is found for the certificate.
+     * Verifies whether a valid CRL is found for the certificate.
      * If this method returns false, it doesn't mean the certificate isn't valid.
      * It means we couldn't verify it against any CRL that was available.
      * @param signCert	the certificate that needs to be checked
@@ -116,7 +116,7 @@ public class CRLVerifier extends RootStoreVerifier {
         }
         // We only check CRLs valid on the signing date for which the issuer matches
         if (crl.getIssuerX500Principal().equals(signCert.getIssuerX500Principal())
-                 && signDate.before(crl.getNextUpdate())) {
+                && signDate.before(crl.getNextUpdate())) {
             // the signing certificate may not be revoked
             if (isSignatureValid(crl, issuerCert) && crl.isRevoked(signCert)) {
                 throw new VerificationException(signCert, "The certificate has been revoked.");
@@ -128,14 +128,13 @@ public class CRLVerifier extends RootStoreVerifier {
 
     /**
      * Fetches a CRL for a specific certificate online (without further checking).
-     * @param signCert	the certificate
-     * @param issuerCert	its issuer
-     * @return	an X509CRL object
+     *
+     * @param signCert   the certificate
+     * @param issuerCert its issuer left for backwards compatibility
+     *
+     * @return an X509CRL object.
      */
     public X509CRL getCRL(X509Certificate signCert, X509Certificate issuerCert) {
-        if (issuerCert == null) {
-            issuerCert = signCert;
-        }
         try {
             // gets the URL from the certificate
             String crlurl = CertificateUtil.getCRLURL(signCert);

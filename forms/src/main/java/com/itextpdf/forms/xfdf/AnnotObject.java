@@ -36,7 +36,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents annotation, a child element of annots tag in Xfdf document structure. For more details see part 6.4 in Xfdf specification.
+ * Represents annotation, a child element of annots tag in Xfdf document structure.
+ * For more details see part 6.4 in Xfdf specification.
  */
 public class AnnotObject {
 
@@ -139,6 +140,9 @@ public class AnnotObject {
      */
     private PdfIndirectReference ref;
 
+    /**
+     * Creates an instance of {@link AnnotObject}.
+     */
     public AnnotObject() {
         this.attributes = new ArrayList<>();
     }
@@ -150,7 +154,7 @@ public class AnnotObject {
      * {@link XfdfConstants#SOUND}, {@link XfdfConstants#SQUARE}, {@link XfdfConstants#SQUIGGLY},
      * {@link XfdfConstants#STAMP}, {@link XfdfConstants#STRIKEOUT}, {@link XfdfConstants#TEXT}, {@link XfdfConstants#UNDERLINE}.
      *
-     * @return {@link String} value of the type of annotation
+     * @return {@link String} value of the type of annotation.
      */
     public String getName() {
         return name;
@@ -164,7 +168,8 @@ public class AnnotObject {
      * {@link XfdfConstants#STAMP}, {@link XfdfConstants#STRIKEOUT}, {@link XfdfConstants#TEXT}, {@link XfdfConstants#UNDERLINE}.
      *
      * @param name {@link String} value of the type of annotation
-     * @return {@link AnnotObject annotation object} with set name
+     *
+     * @return {@link AnnotObject annotation object} with set name.
      */
     public AnnotObject setName(String name) {
         this.name = name;
@@ -174,7 +179,7 @@ public class AnnotObject {
     /**
      * Gets a list of all attributes of the annotation.
      *
-     * @return {@link List list} containing all {@link AttributeObject attribute objects} of the annotation
+     * @return {@link List list} containing all {@link AttributeObject attribute objects} of the annotation.
      */
     public List<AttributeObject> getAttributes() {
         return attributes;
@@ -182,7 +187,9 @@ public class AnnotObject {
 
     /**
      * Finds the attribute by name in attributes list.
-     * @param name The name of the attribute to look for.
+     *
+     * @param name the name of the attribute to look for
+     *
      * @return {@link AttributeObject} with the given name, or null, if no object with this name was found.
      */
     public AttributeObject getAttribute(String name) {
@@ -196,8 +203,11 @@ public class AnnotObject {
 
     /**
      * Finds the attribute by name in attributes list and return its string value.
-     * @param name The name of the attribute to look for.
-     * @return the value of the {@link AttributeObject} with the given name, or null, if no object with this name was found.
+     *
+     * @param name the name of the attribute to look for
+     *
+     * @return the value of the {@link AttributeObject} with the given name,
+     * or null, if no object with this name was found.
      */
     public String getAttributeValue(String name) {
         for (AttributeObject attr : attributes) {
@@ -211,7 +221,7 @@ public class AnnotObject {
     /**
      * Gets the popup annotation, an inner element of the annotation element.
      *
-     * @return {@link AnnotObject} representing the inner popup annotation
+     * @return {@link AnnotObject} representing the inner popup annotation.
      */
     public AnnotObject getPopup() {
         return popup;
@@ -221,7 +231,8 @@ public class AnnotObject {
      * Sets the popup annotation, an inner element of the annotation element.
      *
      * @param popup {@link AnnotObject annotation object} representing inner popup annotation
-     * @return current {@link AnnotObject annotation object}
+     *
+     * @return current {@link AnnotObject annotation object}.
      */
     public AnnotObject setPopup(AnnotObject popup) {
         this.popup = popup;
@@ -231,7 +242,7 @@ public class AnnotObject {
     /**
      * Gets the boolean, indicating if annotation has an inner popup element.
      *
-     * @return true if annotation has an inner popup element, false otherwise
+     * @return true if annotation has an inner popup element, false otherwise.
      */
     public boolean isHasPopup() {
         return hasPopup;
@@ -241,7 +252,8 @@ public class AnnotObject {
      * Sets the boolean, indicating if annotation has inner popup element.
      *
      * @param hasPopup a boolean indicating if annotation has inner popup element
-     * @return current {@link AnnotObject annotation object}
+     *
+     * @return current {@link AnnotObject annotation object}.
      */
     public AnnotObject setHasPopup(boolean hasPopup) {
         this.hasPopup = hasPopup;
@@ -256,7 +268,7 @@ public class AnnotObject {
      * Content model: a string or a rich text string.
      * For more details see paragraph 6.5.4 in Xfdf document specification.
      *
-     * @return {@link PdfString} value of inner contents element of current annotation object
+     * @return {@link PdfString} value of inner contents element of current annotation object.
      */
     public PdfString getContents() {
         return contents;
@@ -266,7 +278,8 @@ public class AnnotObject {
      * Sets the string value of contents tag in Xfdf document structure.
      *
      * @param contents {@link PdfString string} value of inner contents element
-     * @return current {@link AnnotObject annotation object}
+     *
+     * @return current {@link AnnotObject annotation object}.
      */
     public AnnotObject setContents(PdfString contents) {
         this.contents = contents;
@@ -281,7 +294,7 @@ public class AnnotObject {
      * Content model: text string.
      * For more details see paragraph 6.5.5 in Xfdf document specification.
      *
-     * @return {@link PdfString} value of inner contents-richtext element of current annotation object
+     * @return {@link PdfString} value of inner contents-richtext element of current annotation object.
      */
     public PdfString getContentsRichText() {
         return contentsRichText;
@@ -291,7 +304,8 @@ public class AnnotObject {
      * Sets the string value of contents-richtext tag in xfdf document structure.
      *
      * @param contentsRichRext {@link PdfString rich text string} value of inner contents-richtext element
-     * @return current {@link AnnotObject annotation object}
+     *
+     * @return current {@link AnnotObject annotation object}.
      */
     public AnnotObject setContentsRichText(PdfString contentsRichRext) {
         this.contentsRichText = contentsRichRext;
@@ -302,7 +316,7 @@ public class AnnotObject {
      * Gets Action element, a child of OnActivation element of the link annotation.
      * Corresponds to the A key in the link annotation dictionary.
      *
-     * @return inner {@link ActionObject action object} of annotation object
+     * @return inner {@link ActionObject action object} of annotation object.
      */
     public ActionObject getAction() {
         return action;
@@ -313,7 +327,8 @@ public class AnnotObject {
      * Corresponds to the A key in the link annotation dictionary.
      *
      * @param action {@link ActionObject action object}, an inner element of annotation object
-     * @return current {@link AnnotObject annotation object}
+     *
+     * @return current {@link AnnotObject annotation object}.
      */
     public AnnotObject setAction(ActionObject action) {
         this.action = action;
@@ -322,6 +337,7 @@ public class AnnotObject {
 
     /**
      * Adds new {@link AttributeObject} to the list of annotation attributes.
+     *
      * @param attr attribute to be added.
      */
     public void addAttribute(AttributeObject attr) {
@@ -347,9 +363,10 @@ public class AnnotObject {
 
     /**
      * Adds new attribute by given name and value. If required attribute is present, value of the attribute can't be null.
-     * @param name {@link String} attribute name
+     *
+     * @param name        {@link String} attribute name
      * @param valueObject {@link PdfObject} attribute value
-     * @param required boolean indicating if the attribute is required
+     * @param required    boolean indicating if the attribute is required
      */
     void addAttribute(String name, PdfObject valueObject, boolean required) {
         if (valueObject == null) {
@@ -360,13 +377,13 @@ public class AnnotObject {
         }
         String valueString = null;
         if (valueObject.getType() == PdfObject.BOOLEAN) {
-           valueString = ((PdfBoolean)(valueObject)).getValue() ? "yes" : "no";
+            valueString = ((PdfBoolean) (valueObject)).getValue() ? "yes" : "no";
         } else if (valueObject.getType() == PdfObject.NAME) {
-            valueString = ((PdfName)(valueObject)).getValue();
+            valueString = ((PdfName) (valueObject)).getValue();
         } else if (valueObject.getType() == PdfObject.NUMBER) {
-            valueString = XfdfObjectUtils.convertFloatToString((float)((PdfNumber)(valueObject)).getValue());
+            valueString = XfdfObjectUtils.convertFloatToString((float) ((PdfNumber) (valueObject)).getValue());
         } else if (valueObject.getType() == PdfObject.STRING) {
-            valueString = ((PdfString)(valueObject)).getValue();
+            valueString = ((PdfString) (valueObject)).getValue();
         }
 
         attributes.add(new AttributeObject(name, valueString));
@@ -398,7 +415,8 @@ public class AnnotObject {
      * Corresponds to the Dest key in link annotation dictionary.
      *
      * @param destination {@link DestObject destination object}, an inner element of annotation object
-     * @return current {@link AnnotObject annotation object}
+     *
+     * @return current {@link AnnotObject annotation object}.
      */
     public AnnotObject setDestination(DestObject destination) {
         this.destination = destination;
@@ -411,7 +429,7 @@ public class AnnotObject {
      * Content model: Base64 encoded string.
      * For more details see paragraph 6.5.1 in Xfdf document specification.
      *
-     * @return {@link String} value of inner appearance element
+     * @return {@link String} value of inner appearance element.
      */
     public String getAppearance() {
         return appearance;
@@ -423,7 +441,8 @@ public class AnnotObject {
      * Content model: Base64 encoded string.
      *
      * @param appearance {@link String} value of inner appearance element of annotation object
-     * @return current {@link AnnotObject annotation object}
+     *
+     * @return current {@link AnnotObject annotation object}.
      */
     public AnnotObject setAppearance(String appearance) {
         this.appearance = appearance;
@@ -436,7 +455,7 @@ public class AnnotObject {
      * Content model: text string.
      * For more details see paragraph 6.5.7 in Xfdf document specification.
      *
-     * @return {@link String} value of inner deafultappearance element
+     * @return {@link String} value of inner default appearance element.
      */
     public String getDefaultAppearance() {
         return defaultAppearance;
@@ -448,7 +467,8 @@ public class AnnotObject {
      * Content model: text string.
      *
      * @param defaultAppearance {@link String} value of inner defaultappearance element of annotation object
-     * @return current {@link AnnotObject annotation object}
+     *
+     * @return current {@link AnnotObject annotation object}.
      */
     public AnnotObject setDefaultAppearance(String defaultAppearance) {
         this.defaultAppearance = defaultAppearance;
@@ -461,7 +481,7 @@ public class AnnotObject {
      * Content model : a text string.
      * For more details see paragraph 6.5.9 in Xfdf document specification.
      *
-     * @return {@link String} value of inner defaultstyle element
+     * @return {@link String} value of inner defaultstyle element.
      */
     public String getDefaultStyle() {
         return defaultStyle;
@@ -473,7 +493,8 @@ public class AnnotObject {
      * Content model : a text string.
      *
      * @param defaultStyle {@link String} value of inner defaultstyle element of annotation object
-     * @return current {@link AnnotObject annotation object}
+     *
+     * @return current {@link AnnotObject annotation object}.
      */
     public AnnotObject setDefaultStyle(String defaultStyle) {
         this.defaultStyle = defaultStyle;
@@ -485,7 +506,7 @@ public class AnnotObject {
      * Corresponds to the Border key in the common annotation dictionary.
      * For more details see paragraph 6.5.3 in Xfdf document specification.
      *
-     * @return inner {@link BorderStyleAltObject BorderStyleAlt object}
+     * @return inner {@link BorderStyleAltObject BorderStyleAlt object}.
      */
     public BorderStyleAltObject getBorderStyleAlt() {
         return borderStyleAlt;
@@ -496,7 +517,8 @@ public class AnnotObject {
      * Corresponds to the Border key in the common annotation dictionary.
      *
      * @param borderStyleAlt inner {@link BorderStyleAltObject BorderStyleAlt object}
-     * @return current {@link AnnotObject annotation object}
+     *
+     * @return current {@link AnnotObject annotation object}.
      */
     public AnnotObject setBorderStyleAlt(BorderStyleAltObject borderStyleAlt) {
         this.borderStyleAlt = borderStyleAlt;
@@ -508,7 +530,7 @@ public class AnnotObject {
      * Corresponds to the Vertices key in the polygon or polyline annotation dictionary.
      * For more details see paragraph 6.5.31 in Xfdf document specification.
      *
-     * @return {@link String} value of inner vertices element
+     * @return {@link String} value of inner vertices element.
      */
     public String getVertices() {
         return vertices;
@@ -519,7 +541,8 @@ public class AnnotObject {
      * Corresponds to the Vertices key in the polygon or polyline annotation dictionary.
      *
      * @param vertices {@link String} value of inner vertices element
-     * @return current {@link AnnotObject annotation object}
+     *
+     * @return current {@link AnnotObject annotation object}.
      */
     public AnnotObject setVertices(String vertices) {
         this.vertices = vertices;
@@ -528,6 +551,7 @@ public class AnnotObject {
 
     /**
      * Gets the reference to the source {@link PdfAnnotation}. Used for attaching popups in case of reading data from pdf file.
+     *
      * @return an {@link PdfIndirectReference} of the source annotation object.
      */
     public PdfIndirectReference getRef() {
@@ -536,7 +560,9 @@ public class AnnotObject {
 
     /**
      * Sets the reference to the source {@link PdfAnnotation}. Used for attaching popups in case of reading data from pdf file.
-     * @param ref {@link PdfIndirectReference} of the source annotation object.
+     *
+     * @param ref {@link PdfIndirectReference} of the source annotation object
+     *
      * @return this {@link AnnotObject} instance.
      */
     public AnnotObject setRef(PdfIndirectReference ref) {

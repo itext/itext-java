@@ -192,6 +192,7 @@ public class PdfCanvas {
     protected List<Integer> layerDepth;
 
     private Stack<Tuple2<PdfName, PdfDictionary>> tagStructureStack = new Stack<>();
+    protected boolean drawingOnPage = false;
 
     /**
      * Creates PdfCanvas from content stream of page, form XObject, pattern etc.
@@ -236,6 +237,7 @@ public class PdfCanvas {
             applyRotation(page);
             page.setPageRotationInverseMatrixWritten();
         }
+        this.drawingOnPage = true;
     }
 
     /**
@@ -721,7 +723,7 @@ public class PdfCanvas {
     public PdfCanvas showText(GlyphLine text, Iterator<GlyphLine.GlyphLinePart> iterator) {
         checkDefaultDeviceGrayBlackColor(getColorKeyForText());
         document.checkIsoConformance(currentGs, IsoKey.FONT_GLYPHS, null, contentStream);
-        document.checkIsoConformance(tagStructureStack, IsoKey.CANVAS_WRITING_CONTENT);
+        this.checkIsoConformanceWritingOnContent();
         PdfFont font;
         if ((font = currentGs.getFont()) == null) {
             throw new PdfException(
@@ -846,6 +848,15 @@ public class PdfCanvas {
     }
 
     /**
+     * Sets whether we are currently drawing on a page.
+     *
+     * @param drawingOnPage {@code true} if we are currently drawing on page {@code false} if not
+     */
+    public void setDrawingOnPage(boolean drawingOnPage) {
+        this.drawingOnPage = drawingOnPage;
+    }
+
+    /**
      * Finds horizontal distance between the start of the `from` glyph and end of `to` glyph.
      * Glyphs with placement are ignored.
      * XAdvance is not taken into account neither before `from` nor after `to` glyphs.
@@ -898,7 +909,7 @@ public class PdfCanvas {
     public PdfCanvas showText(PdfArray textArray) {
         checkDefaultDeviceGrayBlackColor(getColorKeyForText());
         document.checkIsoConformance(currentGs, IsoKey.FONT_GLYPHS, null, contentStream);
-        document.checkIsoConformance(tagStructureStack, IsoKey.CANVAS_WRITING_CONTENT);
+        this.checkIsoConformanceWritingOnContent();
         if (currentGs.getFont() == null) {
             throw new PdfException(
                     KernelExceptionMessageConstant.FONT_AND_SIZE_MUST_BE_SET_BEFORE_WRITING_ANY_TEXT, currentGs);
@@ -951,7 +962,6 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas lineTo(double x, double y) {
-        document.checkIsoConformance(tagStructureStack, IsoKey.CANVAS_WRITING_CONTENT);
         contentStream.getOutputStream()
                 .writeDouble(x)
                 .writeSpace()
@@ -972,7 +982,6 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas curveTo(double x1, double y1, double x2, double y2, double x3, double y3) {
-        document.checkIsoConformance(tagStructureStack, IsoKey.CANVAS_WRITING_CONTENT);
         contentStream.getOutputStream()
                 .writeDouble(x1)
                 .writeSpace()
@@ -1000,7 +1009,6 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas curveTo(double x2, double y2, double x3, double y3) {
-        document.checkIsoConformance(tagStructureStack, IsoKey.CANVAS_WRITING_CONTENT);
         contentStream.getOutputStream()
                 .writeDouble(x2)
                 .writeSpace()
@@ -1023,7 +1031,6 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas curveFromTo(double x1, double y1, double x3, double y3) {
-        document.checkIsoConformance(tagStructureStack, IsoKey.CANVAS_WRITING_CONTENT);
         contentStream.getOutputStream()
                 .writeDouble(x1)
                 .writeSpace()
@@ -1181,7 +1188,6 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas rectangle(double x, double y, double width, double height) {
-        document.checkIsoConformance(tagStructureStack, IsoKey.CANVAS_WRITING_CONTENT);
         contentStream.getOutputStream().writeDouble(x).
                 writeSpace().
                 writeDouble(y).
@@ -1285,6 +1291,7 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas closePathEoFillStroke() {
+        checkIsoConformanceWritingOnContent();
         checkDefaultDeviceGrayBlackColor(CheckColorMode.FILL_AND_STROKE);
 
         contentStream.getOutputStream().writeBytes(bStar);
@@ -1353,6 +1360,7 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas closePathStroke() {
+        checkIsoConformanceWritingOnContent();
         contentStream.getOutputStream().writeBytes(s);
         return this;
     }
@@ -1363,6 +1371,7 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas fill() {
+        checkIsoConformanceWritingOnContent();
         checkDefaultDeviceGrayBlackColor(CheckColorMode.FILL);
 
         contentStream.getOutputStream().writeBytes(f);
@@ -1375,6 +1384,7 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas fillStroke() {
+        checkIsoConformanceWritingOnContent();
         checkDefaultDeviceGrayBlackColor(CheckColorMode.FILL_AND_STROKE);
 
         contentStream.getOutputStream().writeBytes(B);
@@ -1387,6 +1397,7 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas eoFill() {
+        checkIsoConformanceWritingOnContent();
         checkDefaultDeviceGrayBlackColor(CheckColorMode.FILL);
 
         contentStream.getOutputStream().writeBytes(fStar);
@@ -1399,6 +1410,7 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas eoFillStroke() {
+        checkIsoConformanceWritingOnContent();
         checkDefaultDeviceGrayBlackColor(CheckColorMode.FILL_AND_STROKE);
 
         contentStream.getOutputStream().writeBytes(BStar);
@@ -2132,7 +2144,9 @@ public class PdfCanvas {
             out.write(resources.addProperties(properties)).writeSpace().writeBytes(BDC);
         }
         final Tuple2<PdfName, PdfDictionary> tuple2 = new Tuple2<>(tag, properties);
-        document.checkIsoConformance(tagStructureStack, IsoKey.CANVAS_BEGIN_MARKED_CONTENT, null, null, tuple2);
+        if (this.drawingOnPage){
+            document.checkIsoConformance(tagStructureStack, IsoKey.CANVAS_BEGIN_MARKED_CONTENT, null, null, tuple2);
+        }
         tagStructureStack.push(tuple2);
         return this;
     }
@@ -2406,11 +2420,16 @@ public class PdfCanvas {
             throw new PdfException(
                     KernelExceptionMessageConstant.FONT_AND_SIZE_MUST_BE_SET_BEFORE_WRITING_ANY_TEXT, currentGs);
         }
-
-        document.checkIsoConformance(tagStructureStack, IsoKey.CANVAS_WRITING_CONTENT);
+        this.checkIsoConformanceWritingOnContent();
         document.checkIsoConformance(text, IsoKey.FONT, null, null, currentGs.getFont());
 
         currentGs.getFont().writeText(text, contentStream.getOutputStream());
+    }
+
+    private void checkIsoConformanceWritingOnContent(){
+        if (this.drawingOnPage){
+            document.checkIsoConformance(tagStructureStack, IsoKey.CANVAS_WRITING_CONTENT);
+        }
     }
 
     private void addToPropertiesAndBeginLayer(IPdfOCG layer) {
@@ -2463,7 +2482,6 @@ public class PdfCanvas {
 
     private PdfCanvas drawArc(double x1, double y1, double x2, double y2,
             double startAng, double extent, boolean continuous) {
-        document.checkIsoConformance(tagStructureStack, IsoKey.CANVAS_WRITING_CONTENT);
         List<double[]> ar = bezierArc(x1, y1, x2, y2, startAng, extent);
         if (ar.isEmpty()) {
             return this;

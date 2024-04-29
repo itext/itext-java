@@ -22,7 +22,10 @@
  */
 package com.itextpdf.kernel.pdf.tagging;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.pdf.GenericNameTree;
+import com.itextpdf.kernel.pdf.IsoKey;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfIndirectReference;
@@ -77,5 +80,10 @@ public class PdfStructIdTree extends GenericNameTree {
      */
     public PdfStructElem getStructElemById(byte[] id) {
         return this.getStructElemById(new PdfString(id));
+    }
+
+    @Override
+    public void addEntry(PdfString key, PdfObject value) {
+        super.addEntry(key, value, pdfDoc -> pdfDoc.checkIsoConformance(key, IsoKey.DUPLICATE_ID_ENTRY));
     }
 }

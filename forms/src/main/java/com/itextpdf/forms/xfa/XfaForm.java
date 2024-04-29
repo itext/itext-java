@@ -359,6 +359,30 @@ public class XfaForm {
     }
 
     /**
+     * Gets all the text contained in the child nodes of the node under the provided path.
+     *
+     * @param path path to the node to extract text in the format "some.path.to.node"
+     *
+     * @return text found under the provided path or {@code null} if node or text wasn't found
+     */
+    public String getNodeTextByPath(String path) {
+        if (!xfaPresent) {
+            return null;
+        }
+        Xml2SomDatasets nodeSom = new Xml2SomDatasets(domDocument);
+        AcroFieldsSearch nodeFieldsSom = new AcroFieldsSearch(nodeSom.getName2Node().keySet());
+
+        String foundPath = nodeFieldsSom.inverseSearchGlobal(Xml2Som.splitParts(path));
+
+        if (foundPath != null) {
+            Node resultNode = nodeSom.getName2Node().get(foundPath);
+            return XfaForm.getNodeText(resultNode);
+        }
+
+        return null;
+    }
+
+    /**
      * Sets the text of this node. All the child's node are deleted and a new
      * child text node is created.
      *

@@ -61,7 +61,6 @@ import com.itextpdf.kernel.pdf.annot.da.StandardAnnotationFont;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
-import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.xmp.XMPException;
@@ -189,6 +188,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
             stamp.setStampName(PdfName.Approved);
             stamp.setContents("stamp contents");
             stamp.getPdfObject().put(PdfName.Type, PdfName.Annot);
+            pdfDocument.getTagStructureContext().getAutoTaggingPointer().addTag(StandardRoles.SECT);
             pdfPage.addAnnotation(stamp);
             pdfPage.flush();
         }

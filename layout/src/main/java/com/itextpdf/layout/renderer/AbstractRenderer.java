@@ -1822,7 +1822,7 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     /**
-     * Applies given paddings on the given rectangle
+     * Applies given paddings to the given rectangle.
      *
      * @param rect     a rectangle paddings will be applied on.
      * @param paddings the paddings to be applied on the given rectangle

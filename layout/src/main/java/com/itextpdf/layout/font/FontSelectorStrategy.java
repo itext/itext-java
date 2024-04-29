@@ -24,13 +24,16 @@ package com.itextpdf.layout.font;
 
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.layout.font.selectorstrategy.IFontSelectorStrategy;
 
 import java.util.List;
 
 /**
  * {@link FontSelectorStrategy} is responsible for splitting text into sub texts with one particular font.
  * {@link #nextGlyphs()} will create next sub text and set current font.
+ * @deprecated replaced by {@link IFontSelectorStrategy}.
  */
+@Deprecated
 public abstract class FontSelectorStrategy {
 
     protected String text;

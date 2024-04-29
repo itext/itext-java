@@ -205,6 +205,47 @@ public class PdfTokenizerTest extends ExtendedITextTest {
     }
 
     @Test
+    public void getNextEofShortTextTest() throws IOException {
+        String data = "some text to test \ngetting end of\n file logic%%EOF";
+
+        RandomAccessSourceFactory factory = new RandomAccessSourceFactory();
+        try (PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(
+                factory.createSource(data.getBytes(StandardCharsets.ISO_8859_1))))) {
+            long eofPosition = tok.getNextEof();
+            Assert.assertEquals(data.length() + 1, eofPosition);
+        }
+    }
+
+    @Test
+    public void getNextEofLongTextTest() throws IOException {
+        String data = "some text to test \ngetting end of\n file logic";
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < 20; ++i) {
+            stringBuilder.append(data);
+        }
+        stringBuilder.append("%%EOF");
+
+        RandomAccessSourceFactory factory = new RandomAccessSourceFactory();
+        try (PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(
+                factory.createSource(stringBuilder.toString().getBytes(StandardCharsets.ISO_8859_1))))) {
+            long eofPosition = tok.getNextEof();
+            Assert.assertEquals(data.length() * 20 + 6, eofPosition);
+        }
+    }
+
+    @Test
+    public void getNextEofSeveralEofTest() throws IOException {
+        String data = "some text %%EOFto test \nget%%EOFting end of\n fil%%EOFe logic%%EOF";
+
+        RandomAccessSourceFactory factory = new RandomAccessSourceFactory();
+        try (PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(
+                factory.createSource(data.getBytes(StandardCharsets.ISO_8859_1))))) {
+            long eofPosition = tok.getNextEof();
+            Assert.assertEquals(data.indexOf("%%EOF") + 6, eofPosition);
+        }
+    }
+
+    @Test
     public void getDecodedStringContentTest() throws IOException {
         String data = "/Name1 15";
 

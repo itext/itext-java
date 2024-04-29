@@ -34,10 +34,14 @@ import com.itextpdf.forms.form.renderer.checkboximpl.ICheckBoxRenderingStrategy;
 import com.itextpdf.forms.form.renderer.checkboximpl.PdfACheckBoxRenderingStrategy;
 import com.itextpdf.forms.form.renderer.checkboximpl.PdfCheckBoxRenderingStrategy;
 import com.itextpdf.forms.util.BorderStyleUtil;
+import com.itextpdf.forms.util.FormFieldRendererUtil;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.IConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.layout.LayoutContext;
@@ -103,9 +107,13 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
      * Returns whether or not the checkbox is in PDF/A mode.
      *
      * @return true if the checkbox is in PDF/A mode, false otherwise
+     *
+     * @deprecated since 8.0.4 will be removed
      */
+    @Deprecated
     public boolean isPdfA() {
-        return this.<PdfAConformanceLevel>getProperty(FormProperty.FORM_CONFORMANCE_LEVEL) != null;
+        IConformanceLevel conformanceLevel = this.<IConformanceLevel>getProperty(FormProperty.FORM_CONFORMANCE_LEVEL);
+        return conformanceLevel instanceof PdfAConformanceLevel;
     }
 
     /**
@@ -129,9 +137,11 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
     public ICheckBoxRenderingStrategy createCheckBoxRenderStrategy() {
         // html rendering is PDFA compliant this means we don't have to check if its PDFA.
         ICheckBoxRenderingStrategy renderingStrategy;
+        boolean isConformantPdfDocument =
+                this.<IConformanceLevel>getProperty(FormProperty.FORM_CONFORMANCE_LEVEL) != null;
         if (getRenderingMode() == RenderingMode.HTML_MODE) {
             renderingStrategy = new HtmlCheckBoxRenderingStrategy();
-        } else if (getRenderingMode() == RenderingMode.DEFAULT_LAYOUT_MODE && isPdfA()) {
+        } else if (getRenderingMode() == RenderingMode.DEFAULT_LAYOUT_MODE && isConformantPdfDocument) {
             renderingStrategy = new PdfACheckBoxRenderingStrategy();
         } else {
             renderingStrategy = new PdfCheckBoxRenderingStrategy();
@@ -184,6 +194,24 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
     }
 
     /**
+     * Applies given paddings to the given rectangle.
+     *
+     * Checkboxes don't support setting of paddings as they are always centered.
+     * So that this method returns the rectangle as is.
+     *
+     * @param rect     a rectangle paddings will be applied on.
+     * @param paddings the paddings to be applied on the given rectangle
+     * @param reverse  indicates whether paddings will be applied
+     *                 inside (in case of false) or outside (in case of true) the rectangle.
+     *
+     * @return The rectangle NOT modified by the paddings.
+     */
+    @Override
+    protected Rectangle applyPaddings(Rectangle rect, UnitValue[] paddings, boolean reverse) {
+        return rect;
+    }
+
+    /**
      * Creates a flat renderer for the checkbox.
      *
      * @return an IRenderer object for the flat renderer
@@ -233,10 +261,10 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
         final PdfDocument doc = drawContext.getDocument();
         final Rectangle area = flatRenderer.getOccupiedArea().getBBox().clone();
 
-        final Map<Integer, Object> margins = deleteMargins();
+        final Map<Integer, Object> properties = FormFieldRendererUtil.removeProperties(this.modelElement);
         final PdfPage page = doc.getPage(occupiedArea.getPageNumber());
         final CheckBoxFormFieldBuilder builder = new CheckBoxFormFieldBuilder(doc, name).setWidgetRectangle(area)
-                .setConformanceLevel(this.<PdfAConformanceLevel>getProperty(FormProperty.FORM_CONFORMANCE_LEVEL));
+                .setGenericConformanceLevel(this.<IConformanceLevel>getProperty(FormProperty.FORM_CONFORMANCE_LEVEL));
 
         if (this.hasProperty(FormProperty.FORM_CHECKBOX_TYPE)) {
             builder.setCheckType((CheckBoxType) this.<CheckBoxType>getProperty(FormProperty.FORM_CHECKBOX_TYPE));
@@ -252,12 +280,13 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
         if (!isBoxChecked()) {
             checkBox.setValue(PdfFormAnnotation.OFF_STATE_VALUE);
         }
+
+        applyAccessibilityProperties(checkBox, doc);
         checkBox.getFirstFormAnnotation().setFormFieldElement((CheckBox) modelElement);
         checkBox.enableFieldRegeneration();
 
         PdfFormCreator.getAcroForm(doc, true).addField(checkBox, page);
-        writeAcroFormFieldLangAttribute(doc);
-        applyProperties(margins);
+        FormFieldRendererUtil.reapplyProperties(modelElement, properties);
     }
 
     /**
@@ -288,7 +317,17 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
         @Override
         public void drawChildren(DrawContext drawContext) {
             final Rectangle rectangle = this.getInnerAreaBBox().clone();
+            PdfCanvas canvas = drawContext.getCanvas();
+            boolean isTaggingEnabled = drawContext.isTaggingEnabled();
+            if (isTaggingEnabled) {
+                TagTreePointer tp = drawContext.getDocument().getTagStructureContext().getAutoTaggingPointer();
+                canvas.openTag(tp.getTagReference());
+            }
             createCheckBoxRenderStrategy().drawCheckBoxContent(drawContext, CheckBoxRenderer.this, rectangle);
+            if (isTaggingEnabled) {
+                canvas.closeTag();
+            }
+
         }
     }
 

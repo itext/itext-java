@@ -61,6 +61,7 @@ public final class FormProperty {
     public static final int FORM_FIELD_LABEL = PROPERTY_START + 10;
 
     /** The Constant FORM_ACCESSIBILITY_LANGUAGE. */
+    @Deprecated()
     public static final int FORM_ACCESSIBILITY_LANGUAGE = PROPERTY_START + 11;
 
     /** The Constant FORM_FIELD_RADIO_GROUP_NAME. */

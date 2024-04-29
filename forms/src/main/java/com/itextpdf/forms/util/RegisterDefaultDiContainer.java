@@ -26,8 +26,14 @@ import com.itextpdf.commons.utils.DIContainer;
 import com.itextpdf.forms.fields.merging.MergeFieldsStrategy;
 import com.itextpdf.forms.fields.merging.OnDuplicateFormFieldNameStrategy;
 
+/**
+ * Registers a default instance for a dependency injection container.
+ */
 public class RegisterDefaultDiContainer {
 
+    /**
+     * Creates an instance of {@link RegisterDefaultDiContainer}.
+     */
     public RegisterDefaultDiContainer() {
         // Empty constructor but should be public as we need it for automatic class loading
         // sharp

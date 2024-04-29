@@ -22,7 +22,6 @@
  */
 package com.itextpdf.forms.xfdf;
 
-
 /**
  * Represents the field element, a child of the fields and field elements.
  * The field element corresponds to a form field.
@@ -69,13 +68,23 @@ public class FieldObject {
      */
     private FieldObject parent;
 
+    /**
+     * Creates an instance of {@link FieldObject}.
+     */
     public FieldObject() {
     }
 
+    /**
+     * Creates an instance of {@link FieldObject}.
+     *
+     * @param name             the name attribute of the field element
+     * @param value            the field's value
+     * @param containsRichText indicates if a value-richtext element is present inside the field
+     */
     public FieldObject(String name, String value, boolean containsRichText) {
         this.name = name;
         this.containsRichText = containsRichText;
-        if(containsRichText) {
+        if (containsRichText) {
             this.richTextValue = value;
         } else {
             this.value = value;
@@ -88,7 +97,7 @@ public class FieldObject {
      * In a hierarchical form field, the name is the partial field name.
      * For more details see paragraph 6.3.2.2 in XFDF document specification.
      *
-     * @return {@link String} value of field name attribute
+     * @return {@link String} value of field name attribute.
      */
     public String getName() {
         return name;
@@ -111,7 +120,7 @@ public class FieldObject {
      * Corresponds to the V key in the FDF field dictionary.
      * For more details see paragraph 6.3.3 in XFDF document specification.
      *
-     * @return {@link String} representation of inner value element of the field
+     * @return {@link String} representation of inner value element of the field.
      */
     public String getValue() {
         return value;
@@ -135,7 +144,7 @@ public class FieldObject {
      * Content model: text strign or rich text string.
      * For more details see paragraph 6.3.4 in XFDF document specification.
      *
-     * @return {@link String} representation of inner value-richtext element of the field
+     * @return {@link String} representation of inner value-richtext element of the field.
      */
     public String getRichTextValue() {
         return richTextValue;
@@ -156,7 +165,7 @@ public class FieldObject {
     /**
      * Gets a boolean indicating if a value-richtext element is present inside the field.
      *
-     * @return true if a value-richtext element is present inside the field, false otherwise
+     * @return true if a value-richtext element is present inside the field, false otherwise.
      */
     public boolean isContainsRichText() {
         return containsRichText;
@@ -174,7 +183,7 @@ public class FieldObject {
     /**
      * Gets a parent field of current field.
      *
-     * @return parent {@link FieldObject field object} of the current field
+     * @return parent {@link FieldObject field object} of the current field.
      */
     public FieldObject getParent() {
         return parent;

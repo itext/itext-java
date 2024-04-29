@@ -34,7 +34,6 @@ import com.itextpdf.commons.bouncycastle.cert.ocsp.IUnknownStatus;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.DateTimeUtil;
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignTestPortUtil;
 import com.itextpdf.signatures.testutils.builder.TestOcspResponseBuilder;
@@ -53,6 +52,7 @@ import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -183,9 +183,6 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.OCSP_STATUS_IS_REVOKED),
-    })
     public void ocspStatusIsRevokedTest()
             throws CertificateException, IOException, AbstractPKCSException, AbstractOperatorCreationException {
         IRevokedStatus status = BOUNCY_CASTLE_FACTORY.createRevokedStatus(DateTimeUtil.addDaysToDate(DateTimeUtil.getCurrentTimeDate(), -20),
@@ -194,13 +191,11 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
         OcspClientBouncyCastle ocspClientBouncyCastle = createTestOcspClient(responseBuilder);
 
         byte[] encoded = ocspClientBouncyCastle.getEncoded(checkCert, rootCert, ocspServiceUrl);
-        Assert.assertNull(encoded);
+        Assert.assertNotNull(
+                BOUNCY_CASTLE_FACTORY.createRevokedStatus(OcspClientBouncyCastle.getCertificateStatus(encoded)));
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.OCSP_STATUS_IS_UNKNOWN),
-    })
     public void ocspStatusIsUnknownTest()
             throws CertificateException, IOException, AbstractPKCSException, AbstractOperatorCreationException {
         IUnknownStatus status = BOUNCY_CASTLE_FACTORY.createUnknownStatus();
@@ -208,7 +203,16 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
         OcspClientBouncyCastle ocspClientBouncyCastle = createTestOcspClient(responseBuilder);
 
         byte[] encoded = ocspClientBouncyCastle.getEncoded(checkCert, rootCert, ocspServiceUrl);
-        Assert.assertNull(encoded);
+        Assert.assertNotEquals(BOUNCY_CASTLE_FACTORY.createCertificateStatus().getGood(),
+                OcspClientBouncyCastle.getCertificateStatus(encoded));
+        Assert.assertNull(
+                BOUNCY_CASTLE_FACTORY.createRevokedStatus(OcspClientBouncyCastle.getCertificateStatus(encoded)));
+    }
+
+    @Test
+    public void invalidOcspStatusIsNullTest() {
+        byte[] encoded = new byte[0];
+        Assert.assertNull(OcspClientBouncyCastle.getCertificateStatus(encoded));
     }
 
     private static OcspClientBouncyCastle createOcspClient() {

@@ -33,7 +33,6 @@ import com.itextpdf.kernel.pdf.PdfString;
  */
 public class ActionObject {
 
-
     /**
      * Type of inner action element. Possible values: {@link PdfName#URI}, {@link PdfName#Launch}, {@link PdfName#GoTo},
      * {@link PdfName#GoToR}, {@link PdfName#Named}.
@@ -74,16 +73,21 @@ public class ActionObject {
      */
     private DestObject destination;
 
+    /**
+     * Creates an instance of {@link ActionObject}.
+     *
+     * @param type type of inner action element. Possible values: {@link PdfName#URI}, {@link PdfName#Launch},
+     *             {@link PdfName#GoTo}, {@link PdfName#GoToR}, {@link PdfName#Named}
+     */
     public ActionObject(PdfName type) {
         this.type = type;
     }
-
 
     /**
      * Returns the type of inner action element. Possible values: {@link PdfName#URI}, {@link PdfName#Launch},
      * {@link PdfName#GoTo}, {@link PdfName#GoToR}, {@link PdfName#Named}.
      *
-     * @return {@link PdfName} type of inner action element
+     * @return {@link PdfName} type of inner action element.
      */
     public PdfName getType() {
         return type;
@@ -94,7 +98,8 @@ public class ActionObject {
      * {@link PdfName#GoTo}, {@link PdfName#GoToR}, {@link PdfName#Named}.
      *
      * @param type {@link PdfName} type of inner action object
-     * @return current {@link ActionObject}
+     *
+     * @return current {@link ActionObject}.
      */
     public ActionObject setType(PdfName type) {
         this.type = type;
@@ -105,7 +110,7 @@ public class ActionObject {
      * Gets the string value of URI elements. Corresponds to Name, required attribute of URI element.
      * For more details see paragraph 6.5.30 in Xfdf specification.
      *
-     * @return {@link PdfString} value of URI element
+     * @return {@link PdfString} value of URI element.
      */
     public PdfString getUri() {
         return uri;
@@ -116,7 +121,8 @@ public class ActionObject {
      * For more details see paragraph 6.5.30 in Xfdf specification.
      *
      * @param uri {@link PdfString} value to be set to URI element
-     * @return current {@link ActionObject}
+     *
+     * @return current {@link ActionObject}.
      */
     public ActionObject setUri(PdfString uri) {
         this.uri = uri;
@@ -126,7 +132,7 @@ public class ActionObject {
     /**
      * Gets IsMap, optional attribute of URI element. For more details see paragraph 6.5.30 in Xfdf specification.
      *
-     * @return boolean indicating if URI element is a map
+     * @return boolean indicating if URI element is a map.
      */
     public boolean isMap() {
         return isMap;
@@ -136,7 +142,8 @@ public class ActionObject {
      * Sets IsMap, optional attribute of URI element. For more details see paragraph 6.5.30 in Xfdf specification.
      *
      * @param map boolean indicating if URI element is a map
-     * @return current {@link ActionObject}
+     *
+     * @return current {@link ActionObject}.
      */
     public ActionObject setMap(boolean map) {
         isMap = map;
@@ -144,19 +151,22 @@ public class ActionObject {
     }
 
     /**
-     * Gets the value of Name, required attribute of Named element. For more details see paragraph 6.5.24 in Xfdf specification.
+     * Gets the value of Name, required attribute of Named element.
+     * For more details see paragraph 6.5.24 in Xfdf specification.
      *
-     * @return {@link PdfName} value of Name attribute of a named action element
+     * @return {@link PdfName} value of Name attribute of a named action element.
      */
     public PdfName getNameAction() {
         return nameAction;
     }
 
     /**
-     * Sets the value of Name, required attribute of Named element. For more details see paragraph 6.5.24 in Xfdf specification.
+     * Sets the value of Name, required attribute of Named element.
+     * For more details see paragraph 6.5.24 in Xfdf specification.
      *
      * @param nameAction {@link PdfName} value to be set to Name attribute of a named action element
-     * @return current {@link ActionObject}
+     *
+     * @return current {@link ActionObject}.
      */
     public ActionObject setNameAction(PdfName nameAction) {
         this.nameAction = nameAction;
@@ -168,7 +178,7 @@ public class ActionObject {
      * Corresponds to F key in go-to action or launch dictionaries.
      * For more details see paragraphs 6.5.11, 6.5.23 in Xfdf specification.
      *
-     * @return {@link String} value of OriginalName attribute of current action object
+     * @return {@link String} value of OriginalName attribute of current action object.
      */
     public String getFileOriginalName() {
         return fileOriginalName;
@@ -180,7 +190,8 @@ public class ActionObject {
      * For more details see paragraphs 6.5.11, 6.5.23 in Xfdf specification.
      *
      * @param fileOriginalName {@link String} value of OriginalName attribute of action object
-     * @return current {@link ActionObject}
+     *
+     * @return current {@link ActionObject}.
      */
     public ActionObject setFileOriginalName(String fileOriginalName) {
         this.fileOriginalName = fileOriginalName;
@@ -188,19 +199,22 @@ public class ActionObject {
     }
 
     /**
-     * Gets the boolean value of NewWindow, optional attribute of Launch element. For more details see paragraph 6.5.23 in Xfdf specification.
+     * Gets the boolean value of NewWindow, optional attribute of Launch element.
+     * For more details see paragraph 6.5.23 in Xfdf specification.
      *
-     * @return boolean indicating if current Launch action element should be opened in a new window
+     * @return boolean indicating if current Launch action element should be opened in a new window.
      */
     public boolean isNewWindow() {
         return isNewWindow;
     }
 
     /**
-     * Sets the boolean value of NewWindow, optional attribute of Launch element. For more details see paragraph 6.5.23 in Xfdf specification.
+     * Sets the boolean value of NewWindow, optional attribute of Launch element.
+     * For more details see paragraph 6.5.23 in Xfdf specification.
      *
      * @param newWindow boolean indicating if current Launch action element should be opened in a new window
-     * @return current {@link ActionObject}
+     *
+     * @return current {@link ActionObject}.
      */
     public ActionObject setNewWindow(boolean newWindow) {
         isNewWindow = newWindow;
@@ -212,7 +226,7 @@ public class ActionObject {
      * Corresponds to Dest key in link annotation dictionary.
      * For more details see paragraph 6.5.10 in Xfdf specification.
      *
-     * @return {@link DestObject} destination attribute of current action element
+     * @return {@link DestObject} destination attribute of current action element.
      */
     public DestObject getDestination() {
         return destination;
@@ -224,7 +238,8 @@ public class ActionObject {
      * For more details see paragraph 6.5.10 in Xfdf specification.
      *
      * @param destination {@link DestObject} destination attribute of the action element
-     * @return current {@link ActionObject}
+     *
+     * @return current {@link ActionObject}.
      */
     public ActionObject setDestination(DestObject destination) {
         this.destination = destination;

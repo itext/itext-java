@@ -32,9 +32,9 @@ import java.util.regex.Pattern;
  */
 public final class FontFamilySplitterUtil {
 
-    private static final Pattern FONT_FAMILY_PATTERN = Pattern.compile("^ *([\\w-]+) *$");
-    private static final Pattern FONT_FAMILY_PATTERN_QUOTED = Pattern.compile("^ *(('[\\w -]+')|(\"[\\w -]+\")) *$");
-    private static final Pattern FONT_FAMILY_PATTERN_QUOTED_SELECT = Pattern.compile("[\\w-]+( +[\\w-]+)*");
+    private static final Pattern FONT_FAMILY_PATTERN = Pattern.compile("^([\\w-]+)$");
+    private static final Pattern FONT_FAMILY_PATTERN_QUOTED = Pattern.compile("^(('[\\w -]+')|(\"[\\w -]+\"))$");
+    private static final Pattern FONT_FAMILY_PATTERN_QUOTED_SELECT = Pattern.compile("([\\w -]+)");
 
     public static List<String> splitFontFamily(String fontFamilies) {
         if (fontFamilies == null) {
@@ -43,11 +43,12 @@ public final class FontFamilySplitterUtil {
         String[] names = fontFamilies.split(",");
         List<String> result = new ArrayList<>(names.length);
         for (String name : names) {
+            String trimmedName = name.trim();
             // TODO DEVSIX-2534 improve pattern matching according to CSS specification. E.g. unquoted font-families with spaces.
-            if (FONT_FAMILY_PATTERN.matcher(name).matches()) {
-                result.add(name.trim());
-            } else if (FONT_FAMILY_PATTERN_QUOTED.matcher(name).matches()) {
-                Matcher selectMatcher = FONT_FAMILY_PATTERN_QUOTED_SELECT.matcher(name);
+            if (FONT_FAMILY_PATTERN.matcher(trimmedName).matches()) {
+                result.add(trimmedName);
+            } else if (FONT_FAMILY_PATTERN_QUOTED.matcher(trimmedName).matches()) {
+                Matcher selectMatcher = FONT_FAMILY_PATTERN_QUOTED_SELECT.matcher(trimmedName);
                 if (selectMatcher.find()) {
                     result.add(selectMatcher.group());
                 }

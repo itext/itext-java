@@ -102,8 +102,11 @@ public class DestObject {
      */
     private FitObject fitBV;
 
+    /**
+     * Creates an instance of {@link DestObject}.
+     */
     public DestObject() {
-        //create empty DestObject
+        // Create an empty DestObject.
     }
 
     /**
@@ -121,7 +124,8 @@ public class DestObject {
      * Sets the Name attribute of Named element, a child of Dest element.
      * Allows a destination to be referred to indirectly by means of a name object or a byte string.
      *
-     * @param name string value of the Name attribute.
+     * @param name string value of the Name attribute
+     *
      * @return this {@link DestObject} instance.
      */
     public DestObject setName(String name) {
@@ -146,7 +150,8 @@ public class DestObject {
      * Corresponds to the XYZ key in the destination syntax.
      * Required attributes: Page, Left, Bottom, Right, Top.
      *
-     * @param xyz a {@link FitObject} that represents XYZ of Dest element.
+     * @param xyz a {@link FitObject} that represents XYZ of Dest element
+     *
      * @return this {@link DestObject} instance.
      */
     public DestObject setXyz(FitObject xyz) {
@@ -171,7 +176,8 @@ public class DestObject {
      * Corresponds to the Fit key in the destination syntax.
      * Required attributes: Page.
      *
-     * @param fit a {@link FitObject} that represents Fit of Dest element.
+     * @param fit a {@link FitObject} that represents Fit of Dest element
+     *
      * @return this {@link DestObject} instance.
      */
     public DestObject setFit(FitObject fit) {
@@ -196,7 +202,8 @@ public class DestObject {
      * Corresponds to the FitH key in the destination syntax.
      * Required attributes: Page, Top.
      *
-     * @param fitH a {@link FitObject} that represents FitH of Dest element.
+     * @param fitH a {@link FitObject} that represents FitH of Dest element
+     *
      * @return this {@link DestObject} instance.
      */
     public DestObject setFitH(FitObject fitH) {
@@ -221,7 +228,8 @@ public class DestObject {
      * Corresponds to the FitV key in the destination syntax.
      * Required attributes: Page, Left.
      *
-     * @param fitV a {@link FitObject} that represents FitV of Dest element.
+     * @param fitV a {@link FitObject} that represents FitV of Dest element
+     *
      * @return this {@link DestObject} instance.
      */
     public DestObject setFitV(FitObject fitV) {
@@ -246,7 +254,8 @@ public class DestObject {
      * Corresponds to the FitR key in the destination syntax.
      * Required attributes: Page, Left, Bottom, Right, Top.
      *
-     * @param fitR a {@link FitObject} that represents FitR of Dest element.
+     * @param fitR a {@link FitObject} that represents FitR of Dest element
+     *
      * @return this {@link DestObject} instance.
      */
     public DestObject setFitR(FitObject fitR) {
@@ -272,7 +281,8 @@ public class DestObject {
      * Required attributes: Page.
      * For more details see paragraph 6.5.14 in XFDF document specification.
      *
-     * @param fitB a {@link FitObject} that represents FitB of Dest element.
+     * @param fitB a {@link FitObject} that represents FitB of Dest element
+     *
      * @return this {@link DestObject} instance.
      */
     public DestObject setFitB(FitObject fitB) {
@@ -297,7 +307,8 @@ public class DestObject {
      * Corresponds to the FitBH key in the destination syntax.
      * Required attributes: Page, Top.
      *
-     * @param fitBH a {@link FitObject} that represents FitBH of Dest element.
+     * @param fitBH a {@link FitObject} that represents FitBH of Dest element
+     *
      * @return this {@link DestObject} instance.
      */
     public DestObject setFitBH(FitObject fitBH) {
@@ -322,7 +333,8 @@ public class DestObject {
      * Corresponds to the FitBV key in the destination syntax.
      * Required attributes: Page, Left.
      *
-     * @param fitBV a {@link FitObject} that represents FitBV of Dest element.
+     * @param fitBV a {@link FitObject} that represents FitBV of Dest element
+     *
      * @return this {@link DestObject} instance.
      */
     public DestObject setFitBV(FitObject fitBV) {

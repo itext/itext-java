@@ -1,5 +1,8 @@
 %PDF-1.7
 %‚„œ”
+7 0 obj
+<</D<</Name(OCConfigName0)/Order[6 0 R 10 0 R 13 0 R 16 0 R]>>/OCGs[6 0 R 10 0 R 13 0 R 16 0 R]>>
+endobj
 5 0 obj
 <</Filter/FlateDecode/Length 380>>stream
 xúµñ9v1DÛ9ÖNP®[≠•S„‹>Öù	âØo	k1"M¿„˝¶™($$∏|\ÕÂÛNÊÌ˝∫ml~6ãh⁄„˛ΩÖ(d<{$s€¢*íT‹J¥†åU<a≠[RDD¡4öTÓqN]ëıÄôª~}‚ÒF…{x1!&hYm"é∞©ˆ>≈*yP3w√ô+ZëµÑËÛág∞‘"ÍÉ}lÑîêny4ÀI±k™Ö¸Mé…8´–êõUf±p≈¢î¿3Vı>π◊ÁmÀ÷z√`%∑Q+‡‘xÔ,Æç*ü∞©WÁm£Naµ-«≠loB§±>m@IÔÁòπŒ»\—Jÿ!Öq'z¶ÚRø£[)'πÈgw⁄Íƒ„ç(Ñr(ÎaΩ5v†eˇô™/<˜ìˇåƒ„ç8Øä˛kTy$‰üŸ†/‹û˝g$oDû·úNÂ)7ä¡7ﬁ˜[™ÍgÓ˙ıâŸ¸gAG#Ü¢ÚH¯”œ|b‚ÒFøﬂü
@@ -41,20 +44,17 @@ endobj
 14 0 obj
 <</Contents 15 0 R/MediaBox[0 0 1190 842]/Parent 2 0 R/Resources<</Properties<</Pr1 16 0 R>>>>/TrimBox[0 0 1190 842]/Type/Page>>
 endobj
+3 0 obj
+<</CreationDate(D:20240112133631+03'00')/ModDate(D:20240112133631+03'00')/Producer(iTextÆ Core 8.0.3-SNAPSHOT \(AGPL version\) ©2000-2023 Apryse Group NV)>>
+endobj
 1 0 obj
 <</OCProperties 7 0 R/Pages 2 0 R/Type/Catalog>>
-endobj
-3 0 obj
-<</CreationDate(D:20200901113148+03'00')/ModDate(D:20200901113148+03'00')/Producer(iTextÆ 7.1.13-SNAPSHOT ©2000-2020 iText Group NV \(AGPL-version\))>>
 endobj
 2 0 obj
 <</Count 4/Kids[4 0 R 8 0 R 11 0 R 14 0 R]/Type/Pages>>
 endobj
 6 0 obj
 <</Name(Group: layer 1)/Type/OCG>>
-endobj
-7 0 obj
-<</D<</Order[6 0 R 10 0 R 13 0 R 16 0 R]>>/OCGs[6 0 R 10 0 R 13 0 R 16 0 R]>>
 endobj
 10 0 obj
 <</Name(Group: layer 1_0)/Type/OCG>>
@@ -68,25 +68,25 @@ endobj
 xref
 0 17
 0000000000 65535 f 
-0000001870 00000 n 
-0000002101 00000 n 
-0000001934 00000 n 
-0000000462 00000 n 
+0000002155 00000 n 
+0000002219 00000 n 
+0000001983 00000 n 
+0000000575 00000 n 
+0000000128 00000 n 
+0000002290 00000 n 
 0000000015 00000 n 
-0000002172 00000 n 
-0000002222 00000 n 
-0000000881 00000 n 
-0000000604 00000 n 
-0000002315 00000 n 
-0000001302 00000 n 
-0000001024 00000 n 
-0000002368 00000 n 
-0000001725 00000 n 
-0000001447 00000 n 
-0000002421 00000 n 
+0000000994 00000 n 
+0000000717 00000 n 
+0000002340 00000 n 
+0000001415 00000 n 
+0000001137 00000 n 
+0000002393 00000 n 
+0000001838 00000 n 
+0000001560 00000 n 
+0000002446 00000 n 
 trailer
-<</ID [<145445dd0ef44c14eb44ba2ffa2f98d3><145445dd0ef44c14eb44ba2ffa2f98d3>]/Info 3 0 R/Root 1 0 R/Size 17>>
-%iText-7.1.13-SNAPSHOT
+<</ID [<fcb107caf27ca38fc6901246cdef9eef0a6701aacaecd79dbf470da2285885ca1b6e0d1c492a4d128a463cf3afe315543fd32b889f9be2e702e39af1960df0c0><fcb107caf27ca38fc6901246cdef9eef0a6701aacaecd79dbf470da2285885ca1b6e0d1c492a4d128a463cf3afe315543fd32b889f9be2e702e39af1960df0c0>]/Info 3 0 R/Root 1 0 R/Size 17>>
+%iText-Core-8.0.3-SNAPSHOT
 startxref
-2474
+2499
 %%EOF

@@ -39,61 +39,25 @@ import com.itextpdf.pdfua.checkers.PdfUA1Checker;
 /**
  * PdfDocument extension for testing purposes.
  */
-public class PdfUATestPdfDocument extends PdfDocument {
-
-
-    private final IConformanceLevel conformanceLevel = PdfUAConformanceLevel.PDFUA_1;
-
-    public PdfUATestPdfDocument(PdfReader reader) {
-        this(reader, new DocumentProperties());
-    }
-
-    public PdfUATestPdfDocument(PdfReader reader, DocumentProperties properties) {
-        super(reader, properties);
-        setupUAConfiguration();
-    }
+public class PdfUATestPdfDocument extends PdfUADocument {
 
     public PdfUATestPdfDocument(PdfWriter writer) {
-        this(writer, new DocumentProperties());
+        super(writer, createConfig());
     }
 
     public PdfUATestPdfDocument(PdfWriter writer, DocumentProperties properties) {
-        super(writer, properties);
-        setupUAConfiguration();
+        super(writer, properties, createConfig());
     }
 
     public PdfUATestPdfDocument(PdfReader reader, PdfWriter writer) {
-        super(reader, writer);
-        setupUAConfiguration();
-    }
-
-    public static WriterProperties createWriterProperties() {
-        return new WriterProperties().addUAXmpMetadata();
+        super(reader, writer, createConfig());
     }
 
     public PdfUATestPdfDocument(PdfReader reader, PdfWriter writer, StampingProperties properties) {
-        super(reader, writer, properties);
+        super(reader, writer, properties, createConfig());
     }
 
-    /**
-     * {inheritDoc}
-     */
-    @Override
-    public IConformanceLevel getConformanceLevel() {
-        return conformanceLevel;
-    }
-
-    private void setupUAConfiguration() {
-        //basic configuration
-        this.setTagged();
-
-        this.getCatalog().setViewerPreferences(new PdfViewerPreferences().setDisplayDocTitle(true));
-        this.getCatalog().setLang(new PdfString("en-US"));
-        PdfDocumentInfo info = this.getDocumentInfo();
-        info.setTitle("English pangram");
-        //validation
-        ValidationContainer validationContainer = new ValidationContainer();
-        validationContainer.addChecker(new PdfUA1Checker(this));
-        this.getDiContainer().register(ValidationContainer.class, validationContainer);
+    private static PdfUAConfig createConfig() {
+        return new PdfUAConfig(PdfUAConformanceLevel.PDFUA_1, "English pangram", "en-US");
     }
 }

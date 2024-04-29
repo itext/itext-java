@@ -585,6 +585,20 @@ public class CheckBoxTest extends ExtendedITextTest {
 
     }
 
+    @Test
+    public void basicCheckBoxTagged() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "basicCheckboxTagged.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_basicCheckboxTagged.pdf";
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+            document.getPdfDocument().setTagged();
+            generateCheckBoxes(document, checkBox -> {
+            });
+            generateCheckBoxes(document, checkBox -> {
+            });
+        }
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
     private List<CheckBox> generateCheckBoxes(Document document, Consumer<CheckBox> alterFunction) {
         List<CheckBox> checkBoxList = new ArrayList<>();
 

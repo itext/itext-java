@@ -55,21 +55,21 @@ import org.slf4j.LoggerFactory;
  * tree for layout element (with keeping right order for tags).
  */
 public class LayoutTaggingHelper {
-    private TagStructureContext context;
-    private PdfDocument document;
-    private boolean immediateFlush;
+    private final TagStructureContext context;
+    private final PdfDocument document;
+    private final boolean immediateFlush;
 
     // kidsHints and parentHints fields represent tree of TaggingHintKey, where parentHints
     // stores a parent for the key, and kidsHints stores kids for key.
-    private Map<TaggingHintKey, List<TaggingHintKey>> kidsHints;
-    private Map<TaggingHintKey, TaggingHintKey> parentHints;
+    private final Map<TaggingHintKey, List<TaggingHintKey>> kidsHints;
+    private final Map<TaggingHintKey, TaggingHintKey> parentHints;
 
-    private Map<IRenderer, TagTreePointer> autoTaggingPointerSavedPosition;
+    private final Map<IRenderer, TagTreePointer> autoTaggingPointerSavedPosition;
 
-    private Map<String, List<ITaggingRule>> taggingRules;
+    private final Map<String, List<ITaggingRule>> taggingRules;
 
     // dummiesForPreExistingTags is used to process TaggingDummyElement
-    private Map<PdfObject, TaggingDummyElement> dummiesForPreExistingTags;
+    private final Map<PdfObject, TaggingDummyElement> dummiesForPreExistingTags;
 
     private final int RETVAL_NO_PARENT = -1;
     private final int RETVAL_PARENT_AND_KID_FINISHED = -2;
@@ -334,6 +334,7 @@ public class LayoutTaggingHelper {
 
     public boolean createTag(IRenderer renderer, TagTreePointer tagPointer) {
         TaggingHintKey hintKey = getHintKey(renderer);
+
         boolean noHint = hintKey == null;
         if (noHint) {
             hintKey = getOrCreateHintKey(renderer, false);
@@ -584,6 +585,7 @@ public class LayoutTaggingHelper {
             }
 
             tagPointer.addTag(ind, modelElement.getAccessibilityProperties());
+            hintKey.setTagPointer(new TagTreePointer(tagPointer));
             if (hintKey.getOverriddenRole() != null) {
                 tagPointer.setRole(hintKey.getOverriddenRole());
             }
@@ -763,6 +765,7 @@ public class LayoutTaggingHelper {
         registerSingleRule(StandardRoles.TABLE, tableRule);
         registerSingleRule(StandardRoles.TFOOT, tableRule);
         registerSingleRule(StandardRoles.THEAD, tableRule);
+        registerSingleRule(StandardRoles.TH, new THTaggingRule());
         if (pdfVersion.compareTo(PdfVersion.PDF_1_5) < 0 ) {
             TableTaggingPriorToOneFiveVersionRule priorToOneFiveRule = new TableTaggingPriorToOneFiveVersionRule();
             registerSingleRule(StandardRoles.TABLE, priorToOneFiveRule);

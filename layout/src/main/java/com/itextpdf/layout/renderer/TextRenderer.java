@@ -24,6 +24,7 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.commons.actions.contexts.IMetaInfo;
 import com.itextpdf.commons.actions.sequence.SequenceId;
+import com.itextpdf.commons.datastructures.Tuple2;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.FontMetrics;
 import com.itextpdf.io.font.FontProgram;
@@ -48,8 +49,8 @@ import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
 import com.itextpdf.layout.font.FontCharacteristics;
 import com.itextpdf.layout.font.FontProvider;
-import com.itextpdf.layout.font.FontSelectorStrategy;
 import com.itextpdf.layout.font.FontSet;
+import com.itextpdf.layout.font.selectorstrategy.IFontSelectorStrategy;
 import com.itextpdf.layout.hyphenation.Hyphenation;
 import com.itextpdf.layout.hyphenation.HyphenationConfig;
 import com.itextpdf.layout.layout.LayoutArea;
@@ -983,19 +984,19 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             canvas.endText().restoreState();
             endElementOpacityApplying(drawContext);
 
+            if (isTagged) {
+                canvas.closeTag();
+            }
+
             Object underlines = this.<Object>getProperty(Property.UNDERLINE);
             if (underlines instanceof List) {
                 for (Object underline : (List) underlines) {
                     if (underline instanceof Underline) {
-                        drawSingleUnderline((Underline) underline, fontColor, canvas, fontSize.getValue(), italicSimulation ? ITALIC_ANGLE : 0);
+                        drawAndTagSingleUnderline(drawContext.isTaggingEnabled(), (Underline) underline, fontColor, canvas, fontSize.getValue(), italicSimulation ? ITALIC_ANGLE : 0);
                     }
                 }
             } else if (underlines instanceof Underline) {
-                drawSingleUnderline((Underline) underlines, fontColor, canvas, fontSize.getValue(), italicSimulation ? ITALIC_ANGLE : 0);
-            }
-
-            if (isTagged) {
-                canvas.closeTag();
+                drawAndTagSingleUnderline(drawContext.isTaggingEnabled(), (Underline) underlines, fontColor, canvas, fontSize.getValue(), italicSimulation ? ITALIC_ANGLE : 0);
             }
         }
 
@@ -1526,17 +1527,15 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 throw new IllegalStateException(
                         LayoutExceptionMessageConstant.FONT_PROVIDER_NOT_SET_FONT_FAMILY_NOT_RESOLVED);
             }
-            FontCharacteristics fc = createFontCharacteristics();
-            FontSelectorStrategy strategy = provider.getStrategy(strToBeConverted, Arrays.asList((String[])font), fc, fontSet);
             // process empty renderers because they can have borders or paddings with background to be drawn
             if (null == strToBeConverted || strToBeConverted.isEmpty()) {
                 addTo.add(this);
             } else {
-                while (!strategy.endOfText()) {
-                    GlyphLine nextGlyphs = new GlyphLine(strategy.nextGlyphs());
-                    PdfFont currentFont = strategy.getCurrentFont();
-                    GlyphLine newGlyphs = TextPreprocessingUtil.replaceSpecialWhitespaceGlyphs(nextGlyphs, currentFont);
-                    TextRenderer textRenderer = createCopy(newGlyphs, currentFont);
+                FontCharacteristics fc = createFontCharacteristics();
+                IFontSelectorStrategy strategy = provider.createFontSelectorStrategy(Arrays.asList((String[])font), fc, fontSet);
+                List<Tuple2<GlyphLine, PdfFont>> subTextWithFont = strategy.getGlyphLines(strToBeConverted);
+                for (Tuple2<GlyphLine, PdfFont> subText : subTextWithFont) {
+                    TextRenderer textRenderer = createCopy(subText.getFirst(), subText.getSecond());
                     addTo.add(textRenderer);
                 }
             }
@@ -1621,18 +1620,11 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
     @Override
     PdfFont resolveFirstPdfFont(String[] font, FontProvider provider, FontCharacteristics fc, FontSet additionalFonts) {
-        FontSelectorStrategy strategy = provider.getStrategy(strToBeConverted, Arrays.asList(font), fc, additionalFonts);
-        List<Glyph> resolvedGlyphs;
-        PdfFont currentFont;
-        //try to find first font that can render at least one glyph.
-        while (!strategy.endOfText()) {
-            resolvedGlyphs = strategy.nextGlyphs();
-            currentFont = strategy.getCurrentFont();
-            for (Glyph glyph : resolvedGlyphs) {
-                if (currentFont.containsGlyph(glyph.getUnicode())) {
-                    return currentFont;
-                }
-            }
+        IFontSelectorStrategy strategy = provider.createFontSelectorStrategy(Arrays.asList(font), fc, additionalFonts);
+        // Try to find first font that can render at least one glyph.
+        final List<Tuple2<GlyphLine, PdfFont>> glyphLines = strategy.getGlyphLines(strToBeConverted);
+        if (!glyphLines.isEmpty()) {
+            return glyphLines.get(0).getSecond();
         }
         return super.resolveFirstPdfFont(font, provider, fc, additionalFonts);
     }
@@ -1663,6 +1655,18 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 endsWithBreak = specialScriptsWordBreakPoints.contains(line.end);
             }
             return new boolean[]{startsWithBreak, endsWithBreak};
+        }
+    }
+
+    private void drawAndTagSingleUnderline(boolean isTagged, Underline underline,
+                                           TransparentColor fontStrokeColor, PdfCanvas canvas,
+                                           float fontSize, float italicAngleTan) {
+        if (isTagged) {
+            canvas.openTag(new CanvasArtifact());
+        }
+        drawSingleUnderline(underline, fontStrokeColor, canvas, fontSize, italicAngleTan);
+        if (isTagged) {
+            canvas.closeTag();
         }
     }
 

@@ -22,9 +22,17 @@
  */
 package com.itextpdf.commons.bouncycastle.cert.ocsp;
 
+import java.util.Date;
+
 /**
  * This interface represents the wrapper for RevokedStatus that provides the ability
  * to switch between bouncy-castle and bouncy-castle FIPS implementations.
  */
 public interface IRevokedStatus extends ICertificateStatus {
+    /**
+     * Calls actual {@code getRevocationTime} method for the wrapped RevokedStatus object.
+     *
+     * @return certificate revocation time.
+     */
+    Date getRevocationTime();
 }

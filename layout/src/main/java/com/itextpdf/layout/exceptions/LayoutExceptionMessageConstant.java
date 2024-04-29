@@ -54,6 +54,7 @@ public final class LayoutExceptionMessageConstant {
     public static final String INVALID_COLUMN_PROPERTIES =
             "Invalid column-count/column-width/column-gap properties, they're absent or have negative value";
     public static final String INVALID_FONT_PROPERTY_VALUE = "Invalid FONT property value type.";
+    public static final String TAGGING_HINTKEY_SHOULD_HAVE_ACCES = "TaggingHintKey should have accessibility properties" ;
 
     private LayoutExceptionMessageConstant(){}
 }

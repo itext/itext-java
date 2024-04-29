@@ -22,6 +22,8 @@
  */
 package com.itextpdf.layout.tagging;
 
+import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
+import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.RootRenderer;
@@ -36,6 +38,7 @@ public final class TaggingHintKey {
     private boolean isFinished;
     private String overriddenRole;
     private boolean elementBasedFinishingOnly;
+    private  TagTreePointer tagPointer;
 
     /**
      * Instantiate a new {@link TaggingHintKey} instance.
@@ -57,6 +60,31 @@ public final class TaggingHintKey {
         return elem;
     }
 
+
+    /**
+     * Gets the TagTreePointer.
+     *
+     * @return the {@link TagTreePointer} or null if there is no associated one yet.
+     */
+    public TagTreePointer getTagPointer() {
+        return tagPointer;
+    }
+
+    /**
+     * Sets the TagTreePointer.
+     *
+     * @param tag the TagTreePointer to set.
+     */
+    public void setTagPointer(TagTreePointer tag) {
+       this.tagPointer = tag;
+    }
+
+    AccessibilityProperties getAccessibilityProperties() {
+        if (elem == null){
+            return null;
+        }
+        return elem.getAccessibilityProperties();
+    }
     /**
      * Retrieve hint key finished flag.
      *

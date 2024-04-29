@@ -22,8 +22,10 @@
  */
 package com.itextpdf.forms.form.element;
 
-import com.itextpdf.forms.form.renderer.TextAreaRenderer;
+import com.itextpdf.forms.FormDefaultAccessibilityProperties;
 import com.itextpdf.forms.form.FormProperty;
+import com.itextpdf.forms.form.renderer.TextAreaRenderer;
+import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.properties.BoxSizingPropertyValue;
 import com.itextpdf.layout.properties.Leading;
@@ -104,6 +106,17 @@ public class TextArea extends FormField<TextArea> implements IPlaceholderable {
     @Override
     public void setPlaceholder(Paragraph placeholder) {
         this.placeholder = placeholder;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public AccessibilityProperties getAccessibilityProperties() {
+        if (this.tagProperties == null){
+            tagProperties = new FormDefaultAccessibilityProperties(FormDefaultAccessibilityProperties.FORM_FIELD_TEXT);
+        }
+        return tagProperties;
     }
 
     /* (non-Javadoc)

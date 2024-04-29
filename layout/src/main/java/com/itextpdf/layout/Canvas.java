@@ -162,6 +162,7 @@ public class Canvas extends RootElement<Canvas> {
             logger.error(IoLogMessageConstant.PASSED_PAGE_SHALL_BE_ON_WHICH_CANVAS_WILL_BE_RENDERED);
         }
         this.page = page;
+        this.pdfCanvas.setDrawingOnPage(this.isAutoTaggingEnabled());
     }
 
     /**

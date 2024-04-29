@@ -22,15 +22,13 @@
  */
 package com.itextpdf.kernel.pdf.layer;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.kernel.pdf.PdfArray;
-import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfIndirectReference;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfObject;
-import com.itextpdf.kernel.pdf.PdfObjectWrapper;
-import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
+import com.itextpdf.kernel.pdf.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -133,21 +131,23 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
         }
         getPdfObject().put(PdfName.OCGs, gr);
 
-        // Save radio groups.
-        PdfArray rbGroups = null;
-        PdfDictionary d = getPdfObject().getAsDictionary(PdfName.D);
-        if (d != null) {
-            rbGroups = d.getAsArray(PdfName.RBGroups);
+        PdfDictionary filledDDictionary = new PdfDictionary();
+
+        // Save radio groups,Name,BaseState,Intent,ListMode
+        PdfDictionary dDictionary = getPdfObject().getAsDictionary(PdfName.D);
+        if (dDictionary != null) {
+            PdfOCProperties.copyDDictionaryField(PdfName.RBGroups, dDictionary, filledDDictionary);
+            PdfOCProperties.copyDDictionaryField(PdfName.Name, dDictionary, filledDDictionary);
+            PdfOCProperties.copyDDictionaryField(PdfName.BaseState, dDictionary, filledDDictionary);
+            PdfOCProperties.copyDDictionaryField(PdfName.Intent, dDictionary, filledDDictionary);
+            PdfOCProperties.copyDDictionaryField(PdfName.ListMode, dDictionary, filledDDictionary);
         }
 
-        d = new PdfDictionary();
-        if (rbGroups != null) {
-            d.put(PdfName.RBGroups, rbGroups);
+        if (filledDDictionary.get(PdfName.Name) == null) {
+            filledDDictionary.put(PdfName.Name, new PdfString(createUniqueName(), PdfEncodings.UNICODE_BIG));
         }
-        d.put(PdfName.Name, new PdfString(createUniqueName(), PdfEncodings.UNICODE_BIG));
 
-        getPdfObject().put(PdfName.D, d);
-
+        getPdfObject().put(PdfName.D, filledDDictionary);
 
         List<PdfLayer> docOrder = new ArrayList<>(layers);
         for (int i = 0; i < docOrder.size(); i++) {
@@ -163,7 +163,7 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
             PdfLayer layer = (PdfLayer) element;
             getOCGOrder(order, layer);
         }
-        d.put(PdfName.Order, order);
+        filledDDictionary.put(PdfName.Order, order);
 
         PdfArray off = new PdfArray();
         for (Object element : layers) {
@@ -171,22 +171,20 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
             if (layer.getTitle() == null && !layer.isOn())
                 off.add(layer.getIndirectReference());
         }
-        if (off.size() > 0)
-            d.put(PdfName.OFF, off);
-        else
-            d.remove(PdfName.OFF);
+
+        if (off.size() > 0) {
+            filledDDictionary.put(PdfName.OFF, off);
+        }
 
         PdfArray locked = new PdfArray();
         for (PdfLayer layer : layers) {
             if (layer.getTitle() == null && layer.isLocked())
                 locked.add(layer.getIndirectReference());
         }
-        if (locked.size() > 0)
-            d.put(PdfName.Locked, locked);
-        else
-            d.remove(PdfName.Locked);
+        if (locked.size() > 0) {
+            filledDDictionary.put(PdfName.Locked, locked);
+        }
 
-        d.remove(PdfName.AS);
         addASEvent(PdfName.View, PdfName.Zoom);
         addASEvent(PdfName.View, PdfName.View);
         addASEvent(PdfName.Print, PdfName.Print);
@@ -197,6 +195,26 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
         }
 
         return getPdfObject();
+    }
+
+    /**
+     * Checks if optional content group default configuration dictionary field value matches
+     * the required value for this field, if one exists.
+     *
+     * @param field default configuration dictionary field.
+     * @param value value of that field.
+     *
+     * @return boolean indicating if field meets requirement.
+     */
+    public static boolean checkDDictonaryFieldValue(PdfName field, PdfObject value) {
+        // dictionary D BaseState should have the value ON
+        if (PdfName.BaseState.equals(field) && !PdfName.ON.equals(value)) {
+            return false;
+            //for dictionary D Intent should have the value View
+        } else if (PdfName.Intent.equals(field) && !PdfName.View.equals(value)) {
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -261,6 +279,20 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
         }
         if (kids.size() > 0)
             order.add(kids);
+    }
+
+    private static void copyDDictionaryField(PdfName fieldToAdd, PdfDictionary fromDictionary, PdfDictionary toDictionary) {
+        PdfObject value = fromDictionary.get(fieldToAdd);
+        if(value != null) {
+            if (PdfOCProperties.checkDDictonaryFieldValue(fieldToAdd, value)) {
+                toDictionary.put(fieldToAdd, value);
+            } else {
+                Logger logger = LoggerFactory.getLogger(PdfOCProperties.class);
+                String warnText = MessageFormatUtil.format(KernelLogMessageConstant.INVALID_DDICTIONARY_FIELD_VALUE,
+                        fieldToAdd, value);
+                logger.warn(warnText);
+            }
+        }
     }
 
     private void removeNotRegisteredOcgs() {

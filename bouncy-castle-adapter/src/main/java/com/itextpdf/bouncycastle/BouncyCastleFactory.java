@@ -81,8 +81,10 @@ import com.itextpdf.bouncycastle.asn1.x509.ExtensionBC;
 import com.itextpdf.bouncycastle.asn1.x509.ExtensionsBC;
 import com.itextpdf.bouncycastle.asn1.x509.GeneralNameBC;
 import com.itextpdf.bouncycastle.asn1.x509.GeneralNamesBC;
+import com.itextpdf.bouncycastle.asn1.x509.IssuingDistributionPointBC;
 import com.itextpdf.bouncycastle.asn1.x509.KeyPurposeIdBC;
 import com.itextpdf.bouncycastle.asn1.x509.KeyUsageBC;
+import com.itextpdf.bouncycastle.asn1.x509.ReasonFlagsBC;
 import com.itextpdf.bouncycastle.asn1.x509.SubjectPublicKeyInfoBC;
 import com.itextpdf.bouncycastle.asn1.x509.TBSCertificateBC;
 import com.itextpdf.bouncycastle.asn1.x509.TimeBC;
@@ -186,8 +188,10 @@ import com.itextpdf.commons.bouncycastle.asn1.x509.IExtension;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IExtensions;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IGeneralName;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IGeneralNames;
+import com.itextpdf.commons.bouncycastle.asn1.x509.IIssuingDistributionPoint;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IKeyPurposeId;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IKeyUsage;
+import com.itextpdf.commons.bouncycastle.asn1.x509.IReasonFlags;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ISubjectPublicKeyInfo;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ITBSCertificate;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ITime;
@@ -282,10 +286,14 @@ import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.BasicConstraints;
 import org.bouncycastle.asn1.x509.CRLDistPoint;
+import org.bouncycastle.asn1.x509.DistributionPointName;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.Extensions;
 import org.bouncycastle.asn1.x509.GeneralNames;
+import org.bouncycastle.asn1.x509.IssuingDistributionPoint;
+import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.asn1.x509.KeyUsage;
+import org.bouncycastle.asn1.x509.ReasonFlags;
 import org.bouncycastle.asn1.x509.TBSCertificate;
 import org.bouncycastle.asn1.x509.Time;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
@@ -1200,8 +1208,48 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
      * {@inheritDoc}
      */
     @Override
+    public IIssuingDistributionPoint createIssuingDistributionPoint(Object point) {
+        return new IssuingDistributionPointBC(IssuingDistributionPoint.getInstance(point instanceof ASN1EncodableBC ?
+                ((ASN1EncodableBC) point).getEncodable() : point));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IIssuingDistributionPoint createIssuingDistributionPoint(IDistributionPointName distributionPoint,
+                                                                    boolean onlyContainsUserCerts,
+                                                                    boolean onlyContainsCACerts,
+                                                                    IReasonFlags onlySomeReasons, boolean indirectCRL,
+                                                                    boolean onlyContainsAttributeCerts) {
+        return new IssuingDistributionPointBC(new IssuingDistributionPoint(distributionPoint == null ? null :
+                ((DistributionPointNameBC) distributionPoint).getDistributionPointName(), onlyContainsUserCerts,
+                onlyContainsCACerts, onlySomeReasons == null ? null :
+                ((ReasonFlagsBC) onlySomeReasons).getReasonFlags(), indirectCRL, onlyContainsAttributeCerts));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IReasonFlags createReasonFlags(int reasons) {
+        return new ReasonFlagsBC(new ReasonFlags(reasons));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public IDistributionPointName createDistributionPointName() {
         return DistributionPointNameBC.getInstance();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IDistributionPointName createDistributionPointName(IGeneralNames generalNames) {
+        return new DistributionPointNameBC(new DistributionPointName(((GeneralNamesBC)generalNames).getGeneralNames()));
     }
 
     /**
@@ -1562,6 +1610,14 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
      * {@inheritDoc}
      */
     @Override
+    public IBasicConstraints createBasicConstraints(int pathLength) {
+        return new BasicConstraintsBC(new BasicConstraints(pathLength));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public IKeyUsage createKeyUsage() {
         return KeyUsageBC.getInstance();
     }
@@ -1586,8 +1642,25 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
      * {@inheritDoc}
      */
     @Override
+    public IKeyPurposeId createKeyPurposeId(IASN1ObjectIdentifier objectIdentifier) {
+        return new KeyPurposeIdBC(KeyPurposeId.getInstance(
+                ((ASN1ObjectIdentifierBC) objectIdentifier).getASN1ObjectIdentifier()));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public IExtendedKeyUsage createExtendedKeyUsage(IKeyPurposeId purposeId) {
         return new ExtendedKeyUsageBC(purposeId);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IExtendedKeyUsage createExtendedKeyUsage(IKeyPurposeId[] purposeIds) {
+        return new ExtendedKeyUsageBC(purposeIds);
     }
 
     /**
@@ -1695,6 +1768,14 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     @Override
     public ITime createTime(Date date) {
         return new TimeBC(new Time(date));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ITime createEndDate(X509Certificate certificate) {
+        return createTime(certificate.getNotAfter());
     }
 
     /**

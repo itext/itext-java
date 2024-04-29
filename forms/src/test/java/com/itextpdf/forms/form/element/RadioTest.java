@@ -96,6 +96,31 @@ public class RadioTest extends ExtendedITextTest {
     }
 
     @Test
+    public void basicRadioTaggedTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "basicRadioTagged.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_basicRadioTagged.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+            document.getPdfDocument().setTagged();
+            Radio formRadio1 = createRadioButton("form radio button 1", "form radio group", null, null, true, false);
+            document.add(formRadio1);
+
+            Radio formRadio2 = createRadioButton("form radio button 2", "form radio group", null, null, false, false);
+            document.add(formRadio2);
+
+            Radio flattenRadio1 = createRadioButton("flatten radio button 1", "flatten radio group", null, null, true,
+                    true);
+            document.add(flattenRadio1);
+
+            Radio flattenRadio2 = createRadioButton("flatten radio button 2", "flatten radio group", null, null, false,
+                    true);
+            document.add(flattenRadio2);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
     public void emptyNameTest() {
         try (Document document = new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream())))) {
             Radio formRadio = createRadioButton("radio button 1", null, null, null, true, false);

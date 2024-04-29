@@ -25,7 +25,9 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
+import com.itextpdf.kernel.pdf.layer.PdfOCProperties;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -258,16 +260,17 @@ final class OcgPropertiesCopier {
 
         final PdfDictionary toDDict = toOcProperties.getAsDictionary(PdfName.D);
 
-        // The Name field is not copied because it will be given when flushing the PdfOCProperties
+        OcgPropertiesCopier.copyDStringField(PdfName.Name, fromDDict, toDDict);
         // Delete the Creator field because the D dictionary are changing
         toDDict.remove(PdfName.Creator);
-        // The BaseState field is not copied because for dictionary D BaseState should have the value ON, which is the default
+        OcgPropertiesCopier.copyDNameField(PdfName.BaseState, fromDDict, toDDict);
         OcgPropertiesCopier.copyDArrayField(PdfName.ON, fromOcgsToCopy, fromDDict, toDDict, toDocument);
         OcgPropertiesCopier.copyDArrayField(PdfName.OFF, fromOcgsToCopy, fromDDict, toDDict, toDocument);
-        // The Intent field is not copied because for dictionary D Intent should have the value View, which is the default
+        OcgPropertiesCopier.copyDNameField(PdfName.Intent, fromDDict, toDDict);
         // The AS field is not copied because it will be given when flushing the PdfOCProperties
         OcgPropertiesCopier.copyDArrayField(PdfName.Order, fromOcgsToCopy, fromDDict, toDDict, toDocument);
-        // The ListModel field is not copied because it only affects the visual presentation of the layers
+        // The ListMode field is copied, but it only affects the visual presentation of the layers
+        OcgPropertiesCopier.copyDNameField(PdfName.ListMode, fromDDict, toDDict);
         OcgPropertiesCopier.copyDArrayField(PdfName.RBGroups, fromOcgsToCopy, fromDDict, toDDict, toDocument);
         OcgPropertiesCopier.copyDArrayField(PdfName.Locked, fromOcgsToCopy, fromDDict, toDDict, toDocument);
     }
@@ -277,6 +280,38 @@ final class OcgPropertiesCopier {
         final PdfIndirectReference fromObjRef = fromObj.getIndirectReference();
         if (fromObjRef != null && fromOcgsToCopy.contains(fromObjRef)) {
             toArray.add(fromObj.copyTo(toDocument, false));
+        }
+    }
+
+    private static void copyDNameField(PdfName fieldToCopy, PdfDictionary fromDict, PdfDictionary toDict) {
+        final PdfName fromName = fromDict.getAsName(fieldToCopy);
+        if (fromName == null || toDict.getAsName(fieldToCopy) != null) {
+            return;
+        }
+
+        if (PdfOCProperties.checkDDictonaryFieldValue(fieldToCopy, fromName)) {
+            toDict.put(fieldToCopy, fromName);
+        } else {
+            Logger logger = LoggerFactory.getLogger(OcgPropertiesCopier.class);
+            String warnText = MessageFormatUtil.format(KernelLogMessageConstant.INVALID_DDICTIONARY_FIELD_VALUE,
+                    fieldToCopy, fromName);
+            logger.warn(warnText);
+        }
+    }
+
+    private static void copyDStringField(PdfName fieldToCopy,PdfDictionary fromDict, PdfDictionary toDict){
+        PdfString fromString = fromDict.getAsString(fieldToCopy);
+        if (fromString == null || toDict.getAsString(fieldToCopy) != null) {
+            return;
+        }
+
+        if (PdfOCProperties.checkDDictonaryFieldValue(fieldToCopy, fromString)) {
+            toDict.put(fieldToCopy,fromString);
+        } else {
+            Logger logger = LoggerFactory.getLogger(OcgPropertiesCopier.class);
+            String warnText = MessageFormatUtil.format(KernelLogMessageConstant.INVALID_DDICTIONARY_FIELD_VALUE,
+                    fieldToCopy, fromString);
+            logger.warn(warnText);
         }
     }
 

@@ -78,7 +78,7 @@ public class TestCertificateBuilder {
         this.endDate = endDate;
     }
 
-    public X509Certificate buildAuthorizedOCSPResponderCert()
+    public X509Certificate buildAuthorizedOCSPResponderCert(boolean checkRevData)
             throws IOException, CertificateException, AbstractOperatorCreationException {
         IX500Name subjectDnName = FACTORY.createX500Name(subjectDN);
         // Using the current timestamp as the certificate serial number
@@ -90,8 +90,10 @@ public class TestCertificateBuilder {
         boolean ca = true;
         addExtension(FACTORY.createExtension().getBasicConstraints(), true, FACTORY.createBasicConstraints(ca),
                 certBuilder);
-        addExtension(FACTORY.createOCSPObjectIdentifiers().getIdPkixOcspNoCheck(), false, FACTORY.createDERNull(),
-                certBuilder);
+        if (!checkRevData) {
+            addExtension(FACTORY.createOCSPObjectIdentifiers().getIdPkixOcspNoCheck(), false, FACTORY.createDERNull(),
+                    certBuilder);
+        }
 
         addExtension(FACTORY.createExtension().getKeyUsage(), false, FACTORY.createKeyUsage(FACTORY.createKeyUsage().
                 getDigitalSignature() | FACTORY.createKeyUsage().getNonRepudiation()), certBuilder);

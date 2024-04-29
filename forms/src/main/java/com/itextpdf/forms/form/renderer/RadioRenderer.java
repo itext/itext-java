@@ -32,13 +32,16 @@ import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.Radio;
 import com.itextpdf.forms.util.BorderStyleUtil;
 import com.itextpdf.forms.util.DrawingUtil;
+import com.itextpdf.forms.util.FormFieldRendererUtil;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.layout.LayoutContext;
@@ -171,7 +174,7 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
         PdfDocument doc = drawContext.getDocument();
         PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
         Rectangle area = flatRenderer.getOccupiedArea().getBBox().clone();
-        final Map<Integer, Object> margins = deleteMargins();
+        final Map<Integer, Object> properties = FormFieldRendererUtil.removeProperties(this.modelElement);
 
         PdfPage page = doc.getPage(occupiedArea.getPageNumber());
         String groupName = this.<String>getProperty(FormProperty.FORM_FIELD_RADIO_GROUP_NAME);
@@ -182,7 +185,7 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
         PdfButtonFormField radioGroup = (PdfButtonFormField) form.getField(groupName);
         if (null == radioGroup) {
             radioGroup = new RadioFormFieldBuilder(doc, groupName)
-                    .setConformanceLevel(getConformanceLevel(doc))
+                    .setGenericConformanceLevel(getGenericConformanceLevel(doc))
                     .createRadioGroup();
             radioGroup.disableFieldRegeneration();
             radioGroup.setValue(PdfFormAnnotation.OFF_STATE_VALUE);
@@ -194,7 +197,7 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
         }
 
         PdfFormAnnotation radio = new RadioFormFieldBuilder(doc, null)
-                .setConformanceLevel(getConformanceLevel(doc))
+                .setGenericConformanceLevel(getGenericConformanceLevel(doc))
                 .createRadioButton(getModelId(), area);
         radio.disableFieldRegeneration();
 
@@ -208,10 +211,9 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
         radioGroup.addKid(radio);
         radioGroup.enableFieldRegeneration();
 
+        applyAccessibilityProperties(radioGroup, doc);
         form.addField(radioGroup, page);
-
-        writeAcroFormFieldLangAttribute(doc);
-        applyProperties(margins);
+        FormFieldRendererUtil.reapplyProperties(this.modelElement, properties);
     }
 
     /**
@@ -240,6 +242,11 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
             }
 
             PdfCanvas canvas = drawContext.getCanvas();
+            boolean isTaggingEnabled = drawContext.isTaggingEnabled();
+            if (isTaggingEnabled) {
+                TagTreePointer tp = drawContext.getDocument().getTagStructureContext().getAutoTaggingPointer();
+                canvas.openTag(tp.getTagReference());
+            }
             Rectangle rectangle = getOccupiedArea().getBBox().clone();
             Border border = this.<Border>getProperty(Property.BORDER);
             if (border != null) {
@@ -252,6 +259,9 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
             DrawingUtil.drawCircle(
                     canvas, rectangle.getLeft() + radius, rectangle.getBottom() + radius, radius / 2);
             canvas.restoreState();
+            if (isTaggingEnabled) {
+                canvas.closeTag();
+            }
         }
 
         /**
@@ -278,11 +288,19 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
                 final float cx = rectangle.getX() + rectangle.getWidth() / 2;
                 final float cy = rectangle.getY() + rectangle.getHeight() / 2;
                 final float r = (Math.min(rectangle.getWidth(), rectangle.getHeight()) + borderWidth) / 2;
-                drawContext.getCanvas()
-                        .setStrokeColor(border.getColor())
+                final boolean isTaggingEnabled = drawContext.isTaggingEnabled();
+                final PdfCanvas canvas = drawContext.getCanvas();
+
+                if (isTaggingEnabled){
+                    canvas.openTag(new CanvasArtifact());
+                }
+                canvas.setStrokeColor(border.getColor())
                         .setLineWidth(borderWidth)
                         .circle(cx, cy, r)
                         .stroke();
+                if (isTaggingEnabled){
+                    canvas.closeTag();
+                }
             }
         }
 
@@ -313,10 +331,18 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
                 final float cx = rectangle.getX() + rectangle.getWidth() / 2;
                 final float cy = rectangle.getY() + rectangle.getHeight() / 2;
                 final float r = (Math.min(rectangle.getWidth(), rectangle.getHeight()) + borderWidth) / 2;
-                drawContext.getCanvas()
-                        .setFillColor(backgroundColor)
+                final boolean isTaggingEnabled = drawContext.isTaggingEnabled();
+                final PdfCanvas canvas = drawContext.getCanvas();
+
+                if (isTaggingEnabled){
+                    canvas.openTag(new CanvasArtifact());
+                }
+                canvas.setFillColor(backgroundColor)
                         .circle(cx, cy, r)
                         .fill();
+                if (isTaggingEnabled){
+                    canvas.closeTag();
+                }
             }
         }
     }

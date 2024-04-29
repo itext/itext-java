@@ -34,7 +34,6 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -133,5 +132,15 @@ public class XFAFormTest extends ExtendedITextTest {
         Node node = xfa.findDatasetsNode("Number1");
         Assert.assertNotNull(node);
         Assert.assertEquals("Number1", node.getNodeName());
+    }
+
+    @Test
+    public void extractNodeTextByPathText() throws IOException {
+        String inFileName = sourceFolder + "TextField1.pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFileName))) {
+            XfaForm xfaForm = new XfaForm(pdfDocument);
+            Assert.assertEquals("Test", xfaForm.getNodeTextByPath("xdp.datasets.data.form1"));
+            Assert.assertNull(xfaForm.getNodeTextByPath("xdp.datasets.noElement"));
+        }
     }
 }

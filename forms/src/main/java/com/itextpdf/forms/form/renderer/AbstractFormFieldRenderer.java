@@ -22,12 +22,15 @@
  */
 package com.itextpdf.forms.form.renderer;
 
+import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.IFormField;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.IConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
@@ -73,7 +76,7 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
     /**
      * Checks if form fields need to be flattened.
      *
-     * @return true, if fields need to be flattened
+     * @return true, if fields need to be flattened.
      */
     public boolean isFlatten() {
         if (parent != null) {
@@ -96,7 +99,7 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
     /**
      * Gets the default value of the form field.
      *
-     * @return the default value of the form field
+     * @return the default value of the form field.
      */
     public String getDefaultValue() {
         String defaultValue = this.<String>getProperty(FormProperty.FORM_FIELD_VALUE);
@@ -187,22 +190,6 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
      * {@inheritDoc}
      */
     @Override
-    public void drawChildren(DrawContext drawContext) {
-        drawContext.getCanvas().saveState();
-        boolean flatten = isFlatten();
-        if (flatten) {
-            drawContext.getCanvas().rectangle(applyBorderBox(occupiedArea.getBBox(), false)).clip().endPath();
-            flatRenderer.draw(drawContext);
-        } else {
-            applyAcroField(drawContext);
-        }
-        drawContext.getCanvas().restoreState();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public MinMaxWidth getMinMaxWidth() {
         childRenderers.clear();
         flatRenderer = null;
@@ -213,7 +200,45 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void drawChildren(DrawContext drawContext) {
+        drawContext.getCanvas().saveState();
+        boolean flatten = isFlatten();
+        if (flatten) {
+            PdfCanvas canvas = drawContext.getCanvas();
+            canvas.rectangle(applyBorderBox(occupiedArea.getBBox(), false)).clip().endPath();
+            flatRenderer.draw(drawContext);
+        } else {
+            applyAcroField(drawContext);
+            writeAcroFormFieldLangAttribute(drawContext.getDocument());
+        }
+        drawContext.getCanvas().restoreState();
+    }
+
+    /**
+     * Applies the accessibility properties to the form field.
+     *
+     * @param formField The form field to which the accessibility properties should be applied.
+     * @param pdfDocument The document to which the form field belongs.
+     */
+    protected void applyAccessibilityProperties(PdfFormField formField, PdfDocument pdfDocument) {
+        if (!pdfDocument.isTagged()) {
+            return;
+        }
+        final AccessibilityProperties properties = ((IAccessibleElement) this.modelElement)
+                .getAccessibilityProperties();
+        final String alternativeDescription = properties.getAlternateDescription();
+        if (alternativeDescription != null && !alternativeDescription.isEmpty()) {
+            formField.setAlternativeName(alternativeDescription);
+        }
+    }
+
+
+    /**
      * Adjusts the field layout.
+     *
      * @param layoutContext layout context
      */
     protected abstract void adjustFieldLayout(LayoutContext layoutContext);
@@ -221,7 +246,7 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
     /**
      * Creates the flat renderer instance.
      *
-     * @return the renderer instance
+     * @return the renderer instance.
      */
     protected abstract IRenderer createFlatRenderer();
 
@@ -235,7 +260,7 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
     /**
      * Gets the model id.
      *
-     * @return the model id
+     * @return the model id.
      */
     protected String getModelId() {
         return ((IFormField) getModelElement()).getId();
@@ -246,7 +271,8 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
      *
      * @param availableWidth  the available width
      * @param availableHeight the available height
-     * @return true, if the renderer fits
+     *
+     * @return true, if the renderer fits.
      */
     protected boolean isRendererFit(float availableWidth, float availableHeight) {
         if (occupiedArea == null) {
@@ -261,12 +287,20 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
     /**
      * Gets the accessibility language.
      *
-     * @return the accessibility language
+     * @return the accessibility language.
+     * @deprecated use {@link IAccessibleElement#getAccessibilityProperties()} instead
      */
+    @Deprecated()
     protected String getLang() {
-        return this.<String>getProperty(FormProperty.FORM_ACCESSIBILITY_LANGUAGE);
+        String language = null;
+        if (this.getModelElement() instanceof IAccessibleElement) {
+            language = ((IAccessibleElement) this.getModelElement()).getAccessibilityProperties().getLanguage();
+        }
+        if (language == null) {
+            language = this.<String>getProperty(FormProperty.FORM_ACCESSIBILITY_LANGUAGE);
+        }
+        return language;
     }
-
 
     /**
      * Gets the conformance level. If the conformance level is not set, the conformance level of the document is used.
@@ -274,9 +308,27 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
      * @param document the document
      *
      * @return the conformance level or null if the conformance level is not set.
+     *
+     * @deprecated since 8.0.4 will return {@link IConformanceLevel}
      */
+    @Deprecated
     protected PdfAConformanceLevel getConformanceLevel(PdfDocument document) {
-        final PdfAConformanceLevel conformanceLevel = this.<PdfAConformanceLevel>getProperty(
+        return PdfAConformanceLevel.getPDFAConformance(this.<IConformanceLevel>getProperty(
+                FormProperty.FORM_CONFORMANCE_LEVEL), document);
+    }
+
+    /**
+     * Gets the conformance level. If the conformance level is not set, the conformance level of the document is used.
+     *
+     * @param document the document
+     *
+     * @return the conformance level or null if the conformance level is not set.
+     *
+     * @deprecated since 8.0.4 will be renamed to getConformanceLevel()
+     */
+    @Deprecated
+    protected IConformanceLevel getGenericConformanceLevel(PdfDocument document) {
+        final IConformanceLevel conformanceLevel = this.<IConformanceLevel>getProperty(
                 FormProperty.FORM_CONFORMANCE_LEVEL);
         if (conformanceLevel != null) {
             return conformanceLevel;
@@ -284,21 +336,23 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
         if (document == null) {
             return null;
         }
-        if (document.getConformanceLevel() instanceof PdfAConformanceLevel) {
-            return (PdfAConformanceLevel) document.getConformanceLevel();
-        }
-        return null;
+        return document.getConformanceLevel();
     }
 
     /**
      * Determines, whether the layout is based in the renderer itself or flat renderer.
-     * 
-     * @return {@code true} if layout is based on flat renderer, false otherwise
+     *
+     * @return {@code true} if layout is based on flat renderer, false otherwise.
      */
     protected boolean isLayoutBasedOnFlatRenderer() {
         return true;
     }
 
+    /**
+     * Sets the form accessibility language identifier of the form element in case the document is tagged.
+     *
+     * @param pdfDoc the document which contains form field
+     */
     protected void writeAcroFormFieldLangAttribute(PdfDocument pdfDoc) {
         if (pdfDoc.isTagged()) {
             TagTreePointer formParentPointer = pdfDoc.getTagStructureContext().getAutoTaggingPointer();
@@ -313,51 +367,16 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
         }
     }
 
-    /**
-     * Deletes all margin properties. Used in {@code applyAcroField} to not apply margins twice as we already use area
-     * with margins applied (margins shouldn't be an interactive part of the field, i.e. included into its occupied
-     * area).
-     *
-     * @return the map of deleted margins
-     */
-    Map<Integer, Object> deleteMargins() {
-
-        final Map<Integer, Object> margins = new HashMap<>();
-        margins.put(Property.MARGIN_TOP, this.modelElement.<UnitValue>getOwnProperty(Property.MARGIN_TOP));
-        margins.put(Property.MARGIN_BOTTOM, this.modelElement.<UnitValue>getOwnProperty(Property.MARGIN_BOTTOM));
-        margins.put(Property.MARGIN_LEFT, this.modelElement.<UnitValue>getOwnProperty(Property.MARGIN_LEFT));
-        margins.put(Property.MARGIN_RIGHT, this.modelElement.<UnitValue>getOwnProperty(Property.MARGIN_RIGHT));
-
-        modelElement.deleteOwnProperty(Property.MARGIN_RIGHT);
-        modelElement.deleteOwnProperty(Property.MARGIN_LEFT);
-        modelElement.deleteOwnProperty(Property.MARGIN_TOP);
-        modelElement.deleteOwnProperty(Property.MARGIN_BOTTOM);
-        return margins;
-    }
-
-    /**
-     * Applies the properties to the model element.
-     *
-     * @param properties the properties to apply
-     */
-    void applyProperties(Map<Integer, Object> properties) {
-        for (Entry<Integer, Object> integerObjectEntry : properties.entrySet()) {
-            if (integerObjectEntry.getValue() != null) {
-                modelElement.setProperty(integerObjectEntry.getKey(), integerObjectEntry.getValue());
-            } else {
-                modelElement.deleteOwnProperty(integerObjectEntry.getKey());
-            }
-        }
-    }
 
     private void processLangAttribute() {
-        IPropertyContainer propertyContainer = flatRenderer.getModelElement();
-        String lang = getLang();
-        if (propertyContainer instanceof IAccessibleElement && lang != null) {
-            AccessibilityProperties properties = ((IAccessibleElement) propertyContainer).getAccessibilityProperties();
-            if (properties.getLanguage() == null) {
-                properties.setLanguage(lang);
-            }
-        }
+         IPropertyContainer propertyContainer = flatRenderer.getModelElement();
+         String lang = getLang();
+         if (propertyContainer instanceof IAccessibleElement && lang != null) {
+             AccessibilityProperties properties = ((IAccessibleElement) propertyContainer)
+             .getAccessibilityProperties();
+             if (properties.getLanguage() == null) {
+                 properties.setLanguage(lang);
+             }
+         }
     }
 }

@@ -30,6 +30,7 @@ import com.itextpdf.forms.fields.TextFormFieldBuilder;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.TextArea;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
+import com.itextpdf.forms.util.FormFieldRendererUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -193,7 +194,7 @@ public class TextAreaRenderer extends AbstractTextFieldRenderer {
         PdfDocument doc = drawContext.getDocument();
         Rectangle area = getOccupiedArea().getBBox().clone();
         applyMargins(area, false);
-        final Map<Integer, Object> margins = deleteMargins();
+        final Map<Integer, Object> properties = FormFieldRendererUtil.removeProperties(modelElement);
         PdfPage page = doc.getPage(occupiedArea.getPageNumber());
         final float fontSizeValue = fontSize.getValue();
         final PdfString defaultValue = new PdfString(getDefaultValue());
@@ -202,7 +203,7 @@ public class TextAreaRenderer extends AbstractTextFieldRenderer {
         // That's why we got rid of several properties we set by default during TextArea instance creation.
         modelElement.setProperty(Property.BOX_SIZING, BoxSizingPropertyValue.BORDER_BOX);
         final PdfFormField inputField = new TextFormFieldBuilder(doc, name).setWidgetRectangle(area)
-                .setConformanceLevel(getConformanceLevel(doc))
+                .setGenericConformanceLevel(getGenericConformanceLevel(doc))
                 .setFont(font)
                 .createMultilineText();
         inputField.disableFieldRegeneration();
@@ -212,10 +213,10 @@ public class TextAreaRenderer extends AbstractTextFieldRenderer {
         applyDefaultFieldProperties(inputField);
         inputField.getFirstFormAnnotation().setFormFieldElement((TextArea) modelElement);
         inputField.enableFieldRegeneration();
+        applyAccessibilityProperties(inputField, doc);
         PdfFormCreator.getAcroForm(doc, true).addField(inputField, page);
 
-        writeAcroFormFieldLangAttribute(doc);
-        applyProperties(margins);
+        FormFieldRendererUtil.reapplyProperties(modelElement, properties);
     }
 
     /**

@@ -30,22 +30,23 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.font.selectorstrategy.BestMatchFontSelectorStrategy.BestMatchFontSelectorStrategyFactory;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
 @Category(IntegrationTest.class)
 public class FontSelectorLayoutTest extends ExtendedITextTest {
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/NonBreakingHyphenTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/layout/NonBreakingHyphenTest/";
-    public static final String fontsFolder = "./src/test/resources/com/itextpdf/layout/fonts/";
+    private static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/NonBreakingHyphenTest/";
+    private static final String destinationFolder = "./target/test/com/itextpdf/layout/NonBreakingHyphenTest/";
+    private static final String fontsFolder = "./src/test/resources/com/itextpdf/layout/fonts/";
 
     @BeforeClass
     public static void beforeClass() {
@@ -53,7 +54,6 @@ public class FontSelectorLayoutTest extends ExtendedITextTest {
     }
 
     @Test
-    //TODO: update after fix of DEVSIX-2052
     public void nonBreakingHyphenDifferentFonts() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "nonBreakingHyphenDifferentFonts.pdf";
         String cmpFileName = sourceFolder + "cmp_nonBreakingHyphenDifferentFonts.pdf";
@@ -61,6 +61,7 @@ public class FontSelectorLayoutTest extends ExtendedITextTest {
         Document document = new Document(new PdfDocument(new PdfWriter(outFileName)));
 
         FontProvider sel = new FontProvider();
+        sel.setFontSelectorStrategyFactory(new BestMatchFontSelectorStrategyFactory());
         sel.getFontSet().addFont(StandardFonts.TIMES_ROMAN);
         sel.getFontSet().addFont(StandardFonts.COURIER);
         sel.getFontSet().addFont(fontsFolder + "Puritan2.otf", PdfEncodings.IDENTITY_H, "Puritan2");

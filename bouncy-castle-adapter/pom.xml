@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <groupId>com.itextpdf.android</groupId>
     <artifactId>root-android</artifactId>
-    <version>8.0.3</version>
+    <version>8.0.4</version>
   </parent>
+
   <artifactId>bouncy-castle-adapter-android</artifactId>
+
   <name>iText - Bouncy Castle Adapter</name>
   <url>https://itextpdf.com/</url>
 
@@ -14,16 +17,16 @@
     <sonar.coverage.exclusions>**/*</sonar.coverage.exclusions>
     <sonar.cpd.exclusions>**/*</sonar.cpd.exclusions>
   </properties>
-  
+
   <dependencies>
     <dependency>
       <groupId>org.bouncycastle</groupId>
-      <artifactId>bcpkix-jdk18on</artifactId>
+      <artifactId>bcpkix-jdk15to18<!--Different version is needed because of METAF-INF collisions in bc--></artifactId>
       <version>${bouncycastle.version}</version>
     </dependency>
     <dependency>
       <groupId>org.bouncycastle</groupId>
-      <artifactId>bcprov-jdk18on</artifactId>
+      <artifactId>bcprov-jdk15to18<!--Different version is needed because of METAF-INF collisions in bc--></artifactId>
       <version>${bouncycastle.version}</version>
     </dependency>
     <dependency>
@@ -32,6 +35,7 @@
       <version>${project.version}</version>
     </dependency>
   </dependencies>
+
   <build>
     <plugins>
       <plugin>

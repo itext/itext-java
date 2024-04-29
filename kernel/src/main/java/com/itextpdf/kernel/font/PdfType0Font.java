@@ -262,7 +262,7 @@ public class PdfType0Font extends PdfFont {
         // TODO DEVSIX-7568 handle unicode value with cmap and use only glyphByCode
         Glyph glyph = getFontProgram().getGlyph(unicode);
         if (glyph == null && (glyph = notdefGlyphs.get(unicode)) == null) {
-            // Handle special layout characters like sfthyphen (00AD).
+            // Handle special layout characters like softhyphen (00AD).
             // This glyphs will be skipped while converting to bytes
             Glyph notdef = getFontProgram().getGlyphByCode(0);
             if (notdef != null) {

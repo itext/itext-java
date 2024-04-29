@@ -45,5 +45,6 @@ public enum IsoKey {
     // PDF/UA Enums
     CANVAS_BEGIN_MARKED_CONTENT,
     CANVAS_WRITING_CONTENT,
-    LAYOUT
+    LAYOUT,
+    DUPLICATE_ID_ENTRY
 }

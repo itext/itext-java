@@ -190,13 +190,13 @@ public class PadesSigTest extends ExtendedITextTest {
                 .setLayer2Text("Approval test signature.\nCreated by iText.");
 
         if (sigPolicyIdentifier != null) {
-            signer.signDetached(new BouncyCastleDigest(), pks, signChain, null, null, null, 0,
+            signer.signDetached(pks, signChain, null, null, null, 0,
                     PdfSigner.CryptoStandard.CADES, sigPolicyIdentifier);
         } else if (sigPolicyInfo != null) {
-            signer.signDetached(new BouncyCastleDigest(), pks, signChain, null, null, null, 0,
+            signer.signDetached(pks, signChain, null, null, null, 0,
                     PdfSigner.CryptoStandard.CADES, sigPolicyInfo);
         } else {
-            signer.signDetached(new BouncyCastleDigest(), pks, signChain, null, null, null, 0,
+            signer.signDetached(pks, signChain, null, null, null, 0,
                     PdfSigner.CryptoStandard.CADES);
         }
     }

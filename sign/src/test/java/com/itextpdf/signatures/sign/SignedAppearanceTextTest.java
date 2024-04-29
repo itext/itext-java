@@ -312,9 +312,9 @@ public class SignedAppearanceTextTest extends ExtendedITextTest {
         String location = "TestCity 4";
         SignatureFieldAppearance appearance = new SignatureFieldAppearance(fieldName)
                 .setContent(new SignedAppearanceText()
-                        .setSignedBy("wrong signer")
-                        .setReasonLine("Signing reason: " + reason)
-                        .setLocationLine("Signing location: " + location)
+                        .setSignedBy("   wrong signer   ")
+                        .setReasonLine("   Signing reason: " + reason)
+                        .setLocationLine("   Signing location: " + location)
                         .setSignDate(DateTimeUtil.getCurrentTimeCalendar()));
         sign(srcFile, fieldName, outPdf, reason, location, rect, appearance);
 

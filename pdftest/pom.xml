@@ -1,28 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <groupId>com.itextpdf.android</groupId>
     <artifactId>root-android</artifactId>
-    <version>8.0.3</version>
+    <version>8.0.4</version>
   </parent>
+
   <artifactId>pdftest-android</artifactId>
+
   <name>iText - pdftest</name>
   <url>https://itextpdf.com/</url>
+
   <properties>
     <sonar.skip>true</sonar.skip>
     <verapdf.version>1.25.125</verapdf.version>
   </properties>
-  <repositories>
-    <repository>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <id>vera-dev</id>
-      <name>Vera development</name>
-      <url>https://artifactory.openpreservation.org/artifactory/vera-dev</url>
-    </repository>
-  </repositories>
+
+  <dependencyManagement>
+  <dependencies>
+      <!-- remove when VeraPdf uses the same or a newer version -->
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>2.16.0</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
   <dependencies>
     <dependency>
       <groupId>org.verapdf</groupId>
@@ -40,6 +45,18 @@
       <version>${junit.version}</version>
     </dependency>
   </dependencies>
+
+  <repositories>
+    <repository>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <id>vera-dev</id>
+      <name>Vera development</name>
+      <url>https://artifactory.openpreservation.org/artifactory/vera-dev</url>
+    </repository>
+  </repositories>
+
   <build>
     <plugins>
       <plugin>

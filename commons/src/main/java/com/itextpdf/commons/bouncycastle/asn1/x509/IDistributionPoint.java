@@ -35,4 +35,18 @@ public interface IDistributionPoint extends IASN1Encodable {
      * @return {@link IDistributionPointName} wrapped distribution point.
      */
     IDistributionPointName getDistributionPoint();
+
+    /**
+     * Calls actual {@code getCRLIssuer} method for the wrapped DistributionPoint object.
+     *
+     * @return {@link IGeneralNames} wrapped CRL issuer.
+     */
+    IGeneralNames getCRLIssuer();
+
+    /**
+     * Calls actual {@code getReasons} method for the wrapped DistributionPoint object.
+     *
+     * @return {@link IReasonFlags} wrapped reason codes.
+     */
+    IReasonFlags getReasons();
 }

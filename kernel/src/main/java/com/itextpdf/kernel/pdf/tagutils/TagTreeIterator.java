@@ -81,6 +81,9 @@ public class TagTreeIterator {
     }
 
     private static void traverse(IStructureNode elem, Set<ITagTreeIteratorHandler> handlerList) {
+        if (elem == null) {
+            return;
+        }
         for (ITagTreeIteratorHandler handler : handlerList) {
             handler.nextElement(elem);
         }

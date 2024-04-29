@@ -83,8 +83,7 @@ public class PdfPKCS7Test extends PdfPKCS7BasicTest {
     public void simpleCreationTest()
             throws NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException {
         String hashAlgorithm = DigestAlgorithms.SHA256;
-        PdfPKCS7 pkcs7 = new PdfPKCS7(null, chain, hashAlgorithm, null,
-                new BouncyCastleDigest(), false);
+        PdfPKCS7 pkcs7 = new PdfPKCS7(null, chain, hashAlgorithm, null, false);
 
         String expectedOid = DigestAlgorithms.getAllowedDigest(hashAlgorithm);
         Assert.assertEquals(expectedOid, pkcs7.getDigestAlgorithmOid());

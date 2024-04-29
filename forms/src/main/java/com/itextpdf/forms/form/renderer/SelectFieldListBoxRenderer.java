@@ -30,6 +30,7 @@ import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.AbstractSelectField;
 import com.itextpdf.forms.form.element.ListBoxField;
 import com.itextpdf.forms.util.BorderStyleUtil;
+import com.itextpdf.forms.util.FormFieldRendererUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceRgb;
@@ -57,6 +58,7 @@ import com.itextpdf.layout.renderer.IRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -193,6 +195,8 @@ public class SelectFieldListBoxRenderer extends AbstractSelectFieldRenderer {
         final Rectangle area = this.getOccupiedArea().getBBox().clone();
         final PdfPage page = doc.getPage(occupiedArea.getPageNumber());
 
+        applyMargins(area, false);
+        final Map<Integer, Object> properties = FormFieldRendererUtil.removeProperties(this.modelElement);
         // Some properties are set to the HtmlDocumentRenderer, which is root renderer for this ButtonRenderer, but
         // in forms logic root renderer is CanvasRenderer, and these properties will have default values. So
         // we get them from renderer and set these properties to model element, which will be passed to forms logic.
@@ -202,13 +206,13 @@ public class SelectFieldListBoxRenderer extends AbstractSelectFieldRenderer {
         ListBoxField lbModelElement = (ListBoxField) modelElement;
         List<String> selectedOptions = lbModelElement.getSelectedStrings();
         ChoiceFormFieldBuilder builder = new ChoiceFormFieldBuilder(doc, getModelId())
-                .setConformanceLevel(getConformanceLevel(doc))
+                .setGenericConformanceLevel(getGenericConformanceLevel(doc))
                 .setFont(font)
                 .setWidgetRectangle(area);
         setupBuilderValues(builder, lbModelElement);
         PdfChoiceFormField choiceField = builder.createList();
         choiceField.disableFieldRegeneration();
-
+        applyAccessibilityProperties(choiceField,drawContext.getDocument());
         choiceField.setFontSize(fontSize.getValue());
         choiceField.setMultiSelect(isMultiple());
         choiceField.setListSelected(selectedOptions.toArray(new String[selectedOptions.size()]));
@@ -229,8 +233,8 @@ public class SelectFieldListBoxRenderer extends AbstractSelectFieldRenderer {
         choiceField.getFirstFormAnnotation().setFormFieldElement(lbModelElement);
         choiceField.enableFieldRegeneration();
         PdfFormCreator.getAcroForm(doc, true).addField(choiceField, page);
+        FormFieldRendererUtil.reapplyProperties(this.modelElement, properties);
 
-        writeAcroFormFieldLangAttribute(doc);
     }
 
     private float getCalculatedHeight(IRenderer flatRenderer) {

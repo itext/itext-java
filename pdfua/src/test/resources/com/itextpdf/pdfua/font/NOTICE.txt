@@ -1,0 +1,4 @@
+This software uses the following test resources under the following licenses:
+| cmr10.afm | SIL OFL-1.1  | LICENSE-SIL-1.1.txt | https://www.ams.org/arc/resources/amsfonts-about.html (13.09.2023)
+| cmr10.pfb | SIL OFL-1.1  | LICENSE-SIL-1.1.txt | https://www.ams.org/arc/resources/amsfonts-about.html (13.09.2023)
+| FreeSans.ttf | GPL license | GNU General Public License.txt

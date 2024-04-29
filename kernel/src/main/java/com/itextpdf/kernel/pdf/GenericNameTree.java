@@ -30,6 +30,8 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,17 +64,7 @@ public class GenericNameTree implements IPdfNameTreeAccess {
      * @param value object to add
      */
     public void addEntry(PdfString key, PdfObject value) {
-        final PdfObject existingVal = items.get(key);
-        if (existingVal != null) {
-            final PdfIndirectReference valueRef = value.getIndirectReference();
-            if (valueRef != null && valueRef.equals(existingVal.getIndirectReference())) {
-                return;
-            } else {
-                LOGGER.warn(MessageFormatUtil.format(IoLogMessageConstant.NAME_ALREADY_EXISTS_IN_THE_NAME_TREE, key));
-            }
-        }
-        modified = true;
-        items.put(key, value);
+        addEntry(key, value, null);
     }
 
     /**
@@ -160,6 +152,30 @@ public class GenericNameTree implements IPdfNameTreeAccess {
         PdfDictionary[] leaves = constructLeafArr(names);
         // recursively refine the tree to balance it.
         return reduceTree(names, leaves, leaves.length, NODE_SIZE * NODE_SIZE);
+    }
+
+    /**
+     * Add an entry to the name tree.
+     *
+     * @param key   key of the entry
+     * @param value object to add
+     * @param onErrorAction action to perform if such entry exists
+     */
+    protected void addEntry(PdfString key, PdfObject value, Consumer<PdfDocument> onErrorAction) {
+        final PdfObject existingVal = items.get(key);
+        if (existingVal != null) {
+            final PdfIndirectReference valueRef = value.getIndirectReference();
+            if (valueRef != null && valueRef.equals(existingVal.getIndirectReference())) {
+                return;
+            } else {
+                LOGGER.warn(MessageFormatUtil.format(IoLogMessageConstant.NAME_ALREADY_EXISTS_IN_THE_NAME_TREE, key));
+                if (onErrorAction != null) {
+                    onErrorAction.accept(pdfDoc);
+                }
+            }
+        }
+        modified = true;
+        items.put(key, value);
     }
 
     protected final void setItems(LinkedHashMap<PdfString, PdfObject> items) {

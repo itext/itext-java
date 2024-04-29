@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <groupId>com.itextpdf.android</groupId>
   <artifactId>root-android</artifactId>
-  <version>8.0.3</version>
+  <version>8.0.4</version>
   <packaging>pom</packaging>
+
   <name>iText</name>
   <description>A Free Java-PDF library</description>
   <url>https://itextpdf.com/</url>
@@ -19,6 +21,7 @@
       <url>http://www.fsf.org/licensing/licenses/agpl-3.0.html</url>
     </license>
   </licenses>
+
   <developers>
     <developer>
       <id>itext</id>
@@ -27,6 +30,7 @@
       <url>https://www.itextpdf.com</url>
     </developer>
   </developers>
+
   <mailingLists>
     <mailingList>
       <name>iText on StackOverflow</name>
@@ -41,6 +45,7 @@
       </otherArchives>
     </mailingList>
   </mailingLists>
+
   <modules>
     <module>commons</module>
     <module>barcodes</module>
@@ -61,6 +66,7 @@
     <module>bouncy-castle-connector</module>
     <module>pdfua</module>
   </modules>
+
   <scm>
     <connection>scm:git:ssh://git@git.itextsupport.com:7999/i7j/itextcore.git</connection>
     <url>https://git.itextsupport.com/projects/I7J/repos/itextcore</url>
@@ -76,7 +82,7 @@
 
   <properties>
     <argLine>-Xmx1024m</argLine>
-    <bouncycastle.version>1.75</bouncycastle.version>
+    <bouncycastle.version>1.78</bouncycastle.version>
     <bouncycastleintegrationtests>com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest</bouncycastleintegrationtests>
     <bouncycastleunittests>com.itextpdf.test.annotations.type.BouncyCastleUnitTest</bouncycastleunittests>
     <dependencyCheck.version>7.0.0</dependencyCheck.version>
@@ -89,7 +95,7 @@
     <javadoc.version>3.0.1</javadoc.version>
     <junit.version>4.13.2</junit.version>
     <junitparams.version>1.0.4</junitparams.version>
-    <logback.version>1.2.11</logback.version>
+    <logback.version>1.2.13</logback.version>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <maven.jar.version>3.1.0</maven.jar.version>
@@ -107,30 +113,6 @@
     <unittests>com.itextpdf.test.annotations.type.UnitTest</unittests>
   </properties>
 
-  <repositories>
-    <repository>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <id>itext-snapshot</id>
-      <name>iText Repository - snapshots</name>
-      <url>https://repo.itextsupport.com/snapshot</url>
-    </repository>
-    <repository>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <id>itext-releases</id>
-      <name>iText Repository - releases</name>
-      <url>https://repo.itextsupport.com/releases</url>
-    </repository>
-  </repositories>
   <dependencies>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -156,6 +138,41 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <repositories>
+    <repository>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <id>itext-snapshot</id>
+      <name>iText Repository - snapshots</name>
+      <url>https://repo.itextsupport.com/snapshot</url>
+    </repository>
+    <repository>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>itext-releases</id>
+      <name>iText Repository - releases</name>
+      <url>https://repo.itextsupport.com/releases</url>
+    </repository>
+  </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>itext-releases</id>
+      <name>iText Repository - releases</name>
+      <url>https://repo.itextsupport.com/artifactory/releases</url>
+    </pluginRepository>
+  </pluginRepositories>
 
   <build>
     <finalName>itext-${project.artifactId}-${project.version}</finalName>
@@ -192,32 +209,6 @@
       </plugins>
     </pluginManagement>
     <plugins>
-      <plugin>
-        <groupId>com.github.ekryd.sortpom</groupId>
-        <artifactId>sortpom-maven-plugin</artifactId>
-        <version>2.9.0</version>
-        <executions>
-          <execution>
-            <phase>verify</phase>
-            <goals>
-              <goal>sort</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <encoding>${project.build.sourceEncoding}</encoding>
-          <expandEmptyElements>false</expandEmptyElements>
-          <sortDependencies>scope,groupId,artifactId</sortDependencies>
-          <sortPlugins>groupId,artifactId</sortPlugins>
-          <sortProperties>true</sortProperties>
-          <sortModules>true</sortModules>
-          <createBackupFile>false</createBackupFile>
-          <lineSeparator>\n</lineSeparator>
-          <keepBlankLines>true</keepBlankLines>
-          <nrOfIndentSpace>2</nrOfIndentSpace>
-          <skip>${skipSortPom}</skip>
-        </configuration>
-      </plugin>
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
@@ -481,13 +472,6 @@
       <id>qa</id>
       <build>
         <plugins>
-          <plugin>
-            <groupId>com.github.ekryd.sortpom</groupId>
-            <artifactId>sortpom-maven-plugin</artifactId>
-            <configuration>
-              <skip>true</skip>
-            </configuration>
-          </plugin>
           <!-- Compares current version to the latest released version to prevent breaking changes -->
           <plugin>
             <groupId>com.github.siom79.japicmp</groupId>
@@ -508,14 +492,15 @@
                 <ignoreMissingClasses>true</ignoreMissingClasses>
                 <excludes>
                   <exclude>com.itextpdf.commons.bouncycastle</exclude>
+                  <exclude>com.itextpdf.pdfua.exceptions.PdfUAConformanceException</exclude>
                 </excludes>
                 <excludeModules>
                   <excludeModule>bouncy-castle-adapter</excludeModule>
                   <excludeModule>bouncy-castle-connector</excludeModule>
+                  <!-- TODO DEVSIX-8072 Enable japicmp after release -->
+                  <excludeModule>native-image-test</excludeModule>
                 </excludeModules>
               </parameter>
-              <!-- TODO DEVSIX-7811 Enable japicmp after release -->
-              <skip>true</skip>
             </configuration>
           </plugin>
           <plugin>
@@ -536,7 +521,7 @@
           </plugin>
           <plugin>
             <artifactId>maven-resources-plugin</artifactId>
-            <version>3.1.0</version>
+            <version>3.3.1</version>
             <executions>
               <execution>
                 <id>default-resources</id>
@@ -599,13 +584,6 @@
       <id>test</id>
       <build>
         <plugins>
-          <plugin>
-            <groupId>com.github.ekryd.sortpom</groupId>
-            <artifactId>sortpom-maven-plugin</artifactId>
-            <configuration>
-              <skip>true</skip>
-            </configuration>
-          </plugin>
           <!-- Run integration tests -->
           <plugin>
             <artifactId>maven-failsafe-plugin</artifactId>
@@ -643,14 +621,6 @@
           <!-- Run unit tests -->
           <plugin>
             <artifactId>maven-surefire-plugin</artifactId>
-            <dependencies>
-              <dependency>
-                <groupId>org.apache.maven.surefire</groupId>
-                <artifactId>surefire-junit47</artifactId>
-                <version>${surefire.version}</version>
-                <scope>compile</scope>
-              </dependency>
-            </dependencies>
             <configuration>
               <skipTests>false</skipTests>
               <groups>${unittests}</groups>
@@ -700,6 +670,15 @@
               to junit 4.13.2. See more in DEVSIX-4761. With the future jacoco/junit upgrades the necessity in
               setting this parameter might fade. It's not used for anything else but making sure code coverage is
               measured correctly. -->
+            </configuration>
+          </plugin>
+          <plugin><!-- A fork of https://github.com/sparebank1utvikling/turbo-maven-plugin; available at https://repo.itextsupport.com/artifactory/releases -->
+            <groupId>com.apryse</groupId>
+            <artifactId>apryse-turbo-maven-plugin</artifactId>
+            <version>1.0.0</version>
+            <extensions>true</extensions>
+            <configuration>
+              <enabled>false</enabled>
             </configuration>
           </plugin>
         </plugins>
@@ -789,13 +768,6 @@
       <id>artifactory</id>
       <build>
         <plugins>
-          <plugin>
-            <groupId>com.github.ekryd.sortpom</groupId>
-            <artifactId>sortpom-maven-plugin</artifactId>
-            <configuration>
-              <skip>true</skip>
-            </configuration>
-          </plugin>
           <plugin>
             <artifactId>maven-javadoc-plugin</artifactId>
             <configuration>

@@ -78,7 +78,7 @@ public class PdfChoiceFieldTest extends ExtendedITextTest {
         // 规
         PdfFormField field = new ChoiceFormFieldBuilder(pdfDoc, "combo1")
                 .setWidgetRectangle(new Rectangle(36, 666, 40, 80)).setOptions(new String[]{"\u89c4", "\u89c9"})
-                .setConformanceLevel(null).createComboBox()
+                .setGenericConformanceLevel(null).createComboBox()
                 .setValue("\u89c4");
         field.setFont(font);
         field.getFirstFormAnnotation().setBorderColor(ColorConstants.BLACK);
@@ -87,7 +87,7 @@ public class PdfChoiceFieldTest extends ExtendedITextTest {
         // 觉
         field = new ChoiceFormFieldBuilder(pdfDoc, "combo2")
                 .setWidgetRectangle(new Rectangle(136, 666, 40, 80)).setOptions(new String[]{"\u89c4", "\u89c9"})
-                .setConformanceLevel(null).createComboBox();
+                .setGenericConformanceLevel(null).createComboBox();
         field.setValue("\u89c4").setFont(font);
         field.setValue("\u89c9");
         field.getFirstFormAnnotation().setBorderColor(ColorConstants.BLACK);
@@ -96,7 +96,7 @@ public class PdfChoiceFieldTest extends ExtendedITextTest {
         // 规
         field = new ChoiceFormFieldBuilder(pdfDoc, "list1")
                 .setWidgetRectangle(new Rectangle(236, 666, 50, 80)).setOptions(new String[]{"\u89c4", "\u89c9"})
-                .setConformanceLevel(null).createList()
+                .setGenericConformanceLevel(null).createList()
                 .setValue("\u89c4");
         field.setFont(font);
         field.getFirstFormAnnotation().setBorderColor(ColorConstants.BLACK);
@@ -105,7 +105,7 @@ public class PdfChoiceFieldTest extends ExtendedITextTest {
         // 觉
         field = new ChoiceFormFieldBuilder(pdfDoc, "list2")
                 .setWidgetRectangle(new Rectangle(336, 666, 50, 80)).setOptions(new String[]{"\u89c4", "\u89c9"})
-                .setConformanceLevel(null).createList();
+                .setGenericConformanceLevel(null).createList();
         field.setValue("\u89c4").setFont(font);
         field.setValue("\u89c9");
         field.getFirstFormAnnotation().setBorderColor(ColorConstants.BLACK);
@@ -182,7 +182,7 @@ public class PdfChoiceFieldTest extends ExtendedITextTest {
         PdfAcroForm form = PdfFormCreator.getAcroForm(document, true);
         PdfChoiceFormField choice = (PdfChoiceFormField) new ChoiceFormFieldBuilder(document, "choice")
                 .setWidgetRectangle(new Rectangle(336, 666, 50, 80)).setOptions(new String[]{"one", "two", "three", "four"})
-                .setConformanceLevel(null).createList()
+                .setGenericConformanceLevel(null).createList()
                 .setValue("two").setFont(null);
         choice.getFirstFormAnnotation().setBorderColor(ColorConstants.BLACK);
         choice.setMultiSelect(true);

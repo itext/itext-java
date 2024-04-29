@@ -42,6 +42,33 @@ $ mvn clean install \
     > >(tee mvn.log) 2> >(tee mvn-error.log >&2)
 ```
 
+iText is backwards compatible in minor releases. To ensure that code changes conform to this requirement we use japicmp.
+Todo verify this execute following commands:
+
+```bash
+$ mvn clean install
+$ mvn verify --activate-profiles qa \
+    -Dcheckstyle.skip=true \
+    -Ddependency-check.skip=true \
+    -Dpmd.skip=true \
+    -Dspotbugs.skip=true \
+    -Dmaven.main.skip=true \
+    -Dmaven.test.skip=true \
+    -Djapicmp.breakBuildOnModifications=true \
+    -Djapicmp.breakBuildOnBinaryIncompatibleModifications=true \
+    -Djapicmp.breakBuildOnSourceIncompatibleModifications=true 
+```
+
+If you add new public methods or classes those should be documented. 
+To verify this you can execute the following commands:
+
+```bash
+$ mvn clean install
+$ mvn javadoc:javadoc | grep -E "(: warning:)|(: error:)"
+```
+
+
+
 [1]: https://maven.apache.org/
 
 [2]: https://www.ghostscript.com/

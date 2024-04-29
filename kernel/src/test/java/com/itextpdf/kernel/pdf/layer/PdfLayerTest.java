@@ -409,7 +409,7 @@ public class PdfLayerTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "input_layered.pdf"),
                 CompareTool.createTestPdfWriter(destinationFolder + "output_copy_layered.pdf"));
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "output_copy_layered.pdf", sourceFolder + "input_layered.pdf", destinationFolder, "diff"));
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "output_copy_layered.pdf", sourceFolder + "cmp_output_copy_layered.pdf", destinationFolder, "diff"));
     }
 
     @Test

@@ -1,0 +1,96 @@
+external-url-prefix: "http://localhost:9000"
+keysets:
+  test:
+    path-prefix: keys
+    keys:
+      rootRsa:
+        path: key1.pem
+        password: testpassphrase
+      signRsa:
+        path: key2.pem
+        password: testpassphrase
+      ocsp-responder:
+        path: key3.pem
+        password: testpassphrase
+        
+
+pki-architectures:
+  test:
+    keyset: test
+    entity-defaults:
+      country-name: BY
+      organization-name: iText
+    entities:
+      rootRsa:
+        common-name: iTextTestRootRsa
+      signRsa:
+        common-name: iTextTestSignRsa
+      ocsp-responder:
+        common-name: iTextTestOcspResponder
+    certs:
+      rootRsa:
+        subject: rootRsa
+        issuer: rootRsa
+        validity:
+          valid-from: "2000-01-01T00:00:00+0000"
+          valid-to: "2500-01-01T00:00:00+0000"
+        extensions:
+          - id: basic_constraints
+            critical: true
+            value:
+              ca: true
+          - id: key_usage
+            critical: true
+            smart-value:
+              schema: key-usage
+              params: [digital_signature, key_cert_sign, crl_sign]
+          - id: extended_key_usage
+            critical: true
+            value: [ ocsp_signing ]
+      signRsa:
+        subject: signRsa
+        issuer: rootRsa
+        validity:
+          valid-from: "2000-01-01T00:00:00+0000"
+          valid-to: "2100-01-01T00:00:00+0000"
+        extensions:
+          - id: key_usage
+            critical: true
+            smart-value:
+              schema: key-usage
+              params: [digital_signature, non_repudiation]
+          - id: authority_information_access
+            smart-value:
+              schema: aia-urls
+              params:
+                ocsp-responder-names: [ocsp-service]
+      ocsp-responder:
+        subject: ocsp-responder
+        issuer: rootRsa
+        validity:
+          valid-from: "2000-01-01T00:00:00+0000"
+          valid-to: "2100-01-01T00:00:00+0000"
+        extensions:
+          - id: key_usage
+            critical: true
+            smart-value:
+              schema: key-usage
+              params: [digital_signature]
+          - id: extended_key_usage
+            critical: true
+            value: [ocsp_signing]
+          - id: authority_information_access
+            smart-value:
+              schema: aia-urls
+              params:
+                ocsp-responder-names: [ocsp-service2]
+    services:
+        ocsp:
+          ocsp-service:
+            for-issuer: rootRsa
+            responder-cert: ocsp-responder
+            signing-key: ocsp-responder
+          ocsp-service2:
+            for-issuer: rootRsa
+            responder-cert: rootRsa
+            signing-key: rootRsa

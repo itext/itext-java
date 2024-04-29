@@ -39,6 +39,7 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.utils.CompareTool;
@@ -422,9 +423,7 @@ public class SignatureFieldAppearanceTest extends ExtendedITextTest {
         sigField.setInteractive(true);
         sigField.setBorder(new SolidBorder(ColorConstants.GREEN, 1));
 
-        Exception e = Assert.assertThrows(IllegalStateException.class, () -> {
-            document.add(sigField);
-        });
+        Exception e = Assert.assertThrows(IllegalStateException.class, () -> document.add(sigField));
         Assert.assertEquals(LayoutExceptionMessageConstant.INVALID_FONT_PROPERTY_VALUE, e.getMessage());
 
     }
@@ -505,5 +504,18 @@ public class SignatureFieldAppearanceTest extends ExtendedITextTest {
         }
 
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void flattenEmptySignatureTest() throws IOException, InterruptedException {
+        String srcPdf = SOURCE_FOLDER + "emptySignature.pdf";
+        String outPdf = DESTINATION_FOLDER + "flattenEmptySignature.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_flattenEmptySignature.pdf";
+
+        try (PdfDocument document = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(outPdf))) {
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(document, false);
+            acroForm.flattenFields();
+        }
+        Assert.assertNull(new CompareTool().compareVisually(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
     }
 }

@@ -46,6 +46,7 @@ import com.itextpdf.kernel.xmp.XMPMetaFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.Closeable;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -85,6 +86,8 @@ public class PdfReader implements Closeable {
     private PdfIndirectReference currentIndirectReference;
 
     private XMPMeta xmpMeta;
+
+    private XrefProcessor xrefProcessor = new XrefProcessor();
 
     protected PdfTokenizer tokens;
     protected PdfEncryption decrypt;
@@ -180,6 +183,17 @@ public class PdfReader implements Closeable {
     public PdfReader(String filename) throws IOException {
         this(filename, new ReaderProperties());
 
+    }
+
+    /**
+     * Reads and parses a PDF document.
+     *
+     * @param file   the file of the document
+     * @param properties properties of the created reader
+     * @throws IOException on error
+     */
+    public PdfReader(File file, ReaderProperties properties) throws IOException {
+        this(file.getAbsolutePath(), properties);
     }
 
     PdfReader(IRandomAccessSource byteSource, ReaderProperties properties, boolean closeStream) throws IOException {
@@ -1000,8 +1014,8 @@ public class PdfReader implements Closeable {
                 return;
             }
         } catch (XrefCycledReferencesException
-                | MemoryLimitsAwareException
-                | InvalidXRefPrevException exceptionWhileReadingXrefStream) {
+                 | MemoryLimitsAwareException
+                 | InvalidXRefPrevException exceptionWhileReadingXrefStream) {
             throw exceptionWhileReadingXrefStream;
         } catch (Exception ignored) {
             // Do nothing.
@@ -1122,6 +1136,7 @@ public class PdfReader implements Closeable {
                 }
             }
         }
+        processXref(xref);
         PdfDictionary trailer = (PdfDictionary) readObject(false);
         PdfObject xrs = trailer.get(PdfName.XRefStm);
         if (xrs != null && xrs.getType() == PdfObject.NUMBER) {
@@ -1250,6 +1265,7 @@ public class PdfReader implements Closeable {
                     ++start;
                 }
             }
+            processXref(xref);
             ptr = prev;
             if (alreadyVisitedXrefStreams.contains(ptr)) {
                 throw new XrefCycledReferencesException(
@@ -1388,6 +1404,10 @@ public class PdfReader implements Closeable {
 
     boolean isMemorySavingMode() {
         return memorySavingMode;
+    }
+
+    void setXrefProcessor(XrefProcessor xrefProcessor) {
+        this.xrefProcessor = xrefProcessor;
     }
 
     private void processArrayReadError() {
@@ -1565,6 +1585,15 @@ public class PdfReader implements Closeable {
         return tok;
     }
 
+    private void processXref(PdfXrefTable xrefTable) throws IOException {
+        long currentPosition = tokens.getPosition();
+        try {
+            xrefProcessor.processXref(xrefTable, tokens);
+        } finally {
+            tokens.seek(currentPosition);
+        }
+    }
+
     protected static class ReusableRandomAccessSource implements IRandomAccessSource {
         private ByteBuffer buffer;
 
@@ -1637,6 +1666,23 @@ public class PdfReader implements Closeable {
          */
         public boolean isStricter(StrictnessLevel compareWith) {
             return compareWith == null || this.levelValue > compareWith.levelValue;
+        }
+    }
+
+    /**
+     * Class containing a callback which is called on every xref table reading.
+     */
+    static class XrefProcessor {
+        /**
+         * Process xref table.
+         *
+         * @param xrefTable {@link PdfXrefTable} to be processed
+         * @param tokenizer {@link PdfTokenizer} to be processed
+         *
+         * @throws IOException in case of input-output related exceptions during PDF document reading
+         */
+        void processXref(PdfXrefTable xrefTable, PdfTokenizer tokenizer) throws IOException {
+            // Do nothing.
         }
     }
 }

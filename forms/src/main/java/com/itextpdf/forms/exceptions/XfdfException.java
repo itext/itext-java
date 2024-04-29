@@ -24,16 +24,29 @@ package com.itextpdf.forms.exceptions;
 
 import com.itextpdf.commons.exceptions.ITextException;
 
+/**
+ * This class represents iText exception that should be thrown when some errors occur while working with
+ * XFDF objects (XFDF file is XML-based Acrobat Forms Data Format).
+ */
 public class XfdfException extends ITextException {
 
+    /**
+     * The exception thrown when some errors occur while working with XFDF objects.
+     *
+     * @param message exception message.
+     */
     public XfdfException(String message) {
         super(message);
     }
 
-    /** Message in case one tries to add attribute with null name or value */
+    /**
+     * Message in case one tries to add attribute with null name or value.
+     */
     public static final String ATTRIBUTE_NAME_OR_VALUE_MISSING = "Attribute name or value are missing";
 
-    /** Message in case one tries to add annotation without indicating the page it belongs to*/
+    /**
+     * Message in case one tries to add annotation without indicating the page it belongs to.
+     */
     public static final String PAGE_IS_MISSING = "Required Page attribute is missing.";
 }
 
