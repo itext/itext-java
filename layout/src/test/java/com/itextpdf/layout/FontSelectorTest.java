@@ -1143,6 +1143,21 @@ public class FontSelectorTest extends ExtendedITextTest {
                 new FontSelector(set.getFonts(), fontFamilies, fc).bestMatch().getDescriptor().getFontName());
     }
 
+    @Test
+    public void monospaceFontsTest() {
+        FontSet set = new FontSet();
+        set.addFont(fontsFolder + "SpaceMono-Regular.ttf");
+
+        List<String> fontFamilies = new ArrayList<>();
+        fontFamilies.add("SpaceMono");
+
+        FontCharacteristics fc = new FontCharacteristics();
+
+        FontSelector fontSelector = new FontSelector(set.getFonts(), fontFamilies, fc);
+
+        Assert.assertTrue("Font is not recognized as monospace.", fontSelector.bestMatch().getDescriptor().isMonospace());
+    }
+
     private void checkSelector(Collection<FontInfo> fontInfoCollection, String fontFamily,
                                String expectedNormal, String expectedBold, String expectedItalic, String expectedBoldItalic) {
         List<String> fontFamilies = new ArrayList<>();
