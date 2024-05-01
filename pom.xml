@@ -504,8 +504,6 @@
                   <excludeModule>bouncy-castle-adapter</excludeModule>
                   <excludeModule>bouncy-castle-connector</excludeModule>
                   <excludeModule>bouncy-castle-fips-adapter</excludeModule>
-                  <!-- TODO DEVSIX-8072 Enable japicmp after release -->
-                  <excludeModule>native-image-test</excludeModule>
                 </excludeModules>
               </parameter>
             </configuration>
