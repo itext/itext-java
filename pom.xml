@@ -605,7 +605,7 @@
               <includes>
                 <include>**/*.java</include>
               </includes>
-              <groups>${slowtests}</groups>
+              <groups>${slowtests},SlowTest,PerformanceTest,IntegrationTest,BouncyCastleIntegrationTest,SampleTest</groups>
               <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
               <argLine>@{jacoco.agent.argLine}</argLine>
               <threadCount>1</threadCount>
@@ -628,7 +628,7 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
               <skipTests>false</skipTests>
-              <groups>${unittests}</groups>
+              <groups>${unittests},UnitTest,BouncyCastleUnitTest</groups>
               <argLine>@{jacoco.agent.argLine}</argLine>
             </configuration>
           </plugin>
