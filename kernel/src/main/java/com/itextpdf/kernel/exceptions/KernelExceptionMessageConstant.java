@@ -251,6 +251,8 @@ public final class KernelExceptionMessageConstant {
             "Invalid PDF Type 3 Function object, \"Functions\" array should exist and can't be empty.";
     public static final String INVALID_RANGE_ARRAY = "Invalid range array.";
     public static final String INVALID_OFFSET_FOR_THIS_OBJECT = "Invalid offset for object {0}.";
+    public static final String INVALID_OBJECT_REFERENCE_TYPE = "Object reference has unsupported type, " +
+            "supported types are dictionaries and streams";
     public static final String INVALID_XREF_STREAM = "Invalid xref stream.";
     public static final String INVALID_XREF_TABLE = "Invalid xref table.";
     public static final String IO_EXCEPTION = "I/O exception.";

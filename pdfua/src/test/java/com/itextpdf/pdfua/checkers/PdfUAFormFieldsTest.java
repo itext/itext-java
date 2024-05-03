@@ -40,6 +40,7 @@ import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.*;
+import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
 import com.itextpdf.layout.borders.SolidBorder;
@@ -1868,6 +1869,35 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
         });
         framework.assertBothValid("FormFieldAltDescription");
     }
+
+    @Test
+    public void testFormFieldAsStream() throws IOException {
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfObject page = pdfDoc.addNewPage().getPdfObject();
+
+            PdfStream streamObj = new PdfStream();
+            streamObj.put(PdfName.Subtype, PdfName.Widget);
+            streamObj.put(PdfName.T, new PdfString("hi"));
+            streamObj.put(PdfName.TU, new PdfString("some text"));
+            streamObj.put(PdfName.P,  page);
+
+            PdfDictionary objRef = new PdfDictionary();
+            objRef.put(PdfName.Obj, streamObj);
+            objRef.put(PdfName.Type, PdfName.OBJR);
+
+            PdfDictionary parentDic = new PdfDictionary();
+            parentDic.put(PdfName.P, pdfDoc.getStructTreeRoot().getPdfObject());
+            parentDic.put(PdfName.S, PdfName.Form);
+            parentDic.put(PdfName.Type, PdfName.StructElem);
+            parentDic.put(PdfName.Pg, page);
+            parentDic.put(PdfName.K, objRef);
+
+            pdfDoc.getStructTreeRoot().addKid(new PdfStructElem(parentDic));
+        });
+        framework.assertBothValid("FormFieldAsStream");
+    }
+
+
 
     private PdfFont getFont() {
         try {

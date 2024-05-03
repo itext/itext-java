@@ -25,6 +25,7 @@ package com.itextpdf.kernel.pdf.tagging;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 
 public class PdfObjRef extends PdfMcr {
@@ -55,6 +56,11 @@ public class PdfObjRef extends PdfMcr {
     }
 
     public PdfDictionary getReferencedObject() {
-        return ((PdfDictionary) getPdfObject()).getAsDictionary(PdfName.Obj);
+        PdfObject obj = ((PdfDictionary) getPdfObject()).get(PdfName.Obj);
+        if(obj instanceof PdfDictionary){
+            return (PdfDictionary) obj;
+        } else {
+            return null;
+        }
     }
 }

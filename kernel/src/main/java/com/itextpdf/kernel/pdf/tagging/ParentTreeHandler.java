@@ -197,8 +197,13 @@ class ParentTreeHandler {
             }
             pageMcrs.putXObjectMcr(stmIndRef, mcr);
         } else if (mcr instanceof PdfObjRef) {
-            PdfDictionary obj = ((PdfDictionary) mcr.getPdfObject()).getAsDictionary(PdfName.Obj);
-            if (obj == null || obj.isFlushed()) {
+            PdfObject mcrObj = ((PdfDictionary) mcr.getPdfObject()).get(PdfName.Obj);
+            if (!(mcrObj instanceof PdfDictionary)) {
+                throw new PdfException(KernelExceptionMessageConstant.INVALID_OBJECT_REFERENCE_TYPE);
+            }
+
+            PdfDictionary obj = (PdfDictionary) mcrObj;
+            if (obj.isFlushed()) {
                 throw new PdfException(
                         KernelExceptionMessageConstant.WHEN_ADDING_OBJECT_REFERENCE_TO_THE_TAG_TREE_IT_MUST_BE_CONNECTED_TO_NOT_FLUSHED_OBJECT);
             }
@@ -247,15 +252,6 @@ class ParentTreeHandler {
                 }
                 structTreeRoot.setModified();
             } else if (mcrToUnregister instanceof PdfObjRef) {
-                PdfDictionary obj = ((PdfDictionary) mcrToUnregister.getPdfObject()).getAsDictionary(PdfName.Obj);
-                if (obj != null && !obj.isFlushed()) {
-                    PdfNumber n = obj.getAsNumber(PdfName.StructParent);
-                    if (n != null) {
-                        pageMcrs.getObjRefs().remove(n.intValue());
-                        structTreeRoot.setModified();
-                        return;
-                    }
-                }
                 for (Map.Entry<Integer, PdfMcr> entry : pageMcrs.getObjRefs().entrySet()) {
                     if (entry.getValue().getPdfObject() == mcrToUnregister.getPdfObject()) {
                         pageMcrs.getObjRefs().remove(entry.getKey());

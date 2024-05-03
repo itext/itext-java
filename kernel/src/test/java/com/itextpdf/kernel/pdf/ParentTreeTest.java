@@ -359,6 +359,44 @@ public class ParentTreeTest extends ExtendedITextTest {
     }
 
     @Test
+    public void objRefAsStreamTest() throws IOException, InterruptedException {
+        String pdf = sourceFolder + "objRefAsStream.pdf";
+        String outPdf = destinationFolder + "objRefAsStream.pdf";
+        String cmpPdf = sourceFolder + "cmp_objRefAsStream.pdf";
+
+        PdfDocument taggedPdf = new PdfDocument(new PdfReader(pdf), CompareTool.createTestPdfWriter(outPdf));
+        taggedPdf.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.TAG_STRUCTURE_INIT_FAILED)
+    })
+    public void objRefAsInvalidType() throws IOException {
+        String pdf = sourceFolder + "objRefAsInvalidType.pdf";
+        PdfDocument doc = new PdfDocument(new PdfReader(pdf));
+        Assert.assertNull(doc.getStructTreeRoot());
+    }
+
+    @Test
+    public void unregisterObjRefAsStreamTest() throws IOException, InterruptedException {
+        String pdf = sourceFolder + "objRefAsStream.pdf";
+        String outPdf = destinationFolder + "objRefAsStreamUnregisterMcr.pdf";
+        String cmpPdf = sourceFolder + "cmp_objRefAsStreamUnregisterMcr.pdf";
+
+        PdfDocument taggedPdf = new PdfDocument(new PdfReader(pdf), CompareTool.createTestPdfWriter(outPdf));
+
+        PdfStructElem elem = (PdfStructElem) taggedPdf.getStructTreeRoot().getKids().get(0).getKids().get(0);
+        elem.removeKid(0);
+        taggedPdf.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
+    }
+
+
+    @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = KernelLogMessageConstant.STRUCT_PARENT_INDEX_MISSED_AND_RECREATED, count = 4)
     })
