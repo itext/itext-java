@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.commons.actions.contexts.IMetaInfo;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.RASInputStream;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
@@ -42,6 +43,7 @@ import java.util.Set;
 public class PdfRevisionsReader {
     private final PdfReader reader;
     private List<DocumentRevision> documentRevisions = null;
+    private IMetaInfo metaInfo;
 
     /**
      * Creates {@link PdfRevisionsReader} class.
@@ -50,6 +52,15 @@ public class PdfRevisionsReader {
      */
     public PdfRevisionsReader(PdfReader reader) {
         this.reader = reader;
+    }
+
+    /**
+     * Sets the {@link IMetaInfo} that will be used during {@link PdfDocument} creation.
+     *
+     * @param metaInfo meta info to set
+     */
+    public void setEventCountingMetaInfo(IMetaInfo metaInfo) {
+        this.metaInfo = metaInfo;
     }
 
     /**
@@ -67,7 +78,8 @@ public class PdfRevisionsReader {
 
             try (InputStream inputStream = new RASInputStream(source);
                     PdfReader newReader = new PdfReader(inputStream);
-                    PdfDocument newDocument = new PdfDocument(newReader)) {
+                    PdfDocument newDocument = new PdfDocument(newReader,
+                            new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
                 newDocument.getXref().unmarkReadingCompleted();
                 newDocument.getXref().clearAllReferences();
                 RevisionsXrefProcessor xrefProcessor = new RevisionsXrefProcessor();

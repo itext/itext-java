@@ -177,13 +177,17 @@ public class SignatureUtil {
      * a signature
      */
     public PdfDictionary getSignatureDictionary(String name) {
+        PdfDictionary merged = getSignatureFormFieldDictionary(name);
+        return merged == null ? null : merged.getAsDictionary(PdfName.V);
+    }
+
+    public PdfDictionary getSignatureFormFieldDictionary(String name) {
         getSignatureNames();
         if (acroForm == null || !sigNames.containsKey(name)) {
             return null;
         }
         PdfFormField field = acroForm.getField(name);
-        PdfDictionary merged = field.getPdfObject();
-        return merged.getAsDictionary(PdfName.V);
+        return field.getPdfObject();
     }
 
     /* Updates the /ByteRange with the provided value */

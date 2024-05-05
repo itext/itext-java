@@ -42,7 +42,10 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfRevisionsReader;
 import com.itextpdf.kernel.pdf.PdfStream;
+import com.itextpdf.signatures.PdfSignature;
+import com.itextpdf.signatures.SignatureUtil;
 import com.itextpdf.signatures.validation.v1.report.ReportItem;
 import com.itextpdf.signatures.validation.v1.report.ReportItem.ReportItemStatus;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport;
@@ -83,7 +86,7 @@ class DocumentRevisionsValidator {
     static final String NOT_ALLOWED_CATALOG_CHANGES = "PDF document catalog contains changes other than " +
             "DSS dictionary and DTS addition (docMDP level >= 1), " +
             "form fill-in and digital signatures (docMDP level >= 2), " +
-            "adding or editing annotations (docMDP level 3), which are not allowed.";
+            "adding or editing annotations (docMDP level 3).";
     static final String OBJECT_REMOVED =
             "Object \"{0}\", which is not allowed to be removed, was removed from the document through XREF table.";
     static final String PAGES_MODIFIED = "Pages structure was unexpectedly modified.";
@@ -96,40 +99,121 @@ class DocumentRevisionsValidator {
     static final String SIGNATURE_MODIFIED = "Signature {0} was unexpectedly modified.";
     static final String UNEXPECTED_ENTRY_IN_XREF =
             "New PDF document revision contains unexpected entry \"{0}\" in XREF table.";
+    static final String REVISIONS_RETRIEVAL_FAILED = "Wasn't possible to retrieve document revisions.";
+    static final String DOCUMENT_WITHOUT_SIGNATURES = "Document doesn't contain any signatures.";
+    static final String TOO_MANY_CERTIFICATION_SIGNATURES = "Document contains more than one certification signature.";
+    static final String SIGNATURE_REVISION_NOT_FOUND =
+            "Not possible to identify document revision corresponding to the first signature in the document.";
+    static final String ACCESS_PERMISSIONS_ADDED = "Access permissions level specified for \"{0}\" approval signature "
+            + "is higher than previous one specified. These access permissions will be ignored.";
+    static final String UNKNOWN_ACCESS_PERMISSIONS = "Access permissions level number specified for \"{0}\" signature "
+            + "is undefined. Default level 2 will be used instead.";
     static final String UNEXPECTED_FORM_FIELD = "New PDF document revision contains unexpected form field \"{0}\".";
 
-    int docMDP = 2;
+    private IMetaInfo metaInfo = new ValidationMetaInfo();
+    private AccessPermissions accessPermissions = AccessPermissions.ANNOTATION_MODIFICATION;
+    private AccessPermissions requestedAccessPermissions = AccessPermissions.UNSPECIFIED;
+    private final PdfDocument document;
 
-    private IMetaInfo metaInfo;
-
-    DocumentRevisionsValidator() {
-        // Empty constructor.
+    DocumentRevisionsValidator(PdfDocument document) {
+        this.document = document;
     }
 
     /**
      * Sets the {@link IMetaInfo} that will be used during {@link PdfDocument} creation.
      *
      * @param metaInfo meta info to set
+     *
+     * @return the same {@link DocumentRevisionsValidator} instance
      */
-    public void setEventCountingMetaInfo(IMetaInfo metaInfo) {
+    public DocumentRevisionsValidator setEventCountingMetaInfo(IMetaInfo metaInfo) {
         this.metaInfo = metaInfo;
+        return this;
     }
 
-    static InputStream createInputStreamFromRevision(PdfDocument originalDocument, DocumentRevision revision) {
-        RandomAccessFileOrArray raf = originalDocument.getReader().getSafeFile();
-        WindowRandomAccessSource source = new WindowRandomAccessSource(
-                raf.createSourceView(), 0, revision.getEofOffset());
-        return new RASInputStream(source);
+    /**
+     * Set access permissions to be used during docMDP validation.
+     * If value is provided, related signature fields will be ignored during the validation.
+     *
+     * @param accessPermissions {@link AccessPermissions} docMDP validation level
+     *
+     * @return the same {@link DocumentRevisionsValidator} instance
+     */
+    public DocumentRevisionsValidator setAccessPermissions(AccessPermissions accessPermissions) {
+        this.requestedAccessPermissions = accessPermissions;
+        return this;
     }
 
-    ValidationReport validateRevision(PdfDocument originalDocument, PdfDocument documentWithoutRevision,
-                                      DocumentRevision revision) throws IOException {
-        ValidationReport validationReport = new ValidationReport();
-        try (InputStream inputStream = createInputStreamFromRevision(originalDocument, revision);
-             PdfReader newReader = new PdfReader(inputStream);
-             PdfDocument documentWithRevision = new PdfDocument(newReader,
-                     new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
-            Set<PdfIndirectReference> indirectReferences = revision.getModifiedObjects();
+    /**
+     * Validate all document revisions according to docMDP and fieldMDP transform methods.
+     *
+     * @return {@link ValidationReport} which contains detailed validation results
+     */
+    public ValidationReport validateAllDocumentRevisions() {
+        ValidationReport report = new ValidationReport();
+        PdfRevisionsReader revisionsReader = new PdfRevisionsReader(document.getReader());
+        revisionsReader.setEventCountingMetaInfo(metaInfo);
+        List<DocumentRevision> documentRevisions;
+        try {
+            documentRevisions = revisionsReader.getAllRevisions();
+        } catch (IOException e) {
+            report.addReportItem(
+                    new ReportItem(DOC_MDP_CHECK, REVISIONS_RETRIEVAL_FAILED, ReportItemStatus.INVALID));
+            return report;
+        }
+        SignatureUtil signatureUtil = new SignatureUtil(document);
+        List<String> signatures = new ArrayList<>(signatureUtil.getSignatureNames());
+        if (signatures.isEmpty()) {
+            report.addReportItem(new ReportItem(DOC_MDP_CHECK, DOCUMENT_WITHOUT_SIGNATURES, ReportItemStatus.INFO));
+            return report;
+        }
+        boolean signatureFound = false;
+        boolean certificationSignatureFound = false;
+        PdfSignature currentSignature = signatureUtil.getSignature(signatures.get(0));
+        for (int i = 0; i < documentRevisions.size() - 1; i++) {
+            if (currentSignature != null &&
+                    revisionContainsSignature(documentRevisions.get(i), signatures.get(0))) {
+                signatureFound = true;
+                if (isCertificationSignature(currentSignature)) {
+                    if (certificationSignatureFound) {
+                        report.addReportItem(new ReportItem(DOC_MDP_CHECK,
+                                TOO_MANY_CERTIFICATION_SIGNATURES, ReportItemStatus.INDETERMINATE));
+                    } else {
+                        certificationSignatureFound = true;
+                        updateCertificationSignatureAccessPermissions(currentSignature, report);
+                    }
+                }
+                updateApprovalSignatureAccessPermissions(
+                        signatureUtil.getSignatureFormFieldDictionary(signatures.get(0)), report);
+                signatures.remove(0);
+                if (signatures.isEmpty()) {
+                    currentSignature = null;
+                } else {
+                    currentSignature = signatureUtil.getSignature(signatures.get(0));
+                }
+            }
+            if (signatureFound) {
+                validateRevision(documentRevisions.get(i), documentRevisions.get(i + 1), report);
+            }
+        }
+        if (!signatureFound) {
+            report.addReportItem(
+                    new ReportItem(DOC_MDP_CHECK, SIGNATURE_REVISION_NOT_FOUND, ReportItemStatus.INVALID));
+        }
+        return report;
+    }
+
+    ValidationReport validateRevision(DocumentRevision previousRevision, DocumentRevision currentRevision,
+            ValidationReport validationReport) {
+        try (InputStream previousInputStream = createInputStreamFromRevision(document, previousRevision);
+                PdfReader previousReader = new PdfReader(previousInputStream);
+                PdfDocument documentWithoutRevision = new PdfDocument(previousReader,
+                        new DocumentProperties().setEventCountingMetaInfo(metaInfo));
+                InputStream currentInputStream = createInputStreamFromRevision(document, currentRevision);
+                PdfReader currentReader = new PdfReader(currentInputStream);
+                PdfDocument documentWithRevision = new PdfDocument(currentReader,
+                        new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
+            Set<PdfIndirectReference> indirectReferences = currentRevision.getModifiedObjects();
             if (!compareCatalogs(documentWithoutRevision, documentWithRevision, validationReport)) {
                 return validationReport;
             }
@@ -159,10 +243,115 @@ class DocumentRevisionsValidator {
                             UNEXPECTED_ENTRY_IN_XREF, indirectReference.getObjNumber()), ReportItemStatus.INVALID));
                 }
             }
+        } catch (IOException exception) {
+            // error
         }
         return validationReport;
     }
 
+    AccessPermissions getAccessPermissions() {
+        return requestedAccessPermissions == AccessPermissions.UNSPECIFIED ? accessPermissions :
+                requestedAccessPermissions;
+    }
+
+    private static InputStream createInputStreamFromRevision(PdfDocument originalDocument, DocumentRevision revision) {
+        RandomAccessFileOrArray raf = originalDocument.getReader().getSafeFile();
+        WindowRandomAccessSource source = new WindowRandomAccessSource(
+                raf.createSourceView(), 0, revision.getEofOffset());
+        return new RASInputStream(source);
+    }
+
+    private void updateApprovalSignatureAccessPermissions(PdfDictionary signatureField, ValidationReport report) {
+        PdfDictionary fieldLock = signatureField.getAsDictionary(PdfName.Lock);
+        if (fieldLock == null || fieldLock.getAsNumber(PdfName.P) == null) {
+            return;
+        }
+        PdfNumber p = fieldLock.getAsNumber(PdfName.P);
+        AccessPermissions newAccessPermissions;
+        switch (p.intValue()) {
+            case 1:
+                newAccessPermissions = AccessPermissions.NO_CHANGES_PERMITTED;
+                break;
+            case 2:
+                newAccessPermissions = AccessPermissions.FORM_FIELDS_MODIFICATION;
+                break;
+            case 3:
+                newAccessPermissions = AccessPermissions.ANNOTATION_MODIFICATION;
+                break;
+            default:
+                // Do nothing.
+                return;
+        }
+        if (accessPermissions.compareTo(newAccessPermissions) < 0) {
+            report.addReportItem(new ReportItem(DOC_MDP_CHECK, MessageFormatUtil.format(ACCESS_PERMISSIONS_ADDED,
+                    signatureField.get(PdfName.T)), ReportItemStatus.INDETERMINATE));
+        } else {
+            accessPermissions = newAccessPermissions;
+        }
+    }
+
+    private void updateCertificationSignatureAccessPermissions(PdfSignature signature, ValidationReport report) {
+        PdfArray references = signature.getPdfObject().getAsArray(PdfName.Reference);
+        for (PdfObject reference : references) {
+            PdfDictionary referenceDict = (PdfDictionary) reference;
+            PdfName transformMethod = referenceDict.getAsName(PdfName.TransformMethod);
+            if (PdfName.DocMDP.equals(transformMethod)) {
+                PdfDictionary transformParameters = referenceDict.getAsDictionary(PdfName.TransformParams);
+                if (transformParameters == null || transformParameters.getAsNumber(PdfName.P) == null) {
+                    accessPermissions = AccessPermissions.FORM_FIELDS_MODIFICATION;
+                    return;
+                }
+                PdfNumber p = transformParameters.getAsNumber(PdfName.P);
+                switch (p.intValue()) {
+                    case 1:
+                        accessPermissions = AccessPermissions.NO_CHANGES_PERMITTED;
+                        break;
+                    case 2:
+                        accessPermissions = AccessPermissions.FORM_FIELDS_MODIFICATION;
+                        break;
+                    case 3:
+                        accessPermissions = AccessPermissions.ANNOTATION_MODIFICATION;
+                        break;
+                    default:
+                        report.addReportItem(new ReportItem(DOC_MDP_CHECK, MessageFormatUtil.format(
+                                UNKNOWN_ACCESS_PERMISSIONS, signature.getName()), ReportItemStatus.INDETERMINATE));
+                        accessPermissions = AccessPermissions.FORM_FIELDS_MODIFICATION;
+                        break;
+                }
+                return;
+            }
+        }
+    }
+
+    private boolean isCertificationSignature(PdfSignature signature) {
+        if (PdfName.DocTimeStamp.equals(signature.getType()) || PdfName.ETSI_RFC3161.equals(signature.getSubFilter())) {
+            // Timestamp is never a certification signature.
+            return false;
+        }
+        PdfArray references = signature.getPdfObject().getAsArray(PdfName.Reference);
+        if (references != null) {
+            for (PdfObject reference : references) {
+                if (reference instanceof PdfDictionary) {
+                    PdfDictionary referenceDict = (PdfDictionary) reference;
+                    PdfName transformMethod = referenceDict.getAsName(PdfName.TransformMethod);
+                    return PdfName.DocMDP.equals(transformMethod);
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean revisionContainsSignature(DocumentRevision revision, String signature) {
+        try (InputStream inputStream = createInputStreamFromRevision(document, revision);
+                PdfReader reader = new PdfReader(inputStream);
+                PdfDocument documentWithRevision = new PdfDocument(reader,
+                        new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
+            SignatureUtil signatureUtil = new SignatureUtil(documentWithRevision);
+            return signatureUtil.signatureCoversWholeDocument(signature);
+        } catch (IOException ignored) {
+        }
+        return false;
+    }
 
     private boolean compareCatalogs(PdfDocument documentWithoutRevision, PdfDocument documentWithRevision,
                                     ValidationReport report) {
@@ -513,7 +702,8 @@ class DocumentRevisionsValidator {
                         SIGNATURE_MODIFIED, currentField.getAsString(PdfName.T).getValue()), ReportItemStatus.INVALID));
                 return false;
             }
-        } else if (docMDP == 1 && !comparePdfObjects(prevValue, currValue)) {
+        } else if (getAccessPermissions() == AccessPermissions.NO_CHANGES_PERMITTED
+                && !comparePdfObjects(prevValue, currValue)) {
             return false;
         }
 
@@ -625,7 +815,8 @@ class DocumentRevisionsValidator {
     private boolean isAllowedSignatureField(PdfDictionary field, ValidationReport report) {
         PdfDictionary value = field.getAsDictionary(PdfName.V);
         if (!PdfName.Sig.equals(field.getAsName(PdfName.FT)) || value == null ||
-                (docMDP == 1 && !PdfName.DocTimeStamp.equals(value.getAsName(PdfName.Type)))) {
+                (getAccessPermissions() == AccessPermissions.NO_CHANGES_PERMITTED
+                        && !PdfName.DocTimeStamp.equals(value.getAsName(PdfName.Type)))) {
             report.addReportItem(new ReportItem(DOC_MDP_CHECK, MessageFormatUtil.format(UNEXPECTED_FORM_FIELD,
                     field.getAsString(PdfName.T).getValue()), ReportItemStatus.INVALID));
             return false;
@@ -710,7 +901,7 @@ class DocumentRevisionsValidator {
 
     private void removeAppearanceRelatedProperties(PdfDictionary annotDict) {
         annotDict.remove(PdfName.P);
-        if (docMDP > 1) {
+        if (getAccessPermissions() != AccessPermissions.NO_CHANGES_PERMITTED) {
             annotDict.remove(PdfName.AP);
             annotDict.remove(PdfName.AS);
             annotDict.remove(PdfName.M);
@@ -873,7 +1064,7 @@ class DocumentRevisionsValidator {
             PdfFormField previousField = prevFields.get(fieldEntry.getKey());
             PdfFormField currentField = fieldEntry.getValue();
             PdfObject value = currentField.getValue();
-            if (docMDP >= 2 || (value instanceof PdfDictionary &&
+            if (getAccessPermissions() != AccessPermissions.NO_CHANGES_PERMITTED || (value instanceof PdfDictionary &&
                     PdfName.DocTimeStamp.equals(((PdfDictionary) value).getAsName(PdfName.Type)))) {
                 allowedReferences.add(new ReferencesPair(currentField.getPdfObject().getIndirectReference(),
                         getIndirectReferenceOrNull(() -> previousField.getPdfObject().getIndirectReference())));
@@ -1097,6 +1288,13 @@ class DocumentRevisionsValidator {
         } catch (Exception ignored) {
             return null;
         }
+    }
+
+    enum AccessPermissions {
+        UNSPECIFIED,
+        NO_CHANGES_PERMITTED,
+        FORM_FIELDS_MODIFICATION,
+        ANNOTATION_MODIFICATION
     }
 
     private static class ReferencesPair {
