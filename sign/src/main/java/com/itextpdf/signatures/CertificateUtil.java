@@ -62,6 +62,7 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.security.cert.X509CRL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -88,9 +89,32 @@ public class CertificateUtil {
      * @throws IOException          thrown when the URL couldn't be opened properly.
      * @throws CertificateException thrown if there's no X509 implementation in the provider.
      * @throws CRLException         thrown when encountering errors when parsing the CRL.
+     *
+     * @deprecated use {@link #getCRLs(X509Certificate)}.
      */
+    @Deprecated
     public static CRL getCRL(X509Certificate certificate) throws CertificateException, CRLException, IOException {
         return CertificateUtil.getCRL(CertificateUtil.getCRLURL(certificate));
+    }
+
+    /**
+     * Gets a CRLs from the X509 certificate.
+     *
+     * @param certificate the X509Certificate to extract the CRLs from
+     *
+     * @return CRL list or null if there's no CRL available
+     *
+     * @throws IOException          thrown when the URL couldn't be opened properly.
+     * @throws CertificateException thrown if there's no X509 implementation in the provider.
+     * @throws CRLException         thrown when encountering errors when parsing the CRL.
+     */
+    public static List<CRL> getCRLs(X509Certificate certificate)
+            throws CertificateException, CRLException, IOException {
+        List<CRL> crls = new ArrayList<>();
+        for (String crlUrl : getCRLURLs(certificate)) {
+            crls.add(CertificateUtil.getCRL(crlUrl));
+        }
+        return crls;
     }
 
     /**
@@ -98,9 +122,25 @@ public class CertificateUtil {
      *
      * @param certificate the Certificate
      *
-     * @return the String where you can check if the certificate was revoked
+     * @return the String where you can check if the certificate was revoked.
+     *
+     * @deprecated use {@link #getCRLURLs(X509Certificate)}.
      */
+    @Deprecated
     public static String getCRLURL(X509Certificate certificate) {
+        List<String> urls = getCRLURLs(certificate);
+        return urls.isEmpty() ? null : urls.get(0);
+    }
+
+    /**
+     * Gets the list of the Certificate Revocation List URLs for a Certificate.
+     *
+     * @param certificate the Certificate to get CRL URLs for
+     *
+     * @return the list of URL strings where you can check if the certificate is revoked.
+     */
+    public static List<String> getCRLURLs(X509Certificate certificate) {
+        List<String> crls = new ArrayList<>();
         IDistributionPoint[] dists = getDistributionPoints(certificate);
         for (IDistributionPoint p : dists) {
             IDistributionPointName distributionPointName = p.getDistributionPoint();
@@ -109,16 +149,18 @@ public class CertificateUtil {
             }
             IGeneralNames generalNames = FACTORY.createGeneralNames(distributionPointName.getName());
             IGeneralName[] names = generalNames.getNames();
+            // If the DistributionPointName contains multiple values, each name describes a different mechanism
+            // to obtain the same CRL.
             for (IGeneralName name : names) {
                 if (name.getTagNo() != FACTORY.createGeneralName().getUniformResourceIdentifier()) {
                     continue;
                 }
                 IDERIA5String derStr = FACTORY
                         .createDERIA5String(FACTORY.createASN1TaggedObject(name.toASN1Primitive()), false);
-                return derStr.getString();
+                crls.add(derStr.getString());
             }
         }
-        return null;
+        return crls;
     }
 
     /**

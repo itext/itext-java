@@ -93,12 +93,11 @@ public class CrlClientOnline implements ICrlClient {
      * @param chain a certificate chain
      */
     public CrlClientOnline(Certificate[] chain) {
-        for (int i = 0; i < chain.length; i++) {
-            X509Certificate cert = (X509Certificate) chain[i];
+        for (Certificate certificate : chain) {
+            X509Certificate cert = (X509Certificate) certificate;
             LOGGER.info("Checking certificate: " + cert.getSubjectDN());
-            String url = null;
-            url = CertificateUtil.getCRLURL(cert);
-            if (url != null) {
+            List<String> urls = CertificateUtil.getCRLURLs(cert);
+            for (String url : urls) {
                 addUrl(url);
             }
         }
@@ -120,18 +119,23 @@ public class CrlClientOnline implements ICrlClient {
             return null;
         }
         List<URL> urlList = new ArrayList<>(urls);
-        if (urlList.size() == 0) {
+        if (urlList.isEmpty()) {
             LOGGER.info(MessageFormatUtil.format(
                     "Looking for CRL for certificate {0}", BOUNCY_CASTLE_FACTORY.createX500Name(checkCert)));
             try {
+                List<String> urlsList = new ArrayList<>();
                 if (url == null) {
-                    url = CertificateUtil.getCRLURL(checkCert);
+                    urlsList = CertificateUtil.getCRLURLs(checkCert);
+                } else {
+                    urlsList.add(url);
                 }
-                if (url == null) {
+                if (urlsList.isEmpty()) {
                     throw new IllegalArgumentException("Passed url can not be null.");
                 }
-                urlList.add(new URL(url));
-                LOGGER.info("Found CRL url: " + url);
+                for (String urlString : urlsList) {
+                    urlList.add(new URL(urlString));
+                    LOGGER.info("Found CRL url: " + urlString);
+                }
             } catch (Exception e) {
                 LOGGER.info("Skipped CRL url: " + e.getMessage());
             }

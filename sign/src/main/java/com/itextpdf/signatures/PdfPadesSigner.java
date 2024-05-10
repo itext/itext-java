@@ -479,7 +479,7 @@ public class PdfPadesSigner {
         if (crlClient == null && ocspClient == null && clientsRequired) {
             X509Certificate signingCertificate = (X509Certificate) signingCert;
             if (CertificateUtil.getOCSPURL(signingCertificate) == null &&
-                    CertificateUtil.getCRLURL(signingCertificate) == null) {
+                    CertificateUtil.getCRLURLs(signingCertificate).isEmpty()) {
                 throw new PdfException(SignExceptionMessageConstant.DEFAULT_CLIENTS_CANNOT_BE_CREATED);
             }
         }
