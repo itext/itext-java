@@ -1325,7 +1325,9 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         // Copying OCGs should go after copying LinkAnnotations
         if (getCatalog() != null && getCatalog().getPdfObject().getAsDictionary(PdfName.OCProperties) != null) {
             OcgPropertiesCopier.copyOCGProperties(this, toDocument, page2page);
-            toDocument.getCatalog().setOcgCopied(true);
+            if(toDocument.getCatalog().getPdfObject().getAsDictionary(PdfName.OCProperties) != null){
+                toDocument.getCatalog().setOcgCopied(true);
+            }
         }
 
         // It's important to copy tag structure after link annotations were copied, because object content items in tag
