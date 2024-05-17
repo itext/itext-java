@@ -189,6 +189,7 @@ public final class Property {
     public static final int ROTATION_POINT_X = 58;
     public static final int ROTATION_POINT_Y = 59;
     public static final int ROWSPAN = 60;
+    public static final int ROW_GAP = 153;
     public static final int SPACING_RATIO = 61;
     public static final int SPLIT_CHARACTERS = 62;
     public static final int STROKE_COLOR = 63;
@@ -232,7 +233,7 @@ public final class Property {
      * related to textual operations. Indicates whether or not this type of property is inheritable.
      */
     private static final boolean[] INHERITED_PROPERTIES;
-    private static final int MAX_INHERITED_PROPERTY_ID = 152;
+    private static final int MAX_INHERITED_PROPERTY_ID = 153;
 
     static {
         INHERITED_PROPERTIES = new boolean[MAX_INHERITED_PROPERTY_ID + 1];

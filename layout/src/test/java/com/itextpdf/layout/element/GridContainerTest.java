@@ -33,13 +33,13 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import java.io.IOException;
+import java.util.ArrayList;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.io.IOException;
-import java.util.ArrayList;
 
 @Category(IntegrationTest.class)
 public class GridContainerTest extends ExtendedITextTest {
@@ -549,6 +549,72 @@ public class GridContainerTest extends ExtendedITextTest {
             grid.add(new Paragraph("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
                     "sed do eiusmod tempor incididunt ut labore et dolore").setBorder(border));
             grid.add(new Paragraph("test").setBorder(border));
+            document.add(grid);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void columnRowGapTest() throws IOException, InterruptedException {
+        String filename = DESTINATION_FOLDER + "columnRowGapTest.pdf";
+        String cmpName = SOURCE_FOLDER + "cmp_columnRowGapTest.pdf";
+        java.util.List<UnitValue> template = new ArrayList<>();
+        template.add(new UnitValue(UnitValue.POINT, 50.0f));
+        template.add(new UnitValue(UnitValue.POINT, 50.0f));
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+            GridContainer grid = new GridContainer();
+            grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, template);
+            grid.setProperty(Property.GRID_TEMPLATE_ROWS, template);
+            grid.setProperty(Property.GRID_AUTO_ROWS, new UnitValue(UnitValue.POINT, 70.0f));
+            grid.setProperty(Property.COLUMN_GAP, 20.0f);
+            grid.setProperty(Property.ROW_GAP, 20.0f);
+            grid.add(new Paragraph("One").setBackgroundColor(ColorConstants.CYAN));
+            grid.add(new Paragraph("Two").setBackgroundColor(ColorConstants.CYAN));
+            grid.add(new Paragraph("Tree").setBackgroundColor(ColorConstants.CYAN));
+            grid.add(new Paragraph("Four").setBackgroundColor(ColorConstants.CYAN));
+            grid.add(new Paragraph("Five").setBackgroundColor(ColorConstants.CYAN));
+            grid.add(new Paragraph("Six").setBackgroundColor(ColorConstants.CYAN));
+            grid.add(new Paragraph("Seven").setBackgroundColor(ColorConstants.CYAN));
+            document.add(grid);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void fewBigCellsWithGapTest() throws IOException, InterruptedException {
+        String filename = DESTINATION_FOLDER + "fewBigCellsWithGapTest.pdf";
+        String cmpName = SOURCE_FOLDER + "cmp_fewBigCellsWithGapTest.pdf";
+        java.util.List<UnitValue> template = new ArrayList<>();
+        template.add(new UnitValue(UnitValue.POINT, 50.0f));
+        template.add(new UnitValue(UnitValue.POINT, 50.0f));
+        template.add(new UnitValue(UnitValue.POINT, 50.0f));
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+            GridContainer grid = new GridContainer();
+            grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, template);
+            grid.setProperty(Property.GRID_TEMPLATE_ROWS, template);
+            grid.setProperty(Property.COLUMN_GAP, 10.0f);
+            grid.setProperty(Property.ROW_GAP, 10.0f);
+            final Paragraph one = new Paragraph("One").setBackgroundColor(ColorConstants.CYAN);
+            one.setProperty(Property.GRID_COLUMN_START, 1);
+            one.setProperty(Property.GRID_COLUMN_END, 3);
+            one.setProperty(Property.GRID_ROW_START, 1);
+            one.setProperty(Property.GRID_ROW_END, 3);
+            grid.add(one);
+            grid.add(new Paragraph("Two").setBackgroundColor(ColorConstants.CYAN));
+            grid.add(new Paragraph("Tree").setBackgroundColor(ColorConstants.CYAN));
+            grid.add(new Paragraph("Four").setBackgroundColor(ColorConstants.CYAN));
+            final Paragraph five = new Paragraph("Five").setBackgroundColor(ColorConstants.CYAN);
+            five.setProperty(Property.GRID_COLUMN_START, 1);
+            five.setProperty(Property.GRID_COLUMN_END, 4);
+            five.setProperty(Property.GRID_ROW_START, 3);
+            five.setProperty(Property.GRID_ROW_END, 5);
+            grid.add(five);
+            grid.add(new Paragraph("Six").setBackgroundColor(ColorConstants.CYAN));
+            grid.add(new Paragraph("Seven").setBackgroundColor(ColorConstants.CYAN));
+            grid.add(new Paragraph("Eight").setBackgroundColor(ColorConstants.CYAN));
+            grid.add(new Paragraph("Nine").setBackgroundColor(ColorConstants.CYAN));
             document.add(grid);
         }
         Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));

@@ -286,6 +286,9 @@ public class GridContainerRenderer extends DivRenderer {
         Float rowAutoHeight = renderer.<UnitValue>getProperty(Property.GRID_AUTO_ROWS) == null ?
                 null : (Float) ((UnitValue)renderer.<UnitValue>getProperty(Property.GRID_AUTO_ROWS)).getValue();
 
+        final Float columnGap = renderer.<Float>getProperty(Property.COLUMN_GAP);
+        final Float rowGap = renderer.<Float>getProperty(Property.ROW_GAP);
+
         //Grid Item Placement Algorithm
         int initialRowsCount = templateRows == null ? 1 : templateRows.size();
         int initialColumnsCount = templateColumns == null ? 1 : templateColumns.size();
@@ -314,7 +317,8 @@ public class GridContainerRenderer extends DivRenderer {
         //TODO DEVSIX-8325 eliminate null rows/columns
         // for rows it's easy: grid.getCellsRows().removeIf(row -> row.stream().allMatch(cell -> cell == null));
         // shrinkNullAxis(grid);
-        GridSizer gridSizer = new GridSizer(grid, templateRows, templateColumns, rowAutoHeight, columnAutoWidth);
+        GridSizer gridSizer = new GridSizer(grid, templateRows, templateColumns, rowAutoHeight, columnAutoWidth,
+                columnGap, rowGap);
         gridSizer.sizeCells();
         //calculating explicit height to ensure that even empty rows which covered by template would be considered
         //TODO DEVSIX-8324 improve those methods in future for working correctly with minmax/repeat/etc.

@@ -169,6 +169,11 @@ public abstract class AbstractRenderer implements IRenderer {
         this.modelElement = modelElement;
     }
 
+    /**
+     * Creates a new renderer based on an instance of another renderer.
+     *
+     * @param other renderer from which to copy essential properties
+     */
     protected AbstractRenderer(AbstractRenderer other) {
         this.childRenderers = other.childRenderers;
         this.positionedRenderers = other.positionedRenderers;
@@ -493,6 +498,13 @@ public abstract class AbstractRenderer implements IRenderer {
         flushed = true;
     }
 
+    /**
+     * Apply {@code Property.OPACITY} property if specified by setting corresponding values in graphic state dictionary
+     * opacity will be applied to all elements drawn after calling this method and before
+     * calling {@link AbstractRenderer#endElementOpacityApplying(DrawContext)} ()}.
+     *
+     * @param drawContext the context (canvas, document, etc) of this drawing operation.
+     */
     protected void beginElementOpacityApplying(DrawContext drawContext) {
         Float opacity = this.getPropertyAsFloat(Property.OPACITY);
         if (opacity != null && opacity < 1f) {
@@ -506,6 +518,11 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
+    /**
+     * {@link AbstractRenderer#beginElementOpacityApplying(DrawContext)}.
+     *
+     * @param drawContext the context (canvas, document, etc) of this drawing operation.
+     */
     protected void endElementOpacityApplying(DrawContext drawContext) {
         Float opacity = this.getPropertyAsFloat(Property.OPACITY);
         if (opacity != null && opacity < 1f) {

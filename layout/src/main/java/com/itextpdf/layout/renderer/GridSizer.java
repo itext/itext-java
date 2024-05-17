@@ -44,14 +44,19 @@ class GridSizer {
     private final Float columnAutoWidth;
     //TODO DEVSIX-8326 here should be a list/map of different resolvers
     private final SizeResolver sizeResolver;
+    private final float columnGap;
+    private final float rowGap;
+
     GridSizer(Grid grid, List<Float> templateRows, List<Float> templateColumns,
-                     Float rowAutoHeight, Float columnAutoWidth) {
+                     Float rowAutoHeight, Float columnAutoWidth, Float columnGap, Float rowGap) {
         this.grid = grid;
         this.templateRows = templateRows;
         this.templateColumns = templateColumns;
         this.rowAutoHeight = rowAutoHeight;
         this.columnAutoWidth = columnAutoWidth;
         this.sizeResolver = new MinContentResolver(grid);
+        this.columnGap = columnGap == null ? 0.0f : (float) columnGap;
+        this.rowGap = rowGap == null ? 0.0f : (float) rowGap;
     }
 
     //Grid Sizing Algorithm
@@ -86,7 +91,7 @@ class GridSizer {
         //is a null row) and all cells in a row above have the same top.
         GridCell topNeighbor = grid.getClosestTopNeighbor(cell);
         if (topNeighbor != null) {
-            return topNeighbor.getLayoutArea().getTop();
+            return topNeighbor.getLayoutArea().getTop() + rowGap;
         }
         return 0.0f;
     }
@@ -103,6 +108,7 @@ class GridSizer {
         if (templateColumns != null) {
             for (; currentColumn < Math.min(templateColumns.size(), cell.getColumnStart()); ++currentColumn) {
                 x += (float) templateColumns.get(currentColumn);
+                x += columnGap;
             }
             if (currentColumn == cell.getColumnStart()) {
                 return x;
@@ -111,6 +117,7 @@ class GridSizer {
         if (columnAutoWidth != null) {
             for (; currentColumn < cell.getColumnStart(); ++currentColumn) {
                 x += (float) columnAutoWidth;
+                x += columnGap;
             }
             return x;
         }
@@ -119,10 +126,11 @@ class GridSizer {
         if (leftNeighbor != null) {
             if (leftNeighbor.getColumnEnd() > cell.getColumnStart()) {
                 x = leftNeighbor.getLayoutArea().getX() + leftNeighbor.getLayoutArea().getWidth()
-                        *((float)(cell.getColumnStart() - leftNeighbor.getColumnStart()))/leftNeighbor.getGridWidth() ;
+                        *((float)(cell.getColumnStart() - leftNeighbor.getColumnStart()))/leftNeighbor.getGridWidth();
             } else {
                 x = leftNeighbor.getLayoutArea().getRight();
             }
+            x += columnGap;
         }
         return x;
     }
@@ -147,6 +155,9 @@ class GridSizer {
                     ++counter;
                     cellHeight += (float) rowAutoHeight;
                 }
+            }
+            if (counter > 1) {
+                cellHeight += rowGap * (counter - 1);
             }
             if (counter == cell.getGridHeight()) {
                 return cellHeight;
@@ -181,6 +192,9 @@ class GridSizer {
                     cellWidth += (float) columnAutoWidth;
                 }
             }
+            if (counter > 1) {
+                cellWidth += columnGap * (counter - 1);
+            }
             if (counter == cell.getGridWidth()) {
                 return cellWidth;
             }
@@ -198,8 +212,17 @@ class GridSizer {
         return cellWidth;
     }
 
+    /**
+     * The {@code SizeResolver} is used to calculate cell width and height on layout area.
+     */
     protected abstract static class SizeResolver {
         protected Grid grid;
+
+        /**
+         * Create a new {@code SizeResolver} instance for the given {@code Grid} instance.
+         *
+         * @param grid grid which cells sizes will be resolved
+         */
         public SizeResolver(Grid grid) {
             this.grid = grid;
         }
@@ -250,11 +273,21 @@ class GridSizer {
 
     }
 
+    /**
+     * The {@code MinContentResolver} is used to calculate cell width and height on layout area by calculating their
+     * min required size.
+     */
     protected static class MinContentResolver extends SizeResolver {
+        /**
+         * {@inheritDoc}
+         */
         public MinContentResolver(Grid grid) {
             super(grid);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public float resolveHeight(GridCell cell, float cellHeight) {
             float maxRowTop = grid.getMaxRowTop(cell.getRowStart(), cell.getColumnStart());
@@ -267,6 +300,9 @@ class GridSizer {
             return cellHeight;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public float resolveWidth(GridCell cell, float cellWidth) {
             float maxColumnRight = grid.getMaxColumnRight(cell.getRowStart(), cell.getColumnStart());
