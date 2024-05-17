@@ -77,9 +77,12 @@ final class TableBorderUtil {
     }
 
     public static List<Border> createAndFillBorderList(List<Border> originalList, Border borderToCollapse, int size) {
-        List<Border> borderList = new ArrayList<Border>();
+        List<Border> borderList;
         if (null != originalList) {
+            borderList = new ArrayList<>(originalList.size() + size);
             borderList.addAll(originalList);
+        }else{
+            borderList = new ArrayList<>(size);
         }
         while (borderList.size() < size) {
             borderList.add(borderToCollapse);
