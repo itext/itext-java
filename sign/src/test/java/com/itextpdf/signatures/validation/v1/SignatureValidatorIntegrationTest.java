@@ -94,8 +94,8 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
             certificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
             addRevDataClients();
 
-            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
-            report = signatureValidator.validateLatestSignature();
+            SignatureValidator signatureValidator = builder.buildSignatureValidator();
+            report = signatureValidator.validateLatestSignature(document);
         }
 
         AssertValidationReport.assertThat(report, a -> a
@@ -133,13 +133,13 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
                     .setFreshness(ValidatorContexts.all(), CertificateSources.all(), TimeBasedContexts.all(),
                             Duration.ofDays(-2));
 
-            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
-            report = signatureValidator.validateLatestSignature();
+            SignatureValidator signatureValidator = builder.buildSignatureValidator();
+            report = signatureValidator.validateLatestSignature(document);
         }
 
         AssertValidationReport.assertThat(report, a -> a
                 .hasNumberOfFailures(0)
-                .hasNumberOfLogs(2)
+                .hasNumberOfLogs(3)
                 .hasLogItems(2, 2, la -> la
                         .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
                         .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED,
@@ -157,14 +157,14 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
 
         ValidationReport report;
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "validDocWithoutChain.pdf"))) {
-            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
+            SignatureValidator signatureValidator = builder.buildSignatureValidator();
             certificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
             parameters.setRevocationOnlineFetching(ValidatorContexts.all(), CertificateSources.all(),
                             TimeBasedContexts.all(), SignatureValidationProperties.OnlineFetching.NEVER_FETCH)
                     .setFreshness(ValidatorContexts.all(), CertificateSources.all(), TimeBasedContexts.all(),
                             Duration.ofDays(-2));
 
-            report = signatureValidator.validateLatestSignature();
+            report = signatureValidator.validateLatestSignature(document);
         }
 
         AssertValidationReport.assertThat(report, a -> a
@@ -197,8 +197,8 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
             certificateRetriever.addKnownCertificates(Collections.singletonList(intermediateCert));
             addRevDataClients();
 
-            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
-            report = signatureValidator.validateLatestSignature();
+            SignatureValidator signatureValidator = builder.buildSignatureValidator();
+            report = signatureValidator.validateLatestSignature(document);
         }
         AssertValidationReport.assertThat(report, a -> a
                 .hasStatus(ValidationResult.VALID)
@@ -218,13 +218,13 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
 
         ValidationReport report;
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "validDoc.pdf"))) {
-            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
+            SignatureValidator signatureValidator = builder.buildSignatureValidator();
             parameters.setRevocationOnlineFetching(ValidatorContexts.all(), CertificateSources.all(),
                             TimeBasedContexts.all(), SignatureValidationProperties.OnlineFetching.NEVER_FETCH)
                     .setFreshness(ValidatorContexts.all(), CertificateSources.all(), TimeBasedContexts.all(),
                             Duration.ofDays(-2));
 
-            report = signatureValidator.validateLatestSignature();
+            report = signatureValidator.validateLatestSignature(document);
         }
 
         AssertValidationReport.assertThat(report, a -> a

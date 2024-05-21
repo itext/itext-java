@@ -22,7 +22,6 @@
  */
 package com.itextpdf.signatures.validation.v1;
 
-import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.signatures.IssuingCertificateRetriever;
 
 import java.security.cert.Certificate;
@@ -45,12 +44,10 @@ public class ValidatorChainBuilder {
      * Create a new {@link SignatureValidator} instance with the current configuration.
      * This method can be used to create multiple validators.
      *
-     * @param document The {@link PdfDocument} to create the signatureValidator for.
-     *
      * @return a new instance of a signature validator
      */
-    SignatureValidator buildSignatureValidator(PdfDocument document) {
-        return new SignatureValidator(document, this);
+    SignatureValidator buildSignatureValidator() {
+        return new SignatureValidator(this);
     }
 
     /**

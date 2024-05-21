@@ -22,17 +22,20 @@
  */
 package com.itextpdf.signatures.validation.v1;
 
+import com.itextpdf.commons.bouncycastle.asn1.tsp.ITSTInfo;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.signatures.CertificateUtil;
 import com.itextpdf.signatures.IssuingCertificateRetriever;
 import com.itextpdf.signatures.PdfPKCS7;
 import com.itextpdf.signatures.SignatureUtil;
+import com.itextpdf.signatures.TimestampConstants;
 import com.itextpdf.signatures.validation.v1.context.CertificateSource;
 import com.itextpdf.signatures.validation.v1.context.TimeBasedContext;
 import com.itextpdf.signatures.validation.v1.context.ValidationContext;
@@ -42,11 +45,13 @@ import com.itextpdf.signatures.validation.v1.report.ReportItem.ReportItemStatus;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -54,6 +59,7 @@ import java.util.List;
  * Validator class, which is expected to be used for signatures validation.
  */
 class SignatureValidator {
+    public static final String VALIDATING_SIGNATURE_NAME = "Validating signature {0}";
     static final String TIMESTAMP_VERIFICATION = "Timestamp verification check.";
     static final String SIGNATURE_VERIFICATION = "Signature verification check.";
     static final String CERTS_FROM_DSS = "Certificates from DSS check.";
@@ -62,20 +68,20 @@ class SignatureValidator {
     static final String CANNOT_VERIFY_SIGNATURE = "Signature {0} cannot be mathematically verified.";
     static final String DOCUMENT_IS_NOT_COVERED = "Signature {0} doesn't cover entire document.";
     static final String CANNOT_VERIFY_TIMESTAMP = "Signature timestamp attribute cannot be verified";
-
-    private final PdfDocument document;
+    static final String REVISIONS_RETRIEVAL_FAILED = "Wasn't possible to retrieve document revisions.";
+    private static final String TIMESTAMP_EXTRACTION_FAILED = "Unable to extract timestamp from timestamp signature";
     private final ValidationContext baseValidationContext;
     private final CertificateChainValidator certificateChainValidator;
     private final IssuingCertificateRetriever certificateRetriever;
     private final SignatureValidationProperties properties;
+    private Date lastKnownPoE = (Date) TimestampConstants.UNDEFINED_TIMESTAMP_DATE;
 
     /**
      * Create new instance of {@link SignatureValidator}.
      *
      * @param builder See {@link ValidatorChainBuilder}
      */
-    SignatureValidator(PdfDocument document, ValidatorChainBuilder builder) {
-        this.document = document;
+    SignatureValidator(ValidatorChainBuilder builder) {
         this.certificateRetriever = builder.getCertificateRetriever();
         this.properties = builder.getProperties();
         this.certificateChainValidator = builder.getCertificateChainValidator();
@@ -84,22 +90,49 @@ class SignatureValidator {
     }
 
     /**
-     * Validate the latest signature in the document.
+     * Validate all signatures in the document
      *
+     * @param document the document to be validated
      * @return {@link ValidationReport} which contains detailed validation results
      */
-    public ValidationReport validateLatestSignature() {
+    public ValidationReport validateSignatures(PdfDocument document) {
+        ValidationReport report = new ValidationReport();
+        SignatureUtil util = new SignatureUtil(document);
+        List<String> signatureNames = util.getSignatureNames();
+        Collections.reverse(signatureNames);
+
+        for (String fieldName : signatureNames) {
+            try (PdfDocument doc = new PdfDocument(new PdfReader(util.extractRevision(fieldName)))) {
+                ValidationReport subReport = validateLatestSignature(doc);
+                report.merge(subReport);
+            } catch (IOException e) {
+                report.addReportItem(new ReportItem(SIGNATURE_VERIFICATION, REVISIONS_RETRIEVAL_FAILED,
+                        e, ReportItemStatus.INDETERMINATE));
+            }
+        }
+        return report;
+    }
+
+
+    /**
+     * Validate the latest signature in the document.
+     *
+     * @param document the document of which to validate the latest signature
+     * @return {@link ValidationReport} which contains detailed validation results
+     */
+    public ValidationReport validateLatestSignature(PdfDocument document) {
         ValidationReport validationReport = new ValidationReport();
-        PdfPKCS7 pkcs7 = mathematicallyVerifySignature(validationReport);
+        PdfPKCS7 pkcs7 = mathematicallyVerifySignature(validationReport, document);
         if (stopValidation(validationReport, baseValidationContext)) {
             return validationReport;
         }
 
-        List<Certificate> certificatesFromDss = getCertificatesFromDss(validationReport);
+        List<Certificate> certificatesFromDss = getCertificatesFromDss(validationReport, document);
         certificateRetriever.addKnownCertificates(certificatesFromDss);
 
         if (pkcs7.isTsp()) {
-            return validateTimestampChain(validationReport, pkcs7.getCertificates(), pkcs7.getSigningCertificate());
+            return validateTimestampChain(validationReport, pkcs7.getTimeStampTokenInfo(), pkcs7.getCertificates(),
+                    pkcs7.getSigningCertificate());
         }
 
         Date signingDate = DateTimeUtil.getCurrentTimeDate();
@@ -117,7 +150,8 @@ class SignatureValidator {
                 return validationReport;
             }
             Certificate[] timestampCertificates = pkcs7.getTimestampCertificates();
-            validateTimestampChain(validationReport, timestampCertificates, (X509Certificate) timestampCertificates[0]);
+            validateTimestampChain(validationReport, pkcs7.getTimeStampTokenInfo(), timestampCertificates,
+                    (X509Certificate) timestampCertificates[0]);
             if (stopValidation(validationReport, baseValidationContext)) {
                 return validationReport;
             }
@@ -133,11 +167,14 @@ class SignatureValidator {
                 signingCertificate, signingDate);
     }
 
-    private PdfPKCS7 mathematicallyVerifySignature(ValidationReport validationReport) {
+    private PdfPKCS7 mathematicallyVerifySignature(ValidationReport validationReport, PdfDocument document) {
         SignatureUtil signatureUtil = new SignatureUtil(document);
         List<String> signatures = signatureUtil.getSignatureNames();
         String latestSignatureName = signatures.get(signatures.size() - 1);
         PdfPKCS7 pkcs7 = signatureUtil.readSignatureData(latestSignatureName);
+        validationReport.addReportItem(new ReportItem(SIGNATURE_VERIFICATION,
+                MessageFormatUtil.format(VALIDATING_SIGNATURE_NAME, latestSignatureName), ReportItemStatus.INFO));
+
         if (!signatureUtil.signatureCoversWholeDocument(latestSignatureName)) {
             validationReport.addReportItem(new ReportItem(SIGNATURE_VERIFICATION,
                     MessageFormatUtil.format(DOCUMENT_IS_NOT_COVERED, latestSignatureName), ReportItemStatus.INVALID));
@@ -154,17 +191,32 @@ class SignatureValidator {
         return pkcs7;
     }
 
-    private ValidationReport validateTimestampChain(ValidationReport validationReport, Certificate[] knownCerts,
-            X509Certificate signingCert) {
+    private ValidationReport validateTimestampChain(ValidationReport validationReport, ITSTInfo timeStampTokenInfo,
+                                                    Certificate[] knownCerts, X509Certificate signingCert) {
         certificateRetriever.addKnownCertificates(Arrays.asList(knownCerts));
-        Date signingDate = DateTimeUtil.getCurrentTimeDate();
+        Date signingDate = lastKnownPoE;
+        if (signingDate == TimestampConstants.UNDEFINED_TIMESTAMP_DATE) {
+            signingDate = DateTimeUtil.getCurrentTimeDate();
+        }
 
-        return certificateChainValidator.validate(validationReport,
+        ValidationReport tsValidationReport = new ValidationReport();
+
+        certificateChainValidator.validate(tsValidationReport,
                 baseValidationContext.setCertificateSource(CertificateSource.TIMESTAMP),
                 signingCert, signingDate);
+        validationReport.merge(tsValidationReport);
+        if (tsValidationReport.getValidationResult() == ValidationReport.ValidationResult.VALID) {
+            try {
+                lastKnownPoE = timeStampTokenInfo.getGenTime();
+            } catch (Exception e) {
+                validationReport.addReportItem(new ReportItem(TIMESTAMP_VERIFICATION, TIMESTAMP_EXTRACTION_FAILED, e,
+                        ReportItemStatus.INDETERMINATE));
+            }
+        }
+        return validationReport;
     }
 
-    private List<Certificate> getCertificatesFromDss(ValidationReport validationReport) {
+    private List<Certificate> getCertificatesFromDss(ValidationReport validationReport, PdfDocument document) {
         PdfDictionary dss = document.getCatalog().getPdfObject().getAsDictionary(PdfName.DSS);
         List<Certificate> certificatesFromDss = new ArrayList<>();
         if (dss != null) {
@@ -190,3 +242,4 @@ class SignatureValidator {
                 && result.getValidationResult() != ValidationReport.ValidationResult.VALID;
     }
 }
+

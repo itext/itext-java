@@ -117,6 +117,12 @@ public class ValidationReport {
         return sb.toString();
     }
 
+    public void merge(ValidationReport subReport) {
+        for (ReportItem item : subReport.getLogs()) {
+            addReportItem(item);
+        }
+    }
+
     /**
      * Enum representing possible validation results.
      */

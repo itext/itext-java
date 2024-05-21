@@ -30,6 +30,7 @@ import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.signatures.testutils.PemFileHelper;
+import com.itextpdf.signatures.testutils.TimeTestUtil;
 import com.itextpdf.signatures.testutils.builder.TestOcspResponseBuilder;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
 import com.itextpdf.signatures.validation.v1.context.CertificateSource;
@@ -43,6 +44,7 @@ import com.itextpdf.signatures.validation.v1.report.ValidationReport.ValidationR
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -65,6 +67,7 @@ public class SignatureValidatorTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/validation/v1/SignatureValidatorTest/";
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
+    private static final boolean NON_FIPS_MODE = "BC".equals(FACTORY.getProviderName());
     private static final char[] PASSWORD = "testpassphrase".toCharArray();
     private SignatureValidationProperties parameters;
     private MockIssuingCertificateRetriever mockCertificateRetriever;
@@ -119,8 +122,8 @@ public class SignatureValidatorTest extends ExtendedITextTest {
                     .setFreshness(ValidatorContexts.all(), CertificateSources.all(), TimeBasedContexts.all(),
                             Duration.ofDays(-2));
 
-            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
-            report = signatureValidator.validateLatestSignature();
+            SignatureValidator signatureValidator = builder.buildSignatureValidator();
+            report = signatureValidator.validateLatestSignature(document);
         }
 
 
@@ -141,8 +144,8 @@ public class SignatureValidatorTest extends ExtendedITextTest {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "docWithBrokenTimestamp.pdf"))) {
             mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
 
-            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
-            report = signatureValidator.validateLatestSignature();
+            SignatureValidator signatureValidator = builder.buildSignatureValidator();
+            report = signatureValidator.validateLatestSignature(document);
         }
 
         AssertValidationReport.assertThat(report, a -> a
@@ -164,8 +167,8 @@ public class SignatureValidatorTest extends ExtendedITextTest {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "modifiedDoc.pdf"))) {
             mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
 
-            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
-            report = signatureValidator.validateLatestSignature();
+            SignatureValidator signatureValidator = builder.buildSignatureValidator();
+            report = signatureValidator.validateLatestSignature(document);
         }
         AssertValidationReport.assertThat(report, a -> a
                 .hasStatus(ValidationResult.INVALID)
@@ -189,10 +192,10 @@ public class SignatureValidatorTest extends ExtendedITextTest {
 
         parameters.setContinueAfterFailure(ValidatorContexts.all(), CertificateSources.all(), false);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "modifiedDoc.pdf"))) {
-            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
+            SignatureValidator signatureValidator = builder.buildSignatureValidator();
             mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
 
-            report = signatureValidator.validateLatestSignature();
+            report = signatureValidator.validateLatestSignature(document);
         }
 
         AssertValidationReport.assertThat(report, a -> a
@@ -222,8 +225,8 @@ public class SignatureValidatorTest extends ExtendedITextTest {
             mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
 
 
-            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
-            signatureValidator.validateLatestSignature();
+            SignatureValidator signatureValidator = builder.buildSignatureValidator();
+            signatureValidator.validateLatestSignature(document);
         }
 
         Assert.assertEquals(2, mockCertificateRetriever.addKnownCertificatesCalls.size());
@@ -246,8 +249,8 @@ public class SignatureValidatorTest extends ExtendedITextTest {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "docWithBrokenDss.pdf"))) {
             mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
 
-            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
-            report = signatureValidator.validateLatestSignature();
+            SignatureValidator signatureValidator = builder.buildSignatureValidator();
+            report = signatureValidator.validateLatestSignature(document);
         }
 
         AssertValidationReport.assertThat(report, a -> a
@@ -265,9 +268,9 @@ public class SignatureValidatorTest extends ExtendedITextTest {
 
         ValidationReport report;
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "validDoc.pdf"))) {
-            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
+            SignatureValidator signatureValidator = builder.buildSignatureValidator();
 
-            report = signatureValidator.validateLatestSignature();
+            report = signatureValidator.validateLatestSignature(document);
         }
 
 
@@ -287,9 +290,9 @@ public class SignatureValidatorTest extends ExtendedITextTest {
 
         ValidationReport report;
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "validDoc.pdf"))) {
-            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
+            SignatureValidator signatureValidator = builder.buildSignatureValidator();
 
-            report = signatureValidator.validateLatestSignature();
+            report = signatureValidator.validateLatestSignature(document);
         }
 
         AssertValidationReport.assertThat(report, a -> a
@@ -299,5 +302,57 @@ public class SignatureValidatorTest extends ExtendedITextTest {
                         .withCheckName("test")
                         .withMessage("test"))
         );
+    }
+
+    @Test
+    public void validateMultipleSignatures() throws IOException {
+        Assume.assumeTrue(NON_FIPS_MODE);
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "docWithMultipleSignaturesAndTimeStamp.pdf"))) {
+
+            SignatureValidator signatureValidator = builder.buildSignatureValidator();
+            ValidationReport report = signatureValidator.validateSignatures(document);
+
+            AssertValidationReport.assertThat(report, r-> r
+                    .hasLogItem(l -> l
+                            .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
+                            .withMessage(SignatureValidator.VALIDATING_SIGNATURE_NAME, p -> "Signature1"))
+                    .hasLogItem(l -> l
+                            .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
+                            .withMessage(SignatureValidator.VALIDATING_SIGNATURE_NAME, p -> "Signature2"))
+                    .hasLogItem(l -> l
+                            .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
+                            .withMessage(SignatureValidator.VALIDATING_SIGNATURE_NAME, p -> "Signature3"))
+                    .hasLogItem(l -> l
+                            .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
+                            .withMessage(SignatureValidator.VALIDATING_SIGNATURE_NAME, p -> "signer1"))
+                    .hasLogItem(l -> l
+                            .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
+                            .withMessage(SignatureValidator.VALIDATING_SIGNATURE_NAME, p -> "signer2"))
+            );
+
+            Date date1 = DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, 1);
+            Date date2 = DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, 10);
+            Date date3 = DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, 20);
+
+            // 2 signatures, with timestamp
+            // 3 document timestamps
+            Assert.assertEquals(7, mockCertificateChainValidator.verificationCalls.size());
+            Assert.assertTrue(mockCertificateChainValidator.verificationCalls.stream().anyMatch(c ->
+                    c.certificate.getSerialNumber().toString().equals("1491571297")
+                    && c.checkDate.equals(date3)));
+            Assert.assertTrue(mockCertificateChainValidator.verificationCalls.stream().anyMatch(c ->
+                    c.certificate.getSerialNumber().toString().equals("1491571297")
+                            && c.checkDate.equals(date2)));
+            Assert.assertTrue(mockCertificateChainValidator.verificationCalls.stream().anyMatch(c ->
+                    c.certificate.getSerialNumber().toString().equals("1491571297")
+                            && c.checkDate.equals(date1)));
+            Assert.assertTrue(mockCertificateChainValidator.verificationCalls.stream().anyMatch(c ->
+                    c.certificate.getSerialNumber().toString().equals("1550593058")
+                            && c.checkDate.equals(date2)));
+
+            Assert.assertTrue(mockCertificateChainValidator.verificationCalls.stream().anyMatch(c ->
+                    c.certificate.getSerialNumber().toString().equals("1701704311986")
+                            && c.checkDate.equals(date1)));
+        }
     }
 }
