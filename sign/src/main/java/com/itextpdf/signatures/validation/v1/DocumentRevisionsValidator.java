@@ -25,7 +25,6 @@ package com.itextpdf.signatures.validation.v1;
 import com.itextpdf.commons.actions.contexts.IMetaInfo;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.PdfAcroForm;
-import com.itextpdf.forms.fields.PdfFormAnnotation;
 import com.itextpdf.forms.fields.PdfFormAnnotationUtil;
 import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfFormField;
@@ -59,7 +58,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -75,17 +73,28 @@ class DocumentRevisionsValidator {
     static final String DOC_MDP_CHECK = "DocMDP check.";
     static final String FIELD_MDP_CHECK = "FieldMDP check.";
 
+    static final String ACCESS_PERMISSIONS_ADDED = "Access permissions level specified for \"{0}\" approval signature "
+            + "is higher than previous one specified. These access permissions will be ignored.";
     static final String ACROFORM_REMOVED = "AcroForm dictionary was removed from catalog.";
     static final String ANNOTATIONS_MODIFIED = "Field annotations were removed, added or unexpectedly modified.";
     static final String DEVELOPER_EXTENSION_REMOVED =
             "Developer extension \"{0}\" dictionary was removed or unexpectedly modified.";
     static final String DIRECT_OBJECT = "{0} must be an indirect reference.";
+    static final String DOCUMENT_WITHOUT_SIGNATURES = "Document doesn't contain any signatures.";
     static final String DSS_REMOVED = "DSS dictionary was removed from catalog.";
     static final String EXTENSIONS_REMOVED = "Extensions dictionary was removed from the catalog.";
     static final String EXTENSIONS_TYPE = "Developer extensions must be a dictionary.";
     static final String EXTENSION_LEVEL_DECREASED =
             "Extension level number in developer extension \"{0}\" dictionary was decreased.";
+    static final String FIELD_NOT_DICTIONARY =
+            "Form field \"{0}\" or one of its widgets is not a dictionary. It will not be validated.";
     static final String FIELD_REMOVED = "Form field {0} was removed or unexpectedly modified.";
+    static final String LOCKED_FIELD_KIDS_ADDED =
+            "Kids were added to locked form field \"{0}\".";
+    static final String LOCKED_FIELD_KIDS_REMOVED =
+            "Kids were removed from locked form field \"{0}\" .";
+    static final String LOCKED_FIELD_MODIFIED = "Locked form field \"{0}\" or one of its widgets was modified.";
+    static final String LOCKED_FIELD_REMOVED = "Locked form field \"{0}\" was removed from the document.";
     static final String NOT_ALLOWED_ACROFORM_CHANGES = "PDF document AcroForm contains changes other than " +
             "document timestamp (docMDP level >= 1), form fill-in and digital signatures (docMDP level >= 2), " +
             "adding or editing annotations (docMDP level 3), which are not allowed.";
@@ -102,36 +111,27 @@ class DocumentRevisionsValidator {
     static final String PERMISSIONS_TYPE = "Permissions must be a dictionary.";
     static final String PERMISSION_REMOVED = "Permission \"{0}\" dictionary was removed or unexpectedly modified.";
     static final String REFERENCE_REMOVED = "Signature reference dictionary was removed or unexpectedly modified.";
-    static final String SIGNATURE_MODIFIED = "Signature {0} was unexpectedly modified.";
-    static final String UNEXPECTED_ENTRY_IN_XREF =
-            "New PDF document revision contains unexpected entry \"{0}\" in XREF table.";
+    static final String REVISIONS_READING_EXCEPTION = "IOException occurred during document revisions reading.";
     static final String REVISIONS_RETRIEVAL_FAILED = "Wasn't possible to retrieve document revisions.";
-    static final String DOCUMENT_WITHOUT_SIGNATURES = "Document doesn't contain any signatures.";
-    static final String TOO_MANY_CERTIFICATION_SIGNATURES = "Document contains more than one certification signature.";
+    static final String SIGNATURE_MODIFIED = "Signature {0} was unexpectedly modified.";
     static final String SIGNATURE_REVISION_NOT_FOUND =
             "Not possible to identify document revision corresponding to the first signature in the document.";
-    static final String ACCESS_PERMISSIONS_ADDED = "Access permissions level specified for \"{0}\" approval signature "
-            + "is higher than previous one specified. These access permissions will be ignored.";
+    static final String TOO_MANY_CERTIFICATION_SIGNATURES = "Document contains more than one certification signature.";
+    static final String UNEXPECTED_ENTRY_IN_XREF =
+            "New PDF document revision contains unexpected entry \"{0}\" in XREF table.";
+    static final String UNEXPECTED_FORM_FIELD = "New PDF document revision contains unexpected form field \"{0}\".";
     static final String UNKNOWN_ACCESS_PERMISSIONS = "Access permissions level number specified for \"{0}\" signature "
             + "is undefined. Default level 2 will be used instead.";
-    static final String UNEXPECTED_FORM_FIELD = "New PDF document revision contains unexpected form field \"{0}\".";
-    static final String REVISIONS_READING_EXCEPTION = "IOException occurred during document revisions reading.";
     static final String UNRECOGNIZED_ACTION = "Signature field lock dictionary contains unrecognized "
             + "\"Action\" value \"{0}\". \"All\" will be used instead.";
-    static final String LOCKED_FIELD_REMOVED = "Locked form field \"{0}\" was removed from the document.";
-    static final String LOCKED_FIELD_KIDS_ADDED =
-            "Kids were added to locked form field \"{0}\".";
-    static final String LOCKED_FIELD_KIDS_REMOVED =
-            "Kids were removed from locked form field \"{0}\" .";
-    static final String FIELD_NOT_DICTIONARY =
-            "Form field \"{0}\" or one of its widgets is not a dictionary. It will not be validated.";
-    static final String LOCKED_FIELD_MODIFIED = "Locked form field \"{0}\" or one of its widgets was modified.";
 
     private IMetaInfo metaInfo = new ValidationMetaInfo();
     private AccessPermissions accessPermissions = AccessPermissions.ANNOTATION_MODIFICATION;
     private AccessPermissions requestedAccessPermissions = AccessPermissions.UNSPECIFIED;
     private final Set<String> lockedFields = new HashSet<>();
     private final PdfDocument document;
+    private Set<PdfObject> checkedAnnots;
+    private Set<PdfDictionary> newlyAddedFields;
 
     DocumentRevisionsValidator(PdfDocument document) {
         this.document = document;
@@ -162,10 +162,15 @@ class DocumentRevisionsValidator {
         return this;
     }
 
+    AccessPermissions getAccessPermissions() {
+        return requestedAccessPermissions == AccessPermissions.UNSPECIFIED ? accessPermissions :
+                requestedAccessPermissions;
+    }
+
     /**
      * Validate all document revisions according to docMDP and fieldMDP transform methods.
      *
-     * @return {@link ValidationReport} which contains detailed validation results
+     * @return {@link ValidationReport} which contains detailed validation results.
      */
     public ValidationReport validateAllDocumentRevisions() {
         ValidationReport report = new ValidationReport();
@@ -223,34 +228,39 @@ class DocumentRevisionsValidator {
         return report;
     }
 
+    //
+    //
+    // Revisions validation util section:
+    //
+    //
+
     void validateRevision(DocumentRevision previousRevision, DocumentRevision currentRevision,
-            ValidationReport validationReport) {
+                          ValidationReport validationReport) {
         try (InputStream previousInputStream = createInputStreamFromRevision(document, previousRevision);
-                PdfReader previousReader = new PdfReader(previousInputStream)
-                        .setStrictnessLevel(StrictnessLevel.CONSERVATIVE);
-                PdfDocument documentWithoutRevision = new PdfDocument(previousReader,
-                        new DocumentProperties().setEventCountingMetaInfo(metaInfo));
-                InputStream currentInputStream = createInputStreamFromRevision(document, currentRevision);
-                PdfReader currentReader = new PdfReader(currentInputStream)
-                        .setStrictnessLevel(StrictnessLevel.CONSERVATIVE);
-                PdfDocument documentWithRevision = new PdfDocument(currentReader,
-                        new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
+             PdfReader previousReader = new PdfReader(previousInputStream)
+                     .setStrictnessLevel(StrictnessLevel.CONSERVATIVE);
+             PdfDocument documentWithoutRevision = new PdfDocument(previousReader,
+                     new DocumentProperties().setEventCountingMetaInfo(metaInfo));
+             InputStream currentInputStream = createInputStreamFromRevision(document, currentRevision);
+             PdfReader currentReader = new PdfReader(currentInputStream)
+                     .setStrictnessLevel(StrictnessLevel.CONSERVATIVE);
+             PdfDocument documentWithRevision = new PdfDocument(currentReader,
+                     new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
             Set<PdfIndirectReference> indirectReferences = currentRevision.getModifiedObjects();
             if (!compareCatalogs(documentWithoutRevision, documentWithRevision, validationReport)) {
                 return;
             }
-            List<ReferencesPair> allowedReferences =
-                    createAllowedReferences(documentWithRevision, documentWithoutRevision);
+            Set<PdfIndirectReference> currentAllowedReferences = createAllowedReferences(documentWithRevision);
+            Set<PdfIndirectReference> previousAllowedReferences = createAllowedReferences(documentWithoutRevision);
             for (PdfIndirectReference indirectReference : indirectReferences) {
                 if (indirectReference.isFree()) {
                     // In this boolean flag we check that reference which is about to be removed is the one which
                     // changed in the new revision. For instance DSS reference was 5 0 obj and changed to be 6 0 obj.
                     // In this case and only in this case reference with obj number 5 can be safely removed.
-                    boolean referenceAllowedToBeRemoved = allowedReferences.stream().anyMatch(
-                            reference -> reference.getPreviousReference() != null &&
-                                    reference.getPreviousReference().getObjNumber() == indirectReference.getObjNumber()
-                                    && (reference.getCurrentReference() == null || reference.getCurrentReference()
-                                    .getObjNumber() != indirectReference.getObjNumber()));
+                    boolean referenceAllowedToBeRemoved = previousAllowedReferences.stream().anyMatch(reference ->
+                            reference != null && reference.getObjNumber() == indirectReference.getObjNumber()) &&
+                            !currentAllowedReferences.stream().anyMatch(reference ->
+                                    reference != null && reference.getObjNumber() == indirectReference.getObjNumber());
                     // If some reference wasn't in the previous document, it is safe to remove it,
                     // since it is not possible to introduce new reference and remove it at the same revision.
                     boolean referenceWasInPrevDocument =
@@ -260,7 +270,8 @@ class DocumentRevisionsValidator {
                         validationReport.addReportItem(new ReportItem(DOC_MDP_CHECK, MessageFormatUtil.format(
                                 OBJECT_REMOVED, indirectReference.getObjNumber()), ReportItemStatus.INVALID));
                     }
-                } else if (!checkAllowedReferences(allowedReferences, indirectReference, documentWithoutRevision)) {
+                } else if (!checkAllowedReferences(currentAllowedReferences, previousAllowedReferences,
+                        indirectReference, documentWithoutRevision)) {
                     validationReport.addReportItem(new ReportItem(DOC_MDP_CHECK, MessageFormatUtil.format(
                             UNEXPECTED_ENTRY_IN_XREF, indirectReference.getObjNumber()), ReportItemStatus.INVALID));
                 }
@@ -269,11 +280,6 @@ class DocumentRevisionsValidator {
             validationReport.addReportItem(new ReportItem(DOC_MDP_CHECK, REVISIONS_READING_EXCEPTION,
                     exception, ReportItemStatus.INDETERMINATE));
         }
-    }
-
-    AccessPermissions getAccessPermissions() {
-        return requestedAccessPermissions == AccessPermissions.UNSPECIFIED ? accessPermissions :
-                requestedAccessPermissions;
     }
 
     private static InputStream createInputStreamFromRevision(PdfDocument originalDocument, DocumentRevision revision) {
@@ -305,15 +311,16 @@ class DocumentRevisionsValidator {
                 return;
         }
         if (accessPermissions.compareTo(newAccessPermissions) < 0) {
+            PdfString fieldName = signatureField.getAsString(PdfName.T);
             report.addReportItem(new ReportItem(DOC_MDP_CHECK, MessageFormatUtil.format(ACCESS_PERMISSIONS_ADDED,
-                    signatureField.get(PdfName.T)), ReportItemStatus.INDETERMINATE));
+                    fieldName == null ? "" : fieldName.getValue()), ReportItemStatus.INDETERMINATE));
         } else {
             accessPermissions = newAccessPermissions;
         }
     }
 
     private void updateApprovalSignatureFieldLock(DocumentRevision revision, PdfDictionary signatureField,
-            ValidationReport report) {
+                                                  ValidationReport report) {
         PdfDictionary fieldLock = signatureField.getAsDictionary(PdfName.Lock);
         if (fieldLock == null || fieldLock.getAsName(PdfName.Action) == null) {
             return;
@@ -349,9 +356,9 @@ class DocumentRevisionsValidator {
 
     private void lockAllFormFields(DocumentRevision revision, List<String> excludedFields, ValidationReport report) {
         try (InputStream inputStream = createInputStreamFromRevision(document, revision);
-                PdfReader reader = new PdfReader(inputStream);
-                PdfDocument documentWithRevision = new PdfDocument(reader,
-                        new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
+             PdfReader reader = new PdfReader(inputStream);
+             PdfDocument documentWithRevision = new PdfDocument(reader,
+                     new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
             PdfAcroForm acroForm = PdfFormCreator.getAcroForm(documentWithRevision, false);
             if (acroForm != null) {
                 for (String fieldName : acroForm.getAllFormFields().keySet()) {
@@ -419,15 +426,21 @@ class DocumentRevisionsValidator {
 
     private boolean revisionContainsSignature(DocumentRevision revision, String signature) {
         try (InputStream inputStream = createInputStreamFromRevision(document, revision);
-                PdfReader reader = new PdfReader(inputStream);
-                PdfDocument documentWithRevision = new PdfDocument(reader,
-                        new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
+             PdfReader reader = new PdfReader(inputStream);
+             PdfDocument documentWithRevision = new PdfDocument(reader,
+                     new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
             SignatureUtil signatureUtil = new SignatureUtil(documentWithRevision);
             return signatureUtil.signatureCoversWholeDocument(signature);
         } catch (IOException ignored) {
         }
         return false;
     }
+
+    //
+    //
+    // Compare catalogs section:
+    //
+    //
 
     private boolean compareCatalogs(PdfDocument documentWithoutRevision, PdfDocument documentWithRevision,
                                     ValidationReport report) {
@@ -445,202 +458,11 @@ class DocumentRevisionsValidator {
                 currentCatalog.get(PdfName.Extensions), report) &&
                 comparePermissions(previousCatalog.get(PdfName.Perms), currentCatalog.get(PdfName.Perms), report) &&
                 compareDss(previousCatalog.get(PdfName.DSS), currentCatalog.get(PdfName.DSS), report) &&
-                comparePages(previousCatalog.getAsDictionary(PdfName.Pages),
-                        currentCatalog.getAsDictionary(PdfName.Pages), report) &&
                 compareAcroFormsWithFieldMDP(documentWithoutRevision, documentWithRevision, report) &&
                 compareAcroForms(previousCatalog.getAsDictionary(PdfName.AcroForm),
-                        currentCatalog.getAsDictionary(PdfName.AcroForm), report);
-    }
-
-    private boolean compareAcroFormsWithFieldMDP(PdfDocument documentWithoutRevision, PdfDocument documentWithRevision,
-            ValidationReport report) {
-        PdfAcroForm currentAcroForm = PdfFormCreator.getAcroForm(documentWithRevision, false);
-        PdfAcroForm previousAcroForm = PdfFormCreator.getAcroForm(documentWithoutRevision, false);
-
-        if (currentAcroForm == null || previousAcroForm == null) {
-            // This is not a part of FieldMDP validation.
-            return true;
-        }
-        if (accessPermissions == AccessPermissions.NO_CHANGES_PERMITTED) {
-            // In this case FieldMDP makes no sense, because related changes are forbidden anyway.
-            return true;
-        }
-        for (Map.Entry<String, PdfFormField> previousField : previousAcroForm.getAllFormFields().entrySet()) {
-            if (lockedFields.contains(previousField.getKey())) {
-                // For locked form fields nothing can change,
-                // however annotations can contain page link which should be excluded from direct comparison.
-                PdfFormField currentFormField = currentAcroForm.getField(previousField.getKey());
-                if (currentFormField == null) {
-                    report.addReportItem(new ReportItem(FIELD_MDP_CHECK, MessageFormatUtil.format(
-                            LOCKED_FIELD_REMOVED, previousField.getKey()), ReportItemStatus.INVALID));
-                    return false;
-                }
-                if (!compareFormFieldWithFieldMDP(previousField.getValue().getPdfObject(),
-                        currentFormField.getPdfObject(), previousField.getKey(), report)) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    private boolean compareFormFieldWithFieldMDP(PdfDictionary previousField, PdfDictionary currentField,
-            String fieldName, ValidationReport report) {
-        PdfDictionary previousFieldCopy = new PdfDictionary(previousField);
-        previousFieldCopy.remove(PdfName.Kids);
-        previousFieldCopy.remove(PdfName.P);
-        previousFieldCopy.remove(PdfName.Parent);
-        previousFieldCopy.remove(PdfName.V);
-        PdfDictionary currentFieldCopy = new PdfDictionary(currentField);
-        currentFieldCopy.remove(PdfName.Kids);
-        currentFieldCopy.remove(PdfName.P);
-        currentFieldCopy.remove(PdfName.Parent);
-        currentFieldCopy.remove(PdfName.V);
-        if (!comparePdfObjects(previousFieldCopy, currentFieldCopy)) {
-            report.addReportItem(new ReportItem(FIELD_MDP_CHECK, MessageFormatUtil.format(
-                    LOCKED_FIELD_MODIFIED, fieldName), ReportItemStatus.INVALID));
-            return false;
-        }
-
-        PdfObject prevValue = previousField.get(PdfName.V);
-        PdfObject currValue = currentField.get(PdfName.V);
-        if (PdfName.Sig.equals(currentField.getAsName(PdfName.FT))) {
-            if (!compareSignatureDictionaries(prevValue, currValue, report)) {
-                report.addReportItem(new ReportItem(FIELD_MDP_CHECK, MessageFormatUtil.format(
-                        LOCKED_FIELD_MODIFIED, fieldName), ReportItemStatus.INVALID));
-                return false;
-            }
-        } else if (!comparePdfObjects(prevValue, currValue)) {
-            report.addReportItem(new ReportItem(FIELD_MDP_CHECK, MessageFormatUtil.format(
-                    LOCKED_FIELD_MODIFIED, fieldName), ReportItemStatus.INVALID));
-            return false;
-        }
-
-        if (!compareIndirectReferencesObjNums(previousField.get(PdfName.P), currentField.get(PdfName.P), report,
-                "Page object with which field annotation is associated") ||
-                !compareIndirectReferencesObjNums(previousField.get(PdfName.Parent), currentField.get(PdfName.Parent),
-                        report, "Form field parent")) {
-            report.addReportItem(new ReportItem(FIELD_MDP_CHECK, MessageFormatUtil.format(
-                    LOCKED_FIELD_MODIFIED, fieldName), ReportItemStatus.INVALID));
-            return false;
-        }
-
-        PdfArray previousKids = previousField.getAsArray(PdfName.Kids);
-        PdfArray currentKids = currentField.getAsArray(PdfName.Kids);
-        if (previousKids == null && currentKids != null) {
-            report.addReportItem(new ReportItem(FIELD_MDP_CHECK, MessageFormatUtil.format(
-                    LOCKED_FIELD_KIDS_ADDED, fieldName), ReportItemStatus.INVALID));
-            return false;
-        }
-        if (previousKids != null && currentKids == null) {
-            report.addReportItem(new ReportItem(FIELD_MDP_CHECK, MessageFormatUtil.format(
-                    LOCKED_FIELD_KIDS_REMOVED, fieldName), ReportItemStatus.INVALID));
-            return false;
-        }
-        if (previousKids == currentKids) {
-            return true;
-        }
-        if (previousKids.size() < currentKids.size()) {
-            report.addReportItem(new ReportItem(FIELD_MDP_CHECK, MessageFormatUtil.format(
-                    LOCKED_FIELD_KIDS_ADDED, fieldName), ReportItemStatus.INVALID));
-            return false;
-        }
-        if (previousKids.size() > currentKids.size()) {
-            report.addReportItem(new ReportItem(FIELD_MDP_CHECK, MessageFormatUtil.format(
-                    LOCKED_FIELD_KIDS_REMOVED, fieldName), ReportItemStatus.INVALID));
-            return false;
-        }
-        for (int i = 0; i < previousKids.size(); ++i) {
-            PdfDictionary previousKid = previousKids.getAsDictionary(i);
-            PdfDictionary currentKid = currentKids.getAsDictionary(i);
-            if (previousKid == null || currentKid == null) {
-                report.addReportItem(new ReportItem(FIELD_MDP_CHECK, MessageFormatUtil.format(
-                        FIELD_NOT_DICTIONARY, fieldName), ReportItemStatus.INDETERMINATE));
-                continue;
-            }
-            if (PdfFormAnnotationUtil.isPureWidget(previousKid) &&
-                    !compareFormFieldWithFieldMDP(previousKid, currentKid, fieldName, report)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private List<ReferencesPair> createAllowedReferences(PdfDocument documentWithRevision,
-                                                         PdfDocument documentWithoutRevision) {
-        // First indirect reference in the pair is an allowed reference to be present in new xref table,
-        // and the second indirect reference in the pair is the same entry in the previous document.
-        // If any reference is null, we expect this object to be newly generated or direct reference.
-        List<ReferencesPair> allowedReferences = new ArrayList<>();
-
-        if (documentWithRevision.getTrailer().get(PdfName.Info) != null) {
-            allowedReferences.add(new ReferencesPair(
-                    documentWithRevision.getTrailer().get(PdfName.Info).getIndirectReference(),
-                    getIndirectReferenceOrNull(() ->
-                            documentWithoutRevision.getTrailer().get(PdfName.Info).getIndirectReference())));
-        }
-        if (documentWithRevision.getCatalog().getPdfObject() == null) {
-            return allowedReferences;
-        }
-        allowedReferences.add(new ReferencesPair(
-                documentWithRevision.getCatalog().getPdfObject().getIndirectReference(),
-                getIndirectReferenceOrNull(() ->
-                        documentWithoutRevision.getCatalog().getPdfObject().getIndirectReference())));
-        if (documentWithRevision.getCatalog().getPdfObject().get(PdfName.Metadata) != null) {
-            allowedReferences.add(new ReferencesPair(
-                    documentWithRevision.getCatalog().getPdfObject().get(PdfName.Metadata).getIndirectReference(),
-                    getIndirectReferenceOrNull(() -> documentWithoutRevision.getCatalog().getPdfObject()
-                            .get(PdfName.Metadata).getIndirectReference())));
-        }
-
-        PdfDictionary currentDssDictionary =
-                documentWithRevision.getCatalog().getPdfObject().getAsDictionary(PdfName.DSS);
-        if (currentDssDictionary != null) {
-            PdfDictionary previousDssDictionary =
-                    documentWithoutRevision.getCatalog().getPdfObject().getAsDictionary(PdfName.DSS);
-            allowedReferences.add(new ReferencesPair(currentDssDictionary.getIndirectReference(),
-                    getIndirectReferenceOrNull(() -> previousDssDictionary.getIndirectReference())));
-
-            allowedReferences.addAll(createAllowedDssEntries(documentWithRevision, documentWithoutRevision));
-        }
-
-        PdfDictionary currentAcroForm =
-                documentWithRevision.getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm);
-        if (currentAcroForm != null) {
-            PdfDictionary previousAcroForm =
-                    documentWithoutRevision.getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm);
-
-            allowedReferences.add(new ReferencesPair(currentAcroForm.getIndirectReference(),
-                    getIndirectReferenceOrNull(() -> previousAcroForm.getIndirectReference())));
-
-            allowedReferences.addAll(createAllowedAcroFormEntries(documentWithRevision, documentWithoutRevision));
-        }
-
-        PdfDictionary currentPagesDictionary =
-                documentWithRevision.getCatalog().getPdfObject().getAsDictionary(PdfName.Pages);
-        if (currentPagesDictionary != null) {
-            PdfDictionary previousPagesDictionary =
-                    documentWithoutRevision.getCatalog().getPdfObject().getAsDictionary(PdfName.Pages);
-            allowedReferences.add(new ReferencesPair(currentPagesDictionary.getIndirectReference(),
-                    getIndirectReferenceOrNull(() -> previousPagesDictionary.getIndirectReference())));
-
-            allowedReferences.addAll(createAllowedPagesEntries(currentPagesDictionary, previousPagesDictionary));
-        }
-
-        return allowedReferences;
-    }
-
-    private boolean checkAllowedReferences(List<ReferencesPair> allowedReferences,
-                                           PdfIndirectReference indirectReference,
-                                           PdfDocument documentWithoutRevision) {
-        for (ReferencesPair allowedReference : allowedReferences) {
-            if (isSameReference(allowedReference.getCurrentReference(), indirectReference)) {
-                return documentWithoutRevision.getPdfObject(indirectReference.getObjNumber()) == null ||
-                        allowedReferences.stream().anyMatch(
-                                reference -> isSameReference(reference.getPreviousReference(), indirectReference));
-            }
-        }
-        return false;
+                        currentCatalog.getAsDictionary(PdfName.AcroForm), report) &&
+                comparePages(previousCatalog.getAsDictionary(PdfName.Pages),
+                        currentCatalog.getAsDictionary(PdfName.Pages), report);
     }
 
     // Compare catalogs nested methods section:
@@ -736,60 +558,31 @@ class DocumentRevisionsValidator {
         return true;
     }
 
-    private boolean comparePages(PdfDictionary prevPages, PdfDictionary currPages, ValidationReport report) {
-        if (prevPages == null ^ currPages == null) {
-            report.addReportItem(new ReportItem(DOC_MDP_CHECK, PAGES_MODIFIED, ReportItemStatus.INVALID));
-            return false;
-        }
-        if (prevPages == null) {
+    private boolean compareAcroFormsWithFieldMDP(PdfDocument documentWithoutRevision, PdfDocument documentWithRevision,
+                                                 ValidationReport report) {
+        PdfAcroForm currentAcroForm = PdfFormCreator.getAcroForm(documentWithRevision, false);
+        PdfAcroForm previousAcroForm = PdfFormCreator.getAcroForm(documentWithoutRevision, false);
+
+        if (currentAcroForm == null || previousAcroForm == null) {
+            // This is not a part of FieldMDP validation.
             return true;
         }
-        PdfDictionary previousPagesCopy = new PdfDictionary(prevPages);
-        previousPagesCopy.remove(PdfName.Kids);
-        previousPagesCopy.remove(PdfName.Parent);
-        PdfDictionary currentPagesCopy = new PdfDictionary(currPages);
-        currentPagesCopy.remove(PdfName.Kids);
-        currentPagesCopy.remove(PdfName.Parent);
-        if (!comparePdfObjects(previousPagesCopy, currentPagesCopy) ||
-                !compareIndirectReferencesObjNums(prevPages.get(PdfName.Parent), currPages.get(PdfName.Parent), report,
-                        "Page tree node parent")) {
-            report.addReportItem(new ReportItem(DOC_MDP_CHECK, PAGES_MODIFIED, ReportItemStatus.INVALID));
-            return false;
+        if (accessPermissions == AccessPermissions.NO_CHANGES_PERMITTED) {
+            // In this case FieldMDP makes no sense, because related changes are forbidden anyway.
+            return true;
         }
-
-        PdfArray prevKids = prevPages.getAsArray(PdfName.Kids);
-        PdfArray currKids = currPages.getAsArray(PdfName.Kids);
-        if (prevKids.size() != currKids.size()) {
-            report.addReportItem(new ReportItem(DOC_MDP_CHECK, PAGES_MODIFIED, ReportItemStatus.INVALID));
-            return false;
-        }
-        for (int i = 0; i < currKids.size(); ++i) {
-            PdfDictionary previousKid = prevKids.getAsDictionary(i);
-            PdfDictionary currentKid = currKids.getAsDictionary(i);
-            if (PdfName.Pages.equals(previousKid.getAsName(PdfName.Type))) {
-                // Compare page tree nodes.
-                if (!comparePages(previousKid, currentKid, report)) {
+        for (Map.Entry<String, PdfFormField> previousField : previousAcroForm.getAllFormFields().entrySet()) {
+            if (lockedFields.contains(previousField.getKey())) {
+                // For locked form fields nothing can change,
+                // however annotations can contain page link which should be excluded from direct comparison.
+                PdfFormField currentFormField = currentAcroForm.getField(previousField.getKey());
+                if (currentFormField == null) {
+                    report.addReportItem(new ReportItem(FIELD_MDP_CHECK, MessageFormatUtil.format(
+                            LOCKED_FIELD_REMOVED, previousField.getKey()), ReportItemStatus.INVALID));
                     return false;
                 }
-            } else {
-                // Compare page objects (leaf node in the page tree).
-                PdfDictionary previousPageCopy = new PdfDictionary(previousKid);
-                previousPageCopy.remove(PdfName.Annots);
-                previousPageCopy.remove(PdfName.Parent);
-                PdfDictionary currentPageCopy = new PdfDictionary(currentKid);
-                currentPageCopy.remove(PdfName.Annots);
-                currentPageCopy.remove(PdfName.Parent);
-                if (!comparePdfObjects(previousPageCopy, currentPageCopy) || !compareIndirectReferencesObjNums(
-                        previousKid.get(PdfName.Parent), currentKid.get(PdfName.Parent), report, "Page parent")) {
-                    report.addReportItem(new ReportItem(DOC_MDP_CHECK, PAGE_MODIFIED, ReportItemStatus.INVALID));
-                    return false;
-                }
-
-                PdfArray prevAnnots = getAnnotsNotAllowedToBeModified(previousKid);
-                PdfArray currAnnots = getAnnotsNotAllowedToBeModified(currentKid);
-                if (!comparePdfObjects(prevAnnots, currAnnots)) {
-                    report.addReportItem(new ReportItem(DOC_MDP_CHECK, PAGE_ANNOTATIONS_MODIFIED,
-                            ReportItemStatus.INVALID));
+                if (!compareFormFieldWithFieldMDP(previousField.getValue().getPdfObject(),
+                        currentFormField.getPdfObject(), previousField.getKey(), report)) {
                     return false;
                 }
             }
@@ -797,7 +590,91 @@ class DocumentRevisionsValidator {
         return true;
     }
 
+    private boolean compareFormFieldWithFieldMDP(PdfDictionary previousField, PdfDictionary currentField,
+                                                 String fieldName, ValidationReport report) {
+        PdfDictionary previousFieldCopy = new PdfDictionary(previousField);
+        previousFieldCopy.remove(PdfName.Kids);
+        previousFieldCopy.remove(PdfName.P);
+        previousFieldCopy.remove(PdfName.Parent);
+        previousFieldCopy.remove(PdfName.V);
+        PdfDictionary currentFieldCopy = new PdfDictionary(currentField);
+        currentFieldCopy.remove(PdfName.Kids);
+        currentFieldCopy.remove(PdfName.P);
+        currentFieldCopy.remove(PdfName.Parent);
+        currentFieldCopy.remove(PdfName.V);
+        if (!comparePdfObjects(previousFieldCopy, currentFieldCopy)) {
+            report.addReportItem(new ReportItem(FIELD_MDP_CHECK, MessageFormatUtil.format(
+                    LOCKED_FIELD_MODIFIED, fieldName), ReportItemStatus.INVALID));
+            return false;
+        }
+
+        PdfObject prevValue = previousField.get(PdfName.V);
+        PdfObject currValue = currentField.get(PdfName.V);
+        if (PdfName.Sig.equals(currentField.getAsName(PdfName.FT))) {
+            if (!compareSignatureDictionaries(prevValue, currValue, report)) {
+                report.addReportItem(new ReportItem(FIELD_MDP_CHECK, MessageFormatUtil.format(
+                        LOCKED_FIELD_MODIFIED, fieldName), ReportItemStatus.INVALID));
+                return false;
+            }
+        } else if (!comparePdfObjects(prevValue, currValue)) {
+            report.addReportItem(new ReportItem(FIELD_MDP_CHECK, MessageFormatUtil.format(
+                    LOCKED_FIELD_MODIFIED, fieldName), ReportItemStatus.INVALID));
+            return false;
+        }
+
+        if (!compareIndirectReferencesObjNums(previousField.get(PdfName.P), currentField.get(PdfName.P), report,
+                "Page object with which field annotation is associated") ||
+                !compareIndirectReferencesObjNums(previousField.get(PdfName.Parent), currentField.get(PdfName.Parent),
+                        report, "Form field parent")) {
+            report.addReportItem(new ReportItem(FIELD_MDP_CHECK, MessageFormatUtil.format(
+                    LOCKED_FIELD_MODIFIED, fieldName), ReportItemStatus.INVALID));
+            return false;
+        }
+
+        PdfArray previousKids = previousField.getAsArray(PdfName.Kids);
+        PdfArray currentKids = currentField.getAsArray(PdfName.Kids);
+        if (previousKids == null && currentKids != null) {
+            report.addReportItem(new ReportItem(FIELD_MDP_CHECK, MessageFormatUtil.format(
+                    LOCKED_FIELD_KIDS_ADDED, fieldName), ReportItemStatus.INVALID));
+            return false;
+        }
+        if (previousKids != null && currentKids == null) {
+            report.addReportItem(new ReportItem(FIELD_MDP_CHECK, MessageFormatUtil.format(
+                    LOCKED_FIELD_KIDS_REMOVED, fieldName), ReportItemStatus.INVALID));
+            return false;
+        }
+        if (previousKids == currentKids) {
+            return true;
+        }
+        if (previousKids.size() < currentKids.size()) {
+            report.addReportItem(new ReportItem(FIELD_MDP_CHECK, MessageFormatUtil.format(
+                    LOCKED_FIELD_KIDS_ADDED, fieldName), ReportItemStatus.INVALID));
+            return false;
+        }
+        if (previousKids.size() > currentKids.size()) {
+            report.addReportItem(new ReportItem(FIELD_MDP_CHECK, MessageFormatUtil.format(
+                    LOCKED_FIELD_KIDS_REMOVED, fieldName), ReportItemStatus.INVALID));
+            return false;
+        }
+        for (int i = 0; i < previousKids.size(); ++i) {
+            PdfDictionary previousKid = previousKids.getAsDictionary(i);
+            PdfDictionary currentKid = currentKids.getAsDictionary(i);
+            if (previousKid == null || currentKid == null) {
+                report.addReportItem(new ReportItem(FIELD_MDP_CHECK, MessageFormatUtil.format(
+                        FIELD_NOT_DICTIONARY, fieldName), ReportItemStatus.INDETERMINATE));
+                continue;
+            }
+            if (PdfFormAnnotationUtil.isPureWidget(previousKid) &&
+                    !compareFormFieldWithFieldMDP(previousKid, currentKid, fieldName, report)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private boolean compareAcroForms(PdfDictionary prevAcroForm, PdfDictionary currAcroForm, ValidationReport report) {
+        checkedAnnots = new HashSet<>();
+        newlyAddedFields = new HashSet<>();
         if (prevAcroForm == null) {
             if (currAcroForm == null) {
                 return true;
@@ -835,26 +712,47 @@ class DocumentRevisionsValidator {
     }
 
     private boolean compareFormFields(PdfArray prevFields, PdfArray currFields, ValidationReport report) {
-        Map<String, PdfDictionary> prevFieldsMap = populateFormFieldsMap(prevFields);
-        Map<String, PdfDictionary> currFieldsMap = populateFormFieldsMap(currFields);
+        Set<PdfDictionary> prevFieldsSet = populateFormFields(prevFields);
+        Set<PdfDictionary> currFieldsSet = populateFormFields(currFields);
 
-        for (Map.Entry<String, PdfDictionary> fieldEntry : prevFieldsMap.entrySet()) {
-            PdfDictionary previousField = fieldEntry.getValue();
-            PdfDictionary currentField = currFieldsMap.get(fieldEntry.getKey());
+        for (PdfDictionary previousField : prevFieldsSet) {
+            PdfDictionary currentField = retrieveTheSameField(currFieldsSet, previousField);
             if (currentField == null || !compareFields(previousField, currentField, report)) {
+                PdfString fieldName = previousField.getAsString(PdfName.T);
                 report.addReportItem(new ReportItem(DOC_MDP_CHECK, MessageFormatUtil.format(FIELD_REMOVED,
-                        fieldEntry.getKey()), ReportItemStatus.INVALID));
+                        fieldName == null ? "" : fieldName.getValue()), ReportItemStatus.INVALID));
                 return false;
             }
-            currFieldsMap.remove(fieldEntry.getKey());
+            if (PdfFormAnnotationUtil.isPureWidgetOrMergedField(previousField)) {
+                checkedAnnots.add(previousField);
+            }
+            if (PdfFormAnnotationUtil.isPureWidgetOrMergedField(currentField)) {
+                checkedAnnots.add(currentField);
+            }
+            currFieldsSet.remove(currentField);
         }
 
-        for (Map.Entry<String, PdfDictionary> fieldEntry : currFieldsMap.entrySet()) {
-            if (!isAllowedSignatureField(fieldEntry.getValue(), report)) {
+        for (PdfDictionary field : currFieldsSet) {
+            if (!isAllowedSignatureField(field, report)) {
                 return false;
             }
         }
-        return compareAnnotations(prevFields, currFields, report);
+        return compareWidgets(prevFields, currFields, report);
+    }
+
+    private PdfDictionary retrieveTheSameField(Set<PdfDictionary> currFields, PdfDictionary previousField) {
+        for (PdfDictionary currentField : currFields) {
+            PdfDictionary prevFormDict = copyFieldDictionary(previousField);
+            PdfDictionary currFormDict = copyFieldDictionary(currentField);
+            if (comparePdfObjects(prevFormDict, currFormDict) &&
+                    compareIndirectReferencesObjNums(prevFormDict.get(PdfName.Parent), currFormDict.get(PdfName.Parent),
+                            new ValidationReport(), "Form field parent") &&
+                    compareIndirectReferencesObjNums(prevFormDict.get(PdfName.P), currFormDict.get(PdfName.P),
+                            new ValidationReport(), "Page object with which field annotation is associated")) {
+                return currentField;
+            }
+        }
+        return null;
     }
 
     /**
@@ -869,16 +767,6 @@ class DocumentRevisionsValidator {
      * @return {@code true} if the changes of the field are allowed, {@code false} otherwise.
      */
     private boolean compareFields(PdfDictionary previousField, PdfDictionary currentField, ValidationReport report) {
-        PdfDictionary prevFormDict = copyFieldDictionary(previousField);
-        PdfDictionary currFormDict = copyFieldDictionary(currentField);
-        if (!comparePdfObjects(prevFormDict, currFormDict) ||
-                !compareIndirectReferencesObjNums(prevFormDict.get(PdfName.Parent), currFormDict.get(PdfName.Parent),
-                        report, "Form field parent") || !compareIndirectReferencesObjNums(
-                prevFormDict.get(PdfName.P), currFormDict.get(PdfName.P), report,
-                "Page object with which field annotation is associated")) {
-            return false;
-        }
-
         PdfObject prevValue = previousField.get(PdfName.V);
         PdfObject currValue = currentField.get(PdfName.V);
         if (prevValue == null && currValue == null && PdfName.Ch.equals(currentField.getAsName(PdfName.FT))) {
@@ -889,8 +777,9 @@ class DocumentRevisionsValidator {
 
         if (PdfName.Sig.equals(currentField.getAsName(PdfName.FT))) {
             if (!compareSignatureDictionaries(prevValue, currValue, report)) {
+                PdfString fieldName = currentField.getAsString(PdfName.T);
                 report.addReportItem(new ReportItem(DOC_MDP_CHECK, MessageFormatUtil.format(
-                        SIGNATURE_MODIFIED, currentField.getAsString(PdfName.T).getValue()), ReportItemStatus.INVALID));
+                        SIGNATURE_MODIFIED, fieldName == null ? "" : fieldName.getValue()), ReportItemStatus.INVALID));
                 return false;
             }
         } else if (getAccessPermissions() == AccessPermissions.NO_CHANGES_PERMITTED
@@ -899,28 +788,6 @@ class DocumentRevisionsValidator {
         }
 
         return compareFormFields(previousField.getAsArray(PdfName.Kids), currentField.getAsArray(PdfName.Kids), report);
-    }
-
-    private boolean compareAnnotations(PdfArray prevFields, PdfArray currFields, ValidationReport report) {
-        List<PdfDictionary> prevAnnots = populateAnnotations(prevFields);
-        List<PdfDictionary> currAnnots = populateAnnotations(currFields);
-        if (prevAnnots.size() != currAnnots.size()) {
-            report.addReportItem(new ReportItem(DOC_MDP_CHECK, ANNOTATIONS_MODIFIED, ReportItemStatus.INVALID));
-            return false;
-        }
-        for (int i = 0; i < prevAnnots.size(); i++) {
-            PdfDictionary prevAnnot = new PdfDictionary(prevAnnots.get(i));
-            removeAppearanceRelatedProperties(prevAnnot);
-            PdfDictionary currAnnot = new PdfDictionary(currAnnots.get(i));
-            removeAppearanceRelatedProperties(currAnnot);
-            if (!comparePdfObjects(prevAnnot, currAnnot) || !compareIndirectReferencesObjNums(
-                    prevAnnots.get(i).get(PdfName.P), currAnnots.get(i).get(PdfName.P), report,
-                    "Page object with which annotation is associated")) {
-                report.addReportItem(new ReportItem(DOC_MDP_CHECK, ANNOTATIONS_MODIFIED, ReportItemStatus.INVALID));
-                return false;
-            }
-        }
-        return true;
     }
 
     private boolean compareSignatureDictionaries(PdfObject prevSigDict, PdfObject curSigDict, ValidationReport report) {
@@ -974,6 +841,126 @@ class DocumentRevisionsValidator {
         return true;
     }
 
+    private boolean compareWidgets(PdfArray prevFields, PdfArray currFields, ValidationReport report) {
+        if (getAccessPermissions() == AccessPermissions.ANNOTATION_MODIFICATION) {
+            return true;
+        }
+        List<PdfDictionary> prevAnnots = populateWidgetAnnotations(prevFields);
+        List<PdfDictionary> currAnnots = populateWidgetAnnotations(currFields);
+        if (prevAnnots.size() != currAnnots.size()) {
+            report.addReportItem(new ReportItem(DOC_MDP_CHECK, ANNOTATIONS_MODIFIED, ReportItemStatus.INVALID));
+            return false;
+        }
+        for (int i = 0; i < prevAnnots.size(); i++) {
+            PdfDictionary prevAnnot = new PdfDictionary(prevAnnots.get(i));
+            removeAppearanceRelatedProperties(prevAnnot);
+            PdfDictionary currAnnot = new PdfDictionary(currAnnots.get(i));
+            removeAppearanceRelatedProperties(currAnnot);
+            if (!comparePdfObjects(prevAnnot, currAnnot) ||
+                    !compareIndirectReferencesObjNums(
+                            prevAnnots.get(i).get(PdfName.P), currAnnots.get(i).get(PdfName.P), report,
+                            "Page object with which annotation is associated") ||
+                    !compareIndirectReferencesObjNums(
+                            prevAnnots.get(i).get(PdfName.Parent), currAnnots.get(i).get(PdfName.Parent), report,
+                            "Annotation parent")) {
+                report.addReportItem(new ReportItem(DOC_MDP_CHECK, ANNOTATIONS_MODIFIED, ReportItemStatus.INVALID));
+                return false;
+            }
+            checkedAnnots.add(prevAnnots.get(i));
+            checkedAnnots.add(currAnnots.get(i));
+        }
+        return true;
+    }
+
+    private boolean comparePages(PdfDictionary prevPages, PdfDictionary currPages, ValidationReport report) {
+        if (prevPages == null ^ currPages == null) {
+            report.addReportItem(new ReportItem(DOC_MDP_CHECK, PAGES_MODIFIED, ReportItemStatus.INVALID));
+            return false;
+        }
+        if (prevPages == null) {
+            return true;
+        }
+        PdfDictionary previousPagesCopy = new PdfDictionary(prevPages);
+        previousPagesCopy.remove(PdfName.Kids);
+        previousPagesCopy.remove(PdfName.Parent);
+        PdfDictionary currentPagesCopy = new PdfDictionary(currPages);
+        currentPagesCopy.remove(PdfName.Kids);
+        currentPagesCopy.remove(PdfName.Parent);
+        if (!comparePdfObjects(previousPagesCopy, currentPagesCopy) ||
+                !compareIndirectReferencesObjNums(prevPages.get(PdfName.Parent), currPages.get(PdfName.Parent), report,
+                        "Page tree node parent")) {
+            report.addReportItem(new ReportItem(DOC_MDP_CHECK, PAGES_MODIFIED, ReportItemStatus.INVALID));
+            return false;
+        }
+
+        PdfArray prevKids = prevPages.getAsArray(PdfName.Kids);
+        PdfArray currKids = currPages.getAsArray(PdfName.Kids);
+        if (prevKids.size() != currKids.size()) {
+            report.addReportItem(new ReportItem(DOC_MDP_CHECK, PAGES_MODIFIED, ReportItemStatus.INVALID));
+            return false;
+        }
+        for (int i = 0; i < currKids.size(); ++i) {
+            PdfDictionary previousKid = prevKids.getAsDictionary(i);
+            PdfDictionary currentKid = currKids.getAsDictionary(i);
+            if (PdfName.Pages.equals(previousKid.getAsName(PdfName.Type))) {
+                // Compare page tree nodes.
+                if (!comparePages(previousKid, currentKid, report)) {
+                    return false;
+                }
+            } else {
+                // Compare page objects (leaf node in the page tree).
+                PdfDictionary previousPageCopy = new PdfDictionary(previousKid);
+                previousPageCopy.remove(PdfName.Annots);
+                previousPageCopy.remove(PdfName.Parent);
+                PdfDictionary currentPageCopy = new PdfDictionary(currentKid);
+                currentPageCopy.remove(PdfName.Annots);
+                currentPageCopy.remove(PdfName.Parent);
+                if (!comparePdfObjects(previousPageCopy, currentPageCopy) || !compareIndirectReferencesObjNums(
+                        previousKid.get(PdfName.Parent), currentKid.get(PdfName.Parent), report, "Page parent")) {
+                    report.addReportItem(new ReportItem(DOC_MDP_CHECK, PAGE_MODIFIED, ReportItemStatus.INVALID));
+                    return false;
+                }
+
+                PdfArray prevAnnots = getAnnotsNotAllowedToBeModified(previousKid);
+                PdfArray currAnnots = getAnnotsNotAllowedToBeModified(currentKid);
+                if (!comparePageAnnotations(prevAnnots, currAnnots, report)) {
+                    report.addReportItem(new ReportItem(DOC_MDP_CHECK, PAGE_ANNOTATIONS_MODIFIED,
+                            ReportItemStatus.INVALID));
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean comparePageAnnotations(PdfArray prevAnnots, PdfArray currAnnots, ValidationReport report) {
+        if (prevAnnots == null && currAnnots == null) {
+            return true;
+        }
+        if (prevAnnots == null || currAnnots == null || prevAnnots.size() != currAnnots.size()) {
+            return false;
+        }
+        for (int i = 0; i < prevAnnots.size(); i++) {
+            PdfDictionary prevAnnot = new PdfDictionary(prevAnnots.getAsDictionary(i));
+            prevAnnot.remove(PdfName.P);
+            prevAnnot.remove(PdfName.Parent);
+            PdfDictionary currAnnot = new PdfDictionary(currAnnots.getAsDictionary(i));
+            currAnnot.remove(PdfName.P);
+            currAnnot.remove(PdfName.Parent);
+            if (!comparePdfObjects(prevAnnot, currAnnot) ||
+                    !compareIndirectReferencesObjNums(prevAnnots.getAsDictionary(i).get(PdfName.P),
+                            currAnnots.getAsDictionary(i).get(PdfName.P), report,
+                            "Page object with which annotation is associated") ||
+                    !compareIndirectReferencesObjNums(prevAnnots.getAsDictionary(i).get(PdfName.Parent),
+                            currAnnots.getAsDictionary(i).get(PdfName.Parent), report, "Annotation parent")) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // Compare catalogs util methods section:
+
     private boolean compareIndirectReferencesObjNums(PdfObject prevObj, PdfObject currObj, ValidationReport report,
                                                      String type) {
         if (prevObj == null ^ currObj == null) {
@@ -985,8 +972,10 @@ class DocumentRevisionsValidator {
         PdfIndirectReference prevObjRef = prevObj.getIndirectReference();
         PdfIndirectReference currObjRef = currObj.getIndirectReference();
         if (prevObjRef == null || currObjRef == null) {
-            report.addReportItem(new ReportItem(DOC_MDP_CHECK, MessageFormatUtil.format(DIRECT_OBJECT, type),
-                    ReportItemStatus.INVALID));
+            if (report != null) {
+                report.addReportItem(new ReportItem(DOC_MDP_CHECK, MessageFormatUtil.format(DIRECT_OBJECT, type),
+                        ReportItemStatus.INVALID));
+            }
             return false;
         }
         return isSameReference(prevObjRef, currObjRef);
@@ -1008,28 +997,37 @@ class DocumentRevisionsValidator {
         if (!PdfName.Sig.equals(field.getAsName(PdfName.FT)) || value == null ||
                 (getAccessPermissions() == AccessPermissions.NO_CHANGES_PERMITTED
                         && !PdfName.DocTimeStamp.equals(value.getAsName(PdfName.Type)))) {
+            PdfString fieldName = field.getAsString(PdfName.T);
             report.addReportItem(new ReportItem(DOC_MDP_CHECK, MessageFormatUtil.format(UNEXPECTED_FORM_FIELD,
-                    field.getAsString(PdfName.T).getValue()), ReportItemStatus.INVALID));
+                    fieldName == null ? "" : fieldName.getValue()), ReportItemStatus.INVALID));
             return false;
         }
+
+        if (PdfFormAnnotationUtil.isPureWidgetOrMergedField(field)) {
+            checkedAnnots.add(field);
+        } else {
+            PdfArray kids = field.getAsArray(PdfName.Kids);
+            checkedAnnots.addAll(populateWidgetAnnotations(kids));
+        }
+        newlyAddedFields.add(field);
+
         return true;
     }
 
-    private Map<String, PdfDictionary> populateFormFieldsMap(PdfArray fieldsArray) {
-        Map<String, PdfDictionary> fields = new HashMap<>();
+    private Set<PdfDictionary> populateFormFields(PdfArray fieldsArray) {
+        Set<PdfDictionary> fields = new HashSet<>();
         if (fieldsArray != null) {
             for (int i = 0; i < fieldsArray.size(); ++i) {
                 PdfDictionary fieldDict = (PdfDictionary) fieldsArray.get(i);
                 if (PdfFormField.isFormField(fieldDict)) {
-                    String fieldName = fieldDict.getAsString(PdfName.T).getValue();
-                    fields.put(fieldName, fieldDict);
+                    fields.add(fieldDict);
                 }
             }
         }
         return fields;
     }
 
-    private List<PdfDictionary> populateAnnotations(PdfArray fieldsArray) {
+    private List<PdfDictionary> populateWidgetAnnotations(PdfArray fieldsArray) {
         List<PdfDictionary> annotations = new ArrayList<>();
         if (fieldsArray != null) {
             for (int i = 0; i < fieldsArray.size(); ++i) {
@@ -1044,15 +1042,14 @@ class DocumentRevisionsValidator {
 
     private PdfArray getAnnotsNotAllowedToBeModified(PdfDictionary page) {
         PdfArray annots = page.getAsArray(PdfName.Annots);
-        if (annots == null) {
+        if (annots == null || getAccessPermissions() == AccessPermissions.ANNOTATION_MODIFICATION) {
             return null;
         }
         PdfArray annotsCopy = new PdfArray(annots);
         for (PdfObject annot : annots) {
-            PdfDictionary annotDict = (PdfDictionary) annot;
-            if (PdfFormAnnotationUtil.isPureWidgetOrMergedField(annotDict)) {
-                // Ideally we should also distinguish between docMDP level 1 (DTS) or 2 allowed annotations
-                // (we check them only on the acroform level, but they could be added to the page)
+            // checkedAnnots contains all the fields' widget annotations from the Acroform which were already validated
+            // during the compareAcroForms call, so we shouldn't check them once again
+            if (checkedAnnots.contains(annot)) {
                 annotsCopy.remove(annot);
             }
         }
@@ -1092,290 +1089,27 @@ class DocumentRevisionsValidator {
 
     private void removeAppearanceRelatedProperties(PdfDictionary annotDict) {
         annotDict.remove(PdfName.P);
-        if (getAccessPermissions() != AccessPermissions.NO_CHANGES_PERMITTED) {
+        annotDict.remove(PdfName.Parent);
+        if (getAccessPermissions() == AccessPermissions.FORM_FIELDS_MODIFICATION) {
             annotDict.remove(PdfName.AP);
             annotDict.remove(PdfName.AS);
             annotDict.remove(PdfName.M);
             annotDict.remove(PdfName.F);
         }
-    }
-
-    // Allowed references creation nested methods section:
-
-    private List<ReferencesPair> createAllowedDssEntries(PdfDocument documentWithRevision,
-                                                         PdfDocument documentWithoutRevision) {
-        List<ReferencesPair> allowedReferences = new ArrayList<>();
-        PdfDictionary currentDssDictionary =
-                documentWithRevision.getCatalog().getPdfObject().getAsDictionary(PdfName.DSS);
-        PdfDictionary previousDssDictionary =
-                documentWithoutRevision.getCatalog().getPdfObject().getAsDictionary(PdfName.DSS);
-        PdfArray certs = currentDssDictionary.getAsArray(PdfName.Certs);
-        if (certs != null) {
-            allowedReferences.add(new ReferencesPair(certs.getIndirectReference(),
-                    getIndirectReferenceOrNull(() -> previousDssDictionary.get(PdfName.Certs).getIndirectReference())));
-            for (int i = 0; i < certs.size(); ++i) {
-                int finalI = i;
-                allowedReferences.add(
-                        new ReferencesPair(certs.get(i).getIndirectReference(),
-                                getIndirectReferenceOrNull(() -> previousDssDictionary.getAsArray(PdfName.Certs)
-                                        .get(finalI).getIndirectReference())));
-            }
-        }
-        PdfArray ocsps = currentDssDictionary.getAsArray(PdfName.OCSPs);
-        if (ocsps != null) {
-            allowedReferences.add(new ReferencesPair(ocsps.getIndirectReference(),
-                    getIndirectReferenceOrNull(() -> previousDssDictionary.get(PdfName.OCSPs).getIndirectReference())));
-            for (int i = 0; i < ocsps.size(); ++i) {
-                int finalI = i;
-                allowedReferences.add(new ReferencesPair(
-                        ocsps.get(i).getIndirectReference(),
-                        getIndirectReferenceOrNull(() -> previousDssDictionary.getAsArray(PdfName.OCSPs)
-                                .get(finalI).getIndirectReference())));
-            }
-        }
-        PdfArray crls = currentDssDictionary.getAsArray(PdfName.CRLs);
-        if (crls != null) {
-            allowedReferences.add(new ReferencesPair(crls.getIndirectReference(),
-                    getIndirectReferenceOrNull(() -> previousDssDictionary.get(PdfName.CRLs).getIndirectReference())));
-            for (int i = 0; i < crls.size(); ++i) {
-                int finalI = i;
-                allowedReferences.add(new ReferencesPair(crls.get(i).getIndirectReference(), getIndirectReferenceOrNull(
-                        () -> previousDssDictionary.getAsArray(PdfName.CRLs).get(finalI).getIndirectReference())));
-            }
-        }
-        PdfDictionary vris = currentDssDictionary.getAsDictionary(PdfName.VRI);
-        if (vris != null) {
-            allowedReferences.add(new ReferencesPair(vris.getIndirectReference(),
-                    getIndirectReferenceOrNull(() -> previousDssDictionary.get(PdfName.VRI).getIndirectReference())));
-            for (Map.Entry<PdfName, PdfObject> vri : vris.entrySet()) {
-                allowedReferences.add(new ReferencesPair(
-                        vri.getValue().getIndirectReference(),
-                        getIndirectReferenceOrNull(() -> previousDssDictionary.getAsDictionary(PdfName.VRI)
-                                .get(vri.getKey()).getIndirectReference())));
-                if (vri.getValue() instanceof PdfDictionary) {
-                    PdfDictionary vriDictionary = (PdfDictionary) vri.getValue();
-                    PdfArray vriCerts = vriDictionary.getAsArray(PdfName.Cert);
-                    if (vriCerts != null) {
-                        allowedReferences.add(new ReferencesPair(vriCerts.getIndirectReference(),
-                                getIndirectReferenceOrNull(() -> previousDssDictionary.getAsDictionary(PdfName.VRI)
-                                        .getAsDictionary(vri.getKey()).get(PdfName.Cert).getIndirectReference())));
-                        for (int i = 0; i < vriCerts.size(); ++i) {
-                            int finalI = i;
-                            allowedReferences.add(new ReferencesPair(vriCerts.get(i).getIndirectReference(),
-                                    getIndirectReferenceOrNull(() -> previousDssDictionary.getAsDictionary(PdfName.VRI)
-                                            .getAsDictionary(vri.getKey()).getAsArray(PdfName.Cert).get(finalI)
-                                            .getIndirectReference())));
-                        }
-                    }
-                    PdfArray vriOcsps = vriDictionary.getAsArray(PdfName.OCSP);
-                    if (vriOcsps != null) {
-                        allowedReferences.add(new ReferencesPair(
-                                vriOcsps.getIndirectReference(),
-                                getIndirectReferenceOrNull(() -> previousDssDictionary.getAsDictionary(PdfName.VRI)
-                                        .getAsDictionary(vri.getKey()).get(PdfName.OCSP).getIndirectReference())));
-                        for (int i = 0; i < vriOcsps.size(); ++i) {
-                            int finalI = i;
-                            allowedReferences.add(new ReferencesPair(vriOcsps.get(i).getIndirectReference(),
-                                    getIndirectReferenceOrNull(() -> previousDssDictionary.getAsDictionary(PdfName.VRI)
-                                            .getAsDictionary(vri.getKey()).getAsArray(PdfName.OCSP).get(finalI)
-                                            .getIndirectReference())));
-                        }
-                    }
-                    PdfArray vriCrls = vriDictionary.getAsArray(PdfName.CRL);
-                    if (vriCrls != null) {
-                        allowedReferences.add(new ReferencesPair(vriCrls.getIndirectReference(),
-                                getIndirectReferenceOrNull(() -> previousDssDictionary.getAsDictionary(PdfName.VRI)
-                                        .getAsDictionary(vri.getKey()).get(PdfName.CRL).getIndirectReference())));
-                        for (int i = 0; i < vriCrls.size(); ++i) {
-                            int finalI = i;
-                            allowedReferences.add(new ReferencesPair(vriCrls.get(i).getIndirectReference(),
-                                    getIndirectReferenceOrNull(() -> previousDssDictionary.getAsDictionary(PdfName.VRI)
-                                            .getAsDictionary(vri.getKey()).getAsArray(PdfName.CRL).get(finalI)
-                                            .getIndirectReference())));
-                        }
-                    }
-                    if (vriDictionary.get(new PdfName("TS")) != null) {
-                        allowedReferences.add(new ReferencesPair(
-                                vriDictionary.get(new PdfName("TS")).getIndirectReference(),
-                                getIndirectReferenceOrNull(() -> previousDssDictionary.getAsDictionary(PdfName.VRI)
-                                        .getAsDictionary(vri.getKey()).get(new PdfName("TS"))
-                                        .getIndirectReference())));
-                    }
+        if (getAccessPermissions() == AccessPermissions.ANNOTATION_MODIFICATION) {
+            for (PdfName key : new PdfDictionary(annotDict).keySet()) {
+                if (!PdfFormField.getFormFieldKeys().contains(key)) {
+                    annotDict.remove(key);
                 }
-            }
-        }
-        return allowedReferences;
-    }
-
-    private Collection<ReferencesPair> createAllowedPagesEntries(PdfDictionary currentPagesDictionary,
-            PdfDictionary previousPagesDictionary) {
-        List<ReferencesPair> allowedReferences = new ArrayList<>();
-        PdfArray currentKids = currentPagesDictionary.getAsArray(PdfName.Kids);
-        if (currentKids != null) {
-            allowedReferences.add(new ReferencesPair(currentKids.getIndirectReference(), getIndirectReferenceOrNull(
-                    () -> previousPagesDictionary.get(PdfName.Kids).getIndirectReference())));
-            for (int i = 0; i < currentKids.size(); ++i) {
-                int finalI = i;
-                PdfDictionary currentPageNode = currentKids.getAsDictionary(i);
-                PdfDictionary previousPageNode = null;
-                try {
-                    previousPageNode = previousPagesDictionary.getAsArray(PdfName.Kids).getAsDictionary(i);
-                } catch (NullPointerException ignored) {
-                }
-                allowedReferences.add(new ReferencesPair(currentKids.get(i).getIndirectReference(),
-                        getIndirectReferenceOrNull(() -> previousPagesDictionary.getAsArray(PdfName.Kids)
-                                .get(finalI).getIndirectReference())));
-                if (currentPageNode != null) {
-                    if (PdfName.Pages.equals(currentPageNode.getAsName(PdfName.Type))) {
-                        allowedReferences.addAll(createAllowedPagesEntries(currentPageNode, previousPageNode));
-                    } else {
-                        PdfObject currentAnnots = currentPageNode.get(PdfName.Annots);
-                        if (currentAnnots != null) {
-                            allowedReferences.add(new ReferencesPair(currentAnnots.getIndirectReference(),
-                                    getIndirectReferenceOrNull(
-                                            () -> previousPagesDictionary.getAsArray(PdfName.Kids)
-                                                    .getAsDictionary(finalI).get(PdfName.Annots)
-                                                    .getIndirectReference())));
-                        }
-                    }
-                }
-            }
-        }
-        // We don't need to add annotations because all the allowed ones are already added during acroform processing.
-        return allowedReferences;
-    }
-
-    private Collection<ReferencesPair> createAllowedAcroFormEntries(PdfDocument documentWithRevision,
-                                                                    PdfDocument documentWithoutRevision) {
-        List<ReferencesPair> allowedReferences = new ArrayList<>();
-        PdfAcroForm prevAcroForm = PdfFormCreator.getAcroForm(documentWithoutRevision, false);
-        PdfAcroForm currAcroForm = PdfFormCreator.getAcroForm(documentWithRevision, false);
-        Map<String, PdfFormField> prevFields = prevAcroForm == null ? new HashMap<>() : prevAcroForm.getAllFormFields();
-        for (Map.Entry<String, PdfFormField> fieldEntry : currAcroForm.getAllFormFields().entrySet()) {
-            PdfFormField previousField = prevFields.get(fieldEntry.getKey());
-            PdfFormField currentField = fieldEntry.getValue();
-            PdfObject value = currentField.getValue();
-            if (getAccessPermissions() != AccessPermissions.NO_CHANGES_PERMITTED || (value instanceof PdfDictionary &&
-                    PdfName.DocTimeStamp.equals(((PdfDictionary) value).getAsName(PdfName.Type)))) {
-                allowedReferences.add(new ReferencesPair(currentField.getPdfObject().getIndirectReference(),
-                        getIndirectReferenceOrNull(() -> previousField.getPdfObject().getIndirectReference())));
-                if (previousField == null) {
-                    // For newly generated form field all references are allowed to be added.
-                    addAllNestedDictionaryEntries(allowedReferences, currentField.getPdfObject(), null);
-                } else if (!lockedFields.contains(fieldEntry.getKey())) {
-                    // For already existing form field only several entries are allowed to be updated.
-                    allowedReferences.addAll(createAllowedExistingFormFieldEntries(currentField, previousField));
-                }
-            }
-        }
-
-        PdfDictionary currentResources = currAcroForm.getDefaultResources();
-        if (currentResources != null) {
-            allowedReferences.add(new ReferencesPair(currentResources.getIndirectReference(),
-                    getIndirectReferenceOrNull(() -> prevAcroForm.getDefaultResources().getIndirectReference())));
-            addAllNestedDictionaryEntries(allowedReferences, currentResources,
-                    prevAcroForm == null ? null : prevAcroForm.getDefaultResources());
-        }
-
-        return allowedReferences;
-    }
-
-    private Collection<ReferencesPair> createAllowedExistingFormFieldEntries(PdfFormField currentField,
-            PdfFormField previousField) {
-        List<ReferencesPair> allowedReferences = new ArrayList<>();
-        PdfObject currentValue = currentField.getValue();
-        if (currentValue != null) {
-            allowedReferences.add(new ReferencesPair(currentValue.getIndirectReference(),
-                    getIndirectReferenceOrNull(() -> previousField.getValue().getIndirectReference())));
-        }
-
-        List<PdfFormAnnotation> currAnnots = currentField.getChildFormAnnotations();
-        if (!currAnnots.isEmpty()) {
-            List<PdfFormAnnotation> prevAnnots = previousField == null ? null :
-                    previousField.getChildFormAnnotations();
-            for (int i = 0; i < currAnnots.size(); i++) {
-                int finalI = i;
-                allowedReferences.add(new ReferencesPair(
-                        currAnnots.get(i).getPdfObject().getIndirectReference(), getIndirectReferenceOrNull(
-                        () -> prevAnnots.get(finalI).getPdfObject().getIndirectReference())));
-                PdfObject currentAppearance = currAnnots.get(i).getPdfObject().get(PdfName.AP);
-                if (currentAppearance != null) {
-                    allowedReferences.add(new ReferencesPair(currentAppearance.getIndirectReference(),
-                            getIndirectReferenceOrNull(() -> prevAnnots.get(finalI).getPdfObject()
-                                    .get(PdfName.AP).getIndirectReference())));
-                    if (currentAppearance instanceof PdfDictionary) {
-                        PdfObject previousAppearance;
-                        try {
-                            previousAppearance = prevAnnots.get(finalI).getPdfObject().get(PdfName.AP);
-                        } catch (NullPointerException e) {
-                            previousAppearance = null;
-                        }
-                        addAllNestedDictionaryEntries(allowedReferences,
-                                (PdfDictionary) currentAppearance, previousAppearance);
-                    }
-                }
-
-                PdfObject currentAppearanceState = currAnnots.get(i).getPdfObject().get(PdfName.AS);
-                if (currentAppearanceState != null) {
-                    allowedReferences.add(new ReferencesPair(currentAppearanceState.getIndirectReference(),
-                            getIndirectReferenceOrNull(() -> prevAnnots.get(finalI).getPdfObject()
-                                    .get(PdfName.AS).getIndirectReference())));
-                }
-                PdfObject currentTimeStamp = currAnnots.get(i).getPdfObject().get(PdfName.M);
-                if (currentTimeStamp != null) {
-                    allowedReferences.add(new ReferencesPair(currentTimeStamp.getIndirectReference(),
-                            getIndirectReferenceOrNull(() -> prevAnnots.get(finalI).getPdfObject()
-                                    .get(PdfName.M).getIndirectReference())));
-                }
-            }
-        }
-        return allowedReferences;
-    }
-
-    private void addAllNestedDictionaryEntries(List<ReferencesPair> allowedReferences, PdfDictionary currentDictionary,
-            PdfObject previousDictionary) {
-        for (Map.Entry<PdfName, PdfObject> entry : currentDictionary.entrySet()) {
-            PdfObject currValue = entry.getValue();
-            if (currValue.getIndirectReference() != null && allowedReferences.stream().anyMatch(
-                    pair -> isSameReference(pair.getCurrentReference(), currValue.getIndirectReference()))) {
-                // Required to not end up in an infinite loop.
-                continue;
-            }
-            PdfObject prevValue = previousDictionary instanceof PdfDictionary ?
-                    ((PdfDictionary) previousDictionary).get(entry.getKey()) : null;
-            allowedReferences.add(new ReferencesPair(currValue.getIndirectReference(),
-                    getIndirectReferenceOrNull(() -> prevValue.getIndirectReference())));
-            if (currValue instanceof PdfDictionary) {
-                addAllNestedDictionaryEntries(allowedReferences, (PdfDictionary) currValue, prevValue);
-            }
-            if (currValue instanceof PdfArray) {
-                addAllNestedArrayEntries(allowedReferences, (PdfArray) currValue, prevValue);
             }
         }
     }
 
-    private void addAllNestedArrayEntries(List<ReferencesPair> allowedReferences, PdfArray currentArray,
-            PdfObject previousArray) {
-        for (int i = 0; i < currentArray.size(); ++i) {
-            PdfObject currentArrayEntry = currentArray.get(i);
-            if (currentArrayEntry.getIndirectReference() != null && allowedReferences.stream().anyMatch(
-                    pair -> isSameReference(pair.getCurrentReference(), currentArrayEntry.getIndirectReference()))) {
-                // Required to not end up in an infinite loop.
-                continue;
-            }
-            PdfObject previousArrayEntry = previousArray instanceof PdfArray ? ((PdfArray) previousArray).get(i) : null;
-            allowedReferences.add(new ReferencesPair(currentArrayEntry.getIndirectReference(),
-                    getIndirectReferenceOrNull(() -> previousArrayEntry.getIndirectReference())));
-            if (currentArrayEntry instanceof PdfDictionary) {
-                addAllNestedDictionaryEntries(allowedReferences, currentArray.getAsDictionary(i), previousArrayEntry);
-            }
-            if (currentArrayEntry instanceof PdfArray) {
-                addAllNestedArrayEntries(allowedReferences, currentArray.getAsArray(i), previousArrayEntry);
-            }
-        }
-    }
-
+    //
+    //
     // Compare PDF objects util section:
+    //
+    //
 
     private static boolean comparePdfObjects(PdfObject pdfObject1, PdfObject pdfObject2) {
         return comparePdfObjects(pdfObject1, pdfObject2, new HashSet<>());
@@ -1473,29 +1207,259 @@ class DocumentRevisionsValidator {
         return indirectReference.getObjNumber() == 0 && indirectReference.getGenNumber() == 65535;
     }
 
-    private static PdfIndirectReference getIndirectReferenceOrNull(Supplier<PdfIndirectReference> referenceGetter) {
-        try {
-            return referenceGetter.get();
-        } catch (Exception ignored) {
-            return null;
+    //
+    //
+    // Allowed references section:
+    //
+    //
+
+    private Set<PdfIndirectReference> createAllowedReferences(PdfDocument document) {
+        // Each indirect reference in the set is an allowed reference to be present in the new xref table
+        // or the same entry in the previous document.
+        // If any reference is null, we expect this object to be newly generated or direct reference.
+        Set<PdfIndirectReference> allowedReferences = new HashSet<>();
+
+        if (document.getTrailer().get(PdfName.Info) != null) {
+            allowedReferences.add(document.getTrailer().get(PdfName.Info).getIndirectReference());
+        }
+        if (document.getCatalog().getPdfObject() == null) {
+            return allowedReferences;
+        }
+        allowedReferences.add(document.getCatalog().getPdfObject().getIndirectReference());
+        if (document.getCatalog().getPdfObject().get(PdfName.Metadata) != null) {
+            allowedReferences.add(document.getCatalog().getPdfObject().get(PdfName.Metadata).getIndirectReference());
+        }
+
+        PdfDictionary dssDictionary = document.getCatalog().getPdfObject().getAsDictionary(PdfName.DSS);
+        if (dssDictionary != null) {
+            allowedReferences.add(dssDictionary.getIndirectReference());
+            allowedReferences.addAll(createAllowedDssEntries(document));
+        }
+
+        PdfDictionary acroForm = document.getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm);
+        if (acroForm != null) {
+            allowedReferences.add(acroForm.getIndirectReference());
+
+            PdfArray fields = acroForm.getAsArray(PdfName.Fields);
+            createAllowedFormFieldEntries(fields, allowedReferences);
+
+            PdfDictionary resources = acroForm.getAsDictionary(PdfName.DR);
+            if (resources != null) {
+                allowedReferences.add(resources.getIndirectReference());
+                addAllNestedDictionaryEntries(allowedReferences, resources);
+            }
+        }
+
+        PdfDictionary pagesDictionary = document.getCatalog().getPdfObject().getAsDictionary(PdfName.Pages);
+        if (pagesDictionary != null) {
+            allowedReferences.add(pagesDictionary.getIndirectReference());
+            allowedReferences.addAll(createAllowedPagesEntries(pagesDictionary));
+        }
+
+        return allowedReferences;
+    }
+
+    private boolean checkAllowedReferences(Set<PdfIndirectReference> currentAllowedReferences,
+                                           Set<PdfIndirectReference> previousAllowedReferences,
+                                           PdfIndirectReference indirectReference,
+                                           PdfDocument documentWithoutRevision) {
+        for (PdfIndirectReference currentAllowedReference : currentAllowedReferences) {
+            if (isSameReference(currentAllowedReference, indirectReference)) {
+                return documentWithoutRevision.getPdfObject(indirectReference.getObjNumber()) == null ||
+                        previousAllowedReferences.stream().anyMatch(
+                                reference -> isSameReference(reference, indirectReference));
+            }
+        }
+        return false;
+    }
+
+    // Allowed references creation nested methods section:
+
+    private Set<PdfIndirectReference> createAllowedDssEntries(PdfDocument document) {
+        Set<PdfIndirectReference> allowedReferences = new HashSet<>();
+        PdfDictionary dssDictionary = document.getCatalog().getPdfObject().getAsDictionary(PdfName.DSS);
+        PdfArray certs = dssDictionary.getAsArray(PdfName.Certs);
+        if (certs != null) {
+            allowedReferences.add(certs.getIndirectReference());
+            for (int i = 0; i < certs.size(); ++i) {
+                allowedReferences.add(certs.get(i).getIndirectReference());
+            }
+        }
+        PdfArray ocsps = dssDictionary.getAsArray(PdfName.OCSPs);
+        if (ocsps != null) {
+            allowedReferences.add(ocsps.getIndirectReference());
+            for (int i = 0; i < ocsps.size(); ++i) {
+                allowedReferences.add(ocsps.get(i).getIndirectReference());
+            }
+        }
+        PdfArray crls = dssDictionary.getAsArray(PdfName.CRLs);
+        if (crls != null) {
+            allowedReferences.add(crls.getIndirectReference());
+            for (int i = 0; i < crls.size(); ++i) {
+                allowedReferences.add(crls.get(i).getIndirectReference());
+            }
+        }
+        PdfDictionary vris = dssDictionary.getAsDictionary(PdfName.VRI);
+        if (vris != null) {
+            allowedReferences.add(vris.getIndirectReference());
+            for (Map.Entry<PdfName, PdfObject> vri : vris.entrySet()) {
+                allowedReferences.add(vri.getValue().getIndirectReference());
+                if (vri.getValue() instanceof PdfDictionary) {
+                    PdfDictionary vriDictionary = (PdfDictionary) vri.getValue();
+                    PdfArray vriCerts = vriDictionary.getAsArray(PdfName.Cert);
+                    if (vriCerts != null) {
+                        allowedReferences.add(vriCerts.getIndirectReference());
+                        for (int i = 0; i < vriCerts.size(); ++i) {
+                            allowedReferences.add(vriCerts.get(i).getIndirectReference());
+                        }
+                    }
+                    PdfArray vriOcsps = vriDictionary.getAsArray(PdfName.OCSP);
+                    if (vriOcsps != null) {
+                        allowedReferences.add(vriOcsps.getIndirectReference());
+                        for (int i = 0; i < vriOcsps.size(); ++i) {
+                            allowedReferences.add(vriOcsps.get(i).getIndirectReference());
+                        }
+                    }
+                    PdfArray vriCrls = vriDictionary.getAsArray(PdfName.CRL);
+                    if (vriCrls != null) {
+                        allowedReferences.add(vriCrls.getIndirectReference());
+                        for (int i = 0; i < vriCrls.size(); ++i) {
+                            allowedReferences.add(vriCrls.get(i).getIndirectReference());
+                        }
+                    }
+                    if (vriDictionary.get(new PdfName("TS")) != null) {
+                        allowedReferences.add(vriDictionary.get(new PdfName("TS")).getIndirectReference());
+                    }
+                }
+            }
+        }
+        return allowedReferences;
+    }
+
+    private Collection<PdfIndirectReference> createAllowedPagesEntries(PdfDictionary pagesDictionary) {
+        Set<PdfIndirectReference> allowedReferences = new HashSet<>();
+        PdfArray kids = pagesDictionary.getAsArray(PdfName.Kids);
+        if (kids != null) {
+            allowedReferences.add(kids.getIndirectReference());
+            for (int i = 0; i < kids.size(); ++i) {
+                PdfDictionary pageNode = kids.getAsDictionary(i);
+                allowedReferences.add(kids.get(i).getIndirectReference());
+                if (pageNode != null) {
+                    if (PdfName.Pages.equals(pageNode.getAsName(PdfName.Type))) {
+                        allowedReferences.addAll(createAllowedPagesEntries(pageNode));
+                    } else {
+                        PdfObject annots = pageNode.get(PdfName.Annots);
+                        if (annots != null) {
+                            allowedReferences.add(annots.getIndirectReference());
+                            if (getAccessPermissions() == AccessPermissions.ANNOTATION_MODIFICATION) {
+                                addAllNestedArrayEntries(allowedReferences, (PdfArray) annots);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return allowedReferences;
+    }
+
+    private void createAllowedFormFieldEntries(PdfArray fields, Set<PdfIndirectReference> allowedReferences) {
+        if (fields == null) {
+            return;
+        }
+        for (PdfObject field : fields) {
+            PdfDictionary fieldDict = (PdfDictionary) field;
+            if (PdfFormField.isFormField(fieldDict)) {
+                PdfObject value = fieldDict.get(PdfName.V);
+                if (getAccessPermissions() != AccessPermissions.NO_CHANGES_PERMITTED || (value instanceof PdfDictionary &&
+                        PdfName.DocTimeStamp.equals(((PdfDictionary) value).getAsName(PdfName.Type)))) {
+                    allowedReferences.add(fieldDict.getIndirectReference());
+                    PdfString fieldName = PdfFormCreator.createFormField(fieldDict).getFieldName();
+                    if (newlyAddedFields.contains(fieldDict)) {
+                        // For newly generated form field all references are allowed to be added.
+                        addAllNestedDictionaryEntries(allowedReferences, fieldDict);
+                    } else if (fieldName == null || !lockedFields.contains(fieldName.getValue())) {
+                        // For already existing form field only several entries are allowed to be updated.
+                        if (value != null) {
+                            allowedReferences.add(value.getIndirectReference());
+                        }
+                        if (PdfFormAnnotationUtil.isPureWidgetOrMergedField(fieldDict)) {
+                            addWidgetAnnotation(allowedReferences, fieldDict);
+                        } else {
+                            PdfArray kids = fieldDict.getAsArray(PdfName.Kids);
+                            createAllowedFormFieldEntries(kids, allowedReferences);
+                        }
+                    }
+                }
+            } else {
+                // Add annotation.
+                addWidgetAnnotation(allowedReferences, fieldDict);
+            }
         }
     }
 
-    private static class ReferencesPair {
-        private final PdfIndirectReference currentReference;
-        private final PdfIndirectReference previousReference;
-
-        ReferencesPair(PdfIndirectReference currentReference, PdfIndirectReference previousReference) {
-            this.currentReference = currentReference;
-            this.previousReference = previousReference;
+    private void addWidgetAnnotation(Set<PdfIndirectReference> allowedReferences, PdfDictionary annotDict) {
+        allowedReferences.add(annotDict.getIndirectReference());
+        if (getAccessPermissions() == AccessPermissions.ANNOTATION_MODIFICATION) {
+            PdfDictionary pureAnnotDict = new PdfDictionary(annotDict);
+            for (PdfName key : annotDict.keySet()) {
+                if (PdfFormField.getFormFieldKeys().contains(key)) {
+                    pureAnnotDict.remove(key);
+                }
+            }
+            addAllNestedDictionaryEntries(allowedReferences, pureAnnotDict);
+        } else {
+            PdfObject appearance = annotDict.get(PdfName.AP);
+            if (appearance != null) {
+                allowedReferences.add(appearance.getIndirectReference());
+                if (appearance instanceof PdfDictionary) {
+                    addAllNestedDictionaryEntries(allowedReferences, (PdfDictionary) appearance);
+                }
+            }
+            PdfObject appearanceState = annotDict.get(PdfName.AS);
+            if (appearanceState != null) {
+                allowedReferences.add(appearanceState.getIndirectReference());
+            }
+            PdfObject timeStamp = annotDict.get(PdfName.M);
+            if (timeStamp != null) {
+                allowedReferences.add(timeStamp.getIndirectReference());
+            }
         }
+    }
 
-        public PdfIndirectReference getCurrentReference() {
-            return currentReference;
+    private void addAllNestedDictionaryEntries(Set<PdfIndirectReference> allowedReferences, PdfDictionary dictionary) {
+        for (Map.Entry<PdfName, PdfObject> entry : dictionary.entrySet()) {
+            PdfObject value = entry.getValue();
+            if (value.getIndirectReference() != null && allowedReferences.stream().anyMatch(
+                    reference -> isSameReference(reference, value.getIndirectReference()))) {
+                // Required to not end up in an infinite loop.
+                continue;
+            }
+            allowedReferences.add(value.getIndirectReference());
+            if (value instanceof PdfDictionary) {
+                addAllNestedDictionaryEntries(allowedReferences, (PdfDictionary) value);
+            }
+            if (value instanceof PdfArray) {
+                addAllNestedArrayEntries(allowedReferences, (PdfArray) value);
+            }
         }
+    }
 
-        public PdfIndirectReference getPreviousReference() {
-            return previousReference;
+    private void addAllNestedArrayEntries(Set<PdfIndirectReference> allowedReferences, PdfArray pdfArray) {
+        for (int i = 0; i < pdfArray.size(); ++i) {
+            PdfObject arrayEntry = pdfArray.get(i);
+            if (arrayEntry.getIndirectReference() != null && allowedReferences.stream().anyMatch(
+                    reference -> isSameReference(reference, arrayEntry.getIndirectReference()))) {
+                // Required to not end up in an infinite loop.
+                continue;
+            }
+            allowedReferences.add(arrayEntry.getIndirectReference());
+
+            if (arrayEntry instanceof PdfDictionary) {
+                addAllNestedDictionaryEntries(allowedReferences, pdfArray.getAsDictionary(i));
+            }
+            if (arrayEntry instanceof PdfArray) {
+                addAllNestedArrayEntries(allowedReferences, pdfArray.getAsArray(i));
+            }
         }
     }
 }

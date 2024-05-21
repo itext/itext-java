@@ -24,6 +24,7 @@ package com.itextpdf.signatures.validation.v1;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -36,6 +37,7 @@ import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.IOException;
 import java.security.Security;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -173,6 +175,7 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
             Assert.assertEquals(AccessPermissions.FORM_FIELDS_MODIFICATION, validator.getAccessPermissions());
         }
     }
+
 
     @Test
     public void fieldLockChildModificationAllowedTest() throws IOException {
@@ -326,6 +329,69 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
                     .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.FIELD_MDP_CHECK)
                             .withMessage(DocumentRevisionsValidator.LOCKED_FIELD_REMOVED, i -> "textField")
                             .withStatus(ReportItemStatus.INVALID)));
+        }
+    }
+
+    @Test
+    public void danglingWidgetAnnotationTest() throws IOException {
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "danglingWidgetAnnotation.pdf"))) {
+            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
+            ValidationReport report = validator.validateAllDocumentRevisions();
+
+            // New widget annotation not included into the acroform was added to the 1st page.
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
+                    .hasNumberOfFailures(1).hasNumberOfLogs(1)
+                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                            .withMessage(DocumentRevisionsValidator.PAGE_ANNOTATIONS_MODIFIED)
+                            .withStatus(ReportItemStatus.INVALID)));
+
+            Assert.assertEquals(AccessPermissions.FORM_FIELDS_MODIFICATION, validator.getAccessPermissions());
+        }
+    }
+
+    @Test
+    public void removeAllThePageAnnotationsTest() throws IOException {
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "removeAllAnnots.pdf"))) {
+            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
+            ValidationReport report = validator.validateAllDocumentRevisions();
+
+            // All the annotations on the 2nd page were removed.
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID));
+
+            Assert.assertEquals(AccessPermissions.ANNOTATION_MODIFICATION, validator.getAccessPermissions());
+        }
+    }
+
+    @Test
+    public void removeAllTheFieldAnnotationsTest() throws IOException {
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "removeFieldAnnots.pdf"))) {
+            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
+            ValidationReport report = validator.validateAllDocumentRevisions();
+
+            // All the annotations of the text field were removed. Note that Acrobat considers it invalid.
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID));
+
+            Assert.assertEquals(AccessPermissions.ANNOTATION_MODIFICATION, validator.getAccessPermissions());
+        }
+    }
+
+    @Test
+    public void removeUnnamedFieldTest() throws Exception {
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "removeUnnamedField.pdf"))) {
+            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
+            ValidationReport report = validator.validateAllDocumentRevisions();
+
+            // Child field was removed, so parent field was modified. Both fields are unnamed.
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
+                    .hasNumberOfFailures(3).hasNumberOfLogs(3)
+                    .hasLogItems(2, 2, l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                            .withMessage(MessageFormatUtil.format(DocumentRevisionsValidator.FIELD_REMOVED, ""))
+                            .withStatus(ReportItemStatus.INVALID))
+                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                            .withMessage(DocumentRevisionsValidator.NOT_ALLOWED_ACROFORM_CHANGES)
+                            .withStatus(ReportItemStatus.INVALID)));
+
+            Assert.assertEquals(AccessPermissions.ANNOTATION_MODIFICATION, validator.getAccessPermissions());
         }
     }
 }

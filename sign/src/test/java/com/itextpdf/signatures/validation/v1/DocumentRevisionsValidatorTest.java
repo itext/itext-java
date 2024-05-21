@@ -411,7 +411,7 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
             ValidationReport validationReport = new ValidationReport();
             validator.validateRevision(documentRevisions.get(documentRevisions.size() - 2),
                     documentRevisions.get(documentRevisions.size() - 1), validationReport);
-            
+
             // Between these two revisions field was removed, it is not allowed.
             AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.INVALID)
                     .hasNumberOfFailures(1).hasNumberOfLogs(1)
@@ -432,7 +432,7 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
             ValidationReport validationReport = new ValidationReport();
             validator.validateRevision(documentRevisions.get(documentRevisions.size() - 2),
                     documentRevisions.get(documentRevisions.size() - 1), validationReport);
-            
+
             // Between these two revisions field was renamed, it is not allowed.
             AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.INVALID)
                     .hasNumberOfFailures(2).hasNumberOfLogs(2)
@@ -456,7 +456,7 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
             ValidationReport validationReport = new ValidationReport();
             validator.validateRevision(documentRevisions.get(documentRevisions.size() - 2),
                     documentRevisions.get(documentRevisions.size() - 1), validationReport);
-            
+
             // Between these two revisions new field was added, it is not allowed.
             AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.INVALID)
                     .hasNumberOfFailures(2).hasNumberOfLogs(2)
@@ -480,7 +480,7 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
             ValidationReport validationReport = new ValidationReport();
             validator.validateRevision(documentRevisions.get(documentRevisions.size() - 2),
                     documentRevisions.get(documentRevisions.size() - 1), validationReport);
-            
+
             // Between these two revisions new unsigned signature field was added, it is not allowed.
             AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.INVALID)
                     .hasNumberOfFailures(2).hasNumberOfLogs(2)
@@ -504,7 +504,7 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
             ValidationReport validationReport = new ValidationReport();
             validator.validateRevision(documentRevisions.get(documentRevisions.size() - 2),
                     documentRevisions.get(documentRevisions.size() - 1), validationReport);
-            
+
             // Between these two revisions signature value was replaced by text, it is not allowed.
             AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.INVALID)
                     .hasNumberOfFailures(3).hasNumberOfLogs(3)
@@ -531,13 +531,37 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
             ValidationReport validationReport = new ValidationReport();
             validator.validateRevision(documentRevisions.get(documentRevisions.size() - 2),
                     documentRevisions.get(documentRevisions.size() - 1), validationReport);
-            
+
             // Between these two revisions circle annotation was added to the first page, it is not allowed.
             AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.INVALID)
                     .hasNumberOfFailures(1).hasNumberOfLogs(1)
                     .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
                             .withMessage(DocumentRevisionsValidator.PAGE_ANNOTATIONS_MODIFIED)
                             .withStatus(ReportItemStatus.INVALID)));
+        }
+    }
+
+    @Test
+    public void multipleRevisionsDocumentLevel3Test() throws IOException {
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "multipleRevisionsDocument3.pdf"))) {
+            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
+            validator.setAccessPermissions(AccessPermissions.ANNOTATION_MODIFICATION);
+            PdfRevisionsReader revisionsReader = new PdfRevisionsReader(document.getReader());
+            List<DocumentRevision> documentRevisions = revisionsReader.getAllRevisions();
+
+            ValidationReport validationReport = new ValidationReport();
+            validator.validateRevision(documentRevisions.get(0), documentRevisions.get(1), validationReport);
+
+            // Between these two revisions annotations were added and deleted, text field was filled-in.
+            AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.VALID)
+                    .hasNumberOfFailures(0).hasNumberOfLogs(0));
+
+            validationReport = new ValidationReport();
+            validator.validateRevision(documentRevisions.get(1), documentRevisions.get(2), validationReport);
+
+            // Between these two revisions existed annotations were modified, it is allowed.
+            AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.VALID)
+                    .hasNumberOfFailures(0).hasNumberOfLogs(0));
         }
     }
 }
