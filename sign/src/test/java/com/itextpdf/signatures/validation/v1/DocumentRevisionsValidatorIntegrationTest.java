@@ -27,7 +27,7 @@ import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.signatures.validation.v1.DocumentRevisionsValidator.AccessPermissions;
+import com.itextpdf.signatures.AccessPermissions;
 import com.itextpdf.signatures.validation.v1.report.ReportItem.ReportItemStatus;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport.ValidationResult;
@@ -171,6 +171,161 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
             AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID));
 
             Assert.assertEquals(AccessPermissions.FORM_FIELDS_MODIFICATION, validator.getAccessPermissions());
+        }
+    }
+
+    @Test
+    public void fieldLockChildModificationAllowedTest() throws IOException {
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "fieldLockChildModificationAllowed.pdf"))) {
+            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
+            ValidationReport report = validator.validateAllDocumentRevisions();
+
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID));
+        }
+    }
+
+    @Test
+    public void fieldLockChildModificationNotAllowedTest() throws IOException {
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "fieldLockChildModificationNotAllowed.pdf"))) {
+            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
+            ValidationReport report = validator.validateAllDocumentRevisions();
+
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
+                    .hasNumberOfFailures(1).hasNumberOfLogs(1)
+                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.FIELD_MDP_CHECK)
+                            .withMessage(DocumentRevisionsValidator.LOCKED_FIELD_MODIFIED, i -> "rootField.childTextField")
+                            .withStatus(ReportItemStatus.INVALID)));
+        }
+    }
+
+    @Test
+    public void fieldLockRootModificationAllowedTest() throws IOException {
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "fieldLockRootModificationAllowed.pdf"))) {
+            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
+            ValidationReport report = validator.validateAllDocumentRevisions();
+
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID));
+        }
+    }
+
+    @Test
+    public void fieldLockRootModificationNotAllowedTest() throws IOException {
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "fieldLockRootModificationNotAllowed.pdf"))) {
+            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
+            ValidationReport report = validator.validateAllDocumentRevisions();
+
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
+                    .hasNumberOfFailures(1).hasNumberOfLogs(1)
+                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.FIELD_MDP_CHECK)
+                            .withMessage(DocumentRevisionsValidator.LOCKED_FIELD_MODIFIED, i -> "childTextField")
+                            .withStatus(ReportItemStatus.INVALID)));
+        }
+    }
+
+    @Test
+    public void fieldLockSequentialExcludeValuesTest() throws IOException {
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "fieldLockSequentialExcludeValues.pdf"))) {
+            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
+            ValidationReport report = validator.validateAllDocumentRevisions();
+
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
+                    .hasNumberOfFailures(1).hasNumberOfLogs(1)
+                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.FIELD_MDP_CHECK)
+                            .withMessage(DocumentRevisionsValidator.LOCKED_FIELD_MODIFIED, i -> "rootField.childTextField")
+                            .withStatus(ReportItemStatus.INVALID)));
+        }
+    }
+
+    @Test
+    public void fieldLockSequentialIncludeValuesTest() throws IOException {
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "fieldLockSequentialIncludeValues.pdf"))) {
+            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
+            ValidationReport report = validator.validateAllDocumentRevisions();
+
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
+                    .hasNumberOfFailures(2).hasNumberOfLogs(2)
+                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.FIELD_MDP_CHECK)
+                            .withMessage(DocumentRevisionsValidator.LOCKED_FIELD_MODIFIED, i -> "rootField.childTextField")
+                            .withStatus(ReportItemStatus.INVALID))
+                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.FIELD_MDP_CHECK)
+                            .withMessage(DocumentRevisionsValidator.LOCKED_FIELD_MODIFIED, i -> "childTextField")
+                            .withStatus(ReportItemStatus.INVALID)));
+        }
+    }
+
+    @Test
+    public void fieldLockKidsRemovedAndAddedTest() throws IOException {
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "fieldLockKidsRemovedAndAdded.pdf"))) {
+            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
+            ValidationReport report = validator.validateAllDocumentRevisions();
+
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
+                    .hasNumberOfFailures(2).hasNumberOfLogs(2)
+                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.FIELD_MDP_CHECK)
+                            .withMessage(DocumentRevisionsValidator.LOCKED_FIELD_KIDS_REMOVED, i -> "rootField")
+                            .withStatus(ReportItemStatus.INVALID))
+                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.FIELD_MDP_CHECK)
+                            .withMessage(DocumentRevisionsValidator.LOCKED_FIELD_KIDS_ADDED, i -> "rootField")
+                            .withStatus(ReportItemStatus.INVALID)));
+        }
+    }
+
+    @Test
+    public void pageAndParentIndirectReferenceModifiedTest() throws IOException {
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "pageAndParentIndirectReferenceModified.pdf"))) {
+            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
+            ValidationReport report = validator.validateAllDocumentRevisions();
+
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
+                    .hasNumberOfFailures(1).hasNumberOfLogs(1)
+                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.FIELD_MDP_CHECK)
+                            .withMessage(DocumentRevisionsValidator.LOCKED_FIELD_MODIFIED, i -> "rootField.childTextField2")
+                            .withStatus(ReportItemStatus.INVALID)));
+        }
+    }
+
+    @Test
+    public void lockedSignatureFieldModifiedTest() throws IOException {
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "lockedSignatureFieldModified.pdf"))) {
+            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
+            ValidationReport report = validator.validateAllDocumentRevisions();
+
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
+                    .hasNumberOfFailures(1).hasNumberOfLogs(1)
+                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.FIELD_MDP_CHECK)
+                            .withMessage(DocumentRevisionsValidator.LOCKED_FIELD_MODIFIED, i -> "Signature2")
+                            .withStatus(ReportItemStatus.INVALID)));
+        }
+    }
+
+    @Test
+    public void lockedFieldRemoveAddKidsEntryTest() throws IOException {
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "lockedFieldRemoveAddKidsEntry.pdf"))) {
+            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
+            ValidationReport report = validator.validateAllDocumentRevisions();
+
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
+                    .hasNumberOfFailures(2).hasNumberOfLogs(2)
+                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.FIELD_MDP_CHECK)
+                            .withMessage(DocumentRevisionsValidator.LOCKED_FIELD_KIDS_REMOVED, i -> "rootField")
+                            .withStatus(ReportItemStatus.INVALID))
+                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.FIELD_MDP_CHECK)
+                            .withMessage(DocumentRevisionsValidator.LOCKED_FIELD_KIDS_ADDED, i -> "rootField")
+                            .withStatus(ReportItemStatus.INVALID)));
+        }
+    }
+
+    @Test
+    public void removedLockedFieldTest() throws IOException {
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "removedLockedField.pdf"))) {
+            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
+            ValidationReport report = validator.validateAllDocumentRevisions();
+
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
+                    .hasNumberOfFailures(1).hasNumberOfLogs(1)
+                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.FIELD_MDP_CHECK)
+                            .withMessage(DocumentRevisionsValidator.LOCKED_FIELD_REMOVED, i -> "textField")
+                            .withStatus(ReportItemStatus.INVALID)));
         }
     }
 }

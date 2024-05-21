@@ -29,7 +29,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfRevisionsReader;
-import com.itextpdf.signatures.validation.v1.DocumentRevisionsValidator.AccessPermissions;
+import com.itextpdf.signatures.AccessPermissions;
 import com.itextpdf.signatures.validation.v1.report.ReportItem.ReportItemStatus;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport.ValidationResult;

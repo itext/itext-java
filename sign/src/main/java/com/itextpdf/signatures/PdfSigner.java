@@ -382,6 +382,7 @@ public class PdfSigner {
 
     /**
      * Sets the document's certification level.
+     * This method overrides the value set by {@link #setCertificationLevel(AccessPermissions)}.
      *
      * @param certificationLevel a new certification level for a document.
      *                           Possible values are: <ul>
@@ -393,6 +394,16 @@ public class PdfSigner {
      */
     public void setCertificationLevel(int certificationLevel) {
         this.certificationLevel = certificationLevel;
+    }
+
+    /**
+     * Sets the document's certification level.
+     * This method overrides the value set by {@link #setCertificationLevel(int)}.
+     *
+     * @param accessPermissions {@link AccessPermissions} enum which specifies which certification level shall be used
+     */
+    public void setCertificationLevel(AccessPermissions accessPermissions) {
+        this.certificationLevel = accessPermissions.ordinal();
     }
 
     /**

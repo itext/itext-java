@@ -42,8 +42,11 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfReader.StrictnessLevel;
 import com.itextpdf.kernel.pdf.PdfRevisionsReader;
 import com.itextpdf.kernel.pdf.PdfStream;
+import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.signatures.AccessPermissions;
 import com.itextpdf.signatures.PdfSignature;
 import com.itextpdf.signatures.SignatureUtil;
 import com.itextpdf.signatures.validation.v1.report.ReportItem;
@@ -55,6 +58,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -62,12 +66,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * Validator, which is responsible for document revisions validation according to doc-MDP rules.
  */
 class DocumentRevisionsValidator {
     static final String DOC_MDP_CHECK = "DocMDP check.";
+    static final String FIELD_MDP_CHECK = "FieldMDP check.";
 
     static final String ACROFORM_REMOVED = "AcroForm dictionary was removed from catalog.";
     static final String ANNOTATIONS_MODIFIED = "Field annotations were removed, added or unexpectedly modified.";
@@ -109,10 +115,22 @@ class DocumentRevisionsValidator {
     static final String UNKNOWN_ACCESS_PERMISSIONS = "Access permissions level number specified for \"{0}\" signature "
             + "is undefined. Default level 2 will be used instead.";
     static final String UNEXPECTED_FORM_FIELD = "New PDF document revision contains unexpected form field \"{0}\".";
+    static final String REVISIONS_READING_EXCEPTION = "IOException occurred during document revisions reading.";
+    static final String UNRECOGNIZED_ACTION = "Signature field lock dictionary contains unrecognized "
+            + "\"Action\" value \"{0}\". \"All\" will be used instead.";
+    static final String LOCKED_FIELD_REMOVED = "Locked form field \"{0}\" was removed from the document.";
+    static final String LOCKED_FIELD_KIDS_ADDED =
+            "Kids were added to locked form field \"{0}\".";
+    static final String LOCKED_FIELD_KIDS_REMOVED =
+            "Kids were removed from locked form field \"{0}\" .";
+    static final String FIELD_NOT_DICTIONARY =
+            "Form field \"{0}\" or one of its widgets is not a dictionary. It will not be validated.";
+    static final String LOCKED_FIELD_MODIFIED = "Locked form field \"{0}\" or one of its widgets was modified.";
 
     private IMetaInfo metaInfo = new ValidationMetaInfo();
     private AccessPermissions accessPermissions = AccessPermissions.ANNOTATION_MODIFICATION;
     private AccessPermissions requestedAccessPermissions = AccessPermissions.UNSPECIFIED;
+    private final Set<String> lockedFields = new HashSet<>();
     private final PdfDocument document;
 
     DocumentRevisionsValidator(PdfDocument document) {
@@ -133,7 +151,7 @@ class DocumentRevisionsValidator {
 
     /**
      * Set access permissions to be used during docMDP validation.
-     * If value is provided, related signature fields will be ignored during the validation.
+     * If value is provided, access permission related signature parameters will be ignored during the validation.
      *
      * @param accessPermissions {@link AccessPermissions} docMDP validation level
      *
@@ -158,7 +176,7 @@ class DocumentRevisionsValidator {
             documentRevisions = revisionsReader.getAllRevisions();
         } catch (IOException e) {
             report.addReportItem(
-                    new ReportItem(DOC_MDP_CHECK, REVISIONS_RETRIEVAL_FAILED, ReportItemStatus.INVALID));
+                    new ReportItem(DOC_MDP_CHECK, REVISIONS_RETRIEVAL_FAILED, ReportItemStatus.INDETERMINATE));
             return report;
         }
         SignatureUtil signatureUtil = new SignatureUtil(document);
@@ -185,6 +203,8 @@ class DocumentRevisionsValidator {
                 }
                 updateApprovalSignatureAccessPermissions(
                         signatureUtil.getSignatureFormFieldDictionary(signatures.get(0)), report);
+                updateApprovalSignatureFieldLock(documentRevisions.get(i),
+                        signatureUtil.getSignatureFormFieldDictionary(signatures.get(0)), report);
                 signatures.remove(0);
                 if (signatures.isEmpty()) {
                     currentSignature = null;
@@ -203,19 +223,21 @@ class DocumentRevisionsValidator {
         return report;
     }
 
-    ValidationReport validateRevision(DocumentRevision previousRevision, DocumentRevision currentRevision,
+    void validateRevision(DocumentRevision previousRevision, DocumentRevision currentRevision,
             ValidationReport validationReport) {
         try (InputStream previousInputStream = createInputStreamFromRevision(document, previousRevision);
-                PdfReader previousReader = new PdfReader(previousInputStream);
+                PdfReader previousReader = new PdfReader(previousInputStream)
+                        .setStrictnessLevel(StrictnessLevel.CONSERVATIVE);
                 PdfDocument documentWithoutRevision = new PdfDocument(previousReader,
                         new DocumentProperties().setEventCountingMetaInfo(metaInfo));
                 InputStream currentInputStream = createInputStreamFromRevision(document, currentRevision);
-                PdfReader currentReader = new PdfReader(currentInputStream);
+                PdfReader currentReader = new PdfReader(currentInputStream)
+                        .setStrictnessLevel(StrictnessLevel.CONSERVATIVE);
                 PdfDocument documentWithRevision = new PdfDocument(currentReader,
                         new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
             Set<PdfIndirectReference> indirectReferences = currentRevision.getModifiedObjects();
             if (!compareCatalogs(documentWithoutRevision, documentWithRevision, validationReport)) {
-                return validationReport;
+                return;
             }
             List<ReferencesPair> allowedReferences =
                     createAllowedReferences(documentWithRevision, documentWithoutRevision);
@@ -244,9 +266,9 @@ class DocumentRevisionsValidator {
                 }
             }
         } catch (IOException exception) {
-            // error
+            validationReport.addReportItem(new ReportItem(DOC_MDP_CHECK, REVISIONS_READING_EXCEPTION,
+                    exception, ReportItemStatus.INDETERMINATE));
         }
-        return validationReport;
     }
 
     AccessPermissions getAccessPermissions() {
@@ -287,6 +309,60 @@ class DocumentRevisionsValidator {
                     signatureField.get(PdfName.T)), ReportItemStatus.INDETERMINATE));
         } else {
             accessPermissions = newAccessPermissions;
+        }
+    }
+
+    private void updateApprovalSignatureFieldLock(DocumentRevision revision, PdfDictionary signatureField,
+            ValidationReport report) {
+        PdfDictionary fieldLock = signatureField.getAsDictionary(PdfName.Lock);
+        if (fieldLock == null || fieldLock.getAsName(PdfName.Action) == null) {
+            return;
+        }
+
+        PdfName action = fieldLock.getAsName(PdfName.Action);
+        if (PdfName.Include.equals(action)) {
+            PdfArray fields = fieldLock.getAsArray(PdfName.Fields);
+            if (fields != null) {
+                for (PdfObject fieldName : fields) {
+                    if (fieldName instanceof PdfString) {
+                        lockedFields.add(((PdfString) fieldName).toUnicodeString());
+                    }
+                }
+            }
+        } else if (PdfName.Exclude.equals(action)) {
+            PdfArray fields = fieldLock.getAsArray(PdfName.Fields);
+            List<String> excludedFields = Collections.<String>emptyList();
+            if (fields != null) {
+                excludedFields = fields.subList(0, fields.size()).stream().map(
+                        field -> field instanceof PdfString ? ((PdfString) field).toUnicodeString() : "")
+                        .collect(Collectors.toList());
+            }
+            lockAllFormFields(revision, excludedFields, report);
+        } else {
+            if (!PdfName.All.equals(action)) {
+                report.addReportItem(new ReportItem(FIELD_MDP_CHECK, MessageFormatUtil.format(
+                        UNRECOGNIZED_ACTION, action.getValue()), ReportItemStatus.INVALID));
+            }
+            lockAllFormFields(revision, Collections.<String>emptyList(), report);
+        }
+    }
+
+    private void lockAllFormFields(DocumentRevision revision, List<String> excludedFields, ValidationReport report) {
+        try (InputStream inputStream = createInputStreamFromRevision(document, revision);
+                PdfReader reader = new PdfReader(inputStream);
+                PdfDocument documentWithRevision = new PdfDocument(reader,
+                        new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(documentWithRevision, false);
+            if (acroForm != null) {
+                for (String fieldName : acroForm.getAllFormFields().keySet()) {
+                    if (!excludedFields.contains(fieldName)) {
+                        lockedFields.add(fieldName);
+                    }
+                }
+            }
+        } catch (IOException exception) {
+            report.addReportItem(new ReportItem(FIELD_MDP_CHECK, REVISIONS_READING_EXCEPTION, exception,
+                    ReportItemStatus.INDETERMINATE));
         }
     }
 
@@ -371,8 +447,123 @@ class DocumentRevisionsValidator {
                 compareDss(previousCatalog.get(PdfName.DSS), currentCatalog.get(PdfName.DSS), report) &&
                 comparePages(previousCatalog.getAsDictionary(PdfName.Pages),
                         currentCatalog.getAsDictionary(PdfName.Pages), report) &&
+                compareAcroFormsWithFieldMDP(documentWithoutRevision, documentWithRevision, report) &&
                 compareAcroForms(previousCatalog.getAsDictionary(PdfName.AcroForm),
                         currentCatalog.getAsDictionary(PdfName.AcroForm), report);
+    }
+
+    private boolean compareAcroFormsWithFieldMDP(PdfDocument documentWithoutRevision, PdfDocument documentWithRevision,
+            ValidationReport report) {
+        PdfAcroForm currentAcroForm = PdfFormCreator.getAcroForm(documentWithRevision, false);
+        PdfAcroForm previousAcroForm = PdfFormCreator.getAcroForm(documentWithoutRevision, false);
+
+        if (currentAcroForm == null || previousAcroForm == null) {
+            // This is not a part of FieldMDP validation.
+            return true;
+        }
+        if (accessPermissions == AccessPermissions.NO_CHANGES_PERMITTED) {
+            // In this case FieldMDP makes no sense, because related changes are forbidden anyway.
+            return true;
+        }
+        for (Map.Entry<String, PdfFormField> previousField : previousAcroForm.getAllFormFields().entrySet()) {
+            if (lockedFields.contains(previousField.getKey())) {
+                // For locked form fields nothing can change,
+                // however annotations can contain page link which should be excluded from direct comparison.
+                PdfFormField currentFormField = currentAcroForm.getField(previousField.getKey());
+                if (currentFormField == null) {
+                    report.addReportItem(new ReportItem(FIELD_MDP_CHECK, MessageFormatUtil.format(
+                            LOCKED_FIELD_REMOVED, previousField.getKey()), ReportItemStatus.INVALID));
+                    return false;
+                }
+                if (!compareFormFieldWithFieldMDP(previousField.getValue().getPdfObject(),
+                        currentFormField.getPdfObject(), previousField.getKey(), report)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean compareFormFieldWithFieldMDP(PdfDictionary previousField, PdfDictionary currentField,
+            String fieldName, ValidationReport report) {
+        PdfDictionary previousFieldCopy = new PdfDictionary(previousField);
+        previousFieldCopy.remove(PdfName.Kids);
+        previousFieldCopy.remove(PdfName.P);
+        previousFieldCopy.remove(PdfName.Parent);
+        previousFieldCopy.remove(PdfName.V);
+        PdfDictionary currentFieldCopy = new PdfDictionary(currentField);
+        currentFieldCopy.remove(PdfName.Kids);
+        currentFieldCopy.remove(PdfName.P);
+        currentFieldCopy.remove(PdfName.Parent);
+        currentFieldCopy.remove(PdfName.V);
+        if (!comparePdfObjects(previousFieldCopy, currentFieldCopy)) {
+            report.addReportItem(new ReportItem(FIELD_MDP_CHECK, MessageFormatUtil.format(
+                    LOCKED_FIELD_MODIFIED, fieldName), ReportItemStatus.INVALID));
+            return false;
+        }
+
+        PdfObject prevValue = previousField.get(PdfName.V);
+        PdfObject currValue = currentField.get(PdfName.V);
+        if (PdfName.Sig.equals(currentField.getAsName(PdfName.FT))) {
+            if (!compareSignatureDictionaries(prevValue, currValue, report)) {
+                report.addReportItem(new ReportItem(FIELD_MDP_CHECK, MessageFormatUtil.format(
+                        LOCKED_FIELD_MODIFIED, fieldName), ReportItemStatus.INVALID));
+                return false;
+            }
+        } else if (!comparePdfObjects(prevValue, currValue)) {
+            report.addReportItem(new ReportItem(FIELD_MDP_CHECK, MessageFormatUtil.format(
+                    LOCKED_FIELD_MODIFIED, fieldName), ReportItemStatus.INVALID));
+            return false;
+        }
+
+        if (!compareIndirectReferencesObjNums(previousField.get(PdfName.P), currentField.get(PdfName.P), report,
+                "Page object with which field annotation is associated") ||
+                !compareIndirectReferencesObjNums(previousField.get(PdfName.Parent), currentField.get(PdfName.Parent),
+                        report, "Form field parent")) {
+            report.addReportItem(new ReportItem(FIELD_MDP_CHECK, MessageFormatUtil.format(
+                    LOCKED_FIELD_MODIFIED, fieldName), ReportItemStatus.INVALID));
+            return false;
+        }
+
+        PdfArray previousKids = previousField.getAsArray(PdfName.Kids);
+        PdfArray currentKids = currentField.getAsArray(PdfName.Kids);
+        if (previousKids == null && currentKids != null) {
+            report.addReportItem(new ReportItem(FIELD_MDP_CHECK, MessageFormatUtil.format(
+                    LOCKED_FIELD_KIDS_ADDED, fieldName), ReportItemStatus.INVALID));
+            return false;
+        }
+        if (previousKids != null && currentKids == null) {
+            report.addReportItem(new ReportItem(FIELD_MDP_CHECK, MessageFormatUtil.format(
+                    LOCKED_FIELD_KIDS_REMOVED, fieldName), ReportItemStatus.INVALID));
+            return false;
+        }
+        if (previousKids == currentKids) {
+            return true;
+        }
+        if (previousKids.size() < currentKids.size()) {
+            report.addReportItem(new ReportItem(FIELD_MDP_CHECK, MessageFormatUtil.format(
+                    LOCKED_FIELD_KIDS_ADDED, fieldName), ReportItemStatus.INVALID));
+            return false;
+        }
+        if (previousKids.size() > currentKids.size()) {
+            report.addReportItem(new ReportItem(FIELD_MDP_CHECK, MessageFormatUtil.format(
+                    LOCKED_FIELD_KIDS_REMOVED, fieldName), ReportItemStatus.INVALID));
+            return false;
+        }
+        for (int i = 0; i < previousKids.size(); ++i) {
+            PdfDictionary previousKid = previousKids.getAsDictionary(i);
+            PdfDictionary currentKid = currentKids.getAsDictionary(i);
+            if (previousKid == null || currentKid == null) {
+                report.addReportItem(new ReportItem(FIELD_MDP_CHECK, MessageFormatUtil.format(
+                        FIELD_NOT_DICTIONARY, fieldName), ReportItemStatus.INDETERMINATE));
+                continue;
+            }
+            if (PdfFormAnnotationUtil.isPureWidget(previousKid) &&
+                    !compareFormFieldWithFieldMDP(previousKid, currentKid, fieldName, report)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private List<ReferencesPair> createAllowedReferences(PdfDocument documentWithRevision,
@@ -1071,7 +1262,7 @@ class DocumentRevisionsValidator {
                 if (previousField == null) {
                     // For newly generated form field all references are allowed to be added.
                     addAllNestedDictionaryEntries(allowedReferences, currentField.getPdfObject(), null);
-                } else {
+                } else if (!lockedFields.contains(fieldEntry.getKey())) {
                     // For already existing form field only several entries are allowed to be updated.
                     allowedReferences.addAll(createAllowedExistingFormFieldEntries(currentField, previousField));
                 }
@@ -1288,13 +1479,6 @@ class DocumentRevisionsValidator {
         } catch (Exception ignored) {
             return null;
         }
-    }
-
-    enum AccessPermissions {
-        UNSPECIFIED,
-        NO_CHANGES_PERMITTED,
-        FORM_FIELDS_MODIFICATION,
-        ANNOTATION_MODIFICATION
     }
 
     private static class ReferencesPair {
