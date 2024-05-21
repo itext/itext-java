@@ -490,6 +490,11 @@ public class CommonCssConstants {
     public static final String FONT_WEIGHT = "font-weight";
 
     /**
+     * The Constant FR.
+     */
+    public static final String FR = "fr";
+
+    /**
      * The Constant GAP.
      */
     public static final String GAP = "gap";

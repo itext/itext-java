@@ -26,6 +26,7 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.properties.GridValue;
 import com.itextpdf.layout.properties.Property;
 
 import java.util.List;
@@ -38,17 +39,17 @@ class GridSizer {
     //TODO DEVSIX-8326 since templates will have not only absoulute values, we're probably need to create
     // separate fields, something like rowsHeights, columnsWidths which will store absolute/calculated values.
     // replace all absolute value logic using this new fields
-    private final List<Float> templateRows;
-    private final List<Float> templateColumns;
-    private final Float rowAutoHeight;
-    private final Float columnAutoWidth;
+    private final List<GridValue> templateRows;
+    private final List<GridValue> templateColumns;
+    private final GridValue rowAutoHeight;
+    private final GridValue columnAutoWidth;
     //TODO DEVSIX-8326 here should be a list/map of different resolvers
     private final SizeResolver sizeResolver;
     private final float columnGap;
     private final float rowGap;
 
-    GridSizer(Grid grid, List<Float> templateRows, List<Float> templateColumns,
-                     Float rowAutoHeight, Float columnAutoWidth, Float columnGap, Float rowGap) {
+    GridSizer(Grid grid, List<GridValue> templateRows, List<GridValue> templateColumns,
+            GridValue rowAutoHeight, GridValue columnAutoWidth, Float columnGap, Float rowGap) {
         this.grid = grid;
         this.templateRows = templateRows;
         this.templateColumns = templateColumns;
@@ -107,7 +108,7 @@ class GridSizer {
         int currentColumn = 0;
         if (templateColumns != null) {
             for (; currentColumn < Math.min(templateColumns.size(), cell.getColumnStart()); ++currentColumn) {
-                x += (float) templateColumns.get(currentColumn);
+                x += (float) templateColumns.get(currentColumn).getAbsoluteValue();
                 x += columnGap;
             }
             if (currentColumn == cell.getColumnStart()) {
@@ -116,7 +117,7 @@ class GridSizer {
         }
         if (columnAutoWidth != null) {
             for (; currentColumn < cell.getColumnStart(); ++currentColumn) {
-                x += (float) columnAutoWidth;
+                x += (float) columnAutoWidth.getAbsoluteValue();
                 x += columnGap;
             }
             return x;
@@ -150,10 +151,10 @@ class GridSizer {
             for (int i = cell.getRowStart(); i < cell.getRowEnd(); ++i) {
                 if (templateRows != null && i < templateRows.size()) {
                     ++counter;
-                    cellHeight += (float) templateRows.get(i);
+                    cellHeight += (float) templateRows.get(i).getAbsoluteValue();
                 } else if (rowAutoHeight != null) {
                     ++counter;
-                    cellHeight += (float) rowAutoHeight;
+                    cellHeight += (float) rowAutoHeight.getAbsoluteValue();
                 }
             }
             if (counter > 1) {
@@ -167,11 +168,11 @@ class GridSizer {
         if (templateRows == null || cell.getRowStart() >= templateRows.size()) {
             //TODO DEVSIX-8324 if row auto height value is fr or min-content do not return here
             if (rowAutoHeight != null) {
-                return (float) rowAutoHeight;
+                return (float) rowAutoHeight.getAbsoluteValue();
             }
             cellHeight = sizeResolver.resolveHeight(cell, cellHeight);
         } else {
-            cellHeight = templateRows.get(cell.getRowStart());
+            cellHeight = (float) templateRows.get(cell.getRowStart()).getAbsoluteValue();
         }
         return cellHeight;
     }
@@ -186,10 +187,10 @@ class GridSizer {
             for (int i = cell.getColumnStart(); i < cell.getColumnEnd(); ++i) {
                 if (templateColumns != null && i < templateColumns.size()) {
                     ++counter;
-                    cellWidth += templateColumns.get(i);
+                    cellWidth += (float) templateColumns.get(i).getAbsoluteValue();
                 } else if (columnAutoWidth != null) {
                     ++counter;
-                    cellWidth += (float) columnAutoWidth;
+                    cellWidth += (float) columnAutoWidth.getAbsoluteValue();
                 }
             }
             if (counter > 1) {
@@ -202,12 +203,12 @@ class GridSizer {
         if (templateColumns == null || cell.getColumnEnd() > templateColumns.size()) {
             //TODO DEVSIX-8324 if row auto width value is fr or min-content do not return here
             if (columnAutoWidth != null) {
-                return (float) columnAutoWidth;
+                return (float) columnAutoWidth.getAbsoluteValue();
             }
             cellWidth = sizeResolver.resolveWidth(cell, cellWidth);
         } else {
             //process absolute template values
-            cellWidth = templateColumns.get(cell.getColumnStart());
+            cellWidth = (float) templateColumns.get(cell.getColumnStart()).getAbsoluteValue();
         }
         return cellWidth;
     }

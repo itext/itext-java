@@ -29,6 +29,7 @@ import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.properties.ContinuousContainer;
+import com.itextpdf.layout.properties.GridValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 
@@ -36,7 +37,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Represents a renderer for a grid.
@@ -275,16 +275,15 @@ public class GridContainerRenderer extends DivRenderer {
     //TODO DEVSIX-8324 Left actualBBox parameter since it will be needed for fr and % calculations
     // if it is inline-grid, than it won't be needed.
     private static Grid constructGrid(GridContainerRenderer renderer, Rectangle actualBBox) {
-        //TODO DEVSIX-8324 create a new class GridTemplateValue, which will store fr, pt, %, minmax, etc. values
-        //TODO DEVSIX-8324 Use this new class instead of Float and use it inside Grid Sizing Algorithm
-        //TODO DEVSIX-8324 Right now we're assuming that all template values are points, and there is no % and fr in this list
-        List<Float> templateColumns = processTemplateValues(renderer.<List<UnitValue>>getProperty(Property.GRID_TEMPLATE_COLUMNS));
-        List<Float> templateRows = processTemplateValues(renderer.<List<UnitValue>>getProperty(Property.GRID_TEMPLATE_ROWS));
+        List<GridValue> templateColumns = renderer.<List<GridValue>>getProperty(Property.GRID_TEMPLATE_COLUMNS) == null ?
+                null : renderer.<List<GridValue>>getProperty(Property.GRID_TEMPLATE_COLUMNS);
+        List<GridValue> templateRows = renderer.<List<GridValue>>getProperty(Property.GRID_TEMPLATE_ROWS) == null ?
+                null : renderer.<List<GridValue>>getProperty(Property.GRID_TEMPLATE_ROWS);
 
-        Float columnAutoWidth = renderer.<UnitValue>getProperty(Property.GRID_AUTO_COLUMNS) == null ?
-                null : (Float) ((UnitValue)renderer.<UnitValue>getProperty(Property.GRID_AUTO_COLUMNS)).getValue();
-        Float rowAutoHeight = renderer.<UnitValue>getProperty(Property.GRID_AUTO_ROWS) == null ?
-                null : (Float) ((UnitValue)renderer.<UnitValue>getProperty(Property.GRID_AUTO_ROWS)).getValue();
+        GridValue columnAutoWidth = renderer.<GridValue>getProperty(Property.GRID_AUTO_COLUMNS) == null ?
+                null : renderer.<GridValue>getProperty(Property.GRID_AUTO_COLUMNS);
+        GridValue rowAutoHeight = renderer.<GridValue>getProperty(Property.GRID_AUTO_ROWS) == null ?
+                null : renderer.<GridValue>getProperty(Property.GRID_AUTO_ROWS);
 
         final Float columnGap = renderer.<Float>getProperty(Property.COLUMN_GAP);
         final Float rowGap = renderer.<Float>getProperty(Property.ROW_GAP);
@@ -327,32 +326,27 @@ public class GridContainerRenderer extends DivRenderer {
         return grid;
     }
 
-    //TODO DEVSIX-8324 This is temporary method, we should remove it and instead of having Property.GRID_TEMPLATE_...
-    // as a UnitValue and returning list of Float, we need a new class which will be passed to Grid Sizing Algorithm.
-    private static List<Float> processTemplateValues(List<UnitValue> template) {
-        if (template == null) {
-            return null;
-        }
-        return template.stream().map(value -> value.getValue()).collect(Collectors.toList());
-    }
-
     //This method calculates container minimal height, because if number of cells is not enough to fill all specified
     //rows by template than we need to set the height of the container higher than it's actual occupied height.
-    private static void setGridContainerMinimalHeight(Grid grid, List<Float> templateRows) {
+    private static void setGridContainerMinimalHeight(Grid grid, List<GridValue> templateRows) {
         float explicitContainerHeight = 0.0f;
         if (templateRows != null) {
-            for (Float template : templateRows) {
-                explicitContainerHeight += (float) template;
+            for (GridValue template : templateRows) {
+                if (template.isAbsoluteValue()) {
+                    explicitContainerHeight += (float) template.getAbsoluteValue();
+                }
             }
         }
         grid.setMinHeight(explicitContainerHeight);
     }
 
-    private static void setGridContainerMinimalWidth(Grid grid, List<Float> templateColumns) {
+    private static void setGridContainerMinimalWidth(Grid grid, List<GridValue> templateColumns) {
         float explicitContainerWidth = 0.0f;
         if (templateColumns != null) {
-            for (Float template : templateColumns) {
-                explicitContainerWidth += (float) template;
+            for (GridValue template : templateColumns) {
+                if (template.isAbsoluteValue()) {
+                    explicitContainerWidth += (float) template.getAbsoluteValue();
+                }
             }
         }
         grid.setMinWidth(explicitContainerWidth);
