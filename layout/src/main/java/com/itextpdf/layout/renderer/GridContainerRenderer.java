@@ -66,6 +66,7 @@ public class GridContainerRenderer extends DivRenderer {
      */
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
+
         //TODO DEVSIX-8331 enable continuous container, right now its not working properly out of the box because
         // we don't need to enable it for every element in a grid, probably only to those which get
         // split by a page
@@ -87,7 +88,10 @@ public class GridContainerRenderer extends DivRenderer {
 
         //TODO DEVSIX-8329 improve nothing processing, consider checking for cause of nothing here?
         //TODO DEVSIX-8329 improve forced placement logic
-        if (layoutResult.getSplitRenderers().isEmpty()) {
+        if (layoutResult.getOverflowRenderers().isEmpty() && layoutResult.getSplitRenderers().isEmpty()) {
+            this.occupiedArea = calculateContainerOccupiedArea(layoutContext, grid, true);
+            return new LayoutResult(LayoutResult.FULL, this.occupiedArea, null, null);
+        } else if (layoutResult.getSplitRenderers().isEmpty()) {
             if (Boolean.TRUE.equals(this.<Boolean>getProperty(Property.FORCED_PLACEMENT))) {
                 this.occupiedArea = calculateContainerOccupiedArea(layoutContext, grid, true);
                 return new LayoutResult(LayoutResult.FULL,  this.occupiedArea, this, null);
