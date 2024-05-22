@@ -127,6 +127,7 @@ public final class Property {
     public static final int GRID_TEMPLATE_ROWS = 146;
     public static final int GRID_AUTO_ROWS = 151;
     public static final int GRID_AUTO_COLUMNS = 152;
+    public static final int GRID_FLOW = 154;
     public static final int HEIGHT = 27;
     public static final int HORIZONTAL_ALIGNMENT = 28;
     public static final int HORIZONTAL_BORDER_SPACING = 115;
@@ -233,7 +234,7 @@ public final class Property {
      * related to textual operations. Indicates whether or not this type of property is inheritable.
      */
     private static final boolean[] INHERITED_PROPERTIES;
-    private static final int MAX_INHERITED_PROPERTY_ID = 153;
+    private static final int MAX_INHERITED_PROPERTY_ID = 154;
 
     static {
         INHERITED_PROPERTIES = new boolean[MAX_INHERITED_PROPERTY_ID + 1];

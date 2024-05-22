@@ -26,6 +26,7 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.properties.GridFlow;
 import com.itextpdf.layout.properties.GridValue;
 import com.itextpdf.layout.properties.Property;
 
@@ -71,11 +72,11 @@ class GridSizer {
         // corresponding values of the elements and update auto height/width after calculating each cell layout area
         // and if its changed than re-layout
         //Grid Sizing Algorithm
-        for (GridCell cell : grid.getUniqueGridCells(Grid.COLUMN_ORDER)) {
+        for (GridCell cell : grid.getUniqueGridCells(Grid.GridOrder.COLUMN)) {
             cell.getLayoutArea().setX(calculateCellX(cell));
             cell.getLayoutArea().setWidth(calculateCellWidth(cell));
         }
-        for (GridCell cell : grid.getUniqueGridCells(Grid.ROW_ORDER)) {
+        for (GridCell cell : grid.getUniqueGridCells(Grid.GridOrder.ROW)) {
             cell.getLayoutArea().setY(calculateCellY(cell));
             cell.getLayoutArea().setHeight(calculateCellHeight(cell));
         }
@@ -88,8 +89,24 @@ class GridSizer {
      * @return left upper corner y value
      */
     private float calculateCellY(GridCell cell) {
-        //For y we always know that there is a top neighbor at least in one column (because if not it means there
-        //is a null row) and all cells in a row above have the same top.
+        float y = 0.0f;
+        int currentRow = 0;
+        if (templateRows != null) {
+            for (; currentRow < Math.min(templateRows.size(), cell.getRowStart()); ++currentRow) {
+                y += (float) templateRows.get(currentRow).getAbsoluteValue();
+                y += rowGap;
+            }
+            if (currentRow == cell.getRowStart()) {
+                return y;
+            }
+        }
+        if (rowAutoHeight != null) {
+            for (; currentRow < cell.getRowStart(); ++currentRow) {
+                y += (float) rowAutoHeight.getAbsoluteValue();
+                y += rowGap;
+            }
+            return y;
+        }
         GridCell topNeighbor = grid.getClosestTopNeighbor(cell);
         if (topNeighbor != null) {
             return topNeighbor.getLayoutArea().getTop() + rowGap;

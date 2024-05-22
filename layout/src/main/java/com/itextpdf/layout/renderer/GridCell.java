@@ -25,6 +25,9 @@ package com.itextpdf.layout.renderer;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.properties.Property;
 
+/**
+ * This class represents a cell in a grid.
+ */
 class GridCell {
     private final IRenderer value;
     private final IntRectangle gridArea;
@@ -84,6 +87,10 @@ class GridCell {
         return layoutArea;
     }
 
+    IntRectangle getGridArea() {
+        return gridArea;
+    }
+
     void setLayoutArea(Rectangle layoutArea) {
         this.layoutArea = layoutArea;
     }
@@ -92,9 +99,9 @@ class GridCell {
         isValueFitOnCellArea = valueFitOnCellArea;
     }
 
-    void setStartingRowAndColumn(int row, int column) {
-        this.gridArea.setY(row);
-        this.gridArea.setX(column);
+    void setPos(int y, int x) {
+        this.gridArea.setY(y);
+        this.gridArea.setX(x);
     }
 
     /**
@@ -104,7 +111,7 @@ class GridCell {
      *
      * @param start x/y pos of cell on a grid
      * @param end x/y + width/height pos of cell on a grid
-     * @return
+     * @return row/column start/end values as a pair, where first value is start, second is end
      */
     private int[] initRowColumnsValues(Integer start, Integer end) {
         int[] result = new int[] {0, 0};
@@ -125,7 +132,11 @@ class GridCell {
         return result;
     }
 
-    private static class IntRectangle {
+    /**
+     * This class represents an integer rectangle.
+     * x,y - represents a bottom left corner of this rectangle.
+     */
+    static class IntRectangle {
         private int x;
         private int y;
         private int width;
@@ -168,6 +179,14 @@ class GridCell {
 
         public void setY(int y) {
             this.y = y;
+        }
+
+        public void setWidth(int width) {
+            this.width = width;
+        }
+
+        public void setHeight(int height) {
+            this.height = height;
         }
 
         @Override

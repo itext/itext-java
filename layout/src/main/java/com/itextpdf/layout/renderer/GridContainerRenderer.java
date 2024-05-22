@@ -29,13 +29,12 @@ import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.properties.ContinuousContainer;
+import com.itextpdf.layout.properties.GridFlow;
 import com.itextpdf.layout.properties.GridValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -150,7 +149,7 @@ public class GridContainerRenderer extends DivRenderer {
         // area or returns nothing as layout result RootRenderer sets FORCED_PLACEMENT on this class instance.
         // And basically every cell inherits this value and force placed, but we only need to force place cells
         // which were not fitted originally.
-        for (GridCell cell : grid.getUniqueGridCells(Grid.ROW_ORDER)) {
+        for (GridCell cell : grid.getUniqueGridCells(Grid.GridOrder.ROW)) {
             //If cell couldn't fit during cell layout area calculation than we need to put such cell straight to
             //nothing result list
             if (!cell.isValueFitOnCellArea()) {
@@ -219,7 +218,6 @@ public class GridContainerRenderer extends DivRenderer {
         return area;
     }
 
-    //TODO DEVSIX-8330: Probably height also has to be calculated before layout and set into actual bbox
     private void recalculateHeightAndWidthAfterLayout(Rectangle bBox, boolean isFull) {
         Float height = retrieveHeight();
         if (height != null) {
@@ -234,8 +232,6 @@ public class GridContainerRenderer extends DivRenderer {
         }
     }
 
-    //TODO DEVSIX-8330: Consider extracting this method and same from MulticolRenderer to a separate class
-    // or derive GridRenderer and MulticolRenderer from one class which will manage this and isFirstLayout field
     private float updateOccupiedHeight(float initialHeight, boolean isFull) {
         if (isFull) {
             initialHeight += safelyRetrieveFloatProperty(Property.PADDING_BOTTOM);
@@ -279,47 +275,24 @@ public class GridContainerRenderer extends DivRenderer {
     //TODO DEVSIX-8324 Left actualBBox parameter since it will be needed for fr and % calculations
     // if it is inline-grid, than it won't be needed.
     private static Grid constructGrid(GridContainerRenderer renderer, Rectangle actualBBox) {
-        List<GridValue> templateColumns = renderer.<List<GridValue>>getProperty(Property.GRID_TEMPLATE_COLUMNS) == null ?
-                null : renderer.<List<GridValue>>getProperty(Property.GRID_TEMPLATE_COLUMNS);
-        List<GridValue> templateRows = renderer.<List<GridValue>>getProperty(Property.GRID_TEMPLATE_ROWS) == null ?
-                null : renderer.<List<GridValue>>getProperty(Property.GRID_TEMPLATE_ROWS);
-
-        GridValue columnAutoWidth = renderer.<GridValue>getProperty(Property.GRID_AUTO_COLUMNS) == null ?
-                null : renderer.<GridValue>getProperty(Property.GRID_AUTO_COLUMNS);
-        GridValue rowAutoHeight = renderer.<GridValue>getProperty(Property.GRID_AUTO_ROWS) == null ?
-                null : renderer.<GridValue>getProperty(Property.GRID_AUTO_ROWS);
-
+        List<GridValue> templateColumns = renderer.<List<GridValue>>getProperty(Property.GRID_TEMPLATE_COLUMNS);
+        List<GridValue> templateRows = renderer.<List<GridValue>>getProperty(Property.GRID_TEMPLATE_ROWS);
+        GridValue columnAutoWidth = renderer.<GridValue>getProperty(Property.GRID_AUTO_COLUMNS);
+        GridValue rowAutoHeight = renderer.<GridValue>getProperty(Property.GRID_AUTO_ROWS);
         final Float columnGap = renderer.<Float>getProperty(Property.COLUMN_GAP);
         final Float rowGap = renderer.<Float>getProperty(Property.ROW_GAP);
+        final GridFlow flow = renderer.<GridFlow>getProperty(Property.GRID_FLOW) == null ?
+                GridFlow.ROW : (GridFlow) (renderer.<GridFlow>getProperty(Property.GRID_FLOW));
 
-        //Grid Item Placement Algorithm
-        int initialRowsCount = templateRows == null ? 1 : templateRows.size();
-        int initialColumnsCount = templateColumns == null ? 1 : templateColumns.size();
-
-        //Sort cells to first position anything that’s not auto-positioned, then process the items locked to a given row.
-        //It would be better to use tree set here, but not using it due to .NET porting issues
-        List<GridCell> sortedCells = new ArrayList<>();
         for (IRenderer child : renderer.getChildRenderers()) {
-            sortedCells.add(new GridCell(child));
-        }
-        Collections.sort(sortedCells, new CellComparator());
-
-        //Find a cell with a max column end to ensure it will fit on the grid
-        for (GridCell cell : sortedCells) {
-            if (cell != null) {
-                initialColumnsCount = Math.max(initialColumnsCount, cell.getColumnEnd());
-            }
+            child.setParent(renderer);
         }
 
-        final Grid grid = new Grid(initialRowsCount, initialColumnsCount, false);
+        Grid grid = Grid.Builder.forItems(renderer.getChildRenderers())
+                        .columns(templateColumns == null ? 1 : templateColumns.size())
+                        .rows(templateRows == null ? 1 : templateRows.size())
+                        .flow(flow).build();
 
-        for (GridCell cell : sortedCells) {
-            cell.getValue().setParent(renderer);
-            grid.addCell(cell);
-        }
-        //TODO DEVSIX-8325 eliminate null rows/columns
-        // for rows it's easy: grid.getCellsRows().removeIf(row -> row.stream().allMatch(cell -> cell == null));
-        // shrinkNullAxis(grid);
         GridSizer gridSizer = new GridSizer(grid, templateRows, templateColumns, rowAutoHeight, columnAutoWidth,
                 columnGap, rowGap);
         gridSizer.sizeCells();
@@ -354,32 +327,6 @@ public class GridContainerRenderer extends DivRenderer {
             }
         }
         grid.setMinWidth(explicitContainerWidth);
-    }
-
-    /**
-     * This comparator sorts cells so ones with both fixed row and column positions would go first,
-     * then cells with fixed row and then cells without such properties.
-     */
-    private final static class CellComparator implements Comparator<GridCell> {
-
-        @Override
-        public int compare(GridCell lhs, GridCell rhs) {
-            int lhsModifiers = 0;
-            if (lhs.getColumnStart() != -1 && lhs.getRowStart() != -1) {
-                lhsModifiers = 2;
-            } else if (lhs.getRowStart() != -1) {
-                lhsModifiers = 1;
-            }
-
-            int rhsModifiers = 0;
-            if (rhs.getColumnStart() != -1 && rhs.getRowStart() != -1) {
-                rhsModifiers = 2;
-            } else if (rhs.getRowStart() != -1) {
-                rhsModifiers = 1;
-            }
-            //passing parameters in reversed order so ones with properties would come first
-            return Integer.compare(rhsModifiers, lhsModifiers);
-        }
     }
 
     private final static class GridLayoutResult {

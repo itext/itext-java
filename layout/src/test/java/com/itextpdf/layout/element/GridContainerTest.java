@@ -29,6 +29,7 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
+import com.itextpdf.layout.properties.GridFlow;
 import com.itextpdf.layout.properties.GridValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
@@ -362,7 +363,7 @@ public class GridContainerTest extends ExtendedITextTest {
     }
     
     @Test
-    public void overlapWithExistingColumnTest() throws IOException, InterruptedException {
+    public void overlapWithExistingColumnTest() throws IOException {
         String filename = DESTINATION_FOLDER + "overlapWithExistingColumnTest.pdf";
 
         java.util.List<GridValue> templateColumns = new ArrayList<>();
@@ -615,6 +616,47 @@ public class GridContainerTest extends ExtendedITextTest {
             grid.add(five);
             grid.add(new Paragraph("Six").setBackgroundColor(ColorConstants.CYAN));
             grid.add(new Paragraph("Seven").setBackgroundColor(ColorConstants.CYAN));
+            grid.add(new Paragraph("Eight").setBackgroundColor(ColorConstants.CYAN));
+            grid.add(new Paragraph("Nine").setBackgroundColor(ColorConstants.CYAN));
+            document.add(grid);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void columnFlowWithBigCellsTest() throws IOException, InterruptedException {
+        String filename = DESTINATION_FOLDER + "columnFlowWithBigCellsTest.pdf";
+        String cmpName = SOURCE_FOLDER + "cmp_columnFlowWithBigCellsTest.pdf";
+        java.util.List<GridValue> template = new ArrayList<>();
+        template.add(GridValue.createUnitValue(new UnitValue(UnitValue.POINT, 50.0f)));
+        template.add(GridValue.createUnitValue(new UnitValue(UnitValue.POINT, 50.0f)));
+        template.add(GridValue.createUnitValue(new UnitValue(UnitValue.POINT, 50.0f)));
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+            GridContainer grid = new GridContainer();
+            grid.setProperty(Property.GRID_FLOW, GridFlow.COLUMN);
+            grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, template);
+            grid.setProperty(Property.GRID_TEMPLATE_ROWS, template);
+            grid.setProperty(Property.COLUMN_GAP, 10.0f);
+            grid.setProperty(Property.ROW_GAP, 10.0f);
+            final Paragraph one = new Paragraph("One").setBackgroundColor(ColorConstants.CYAN);
+            one.setProperty(Property.GRID_COLUMN_START, 1);
+            one.setProperty(Property.GRID_COLUMN_END, 3);
+            one.setProperty(Property.GRID_ROW_START, 1);
+            one.setProperty(Property.GRID_ROW_END, 3);
+            grid.add(one);
+            grid.add(new Paragraph("Two").setBackgroundColor(ColorConstants.CYAN));
+            grid.add(new Paragraph("Tree").setBackgroundColor(ColorConstants.CYAN));
+            grid.add(new Paragraph("Four").setBackgroundColor(ColorConstants.CYAN));
+            final Paragraph five = new Paragraph("Five").setBackgroundColor(ColorConstants.CYAN);
+            five.setProperty(Property.GRID_COLUMN_START, 1);
+            five.setProperty(Property.GRID_COLUMN_END, 4);
+            grid.add(five);
+            grid.add(new Paragraph("Six").setBackgroundColor(ColorConstants.CYAN));
+            final Paragraph seven = new Paragraph("Seven").setBackgroundColor(ColorConstants.CYAN);
+            seven.setProperty(Property.GRID_ROW_START, 1);
+            seven.setProperty(Property.GRID_ROW_END, 4);
+            grid.add(seven);
             grid.add(new Paragraph("Eight").setBackgroundColor(ColorConstants.CYAN));
             grid.add(new Paragraph("Nine").setBackgroundColor(ColorConstants.CYAN));
             document.add(grid);

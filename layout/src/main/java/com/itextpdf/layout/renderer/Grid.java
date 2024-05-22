@@ -23,33 +23,37 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
+import com.itextpdf.layout.properties.GridFlow;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This class represents a grid of elements.
+ * Complex elements (which span over few cells of a grid) are stored as duplicates.
+ * For example if element with width = 2, height = 3 added to a grid, grid will store it as 6 elements each having
+ * width = height = 1.
  */
 class Grid {
-    private final List<List<GridCell>> rows = new ArrayList<>();
-    private final CellPacker cellPacker;
+    private GridCell[][] rows = new GridCell[1][1];
+    private final CellPlacementHelper cellPlacementHelper;
     private float minHeight = 0.0f;
     private float minWidth = 0.0f;
-    static final int ROW_ORDER = 1;
-    static final int COLUMN_ORDER = 2;
 
     /**
      * Creates a new grid instance.
      *
      * @param initialRowsCount initial number of row for the grid
      * @param initialColumnsCount initial number of columns for the grid
-     * @param densePacking if true, dense packing will be used, otherwise sparse packing will be used
+     * @param flow) see {@link com.itextpdf.layout.properties.GridFlow}
      */
-    Grid(int initialRowsCount, int initialColumnsCount, boolean densePacking) {
+    Grid(int initialRowsCount, int initialColumnsCount, GridFlow flow) {
+        cellPlacementHelper = new CellPlacementHelper(this, flow);
         ensureGridSize(initialRowsCount, initialColumnsCount);
-        cellPacker = new CellPacker(densePacking);
     }
 
     /**
@@ -59,10 +63,10 @@ class Grid {
      * @return resulting layout height of a grid.
      */
     float getHeight() {
-        for (int i = rows.size() - 1; i >= 0; --i) {
-            for (int j = 0; j < rows.get(0).size(); ++j) {
-                if (rows.get(i).get(j) != null) {
-                    return Math.max(rows.get(i).get(j).getLayoutArea().getTop(), minHeight);
+        for (int i = rows.length - 1; i >= 0; --i) {
+            for (int j = 0; j < rows[0].length; ++j) {
+                if (rows[i][j] != null) {
+                    return Math.max(rows[i][j].getLayoutArea().getTop(), minHeight);
                 }
             }
         }
@@ -83,17 +87,18 @@ class Grid {
      *
      * @return matrix of cells.
      */
-    List<List<GridCell>> getRows() {
+    GridCell[][] getRows() {
         return rows;
     }
 
     /**
      * Get any cell adjacent to the left of a given cell.
-     * If there is no a direct neighbor to the left, and other adjacent cells are big cells and their column end
+     * If there is no a direct neighbor to the left, and other adjacent cells are wide cells and their column end
      * is bigger than the column start of a given cell, method will still return such a neighbor, though it's not
-     * actually a neighbor to the left.
+     * actually a neighbor to the left. But if there will be a neighbor before column start of such a cell method will
+     * return such a neighbor.
      *
-     * @param value cell for which to find the neighbor
+     * @param value cell for which to find a neighbor
      *
      * @return adjacent cell to the left if found one, null otherwise
      */
@@ -101,13 +106,13 @@ class Grid {
         int x = value.getColumnStart();
         GridCell bigNeighbor = null;
         for (int i = 1; i <= x; ++i) {
-            for (int j = 0; j < rows.size(); ++j) {
-                if (rows.get(j).get(x - i) != null) {
-                    if (rows.get(j).get(x - i).getColumnEnd() > x) {
-                        bigNeighbor = rows.get(j).get(x - i);
+            for (int j = 0; j < rows.length; ++j) {
+                if (rows[j][x - i] != null) {
+                    if (rows[j][x - i].getColumnEnd() > x) {
+                        bigNeighbor = rows[j][x - i];
                         continue;
                     }
-                    return rows.get(j).get(x - i);
+                    return rows[j][x - i];
                 }
             }
             if (bigNeighbor != null && bigNeighbor.getColumnStart() == x - i) {
@@ -119,11 +124,12 @@ class Grid {
 
     /**
      * Get any cell adjacent to the top of a given cell
-     * If there is no a direct neighbor to the top, and other adjacent cells are big cells and their row end
+     * If there is no a direct neighbor to the top, and other adjacent cells are tall cells and their row end
      * is bigger than the row start of a given cell, method will still return such a neighbor, though it's not
-     * actually a neighbor to the top.
+     * actually a neighbor to the top. But if there will be a neighbor before row start of such a cell method will
+     * return such a neighbor.
      *
-     * @param value cell for which to find the neighbor
+     * @param value cell for which to find a neighbor
      *
      * @return adjacent cell to the top if found one, null otherwise
      */
@@ -131,13 +137,13 @@ class Grid {
         int y = value.getRowStart();
         GridCell bigNeighbor = null;
         for (int i = 1; i <= y; ++i) {
-            for (int j = 0; j < rows.get(0).size(); ++j) {
-                if (rows.get(y - i).get(j) != null) {
-                    if (rows.get(y - i).get(j).getRowEnd() > y) {
-                        bigNeighbor = rows.get(y - i).get(j);
+            for (int j = 0; j < rows[0].length; ++j) {
+                if (rows[y - i][j] != null) {
+                    if (rows[y - i][j].getRowEnd() > y) {
+                        bigNeighbor = rows[y - i][j];
                         continue;
                     }
-                    return rows.get(y - i).get(j);
+                    return rows[y - i][j];
                 }
             }
             if (bigNeighbor != null && bigNeighbor.getRowStart() == y - i) {
@@ -153,27 +159,27 @@ class Grid {
      * For example, cell with height = 2 and width = 2 will have 4 instances on a grid (width * height) to simplify
      * internal grid processing. This method counts such cells as one and returns a list of unique cells.
      *
-     * @param iterationOrder if <code>Grid.ROW</code> the order of cells is from left to right, top to bottom
-     *                       if <code>Grid.COLUMN</code> the order of cells is from top to bottom, left to right
+     * @param iterationOrder if {GridOrder.ROW} the order of cells is from left to right, top to bottom
+     *                       if {GridOrder.COLUMN} the order of cells is from top to bottom, left to right
+     *
      * @return collection of unique grid cells.
      */
-    Collection<GridCell> getUniqueGridCells(int iterationOrder) {
+    Collection<GridCell> getUniqueGridCells(GridOrder iterationOrder) {
         Collection<GridCell> result = new LinkedHashSet<>();
-        if (iterationOrder == ROW_ORDER) {
-            for (List<GridCell> cellsRow : rows) {
-                for (GridCell cell : cellsRow) {
-                    if (cell != null) {
-                        result.add(cell);
+        if (GridOrder.COLUMN.equals(iterationOrder)) {
+            for (int j = 0; j < rows[0].length; ++j) {
+                for (int i = 0; i < rows.length; ++i) {
+                    if (rows[i][j] != null) {
+                        result.add(rows[i][j]);
                     }
                 }
             }
+            return result;
         }
-        if (iterationOrder == COLUMN_ORDER) {
-            for (int j = 0; j < rows.get(0).size(); ++j) {
-                for (int i = 0; i < rows.size(); ++i) {
-                    if (rows.get(i).get(j) != null) {
-                        result.add(rows.get(i).get(j));
-                    }
+        for (GridCell[] cellsRow : rows) {
+            for (GridCell cell : cellsRow) {
+                if (cell != null) {
+                    result.add(cell);
                 }
             }
         }
@@ -188,7 +194,7 @@ class Grid {
      */
     void alignRow(int row, float value) {
         GridCell previousCell = null;
-        for (GridCell cell : rows.get(row)) {
+        for (GridCell cell : rows[row]) {
             if (cell == null) {
                 continue;
             }
@@ -208,8 +214,8 @@ class Grid {
      */
     void alignColumn(int column, float value) {
         GridCell previousCell = null;
-        for (int i = 0; i < rows.size(); ++i) {
-            GridCell cell = rows.get(i).get(column);
+        for (int i = 0; i < rows.length; ++i) {
+            GridCell cell = rows[i][column];
             if (cell == null) {
                 continue;
             }
@@ -221,25 +227,42 @@ class Grid {
         }
     }
 
+    /**
+     * Get max top (layout area y + height of a cell) in a row with index = y, for all elements in a row before given x.
+     *
+     * @param y index of a row to find max top value
+     * @param x index of element in a row before which to search for max top value
+     *
+     * @return max top value, all cells which do not end in the given row are not counted.
+     */
     float getMaxRowTop(int y, int x) {
-        List<GridCell> row = rows.get(y);
+        GridCell[] row = rows[y];
         float maxTop = 0.0f;
         for (int i = 0; i < x; ++i) {
-            if (row.get(i) == null || row.get(i).getLayoutArea() == null) {
+            if (row[i] == null || row[i].getLayoutArea() == null) {
                 continue;
             }
             //process cells which end at the same row
-            if (row.get(i).getLayoutArea().getTop() > maxTop && row.get(i).getRowEnd() == y + 1) {
-                maxTop = row.get(i).getLayoutArea().getTop();
+            if (row[i].getLayoutArea().getTop() > maxTop && row[i].getRowEnd() == y + 1) {
+                maxTop = row[i].getLayoutArea().getTop();
             }
         }
         return maxTop;
     }
 
+    /**
+     * Get max right (layout area x + width of a cell) in a column with index = x,
+     * for all elements in a column before given y.
+     *
+     * @param y index of element in a column before which to search for max right value
+     * @param x index of a column to find max right value
+     *
+     * @return max right value, all cells which do not end in the given column are not counted.
+     */
     float getMaxColumnRight(int y, int x) {
         float maxRight = 0.0f;
         for (int i = 0; i < y; ++i) {
-            GridCell cell = rows.get(i).get(x);
+            GridCell cell = rows[i][x];
             if (cell == null || cell.getLayoutArea() == null) {
                 continue;
             }
@@ -252,180 +275,265 @@ class Grid {
     }
 
     /**
-     * Add cell in the grid, checking that it would fit and initializing it upper left corner (x, y).
+     * Add cell in the grid, checking that it would fit and initializing it bottom left corner (x, y).
      *
      * @param cell cell to and in the grid
      */
     void addCell(GridCell cell) {
-        ensureGridSize(cell.getRowEnd(), cell.getColumnEnd());
-        setStartingRowAndColumn(cell);
+        cellPlacementHelper.fit(cell);
         for (int i = cell.getRowStart(); i < cell.getRowEnd(); ++i) {
             for(int j = cell.getColumnStart(); j < cell.getColumnEnd(); ++j) {
-                rows.get(i).set(j, cell);
+                rows[i][j] = cell;
             }
         }
     }
 
-    public void setMinHeight(float minHeight) {
+    void setMinHeight(float minHeight) {
         this.minHeight = minHeight;
     }
 
-    public void setMinWidth(float minWidth) {
+    void setMinWidth(float minWidth) {
         this.minWidth = minWidth;
     }
 
-    private void setStartingRowAndColumn(GridCell cell) {
-        if (cell.getColumnStart() != -1 && cell.getRowStart() != -1) {
-            // cells which take more than 1 grid cells vertically and horizontally can't be moved
-            for (int i = cell.getRowStart(); i < cell.getRowEnd(); ++i) {
-                for(int j = cell.getColumnStart(); j < cell.getColumnEnd(); ++j) {
-                    if (rows.get(i).get(j) != null) {
-                        throw new IllegalArgumentException(LayoutExceptionMessageConstant.INVALID_CELL_INDEXES);
-                    }
+    /**
+     * Resize grid if needed, so it would have given number of rows/columns.
+     *
+     * @param height new grid height
+     * @param width new grid width
+     */
+    void ensureGridSize(int height, int width) {
+        if (height <= rows.length && width <= rows[0].length) {
+            return;
+        }
+        GridCell[][] resizedRows = height > rows.length ? new GridCell[height][] : rows;
+        int gridWidth = Math.max(width, rows[0].length);
+        for (int i = 0; i < resizedRows.length; ++i) {
+            if (i < rows.length) {
+                if (width <= rows[i].length) {
+                    resizedRows[i] = rows[i];
+                } else {
+                    GridCell[] row = new GridCell[width];
+                    System.arraycopy(rows[i], 0, row, 0, rows[i].length);
+                    resizedRows[i] = row;
+                }
+            } else {
+                GridCell[] row = new GridCell[gridWidth];
+                resizedRows[i] = row;
+            }
+        }
+        rows = resizedRows;
+    }
+
+    static enum GridOrder {
+        ROW,
+        COLUMN
+    }
+
+    /**
+     * This class is used to properly initialize starting values for grid.
+     */
+    static final class Builder {
+        private int columnCount;
+        private int rowCount;
+        private GridFlow flow;
+        private List<GridCell> cells;
+
+        private Builder() {
+        }
+
+        /**
+         * Get grid builder for list of values.
+         *
+         * @param values values to layout on grid
+         * @return new grid builder instance
+         */
+        static Builder forItems(List<IRenderer> values) {
+            Builder builder = new Builder();
+            builder.cells = values.stream().map(val -> new GridCell(val)).collect(Collectors.toList());
+            return builder;
+        }
+
+        /**
+         * Set number of columns for a grid, the result will be either a provided one or if some elements
+         * have a property defining more columns on a grid than provided value it will be set instead.
+         *
+         * @param minColumnCount min column count of a grid
+         * @return current builder instance
+         */
+        public Builder columns(int minColumnCount) {
+            columnCount = Math.max(
+                    minColumnCount,
+                    calculateInitialColumnsCount(cells)
+            );
+            return this;
+        }
+
+        /**
+         * Set number of rows for a grid, the result will be either a provided one or if some elements
+         * have a property defining more rows on a grid than provided value it will be set instead.
+         *
+         * @param minRowCount min height of a grid
+         * @return current builder instance
+         */
+        public Builder rows(int minRowCount) {
+            rowCount = Math.max(
+                    minRowCount,
+                    calculateInitialRowsCount(cells)
+            );
+            return this;
+        }
+
+        /**
+         * Set iteration flow for a grid.
+         *
+         * @param flow iteration flow
+         * @return current builder instance
+         */
+        public Builder flow(GridFlow flow) {
+            this.flow = flow;
+            Collections.sort(cells, getOrderingFunctionForFlow(flow));
+            return this;
+        }
+
+        /**
+         * Build a grid with provided properties.
+         *
+         * @return new {@code Grid} instance.
+         */
+        public Grid build() {
+            final Grid grid = new Grid(rowCount, columnCount, flow);
+            for (GridCell cell : cells) {
+                grid.addCell(cell);
+            }
+            return grid;
+        }
+
+        private static int calculateInitialColumnsCount(Collection<GridCell> cells) {
+            int initialColumnsCount = 1;
+            for (GridCell cell : cells) {
+                if (cell != null) {
+                    initialColumnsCount = Math.max(cell.getGridWidth(), Math.max(initialColumnsCount, cell.getColumnEnd()));
                 }
             }
-        } else if (cell.getColumnStart() != -1) {
-            cellPacker.fitHorizontalCell(cell);
-        } else if (cell.getRowStart() != -1) {
-            cellPacker.fitVerticalCell(cell);
-        } else {
-            cellPacker.fitSimpleCell(cell);
+            return initialColumnsCount;
+        }
+
+        private static int calculateInitialRowsCount(Collection<GridCell> cells) {
+            int initialRowsCount = 1;
+            for (GridCell cell : cells) {
+                if (cell != null) {
+                    initialRowsCount = Math.max(cell.getGridHeight(), Math.max(initialRowsCount, cell.getRowEnd()));
+                }
+            }
+            return initialRowsCount;
+        }
+
+        static Comparator<GridCell> getOrderingFunctionForFlow(GridFlow flow) {
+            if (GridFlow.COLUMN.equals(flow) || GridFlow.COLUMN_DENSE.equals(flow)) {
+                return new ColumnCellComparator();
+            }
+            return new RowCellComparator();
         }
     }
 
     /**
-     * Resize grid to ensure that right bottom corner of a cell will fit into the grid.
-     *
-     * @param rowEnd end row pos of a cell on a grid
-     * @param columnEnd end column pos of a cell on a grid
+     * This comparator sorts cells so ones with both fixed row and column positions would go first,
+     * then cells with fixed row and then all other cells.
      */
-    private void ensureGridSize(int rowEnd, int columnEnd) {
-        int maxRowSize = -1;
-        for (int i = 0; i < Math.max(rowEnd, rows.size()); i++) {
-            List<GridCell> row;
-            if (i >= rows.size()) {
-                row = new ArrayList<>();
-                rows.add(row);
-            } else {
-                row = rows.get(i);
+    private final static class RowCellComparator implements Comparator<GridCell> {
+        @Override
+        public int compare(GridCell lhs, GridCell rhs) {
+            int lhsModifiers = 0;
+            if (lhs.getColumnStart() != -1 && lhs.getRowStart() != -1) {
+                lhsModifiers = 2;
+            } else if (lhs.getRowStart() != -1) {
+                lhsModifiers = 1;
             }
-            maxRowSize = Math.max(maxRowSize, row.size());
 
-            for (int j = row.size(); j < Math.max(columnEnd, maxRowSize); j++) {
-                row.add(null);
+            int rhsModifiers = 0;
+            if (rhs.getColumnStart() != -1 && rhs.getRowStart() != -1) {
+                rhsModifiers = 2;
+            } else if (rhs.getRowStart() != -1) {
+                rhsModifiers = 1;
             }
+            //passing parameters in reversed order so ones with properties would come first
+            return Integer.compare(rhsModifiers, lhsModifiers);
         }
     }
 
-    //TODO DEVSIX-8323 Right now "row sparse" and "row dense" algorithms are implemented
-    // implement "column sparse" and "column dense" the only thing which changes is winding order of a grid.
-    // One will need to create a "view" on cellRows which is rotated 90 degrees to the right and also swap parameters
-    // for the ensureGridSize in such a case
-    private class CellPacker {
-        //Determines whether to use "dense" or "sparse" packing algorithm
-        private final boolean densePacking;
-        private int placementCursorX = 0;
-        private int placementCursorY = 0;
-
-        CellPacker(boolean densePacking) {
-            this.densePacking = densePacking;
-        }
-
-        //TODO DEVSIX-8323 double check with https://drafts.csswg.org/css-grid/#grid-item-placement-algorithm
-        // they have 2 cases for such cells however I could not find a case for “sparse” and “dense” packing to
-        // be different
-
-        /**
-         * init vertical (<code>GridCell#getGridHeight() > 1</code>)
-         * <code>GridCell</code> upper left corner to fit it in the grid
-         *
-         * @param cell cell to fit
-         */
-        void fitVerticalCell(GridCell cell) {
-            for(int j = 0; j < rows.get(0).size(); ++j) {
-                boolean found = true;
-                for (int i = cell.getRowStart(); i < cell.getRowEnd(); ++i) {
-                    if (rows.get(i).get(j) != null) {
-                        found = false;
-                        break;
-                    }
-                }
-                if (found) {
-                    cell.setStartingRowAndColumn(cell.getRowStart(), j);
-                    return;
-                }
+    /**
+     * This comparator sorts cells so ones with both fixed row and column positions would go first,
+     * then cells with fixed column and then all other cells.
+     */
+    private final static class ColumnCellComparator implements Comparator<GridCell> {
+        @Override
+        public int compare(GridCell lhs, GridCell rhs) {
+            int lhsModifiers = 0;
+            if (lhs.getColumnStart() != -1 && lhs.getRowStart() != -1) {
+                lhsModifiers = 2;
+            } else if (lhs.getColumnStart() != -1) {
+                lhsModifiers = 1;
             }
-            cell.setStartingRowAndColumn(cell.getRowStart(), rows.get(0).size());
-            ensureGridSize(-1, rows.get(0).size() + 1);
-        }
 
-        /**
-         * init horizontal (<code>GridCell#getColumnEnd() - GridCell#getColumnStart() > 1</code>)
-         * <code>GridCell</code> upper left corner to fit it in the grid
-         *
-         * @param cell cell to fit
-         */
-        void fitHorizontalCell(GridCell cell) {
-            // All comments bellow are for the "sparse" packing, dense packing is much simpler and is achieved by
-            // disabling placement cursor
-
-            //Increment the cursor’s row position until a value is found where the grid item
-            // does not overlap any occupied grid cells (creating new rows in the implicit grid as necessary).
-            for (int i = getPlacementCursorY(); i < rows.size(); ++i, ++placementCursorY) {
-                //Set the column position of the cursor to the grid item’s column-start line.
-                // If this is less than the previous column position of the cursor, increment the row position by 1.
-                if (cell.getColumnStart() < getPlacementCursorX()) {
-                    placementCursorX = cell.getColumnStart();
-                    continue;
-                }
-                placementCursorX = cell.getColumnStart();
-                boolean found = true;
-                for(int j = cell.getColumnStart(); j < cell.getColumnEnd(); ++j, ++placementCursorX) {
-                    if (rows.get(i).get(j) != null) {
-                        found = false;
-                        break;
-                    }
-                }
-                if (found) {
-                    //Set the item’s row-start line to the cursor’s row position
-                    cell.setStartingRowAndColumn(i, cell.getColumnStart());
-                    return;
-                }
+            int rhsModifiers = 0;
+            if (rhs.getColumnStart() != -1 && rhs.getRowStart() != -1) {
+                rhsModifiers = 2;
+            } else if (rhs.getColumnStart() != -1) {
+                rhsModifiers = 1;
             }
-            cell.setStartingRowAndColumn(rows.size(), cell.getColumnStart());
-            ensureGridSize(rows.size() + 1, -1);
+            //passing parameters in reversed order so ones with properties would come first
+            return Integer.compare(rhsModifiers, lhsModifiers);
+        }
+    }
+
+    /**
+     * This class is used to place cells on grid.
+     */
+    private static class CellPlacementHelper {
+        private final GridView view;
+        private final Grid grid;
+
+        CellPlacementHelper(Grid grid, GridFlow flow) {
+            this.view = new GridView(grid, flow);
+            this.grid = grid;
         }
 
         /**
-         * init simple (cell height = width = 1)
-         * <code>GridCell</code> upper left corner to fit it in the grid
+         * Place cell on grid and resize grid if needed.
          *
-         * @param cell cell to fit
+         * @param cell cell to place on a grid.
          */
-        void fitSimpleCell(GridCell cell) {
-            //Algorithm the same as for horizontal cells except we're not checking for overlapping
-            //and just placing the cell to the first space place
-            for (int i = getPlacementCursorY(); i < rows.size(); ++i, ++placementCursorY) {
-                for(int j = getPlacementCursorX(); j < rows.get(i).size(); ++j, ++placementCursorX) {
-                    if (rows.get(i).get(j) == null) {
-                        cell.setStartingRowAndColumn(i, j);
+        void fit(GridCell cell) {
+            //resize the grid if needed to fit a cell into it
+            grid.ensureGridSize(cell.getRowEnd(), cell.getColumnEnd());
+            boolean result;
+            //reset grid view to process new cell
+            GridView.Pos pos = view.reset(cell.getRowStart(), cell.getColumnStart(),
+                    cell.getGridWidth(), cell.getGridHeight());
+            //Can use while(true) here, but since it's not expected to do more placement iteration as described with
+            //max statement, to be on a safe side and prevent algorithm from hanging in unexpected situations doing
+            //a finite number of iterations here.
+            for(int i = 0; i < Math.max(cell.getGridHeight(), cell.getGridWidth()) + 1; ++i) {
+                while (view.hasNext()) {
+                    //Try to place the cell
+                    result = view.fit(cell.getGridWidth(), cell.getGridHeight());
+                    //If fit, init cell's left corner position
+                    if (result) {
+                        cell.setPos(pos.getY(), pos.getX());
                         return;
                     }
+                    //Move grid view cursor
+                    pos = view.next();
                 }
-                placementCursorX = 0;
+                //If cell restricts both x and y position grow and can't be fitted on a grid, throw an excpetion
+                if (view.isFixed()) {
+                    throw new IllegalArgumentException(LayoutExceptionMessageConstant.INVALID_CELL_INDEXES);
+                }
+                //If cell was not fitted while iterating grid, then there is not enough space to fit it, and grid
+                //has to be resized
+                view.increaseDefaultAxis();
             }
-            cell.setStartingRowAndColumn(rows.size(), 0);
-            ensureGridSize(rows.size() + 1, -1);
-        }
-
-        //If it's dense packing, then it's enough to just disable placement cursors
-        // and search for a spare place for the cell from the start of the grid.
-        int getPlacementCursorX() {
-            return densePacking ? 0 : placementCursorX;
-        }
-
-        int getPlacementCursorY() {
-            return densePacking ? 0 : placementCursorY;
         }
     }
 }
