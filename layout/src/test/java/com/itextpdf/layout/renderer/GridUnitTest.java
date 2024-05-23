@@ -22,43 +22,20 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.properties.GridFlow;
 import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.renderer.Grid.GridOrder;
+import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
 public class GridUnitTest extends ExtendedITextTest {
-
-    @Test
-    public void getClosestTopNeighborTest() {
-        Grid grid = new Grid(3, 3,  GridFlow.ROW);
-        grid.addCell(new GridCell(new TextRenderer(new Text("One"))));
-        grid.addCell(new GridCell(new TextRenderer(new Text("Three"))));
-        IRenderer value = new TextRenderer(new Text("Two"));
-        value.setProperty(Property.GRID_COLUMN_START, 2);
-        value.setProperty(Property.GRID_ROW_START, 2);
-        GridCell cell = new GridCell(value);
-        grid.addCell(cell);
-        Assert.assertEquals(grid.getRows()[0][0], grid.getClosestTopNeighbor(cell));
-    }
-
-    @Test
-    public void getClosestLeftNeighborTest() {
-        Grid grid = new Grid(3, 3,  GridFlow.ROW);
-        grid.addCell(new GridCell(new TextRenderer(new Text("One"))));
-        IRenderer value = new TextRenderer(new Text("Two"));
-        value.setProperty(Property.GRID_COLUMN_START, 2);
-        value.setProperty(Property.GRID_ROW_START, 2);
-        GridCell cell = new GridCell(value);
-        grid.addCell(cell);
-        Assert.assertEquals(grid.getRows()[0][0], grid.getClosestLeftNeighbor(cell));
-    }
 
     @Test
     public void getUniqueCellsTest() {
@@ -75,46 +52,47 @@ public class GridUnitTest extends ExtendedITextTest {
     }
 
     @Test
-    public void increaseRowHeightTest() {
+    public void getUniqueCellsInColumnTest() {
         Grid grid = new Grid(3, 3,  GridFlow.ROW);
-        GridCell cell1 = new GridCell(new TextRenderer(new Text("One")));
-        cell1.setLayoutArea(new Rectangle(50.0f, 50.0f));
-        GridCell cell2 = new GridCell(new TextRenderer(new Text("Two")));
-        cell2.setLayoutArea(new Rectangle(50.0f, 50.0f));
-        GridCell cell3 = new GridCell(new TextRenderer(new Text("Three")));
-        cell3.setLayoutArea(new Rectangle(50.0f, 50.0f));
-        grid.addCell(cell1);
-        grid.addCell(cell2);
-        grid.addCell(cell3);
-        grid.alignRow(0, 100.0f);
-        Assert.assertEquals(100.0f, grid.getRows()[0][0].getLayoutArea().getHeight(), 0.00001f);
-        Assert.assertEquals(100.0f, grid.getRows()[0][1].getLayoutArea().getHeight(), 0.00001f);
-        Assert.assertEquals(100.0f, grid.getRows()[0][2].getLayoutArea().getHeight(), 0.00001f);
+        grid.addCell(new GridCell(new TextRenderer(new Text("One"))));
+        IRenderer twoRenderer = new TextRenderer(new Text("Two"));
+        twoRenderer.setProperty(Property.GRID_ROW_START, 2);
+        twoRenderer.setProperty(Property.GRID_ROW_END, 4);
+        GridCell cell = new GridCell(twoRenderer);
+        grid.addCell(cell);
+        grid.addCell(new GridCell(new TextRenderer(new Text("Three"))));
+        grid.addCell(new GridCell(new TextRenderer(new Text("Four"))));
+        Assert.assertEquals(1, grid.getUniqueCellsInTrack(GridOrder.COLUMN, 1).size());
     }
 
     @Test
-    public void increaseColumnWidthTest() {
+    public void invalidColumnForGetColCellsTest() {
         Grid grid = new Grid(3, 3,  GridFlow.ROW);
-        GridCell cell1 = new GridCell(new TextRenderer(new Text("One")));
-        cell1.setLayoutArea(new Rectangle(100.0f, 50.0f));
-        GridCell cell2 = new GridCell(new TextRenderer(new Text("Two")));
-        cell2.setLayoutArea(new Rectangle(30.0f, 50.0f));
-        GridCell cell3 = new GridCell(new TextRenderer(new Text("Three")));
-        cell3.setLayoutArea(new Rectangle(50.0f, 50.0f));
-        GridCell cell4 = new GridCell(new TextRenderer(new Text("Three")));
-        cell4.setLayoutArea(new Rectangle(100.0f, 50.0f));
-        GridCell cell5 = new GridCell(new TextRenderer(new Text("Three")));
-        cell5.setLayoutArea(new Rectangle(50.0f, 50.0f));
-        grid.addCell(cell1);
-        grid.addCell(cell2);
-        grid.addCell(cell3);
-        grid.addCell(cell4);
-        grid.addCell(cell5);
-        grid.alignColumn(1, 150.0f);
-        Assert.assertEquals(100.0f, grid.getRows()[0][0].getLayoutArea().getWidth(), 0.00001f);
-        Assert.assertEquals(150.0f, grid.getRows()[0][1].getLayoutArea().getWidth(), 0.00001f);
-        Assert.assertEquals(150.0f, grid.getRows()[1][1].getLayoutArea().getWidth(), 0.00001f);
-        Assert.assertEquals(50.0f, grid.getRows()[0][2].getLayoutArea().getWidth(), 0.00001f);
+        Assert.assertThrows(IndexOutOfBoundsException.class, () -> grid.getUniqueCellsInTrack(GridOrder.COLUMN, 4));
+        Assert.assertThrows(IndexOutOfBoundsException.class, () -> grid.getUniqueCellsInTrack(GridOrder.COLUMN, -1));
+        AssertUtil.doesNotThrow(() -> grid.getUniqueCellsInTrack(GridOrder.COLUMN, 2));
+    }
+
+    @Test
+    public void getUniqueCellsInRowTest() {
+        Grid grid = new Grid(3, 3,  GridFlow.ROW);
+        grid.addCell(new GridCell(new TextRenderer(new Text("One"))));
+        IRenderer twoRenderer = new TextRenderer(new Text("Two"));
+        twoRenderer.setProperty(Property.GRID_COLUMN_START, 2);
+        twoRenderer.setProperty(Property.GRID_COLUMN_END, 4);
+        GridCell cell = new GridCell(twoRenderer);
+        grid.addCell(cell);
+        grid.addCell(new GridCell(new TextRenderer(new Text("Three"))));
+        grid.addCell(new GridCell(new TextRenderer(new Text("Four"))));
+        Assert.assertEquals(2, grid.getUniqueCellsInTrack(GridOrder.ROW, 0).size());
+    }
+
+    @Test
+    public void invalidRowForGetRowCellsTest() {
+        Grid grid = new Grid(3, 3,  GridFlow.ROW);
+        Assert.assertThrows(IndexOutOfBoundsException.class, () -> grid.getUniqueCellsInTrack(GridOrder.ROW, 4));
+        Assert.assertThrows(IndexOutOfBoundsException.class, () -> grid.getUniqueCellsInTrack(GridOrder.ROW, -1));
+        AssertUtil.doesNotThrow(() -> grid.getUniqueCellsInTrack(GridOrder.ROW, 2));
     }
 
     @Test

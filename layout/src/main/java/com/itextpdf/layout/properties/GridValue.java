@@ -27,124 +27,182 @@ package com.itextpdf.layout.properties;
  * grid-auto-columns/rows properties and the type it is measured in.
  */
 public class GridValue {
-    /**
-     * The type of the value.
-     */
-    private GridValueType type;
-    /**
-     * The flexible value.
-     */
-    private Float flex;
-    /**
-     * The sizing value.
-     */
-    private SizingValue sizingValue;
+    private static final GridValue MIN_CONTENT_VALUE = new GridValue(SizingValueType.MIN_CONTENT);
+    private static final GridValue MAX_CONTENT_VALUE = new GridValue(SizingValueType.MAX_CONTENT);
+    private static final GridValue AUTO_VALUE = new GridValue(SizingValueType.AUTO);
 
-    /**
-     * Creates a new empty instance of {@link GridValue} class.
-     */
+    private SizingValueType type;
+    private Float value;
+
     private GridValue() {
-        // do nothing
+       // Do nothing
+    }
+
+    private GridValue(SizingValueType type) {
+        this.type = type;
     }
 
     /**
-     * Creates an instance of {@link GridValue} with {@link SizingValue} value.
+     * Creates an instance of {@link GridValue} with point value.
      *
-     * @param sizingValue the sizing value
+     * @param value the point value
      *
      * @return the grid value instance
      */
-    public static GridValue createSizeValue(SizingValue sizingValue) {
+    public static GridValue createPointValue(float value) {
         GridValue result = new GridValue();
-        result.sizingValue = sizingValue;
-        result.type = GridValueType.SIZING;
+        result.type = SizingValueType.POINT;
+        result.value = value;
         return result;
     }
 
     /**
-     * Creates an instance of {@link GridValue} with {@link UnitValue} inside of {@link SizingValue} value.
+     * Creates an instance of {@link GridValue} with percent value.
      *
-     * @param unitValue the unit value
+     * @param value the percent value
      *
      * @return the grid value instance
      */
-    public static GridValue createUnitValue(UnitValue unitValue) {
+    public static GridValue createPercentValue(float value) {
         GridValue result = new GridValue();
-        result.sizingValue = SizingValue.createUnitValue(unitValue);
-        result.type = GridValueType.SIZING;
+        result.type = SizingValueType.PERCENT;
+        result.value = value;
         return result;
     }
 
     /**
-     * Creates an instance of {@link GridValue} with flex value.
-     *
-     * @param flex the flex value
+     * Creates an instance of {@link GridValue} with min-content value.
      *
      * @return the grid value instance
      */
-    public static GridValue createFlexValue(float flex) {
-        GridValue result = new GridValue();
-        result.flex = flex;
-        result.type = GridValueType.FLEX;
-        return result;
+    public static GridValue createMinContentValue() {
+        return MIN_CONTENT_VALUE;
     }
 
     /**
-     * Checks whether the value is  absolute.
+     * Creates an instance of {@link GridValue} with max-content value.
+     *
+     * @return the grid value instance
+     */
+    public static GridValue createMaxContentValue() {
+        return MAX_CONTENT_VALUE;
+    }
+
+    /**
+     * Creates an instance of {@link GridValue} with auto value.
+     *
+     * @return the grid value instance
+     */
+    public static GridValue createAutoValue() {
+        return AUTO_VALUE;
+    }
+
+    /**
+     * Creates an instance of {@link GridValue} with flexible value.
+     *
+     * @param value the flexible value
+     *
+     * @return the grid value instance
+     */
+    public static GridValue createFlexValue(float value) {
+        GridValue result = new GridValue();
+        result.type = SizingValueType.FLEX;
+        result.value = value;
+        return result;
+    }
+
+
+    /**
+     * Checks whether the value is absolute.
      *
      * @return {@code true} if absolute, {@code false} otherwise
      */
-    public boolean isAbsoluteValue() {
-        return type == GridValueType.SIZING && sizingValue.isAbsoluteValue();
+    public boolean isPointValue() {
+        return type == SizingValueType.POINT;
     }
 
     /**
-     * Gets absolute value, if exists.
+     * Checks whether the value is percent.
      *
-     * @return absolute value, or {@code null} if value is relative
+     * @return {@code true} if percent, {@code false} otherwise
      */
-    public Float getAbsoluteValue() {
-        if (isAbsoluteValue()) {
-            return sizingValue.getAbsoluteValue();
-        }
-        return null;
+    public boolean isPercentValue() {
+        return type == SizingValueType.PERCENT;
     }
 
     /**
-     * Gets type of value.
+     * Checks whether the value is auto.
      *
-     * @return the type of the value
+     * @return {@code true} if auto, {@code false} otherwise
      */
-    public GridValueType getType() {
-        return type;
+    public boolean isAutoValue() {
+        return type == SizingValueType.AUTO;
     }
 
     /**
-     * Gets the flex value.
+     * Checks whether the value is min-content.
      *
-     * @return the flex value of {@code null} if another value type is stored
+     * @return {@code true} if min-content, {@code false} otherwise
      */
-    public Float getFlexValue() {
-        return flex;
+    public boolean isMinContentValue() {
+        return type == SizingValueType.MIN_CONTENT;
     }
 
     /**
-     * Gets the sizing value.
+     * Checks whether the value is max-content.
      *
-     * @return the instance of {@link SizingValue} or {@code null} if another value type is stored
+     * @return {@code true} if max-content, {@code false} otherwise
      */
-    public SizingValue getSizingValue() {
-        return sizingValue;
+    public boolean isMaxContentValue() {
+        return type == SizingValueType.MAX_CONTENT;
     }
 
     /**
-     * Enum of grid value types.
+     * Checks whether the value is flexible.
+     *
+     * @return {@code true} if flexible, {@code false} otherwise
      */
-    public enum GridValueType {
+    public boolean isFlexibleValue() {
+        return type == SizingValueType.FLEX;
+    }
+
+    /**
+     * Gets value, if exists.
+     *
+     * @return the value, or {@code null} if there is no value
+     */
+    public Float getValue() {
+        return value;
+    }
+
+    /**
+     * Enum of sizing value types.
+     */
+    private enum SizingValueType {
         /**
-         * Type which presents {@link SizingValue} value.
+         * Type which presents absolute point value.
          */
-        SIZING,
+        POINT,
+        /**
+         * Type which presents relative percent value.
+         */
+        PERCENT,
+        /**
+         * Type which presents relative auto value.
+         */
+        AUTO,
+        /**
+         * Type which presents relative min content value.
+         */
+        MIN_CONTENT,
+        /**
+         * Type which presents relative max content value.
+         */
+        MAX_CONTENT,
+        /**
+         * Type which presents relative fit content function value.
+         */
+        FIT_CONTENT,
         /**
          * Type which presents relative flexible value.
          */

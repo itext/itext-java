@@ -22,7 +22,6 @@
  */
 package com.itextpdf.layout.properties;
 
-import com.itextpdf.layout.properties.GridValue.GridValueType;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
@@ -33,34 +32,38 @@ import org.junit.experimental.categories.Category;
 @Category(UnitTest.class)
 public class GridValueTest extends ExtendedITextTest {
     @Test
-    public void sizingValueTest() {
-        GridValue value = GridValue.createSizeValue(SizingValue.createUnitValue(UnitValue.createPointValue(1.3f)));
-        Assert.assertEquals(GridValueType.SIZING, value.getType());
-        Assert.assertEquals(1.3f, (float) value.getAbsoluteValue(), 0.00001);
+    public void unitValueTest() {
+        GridValue value = GridValue.createPointValue(3.2f);
+        Assert.assertTrue(value.isPointValue());
+        Assert.assertEquals(3.2f, value.getValue(), 0.00001);
 
-        value = GridValue.createSizeValue(SizingValue.createUnitValue(UnitValue.createPercentValue(30)));
-        Assert.assertEquals(GridValueType.SIZING, value.getType());
-        Assert.assertNull(value.getAbsoluteValue());
-        Assert.assertEquals(30, value.getSizingValue().getUnitValue().getValue(), 0.00001);
+        value = GridValue.createPercentValue(30f);
+        Assert.assertTrue(value.isPercentValue());
+        Assert.assertEquals(30, value.getValue(), 0.00001);
     }
 
     @Test
-    public void unitValueTest() {
-        GridValue value = GridValue.createUnitValue(UnitValue.createPointValue(1.3f));
-        Assert.assertEquals(GridValueType.SIZING, value.getType());
-        Assert.assertEquals(1.3f, (float) value.getAbsoluteValue(), 0.00001);
+    public void minMaxContentTest() {
+        GridValue value = GridValue.createMinContentValue();
+        Assert.assertTrue(value.isMinContentValue());
+        Assert.assertNull(value.getValue());
 
-        value = GridValue.createUnitValue(UnitValue.createPercentValue(30));
-        Assert.assertEquals(GridValueType.SIZING, value.getType());
-        Assert.assertNull(value.getAbsoluteValue());
-        Assert.assertEquals(30, value.getSizingValue().getUnitValue().getValue(), 0.00001);
+        value = GridValue.createMaxContentValue();
+        Assert.assertTrue(value.isMaxContentValue());
+        Assert.assertNull(value.getValue());
+    }
+
+    @Test
+    public void autoTest() {
+        GridValue value = GridValue.createAutoValue();
+        Assert.assertTrue(value.isAutoValue());
+        Assert.assertNull(value.getValue());
     }
 
     @Test
     public void flexValueTest() {
         GridValue value = GridValue.createFlexValue(1.5f);
-        Assert.assertEquals(GridValueType.FLEX, value.getType());
-        Assert.assertNull(value.getAbsoluteValue());
-        Assert.assertEquals(1.5f, (float) value.getFlexValue(), 0.00001);
+        Assert.assertTrue(value.isFlexibleValue());
+        Assert.assertEquals(1.5f, (float) value.getValue(), 0.00001);
     }
 }

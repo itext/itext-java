@@ -102,9 +102,10 @@ class GridView {
      * @return true if cell is fit, false otherwise
      */
     boolean fit(int width, int height) {
+        final GridCell[][] rows = grid.getRows();
         for (int i = cursor.x; i < cursor.x + width; ++i) {
             for (int j = cursor.y; j < cursor.y + height; ++j) {
-                if (grid.getRows()[j][i] != null) {
+                if (rows[j][i] != null) {
                     return false;
                 }
             }

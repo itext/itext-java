@@ -24,6 +24,7 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.renderer.Grid.GridOrder;
 
 /**
  * This class represents a cell in a grid.
@@ -67,12 +68,36 @@ class GridCell {
         return gridArea.getTop();
     }
 
+    int getStart(GridOrder order) {
+        if (GridOrder.COLUMN == order) {
+            return getColumnStart();
+        } else {
+            return getRowStart();
+        }
+    }
+
+    int getEnd(GridOrder order) {
+        if (GridOrder.COLUMN == order) {
+            return getColumnEnd();
+        } else {
+            return getRowEnd();
+        }
+    }
+
     int getGridHeight() {
         return gridArea.getHeight();
     }
 
     int getGridWidth() {
         return gridArea.getWidth();
+    }
+
+    int getGridSpan(GridOrder order) {
+        if (GridOrder.COLUMN == order) {
+            return getGridWidth();
+        } else {
+            return getGridHeight();
+        }
     }
 
     IRenderer getValue() {

@@ -140,7 +140,6 @@ public class GridContainerRenderer extends DivRenderer {
     //Process cells by doing actual layout on the calculated layout area
     private GridLayoutResult layoutGrid(LayoutContext layoutContext, Rectangle actualBBox, Grid grid) {
         GridLayoutResult layoutResult = new GridLayoutResult();
-        ensureTemplateValuesFit(grid, actualBBox);
 
         for (GridCell cell : grid.getUniqueGridCells(Grid.GridOrder.ROW)) {
             // Calculate cell layout context by getting actual x and y on parent layout area for it
@@ -188,12 +187,6 @@ public class GridContainerRenderer extends DivRenderer {
             }
         }
         return layoutResult;
-    }
-
-    private void ensureTemplateValuesFit(Grid grid, Rectangle actualBBox) {
-        if (grid.getMinWidth() > actualBBox.getWidth()) {
-            actualBBox.setWidth(grid.getMinWidth());
-        }
     }
 
     //Init cell layout context based on a parent context and calculated cell layout area from grid sizing algorithm.
@@ -276,16 +269,9 @@ public class GridContainerRenderer extends DivRenderer {
     }
 
     //Grid layout algorithm is based on a https://drafts.csswg.org/css-grid/#layout-algorithm
-    //It's not a 1 to 1 implementation and Grid Sizing Algorithm differs a little bit
-    //TODO DEVSIX-8324 Left actualBBox parameter since it will be needed for fr and % calculations
-    // if it is inline-grid, than it won't be needed.
     private static Grid constructGrid(GridContainerRenderer renderer, Rectangle actualBBox) {
         List<GridValue> templateColumns = renderer.<List<GridValue>>getProperty(Property.GRID_TEMPLATE_COLUMNS);
         List<GridValue> templateRows = renderer.<List<GridValue>>getProperty(Property.GRID_TEMPLATE_ROWS);
-        GridValue columnAutoWidth = renderer.<GridValue>getProperty(Property.GRID_AUTO_COLUMNS);
-        GridValue rowAutoHeight = renderer.<GridValue>getProperty(Property.GRID_AUTO_ROWS);
-        final Float columnGap = renderer.<Float>getProperty(Property.COLUMN_GAP);
-        final Float rowGap = renderer.<Float>getProperty(Property.ROW_GAP);
         final GridFlow flow = renderer.<GridFlow>getProperty(Property.GRID_FLOW) == null ?
                 GridFlow.ROW : (GridFlow) (renderer.<GridFlow>getProperty(Property.GRID_FLOW));
 
@@ -293,46 +279,27 @@ public class GridContainerRenderer extends DivRenderer {
             child.setParent(renderer);
         }
 
+        // 8. Placing Grid Items
         Grid grid = Grid.Builder.forItems(renderer.getChildRenderers())
                         .columns(templateColumns == null ? 1 : templateColumns.size())
                         .rows(templateRows == null ? 1 : templateRows.size())
                         .flow(flow).build();
 
-        GridSizer gridSizer = new GridSizer(grid, templateRows, templateColumns, rowAutoHeight, columnAutoWidth,
-                columnGap, rowGap);
-        gridSizer.sizeCells();
-        //calculating explicit height to ensure that even empty rows which covered by template would be considered
-        //TODO DEVSIX-8324 improve those methods in future for working correctly with minmax/repeat/etc.
-        setGridContainerMinimalHeight(grid, templateRows);
-        setGridContainerMinimalWidth(grid, templateColumns);
+
+        GridValue columnAutoWidth = renderer.<GridValue>getProperty(Property.GRID_AUTO_COLUMNS);
+        GridValue rowAutoHeight = renderer.<GridValue>getProperty(Property.GRID_AUTO_ROWS);
+        Float columnGapProp = renderer.<Float>getProperty(Property.COLUMN_GAP);
+        Float rowGapProp = renderer.<Float>getProperty(Property.ROW_GAP);
+        float columnGap = columnGapProp == null ? 0f : (float) columnGapProp;
+        float rowGap = rowGapProp == null ? 0f : (float) rowGapProp;
+
+        // 12. Grid Layout Algorithm
+        GridSizer gridSizer = new GridSizer(grid, templateColumns, templateRows, columnAutoWidth, rowAutoHeight,
+                columnGap, rowGap, actualBBox);
+        gridSizer.sizeGrid();
         return grid;
     }
 
-    //This method calculates container minimal height, because if number of cells is not enough to fill all specified
-    //rows by template than we need to set the height of the container higher than it's actual occupied height.
-    private static void setGridContainerMinimalHeight(Grid grid, List<GridValue> templateRows) {
-        float explicitContainerHeight = 0.0f;
-        if (templateRows != null) {
-            for (GridValue template : templateRows) {
-                if (template.isAbsoluteValue()) {
-                    explicitContainerHeight += (float) template.getAbsoluteValue();
-                }
-            }
-        }
-        grid.setMinHeight(explicitContainerHeight);
-    }
-
-    private static void setGridContainerMinimalWidth(Grid grid, List<GridValue> templateColumns) {
-        float explicitContainerWidth = 0.0f;
-        if (templateColumns != null) {
-            for (GridValue template : templateColumns) {
-                if (template.isAbsoluteValue()) {
-                    explicitContainerWidth += (float) template.getAbsoluteValue();
-                }
-            }
-        }
-        grid.setMinWidth(explicitContainerWidth);
-    }
 
     private final static class GridLayoutResult {
         private final List<IRenderer> splitRenderers = new ArrayList<>();

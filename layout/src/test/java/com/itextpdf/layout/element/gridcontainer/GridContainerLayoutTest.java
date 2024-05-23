@@ -45,7 +45,6 @@ import com.itextpdf.layout.properties.BackgroundRepeat.BackgroundRepeatValue;
 import com.itextpdf.layout.properties.BoxSizingPropertyValue;
 import com.itextpdf.layout.properties.GridValue;
 import com.itextpdf.layout.properties.Property;
-import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
@@ -191,9 +190,9 @@ public class GridContainerLayoutTest extends ExtendedITextTest {
         gridcontainer0.setBackgroundColor(ColorConstants.RED);
         gridcontainer0.setProperty(Property.GRID_TEMPLATE_COLUMNS,
                 Arrays.asList(
-                        GridValue.createUnitValue(new UnitValue(1, 150.0f)),
-                        GridValue.createUnitValue(new UnitValue(1, 150.0f)),
-                        GridValue.createUnitValue(new UnitValue(1, 150.0f))));
+                        GridValue.createPointValue(150.0f),
+                        GridValue.createPointValue(150.0f),
+                        GridValue.createPointValue(150.0f)));
         gridcontainer0.setProperty(Property.COLUMN_GAP, 12.0f);
         document.add(gridcontainer0);
 
@@ -215,9 +214,9 @@ public class GridContainerLayoutTest extends ExtendedITextTest {
         gridcontainer0.setBackgroundColor(ColorConstants.MAGENTA);
         gridcontainer0.setProperty(Property.GRID_TEMPLATE_ROWS,
                 Arrays.asList(
-                        GridValue.createUnitValue(new UnitValue(1, 500.0f)),
-                        GridValue.createUnitValue(new UnitValue(1, 500.0f)),
-                        GridValue.createUnitValue(new UnitValue(1, 500.0f))));
+                        GridValue.createPointValue(500.0f),
+                        GridValue.createPointValue(500.0f),
+                        GridValue.createPointValue(500.0f)));
 
         gridcontainer0.add(new Image(ImageDataFactory.create(SOURCE_FOLDER + "rock_texture.jpg")).setHeight(150));
         document.add(gridcontainer0);
@@ -252,9 +251,10 @@ public class GridContainerLayoutTest extends ExtendedITextTest {
 
         gridcontainer0.setProperty(Property.COLUMN_GAP_BORDER, null);
         gridcontainer0.setProperty(Property.GRID_TEMPLATE_COLUMNS,
-                Arrays.asList(GridValue.createUnitValue(new UnitValue(1, 150.0f)),
-                        GridValue.createUnitValue(new UnitValue(1, 150.0f)),
-                        GridValue.createUnitValue(new UnitValue(1, 150.0f))));
+                Arrays.asList(
+                        GridValue.createPointValue(150.0f),
+                        GridValue.createPointValue(150.0f),
+                        GridValue.createPointValue(150.0f)));
         gridcontainer0.setProperty(Property.COLUMN_GAP, 12.0f);
         Div div1 = new Div();
         div1.setBackgroundColor(ColorConstants.YELLOW);

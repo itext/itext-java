@@ -42,7 +42,6 @@ class Grid {
     private GridCell[][] rows = new GridCell[1][1];
     private final CellPlacementHelper cellPlacementHelper;
     private float minHeight = 0.0f;
-    private float minWidth = 0.0f;
 
     /**
      * Creates a new grid instance.
@@ -63,23 +62,14 @@ class Grid {
      * @return resulting layout height of a grid.
      */
     float getHeight() {
-        for (int i = rows.length - 1; i >= 0; --i) {
-            for (int j = 0; j < rows[0].length; ++j) {
+        for (int i = getNumberOfRows() - 1; i >= 0; --i) {
+            for (int j = 0; j < getNumberOfColumns(); ++j) {
                 if (rows[i][j] != null) {
                     return Math.max(rows[i][j].getLayoutArea().getTop(), minHeight);
                 }
             }
         }
         return minHeight;
-    }
-
-    /**
-     * Get min width of the grid, which is size of the grid covered by absolute template values.
-     *
-     * @return min width of a grid.
-     */
-    float getMinWidth() {
-        return minWidth;
     }
 
     /**
@@ -92,65 +82,49 @@ class Grid {
     }
 
     /**
-     * Get any cell adjacent to the left of a given cell.
-     * If there is no a direct neighbor to the left, and other adjacent cells are wide cells and their column end
-     * is bigger than the column start of a given cell, method will still return such a neighbor, though it's not
-     * actually a neighbor to the left. But if there will be a neighbor before column start of such a cell method will
-     * return such a neighbor.
+     * Gets the current number of rows of grid.
      *
-     * @param value cell for which to find a neighbor
-     *
-     * @return adjacent cell to the left if found one, null otherwise
+     * @return the number of rows
      */
-    GridCell getClosestLeftNeighbor(GridCell value) {
-        int x = value.getColumnStart();
-        GridCell bigNeighbor = null;
-        for (int i = 1; i <= x; ++i) {
-            for (int j = 0; j < rows.length; ++j) {
-                if (rows[j][x - i] != null) {
-                    if (rows[j][x - i].getColumnEnd() > x) {
-                        bigNeighbor = rows[j][x - i];
-                        continue;
-                    }
-                    return rows[j][x - i];
-                }
-            }
-            if (bigNeighbor != null && bigNeighbor.getColumnStart() == x - i) {
-                return bigNeighbor;
-            }
-        }
-        return null;
+    int getNumberOfRows() {
+        return rows.length;
     }
 
     /**
-     * Get any cell adjacent to the top of a given cell
-     * If there is no a direct neighbor to the top, and other adjacent cells are tall cells and their row end
-     * is bigger than the row start of a given cell, method will still return such a neighbor, though it's not
-     * actually a neighbor to the top. But if there will be a neighbor before row start of such a cell method will
-     * return such a neighbor.
+     * Gets the current number of rows of grid.
      *
-     * @param value cell for which to find a neighbor
-     *
-     * @return adjacent cell to the top if found one, null otherwise
+     * @return the number of columns
      */
-    GridCell getClosestTopNeighbor(GridCell value) {
-        int y = value.getRowStart();
-        GridCell bigNeighbor = null;
-        for (int i = 1; i <= y; ++i) {
-            for (int j = 0; j < rows[0].length; ++j) {
-                if (rows[y - i][j] != null) {
-                    if (rows[y - i][j].getRowEnd() > y) {
-                        bigNeighbor = rows[y - i][j];
-                        continue;
-                    }
-                    return rows[y - i][j];
+    int getNumberOfColumns() {
+        return rows[0].length;
+    }
+
+    /**
+     * Gets unique cells in the specified row or column depends on passed {@link GridOrder}.
+     *
+     * @param order the order which will be used to extract cells
+     * @param trackIndex the track index from which cells will be extracted
+     *
+     * @return collection of unique cells in a row or column
+     */
+    Collection<GridCell> getUniqueCellsInTrack(GridOrder order, int trackIndex) {
+        Collection<GridCell> result = new LinkedHashSet<>();
+        if (GridOrder.COLUMN == order) {
+            for (GridCell[] row : rows) {
+                final GridCell cell = row[trackIndex];
+                if (cell != null) {
+                    result.add(cell);
                 }
             }
-            if (bigNeighbor != null && bigNeighbor.getRowStart() == y - i) {
-                return bigNeighbor;
+            return result;
+        } else {
+            for (GridCell cell : rows[trackIndex]) {
+                if (cell != null) {
+                    result.add(cell);
+                }
             }
+            return result;
         }
-        return null;
     }
 
     /**
@@ -167,8 +141,8 @@ class Grid {
     Collection<GridCell> getUniqueGridCells(GridOrder iterationOrder) {
         Collection<GridCell> result = new LinkedHashSet<>();
         if (GridOrder.COLUMN.equals(iterationOrder)) {
-            for (int j = 0; j < rows[0].length; ++j) {
-                for (int i = 0; i < rows.length; ++i) {
+            for (int j = 0; j < getNumberOfColumns(); ++j) {
+                for (int i = 0; i < getNumberOfRows(); ++i) {
                     if (rows[i][j] != null) {
                         result.add(rows[i][j]);
                     }
@@ -184,94 +158,6 @@ class Grid {
             }
         }
         return result;
-    }
-
-    /**
-     * align all cells in the specified row.
-     *
-     * @param row row to iterate
-     * @param value new pos on a grid at which row should end
-     */
-    void alignRow(int row, float value) {
-        GridCell previousCell = null;
-        for (GridCell cell : rows[row]) {
-            if (cell == null) {
-                continue;
-            }
-            // previousCell is used to avoid multiple area updating for items which spread through few cells
-            if (previousCell != cell && cell.getLayoutArea().getTop() < value) {
-                cell.getLayoutArea().setHeight(value - cell.getLayoutArea().getY());
-            }
-            previousCell = cell;
-        }
-    }
-
-    /**
-     * align all cells in the specified column.
-     *
-     * @param column column to iterate
-     * @param value new pos on a grid at which column should end
-     */
-    void alignColumn(int column, float value) {
-        GridCell previousCell = null;
-        for (int i = 0; i < rows.length; ++i) {
-            GridCell cell = rows[i][column];
-            if (cell == null) {
-                continue;
-            }
-            // previousCell is used to avoid multiple area updating for items which spread through few cells
-            if (previousCell != cell && cell.getLayoutArea().getRight() < value) {
-                cell.getLayoutArea().setWidth(value - cell.getLayoutArea().getX());
-            }
-            previousCell = cell;
-        }
-    }
-
-    /**
-     * Get max top (layout area y + height of a cell) in a row with index = y, for all elements in a row before given x.
-     *
-     * @param y index of a row to find max top value
-     * @param x index of element in a row before which to search for max top value
-     *
-     * @return max top value, all cells which do not end in the given row are not counted.
-     */
-    float getMaxRowTop(int y, int x) {
-        GridCell[] row = rows[y];
-        float maxTop = 0.0f;
-        for (int i = 0; i < x; ++i) {
-            if (row[i] == null || row[i].getLayoutArea() == null) {
-                continue;
-            }
-            //process cells which end at the same row
-            if (row[i].getLayoutArea().getTop() > maxTop && row[i].getRowEnd() == y + 1) {
-                maxTop = row[i].getLayoutArea().getTop();
-            }
-        }
-        return maxTop;
-    }
-
-    /**
-     * Get max right (layout area x + width of a cell) in a column with index = x,
-     * for all elements in a column before given y.
-     *
-     * @param y index of element in a column before which to search for max right value
-     * @param x index of a column to find max right value
-     *
-     * @return max right value, all cells which do not end in the given column are not counted.
-     */
-    float getMaxColumnRight(int y, int x) {
-        float maxRight = 0.0f;
-        for (int i = 0; i < y; ++i) {
-            GridCell cell = rows[i][x];
-            if (cell == null || cell.getLayoutArea() == null) {
-                continue;
-            }
-            //process cells which ends in the same column
-            if (cell.getLayoutArea().getRight() > maxRight && cell.getColumnEnd() == x + 1) {
-                maxRight = cell.getLayoutArea().getRight();
-            }
-        }
-        return maxRight;
     }
 
     /**
@@ -292,10 +178,6 @@ class Grid {
         this.minHeight = minHeight;
     }
 
-    void setMinWidth(float minWidth) {
-        this.minWidth = minWidth;
-    }
-
     /**
      * Resize grid if needed, so it would have given number of rows/columns.
      *
@@ -303,13 +185,13 @@ class Grid {
      * @param width new grid width
      */
     void ensureGridSize(int height, int width) {
-        if (height <= rows.length && width <= rows[0].length) {
+        if (height <= getNumberOfRows() && width <= getNumberOfColumns()) {
             return;
         }
-        GridCell[][] resizedRows = height > rows.length ? new GridCell[height][] : rows;
-        int gridWidth = Math.max(width, rows[0].length);
+        GridCell[][] resizedRows = height > getNumberOfRows() ? new GridCell[height][] : rows;
+        int gridWidth = Math.max(width, getNumberOfColumns());
         for (int i = 0; i < resizedRows.length; ++i) {
-            if (i < rows.length) {
+            if (i < getNumberOfRows()) {
                 if (width <= rows[i].length) {
                     resizedRows[i] = rows[i];
                 } else {

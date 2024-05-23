@@ -23,314 +23,110 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.layout.layout.LayoutArea;
-import com.itextpdf.layout.layout.LayoutContext;
-import com.itextpdf.layout.layout.LayoutResult;
-import com.itextpdf.layout.properties.GridFlow;
 import com.itextpdf.layout.properties.GridValue;
-import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.renderer.Grid.GridOrder;
 
+import java.util.ArrayList;
 import java.util.List;
 
-/**
- * This class is responsible for sizing grid elements and calculating their layout area for future layout process.
- */
+// 12.1. Grid Sizing Algorithm
 class GridSizer {
     private final Grid grid;
-    //TODO DEVSIX-8326 since templates will have not only absoulute values, we're probably need to create
-    // separate fields, something like rowsHeights, columnsWidths which will store absolute/calculated values.
-    // replace all absolute value logic using this new fields
-    private final List<GridValue> templateRows;
     private final List<GridValue> templateColumns;
-    private final GridValue rowAutoHeight;
+    private final List<GridValue> templateRows;
     private final GridValue columnAutoWidth;
-    //TODO DEVSIX-8326 here should be a list/map of different resolvers
-    private final SizeResolver sizeResolver;
+    private final GridValue rowAutoHeight;
     private final float columnGap;
     private final float rowGap;
+    private final Rectangle actualBBox;
 
-    GridSizer(Grid grid, List<GridValue> templateRows, List<GridValue> templateColumns,
-            GridValue rowAutoHeight, GridValue columnAutoWidth, Float columnGap, Float rowGap) {
+    GridSizer(Grid grid, List<GridValue> templateColumns, List<GridValue> templateRows,
+            GridValue columnAutoWidth, GridValue rowAutoHeight, float columnGap, float rowGap, Rectangle actualBBox) {
         this.grid = grid;
-        this.templateRows = templateRows;
         this.templateColumns = templateColumns;
-        this.rowAutoHeight = rowAutoHeight;
+        this.templateRows = templateRows;
         this.columnAutoWidth = columnAutoWidth;
-        this.sizeResolver = new MinContentResolver(grid);
-        this.columnGap = columnGap == null ? 0.0f : (float) columnGap;
-        this.rowGap = rowGap == null ? 0.0f : (float) rowGap;
+        this.rowAutoHeight = rowAutoHeight;
+        this.columnGap = columnGap;
+        this.rowGap = rowGap;
+        this.actualBBox = actualBBox;
     }
 
-    //Grid Sizing Algorithm
-    /**
-     * This method simulates positioning of cells on the grid, by calculating their occupied area.
-     * If there was enough place to fit the renderer value of a cell on the grid, then such cell will be marked as
-     * non-fit and will be added to nothing result during actual layout.
-     */
-    void sizeCells() {
-        //TODO DEVSIX-8326 if rowsAutoSize/columnsAutoSize == auto/fr/min-content/max-content we need to track the
-        // corresponding values of the elements and update auto height/width after calculating each cell layout area
-        // and if its changed than re-layout
-        //Grid Sizing Algorithm
-        for (GridCell cell : grid.getUniqueGridCells(Grid.GridOrder.COLUMN)) {
-            cell.getLayoutArea().setX(calculateCellX(cell));
-            cell.getLayoutArea().setWidth(calculateCellWidth(cell));
-        }
-        for (GridCell cell : grid.getUniqueGridCells(Grid.GridOrder.ROW)) {
-            cell.getLayoutArea().setY(calculateCellY(cell));
-            cell.getLayoutArea().setHeight(calculateCellHeight(cell));
-        }
+    public void sizeGrid() {
+        // 1. First, the track sizing algorithm is used to resolve the sizes of the grid columns.
+        resolveGridColumns();
+        // 2. Next, the track sizing algorithm resolves the sizes of the grid rows.
+        resolveGridRows();
     }
 
-    /**
-     * Calculate cell left upper corner y position.
-     *
-     * @param cell cell to calculate starting position
-     * @return left upper corner y value
-     */
-    private float calculateCellY(GridCell cell) {
-        float y = 0.0f;
-        int currentRow = 0;
-        if (templateRows != null) {
-            for (; currentRow < Math.min(templateRows.size(), cell.getRowStart()); ++currentRow) {
-                y += (float) templateRows.get(currentRow).getAbsoluteValue();
-                y += rowGap;
-            }
-            if (currentRow == cell.getRowStart()) {
-                return y;
-            }
-        }
-        if (rowAutoHeight != null) {
-            for (; currentRow < cell.getRowStart(); ++currentRow) {
-                y += (float) rowAutoHeight.getAbsoluteValue();
-                y += rowGap;
-            }
-            return y;
-        }
-        GridCell topNeighbor = grid.getClosestTopNeighbor(cell);
-        if (topNeighbor != null) {
-            return topNeighbor.getLayoutArea().getTop() + rowGap;
-        }
-        return 0.0f;
-    }
-
-    /**
-     * Calculate cell left upper corner x position.
-     *
-     * @param cell cell to calculate starting position
-     * @return left upper corner x value
-     */
-    private float calculateCellX(GridCell cell) {
-        float x = 0.0f;
-        int currentColumn = 0;
-        if (templateColumns != null) {
-            for (; currentColumn < Math.min(templateColumns.size(), cell.getColumnStart()); ++currentColumn) {
-                x += (float) templateColumns.get(currentColumn).getAbsoluteValue();
-                x += columnGap;
-            }
-            if (currentColumn == cell.getColumnStart()) {
-                return x;
-            }
-        }
-        if (columnAutoWidth != null) {
-            for (; currentColumn < cell.getColumnStart(); ++currentColumn) {
-                x += (float) columnAutoWidth.getAbsoluteValue();
-                x += columnGap;
-            }
-            return x;
-        }
-
-        GridCell leftNeighbor = grid.getClosestLeftNeighbor(cell);
-        if (leftNeighbor != null) {
-            if (leftNeighbor.getColumnEnd() > cell.getColumnStart()) {
-                x = leftNeighbor.getLayoutArea().getX() + leftNeighbor.getLayoutArea().getWidth()
-                        *((float)(cell.getColumnStart() - leftNeighbor.getColumnStart()))/leftNeighbor.getGridWidth();
+    private void resolveGridRows() {
+        List<GridValue> rowsValues = new ArrayList<>();
+        for (int i = 0; i < grid.getNumberOfRows(); i++) {
+            if (templateRows != null && i < templateRows.size()) {
+                rowsValues.add(templateRows.get(i));
+            } else if (rowAutoHeight != null) {
+                rowsValues.add(rowAutoHeight);
             } else {
-                x = leftNeighbor.getLayoutArea().getRight();
+                rowsValues.add(GridValue.createAutoValue());
             }
-            x += columnGap;
         }
-        return x;
-    }
 
-    //TODO DEVSIX-8327 Calculate fr units of rowsAutoSize here
-    //TODO DEVSIX-8327 currently the default behaviour when there is no templateRows or rowAutoHeight is
-    // css grid-auto-columns: min-content analogue, the default one should be 1fr
-    // (for rows they are somewhat similar, if there where no fr values in templateRows, then the
-    // size of all subsequent rows is the size of the highest row after templateRows
-    //TODO DEVSIX-8327 add a comment for this method and how it works (not done in the scope of previous ticket
-    // because logic will be changed after fr value implementation)
-    private float calculateCellHeight(GridCell cell) {
-        float cellHeight = 0.0f;
-        //process cells with grid height > 1;
-        if (cell.getGridHeight() > 1) {
-            int counter = 0;
+        // TODO DEVSIX-8384 during grid sizing algorithm take into account grid container constraints
+        GridTrackSizer gridTrackSizer = new GridTrackSizer(grid, rowsValues, rowGap, -1, GridOrder.ROW);
+        List<Float> rows = gridTrackSizer.sizeTracks();
+        for (GridCell cell : grid.getUniqueGridCells(GridOrder.ROW)) {
+            float y = 0.0f;
+            for (int currentRow = 0; currentRow < cell.getRowStart(); ++currentRow) {
+                y += (float) rows.get(currentRow);
+                y += rowGap;
+            }
+            cell.getLayoutArea().setY(y);
+
+            float cellHeight = 0.0f;
             for (int i = cell.getRowStart(); i < cell.getRowEnd(); ++i) {
-                if (templateRows != null && i < templateRows.size()) {
-                    ++counter;
-                    cellHeight += (float) templateRows.get(i).getAbsoluteValue();
-                } else if (rowAutoHeight != null) {
-                    ++counter;
-                    cellHeight += (float) rowAutoHeight.getAbsoluteValue();
-                }
+                cellHeight += (float) rows.get(i);
             }
-            if (counter > 1) {
-                cellHeight += rowGap * (counter - 1);
-            }
-            if (counter == cell.getGridHeight()) {
-                return cellHeight;
-            }
+            cellHeight += (cell.getGridHeight() - 1) * rowGap;
+            cell.getLayoutArea().setHeight(cellHeight);
         }
 
-        if (templateRows == null || cell.getRowStart() >= templateRows.size()) {
-            //TODO DEVSIX-8324 if row auto height value is fr or min-content do not return here
-            if (rowAutoHeight != null) {
-                return (float) rowAutoHeight.getAbsoluteValue();
-            }
-            cellHeight = sizeResolver.resolveHeight(cell, cellHeight);
-        } else {
-            cellHeight = (float) templateRows.get(cell.getRowStart()).getAbsoluteValue();
+        // calculating explicit height to ensure that even empty rows which covered by template would be considered
+        float minHeight = 0.0f;
+        for (Float row : rows) {
+            minHeight += (float) row;
         }
-        return cellHeight;
+        grid.setMinHeight(minHeight);
     }
 
-    //TODO DEVSIX-8327 currently the default behaviour when there is no templateColumns or columnAutoWidth is
-    // css grid-auto-columns: min-content analogue, the default one should be 1fr
-    private float calculateCellWidth(GridCell cell) {
-        float cellWidth = 0.0f;
-        //process absolute values for wide cells
-        if (cell.getGridWidth() > 1) {
-            int counter = 0;
+    private void resolveGridColumns() {
+        List<GridValue> colsValues = new ArrayList<>();
+        for (int i = 0; i < grid.getNumberOfColumns(); i++) {
+            if (templateColumns != null && i < templateColumns.size()) {
+                colsValues.add(templateColumns.get(i));
+            } else if (columnAutoWidth != null) {
+                colsValues.add(columnAutoWidth);
+            } else {
+                colsValues.add(GridValue.createFlexValue(1f));
+            }
+        }
+        GridTrackSizer gridTrackSizer = new GridTrackSizer(grid, colsValues, columnGap, actualBBox.getWidth(),
+                GridOrder.COLUMN);
+        List<Float> columns = gridTrackSizer.sizeTracks();
+
+        for (GridCell cell : grid.getUniqueGridCells(GridOrder.COLUMN)) {
+            float x = 0.0f;
+            for (int currentColumn = 0; currentColumn < cell.getColumnStart(); ++currentColumn) {
+                x += (float) columns.get(currentColumn);
+                x += columnGap;
+            }
+            cell.getLayoutArea().setX(x);
+
+            float cellWidth = 0.0f;
             for (int i = cell.getColumnStart(); i < cell.getColumnEnd(); ++i) {
-                if (templateColumns != null && i < templateColumns.size()) {
-                    ++counter;
-                    cellWidth += (float) templateColumns.get(i).getAbsoluteValue();
-                } else if (columnAutoWidth != null) {
-                    ++counter;
-                    cellWidth += (float) columnAutoWidth.getAbsoluteValue();
-                }
+                cellWidth += (float) columns.get(i);
             }
-            if (counter > 1) {
-                cellWidth += columnGap * (counter - 1);
-            }
-            if (counter == cell.getGridWidth()) {
-                return cellWidth;
-            }
-        }
-        if (templateColumns == null || cell.getColumnEnd() > templateColumns.size()) {
-            //TODO DEVSIX-8324 if row auto width value is fr or min-content do not return here
-            if (columnAutoWidth != null) {
-                return (float) columnAutoWidth.getAbsoluteValue();
-            }
-            cellWidth = sizeResolver.resolveWidth(cell, cellWidth);
-        } else {
-            //process absolute template values
-            cellWidth = (float) templateColumns.get(cell.getColumnStart()).getAbsoluteValue();
-        }
-        return cellWidth;
-    }
-
-    /**
-     * The {@code SizeResolver} is used to calculate cell width and height on layout area.
-     */
-    protected abstract static class SizeResolver {
-        protected Grid grid;
-
-        /**
-         * Create a new {@code SizeResolver} instance for the given {@code Grid} instance.
-         *
-         * @param grid grid which cells sizes will be resolved
-         */
-        public SizeResolver(Grid grid) {
-            this.grid = grid;
-        }
-        public abstract float resolveHeight(GridCell cell, float explicitCellHeight);
-        public abstract float resolveWidth(GridCell cell, float explicitCellWidth);
-
-        //TODO DEVSIX-8326 If we're getting LayoutResult = NOTHING (PARTIAL ? if it is even possible) / null occupied area
-        // from this method, we need to return current default sizing for a grid.
-        // For min-content - that's should be practically impossible but as a safe guard we can return height of any adjacent
-        // item in a row
-        // For fr (flex) unit - currently calculated flex value
-        // For other relative unit this should be investigated
-        // Basically this method will only be called for relative values of rowsAutoHeight and we need to carefully think
-        // what to return if we failed to layout a cell item in a given space
-        /**
-         * Calculate minimal cell height required for cell value to be laid out.
-         *
-         * @param cell cell container in which cell value has to be laid out
-         * @return required height for cell to be laid out
-         */
-        protected float calculateImplicitCellHeight(GridCell cell) {
-            cell.getValue().setProperty(Property.FILL_AVAILABLE_AREA, Boolean.FALSE);
-            LayoutResult inifiniteHeighLayoutResult = cell.getValue().layout(
-                    new LayoutContext(new LayoutArea(1,
-                            new Rectangle(cell.getLayoutArea().getWidth(), AbstractRenderer.INF))));
-            if (inifiniteHeighLayoutResult.getStatus() == LayoutResult.NOTHING
-                    || inifiniteHeighLayoutResult.getStatus() == LayoutResult.PARTIAL) {
-                cell.setValueFitOnCellArea(false);
-                return -1;
-            }
-            return inifiniteHeighLayoutResult.getOccupiedArea().getBBox().getHeight();
-        }
-
-        /**
-         * Calculate minimal cell width required for cell value to be laid out.
-         *
-         * @param cell cell container in which cell value has to be laid out
-         * @return required width for cell to be laid out
-         */
-        protected float calculateMinRequiredCellWidth(GridCell cell) {
-            cell.getValue().setProperty(Property.FILL_AVAILABLE_AREA, Boolean.FALSE);
-            if (cell.getValue() instanceof AbstractRenderer) {
-                AbstractRenderer abstractRenderer = (AbstractRenderer) cell.getValue();
-                return abstractRenderer.getMinMaxWidth().getMinWidth();
-            }
-            return -1;
-        }
-
-    }
-
-    /**
-     * The {@code MinContentResolver} is used to calculate cell width and height on layout area by calculating their
-     * min required size.
-     */
-    protected static class MinContentResolver extends SizeResolver {
-        /**
-         * {@inheritDoc}
-         */
-        public MinContentResolver(Grid grid) {
-            super(grid);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public float resolveHeight(GridCell cell, float cellHeight) {
-            float maxRowTop = grid.getMaxRowTop(cell.getRowStart(), cell.getColumnStart());
-            cellHeight = Math.max(cellHeight, calculateImplicitCellHeight(cell));
-            if (maxRowTop >= cellHeight + cell.getLayoutArea().getY()) {
-                cellHeight = maxRowTop - cell.getLayoutArea().getY();
-            } else {
-                grid.alignRow(cell.getRowEnd() - 1, cellHeight + cell.getLayoutArea().getY());
-            }
-            return cellHeight;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public float resolveWidth(GridCell cell, float cellWidth) {
-            float maxColumnRight = grid.getMaxColumnRight(cell.getRowStart(), cell.getColumnStart());
-            cellWidth = Math.max(cellWidth, calculateMinRequiredCellWidth(cell));
-            if (maxColumnRight >= cellWidth + cell.getLayoutArea().getX()) {
-                cellWidth = maxColumnRight - cell.getLayoutArea().getX();
-            } else {
-                grid.alignColumn(cell.getColumnEnd() - 1, cellWidth + cell.getLayoutArea().getX());
-            }
-            return cellWidth;
+            cellWidth += (cell.getGridWidth() - 1) * columnGap;
+            cell.getLayoutArea().setWidth(cellWidth);
         }
     }
 }
