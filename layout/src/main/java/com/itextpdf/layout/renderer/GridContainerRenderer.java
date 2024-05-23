@@ -31,6 +31,7 @@ import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.properties.ContinuousContainer;
 import com.itextpdf.layout.properties.GridFlow;
 import com.itextpdf.layout.properties.GridValue;
+import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 
@@ -85,37 +86,31 @@ public class GridContainerRenderer extends DivRenderer {
         Grid grid = constructGrid(this, actualBBox);
         GridLayoutResult layoutResult = layoutGrid(layoutContext, actualBBox, grid);
 
-        //TODO DEVSIX-8329 improve nothing processing, consider checking for cause of nothing here?
-        //TODO DEVSIX-8329 improve forced placement logic
-        if (layoutResult.getOverflowRenderers().isEmpty() && layoutResult.getSplitRenderers().isEmpty()) {
+        if (layoutResult.getOverflowRenderers().isEmpty()) {
             this.occupiedArea = calculateContainerOccupiedArea(layoutContext, grid, true);
             return new LayoutResult(LayoutResult.FULL, this.occupiedArea, null, null);
         } else if (layoutResult.getSplitRenderers().isEmpty()) {
-            if (Boolean.TRUE.equals(this.<Boolean>getProperty(Property.FORCED_PLACEMENT))) {
-                this.occupiedArea = calculateContainerOccupiedArea(layoutContext, grid, true);
-                return new LayoutResult(LayoutResult.FULL,  this.occupiedArea, this, null);
-            }
             IRenderer cause = this;
             if (!layoutResult.getCauseOfNothing().isEmpty()) {
                 cause = layoutResult.getCauseOfNothing().get(0);
             }
             return new LayoutResult(LayoutResult.NOTHING, null, null, this, cause);
-        } else if (layoutResult.getOverflowRenderers().isEmpty()) {
-            final ContinuousContainer continuousContainer = this.<ContinuousContainer>getProperty(
-                    Property.TREAT_AS_CONTINUOUS_CONTAINER_RESULT);
-            if (continuousContainer != null) {
-                continuousContainer.reApplyProperties(this);
-            }
-            this.childRenderers.clear();
-            this.addAllChildRenderers(layoutResult.getSplitRenderers());
-            this.occupiedArea = calculateContainerOccupiedArea(layoutContext, grid, true);
-            return new LayoutResult(LayoutResult.FULL, this.occupiedArea, this, null);
         } else {
             this.occupiedArea = calculateContainerOccupiedArea(layoutContext, grid, false);
             return new LayoutResult(LayoutResult.PARTIAL, this.occupiedArea,
                     createSplitRenderer(layoutResult.getSplitRenderers()),
                     createOverflowRenderer(layoutResult.getOverflowRenderers()));
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addChild(IRenderer renderer) {
+        renderer.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
+        renderer.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.VISIBLE);
+        super.addChild(renderer);
     }
 
     private AbstractRenderer createSplitRenderer(List<IRenderer> children) {
@@ -131,6 +126,7 @@ public class GridContainerRenderer extends DivRenderer {
     }
 
     private AbstractRenderer createOverflowRenderer(List<IRenderer> children) {
+        // TODO DEVSIX-8340 - We put the original amount of rows into overflow container.
         GridContainerRenderer overflowRenderer = (GridContainerRenderer) getNextRenderer();
         overflowRenderer.isFirstLayout = false;
         overflowRenderer.parent = parent;
@@ -145,30 +141,39 @@ public class GridContainerRenderer extends DivRenderer {
     private GridLayoutResult layoutGrid(LayoutContext layoutContext, Rectangle actualBBox, Grid grid) {
         GridLayoutResult layoutResult = new GridLayoutResult();
         ensureTemplateValuesFit(grid, actualBBox);
-        //TODO DEVSIX-8329 improve forced placement logic, right now if we have a cell which could not be fitted on its
-        // area or returns nothing as layout result RootRenderer sets FORCED_PLACEMENT on this class instance.
-        // And basically every cell inherits this value and force placed, but we only need to force place cells
-        // which were not fitted originally.
+
         for (GridCell cell : grid.getUniqueGridCells(Grid.GridOrder.ROW)) {
-            //If cell couldn't fit during cell layout area calculation than we need to put such cell straight to
-            //nothing result list
-            if (!cell.isValueFitOnCellArea()) {
-                layoutResult.getOverflowRenderers().add(cell.getValue());
-                layoutResult.getCauseOfNothing().add(cell.getValue());
-                continue;
-            }
-            //Calculate cell layout context by getting actual x and y on parent layout area for it
+            // Calculate cell layout context by getting actual x and y on parent layout area for it
             LayoutContext cellContext = getCellLayoutContext(layoutContext, actualBBox, cell);
-            //We need to check for forced placement here, because otherwise we would infinitely return partial result.
-            if (!Boolean.TRUE.equals(this.<Boolean>getProperty(Property.FORCED_PLACEMENT))
-                    && !actualBBox.contains(cellContext.getArea().getBBox())) {
-                layoutResult.getOverflowRenderers().add(cell.getValue());
-                continue;
-            }
 
             IRenderer cellToRender = cell.getValue();
-            cellToRender.setProperty(Property.FILL_AVAILABLE_AREA, true);
             cellToRender.setProperty(Property.COLLAPSING_MARGINS, Boolean.FALSE);
+
+            // Now set the height for the individual items
+            // We know cell height upfront and this way we tell the element what it can occupy
+            Rectangle cellBBox = cellContext.getArea().getBBox();
+            if (!cellToRender.hasProperty(Property.HEIGHT)) {
+                final Rectangle rectangleWithoutBordersMarginsPaddings = cellBBox.clone();
+                if (cellToRender instanceof AbstractRenderer) {
+                    final AbstractRenderer abstractCellRenderer = ((AbstractRenderer) cellToRender);
+                    // We subtract margins/borders/paddings because we should take into account that
+                    // borders/paddings/margins should also fit into a cell.
+                    if (AbstractRenderer.isBorderBoxSizing(cellToRender)) {
+                        abstractCellRenderer.applyMargins(rectangleWithoutBordersMarginsPaddings, false);
+                    } else {
+                        abstractCellRenderer.applyMarginsBordersPaddings(rectangleWithoutBordersMarginsPaddings, false);
+                    }
+                }
+
+                cellToRender.setProperty(Property.HEIGHT,
+                        UnitValue.createPointValue(rectangleWithoutBordersMarginsPaddings.getHeight()));
+            }
+
+            // Adjust cell BBox to the remaining part of the layout bbox
+            // This way we can layout elements partially
+            cellBBox.setHeight(cellBBox.getTop() - actualBBox.getBottom())
+                    .setY(actualBBox.getY());
+
             LayoutResult cellResult = cellToRender.layout(cellContext);
 
             if (cellResult.getStatus() == LayoutResult.NOTHING) {

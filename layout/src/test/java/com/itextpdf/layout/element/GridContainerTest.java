@@ -489,6 +489,7 @@ public class GridContainerTest extends ExtendedITextTest {
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
+            grid.setBackgroundColor(ColorConstants.GREEN);
             SolidBorder border = new SolidBorder(ColorConstants.BLUE, 1);
             grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, templateColumns);
             Paragraph paragraph1 = new Paragraph("One");

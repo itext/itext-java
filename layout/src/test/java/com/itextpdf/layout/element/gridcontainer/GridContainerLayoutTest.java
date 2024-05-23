@@ -35,8 +35,10 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.GridContainer;
+import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.BackgroundImage;
 import com.itextpdf.layout.properties.BackgroundRepeat;
 import com.itextpdf.layout.properties.BackgroundRepeat.BackgroundRepeatValue;
@@ -45,6 +47,9 @@ import com.itextpdf.layout.properties.GridValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.LogLevelConstants;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
@@ -198,26 +203,48 @@ public class GridContainerLayoutTest extends ExtendedITextTest {
                 DESTINATION_FOLDER, "diff"));
     }
 
+    // TODO DEVSIX-8340
+    @Test
+    public void overflowGridContainerTest() throws IOException, InterruptedException {
+        String fileName = DESTINATION_FOLDER + "overflowGridContainer.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(fileName));
+        Document document = new Document(pdfDocument);
 
-    private GridContainer createGridBoxWithSizedDiv() {
-        GridContainer gridcontainer0 = new GridContainer();
+        GridContainer gridcontainer0 = createGridBoxWithText();
 
-        gridcontainer0.setProperty(Property.COLUMN_GAP_BORDER, null);
-        gridcontainer0.setProperty(Property.GRID_TEMPLATE_COLUMNS,
-                Arrays.asList(new UnitValue(1, 150.0f), new UnitValue(1, 150.0f), new UnitValue(1, 150.0f)));
-        gridcontainer0.setProperty(Property.COLUMN_GAP, 12.0f);
-        gridcontainer0.setBackgroundColor(ColorConstants.RED);
-        for (int i = 0; i < 4; i++) {
-            Div div1 = new Div();
-            div1.setBackgroundColor(ColorConstants.YELLOW);
-            div1.setHeight(20);
-            div1.setWidth(30);
-            div1.setProperty(Property.COLUMN_GAP_BORDER, null);
-            div1.setProperty(Property.COLUMN_GAP, 12.0f);
-            gridcontainer0.add(div1);
-        }
-        return gridcontainer0;
+        gridcontainer0.setBackgroundColor(ColorConstants.MAGENTA);
+        gridcontainer0.setProperty(Property.GRID_TEMPLATE_ROWS,
+                Arrays.asList(
+                        GridValue.createUnitValue(new UnitValue(1, 500.0f)),
+                        GridValue.createUnitValue(new UnitValue(1, 500.0f)),
+                        GridValue.createUnitValue(new UnitValue(1, 500.0f))));
 
+        gridcontainer0.add(new Image(ImageDataFactory.create(SOURCE_FOLDER + "rock_texture.jpg")).setHeight(150));
+        document.add(gridcontainer0);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(fileName, SOURCE_FOLDER + "cmp_overflowGridContainer.pdf",
+                DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, logLevel =
+                    LogLevelConstants.WARN)})
+    public void nothingResultTest() throws IOException, InterruptedException {
+        String fileName = DESTINATION_FOLDER + "nothingResult.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(fileName));
+        Document document = new Document(pdfDocument);
+
+        GridContainer gridcontainer = new GridContainer();
+        gridcontainer.add(new Image(ImageDataFactory.create(SOURCE_FOLDER + "rock_texture.jpg")).setHeight(1200));
+        document.add(gridcontainer);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(fileName, SOURCE_FOLDER + "cmp_nothingResult.pdf",
+                DESTINATION_FOLDER, "diff"));
     }
 
     private GridContainer createGridBoxWithText() {
@@ -289,6 +316,4 @@ public class GridContainerLayoutTest extends ExtendedITextTest {
         gridcontainer0.add(div13);
         return gridcontainer0;
     }
-
-
 }
