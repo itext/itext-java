@@ -248,7 +248,7 @@ public class WebColors extends HashMap<String, int[]> {
                     color[4] = getAlphaChannelValue(tok.nextToken());
                 }
             }
-        } catch (Exception exc) {
+        } catch (Exception e) {
             // Will just return null in this case
             color = null;
         }
@@ -309,7 +309,7 @@ public class WebColors extends HashMap<String, int[]> {
                 color[1] = (float) (intColor[1] / RGB_MAX_VAL);
                 color[2] = (float) (intColor[2] / RGB_MAX_VAL);
             }
-        } catch (Exception exc) {
+        } catch (Exception e) {
             // Will just return null in this case
             color = null;
         }

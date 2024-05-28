@@ -24,6 +24,7 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.MemoryLimitsAwareException;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.AssertUtil;
@@ -63,7 +64,22 @@ public class PdfXrefTableTest extends ExtendedITextTest {
     })
     public void openInvalidDocWithHugeRefTest() {
         String inputFile = SOURCE_FOLDER + "invalidDocWithHugeRef.pdf";
-        AssertUtil.doesNotThrow(() -> new PdfDocument(new PdfReader(inputFile)));
+        MemoryLimitsAwareHandler memoryLimitsAwareHandler = new MemoryLimitsAwareHandler(){
+            @Override
+            public void checkIfXrefStructureExceedsTheLimit(int requestedCapacity) {
+            }
+        };
+        AssertUtil.doesNotThrow(() -> new PdfDocument(new PdfReader(inputFile, new ReaderProperties().setMemoryLimitsAwareHandler(memoryLimitsAwareHandler))));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT, logLevel = LogLevelConstants.ERROR)
+    })
+    public void openInvalidDocWithHugeRefTestDefaultMemoryLimitAwareHandler() {
+        String inputFile = SOURCE_FOLDER + "invalidDocWithHugeRef.pdf";
+        Assert.assertThrows(MemoryLimitsAwareException.class,() ->
+                new PdfDocument(new PdfReader(inputFile)));
     }
 
     @Test

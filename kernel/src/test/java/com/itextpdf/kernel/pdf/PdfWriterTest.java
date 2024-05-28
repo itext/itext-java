@@ -535,7 +535,8 @@ public class PdfWriterTest extends ExtendedITextTest {
         try {
             fos.write(1);
             Assert.fail("Exception expected");
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            //ignored
         }
     }
 

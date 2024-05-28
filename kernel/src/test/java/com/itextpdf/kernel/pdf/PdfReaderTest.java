@@ -2816,6 +2816,25 @@ public class PdfReaderTest extends ExtendedITextTest {
         Assert.assertEquals(PdfObject.STREAM, pdfDoc.getPdfObject(5).getType());
     }
 
+    @Test
+    public void initTagTreeStructureThrowsOOMIsCatched() throws IOException {
+        File file = new File(SOURCE_FOLDER+ "big_table_lot_of_mcrs.pdf");
+        MemoryLimitsAwareHandler memoryLimitsAwareHandler = new MemoryLimitsAwareHandler() {
+            @Override
+            public boolean isMemoryLimitsAwarenessRequiredOnDecompression(PdfArray filters) {
+                return true;
+            }
+        };
+        memoryLimitsAwareHandler.setMaxSizeOfDecompressedPdfStreamsSum(100000);
+
+        Assert.assertThrows(MemoryLimitsAwareException.class, () -> {
+            try (final PdfReader reader = new PdfReader(file,
+                    new ReaderProperties().setMemoryLimitsAwareHandler(memoryLimitsAwareHandler));
+                    final PdfDocument document = new PdfDocument(reader);) {
+            }
+        });
+    }
+
     private static PdfDictionary getTestPdfDictionary() {
         HashMap<PdfName, PdfObject> tmpMap = new HashMap<PdfName, PdfObject>();
         tmpMap.put(new PdfName("b"), new PdfName("c"));

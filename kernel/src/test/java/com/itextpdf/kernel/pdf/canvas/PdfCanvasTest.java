@@ -31,6 +31,7 @@ import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.MemoryLimitsAwareException;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -38,6 +39,7 @@ import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.kernel.pdf.canvas.wmf.WmfImageData;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -1102,6 +1104,49 @@ public class PdfCanvasTest extends ExtendedITextTest {
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public  void canvasStreamFlushedNoException(){
+        PdfDocument doc =new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        PdfStream stream = new PdfStream(){
+            private boolean isFlushed = false;
+            @Override
+            public boolean isFlushed() {
+                System.out.println("isFlushed: " + isFlushed);
+                if (isFlushed){
+                    return true;
+                }
+                isFlushed = true;
+                return false;
+            }
+        };
+        stream.put(PdfName.Filter, new PdfName("FlateDecode"));
+        AssertUtil.doesNotThrow(()->{
+            new PdfCanvas(stream, new PdfResources(),doc );
+        });
+    }
+
+    @Test
+    public void canvasInitializationStampingExistingStreamMemoryLimitAware() throws IOException, InterruptedException {
+        String srcFile = SOURCE_FOLDER + "pageWithContent.pdf";
+
+        ReaderProperties properties = new ReaderProperties();
+        MemoryLimitsAwareHandler handler = new MemoryLimitsAwareHandler(){
+            @Override
+            public boolean isMemoryLimitsAwarenessRequiredOnDecompression(PdfArray filters) {
+                return true;
+            };
+        };
+        handler.setMaxSizeOfSingleDecompressedPdfStream(1);
+        properties.setMemoryLimitsAwareHandler(handler);
+
+        PdfDocument document = new PdfDocument(new PdfReader(srcFile, properties));
+
+        PdfPage page = document.getPage(1);
+        Assert.assertThrows(MemoryLimitsAwareException.class, () ->{
+            new PdfCanvas(page.getLastContentStream(), page.getResources(), page.getDocument());
+        });
     }
 
     @Test

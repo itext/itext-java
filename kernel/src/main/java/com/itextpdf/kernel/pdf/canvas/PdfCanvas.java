@@ -36,6 +36,7 @@ import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.DeviceGray;
 import com.itextpdf.kernel.colors.PatternColor;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.MemoryLimitsAwareException;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfType0Font;
@@ -2400,8 +2401,10 @@ public class PdfCanvas {
             if (stream.getOutputStream() == null || stream.containsKey(PdfName.Filter)) {
                 try {
                     stream.setData(stream.getBytes());
-                } catch (Exception ex) {
-                    // ignore
+                } catch (MemoryLimitsAwareException e){
+                    throw e;
+                } catch (Exception e) {
+                    // ignored
                 }
             }
         }

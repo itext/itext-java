@@ -41,6 +41,7 @@ import com.itextpdf.kernel.events.IEventDispatcher;
 import com.itextpdf.kernel.events.PdfDocumentEvent;
 import com.itextpdf.kernel.exceptions.BadPasswordException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.MemoryLimitsAwareException;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -1344,11 +1345,11 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                         insertBeforePage += increasingPagesRange.size();
                     }
                     toDocument.getTagStructureContext().normalizeDocumentRootTag();
-                } catch (Exception ex) {
+                } catch (Exception e) {
                     throw new PdfException(
                             KernelExceptionMessageConstant.
                                     TAG_STRUCTURE_COPYING_FAILED_IT_MIGHT_BE_CORRUPTED_IN_ONE_OF_THE_DOCUMENTS,
-                            ex);
+                            e);
                 }
                 if (copier instanceof IPdfPageFormCopier) {
                     ((IPdfPageFormCopier) copier).recreateAcroformToProcessCopiedFields(toDocument);
@@ -2385,11 +2386,13 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         try {
             structTreeRoot = new PdfStructTreeRoot(str, this);
             structParentIndex = getStructTreeRoot().getParentTreeNextKey();
-        } catch (Exception ex) {
+        } catch (MemoryLimitsAwareException e){
+            throw e;
+        } catch (Exception e) {
             structTreeRoot = null;
             structParentIndex = -1;
             Logger logger = LoggerFactory.getLogger(PdfDocument.class);
-            logger.error(IoLogMessageConstant.TAG_STRUCTURE_INIT_FAILED, ex);
+            logger.error(IoLogMessageConstant.TAG_STRUCTURE_INIT_FAILED, e);
         }
     }
 
@@ -2422,9 +2425,11 @@ public class PdfDocument implements IEventDispatcher, Closeable {
             if (!isAppendMode || structTreeRoot.getPdfObject().isModified()) {
                 structTreeRoot.flush();
             }
-        } catch (Exception ex) {
+        } catch (MemoryLimitsAwareException e){
+            throw e;
+        } catch (Exception e) { 
             throw new PdfException(KernelExceptionMessageConstant.TAG_STRUCTURE_FLUSHING_FAILED_IT_MIGHT_BE_CORRUPTED,
-                    ex);
+                    e);
         }
     }
 

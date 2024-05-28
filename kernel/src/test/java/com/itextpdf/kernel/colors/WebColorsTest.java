@@ -198,6 +198,15 @@ public class WebColorsTest extends ExtendedITextTest {
         Assert.assertNull(resultCmyk);
     }
 
+
+    @Test
+    public void getRGBAColorWithExceptionDuringParsing() {
+        float[] resultCmyk = WebColors.getRGBAColor(null);
+        Assert.assertNull(resultCmyk);
+    }
+
+
+
     @Test
     public void getCMYKColorTest() {
         //corresponding color name = "violet"

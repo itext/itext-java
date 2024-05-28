@@ -428,7 +428,8 @@ public class PdfReader implements Closeable {
         } finally {
             try {
                 file.close();
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+                // ignored
             }
         }
         return bytes;
@@ -1017,7 +1018,7 @@ public class PdfReader implements Closeable {
                  | MemoryLimitsAwareException
                  | InvalidXRefPrevException exceptionWhileReadingXrefStream) {
             throw exceptionWhileReadingXrefStream;
-        } catch (Exception ignored) {
+        } catch (Exception e) {
             // Do nothing.
         }
         // clear xref because of possible issues at reading xref stream.
@@ -1363,6 +1364,8 @@ public class PdfReader implements Closeable {
         try {
             final PdfDictionary dic = (PdfDictionary) readObject(false);
             return dic.get(PdfName.Root, false) != null;
+        } catch (MemoryLimitsAwareException e){
+            throw e;
         } catch (Exception e) {
             return false;
         }

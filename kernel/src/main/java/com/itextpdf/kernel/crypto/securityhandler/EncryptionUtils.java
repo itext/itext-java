@@ -105,8 +105,8 @@ final class EncryptionUtils {
         IX509CertificateHolder certHolder;
         try {
             certHolder = BOUNCY_CASTLE_FACTORY.createX509CertificateHolder(certificate.getEncoded());
-        } catch (Exception f) {
-            throw new PdfException(KernelExceptionMessageConstant.PDF_DECRYPTION, f);
+        } catch (Exception e) {
+            throw new PdfException(KernelExceptionMessageConstant.PDF_DECRYPTION, e);
         }
         if (externalDecryptionProcess == null) {
             for (int i = 0; i < recipients.size(); i++) {
@@ -125,12 +125,12 @@ final class EncryptionUtils {
                             foundRecipient = true;
                         }
                     }
-                } catch (Exception f) {
+                } catch (Exception e) {
                     // First check if the feature is supported, it will throw if not
                     // Exact algorithm doesn't matter currently
                     BouncyCastleFactoryCreator.getFactory().isEncryptionFeatureSupported(0, true);
                     // Throw the original exception if the feature is supported
-                    throw new PdfException(KernelExceptionMessageConstant.PDF_DECRYPTION, f);
+                    throw new PdfException(KernelExceptionMessageConstant.PDF_DECRYPTION, e);
                 }
             }
         } else {

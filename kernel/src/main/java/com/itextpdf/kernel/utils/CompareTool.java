@@ -802,7 +802,7 @@ public class CompareTool {
             if (!compareXmls(cmpBytes, outBytes)) {
                 return "The XMP packages different!";
             }
-        } catch (Exception ex) {
+        } catch (Exception e) {
             return "XMP parsing failure!";
         }
         return null;

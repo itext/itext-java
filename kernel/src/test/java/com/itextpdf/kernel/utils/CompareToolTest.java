@@ -165,6 +165,14 @@ public class CompareToolTest extends ExtendedITextTest {
     }
 
     @Test
+    public void compareXmpThrows(){
+        CompareTool compareTool = new CompareTool();
+        String outPdf = sourceFolder + "simple_pdf.pdf";
+        String cmpPdf = sourceFolder + "cmp_simple_pdf.pdf";
+        Assert.assertEquals("XMP parsing failure!", compareTool.compareXmp(outPdf, cmpPdf));
+    }
+
+    @Test
     public void gsEnvironmentVariableSpecifiedIncorrectlyTest() throws IOException, InterruptedException {
         String outPdf = sourceFolder + "simple_pdf.pdf";
         String cmpPdf = sourceFolder + "cmp_simple_pdf.pdf";
