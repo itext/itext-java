@@ -380,6 +380,10 @@ public class PdfReader implements Closeable {
      * @throws IOException on error.
      */
     public byte[] readStreamBytesRaw(PdfStream stream) throws IOException {
+        if (stream == null) {
+            throw new PdfException(KernelExceptionMessageConstant.UNABLE_TO_READ_STREAM_BYTES);
+        }
+
         PdfName type = stream.getAsName(PdfName.Type);
         if (!PdfName.XRef.equals(type) && !PdfName.ObjStm.equals(type)) {
             checkPdfStreamLength(stream);
@@ -765,6 +769,10 @@ public class PdfReader implements Closeable {
     }
 
     protected void readObjectStream(PdfStream objectStream) throws IOException {
+        if (objectStream == null) {
+            throw new PdfException(KernelExceptionMessageConstant.UNABLE_TO_READ_OBJECT_STREAM);
+        }
+
         int objectStreamNumber = objectStream.getIndirectReference().getObjNumber();
         int first = objectStream.getAsNumber(PdfName.First).intValue();
         int n = objectStream.getAsNumber(PdfName.N).intValue();
@@ -1457,6 +1465,12 @@ public class PdfReader implements Closeable {
             if (reference.getObjStreamNumber() > 0) {
                 PdfStream objectStream = (PdfStream) pdfDocument.getXref().
                         get(reference.getObjStreamNumber()).getRefersTo(false);
+                if (objectStream == null) {
+                    throw new PdfException(MessageFormatUtil.format(
+                            KernelExceptionMessageConstant.INVALID_OBJECT_STREAM_NUMBER, reference.getObjNumber()
+                            , reference.getObjStreamNumber(), reference.getIndex()));
+                }
+
                 readObjectStream(objectStream);
                 return reference.refersTo;
             } else if (reference.getOffset() > 0) {

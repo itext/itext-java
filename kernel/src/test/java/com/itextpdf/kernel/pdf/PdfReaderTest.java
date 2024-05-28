@@ -2815,6 +2815,36 @@ public class PdfReaderTest extends ExtendedITextTest {
     }
 
     @Test
+    public void streamObjIsNullTest() throws IOException {
+        ByteArrayOutputStream bsaos = new ByteArrayOutputStream();
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(bsaos));
+
+        new PdfDictionary().makeIndirect(pdfDocument);
+
+        PdfStream pdfDictionary = new PdfStream();
+        pdfDictionary.makeIndirect(pdfDocument);
+
+        int objNumber = pdfDictionary.getIndirectReference().objNr;
+        pdfDocument.catalog.getPdfObject().put(PdfName.StructTreeRoot, pdfDictionary);
+        pdfDocument.close();
+
+        PdfReader pdfReader = new PdfReader(new ByteArrayInputStream(bsaos.toByteArray())) {
+            @Override
+            protected PdfObject readObject(PdfIndirectReference reference) {
+                if (reference.objNr == objNumber) {
+                    reference.setObjStreamNumber(objNumber - 1);
+                    reference.setIndex(492);
+                }
+                return super.readObject(reference);
+            }
+        };
+
+        Exception e = Assert.assertThrows(PdfException.class, () -> new PdfDocument(pdfReader));
+        Assert.assertEquals(MessageFormatUtil.format(
+                KernelExceptionMessageConstant.INVALID_OBJECT_STREAM_NUMBER, 5, 4, 492), e.getMessage());
+    }
+
+    @Test
     public void initTagTreeStructureThrowsOOMIsCatched() throws IOException {
         File file = new File(SOURCE_FOLDER+ "big_table_lot_of_mcrs.pdf");
         MemoryLimitsAwareHandler memoryLimitsAwareHandler = new MemoryLimitsAwareHandler() {
