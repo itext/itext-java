@@ -146,7 +146,7 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         certificateRetriever.addKnownCertificates(Collections.singletonList(intermediateCert));
         certificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
 
-        properties.setContinueAfterFailure(ValidatorContexts.all() , CertificateSources.all(),true);
+        properties.setContinueAfterFailure(ValidatorContexts.all() , CertificateSources.all(), true);
         // Set random extension as a required one to force the test to fail.
         properties.setRequiredExtensions(CertificateSources.of(CertificateSource.CERT_ISSUER),
                 Collections.<CertificateExtension>singletonList(new KeyUsageExtension(KeyUsage.DECIPHER_ONLY)));

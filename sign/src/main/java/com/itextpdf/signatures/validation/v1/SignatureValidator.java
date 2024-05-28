@@ -67,14 +67,14 @@ class SignatureValidator {
             "Certificate {0} stored in DSS dictionary cannot be parsed.";
     static final String CANNOT_VERIFY_SIGNATURE = "Signature {0} cannot be mathematically verified.";
     static final String DOCUMENT_IS_NOT_COVERED = "Signature {0} doesn't cover entire document.";
-    static final String CANNOT_VERIFY_TIMESTAMP = "Signature timestamp attribute cannot be verified";
+    static final String CANNOT_VERIFY_TIMESTAMP = "Signature timestamp attribute cannot be verified.";
     static final String REVISIONS_RETRIEVAL_FAILED = "Wasn't possible to retrieve document revisions.";
     private static final String TIMESTAMP_EXTRACTION_FAILED = "Unable to extract timestamp from timestamp signature";
     private final ValidationContext baseValidationContext;
     private final CertificateChainValidator certificateChainValidator;
     private final IssuingCertificateRetriever certificateRetriever;
     private final SignatureValidationProperties properties;
-    private Date lastKnownPoE = (Date) TimestampConstants.UNDEFINED_TIMESTAMP_DATE;
+    private Date lastKnownPoE = DateTimeUtil.getCurrentTimeDate();
 
     /**
      * Create new instance of {@link SignatureValidator}.
@@ -135,7 +135,6 @@ class SignatureValidator {
                     pkcs7.getSigningCertificate());
         }
 
-        Date signingDate = DateTimeUtil.getCurrentTimeDate();
         if (pkcs7.getTimeStampTokenInfo() != null) {
             try {
                 if (!pkcs7.verifyTimestampImprint()) {
@@ -149,13 +148,27 @@ class SignatureValidator {
             if (stopValidation(validationReport, baseValidationContext)) {
                 return validationReport;
             }
-            Certificate[] timestampCertificates = pkcs7.getTimestampCertificates();
-            validateTimestampChain(validationReport, pkcs7.getTimeStampTokenInfo(), timestampCertificates,
-                    (X509Certificate) timestampCertificates[0]);
+
+            PdfPKCS7 timestampSignatureContainer = pkcs7.getTimestampSignatureContainer();
+            try {
+                if (!timestampSignatureContainer.verifySignatureIntegrityAndAuthenticity()) {
+                    validationReport.addReportItem(new ReportItem(TIMESTAMP_VERIFICATION,
+                            CANNOT_VERIFY_TIMESTAMP, ReportItemStatus.INVALID));
+                }
+            } catch (GeneralSecurityException e) {
+                validationReport.addReportItem(new ReportItem(TIMESTAMP_VERIFICATION,
+                        CANNOT_VERIFY_TIMESTAMP, e, ReportItemStatus.INVALID));
+            }
             if (stopValidation(validationReport, baseValidationContext)) {
                 return validationReport;
             }
-            signingDate = pkcs7.getTimeStampDate().getTime();
+
+            Certificate[] timestampCertificates = timestampSignatureContainer.getCertificates();
+            validateTimestampChain(validationReport, pkcs7.getTimeStampTokenInfo(), timestampCertificates,
+                    timestampSignatureContainer.getSigningCertificate());
+            if (stopValidation(validationReport, baseValidationContext)) {
+                return validationReport;
+            }
         }
 
         Certificate[] certificates = pkcs7.getCertificates();
@@ -164,7 +177,7 @@ class SignatureValidator {
 
         return certificateChainValidator.validate(validationReport,
                 baseValidationContext,
-                signingCertificate, signingDate);
+                signingCertificate, lastKnownPoE);
     }
 
     private PdfPKCS7 mathematicallyVerifySignature(ValidationReport validationReport, PdfDocument document) {
@@ -194,16 +207,12 @@ class SignatureValidator {
     private ValidationReport validateTimestampChain(ValidationReport validationReport, ITSTInfo timeStampTokenInfo,
                                                     Certificate[] knownCerts, X509Certificate signingCert) {
         certificateRetriever.addKnownCertificates(Arrays.asList(knownCerts));
-        Date signingDate = lastKnownPoE;
-        if (signingDate == TimestampConstants.UNDEFINED_TIMESTAMP_DATE) {
-            signingDate = DateTimeUtil.getCurrentTimeDate();
-        }
 
         ValidationReport tsValidationReport = new ValidationReport();
 
         certificateChainValidator.validate(tsValidationReport,
                 baseValidationContext.setCertificateSource(CertificateSource.TIMESTAMP),
-                signingCert, signingDate);
+                signingCert, lastKnownPoE);
         validationReport.merge(tsValidationReport);
         if (tsValidationReport.getValidationResult() == ValidationReport.ValidationResult.VALID) {
             try {

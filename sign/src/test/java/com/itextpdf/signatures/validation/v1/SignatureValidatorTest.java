@@ -27,6 +27,7 @@ import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.DateTimeUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.signatures.testutils.PemFileHelper;
@@ -44,7 +45,6 @@ import com.itextpdf.signatures.validation.v1.report.ValidationReport.ValidationR
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 import org.junit.Assert;
-import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -67,7 +67,6 @@ public class SignatureValidatorTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/validation/v1/SignatureValidatorTest/";
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
-    private static final boolean NON_FIPS_MODE = "BC".equals(FACTORY.getProviderName());
     private static final char[] PASSWORD = "testpassphrase".toCharArray();
     private SignatureValidationProperties parameters;
     private MockIssuingCertificateRetriever mockCertificateRetriever;
@@ -92,7 +91,6 @@ public class SignatureValidatorTest extends ExtendedITextTest {
                 .withRevocationDataValidator(new MockRevocationDataValidator());
 
     }
-
 
     @Test
     public void latestSignatureIsTimestampTest() throws GeneralSecurityException, IOException,
@@ -126,12 +124,101 @@ public class SignatureValidatorTest extends ExtendedITextTest {
             report = signatureValidator.validateLatestSignature(document);
         }
 
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationResult.VALID)
+                .hasNumberOfLogs(1).hasNumberOfFailures(0));
 
         Assert.assertEquals(1, mockCertificateChainValidator.verificationCalls.size());
         MockChainValidator.ValidationCallBack call = mockCertificateChainValidator.verificationCalls.get(0);
         Assert.assertEquals(CertificateSource.TIMESTAMP, call.context.getCertificateSource());
         Assert.assertEquals(ValidatorContext.SIGNATURE_VALIDATOR, call.context.getValidatorContext());
         Assert.assertEquals(timeStampCert.getSubjectX500Principal(), call.certificate.getSubjectX500Principal());
+    }
+
+    @Test
+    public void latestSignatureIsDocTimestampWithModifiedDateTest() throws GeneralSecurityException, IOException,
+            AbstractOperatorCreationException, AbstractPKCSException {
+        String chainName = CERTS_SRC + "validCertsChain.pem";
+        String privateKeyName = CERTS_SRC + "rootCertKey.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+        X509Certificate rootCert = (X509Certificate) certificateChain[2];
+        PrivateKey rootPrivateKey = PemFileHelper.readFirstKey(privateKeyName, PASSWORD);
+
+        ValidationReport report;
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "modifiedDocTimestampDate.pdf"))) {
+            mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
+
+            TestOcspResponseBuilder ocspBuilder = new TestOcspResponseBuilder(rootCert, rootPrivateKey);
+            Date currentDate = DateTimeUtil.getCurrentTimeDate();
+            ocspBuilder.setProducedAt(currentDate);
+            ocspBuilder.setThisUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(currentDate, 3)));
+            ocspBuilder.setNextUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(currentDate, 30)));
+            TestOcspClient ocspClient = new TestOcspClient().addBuilderForCertIssuer(rootCert, ocspBuilder);
+            builder.getRevocationDataValidator().addOcspClient(ocspClient);
+            parameters.setRevocationOnlineFetching(ValidatorContexts.all(), CertificateSources.all(),
+                            TimeBasedContexts.all(), SignatureValidationProperties.OnlineFetching.NEVER_FETCH)
+                    .setFreshness(ValidatorContexts.all(), CertificateSources.all(), TimeBasedContexts.all(),
+                            Duration.ofDays(-2));
+
+            SignatureValidator signatureValidator = builder.buildSignatureValidator();
+            report = signatureValidator.validateLatestSignature(document);
+        }
+
+        AssertValidationReport.assertThat(report, a -> a
+                .hasNumberOfLogs(2).hasNumberOfFailures(1)
+                .hasStatus(ValidationResult.INVALID)
+                .hasLogItem(l -> l
+                        .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
+                        .withMessage(SignatureValidator.VALIDATING_SIGNATURE_NAME, p -> "timestampSignature1"))
+                .hasLogItem(al -> al
+                        .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
+                        .withMessage(MessageFormatUtil.format(SignatureValidator.CANNOT_VERIFY_SIGNATURE,
+                                        "timestampSignature1"))
+                        .withStatus(ReportItem.ReportItemStatus.INVALID))
+        );
+    }
+
+    @Test
+    public void latestSignatureWithModifiedTimestampDateTest() throws GeneralSecurityException, IOException,
+            AbstractOperatorCreationException, AbstractPKCSException {
+        String chainName = CERTS_SRC + "validCertsChain.pem";
+        String privateKeyName = CERTS_SRC + "rootCertKey.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+        X509Certificate rootCert = (X509Certificate) certificateChain[2];
+        PrivateKey rootPrivateKey = PemFileHelper.readFirstKey(privateKeyName, PASSWORD);
+
+        ValidationReport report;
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "signatureWithModifiedTimestampDate.pdf"))) {
+            mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
+
+            TestOcspResponseBuilder ocspBuilder = new TestOcspResponseBuilder(rootCert, rootPrivateKey);
+            Date currentDate = DateTimeUtil.getCurrentTimeDate();
+            ocspBuilder.setProducedAt(currentDate);
+            ocspBuilder.setThisUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(currentDate, 3)));
+            ocspBuilder.setNextUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(currentDate, 30)));
+            TestOcspClient ocspClient = new TestOcspClient().addBuilderForCertIssuer(rootCert, ocspBuilder);
+            builder.getRevocationDataValidator().addOcspClient(ocspClient);
+            parameters.setRevocationOnlineFetching(ValidatorContexts.all(), CertificateSources.all(),
+                            TimeBasedContexts.all(), SignatureValidationProperties.OnlineFetching.NEVER_FETCH)
+                    .setFreshness(ValidatorContexts.all(), CertificateSources.all(), TimeBasedContexts.all(),
+                            Duration.ofDays(-2))
+                    .setContinueAfterFailure(ValidatorContexts.all() , CertificateSources.all(), false);
+
+            SignatureValidator signatureValidator = builder.buildSignatureValidator();
+            report = signatureValidator.validateLatestSignature(document);
+        }
+
+        AssertValidationReport.assertThat(report, a -> a
+                .hasNumberOfLogs(2).hasNumberOfFailures(1)
+                .hasStatus(ValidationResult.INVALID)
+                .hasLogItem(l -> l
+                        .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
+                        .withMessage(SignatureValidator.VALIDATING_SIGNATURE_NAME, p -> "Signature1"))
+                .hasLogItem(al -> al
+                        .withCheckName(SignatureValidator.TIMESTAMP_VERIFICATION)
+                        .withMessage(SignatureValidator.CANNOT_VERIFY_TIMESTAMP)
+                        .withStatus(ReportItem.ReportItemStatus.INVALID))
+        );
     }
 
     @Test
@@ -150,7 +237,7 @@ public class SignatureValidatorTest extends ExtendedITextTest {
 
         AssertValidationReport.assertThat(report, a -> a
                 .hasStatus(ValidationResult.INVALID)
-                .hasLogItem(al -> al
+                .hasLogItems(2, 2, al -> al
                         .withCheckName(SignatureValidator.TIMESTAMP_VERIFICATION)
                         .withMessage(SignatureValidator.CANNOT_VERIFY_TIMESTAMP)
                         .withStatus(ReportItem.ReportItemStatus.INVALID))
@@ -306,13 +393,14 @@ public class SignatureValidatorTest extends ExtendedITextTest {
 
     @Test
     public void validateMultipleSignatures() throws IOException {
-        Assume.assumeTrue(NON_FIPS_MODE);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "docWithMultipleSignaturesAndTimeStamp.pdf"))) {
 
             SignatureValidator signatureValidator = builder.buildSignatureValidator();
             ValidationReport report = signatureValidator.validateSignatures(document);
 
-            AssertValidationReport.assertThat(report, r-> r
+            AssertValidationReport.assertThat(report, r -> r
+                    .hasStatus(ValidationResult.VALID)
+                    .hasNumberOfLogs(5).hasNumberOfFailures(0)
                     .hasLogItem(l -> l
                             .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
                             .withMessage(SignatureValidator.VALIDATING_SIGNATURE_NAME, p -> "Signature1"))
@@ -334,7 +422,7 @@ public class SignatureValidatorTest extends ExtendedITextTest {
             Date date2 = DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, 10);
             Date date3 = DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, 20);
 
-            // 2 signatures, with timestamp
+            // 2 signatures with timestamp
             // 3 document timestamps
             Assert.assertEquals(7, mockCertificateChainValidator.verificationCalls.size());
             Assert.assertTrue(mockCertificateChainValidator.verificationCalls.stream().anyMatch(c ->
@@ -349,7 +437,6 @@ public class SignatureValidatorTest extends ExtendedITextTest {
             Assert.assertTrue(mockCertificateChainValidator.verificationCalls.stream().anyMatch(c ->
                     c.certificate.getSerialNumber().toString().equals("1550593058")
                             && c.checkDate.equals(date2)));
-
             Assert.assertTrue(mockCertificateChainValidator.verificationCalls.stream().anyMatch(c ->
                     c.certificate.getSerialNumber().toString().equals("1701704311986")
                             && c.checkDate.equals(date1)));

@@ -54,6 +54,7 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 
@@ -244,6 +245,52 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
                                 i -> rootCert.getSubjectX500Principal())
                         .withCertificate(rootCert))
         );
+    }
+
+    @Test
+    public void validateMultipleSignaturesUsingLastKnownPoETest() throws Exception {
+        String trustedCertsFileName = CERTS_SRC + "trustedCerts.pem";
+        Certificate[] trustedCerts = PemFileHelper.readFirstChain(trustedCertsFileName);
+
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "signatureSigningCertExpired.pdf"))) {
+            SignatureValidator signatureValidator = new ValidatorChainBuilder()
+                    .withTrustedCertificates(Arrays.asList(trustedCerts))
+                    .withRevocationDataValidator(new MockRevocationDataValidator()).buildSignatureValidator();
+            ValidationReport report = signatureValidator.validateSignatures(document);
+
+            AssertValidationReport.assertThat(report, r -> r
+                    .hasStatus(ValidationResult.VALID)
+                    .hasNumberOfLogs(4).hasNumberOfFailures(0)
+                    .hasLogItem(l -> l
+                            .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
+                            .withMessage(SignatureValidator.VALIDATING_SIGNATURE_NAME, p -> "timestampSig1"))
+                    .hasLogItem(l -> l
+                            .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
+                            .withMessage(SignatureValidator.VALIDATING_SIGNATURE_NAME, p -> "Signature1"))
+            );
+        }
+    }
+
+    @Test
+    public void stopAfterTimestampChainValidationFailureTest() throws Exception {
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "validDocWithTimestamp.pdf"))) {
+            SignatureValidator signatureValidator = new ValidatorChainBuilder()
+                    .withSignatureValidationProperties(new SignatureValidationProperties()
+                            .setContinueAfterFailure(ValidatorContexts.all(), CertificateSources.all(), false))
+                    .withRevocationDataValidator(new MockRevocationDataValidator()).buildSignatureValidator();
+            ValidationReport report = signatureValidator.validateSignatures(document);
+
+            AssertValidationReport.assertThat(report, r -> r
+                    .hasStatus(ValidationResult.INDETERMINATE)
+                    .hasNumberOfLogs(2).hasNumberOfFailures(1)
+                    .hasLogItem(l -> l
+                            .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
+                            .withMessage(SignatureValidator.VALIDATING_SIGNATURE_NAME, p -> "Signature1"))
+                    .hasLogItem(l -> l
+                            .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
+                            .withStatus(ReportItem.ReportItemStatus.INDETERMINATE))
+            );
+        }
     }
 
     private void addRevDataClients()

@@ -449,6 +449,9 @@ public class PdfPKCS7 {
                         IASN1Set attributeValues = ts.getAttrValues();
                         IASN1Sequence tokenSequence =
                                 BOUNCY_CASTLE_FACTORY.createASN1SequenceInstance(attributeValues.getObjectAt(0));
+                        this.timestampSignatureContainer = new PdfPKCS7(tokenSequence.getEncoded(),
+                                PdfName.ETSI_RFC3161, BOUNCY_CASTLE_FACTORY.getProviderName());
+                        this.timestampSignatureContainer.update(signatureValue, 0, signatureValue.length);
                         this.timestampCerts = SignUtils.readAllCerts(tokenSequence.getEncoded());
                         IContentInfo contentInfo = BOUNCY_CASTLE_FACTORY.createContentInfo(tokenSequence);
                         this.timeStampTokenInfo = BOUNCY_CASTLE_FACTORY.createTSTInfo(contentInfo);
@@ -461,6 +464,7 @@ public class PdfPKCS7 {
                 this.timestampCerts = this.certs;
                 String algOID = timeStampTokenInfo.getMessageImprint().getHashAlgorithm().getAlgorithm().getId();
                 messageDigest = DigestAlgorithms.getMessageDigestFromOid(algOID, null);
+                encContDigest = DigestAlgorithms.getMessageDigest(getDigestAlgorithmName(), provider);
             } else {
                 if (this.encapMessageContent != null || digestAttr != null) {
                     if (PdfName.Adbe_pkcs7_sha1.equals(getFilterSubtype())) {
@@ -1323,32 +1327,39 @@ public class PdfPKCS7 {
         if (verified) {
             return verifyResult;
         }
-        if (isTsp) {
-            IMessageImprint imprint = timeStampTokenInfo.getMessageImprint();
-            byte[] md = messageDigest.digest();
-            byte[] imphashed = imprint.getHashedMessage();
-            verifyResult = Arrays.equals(md, imphashed);
-        } else {
-            if (sigAttr != null || sigAttrDer != null) {
-                final byte[] msgDigestBytes = messageDigest.digest();
-                boolean verifySignedMessageContent = true;
-                // Stefan Santesson fixed a bug, keeping the code backward compatible
-                boolean encContDigestCompare = false;
-                if (encapMessageContent != null) {
+        if (sigAttr != null || sigAttrDer != null) {
+            final byte[] msgDigestBytes = messageDigest.digest();
+            boolean verifySignedMessageContent = true;
+            // Stefan Santesson fixed a bug, keeping the code backward compatible
+            boolean encContDigestCompare = false;
+            if (encapMessageContent != null) {
+                if (isTsp) {
+                    byte[] tstInfo = new byte[0];
+                    try {
+                        tstInfo = timeStampTokenInfo.toASN1Primitive().getEncoded();
+                    } catch (IOException e) {
+                        // Ignore.
+                    }
+                    // Check that encapMessageContent is TSTInfo
+                    boolean isTSTInfo = Arrays.equals(tstInfo, encapMessageContent);
+                    IMessageImprint imprint = timeStampTokenInfo.getMessageImprint();
+                    byte[] imphashed = imprint.getHashedMessage();
+                    verifySignedMessageContent = isTSTInfo && Arrays.equals(msgDigestBytes, imphashed);
+                } else {
                     verifySignedMessageContent = Arrays.equals(msgDigestBytes, encapMessageContent);
-                    encContDigest.update(encapMessageContent);
-                    encContDigestCompare = Arrays.equals(encContDigest.digest(), digestAttr);
                 }
-                boolean absentEncContDigestCompare = Arrays.equals(msgDigestBytes, digestAttr);
-                boolean concludingDigestCompare = absentEncContDigestCompare || encContDigestCompare;
-                boolean sigVerify = verifySigAttributes(sigAttr) || verifySigAttributes(sigAttrDer);
-                verifyResult = concludingDigestCompare && sigVerify && verifySignedMessageContent;
-            } else {
-                if (encapMessageContent != null) {
-                    SignUtils.updateVerifier(sig, messageDigest.digest());
-                }
-                verifyResult = sig.verify(signatureValue);
+                encContDigest.update(encapMessageContent);
+                encContDigestCompare = Arrays.equals(encContDigest.digest(), digestAttr);
             }
+            boolean absentEncContDigestCompare = Arrays.equals(msgDigestBytes, digestAttr);
+            boolean concludingDigestCompare = absentEncContDigestCompare || encContDigestCompare;
+            boolean sigVerify = verifySigAttributes(sigAttr) || verifySigAttributes(sigAttrDer);
+            verifyResult = concludingDigestCompare && sigVerify && verifySignedMessageContent;
+        } else {
+            if (encapMessageContent != null) {
+                SignUtils.updateVerifier(sig, messageDigest.digest());
+            }
+            verifyResult = sig.verify(signatureValue);
         }
         verified = true;
         return verifyResult;
@@ -1624,10 +1635,14 @@ public class PdfPKCS7 {
     private boolean isCades;
 
     /**
+     * Inner timestamp signature container.
+     */
+    private PdfPKCS7 timestampSignatureContainer;
+
+    /**
      * BouncyCastle TSTInfo.
      */
     private ITSTInfo timeStampTokenInfo;
-
     /**
      * Check if it's a PAdES-LTV time stamp.
      *
@@ -1635,6 +1650,15 @@ public class PdfPKCS7 {
      */
     public boolean isTsp() {
         return isTsp;
+    }
+
+    /**
+     * Retrieves inner timestamp signature container if there is one.
+     *
+     * @return timestamp signature container or null.
+     */
+    public PdfPKCS7 getTimestampSignatureContainer() {
+        return timestampSignatureContainer;
     }
 
     /**
