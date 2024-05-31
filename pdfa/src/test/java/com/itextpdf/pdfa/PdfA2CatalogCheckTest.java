@@ -22,6 +22,7 @@
  */
 package com.itextpdf.pdfa;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -65,7 +66,7 @@ public class PdfA2CatalogCheckTest extends ExtendedITextTest {
         String outPdf = destinationFolder + "pdfA2b_catalogCheck03.pdf";
         String cmpPdf = cmpFolder + "cmp_pdfA2b_catalogCheck03.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         PdfDictionary ocProperties = new PdfDictionary();
@@ -90,9 +91,9 @@ public class PdfA2CatalogCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void catalogCheck04() throws FileNotFoundException {
+    public void catalogCheck04() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         PdfDictionary ocProperties = new PdfDictionary();
@@ -118,7 +119,7 @@ public class PdfA2CatalogCheckTest extends ExtendedITextTest {
         String outPdf = destinationFolder + "pdfA2b_catalogCheck05.pdf";
         String cmpPdf = cmpFolder + "cmp_pdfA2b_catalogCheck05.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         PdfDictionary ocProperties = new PdfDictionary();

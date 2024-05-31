@@ -22,6 +22,8 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.commons.utils.FileUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.action.PdfActionOcgState;
@@ -32,10 +34,7 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import com.itextpdf.commons.utils.MessageFormatUtil;
-
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -88,7 +87,7 @@ public class PdfActionTest extends ExtendedITextTest {
         String fileName = "soundActionTest.pdf";
         PdfDocument document = createDocument(CompareTool.createTestPdfWriter(destinationFolder + fileName), false);
 
-        InputStream is = new FileInputStream(sourceFolder + "sample.aif");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sample.aif");
         PdfStream sound1 = new PdfStream(document, is);
         sound1.put(PdfName.R, new PdfNumber(32117));
         sound1.put(PdfName.E, PdfName.Signed);
@@ -107,7 +106,7 @@ public class PdfActionTest extends ExtendedITextTest {
         String fileName = "soundActionWithRepeatFlagTest.pdf";
         PdfDocument document = createDocument(CompareTool.createTestPdfWriter(destinationFolder + fileName), false);
 
-        InputStream is = new FileInputStream(sourceFolder + "sample.aif");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sample.aif");
         PdfStream sound1 = new PdfStream(document, is);
         sound1.put(PdfName.R, new PdfNumber(32117));
         sound1.put(PdfName.E, PdfName.Signed);
@@ -126,7 +125,7 @@ public class PdfActionTest extends ExtendedITextTest {
     public void soundActionWithToBigVolumeTest() throws Exception {
         PdfDocument document = createDocument(new PdfWriter(new ByteArrayOutputStream()), false);
 
-        InputStream is = new FileInputStream(sourceFolder + "sample.aif");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sample.aif");
         PdfStream sound1 = new PdfStream(document, is);
         sound1.put(PdfName.R, new PdfNumber(32117));
         sound1.put(PdfName.E, PdfName.Signed);
@@ -147,7 +146,7 @@ public class PdfActionTest extends ExtendedITextTest {
     public void soundActionWithToLowVolumeTest() throws Exception {
         PdfDocument document = createDocument(new PdfWriter(new ByteArrayOutputStream()), false);
 
-        InputStream is = new FileInputStream(sourceFolder + "sample.aif");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sample.aif");
         PdfStream sound1 = new PdfStream(document, is);
         sound1.put(PdfName.R, new PdfNumber(32117));
         sound1.put(PdfName.E, PdfName.Signed);
@@ -301,7 +300,7 @@ public class PdfActionTest extends ExtendedITextTest {
         String fileName = "soundAndNextJavaScriptActionTest.pdf";
         PdfDocument document = createDocument(CompareTool.createTestPdfWriter(destinationFolder + fileName), false);
 
-        InputStream is = new FileInputStream(sourceFolder + "sample.aif");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sample.aif");
         PdfStream sound1 = new PdfStream(document, is);
         sound1.put(PdfName.R, new PdfNumber(32117));
         sound1.put(PdfName.E, PdfName.Signed);
@@ -322,7 +321,7 @@ public class PdfActionTest extends ExtendedITextTest {
         String fileName = "soundAndTwoNextJavaScriptActionTest.pdf";
         PdfDocument document = createDocument(CompareTool.createTestPdfWriter(destinationFolder + fileName), false);
 
-        InputStream is = new FileInputStream(sourceFolder + "sample.aif");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sample.aif");
         PdfStream sound1 = new PdfStream(document, is);
         sound1.put(PdfName.R, new PdfNumber(32117));
         sound1.put(PdfName.E, PdfName.Signed);

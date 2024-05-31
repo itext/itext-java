@@ -26,6 +26,7 @@ import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -47,7 +48,6 @@ import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
@@ -93,7 +93,7 @@ public class PadesSignatureLevelTest extends ExtendedITextTest {
         Certificate[] tsaChain = PemFileHelper.readFirstChain(tsaCertFileName);
         PrivateKey tsaPrivateKey = PemFileHelper.readFirstKey(tsaCertFileName, password);
 
-        PdfSigner signer = new PdfSigner(new PdfReader(srcFileName), new FileOutputStream(outFileName), new StampingProperties());
+        PdfSigner signer = new PdfSigner(new PdfReader(srcFileName), FileUtil.getFileOutputStream(outFileName), new StampingProperties());
         signer.setFieldName("Signature1");
         signer.getSignatureAppearance()
                 .setPageRect(new Rectangle(50, 650, 200, 100))
@@ -145,7 +145,7 @@ public class PadesSignatureLevelTest extends ExtendedITextTest {
         Certificate[] tsaChain = PemFileHelper.readFirstChain(tsaCertFileName);
         PrivateKey tsaPrivateKey = PemFileHelper.readFirstKey(tsaCertFileName, password);
 
-        PdfSigner signer = new PdfSigner(new PdfReader(srcFileName), new FileOutputStream(outFileName), new StampingProperties().useAppendMode());
+        PdfSigner signer = new PdfSigner(new PdfReader(srcFileName), FileUtil.getFileOutputStream(outFileName), new StampingProperties().useAppendMode());
 
         TestTsaClient testTsa = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
         signer.timestamp(testTsa, "timestampSig1");

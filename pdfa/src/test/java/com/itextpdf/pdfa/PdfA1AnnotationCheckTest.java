@@ -22,6 +22,7 @@
  */
 package com.itextpdf.pdfa;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -76,9 +77,9 @@ public class PdfA1AnnotationCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void annotationCheckTest01() throws FileNotFoundException {
+    public void annotationCheckTest01() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfPage page = doc.addNewPage();
 
@@ -92,9 +93,9 @@ public class PdfA1AnnotationCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void annotationCheckTest02() throws FileNotFoundException {
+    public void annotationCheckTest02() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfPage page = doc.addNewPage();
 
@@ -111,9 +112,9 @@ public class PdfA1AnnotationCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void annotationCheckTest03() throws FileNotFoundException {
+    public void annotationCheckTest03() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfPage page = doc.addNewPage();
 
@@ -131,9 +132,9 @@ public class PdfA1AnnotationCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void annotationCheckTest04() throws FileNotFoundException {
+    public void annotationCheckTest04() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfPage page = doc.addNewPage();
 
@@ -150,9 +151,9 @@ public class PdfA1AnnotationCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void annotationCheckTest05() throws FileNotFoundException {
+    public void annotationCheckTest05() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfPage page = doc.addNewPage();
 
@@ -172,9 +173,9 @@ public class PdfA1AnnotationCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void annotationCheckTest06() throws FileNotFoundException {
+    public void annotationCheckTest06() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfPage page = doc.addNewPage();
 
@@ -196,7 +197,7 @@ public class PdfA1AnnotationCheckTest extends ExtendedITextTest {
         String outPdf = destinationFolder + "pdfA1b_annotationCheckTest07.pdf";
         String cmpPdf = cmpFolder + "cmp_pdfA1b_annotationCheckTest07.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfPage page = doc.addNewPage();
 
@@ -218,7 +219,7 @@ public class PdfA1AnnotationCheckTest extends ExtendedITextTest {
         String cmpPdf = cmpFolder + "cmp_pdfA1a_annotationCheckTest08.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_1_4));
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1A, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.setTagged();
         doc.getCatalog().setLang(new PdfString("en-US"));
@@ -241,7 +242,7 @@ public class PdfA1AnnotationCheckTest extends ExtendedITextTest {
         String cmpPdf = cmpFolder + "cmp_pdfA1a_annotationCheckTest09.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf);
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1A, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.setTagged();
         doc.getCatalog().setLang(new PdfString("en-US"));

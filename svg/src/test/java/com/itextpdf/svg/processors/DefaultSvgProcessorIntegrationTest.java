@@ -22,6 +22,7 @@
  */
 package com.itextpdf.svg.processors;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.styledxmlparser.node.IDocumentNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.JsoupXmlParser;
 import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
@@ -47,7 +48,7 @@ public class DefaultSvgProcessorIntegrationTest extends SvgIntegrationTest {
     @Test
     public void DefaultBehaviourTest() throws IOException {
         String svgFile = sourceFolder + "RedCircle.svg";
-        InputStream svg = new FileInputStream(svgFile);
+        InputStream svg = FileUtil.getInputStreamForFile(svgFile);
         JsoupXmlParser xmlParser = new JsoupXmlParser();
         IDocumentNode root = xmlParser.parse(svg, null);
         IBranchSvgNodeRenderer actual = (IBranchSvgNodeRenderer) new DefaultSvgProcessor().process(root, null).getRootRenderer();
@@ -67,7 +68,7 @@ public class DefaultSvgProcessorIntegrationTest extends SvgIntegrationTest {
     @Test
     public void namedObjectRectangleTest() throws IOException {
         String svgFile = sourceFolder + "namedObjectRectangleTest.svg";
-        InputStream svg = new FileInputStream(svgFile);
+        InputStream svg = FileUtil.getInputStreamForFile(svgFile);
         JsoupXmlParser xmlParser = new JsoupXmlParser();
         IDocumentNode root = xmlParser.parse(svg, null);
         ISvgProcessorResult processorResult = new DefaultSvgProcessor().process(root, null);

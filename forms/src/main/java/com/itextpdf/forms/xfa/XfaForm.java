@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms.xfa;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.kernel.exceptions.PdfException;
@@ -40,7 +41,6 @@ import com.itextpdf.kernel.xmp.XmlDomWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -450,7 +450,7 @@ public class XfaForm {
      * @throws java.io.IOException if any I/O issue occurs on the {@link InputSource}
      */
     public void fillXfaForm(File file, boolean readOnly) throws IOException {
-        fillXfaForm(new FileInputStream(file), readOnly);
+        fillXfaForm(FileUtil.getInputStreamForFile(file), readOnly);
     }
 
     /**

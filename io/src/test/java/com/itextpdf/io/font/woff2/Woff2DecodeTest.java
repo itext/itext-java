@@ -22,6 +22,7 @@
  */
 package com.itextpdf.io.font.woff2;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.exceptions.FontCompressionException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
@@ -71,7 +72,7 @@ public abstract class Woff2DecodeTest extends ExtendedITextTest {
 
     protected final void saveFile(byte[] content, String fileName) throws IOException {
         if (content != null) {
-            OutputStream os = new FileOutputStream(fileName);
+            OutputStream os = FileUtil.getFileOutputStream(fileName);
             os.write(content);
             os.close();
         }

@@ -26,6 +26,7 @@ import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.ReaderProperties;
@@ -42,7 +43,6 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
@@ -94,7 +94,7 @@ public class EncryptedSigningTest extends ExtendedITextTest {
 
         byte[] ownerPass = "World".getBytes();
         PdfReader reader = new PdfReader(srcFile, new ReaderProperties().setPassword(ownerPass));
-        PdfSigner signer = new PdfSigner(reader, new FileOutputStream(outPdf),
+        PdfSigner signer = new PdfSigner(reader, FileUtil.getFileOutputStream(outPdf),
                 new StampingProperties().useAppendMode());
 
         signer.setFieldName(fieldName);
@@ -119,7 +119,7 @@ public class EncryptedSigningTest extends ExtendedITextTest {
 
             PdfReader reader = new PdfReader(srcFile, new ReaderProperties()
                     .setPublicKeySecurityParams(chain[0], pk, FACTORY.getProviderName(), null));
-            PdfSigner signer = new PdfSigner(reader, new FileOutputStream(outPdf),
+            PdfSigner signer = new PdfSigner(reader, FileUtil.getFileOutputStream(outPdf),
                     new StampingProperties().useAppendMode());
 
             // Creating the signature

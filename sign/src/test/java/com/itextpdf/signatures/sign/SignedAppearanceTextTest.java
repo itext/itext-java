@@ -27,6 +27,7 @@ import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.DateTimeUtil;
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.fields.properties.SignedAppearanceText;
 import com.itextpdf.forms.form.element.SignatureFieldAppearance;
@@ -64,10 +65,8 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator;  // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+import com.itextpdf.test.pdfa.VeraPdfValidator;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
@@ -251,7 +250,7 @@ public class SignedAppearanceTextTest extends ExtendedITextTest {
         WriterProperties writerProperties = new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0);
         String icmProfile = PDFA_FOLDER + "sRGB Color Space Profile.icm";
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "",
-                "http://www.color.org", "sRGB IEC61966-2.1", new FileInputStream(icmProfile));
+                "http://www.color.org", "sRGB IEC61966-2.1", FileUtil.getInputStreamForFile(icmProfile));
         PdfDocument document = new PdfADocument(new PdfWriter(filename, writerProperties),
                 PdfAConformanceLevel.PDF_A_4,
                 outputIntent);
@@ -335,7 +334,7 @@ public class SignedAppearanceTextTest extends ExtendedITextTest {
 
         PdfReader reader = new PdfReader(src);
         StampingProperties properties = new StampingProperties();
-        PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), properties);
+        PdfSigner signer = new PdfSigner(reader, FileUtil.getFileOutputStream(dest), properties);
 
         signer.setCertificationLevel(PdfSigner.NOT_CERTIFIED);
         signer.setFieldName(name);

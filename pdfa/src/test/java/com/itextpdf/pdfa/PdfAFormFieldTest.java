@@ -22,6 +22,7 @@
  */
 package com.itextpdf.pdfa;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.PdfPageFormCopier;
 import com.itextpdf.forms.fields.CheckBoxFormFieldBuilder;
@@ -83,10 +84,8 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+import com.itextpdf.test.pdfa.VeraPdfValidator;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -113,11 +112,11 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
     @Test
     public void pdfAButtonFieldTest() throws Exception {
         PdfDocument pdf;
-        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         String file = "pdfAButtonField.pdf";
         String filename = DESTINATION_FOLDER + file;
         pdf = new PdfADocument(
-                new PdfWriter(new FileOutputStream(filename)),
+                new PdfWriter(FileUtil.getFileOutputStream(filename)),
                 PdfAConformanceLevel.PDF_A_1B,
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB ICC preference", is));
 
@@ -175,7 +174,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         String fileName = DESTINATION_FOLDER + name + ".pdf";
         String cmp = SOURCE_FOLDER + "cmp/PdfAFormFieldTest/cmp_pdfA1DocWithPdfA1ButtonField.pdf";
 
-        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
 
         PdfAConformanceLevel conformanceLevel = PdfAConformanceLevel.PDF_A_1B;
 
@@ -202,7 +201,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         String fileName = DESTINATION_FOLDER + name + ".pdf";
         String cmp = SOURCE_FOLDER + "cmp/PdfAFormFieldTest/cmp_pdfA1DocWithPdfA1CheckBoxField.pdf";
 
-        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
 
         PdfAConformanceLevel conformanceLevel = PdfAConformanceLevel.PDF_A_1B;
 
@@ -228,7 +227,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
 
         PdfFont fontFreeSans = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
                 "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
-        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
 
         PdfAConformanceLevel conformanceLevel = PdfAConformanceLevel.PDF_A_1B;
         PdfADocument pdfDoc = new PdfADocument(new PdfWriter(fileName), conformanceLevel,
@@ -258,7 +257,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         PdfFont fontCJK = PdfFontFactory.createFont(SOURCE_FOLDER + "NotoSansCJKtc-Light.otf",
                         PdfEncodings.IDENTITY_H, EmbeddingStrategy.FORCE_EMBEDDED);
 
-        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
 
         PdfAConformanceLevel conformanceLevel = PdfAConformanceLevel.PDF_A_1B;
         PdfADocument pdfDoc = new PdfADocument(new PdfWriter(fileName), conformanceLevel,
@@ -287,7 +286,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         PdfFont fontFreeSans = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
                 "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
 
-        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
 
         PdfAConformanceLevel conformanceLevel = PdfAConformanceLevel.PDF_A_1B;
         PdfADocument pdfDoc = new PdfADocument(new PdfWriter(fileName), conformanceLevel,
@@ -319,7 +318,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         PdfFont fontFreeSans = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
                 "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
 
-        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
 
         PdfAConformanceLevel conformanceLevel = PdfAConformanceLevel.PDF_A_1B;
         PdfADocument pdfDoc = new PdfADocument(new PdfWriter(fileName), conformanceLevel,
@@ -344,7 +343,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         String fileName = DESTINATION_FOLDER + name + ".pdf";
         String cmp = SOURCE_FOLDER + "cmp/PdfAFormFieldTest/cmp_pdfA1DocWithPdfA1RadioButtonField.pdf";
 
-        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
 
         PdfAConformanceLevel conformanceLevel = PdfAConformanceLevel.PDF_A_1B;
         PdfADocument pdfDoc = new PdfADocument(new PdfWriter(fileName), conformanceLevel,
@@ -386,7 +385,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
                 "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
         fontFreeSans.setSubset(false);
 
-        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
 
         PdfAConformanceLevel conformanceLevel = PdfAConformanceLevel.PDF_A_1B;
         PdfADocument pdfDoc = new PdfADocument(new PdfWriter(fileName), conformanceLevel,
@@ -413,7 +412,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
                 "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
         fontFreeSans.setSubset(false);
 
-        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
 
         PdfAConformanceLevel conformanceLevel = PdfAConformanceLevel.PDF_A_1B;
         PdfADocument pdfDoc = new PdfADocument(new PdfWriter(fileName), conformanceLevel,
@@ -437,7 +436,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         String fileName = DESTINATION_FOLDER + "pdfADocWithTextFormField.pdf";
         String mergedDocFileName = DESTINATION_FOLDER + "mergedPdfADoc.pdf";
 
-        try (InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        try (InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
                 PdfADocument pdfDoc = new PdfADocument(new PdfWriter(fileName), PdfAConformanceLevel.PDF_A_1B,
                         new PdfOutputIntent("Custom", "",
                                 "http://www.color.org", "sRGB ICC preference", is));
@@ -459,7 +458,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         Assert.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 
         PdfADocument pdfDocToMerge;
-        try (InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        try (InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
                 PdfDocument newDoc = new PdfDocument(new PdfReader(fileName))) {
             pdfDocToMerge = new PdfADocument(new PdfWriter(mergedDocFileName).setSmartMode(true),
                     PdfAConformanceLevel.PDF_A_1B,
@@ -646,7 +645,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
                 .setPdfVersion(PdfVersion.PDF_2_0));
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4E,
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
-                        new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm")));
+                        FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm")));
 
         Document document = new Document(doc);
         document.add(new InputField("inputfield1").setFont(font).setInteractive(true).setValue("Hello there"));
@@ -658,7 +657,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
                         .setPdfVersion(PdfVersion.PDF_2_0));
         PdfADocument doc2 = new PdfADocument(writer2, PdfAConformanceLevel.PDF_A_4,
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
-                        new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm")));
+                        FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm")));
 
         PdfDocument docToCopy = new PdfDocument(new PdfReader(simplePdf));
         docToCopy.copyPagesTo(1, 1, doc2, new PdfPageFormCopier());
@@ -712,7 +711,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
                         .setPdfVersion(PdfVersion.PDF_2_0));
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4E,
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
-                        new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm")));
+                        FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm")));
 
         Document document = new Document(doc);
         consumer.accept(document);

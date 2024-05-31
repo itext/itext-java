@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf.canvas;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.image.ImageData;
@@ -955,7 +956,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_FOLDER + "gifImageTest02.pdf"));
         PdfPage page = document.addNewPage();
 
-        InputStream is = new FileInputStream(SOURCE_FOLDER + "2-frames.gif");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "2-frames.gif");
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         int reads = is.read();
         while (reads != -1) {
@@ -978,7 +979,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_FOLDER + "gifImageTest03.pdf"));
         PdfPage page = document.addNewPage();
 
-        InputStream is = new FileInputStream(SOURCE_FOLDER + "2-frames.gif");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "2-frames.gif");
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         int reads = is.read();
         while (reads != -1) {
@@ -1001,7 +1002,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_FOLDER + "gifImageTest04.pdf"));
         PdfPage page = document.addNewPage();
 
-        InputStream is = new FileInputStream(SOURCE_FOLDER + "2-frames.gif");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "2-frames.gif");
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         int reads = is.read();
         while (reads != -1) {
@@ -1023,7 +1024,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_FOLDER + "gifImageTest05.pdf"));
         PdfPage page = document.addNewPage();
 
-        InputStream is = new FileInputStream(SOURCE_FOLDER + "animated_fox_dog.gif");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "animated_fox_dog.gif");
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         int reads = is.read();
         while (reads != -1) {

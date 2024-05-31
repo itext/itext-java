@@ -22,6 +22,7 @@
  */
 package com.itextpdf.signatures.sign;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.crypto.CryptoUtil;
 import com.itextpdf.signatures.CrlClientOnline;
@@ -34,8 +35,6 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -105,8 +104,8 @@ public class CrlClientOnlineTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = "Skipped CRL url (malformed): test",
                     logLevel = LogLevelConstants.INFO)
     })
-    public void checkCrlCertWithMalformedUrlTest() throws CertificateException, FileNotFoundException {
-        Certificate chain = CryptoUtil.readPublicCertificate(new FileInputStream(certWithMalformedUrl));
+    public void checkCrlCertWithMalformedUrlTest() throws CertificateException, IOException {
+        Certificate chain = CryptoUtil.readPublicCertificate(FileUtil.getInputStreamForFile(certWithMalformedUrl));
         CrlClientOnline crlClientOnline = new CrlClientOnline(new Certificate[] {chain});
         Assert.assertEquals(0, crlClientOnline.getUrlsSize());
     }
@@ -117,8 +116,8 @@ public class CrlClientOnlineTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = "Added CRL url: http://www.example.com/crl/test.crl",
                     logLevel = LogLevelConstants.INFO)
     })
-    public void checkCrlCertWithCorrectUrlTest() throws CertificateException, FileNotFoundException {
-        Certificate chain = CryptoUtil.readPublicCertificate(new FileInputStream(certWithCorrectUrl));
+    public void checkCrlCertWithCorrectUrlTest() throws CertificateException, IOException {
+        Certificate chain = CryptoUtil.readPublicCertificate(FileUtil.getInputStreamForFile(certWithCorrectUrl));
         CrlClientOnline crlClientOnline = new CrlClientOnline(new Certificate[] {chain});
         Assert.assertEquals(1, crlClientOnline.getUrlsSize());
     }

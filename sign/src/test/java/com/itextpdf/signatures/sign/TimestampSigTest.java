@@ -26,6 +26,7 @@ import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.signatures.PdfSigner;
@@ -35,18 +36,17 @@ import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.util.Arrays;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(BouncyCastleIntegrationTest.class)
 public class TimestampSigTest extends ExtendedITextTest {
@@ -76,7 +76,7 @@ public class TimestampSigTest extends ExtendedITextTest {
         Certificate[] tsaChain = PemFileHelper.readFirstChain(tsaCertFileName);
         PrivateKey tsaPrivateKey = PemFileHelper.readFirstKey(tsaCertFileName, password);
 
-        PdfSigner signer = new PdfSigner(new PdfReader(srcFileName), new FileOutputStream(outFileName), new StampingProperties());
+        PdfSigner signer = new PdfSigner(new PdfReader(srcFileName), FileUtil.getFileOutputStream(outFileName), new StampingProperties());
 
         TestTsaClient testTsa = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
         signer.timestamp(testTsa, "timestampSig1");

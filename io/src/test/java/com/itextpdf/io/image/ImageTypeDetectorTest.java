@@ -22,13 +22,12 @@
  */
 package com.itextpdf.io.image;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -78,33 +77,33 @@ public class ImageTypeDetectorTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testStreamUnknown() throws FileNotFoundException {
-        testStream(new FileInputStream(SOURCE_FOLDER + IMAGE_NAME + ".txt"), ImageType.NONE);
+    public void testStreamUnknown() throws IOException {
+        testStream(FileUtil.getInputStreamForFile(SOURCE_FOLDER + IMAGE_NAME + ".txt"), ImageType.NONE);
     }
 
     @Test
-    public void testStreamGif() throws FileNotFoundException {
-        testStream(new FileInputStream(SOURCE_FOLDER + IMAGE_NAME + ".gif"), ImageType.GIF);
+    public void testStreamGif() throws IOException {
+        testStream(FileUtil.getInputStreamForFile(SOURCE_FOLDER + IMAGE_NAME + ".gif"), ImageType.GIF);
     }
 
     @Test
-    public void testStreamJpeg() throws FileNotFoundException {
-        testStream(new FileInputStream(SOURCE_FOLDER + IMAGE_NAME + ".jpg"), ImageType.JPEG);
+    public void testStreamJpeg() throws IOException {
+        testStream(FileUtil.getInputStreamForFile(SOURCE_FOLDER + IMAGE_NAME + ".jpg"), ImageType.JPEG);
     }
 
     @Test
-    public void testStreamTiff() throws FileNotFoundException {
-        testStream(new FileInputStream(SOURCE_FOLDER + IMAGE_NAME + ".tiff"), ImageType.TIFF);
+    public void testStreamTiff() throws IOException {
+        testStream(FileUtil.getInputStreamForFile(SOURCE_FOLDER + IMAGE_NAME + ".tiff"), ImageType.TIFF);
     }
 
     @Test
-    public void testStreamWmf() throws FileNotFoundException {
-        testStream(new FileInputStream(SOURCE_FOLDER + IMAGE_NAME + ".wmf"), ImageType.WMF);
+    public void testStreamWmf() throws IOException {
+        testStream(FileUtil.getInputStreamForFile(SOURCE_FOLDER + IMAGE_NAME + ".wmf"), ImageType.WMF);
     }
 
     @Test
     public void testStreamClosed() throws IOException {
-        InputStream stream = new FileInputStream(SOURCE_FOLDER + IMAGE_NAME + ".wmf");
+        InputStream stream = FileUtil.getInputStreamForFile(SOURCE_FOLDER + IMAGE_NAME + ".wmf");
         stream.close();
 
         // A common exception is expected instead of com.itextpdf.io.exceptions.IOException, because in .NET
@@ -114,31 +113,31 @@ public class ImageTypeDetectorTest extends ExtendedITextTest {
 
     @Test
     public void testBytesUnknown() throws IOException {
-        testBytes(StreamUtil.inputStreamToArray(new FileInputStream(SOURCE_FOLDER + IMAGE_NAME + ".txt")),
+        testBytes(StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile(SOURCE_FOLDER + IMAGE_NAME + ".txt")),
                 ImageType.NONE);
     }
 
     @Test
     public void testBytesGif() throws IOException {
-        testBytes(StreamUtil.inputStreamToArray(new FileInputStream(SOURCE_FOLDER + IMAGE_NAME + ".gif")),
+        testBytes(StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile(SOURCE_FOLDER + IMAGE_NAME + ".gif")),
                 ImageType.GIF);
     }
 
     @Test
     public void testBytesJpeg() throws IOException {
-        testBytes(StreamUtil.inputStreamToArray(new FileInputStream(SOURCE_FOLDER + IMAGE_NAME + ".jpg")),
+        testBytes(StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile(SOURCE_FOLDER + IMAGE_NAME + ".jpg")),
                 ImageType.JPEG);
     }
 
     @Test
     public void testBytesTiff() throws IOException {
-        testBytes(StreamUtil.inputStreamToArray(new FileInputStream(SOURCE_FOLDER + IMAGE_NAME + ".tiff")),
+        testBytes(StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile(SOURCE_FOLDER + IMAGE_NAME + ".tiff")),
                 ImageType.TIFF);
     }
 
     @Test
     public void testBytesWmf() throws IOException {
-        testBytes(StreamUtil.inputStreamToArray(new FileInputStream(SOURCE_FOLDER + IMAGE_NAME + ".wmf")),
+        testBytes(StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile(SOURCE_FOLDER + IMAGE_NAME + ".wmf")),
                 ImageType.WMF);
     }
 

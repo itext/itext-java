@@ -66,9 +66,7 @@ import com.itextpdf.kernel.xmp.options.SerializeOptions;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -967,13 +965,13 @@ public class CompareTool {
         try (PdfReader readerOut = CompareTool.createOutputReader(outPdf);
                 PdfDocument docOut = new PdfDocument(readerOut,
                         new DocumentProperties().setEventCountingMetaInfo(metaInfo));
-                FileOutputStream xmlOut = new FileOutputStream(outXmlPath)) {
+                OutputStream xmlOut = FileUtil.getFileOutputStream(outXmlPath)) {
             new TaggedPdfReaderTool(docOut).setRootTag("root").convertToXml(xmlOut);
         }
         try (PdfReader readerCmp = CompareTool.createOutputReader(cmpPdf);
                 PdfDocument docCmp = new PdfDocument(readerCmp,
                         new DocumentProperties().setEventCountingMetaInfo(metaInfo));
-                FileOutputStream xmlCmp = new FileOutputStream(cmpXmlPath)) {
+                OutputStream xmlCmp = FileUtil.getFileOutputStream(cmpXmlPath)) {
             new TaggedPdfReaderTool(docCmp).setRootTag("root").convertToXml(xmlCmp);
         }
 
@@ -1120,8 +1118,8 @@ public class CompareTool {
                 continue;
             System.out.println("Comparing page " + Integer.toString(i + 1) + ": " + UrlUtil.getNormalizedFileUriString(imageFiles[i].getName()) + " ...");
             System.out.println("Comparing page " + Integer.toString(i + 1) + ": " + UrlUtil.getNormalizedFileUriString(imageFiles[i].getName()) + " ...");
-            FileInputStream is1 = new FileInputStream(imageFiles[i].getAbsolutePath());
-            FileInputStream is2 = new FileInputStream(cmpImageFiles[i].getAbsolutePath());
+            InputStream is1 = FileUtil.getInputStreamForFile(imageFiles[i].getAbsolutePath());
+            InputStream is2 = FileUtil.getInputStreamForFile(cmpImageFiles[i].getAbsolutePath());
             boolean cmpResult = compareStreams(is1, is2);
             is1.close();
             is2.close();
@@ -1275,7 +1273,7 @@ public class CompareTool {
             }
             if (generateCompareByContentXmlReport) {
                 String outPdfName = new File(outPdf).getName();
-                FileOutputStream xml = new FileOutputStream(outPath + "/" + outPdfName.substring(0, outPdfName.length() - 3) + "report.xml");
+                OutputStream xml = FileUtil.getFileOutputStream(outPath + "/" + outPdfName.substring(0, outPdfName.length() - 3) + "report.xml");
                 try {
                     compareResult.writeReportToXml(xml);
                 } catch (Exception e) {

@@ -22,6 +22,7 @@
  */
 package com.itextpdf.layout;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
@@ -30,9 +31,7 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -89,7 +88,8 @@ public class NewLineTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_" + fileName;
         String diffPrefix = "diff_" + fileName + "_";
 
-        PdfDocument pdf = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName), new WriterProperties().setCompressionLevel(0)));
+        PdfDocument pdf = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName),
+                new WriterProperties().setCompressionLevel(0)));
         Document document = new Document(pdf);
 
         Paragraph paragraph = new Paragraph().add(

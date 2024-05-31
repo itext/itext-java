@@ -22,6 +22,7 @@
  */
 package com.itextpdf.pdfa;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
@@ -36,15 +37,14 @@ import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+import com.itextpdf.test.pdfa.VeraPdfValidator;
+
+import java.io.IOException;
+import java.io.InputStream;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 
 @Category(IntegrationTest.class)
 public class PdfA2LayoutOcgTest extends ExtendedITextTest {
@@ -60,7 +60,7 @@ public class PdfA2LayoutOcgTest extends ExtendedITextTest {
     @Test
     public void checkIfOcgForPdfA2Works() throws IOException, InterruptedException {
         String fileName = "createdOcgPdfA.pdf";
-        InputStream colorStream = new FileInputStream(sourceFolder + "color/sRGB_CS_profile.icm");
+        InputStream colorStream = FileUtil.getInputStreamForFile(sourceFolder + "color/sRGB_CS_profile.icm");
         String outFileName = destinationFolder + fileName;
         String cmpFileName = sourceFolder + "cmp/PdfA2LayoutOcgTest/cmp_" + fileName;
         PdfDocument pdfDoc = new PdfADocument(new PdfWriter(outFileName), PdfAConformanceLevel.PDF_A_2A,

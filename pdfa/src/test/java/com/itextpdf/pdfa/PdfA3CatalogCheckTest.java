@@ -22,6 +22,7 @@
  */
 package com.itextpdf.pdfa;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -32,9 +33,8 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+import com.itextpdf.test.pdfa.VeraPdfValidator;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import org.junit.Assert;
@@ -59,7 +59,7 @@ public class PdfA3CatalogCheckTest extends ExtendedITextTest {
         String cmpPdf = cmpFolder + "cmp_pdfA3b_catalogCheck01.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf);
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_3B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
 

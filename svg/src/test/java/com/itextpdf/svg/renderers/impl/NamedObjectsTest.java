@@ -22,6 +22,7 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.svg.converter.SvgConverter;
@@ -47,7 +48,7 @@ public class NamedObjectsTest extends SvgIntegrationTest {
             @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.RULE_IS_NOT_SUPPORTED),
     })
     public void addNamedObject() throws IOException {
-        INode parsedSvg = SvgConverter.parse(new FileInputStream("./src/test/resources/com/itextpdf/svg/renderers/impl/NamedObjectsTest/names.svg"));
+        INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile("./src/test/resources/com/itextpdf/svg/renderers/impl/NamedObjectsTest/names.svg"));
         ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg, null);
 
         Assert.assertTrue(result.getNamedObjects().get("name_svg") instanceof SvgTagSvgNodeRenderer);

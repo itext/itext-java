@@ -22,6 +22,7 @@
  */
 package com.itextpdf.io.image;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.test.AssertUtil;
@@ -31,8 +32,8 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -45,7 +46,7 @@ public class JpegImageHelperTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = IoLogMessageConstant.DURING_CONSTRUCTION_OF_ICC_PROFILE_ERROR_OCCURRED, logLevel = LogLevelConstants.ERROR)
     })
     public void attemptToSetInvalidIccProfileToImageTest() throws IOException {
-        try (FileInputStream fis = new FileInputStream(SOURCE_FOLDER + "WP_20140410_001.jpg")) {
+        try (InputStream fis = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "WP_20140410_001.jpg")) {
 
             ImageData img = ImageDataFactory.createJpeg(StreamUtil.inputStreamToArray(fis));
             int size = 100;
@@ -63,7 +64,7 @@ public class JpegImageHelperTest extends ExtendedITextTest {
 
     @Test
     public void attemptToSetNullIccProfileToImageTest() throws IOException {
-        try (FileInputStream fis = new FileInputStream(SOURCE_FOLDER + "WP_20140410_001.jpg")) {
+        try (InputStream fis = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "WP_20140410_001.jpg")) {
             byte[][] icc = new byte[][] {null, null};
             ImageData img = ImageDataFactory.createJpeg(StreamUtil.inputStreamToArray(fis));
             AssertUtil.doesNotThrow(() -> JpegImageHelper.attemptToSetIccProfileToImage(icc, img));

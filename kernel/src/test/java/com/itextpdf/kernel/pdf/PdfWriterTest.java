@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
@@ -30,6 +31,7 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import java.io.OutputStream;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -527,7 +529,7 @@ public class PdfWriterTest extends ExtendedITextTest {
 
     @Test
     public void closeStream1() throws IOException {
-        FileOutputStream fos = new FileOutputStream(destinationFolder + "closeStream1.pdf");
+        OutputStream fos = FileUtil.getFileOutputStream(destinationFolder + "closeStream1.pdf");
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.addNewPage();
@@ -542,7 +544,7 @@ public class PdfWriterTest extends ExtendedITextTest {
 
     @Test
     public void closeStream2() throws IOException {
-        FileOutputStream fos = new FileOutputStream(destinationFolder + "closeStream2.pdf");
+        OutputStream fos = FileUtil.getFileOutputStream(destinationFolder + "closeStream2.pdf");
         PdfWriter writer = new PdfWriter(fos);
         writer.setCloseStream(false);
         PdfDocument pdfDoc = new PdfDocument(writer);

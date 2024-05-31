@@ -25,6 +25,7 @@ package com.itextpdf.signatures.sign;
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -43,13 +44,9 @@ import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -58,6 +55,10 @@ import java.security.KeyException;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(BouncyCastleUnitTest.class)
 public class RSASSAPSSTest extends ExtendedITextTest {
@@ -178,7 +179,7 @@ public class RSASSAPSSTest extends ExtendedITextTest {
     private void doSign(String digestAlgo, String signatureAlgo, String outFile, IApplicableSignatureParams params)
             throws IOException, GeneralSecurityException {
         // write to a file for easier inspection when debugging
-        try (FileOutputStream fos = new FileOutputStream(outFile)) {
+        try (OutputStream fos = FileUtil.getFileOutputStream(outFile)) {
             Certificate root = readCertificate(Paths.get(SOURCE_FOLDER, "ca.crt"));
             Certificate signerCert = readCertificate(Paths.get(SOURCE_FOLDER, "rsa.crt"));
             Certificate[] signChain = new Certificate[]{signerCert, root};

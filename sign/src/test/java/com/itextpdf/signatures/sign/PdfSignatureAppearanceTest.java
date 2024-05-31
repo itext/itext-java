@@ -26,13 +26,14 @@ import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
+import com.itextpdf.commons.utils.FileUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfSignatureFormField;
 import com.itextpdf.forms.fields.SignatureFormFieldBuilder;
 import com.itextpdf.forms.form.element.SignatureFieldAppearance;
 import com.itextpdf.io.image.ImageDataFactory;
-import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -63,7 +64,6 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
@@ -179,7 +179,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         String dest = DESTINATION_FOLDER + "signed_hybrid.pdf";
         String cmp = SOURCE_FOLDER + "cmp_signed_hybrid.pdf";
 
-        PdfSigner signer = new PdfSigner(new PdfReader(src), new FileOutputStream(dest),
+        PdfSigner signer = new PdfSigner(new PdfReader(src), FileUtil.getFileOutputStream(dest),
                 new StampingProperties().useAppendMode());
 
         String fieldName = "Sign1";
@@ -214,7 +214,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         Rectangle rect = new Rectangle(36, 648, 100, 50);
         String src = SOURCE_FOLDER + "simpleDocument.pdf";
 
-        PdfSigner signer = new PdfSigner(new PdfReader(src), new FileOutputStream(dest), new StampingProperties());
+        PdfSigner signer = new PdfSigner(new PdfReader(src), FileUtil.getFileOutputStream(dest), new StampingProperties());
         signer.setFieldName("Signature1");
         // Creating the appearance
         signer.setPageRect(rect)
@@ -267,7 +267,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
 
         PdfReader reader = new PdfReader(src);
 
-        PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties());
+        PdfSigner signer = new PdfSigner(reader, FileUtil.getFileOutputStream(dest), new StampingProperties());
         signer.setCertificationLevel(PdfSigner.NOT_CERTIFIED);
 
         signer.setFieldName("Signature1");
@@ -297,7 +297,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
 
         PdfReader reader = new PdfReader(src);
 
-        PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties());
+        PdfSigner signer = new PdfSigner(reader, FileUtil.getFileOutputStream(dest), new StampingProperties());
         signer.setCertificationLevel(PdfSigner.NOT_CERTIFIED);
 
         signer.setFieldName("Signature1");
@@ -329,7 +329,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
 
         PdfReader reader = new PdfReader(src);
 
-        PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties());
+        PdfSigner signer = new PdfSigner(reader, FileUtil.getFileOutputStream(dest), new StampingProperties());
         signer.setCertificationLevel(PdfSigner.NOT_CERTIFIED);
 
         signer.setFieldName("Signature1");
@@ -354,7 +354,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         String fileName = "layer0Test.pdf";
         String dest = DESTINATION_FOLDER + fileName;
 
-        PdfSigner signer = new PdfSigner(new PdfReader(src), new FileOutputStream(dest), new StampingProperties());
+        PdfSigner signer = new PdfSigner(new PdfReader(src), FileUtil.getFileOutputStream(dest), new StampingProperties());
 
         // Creating the appearance
         PdfSignatureAppearance appearance = signer.getSignatureAppearance();
@@ -403,7 +403,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         String fileName = "layer0WithImageTest.pdf";
         String dest = DESTINATION_FOLDER + fileName;
 
-        PdfSigner signer = new PdfSigner(new PdfReader(src), new FileOutputStream(dest), new StampingProperties());
+        PdfSigner signer = new PdfSigner(new PdfReader(src), FileUtil.getFileOutputStream(dest), new StampingProperties());
 
         // Creating the appearance
         PdfSignatureAppearance appearance = signer.getSignatureAppearance();
@@ -430,7 +430,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         String fileName = "layer0WithImageAndPositiveImageScaleTest.pdf";
         String dest = DESTINATION_FOLDER + fileName;
 
-        PdfSigner signer = new PdfSigner(new PdfReader(src), new FileOutputStream(dest), new StampingProperties());
+        PdfSigner signer = new PdfSigner(new PdfReader(src), FileUtil.getFileOutputStream(dest), new StampingProperties());
 
         // Creating the appearance
         PdfSignatureAppearance appearance = signer.getSignatureAppearance();
@@ -458,7 +458,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         String fileName = "layer0WithImageAndNegativeImageScale.pdf";
         String dest = DESTINATION_FOLDER + fileName;
 
-        PdfSigner signer = new PdfSigner(new PdfReader(src), new FileOutputStream(dest), new StampingProperties());
+        PdfSigner signer = new PdfSigner(new PdfReader(src), FileUtil.getFileOutputStream(dest), new StampingProperties());
 
         // Creating the appearance
         PdfSignatureAppearance appearance = signer.getSignatureAppearance();
@@ -486,7 +486,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         String fileName = "layer2Test.pdf";
         String dest = DESTINATION_FOLDER + fileName;
 
-        PdfSigner signer = new PdfSigner(new PdfReader(src), new FileOutputStream(dest), new StampingProperties());
+        PdfSigner signer = new PdfSigner(new PdfReader(src), FileUtil.getFileOutputStream(dest), new StampingProperties());
 
         // Creating the appearance
         PdfSignatureAppearance appearance = signer.getSignatureAppearance();
@@ -540,7 +540,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         PdfFormCreator.getAcroForm(document, true).addField(field);
         document.close();
 
-        PdfSigner signer = new PdfSigner(new PdfReader(unsignedDoc), new FileOutputStream(dest), new StampingProperties());
+        PdfSigner signer = new PdfSigner(new PdfReader(unsignedDoc), FileUtil.getFileOutputStream(dest), new StampingProperties());
         signer.setFieldName(fieldName);
         // Creating the appearance
         SignatureFieldAppearance appearance = new SignatureFieldAppearance(fieldName)
@@ -563,7 +563,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         String fileName = "signedSignatureField.pdf";
         String dest = DESTINATION_FOLDER + fileName;
 
-        PdfSigner signer = new PdfSigner(new PdfReader(src), new FileOutputStream(dest), new StampingProperties());
+        PdfSigner signer = new PdfSigner(new PdfReader(src), FileUtil.getFileOutputStream(dest), new StampingProperties());
         signer.setFieldName("Signature1");
 
         // Creating the appearance
@@ -631,7 +631,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         String dest = DESTINATION_FOLDER + fileName;
         String fieldName = "Signature1";
 
-        PdfSigner signer = new PdfSigner(new PdfReader(src), new FileOutputStream(dest), new StampingProperties());
+        PdfSigner signer = new PdfSigner(new PdfReader(src), FileUtil.getFileOutputStream(dest), new StampingProperties());
         signer.setFieldName(fieldName);
         SignatureFieldAppearance appearance = new SignatureFieldAppearance(fieldName)
                 .setContent("Signature field")
@@ -662,7 +662,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         String fieldName = "Signature1";
         SignatureFieldAppearance appearance = new SignatureFieldAppearance(fieldName);
 
-        PdfSigner signer = new PdfSigner(new PdfReader(srcFile), new FileOutputStream(outPdf), new StampingProperties());
+        PdfSigner signer = new PdfSigner(new PdfReader(srcFile), FileUtil.getFileOutputStream(outPdf), new StampingProperties());
         signer.setCertificationLevel(PdfSigner.NOT_CERTIFIED);
         signer.setFieldName(fieldName);
         signer.setReason("test reason").setLocation("test location").setSignatureAppearance(appearance);
@@ -697,7 +697,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         String dest = DESTINATION_FOLDER + fileName;
         String fieldName = "Signature1";
 
-        PdfSigner signer = new PdfSigner(new PdfReader(src), new FileOutputStream(dest), new StampingProperties());
+        PdfSigner signer = new PdfSigner(new PdfReader(src), FileUtil.getFileOutputStream(dest), new StampingProperties());
         signer.setFieldName(fieldName);
         signer.getSignatureField().setReuseAppearance(fieldReuseAp);
         if (useDeprecated) {
@@ -719,7 +719,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         String dest = DESTINATION_FOLDER + fileName;
         String fieldName = "Signature1";
 
-        PdfSigner signer = new PdfSigner(new PdfReader(src), new FileOutputStream(dest), new StampingProperties());
+        PdfSigner signer = new PdfSigner(new PdfReader(src), FileUtil.getFileOutputStream(dest), new StampingProperties());
         signer.setFieldName(fieldName);
         signer.setPageRect(new Rectangle(250, 500, 100, 100)).setReason("Test 1").setLocation("TestCity")
                 .setSignatureAppearance(new SignatureFieldAppearance(fieldName));
@@ -785,7 +785,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         String src = SOURCE_FOLDER + "documentWithRotatedPages.pdf";
         String dest = DESTINATION_FOLDER + fileName;
 
-        PdfSigner signer = new PdfSigner(new PdfReader(src), new FileOutputStream(dest),
+        PdfSigner signer = new PdfSigner(new PdfReader(src), FileUtil.getFileOutputStream(dest),
                 new StampingProperties().useAppendMode());
 
         PdfSignatureAppearance appearance = signer.getSignatureAppearance();
@@ -822,7 +822,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
             PdfSignatureAppearance.RenderingMode renderingMode) throws IOException, GeneralSecurityException {
         String src = SOURCE_FOLDER + "simpleDocument.pdf";
 
-        PdfSigner signer = new PdfSigner(new PdfReader(src), new FileOutputStream(dest), new StampingProperties());
+        PdfSigner signer = new PdfSigner(new PdfReader(src), FileUtil.getFileOutputStream(dest), new StampingProperties());
         // Creating the appearance
         signer.getSignatureAppearance()
                 .setLayer2FontSize(0)

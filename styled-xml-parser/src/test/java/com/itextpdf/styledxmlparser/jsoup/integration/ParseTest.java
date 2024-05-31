@@ -22,6 +22,7 @@
  */
 package com.itextpdf.styledxmlparser.jsoup.integration;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.styledxmlparser.jsoup.Jsoup;
 import com.itextpdf.styledxmlparser.jsoup.helper.DataUtil;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Document;
@@ -31,19 +32,18 @@ import com.itextpdf.styledxmlparser.jsoup.parser.Parser;
 import com.itextpdf.styledxmlparser.jsoup.select.Elements;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.zip.GZIPInputStream;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 /**
  * Integration test: parses from real-world example HTML.
@@ -210,6 +210,16 @@ public class ParseTest extends ExtendedITextTest {
     }
 
     @Test
+    public void usualHtmlButWithGzExtensionTest() throws IOException {
+        File in = getFile("/htmltests/simple.html.gz");
+        Document doc = Jsoup.parse(in, null);
+
+        Element form = doc.select("#form").first();
+        Assert.assertEquals(2, form.children().size());
+        Assert.assertEquals("UTF-8", doc.outputSettings().charset().name());
+    }
+
+    @Test
     public void testXwiki() throws IOException {
         // https://github.com/jhy/jsoup/issues/1324
         // this tests that when in CharacterReader we hit a buffer while marked, we preserve the mark when buffered up and can rewind
@@ -230,7 +240,7 @@ public class ParseTest extends ExtendedITextTest {
         // and the parse tree is correct.
         File in = getFile("/htmltests/xwiki-edit.html.gz");
         Parser parser = Parser.htmlParser();
-        Document doc = Jsoup.parse(new GZIPInputStream(new FileInputStream(in)), "UTF-8", "https://localhost/", parser.setTrackErrors(100));
+        Document doc = Jsoup.parse(new GZIPInputStream(FileUtil.getInputStreamForFile(in)), "UTF-8", "https://localhost/", parser.setTrackErrors(100));
         ParseErrorList errors = parser.getErrors();
 
         Assert.assertEquals("XWiki Jetty HSQLDB 12.1-SNAPSHOT", doc.select("#xwikiplatformversion").text());
@@ -271,7 +281,7 @@ public class ParseTest extends ExtendedITextTest {
     public static String getFileAsString(File file) throws IOException {
         byte[] bytes;
         if (file.getName().endsWith(".gz")) {
-            InputStream stream = new GZIPInputStream(new FileInputStream(file));
+            InputStream stream = new GZIPInputStream(FileUtil.getInputStreamForFile(file));
             ByteBuffer byteBuffer = DataUtil.readToByteBuffer(stream, 0);
             bytes = byteBuffer.array();
         } else {

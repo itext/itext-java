@@ -22,6 +22,7 @@
  */
 package com.itextpdf.pdfa;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -37,16 +38,14 @@ import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+import com.itextpdf.test.pdfa.VeraPdfValidator;
+
+import java.io.IOException;
+import java.io.InputStream;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 
 @Category(IntegrationTest.class)
 public class PdfA2OCPropertiesTest extends ExtendedITextTest {
@@ -59,10 +58,10 @@ public class PdfA2OCPropertiesTest extends ExtendedITextTest {
     }
 
     @Test
-    public void checkNameEntryShouldBeUniqueBetweenDefaultAndAdditionalConfigsTest() throws FileNotFoundException {
+    public void checkNameEntryShouldBeUniqueBetweenDefaultAndAdditionalConfigsTest() throws IOException {
         String outPdf = DESTINATION_FOLDER + "pdfA2b_ocPropertiesCheck01.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
-        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
 
@@ -86,10 +85,10 @@ public class PdfA2OCPropertiesTest extends ExtendedITextTest {
     }
 
     @Test
-    public void checkAsKeyInContentConfigDictTest() throws FileNotFoundException {
+    public void checkAsKeyInContentConfigDictTest() throws IOException {
         String outPdf = DESTINATION_FOLDER + "pdfA2b_ocPropertiesCheck02.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
-        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
 
@@ -112,10 +111,10 @@ public class PdfA2OCPropertiesTest extends ExtendedITextTest {
 
 
     @Test
-    public void checkNameEntryShouldBeUniqueBetweenAdditionalConfigsTest() throws FileNotFoundException {
+    public void checkNameEntryShouldBeUniqueBetweenAdditionalConfigsTest() throws IOException {
         String outPdf = DESTINATION_FOLDER + "pdfA2b_ocPropertiesCheck03.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
-        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
 
@@ -142,10 +141,10 @@ public class PdfA2OCPropertiesTest extends ExtendedITextTest {
     }
 
     @Test
-    public void checkOCCDContainNameTest() throws FileNotFoundException {
+    public void checkOCCDContainNameTest() throws IOException {
         String outPdf = DESTINATION_FOLDER + "pdfA2b_ocPropertiesCheck04.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
-        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
 
@@ -171,10 +170,10 @@ public class PdfA2OCPropertiesTest extends ExtendedITextTest {
     }
 
     @Test
-    public void checkOrderArrayContainsReferencesToAllOCGsTest() throws FileNotFoundException {
+    public void checkOrderArrayContainsReferencesToAllOCGsTest() throws IOException {
         String outPdf = DESTINATION_FOLDER + "pdfA2b_ocPropertiesCheck05.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
-        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
 
@@ -216,7 +215,7 @@ public class PdfA2OCPropertiesTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "pdfA2b_ocPropertiesCheck06.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_pdfA2b_ocPropertiesCheck06.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
-        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
 

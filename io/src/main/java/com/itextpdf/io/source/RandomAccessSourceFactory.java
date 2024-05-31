@@ -22,13 +22,13 @@
  */
 package com.itextpdf.io.source;
 
+import com.itextpdf.commons.utils.FileUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.util.ResourceUtil;
 import com.itextpdf.io.util.StreamUtil;
-import com.itextpdf.commons.utils.MessageFormatUtil;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.net.URL;
@@ -195,7 +195,7 @@ public final class RandomAccessSourceFactory {
         }
 
         if (forceRead){
-            return createByReadingToMemory(new FileInputStream(filename));
+            return createByReadingToMemory(FileUtil.getInputStreamForFile(filename));
         }
 
         String openMode = exclusivelyLockFile ? "rw" : "r";

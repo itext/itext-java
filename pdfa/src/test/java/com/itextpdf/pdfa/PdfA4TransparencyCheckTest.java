@@ -22,6 +22,7 @@
  */
 package com.itextpdf.pdfa;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.colors.IccBased;
 import com.itextpdf.kernel.font.PdfFont;
@@ -52,12 +53,11 @@ import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+import com.itextpdf.test.pdfa.VeraPdfValidator;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -89,7 +89,7 @@ public class PdfA4TransparencyCheckTest extends ExtendedITextTest {
         PdfPage page1 = pdfDocument.addNewPage();
         page1.addOutputIntent(createOutputIntent());
 
-        FileInputStream streamGray = new FileInputStream(SOURCE_FOLDER + "BlackWhite.icc");
+        InputStream streamGray = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "BlackWhite.icc");
         IccBased gray = new IccBased(streamGray, new float[]{0.2f});
 
         PdfCanvas canvas = new PdfCanvas(page1);
@@ -153,7 +153,7 @@ public class PdfA4TransparencyCheckTest extends ExtendedITextTest {
         PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
                 "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED);
 
-        FileInputStream streamGray = new FileInputStream(SOURCE_FOLDER + "BlackWhite.icc");
+        InputStream streamGray = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "BlackWhite.icc");
         IccBased gray = new IccBased(streamGray, new float[]{0.2f});
 
         PdfPage page = pdfDocument.addNewPage();
@@ -193,7 +193,7 @@ public class PdfA4TransparencyCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void blendModeTest() throws FileNotFoundException {
+    public void blendModeTest() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         try (PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, createOutputIntent())) {
             PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
@@ -310,8 +310,8 @@ public class PdfA4TransparencyCheckTest extends ExtendedITextTest {
         return array;
     }
 
-    private PdfOutputIntent createOutputIntent() throws FileNotFoundException {
+    private PdfOutputIntent createOutputIntent() throws IOException {
         return new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
-                new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm"));
+                FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm"));
     }
 }

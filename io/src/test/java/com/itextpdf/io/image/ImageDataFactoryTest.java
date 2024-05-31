@@ -27,8 +27,8 @@ import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import org.junit.Assert;
 import org.junit.Test;
@@ -92,7 +92,7 @@ public class ImageDataFactoryTest extends ExtendedITextTest {
 
     private void testImageTypeSupport(URL location, boolean expectedResult) throws IOException {
         Assert.assertEquals(expectedResult, ImageDataFactory.isSupportedType(location));
-        try (FileInputStream inputStream = new FileInputStream(location.getFile())) {
+        try (InputStream inputStream = UrlUtil.openStream(location)) {
             Assert.assertEquals(expectedResult, ImageDataFactory.isSupportedType(StreamUtil.inputStreamToArray(inputStream)));
         }
     }

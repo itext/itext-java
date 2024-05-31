@@ -53,8 +53,6 @@ import com.itextpdf.svg.renderers.impl.PdfRootSvgNodeRenderer;
 import com.itextpdf.svg.utils.SvgCssUtils;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -453,8 +451,8 @@ public final class SvgConverter {
             String baseUri = FileUtil.getParentDirectoryUri(svgFile);
             props = convertToSvgConverterProps(props, baseUri);
         }
-        try (FileInputStream fileInputStream = new FileInputStream(svgFile.getAbsolutePath());
-             FileOutputStream fileOutputStream = new FileOutputStream(pdfFile.getAbsolutePath())) {
+        try (InputStream fileInputStream = FileUtil.getInputStreamForFile(svgFile.getAbsolutePath());
+                OutputStream fileOutputStream = FileUtil.getFileOutputStream(pdfFile.getAbsolutePath())) {
             createPdf(fileInputStream, fileOutputStream, props, writerProps);
         }
     }

@@ -22,6 +22,7 @@
  */
 package com.itextpdf.pdfa;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -158,8 +159,8 @@ public class PdfA4EmbeddedFilesCheckTest extends ExtendedITextTest {
         Assert.assertEquals(PdfaExceptionMessageConstant.FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_AFRELATIONSHIP_KEY, e.getMessage());
     }
 
-    private PdfOutputIntent createOutputIntent() throws FileNotFoundException {
+    private PdfOutputIntent createOutputIntent() throws IOException {
         return new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
-                new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm"));
+                FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm"));
     }
 }

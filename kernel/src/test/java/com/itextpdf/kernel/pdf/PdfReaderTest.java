@@ -54,8 +54,6 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -2094,7 +2092,7 @@ public class PdfReaderTest extends ExtendedITextTest {
     @Test
     public void notCloseUserStreamTest() throws IOException {
         String fileName = SOURCE_FOLDER + "emptyPdf.pdf";
-        try (InputStream pdfStream = new FileInputStream(fileName)) {
+        try (InputStream pdfStream = FileUtil.getInputStreamForFile(fileName)) {
             IRandomAccessSource randomAccessSource = new RandomAccessSourceFactory()
                     .createSource(pdfStream);
             Exception e = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class,
@@ -2251,7 +2249,7 @@ public class PdfReaderTest extends ExtendedITextTest {
     @Test
     public void readRASInputStreamClosedTest() throws IOException {
         String fileName = SOURCE_FOLDER + "hello.pdf";
-        try (InputStream pdfStream = new FileInputStream(fileName)) {
+        try (InputStream pdfStream = FileUtil.getInputStreamForFile(fileName)) {
 
             IRandomAccessSource randomAccessSource = new RandomAccessSourceFactory()
                     .extractOrCreateSource(pdfStream);
@@ -2268,7 +2266,7 @@ public class PdfReaderTest extends ExtendedITextTest {
     @Test
     public void readRASInputStreamTest() throws IOException {
         String fileName = SOURCE_FOLDER + "hello.pdf";
-        try (InputStream pdfStream = new FileInputStream(fileName)) {
+        try (InputStream pdfStream = FileUtil.getInputStreamForFile(fileName)) {
             IRandomAccessSource randomAccessSource = new RandomAccessSourceFactory()
                     .extractOrCreateSource(pdfStream);
             RASInputStream rasInputStream = new RASInputStream(randomAccessSource);
@@ -2284,7 +2282,7 @@ public class PdfReaderTest extends ExtendedITextTest {
     @Test
     public void readRASInputStreamValidTest() throws IOException {
         String fileName = SOURCE_FOLDER + "hello.pdf";
-        try (InputStream pdfStream = new FileInputStream(fileName)) {
+        try (InputStream pdfStream = FileUtil.getInputStreamForFile(fileName)) {
             IRandomAccessSource randomAccessSource = new RandomAccessSourceFactory()
                     .extractOrCreateSource(pdfStream);
             RASInputStream rasInputStream = new RASInputStream(randomAccessSource);

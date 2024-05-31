@@ -22,6 +22,7 @@
  */
 package com.itextpdf.pdfa;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -85,9 +86,9 @@ public class PdfA4MiscCheckTest extends ExtendedITextTest {
         compareResult(outPdf, cmpPdf);
     }
 
-    private PdfOutputIntent createOutputIntent() throws FileNotFoundException {
+    private PdfOutputIntent createOutputIntent() throws IOException {
         return new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
-                new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm"));
+                FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm"));
     }
 
     private void compareResult(String outPdf, String cmpPdf) throws IOException, InterruptedException {

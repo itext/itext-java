@@ -22,6 +22,7 @@
  */
 package com.itextpdf.layout;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.UrlUtil;
@@ -40,17 +41,17 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 
 @RunWith(Parameterized.class)
 @Category(IntegrationTest.class)
@@ -176,8 +177,8 @@ public class ListItemPositionAlignmentTest extends ExtendedITextTest {
 				formatSymbolAlignment(listSymbolAlignment),
 				formatBaseDirection(listItemBaseDirection),
 				formatBaseDirection(listBaseDirection));
-		try (FileOutputStream htmlFile =
-				     new FileOutputStream(DESTINATION_FOLDER + fileName + ".html")) {
+		try (OutputStream htmlFile =
+				     FileUtil.getFileOutputStream(DESTINATION_FOLDER + fileName + ".html")) {
 			byte[] htmlBytes = htmlString.getBytes(StandardCharsets.UTF_8);
 			htmlFile.write(htmlBytes, 0, htmlBytes.length);
 		}

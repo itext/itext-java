@@ -22,9 +22,11 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.security.KeyStore;
 
 /**
@@ -41,9 +43,9 @@ public class KeyStoreUtil {
         File file = new File(System.getProperty("java.home"), "lib");
         file = new File(file, "security");
         file = new File(file, "cacerts");
-        FileInputStream fin = null;
+        InputStream fin = null;
         try {
-            fin = new FileInputStream(file);
+            fin = FileUtil.getInputStreamForFile(file);
             KeyStore k;
             if (provider == null) {
                 k = KeyStore.getInstance("JKS");

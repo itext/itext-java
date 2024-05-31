@@ -27,6 +27,7 @@ import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.DateTimeUtil;
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.PdfSigFieldLock;
 import com.itextpdf.forms.fields.NonTerminalFormFieldBuilder;
@@ -35,7 +36,6 @@ import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfSignatureFormField;
 import com.itextpdf.forms.fields.SignatureFormFieldBuilder;
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
@@ -63,14 +63,8 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
@@ -79,6 +73,11 @@ import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.Calendar;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(BouncyCastleUnitTest.class)
 public class PdfSignerUnitTest extends ExtendedITextTest {
@@ -511,7 +510,7 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
     private static byte[] createSimplePdfaDocument() throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PdfWriter writer = new PdfWriter(outputStream);
-        InputStream is = new FileInputStream(PDFA_RESOURCES + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(PDFA_RESOURCES + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent =
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
         PdfDocument document = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1A, outputIntent);

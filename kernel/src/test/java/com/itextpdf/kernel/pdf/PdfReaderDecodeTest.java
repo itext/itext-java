@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.MemoryLimitsAwareException;
@@ -31,8 +32,8 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -45,7 +46,7 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
     @Test
     public void noMemoryHandlerTest() throws IOException {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-                FileInputStream is = new FileInputStream(SOURCE_FOLDER + "stream")) {
+                InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "stream")) {
             byte[] b = new byte[51];
             is.read(b);
 

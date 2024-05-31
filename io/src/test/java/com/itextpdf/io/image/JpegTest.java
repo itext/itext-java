@@ -22,13 +22,14 @@
  */
 package com.itextpdf.io.image;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -40,7 +41,7 @@ public class JpegTest extends ExtendedITextTest {
 
     @Test
     public void openJpeg1() throws IOException {
-        try (FileInputStream fis = new FileInputStream(SOURCE_FOLDER + "WP_20140410_001.jpg")) {
+        try (InputStream fis = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "WP_20140410_001.jpg")) {
             // Test this a more specific entry point
             ImageData img = ImageDataFactory.createJpeg(StreamUtil.inputStreamToArray(fis));
             Assert.assertEquals(2592, img.getWidth(), 0);
@@ -60,7 +61,7 @@ public class JpegTest extends ExtendedITextTest {
 
     @Test
     public void openJpeg3() throws IOException {
-        try (FileInputStream fis = new FileInputStream(SOURCE_FOLDER + "WP_20140410_001_monochrome.jpg")) {
+        try (InputStream fis = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "WP_20140410_001_monochrome.jpg")) {
             // Test this a more specific entry point
             ImageData img = ImageDataFactory.create(StreamUtil.inputStreamToArray(fis));
             Assert.assertEquals(2592, img.getWidth(), 0);

@@ -26,6 +26,7 @@ import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.CompressionConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -45,7 +46,6 @@ import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
@@ -87,7 +87,7 @@ public class SequentialSignaturesTest extends ExtendedITextTest {
                 new PrivateKeySignature(signPrivateKey, DigestAlgorithms.SHA256, FACTORY.getProviderName());
 
         String signatureName = "Signature2";
-        PdfSigner signer = new PdfSigner(new PdfReader(srcFileName), new FileOutputStream(outFileName), new StampingProperties().useAppendMode());
+        PdfSigner signer = new PdfSigner(new PdfReader(srcFileName), FileUtil.getFileOutputStream(outFileName), new StampingProperties().useAppendMode());
         signer.setFieldName(signatureName);
         signer.getSignatureAppearance()
                 .setPageRect(new Rectangle(50, 350, 200, 100))
@@ -117,7 +117,7 @@ public class SequentialSignaturesTest extends ExtendedITextTest {
                 FACTORY.getProviderName());
 
         String signatureName = "Signature2";
-        PdfSigner signer = new PdfSigner(new PdfReader(srcFileName), new FileOutputStream(outFileName),
+        PdfSigner signer = new PdfSigner(new PdfReader(srcFileName), FileUtil.getFileOutputStream(outFileName),
                 new StampingProperties().useAppendMode());
 
         PdfDocument document = signer.getDocument();

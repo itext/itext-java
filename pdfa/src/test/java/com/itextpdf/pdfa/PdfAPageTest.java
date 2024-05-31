@@ -22,6 +22,7 @@
  */
 package com.itextpdf.pdfa;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.events.Event;
 import com.itextpdf.kernel.events.IEventHandler;
 import com.itextpdf.kernel.events.PdfDocumentEvent;
@@ -66,7 +67,7 @@ public class PdfAPageTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(outPdf);
         PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1A,
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
-                        new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm")));
+                        FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm")));
         pdfDoc.setTagged();
         pdfDoc.getCatalog().setLang(new PdfString("en-US"));
         EndPageEventHandler eventHandler = new EndPageEventHandler();
@@ -100,7 +101,7 @@ public class PdfAPageTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(outPdf);
         PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1A,
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
-                        new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm")));
+                        FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm")));
         pdfDoc.setTagged();
         pdfDoc.getCatalog().setLang(new PdfString("en-US"));
 
@@ -128,7 +129,7 @@ public class PdfAPageTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(outPdf);
         PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1A,
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
-                        new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm")));
+                        FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm")));
         pdfDoc.setTagged();
         pdfDoc.getCatalog().setLang(new PdfString("en-US"));
 
@@ -156,7 +157,7 @@ public class PdfAPageTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(outPdf);
         PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1A,
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
-                        new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm")));
+                        FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm")));
         pdfDoc.setTagged();
         pdfDoc.getCatalog().setLang(new PdfString("en-US"));
 
@@ -184,7 +185,7 @@ public class PdfAPageTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(outPdf);
         PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1A,
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
-                        new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm")));
+                        FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm")));
         pdfDoc.setTagged();
         pdfDoc.getCatalog().setLang(new PdfString("en-US"));
 

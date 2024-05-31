@@ -22,6 +22,7 @@
  */
 package com.itextpdf.pdfa;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -63,7 +64,7 @@ public class PdfAIndirectObjectsCountLimitTest extends ExtendedITextTest {
         };
 
         try (
-                InputStream icm = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+                InputStream icm = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
                 OutputStream fos = new ByteArrayOutputStream();
                 Document document = new Document(new PdfADocument(new PdfWriter(fos),
                         PdfAConformanceLevel.PDF_A_1B,
@@ -88,7 +89,7 @@ public class PdfAIndirectObjectsCountLimitTest extends ExtendedITextTest {
         };
 
         try (
-                InputStream icm = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+                InputStream icm = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
                 OutputStream fos = new ByteArrayOutputStream();
         ) {
             Document document = new Document(new PdfADocument(new PdfWriter(fos),
@@ -116,7 +117,7 @@ public class PdfAIndirectObjectsCountLimitTest extends ExtendedITextTest {
         };
 
         try (
-                InputStream fis = new FileInputStream(sourceFolder + "pdfs/pdfa10IndirectObjects.pdf");
+                InputStream fis = FileUtil.getInputStreamForFile(sourceFolder + "pdfs/pdfa10IndirectObjects.pdf");
                 OutputStream fos = new ByteArrayOutputStream();
         ) {
             PdfADocument pdfa = new PdfADocument(new PdfReader(fis), new PdfWriter(fos), new StampingProperties().useAppendMode());
