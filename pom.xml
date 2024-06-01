@@ -498,6 +498,7 @@
                 <excludes>
                   <exclude>com.itextpdf.commons.bouncycastle</exclude>
                   <exclude>com.itextpdf.pdfua.exceptions.PdfUAConformanceException</exclude>
+                  <exclude>com.itextpdf.signatures.validation.v1.DocumentRevisionsValidator</exclude>
                 </excludes>
                 <excludeModules>
                   <excludeModule>bouncy-castle-adapter</excludeModule>

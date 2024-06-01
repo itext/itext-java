@@ -39,7 +39,12 @@ import com.itextpdf.signatures.validation.v1.context.CertificateSources;
 import com.itextpdf.signatures.validation.v1.context.TimeBasedContexts;
 import com.itextpdf.signatures.validation.v1.context.ValidatorContext;
 import com.itextpdf.signatures.validation.v1.context.ValidatorContexts;
+import com.itextpdf.signatures.validation.v1.mocks.MockChainValidator;
+import com.itextpdf.signatures.validation.v1.mocks.MockDocumentRevisionsValidator;
+import com.itextpdf.signatures.validation.v1.mocks.MockIssuingCertificateRetriever;
+import com.itextpdf.signatures.validation.v1.mocks.MockRevocationDataValidator;
 import com.itextpdf.signatures.validation.v1.report.ReportItem;
+import com.itextpdf.signatures.validation.v1.report.ReportItem.ReportItemStatus;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport.ValidationResult;
 import com.itextpdf.test.ExtendedITextTest;
@@ -73,6 +78,7 @@ public class SignatureValidatorTest extends ExtendedITextTest {
 
     private ValidatorChainBuilder builder;
     private MockChainValidator mockCertificateChainValidator;
+    private MockDocumentRevisionsValidator mockDocumentRevisionsValidator;
 
     @BeforeClass
     public static void before() {
@@ -84,11 +90,13 @@ public class SignatureValidatorTest extends ExtendedITextTest {
         mockCertificateChainValidator = new MockChainValidator();
         parameters = new SignatureValidationProperties();
         mockCertificateRetriever = new MockIssuingCertificateRetriever();
+        mockDocumentRevisionsValidator = new MockDocumentRevisionsValidator();
         builder = new ValidatorChainBuilder()
                 .withIssuingCertificateRetriever(mockCertificateRetriever)
                 .withSignatureValidationProperties(parameters)
                 .withCertificateChainValidator(mockCertificateChainValidator)
-                .withRevocationDataValidator(new MockRevocationDataValidator());
+                .withRevocationDataValidator(new MockRevocationDataValidator())
+                .withDocumentRevisionsValidator(mockDocumentRevisionsValidator);
 
     }
 
@@ -380,6 +388,26 @@ public class SignatureValidatorTest extends ExtendedITextTest {
             SignatureValidator signatureValidator = builder.buildSignatureValidator();
 
             report = signatureValidator.validateLatestSignature(document);
+        }
+
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationResult.INVALID)
+                .hasNumberOfFailures(1)
+                .hasLogItem(al -> al
+                        .withCheckName("test")
+                        .withMessage("test"))
+        );
+    }
+
+    @Test
+    public void invalidRevisionsValidationLeadsToInvalidResultTest() throws IOException {
+        mockDocumentRevisionsValidator.setReportItemStatus(ReportItemStatus.INVALID);
+
+        ValidationReport report;
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "validDoc.pdf"))) {
+            SignatureValidator signatureValidator = builder.buildSignatureValidator();
+
+            report = signatureValidator.validateSignatures(document);
         }
 
         AssertValidationReport.assertThat(report, a -> a

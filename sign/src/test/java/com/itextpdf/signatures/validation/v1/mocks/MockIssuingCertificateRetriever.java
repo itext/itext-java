@@ -20,7 +20,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.signatures.validation.v1;
+package com.itextpdf.signatures.validation.v1.mocks;
 
 import com.itextpdf.signatures.IssuingCertificateRetriever;
 

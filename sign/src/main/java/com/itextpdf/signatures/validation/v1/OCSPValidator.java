@@ -80,7 +80,7 @@ public class OCSPValidator {
 
      * @param builder See {@link  ValidatorChainBuilder}
      */
-    OCSPValidator(ValidatorChainBuilder builder) {
+    protected OCSPValidator(ValidatorChainBuilder builder) {
         this.certificateRetriever = builder.getCertificateRetriever();
         this.properties = builder.getProperties();
         this.builder = builder;

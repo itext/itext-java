@@ -36,6 +36,7 @@ import com.itextpdf.signatures.testutils.client.TestOcspClient;
 import com.itextpdf.signatures.validation.v1.context.CertificateSources;
 import com.itextpdf.signatures.validation.v1.context.TimeBasedContexts;
 import com.itextpdf.signatures.validation.v1.context.ValidatorContexts;
+import com.itextpdf.signatures.validation.v1.mocks.MockRevocationDataValidator;
 import com.itextpdf.signatures.validation.v1.report.ReportItem;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport.ValidationResult;
@@ -258,15 +259,19 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
                     .withRevocationDataValidator(new MockRevocationDataValidator()).buildSignatureValidator();
             ValidationReport report = signatureValidator.validateSignatures(document);
 
+            // Document contains invalid unused entry which is invalid according to DocumentRevisionsValidator.
             AssertValidationReport.assertThat(report, r -> r
-                    .hasStatus(ValidationResult.VALID)
-                    .hasNumberOfLogs(4).hasNumberOfFailures(0)
+                    .hasStatus(ValidationResult.INVALID)
+                    .hasNumberOfLogs(5).hasNumberOfFailures(1)
                     .hasLogItem(l -> l
                             .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
                             .withMessage(SignatureValidator.VALIDATING_SIGNATURE_NAME, p -> "timestampSig1"))
                     .hasLogItem(l -> l
                             .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
                             .withMessage(SignatureValidator.VALIDATING_SIGNATURE_NAME, p -> "Signature1"))
+                    .hasLogItem(l -> l
+                            .withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                            .withMessage(DocumentRevisionsValidator.UNEXPECTED_ENTRY_IN_XREF, p -> "28"))
             );
         }
     }
@@ -282,11 +287,11 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
 
             AssertValidationReport.assertThat(report, r -> r
                     .hasStatus(ValidationResult.INDETERMINATE)
-                    .hasNumberOfLogs(2).hasNumberOfFailures(1)
+                    .hasNumberOfLogs(3).hasNumberOfFailures(2)
                     .hasLogItem(l -> l
                             .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
                             .withMessage(SignatureValidator.VALIDATING_SIGNATURE_NAME, p -> "Signature1"))
-                    .hasLogItem(l -> l
+                    .hasLogItems(2, l -> l
                             .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
                             .withStatus(ReportItem.ReportItemStatus.INDETERMINATE))
             );

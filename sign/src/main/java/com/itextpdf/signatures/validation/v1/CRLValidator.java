@@ -98,7 +98,7 @@ public class CRLValidator {
      *
      * @param builder See {@link  ValidatorChainBuilder}
      */
-     CRLValidator(ValidatorChainBuilder builder) {
+    protected CRLValidator(ValidatorChainBuilder builder) {
         this.certificateRetriever = builder.getCertificateRetriever();
         this.properties = builder.getProperties();
         this.builder = builder;
@@ -114,7 +114,7 @@ public class CRLValidator {
      * @param validationDate validation date to check for
      */
     public void validate(ValidationReport report, ValidationContext context, X509Certificate certificate, X509CRL crl,
-                         Date validationDate) {
+            Date validationDate) {
         ValidationContext localContext = context.setValidatorContext(ValidatorContext.CRL_VALIDATOR);
         if (CertificateUtil.isSelfSigned(certificate)) {
             report.addReportItem(new CertificateReportItem(certificate, CRL_CHECK, SELF_SIGNED_CERTIFICATE,
@@ -123,7 +123,7 @@ public class CRLValidator {
         }
         // Check that thisUpdate >= (validationDate - freshness).
         Duration freshness = properties.getFreshness(localContext);
-        if (crl.getThisUpdate().before(DateTimeUtil.addMillisToDate(validationDate, -(long)freshness.toMillis()))) {
+        if (crl.getThisUpdate().before(DateTimeUtil.addMillisToDate(validationDate, -(long) freshness.toMillis()))) {
             report.addReportItem(new CertificateReportItem(certificate, CRL_CHECK,
                     MessageFormatUtil.format(FRESHNESS_CHECK, crl.getThisUpdate(), validationDate, freshness),
                     ReportItemStatus.INDETERMINATE));
@@ -203,7 +203,7 @@ public class CRLValidator {
     }
 
     private static void verifyRevocation(ValidationReport report, X509Certificate certificate,
-                                         Date verificationDate, X509CRL crl) {
+            Date verificationDate, X509CRL crl) {
         X509CRLEntry revocation = crl.getRevokedCertificate(certificate.getSerialNumber());
         if (revocation != null) {
             Date revocationDate = revocation.getRevocationDate();
@@ -255,7 +255,7 @@ public class CRLValidator {
     }
 
     private static int computeInterimReasonsMask(IIssuingDistributionPoint issuingDistPoint,
-                                                 IDistributionPoint distributionPoint) {
+            IDistributionPoint distributionPoint) {
         int interimReasonsMask = ALL_REASONS;
         if (!issuingDistPoint.isNull()) {
             IReasonFlags onlySomeReasons = issuingDistPoint.getOnlySomeReasons();
@@ -273,7 +273,7 @@ public class CRLValidator {
     }
 
     private void verifyCrlIntegrity(ValidationReport report, ValidationContext context, X509Certificate certificate,
-                                    X509CRL crl) {
+            X509CRL crl) {
         Certificate[] certs = certificateRetriever.getCrlIssuerCertificates(crl);
         if (certs.length == 0) {
             report.addReportItem(new CertificateReportItem(certificate, CRL_CHECK, CRL_ISSUER_NOT_FOUND,
@@ -312,7 +312,7 @@ public class CRLValidator {
     }
 
     private Certificate getRoot(Certificate cert) {
-        Certificate[] chain = certificateRetriever.retrieveMissingCertificates(new Certificate[]{cert});
+        Certificate[] chain = certificateRetriever.retrieveMissingCertificates(new Certificate[] {cert});
         return chain[chain.length - 1];
     }
 }

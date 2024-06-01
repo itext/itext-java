@@ -48,9 +48,12 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.signatures.AccessPermissions;
 import com.itextpdf.signatures.PdfSignature;
 import com.itextpdf.signatures.SignatureUtil;
+import com.itextpdf.signatures.validation.v1.context.ValidationContext;
+import com.itextpdf.signatures.validation.v1.context.ValidatorContext;
 import com.itextpdf.signatures.validation.v1.report.ReportItem;
 import com.itextpdf.signatures.validation.v1.report.ReportItem.ReportItemStatus;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport;
+import com.itextpdf.signatures.validation.v1.report.ValidationReport.ValidationResult;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -63,13 +66,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
- * Validator, which is responsible for document revisions validation according to doc-MDP rules.
+ * Validator, which is responsible for document revisions validation according to doc-MDP and field-MDP rules.
  */
-class DocumentRevisionsValidator {
+public class DocumentRevisionsValidator {
     static final String DOC_MDP_CHECK = "DocMDP check.";
     static final String FIELD_MDP_CHECK = "FieldMDP check.";
 
@@ -125,20 +127,25 @@ class DocumentRevisionsValidator {
     static final String UNRECOGNIZED_ACTION = "Signature field lock dictionary contains unrecognized "
             + "\"Action\" value \"{0}\". \"All\" will be used instead.";
 
+    private final Set<String> lockedFields = new HashSet<>();
+    private final SignatureValidationProperties properties;
     private IMetaInfo metaInfo = new ValidationMetaInfo();
     private AccessPermissions accessPermissions = AccessPermissions.ANNOTATION_MODIFICATION;
     private AccessPermissions requestedAccessPermissions = AccessPermissions.UNSPECIFIED;
-    private final Set<String> lockedFields = new HashSet<>();
-    private final PdfDocument document;
     private Set<PdfObject> checkedAnnots;
     private Set<PdfDictionary> newlyAddedFields;
 
-    DocumentRevisionsValidator(PdfDocument document) {
-        this.document = document;
+    /**
+     * Creates new instance of {@link DocumentRevisionsValidator}.
+     *
+     * @param chainBuilder See {@link  ValidatorChainBuilder}
+     */
+    protected DocumentRevisionsValidator(ValidatorChainBuilder chainBuilder) {
+        this.properties = chainBuilder.getProperties();
     }
 
     /**
-     * Sets the {@link IMetaInfo} that will be used during {@link PdfDocument} creation.
+     * Sets the {@link IMetaInfo} that will be used during new {@link PdfDocument} creations.
      *
      * @param metaInfo meta info to set
      *
@@ -162,17 +169,17 @@ class DocumentRevisionsValidator {
         return this;
     }
 
-    AccessPermissions getAccessPermissions() {
-        return requestedAccessPermissions == AccessPermissions.UNSPECIFIED ? accessPermissions :
-                requestedAccessPermissions;
-    }
-
     /**
      * Validate all document revisions according to docMDP and fieldMDP transform methods.
      *
+     * @param context the validation context in which to validate document revisions
+     * @param document the document to be validated
+     *
      * @return {@link ValidationReport} which contains detailed validation results.
      */
-    public ValidationReport validateAllDocumentRevisions() {
+    public ValidationReport validateAllDocumentRevisions(ValidationContext context, PdfDocument document) {
+        resetClassFields();
+        ValidationContext localContext = context.setValidatorContext(ValidatorContext.DOCUMENT_REVISIONS_VALIDATOR);
         ValidationReport report = new ValidationReport();
         PdfRevisionsReader revisionsReader = new PdfRevisionsReader(document.getReader());
         revisionsReader.setEventCountingMetaInfo(metaInfo);
@@ -193,9 +200,9 @@ class DocumentRevisionsValidator {
         boolean signatureFound = false;
         boolean certificationSignatureFound = false;
         PdfSignature currentSignature = signatureUtil.getSignature(signatures.get(0));
-        for (int i = 0; i < documentRevisions.size() - 1; i++) {
+        for (int i = 0; i < documentRevisions.size(); i++) {
             if (currentSignature != null &&
-                    revisionContainsSignature(documentRevisions.get(i), signatures.get(0))) {
+                    revisionContainsSignature(documentRevisions.get(i), signatures.get(0), document)) {
                 signatureFound = true;
                 if (isCertificationSignature(currentSignature)) {
                     if (certificationSignatureFound) {
@@ -209,7 +216,7 @@ class DocumentRevisionsValidator {
                 updateApprovalSignatureAccessPermissions(
                         signatureUtil.getSignatureFormFieldDictionary(signatures.get(0)), report);
                 updateApprovalSignatureFieldLock(documentRevisions.get(i),
-                        signatureUtil.getSignatureFormFieldDictionary(signatures.get(0)), report);
+                        signatureUtil.getSignatureFormFieldDictionary(signatures.get(0)), document, report);
                 signatures.remove(0);
                 if (signatures.isEmpty()) {
                     currentSignature = null;
@@ -217,8 +224,12 @@ class DocumentRevisionsValidator {
                     currentSignature = signatureUtil.getSignature(signatures.get(0));
                 }
             }
-            if (signatureFound) {
-                validateRevision(documentRevisions.get(i), documentRevisions.get(i + 1), report);
+            if (signatureFound && i < documentRevisions.size() - 1) {
+                validateRevision(documentRevisions.get(i), documentRevisions.get(i + 1),
+                        document, report, localContext);
+            }
+            if (stopValidation(report, localContext)) {
+                break;
             }
         }
         if (!signatureFound) {
@@ -228,14 +239,8 @@ class DocumentRevisionsValidator {
         return report;
     }
 
-    //
-    //
-    // Revisions validation util section:
-    //
-    //
-
-    void validateRevision(DocumentRevision previousRevision, DocumentRevision currentRevision,
-                          ValidationReport validationReport) {
+    void validateRevision(DocumentRevision previousRevision, DocumentRevision currentRevision, PdfDocument document,
+            ValidationReport validationReport, ValidationContext context) {
         try (InputStream previousInputStream = createInputStreamFromRevision(document, previousRevision);
              PdfReader previousReader = new PdfReader(previousInputStream)
                      .setStrictnessLevel(StrictnessLevel.CONSERVATIVE);
@@ -247,7 +252,7 @@ class DocumentRevisionsValidator {
              PdfDocument documentWithRevision = new PdfDocument(currentReader,
                      new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
             Set<PdfIndirectReference> indirectReferences = currentRevision.getModifiedObjects();
-            if (!compareCatalogs(documentWithoutRevision, documentWithRevision, validationReport)) {
+            if (!compareCatalogs(documentWithoutRevision, documentWithRevision, validationReport, context)) {
                 return;
             }
             Set<PdfIndirectReference> currentAllowedReferences = createAllowedReferences(documentWithRevision);
@@ -282,11 +287,27 @@ class DocumentRevisionsValidator {
         }
     }
 
+    //
+    //
+    // Revisions validation util section:
+    //
+    //
+
+    AccessPermissions getAccessPermissions() {
+        return requestedAccessPermissions == AccessPermissions.UNSPECIFIED ? accessPermissions :
+                requestedAccessPermissions;
+    }
+
     private static InputStream createInputStreamFromRevision(PdfDocument originalDocument, DocumentRevision revision) {
         RandomAccessFileOrArray raf = originalDocument.getReader().getSafeFile();
         WindowRandomAccessSource source = new WindowRandomAccessSource(
                 raf.createSourceView(), 0, revision.getEofOffset());
         return new RASInputStream(source);
+    }
+
+    private boolean stopValidation(ValidationReport result, ValidationContext validationContext) {
+        return !properties.getContinueAfterFailure(validationContext)
+                && result.getValidationResult() == ValidationResult.INVALID;
     }
 
     private void updateApprovalSignatureAccessPermissions(PdfDictionary signatureField, ValidationReport report) {
@@ -320,7 +341,7 @@ class DocumentRevisionsValidator {
     }
 
     private void updateApprovalSignatureFieldLock(DocumentRevision revision, PdfDictionary signatureField,
-                                                  ValidationReport report) {
+            PdfDocument document, ValidationReport report) {
         PdfDictionary fieldLock = signatureField.getAsDictionary(PdfName.Lock);
         if (fieldLock == null || fieldLock.getAsName(PdfName.Action) == null) {
             return;
@@ -341,20 +362,21 @@ class DocumentRevisionsValidator {
             List<String> excludedFields = Collections.<String>emptyList();
             if (fields != null) {
                 excludedFields = fields.subList(0, fields.size()).stream().map(
-                        field -> field instanceof PdfString ? ((PdfString) field).toUnicodeString() : "")
+                        field -> field instanceof PdfString ? ((PdfString) field).toUnicodeString() : null)
                         .collect(Collectors.toList());
             }
-            lockAllFormFields(revision, excludedFields, report);
+            lockAllFormFields(revision, excludedFields, document, report);
         } else {
             if (!PdfName.All.equals(action)) {
                 report.addReportItem(new ReportItem(FIELD_MDP_CHECK, MessageFormatUtil.format(
                         UNRECOGNIZED_ACTION, action.getValue()), ReportItemStatus.INVALID));
             }
-            lockAllFormFields(revision, Collections.<String>emptyList(), report);
+            lockAllFormFields(revision, Collections.<String>emptyList(), document, report);
         }
     }
 
-    private void lockAllFormFields(DocumentRevision revision, List<String> excludedFields, ValidationReport report) {
+    private void lockAllFormFields(DocumentRevision revision, List<String> excludedFields, PdfDocument document,
+            ValidationReport report) {
         try (InputStream inputStream = createInputStreamFromRevision(document, revision);
              PdfReader reader = new PdfReader(inputStream);
              PdfDocument documentWithRevision = new PdfDocument(reader,
@@ -424,7 +446,7 @@ class DocumentRevisionsValidator {
         return false;
     }
 
-    private boolean revisionContainsSignature(DocumentRevision revision, String signature) {
+    private boolean revisionContainsSignature(DocumentRevision revision, String signature, PdfDocument document) {
         try (InputStream inputStream = createInputStreamFromRevision(document, revision);
              PdfReader reader = new PdfReader(inputStream);
              PdfDocument documentWithRevision = new PdfDocument(reader,
@@ -436,6 +458,11 @@ class DocumentRevisionsValidator {
         return false;
     }
 
+    private void resetClassFields() {
+        lockedFields.clear();
+        accessPermissions = AccessPermissions.ANNOTATION_MODIFICATION;
+    }
+
     //
     //
     // Compare catalogs section:
@@ -443,7 +470,7 @@ class DocumentRevisionsValidator {
     //
 
     private boolean compareCatalogs(PdfDocument documentWithoutRevision, PdfDocument documentWithRevision,
-                                    ValidationReport report) {
+                                    ValidationReport report, ValidationContext context) {
         PdfDictionary previousCatalog = documentWithoutRevision.getCatalog().getPdfObject();
         PdfDictionary currentCatalog = documentWithRevision.getCatalog().getPdfObject();
 
@@ -454,15 +481,33 @@ class DocumentRevisionsValidator {
             report.addReportItem(new ReportItem(DOC_MDP_CHECK, NOT_ALLOWED_CATALOG_CHANGES, ReportItemStatus.INVALID));
             return false;
         }
-        return compareExtensions(previousCatalog.get(PdfName.Extensions),
-                currentCatalog.get(PdfName.Extensions), report) &&
-                comparePermissions(previousCatalog.get(PdfName.Perms), currentCatalog.get(PdfName.Perms), report) &&
-                compareDss(previousCatalog.get(PdfName.DSS), currentCatalog.get(PdfName.DSS), report) &&
-                compareAcroFormsWithFieldMDP(documentWithoutRevision, documentWithRevision, report) &&
-                compareAcroForms(previousCatalog.getAsDictionary(PdfName.AcroForm),
-                        currentCatalog.getAsDictionary(PdfName.AcroForm), report) &&
-                comparePages(previousCatalog.getAsDictionary(PdfName.Pages),
-                        currentCatalog.getAsDictionary(PdfName.Pages), report);
+        boolean result = compareExtensions(previousCatalog.get(PdfName.Extensions),
+                currentCatalog.get(PdfName.Extensions), report);
+        if (stopValidation(report, context)) {
+            return result;
+        }
+        result = result &&
+                comparePermissions(previousCatalog.get(PdfName.Perms), currentCatalog.get(PdfName.Perms), report);
+        if (stopValidation(report, context)) {
+            return result;
+        }
+        result = result && compareDss(previousCatalog.get(PdfName.DSS), currentCatalog.get(PdfName.DSS), report);
+        if (stopValidation(report, context)) {
+            return result;
+        }
+        result = result && compareAcroFormsWithFieldMDP(documentWithoutRevision, documentWithRevision, report);
+        if (stopValidation(report, context)) {
+            return result;
+        }
+        result = result && compareAcroForms(previousCatalog.getAsDictionary(PdfName.AcroForm),
+                currentCatalog.getAsDictionary(PdfName.AcroForm), report);
+        if (stopValidation(report, context)) {
+            return result;
+        }
+        result = result && comparePages(previousCatalog.getAsDictionary(PdfName.Pages),
+                currentCatalog.getAsDictionary(PdfName.Pages), report);
+
+        return result;
     }
 
     // Compare catalogs nested methods section:
@@ -482,12 +527,13 @@ class DocumentRevisionsValidator {
         }
         PdfDictionary previousExtensionsDictionary = (PdfDictionary) previousExtensions;
         PdfDictionary currentExtensionsDictionary = (PdfDictionary) currentExtensions;
+        boolean result = true;
         for (Map.Entry<PdfName, PdfObject> previousExtension : previousExtensionsDictionary.entrySet()) {
             PdfDictionary currentExtension = currentExtensionsDictionary.getAsDictionary(previousExtension.getKey());
             if (currentExtension == null) {
                 report.addReportItem(new ReportItem(DOC_MDP_CHECK, MessageFormatUtil.format(
                         DEVELOPER_EXTENSION_REMOVED, previousExtension.getKey()), ReportItemStatus.INVALID));
-                return false;
+                result = false;
             } else {
                 PdfDictionary currentExtensionCopy = new PdfDictionary(currentExtension);
                 currentExtensionCopy.remove(PdfName.ExtensionLevel);
@@ -497,7 +543,8 @@ class DocumentRevisionsValidator {
                 if (!comparePdfObjects(previousExtensionCopy, currentExtensionCopy)) {
                     report.addReportItem(new ReportItem(DOC_MDP_CHECK, MessageFormatUtil.format(
                             DEVELOPER_EXTENSION_REMOVED, previousExtension.getKey()), ReportItemStatus.INVALID));
-                    return false;
+                    result = false;
+                    continue;
                 }
                 PdfNumber previousExtensionLevel = ((PdfDictionary) previousExtension.getValue())
                         .getAsNumber(PdfName.ExtensionLevel);
@@ -507,12 +554,12 @@ class DocumentRevisionsValidator {
                             previousExtensionLevel.intValue() > currentExtensionLevel.intValue()) {
                         report.addReportItem(new ReportItem(DOC_MDP_CHECK, MessageFormatUtil.format(
                                 EXTENSION_LEVEL_DECREASED, previousExtension.getKey()), ReportItemStatus.INVALID));
-                        return false;
+                        result = false;
                     }
                 }
             }
         }
-        return true;
+        return result;
     }
 
     private boolean comparePermissions(PdfObject previousPerms, PdfObject currentPerms, ValidationReport report) {
@@ -529,22 +576,23 @@ class DocumentRevisionsValidator {
         }
         PdfDictionary previousPermsDictionary = (PdfDictionary) previousPerms;
         PdfDictionary currentPermsDictionary = (PdfDictionary) currentPerms;
+        boolean result = true;
         for (Map.Entry<PdfName, PdfObject> previousPermission : previousPermsDictionary.entrySet()) {
             PdfDictionary currentPermission = currentPermsDictionary.getAsDictionary(previousPermission.getKey());
             if (currentPermission == null) {
                 report.addReportItem(new ReportItem(DOC_MDP_CHECK, MessageFormatUtil.format(
                         PERMISSION_REMOVED, previousPermission.getKey()), ReportItemStatus.INVALID));
-                return false;
+                result = false;
             } else {
                 // Perms dictionary is the signature dictionary.
                 if (!compareSignatureDictionaries(previousPermission.getValue(), currentPermission, report)) {
                     report.addReportItem(new ReportItem(DOC_MDP_CHECK, MessageFormatUtil.format(
                             PERMISSION_REMOVED, previousPermission.getKey()), ReportItemStatus.INVALID));
-                    return false;
+                    result = false;
                 }
             }
         }
-        return true;
+        return result;
     }
 
     private boolean compareDss(PdfObject previousDss, PdfObject currentDss, ValidationReport report) {
@@ -571,6 +619,7 @@ class DocumentRevisionsValidator {
             // In this case FieldMDP makes no sense, because related changes are forbidden anyway.
             return true;
         }
+        boolean result = true;
         for (Map.Entry<String, PdfFormField> previousField : previousAcroForm.getAllFormFields().entrySet()) {
             if (lockedFields.contains(previousField.getKey())) {
                 // For locked form fields nothing can change,
@@ -579,15 +628,16 @@ class DocumentRevisionsValidator {
                 if (currentFormField == null) {
                     report.addReportItem(new ReportItem(FIELD_MDP_CHECK, MessageFormatUtil.format(
                             LOCKED_FIELD_REMOVED, previousField.getKey()), ReportItemStatus.INVALID));
-                    return false;
+                    result = false;
+                    continue;
                 }
                 if (!compareFormFieldWithFieldMDP(previousField.getValue().getPdfObject(),
                         currentFormField.getPdfObject(), previousField.getKey(), report)) {
-                    return false;
+                    result = false;
                 }
             }
         }
-        return true;
+        return result;
     }
 
     private boolean compareFormFieldWithFieldMDP(PdfDictionary previousField, PdfDictionary currentField,

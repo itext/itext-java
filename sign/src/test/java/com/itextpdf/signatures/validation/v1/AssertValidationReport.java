@@ -91,6 +91,10 @@ public class AssertValidationReport implements AutoCloseable {
         return this;
     }
 
+    public AssertValidationReport hasLogItems(int count, Consumer<AssertValidationReportLogItem> c) {
+        return this.hasLogItems(count, count, c);
+    }
+
 
     public AssertValidationReport hasStatus(ValidationReport.ValidationResult expectedStatus) {
         chain.setNext((new StatusCheck(expectedStatus)));

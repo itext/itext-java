@@ -39,6 +39,7 @@ public class ValidatorChainBuilder {
     private RevocationDataValidator revocationDataValidator;
     private OCSPValidator ocspValidator;
     private CRLValidator crlValidator;
+    private DocumentRevisionsValidator documentRevisionsValidator;
 
     /**
      * Create a new {@link SignatureValidator} instance with the current configuration.
@@ -48,6 +49,16 @@ public class ValidatorChainBuilder {
      */
     SignatureValidator buildSignatureValidator() {
         return new SignatureValidator(this);
+    }
+
+    /**
+     * Create a bew {@link DocumentRevisionsValidator} instance with the current configuration.
+     * This method can be used to create multiple validators.
+     *
+     * @return a new instance of a document revisions validator
+     */
+    public DocumentRevisionsValidator buildDocumentRevisionsValidator() {
+        return new DocumentRevisionsValidator(this);
     }
 
     /**
@@ -88,6 +99,18 @@ public class ValidatorChainBuilder {
      */
     public CRLValidator buildCRLValidator() {
         return new CRLValidator(this);
+    }
+
+    /**
+     * Use this instance of a {@link DocumentRevisionsValidator} in the validation chain.
+     *
+     * @param documentRevisionsValidator the document revisions validator instance to use
+     *
+     * @return the current ValidatorChainBuilder
+     */
+    public ValidatorChainBuilder withDocumentRevisionsValidator(DocumentRevisionsValidator documentRevisionsValidator) {
+        this.documentRevisionsValidator = documentRevisionsValidator;
+        return this;
     }
 
     /**
@@ -184,6 +207,18 @@ public class ValidatorChainBuilder {
     public ValidatorChainBuilder withTrustedCertificates(Collection<Certificate> trustedCertificates) {
         getCertificateRetriever().setTrustedCertificates(trustedCertificates);
         return this;
+    }
+
+    /**
+     * Retrieves the explicitly added or automatically created {@link DocumentRevisionsValidator} instance.
+     *
+     * @return the explicitly added or automatically created {@link DocumentRevisionsValidator} instance
+     */
+    DocumentRevisionsValidator getDocumentRevisionsValidator() {
+        if (documentRevisionsValidator == null) {
+            documentRevisionsValidator = buildDocumentRevisionsValidator();
+        }
+        return documentRevisionsValidator;
     }
 
     /**

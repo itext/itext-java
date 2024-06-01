@@ -81,7 +81,7 @@ public class RevocationDataValidator {
      *
      * @param builder See {@link  ValidatorChainBuilder}
      */
-    RevocationDataValidator(ValidatorChainBuilder builder) {
+    protected RevocationDataValidator(ValidatorChainBuilder builder) {
         this.certificateRetriever = builder.getCertificateRetriever();
         this.properties = builder.getProperties();
         this.ocspValidator = builder.getOCSPValidator();

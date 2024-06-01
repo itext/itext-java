@@ -20,10 +20,12 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.signatures.validation.v1;
+package com.itextpdf.signatures.validation.v1.mocks;
 
 import com.itextpdf.signatures.ICrlClient;
 import com.itextpdf.signatures.IOcspClient;
+import com.itextpdf.signatures.validation.v1.RevocationDataValidator;
+import com.itextpdf.signatures.validation.v1.ValidatorChainBuilder;
 import com.itextpdf.signatures.validation.v1.context.ValidationContext;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport;
 
@@ -42,7 +44,7 @@ public class MockRevocationDataValidator extends RevocationDataValidator {
     /**
      * Creates new {@link RevocationDataValidator} instance to validate certificate revocation data.
      */
-    MockRevocationDataValidator() {
+    public MockRevocationDataValidator() {
         super(new ValidatorChainBuilder());
     }
 

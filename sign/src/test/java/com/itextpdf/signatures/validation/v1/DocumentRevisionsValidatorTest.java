@@ -30,6 +30,12 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfRevisionsReader;
 import com.itextpdf.signatures.AccessPermissions;
+import com.itextpdf.signatures.validation.v1.context.CertificateSource;
+import com.itextpdf.signatures.validation.v1.context.CertificateSources;
+import com.itextpdf.signatures.validation.v1.context.TimeBasedContext;
+import com.itextpdf.signatures.validation.v1.context.ValidationContext;
+import com.itextpdf.signatures.validation.v1.context.ValidatorContext;
+import com.itextpdf.signatures.validation.v1.context.ValidatorContexts;
 import com.itextpdf.signatures.validation.v1.report.ReportItem.ReportItemStatus;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport.ValidationResult;
@@ -38,33 +44,57 @@ import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
 import java.io.IOException;
 import java.security.Security;
+import java.util.Arrays;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
+@RunWith(Parameterized.class)
 @Category(BouncyCastleUnitTest.class)
 public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/validation/v1/DocumentRevisionsValidatorTest/";
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
+    private ValidatorChainBuilder builder;
+    private final ValidationContext validationContext = new ValidationContext(
+            ValidatorContext.DOCUMENT_REVISIONS_VALIDATOR, CertificateSource.SIGNER_CERT, TimeBasedContext.PRESENT);
+    private final boolean continueValidationAfterFail;
 
     @BeforeClass
     public static void before() {
         Security.addProvider(FACTORY.getProvider());
     }
 
+    @Before
+    public void setUp() {
+        builder = new ValidatorChainBuilder();
+        builder.getProperties().setContinueAfterFailure(ValidatorContexts.all(), CertificateSources.all(), continueValidationAfterFail);
+    }
+
+    public DocumentRevisionsValidatorTest(Object continueValidationAfterFail) {
+        this.continueValidationAfterFail = (boolean) continueValidationAfterFail;
+    }
+
+    @Parameterized.Parameters(name = "Continue validation after failure: {0}")
+    public static Iterable<Object[]> createParameters() {
+        return Arrays.asList(new Object[] {false}, new Object[] {true});
+    }
+
     @Test
     public void multipleRevisionsDocumentLevel1Test() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "multipleRevisionsDocument.pdf"))) {
-            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
             validator.setAccessPermissions(AccessPermissions.NO_CHANGES_PERMITTED);
             PdfRevisionsReader revisionsReader = new PdfRevisionsReader(document.getReader());
             List<DocumentRevision> documentRevisions = revisionsReader.getAllRevisions();
 
             ValidationReport validationReport = new ValidationReport();
-            validator.validateRevision(documentRevisions.get(0), documentRevisions.get(1), validationReport);
+            validator.validateRevision(documentRevisions.get(0), documentRevisions.get(1), document, validationReport, validationContext);
 
             // Between these two revisions DSS and timestamp are added, which is allowed,
             // but there is unused entry in the xref table, which is an itext signature generation artifact.
@@ -75,7 +105,7 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
                             .withStatus(ReportItemStatus.INVALID)));
 
             validationReport = new ValidationReport();
-            validator.validateRevision(documentRevisions.get(1), documentRevisions.get(2), validationReport);
+            validator.validateRevision(documentRevisions.get(1), documentRevisions.get(2), document, validationReport, validationContext);
 
             // Between these two revisions only DSS is updated, which is allowed.
             AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.VALID));
@@ -85,13 +115,13 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
     @Test
     public void hugeDocumentTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "hugeDocument.pdf"))) {
-            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
             validator.setAccessPermissions(AccessPermissions.NO_CHANGES_PERMITTED);
             PdfRevisionsReader revisionsReader = new PdfRevisionsReader(document.getReader());
             List<DocumentRevision> documentRevisions = revisionsReader.getAllRevisions();
 
             ValidationReport validationReport = new ValidationReport();
-            validator.validateRevision(documentRevisions.get(0), documentRevisions.get(1), validationReport);
+            validator.validateRevision(documentRevisions.get(0), documentRevisions.get(1), document, validationReport, validationContext);
 
             AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.VALID));
         }
@@ -100,18 +130,18 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
     @Test
     public void extensionsModificationsTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "extensionsModifications.pdf"))) {
-            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
             validator.setAccessPermissions(AccessPermissions.NO_CHANGES_PERMITTED);
             PdfRevisionsReader revisionsReader = new PdfRevisionsReader(document.getReader());
             List<DocumentRevision> documentRevisions = revisionsReader.getAllRevisions();
 
             ValidationReport validationReport = new ValidationReport();
-            validator.validateRevision(documentRevisions.get(0), documentRevisions.get(1), validationReport);
+            validator.validateRevision(documentRevisions.get(0), documentRevisions.get(1), document, validationReport, validationContext);
 
             AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.VALID));
 
             validationReport = new ValidationReport();
-            validator.validateRevision(documentRevisions.get(1), documentRevisions.get(2), validationReport);
+            validator.validateRevision(documentRevisions.get(1), documentRevisions.get(2), document, validationReport, validationContext);
 
             AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.INVALID)
                     .hasNumberOfFailures(1).hasNumberOfLogs(1)
@@ -120,7 +150,7 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
                             .withStatus(ReportItemStatus.INVALID)));
 
             validationReport = new ValidationReport();
-            validator.validateRevision(documentRevisions.get(2), documentRevisions.get(3), validationReport);
+            validator.validateRevision(documentRevisions.get(2), documentRevisions.get(3), document, validationReport, validationContext);
 
             AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.INVALID)
                     .hasNumberOfFailures(1).hasNumberOfLogs(1)
@@ -130,7 +160,7 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
 
 
             validationReport = new ValidationReport();
-            validator.validateRevision(documentRevisions.get(3), documentRevisions.get(4), validationReport);
+            validator.validateRevision(documentRevisions.get(3), documentRevisions.get(4), document, validationReport, validationContext);
 
             AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.INVALID)
                     .hasNumberOfFailures(1).hasNumberOfLogs(1)
@@ -139,7 +169,7 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
                             .withStatus(ReportItemStatus.INVALID)));
 
             validationReport = new ValidationReport();
-            validator.validateRevision(documentRevisions.get(4), documentRevisions.get(5), validationReport);
+            validator.validateRevision(documentRevisions.get(4), documentRevisions.get(5), document, validationReport, validationContext);
 
             AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.INVALID)
                     .hasNumberOfFailures(1).hasNumberOfLogs(1)
@@ -152,13 +182,13 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
     @Test
     public void completelyInvalidDocumentTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "completelyInvalidDocument.pdf"))) {
-            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
             validator.setAccessPermissions(AccessPermissions.NO_CHANGES_PERMITTED);
             PdfRevisionsReader revisionsReader = new PdfRevisionsReader(document.getReader());
             List<DocumentRevision> documentRevisions = revisionsReader.getAllRevisions();
 
             ValidationReport validationReport = new ValidationReport();
-            validator.validateRevision(documentRevisions.get(0), documentRevisions.get(1), validationReport);
+            validator.validateRevision(documentRevisions.get(0), documentRevisions.get(1), document, validationReport, validationContext);
 
             AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.INVALID)
                     .hasNumberOfFailures(1).hasNumberOfLogs(1)
@@ -171,13 +201,13 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
     @Test
     public void makeFontDirectAndIndirectTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "makeFontDirectAndIndirect.pdf"))) {
-            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
             PdfRevisionsReader revisionsReader = new PdfRevisionsReader(document.getReader());
             validator.setAccessPermissions(AccessPermissions.NO_CHANGES_PERMITTED);
             List<DocumentRevision> documentRevisions = revisionsReader.getAllRevisions();
 
             ValidationReport validationReport = new ValidationReport();
-            validator.validateRevision(documentRevisions.get(0), documentRevisions.get(1), validationReport);
+            validator.validateRevision(documentRevisions.get(0), documentRevisions.get(1), document, validationReport, validationContext);
 
             // Adobe Acrobat doesn't complain about such change. We consider this incorrect.
             AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.INVALID)
@@ -190,7 +220,7 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
                             .withStatus(ReportItemStatus.INVALID)));
 
             validationReport = new ValidationReport();
-            validator.validateRevision(documentRevisions.get(1), documentRevisions.get(2), validationReport);
+            validator.validateRevision(documentRevisions.get(1), documentRevisions.get(2), document, validationReport, validationContext);
 
             // Adobe Acrobat doesn't complain about such change. We consider this incorrect.
             AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.INVALID)
@@ -207,13 +237,13 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
     @Test
     public void randomEntryAddedTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "randomEntryAdded.pdf"))) {
-            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
             validator.setAccessPermissions(AccessPermissions.NO_CHANGES_PERMITTED);
             PdfRevisionsReader revisionsReader = new PdfRevisionsReader(document.getReader());
             List<DocumentRevision> documentRevisions = revisionsReader.getAllRevisions();
 
             ValidationReport validationReport = new ValidationReport();
-            validator.validateRevision(documentRevisions.get(0), documentRevisions.get(1), validationReport);
+            validator.validateRevision(documentRevisions.get(0), documentRevisions.get(1), document, validationReport, validationContext);
 
             // Adobe Acrobat doesn't complain about such change. We consider this incorrect.
             AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.INVALID)
@@ -227,13 +257,13 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
     @Test
     public void randomEntryWithoutUsageTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "randomEntryWithoutUsage.pdf"))) {
-            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
             validator.setAccessPermissions(AccessPermissions.NO_CHANGES_PERMITTED);
             PdfRevisionsReader revisionsReader = new PdfRevisionsReader(document.getReader());
             List<DocumentRevision> documentRevisions = revisionsReader.getAllRevisions();
 
             ValidationReport validationReport = new ValidationReport();
-            validator.validateRevision(documentRevisions.get(0), documentRevisions.get(1), validationReport);
+            validator.validateRevision(documentRevisions.get(0), documentRevisions.get(1), document, validationReport, validationContext);
 
             // Adobe Acrobat doesn't complain about such change. We consider this incorrect.
             AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.INVALID)
@@ -247,13 +277,13 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
     @Test
     public void changeExistingFontTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "changeExistingFont.pdf"))) {
-            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
             validator.setAccessPermissions(AccessPermissions.NO_CHANGES_PERMITTED);
             PdfRevisionsReader revisionsReader = new PdfRevisionsReader(document.getReader());
             List<DocumentRevision> documentRevisions = revisionsReader.getAllRevisions();
 
             ValidationReport validationReport = new ValidationReport();
-            validator.validateRevision(documentRevisions.get(0), documentRevisions.get(1), validationReport);
+            validator.validateRevision(documentRevisions.get(0), documentRevisions.get(1), document, validationReport, validationContext);
 
             AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.INVALID)
                     .hasNumberOfFailures(1).hasNumberOfLogs(1)
@@ -266,13 +296,13 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
     @Test
     public void changeExistingFontAndAddAsDssTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "changeExistingFontAndAddAsDss.pdf"))) {
-            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
             validator.setAccessPermissions(AccessPermissions.NO_CHANGES_PERMITTED);
             PdfRevisionsReader revisionsReader = new PdfRevisionsReader(document.getReader());
             List<DocumentRevision> documentRevisions = revisionsReader.getAllRevisions();
 
             ValidationReport validationReport = new ValidationReport();
-            validator.validateRevision(documentRevisions.get(0), documentRevisions.get(1), validationReport);
+            validator.validateRevision(documentRevisions.get(0), documentRevisions.get(1), document, validationReport, validationContext);
 
             // Adobe Acrobat doesn't complain about such change. We consider this incorrect.
             AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.INVALID)
@@ -286,13 +316,13 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
     @Test
     public void fillInFieldAtLevel1Test() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "fillInField.pdf"))) {
-            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
             validator.setAccessPermissions(AccessPermissions.NO_CHANGES_PERMITTED);
             PdfRevisionsReader revisionsReader = new PdfRevisionsReader(document.getReader());
             List<DocumentRevision> documentRevisions = revisionsReader.getAllRevisions();
 
             ValidationReport validationReport = new ValidationReport();
-            validator.validateRevision(documentRevisions.get(0), documentRevisions.get(1), validationReport);
+            validator.validateRevision(documentRevisions.get(0), documentRevisions.get(1), document, validationReport, validationContext);
 
             // Between these two revisions forms were filled in, it is not allowed at docMDP level 1.
             AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.INVALID)
@@ -309,27 +339,27 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
     @Test
     public void multipleRevisionsDocumentLevel2Test() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "multipleRevisionsDocument2.pdf"))) {
-            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
             validator.setAccessPermissions(AccessPermissions.FORM_FIELDS_MODIFICATION);
             PdfRevisionsReader revisionsReader = new PdfRevisionsReader(document.getReader());
             List<DocumentRevision> documentRevisions = revisionsReader.getAllRevisions();
 
             ValidationReport validationReport = new ValidationReport();
-            validator.validateRevision(documentRevisions.get(0), documentRevisions.get(1), validationReport);
+            validator.validateRevision(documentRevisions.get(0), documentRevisions.get(1), document, validationReport, validationContext);
 
             // Between these two revisions forms were filled in, it is allowed.
             AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.VALID)
                     .hasNumberOfFailures(0).hasNumberOfLogs(0));
 
             validationReport = new ValidationReport();
-            validator.validateRevision(documentRevisions.get(1), documentRevisions.get(2), validationReport);
+            validator.validateRevision(documentRevisions.get(1), documentRevisions.get(2), document, validationReport, validationContext);
 
             // Between these two revisions existing signature field was signed, it is allowed.
             AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.VALID)
                     .hasNumberOfFailures(0).hasNumberOfLogs(0));
 
             validationReport = new ValidationReport();
-            validator.validateRevision(documentRevisions.get(2), documentRevisions.get(3), validationReport);
+            validator.validateRevision(documentRevisions.get(2), documentRevisions.get(3), document, validationReport, validationContext);
 
             // Between these two revisions newly added signature field was signed, it is allowed.
             AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.VALID)
@@ -340,14 +370,14 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
     @Test
     public void removePermissionsTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "removePermissions.pdf"))) {
-            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
             validator.setAccessPermissions(AccessPermissions.FORM_FIELDS_MODIFICATION);
             PdfRevisionsReader revisionsReader = new PdfRevisionsReader(document.getReader());
             List<DocumentRevision> documentRevisions = revisionsReader.getAllRevisions();
 
             ValidationReport validationReport = new ValidationReport();
             validator.validateRevision(documentRevisions.get(documentRevisions.size() - 2),
-                    documentRevisions.get(documentRevisions.size() - 1), validationReport);
+                    documentRevisions.get(documentRevisions.size() - 1), document, validationReport, validationContext);
 
             // Between these two revisions /Perms key was removed, it is not allowed.
             AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.INVALID)
@@ -361,14 +391,14 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
     @Test
     public void removeDSSTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "removeDSS.pdf"))) {
-            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
             validator.setAccessPermissions(AccessPermissions.FORM_FIELDS_MODIFICATION);
             PdfRevisionsReader revisionsReader = new PdfRevisionsReader(document.getReader());
             List<DocumentRevision> documentRevisions = revisionsReader.getAllRevisions();
 
             ValidationReport validationReport = new ValidationReport();
             validator.validateRevision(documentRevisions.get(documentRevisions.size() - 2),
-                    documentRevisions.get(documentRevisions.size() - 1), validationReport);
+                    documentRevisions.get(documentRevisions.size() - 1), document, validationReport, validationContext);
 
             // Between these two revisions /DSS key was removed, it is not allowed.
             AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.INVALID)
@@ -382,14 +412,14 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
     @Test
     public void removeAcroformTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "removeAcroform.pdf"))) {
-            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
             validator.setAccessPermissions(AccessPermissions.FORM_FIELDS_MODIFICATION);
             PdfRevisionsReader revisionsReader = new PdfRevisionsReader(document.getReader());
             List<DocumentRevision> documentRevisions = revisionsReader.getAllRevisions();
 
             ValidationReport validationReport = new ValidationReport();
             validator.validateRevision(documentRevisions.get(documentRevisions.size() - 2),
-                    documentRevisions.get(documentRevisions.size() - 1), validationReport);
+                    documentRevisions.get(documentRevisions.size() - 1), document, validationReport, validationContext);
 
             // Between these two revisions /Acroform key was removed, it is not allowed.
             AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.INVALID)
@@ -403,14 +433,14 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
     @Test
     public void removeFieldTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "removeField.pdf"))) {
-            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
             validator.setAccessPermissions(AccessPermissions.FORM_FIELDS_MODIFICATION);
             PdfRevisionsReader revisionsReader = new PdfRevisionsReader(document.getReader());
             List<DocumentRevision> documentRevisions = revisionsReader.getAllRevisions();
 
             ValidationReport validationReport = new ValidationReport();
             validator.validateRevision(documentRevisions.get(documentRevisions.size() - 2),
-                    documentRevisions.get(documentRevisions.size() - 1), validationReport);
+                    documentRevisions.get(documentRevisions.size() - 1), document, validationReport, validationContext);
 
             // Between these two revisions field was removed, it is not allowed.
             AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.INVALID)
@@ -424,14 +454,14 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
     @Test
     public void renameFieldTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "renameField.pdf"))) {
-            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
             validator.setAccessPermissions(AccessPermissions.FORM_FIELDS_MODIFICATION);
             PdfRevisionsReader revisionsReader = new PdfRevisionsReader(document.getReader());
             List<DocumentRevision> documentRevisions = revisionsReader.getAllRevisions();
 
             ValidationReport validationReport = new ValidationReport();
             validator.validateRevision(documentRevisions.get(documentRevisions.size() - 2),
-                    documentRevisions.get(documentRevisions.size() - 1), validationReport);
+                    documentRevisions.get(documentRevisions.size() - 1), document, validationReport, validationContext);
 
             // Between these two revisions field was renamed, it is not allowed.
             AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.INVALID)
@@ -448,14 +478,14 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
     @Test
     public void addTextFieldTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "addTextField.pdf"))) {
-            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
             validator.setAccessPermissions(AccessPermissions.FORM_FIELDS_MODIFICATION);
             PdfRevisionsReader revisionsReader = new PdfRevisionsReader(document.getReader());
             List<DocumentRevision> documentRevisions = revisionsReader.getAllRevisions();
 
             ValidationReport validationReport = new ValidationReport();
             validator.validateRevision(documentRevisions.get(documentRevisions.size() - 2),
-                    documentRevisions.get(documentRevisions.size() - 1), validationReport);
+                    documentRevisions.get(documentRevisions.size() - 1), document, validationReport, validationContext);
 
             // Between these two revisions new field was added, it is not allowed.
             AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.INVALID)
@@ -472,14 +502,14 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
     @Test
     public void addUnsignedSignatureFieldTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "addUnsignedSignatureField.pdf"))) {
-            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
             validator.setAccessPermissions(AccessPermissions.FORM_FIELDS_MODIFICATION);
             PdfRevisionsReader revisionsReader = new PdfRevisionsReader(document.getReader());
             List<DocumentRevision> documentRevisions = revisionsReader.getAllRevisions();
 
             ValidationReport validationReport = new ValidationReport();
             validator.validateRevision(documentRevisions.get(documentRevisions.size() - 2),
-                    documentRevisions.get(documentRevisions.size() - 1), validationReport);
+                    documentRevisions.get(documentRevisions.size() - 1), document, validationReport, validationContext);
 
             // Between these two revisions new unsigned signature field was added, it is not allowed.
             AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.INVALID)
@@ -496,14 +526,14 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
     @Test
     public void brokenSignatureFieldDictionaryTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "brokenSignatureFieldDictionary.pdf"))) {
-            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
             validator.setAccessPermissions(AccessPermissions.FORM_FIELDS_MODIFICATION);
             PdfRevisionsReader revisionsReader = new PdfRevisionsReader(document.getReader());
             List<DocumentRevision> documentRevisions = revisionsReader.getAllRevisions();
 
             ValidationReport validationReport = new ValidationReport();
             validator.validateRevision(documentRevisions.get(documentRevisions.size() - 2),
-                    documentRevisions.get(documentRevisions.size() - 1), validationReport);
+                    documentRevisions.get(documentRevisions.size() - 1), document, validationReport, validationContext);
 
             // Between these two revisions signature value was replaced by text, it is not allowed.
             AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.INVALID)
@@ -523,14 +553,14 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
     @Test
     public void modifyPageAnnotsTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "modifyPageAnnots.pdf"))) {
-            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
             validator.setAccessPermissions(AccessPermissions.FORM_FIELDS_MODIFICATION);
             PdfRevisionsReader revisionsReader = new PdfRevisionsReader(document.getReader());
             List<DocumentRevision> documentRevisions = revisionsReader.getAllRevisions();
 
             ValidationReport validationReport = new ValidationReport();
             validator.validateRevision(documentRevisions.get(documentRevisions.size() - 2),
-                    documentRevisions.get(documentRevisions.size() - 1), validationReport);
+                    documentRevisions.get(documentRevisions.size() - 1), document, validationReport, validationContext);
 
             // Between these two revisions circle annotation was added to the first page, it is not allowed.
             AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.INVALID)
@@ -544,20 +574,20 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
     @Test
     public void multipleRevisionsDocumentLevel3Test() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "multipleRevisionsDocument3.pdf"))) {
-            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
             validator.setAccessPermissions(AccessPermissions.ANNOTATION_MODIFICATION);
             PdfRevisionsReader revisionsReader = new PdfRevisionsReader(document.getReader());
             List<DocumentRevision> documentRevisions = revisionsReader.getAllRevisions();
 
             ValidationReport validationReport = new ValidationReport();
-            validator.validateRevision(documentRevisions.get(0), documentRevisions.get(1), validationReport);
+            validator.validateRevision(documentRevisions.get(0), documentRevisions.get(1), document, validationReport, validationContext);
 
             // Between these two revisions annotations were added and deleted, text field was filled-in.
             AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.VALID)
                     .hasNumberOfFailures(0).hasNumberOfLogs(0));
 
             validationReport = new ValidationReport();
-            validator.validateRevision(documentRevisions.get(1), documentRevisions.get(2), validationReport);
+            validator.validateRevision(documentRevisions.get(1), documentRevisions.get(2), document, validationReport, validationContext);
 
             // Between these two revisions existed annotations were modified, it is allowed.
             AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.VALID)

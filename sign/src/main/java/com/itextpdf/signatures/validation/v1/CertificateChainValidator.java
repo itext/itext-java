@@ -69,7 +69,7 @@ public class CertificateChainValidator {
      *
      * @param builder See {@link  ValidatorChainBuilder}
      */
-    CertificateChainValidator(ValidatorChainBuilder builder) {
+    protected CertificateChainValidator(ValidatorChainBuilder builder) {
         this.certificateRetriever = builder.getCertificateRetriever();
         this.properties = builder.getProperties();
         this.revocationDataValidator = builder.getRevocationDataValidator();
@@ -213,7 +213,7 @@ public class CertificateChainValidator {
 
     private boolean stopValidation(ValidationReport result, ValidationContext context) {
         return !properties.getContinueAfterFailure(context)
-                && result.getValidationResult() != ValidationReport.ValidationResult.VALID;
+                && result.getValidationResult() == ValidationReport.ValidationResult.INVALID;
     }
 
     private void validateValidityPeriod(ValidationReport result, X509Certificate certificate,

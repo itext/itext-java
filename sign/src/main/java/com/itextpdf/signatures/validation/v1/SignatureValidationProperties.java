@@ -39,6 +39,7 @@ import com.itextpdf.signatures.validation.v1.extensions.CertificateExtension;
 import com.itextpdf.signatures.validation.v1.extensions.ExtendedKeyUsageExtension;
 import com.itextpdf.signatures.validation.v1.extensions.KeyUsage;
 import com.itextpdf.signatures.validation.v1.extensions.KeyUsageExtension;
+import com.itextpdf.signatures.validation.v1.report.ValidationReport.ValidationResult;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -105,6 +106,8 @@ public class SignatureValidationProperties {
     /**
      * Sets the freshness setting for the specified validator,
      * time based and certificate source contexts in milliseconds.
+     * <p>
+     * This parameter specifies how old revocation data can be, compared to validation time, in order to be trustworthy.
      *
      * @param validatorContexts  the validators for which to apply the setting
      * @param certificateSources the certificate sources to
@@ -136,6 +139,9 @@ public class SignatureValidationProperties {
 
     /**
      * Sets the Continue after failure setting for the provided context.
+     * <p>
+     * This parameter specifies if validation is expected to continue after first failure is encountered.
+     * Only {@link ValidationResult#INVALID} is considered to be a failure.
      *
      * @param validatorContexts  the validators for which to set the Continue after failure setting
      * @param certificateSources the certificateSources for which to set the Continue after failure setting
@@ -196,8 +202,8 @@ public class SignatureValidationProperties {
 
     final SignatureValidationProperties setRequiredExtensions(CertificateSources certificateSources,
             List<CertificateExtension> requiredExtensions) {
-        // make a defensive copy of  requiredExtensions and already wrap it with unmodifiableList so that we don't have
-        // to do this every time it is retrieved. Now we are protected against changes in th passed list and from
+        // make a defensive copy of requiredExtensions and already wrap it with unmodifiableList so that we don't have
+        // to do this every time it is retrieved. Now we are protected against changes in passed list and from
         // changes in the returned list
         List<CertificateExtension> copy = Collections.<CertificateExtension>unmodifiableList(
                 new ArrayList<>(requiredExtensions));

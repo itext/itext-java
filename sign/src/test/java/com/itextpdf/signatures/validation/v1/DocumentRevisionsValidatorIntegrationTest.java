@@ -29,6 +29,12 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.signatures.AccessPermissions;
+import com.itextpdf.signatures.validation.v1.context.CertificateSource;
+import com.itextpdf.signatures.validation.v1.context.CertificateSources;
+import com.itextpdf.signatures.validation.v1.context.TimeBasedContext;
+import com.itextpdf.signatures.validation.v1.context.ValidationContext;
+import com.itextpdf.signatures.validation.v1.context.ValidatorContext;
+import com.itextpdf.signatures.validation.v1.context.ValidatorContexts;
 import com.itextpdf.signatures.validation.v1.report.ReportItem.ReportItemStatus;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport.ValidationResult;
@@ -38,27 +44,52 @@ import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 import java.io.IOException;
 import java.security.Security;
 
+import java.util.Arrays;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
+@RunWith(Parameterized.class)
 @Category(BouncyCastleIntegrationTest.class)
 public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/validation/v1/DocumentRevisionsValidatorIntegrationTest/";
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
+    private ValidatorChainBuilder builder;
+    private final ValidationContext validationContext = new ValidationContext(
+            ValidatorContext.DOCUMENT_REVISIONS_VALIDATOR, CertificateSource.SIGNER_CERT, TimeBasedContext.PRESENT);
+    private final boolean continueValidationAfterFail;
 
     @BeforeClass
     public static void before() {
         Security.addProvider(FACTORY.getProvider());
     }
 
+
+    @Before
+    public void setUp() {
+        builder = new ValidatorChainBuilder();
+        builder.getProperties().setContinueAfterFailure(ValidatorContexts.all(), CertificateSources.all(), continueValidationAfterFail);
+    }
+
+    public DocumentRevisionsValidatorIntegrationTest(Object continueValidationAfterFail) {
+        this.continueValidationAfterFail = (boolean) continueValidationAfterFail;
+    }
+
+    @Parameterized.Parameters(name = "Continue validation after failure: {0}")
+    public static Iterable<Object[]> createParameters() {
+        return Arrays.asList(new Object[] {false}, new Object[] {true});
+    }
+
     @Test
     public void noSignaturesDocTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "noSignaturesDoc.pdf"))) {
-            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
-            ValidationReport report = validator.validateAllDocumentRevisions();
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
 
             AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID)
                     .hasNumberOfFailures(0).hasNumberOfLogs(1)
@@ -73,8 +104,8 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     @Test
     public void multipleRevisionsDocumentWithoutPermissionsTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "multipleRevisionsDocumentWithoutPermissions.pdf"))) {
-            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
-            ValidationReport report = validator.validateAllDocumentRevisions();
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
 
             AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID));
 
@@ -85,8 +116,8 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     @Test
     public void multipleRevisionsDocumentWithPermissionsTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "multipleRevisionsDocumentWithPermissions.pdf"))) {
-            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
-            ValidationReport report = validator.validateAllDocumentRevisions();
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
 
             AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID));
 
@@ -97,17 +128,25 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     @Test
     public void twoCertificationSignaturesTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "twoCertificationSignatures.pdf"))) {
-            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
-            ValidationReport report = validator.validateAllDocumentRevisions();
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
 
-            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
-                    .hasNumberOfFailures(2).hasNumberOfLogs(2)
-                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
-                            .withMessage(DocumentRevisionsValidator.PERMISSION_REMOVED, i -> PdfName.DocMDP)
-                            .withStatus(ReportItemStatus.INVALID))
-                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
-                            .withMessage(DocumentRevisionsValidator.TOO_MANY_CERTIFICATION_SIGNATURES)
-                            .withStatus(ReportItemStatus.INDETERMINATE)));
+            if (continueValidationAfterFail) {
+                AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
+                        .hasNumberOfFailures(2).hasNumberOfLogs(2)
+                        .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                                .withMessage(DocumentRevisionsValidator.PERMISSION_REMOVED, i -> PdfName.DocMDP)
+                                .withStatus(ReportItemStatus.INVALID))
+                        .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                                .withMessage(DocumentRevisionsValidator.TOO_MANY_CERTIFICATION_SIGNATURES)
+                                .withStatus(ReportItemStatus.INDETERMINATE)));
+            } else {
+                AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
+                        .hasNumberOfFailures(1).hasNumberOfLogs(1)
+                        .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                                .withMessage(DocumentRevisionsValidator.PERMISSION_REMOVED, i -> PdfName.DocMDP)
+                                .withStatus(ReportItemStatus.INVALID)));
+            }
 
             Assert.assertEquals(AccessPermissions.FORM_FIELDS_MODIFICATION, validator.getAccessPermissions());
         }
@@ -116,8 +155,8 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     @Test
     public void signatureNotFoundTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "signatureNotFound.pdf"))) {
-            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
-            ValidationReport report = validator.validateAllDocumentRevisions();
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
 
             AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
                     .hasNumberOfFailures(1).hasNumberOfLogs(1)
@@ -132,8 +171,8 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     @Test
     public void differentFieldLockLevelsTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "differentFieldLockLevels.pdf"))) {
-            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
-            ValidationReport report = validator.validateAllDocumentRevisions();
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
 
             AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
                     .hasNumberOfFailures(2).hasNumberOfLogs(2)
@@ -151,8 +190,8 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     @Test
     public void fieldLockLevelIncreaseTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "fieldLockLevelIncrease.pdf"))) {
-            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
-            ValidationReport report = validator.validateAllDocumentRevisions();
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
 
             AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INDETERMINATE)
                     .hasNumberOfFailures(1).hasNumberOfLogs(1)
@@ -167,8 +206,8 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     @Test
     public void certificationSignatureAfterApprovalTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "certificationSignatureAfterApproval.pdf"))) {
-            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
-            ValidationReport report = validator.validateAllDocumentRevisions();
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
 
             AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID));
 
@@ -180,8 +219,8 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     @Test
     public void fieldLockChildModificationAllowedTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "fieldLockChildModificationAllowed.pdf"))) {
-            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
-            ValidationReport report = validator.validateAllDocumentRevisions();
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
 
             AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID));
         }
@@ -190,8 +229,8 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     @Test
     public void fieldLockChildModificationNotAllowedTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "fieldLockChildModificationNotAllowed.pdf"))) {
-            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
-            ValidationReport report = validator.validateAllDocumentRevisions();
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
 
             AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
                     .hasNumberOfFailures(1).hasNumberOfLogs(1)
@@ -204,8 +243,8 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     @Test
     public void fieldLockRootModificationAllowedTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "fieldLockRootModificationAllowed.pdf"))) {
-            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
-            ValidationReport report = validator.validateAllDocumentRevisions();
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
 
             AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID));
         }
@@ -214,8 +253,8 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     @Test
     public void fieldLockRootModificationNotAllowedTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "fieldLockRootModificationNotAllowed.pdf"))) {
-            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
-            ValidationReport report = validator.validateAllDocumentRevisions();
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
 
             AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
                     .hasNumberOfFailures(1).hasNumberOfLogs(1)
@@ -228,8 +267,8 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     @Test
     public void fieldLockSequentialExcludeValuesTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "fieldLockSequentialExcludeValues.pdf"))) {
-            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
-            ValidationReport report = validator.validateAllDocumentRevisions();
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
 
             AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
                     .hasNumberOfFailures(1).hasNumberOfLogs(1)
@@ -242,42 +281,60 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     @Test
     public void fieldLockSequentialIncludeValuesTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "fieldLockSequentialIncludeValues.pdf"))) {
-            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
-            ValidationReport report = validator.validateAllDocumentRevisions();
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
 
-            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
-                    .hasNumberOfFailures(2).hasNumberOfLogs(2)
-                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.FIELD_MDP_CHECK)
-                            .withMessage(DocumentRevisionsValidator.LOCKED_FIELD_MODIFIED, i -> "rootField.childTextField")
-                            .withStatus(ReportItemStatus.INVALID))
-                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.FIELD_MDP_CHECK)
-                            .withMessage(DocumentRevisionsValidator.LOCKED_FIELD_MODIFIED, i -> "childTextField")
-                            .withStatus(ReportItemStatus.INVALID)));
+            if (continueValidationAfterFail) {
+                AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
+                        .hasNumberOfFailures(2).hasNumberOfLogs(2)
+                        .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.FIELD_MDP_CHECK)
+                                .withMessage(DocumentRevisionsValidator.LOCKED_FIELD_MODIFIED,
+                                        i -> "rootField.childTextField")
+                                .withStatus(ReportItemStatus.INVALID))
+                        .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.FIELD_MDP_CHECK)
+                                .withMessage(DocumentRevisionsValidator.LOCKED_FIELD_MODIFIED, i -> "childTextField")
+                                .withStatus(ReportItemStatus.INVALID)));
+            } else {
+                AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
+                        .hasNumberOfFailures(1).hasNumberOfLogs(1)
+                        .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.FIELD_MDP_CHECK)
+                                .withMessage(DocumentRevisionsValidator.LOCKED_FIELD_MODIFIED,
+                                        i -> "rootField.childTextField")
+                                .withStatus(ReportItemStatus.INVALID)));
+            }
         }
     }
 
     @Test
     public void fieldLockKidsRemovedAndAddedTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "fieldLockKidsRemovedAndAdded.pdf"))) {
-            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
-            ValidationReport report = validator.validateAllDocumentRevisions();
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
 
-            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
-                    .hasNumberOfFailures(2).hasNumberOfLogs(2)
-                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.FIELD_MDP_CHECK)
-                            .withMessage(DocumentRevisionsValidator.LOCKED_FIELD_KIDS_REMOVED, i -> "rootField")
-                            .withStatus(ReportItemStatus.INVALID))
-                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.FIELD_MDP_CHECK)
-                            .withMessage(DocumentRevisionsValidator.LOCKED_FIELD_KIDS_ADDED, i -> "rootField")
-                            .withStatus(ReportItemStatus.INVALID)));
+            if (continueValidationAfterFail) {
+                AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
+                        .hasNumberOfFailures(2).hasNumberOfLogs(2)
+                        .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.FIELD_MDP_CHECK)
+                                .withMessage(DocumentRevisionsValidator.LOCKED_FIELD_KIDS_REMOVED, i -> "rootField")
+                                .withStatus(ReportItemStatus.INVALID))
+                        .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.FIELD_MDP_CHECK)
+                                .withMessage(DocumentRevisionsValidator.LOCKED_FIELD_KIDS_ADDED, i -> "rootField")
+                                .withStatus(ReportItemStatus.INVALID)));
+            } else {
+                AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
+                        .hasNumberOfFailures(1).hasNumberOfLogs(1)
+                        .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.FIELD_MDP_CHECK)
+                                .withMessage(DocumentRevisionsValidator.LOCKED_FIELD_KIDS_REMOVED, i -> "rootField")
+                                .withStatus(ReportItemStatus.INVALID)));
+            }
         }
     }
 
     @Test
     public void pageAndParentIndirectReferenceModifiedTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "pageAndParentIndirectReferenceModified.pdf"))) {
-            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
-            ValidationReport report = validator.validateAllDocumentRevisions();
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
 
             AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
                     .hasNumberOfFailures(1).hasNumberOfLogs(1)
@@ -290,8 +347,8 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     @Test
     public void lockedSignatureFieldModifiedTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "lockedSignatureFieldModified.pdf"))) {
-            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
-            ValidationReport report = validator.validateAllDocumentRevisions();
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
 
             AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
                     .hasNumberOfFailures(1).hasNumberOfLogs(1)
@@ -304,25 +361,33 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     @Test
     public void lockedFieldRemoveAddKidsEntryTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "lockedFieldRemoveAddKidsEntry.pdf"))) {
-            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
-            ValidationReport report = validator.validateAllDocumentRevisions();
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
 
-            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
-                    .hasNumberOfFailures(2).hasNumberOfLogs(2)
-                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.FIELD_MDP_CHECK)
-                            .withMessage(DocumentRevisionsValidator.LOCKED_FIELD_KIDS_REMOVED, i -> "rootField")
-                            .withStatus(ReportItemStatus.INVALID))
-                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.FIELD_MDP_CHECK)
-                            .withMessage(DocumentRevisionsValidator.LOCKED_FIELD_KIDS_ADDED, i -> "rootField")
-                            .withStatus(ReportItemStatus.INVALID)));
+            if (continueValidationAfterFail) {
+                AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
+                        .hasNumberOfFailures(2).hasNumberOfLogs(2)
+                        .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.FIELD_MDP_CHECK)
+                                .withMessage(DocumentRevisionsValidator.LOCKED_FIELD_KIDS_REMOVED, i -> "rootField")
+                                .withStatus(ReportItemStatus.INVALID))
+                        .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.FIELD_MDP_CHECK)
+                                .withMessage(DocumentRevisionsValidator.LOCKED_FIELD_KIDS_ADDED, i -> "rootField")
+                                .withStatus(ReportItemStatus.INVALID)));
+            } else {
+                AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
+                        .hasNumberOfFailures(1).hasNumberOfLogs(1)
+                        .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.FIELD_MDP_CHECK)
+                                .withMessage(DocumentRevisionsValidator.LOCKED_FIELD_KIDS_REMOVED, i -> "rootField")
+                                .withStatus(ReportItemStatus.INVALID)));
+            }
         }
     }
 
     @Test
     public void removedLockedFieldTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "removedLockedField.pdf"))) {
-            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
-            ValidationReport report = validator.validateAllDocumentRevisions();
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
 
             AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
                     .hasNumberOfFailures(1).hasNumberOfLogs(1)
@@ -335,8 +400,8 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     @Test
     public void danglingWidgetAnnotationTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "danglingWidgetAnnotation.pdf"))) {
-            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
-            ValidationReport report = validator.validateAllDocumentRevisions();
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
 
             // New widget annotation not included into the acroform was added to the 1st page.
             AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
@@ -352,8 +417,8 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     @Test
     public void removeAllThePageAnnotationsTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "removeAllAnnots.pdf"))) {
-            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
-            ValidationReport report = validator.validateAllDocumentRevisions();
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
 
             // All the annotations on the 2nd page were removed.
             AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID));
@@ -365,8 +430,8 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     @Test
     public void removeAllTheFieldAnnotationsTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "removeFieldAnnots.pdf"))) {
-            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
-            ValidationReport report = validator.validateAllDocumentRevisions();
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
 
             // All the annotations of the text field were removed. Note that Acrobat considers it invalid.
             AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID));
@@ -378,8 +443,8 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     @Test
     public void removeUnnamedFieldTest() throws Exception {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "removeUnnamedField.pdf"))) {
-            DocumentRevisionsValidator validator = new DocumentRevisionsValidator(document);
-            ValidationReport report = validator.validateAllDocumentRevisions();
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
 
             // Child field was removed, so parent field was modified. Both fields are unnamed.
             AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)

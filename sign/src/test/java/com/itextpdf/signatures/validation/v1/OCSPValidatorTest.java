@@ -43,6 +43,7 @@ import com.itextpdf.signatures.validation.v1.context.TimeBasedContexts;
 import com.itextpdf.signatures.validation.v1.context.ValidationContext;
 import com.itextpdf.signatures.validation.v1.context.ValidatorContext;
 import com.itextpdf.signatures.validation.v1.context.ValidatorContexts;
+import com.itextpdf.signatures.validation.v1.mocks.MockChainValidator;
 import com.itextpdf.signatures.validation.v1.report.ReportItem;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport;
 import com.itextpdf.test.ExtendedITextTest;

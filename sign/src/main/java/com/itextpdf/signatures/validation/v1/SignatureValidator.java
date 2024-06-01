@@ -22,9 +22,11 @@
  */
 package com.itextpdf.signatures.validation.v1;
 
+import com.itextpdf.commons.actions.contexts.IMetaInfo;
 import com.itextpdf.commons.bouncycastle.asn1.tsp.ITSTInfo;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.pdf.DocumentProperties;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -35,7 +37,6 @@ import com.itextpdf.signatures.CertificateUtil;
 import com.itextpdf.signatures.IssuingCertificateRetriever;
 import com.itextpdf.signatures.PdfPKCS7;
 import com.itextpdf.signatures.SignatureUtil;
-import com.itextpdf.signatures.TimestampConstants;
 import com.itextpdf.signatures.validation.v1.context.CertificateSource;
 import com.itextpdf.signatures.validation.v1.context.TimeBasedContext;
 import com.itextpdf.signatures.validation.v1.context.ValidationContext;
@@ -43,6 +44,7 @@ import com.itextpdf.signatures.validation.v1.context.ValidatorContext;
 import com.itextpdf.signatures.validation.v1.report.ReportItem;
 import com.itextpdf.signatures.validation.v1.report.ReportItem.ReportItemStatus;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport;
+import com.itextpdf.signatures.validation.v1.report.ValidationReport.ValidationResult;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -70,14 +72,17 @@ class SignatureValidator {
     static final String CANNOT_VERIFY_TIMESTAMP = "Signature timestamp attribute cannot be verified.";
     static final String REVISIONS_RETRIEVAL_FAILED = "Wasn't possible to retrieve document revisions.";
     private static final String TIMESTAMP_EXTRACTION_FAILED = "Unable to extract timestamp from timestamp signature";
+
     private final ValidationContext baseValidationContext;
     private final CertificateChainValidator certificateChainValidator;
+    private final DocumentRevisionsValidator documentRevisionsValidator;
     private final IssuingCertificateRetriever certificateRetriever;
     private final SignatureValidationProperties properties;
     private Date lastKnownPoE = DateTimeUtil.getCurrentTimeDate();
+    private IMetaInfo metaInfo = new ValidationMetaInfo();
 
     /**
-     * Create new instance of {@link SignatureValidator}.
+     * Creates new instance of {@link SignatureValidator}.
      *
      * @param builder See {@link ValidatorChainBuilder}
      */
@@ -85,8 +90,21 @@ class SignatureValidator {
         this.certificateRetriever = builder.getCertificateRetriever();
         this.properties = builder.getProperties();
         this.certificateChainValidator = builder.getCertificateChainValidator();
+        this.documentRevisionsValidator = builder.getDocumentRevisionsValidator();
         this.baseValidationContext = new ValidationContext(ValidatorContext.SIGNATURE_VALIDATOR,
                 CertificateSource.SIGNER_CERT, TimeBasedContext.PRESENT);
+    }
+
+    /**
+     * Sets the {@link IMetaInfo} that will be used during new {@link PdfDocument} creations.
+     *
+     * @param metaInfo meta info to set
+     *
+     * @return the same {@link SignatureValidator} instance
+     */
+    public SignatureValidator setEventCountingMetaInfo(IMetaInfo metaInfo) {
+        this.metaInfo = metaInfo;
+        return this;
     }
 
     /**
@@ -97,14 +115,26 @@ class SignatureValidator {
      */
     public ValidationReport validateSignatures(PdfDocument document) {
         ValidationReport report = new ValidationReport();
+        documentRevisionsValidator.setEventCountingMetaInfo(metaInfo);
+        ValidationReport revisionsValidationReport =
+                documentRevisionsValidator.validateAllDocumentRevisions(baseValidationContext, document);
+        report.merge(revisionsValidationReport);
+        if (stopValidation(report, baseValidationContext)) {
+            return report;
+        }
+
         SignatureUtil util = new SignatureUtil(document);
         List<String> signatureNames = util.getSignatureNames();
         Collections.reverse(signatureNames);
 
         for (String fieldName : signatureNames) {
-            try (PdfDocument doc = new PdfDocument(new PdfReader(util.extractRevision(fieldName)))) {
+            try (PdfDocument doc = new PdfDocument(new PdfReader(util.extractRevision(fieldName)),
+                    new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
                 ValidationReport subReport = validateLatestSignature(doc);
                 report.merge(subReport);
+                if (stopValidation(report, baseValidationContext)) {
+                    return report;
+                }
             } catch (IOException e) {
                 report.addReportItem(new ReportItem(SIGNATURE_VERIFICATION, REVISIONS_RETRIEVAL_FAILED,
                         e, ReportItemStatus.INDETERMINATE));
@@ -248,7 +278,7 @@ class SignatureValidator {
 
     private boolean stopValidation(ValidationReport result, ValidationContext validationContext) {
         return !properties.getContinueAfterFailure(validationContext)
-                && result.getValidationResult() != ValidationReport.ValidationResult.VALID;
+                && result.getValidationResult() == ValidationResult.INVALID;
     }
 }
 

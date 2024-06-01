@@ -37,6 +37,7 @@ import com.itextpdf.signatures.validation.v1.context.ValidatorContexts;
 import com.itextpdf.signatures.validation.v1.extensions.CertificateExtension;
 import com.itextpdf.signatures.validation.v1.extensions.KeyUsage;
 import com.itextpdf.signatures.validation.v1.extensions.KeyUsageExtension;
+import com.itextpdf.signatures.validation.v1.mocks.MockRevocationDataValidator;
 import com.itextpdf.signatures.validation.v1.report.CertificateReportItem;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport.ValidationResult;
