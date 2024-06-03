@@ -83,9 +83,19 @@ class GridSizer {
             cell.getLayoutArea().setY(y);
 
             float cellHeight = 0.0f;
+            float[] rowSizes = new float[cell.getRowEnd() - cell.getRowStart()];
+            int rowSizesIdx = 0;
             for (int i = cell.getRowStart(); i < cell.getRowEnd(); ++i) {
+                rowSizes[rowSizesIdx] = (float) rows.get(i);
+                if (rowSizesIdx != 0) {
+                    // We take into account only top gap and not bottom one
+                    rowSizes[rowSizesIdx] += rowGap;
+                }
+                ++rowSizesIdx;
                 cellHeight += (float) rows.get(i);
             }
+            // Preserve row sizes for split
+            cell.setRowSizes(rowSizes);
             cellHeight += (cell.getGridHeight() - 1) * rowGap;
             cell.getLayoutArea().setHeight(cellHeight);
         }

@@ -38,6 +38,11 @@ class GridCell {
     private final Rectangle layoutArea = new Rectangle(0.0f, 0.0f, 0.0f,0.0f);
 
     /**
+     * Cached track sizes for rows to use them during split.
+     */
+    private float[] rowSizes;
+
+    /**
      * Create a grid cell and init value renderer position on a grid based on its properties.
      *
      * @param value item renderer
@@ -114,6 +119,14 @@ class GridCell {
     void setPos(int y, int x) {
         this.gridY = y;
         this.gridX = x;
+    }
+
+    float[] getRowSizes() {
+        return this.rowSizes;
+    }
+
+    void setRowSizes(float[] rowSizes) {
+        this.rowSizes = rowSizes;
     }
 
     /**

@@ -41,7 +41,7 @@ import java.util.List;
 /**
  * Represents a renderer for a grid.
  */
-public class GridContainerRenderer extends DivRenderer {
+public class GridContainerRenderer extends BlockRenderer {
     private boolean isFirstLayout = true;
 
     /**
@@ -110,7 +110,33 @@ public class GridContainerRenderer extends DivRenderer {
     public void addChild(IRenderer renderer) {
         renderer.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
         renderer.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.VISIBLE);
-        super.addChild(renderer);
+        renderer.setProperty(Property.COLLAPSING_MARGINS, determineCollapsingMargins(renderer));
+
+        GridItemRenderer itemRenderer = new GridItemRenderer();
+        itemRenderer.setProperty(Property.COLLAPSING_MARGINS, Boolean.FALSE);
+        itemRenderer.addChild(renderer);
+
+        super.addChild(itemRenderer);
+    }
+
+    /**
+     * Calculates collapsing margins value. It's based on browser behavior.
+     * Always returning true somehow also almost works.
+     */
+    private static Boolean determineCollapsingMargins(IRenderer renderer) {
+        IRenderer currentRenderer = renderer;
+        while (!currentRenderer.getChildRenderers().isEmpty()) {
+            if (currentRenderer.getChildRenderers().size() > 1) {
+                return Boolean.TRUE;
+            } else {
+                currentRenderer = currentRenderer.getChildRenderers().get(0);
+            }
+        }
+        if (currentRenderer instanceof TableRenderer) {
+            return Boolean.TRUE;
+        }
+
+        return Boolean.FALSE;
     }
 
     private AbstractRenderer createSplitRenderer(List<IRenderer> children) {
@@ -126,12 +152,13 @@ public class GridContainerRenderer extends DivRenderer {
     }
 
     private AbstractRenderer createOverflowRenderer(List<IRenderer> children) {
-        // TODO DEVSIX-8340 - We put the original amount of rows into overflow container.
         GridContainerRenderer overflowRenderer = (GridContainerRenderer) getNextRenderer();
         overflowRenderer.isFirstLayout = false;
         overflowRenderer.parent = parent;
         overflowRenderer.modelElement = modelElement;
         overflowRenderer.addAllProperties(getOwnProperties());
+        overflowRenderer.setProperty(Property.GRID_TEMPLATE_ROWS, null);
+        overflowRenderer.setProperty(Property.GRID_AUTO_ROWS, null);
         overflowRenderer.setChildRenderers(children);
         ContinuousContainer.clearPropertiesFromOverFlowRenderer(overflowRenderer);
         return overflowRenderer;
@@ -141,52 +168,89 @@ public class GridContainerRenderer extends DivRenderer {
     private GridLayoutResult layoutGrid(LayoutContext layoutContext, Rectangle actualBBox, Grid grid) {
         GridLayoutResult layoutResult = new GridLayoutResult();
 
+        int notLayoutedRow = grid.getNumberOfRows();
         for (GridCell cell : grid.getUniqueGridCells(Grid.GridOrder.ROW)) {
             // Calculate cell layout context by getting actual x and y on parent layout area for it
             LayoutContext cellContext = getCellLayoutContext(layoutContext, actualBBox, cell);
-
+            Rectangle cellBBox = cellContext.getArea().getBBox();
             IRenderer cellToRender = cell.getValue();
-            cellToRender.setProperty(Property.COLLAPSING_MARGINS, Boolean.FALSE);
 
             // Now set the height for the individual items
             // We know cell height upfront and this way we tell the element what it can occupy
-            Rectangle cellBBox = cellContext.getArea().getBBox();
-            if (!cellToRender.hasProperty(Property.HEIGHT)) {
-                final Rectangle rectangleWithoutBordersMarginsPaddings = cellBBox.clone();
-                if (cellToRender instanceof AbstractRenderer) {
-                    final AbstractRenderer abstractCellRenderer = ((AbstractRenderer) cellToRender);
-                    // We subtract margins/borders/paddings because we should take into account that
-                    // borders/paddings/margins should also fit into a cell.
-                    if (AbstractRenderer.isBorderBoxSizing(cellToRender)) {
-                        abstractCellRenderer.applyMargins(rectangleWithoutBordersMarginsPaddings, false);
-                    } else {
-                        abstractCellRenderer.applyMarginsBordersPaddings(rectangleWithoutBordersMarginsPaddings, false);
-                    }
-                }
+            final float itemHeight = ((GridItemRenderer) cellToRender).calculateHeight(cellBBox.getHeight());
 
-                cellToRender.setProperty(Property.HEIGHT,
-                        UnitValue.createPointValue(rectangleWithoutBordersMarginsPaddings.getHeight()));
-            }
+            cellToRender.setProperty(Property.HEIGHT, UnitValue.createPointValue(itemHeight));
 
             // Adjust cell BBox to the remaining part of the layout bbox
             // This way we can layout elements partially
             cellBBox.setHeight(cellBBox.getTop() - actualBBox.getBottom())
                     .setY(actualBBox.getY());
 
+            cellToRender.setProperty(Property.FILL_AVAILABLE_AREA, Boolean.TRUE);
             LayoutResult cellResult = cellToRender.layout(cellContext);
+            notLayoutedRow = Math.min(notLayoutedRow, processLayoutResult(layoutResult, cell, cellResult));
+        }
 
-            if (cellResult.getStatus() == LayoutResult.NOTHING) {
-                layoutResult.getOverflowRenderers().add(cellToRender);
-                layoutResult.getCauseOfNothing().add(cellResult.getCauseOfNothing());
-            } else {
-                // PARTIAL + FULL result handling
-                layoutResult.getSplitRenderers().add(cellToRender);
-                if (cellResult.getStatus() == LayoutResult.PARTIAL) {
-                    layoutResult.getOverflowRenderers().add(cellResult.getOverflowRenderer());
-                }
+        for (IRenderer overflowRenderer : layoutResult.getOverflowRenderers()) {
+            if (overflowRenderer.<Integer>getProperty(Property.GRID_ROW_START) != null) {
+                overflowRenderer.setProperty(Property.GRID_ROW_START,
+                        (int) overflowRenderer.<Integer>getProperty(Property.GRID_ROW_START) - notLayoutedRow);
+                overflowRenderer.setProperty(Property.GRID_ROW_END,
+                        (int) overflowRenderer.<Integer>getProperty(Property.GRID_ROW_END) - notLayoutedRow);
             }
         }
+
         return layoutResult;
+    }
+
+    private static int processLayoutResult(GridLayoutResult layoutResult, GridCell cell, LayoutResult cellResult) {
+        IRenderer cellToRenderer = cell.getValue();
+        if (cellResult.getStatus() == LayoutResult.NOTHING) {
+            cellToRenderer.setProperty(Property.GRID_COLUMN_START, cell.getColumnStart() + 1);
+            cellToRenderer.setProperty(Property.GRID_COLUMN_END, cell.getColumnEnd() + 1);
+            cellToRenderer.setProperty(Property.GRID_ROW_START, cell.getRowStart() + 1);
+            cellToRenderer.setProperty(Property.GRID_ROW_END, cell.getRowEnd() + 1);
+            layoutResult.getOverflowRenderers().add(cellToRenderer);
+            layoutResult.getCauseOfNothing().add(cellResult.getCauseOfNothing());
+
+            return cell.getRowStart();
+        }
+
+        // PARTIAL + FULL result handling
+        layoutResult.getSplitRenderers().add(cellToRenderer);
+        if (cellResult.getStatus() == LayoutResult.PARTIAL) {
+            IRenderer overflowRenderer = cellResult.getOverflowRenderer();
+            overflowRenderer.setProperty(Property.GRID_COLUMN_START, cell.getColumnStart() + 1);
+            overflowRenderer.setProperty(Property.GRID_COLUMN_END, cell.getColumnEnd() + 1);
+            int rowStart = cell.getRowStart() + 1;
+            int rowEnd = cell.getRowEnd() + 1;
+            layoutResult.getOverflowRenderers().add(overflowRenderer);
+            // Now let's find out where we split exactly
+            float accumulatedRowSize = 0;
+            final float layoutedHeight = cellResult.getOccupiedArea().getBBox().getHeight();
+            int notLayoutedRow = rowStart - 1;
+            for (int i = 0; i < cell.getRowSizes().length; ++i) {
+                accumulatedRowSize += cell.getRowSizes()[i];
+                if (accumulatedRowSize < layoutedHeight) {
+                    ++rowStart;
+                    ++notLayoutedRow;
+                } else {
+                    break;
+                }
+            }
+
+            // We don't know what to do if rowStart is equal or more than rowEnd
+            // Let's not try to guess by just take the 1st available space in a column
+            // by leaving nulls for grid-row-start/end
+            if (rowEnd > rowStart) {
+                overflowRenderer.setProperty(Property.GRID_ROW_START, rowStart);
+                overflowRenderer.setProperty(Property.GRID_ROW_END, rowEnd);
+            }
+
+            return notLayoutedRow;
+        }
+
+        return Integer.MAX_VALUE;
     }
 
     //Init cell layout context based on a parent context and calculated cell layout area from grid sizing algorithm.
@@ -209,10 +273,12 @@ public class GridContainerRenderer extends DivRenderer {
     private LayoutArea calculateContainerOccupiedArea(LayoutContext layoutContext, Grid grid, boolean isFull) {
         LayoutArea area = layoutContext.getArea().clone();
         final float totalHeight = updateOccupiedHeight(grid.getHeight(), isFull);
-        area.getBBox().setHeight(totalHeight);
-        final Rectangle initialBBox = layoutContext.getArea().getBBox();
-        area.getBBox().setY(initialBBox.getY() + initialBBox.getHeight() - area.getBBox().getHeight());
-        recalculateHeightAndWidthAfterLayout(area.getBBox(), isFull);
+        if (totalHeight < area.getBBox().getHeight() || isFull) {
+            area.getBBox().setHeight(totalHeight);
+            final Rectangle initialBBox = layoutContext.getArea().getBBox();
+            area.getBBox().setY(initialBBox.getY() + initialBBox.getHeight() - area.getBBox().getHeight());
+            recalculateHeightAndWidthAfterLayout(area.getBBox(), isFull);
+        }
         return area;
     }
 
@@ -299,7 +365,6 @@ public class GridContainerRenderer extends DivRenderer {
         gridSizer.sizeGrid();
         return grid;
     }
-
 
     private final static class GridLayoutResult {
         private final List<IRenderer> splitRenderers = new ArrayList<>();

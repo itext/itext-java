@@ -202,7 +202,6 @@ public class GridContainerLayoutTest extends ExtendedITextTest {
                 DESTINATION_FOLDER, "diff"));
     }
 
-    // TODO DEVSIX-8340
     @Test
     public void overflowGridContainerTest() throws IOException, InterruptedException {
         String fileName = DESTINATION_FOLDER + "overflowGridContainer.pdf";
