@@ -807,6 +807,15 @@ public interface IBouncyCastleFactory {
     IExtensions createExtensions(IExtension extension);
 
     /**
+     * Create extensions wrapper from extension wrapper.
+     *
+     * @param extensions array of the extension wrappers to create extensions wrapper from
+     *
+     * @return created extensions wrapper
+     */
+    IExtensions createExtensions(IExtension[] extensions);
+
+    /**
      * Create extensions wrapper for {@code null} value.
      *
      * @return created extensions wrapper

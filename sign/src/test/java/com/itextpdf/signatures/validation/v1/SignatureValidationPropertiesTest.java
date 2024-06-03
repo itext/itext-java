@@ -35,7 +35,6 @@ import com.itextpdf.signatures.validation.v1.extensions.KeyUsageExtension;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -45,9 +44,6 @@ import java.util.function.Consumer;
 
 @Category(UnitTest.class)
 public class SignatureValidationPropertiesTest extends ExtendedITextTest {
-    @Before
-    public void setUp() {
-    }
 
     @Test
     public void getParametersValueForSpecificTest() {

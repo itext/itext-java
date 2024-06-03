@@ -481,7 +481,7 @@ public class CRLValidatorTest extends ExtendedITextTest {
     private byte[] createCrl(X509Certificate issuerCert, PrivateKey issuerKey, Date issueDate, Date nextUpdate,
                              X509Certificate revokedCert, Date revocationDate, int reason)
             throws Exception {
-        TestCrlBuilder builder = new TestCrlBuilder(issuerCert, issuerKey);
+        TestCrlBuilder builder = new TestCrlBuilder(issuerCert, issuerKey, issueDate);
         if (nextUpdate != null) {
             builder.setNextUpdate(nextUpdate);
         }

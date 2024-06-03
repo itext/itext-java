@@ -115,7 +115,6 @@ public class CertificateChainValidator {
         return validate(result, context, certificate, validationDate);
     }
 
-
     /**
      * Validate given certificate using provided validation date and required extensions.
      * Result is added into provided report.

@@ -22,8 +22,12 @@
  */
 package com.itextpdf.bouncycastlefips.cert.ocsp;
 
+import com.itextpdf.bouncycastlefips.asn1.ASN1EncodableBCFips;
+import com.itextpdf.bouncycastlefips.asn1.ASN1ObjectIdentifierBCFips;
 import com.itextpdf.bouncycastlefips.cert.X509CertificateHolderBCFips;
 import com.itextpdf.bouncycastlefips.operator.ContentVerifierProviderBCFips;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1Encodable;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1ObjectIdentifier;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.ISingleResp;
@@ -32,6 +36,8 @@ import com.itextpdf.commons.bouncycastle.operator.IContentVerifierProvider;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Objects;
+
+import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.cert.ocsp.OCSPException;
@@ -116,6 +122,16 @@ public class BasicOCSPRespBCFips implements IBasicOCSPResp {
     @Override
     public Date getProducedAt() {
         return basicOCSPResp.getProducedAt();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IASN1Encodable getExtensionParsedValue(IASN1ObjectIdentifier objectIdentifier) {
+        Extension extension =
+                basicOCSPResp.getExtension(((ASN1ObjectIdentifierBCFips) objectIdentifier).getASN1ObjectIdentifier());
+        return new ASN1EncodableBCFips(extension == null ? null : extension.getParsedValue());
     }
 
     /**

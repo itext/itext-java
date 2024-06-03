@@ -84,8 +84,8 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
 
     private IssuingCertificateRetriever certificateRetriever;
     private SignatureValidationProperties parameters;
-    private ValidationContext baseContext = new ValidationContext(ValidatorContext.SIGNATURE_VALIDATOR, CertificateSource.SIGNER_CERT,
-            TimeBasedContext.PRESENT);
+    private final ValidationContext baseContext = new ValidationContext(ValidatorContext.SIGNATURE_VALIDATOR,
+            CertificateSource.SIGNER_CERT, TimeBasedContext.PRESENT);
     private ValidatorChainBuilder validatorChainBuilder;
     private MockCrlValidator mockCrlValidator;
     private MockOCSPValidator mockOCSPValidator;
@@ -170,7 +170,7 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
     }
 
     @Test
-    public void basicCrlValidatorUsageTest() throws GeneralSecurityException, AbstractOperatorCreationException, IOException {
+    public void basicCrlValidatorUsageTest() throws GeneralSecurityException {
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
         Date revocationDate = DateTimeUtil.addDaysToDate(checkDate, -1);
         TestCrlBuilder builder = new TestCrlBuilder(caCert, caPrivateKey, checkDate);

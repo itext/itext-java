@@ -22,6 +22,8 @@
  */
 package com.itextpdf.commons.bouncycastle.cert.ocsp;
 
+import com.itextpdf.commons.bouncycastle.asn1.IASN1Encodable;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1ObjectIdentifier;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
 import com.itextpdf.commons.bouncycastle.operator.IContentVerifierProvider;
 
@@ -73,4 +75,14 @@ public interface IBasicOCSPResp {
      * @return produced at date.
      */
     Date getProducedAt();
+
+    /**
+     * Gets parsed value of the extension retrieved using actual {@code getExtension} method
+     * for the wrapped BasicOCSPResp object.
+     *
+     * @param objectIdentifier extension object identifier
+     *
+     * @return wrapped extension parsed value.
+     */
+    IASN1Encodable getExtensionParsedValue(IASN1ObjectIdentifier objectIdentifier);
 }

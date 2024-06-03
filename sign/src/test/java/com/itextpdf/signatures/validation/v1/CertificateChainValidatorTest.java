@@ -116,8 +116,7 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         CertificateChainValidator validator = validatorChainBuilder.buildCertificateChainValidator();
         certificateRetriever.addKnownCertificates(Collections.<Certificate>singletonList(intermediateCert));
         certificateRetriever.setTrustedCertificates(Collections.<Certificate>singletonList(rootCert));
-        ValidationReport report =
-                validator.validateCertificate(baseContext, signingCert, TimeTestUtil.TEST_DATE_TIME);
+        validator.validateCertificate(baseContext, signingCert, TimeTestUtil.TEST_DATE_TIME);
 
 
         Assert.assertEquals(2, mockRevocationDataValidator.calls.size());

@@ -123,7 +123,7 @@ public class OCSPValidatorTest extends ExtendedITextTest {
     @Test
     public void ocpsIssuerChainValidationsUsesCorrectParametersTest() throws CertificateException, IOException {
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
-        ValidationReport report = validateTest(checkDate);
+        validateTest(checkDate);
 
         Assert.assertEquals(1, mockCertificateChainValidator.verificationCalls.size());
         Assert.assertEquals(responderCert, mockCertificateChainValidator.verificationCalls.get(0).certificate);
@@ -398,6 +398,108 @@ public class OCSPValidatorTest extends ExtendedITextTest {
                 .hasLogItem(la -> la.withStatus(ReportItem.ReportItemStatus.INFO)));
     }
 
+    @Test
+    public void noArchiveCutoffExtensionTest() throws Exception {
+        Date producedAt = DateTimeUtil.addDaysToDate(checkCert.getNotAfter(), 5);
+        TestOcspResponseBuilder builder = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
+        builder.setProducedAt(producedAt);
+        TestOcspClient ocspClient = new TestOcspClient().addBuilderForCertIssuer(caCert, builder);
+        IBasicOCSPResp basicOCSPResp = FACTORY.createBasicOCSPResp(FACTORY.createBasicOCSPResponse(
+                FACTORY.createASN1Primitive(ocspClient.getEncoded(checkCert, caCert, null))));
+
+        ValidationReport report = new ValidationReport();
+        certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
+
+        OCSPValidator validator = validatorChainBuilder.buildOCSPValidator();
+        validator.validate(report, baseContext, checkCert, basicOCSPResp.getResponses()[0], basicOCSPResp,
+                TimeTestUtil.TEST_DATE_TIME);
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationReport.ValidationResult.INDETERMINATE)
+                .hasNumberOfFailures(1)
+                .hasNumberOfLogs(1)
+                .hasLogItem(l -> l.withCheckName(OCSPValidator.OCSP_CHECK)
+                        .withMessage(OCSPValidator.CERT_IS_EXPIRED, i -> checkCert.getNotAfter())
+                        .withCertificate(checkCert))
+        );
+    }
+
+    @Test
+    public void noArchiveCutoffExtensionButRevokedStatusTest() throws Exception {
+        Date producedAt = DateTimeUtil.addDaysToDate(checkCert.getNotAfter(), 5);
+        Date revocationDate = DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, 5);
+        TestOcspResponseBuilder builder = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
+        builder.setProducedAt(producedAt);
+        builder.setCertificateStatus(FACTORY.createRevokedStatus(revocationDate,
+                FACTORY.createCRLReason().getKeyCompromise()));
+        TestOcspClient ocspClient = new TestOcspClient().addBuilderForCertIssuer(caCert, builder);
+        IBasicOCSPResp basicOCSPResp = FACTORY.createBasicOCSPResp(FACTORY.createBasicOCSPResponse(
+                FACTORY.createASN1Primitive(ocspClient.getEncoded(checkCert, caCert, null))));
+
+        ValidationReport report = new ValidationReport();
+        certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
+
+        OCSPValidator validator = validatorChainBuilder.buildOCSPValidator();
+        validator.validate(report, baseContext, checkCert, basicOCSPResp.getResponses()[0], basicOCSPResp,
+                TimeTestUtil.TEST_DATE_TIME);
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationReport.ValidationResult.VALID)
+                .hasNumberOfFailures(0).hasNumberOfLogs(1)
+                .hasLogItem(l -> l.withCheckName(OCSPValidator.OCSP_CHECK)
+                        .withMessage(SignLogMessageConstant.VALID_CERTIFICATE_IS_REVOKED, i -> revocationDate)
+                        .withCertificate(checkCert)));
+    }
+
+    @Test
+    public void certExpiredBeforeArchiveCutoffDateTest() throws Exception {
+        Date producedAt = DateTimeUtil.addDaysToDate(checkCert.getNotAfter(), 5);
+        TestOcspResponseBuilder builder = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
+        builder.setProducedAt(producedAt);
+        builder.addResponseExtension(FACTORY.createOCSPObjectIdentifiers().getIdPkixOcspArchiveCutoff(),
+                FACTORY.createDEROctetString(FACTORY.createASN1GeneralizedTime(
+                        DateTimeUtil.addDaysToDate(producedAt, -3)).getEncoded()));
+        TestOcspClient ocspClient = new TestOcspClient().addBuilderForCertIssuer(caCert, builder);
+        IBasicOCSPResp basicOCSPResp = FACTORY.createBasicOCSPResp(FACTORY.createBasicOCSPResponse(
+                FACTORY.createASN1Primitive(ocspClient.getEncoded(checkCert, caCert, null))));
+
+        ValidationReport report = new ValidationReport();
+        certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
+
+        OCSPValidator validator = validatorChainBuilder.buildOCSPValidator();
+        validator.validate(report, baseContext, checkCert, basicOCSPResp.getResponses()[0], basicOCSPResp,
+                TimeTestUtil.TEST_DATE_TIME);
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationReport.ValidationResult.INDETERMINATE)
+                .hasNumberOfFailures(1)
+                .hasNumberOfLogs(1)
+                .hasLogItem(l -> l.withCheckName(OCSPValidator.OCSP_CHECK)
+                        .withMessage(OCSPValidator.CERT_IS_EXPIRED, i -> checkCert.getNotAfter())
+                        .withCertificate(checkCert))
+        );
+    }
+
+    @Test
+    public void certExpiredAfterArchiveCutoffDateTest() throws Exception {
+        Date producedAt = DateTimeUtil.addDaysToDate(checkCert.getNotAfter(), 5);
+        TestOcspResponseBuilder builder = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
+        builder.setProducedAt(producedAt);
+        builder.addResponseExtension(FACTORY.createOCSPObjectIdentifiers().getIdPkixOcspArchiveCutoff(),
+                FACTORY.createDEROctetString(FACTORY.createASN1GeneralizedTime(
+                        DateTimeUtil.addDaysToDate(producedAt, -10)).getEncoded()));
+        TestOcspClient ocspClient = new TestOcspClient().addBuilderForCertIssuer(caCert, builder);
+        IBasicOCSPResp basicOCSPResp = FACTORY.createBasicOCSPResp(FACTORY.createBasicOCSPResponse(
+                FACTORY.createASN1Primitive(ocspClient.getEncoded(checkCert, caCert, null))));
+
+        ValidationReport report = new ValidationReport();
+        certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
+
+        OCSPValidator validator = validatorChainBuilder.buildOCSPValidator();
+        validator.validate(report, baseContext, checkCert, basicOCSPResp.getResponses()[0], basicOCSPResp,
+                TimeTestUtil.TEST_DATE_TIME);
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationReport.ValidationResult.VALID)
+                .hasNumberOfFailures(0).hasNumberOfLogs(0));
+    }
+
     private ValidationReport validateTest(Date checkDate) throws CertificateException, IOException {
         return validateTest(checkDate, DateTimeUtil.addDaysToDate(checkDate, 1), 0);
     }
@@ -432,70 +534,6 @@ public class OCSPValidatorTest extends ExtendedITextTest {
         ValidationReport report = new ValidationReport();
         certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
 
-        OCSPValidator validator = validatorChainBuilder.buildOCSPValidator();
-        validator.validate(report, baseContext, checkCert, basicOCSPResp.getResponses()[0], basicOCSPResp, checkDate);
-        return report;
-    }
-
-    private ValidationReport validateOcspWithoutCertsTestMocked(boolean addResponderToTrusted)
-            throws IOException, CertificateException {
-        TestOcspResponseBuilder builder = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
-        builder.setOcspCertsChain(new IX509CertificateHolder[0]);
-        TestOcspClient ocspClient = new TestOcspClient().addBuilderForCertIssuer(caCert, builder);
-        IBasicOCSPResp basicOCSPResp = FACTORY.createBasicOCSPResp(FACTORY.createBasicOCSPResponse(
-                FACTORY.createASN1Primitive(ocspClient.getEncoded(checkCert, caCert, null))));
-
-        ValidationReport report = new ValidationReport();
-        certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
-        if (addResponderToTrusted) {
-            certificateRetriever.addTrustedCertificates(Collections.singletonList(responderCert));
-        }
-
-        OCSPValidator validator = validatorChainBuilder.buildOCSPValidator();
-        validator.validate(report, baseContext, checkCert, basicOCSPResp.getResponses()[0], basicOCSPResp,
-                TimeTestUtil.TEST_DATE_TIME);
-        return report;
-    }
-
-    private ValidationReport verifyResponderWithOcspMocked(boolean revokedOcsp)
-            throws IOException, CertificateException, AbstractOperatorCreationException, AbstractPKCSException {
-        String rootCertFileName = SOURCE_FOLDER + "rootCertForOcspTest.pem";
-        String checkCertFileName = SOURCE_FOLDER + "signCertForOcspTest.pem";
-        String ocspResponderCertFileName = SOURCE_FOLDER + "ocspResponderCertForOcspTest.pem";
-        Date checkDate = TimeTestUtil.TEST_DATE_TIME;
-
-        X509Certificate caCert = (X509Certificate) PemFileHelper.readFirstChain(rootCertFileName)[0];
-        PrivateKey caPrivateKey = PemFileHelper.readFirstKey(rootCertFileName, PASSWORD);
-        X509Certificate checkCert = (X509Certificate) PemFileHelper.readFirstChain(checkCertFileName)[0];
-        X509Certificate responderCert = (X509Certificate) PemFileHelper.readFirstChain(ocspResponderCertFileName)[0];
-        PrivateKey ocspRespPrivateKey = PemFileHelper.readFirstKey(ocspResponderCertFileName, PASSWORD);
-
-        TestOcspResponseBuilder builder = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
-        builder.setThisUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(checkDate, -5)));
-        builder.setNextUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(checkDate, 5)));
-        TestOcspClient ocspClient = new TestOcspClient().addBuilderForCertIssuer(caCert, builder);
-        IBasicOCSPResp basicOCSPResp = FACTORY.createBasicOCSPResp(FACTORY.createBasicOCSPResponse(
-                FACTORY.createASN1Primitive(ocspClient.getEncoded(checkCert, caCert, null))));
-
-        ValidationReport report = new ValidationReport();
-        certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
-
-        TestOcspResponseBuilder builder2 = revokedOcsp ? new TestOcspResponseBuilder(caCert, caPrivateKey,
-                FACTORY.createRevokedStatus(
-                        DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, -5),
-                        FACTORY.createCRLReason().getKeyCompromise())) :
-                new TestOcspResponseBuilder(caCert, caPrivateKey);
-        builder2.setThisUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(checkDate, 20)));
-        builder2.setNextUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(checkDate, 30)));
-        TestOcspClient ocspClient2 = new TestOcspClient().addBuilderForCertIssuer(caCert, builder2);
-
-        parameters.setRevocationOnlineFetching(ValidatorContexts.all(), CertificateSources.all(),
-                        TimeBasedContexts.all(), SignatureValidationProperties.OnlineFetching.NEVER_FETCH)
-                .setFreshness(ValidatorContexts.all(), CertificateSources.all(), TimeBasedContexts.all(),
-                        Duration.ofDays(5));
-        if (revokedOcsp) {
-            parameters.setContinueAfterFailure(ValidatorContexts.all(), CertificateSources.all(), false);
-        }
         OCSPValidator validator = validatorChainBuilder.buildOCSPValidator();
         validator.validate(report, baseContext, checkCert, basicOCSPResp.getResponses()[0], basicOCSPResp, checkDate);
         return report;

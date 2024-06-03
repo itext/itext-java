@@ -24,6 +24,8 @@ package com.itextpdf.signatures.testutils.builder;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1ObjectIdentifier;
+import com.itextpdf.commons.bouncycastle.asn1.IDEROctetString;
 import com.itextpdf.commons.bouncycastle.asn1.x500.IX500Name;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IExtension;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
@@ -46,6 +48,8 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 public class TestOcspResponseBuilder {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
@@ -61,6 +65,7 @@ public class TestOcspResponseBuilder {
     private Date producedAt = TimeTestUtil.TEST_DATE_TIME;
     private IX509CertificateHolder[] chain;
     private boolean chainSet = false;
+    private final Set<IExtension> extensions = new HashSet<>();
 
     public TestOcspResponseBuilder(X509Certificate issuerCert, PrivateKey issuerPrivateKey,
             ICertificateStatus certificateStatus) throws CertificateEncodingException, IOException {
@@ -98,6 +103,10 @@ public class TestOcspResponseBuilder {
         this.nextUpdate = nextUpdate;
     }
 
+    public void addResponseExtension(IASN1ObjectIdentifier objectIdentifier, IDEROctetString extensionValue) {
+        this.extensions.add(FACTORY.createExtension(objectIdentifier, false, extensionValue));
+    }
+
     public byte[] makeOcspResponse(byte[] requestBytes) throws IOException, CertificateException,
             AbstractOperatorCreationException, AbstractOCSPException {
         IBasicOCSPResp ocspResponse = makeOcspResponseObject(requestBytes);
@@ -111,8 +120,10 @@ public class TestOcspResponseBuilder {
 
         IExtension extNonce = ocspRequest.getExtension(FACTORY.createOCSPObjectIdentifiers().getIdPkixOcspNonce());
         if (!FACTORY.isNullExtension(extNonce)) {
-            responseBuilder.setResponseExtensions(FACTORY.createExtensions(extNonce));
+            extensions.add(extNonce);
         }
+        responseBuilder.setResponseExtensions(FACTORY.createExtensions(extensions.toArray(new IExtension[0])));
+        extensions.clear();
         for (IReq req : requestList) {
             responseBuilder.addResponse(req.getCertID(), certificateStatus, thisUpdate.getTime(),
                     nextUpdate == TimestampConstants.UNDEFINED_TIMESTAMP_DATE ?

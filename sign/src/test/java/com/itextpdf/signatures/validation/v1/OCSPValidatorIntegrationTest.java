@@ -57,10 +57,10 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.Security;
-import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 
@@ -165,7 +165,7 @@ public class OCSPValidatorIntegrationTest extends ExtendedITextTest {
 
     @Test
     public void validateAuthorizedOCSPResponderFromTheTrustedStoreTest() throws GeneralSecurityException, IOException {
-        ValidationReport report = validateOcspWithoutCertsTest(true);
+        ValidationReport report = validateOcspWithoutCertsTest();
 
         Assert.assertEquals(0, report.getFailures().size());
         Assert.assertEquals(ValidationReport.ValidationResult.VALID, report.getValidationResult());
@@ -223,11 +223,7 @@ public class OCSPValidatorIntegrationTest extends ExtendedITextTest {
     }
 
     private ValidationReport validateTest(Date checkDate) throws CertificateException, IOException {
-        return validateTest(checkDate, DateTimeUtil.addDaysToDate(checkDate, 1), 0);
-    }
-
-    private ValidationReport validateTest(Date checkDate, Date thisUpdate, long freshness)
-            throws CertificateException, IOException {
+        Date thisUpdate = DateTimeUtil.addDaysToDate(checkDate, 1);
         TestOcspResponseBuilder builder = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
         builder.setThisUpdate(DateTimeUtil.getCalendar(thisUpdate));
         TestOcspClient ocspClient = new TestOcspClient().addBuilderForCertIssuer(caCert, builder);
@@ -239,30 +235,12 @@ public class OCSPValidatorIntegrationTest extends ExtendedITextTest {
 
         OCSPValidator validator = validatorChainBuilder.buildOCSPValidator();
         parameters.setFreshness(ValidatorContexts.all(), CertificateSources.all(), TimeBasedContexts.all(),
-                Duration.ofDays(freshness));
+                Duration.ofDays(0));
         validator.validate(report, baseContext, checkCert, basicOCSPResp.getResponses()[0], basicOCSPResp, checkDate);
         return report;
     }
 
-    private ValidationReport validateRevokedTest(Date checkDate, Date revocationDate)
-            throws IOException, CertificateException {
-        TestOcspResponseBuilder builder = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
-        builder.setCertificateStatus(FACTORY.createRevokedStatus(revocationDate,
-                FACTORY.createCRLReason().getKeyCompromise()));
-        TestOcspClient ocspClient = new TestOcspClient().addBuilderForCertIssuer(caCert, builder);
-        IBasicOCSPResp basicOCSPResp = FACTORY.createBasicOCSPResp(FACTORY.createBasicOCSPResponse(
-                FACTORY.createASN1Primitive(ocspClient.getEncoded(checkCert, caCert, null))));
-
-        ValidationReport report = new ValidationReport();
-        certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
-
-        OCSPValidator validator = validatorChainBuilder.buildOCSPValidator();
-        validator.validate(report, baseContext, checkCert, basicOCSPResp.getResponses()[0], basicOCSPResp, checkDate);
-        return report;
-    }
-
-    private ValidationReport validateOcspWithoutCertsTest(boolean addResponderToTrusted)
-            throws IOException, CertificateException {
+    private ValidationReport validateOcspWithoutCertsTest() throws IOException, CertificateException {
         TestOcspResponseBuilder builder = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
         builder.setOcspCertsChain(new IX509CertificateHolder[0]);
         TestOcspClient ocspClient = new TestOcspClient().addBuilderForCertIssuer(caCert, builder);
@@ -270,10 +248,7 @@ public class OCSPValidatorIntegrationTest extends ExtendedITextTest {
                 FACTORY.createASN1Primitive(ocspClient.getEncoded(checkCert, caCert, null))));
 
         ValidationReport report = new ValidationReport();
-        certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
-        if (addResponderToTrusted) {
-            certificateRetriever.addTrustedCertificates(Collections.singletonList(responderCert));
-        }
+        certificateRetriever.addTrustedCertificates(Arrays.asList(caCert, responderCert));
 
         OCSPValidator validator = validatorChainBuilder.buildOCSPValidator();
         validator.validate(report, baseContext, checkCert, basicOCSPResp.getResponses()[0], basicOCSPResp,
@@ -325,19 +300,5 @@ public class OCSPValidatorIntegrationTest extends ExtendedITextTest {
         OCSPValidator validator = validatorChainBuilder.buildOCSPValidator();
         validator.validate(report, baseContext, checkCert, basicOCSPResp.getResponses()[0], basicOCSPResp, checkDate);
         return report;
-    }
-
-    private static class TestIssuingCertificateRetriever extends IssuingCertificateRetriever {
-        Certificate issuerCertificate;
-
-        public TestIssuingCertificateRetriever(String issuerPath) throws CertificateException, IOException {
-            super();
-            this.issuerCertificate = PemFileHelper.readFirstChain(issuerPath)[0];
-        }
-
-        @Override
-        public Certificate retrieveIssuerCertificate(Certificate certificate) {
-            return issuerCertificate;
-        }
     }
 }

@@ -1024,6 +1024,18 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
      * {@inheritDoc}
      */
     @Override
+    public IExtensions createExtensions(IExtension[] extensions) {
+        Extension[] exts = new Extension[extensions.length];
+        for (int i = 0; i < extensions.length; ++i) {
+            exts[i] = ((ExtensionBC) extensions[i]).getExtension();
+        }
+        return new ExtensionsBC(new Extensions(exts));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public IExtensions createNullExtensions() {
         return new ExtensionsBC((Extensions) null);
     }

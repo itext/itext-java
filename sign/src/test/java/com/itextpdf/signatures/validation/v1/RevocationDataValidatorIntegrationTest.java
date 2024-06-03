@@ -73,7 +73,7 @@ public class RevocationDataValidatorIntegrationTest extends ExtendedITextTest {
     private IssuingCertificateRetriever certificateRetriever;
     private SignatureValidationProperties parameters;
     private ValidatorChainBuilder validatorChainBuilder;
-    private ValidationContext baseContext = new ValidationContext(ValidatorContext.SIGNATURE_VALIDATOR,
+    private final ValidationContext baseContext = new ValidationContext(ValidatorContext.SIGNATURE_VALIDATOR,
             CertificateSource.SIGNER_CERT, TimeBasedContext.PRESENT);
 
     @BeforeClass

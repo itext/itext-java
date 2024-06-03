@@ -24,6 +24,7 @@ package com.itextpdf.signatures.validation.v1;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1Encodable;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateStatus;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IRevokedStatus;
@@ -53,6 +54,8 @@ import static com.itextpdf.signatures.validation.v1.RevocationDataValidator.SELF
  * Class that allows you to validate a single OCSP response.
  */
 public class OCSPValidator {
+    static final String CERT_IS_EXPIRED = "Certificate is expired on {0}. Its revocation status could have been " +
+            "removed from the database, so the OCSP response status could be falsely valid.";
     static final String CERT_IS_REVOKED = "Certificate status is revoked.";
     static final String CERT_STATUS_IS_UNKNOWN = "Certificate status is unknown.";
     static final String INVALID_OCSP = "OCSP response is invalid.";
@@ -152,6 +155,18 @@ public class OCSPValidator {
         ICertificateStatus status = singleResp.getCertStatus();
         IRevokedStatus revokedStatus = BOUNCY_CASTLE_FACTORY.createRevokedStatus(status);
         boolean isStatusGood = BOUNCY_CASTLE_FACTORY.createCertificateStatus().getGood().equals(status);
+
+        // Check OCSP Archive Cutoff extension in case OCSP response was generated after the certificate is expired.
+        if (isStatusGood && certificate.getNotAfter().before(ocspResp.getProducedAt())) {
+            Date startExpirationDate = getArchiveCutoffExtension(ocspResp);
+            if (TimestampConstants.UNDEFINED_TIMESTAMP_DATE == startExpirationDate ||
+                    certificate.getNotAfter().before(startExpirationDate)) {
+                report.addReportItem(new CertificateReportItem(certificate, OCSP_CHECK, MessageFormatUtil.format(
+                        CERT_IS_EXPIRED, certificate.getNotAfter()), ReportItemStatus.INDETERMINATE));
+                return;
+            }
+        }
+
         if (isStatusGood || (revokedStatus != null && validationDate.before(revokedStatus.getRevocationTime()))) {
             // Check if the OCSP response is genuine.
             verifyOcspResponder(report, localContext, ocspResp, (X509Certificate) issuerCert);
@@ -237,5 +252,20 @@ public class OCSPValidator {
             report.addReportItem(ReportItemStatus.INVALID == reportItem.getStatus() ?
                     reportItem.setStatus(ReportItemStatus.INDETERMINATE) : reportItem);
         }
+    }
+
+    private Date getArchiveCutoffExtension(IBasicOCSPResp ocspResp) {
+        // OCSP containing this extension specifies the reliable revocation status of the certificate
+        // that expired after the date specified in the Archive Cutoff extension or at that date.
+        IASN1Encodable archiveCutoff = ocspResp.getExtensionParsedValue(
+                BOUNCY_CASTLE_FACTORY.createOCSPObjectIdentifiers().getIdPkixOcspArchiveCutoff());
+        if (!archiveCutoff.isNull()) {
+            try {
+                return BOUNCY_CASTLE_FACTORY.createASN1GeneralizedTime(archiveCutoff).getDate();
+            } catch (Exception e) {
+                // Ignore exception.
+            }
+        }
+        return (Date) TimestampConstants.UNDEFINED_TIMESTAMP_DATE;
     }
 }

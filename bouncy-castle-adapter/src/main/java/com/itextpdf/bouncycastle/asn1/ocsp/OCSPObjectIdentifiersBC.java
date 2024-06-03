@@ -44,6 +44,9 @@ public class OCSPObjectIdentifiersBC implements IOCSPObjectIdentifiers {
     private static final IASN1ObjectIdentifier ID_PKIX_OCSP_NOCHECK =
             new ASN1ObjectIdentifierBC(OCSPObjectIdentifiers.id_pkix_ocsp_nocheck);
 
+    private static final IASN1ObjectIdentifier ID_PKIX_OCSP_ARCHIVE_CUTOFF =
+            new ASN1ObjectIdentifierBC(OCSPObjectIdentifiers.id_pkix_ocsp_archive_cutoff);
+
     private final OCSPObjectIdentifiers ocspObjectIdentifiers;
 
     /**
@@ -95,6 +98,14 @@ public class OCSPObjectIdentifiersBC implements IOCSPObjectIdentifiers {
     @Override
     public IASN1ObjectIdentifier getIdPkixOcspNoCheck() {
         return ID_PKIX_OCSP_NOCHECK;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IASN1ObjectIdentifier getIdPkixOcspArchiveCutoff() {
+        return ID_PKIX_OCSP_ARCHIVE_CUTOFF;
     }
 
     /**
