@@ -23,6 +23,7 @@
 package com.itextpdf.kernel.pdf.action;
 
 import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
@@ -44,6 +45,7 @@ import com.itextpdf.kernel.pdf.navigation.PdfStringDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfStructureDestination;
 import org.slf4j.LoggerFactory;
 
+import java.net.URI;
 import java.util.List;
 
 /**
@@ -127,6 +129,16 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
     public PdfAction(PdfDictionary pdfObject) {
         super(pdfObject);
         markObjectAsIndirect(getPdfObject());
+    }
+
+    /**
+     * Creates a GoTo action (section 12.6.4.2 of ISO 32000-1) via a given uri.
+     *
+     * @param uri the uniform resource identifier to resolve
+     * @return created action
+     */
+    public static PdfAction createURI(URI uri) {
+        return createURI(UrlUtil.toAbsoluteURI(uri));
     }
 
     /**

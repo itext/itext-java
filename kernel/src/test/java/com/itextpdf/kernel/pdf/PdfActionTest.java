@@ -36,6 +36,7 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.AfterClass;
@@ -80,6 +81,19 @@ public class PdfActionTest extends ExtendedITextTest {
         document.close();
 
         System.out.println(MessageFormatUtil.format("Please open document {0} at page 2 and make sure that you're automatically redirected to {1} site.", destinationFolder + "actionTest02.pdf", "http://itextpdf.com"));
+    }
+
+    @Test
+    public void actionTest03() throws Exception {
+        PdfDocument document = createDocument(CompareTool.createTestPdfWriter(destinationFolder + "actionTest03.pdf"), true);
+        String uri = "http://itextpdf.com/";
+
+        document.getCatalog().setOpenAction(PdfAction.createURI(new URI(uri)));
+        Assert.assertEquals(new PdfString(uri),
+                document.getCatalog().getPdfObject().getAsDictionary(PdfName.OpenAction).get(PdfName.URI));
+        document.close();
+
+        System.out.println(MessageFormatUtil.format("Please open document {0} and make sure that you're automatically redirected to {1} site.", destinationFolder + "actionTest01.pdf", "http://itextpdf.com"));
     }
 
     @Test
