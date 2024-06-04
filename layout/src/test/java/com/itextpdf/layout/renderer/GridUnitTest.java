@@ -223,31 +223,4 @@ public class GridUnitTest extends ExtendedITextTest {
         Assert.assertEquals(cell5, grid.getRows()[2][1]);
         Assert.assertEquals(cell6, grid.getRows()[0][2]);
     }
-
-    @Test
-    public void columnWithTallAndWideCellPackingTest() {
-        Grid grid = new Grid(3, 3,  GridFlow.COLUMN);
-        GridCell cell1 = new GridCell(new TextRenderer(new Text("One")));
-        GridCell tallCell = new GridCell(new TextRenderer(new Text("Two")));
-        tallCell.getGridArea().setHeight(2);
-        GridCell cell3 = new GridCell(new TextRenderer(new Text("Three")));
-        GridCell cell4 = new GridCell(new TextRenderer(new Text("Four")));
-        cell4.getGridArea().setWidth(2);
-        GridCell cell5 = new GridCell(new TextRenderer(new Text("Five")));
-        GridCell cell6 = new GridCell(new TextRenderer(new Text("Six")));
-        grid.addCell(cell1);
-        grid.addCell(tallCell);
-        grid.addCell(cell3);
-        grid.addCell(cell4);
-        grid.addCell(cell5);
-        grid.addCell(cell6);
-        Assert.assertEquals(cell1, grid.getRows()[0][0]);
-        Assert.assertEquals(tallCell, grid.getRows()[1][0]);
-        Assert.assertEquals(tallCell, grid.getRows()[2][0]);
-        Assert.assertEquals(cell3, grid.getRows()[0][1]);
-        Assert.assertEquals(cell4, grid.getRows()[1][1]);
-        Assert.assertEquals(cell4, grid.getRows()[1][2]);
-        Assert.assertEquals(cell5, grid.getRows()[2][1]);
-        Assert.assertEquals(cell6, grid.getRows()[0][2]);
-    }
 }

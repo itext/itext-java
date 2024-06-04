@@ -711,4 +711,57 @@ public class GridContainerTest extends ExtendedITextTest {
         }
         Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
+
+    @Test
+    public void columnSpanTest() throws IOException, InterruptedException {
+        String filename = DESTINATION_FOLDER + "columnSpanTest.pdf";
+        String cmpName = SOURCE_FOLDER + "cmp_columnSpanTest.pdf";
+
+        java.util.List<GridValue> templateColumns = new ArrayList<>();
+        templateColumns.add(GridValue.createPointValue(100.0f));
+        templateColumns.add(GridValue.createPointValue(100.0f));
+        templateColumns.add(GridValue.createPointValue(100.0f));
+        SolidBorder border = new SolidBorder(ColorConstants.BLUE, 1);
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+            GridContainer grid = new GridContainer();
+            grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, templateColumns);
+            Paragraph paragraph1 = new Paragraph("One").setBorder(border);
+            paragraph1.setProperty(Property.GRID_COLUMN_START, 1);
+            paragraph1.setProperty(Property.GRID_COLUMN_SPAN, 2);
+            grid.add(paragraph1);
+            grid.add(new Paragraph("Two").setBorder(border));
+            grid.add(new Paragraph("Three").setBorder(border));
+            grid.add(new Paragraph("Four").setBorder(border));
+            document.add(grid);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void rowSpanTest() throws IOException, InterruptedException {
+        String filename = DESTINATION_FOLDER + "rowSpanTest.pdf";
+        String cmpName = SOURCE_FOLDER + "cmp_rowSpanTest.pdf";
+
+        java.util.List<GridValue> template = new ArrayList<>();
+        template.add(GridValue.createPointValue(100.0f));
+        template.add(GridValue.createPointValue(100.0f));
+        template.add(GridValue.createPointValue(100.0f));
+        SolidBorder border = new SolidBorder(ColorConstants.BLUE, 1);
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+            GridContainer grid = new GridContainer();
+            grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, template);
+            grid.setProperty(Property.GRID_TEMPLATE_ROWS, template);
+            Paragraph paragraph1 = new Paragraph("One").setBorder(border);
+            paragraph1.setProperty(Property.GRID_ROW_SPAN, 2);
+            paragraph1.setProperty(Property.GRID_ROW_END, 3);
+            grid.add(paragraph1);
+            grid.add(new Paragraph("Two").setBorder(border));
+            grid.add(new Paragraph("Three").setBorder(border));
+            grid.add(new Paragraph("Four").setBorder(border));
+            document.add(grid);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+    }
 }

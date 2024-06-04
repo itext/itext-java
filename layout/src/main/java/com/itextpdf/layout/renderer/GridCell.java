@@ -31,9 +31,11 @@ import com.itextpdf.layout.renderer.Grid.GridOrder;
  */
 class GridCell {
     private final IRenderer value;
-    private final IntRectangle gridArea;
-    private Rectangle layoutArea = new Rectangle(0.0f, 0.0f, 0.0f,0.0f);
-    private boolean isValueFitOnCellArea = true;
+    private int gridX;
+    private int gridY;
+    private final int spanColumn;
+    private final int spanRow;
+    private final Rectangle layoutArea = new Rectangle(0.0f, 0.0f, 0.0f,0.0f);
 
     /**
      * Create a grid cell and init value renderer position on a grid based on its properties.
@@ -42,30 +44,31 @@ class GridCell {
      */
     GridCell(IRenderer value) {
         this.value = value;
-        final int[] rowValues = initRowColumnsValues(value.<Integer>getProperty(Property.GRID_ROW_START),
-                value.<Integer>getProperty(Property.GRID_ROW_END));
-        int height = rowValues[0] == 0 ? 1 : rowValues[1] - rowValues[0];
+        final int[] rowPlacement = initAxisPlacement(value.<Integer>getProperty(Property.GRID_ROW_START),
+                value.<Integer>getProperty(Property.GRID_ROW_END), value.<Integer>getProperty(Property.GRID_ROW_SPAN));
+        gridY = rowPlacement[0];
+        spanRow = rowPlacement[1];
 
-        final int[] columnValues = initRowColumnsValues(value.<Integer>getProperty(Property.GRID_COLUMN_START),
-                value.<Integer>getProperty(Property.GRID_COLUMN_END));
-        int width = columnValues[0] == 0 ? 1 : columnValues[1] - columnValues[0];
-        gridArea = new IntRectangle(columnValues[0] - 1, rowValues[0] - 1, width, height);
+        final int[] columnPlacement = initAxisPlacement(value.<Integer>getProperty(Property.GRID_COLUMN_START),
+                value.<Integer>getProperty(Property.GRID_COLUMN_END), value.<Integer>getProperty(Property.GRID_COLUMN_SPAN));
+        gridX = columnPlacement[0];
+        spanColumn = columnPlacement[1];
     }
 
     int getColumnStart() {
-        return gridArea.getLeft();
+        return gridX;
     }
 
     int getColumnEnd() {
-        return gridArea.getRight();
+        return gridX + spanColumn;
     }
 
     int getRowStart() {
-        return gridArea.getBottom();
+        return gridY;
     }
 
     int getRowEnd() {
-        return gridArea.getTop();
+        return gridY + spanRow;
     }
 
     int getStart(GridOrder order) {
@@ -85,11 +88,11 @@ class GridCell {
     }
 
     int getGridHeight() {
-        return gridArea.getHeight();
+        return spanRow;
     }
 
     int getGridWidth() {
-        return gridArea.getWidth();
+        return spanColumn;
     }
 
     int getGridSpan(GridOrder order) {
@@ -104,119 +107,56 @@ class GridCell {
         return value;
     }
 
-    boolean isValueFitOnCellArea() {
-        return isValueFitOnCellArea;
-    }
-
     Rectangle getLayoutArea() {
         return layoutArea;
     }
 
-    IntRectangle getGridArea() {
-        return gridArea;
-    }
-
-    void setLayoutArea(Rectangle layoutArea) {
-        this.layoutArea = layoutArea;
-    }
-
-    void setValueFitOnCellArea(boolean valueFitOnCellArea) {
-        isValueFitOnCellArea = valueFitOnCellArea;
-    }
-
     void setPos(int y, int x) {
-        this.gridArea.setY(y);
-        this.gridArea.setX(x);
+        this.gridY = y;
+        this.gridX = x;
     }
 
     /**
-     * init row/column start/end value
+     * Init axis placement values
      * if start > end values are swapped
-     * if only start or end are specified - other value is initialized so cell would have height/width = 1
      *
      * @param start x/y pos of cell on a grid
      * @param end x/y + width/height pos of cell on a grid
-     * @return row/column start/end values as a pair, where first value is start, second is end
+     * @param span vertical or horizontal span of the cell on a grid
+     * @return row/column start + vertical/horizontal span values as a pair, where first value is start, second is span
      */
-    private int[] initRowColumnsValues(Integer start, Integer end) {
-        int[] result = new int[] {0, 0};
+    private int[] initAxisPlacement(Integer start, Integer end, Integer span) {
+        int[] result = new int[] {0, 1};
         if (start != null && end != null) {
-            result[0] = (int)start;
-            result[1] = (int)end;
-            if (start > end) {
-                result[0] = (int)end;
-                result[1] = (int)start;
+            int intStart = (int) start;
+            int intEnd = (int) end;
+            if (intStart < intEnd) {
+                result[0] = intStart;
+                result[1] = intEnd - intStart;
+            } else {
+                result[0] = intEnd;
+                result[1] = intStart - intEnd;
             }
         } else if (start != null) {
-            result[0] = (int)start;
-            result[1] = (int)start + 1;
+            result[0] = (int) start;
+            if (span != null) {
+                result[1] = (int) span;
+            }
+            // span default value 1 was set up on the result array initialization
         } else if (end != null) {
-            result[0] = end <= 1 ? 1 : ((int)end) - 1;
-            result[1] = end <= 1 ? 2 : (int)end;
+            int intEnd = (int) end;
+            if (span == null) {
+                result[0] = end <= 1 ? 1 : ((int) end) - 1;
+                // span default value 1 was set up on the result array initialization
+            } else {
+                int intSpan = (int) span;
+                result[1] = intSpan;
+                result[0] = Math.max(intEnd - intSpan, 1);
+            }
+        } else if (span != null) {
+            result[1] = (int) span;
         }
+        result[0] -= 1;
         return result;
-    }
-
-    /**
-     * This class represents an integer rectangle.
-     * x,y - represents a bottom left corner of this rectangle.
-     */
-    static class IntRectangle {
-        private int x;
-        private int y;
-        private int width;
-        private int height;
-
-        public IntRectangle(int x, int y, int width, int height) {
-            this.x = x;
-            this.y = y;
-            this.width = width;
-            this.height = height;
-        }
-
-        public int getLeft() {
-            return x;
-        }
-
-        public int getRight() {
-            return x + width;
-        }
-
-        public int getTop() {
-            return y + height;
-        }
-
-        public int getBottom() {
-            return y;
-        }
-
-        public int getWidth() {
-            return width;
-        }
-
-        public int getHeight() {
-            return height;
-        }
-
-        public void setX(int x) {
-            this.x = x;
-        }
-
-        public void setY(int y) {
-            this.y = y;
-        }
-
-        public void setWidth(int width) {
-            this.width = width;
-        }
-
-        public void setHeight(int height) {
-            this.height = height;
-        }
-
-        @Override
-        public String toString() {
-            return "Rectangle: start(" + x + ',' + y + ") ," + width + 'x' + height;
-        }
     }
 }

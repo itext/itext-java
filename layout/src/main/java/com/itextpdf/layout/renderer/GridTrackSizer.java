@@ -481,7 +481,6 @@ class GridTrackSizer {
             LayoutResult inifiniteHeighLayoutResult = cell.getValue().layout(layoutContext);
             if (inifiniteHeighLayoutResult.getStatus() == LayoutResult.NOTHING
                     || inifiniteHeighLayoutResult.getStatus() == LayoutResult.PARTIAL) {
-                cell.setValueFitOnCellArea(false);
                 return 0;
             }
             return inifiniteHeighLayoutResult.getOccupiedArea().getBBox().getHeight();
