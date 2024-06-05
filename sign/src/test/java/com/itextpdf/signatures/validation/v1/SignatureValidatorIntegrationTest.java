@@ -33,8 +33,11 @@ import com.itextpdf.signatures.IssuingCertificateRetriever;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.builder.TestOcspResponseBuilder;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
+import com.itextpdf.signatures.validation.v1.context.CertificateSource;
 import com.itextpdf.signatures.validation.v1.context.CertificateSources;
+import com.itextpdf.signatures.validation.v1.context.TimeBasedContext;
 import com.itextpdf.signatures.validation.v1.context.TimeBasedContexts;
+import com.itextpdf.signatures.validation.v1.context.ValidatorContext;
 import com.itextpdf.signatures.validation.v1.context.ValidatorContexts;
 import com.itextpdf.signatures.validation.v1.mocks.MockRevocationDataValidator;
 import com.itextpdf.signatures.validation.v1.report.ReportItem;
@@ -61,8 +64,8 @@ import java.util.Date;
 
 @Category(BouncyCastleIntegrationTest.class)
 public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
-    private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/validation/v1/SignatureValidatorTest/certs/";
-    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/validation/v1/SignatureValidatorTest/";
+    private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/validation/v1/SignatureValidatorIntegrationTest/certs/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/validation/v1/SignatureValidatorIntegrationTest/";
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
     private static final char[] PASSWORD = "testpassphrase".toCharArray();
@@ -102,11 +105,93 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
 
         AssertValidationReport.assertThat(report, a -> a
                 .hasStatus(ValidationResult.VALID)
-                .hasLogItems(3, 3, al -> al
+                .hasLogItems(3, al -> al
                         .withCertificate(rootCert)
                         .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
                         .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED,
                                 i -> rootCert.getSubjectX500Principal()))
+        );
+    }
+
+    @Test
+    public void shortValidityCertsWithOcspTest() throws GeneralSecurityException, IOException {
+        String rootCertName = CERTS_SRC + "short_validity_root_cert.pem";
+        String tsRootCertName = CERTS_SRC + "ts_root_cert.pem";
+        X509Certificate rootCert = (X509Certificate) PemFileHelper.readFirstChain(rootCertName)[0];
+        X509Certificate tsRootCert = (X509Certificate) PemFileHelper.readFirstChain(tsRootCertName)[0];
+
+        // We need to set infinite freshness for first timestamp validation. Otherwise, test will fail.
+        builder.getProperties().setFreshness(ValidatorContexts.of(ValidatorContext.OCSP_VALIDATOR), CertificateSources.of(
+                CertificateSource.TIMESTAMP), TimeBasedContexts.of(TimeBasedContext.PRESENT), Duration.ofDays(999999));
+
+        ValidationReport report;
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "shortValidityCertsWithOcsp.pdf"))) {
+            certificateRetriever.setTrustedCertificates(Arrays.asList(rootCert, tsRootCert));
+
+            SignatureValidator signatureValidator = builder.buildSignatureValidator();
+            report = signatureValidator.validateSignatures(document);
+        }
+
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationResult.VALID)
+                .hasLogItem(al -> al
+                        .withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                        .withMessage(DocumentRevisionsValidator.UNEXPECTED_ENTRY_IN_XREF, i -> 30))
+                .hasLogItem(al -> al
+                        .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
+                        .withMessage(SignatureValidator.VALIDATING_SIGNATURE_NAME, i -> "timestampSig1"))
+                .hasLogItem(al -> al
+                        .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
+                        .withMessage(SignatureValidator.VALIDATING_SIGNATURE_NAME, i -> "Signature1"))
+                .hasLogItems(2, al -> al
+                        .withCertificate(rootCert)
+                        .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
+                        .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED, i -> rootCert.getSubjectX500Principal()))
+                .hasLogItems(4, al -> al
+                        .withCertificate(tsRootCert)
+                        .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
+                        .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED, i -> tsRootCert.getSubjectX500Principal()))
+        );
+    }
+
+    @Test
+    public void shortValidityCertsWithCrlTest() throws GeneralSecurityException, IOException {
+        String rootCertName = CERTS_SRC + "short_validity_root_cert.pem";
+        String tsRootCertName = CERTS_SRC + "ts_root_cert.pem";
+        X509Certificate rootCert = (X509Certificate) PemFileHelper.readFirstChain(rootCertName)[0];
+        X509Certificate tsRootCert = (X509Certificate) PemFileHelper.readFirstChain(tsRootCertName)[0];
+
+        // We need to set infinite freshness for first timestamp validation. Otherwise, test will fail.
+        builder.getProperties().setFreshness(ValidatorContexts.of(ValidatorContext.CRL_VALIDATOR), CertificateSources.of(
+                CertificateSource.TIMESTAMP), TimeBasedContexts.of(TimeBasedContext.PRESENT), Duration.ofDays(999999));
+
+        ValidationReport report;
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "shortValidityCertsWithCrl.pdf"))) {
+            certificateRetriever.setTrustedCertificates(Arrays.asList(rootCert, tsRootCert));
+
+            SignatureValidator signatureValidator = builder.buildSignatureValidator();
+            report = signatureValidator.validateSignatures(document);
+        }
+
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationResult.VALID)
+                .hasLogItem(al -> al
+                        .withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                        .withMessage(DocumentRevisionsValidator.UNEXPECTED_ENTRY_IN_XREF, i -> 32))
+                .hasLogItem(al -> al
+                        .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
+                        .withMessage(SignatureValidator.VALIDATING_SIGNATURE_NAME, i -> "timestampSig1"))
+                .hasLogItem(al -> al
+                        .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
+                        .withMessage(SignatureValidator.VALIDATING_SIGNATURE_NAME, i -> "Signature1"))
+                .hasLogItems(2, al -> al
+                        .withCertificate(rootCert)
+                        .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
+                        .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED, i -> rootCert.getSubjectX500Principal()))
+                .hasLogItems(4, al -> al
+                        .withCertificate(tsRootCert)
+                        .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
+                        .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED, i -> tsRootCert.getSubjectX500Principal()))
         );
     }
 
@@ -142,7 +227,7 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
         AssertValidationReport.assertThat(report, a -> a
                 .hasNumberOfFailures(0)
                 .hasNumberOfLogs(3)
-                .hasLogItems(2, 2, la -> la
+                .hasLogItems(2, la -> la
                         .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
                         .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED,
                                 l -> rootCert.getSubjectX500Principal())
@@ -204,7 +289,7 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
         }
         AssertValidationReport.assertThat(report, a -> a
                 .hasStatus(ValidationResult.VALID)
-                .hasLogItems(3, 3, al -> al
+                .hasLogItems(3, al -> al
                         .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
                         .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED,
                                 i -> rootCert.getSubjectX500Principal())

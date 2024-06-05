@@ -48,8 +48,6 @@ import java.security.cert.X509Certificate;
 import java.time.Duration;
 import java.util.Date;
 
-import static com.itextpdf.signatures.validation.v1.RevocationDataValidator.SELF_SIGNED_CERTIFICATE;
-
 /**
  * Class that allows you to validate a single OCSP response.
  */
@@ -98,13 +96,32 @@ public class OCSPValidator {
      * @param singleResp     single response to check
      * @param ocspResp       basic OCSP response which contains single response to check
      * @param validationDate validation date to check for
+     *
+     * @deprecated starting from 8.0.5. TODO DEVSIX-8398 To be removed.
      */
+    @Deprecated
     public void validate(ValidationReport report, ValidationContext context, X509Certificate certificate,
             ISingleResp singleResp, IBasicOCSPResp ocspResp, Date validationDate) {
+        validate(report, context, certificate, singleResp, ocspResp, validationDate, DateTimeUtil.getCurrentTimeDate());
+    }
+
+    /**
+     * Validates a certificate against single OCSP Response.
+     *
+     * @param report                 to store all the chain verification results
+     * @param context                the context in which to perform the validation
+     * @param certificate            the certificate to check for
+     * @param singleResp             single response to check
+     * @param ocspResp               basic OCSP response which contains single response to check
+     * @param validationDate         validation date to check for
+     * @param responseGenerationDate trusted date at which response is generated
+     */
+    public void validate(ValidationReport report, ValidationContext context, X509Certificate certificate,
+            ISingleResp singleResp, IBasicOCSPResp ocspResp, Date validationDate, Date responseGenerationDate) {
         ValidationContext localContext = context.setValidatorContext(ValidatorContext.OCSP_VALIDATOR);
         if (CertificateUtil.isSelfSigned(certificate)) {
-            report.addReportItem(new CertificateReportItem(certificate, OCSP_CHECK, SELF_SIGNED_CERTIFICATE,
-                    ReportItemStatus.INFO));
+            report.addReportItem(new CertificateReportItem(certificate, OCSP_CHECK,
+                    RevocationDataValidator.SELF_SIGNED_CERTIFICATE, ReportItemStatus.INFO));
             return;
         }
         // SingleResp contains the basic information of the status of the certificate identified by the certID.
@@ -131,10 +148,10 @@ public class OCSPValidator {
         // So, since the issuer name and serial number identify a unique certificate, we found the single response
         // for the provided certificate.
 
-        // Check that thisUpdate >= (validationDate - freshness).
         Duration freshness = properties.getFreshness(localContext);
-        if (singleResp.getThisUpdate().before(
-                DateTimeUtil.addMillisToDate(validationDate, -(long)freshness.toMillis()))) {
+        // Check that thisUpdate + freshness < validation.
+        if (DateTimeUtil.addMillisToDate(singleResp.getThisUpdate(), (long) freshness.toMillis())
+                .before(validationDate)) {
             report.addReportItem(new CertificateReportItem(certificate, OCSP_CHECK,
                     MessageFormatUtil.format(FRESHNESS_CHECK, singleResp.getThisUpdate(), validationDate,
                             freshness), ReportItemStatus.INDETERMINATE));
@@ -169,7 +186,7 @@ public class OCSPValidator {
 
         if (isStatusGood || (revokedStatus != null && validationDate.before(revokedStatus.getRevocationTime()))) {
             // Check if the OCSP response is genuine.
-            verifyOcspResponder(report, localContext, ocspResp, (X509Certificate) issuerCert);
+            verifyOcspResponder(report, localContext, ocspResp, (X509Certificate) issuerCert, responseGenerationDate);
             if (!isStatusGood) {
                 report.addReportItem(new CertificateReportItem(certificate, OCSP_CHECK,
                         MessageFormatUtil.format(SignLogMessageConstant.VALID_CERTIFICATE_IS_REVOKED,
@@ -195,7 +212,7 @@ public class OCSPValidator {
      * @param issuerCert the issuer of the certificate for which the OCSP is checked
      */
     private void verifyOcspResponder(ValidationReport report, ValidationContext context, IBasicOCSPResp ocspResp,
-            X509Certificate issuerCert) {
+            X509Certificate issuerCert, Date responseGenerationDate) {
         ValidationContext localContext = context.setCertificateSource(CertificateSource.OCSP_ISSUER);
         ValidationReport responderReport = new ValidationReport();
 
@@ -236,18 +253,21 @@ public class OCSPValidator {
                 // RFC6960 4.2.2.2.1. Revocation Checking of an Authorized Responder.
                 builder.getCertificateChainValidator().validate(responderReport,
                         localContext,
-                        responderCert, ocspResp.getProducedAt());
-                addResponderValidationReport(report, responderReport);
-                return;
+                        responderCert, responseGenerationDate);
+            } else {
+                builder.getCertificateChainValidator().validate(responderReport,
+                        localContext.setCertificateSource(CertificateSource.TRUSTED),
+                        responderCert, responseGenerationDate);
             }
+        } else {
+            builder.getCertificateChainValidator().validate(responderReport,
+                    localContext.setCertificateSource(CertificateSource.CERT_ISSUER),
+                    responderCert, responseGenerationDate);
         }
-        builder.getCertificateChainValidator().validate(responderReport,
-                localContext.setCertificateSource(CertificateSource.TRUSTED),
-                responderCert, ocspResp.getProducedAt());
         addResponderValidationReport(report, responderReport);
     }
 
-    private void addResponderValidationReport(ValidationReport report, ValidationReport responderReport) {
+    private static void addResponderValidationReport(ValidationReport report, ValidationReport responderReport) {
         for (ReportItem reportItem : responderReport.getLogs()) {
             report.addReportItem(ReportItemStatus.INVALID == reportItem.getStatus() ?
                     reportItem.setStatus(ReportItemStatus.INDETERMINATE) : reportItem);

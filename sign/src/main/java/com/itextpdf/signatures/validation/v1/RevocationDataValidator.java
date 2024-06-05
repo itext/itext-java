@@ -26,6 +26,8 @@ import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.ISingleResp;
+import com.itextpdf.commons.utils.DateTimeUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.signatures.CertificateUtil;
 import com.itextpdf.signatures.CrlClientOnline;
 import com.itextpdf.signatures.ICrlClient;
@@ -34,6 +36,7 @@ import com.itextpdf.signatures.IssuingCertificateRetriever;
 import com.itextpdf.signatures.OID;
 import com.itextpdf.signatures.OcspClientBouncyCastle;
 import com.itextpdf.signatures.validation.v1.context.CertificateSource;
+import com.itextpdf.signatures.validation.v1.context.TimeBasedContext;
 import com.itextpdf.signatures.validation.v1.context.ValidationContext;
 import com.itextpdf.signatures.validation.v1.context.ValidatorContext;
 import com.itextpdf.signatures.validation.v1.report.CertificateReportItem;
@@ -41,7 +44,6 @@ import com.itextpdf.signatures.validation.v1.report.ReportItem;
 import com.itextpdf.signatures.validation.v1.report.ReportItem.ReportItemStatus;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.cert.X509CRL;
@@ -49,7 +51,6 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -59,13 +60,16 @@ import java.util.stream.Collectors;
  */
 public class RevocationDataValidator {
     static final String REVOCATION_DATA_CHECK = "Revocation data check.";
-    static final String CRL_PARSING_ERROR = "CRL is incorrectly formatted.";
     static final String NO_REVOCATION_DATA = "Certificate revocation status cannot be checked: " +
             "no revocation data available or the status cannot be determined.";
-    static final String SELF_SIGNED_CERTIFICATE = "Certificate is self-signed: it cannot be revoked.";
+    static final String SELF_SIGNED_CERTIFICATE = "Certificate is self-signed. Revocation data check will be skipped.";
     static final String TRUSTED_OCSP_RESPONDER = "Authorized OCSP Responder certificate has id-pkix-ocsp-nocheck " +
             "extension so it is trusted by the definition and no revocation checking is performed.";
     static final String VALIDITY_ASSURED = "Certificate is trusted due to validity assured - short term extension.";
+    static final String CANNOT_PARSE_OCSP =
+            "OCSP response from \"{0}\" OCSP client cannot be parsed.";
+    static final String CANNOT_PARSE_CRL =
+            "CRL response from \"{0}\" CRL client cannot be parsed.";
 
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
@@ -148,47 +152,50 @@ public class RevocationDataValidator {
         }
 
         // Collect revocation data.
-        Map<ISingleResp, IBasicOCSPResp> ocspResponsesMap = retrieveAllOCSPResponses(localContext, certificate);
-        // Sort all the OCSP responses available based on the most recent revocation data.
-        List<ISingleResp> singleResponses = ocspResponsesMap.keySet().stream()
-                .sorted((o1, o2) -> o2.getThisUpdate().compareTo(o1.getThisUpdate())).collect(Collectors.toList());
-        List<X509CRL> crlResponses = retrieveAllCRLResponses(report, localContext, certificate);
+        List<OcspResponseValidationInfo> ocspResponses = retrieveAllOCSPResponses(report, localContext, certificate);
+        ocspResponses = ocspResponses.stream().sorted((o1, o2) -> o2.singleResp.getThisUpdate().compareTo(
+                o1.singleResp.getThisUpdate())).collect(Collectors.toList());
+        List<CrlValidationInfo> crlResponses = retrieveAllCRLResponses(report, localContext, certificate);
 
         // Try to check responderCert for revocation using provided responder OCSP/CRL clients or
         // Authority Information Access for OCSP responses and CRL Distribution Points for CRL responses
         // using default clients.
-        validateRevocationData(report, localContext, certificate, validationDate, singleResponses,
-                ocspResponsesMap, crlResponses);
+        validateRevocationData(report, localContext, certificate, validationDate, ocspResponses, crlResponses);
     }
 
     private void validateRevocationData(ValidationReport report, ValidationContext context, X509Certificate certificate,
-            Date validationDate, List<ISingleResp> singleResponses, Map<ISingleResp, IBasicOCSPResp> ocspResponsesMap,
-            List<X509CRL> crlResponses) {
+            Date validationDate, List<OcspResponseValidationInfo> ocspResponses, List<CrlValidationInfo> crlResponses) {
         int i = 0;
         int j = 0;
-        while (i < singleResponses.size() || j < crlResponses.size()) {
+        while (i < ocspResponses.size() || j < crlResponses.size()) {
             ValidationReport revDataValidationReport = new ValidationReport();
-            if (i < singleResponses.size() && (j >= crlResponses.size() ||
-                    singleResponses.get(i).getThisUpdate().after(crlResponses.get(j).getThisUpdate()))) {
+            if (i < ocspResponses.size() && (j >= crlResponses.size() ||
+                    ocspResponses.get(i).singleResp.getThisUpdate().after(crlResponses.get(j).crl.getThisUpdate()))) {
+                OcspResponseValidationInfo validationInfo = ocspResponses.get(i);
                 ocspValidator.validate(revDataValidationReport,
-                        context, certificate, singleResponses.get(i),
-                        ocspResponsesMap.get(singleResponses.get(i)), validationDate);
+                        context.setTimeBasedContext(validationInfo.timeBasedContext), certificate,
+                        validationInfo.singleResp, validationInfo.basicOCSPResp, validationDate,
+                        validationInfo.trustedGenerationDate);
                 i++;
             } else {
+                CrlValidationInfo validationInfo = crlResponses.get(j);
                 crlValidator.validate(revDataValidationReport,
-                        context, certificate, crlResponses.get(j), validationDate);
+                        context.setTimeBasedContext(validationInfo.timeBasedContext), certificate, validationInfo.crl,
+                        validationDate, validationInfo.trustedGenerationDate);
                 j++;
             }
 
-            if (ValidationReport.ValidationResult.INDETERMINATE != revDataValidationReport.getValidationResult()) {
+            if (ValidationReport.ValidationResult.INDETERMINATE == revDataValidationReport.getValidationResult()) {
                 for (ReportItem reportItem : revDataValidationReport.getLogs()) {
-                    report.addReportItem(reportItem);
+                    // These messages are useless for the user, we don't want them to be in the resulting report.
+                    if (!OCSPValidator.SERIAL_NUMBERS_DO_NOT_MATCH.equals(reportItem.getMessage()) &&
+                            !CRLValidator.CRL_ISSUER_NO_COMMON_ROOT.equals(reportItem.getMessage())) {
+                        report.addReportItem(reportItem.setStatus(ReportItemStatus.INFO));
+                    }
                 }
-                return;
             } else {
-                for (ReportItem reportItem : revDataValidationReport.getLogs()) {
-                    report.addReportItem(reportItem.setStatus(ReportItemStatus.INFO));
-                }
+                report.merge(revDataValidationReport);
+                return;
             }
         }
 
@@ -196,20 +203,31 @@ public class RevocationDataValidator {
                 ReportItemStatus.INDETERMINATE));
     }
 
-    private Map<ISingleResp, IBasicOCSPResp> retrieveAllOCSPResponses(ValidationContext context,
-            X509Certificate certificate) {
-        Map<ISingleResp, IBasicOCSPResp> ocspResponsesMap = new HashMap<>();
+    private List<OcspResponseValidationInfo> retrieveAllOCSPResponses(ValidationReport report,
+            ValidationContext context, X509Certificate certificate) {
+        List<OcspResponseValidationInfo> ocspResponses = new ArrayList<>();
         for (IOcspClient ocspClient : ocspClients) {
-            byte[] basicOcspRespBytes = ocspClient.getEncoded(certificate,
-                    (X509Certificate) certificateRetriever.retrieveIssuerCertificate(certificate), null);
-            if (basicOcspRespBytes != null) {
-                try {
-                    IBasicOCSPResp basicOCSPResp = BOUNCY_CASTLE_FACTORY.createBasicOCSPResp(
-                            BOUNCY_CASTLE_FACTORY.createBasicOCSPResponse(BOUNCY_CASTLE_FACTORY.createASN1Primitive(
-                                    basicOcspRespBytes)));
-                    fillOcspResponsesMap(ocspResponsesMap, basicOCSPResp);
-                } catch (IOException ignored) {
-                    // Ignore exception.
+            if (ocspClient instanceof ValidationOcspClient) {
+                ValidationOcspClient validationOcspClient = (ValidationOcspClient) ocspClient;
+                for (Map.Entry<IBasicOCSPResp, OcspResponseValidationInfo> response :
+                        validationOcspClient.getResponses().entrySet()) {
+                    fillOcspResponses(ocspResponses, response.getKey(), response.getValue().trustedGenerationDate,
+                            response.getValue().timeBasedContext);
+                }
+            } else {
+                byte[] basicOcspRespBytes = ocspClient.getEncoded(certificate,
+                        (X509Certificate) certificateRetriever.retrieveIssuerCertificate(certificate), null);
+                if (basicOcspRespBytes != null) {
+                    try {
+                        IBasicOCSPResp basicOCSPResp = BOUNCY_CASTLE_FACTORY.createBasicOCSPResp(
+                                BOUNCY_CASTLE_FACTORY.createBasicOCSPResponse(BOUNCY_CASTLE_FACTORY.createASN1Primitive(
+                                        basicOcspRespBytes)));
+                        fillOcspResponses(ocspResponses, basicOCSPResp, DateTimeUtil.getCurrentTimeDate(),
+                                TimeBasedContext.PRESENT);
+                    } catch (IOException e) {
+                        report.addReportItem(new ReportItem(REVOCATION_DATA_CHECK, MessageFormatUtil.format(
+                                CANNOT_PARSE_OCSP, ocspClient), e, ReportItemStatus.INFO));
+                    }
                 }
             }
         }
@@ -217,27 +235,18 @@ public class RevocationDataValidator {
                 context.setValidatorContext(ValidatorContext.OCSP_VALIDATOR));
         if (SignatureValidationProperties.OnlineFetching.ALWAYS_FETCH == onlineFetching ||
                 (SignatureValidationProperties.OnlineFetching.FETCH_IF_NO_OTHER_DATA_AVAILABLE == onlineFetching
-                        && ocspResponsesMap.isEmpty())) {
+                        && ocspResponses.isEmpty())) {
             IBasicOCSPResp basicOCSPResp = new OcspClientBouncyCastle(null).getBasicOCSPResp(certificate,
                     (X509Certificate) certificateRetriever.retrieveIssuerCertificate(certificate), null);
-            fillOcspResponsesMap(ocspResponsesMap, basicOCSPResp);
+            fillOcspResponses(ocspResponses, basicOCSPResp, DateTimeUtil.getCurrentTimeDate(),
+                    TimeBasedContext.PRESENT);
         }
-        return ocspResponsesMap;
+        return ocspResponses;
     }
 
-    private void fillOcspResponsesMap(Map<ISingleResp, IBasicOCSPResp> ocspResponsesMap, IBasicOCSPResp basicOCSPResp) {
-        if (basicOCSPResp != null) {
-            // Getting the responses.
-            ISingleResp[] singleResponses = basicOCSPResp.getResponses();
-            for (ISingleResp singleResponse : singleResponses) {
-                ocspResponsesMap.put(singleResponse, basicOCSPResp);
-            }
-        }
-    }
-
-    private List<X509CRL> retrieveAllCRLResponses(ValidationReport report, ValidationContext context,
+    private List<CrlValidationInfo> retrieveAllCRLResponses(ValidationReport report, ValidationContext context,
             X509Certificate certificate) {
-        List<X509CRL> crlResponses = new ArrayList<>();
+        List<CrlValidationInfo> crlResponses = new ArrayList<>();
         for (ICrlClient crlClient : crlClients) {
             crlResponses.addAll(retrieveAllCRLResponsesUsingClient(report, certificate, crlClient));
         }
@@ -249,28 +258,93 @@ public class RevocationDataValidator {
             crlResponses.addAll(retrieveAllCRLResponsesUsingClient(report, certificate, new CrlClientOnline()));
         }
         // Sort all the CRL responses available based on the most recent revocation data.
-        return crlResponses.stream().sorted((o1, o2) -> o2.getThisUpdate().compareTo(o1.getThisUpdate()))
+        return crlResponses.stream().sorted((o1, o2) -> o2.crl.getThisUpdate().compareTo(o1.crl.getThisUpdate()))
                 .collect(Collectors.toList());
     }
 
-    private List<X509CRL> retrieveAllCRLResponsesUsingClient(ValidationReport report, X509Certificate certificate,
-            ICrlClient crlClient) {
-        List<X509CRL> crlResponses = new ArrayList<>();
-        try {
-            Collection<byte[]> crlBytesCollection = crlClient.getEncoded(certificate, null);
-            for (byte[] crlBytes : crlBytesCollection) {
-                try {
-                    crlResponses.add((X509CRL) CertificateUtil.parseCrlFromStream(
-                            new ByteArrayInputStream(crlBytes)));
-                } catch (Exception ignored) {
-                    // CRL parsing error.
-                    report.addReportItem(new CertificateReportItem(certificate, REVOCATION_DATA_CHECK,
-                            CRL_PARSING_ERROR, ReportItemStatus.INFO));
-                }
+    private static void fillOcspResponses(List<OcspResponseValidationInfo> ocspResponses, IBasicOCSPResp basicOCSPResp,
+            Date generationDate, TimeBasedContext timeBasedContext) {
+        if (basicOCSPResp != null) {
+            // Getting the responses.
+            ISingleResp[] singleResponses = basicOCSPResp.getResponses();
+            for (ISingleResp singleResponse : singleResponses) {
+                ocspResponses.add(new OcspResponseValidationInfo(singleResponse, basicOCSPResp, generationDate,
+                        timeBasedContext));
             }
-        } catch (GeneralSecurityException ignored) {
-            // Ignore exception.
+        }
+    }
+
+    private static List<CrlValidationInfo> retrieveAllCRLResponsesUsingClient(ValidationReport report,
+            X509Certificate certificate, ICrlClient crlClient) {
+        List<CrlValidationInfo> crlResponses = new ArrayList<>();
+        if (crlClient instanceof ValidationCrlClient) {
+            ValidationCrlClient validationCrlClient = (ValidationCrlClient) crlClient;
+            crlResponses.addAll(validationCrlClient.getCrls().values());
+        } else {
+            try {
+                Collection<byte[]> crlBytesCollection = crlClient.getEncoded(certificate, null);
+                for (byte[] crlBytes : crlBytesCollection) {
+                    try {
+                        crlResponses.add(new CrlValidationInfo((X509CRL) CertificateUtil.parseCrlFromBytes(crlBytes),
+                                DateTimeUtil.getCurrentTimeDate(), TimeBasedContext.PRESENT));
+                    } catch (Exception ignored) {
+                        report.addReportItem(new CertificateReportItem(certificate, REVOCATION_DATA_CHECK,
+                                MessageFormatUtil.format(CANNOT_PARSE_CRL, crlClient), ReportItemStatus.INFO));
+                    }
+                }
+            } catch (GeneralSecurityException ignored) {
+                report.addReportItem(new CertificateReportItem(certificate, REVOCATION_DATA_CHECK,
+                        MessageFormatUtil.format(CANNOT_PARSE_CRL, crlClient), ReportItemStatus.INFO));
+            }
         }
         return crlResponses;
+    }
+
+    /**
+     * Class which contains validation related information about single OCSP response.
+     */
+    public static class OcspResponseValidationInfo {
+        final ISingleResp singleResp;
+        final IBasicOCSPResp basicOCSPResp;
+        final Date trustedGenerationDate;
+        final TimeBasedContext timeBasedContext;
+
+        /**
+         * Creates validation related information about single OCSP response.
+         *
+         * @param singleResp            {@link ISingleResp} single response to be validated
+         * @param basicOCSPResp         {@link IBasicOCSPResp} basic OCSP response which contains this single response
+         * @param trustedGenerationDate {@link Date} trusted date at which response was generated
+         * @param timeBasedContext      {@link TimeBasedContext} time based context which corresponds to generation date
+         */
+        public OcspResponseValidationInfo(ISingleResp singleResp, IBasicOCSPResp basicOCSPResp,
+                Date trustedGenerationDate, TimeBasedContext timeBasedContext) {
+            this.singleResp = singleResp;
+            this.basicOCSPResp = basicOCSPResp;
+            this.trustedGenerationDate = trustedGenerationDate;
+            this.timeBasedContext = timeBasedContext;
+        }
+    }
+
+    /**
+     * Class which contains validation related information about CRL response.
+     */
+    public static class CrlValidationInfo {
+        final X509CRL crl;
+        final Date trustedGenerationDate;
+        final TimeBasedContext timeBasedContext;
+
+        /**
+         * Creates validation related information about CRL response.
+         *
+         * @param crl                   {@link X509CRL} CRL to be validated
+         * @param trustedGenerationDate {@link Date} trusted date at which response was generated
+         * @param timeBasedContext      {@link TimeBasedContext} time based context which corresponds to generation date
+         */
+        public CrlValidationInfo(X509CRL crl, Date trustedGenerationDate, TimeBasedContext timeBasedContext) {
+            this.crl = crl;
+            this.trustedGenerationDate = trustedGenerationDate;
+            this.timeBasedContext = timeBasedContext;
+        }
     }
 }

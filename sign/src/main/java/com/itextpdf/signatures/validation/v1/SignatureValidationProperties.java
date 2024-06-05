@@ -52,7 +52,7 @@ import java.util.function.Function;
 public class SignatureValidationProperties {
     public static final boolean DEFAULT_CONTINUE_AFTER_FAILURE = true;
     public static final Duration DEFAULT_FRESHNESS_PRESENT_CRL = Duration.ofDays(30);
-    public static final Duration DEFAULT_FRESHNESS_PRESENT_OCSP = Duration.ofDays(24);
+    public static final Duration DEFAULT_FRESHNESS_PRESENT_OCSP = Duration.ofDays(30);
     public static final Duration DEFAULT_FRESHNESS_HISTORICAL = Duration.ofMinutes(1);
     public static final OnlineFetching DEFAULT_ONLINE_FETCHING = OnlineFetching.FETCH_IF_NO_OTHER_DATA_AVAILABLE;
 
@@ -200,7 +200,18 @@ public class SignatureValidationProperties {
                 p -> p.getRequiredExtensions());
     }
 
-    final SignatureValidationProperties setRequiredExtensions(CertificateSources certificateSources,
+    /**
+     * Set list of extensions which are required to be set to a certificate depending on certificate source.
+     * <p>
+     * By default, required extensions are set to be compliant with common validation norms.
+     * Changing those can result in falsely positive validation result.
+     *
+     * @param certificateSources {@link CertificateSource} for extensions to be present
+     * @param requiredExtensions list of required {@link CertificateExtension}
+     *
+     * @return this same {@link SignatureValidationProperties} instance
+     */
+    public final SignatureValidationProperties setRequiredExtensions(CertificateSources certificateSources,
             List<CertificateExtension> requiredExtensions) {
         // make a defensive copy of requiredExtensions and already wrap it with unmodifiableList so that we don't have
         // to do this every time it is retrieved. Now we are protected against changes in passed list and from

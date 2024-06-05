@@ -50,8 +50,8 @@ public class MockOCSPValidator extends OCSPValidator {
 
     @Override
     public void validate(ValidationReport report, ValidationContext context, X509Certificate certificate,
-                         ISingleResp singleResp, IBasicOCSPResp ocspResp, Date validationDate) {
-        OCSPValidatorCall call = new OCSPValidatorCall(report, context, certificate, singleResp, ocspResp, validationDate);
+                         ISingleResp singleResp, IBasicOCSPResp ocspResp, Date validationDate, Date responseGenerationDate) {
+        OCSPValidatorCall call = new OCSPValidatorCall(report, context, certificate, singleResp, ocspResp, validationDate, responseGenerationDate);
         calls.add(call);
         if (onCallHandler != null) {
             onCallHandler.accept(call);
@@ -71,15 +71,17 @@ public class MockOCSPValidator extends OCSPValidator {
         public final ISingleResp singleResp;
         public final IBasicOCSPResp ocspResp;
         public final Date validationDate;
+        public final Date responseGenerationDate;
 
         public OCSPValidatorCall(ValidationReport report, ValidationContext context, X509Certificate certificate,
-                                 ISingleResp singleResp, IBasicOCSPResp ocspResp, Date validationDate) {
+                                 ISingleResp singleResp, IBasicOCSPResp ocspResp, Date validationDate, Date responseGenerationDate) {
             this.report = report;
             this.context = context;
             this.certificate = certificate;
             this.singleResp = singleResp;
             this.ocspResp = ocspResp;
             this.validationDate = validationDate;
+            this.responseGenerationDate = responseGenerationDate;
         }
     }
 }

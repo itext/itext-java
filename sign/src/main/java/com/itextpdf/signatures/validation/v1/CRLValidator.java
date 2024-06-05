@@ -40,6 +40,7 @@ import com.itextpdf.signatures.validation.v1.context.ValidationContext;
 import com.itextpdf.signatures.validation.v1.context.ValidatorContext;
 import com.itextpdf.signatures.validation.v1.extensions.BasicConstraintsExtension;
 import com.itextpdf.signatures.validation.v1.report.CertificateReportItem;
+import com.itextpdf.signatures.validation.v1.report.ReportItem;
 import com.itextpdf.signatures.validation.v1.report.ReportItem.ReportItemStatus;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport;
 
@@ -53,8 +54,6 @@ import java.time.Duration;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
-import static com.itextpdf.signatures.validation.v1.RevocationDataValidator.SELF_SIGNED_CERTIFICATE;
 
 /**
  * Class that allows you to validate a certificate against a Certificate Revocation List (CRL) Response.
@@ -79,8 +78,6 @@ public class CRLValidator {
             "not all reason codes are covered by the current CRL.";
     static final String SAME_REASONS_CHECK = "CRLs that cover the same reason codes were already verified.";
     static final String UPDATE_DATE_BEFORE_CHECK_DATE = "nextUpdate: {0} of CRLResponse is before validation date {1}.";
-    static final String NEXT_UPDATE_VALIDATION = "Using crl nextUpdate date as validation date.";
-    static final String THIS_UPDATE_VALIDATION = "Using crl thisUpdate date as validation date.";
 
     // All reasons without unspecified.
     static final int ALL_REASONS = 32895;
@@ -111,18 +108,36 @@ public class CRLValidator {
      * @param certificate    the certificate to check against CRL response
      * @param crl            the crl response to be validated
      * @param validationDate validation date to check for
+     *
+     * @deprecated starting from 8.0.5. TODO DEVSIX-8398 To be removed.
      */
+    @Deprecated
     public void validate(ValidationReport report, ValidationContext context, X509Certificate certificate, X509CRL crl,
             Date validationDate) {
+        validate(report, context, certificate, crl, validationDate, DateTimeUtil.getCurrentTimeDate());
+    }
+
+    /**
+     * Validates a certificate against Certificate Revocation List (CRL) Responses.
+     *
+     * @param report                 to store all the chain verification results
+     * @param context                the context in which to perform the validation
+     * @param certificate            the certificate to check against CRL response
+     * @param crl                    the crl response to be validated
+     * @param validationDate         validation date to check for
+     * @param responseGenerationDate trusted date at which response is generated
+     */
+    public void validate(ValidationReport report, ValidationContext context, X509Certificate certificate, X509CRL crl,
+            Date validationDate, Date responseGenerationDate) {
         ValidationContext localContext = context.setValidatorContext(ValidatorContext.CRL_VALIDATOR);
         if (CertificateUtil.isSelfSigned(certificate)) {
-            report.addReportItem(new CertificateReportItem(certificate, CRL_CHECK, SELF_SIGNED_CERTIFICATE,
-                    ReportItemStatus.INFO));
+            report.addReportItem(new CertificateReportItem(certificate, CRL_CHECK,
+                    RevocationDataValidator.SELF_SIGNED_CERTIFICATE, ReportItemStatus.INFO));
             return;
         }
-        // Check that thisUpdate >= (validationDate - freshness).
         Duration freshness = properties.getFreshness(localContext);
-        if (crl.getThisUpdate().before(DateTimeUtil.addMillisToDate(validationDate, -(long) freshness.toMillis()))) {
+        // Check that thisUpdate + freshness < validation.
+        if (DateTimeUtil.addMillisToDate(crl.getThisUpdate(), (long) freshness.toMillis()).before(validationDate)) {
             report.addReportItem(new CertificateReportItem(certificate, CRL_CHECK,
                     MessageFormatUtil.format(FRESHNESS_CHECK, crl.getThisUpdate(), validationDate, freshness),
                     ReportItemStatus.INDETERMINATE));
@@ -175,16 +190,10 @@ public class CRLValidator {
         Integer reasonsMask = checkedReasonsMask.get(certificate);
         if (reasonsMask != null) {
             interimReasonsMask |= (int) reasonsMask;
-
-            // Verify that interim_reasons_mask includes one or more reasons that are not included in the reasons_mask.
-            if (interimReasonsMask == reasonsMask) {
-                report.addReportItem(
-                        new CertificateReportItem(certificate, CRL_CHECK, SAME_REASONS_CHECK, ReportItemStatus.INFO));
-            }
         }
 
         // Verify the CRL issuer.
-        verifyCrlIntegrity(report, localContext, certificate, crl);
+        verifyCrlIntegrity(report, localContext, certificate, crl, responseGenerationDate);
 
         // Check the status of the certificate.
         verifyRevocation(report, certificate, validationDate, crl);
@@ -272,7 +281,7 @@ public class CRLValidator {
     }
 
     private void verifyCrlIntegrity(ValidationReport report, ValidationContext context, X509Certificate certificate,
-            X509CRL crl) {
+            X509CRL crl, Date responseGenerationDate) {
         Certificate[] certs = certificateRetriever.getCrlIssuerCertificates(crl);
         if (certs.length == 0) {
             report.addReportItem(new CertificateReportItem(certificate, CRL_CHECK, CRL_ISSUER_NOT_FOUND,
@@ -285,6 +294,7 @@ public class CRLValidator {
         if (!crlIssuerRoot.equals(subjectRoot)) {
             report.addReportItem(new CertificateReportItem(certificate, CRL_CHECK, CRL_ISSUER_NO_COMMON_ROOT,
                     ReportItemStatus.INDETERMINATE));
+            return;
         }
         try {
             crl.verify(crlIssuer.getPublicKey());
@@ -293,25 +303,23 @@ public class CRLValidator {
                     ReportItemStatus.INDETERMINATE));
             return;
         }
-        // Ideally this date should be the date this response was retrieved from the server.
-        Date crlIssuerDate;
-        if (TimestampConstants.UNDEFINED_TIMESTAMP_DATE != crl.getNextUpdate()) {
-            crlIssuerDate = crl.getNextUpdate();
-            report.addReportItem(new CertificateReportItem((X509Certificate) crlIssuer, CRL_CHECK,
-                    NEXT_UPDATE_VALIDATION, ReportItemStatus.INFO));
-        } else {
-            crlIssuerDate = crl.getThisUpdate();
-            report.addReportItem(new CertificateReportItem((X509Certificate) crlIssuer, CRL_CHECK,
-                    THIS_UPDATE_VALIDATION, ReportItemStatus.INFO));
-        }
 
-        builder.getCertificateChainValidator().validate(report,
+        ValidationReport responderReport = new ValidationReport();
+        builder.getCertificateChainValidator().validate(responderReport,
                 context.setCertificateSource(CertificateSource.CRL_ISSUER),
-                (X509Certificate) crlIssuer, crlIssuerDate);
+                (X509Certificate) crlIssuer, responseGenerationDate);
+        addResponderValidationReport(report, responderReport);
     }
 
     private Certificate getRoot(Certificate cert) {
         Certificate[] chain = certificateRetriever.retrieveMissingCertificates(new Certificate[] {cert});
         return chain[chain.length - 1];
+    }
+
+    private static void addResponderValidationReport(ValidationReport report, ValidationReport responderReport) {
+        for (ReportItem reportItem : responderReport.getLogs()) {
+            report.addReportItem(ReportItemStatus.INVALID == reportItem.getStatus() ?
+                    reportItem.setStatus(ReportItemStatus.INDETERMINATE) : reportItem);
+        }
     }
 }

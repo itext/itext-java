@@ -148,6 +148,11 @@ public class CertificateChainValidator {
 
     private boolean checkIfCertIsTrusted(ValidationReport result, ValidationContext context,
             X509Certificate certificate) {
+        if (CertificateSource.TRUSTED == context.getCertificateSource()) {
+            result.addReportItem(new CertificateReportItem(certificate, CERTIFICATE_CHECK, MessageFormatUtil.format(
+                    CERTIFICATE_TRUSTED, certificate.getSubjectX500Principal()), ReportItemStatus.INFO));
+            return true;
+        }
         TrustedCertificatesStore store = certificateRetriever.getTrustedCertificatesStore();
         if (store.isCertificateGenerallyTrusted(certificate)) {
             // Certificate is trusted for everything.

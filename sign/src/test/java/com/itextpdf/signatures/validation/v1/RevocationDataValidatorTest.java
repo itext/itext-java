@@ -24,11 +24,16 @@ package com.itextpdf.signatures.validation.v1;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.DateTimeUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.signatures.CertificateUtil;
+import com.itextpdf.signatures.CrlClientOnline;
 import com.itextpdf.signatures.ICrlClient;
 import com.itextpdf.signatures.IssuingCertificateRetriever;
+import com.itextpdf.signatures.OcspClientBouncyCastle;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.TimeTestUtil;
 import com.itextpdf.signatures.testutils.builder.TestCrlBuilder;
@@ -51,6 +56,10 @@ import com.itextpdf.signatures.validation.v1.report.ReportItem;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
+
+import java.security.cert.CRLException;
+import java.security.cert.X509CRL;
+import java.util.ArrayList;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -219,8 +228,7 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
         TestCrlClientWrapper crlClient1 = new TestCrlClientWrapper(
                 new TestCrlClient().addBuilderForCertIssuer(builder1));
 
-        Date thisUpdate2 = checkDate;
-        TestCrlBuilder builder2 = new TestCrlBuilder(caCert, caPrivateKey, thisUpdate2);
+        TestCrlBuilder builder2 = new TestCrlBuilder(caCert, caPrivateKey, checkDate);
         builder2.setNextUpdate(checkDate);
         TestCrlClientWrapper crlClient2 =new TestCrlClientWrapper(
                 new TestCrlClient().addBuilderForCertIssuer(builder2));
@@ -403,6 +411,11 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
                     public Collection<byte[]> getEncoded(X509Certificate checkCert, String url) {
                         return Collections.singletonList(crl);
                     }
+
+                    @Override
+                    public String toString() {
+                        return "Test crl client.";
+                    }
                 })
                 .validate(report, baseContext, checkCert, TimeTestUtil.TEST_DATE_TIME);
 
@@ -410,7 +423,7 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
                 .hasStatus(ValidationReport.ValidationResult.INDETERMINATE)
                 .hasLogItem(la -> la
                     .withCheckName(RevocationDataValidator.REVOCATION_DATA_CHECK)
-                    .withMessage(RevocationDataValidator.CRL_PARSING_ERROR)
+                    .withMessage(MessageFormatUtil.format(RevocationDataValidator.CANNOT_PARSE_CRL, "Test crl client."))
                    )
                 .hasLogItem(la -> la
                     .withCheckName(RevocationDataValidator.REVOCATION_DATA_CHECK)
@@ -473,25 +486,155 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
                 c.report.addReportItem(new ReportItem("1","2", ReportItem.ReportItemStatus.INDETERMINATE));
                 try {
                     Thread.sleep(10);
-                } catch (InterruptedException e) {}
+                } catch (InterruptedException ignored) {}
         });
         mockOCSPValidator.onCallDo(c -> {
             c.report.addReportItem(new ReportItem("1","2", ReportItem.ReportItemStatus.INDETERMINATE));
             try {
                 Thread.sleep(10);
-            } catch (InterruptedException e) {}
+            } catch (InterruptedException ignored) {}
         });
         validator.validate(report, baseContext, checkCert, checkDate);
 
-        Assert.assertTrue (mockOCSPValidator.calls.get(0).timeStamp.before(mockOCSPValidator.calls.get(1).timeStamp));
-        Assert.assertTrue (mockOCSPValidator.calls.get(1).timeStamp.before(mockCrlValidator.calls.get(0).timeStamp));
-        Assert.assertTrue (mockCrlValidator.calls.get(0).timeStamp.before( mockCrlValidator.calls.get(1).timeStamp));
-        Assert.assertTrue (mockCrlValidator.calls.get(1).timeStamp.before( mockOCSPValidator.calls.get(2).timeStamp));
+        Assert.assertTrue(mockOCSPValidator.calls.get(0).timeStamp.before(mockOCSPValidator.calls.get(1).timeStamp));
+        Assert.assertTrue(mockOCSPValidator.calls.get(1).timeStamp.before(mockCrlValidator.calls.get(0).timeStamp));
+        Assert.assertTrue(mockCrlValidator.calls.get(0).timeStamp.before(mockCrlValidator.calls.get(1).timeStamp));
+        Assert.assertTrue(mockCrlValidator.calls.get(1).timeStamp.before(mockOCSPValidator.calls.get(2).timeStamp));
 
         Assert.assertEquals(ocspClient1.getCalls().get(0).response, mockOCSPValidator.calls.get(2).ocspResp);
         Assert.assertEquals(ocspClient2.getCalls().get(0).response, mockOCSPValidator.calls.get(1).ocspResp);
         Assert.assertEquals(ocspClient3.getCalls().get(0).response, mockOCSPValidator.calls.get(0).ocspResp);
         Assert.assertEquals(crlClient.getCalls().get(0).responses.get(0), mockCrlValidator.calls.get(1).crl);
         Assert.assertEquals(crlClient.getCalls().get(0).responses.get(1), mockCrlValidator.calls.get(0).crl);
+    }
+
+    @Test
+    public void responsesFromValidationClientArePassedTest() throws GeneralSecurityException, IOException {
+        Date checkDate = TimeTestUtil.TEST_DATE_TIME;
+
+        Date ocspGeneration = DateTimeUtil.addDaysToDate(checkDate, 2);
+        // Here we check that proper generation time was set.
+        mockOCSPValidator.onCallDo(c -> Assert.assertEquals(ocspGeneration, c.responseGenerationDate));
+
+        Date crlGeneration = DateTimeUtil.addDaysToDate(checkDate, 3);
+        // Here we check that proper generation time was set.
+        mockCrlValidator.onCallDo(c -> Assert.assertEquals(crlGeneration, c.responseGenerationDate));
+
+        ValidationReport report = new ValidationReport();
+        RevocationDataValidator validator = validatorChainBuilder.getRevocationDataValidator();
+
+        ValidationOcspClient ocspClient = new ValidationOcspClient() {
+            @Override
+            public byte[] getEncoded(X509Certificate checkCert, X509Certificate issuerCert, String url) {
+                Assert.fail("This method shall not be called");
+                return null;
+            }
+        };
+        TestOcspResponseBuilder ocspBuilder = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
+        byte[] ocspResponseBytes = new TestOcspClient().addBuilderForCertIssuer(caCert, ocspBuilder)
+                .getEncoded(checkCert, caCert, null);
+        IBasicOCSPResp basicOCSPResp = FACTORY.createBasicOCSPResp(FACTORY.createBasicOCSPResponse(
+                FACTORY.createASN1Primitive(ocspResponseBytes)));
+        ocspClient.addResponse(basicOCSPResp, ocspGeneration, TimeBasedContext.HISTORICAL);
+        validator.addOcspClient(ocspClient);
+
+        ValidationCrlClient crlClient = new ValidationCrlClient() {
+            @Override
+            public Collection<byte[]> getEncoded(X509Certificate checkCert, String url) {
+                Assert.fail("This method shall not be called");
+                return null;
+            }
+        };
+        TestCrlBuilder crlBuilder = new TestCrlBuilder(caCert, caPrivateKey, checkDate);
+        byte[] crlResponseBytes = new ArrayList<>(
+                new TestCrlClient().addBuilderForCertIssuer(crlBuilder).getEncoded(checkCert, null)).get(0);
+        crlClient.addCrl((X509CRL) CertificateUtil.parseCrlFromBytes(crlResponseBytes), crlGeneration, TimeBasedContext.HISTORICAL);
+        validator.addCrlClient(crlClient);
+
+        validator.validate(report, baseContext, checkCert, checkDate);
+    }
+
+    @Test
+    public void timeBasedContextProperlySetValidationClientsTest() throws GeneralSecurityException, IOException {
+        Date checkDate = TimeTestUtil.TEST_DATE_TIME;
+
+        mockOCSPValidator.onCallDo(c -> Assert.assertEquals(TimeBasedContext.HISTORICAL, c.context.getTimeBasedContext()));
+
+        mockCrlValidator.onCallDo(c -> Assert.assertEquals(TimeBasedContext.HISTORICAL, c.context.getTimeBasedContext()));
+
+        ValidationReport report = new ValidationReport();
+        RevocationDataValidator validator = validatorChainBuilder.getRevocationDataValidator();
+
+        ValidationOcspClient ocspClient = new ValidationOcspClient();
+        TestOcspResponseBuilder ocspBuilder = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
+        byte[] ocspResponseBytes = new TestOcspClient().addBuilderForCertIssuer(caCert, ocspBuilder)
+                .getEncoded(checkCert, caCert, null);
+        IBasicOCSPResp basicOCSPResp = FACTORY.createBasicOCSPResp(FACTORY.createBasicOCSPResponse(
+                FACTORY.createASN1Primitive(ocspResponseBytes)));
+        ocspClient.addResponse(basicOCSPResp, checkDate, TimeBasedContext.HISTORICAL);
+        validator.addOcspClient(ocspClient);
+
+        ValidationCrlClient crlClient = new ValidationCrlClient();
+        TestCrlBuilder crlBuilder = new TestCrlBuilder(caCert, caPrivateKey, checkDate);
+        byte[] crlResponseBytes = new ArrayList<>(
+                new TestCrlClient().addBuilderForCertIssuer(crlBuilder).getEncoded(checkCert, null)).get(0);
+        crlClient.addCrl((X509CRL) CertificateUtil.parseCrlFromBytes(crlResponseBytes), checkDate, TimeBasedContext.HISTORICAL);
+        validator.addCrlClient(crlClient);
+
+        validator.validate(report, baseContext, checkCert, checkDate);
+    }
+
+    @Test
+    public void timeBasedContextProperlySetRandomClientsTest() throws GeneralSecurityException, IOException {
+        Date checkDate = TimeTestUtil.TEST_DATE_TIME;
+        certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
+
+        mockOCSPValidator.onCallDo(c -> Assert.assertEquals(TimeBasedContext.PRESENT, c.context.getTimeBasedContext()));
+        mockCrlValidator.onCallDo(c -> Assert.assertEquals(TimeBasedContext.PRESENT, c.context.getTimeBasedContext()));
+
+        ValidationReport report = new ValidationReport();
+        RevocationDataValidator validator = validatorChainBuilder.getRevocationDataValidator();
+
+        TestOcspResponseBuilder ocspBuilder = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
+        validator.addOcspClient(new TestOcspClient().addBuilderForCertIssuer(caCert, ocspBuilder));
+
+        TestCrlBuilder crlBuilder = new TestCrlBuilder(caCert, caPrivateKey, checkDate);
+        validator.addCrlClient(new TestCrlClient().addBuilderForCertIssuer(crlBuilder));
+
+        validator.validate(report, baseContext.setTimeBasedContext(TimeBasedContext.HISTORICAL), checkCert, checkDate);
+    }
+
+    @Test
+    public void timeBasedContextProperlySetOnlineClientsTest() throws GeneralSecurityException, IOException {
+        Date checkDate = TimeTestUtil.TEST_DATE_TIME;
+        certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
+
+        mockOCSPValidator.onCallDo(c -> Assert.assertEquals(TimeBasedContext.PRESENT, c.context.getTimeBasedContext()));
+        mockCrlValidator.onCallDo(c -> Assert.assertEquals(TimeBasedContext.PRESENT, c.context.getTimeBasedContext()));
+
+        ValidationReport report = new ValidationReport();
+        RevocationDataValidator validator = validatorChainBuilder.getRevocationDataValidator();
+
+        TestOcspResponseBuilder ocspBuilder = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
+        TestOcspClient testOcspClient = new TestOcspClient().addBuilderForCertIssuer(caCert, ocspBuilder);
+        OcspClientBouncyCastle ocspClient = new OcspClientBouncyCastle(null) {
+            @Override
+            public byte[] getEncoded(X509Certificate checkCert, X509Certificate rootCert, String url) {
+                return testOcspClient.getEncoded(checkCert, rootCert, url);
+            }
+        };
+        validator.addOcspClient(ocspClient);
+
+        TestCrlBuilder crlBuilder = new TestCrlBuilder(caCert, caPrivateKey, checkDate);
+        TestCrlClient testCrlClient = new TestCrlClient().addBuilderForCertIssuer(crlBuilder);
+        CrlClientOnline crlClient = new CrlClientOnline() {
+            @Override
+            public Collection<byte[]> getEncoded(X509Certificate checkCert, String url) {
+                return testCrlClient.getEncoded(checkCert, url);
+            }
+        };
+        validator.addCrlClient(crlClient);
+
+        validator.validate(report, baseContext.setTimeBasedContext(TimeBasedContext.HISTORICAL), checkCert, checkDate);
     }
 }

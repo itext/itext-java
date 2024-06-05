@@ -105,6 +105,9 @@ public class ValidationReport {
         reportItems.add(item);
     }
 
+    /**
+     * {@inheritDoc}.
+     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("ValidationReport{validationResult=");
@@ -117,10 +120,18 @@ public class ValidationReport {
         return sb.toString();
     }
 
-    public void merge(ValidationReport subReport) {
+    /**
+     * Merge all {@link ReportItem} objects from sub report into this one.
+     *
+     * @param subReport report from which items will be merged
+     *
+     * @return {@link ValidationReport} the same updated validation report instance.
+     */
+    public ValidationReport merge(ValidationReport subReport) {
         for (ReportItem item : subReport.getLogs()) {
             addReportItem(item);
         }
+        return this;
     }
 
     /**

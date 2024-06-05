@@ -23,7 +23,10 @@
 package com.itextpdf.signatures.validation.v1;
 
 import com.itextpdf.commons.actions.contexts.IMetaInfo;
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.asn1.tsp.ITSTInfo;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.AbstractOCSPException;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.pdf.DocumentProperties;
@@ -50,6 +53,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.cert.Certificate;
+import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,22 +68,29 @@ class SignatureValidator {
     public static final String VALIDATING_SIGNATURE_NAME = "Validating signature {0}";
     static final String TIMESTAMP_VERIFICATION = "Timestamp verification check.";
     static final String SIGNATURE_VERIFICATION = "Signature verification check.";
-    static final String CERTS_FROM_DSS = "Certificates from DSS check.";
     static final String CANNOT_PARSE_CERT_FROM_DSS =
             "Certificate {0} stored in DSS dictionary cannot be parsed.";
+    static final String CANNOT_PARSE_OCSP_FROM_DSS =
+            "OCSP response {0} stored in DSS dictionary cannot be parsed.";
+    static final String CANNOT_PARSE_CRL_FROM_DSS =
+            "CRL {0} stored in DSS dictionary cannot be parsed.";
     static final String CANNOT_VERIFY_SIGNATURE = "Signature {0} cannot be mathematically verified.";
     static final String DOCUMENT_IS_NOT_COVERED = "Signature {0} doesn't cover entire document.";
     static final String CANNOT_VERIFY_TIMESTAMP = "Signature timestamp attribute cannot be verified.";
     static final String REVISIONS_RETRIEVAL_FAILED = "Wasn't possible to retrieve document revisions.";
     private static final String TIMESTAMP_EXTRACTION_FAILED = "Unable to extract timestamp from timestamp signature";
+    private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
-    private final ValidationContext baseValidationContext;
+    private ValidationContext validationContext = new ValidationContext(ValidatorContext.SIGNATURE_VALIDATOR,
+            CertificateSource.SIGNER_CERT, TimeBasedContext.PRESENT);
     private final CertificateChainValidator certificateChainValidator;
     private final DocumentRevisionsValidator documentRevisionsValidator;
     private final IssuingCertificateRetriever certificateRetriever;
     private final SignatureValidationProperties properties;
     private Date lastKnownPoE = DateTimeUtil.getCurrentTimeDate();
     private IMetaInfo metaInfo = new ValidationMetaInfo();
+    private final ValidationOcspClient validationOcspClient = new ValidationOcspClient();
+    private final ValidationCrlClient validationCrlClient = new ValidationCrlClient();
 
     /**
      * Creates new instance of {@link SignatureValidator}.
@@ -91,8 +102,8 @@ class SignatureValidator {
         this.properties = builder.getProperties();
         this.certificateChainValidator = builder.getCertificateChainValidator();
         this.documentRevisionsValidator = builder.getDocumentRevisionsValidator();
-        this.baseValidationContext = new ValidationContext(ValidatorContext.SIGNATURE_VALIDATOR,
-                CertificateSource.SIGNER_CERT, TimeBasedContext.PRESENT);
+        builder.getRevocationDataValidator().addOcspClient(validationOcspClient);
+        builder.getRevocationDataValidator().addCrlClient(validationCrlClient);
     }
 
     /**
@@ -117,9 +128,9 @@ class SignatureValidator {
         ValidationReport report = new ValidationReport();
         documentRevisionsValidator.setEventCountingMetaInfo(metaInfo);
         ValidationReport revisionsValidationReport =
-                documentRevisionsValidator.validateAllDocumentRevisions(baseValidationContext, document);
+                documentRevisionsValidator.validateAllDocumentRevisions(validationContext, document);
         report.merge(revisionsValidationReport);
-        if (stopValidation(report, baseValidationContext)) {
+        if (stopValidation(report, validationContext)) {
             return report;
         }
 
@@ -132,7 +143,7 @@ class SignatureValidator {
                     new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
                 ValidationReport subReport = validateLatestSignature(doc);
                 report.merge(subReport);
-                if (stopValidation(report, baseValidationContext)) {
+                if (stopValidation(report, validationContext)) {
                     return report;
                 }
             } catch (IOException e) {
@@ -143,17 +154,12 @@ class SignatureValidator {
         return report;
     }
 
-
-    /**
-     * Validate the latest signature in the document.
-     *
-     * @param document the document of which to validate the latest signature
-     * @return {@link ValidationReport} which contains detailed validation results
-     */
-    public ValidationReport validateLatestSignature(PdfDocument document) {
+    ValidationReport validateLatestSignature(PdfDocument document) {
         ValidationReport validationReport = new ValidationReport();
+        updateValidationOcspClient(validationReport, validationContext, document);
+        updateValidationCrlClient(validationReport, validationContext, document);
         PdfPKCS7 pkcs7 = mathematicallyVerifySignature(validationReport, document);
-        if (stopValidation(validationReport, baseValidationContext)) {
+        if (stopValidation(validationReport, validationContext)) {
             return validationReport;
         }
 
@@ -161,10 +167,15 @@ class SignatureValidator {
         certificateRetriever.addKnownCertificates(certificatesFromDss);
 
         if (pkcs7.isTsp()) {
-            return validateTimestampChain(validationReport, pkcs7.getTimeStampTokenInfo(), pkcs7.getCertificates(),
+            validateTimestampChain(validationReport, pkcs7.getTimeStampTokenInfo(), pkcs7.getCertificates(),
                     pkcs7.getSigningCertificate());
+            updateValidationOcspClient(validationReport, validationContext, document);
+            updateValidationCrlClient(validationReport, validationContext, document);
+            return validationReport;
         }
 
+        Date previousLastKnowPoE = lastKnownPoE;
+        ValidationContext previousValidationContext = validationContext;
         if (pkcs7.getTimeStampTokenInfo() != null) {
             try {
                 if (!pkcs7.verifyTimestampImprint()) {
@@ -175,7 +186,7 @@ class SignatureValidator {
                 validationReport.addReportItem(new ReportItem(TIMESTAMP_VERIFICATION, CANNOT_VERIFY_TIMESTAMP, e,
                         ReportItemStatus.INVALID));
             }
-            if (stopValidation(validationReport, baseValidationContext)) {
+            if (stopValidation(validationReport, validationContext)) {
                 return validationReport;
             }
 
@@ -189,25 +200,35 @@ class SignatureValidator {
                 validationReport.addReportItem(new ReportItem(TIMESTAMP_VERIFICATION,
                         CANNOT_VERIFY_TIMESTAMP, e, ReportItemStatus.INVALID));
             }
-            if (stopValidation(validationReport, baseValidationContext)) {
+            if (stopValidation(validationReport, validationContext)) {
                 return validationReport;
             }
 
             Certificate[] timestampCertificates = timestampSignatureContainer.getCertificates();
             validateTimestampChain(validationReport, pkcs7.getTimeStampTokenInfo(), timestampCertificates,
                     timestampSignatureContainer.getSigningCertificate());
-            if (stopValidation(validationReport, baseValidationContext)) {
+            if (stopValidation(validationReport, validationContext)) {
                 return validationReport;
             }
         }
+        updateValidationOcspClient(validationReport, validationContext, document);
+        updateValidationCrlClient(validationReport, validationContext, document);
 
         Certificate[] certificates = pkcs7.getCertificates();
         certificateRetriever.addKnownCertificates(Arrays.asList(certificates));
         X509Certificate signingCertificate = pkcs7.getSigningCertificate();
 
-        return certificateChainValidator.validate(validationReport,
-                baseValidationContext,
-                signingCertificate, lastKnownPoE);
+        ValidationReport signatureReport = new ValidationReport();
+        certificateChainValidator.validate(signatureReport, validationContext, signingCertificate, lastKnownPoE);
+        if (signatureReport.getValidationResult() != ValidationResult.VALID) {
+            // We can only use PoE retrieved from timestamp attribute in case main signature validation is successful.
+            // That's why if the result is not valid, we set back lastKnownPoE value, validation context and DSS.
+            lastKnownPoE = previousLastKnowPoE;
+            validationContext = previousValidationContext;
+            updateValidationOcspClient(validationReport, validationContext, document);
+            updateValidationCrlClient(validationReport, validationContext, document);
+        }
+        return validationReport.merge(signatureReport);
     }
 
     private PdfPKCS7 mathematicallyVerifySignature(ValidationReport validationReport, PdfDocument document) {
@@ -241,18 +262,62 @@ class SignatureValidator {
         ValidationReport tsValidationReport = new ValidationReport();
 
         certificateChainValidator.validate(tsValidationReport,
-                baseValidationContext.setCertificateSource(CertificateSource.TIMESTAMP),
+                validationContext.setCertificateSource(CertificateSource.TIMESTAMP),
                 signingCert, lastKnownPoE);
         validationReport.merge(tsValidationReport);
         if (tsValidationReport.getValidationResult() == ValidationReport.ValidationResult.VALID) {
             try {
                 lastKnownPoE = timeStampTokenInfo.getGenTime();
+                if (validationContext.getTimeBasedContext() == TimeBasedContext.PRESENT) {
+                    validationContext = validationContext.setTimeBasedContext(TimeBasedContext.HISTORICAL);
+                }
             } catch (Exception e) {
                 validationReport.addReportItem(new ReportItem(TIMESTAMP_VERIFICATION, TIMESTAMP_EXTRACTION_FAILED, e,
                         ReportItemStatus.INDETERMINATE));
             }
         }
         return validationReport;
+    }
+
+    private void updateValidationOcspClient(ValidationReport validationReport, ValidationContext context,
+            PdfDocument document) {
+        PdfDictionary dss = document.getCatalog().getPdfObject().getAsDictionary(PdfName.DSS);
+        if (dss != null) {
+            PdfArray ocsps = dss.getAsArray(PdfName.OCSPs);
+            if (ocsps != null) {
+                for (int i = 0; i < ocsps.size(); ++i) {
+                    PdfStream ocspStream = ocsps.getAsStream(i);
+                    try {
+                        validationOcspClient.addResponse(BOUNCY_CASTLE_FACTORY.createBasicOCSPResp(
+                                BOUNCY_CASTLE_FACTORY.createOCSPResp(ocspStream.getBytes()).getResponseObject()),
+                                lastKnownPoE, context.getTimeBasedContext());
+                    } catch (IOException | AbstractOCSPException e) {
+                        validationReport.addReportItem(new ReportItem(SIGNATURE_VERIFICATION, MessageFormatUtil.format(
+                                CANNOT_PARSE_OCSP_FROM_DSS, ocspStream), e, ReportItemStatus.INFO));
+                    }
+                }
+            }
+        }
+    }
+
+    private void updateValidationCrlClient(ValidationReport validationReport, ValidationContext context,
+            PdfDocument document) {
+        PdfDictionary dss = document.getCatalog().getPdfObject().getAsDictionary(PdfName.DSS);
+        if (dss != null) {
+            PdfArray crls = dss.getAsArray(PdfName.CRLs);
+            if (crls != null) {
+                for (int i = 0; i < crls.size(); ++i) {
+                    PdfStream crlStream = crls.getAsStream(i);
+                    try {
+                        validationCrlClient.addCrl((X509CRL) CertificateUtil.parseCrlFromBytes(crlStream.getBytes()),
+                                lastKnownPoE, context.getTimeBasedContext());
+                    } catch (Exception e) {
+                        validationReport.addReportItem(new ReportItem(SIGNATURE_VERIFICATION, MessageFormatUtil.format(
+                                CANNOT_PARSE_CRL_FROM_DSS, crlStream), e, ReportItemStatus.INFO));
+                    }
+                }
+            }
+        }
     }
 
     private List<Certificate> getCertificatesFromDss(ValidationReport validationReport, PdfDocument document) {
@@ -267,7 +332,7 @@ class SignatureValidator {
                         certificatesFromDss.add(CertificateUtil.generateCertificate(
                                 new ByteArrayInputStream(certStream.getBytes())));
                     } catch (GeneralSecurityException e) {
-                        validationReport.addReportItem(new ReportItem(CERTS_FROM_DSS, MessageFormatUtil.format(
+                        validationReport.addReportItem(new ReportItem(SIGNATURE_VERIFICATION, MessageFormatUtil.format(
                                 CANNOT_PARSE_CERT_FROM_DSS, certStream), e, ReportItemStatus.INFO));
                     }
                 }

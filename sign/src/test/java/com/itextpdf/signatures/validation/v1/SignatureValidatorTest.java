@@ -36,10 +36,12 @@ import com.itextpdf.signatures.testutils.builder.TestOcspResponseBuilder;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
 import com.itextpdf.signatures.validation.v1.context.CertificateSource;
 import com.itextpdf.signatures.validation.v1.context.CertificateSources;
+import com.itextpdf.signatures.validation.v1.context.TimeBasedContext;
 import com.itextpdf.signatures.validation.v1.context.TimeBasedContexts;
 import com.itextpdf.signatures.validation.v1.context.ValidatorContext;
 import com.itextpdf.signatures.validation.v1.context.ValidatorContexts;
 import com.itextpdf.signatures.validation.v1.mocks.MockChainValidator;
+import com.itextpdf.signatures.validation.v1.mocks.MockChainValidator.ValidationCallBack;
 import com.itextpdf.signatures.validation.v1.mocks.MockDocumentRevisionsValidator;
 import com.itextpdf.signatures.validation.v1.mocks.MockIssuingCertificateRetriever;
 import com.itextpdf.signatures.validation.v1.mocks.MockRevocationDataValidator;
@@ -49,6 +51,8 @@ import com.itextpdf.signatures.validation.v1.report.ValidationReport;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport.ValidationResult;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
+
+import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -97,7 +101,6 @@ public class SignatureValidatorTest extends ExtendedITextTest {
                 .withCertificateChainValidator(mockCertificateChainValidator)
                 .withRevocationDataValidator(new MockRevocationDataValidator())
                 .withDocumentRevisionsValidator(mockDocumentRevisionsValidator);
-
     }
 
     @Test
@@ -351,7 +354,7 @@ public class SignatureValidatorTest extends ExtendedITextTest {
         AssertValidationReport.assertThat(report, a -> a
                 .hasStatus(ValidationResult.VALID)
                 .hasLogItem(al -> al
-                        .withCheckName(SignatureValidator.CERTS_FROM_DSS)
+                        .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
                         .withExceptionCauseType(GeneralSecurityException.class))
         );
     }
@@ -422,7 +425,6 @@ public class SignatureValidatorTest extends ExtendedITextTest {
     @Test
     public void validateMultipleSignatures() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "docWithMultipleSignaturesAndTimeStamp.pdf"))) {
-
             SignatureValidator signatureValidator = builder.buildSignatureValidator();
             ValidationReport report = signatureValidator.validateSignatures(document);
 
@@ -452,20 +454,25 @@ public class SignatureValidatorTest extends ExtendedITextTest {
 
             // 2 signatures with timestamp
             // 3 document timestamps
-            Assert.assertEquals(7, mockCertificateChainValidator.verificationCalls.size());
-            Assert.assertTrue(mockCertificateChainValidator.verificationCalls.stream().anyMatch(c ->
+            List<ValidationCallBack> verificationCalls = mockCertificateChainValidator.verificationCalls;
+            Assert.assertEquals(7, verificationCalls.size());
+            Assert.assertEquals(TimeBasedContext.PRESENT, verificationCalls.get(0).context.getTimeBasedContext());
+            for (int i = 1; i < verificationCalls.size(); ++i) {
+                Assert.assertEquals(TimeBasedContext.HISTORICAL, verificationCalls.get(i).context.getTimeBasedContext());
+            }
+            Assert.assertTrue(verificationCalls.stream().anyMatch(c ->
                     c.certificate.getSerialNumber().toString().equals("1491571297")
                     && c.checkDate.equals(date3)));
-            Assert.assertTrue(mockCertificateChainValidator.verificationCalls.stream().anyMatch(c ->
+            Assert.assertTrue(verificationCalls.stream().anyMatch(c ->
                     c.certificate.getSerialNumber().toString().equals("1491571297")
                             && c.checkDate.equals(date2)));
-            Assert.assertTrue(mockCertificateChainValidator.verificationCalls.stream().anyMatch(c ->
+            Assert.assertTrue(verificationCalls.stream().anyMatch(c ->
                     c.certificate.getSerialNumber().toString().equals("1491571297")
                             && c.checkDate.equals(date1)));
-            Assert.assertTrue(mockCertificateChainValidator.verificationCalls.stream().anyMatch(c ->
+            Assert.assertTrue(verificationCalls.stream().anyMatch(c ->
                     c.certificate.getSerialNumber().toString().equals("1550593058")
                             && c.checkDate.equals(date2)));
-            Assert.assertTrue(mockCertificateChainValidator.verificationCalls.stream().anyMatch(c ->
+            Assert.assertTrue(verificationCalls.stream().anyMatch(c ->
                     c.certificate.getSerialNumber().toString().equals("1701704311986")
                             && c.checkDate.equals(date1)));
         }

@@ -134,7 +134,7 @@ public class OCSPValidatorIntegrationTest extends ExtendedITextTest {
         AssertValidationReport.assertThat(report, a -> a
                 .hasNumberOfFailures(0)
                 .hasNumberOfLogs(2)
-                .hasLogItems(2,2, al -> al
+                .hasLogItems(2, al -> al
                     .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
                     .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED, l->
                                 ((CertificateReportItem) l).getCertificate().getSubjectX500Principal())
@@ -184,7 +184,7 @@ public class OCSPValidatorIntegrationTest extends ExtendedITextTest {
 
         OCSPValidator validator = validatorChainBuilder.buildOCSPValidator();
         validator.validate(report, baseContext, checkCert, caBasicOCSPResp.getResponses()[0], caBasicOCSPResp,
-                TimeTestUtil.TEST_DATE_TIME);
+                TimeTestUtil.TEST_DATE_TIME, TimeTestUtil.TEST_DATE_TIME);
 
         AssertValidationReport.assertThat(report, a -> a
                 .hasNumberOfFailures(0)
@@ -209,7 +209,7 @@ public class OCSPValidatorIntegrationTest extends ExtendedITextTest {
 
         OCSPValidator validator = validatorChainBuilder.buildOCSPValidator();
         validator.validate(report, baseContext, checkCert, basicOCSPResp.getResponses()[0], basicOCSPResp,
-                TimeTestUtil.TEST_DATE_TIME);
+                TimeTestUtil.TEST_DATE_TIME, TimeTestUtil.TEST_DATE_TIME);
 
         AssertValidationReport.assertThat(report, a -> a
                 .hasNumberOfFailures(1)
@@ -236,7 +236,7 @@ public class OCSPValidatorIntegrationTest extends ExtendedITextTest {
         OCSPValidator validator = validatorChainBuilder.buildOCSPValidator();
         parameters.setFreshness(ValidatorContexts.all(), CertificateSources.all(), TimeBasedContexts.all(),
                 Duration.ofDays(0));
-        validator.validate(report, baseContext, checkCert, basicOCSPResp.getResponses()[0], basicOCSPResp, checkDate);
+        validator.validate(report, baseContext, checkCert, basicOCSPResp.getResponses()[0], basicOCSPResp, checkDate, checkDate);
         return report;
     }
 
@@ -252,7 +252,7 @@ public class OCSPValidatorIntegrationTest extends ExtendedITextTest {
 
         OCSPValidator validator = validatorChainBuilder.buildOCSPValidator();
         validator.validate(report, baseContext, checkCert, basicOCSPResp.getResponses()[0], basicOCSPResp,
-                TimeTestUtil.TEST_DATE_TIME);
+                TimeTestUtil.TEST_DATE_TIME, TimeTestUtil.TEST_DATE_TIME);
         return report;
     }
 
@@ -298,7 +298,7 @@ public class OCSPValidatorIntegrationTest extends ExtendedITextTest {
         validatorChainBuilder.getRevocationDataValidator().addOcspClient(ocspClient);
         validatorChainBuilder.getRevocationDataValidator().addOcspClient(ocspClient2);
         OCSPValidator validator = validatorChainBuilder.buildOCSPValidator();
-        validator.validate(report, baseContext, checkCert, basicOCSPResp.getResponses()[0], basicOCSPResp, checkDate);
+        validator.validate(report, baseContext, checkCert, basicOCSPResp.getResponses()[0], basicOCSPResp, checkDate, checkDate);
         return report;
     }
 }

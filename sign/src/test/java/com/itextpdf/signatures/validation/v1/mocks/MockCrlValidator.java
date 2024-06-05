@@ -49,8 +49,8 @@ public class MockCrlValidator extends CRLValidator {
 
     @Override
     public void validate(ValidationReport report, ValidationContext context, X509Certificate certificate, X509CRL crl,
-                         Date validationDate) {
-        CRLValidateCall call = new CRLValidateCall(report, context, certificate, crl, validationDate);
+                         Date validationDate, Date responseGenerationDate) {
+        CRLValidateCall call = new CRLValidateCall(report, context, certificate, crl, validationDate, responseGenerationDate);
         calls.add(call);
         if (onCallHandler != null) {
             onCallHandler.accept(calls.get(calls.size() - 1));
@@ -68,14 +68,16 @@ public class MockCrlValidator extends CRLValidator {
         public final X509Certificate certificate;
         public final X509CRL crl;
         public final Date validationDate;
+        public final Date responseGenerationDate;
 
         public CRLValidateCall(ValidationReport report, ValidationContext context, X509Certificate certificate,
-                               X509CRL crl, Date validationDate) {
+                               X509CRL crl, Date validationDate, Date responseGenerationDate) {
             this.report = report;
             this.context = context;
             this.certificate = certificate;
             this.crl = crl;
             this.validationDate = validationDate;
+            this.responseGenerationDate = responseGenerationDate;
         }
     }
 }

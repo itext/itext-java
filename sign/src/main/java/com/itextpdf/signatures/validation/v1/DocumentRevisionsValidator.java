@@ -1195,8 +1195,8 @@ public class DocumentRevisionsValidator {
         if (pdfObject1.getClass() != pdfObject2.getClass()) {
             return false;
         }
-        // We don't allow objects to be direct and indirect.
-        // Acrobat however allows it, but such change can invalidate the document.
+        // We don't allow objects to change from being direct to indirect and vice versa.
+        // Acrobat allows it, but such change can invalidate the document.
         if (pdfObject1.getIndirectReference() == null ^ pdfObject2.getIndirectReference() == null) {
             return false;
         }
@@ -1529,10 +1529,10 @@ public class DocumentRevisionsValidator {
             allowedReferences.add(arrayEntry.getIndirectReference());
 
             if (arrayEntry instanceof PdfDictionary) {
-                addAllNestedDictionaryEntries(allowedReferences, pdfArray.getAsDictionary(i));
+                addAllNestedDictionaryEntries(allowedReferences, (PdfDictionary) arrayEntry);
             }
             if (arrayEntry instanceof PdfArray) {
-                addAllNestedArrayEntries(allowedReferences, pdfArray.getAsArray(i));
+                addAllNestedArrayEntries(allowedReferences, (PdfArray) arrayEntry);
             }
         }
     }

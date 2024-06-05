@@ -224,6 +224,20 @@ public class CertificateUtil {
     }
 
     /**
+     * Parses a CRL from bytes.
+     *
+     * @param crlBytes the bytes holding the unparsed CRL
+     *
+     * @return the parsed CRL object.
+     *
+     * @throws CertificateException thrown if there's no X509 implementation in the provider.
+     * @throws CRLException         thrown when encountering errors when parsing the CRL.
+     */
+    public static CRL parseCrlFromBytes(byte[] crlBytes) throws CertificateException, CRLException {
+        return SignUtils.parseCrlFromStream(new ByteArrayInputStream(crlBytes));
+    }
+
+    /**
      * Retrieves the URL for the issuer certificate for the given CRL.
      *
      * @param crl the CRL response
