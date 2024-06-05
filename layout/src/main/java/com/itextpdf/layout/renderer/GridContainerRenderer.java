@@ -29,11 +29,12 @@ import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.properties.ContinuousContainer;
-import com.itextpdf.layout.properties.GridFlow;
-import com.itextpdf.layout.properties.GridValue;
 import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
+import com.itextpdf.layout.properties.grid.GridFlow;
+import com.itextpdf.layout.properties.grid.GridValue;
+import com.itextpdf.layout.properties.grid.TemplateValue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +44,7 @@ import java.util.List;
  */
 public class GridContainerRenderer extends BlockRenderer {
     private boolean isFirstLayout = true;
-
+    private float containerHeight = 0.0f;
     /**
      * Creates a Grid renderer from its corresponding layout object.
      * @param modelElement the {@link GridContainer} which this object should manage
@@ -66,10 +67,7 @@ public class GridContainerRenderer extends BlockRenderer {
      */
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
-
-        //TODO DEVSIX-8331 enable continuous container, right now its not working properly out of the box because
-        // we don't need to enable it for every element in a grid, probably only to those which get
-        // split by a page
+        //TODO DEVSIX-8331 enable continuous container
         //this.setProperty(Property.TREAT_AS_CONTINUOUS_CONTAINER, Boolean.TRUE);
 
         Rectangle actualBBox = layoutContext.getArea().getBBox().clone();
@@ -83,17 +81,21 @@ public class GridContainerRenderer extends BlockRenderer {
         applyBorderBox(actualBBox, false);
         applyMargins(actualBBox, false);
 
-        Grid grid = constructGrid(this, actualBBox);
+        Float blockHeight = retrieveHeight();
+        if (blockHeight != null && (float) blockHeight < actualBBox.getHeight()) {
+            actualBBox.setY(actualBBox.getY() + actualBBox.getHeight() - (float) blockHeight);
+            actualBBox.setHeight((float) blockHeight);
+        }
+
+        Grid grid = constructGrid(this,
+                new Rectangle(actualBBox.getWidth(), blockHeight == null ? -1 : actualBBox.getHeight()));
         GridLayoutResult layoutResult = layoutGrid(layoutContext, actualBBox, grid);
 
         if (layoutResult.getOverflowRenderers().isEmpty()) {
             this.occupiedArea = calculateContainerOccupiedArea(layoutContext, grid, true);
             return new LayoutResult(LayoutResult.FULL, this.occupiedArea, null, null);
         } else if (layoutResult.getSplitRenderers().isEmpty()) {
-            IRenderer cause = this;
-            if (!layoutResult.getCauseOfNothing().isEmpty()) {
-                cause = layoutResult.getCauseOfNothing().get(0);
-            }
+            IRenderer cause = layoutResult.getCauseOfNothing() == null ? this : layoutResult.getCauseOfNothing();
             return new LayoutResult(LayoutResult.NOTHING, null, null, this, cause);
         } else {
             this.occupiedArea = calculateContainerOccupiedArea(layoutContext, grid, false);
@@ -182,7 +184,7 @@ public class GridContainerRenderer extends BlockRenderer {
             cellToRender.setProperty(Property.HEIGHT, UnitValue.createPointValue(itemHeight));
 
             // Adjust cell BBox to the remaining part of the layout bbox
-            // This way we can layout elements partially
+            // This way we can lay out elements partially
             cellBBox.setHeight(cellBBox.getTop() - actualBBox.getBottom())
                     .setY(actualBBox.getY());
 
@@ -211,8 +213,7 @@ public class GridContainerRenderer extends BlockRenderer {
             cellToRenderer.setProperty(Property.GRID_ROW_START, cell.getRowStart() + 1);
             cellToRenderer.setProperty(Property.GRID_ROW_END, cell.getRowEnd() + 1);
             layoutResult.getOverflowRenderers().add(cellToRenderer);
-            layoutResult.getCauseOfNothing().add(cellResult.getCauseOfNothing());
-
+            layoutResult.setCauseOfNothing(cellResult.getCauseOfNothing());
             return cell.getRowStart();
         }
 
@@ -269,10 +270,10 @@ public class GridContainerRenderer extends BlockRenderer {
                 layoutContext.getFloatRendererAreas(), layoutContext.isClippedHeight());
     }
 
-    //calculate grid container occupied area based on its width/height properties and cell layout areas
+    // Calculate grid container occupied area based on its width/height properties and cell layout areas
     private LayoutArea calculateContainerOccupiedArea(LayoutContext layoutContext, Grid grid, boolean isFull) {
         LayoutArea area = layoutContext.getArea().clone();
-        final float totalHeight = updateOccupiedHeight(grid.getHeight(), isFull);
+        final float totalHeight = updateOccupiedHeight(containerHeight, isFull);
         if (totalHeight < area.getBBox().getHeight() || isFull) {
             area.getBBox().setHeight(totalHeight);
             final Rectangle initialBBox = layoutContext.getArea().getBBox();
@@ -282,6 +283,7 @@ public class GridContainerRenderer extends BlockRenderer {
         return area;
     }
 
+    // Recalculate height/width after grid sizing and re-apply height/width properties
     private void recalculateHeightAndWidthAfterLayout(Rectangle bBox, boolean isFull) {
         Float height = retrieveHeight();
         if (height != null) {
@@ -334,10 +336,24 @@ public class GridContainerRenderer extends BlockRenderer {
         return 0F;
     }
 
-    //Grid layout algorithm is based on a https://drafts.csswg.org/css-grid/#layout-algorithm
+    // Grid layout algorithm is based on a https://drafts.csswg.org/css-grid/#layout-algorithm
+    // This method creates grid, positions items on it and sizes grid tracks
     private static Grid constructGrid(GridContainerRenderer renderer, Rectangle actualBBox) {
-        List<GridValue> templateColumns = renderer.<List<GridValue>>getProperty(Property.GRID_TEMPLATE_COLUMNS);
-        List<GridValue> templateRows = renderer.<List<GridValue>>getProperty(Property.GRID_TEMPLATE_ROWS);
+        Float columnGapProp = renderer.<Float>getProperty(Property.COLUMN_GAP);
+        Float rowGapProp = renderer.<Float>getProperty(Property.ROW_GAP);
+        float columnGap = columnGapProp == null ? 0f : (float) columnGapProp;
+        float rowGap = rowGapProp == null ? 0f : (float) rowGapProp;
+
+        // Resolving repeats
+        GridTemplateResolver rowRepeatResolver
+                = new GridTemplateResolver(actualBBox.getHeight(), rowGap);
+        GridTemplateResolver columnRepeatResolver
+                = new GridTemplateResolver(actualBBox.getWidth(), columnGap);
+        List<GridValue> templateRows = rowRepeatResolver.resolveTemplate(
+                renderer.<List<TemplateValue>>getProperty(Property.GRID_TEMPLATE_ROWS));
+        List<GridValue> templateColumns = columnRepeatResolver.resolveTemplate(
+                renderer.<List<TemplateValue>>getProperty(Property.GRID_TEMPLATE_COLUMNS));
+
         final GridFlow flow = renderer.<GridFlow>getProperty(Property.GRID_FLOW) == null ?
                 GridFlow.ROW : (GridFlow) (renderer.<GridFlow>getProperty(Property.GRID_FLOW));
 
@@ -351,25 +367,30 @@ public class GridContainerRenderer extends BlockRenderer {
                         .rows(templateRows == null ? 1 : templateRows.size())
                         .flow(flow).build();
 
-
-        GridValue columnAutoWidth = renderer.<GridValue>getProperty(Property.GRID_AUTO_COLUMNS);
-        GridValue rowAutoHeight = renderer.<GridValue>getProperty(Property.GRID_AUTO_ROWS);
-        Float columnGapProp = renderer.<Float>getProperty(Property.COLUMN_GAP);
-        Float rowGapProp = renderer.<Float>getProperty(Property.ROW_GAP);
-        float columnGap = columnGapProp == null ? 0f : (float) columnGapProp;
-        float rowGap = rowGapProp == null ? 0f : (float) rowGapProp;
+        // Collapse any empty repeated tracks if auto-fit was used
+        if (rowRepeatResolver.isCollapseNullLines()) {
+            templateRows = rowRepeatResolver.shrinkTemplatesToFitSize(grid.collapseNullLines(Grid.GridOrder.ROW,
+                    rowRepeatResolver.getFixedValuesCount()));
+        }
+        if (columnRepeatResolver.isCollapseNullLines()) {
+            templateColumns = columnRepeatResolver.shrinkTemplatesToFitSize(grid.collapseNullLines(Grid.GridOrder.COLUMN,
+                    columnRepeatResolver.getFixedValuesCount()));
+        }
 
         // 12. Grid Layout Algorithm
+        GridValue columnAutoWidth = renderer.<GridValue>getProperty(Property.GRID_AUTO_COLUMNS);
+        GridValue rowAutoHeight = renderer.<GridValue>getProperty(Property.GRID_AUTO_ROWS);
         GridSizer gridSizer = new GridSizer(grid, templateColumns, templateRows, columnAutoWidth, rowAutoHeight,
                 columnGap, rowGap, actualBBox);
         gridSizer.sizeGrid();
+        renderer.containerHeight = gridSizer.getContainerHeight();
         return grid;
     }
 
     private final static class GridLayoutResult {
         private final List<IRenderer> splitRenderers = new ArrayList<>();
         private final List<IRenderer> overflowRenderers = new ArrayList<>();
-        private final List<IRenderer> causeOfNothing = new ArrayList<>();
+        private IRenderer causeOfNothing;
 
         public GridLayoutResult() {
             //default constructor
@@ -383,7 +404,11 @@ public class GridContainerRenderer extends BlockRenderer {
             return overflowRenderers;
         }
 
-        public List<IRenderer> getCauseOfNothing() {
+        public void setCauseOfNothing(IRenderer causeOfNothing) {
+            this.causeOfNothing = causeOfNothing;
+        }
+
+        public IRenderer getCauseOfNothing() {
             return causeOfNothing;
         }
     }

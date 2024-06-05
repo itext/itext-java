@@ -22,7 +22,7 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.layout.properties.GridFlow;
+import com.itextpdf.layout.properties.grid.GridFlow;
 
 /**
  * This class represents a view on a grid, which returns cells one by one in a specified order.

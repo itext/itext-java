@@ -23,7 +23,7 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.layout.element.Text;
-import com.itextpdf.layout.properties.GridFlow;
+import com.itextpdf.layout.properties.grid.GridFlow;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.renderer.Grid.GridOrder;
 import com.itextpdf.test.AssertUtil;
@@ -34,62 +34,51 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import java.util.Arrays;
+
 @Category(UnitTest.class)
 public class GridUnitTest extends ExtendedITextTest {
 
     @Test
     public void getUniqueCellsTest() {
-        Grid grid = new Grid(3, 3,  GridFlow.ROW);
-        grid.addCell(new GridCell(new TextRenderer(new Text("One"))));
         IRenderer twoRenderer = new TextRenderer(new Text("Two"));
         twoRenderer.setProperty(Property.GRID_COLUMN_START, 2);
         twoRenderer.setProperty(Property.GRID_COLUMN_END, 4);
-        GridCell cell = new GridCell(twoRenderer);
-        grid.addCell(cell);
-        grid.addCell(new GridCell(new TextRenderer(new Text("Three"))));
-        grid.addCell(new GridCell(new TextRenderer(new Text("Four"))));
+        Grid grid = Grid.Builder.forItems(Arrays.asList(
+                new TextRenderer(new Text("One")),
+                twoRenderer,
+                new TextRenderer(new Text("Three")),
+                new TextRenderer(new Text("Four"))
+        )).columns(3).rows(3).flow(GridFlow.ROW).build();
         Assert.assertEquals(4, grid.getUniqueGridCells(Grid.GridOrder.ROW).size());
     }
 
     @Test
-    public void getUniqueCellsInColumnTest() {
-        Grid grid = new Grid(3, 3,  GridFlow.ROW);
-        grid.addCell(new GridCell(new TextRenderer(new Text("One"))));
+    public void getUniqueCellsInColumnAndRowTest() {
         IRenderer twoRenderer = new TextRenderer(new Text("Two"));
         twoRenderer.setProperty(Property.GRID_ROW_START, 2);
         twoRenderer.setProperty(Property.GRID_ROW_END, 4);
-        GridCell cell = new GridCell(twoRenderer);
-        grid.addCell(cell);
-        grid.addCell(new GridCell(new TextRenderer(new Text("Three"))));
-        grid.addCell(new GridCell(new TextRenderer(new Text("Four"))));
+        Grid grid = Grid.Builder.forItems(Arrays.asList(
+                new TextRenderer(new Text("One")),
+                twoRenderer,
+                new TextRenderer(new Text("Three")),
+                new TextRenderer(new Text("Four"))
+        )).columns(3).rows(3).flow(GridFlow.ROW).build();
         Assert.assertEquals(1, grid.getUniqueCellsInTrack(GridOrder.COLUMN, 1).size());
+        Assert.assertEquals(3, grid.getUniqueCellsInTrack(GridOrder.ROW, 0).size());
     }
 
     @Test
     public void invalidColumnForGetColCellsTest() {
-        Grid grid = new Grid(3, 3,  GridFlow.ROW);
+        Grid grid = new Grid(3, 3);
         Assert.assertThrows(IndexOutOfBoundsException.class, () -> grid.getUniqueCellsInTrack(GridOrder.COLUMN, 4));
         Assert.assertThrows(IndexOutOfBoundsException.class, () -> grid.getUniqueCellsInTrack(GridOrder.COLUMN, -1));
         AssertUtil.doesNotThrow(() -> grid.getUniqueCellsInTrack(GridOrder.COLUMN, 2));
     }
 
     @Test
-    public void getUniqueCellsInRowTest() {
-        Grid grid = new Grid(3, 3,  GridFlow.ROW);
-        grid.addCell(new GridCell(new TextRenderer(new Text("One"))));
-        IRenderer twoRenderer = new TextRenderer(new Text("Two"));
-        twoRenderer.setProperty(Property.GRID_COLUMN_START, 2);
-        twoRenderer.setProperty(Property.GRID_COLUMN_END, 4);
-        GridCell cell = new GridCell(twoRenderer);
-        grid.addCell(cell);
-        grid.addCell(new GridCell(new TextRenderer(new Text("Three"))));
-        grid.addCell(new GridCell(new TextRenderer(new Text("Four"))));
-        Assert.assertEquals(2, grid.getUniqueCellsInTrack(GridOrder.ROW, 0).size());
-    }
-
-    @Test
     public void invalidRowForGetRowCellsTest() {
-        Grid grid = new Grid(3, 3,  GridFlow.ROW);
+        Grid grid = new Grid(3, 3);
         Assert.assertThrows(IndexOutOfBoundsException.class, () -> grid.getUniqueCellsInTrack(GridOrder.ROW, 4));
         Assert.assertThrows(IndexOutOfBoundsException.class, () -> grid.getUniqueCellsInTrack(GridOrder.ROW, -1));
         AssertUtil.doesNotThrow(() -> grid.getUniqueCellsInTrack(GridOrder.ROW, 2));
@@ -97,130 +86,137 @@ public class GridUnitTest extends ExtendedITextTest {
 
     @Test
     public void sparsePackingTest() {
-        Grid grid = new Grid(3, 3,  GridFlow.ROW);
-        GridCell cell1 = new GridCell(new TextRenderer(new Text("One")));
-        grid.addCell(cell1);
-        IRenderer renderer = new TextRenderer(new Text("Two"));
-        renderer.setProperty(Property.GRID_COLUMN_START, 1);
-        renderer.setProperty(Property.GRID_COLUMN_END, 6);
-        GridCell wideCell = new GridCell(renderer);
-        grid.addCell(wideCell);
-        GridCell cell3 = new GridCell(new TextRenderer(new Text("Three")));
-        GridCell cell4 = new GridCell(new TextRenderer(new Text("Four")));
-        GridCell cell5 = new GridCell(new TextRenderer(new Text("Five")));
-        GridCell cell6 = new GridCell(new TextRenderer(new Text("Six")));
-        grid.addCell(cell3);
-        grid.addCell(cell4);
-        grid.addCell(cell5);
-        grid.addCell(cell6);
-        Assert.assertEquals(cell1, grid.getRows()[0][0]);
-        Assert.assertEquals(wideCell, grid.getRows()[1][0]);
-        Assert.assertEquals(cell3, grid.getRows()[2][0]);
-        Assert.assertEquals(cell4, grid.getRows()[2][1]);
-        Assert.assertEquals(cell5, grid.getRows()[2][2]);
-        Assert.assertEquals(cell6, grid.getRows()[2][3]);
+        IRenderer cell1 = new TextRenderer(new Text("One"));
+        IRenderer wideCell = new TextRenderer(new Text("Two"));
+        wideCell.setProperty(Property.GRID_COLUMN_START, 2);
+        wideCell.setProperty(Property.GRID_COLUMN_END, 4);
+        IRenderer cell3 = new TextRenderer(new Text("Three"));
+        IRenderer cell4 = new TextRenderer(new Text("Four"));
+        IRenderer cell5 = new TextRenderer(new Text("Five"));
+        IRenderer cell6 = new TextRenderer(new Text("Six"));
+
+        Grid grid = Grid.Builder.forItems(Arrays.asList(
+                cell1,
+                wideCell,
+                cell3,
+                cell4,
+                cell5,
+                cell6
+        )).columns(3).rows(3).flow(GridFlow.ROW).build();
+        Assert.assertEquals(cell1, grid.getRows()[0][0].getValue());
+        Assert.assertEquals(wideCell, grid.getRows()[0][1].getValue());
+        Assert.assertEquals(wideCell, grid.getRows()[0][2].getValue());
+        Assert.assertEquals(cell3, grid.getRows()[1][0].getValue());
+        Assert.assertEquals(cell4, grid.getRows()[1][1].getValue());
+        Assert.assertEquals(cell5, grid.getRows()[1][2].getValue());
+        Assert.assertEquals(cell6, grid.getRows()[2][0].getValue());
     }
 
     @Test
     public void densePackingTest() {
-        Grid grid = new Grid(3, 3, GridFlow.ROW_DENSE);
-        GridCell cell1 = new GridCell(new TextRenderer(new Text("One")));
-        grid.addCell(cell1);
-        IRenderer renderer = new TextRenderer(new Text("Two"));
-        renderer.setProperty(Property.GRID_COLUMN_START, 1);
-        renderer.setProperty(Property.GRID_COLUMN_END, 6);
-        GridCell wideCell = new GridCell(renderer);
-        grid.addCell(wideCell);
-        GridCell cell3 = new GridCell(new TextRenderer(new Text("Three")));
-        GridCell cell4 = new GridCell(new TextRenderer(new Text("Four")));
-        GridCell cell5 = new GridCell(new TextRenderer(new Text("Five")));
-        GridCell cell6 = new GridCell(new TextRenderer(new Text("Six")));
-        grid.addCell(cell3);
-        grid.addCell(cell4);
-        grid.addCell(cell5);
-        grid.addCell(cell6);
-        Assert.assertEquals(cell1, grid.getRows()[0][0]);
-        Assert.assertEquals(cell3, grid.getRows()[0][1]);
-        Assert.assertEquals(cell4, grid.getRows()[0][2]);
-        Assert.assertEquals(cell5, grid.getRows()[0][3]);
-        Assert.assertEquals(cell6, grid.getRows()[0][4]);
-        Assert.assertEquals(wideCell, grid.getRows()[1][0]);
+        IRenderer cell1 = new TextRenderer(new Text("One"));
+        IRenderer wideCell = new TextRenderer(new Text("Two"));
+        wideCell.setProperty(Property.GRID_COLUMN_START, 2);
+        wideCell.setProperty(Property.GRID_COLUMN_END, 4);
+        IRenderer cell3 = new TextRenderer(new Text("Three"));
+        IRenderer cell4 = new TextRenderer(new Text("Four"));
+        IRenderer cell5 = new TextRenderer(new Text("Five"));
+        IRenderer cell6 = new TextRenderer(new Text("Six"));
+
+        Grid grid = Grid.Builder.forItems(Arrays.asList(
+                cell1,
+                wideCell,
+                cell3,
+                cell4,
+                cell5,
+                cell6
+        )).columns(3).rows(3).flow(GridFlow.ROW_DENSE).build();
+        Assert.assertEquals(cell1, grid.getRows()[0][0].getValue());
+        Assert.assertEquals(wideCell, grid.getRows()[0][1].getValue());
+        Assert.assertEquals(wideCell, grid.getRows()[0][2].getValue());
+        Assert.assertEquals(cell3, grid.getRows()[1][0].getValue());
+        Assert.assertEquals(cell4, grid.getRows()[1][1].getValue());
+        Assert.assertEquals(cell5, grid.getRows()[1][2].getValue());
+        Assert.assertEquals(cell6, grid.getRows()[2][0].getValue());
     }
 
     @Test
     public void columnPackingTest() {
-        Grid grid = new Grid(3, 3,  GridFlow.COLUMN);
-        GridCell cell1 = new GridCell(new TextRenderer(new Text("One")));
-        GridCell cell2 = new GridCell(new TextRenderer(new Text("Two")));
-        GridCell cell3 = new GridCell(new TextRenderer(new Text("Three")));
-        GridCell cell4 = new GridCell(new TextRenderer(new Text("Four")));
-        GridCell cell5 = new GridCell(new TextRenderer(new Text("Five")));
-        GridCell cell6 = new GridCell(new TextRenderer(new Text("Six")));
-        grid.addCell(cell1);
-        grid.addCell(cell2);
-        grid.addCell(cell3);
-        grid.addCell(cell4);
-        grid.addCell(cell5);
-        grid.addCell(cell6);
-        Assert.assertEquals(cell1, grid.getRows()[0][0]);
-        Assert.assertEquals(cell2, grid.getRows()[1][0]);
-        Assert.assertEquals(cell3, grid.getRows()[2][0]);
-        Assert.assertEquals(cell4, grid.getRows()[0][1]);
-        Assert.assertEquals(cell5, grid.getRows()[1][1]);
-        Assert.assertEquals(cell6, grid.getRows()[2][1]);
+        IRenderer cell1 = new TextRenderer(new Text("One"));
+        IRenderer cell2 = new TextRenderer(new Text("Two"));
+        IRenderer cell3 = new TextRenderer(new Text("Three"));
+        IRenderer cell4 = new TextRenderer(new Text("Four"));
+        IRenderer cell5 = new TextRenderer(new Text("Five"));
+        IRenderer cell6 = new TextRenderer(new Text("Six"));
+        Grid grid = Grid.Builder.forItems(Arrays.asList(
+                cell1,
+                cell2,
+                cell3,
+                cell4,
+                cell5,
+                cell6
+        )).columns(3).rows(3).flow(GridFlow.COLUMN).build();
+        Assert.assertEquals(cell1, grid.getRows()[0][0].getValue());
+        Assert.assertEquals(cell2, grid.getRows()[1][0].getValue());
+        Assert.assertEquals(cell3, grid.getRows()[2][0].getValue());
+        Assert.assertEquals(cell4, grid.getRows()[0][1].getValue());
+        Assert.assertEquals(cell5, grid.getRows()[1][1].getValue());
+        Assert.assertEquals(cell6, grid.getRows()[2][1].getValue());
     }
 
     @Test
     public void columnWithFixedWideCellPackingTest() {
-        Grid grid = new Grid(3, 3,  GridFlow.COLUMN);
-        GridCell cell1 = new GridCell(new TextRenderer(new Text("One")));
-        IRenderer renderer = new TextRenderer(new Text("Two"));
-        renderer.setProperty(Property.GRID_COLUMN_START, 1);
-        renderer.setProperty(Property.GRID_COLUMN_END, 3);
-        GridCell wideCell = new GridCell(renderer);
-        GridCell cell3 = new GridCell(new TextRenderer(new Text("Three")));
-        GridCell cell4 = new GridCell(new TextRenderer(new Text("Four")));
-        GridCell cell5 = new GridCell(new TextRenderer(new Text("Five")));
-        GridCell cell6 = new GridCell(new TextRenderer(new Text("Six")));
-        grid.addCell(cell1);
-        grid.addCell(wideCell);
-        grid.addCell(cell3);
-        grid.addCell(cell4);
-        grid.addCell(cell5);
-        grid.addCell(cell6);
-        Assert.assertEquals(cell1, grid.getRows()[0][0]);
-        Assert.assertEquals(wideCell, grid.getRows()[1][0]);
-        Assert.assertEquals(wideCell, grid.getRows()[1][1]);
-        Assert.assertEquals(cell3, grid.getRows()[2][0]);
-        Assert.assertEquals(cell4, grid.getRows()[0][1]);
-        Assert.assertEquals(cell5, grid.getRows()[2][1]);
-        Assert.assertEquals(cell6, grid.getRows()[0][2]);
+        IRenderer cell1 = new TextRenderer(new Text("One"));
+        IRenderer wideCell = new TextRenderer(new Text("Two"));
+        wideCell.setProperty(Property.GRID_COLUMN_START, 1);
+        wideCell.setProperty(Property.GRID_COLUMN_END, 3);
+        IRenderer cell3 = new TextRenderer(new Text("Three"));
+        IRenderer cell4 = new TextRenderer(new Text("Four"));
+        IRenderer cell5 = new TextRenderer(new Text("Five"));
+        IRenderer cell6 = new TextRenderer(new Text("Six"));
+
+        Grid grid = Grid.Builder.forItems(Arrays.asList(
+                cell1,
+                wideCell,
+                cell3,
+                cell4,
+                cell5,
+                cell6
+        )).columns(3).rows(3).flow(GridFlow.COLUMN).build();
+        Assert.assertEquals(wideCell, grid.getRows()[0][0].getValue());
+        Assert.assertEquals(cell1, grid.getRows()[1][0].getValue());
+        Assert.assertEquals(cell4, grid.getRows()[1][1].getValue());
+        Assert.assertEquals(cell3, grid.getRows()[2][0].getValue());
+        Assert.assertEquals(wideCell, grid.getRows()[0][1].getValue());
+        Assert.assertEquals(cell5, grid.getRows()[2][1].getValue());
+        Assert.assertEquals(cell6, grid.getRows()[0][2].getValue());
     }
 
     @Test
     public void columnWithFixedTallCellPackingTest() {
-        Grid grid = new Grid(3, 3,  GridFlow.COLUMN);
-        GridCell cell1 = new GridCell(new TextRenderer(new Text("One")));
-        IRenderer renderer = new TextRenderer(new Text("Two"));
-        renderer.setProperty(Property.GRID_ROW_START, 2);
-        renderer.setProperty(Property.GRID_ROW_END, 4);
-        GridCell tallCell = new GridCell(renderer);
-        GridCell cell3 = new GridCell(new TextRenderer(new Text("Three")));
-        GridCell cell4 = new GridCell(new TextRenderer(new Text("Four")));
-        GridCell cell5 = new GridCell(new TextRenderer(new Text("Five")));
-        GridCell cell6 = new GridCell(new TextRenderer(new Text("Six")));
-        grid.addCell(cell1);
-        grid.addCell(tallCell);
-        grid.addCell(cell3);
-        grid.addCell(cell4);
-        grid.addCell(cell5);
-        grid.addCell(cell6);
-        Assert.assertEquals(cell1, grid.getRows()[0][0]);
-        Assert.assertEquals(tallCell, grid.getRows()[1][0]);
-        Assert.assertEquals(tallCell, grid.getRows()[2][0]);
-        Assert.assertEquals(cell3, grid.getRows()[0][1]);
-        Assert.assertEquals(cell4, grid.getRows()[1][1]);
-        Assert.assertEquals(cell5, grid.getRows()[2][1]);
-        Assert.assertEquals(cell6, grid.getRows()[0][2]);
+        IRenderer cell1 = new TextRenderer(new Text("One"));
+        IRenderer tallCell = new TextRenderer(new Text("Two"));
+        tallCell.setProperty(Property.GRID_ROW_START, 2);
+        tallCell.setProperty(Property.GRID_ROW_END, 4);
+        IRenderer cell3 = new TextRenderer(new Text("Three"));
+        IRenderer cell4 = new TextRenderer(new Text("Four"));
+        IRenderer cell5 = new TextRenderer(new Text("Five"));
+        IRenderer cell6 = new TextRenderer(new Text("Six"));
+
+        Grid grid = Grid.Builder.forItems(Arrays.asList(
+                cell1,
+                tallCell,
+                cell3,
+                cell4,
+                cell5,
+                cell6
+        )).columns(3).rows(3).flow(GridFlow.COLUMN).build();
+        Assert.assertEquals(cell1, grid.getRows()[0][0].getValue());
+        Assert.assertEquals(tallCell, grid.getRows()[1][0].getValue());
+        Assert.assertEquals(tallCell, grid.getRows()[2][0].getValue());
+        Assert.assertEquals(cell3, grid.getRows()[0][1].getValue());
+        Assert.assertEquals(cell4, grid.getRows()[1][1].getValue());
+        Assert.assertEquals(cell5, grid.getRows()[2][1].getValue());
+        Assert.assertEquals(cell6, grid.getRows()[0][2].getValue());
     }
 }

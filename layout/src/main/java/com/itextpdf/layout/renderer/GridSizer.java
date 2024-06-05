@@ -23,13 +23,20 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.layout.properties.GridValue;
+import com.itextpdf.layout.properties.grid.AutoValue;
+import com.itextpdf.layout.properties.grid.FlexValue;
+import com.itextpdf.layout.properties.grid.GridValue;
 import com.itextpdf.layout.renderer.Grid.GridOrder;
+import com.itextpdf.layout.renderer.GridTrackSizer.TrackSizingResult;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 // 12.1. Grid Sizing Algorithm
+/**
+ * Class representing grid sizing algorithm.
+ */
 class GridSizer {
     private final Grid grid;
     private final List<GridValue> templateColumns;
@@ -39,9 +46,23 @@ class GridSizer {
     private final float columnGap;
     private final float rowGap;
     private final Rectangle actualBBox;
+    private float containerHeight;
 
+    /**
+     * Creates new grid sizer instance.
+     *
+     * @param grid grid to size
+     * @param templateColumns template values for columns
+     * @param templateRows template values for rows
+     * @param columnAutoWidth value which used to size columns out of template range
+     * @param rowAutoHeight value which used to size rows out of template range
+     * @param columnGap gap size between columns
+     * @param rowGap gap size between rows
+     * @param actualBBox actual bbox which restricts sizing algorithm
+     */
     GridSizer(Grid grid, List<GridValue> templateColumns, List<GridValue> templateRows,
-            GridValue columnAutoWidth, GridValue rowAutoHeight, float columnGap, float rowGap, Rectangle actualBBox) {
+              GridValue columnAutoWidth, GridValue rowAutoHeight, float columnGap, float rowGap,
+              Rectangle actualBBox) {
         this.grid = grid;
         this.templateColumns = templateColumns;
         this.templateRows = templateRows;
@@ -52,11 +73,24 @@ class GridSizer {
         this.actualBBox = actualBBox;
     }
 
+    /**
+     * Resolves grid track sizes.
+     */
     public void sizeGrid() {
         // 1. First, the track sizing algorithm is used to resolve the sizes of the grid columns.
         resolveGridColumns();
         // 2. Next, the track sizing algorithm resolves the sizes of the grid rows.
         resolveGridRows();
+    }
+
+    /**
+     * Gets grid container height.
+     * Use this method only after calling {@link GridSizer#sizeGrid()}.
+     *
+     * @return grid container height covered by row template
+     */
+    public float getContainerHeight() {
+        return containerHeight;
     }
 
     private void resolveGridRows() {
@@ -67,13 +101,14 @@ class GridSizer {
             } else if (rowAutoHeight != null) {
                 rowsValues.add(rowAutoHeight);
             } else {
-                rowsValues.add(GridValue.createAutoValue());
+                rowsValues.add(AutoValue.VALUE);
             }
         }
 
-        // TODO DEVSIX-8384 during grid sizing algorithm take into account grid container constraints
-        GridTrackSizer gridTrackSizer = new GridTrackSizer(grid, rowsValues, rowGap, -1, GridOrder.ROW);
-        List<Float> rows = gridTrackSizer.sizeTracks();
+        GridTrackSizer gridTrackSizer = new GridTrackSizer(grid, rowsValues, rowGap,
+                actualBBox.getHeight(), GridOrder.ROW);
+        TrackSizingResult result = gridTrackSizer.sizeTracks();
+        List<Float> rows = result.getTrackSizesAndExpandPercents(rowsValues);
         for (GridCell cell : grid.getUniqueGridCells(GridOrder.ROW)) {
             float y = 0.0f;
             for (int currentRow = 0; currentRow < cell.getRowStart(); ++currentRow) {
@@ -94,18 +129,45 @@ class GridSizer {
                 ++rowSizesIdx;
                 cellHeight += (float) rows.get(i);
             }
-            // Preserve row sizes for split
+            //Preserve row sizes for split
             cell.setRowSizes(rowSizes);
             cellHeight += (cell.getGridHeight() - 1) * rowGap;
             cell.getLayoutArea().setHeight(cellHeight);
         }
 
-        // calculating explicit height to ensure that even empty rows which covered by template would be considered
+        containerHeight = calculateGridOccupiedHeight(result.getTrackSizes());
+    }
+
+    /**
+     * Calculate grid container occupied area based on original (non-expanded percentages) track sizes.
+     *
+     * @param originalSizes original track sizes
+     * @return grid container occupied area
+     */
+    private float calculateGridOccupiedHeight(List<Float> originalSizes) {
+        // Calculate explicit height to ensure that even empty rows which covered by template would be considered
         float minHeight = 0.0f;
-        for (Float row : rows) {
-            minHeight += (float) row;
+        for (int i = 0; i < (templateRows == null ? 0 : templateRows.size()); ++i) {
+            minHeight += (float) originalSizes.get(i);
         }
-        grid.setMinHeight(minHeight);
+        float maxHeight = sum(originalSizes);
+        // Add gaps
+        minHeight += (grid.getNumberOfRows() - 1) * rowGap;
+        maxHeight += (grid.getNumberOfRows() - 1) * rowGap;
+        float occupiedHeight = 0.0f;
+        Collection<GridCell> cells = grid.getUniqueGridCells(GridOrder.ROW);
+        for (GridCell cell : cells) {
+            occupiedHeight = Math.max(occupiedHeight, cell.getLayoutArea().getTop());
+        }
+        return Math.max(Math.min(maxHeight, occupiedHeight), minHeight);
+    }
+
+    private float sum(List<Float> trackSizes) {
+        float sum = 0.0f;
+        for (Float size : trackSizes) {
+            sum += (float) size;
+        }
+        return sum;
     }
 
     private void resolveGridColumns() {
@@ -116,12 +178,12 @@ class GridSizer {
             } else if (columnAutoWidth != null) {
                 colsValues.add(columnAutoWidth);
             } else {
-                colsValues.add(GridValue.createFlexValue(1f));
+                colsValues.add(new FlexValue(1f));
             }
         }
-        GridTrackSizer gridTrackSizer = new GridTrackSizer(grid, colsValues, columnGap, actualBBox.getWidth(),
-                GridOrder.COLUMN);
-        List<Float> columns = gridTrackSizer.sizeTracks();
+        GridTrackSizer gridTrackSizer = new GridTrackSizer(grid, colsValues, columnGap,
+                actualBBox.getWidth(), GridOrder.COLUMN);
+        List<Float> columns = gridTrackSizer.sizeTracks().getTrackSizesAndExpandPercents(colsValues);
 
         for (GridCell cell : grid.getUniqueGridCells(GridOrder.COLUMN)) {
             float x = 0.0f;

@@ -29,14 +29,28 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
-import com.itextpdf.layout.properties.GridFlow;
-import com.itextpdf.layout.properties.GridValue;
+import com.itextpdf.layout.properties.grid.AutoRepeatValue;
+import com.itextpdf.layout.properties.grid.AutoValue;
+import com.itextpdf.layout.properties.grid.FitContentValue;
+import com.itextpdf.layout.properties.grid.FixedRepeatValue;
+import com.itextpdf.layout.properties.grid.FlexValue;
+import com.itextpdf.layout.properties.grid.GridFlow;
+import com.itextpdf.layout.properties.grid.GridValue;
 import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.UnitValue;
+import com.itextpdf.layout.properties.grid.MinContentValue;
+import com.itextpdf.layout.properties.grid.MinMaxValue;
+import com.itextpdf.layout.properties.grid.PercentValue;
+import com.itextpdf.layout.properties.grid.PointValue;
+import com.itextpdf.layout.properties.grid.TemplateValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -57,10 +71,10 @@ public class GridContainerTest extends ExtendedITextTest {
         String filename = DESTINATION_FOLDER + "basicThreeColumnsTest.pdf";
         String cmpName = SOURCE_FOLDER + "cmp_basicThreeColumnsTest.pdf";
 
-        java.util.List<GridValue> templateColumns = new ArrayList<>();
-        templateColumns.add(GridValue.createPointValue(150.0f));
-        templateColumns.add(GridValue.createPointValue(150.0f));
-        templateColumns.add(GridValue.createPointValue(150.0f));
+        java.util.List<TemplateValue> templateColumns = new ArrayList<>();
+        templateColumns.add((TemplateValue) new PointValue(150.0f));
+        templateColumns.add((TemplateValue) new PointValue(150.0f));
+        templateColumns.add((TemplateValue) new PointValue(150.0f));
         SolidBorder border = new SolidBorder(ColorConstants.BLUE, 1);
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
@@ -82,7 +96,7 @@ public class GridContainerTest extends ExtendedITextTest {
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
-            grid.setProperty(Property.GRID_AUTO_COLUMNS, GridValue.createPointValue(150.0f));
+            grid.setProperty(Property.GRID_AUTO_COLUMNS, new PointValue(150.0f));
             for (int i = 0; i < 5; ++i) {
                 grid.add(new Paragraph("Test" + i).setBorder(border));
             }
@@ -99,7 +113,7 @@ public class GridContainerTest extends ExtendedITextTest {
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
-            grid.setProperty(Property.GRID_AUTO_ROWS, GridValue.createPointValue(70.0f));
+            grid.setProperty(Property.GRID_AUTO_ROWS, new PointValue(70.0f));
             grid.add(new Paragraph("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
                     "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, " +
                     "quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute " +
@@ -117,10 +131,10 @@ public class GridContainerTest extends ExtendedITextTest {
         String filename = DESTINATION_FOLDER + "basicThreeColumnsWithCustomColumnIndexesTest.pdf";
         String cmpName = SOURCE_FOLDER + "cmp_basicThreeColumnsWithCustomColumnIndexesTest.pdf";
 
-        java.util.List<GridValue> templateColumns = new ArrayList<>();
-        templateColumns.add(GridValue.createPointValue(100.0f));
-        templateColumns.add(GridValue.createPointValue(100.0f));
-        templateColumns.add(GridValue.createPointValue(100.0f));
+        java.util.List<TemplateValue> templateColumns = new ArrayList<>();
+        templateColumns.add(new PointValue(100.0f));
+        templateColumns.add(new PointValue(100.0f));
+        templateColumns.add(new PointValue(100.0f));
         SolidBorder border = new SolidBorder(ColorConstants.BLUE, 1);
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
@@ -146,11 +160,11 @@ public class GridContainerTest extends ExtendedITextTest {
         String filename = DESTINATION_FOLDER + "threeColumnsWithAdjacentWideCellsTest.pdf";
         String cmpName = SOURCE_FOLDER + "cmp_threeColumnsWithAdjacentWideCellsTest.pdf";
 
-        java.util.List<GridValue> templateColumns = new ArrayList<>();
-        templateColumns.add(GridValue.createPointValue(100.0f));
-        templateColumns.add(GridValue.createPointValue(100.0f));
-        templateColumns.add(GridValue.createPointValue(100.0f));
-        templateColumns.add(GridValue.createPointValue(100.0f));
+        java.util.List<TemplateValue> templateColumns = new ArrayList<>();
+        templateColumns.add((TemplateValue) new PointValue(100.0f));
+        templateColumns.add((TemplateValue) new PointValue(100.0f));
+        templateColumns.add((TemplateValue) new PointValue(100.0f));
+        templateColumns.add((TemplateValue) new PointValue(100.0f));
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
             SolidBorder border = new SolidBorder(ColorConstants.BLUE, 1);
@@ -183,10 +197,10 @@ public class GridContainerTest extends ExtendedITextTest {
         String filename = DESTINATION_FOLDER + "basicThreeColumnsWithCustomRowIndexesTest.pdf";
         String cmpName = SOURCE_FOLDER + "cmp_basicThreeColumnsWithCustomRowIndexesTest.pdf";
 
-        java.util.List<GridValue> templateColumns = new ArrayList<>();
-        templateColumns.add(GridValue.createPointValue(100.0f));
-        templateColumns.add(GridValue.createPointValue(100.0f));
-        templateColumns.add(GridValue.createPointValue(100.0f));
+        java.util.List<TemplateValue> templateColumns = new ArrayList<>();
+        templateColumns.add((TemplateValue) new PointValue(100.0f));
+        templateColumns.add((TemplateValue) new PointValue(100.0f));
+        templateColumns.add((TemplateValue) new PointValue(100.0f));
         SolidBorder border = new SolidBorder(ColorConstants.BLUE, 1);
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
@@ -212,10 +226,10 @@ public class GridContainerTest extends ExtendedITextTest {
         String filename = DESTINATION_FOLDER + "basicThreeColumnsWithCustomColumnAndRowIndexesTest.pdf";
         String cmpName = SOURCE_FOLDER + "cmp_basicThreeColumnsWithCustomColumnAndRowIndexesTest.pdf";
 
-        java.util.List<GridValue> templateColumns = new ArrayList<>();
-        templateColumns.add(GridValue.createPointValue(100.0f));
-        templateColumns.add(GridValue.createPointValue(100.0f));
-        templateColumns.add(GridValue.createPointValue(100.0f));
+        java.util.List<TemplateValue> templateColumns = new ArrayList<>();
+        templateColumns.add((TemplateValue) new PointValue(100.0f));
+        templateColumns.add((TemplateValue) new PointValue(100.0f));
+        templateColumns.add((TemplateValue) new PointValue(100.0f));
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
@@ -242,10 +256,10 @@ public class GridContainerTest extends ExtendedITextTest {
         String filename = DESTINATION_FOLDER + "basicThreeColumnsWithReversedIndexesTest.pdf";
         String cmpName = SOURCE_FOLDER + "cmp_basicThreeColumnsWithReversedIndexesTest.pdf";
 
-        java.util.List<GridValue> templateColumns = new ArrayList<>();
-        templateColumns.add(GridValue.createPointValue(100.0f));
-        templateColumns.add(GridValue.createPointValue(100.0f));
-        templateColumns.add(GridValue.createPointValue(100.0f));
+        java.util.List<TemplateValue> templateColumns = new ArrayList<>();
+        templateColumns.add((TemplateValue) new PointValue(100.0f));
+        templateColumns.add((TemplateValue) new PointValue(100.0f));
+        templateColumns.add((TemplateValue) new PointValue(100.0f));
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
@@ -280,10 +294,10 @@ public class GridContainerTest extends ExtendedITextTest {
         String filename = DESTINATION_FOLDER + "basicThreeColumnsWithoutColumnEndTest.pdf";
         String cmpName = SOURCE_FOLDER + "cmp_basicThreeColumnsWithoutColumnEndTest.pdf";
 
-        java.util.List<GridValue> templateColumns = new ArrayList<>();
-        templateColumns.add(GridValue.createPointValue(100.0f));
-        templateColumns.add(GridValue.createPointValue(100.0f));
-        templateColumns.add(GridValue.createPointValue(100.0f));
+        java.util.List<TemplateValue> templateColumns = new ArrayList<>();
+        templateColumns.add((TemplateValue) new PointValue(100.0f));
+        templateColumns.add((TemplateValue) new PointValue(100.0f));
+        templateColumns.add((TemplateValue) new PointValue(100.0f));
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
@@ -316,10 +330,10 @@ public class GridContainerTest extends ExtendedITextTest {
         String filename = DESTINATION_FOLDER + "fixedColumnRowGoesFirstTest.pdf";
         String cmpName = SOURCE_FOLDER + "cmp_fixedColumnRowGoesFirstTest.pdf";
 
-        java.util.List<GridValue> templateColumns = new ArrayList<>();
-        templateColumns.add(GridValue.createPointValue(100.0f));
-        templateColumns.add(GridValue.createPointValue(100.0f));
-        templateColumns.add(GridValue.createPointValue(100.0f));
+        java.util.List<TemplateValue> templateColumns = new ArrayList<>();
+        templateColumns.add((TemplateValue) new PointValue(100.0f));
+        templateColumns.add((TemplateValue) new PointValue(100.0f));
+        templateColumns.add((TemplateValue) new PointValue(100.0f));
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
@@ -364,10 +378,10 @@ public class GridContainerTest extends ExtendedITextTest {
     public void overlapWithExistingColumnTest() throws IOException {
         String filename = DESTINATION_FOLDER + "overlapWithExistingColumnTest.pdf";
 
-        java.util.List<GridValue> templateColumns = new ArrayList<>();
-        templateColumns.add(GridValue.createPointValue(100.0f));
-        templateColumns.add(GridValue.createPointValue(100.0f));
-        templateColumns.add(GridValue.createPointValue(100.0f));
+        java.util.List<TemplateValue> templateColumns = new ArrayList<>();
+        templateColumns.add((TemplateValue) new PointValue(100.0f));
+        templateColumns.add((TemplateValue) new PointValue(100.0f));
+        templateColumns.add((TemplateValue) new PointValue(100.0f));
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
@@ -401,10 +415,10 @@ public class GridContainerTest extends ExtendedITextTest {
         String filename = DESTINATION_FOLDER + "basicThreeColumnsWithPtAndPercentTest.pdf";
         String cmpName = SOURCE_FOLDER + "cmp_basicThreeColumnsWithPtAndPercentTest.pdf";
 
-        java.util.List<GridValue> templateColumns = new ArrayList<>();
-        templateColumns.add(GridValue.createPercentValue(15.0f));
-        templateColumns.add(GridValue.createPercentValue(50.0f));
-        templateColumns.add(GridValue.createPointValue(100.0f));
+        java.util.List<TemplateValue> templateColumns = new ArrayList<>();
+        templateColumns.add((TemplateValue) new PercentValue(15.0f));
+        templateColumns.add((TemplateValue) new PercentValue(50.0f));
+        templateColumns.add((TemplateValue) new PointValue(100.0f));
         SolidBorder border = new SolidBorder(ColorConstants.BLUE, 1);
         try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
@@ -422,10 +436,10 @@ public class GridContainerTest extends ExtendedITextTest {
         String filename = DESTINATION_FOLDER + "thirdColumnNotLayoutedTest.pdf";
         String cmpName = SOURCE_FOLDER + "cmp_thirdColumnNotLayoutedTest.pdf";
 
-        java.util.List<GridValue> templateColumns = new ArrayList<>();
-        templateColumns.add(GridValue.createPointValue(200.0f));
-        templateColumns.add(GridValue.createPointValue(200.0f));
-        templateColumns.add(GridValue.createPointValue(200.0f));
+        java.util.List<TemplateValue> templateColumns = new ArrayList<>();
+        templateColumns.add((TemplateValue) new PointValue(200.0f));
+        templateColumns.add((TemplateValue) new PointValue(200.0f));
+        templateColumns.add((TemplateValue) new PointValue(200.0f));
         SolidBorder border = new SolidBorder(ColorConstants.BLUE, 1);
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
@@ -444,10 +458,10 @@ public class GridContainerTest extends ExtendedITextTest {
         String filename = DESTINATION_FOLDER + "threeColumnsWithSquareAndVerticalCellsTest.pdf";
         String cmpName = SOURCE_FOLDER + "cmp_threeColumnsWithSquareAndVerticalCellsTest.pdf";
 
-        java.util.List<GridValue> templateColumns = new ArrayList<>();
-        templateColumns.add(GridValue.createPointValue(100.0f));
-        templateColumns.add(GridValue.createPointValue(100.0f));
-        templateColumns.add(GridValue.createPointValue(100.0f));
+        java.util.List<TemplateValue> templateColumns = new ArrayList<>();
+        templateColumns.add((TemplateValue) new PointValue(100.0f));
+        templateColumns.add((TemplateValue) new PointValue(100.0f));
+        templateColumns.add((TemplateValue) new PointValue(100.0f));
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
@@ -479,10 +493,10 @@ public class GridContainerTest extends ExtendedITextTest {
         String filename = DESTINATION_FOLDER + "threeColumnsWithSquareCellAndCellWithExplicitHeightTest.pdf";
         String cmpName = SOURCE_FOLDER + "cmp_threeColumnsWithSquareCellAndCellWithExplicitHeightTest.pdf";
 
-        java.util.List<GridValue> templateColumns = new ArrayList<>();
-        templateColumns.add(GridValue.createPointValue(100.0f));
-        templateColumns.add(GridValue.createPointValue(100.0f));
-        templateColumns.add(GridValue.createPointValue(100.0f));
+        java.util.List<TemplateValue> templateColumns = new ArrayList<>();
+        templateColumns.add((TemplateValue) new PointValue(100.0f));
+        templateColumns.add((TemplateValue) new PointValue(100.0f));
+        templateColumns.add((TemplateValue) new PointValue(100.0f));
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
@@ -510,10 +524,10 @@ public class GridContainerTest extends ExtendedITextTest {
         String filename = DESTINATION_FOLDER + "threeColumnsWithVerticalCellWithSeveralNeighboursToTheLeftTest.pdf";
         String cmpName = SOURCE_FOLDER + "cmp_threeColumnsWithVerticalCellWithSeveralNeighboursToTheLeftTest.pdf";
 
-        java.util.List<GridValue> templateColumns = new ArrayList<>();
-        templateColumns.add(GridValue.createPointValue(100.0f));
-        templateColumns.add(GridValue.createPointValue(100.0f));
-        templateColumns.add(GridValue.createPointValue(100.0f));
+        java.util.List<TemplateValue> templateColumns = new ArrayList<>();
+        templateColumns.add((TemplateValue) new PointValue(100.0f));
+        templateColumns.add((TemplateValue) new PointValue(100.0f));
+        templateColumns.add((TemplateValue) new PointValue(100.0f));
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
@@ -544,8 +558,8 @@ public class GridContainerTest extends ExtendedITextTest {
         String filename = DESTINATION_FOLDER + "bigCellMinContentTest.pdf";
         String cmpName = SOURCE_FOLDER + "cmp_bigCellMinContentTest.pdf";
         SolidBorder border = new SolidBorder(ColorConstants.BLUE, 1);
-        java.util.List<GridValue> templateColumns = new ArrayList<>();
-        templateColumns.add(GridValue.createMinContentValue());
+        java.util.List<TemplateValue> templateColumns = new ArrayList<>();
+        templateColumns.add((TemplateValue) MinContentValue.VALUE);
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
@@ -562,15 +576,15 @@ public class GridContainerTest extends ExtendedITextTest {
     public void columnRowGapTest() throws IOException, InterruptedException {
         String filename = DESTINATION_FOLDER + "columnRowGapTest.pdf";
         String cmpName = SOURCE_FOLDER + "cmp_columnRowGapTest.pdf";
-        java.util.List<GridValue> template = new ArrayList<>();
-        template.add(GridValue.createPointValue(50.0f));
-        template.add(GridValue.createPointValue(50.0f));
+        java.util.List<TemplateValue> template = new ArrayList<>();
+        template.add((TemplateValue) new PointValue(50.0f));
+        template.add((TemplateValue) new PointValue(50.0f));
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
             grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, template);
             grid.setProperty(Property.GRID_TEMPLATE_ROWS, template);
-            grid.setProperty(Property.GRID_AUTO_ROWS, GridValue.createPointValue(70.0f));
+            grid.setProperty(Property.GRID_AUTO_ROWS, new PointValue(70.0f));
             grid.setProperty(Property.COLUMN_GAP, 20.0f);
             grid.setProperty(Property.ROW_GAP, 20.0f);
             grid.add(new Paragraph("One").setBackgroundColor(ColorConstants.CYAN));
@@ -586,13 +600,89 @@ public class GridContainerTest extends ExtendedITextTest {
     }
 
     @Test
+    public void autoRepeatTestWithRowGapTest() throws IOException, InterruptedException {
+        String filename = DESTINATION_FOLDER + "autoRepeatTestWithRowGapTest.pdf";
+        String cmpName = SOURCE_FOLDER + "cmp_autoRepeatTestWithRowGapTest.pdf";
+        java.util.List<TemplateValue> columnsTemplate = new ArrayList<>();
+        columnsTemplate.add(new FixedRepeatValue(2,
+                Arrays.asList((GridValue) new PercentValue(20.0f),
+                        (GridValue) new PointValue(50.0f),
+                        (GridValue) new MinMaxValue(new PointValue(50.0f), AutoValue.VALUE))));
+        java.util.List<TemplateValue> rowsTemplate = new ArrayList<>();
+        rowsTemplate.add(new AutoRepeatValue(true, Collections.singletonList((GridValue) new PointValue(100.0f))));
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+            GridContainer grid = new GridContainer();
+            grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, columnsTemplate);
+            grid.setProperty(Property.GRID_TEMPLATE_ROWS, rowsTemplate);
+            grid.setProperty(Property.GRID_AUTO_ROWS, new PointValue(70.0f));
+            grid.setProperty(Property.COLUMN_GAP, 20.0f);
+            grid.setProperty(Property.ROW_GAP, 20.0f);
+            grid.add(new Paragraph("One").setBackgroundColor(ColorConstants.CYAN));
+            grid.add(new Paragraph("Two").setBackgroundColor(ColorConstants.CYAN));
+            grid.add(new Paragraph("Tree").setBackgroundColor(ColorConstants.CYAN));
+            grid.add(new Paragraph("Four").setBackgroundColor(ColorConstants.CYAN));
+            grid.add(new Paragraph("Five").setBackgroundColor(ColorConstants.CYAN));
+            grid.add(new Paragraph("Six").setBackgroundColor(ColorConstants.CYAN));
+            grid.add(new Paragraph("Seven").setBackgroundColor(ColorConstants.CYAN));
+            grid.add(new Paragraph("Eight").setBackgroundColor(ColorConstants.CYAN));
+            grid.add(new Paragraph("Nine").setBackgroundColor(ColorConstants.CYAN));
+            document.add(grid);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void autoRepeatWithShrinkTest() throws IOException, InterruptedException {
+        String filename = DESTINATION_FOLDER + "autoRepeatWithShrinkTest.pdf";
+        String cmpName = SOURCE_FOLDER + "cmp_autoRepeatWithShrinkTest.pdf";
+        java.util.List<TemplateValue> columnsTemplate = new ArrayList<>();
+        columnsTemplate.add(new AutoRepeatValue(true, Collections.singletonList((GridValue) new PointValue(50.0f))));
+        columnsTemplate.add(new PointValue(100.0f));
+        java.util.List<TemplateValue> rowsTemplate = new ArrayList<>();
+        rowsTemplate.add(new AutoRepeatValue(true, Collections.singletonList((GridValue) new PointValue(100.0f))));
+        rowsTemplate.add(new PointValue(200.0f));
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+            GridContainer grid = new GridContainer();
+            grid.setHeight(500.0f);
+            grid.setBackgroundColor(ColorConstants.GREEN);
+            grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, columnsTemplate);
+            grid.setProperty(Property.GRID_TEMPLATE_ROWS, rowsTemplate);
+            grid.add(new Paragraph("One").setBackgroundColor(ColorConstants.CYAN));
+            document.add(grid);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void autoRepeatOnEmptyGridTest() throws IOException, InterruptedException {
+        String filename = DESTINATION_FOLDER + "autoRepeatOnEmptyGridTest.pdf";
+        String cmpName = SOURCE_FOLDER + "cmp_autoRepeatOnEmptyGridTest.pdf";
+        java.util.List<TemplateValue> columnsTemplate = new ArrayList<>();
+        columnsTemplate.add(new AutoRepeatValue(true, Collections.singletonList((GridValue) new PointValue(50.0f))));
+        java.util.List<TemplateValue> rowsTemplate = new ArrayList<>();
+        rowsTemplate.add(new AutoRepeatValue(true, Collections.singletonList((GridValue) new PointValue(100.0f))));
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+            GridContainer grid = new GridContainer();
+            grid.setBackgroundColor(ColorConstants.GREEN);
+            grid.setHeight(500.0f);
+            grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, columnsTemplate);
+            grid.setProperty(Property.GRID_TEMPLATE_ROWS, rowsTemplate);
+            document.add(grid);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
     public void fewBigCellsWithGapTest() throws IOException, InterruptedException {
         String filename = DESTINATION_FOLDER + "fewBigCellsWithGapTest.pdf";
         String cmpName = SOURCE_FOLDER + "cmp_fewBigCellsWithGapTest.pdf";
-        java.util.List<GridValue> template = new ArrayList<>();
-        template.add(GridValue.createPointValue(50.0f));
-        template.add(GridValue.createPointValue(50.0f));
-        template.add(GridValue.createPointValue(50.0f));
+        java.util.List<TemplateValue> template = new ArrayList<>();
+        template.add((TemplateValue) new PointValue(50.0f));
+        template.add((TemplateValue) new PointValue(50.0f));
+        template.add((TemplateValue) new PointValue(50.0f));
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
@@ -628,10 +718,10 @@ public class GridContainerTest extends ExtendedITextTest {
     public void columnFlowWithBigCellsTest() throws IOException, InterruptedException {
         String filename = DESTINATION_FOLDER + "columnFlowWithBigCellsTest.pdf";
         String cmpName = SOURCE_FOLDER + "cmp_columnFlowWithBigCellsTest.pdf";
-        java.util.List<GridValue> template = new ArrayList<>();
-        template.add(GridValue.createPointValue(50.0f));
-        template.add(GridValue.createPointValue(50.0f));
-        template.add(GridValue.createPointValue(50.0f));
+        java.util.List<TemplateValue> template = new ArrayList<>();
+        template.add((TemplateValue) new PointValue(50.0f));
+        template.add((TemplateValue) new PointValue(50.0f));
+        template.add((TemplateValue) new PointValue(50.0f));
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
@@ -669,9 +759,9 @@ public class GridContainerTest extends ExtendedITextTest {
     public void frInRowsTest() throws IOException, InterruptedException {
         String filename = DESTINATION_FOLDER + "frInRowsTest.pdf";
         String cmpName = SOURCE_FOLDER + "cmp_frInRowsTest.pdf";
-        java.util.List<GridValue> template = new ArrayList<>();
-        template.add(GridValue.createFlexValue(1f));
-        template.add(GridValue.createFlexValue(3f));
+        java.util.List<TemplateValue> template = new ArrayList<>();
+        template.add((TemplateValue) new FlexValue(1f));
+        template.add((TemplateValue) new FlexValue(3f));
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
@@ -690,10 +780,10 @@ public class GridContainerTest extends ExtendedITextTest {
         String filename = DESTINATION_FOLDER + "frColumnsTest.pdf";
         String cmpName = SOURCE_FOLDER + "cmp_frColumnsTest.pdf";
 
-        java.util.List<GridValue> templateColumns = new ArrayList<>();
-        templateColumns.add(GridValue.createFlexValue(1f));
-        templateColumns.add(GridValue.createAutoValue());
-        templateColumns.add(GridValue.createFlexValue(3f));
+        java.util.List<TemplateValue> templateColumns = new ArrayList<>();
+        templateColumns.add((TemplateValue) new FlexValue(1f));
+        templateColumns.add((TemplateValue) AutoValue.VALUE);
+        templateColumns.add((TemplateValue) new FlexValue(3f));
         SolidBorder border = new SolidBorder(ColorConstants.BLUE, 1);
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
@@ -713,14 +803,41 @@ public class GridContainerTest extends ExtendedITextTest {
     }
 
     @Test
+    public void fitContentColumnsTest() throws IOException, InterruptedException {
+        String filename = DESTINATION_FOLDER + "fitContentColumnsTest.pdf";
+        String cmpName = SOURCE_FOLDER + "cmp_fitContentColumnsTest.pdf";
+
+        java.util.List<TemplateValue> templateColumns = new ArrayList<>();
+        templateColumns.add((TemplateValue) new FlexValue(1f));
+        templateColumns.add((TemplateValue) new FlexValue(3f));
+        templateColumns.add((TemplateValue) new FitContentValue(UnitValue.createPercentValue(5.0f)));
+        SolidBorder border = new SolidBorder(ColorConstants.BLUE, 1);
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+            GridContainer grid = new GridContainer();
+            grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, templateColumns);
+            grid.add(new Paragraph("Test1").setBorder(border));
+            grid.add(new Paragraph("Test2").setBorder(border));
+            grid.add(new Paragraph("Test3 Test3 Test3 Test3 Test3 Test3 Test3 Test3").setBorder(border));
+            final Paragraph test4 = new Paragraph("Test4Test4Test4Test4Test4 Test4 Test4 Test4 Test4 Test4 Test4 Test4").setBorder(border);
+            test4.setProperty(Property.GRID_COLUMN_START, 1);
+            test4.setProperty(Property.GRID_COLUMN_END, 3);
+            grid.add(test4);
+            grid.add(new Paragraph("Test5").setBorder(border));
+            document.add(grid);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
     public void columnSpanTest() throws IOException, InterruptedException {
         String filename = DESTINATION_FOLDER + "columnSpanTest.pdf";
         String cmpName = SOURCE_FOLDER + "cmp_columnSpanTest.pdf";
 
-        java.util.List<GridValue> templateColumns = new ArrayList<>();
-        templateColumns.add(GridValue.createPointValue(100.0f));
-        templateColumns.add(GridValue.createPointValue(100.0f));
-        templateColumns.add(GridValue.createPointValue(100.0f));
+        java.util.List<TemplateValue> templateColumns = new ArrayList<>();
+        templateColumns.add((TemplateValue) new PointValue(100.0f));
+        templateColumns.add((TemplateValue) new PointValue(100.0f));
+        templateColumns.add((TemplateValue) new PointValue(100.0f));
         SolidBorder border = new SolidBorder(ColorConstants.BLUE, 1);
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
@@ -743,10 +860,10 @@ public class GridContainerTest extends ExtendedITextTest {
         String filename = DESTINATION_FOLDER + "rowSpanTest.pdf";
         String cmpName = SOURCE_FOLDER + "cmp_rowSpanTest.pdf";
 
-        java.util.List<GridValue> template = new ArrayList<>();
-        template.add(GridValue.createPointValue(100.0f));
-        template.add(GridValue.createPointValue(100.0f));
-        template.add(GridValue.createPointValue(100.0f));
+        java.util.List<TemplateValue> template = new ArrayList<>();
+        template.add((TemplateValue) new PointValue(100.0f));
+        template.add((TemplateValue) new PointValue(100.0f));
+        template.add((TemplateValue) new PointValue(100.0f));
         SolidBorder border = new SolidBorder(ColorConstants.BLUE, 1);
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {

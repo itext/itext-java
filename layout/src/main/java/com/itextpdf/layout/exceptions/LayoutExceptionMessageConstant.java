@@ -57,6 +57,10 @@ public final class LayoutExceptionMessageConstant {
             "Invalid grid-column/grid-row properties, cells overlapping";
     public static final String INVALID_FONT_PROPERTY_VALUE = "Invalid FONT property value type.";
     public static final String TAGGING_HINTKEY_SHOULD_HAVE_ACCES = "TaggingHintKey should have accessibility properties" ;
+    public static final String GRID_AUTO_REPEAT_CAN_BE_USED_ONLY_ONCE
+            = "Automatic repetitions in the grid template are allowed only once per template.";
+    public static final String GRID_AUTO_REPEAT_CANNOT_BE_COMBINED_WITH_INDEFINITE_SIZES
+            = "Automatic repetitions in the grid template  cannot be combined with intrinsic or flexible sizes.";
 
     private LayoutExceptionMessageConstant(){}
 }

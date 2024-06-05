@@ -23,8 +23,9 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
-import com.itextpdf.layout.properties.GridFlow;
+import com.itextpdf.layout.properties.grid.GridFlow;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -40,36 +41,20 @@ import java.util.stream.Collectors;
  */
 class Grid {
     private GridCell[][] rows = new GridCell[1][1];
-    private final CellPlacementHelper cellPlacementHelper;
-    private float minHeight = 0.0f;
+    //Using array list instead of array for .NET portability
+    private final List<Collection<GridCell>> uniqueCells = new ArrayList<>(2);
 
     /**
      * Creates a new grid instance.
      *
      * @param initialRowsCount initial number of row for the grid
      * @param initialColumnsCount initial number of columns for the grid
-     * @param flow) see {@link com.itextpdf.layout.properties.GridFlow}
      */
-    Grid(int initialRowsCount, int initialColumnsCount, GridFlow flow) {
-        cellPlacementHelper = new CellPlacementHelper(this, flow);
+    Grid(int initialRowsCount, int initialColumnsCount) {
         ensureGridSize(initialRowsCount, initialColumnsCount);
-    }
-
-    /**
-     * Get resulting layout height of the grid, if it's less than explicit (minimal) height of the grid
-     * return the explicit one.
-     *
-     * @return resulting layout height of a grid.
-     */
-    float getHeight() {
-        for (int i = getNumberOfRows() - 1; i >= 0; --i) {
-            for (int j = 0; j < getNumberOfColumns(); ++j) {
-                if (rows[i][j] != null) {
-                    return Math.max(rows[i][j].getLayoutArea().getTop(), minHeight);
-                }
-            }
-        }
-        return minHeight;
+        //Add GridOrder.ROW and GridOrder.COLUMN cache for unique cells, which is null initially
+        uniqueCells.add(null);
+        uniqueCells.add(null);
     }
 
     /**
@@ -77,7 +62,7 @@ class Grid {
      *
      * @return matrix of cells.
      */
-    GridCell[][] getRows() {
+    final GridCell[][] getRows() {
         return rows;
     }
 
@@ -86,7 +71,7 @@ class Grid {
      *
      * @return the number of rows
      */
-    int getNumberOfRows() {
+    final int getNumberOfRows() {
         return rows.length;
     }
 
@@ -95,8 +80,8 @@ class Grid {
      *
      * @return the number of columns
      */
-    int getNumberOfColumns() {
-        return rows[0].length;
+    final int getNumberOfColumns() {
+        return rows.length > 0 ? rows[0].length : 0;
     }
 
     /**
@@ -108,23 +93,25 @@ class Grid {
      * @return collection of unique cells in a row or column
      */
     Collection<GridCell> getUniqueCellsInTrack(GridOrder order, int trackIndex) {
-        Collection<GridCell> result = new LinkedHashSet<>();
+        List<GridCell> result = new ArrayList<>(order == GridOrder.ROW ? getNumberOfRows() : getNumberOfColumns());
+        GridCell previous = null;
         if (GridOrder.COLUMN == order) {
             for (GridCell[] row : rows) {
-                final GridCell cell = row[trackIndex];
-                if (cell != null) {
-                    result.add(cell);
+                final GridCell current = row[trackIndex];
+                if (current != null && current != previous) {
+                    previous = current;
+                    result.add(current);
                 }
             }
-            return result;
         } else {
-            for (GridCell cell : rows[trackIndex]) {
-                if (cell != null) {
-                    result.add(cell);
+            for (GridCell current : rows[trackIndex]) {
+                if (current != null && current != previous) {
+                    previous = current;
+                    result.add(current);
                 }
             }
-            return result;
         }
+        return result;
     }
 
     /**
@@ -132,6 +119,7 @@ class Grid {
      * Internally big cells (height * width > 1) are stored in multiple quantities
      * For example, cell with height = 2 and width = 2 will have 4 instances on a grid (width * height) to simplify
      * internal grid processing. This method counts such cells as one and returns a list of unique cells.
+     * The result is cached since grid can't be changed after creation.
      *
      * @param iterationOrder if {GridOrder.ROW} the order of cells is from left to right, top to bottom
      *                       if {GridOrder.COLUMN} the order of cells is from top to bottom, left to right
@@ -140,6 +128,9 @@ class Grid {
      */
     Collection<GridCell> getUniqueGridCells(GridOrder iterationOrder) {
         Collection<GridCell> result = new LinkedHashSet<>();
+        if (uniqueCells.get(iterationOrder.ordinal()) != null) {
+            return uniqueCells.get(iterationOrder.ordinal());
+        }
         if (GridOrder.COLUMN.equals(iterationOrder)) {
             for (int j = 0; j < getNumberOfColumns(); ++j) {
                 for (int i = 0; i < getNumberOfRows(); ++i) {
@@ -148,8 +139,10 @@ class Grid {
                     }
                 }
             }
+            uniqueCells.set(iterationOrder.ordinal(), result);
             return result;
         }
+        // GridOrder.ROW
         for (GridCell[] cellsRow : rows) {
             for (GridCell cell : cellsRow) {
                 if (cell != null) {
@@ -157,25 +150,8 @@ class Grid {
                 }
             }
         }
+        uniqueCells.set(iterationOrder.ordinal(), result);
         return result;
-    }
-
-    /**
-     * Add cell in the grid, checking that it would fit and initializing it bottom left corner (x, y).
-     *
-     * @param cell cell to and in the grid
-     */
-    void addCell(GridCell cell) {
-        cellPlacementHelper.fit(cell);
-        for (int i = cell.getRowStart(); i < cell.getRowEnd(); ++i) {
-            for(int j = cell.getColumnStart(); j < cell.getColumnEnd(); ++j) {
-                rows[i][j] = cell;
-            }
-        }
-    }
-
-    void setMinHeight(float minHeight) {
-        this.minHeight = minHeight;
     }
 
     /**
@@ -207,7 +183,83 @@ class Grid {
         rows = resizedRows;
     }
 
-    static enum GridOrder {
+    /**
+     * Deletes all null rows/columns depending on the given values.
+     * If resulting grid size is less than provided minSize than some null lines will be preserved.
+     *
+     * @param order which null lines to remove - {@link GridOrder#ROW} to remove rows
+     *                                           {@link GridOrder#COLUMN} to remove columns
+     * @param minSize minimal size of the resulting grid
+     *
+     * @return the number of left lines in given order
+     */
+    int collapseNullLines(GridOrder order, int minSize) {
+        int nullLinesStart = determineNullLinesStart(order);
+        if (nullLinesStart == -1) {
+            return GridOrder.ROW.equals(order) ? getNumberOfRows() : getNumberOfColumns();
+        } else {
+            nullLinesStart = Math.max(minSize, nullLinesStart);
+        }
+        int rowsNumber = GridOrder.ROW.equals(order) ? nullLinesStart : getNumberOfRows();
+        int colsNumber = GridOrder.COLUMN.equals(order) ? nullLinesStart : getNumberOfColumns();
+        GridCell[][] shrankGrid = new GridCell[rowsNumber][];
+        for (int i = 0; i < shrankGrid.length; ++i) {
+            shrankGrid[i] = new GridCell[colsNumber];
+        }
+        for (int i = 0; i < shrankGrid.length; ++i) {
+            System.arraycopy(rows[i], 0, shrankGrid[i], 0, shrankGrid[0].length);
+        }
+        rows = shrankGrid;
+        return GridOrder.ROW.equals(order) ? getNumberOfRows() : getNumberOfColumns();
+    }
+
+    /**
+     * Add cell in the grid, checking that it would fit and initializing it bottom left corner (x, y).
+     *
+     * @param cell cell to and in the grid
+     */
+    private void addCell(GridCell cell) {
+        for (int i = cell.getRowStart(); i < cell.getRowEnd(); ++i) {
+            for(int j = cell.getColumnStart(); j < cell.getColumnEnd(); ++j) {
+                rows[i][j] = cell;
+            }
+        }
+    }
+
+    private int determineNullLinesStart(GridOrder order) {
+        if (GridOrder.ROW.equals(order)) {
+            for (int i = 0; i < getNumberOfRows(); ++i) {
+                boolean isNull = true;
+                for (int j = 0; j < getNumberOfColumns(); ++j) {
+                    if (getRows()[i][j] != null) {
+                        isNull = false;
+                        break;
+                    }
+                }
+                if (isNull) {
+                    return i;
+                }
+            }
+            return -1;
+        } else if (GridOrder.COLUMN.equals(order)) {
+            for (int j = 0; j < getNumberOfColumns(); ++j) {
+                boolean isNull = true;
+                for (int i = 0; i < getNumberOfRows(); ++i) {
+                    if (getRows()[i][j] != null) {
+                        isNull = false;
+                        break;
+                    }
+                }
+                if (isNull) {
+                    return j;
+                }
+            }
+            return -1;
+        }
+        return -1;
+    }
+
+    enum GridOrder {
         ROW,
         COLUMN
     }
@@ -284,8 +336,10 @@ class Grid {
          * @return new {@code Grid} instance.
          */
         public Grid build() {
-            final Grid grid = new Grid(rowCount, columnCount, flow);
+            final Grid grid = new Grid(rowCount, columnCount);
+            CellPlacementHelper cellPlacementHelper = new CellPlacementHelper(grid, flow);
             for (GridCell cell : cells) {
+                cellPlacementHelper.fit(cell);
                 grid.addCell(cell);
             }
             return grid;
