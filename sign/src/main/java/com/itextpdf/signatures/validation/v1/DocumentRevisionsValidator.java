@@ -132,6 +132,7 @@ public class DocumentRevisionsValidator {
     private IMetaInfo metaInfo = new ValidationMetaInfo();
     private AccessPermissions accessPermissions = AccessPermissions.ANNOTATION_MODIFICATION;
     private AccessPermissions requestedAccessPermissions = AccessPermissions.UNSPECIFIED;
+    private ReportItemStatus unexpectedXrefChangesStatus = ReportItemStatus.INFO;
     private Set<PdfObject> checkedAnnots;
     private Set<PdfDictionary> newlyAddedFields;
 
@@ -166,6 +167,19 @@ public class DocumentRevisionsValidator {
      */
     public DocumentRevisionsValidator setAccessPermissions(AccessPermissions accessPermissions) {
         this.requestedAccessPermissions = accessPermissions;
+        return this;
+    }
+
+    /**
+     * Set the status to be used for the report items produced during docMDP validation in case revision contains
+     * unexpected changes in the XREF table. Default value is {@link ReportItemStatus#INFO}.
+     *
+     * @param status {@link ReportItemStatus} to be used in case of unexpected changes in the XREF table
+     *
+     * @return the same {@link DocumentRevisionsValidator} instance.
+     */
+    public DocumentRevisionsValidator setUnexpectedXrefChangesStatus(ReportItemStatus status) {
+        this.unexpectedXrefChangesStatus = status;
         return this;
     }
 
@@ -273,12 +287,13 @@ public class DocumentRevisionsValidator {
                     if (!isMaxGenerationObject(indirectReference) &&
                             referenceWasInPrevDocument && !referenceAllowedToBeRemoved) {
                         validationReport.addReportItem(new ReportItem(DOC_MDP_CHECK, MessageFormatUtil.format(
-                                OBJECT_REMOVED, indirectReference.getObjNumber()), ReportItemStatus.INVALID));
+                                OBJECT_REMOVED, indirectReference.getObjNumber()), unexpectedXrefChangesStatus));
                     }
                 } else if (!checkAllowedReferences(currentAllowedReferences, previousAllowedReferences,
-                        indirectReference, documentWithoutRevision)) {
+                        indirectReference, documentWithoutRevision) &&
+                        !isAllowedStreamObj(indirectReference, documentWithRevision)) {
                     validationReport.addReportItem(new ReportItem(DOC_MDP_CHECK, MessageFormatUtil.format(
-                            UNEXPECTED_ENTRY_IN_XREF, indirectReference.getObjNumber()), ReportItemStatus.INVALID));
+                            UNEXPECTED_ENTRY_IN_XREF, indirectReference.getObjNumber()), unexpectedXrefChangesStatus));
                 }
             }
         } catch (IOException exception) {
@@ -1319,6 +1334,15 @@ public class DocumentRevisionsValidator {
                         previousAllowedReferences.stream().anyMatch(
                                 reference -> isSameReference(reference, indirectReference));
             }
+        }
+        return false;
+    }
+
+    private boolean isAllowedStreamObj(PdfIndirectReference indirectReference, PdfDocument document) {
+        PdfObject pdfObject = document.getPdfObject(indirectReference.getObjNumber());
+        if (pdfObject instanceof PdfStream) {
+            PdfName type = ((PdfStream) pdfObject).getAsName(PdfName.Type);
+            return PdfName.XRef.equals(type) || PdfName.ObjStm.equals(type);
         }
         return false;
     }

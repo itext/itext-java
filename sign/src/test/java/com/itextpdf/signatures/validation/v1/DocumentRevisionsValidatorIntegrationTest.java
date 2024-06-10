@@ -459,4 +459,43 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
             Assert.assertEquals(AccessPermissions.ANNOTATION_MODIFICATION, validator.getAccessPermissions());
         }
     }
+
+    @Test
+    public void fullCompressionModeLevel1Test() throws Exception {
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "fullCompressionModeLevel1.pdf"))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
+
+            Assert.assertEquals(AccessPermissions.NO_CHANGES_PERMITTED, validator.getAccessPermissions());
+
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID)
+                    .hasNumberOfFailures(0).hasNumberOfLogs(0));
+        }
+    }
+
+    @Test
+    public void fullCompressionModeLevel2Test() throws Exception {
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "fullCompressionModeLevel2.pdf"))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
+
+            Assert.assertEquals(AccessPermissions.FORM_FIELDS_MODIFICATION, validator.getAccessPermissions());
+
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID)
+                    .hasNumberOfFailures(0).hasNumberOfLogs(0));
+        }
+    }
+
+    @Test
+    public void fullCompressionModeLevel3Test() throws Exception {
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "fullCompressionModeLevel3.pdf"))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
+
+            Assert.assertEquals(AccessPermissions.ANNOTATION_MODIFICATION, validator.getAccessPermissions());
+
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID)
+                    .hasNumberOfFailures(0).hasNumberOfLogs(0));
+        }
+    }
 }

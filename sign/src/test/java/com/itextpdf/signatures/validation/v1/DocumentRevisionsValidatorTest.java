@@ -98,11 +98,11 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
 
             // Between these two revisions DSS and timestamp are added, which is allowed,
             // but there is unused entry in the xref table, which is an itext signature generation artifact.
-            AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.INVALID)
-                    .hasNumberOfFailures(1).hasNumberOfLogs(1)
+            AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.VALID)
+                    .hasNumberOfFailures(0).hasNumberOfLogs(1)
                     .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
                             .withMessage(DocumentRevisionsValidator.UNEXPECTED_ENTRY_IN_XREF, i -> 27)
-                            .withStatus(ReportItemStatus.INVALID)));
+                            .withStatus(ReportItemStatus.INFO)));
 
             validationReport = new ValidationReport();
             validator.validateRevision(documentRevisions.get(1), documentRevisions.get(2), document, validationReport, validationContext);
@@ -257,8 +257,9 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
     @Test
     public void randomEntryWithoutUsageTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "randomEntryWithoutUsage.pdf"))) {
-            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
-            validator.setAccessPermissions(AccessPermissions.NO_CHANGES_PERMITTED);
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator()
+                    .setAccessPermissions(AccessPermissions.NO_CHANGES_PERMITTED)
+                    .setUnexpectedXrefChangesStatus(ReportItemStatus.INVALID);
             PdfRevisionsReader revisionsReader = new PdfRevisionsReader(document.getReader());
             List<DocumentRevision> documentRevisions = revisionsReader.getAllRevisions();
 

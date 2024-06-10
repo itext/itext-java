@@ -259,19 +259,20 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
                     .withRevocationDataValidator(new MockRevocationDataValidator()).buildSignatureValidator();
             ValidationReport report = signatureValidator.validateSignatures(document);
 
-            // Document contains invalid unused entry which is invalid according to DocumentRevisionsValidator.
             AssertValidationReport.assertThat(report, r -> r
-                    .hasStatus(ValidationResult.INVALID)
-                    .hasNumberOfLogs(5).hasNumberOfFailures(1)
+                    .hasStatus(ValidationResult.VALID)
+                    .hasNumberOfLogs(5).hasNumberOfFailures(0)
                     .hasLogItem(l -> l
                             .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
                             .withMessage(SignatureValidator.VALIDATING_SIGNATURE_NAME, p -> "timestampSig1"))
                     .hasLogItem(l -> l
                             .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
                             .withMessage(SignatureValidator.VALIDATING_SIGNATURE_NAME, p -> "Signature1"))
+                    // Document contains unused unexpected entry.
                     .hasLogItem(l -> l
                             .withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
-                            .withMessage(DocumentRevisionsValidator.UNEXPECTED_ENTRY_IN_XREF, p -> "28"))
+                            .withMessage(DocumentRevisionsValidator.UNEXPECTED_ENTRY_IN_XREF, p -> "28")
+                            .withStatus(ReportItem.ReportItemStatus.INFO))
             );
         }
     }
