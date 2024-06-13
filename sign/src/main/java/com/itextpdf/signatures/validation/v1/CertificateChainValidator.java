@@ -249,8 +249,7 @@ public class CertificateChainValidator {
 
     private void validateRevocationData(ValidationReport report, ValidationContext context, X509Certificate certificate,
             Date validationDate) {
-        revocationDataValidator.validate(report,
-                context, certificate, validationDate);
+        revocationDataValidator.validate(report, context, certificate, validationDate);
     }
 
     private void validateChain(ValidationReport result, ValidationContext context, X509Certificate certificate,

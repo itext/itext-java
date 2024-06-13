@@ -196,6 +196,87 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
     }
 
     @Test
+    public void retrieveRevocationDataFromTheSignatureContainerTest() throws GeneralSecurityException, IOException {
+        String rootCertName = CERTS_SRC + "rootRsa.pem";
+        X509Certificate rootCert = (X509Certificate) PemFileHelper.readFirstChain(rootCertName)[0];
+
+        // We need to set infinite freshness for the signature validation. Otherwise, test will fail.
+        builder.getProperties().setFreshness(
+                ValidatorContexts.of(ValidatorContext.OCSP_VALIDATOR, ValidatorContext.CRL_VALIDATOR),
+                CertificateSources.of(CertificateSource.SIGNER_CERT),
+                TimeBasedContexts.of(TimeBasedContext.PRESENT), Duration.ofDays(999999));
+
+        ValidationReport report;
+        // Signature container stores OCSP response with indeterminate status and less fresh but valid CRL response.
+        try (PdfDocument document = new PdfDocument(
+                new PdfReader(SOURCE_FOLDER + "revDataInTheSignatureContainer.pdf"))) {
+            certificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
+
+            SignatureValidator signatureValidator = builder.buildSignatureValidator();
+            report = signatureValidator.validateSignatures(document);
+        }
+
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationResult.VALID)
+                .hasNumberOfLogs(4).hasNumberOfFailures(0)
+                .hasLogItem(al -> al
+                        .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
+                        .withMessage(SignatureValidator.VALIDATING_SIGNATURE_NAME, i -> "Signature1"))
+                .hasLogItem(al -> al
+                        .withCheckName(OCSPValidator.OCSP_CHECK)
+                        .withMessage(OCSPValidator.CERT_STATUS_IS_UNKNOWN)
+                        .withStatus(ReportItem.ReportItemStatus.INFO))
+                .hasLogItems(2, al -> al
+                        .withCertificate(rootCert)
+                        .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
+                        .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED,
+                                i -> rootCert.getSubjectX500Principal()))
+        );
+    }
+
+    @Test
+    public void retrieveRevocationDataStoredInTheSignerInfoTest() throws GeneralSecurityException, IOException {
+        String rootCertName = CERTS_SRC + "rootRsa.pem";
+        X509Certificate rootCert = (X509Certificate) PemFileHelper.readFirstChain(rootCertName)[0];
+
+        // We need to set infinite freshness for the embedded timestamp validation. Otherwise, test will fail.
+        builder.getProperties().setFreshness(
+                        ValidatorContexts.of(ValidatorContext.OCSP_VALIDATOR, ValidatorContext.CRL_VALIDATOR),
+                        CertificateSources.of(CertificateSource.TIMESTAMP),
+                        TimeBasedContexts.of(TimeBasedContext.PRESENT), Duration.ofDays(999999))
+                .setFreshness(
+                        ValidatorContexts.of(ValidatorContext.CRL_VALIDATOR),
+                        CertificateSources.of(CertificateSource.SIGNER_CERT),
+                        TimeBasedContexts.of(TimeBasedContext.HISTORICAL), Duration.ofDays(2));
+
+        ValidationReport report;
+        // Signer info authenticated attributes store OCSP response with indeterminate status and valid CRL response.
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "revDataInTheSignerInfo.pdf"))) {
+            certificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
+
+            SignatureValidator signatureValidator = builder.buildSignatureValidator();
+            report = signatureValidator.validateSignatures(document);
+        }
+
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationResult.VALID)
+                .hasNumberOfLogs(6).hasNumberOfFailures(0)
+                .hasLogItem(al -> al
+                        .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
+                        .withMessage(SignatureValidator.VALIDATING_SIGNATURE_NAME, i -> "Signature1"))
+                .hasLogItem(al -> al
+                        .withCheckName(OCSPValidator.OCSP_CHECK)
+                        .withMessage(OCSPValidator.CERT_STATUS_IS_UNKNOWN)
+                        .withStatus(ReportItem.ReportItemStatus.INFO))
+                .hasLogItems(4, al -> al
+                        .withCertificate(rootCert)
+                        .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
+                        .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED,
+                                i -> rootCert.getSubjectX500Principal()))
+        );
+    }
+
+    @Test
     public void latestSignatureIsTimestampTest() throws GeneralSecurityException, IOException,
             AbstractOperatorCreationException, AbstractPKCSException {
         String chainName = CERTS_SRC + "validCertsChain.pem";
