@@ -52,9 +52,9 @@ public class ValidationOcspClient implements IOcspClient {
     /**
      * Add OCSP response which is linked with generation date.
      *
-     * @param response         {@link IBasicOCSPResp} response to be added
-     * @param date             {@link Date} to be linked with the response
-     * @param context {@link TimeBasedContext} time based context which corresponds to generation date
+     * @param response {@link IBasicOCSPResp} response to be added
+     * @param date     {@link Date} to be linked with the response
+     * @param context  {@link TimeBasedContext} time based context which corresponds to generation date
      */
     public void addResponse(IBasicOCSPResp response, Date date, TimeBasedContext context) {
         responses.put(response, new OcspResponseValidationInfo(null, response, date, context));
@@ -82,7 +82,7 @@ public class ValidationOcspClient implements IOcspClient {
             return responses.entrySet().stream().sorted((r1, r2) ->
                             r2.getKey().getProducedAt().compareTo(r1.getKey().getProducedAt()))
                     .collect(Collectors.toList()).get(0).getKey().getEncoded();
-        } catch (IOException e) {
+        } catch (IOException | RuntimeException e) {
             return null;
         }
     }

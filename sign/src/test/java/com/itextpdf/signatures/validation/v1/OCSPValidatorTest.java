@@ -44,6 +44,8 @@ import com.itextpdf.signatures.validation.v1.context.ValidationContext;
 import com.itextpdf.signatures.validation.v1.context.ValidatorContext;
 import com.itextpdf.signatures.validation.v1.context.ValidatorContexts;
 import com.itextpdf.signatures.validation.v1.mocks.MockChainValidator;
+import com.itextpdf.signatures.validation.v1.mocks.MockIssuingCertificateRetriever;
+import com.itextpdf.signatures.validation.v1.mocks.MockTrustedCertificatesStore;
 import com.itextpdf.signatures.validation.v1.report.ReportItem;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport;
 import com.itextpdf.test.ExtendedITextTest;
@@ -497,6 +499,96 @@ public class OCSPValidatorTest extends ExtendedITextTest {
         AssertValidationReport.assertThat(report, a -> a
                 .hasStatus(ValidationReport.ValidationResult.VALID)
                 .hasNumberOfFailures(0).hasNumberOfLogs(0));
+    }
+
+
+    @Test
+    public void certificateRetrieverRetrieveIssuerCertificateFailureTest() throws GeneralSecurityException, IOException {
+        Date checkDate = TimeTestUtil.TEST_DATE_TIME;
+        MockIssuingCertificateRetriever mockCertificateRetriever = new MockIssuingCertificateRetriever();
+        validatorChainBuilder.withIssuingCertificateRetriever(mockCertificateRetriever);
+        mockCertificateRetriever.onRetrieveIssuerCertificateDo(c -> {
+            throw new RuntimeException("Test retrieveMissingCertificates failure");
+        });
+
+        ValidationReport report = validateTest(checkDate);
+
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationReport.ValidationResult.INDETERMINATE)
+                .hasLogItem(l-> l.withMessage(OCSPValidator.UNABLE_TO_RETRIEVE_ISSUER)));
+    }
+
+
+    @Test
+    public void certificateRetrieverRetrieveOCSPResponderCertificateFailureTest() throws GeneralSecurityException, IOException {
+        Date checkDate = TimeTestUtil.TEST_DATE_TIME;
+        MockIssuingCertificateRetriever mockCertificateRetriever =
+                new MockIssuingCertificateRetriever(certificateRetriever);
+        validatorChainBuilder.withIssuingCertificateRetriever(mockCertificateRetriever);
+        mockCertificateRetriever.onRetrieveOCSPResponderCertificateDo(c -> {
+            throw new RuntimeException("Test retrieveMissingCertificates failure");
+        });
+
+        ValidationReport report = validateTest(checkDate);
+
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationReport.ValidationResult.INDETERMINATE)
+                .hasLogItem(l-> l.withMessage(OCSPValidator.OCSP_RESPONDER_NOT_RETRIEVED)));
+    }
+
+
+    @Test
+    public void certificateRetrieverIsCertificateTrustedFailureTest() throws GeneralSecurityException, IOException {
+        Date checkDate = TimeTestUtil.TEST_DATE_TIME;
+        MockIssuingCertificateRetriever mockCertificateRetriever =
+                new MockIssuingCertificateRetriever(certificateRetriever);
+        validatorChainBuilder.withIssuingCertificateRetriever(mockCertificateRetriever);
+        mockCertificateRetriever.onIsCertificateTrustedDo(c -> {
+            throw new RuntimeException("Test isCertificateTrusted failure");
+        });
+
+        ValidationReport report = validateTest(checkDate);
+
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationReport.ValidationResult.INDETERMINATE)
+                .hasLogItem(l-> l.withMessage(OCSPValidator.OCSP_RESPONDER_TRUST_NOT_RETRIEVED)));
+    }
+
+    @Test
+    public void certificateRetrieverIsCertificateTrustedForOcspFailureTest() throws GeneralSecurityException, IOException {
+        Date checkDate = TimeTestUtil.TEST_DATE_TIME;
+        MockIssuingCertificateRetriever mockCertificateRetriever =
+                new MockIssuingCertificateRetriever(certificateRetriever);
+        validatorChainBuilder.withIssuingCertificateRetriever(mockCertificateRetriever);
+        mockCertificateRetriever.onIsCertificateTrustedDo(c -> false);
+        MockTrustedCertificatesStore mockTrustedStore =
+                new MockTrustedCertificatesStore(certificateRetriever.getTrustedCertificatesStore());
+        mockCertificateRetriever.onGetTrustedCertificatesStoreDo(() -> mockTrustedStore);
+        mockTrustedStore.onIsCertificateTrustedForOcspDo(c -> {
+            throw new RuntimeException("Test isCertificateTrustedForOcsp failure");
+        });
+
+        ValidationReport report = validateTest(checkDate);
+
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationReport.ValidationResult.INDETERMINATE)
+                .hasLogItem(l-> l.withMessage(OCSPValidator.OCSP_RESPONDER_TRUST_NOT_RETRIEVED)));
+    }
+
+    @Test
+    public void certificateChainValidationFailureTest() throws GeneralSecurityException, IOException {
+        Date checkDate = TimeTestUtil.TEST_DATE_TIME;
+
+        mockCertificateChainValidator.onCallDo(c-> {
+            throw new RuntimeException("Test chain validation failure");
+        });
+
+        ValidationReport report = validateTest(checkDate);
+
+
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationReport.ValidationResult.INDETERMINATE)
+                .hasLogItem(l -> l.withMessage(OCSPValidator.OCSP_RESPONDER_NOT_VERIFIED)));
     }
 
     private ValidationReport validateTest(Date checkDate) throws CertificateException, IOException {

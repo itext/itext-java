@@ -115,6 +115,8 @@ public class DocumentRevisionsValidator {
     static final String REFERENCE_REMOVED = "Signature reference dictionary was removed or unexpectedly modified.";
     static final String REVISIONS_READING_EXCEPTION = "IOException occurred during document revisions reading.";
     static final String REVISIONS_RETRIEVAL_FAILED = "Wasn't possible to retrieve document revisions.";
+    static final String REVISIONS_RETRIEVAL_FAILED_UNEXPECTEDLY =
+            "Unexpected exception while retrieving document revisions.";
     static final String SIGNATURE_MODIFIED = "Signature {0} was unexpectedly modified.";
     static final String SIGNATURE_REVISION_NOT_FOUND =
             "Not possible to identify document revision corresponding to the first signature in the document.";
@@ -186,7 +188,7 @@ public class DocumentRevisionsValidator {
     /**
      * Validate all document revisions according to docMDP and fieldMDP transform methods.
      *
-     * @param context the validation context in which to validate document revisions
+     * @param context  the validation context in which to validate document revisions
      * @param document the document to be validated
      *
      * @return {@link ValidationReport} which contains detailed validation results.
@@ -203,6 +205,11 @@ public class DocumentRevisionsValidator {
         } catch (IOException e) {
             report.addReportItem(
                     new ReportItem(DOC_MDP_CHECK, REVISIONS_RETRIEVAL_FAILED, ReportItemStatus.INDETERMINATE));
+            return report;
+        } catch (RuntimeException e) {
+            report.addReportItem(
+                    new ReportItem(DOC_MDP_CHECK, REVISIONS_RETRIEVAL_FAILED_UNEXPECTEDLY, e,
+                            ReportItemStatus.INDETERMINATE));
             return report;
         }
         SignatureUtil signatureUtil = new SignatureUtil(document);
@@ -256,15 +263,15 @@ public class DocumentRevisionsValidator {
     void validateRevision(DocumentRevision previousRevision, DocumentRevision currentRevision, PdfDocument document,
             ValidationReport validationReport, ValidationContext context) {
         try (InputStream previousInputStream = createInputStreamFromRevision(document, previousRevision);
-             PdfReader previousReader = new PdfReader(previousInputStream)
-                     .setStrictnessLevel(StrictnessLevel.CONSERVATIVE);
-             PdfDocument documentWithoutRevision = new PdfDocument(previousReader,
-                     new DocumentProperties().setEventCountingMetaInfo(metaInfo));
-             InputStream currentInputStream = createInputStreamFromRevision(document, currentRevision);
-             PdfReader currentReader = new PdfReader(currentInputStream)
-                     .setStrictnessLevel(StrictnessLevel.CONSERVATIVE);
-             PdfDocument documentWithRevision = new PdfDocument(currentReader,
-                     new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
+                PdfReader previousReader = new PdfReader(previousInputStream)
+                        .setStrictnessLevel(StrictnessLevel.CONSERVATIVE);
+                PdfDocument documentWithoutRevision = new PdfDocument(previousReader,
+                        new DocumentProperties().setEventCountingMetaInfo(metaInfo));
+                InputStream currentInputStream = createInputStreamFromRevision(document, currentRevision);
+                PdfReader currentReader = new PdfReader(currentInputStream)
+                        .setStrictnessLevel(StrictnessLevel.CONSERVATIVE);
+                PdfDocument documentWithRevision = new PdfDocument(currentReader,
+                        new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
             Set<PdfIndirectReference> indirectReferences = currentRevision.getModifiedObjects();
             if (!compareCatalogs(documentWithoutRevision, documentWithRevision, validationReport, context)) {
                 return;
@@ -296,7 +303,7 @@ public class DocumentRevisionsValidator {
                             UNEXPECTED_ENTRY_IN_XREF, indirectReference.getObjNumber()), unexpectedXrefChangesStatus));
                 }
             }
-        } catch (IOException exception) {
+        } catch (IOException | RuntimeException exception) {
             validationReport.addReportItem(new ReportItem(DOC_MDP_CHECK, REVISIONS_READING_EXCEPTION,
                     exception, ReportItemStatus.INDETERMINATE));
         }
@@ -377,7 +384,7 @@ public class DocumentRevisionsValidator {
             List<String> excludedFields = Collections.<String>emptyList();
             if (fields != null) {
                 excludedFields = fields.subList(0, fields.size()).stream().map(
-                        field -> field instanceof PdfString ? ((PdfString) field).toUnicodeString() : null)
+                                field -> field instanceof PdfString ? ((PdfString) field).toUnicodeString() : null)
                         .collect(Collectors.toList());
             }
             lockAllFormFields(revision, excludedFields, document, report);
@@ -393,9 +400,9 @@ public class DocumentRevisionsValidator {
     private void lockAllFormFields(DocumentRevision revision, List<String> excludedFields, PdfDocument document,
             ValidationReport report) {
         try (InputStream inputStream = createInputStreamFromRevision(document, revision);
-             PdfReader reader = new PdfReader(inputStream);
-             PdfDocument documentWithRevision = new PdfDocument(reader,
-                     new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
+                PdfReader reader = new PdfReader(inputStream);
+                PdfDocument documentWithRevision = new PdfDocument(reader,
+                        new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
             PdfAcroForm acroForm = PdfFormCreator.getAcroForm(documentWithRevision, false);
             if (acroForm != null) {
                 for (String fieldName : acroForm.getAllFormFields().keySet()) {
@@ -404,7 +411,7 @@ public class DocumentRevisionsValidator {
                     }
                 }
             }
-        } catch (IOException exception) {
+        } catch (IOException | RuntimeException exception) {
             report.addReportItem(new ReportItem(FIELD_MDP_CHECK, REVISIONS_READING_EXCEPTION, exception,
                     ReportItemStatus.INDETERMINATE));
         }
@@ -463,12 +470,13 @@ public class DocumentRevisionsValidator {
 
     private boolean revisionContainsSignature(DocumentRevision revision, String signature, PdfDocument document) {
         try (InputStream inputStream = createInputStreamFromRevision(document, revision);
-             PdfReader reader = new PdfReader(inputStream);
-             PdfDocument documentWithRevision = new PdfDocument(reader,
-                     new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
+                PdfReader reader = new PdfReader(inputStream);
+                PdfDocument documentWithRevision = new PdfDocument(reader,
+                        new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
             SignatureUtil signatureUtil = new SignatureUtil(documentWithRevision);
             return signatureUtil.signatureCoversWholeDocument(signature);
-        } catch (IOException ignored) {
+        } catch (IOException | RuntimeException ignored) {
+            //ignored
         }
         return false;
     }
@@ -485,7 +493,7 @@ public class DocumentRevisionsValidator {
     //
 
     private boolean compareCatalogs(PdfDocument documentWithoutRevision, PdfDocument documentWithRevision,
-                                    ValidationReport report, ValidationContext context) {
+            ValidationReport report, ValidationContext context) {
         PdfDictionary previousCatalog = documentWithoutRevision.getCatalog().getPdfObject();
         PdfDictionary currentCatalog = documentWithRevision.getCatalog().getPdfObject();
 
@@ -528,7 +536,7 @@ public class DocumentRevisionsValidator {
     // Compare catalogs nested methods section:
 
     private boolean compareExtensions(PdfObject previousExtensions, PdfObject currentExtensions,
-                                      ValidationReport report) {
+            ValidationReport report) {
         if (previousExtensions == null || comparePdfObjects(previousExtensions, currentExtensions)) {
             return true;
         }
@@ -622,7 +630,7 @@ public class DocumentRevisionsValidator {
     }
 
     private boolean compareAcroFormsWithFieldMDP(PdfDocument documentWithoutRevision, PdfDocument documentWithRevision,
-                                                 ValidationReport report) {
+            ValidationReport report) {
         PdfAcroForm currentAcroForm = PdfFormCreator.getAcroForm(documentWithRevision, false);
         PdfAcroForm previousAcroForm = PdfFormCreator.getAcroForm(documentWithoutRevision, false);
 
@@ -656,7 +664,7 @@ public class DocumentRevisionsValidator {
     }
 
     private boolean compareFormFieldWithFieldMDP(PdfDictionary previousField, PdfDictionary currentField,
-                                                 String fieldName, ValidationReport report) {
+            String fieldName, ValidationReport report) {
         PdfDictionary previousFieldCopy = new PdfDictionary(previousField);
         previousFieldCopy.remove(PdfName.Kids);
         previousFieldCopy.remove(PdfName.P);
@@ -879,7 +887,7 @@ public class DocumentRevisionsValidator {
     }
 
     private boolean compareSignatureReferenceDictionaries(PdfArray previousReferences, PdfArray currentReferences,
-                                                          ValidationReport report) {
+            ValidationReport report) {
         if (previousReferences == null || comparePdfObjects(previousReferences, currentReferences)) {
             return true;
         }
@@ -1027,7 +1035,7 @@ public class DocumentRevisionsValidator {
     // Compare catalogs util methods section:
 
     private boolean compareIndirectReferencesObjNums(PdfObject prevObj, PdfObject currObj, ValidationReport report,
-                                                     String type) {
+            String type) {
         if (prevObj == null ^ currObj == null) {
             return false;
         }
@@ -1181,7 +1189,7 @@ public class DocumentRevisionsValidator {
     }
 
     private static boolean comparePdfObjects(PdfObject pdfObject1, PdfObject pdfObject2,
-                                             Set<PdfObject> visitedObjects) {
+            Set<PdfObject> visitedObjects) {
         if (visitedObjects.contains(pdfObject1)) {
             return true;
         }
@@ -1236,7 +1244,7 @@ public class DocumentRevisionsValidator {
     }
 
     private static boolean comparePdfDictionaries(PdfDictionary dictionary1, PdfDictionary dictionary2,
-                                                  Set<PdfObject> visitedObjects) {
+            Set<PdfObject> visitedObjects) {
         Set<Map.Entry<PdfName, PdfObject>> entrySet1 = dictionary1.entrySet();
         Set<Map.Entry<PdfName, PdfObject>> entrySet2 = dictionary2.entrySet();
         if (entrySet1.size() != entrySet2.size()) {
@@ -1257,7 +1265,7 @@ public class DocumentRevisionsValidator {
     }
 
     private static boolean isSameReference(PdfIndirectReference indirectReference1,
-                                           PdfIndirectReference indirectReference2) {
+            PdfIndirectReference indirectReference2) {
         if (indirectReference1 == indirectReference2) {
             return true;
         }
@@ -1325,9 +1333,9 @@ public class DocumentRevisionsValidator {
     }
 
     private boolean checkAllowedReferences(Set<PdfIndirectReference> currentAllowedReferences,
-                                           Set<PdfIndirectReference> previousAllowedReferences,
-                                           PdfIndirectReference indirectReference,
-                                           PdfDocument documentWithoutRevision) {
+            Set<PdfIndirectReference> previousAllowedReferences,
+            PdfIndirectReference indirectReference,
+            PdfDocument documentWithoutRevision) {
         for (PdfIndirectReference currentAllowedReference : currentAllowedReferences) {
             if (isSameReference(currentAllowedReference, indirectReference)) {
                 return documentWithoutRevision.getPdfObject(indirectReference.getObjNumber()) == null ||
@@ -1444,8 +1452,9 @@ public class DocumentRevisionsValidator {
             PdfDictionary fieldDict = (PdfDictionary) field;
             if (PdfFormField.isFormField(fieldDict)) {
                 PdfObject value = fieldDict.get(PdfName.V);
-                if (getAccessPermissions() != AccessPermissions.NO_CHANGES_PERMITTED || (value instanceof PdfDictionary &&
-                        PdfName.DocTimeStamp.equals(((PdfDictionary) value).getAsName(PdfName.Type)))) {
+                if (getAccessPermissions() != AccessPermissions.NO_CHANGES_PERMITTED ||
+                        (value instanceof PdfDictionary &&
+                                PdfName.DocTimeStamp.equals(((PdfDictionary) value).getAsName(PdfName.Type)))) {
                     allowedReferences.add(fieldDict.getIndirectReference());
                     PdfString fieldName = PdfFormCreator.createFormField(fieldDict).getFieldName();
                     if (newlyAddedFields.contains(fieldDict)) {

@@ -76,7 +76,7 @@ public class BasicConstraintsExtension extends CertificateExtension {
             if (CertificateUtil.getExtensionValue(certificate, OID.X509Extensions.BASIC_CONSTRAINTS) == null) {
                 return false;
             }
-        } catch (IOException e) {
+        } catch (IOException | RuntimeException e) {
             return false;
         }
         if (pathLength >= 0) {

@@ -63,10 +63,19 @@ public class OCSPValidator {
     static final String OCSP_COULD_NOT_BE_VERIFIED = "OCSP response could not be verified: " +
             "it does not contain responder in the certificate chain and response is not signed " +
             "by issuer certificate or any from the trusted store.";
+    static final String OCSP_RESPONDER_NOT_RETRIEVED = "OCSP response could not be verified: \" +\n" +
+            "            \"Unexpected exception occurred retrieving responder.";
+    static final String OCSP_RESPONDER_NOT_VERIFIED = "OCSP response could not be verified: \" +\n" +
+            "            \" Unexpected exception occurred while validating responder certificate.";
+    static final String OCSP_RESPONDER_TRUST_NOT_RETRIEVED = "OCSP response could not be verified: \" +\n" +
+            "            \"responder trust state could not be retrieved.";
     static final String OCSP_IS_NO_LONGER_VALID = "OCSP is no longer valid: {0} after {1}";
     static final String SERIAL_NUMBERS_DO_NOT_MATCH = "OCSP: Serial numbers don't match.";
-    static final String UNABLE_TO_CHECK_IF_ISSUERS_MATCH = "OCSP response could not be verified: unable to check" +
-            " if issuers match.";
+    static final String UNABLE_TO_CHECK_IF_ISSUERS_MATCH =
+            "OCSP response could not be verified: Unexpected exception occurred checking if issuers match.";
+
+    static final String UNABLE_TO_RETRIEVE_ISSUER =
+            "OCSP response could not be verified: Unexpected exception occurred while retrieving issuer";
 
     static final String OCSP_CHECK = "OCSP response check.";
 
@@ -78,7 +87,7 @@ public class OCSPValidator {
 
     /**
      * Creates new {@link OCSPValidator} instance.
-
+     *
      * @param builder See {@link  ValidatorChainBuilder}
      */
     protected OCSPValidator(ValidatorChainBuilder builder) {
@@ -117,7 +126,8 @@ public class OCSPValidator {
      * @param responseGenerationDate trusted date at which response is generated
      */
     public void validate(ValidationReport report, ValidationContext context, X509Certificate certificate,
-            ISingleResp singleResp, IBasicOCSPResp ocspResp, Date validationDate, Date responseGenerationDate) {
+            ISingleResp singleResp, IBasicOCSPResp ocspResp, Date validationDate,
+            Date responseGenerationDate) {
         ValidationContext localContext = context.setValidatorContext(ValidatorContext.OCSP_VALIDATOR);
         if (CertificateUtil.isSelfSigned(certificate)) {
             report.addReportItem(new CertificateReportItem(certificate, OCSP_CHECK,
@@ -131,7 +141,14 @@ public class OCSPValidator {
                     ReportItemStatus.INDETERMINATE));
             return;
         }
-        Certificate issuerCert = certificateRetriever.retrieveIssuerCertificate(certificate);
+        Certificate issuerCert;
+        try {
+            issuerCert = certificateRetriever.retrieveIssuerCertificate(certificate);
+        } catch (RuntimeException e) {
+            report.addReportItem(new CertificateReportItem(certificate, OCSP_CHECK, UNABLE_TO_RETRIEVE_ISSUER, e,
+                    ReportItemStatus.INDETERMINATE));
+            return;
+        }
         // Check if the issuer of the certID and signCert matches, i.e. check that issuerNameHash and issuerKeyHash
         // fields of the certID is the hash of the issuer's name and public key:
         try {
@@ -228,14 +245,31 @@ public class OCSPValidator {
         // If the issuer certificate didn't sign the ocsp response, look for authorized ocsp responses
         // from the properties or from the certificate chain received with response.
         if (responderCert == null) {
-            responderCert = (X509Certificate) certificateRetriever.retrieveOCSPResponderCertificate(ocspResp);
+            try {
+                responderCert = (X509Certificate) certificateRetriever.retrieveOCSPResponderCertificate(ocspResp);
+            } catch (RuntimeException e) {
+                report.addReportItem(new CertificateReportItem(issuerCert, OCSP_CHECK, OCSP_RESPONDER_NOT_RETRIEVED, e,
+                        ReportItemStatus.INDETERMINATE));
+                return;
+            }
             if (responderCert == null) {
                 report.addReportItem(new CertificateReportItem(issuerCert, OCSP_CHECK, OCSP_COULD_NOT_BE_VERIFIED,
                         ReportItemStatus.INDETERMINATE));
                 return;
             }
-            if (!certificateRetriever.isCertificateTrusted(responderCert) &&
-                    !certificateRetriever.getTrustedCertificatesStore().isCertificateTrustedForOcsp(responderCert)) {
+
+            boolean needsToBeSignedByIssuer = false;
+            try {
+                needsToBeSignedByIssuer = (!certificateRetriever.isCertificateTrusted(responderCert) &&
+                        !certificateRetriever.getTrustedCertificatesStore().isCertificateTrustedForOcsp(responderCert));
+            } catch (RuntimeException e) {
+                report.addReportItem(new CertificateReportItem(responderCert, OCSP_CHECK,
+                        OCSP_RESPONDER_TRUST_NOT_RETRIEVED, e,
+                        ReportItemStatus.INDETERMINATE));
+                return;
+            }
+
+            if (needsToBeSignedByIssuer) {
                 // RFC 6960 4.2.2.2. Authorized Responders:
                 // "Systems relying on OCSP responses MUST recognize a delegation certificate as being issued
                 // by the CA that issued the certificate in question only if the delegation certificate and the
@@ -251,18 +285,39 @@ public class OCSPValidator {
 
                 // Validating of the ocsp signer's certificate (responderCert) described in the
                 // RFC6960 4.2.2.2.1. Revocation Checking of an Authorized Responder.
-                builder.getCertificateChainValidator().validate(responderReport,
-                        localContext,
-                        responderCert, responseGenerationDate);
+                try {
+                    builder.getCertificateChainValidator().validate(responderReport,
+                            localContext,
+                            responderCert, responseGenerationDate);
+                } catch (RuntimeException e) {
+                    report.addReportItem(new CertificateReportItem(responderCert, OCSP_CHECK,
+                            OCSP_RESPONDER_NOT_VERIFIED, e,
+                            ReportItemStatus.INDETERMINATE));
+                    return;
+                }
             } else {
-                builder.getCertificateChainValidator().validate(responderReport,
-                        localContext.setCertificateSource(CertificateSource.TRUSTED),
-                        responderCert, responseGenerationDate);
+                try {
+                    builder.getCertificateChainValidator().validate(responderReport,
+                            localContext.setCertificateSource(CertificateSource.TRUSTED),
+                            responderCert, responseGenerationDate);
+                } catch (RuntimeException e) {
+                    report.addReportItem(new CertificateReportItem(responderCert, OCSP_CHECK,
+                            OCSP_RESPONDER_NOT_VERIFIED, e,
+                            ReportItemStatus.INDETERMINATE));
+                    return;
+                }
             }
         } else {
-            builder.getCertificateChainValidator().validate(responderReport,
-                    localContext.setCertificateSource(CertificateSource.CERT_ISSUER),
-                    responderCert, responseGenerationDate);
+            try {
+                builder.getCertificateChainValidator().validate(responderReport,
+                        localContext.setCertificateSource(CertificateSource.CERT_ISSUER),
+                        responderCert, responseGenerationDate);
+            } catch (RuntimeException e) {
+                report.addReportItem(new CertificateReportItem(responderCert, OCSP_CHECK,
+                        OCSP_RESPONDER_NOT_VERIFIED, e,
+                        ReportItemStatus.INDETERMINATE));
+                return;
+            }
         }
         addResponderValidationReport(report, responderReport);
     }

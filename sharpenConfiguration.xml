@@ -4,6 +4,11 @@
     <ignored>
         <java>
             <!-- commons -->
+            <fileset reason="Delegates already exist in .net">
+                <file path="com/itextpdf/commons/utils/Action.java"/>
+                <file path="com/itextpdf/commons/utils/ThrowingSupplier.java"/>
+                <file path="com/itextpdf/commons/utils/ThrowingAction.java"/>
+            </fileset>
             <fileset reason="Namespaces differs in Java an .NET, so it can't be ported automatically">
                 <file path="com/itextpdf/commons/actions/NamespaceConstant.java"/>
             </fileset>

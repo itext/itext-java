@@ -33,6 +33,7 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class MockRevocationDataValidator extends RevocationDataValidator {
 
@@ -40,6 +41,9 @@ public class MockRevocationDataValidator extends RevocationDataValidator {
     public List<IOcspClient> ocspClientsAdded = new ArrayList<>();
 
     public List<RevocationDataValidatorCall> calls = new ArrayList<>();
+    private Consumer<RevocationDataValidatorCall> onValidateHandler;
+    private Consumer<ICrlClient> onAddCrlClientHandler;
+    private Consumer<IOcspClient> onAddOCSPClientHandler;
 
     /**
      * Creates new {@link RevocationDataValidator} instance to validate certificate revocation data.
@@ -51,19 +55,44 @@ public class MockRevocationDataValidator extends RevocationDataValidator {
     @Override
     public RevocationDataValidator addCrlClient(ICrlClient crlClient) {
         crlClientsAdded.add(crlClient);
+        if (onAddCrlClientHandler != null) {
+            onAddCrlClientHandler.accept(crlClient);
+        }
         return this;
     }
 
     @Override
     public RevocationDataValidator addOcspClient(IOcspClient ocspClient) {
         ocspClientsAdded.add(ocspClient);
+        if (onAddOCSPClientHandler != null) {
+            onAddOCSPClientHandler.accept(ocspClient);
+        }
         return this;
     }
 
     @Override
     public void validate(ValidationReport report, ValidationContext context, X509Certificate certificate,
                          Date validationDate) {
-        calls.add(new RevocationDataValidatorCall(report, context, certificate, validationDate));
+        RevocationDataValidatorCall call = new RevocationDataValidatorCall(report, context, certificate, validationDate);
+        calls.add(call);
+        if (onValidateHandler != null) {
+            onValidateHandler.accept(call);
+        }
+    }
+
+    public MockRevocationDataValidator onValidateDo(Consumer<RevocationDataValidatorCall> callBack) {
+        onValidateHandler = callBack;
+        return this;
+    }
+
+    public MockRevocationDataValidator onAddCerlClientDo(Consumer<ICrlClient> callBack) {
+        onAddCrlClientHandler = callBack;
+        return this;
+    }
+
+    public MockRevocationDataValidator onAddOCSPClientDo(Consumer<IOcspClient> callBack) {
+        onAddOCSPClientHandler = callBack;
+        return this;
     }
 
     public final static class RevocationDataValidatorCall {

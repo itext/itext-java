@@ -477,4 +477,117 @@ public class SignatureValidatorTest extends ExtendedITextTest {
                             && c.checkDate.equals(date1)));
         }
     }
+
+    @Test
+    public void signatureChainValidatorFailureTest() throws GeneralSecurityException, IOException {
+        String chainName = CERTS_SRC + "validCertsChain.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+        X509Certificate rootCert = (X509Certificate) certificateChain[2];
+
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "validDoc.pdf"))) {
+            mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
+            mockCertificateChainValidator.onCallDo(c-> {throw new RuntimeException("Test chain validation failure");});
+
+            SignatureValidator signatureValidator = builder.buildSignatureValidator();
+            ValidationReport report = signatureValidator.validateLatestSignature(document);
+            AssertValidationReport.assertThat(report, r->
+                    r.hasLogItem(l-> l
+                            .withMessage(SignatureValidator.CHAIN_VALIDATION_FAILED)));
+        }
+    }
+    @Test
+    public void timeStampChainValidatorFailureTest() throws GeneralSecurityException, IOException {
+        String chainName = CERTS_SRC + "validCertsChain.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+        X509Certificate rootCert = (X509Certificate) certificateChain[2];
+        X509Certificate intermediateCert = (X509Certificate) certificateChain[1];
+        X509Certificate signCert = (X509Certificate) certificateChain[0];
+
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "timestampSignatureDoc.pdf"))) {
+            mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
+            mockCertificateChainValidator.onCallDo(c-> {throw new RuntimeException("Test chain validation failure");});
+
+            SignatureValidator signatureValidator = builder.buildSignatureValidator();
+            ValidationReport report = signatureValidator.validateLatestSignature(document);
+            AssertValidationReport.assertThat(report, r->
+                    r.hasLogItem(l-> l
+                            .withMessage(SignatureValidator.CHAIN_VALIDATION_FAILED)));
+        }
+    }
+
+    @Test
+    public void certificateRetrieverAddKnownCertificatesFromDSSFailureTest() throws GeneralSecurityException, IOException {
+        String chainName = CERTS_SRC + "validCertsChain.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+        X509Certificate rootCert = (X509Certificate) certificateChain[2];
+
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "docWithDss.pdf"))) {
+            mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
+
+            mockCertificateRetriever.onAddKnownCertificatesDo( c -> {
+                throw new RuntimeException("Test add know certificates failure");
+            });
+
+            SignatureValidator signatureValidator = builder.buildSignatureValidator();
+            ValidationReport report = signatureValidator.validateLatestSignature(document);
+            AssertValidationReport.assertThat(report, r-> r
+                    .hasLogItems(1,Integer.MAX_VALUE,l -> l.withMessage(SignatureValidator.ADD_KNOWN_CERTIFICATES_FAILED)));
+        }
+    }
+    @Test
+    public void certificateRetrieverAddKnownCertificatesFromSignatureFailureTest() throws GeneralSecurityException, IOException {
+        String chainName = CERTS_SRC + "validCertsChain.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+        X509Certificate rootCert = (X509Certificate) certificateChain[2];
+
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "validDoc.pdf"))) {
+            mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
+            mockCertificateRetriever.onAddKnownCertificatesDo( c -> {
+                throw new RuntimeException("Test add know certificates failure");
+            });
+
+            SignatureValidator signatureValidator = builder.buildSignatureValidator();
+            ValidationReport report = signatureValidator.validateLatestSignature(document);
+            AssertValidationReport.assertThat(report, r-> r
+                    .hasLogItems(1,Integer.MAX_VALUE, l -> l.withMessage(SignatureValidator.ADD_KNOWN_CERTIFICATES_FAILED)));
+        }
+    }
+    @Test
+    public void certificateRetrieverAddKnownCertificatesFromTimestampFailureTest() throws GeneralSecurityException, IOException {
+        String chainName = CERTS_SRC + "validCertsChain.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+        X509Certificate rootCert = (X509Certificate) certificateChain[2];
+
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "timestampSignatureDoc.pdf"))) {
+            mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
+            mockCertificateRetriever.onAddKnownCertificatesDo( c -> {
+                throw new RuntimeException("Test add know certificates failure");
+            });
+
+            SignatureValidator signatureValidator = builder.buildSignatureValidator();
+            ValidationReport report = signatureValidator.validateLatestSignature(document);
+            AssertValidationReport.assertThat(report, r-> r
+                    .hasLogItems(1,Integer.MAX_VALUE, l -> l.withMessage(SignatureValidator.ADD_KNOWN_CERTIFICATES_FAILED)));
+        }
+    }
+
+    @Test
+    public void documentRevisionValidatorFailureTest() throws GeneralSecurityException, IOException {
+        String chainName = CERTS_SRC + "validCertsChain.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+        X509Certificate rootCert = (X509Certificate) certificateChain[2];
+
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "validDoc.pdf"))) {
+            mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
+            mockDocumentRevisionsValidator.onCallDo( c -> {
+                throw new RuntimeException("Test add know certificates failure");
+            });
+
+
+            SignatureValidator signatureValidator = builder.buildSignatureValidator();
+            ValidationReport report = signatureValidator.validateSignatures(document);
+            AssertValidationReport.assertThat(report, r-> r
+                    .hasLogItem(l -> l.withMessage(SignatureValidator.REVISIONS_VALIDATION_FAILED)));
+        }
+    }
 }

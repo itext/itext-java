@@ -32,11 +32,13 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Function;
 
 public class TestCrlClientWrapper implements ICrlClient {
 
     private final ICrlClient wrappedClient;
     private final List<CrlClientCall> calls = new ArrayList<>();
+    private Function<CrlClientCall, Collection<byte[]>> onGetEncoded;
 
     public TestCrlClientWrapper(ICrlClient wrappedClient) {
         this.wrappedClient = wrappedClient;
@@ -44,7 +46,15 @@ public class TestCrlClientWrapper implements ICrlClient {
 
     @Override
     public Collection<byte[]> getEncoded(X509Certificate checkCert, String url) throws CertificateEncodingException {
-        Collection<byte[]> crlBytesCollection = wrappedClient.getEncoded(checkCert, url);
+        CrlClientCall call = new CrlClientCall(checkCert, url);
+        Collection<byte[]> crlBytesCollection;
+        if (onGetEncoded != null) {
+            crlBytesCollection = onGetEncoded.apply(call);
+        } else {
+
+            crlBytesCollection = wrappedClient.getEncoded(checkCert, url);
+        }
+
         List<X509CRL> crlResponses = new ArrayList<>();
         for (byte[] crlBytes : crlBytesCollection) {
             try {
@@ -54,7 +64,8 @@ public class TestCrlClientWrapper implements ICrlClient {
                 throw new RuntimeException("Deserializing CRL response failed",e);
             }
         }
-        calls.add(new CrlClientCall(checkCert, url, crlResponses));
+        call.setResponses(crlResponses);
+        calls.add(call);
         return crlBytesCollection;
     }
 
@@ -62,15 +73,23 @@ public class TestCrlClientWrapper implements ICrlClient {
         return calls;
     }
 
+    public TestCrlClientWrapper onGetEncodedDo(Function<CrlClientCall, Collection<byte[]>> callBack) {
+        onGetEncoded = callBack;
+        return this;
+    }
+
     public static class CrlClientCall {
         public final X509Certificate checkCert;
         public final String url;
-        public final List<X509CRL> responses;
+        public List<X509CRL> responses;
 
-        public CrlClientCall(X509Certificate checkCert, String url, List<X509CRL> responses) {
+        public CrlClientCall(X509Certificate checkCert, String url) {
             this.checkCert = checkCert;
             this.url = url;
-            this.responses = responses;
+        }
+
+        public void setResponses(List<X509CRL> crlResponses) {
+            responses = crlResponses;
         }
     }
 }

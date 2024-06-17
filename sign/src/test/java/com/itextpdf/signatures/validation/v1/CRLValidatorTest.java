@@ -38,6 +38,7 @@ import com.itextpdf.signatures.validation.v1.context.TimeBasedContext;
 import com.itextpdf.signatures.validation.v1.context.ValidationContext;
 import com.itextpdf.signatures.validation.v1.context.ValidatorContext;
 import com.itextpdf.signatures.validation.v1.mocks.MockChainValidator;
+import com.itextpdf.signatures.validation.v1.mocks.MockIssuingCertificateRetriever;
 import com.itextpdf.signatures.validation.v1.report.ReportItem;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport;
 import com.itextpdf.test.ExtendedITextTest;
@@ -66,6 +67,7 @@ public class CRLValidatorTest extends ExtendedITextTest {
     private static final char[] KEY_PASSWORD = "testpassphrase".toCharArray();
 
     private MockChainValidator mockChainValidator;
+
     private X509Certificate crlIssuerCert;
     private X509Certificate signCert;
     private PrivateKey crlIssuerKey;
@@ -444,6 +446,46 @@ public class CRLValidatorTest extends ExtendedITextTest {
                 .hasStatus(ValidationReport.ValidationResult.VALID)
                 .hasNumberOfFailures(0));
     }
+
+    @Test
+    public void certificateRetrieverFailureTest() throws Exception {
+        retrieveTestResources("happyPath");
+        byte[] crl = createCrl(
+                crlIssuerCert,
+                crlIssuerKey,
+                DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, -5),
+                DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, +5)
+        );
+        MockIssuingCertificateRetriever mockCertificateRetriever = new MockIssuingCertificateRetriever();
+        mockCertificateRetriever.ongetCrlIssuerCertificatesDo(c -> {throw new RuntimeException("just testing");});
+        validatorChainBuilder.withIssuingCertificateRetriever(mockCertificateRetriever);
+        validatorChainBuilder.withCRLValidator(new CRLValidator(validatorChainBuilder));
+
+        ValidationReport report = performValidation("happyPath", TimeTestUtil.TEST_DATE_TIME, crl);
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationReport.ValidationResult.INDETERMINATE)
+                .hasLogItem(l -> l.withMessage(CRLValidator.CRL_ISSUER_REQUEST_FAILED)));
+
+    }
+
+
+    @Test
+    public void chainValidatorFailureTest() throws Exception {
+        retrieveTestResources("happyPath");
+        byte[] crl = createCrl(
+                crlIssuerCert,
+                crlIssuerKey,
+                DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, -5),
+                DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, +5)
+        );
+        mockChainValidator.onCallDo(c -> {throw new RuntimeException("Just testing");});
+
+        ValidationReport report = performValidation("happyPath", TimeTestUtil.TEST_DATE_TIME, crl);
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationReport.ValidationResult.INDETERMINATE)
+                .hasLogItem(l -> l.withMessage(CRLValidator.CRL_ISSUER_CHAIN_FAILED)));
+    }
+
 
     @Test
     public void providedTimeIsUsedForResponderValidation() throws Exception {

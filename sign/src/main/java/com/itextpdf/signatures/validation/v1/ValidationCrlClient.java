@@ -54,8 +54,8 @@ public class ValidationCrlClient implements ICrlClient {
      * Add CRL response which is linked with generation date.
      *
      * @param response {@link X509CRL} response to be added
-     * @param date {@link Date} to be linked with the response
-     * @param context {@link TimeBasedContext} time based context which corresponds to generation date
+     * @param date     {@link Date} to be linked with the response
+     * @param context  {@link TimeBasedContext} time based context which corresponds to generation date
      */
     public void addCrl(X509CRL response, Date date, TimeBasedContext context) {
         // We need to have these data stored in Map in order to replace duplicates.
@@ -80,7 +80,7 @@ public class ValidationCrlClient implements ICrlClient {
         for (X509CRL response : crls.keySet()) {
             try {
                 byteResponses.add(response.getEncoded());
-            } catch (CRLException ignored) {
+            } catch (CRLException | RuntimeException ignored) {
                 // Do nothing.
             }
         }

@@ -41,6 +41,9 @@ import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.List;
 
+import static com.itextpdf.signatures.validation.v1.SafeCalling.onExceptionLog;
+import static com.itextpdf.signatures.validation.v1.SafeCalling.onRuntimeExceptionLog;
+
 /**
  * Validator class, which is expected to be used for certificates chain validation.
  */
@@ -59,6 +62,18 @@ public class CertificateChainValidator {
     static final String NOT_YET_VALID_CERTIFICATE = "Certificate {0} is not yet valid.";
     static final String ISSUER_CANNOT_BE_VERIFIED =
             "Issuer certificate {0} for subject certificate {1} cannot be mathematically verified.";
+
+    static final String ISSUER_VERIFICATION_FAILED =
+            "Unexpected exception occurred while verifying issuer certificate.";
+    static final String ISSUER_RETRIEVAL_FAILED =
+            "Unexpected exception occurred while retrieving certificate issuer from IssuingCertificateRetriever.";
+    static final String TRUSTSTORE_RETRIEVAL_FAILED =
+            "Unexpected exception occurred while retrieving trust store from IssuingCertificateRetriever.";
+    static final String REVOCATION_VALIDATION_FAILED =
+            "Unexpected exception occurred while validating certificate revocation.";
+    static final String VALIDITY_PERIOD_CHECK_FAILED =
+            "Unexpected exception occurred while validating certificate validity period.";
+
 
     private final SignatureValidationProperties properties;
     private final IssuingCertificateRetriever certificateRetriever;
@@ -102,15 +117,15 @@ public class CertificateChainValidator {
     /**
      * Validate given certificate using provided validation date and required extensions.
      *
-     * @param context            the validation context in which to validate the certificate chain
-     * @param certificate        {@link X509Certificate} to be validated
-     * @param validationDate     {@link Date} against which certificate is expected to be validated. Usually signing
-     *                           date
+     * @param context        the validation context in which to validate the certificate chain
+     * @param certificate    {@link X509Certificate} to be validated
+     * @param validationDate {@link Date} against which certificate is expected to be validated. Usually signing
+     *                       date
      *
      * @return {@link ValidationReport} which contains detailed validation results
      */
     public ValidationReport validateCertificate(ValidationContext context, X509Certificate certificate,
-                                                Date validationDate) {
+            Date validationDate) {
         ValidationReport result = new ValidationReport();
         return validate(result, context, certificate, validationDate);
     }
@@ -119,11 +134,11 @@ public class CertificateChainValidator {
      * Validate given certificate using provided validation date and required extensions.
      * Result is added into provided report.
      *
-     * @param result             {@link ValidationReport} which is populated with detailed validation results
-     * @param context            the context in which to perform the validation
-     * @param certificate        {@link X509Certificate} to be validated
-     * @param validationDate     {@link Date} against which certificate is expected to be validated. Usually signing
-     *                           date
+     * @param result         {@link ValidationReport} which is populated with detailed validation results
+     * @param context        the context in which to perform the validation
+     * @param certificate    {@link X509Certificate} to be validated
+     * @param validationDate {@link Date} against which certificate is expected to be validated. Usually signing
+     *                       date
      *
      * @return {@link ValidationReport} which contains both provided and new validation results
      */
@@ -135,9 +150,12 @@ public class CertificateChainValidator {
         if (stopValidation(result, localContext)) {
             return result;
         }
-        if (checkIfCertIsTrusted(result, localContext, certificate)) {
+        if (onExceptionLog(() -> checkIfCertIsTrusted(result, localContext, certificate), Boolean.FALSE, result,
+                e -> new CertificateReportItem(certificate, CERTIFICATE_CHECK, TRUSTSTORE_RETRIEVAL_FAILED,
+                        e, ReportItemStatus.INFO))) {
             return result;
         }
+
         validateRevocationData(result, localContext, certificate, validationDate);
         if (stopValidation(result, localContext)) {
             return result;
@@ -230,6 +248,9 @@ public class CertificateChainValidator {
         } catch (CertificateNotYetValidException e) {
             result.addReportItem(new CertificateReportItem(certificate, VALIDITY_CHECK, MessageFormatUtil.format(
                     NOT_YET_VALID_CERTIFICATE, certificate.getSubjectX500Principal()), e, ReportItemStatus.INVALID));
+        } catch (RuntimeException e) {
+            result.addReportItem(new CertificateReportItem(certificate, VALIDITY_CHECK, MessageFormatUtil.format(
+                    VALIDITY_PERIOD_CHECK_FAILED, certificate.getSubjectX500Principal()), e, ReportItemStatus.INVALID));
         }
     }
 
@@ -249,13 +270,23 @@ public class CertificateChainValidator {
 
     private void validateRevocationData(ValidationReport report, ValidationContext context, X509Certificate certificate,
             Date validationDate) {
-        revocationDataValidator.validate(report, context, certificate, validationDate);
+        onRuntimeExceptionLog(() ->
+                revocationDataValidator.validate(report, context, certificate, validationDate), report, e ->
+                new CertificateReportItem(certificate, CERTIFICATE_CHECK,
+                        REVOCATION_VALIDATION_FAILED, e, ReportItemStatus.INDETERMINATE));
     }
 
     private void validateChain(ValidationReport result, ValidationContext context, X509Certificate certificate,
             Date validationDate) {
-        X509Certificate issuerCertificate =
-                (X509Certificate) certificateRetriever.retrieveIssuerCertificate(certificate);
+        X509Certificate issuerCertificate = null;
+        try {
+            issuerCertificate =
+                    (X509Certificate) certificateRetriever.retrieveIssuerCertificate(certificate);
+        } catch (RuntimeException e) {
+            result.addReportItem(new CertificateReportItem(certificate, CERTIFICATE_CHECK,
+                    ISSUER_RETRIEVAL_FAILED, e, ReportItemStatus.INDETERMINATE));
+            return;
+        }
         if (issuerCertificate == null) {
             result.addReportItem(new CertificateReportItem(certificate, CERTIFICATE_CHECK, MessageFormatUtil.format(
                     ISSUER_MISSING, certificate.getSubjectX500Principal()), ReportItemStatus.INDETERMINATE));
@@ -266,6 +297,11 @@ public class CertificateChainValidator {
         } catch (GeneralSecurityException e) {
             result.addReportItem(new CertificateReportItem(certificate, CERTIFICATE_CHECK,
                     MessageFormatUtil.format(ISSUER_CANNOT_BE_VERIFIED, issuerCertificate.getSubjectX500Principal(),
+                            certificate.getSubjectX500Principal()), e, ReportItemStatus.INVALID));
+            return;
+        } catch (RuntimeException e) {
+            result.addReportItem(new CertificateReportItem(certificate, CERTIFICATE_CHECK,
+                    MessageFormatUtil.format(ISSUER_VERIFICATION_FAILED, issuerCertificate.getSubjectX500Principal(),
                             certificate.getSubjectX500Principal()), e, ReportItemStatus.INVALID));
             return;
         }

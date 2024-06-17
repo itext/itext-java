@@ -30,9 +30,15 @@ import com.itextpdf.signatures.validation.v1.report.ReportItem;
 import com.itextpdf.signatures.validation.v1.report.ReportItem.ReportItemStatus;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
+
 public class MockDocumentRevisionsValidator extends DocumentRevisionsValidator {
 
+    public Consumer<RevisionsValidatorCall> onCallHandler;
     private ReportItemStatus reportItemStatus = ReportItemStatus.INFO;
+    private List<RevisionsValidatorCall> calls = new ArrayList<>();
 
     public MockDocumentRevisionsValidator() {
         super(new ValidatorChainBuilder());
@@ -40,6 +46,11 @@ public class MockDocumentRevisionsValidator extends DocumentRevisionsValidator {
 
     @Override
     public ValidationReport validateAllDocumentRevisions(ValidationContext context, PdfDocument document) {
+        RevisionsValidatorCall call = new RevisionsValidatorCall(context, document);
+        calls.add(call);
+        if (onCallHandler != null) {
+            onCallHandler.accept(call);
+        }
         ValidationReport report = new ValidationReport();
         if (reportItemStatus != ReportItemStatus.INFO) {
             report.addReportItem(new ReportItem("test", "test", reportItemStatus));
@@ -49,5 +60,20 @@ public class MockDocumentRevisionsValidator extends DocumentRevisionsValidator {
 
     public void setReportItemStatus(ReportItemStatus reportItemStatus) {
         this.reportItemStatus = reportItemStatus;
+    }
+
+    public void onCallDo(Consumer<RevisionsValidatorCall> callback) {
+        onCallHandler = callback;
+    }
+
+
+    public static class RevisionsValidatorCall {
+        public final ValidationContext context;
+        public final PdfDocument document;
+
+        public RevisionsValidatorCall(ValidationContext context, PdfDocument document) {
+            this.context = context;
+            this.document = document;
+        }
     }
 }

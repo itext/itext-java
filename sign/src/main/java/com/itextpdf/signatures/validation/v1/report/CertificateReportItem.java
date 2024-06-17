@@ -39,7 +39,7 @@ public class CertificateReportItem extends ReportItem {
      * @param status      {@link ReportItemStatus} report item status that determines validation result
      */
     public CertificateReportItem(X509Certificate certificate, String checkName, String message,
-                                 ReportItemStatus status) {
+            ReportItemStatus status) {
         this(certificate, checkName, message, null, status);
     }
 
@@ -53,7 +53,7 @@ public class CertificateReportItem extends ReportItem {
      * @param status      {@link ReportItemStatus} report item status that determines validation result
      */
     public CertificateReportItem(X509Certificate certificate, String checkName, String message, Exception cause,
-                                 ReportItemStatus status) {
+            ReportItemStatus status) {
         super(checkName, message, cause, status);
         this.certificate = certificate;
     }

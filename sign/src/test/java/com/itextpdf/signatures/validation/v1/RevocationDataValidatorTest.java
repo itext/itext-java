@@ -50,6 +50,7 @@ import com.itextpdf.signatures.validation.v1.context.ValidationContext;
 import com.itextpdf.signatures.validation.v1.context.ValidatorContext;
 import com.itextpdf.signatures.validation.v1.context.ValidatorContexts;
 import com.itextpdf.signatures.validation.v1.mocks.MockCrlValidator;
+import com.itextpdf.signatures.validation.v1.mocks.MockIssuingCertificateRetriever;
 import com.itextpdf.signatures.validation.v1.mocks.MockOCSPValidator;
 import com.itextpdf.signatures.validation.v1.mocks.MockSignatureValidationProperties;
 import com.itextpdf.signatures.validation.v1.report.ReportItem;
@@ -508,7 +509,7 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
         Assert.assertEquals(crlClient.getCalls().get(0).responses.get(1), mockCrlValidator.calls.get(0).crl);
     }
 
-    @Test
+@Test
     public void responsesFromValidationClientArePassedTest() throws GeneralSecurityException, IOException {
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
 
@@ -636,5 +637,167 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
         validator.addCrlClient(crlClient);
 
         validator.validate(report, baseContext.setTimeBasedContext(TimeBasedContext.HISTORICAL), checkCert, checkDate);
+    }
+
+    @Test
+    public void basicOCSPValidatorFailureTest() throws GeneralSecurityException, IOException {
+        Date checkDate = TimeTestUtil.TEST_DATE_TIME;
+        TestOcspResponseBuilder builder = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
+        builder.setProducedAt(DateTimeUtil.addDaysToDate(checkDate, 5));
+        builder.setThisUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(checkDate, 5)));
+        builder.setNextUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(checkDate, 10)));
+        TestOcspClientWrapper ocspClient = new TestOcspClientWrapper(new TestOcspClient().addBuilderForCertIssuer(caCert, builder));
+
+        ValidationReport report = new ValidationReport();
+        certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
+        mockParameters.addRevocationOnlineFetchingResponse(SignatureValidationProperties.OnlineFetching.NEVER_FETCH);
+        mockParameters.addRevocationOnlineFetchingResponse(SignatureValidationProperties.OnlineFetching.NEVER_FETCH);
+        mockParameters.addFreshnessResponse(Duration.ofDays(-2));
+        RevocationDataValidator validator = validatorChainBuilder.buildRevocationDataValidator();
+
+        validator.addOcspClient(ocspClient);
+
+        mockOCSPValidator.onCallDo(c -> {throw new RuntimeException("Test OCSP client failure"); });
+
+
+        validator.validate(report, baseContext, checkCert, checkDate);
+
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationReport.ValidationResult.VALID)
+                // the logitem from the OCSP valdiation should be copied to the final report
+                .hasLogItem(l -> l.withMessage(RevocationDataValidator.OCSP_VALIDATOR_FAILURE)));
+    }
+
+    @Test
+    public void OCSPValidatorFailureTest() throws GeneralSecurityException, IOException {
+        Date checkDate = TimeTestUtil.TEST_DATE_TIME;
+        Date revocationDate = DateTimeUtil.addDaysToDate(checkDate, -1);
+        TestCrlBuilder builder = new TestCrlBuilder(caCert, caPrivateKey, checkDate);
+        builder.setNextUpdate(DateTimeUtil.addDaysToDate(checkDate, 10));
+        builder.addCrlEntry(checkCert, revocationDate, FACTORY.createCRLReason().getKeyCompromise());
+        TestCrlClientWrapper crlClient = new TestCrlClientWrapper(new TestCrlClient().addBuilderForCertIssuer(builder));
+
+        ValidationReport report = new ValidationReport();
+        certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
+
+        mockParameters.addRevocationOnlineFetchingResponse(SignatureValidationProperties.OnlineFetching.NEVER_FETCH);
+        mockParameters.addRevocationOnlineFetchingResponse(SignatureValidationProperties.OnlineFetching.NEVER_FETCH);
+        mockParameters.addFreshnessResponse(Duration.ofDays(0));
+
+        ReportItem reportItem = new ReportItem("validator", "message",
+                ReportItem.ReportItemStatus.INFO);
+        mockCrlValidator.onCallDo(c -> {
+            throw new RuntimeException("Test OCSP client failure");
+        });
+
+        RevocationDataValidator validator = validatorChainBuilder.buildRevocationDataValidator()
+                .addCrlClient(crlClient);
+        validator.validate(report, baseContext, checkCert, checkDate);
+
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationReport.ValidationResult.VALID)
+                // the logitem from the OCSP valdiation should be copied to the final report
+                .hasLogItem(l -> l.withMessage(RevocationDataValidator.CRL_VALIDATOR_FAILURE)));
+    }
+
+    //certificateRetriever.retrieveIssuerCertificate
+
+    @Test
+    public void certificateRetrieverRetrieveIssuerCertificateFailureTest() throws GeneralSecurityException, IOException {
+        Date checkDate = TimeTestUtil.TEST_DATE_TIME;
+        TestOcspResponseBuilder builder = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
+        builder.setProducedAt(DateTimeUtil.addDaysToDate(checkDate, 5));
+        builder.setThisUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(checkDate, 5)));
+        builder.setNextUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(checkDate, 10)));
+        TestOcspClientWrapper ocspClient = new TestOcspClientWrapper(new TestOcspClient().addBuilderForCertIssuer(caCert, builder));
+
+        ValidationReport report = new ValidationReport();
+        certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
+        mockParameters.addRevocationOnlineFetchingResponse(SignatureValidationProperties.OnlineFetching.NEVER_FETCH);
+        mockParameters.addRevocationOnlineFetchingResponse(SignatureValidationProperties.OnlineFetching.NEVER_FETCH);
+        mockParameters.addFreshnessResponse(Duration.ofDays(-2));
+
+        MockIssuingCertificateRetriever mockCertificateRetreiver =
+                new MockIssuingCertificateRetriever(certificateRetriever).onRetrieveIssuerCertificateDo(c -> {
+                    throw new RuntimeException("Test retrieveIssuerCertificate failure");
+                });
+        validatorChainBuilder.withIssuingCertificateRetriever(mockCertificateRetreiver);
+        RevocationDataValidator validator = validatorChainBuilder.buildRevocationDataValidator();
+
+        validator.addOcspClient(ocspClient);
+
+        ReportItem reportItem = new ReportItem("validator", "message",
+                ReportItem.ReportItemStatus.INFO);
+        mockOCSPValidator.onCallDo(c -> c.report.addReportItem(reportItem));
+
+        validator.validate(report, baseContext, checkCert, checkDate);
+
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationReport.ValidationResult.INDETERMINATE)
+                .hasLogItem(l -> l.withMessage(RevocationDataValidator.ISSUER_RETRIEVAL_FAILED)));
+    }
+
+    @Test
+    public void ocspClientGetEncodedFailureTest() throws GeneralSecurityException, IOException {
+        Date checkDate = TimeTestUtil.TEST_DATE_TIME;
+        TestOcspResponseBuilder builder = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
+        builder.setProducedAt(DateTimeUtil.addDaysToDate(checkDate, 5));
+        builder.setThisUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(checkDate, 5)));
+        builder.setNextUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(checkDate, 10)));
+        TestOcspClientWrapper ocspClient = new TestOcspClientWrapper(new TestOcspClient().addBuilderForCertIssuer(caCert, builder));
+
+        ValidationReport report = new ValidationReport();
+        certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
+        mockParameters.addRevocationOnlineFetchingResponse(SignatureValidationProperties.OnlineFetching.NEVER_FETCH);
+        mockParameters.addRevocationOnlineFetchingResponse(SignatureValidationProperties.OnlineFetching.NEVER_FETCH);
+        mockParameters.addFreshnessResponse(Duration.ofDays(-2));
+
+        RevocationDataValidator validator = validatorChainBuilder.buildRevocationDataValidator();
+
+        validator.addOcspClient(ocspClient);
+
+        ReportItem reportItem = new ReportItem("validator", "message",
+                ReportItem.ReportItemStatus.INFO);
+        mockOCSPValidator.onCallDo(c -> c.report.addReportItem(reportItem));
+
+
+        ocspClient.onGetEncodedDo(c -> {throw new RuntimeException("Test onGetEncoded failure");});
+        validator.validate(report, baseContext, checkCert, checkDate);
+
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationReport.ValidationResult.INDETERMINATE)
+                .hasLogItem(l -> l.withMessage(RevocationDataValidator.OCSP_CLIENT_FAILURE, p -> ocspClient)));
+    }
+
+    @Test
+    public void crlClientGetEncodedFailureTest() throws GeneralSecurityException {
+        Date checkDate = TimeTestUtil.TEST_DATE_TIME;
+        Date revocationDate = DateTimeUtil.addDaysToDate(checkDate, -1);
+        TestCrlBuilder builder = new TestCrlBuilder(caCert, caPrivateKey, checkDate);
+        builder.setNextUpdate(DateTimeUtil.addDaysToDate(checkDate, 10));
+        builder.addCrlEntry(checkCert, revocationDate, FACTORY.createCRLReason().getKeyCompromise());
+        TestCrlClientWrapper crlClient = new TestCrlClientWrapper(new TestCrlClient().addBuilderForCertIssuer(builder));
+
+        ValidationReport report = new ValidationReport();
+        certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
+
+        mockParameters.addRevocationOnlineFetchingResponse(SignatureValidationProperties.OnlineFetching.NEVER_FETCH);
+        mockParameters.addRevocationOnlineFetchingResponse(SignatureValidationProperties.OnlineFetching.NEVER_FETCH);
+        mockParameters.addFreshnessResponse(Duration.ofDays(0));
+
+        ReportItem reportItem = new ReportItem("validator", "message",
+                ReportItem.ReportItemStatus.INFO);
+        mockCrlValidator.onCallDo(c -> c.report.addReportItem(reportItem));
+
+        RevocationDataValidator validator = validatorChainBuilder.buildRevocationDataValidator()
+                .addCrlClient(crlClient);
+
+        crlClient.onGetEncodedDo(c -> {throw new RuntimeException("Test getEncoded failure");});
+        validator.validate(report, baseContext, checkCert, checkDate);
+
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationReport.ValidationResult.INDETERMINATE)
+                .hasLogItem(l -> l.withMessage(RevocationDataValidator.CRL_CLIENT_FAILURE,p -> crlClient.toString())));
+
     }
 }

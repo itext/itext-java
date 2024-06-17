@@ -31,11 +31,13 @@ import java.io.IOException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 public class TestOcspClientWrapper implements IOcspClient {
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
     private final List<OcspClientCall> calls = new ArrayList<>();
     private final IOcspClient wrappedClient;
+    private Function<OcspClientCall, byte[]> onGetEncoded;
 
     public TestOcspClientWrapper(IOcspClient wrappedClient) {
         this.wrappedClient = wrappedClient;
@@ -43,12 +45,19 @@ public class TestOcspClientWrapper implements IOcspClient {
 
     @Override
     public byte[] getEncoded(X509Certificate checkCert, X509Certificate issuerCert, String url) {
-        byte[] response = wrappedClient.getEncoded(checkCert, issuerCert, url);
+        OcspClientCall call = new OcspClientCall(checkCert, issuerCert, url);
+        byte[] response;
+        if (onGetEncoded != null) {
+            response = onGetEncoded.apply(call);
+        } else {
+            response = wrappedClient.getEncoded(checkCert, issuerCert, url);
+        }
         try {
             IBasicOCSPResp basicOCSPResp = BOUNCY_CASTLE_FACTORY.createBasicOCSPResp(
                     BOUNCY_CASTLE_FACTORY.createBasicOCSPResponse(
                             BOUNCY_CASTLE_FACTORY.createASN1Primitive(response)));
-            calls.add(new OcspClientCall(checkCert, issuerCert, url, basicOCSPResp));
+            call.setResponce(basicOCSPResp);
+            calls.add(call);
         } catch (IOException e) {
             throw new RuntimeException("deserializing ocsp response failed", e);
         }
@@ -59,17 +68,25 @@ public class TestOcspClientWrapper implements IOcspClient {
         return calls;
     }
 
+    public TestOcspClientWrapper onGetEncodedDo(Function<OcspClientCall, byte[]> callBack) {
+        onGetEncoded = callBack;
+        return this;
+    }
+
     public static class OcspClientCall {
         public final X509Certificate checkCert;
         public final X509Certificate issuerCert;
         public final String url;
-        public final IBasicOCSPResp response;
+        public IBasicOCSPResp response;
 
-        public OcspClientCall(X509Certificate checkCert, X509Certificate issuerCert, String url, IBasicOCSPResp response) {
+        public OcspClientCall(X509Certificate checkCert, X509Certificate issuerCert, String url) {
             this.checkCert = checkCert;
             this.issuerCert = issuerCert;
             this.url = url;
-            this.response = response;
+        }
+
+        public void setResponce(IBasicOCSPResp basicOCSPResp) {
+            response = basicOCSPResp;
         }
     }
 }

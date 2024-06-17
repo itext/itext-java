@@ -224,6 +224,7 @@ public class TrustedCertificatesStore {
      * Get certificate, if any, which corresponds to the provided certificate name.
      *
      * @param certificateName {@link String} certificate name
+     *
      * @return {@link Certificate} which corresponds to the provided certificate name
      */
     public Certificate getKnownCertificate(String certificateName) {
