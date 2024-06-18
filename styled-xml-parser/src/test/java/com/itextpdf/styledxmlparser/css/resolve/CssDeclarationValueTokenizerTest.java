@@ -65,6 +65,39 @@ public class CssDeclarationValueTokenizerTest extends ExtendedITextTest {
         runTest("a('x'), b('x')", Arrays.asList("a('x')", ",", "b('x')"), Arrays.asList(CssDeclarationValueTokenizer.TokenType.FUNCTION, CssDeclarationValueTokenizer.TokenType.COMMA, CssDeclarationValueTokenizer.TokenType.FUNCTION));
     }
 
+    @Test
+    public void stringTest01() {
+        runTest("'a b c'", Arrays.asList("a b c"), Arrays.asList(CssDeclarationValueTokenizer.TokenType.STRING));
+    }
+
+    @Test
+    public void stringTest02() {
+        runTest("\"a b c\"", Arrays.asList("a b c"), Arrays.asList(CssDeclarationValueTokenizer.TokenType.STRING));
+    }
+
+    @Test
+    public void stringTest03() {
+        runTest("[ aa  bb  cc ]", Arrays.asList("[ aa  bb  cc ]"),
+                Arrays.asList(CssDeclarationValueTokenizer.TokenType.STRING));
+    }
+
+    @Test
+    public void stringTest04() {
+        runTest("[aa bb cc] [dd ee] 'ff ff'", Arrays.asList("[aa bb cc]", "[dd ee]", "ff ff"),
+                Arrays.asList(CssDeclarationValueTokenizer.TokenType.STRING,
+                        CssDeclarationValueTokenizer.TokenType.STRING,
+                        CssDeclarationValueTokenizer.TokenType.STRING));
+    }
+
+    @Test
+    public void functionWithSquareBracketsTest04() {
+        runTest("'prefix' repeat(3, [aa bb cc] 2 [dd ee] 3) 'ff ff'",
+                Arrays.asList("prefix", "repeat(3, [aa bb cc] 2 [dd ee] 3)", "ff ff"),
+                Arrays.asList(CssDeclarationValueTokenizer.TokenType.STRING,
+                        CssDeclarationValueTokenizer.TokenType.FUNCTION,
+                        CssDeclarationValueTokenizer.TokenType.STRING));
+    }
+
     private void runTest(String src, List<String> tokenValues, List<CssDeclarationValueTokenizer.TokenType> tokenTypes) {
         CssDeclarationValueTokenizer tokenizer = new CssDeclarationValueTokenizer(src);
         CssDeclarationValueTokenizer.Token token = null;
