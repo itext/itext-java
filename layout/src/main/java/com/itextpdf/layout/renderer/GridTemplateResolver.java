@@ -30,6 +30,7 @@ import com.itextpdf.layout.properties.grid.MinMaxValue;
 import com.itextpdf.layout.properties.grid.PercentValue;
 import com.itextpdf.layout.properties.grid.PointValue;
 import com.itextpdf.layout.properties.grid.TemplateValue;
+import com.itextpdf.layout.properties.grid.TemplateValue.ValueType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -136,9 +137,15 @@ class GridTemplateResolver {
                 // or as its minimum track sizing function otherwise
                 // if encountered intrinsic or flexible before, then it doesn't matter what to process
                 boolean currentValue = containsIntrinsicOrFlexible;
-                float length = processValue(((MinMaxValue)value).getMax());
+                final MinMaxValue minMaxValue = (MinMaxValue) value;
+                if (minMaxValue.getMin().getType() == ValueType.FLEX) {
+                    // A future level of CSS Grid spec may allow <flex> minimums, but not now
+                    throw new IllegalStateException(
+                            LayoutExceptionMessageConstant.FLEXIBLE_ARENT_ALLOWED_AS_MINIMUM_IN_MINMAX);
+                }
+                float length = processValue(minMaxValue.getMax());
                 if (containsIntrinsicOrFlexible) {
-                    length = processValue(((MinMaxValue)value).getMin());
+                    length = processValue(minMaxValue.getMin());
                 }
                 containsIntrinsicOrFlexible = currentValue;
                 result.setFreeze(false);

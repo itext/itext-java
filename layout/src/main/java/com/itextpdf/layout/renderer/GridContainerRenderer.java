@@ -345,10 +345,8 @@ public class GridContainerRenderer extends BlockRenderer {
         float rowGap = rowGapProp == null ? 0f : (float) rowGapProp;
 
         // Resolving repeats
-        GridTemplateResolver rowRepeatResolver
-                = new GridTemplateResolver(actualBBox.getHeight(), rowGap);
-        GridTemplateResolver columnRepeatResolver
-                = new GridTemplateResolver(actualBBox.getWidth(), columnGap);
+        GridTemplateResolver rowRepeatResolver = new GridTemplateResolver(actualBBox.getHeight(), rowGap);
+        GridTemplateResolver columnRepeatResolver = new GridTemplateResolver(actualBBox.getWidth(), columnGap);
         List<GridValue> templateRows = rowRepeatResolver.resolveTemplate(
                 renderer.<List<TemplateValue>>getProperty(Property.GRID_TEMPLATE_ROWS));
         List<GridValue> templateColumns = columnRepeatResolver.resolveTemplate(

@@ -24,7 +24,6 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.properties.grid.AutoValue;
-import com.itextpdf.layout.properties.grid.FlexValue;
 import com.itextpdf.layout.properties.grid.GridValue;
 import com.itextpdf.layout.renderer.Grid.GridOrder;
 import com.itextpdf.layout.renderer.GridTrackSizer.TrackSizingResult;
@@ -178,7 +177,7 @@ class GridSizer {
             } else if (columnAutoWidth != null) {
                 colsValues.add(columnAutoWidth);
             } else {
-                colsValues.add(new FlexValue(1f));
+                colsValues.add(AutoValue.VALUE);
             }
         }
         GridTrackSizer gridTrackSizer = new GridTrackSizer(grid, colsValues, columnGap,
