@@ -12,9 +12,7 @@
 
   <name>iText - sign</name>
   <url>https://itextpdf.com/</url>
-  <properties>
-    <sonar.coverage.exclusions>**/validation/v1/**/*,**/cms/SignerInfo.java</sonar.coverage.exclusions>
-  </properties>
+
   <dependencies>
     <dependency>
       <groupId>com.itextpdf</groupId>

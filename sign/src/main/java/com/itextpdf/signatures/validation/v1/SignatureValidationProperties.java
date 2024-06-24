@@ -36,8 +36,8 @@ import com.itextpdf.signatures.validation.v1.context.TimeBasedContexts;
 import com.itextpdf.signatures.validation.v1.context.ValidationContext;
 import com.itextpdf.signatures.validation.v1.context.ValidatorContext;
 import com.itextpdf.signatures.validation.v1.context.ValidatorContexts;
-import com.itextpdf.signatures.validation.v1.extensions.BasicConstraintsExtension;
 import com.itextpdf.signatures.validation.v1.extensions.CertificateExtension;
+import com.itextpdf.signatures.validation.v1.extensions.DynamicBasicConstraintsExtension;
 import com.itextpdf.signatures.validation.v1.extensions.ExtendedKeyUsageExtension;
 import com.itextpdf.signatures.validation.v1.extensions.KeyUsage;
 import com.itextpdf.signatures.validation.v1.extensions.KeyUsageExtension;
@@ -86,7 +86,7 @@ public class SignatureValidationProperties {
                 Collections.<CertificateExtension>singletonList(new KeyUsageExtension(KeyUsage.NON_REPUDIATION)));
         List<CertificateExtension> certIssuerRequiredExtensions = new ArrayList<>();
         certIssuerRequiredExtensions.add(new KeyUsageExtension(KeyUsage.KEY_CERT_SIGN));
-        certIssuerRequiredExtensions.add(new BasicConstraintsExtension(true));
+        certIssuerRequiredExtensions.add(new DynamicBasicConstraintsExtension());
         setRequiredExtensions(CertificateSources.of(CertificateSource.CERT_ISSUER), certIssuerRequiredExtensions);
         setRequiredExtensions(CertificateSources.of(CertificateSource.TIMESTAMP),
                 Collections.<CertificateExtension>singletonList(new ExtendedKeyUsageExtension(

@@ -38,7 +38,7 @@ import com.itextpdf.signatures.logs.SignLogMessageConstant;
 import com.itextpdf.signatures.validation.v1.context.CertificateSource;
 import com.itextpdf.signatures.validation.v1.context.ValidationContext;
 import com.itextpdf.signatures.validation.v1.context.ValidatorContext;
-import com.itextpdf.signatures.validation.v1.extensions.BasicConstraintsExtension;
+import com.itextpdf.signatures.validation.v1.extensions.DynamicBasicConstraintsExtension;
 import com.itextpdf.signatures.validation.v1.report.CertificateReportItem;
 import com.itextpdf.signatures.validation.v1.report.ReportItem;
 import com.itextpdf.signatures.validation.v1.report.ReportItem.ReportItemStatus;
@@ -174,7 +174,8 @@ public class CRLValidator {
         IDistributionPoint distributionPoint = null;
         if (!issuingDistPoint.isNull()) {
             // Verify that certificate is in the CRL scope using IDP extension.
-            boolean basicConstraintsCaAsserted = new BasicConstraintsExtension(true).existsInCertificate(certificate);
+            boolean basicConstraintsCaAsserted = new DynamicBasicConstraintsExtension().withCertificateChainSize(1)
+                    .existsInCertificate(certificate);
             if ((issuingDistPoint.onlyContainsUserCerts() && basicConstraintsCaAsserted) ||
                     (issuingDistPoint.onlyContainsCACerts() && !basicConstraintsCaAsserted)) {
                 report.addReportItem(new CertificateReportItem(certificate, CRL_CHECK,

@@ -111,6 +111,71 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
     }
 
     @Test
+    public void validNumericBasicConstraintsTest() throws CertificateException, IOException {
+        String chainName = CERTS_SRC + "signChainWithValidNumericBasicConstraints.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+        X509Certificate signingCert = (X509Certificate) certificateChain[0];
+        X509Certificate intermediateCert = (X509Certificate) certificateChain[1];
+        X509Certificate rootCert = (X509Certificate) certificateChain[2];
+
+        CertificateChainValidator validator = validatorChainBuilder.buildCertificateChainValidator();
+        certificateRetriever.addKnownCertificates(Collections.<Certificate>singletonList(intermediateCert));
+        certificateRetriever.setTrustedCertificates(Collections.<Certificate>singletonList(rootCert));
+
+        ValidationReport report =
+                validator.validateCertificate(baseContext, signingCert, TimeTestUtil.TEST_DATE_TIME);
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationResult.VALID)
+                .hasNumberOfFailures(0)
+                .hasNumberOfLogs(1)
+                .hasLogItem(la -> la
+                        .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
+                        .withMessage("Certificate {0} is trusted, revocation data checks are not required.",
+                                l -> rootCert.getSubjectX500Principal())
+                        .withCertificate(rootCert)
+                ));
+    }
+
+    @Test
+    public void invalidNumericBasicConstraintsTest() throws CertificateException, IOException {
+        String chainName = CERTS_SRC + "signChainWithInvalidNumericBasicConstraints.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+        X509Certificate signingCert = (X509Certificate) certificateChain[0];
+        X509Certificate intermediateCert = (X509Certificate) certificateChain[1];
+        X509Certificate rootCert = (X509Certificate) certificateChain[2];
+
+        CertificateChainValidator validator = validatorChainBuilder.buildCertificateChainValidator();
+        certificateRetriever.addKnownCertificates(Collections.<Certificate>singletonList(intermediateCert));
+        certificateRetriever.setTrustedCertificates(Collections.<Certificate>singletonList(rootCert));
+
+        ValidationReport report =
+                validator.validateCertificate(baseContext, signingCert, TimeTestUtil.TEST_DATE_TIME);
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationResult.INVALID)
+                .hasNumberOfFailures(2)
+                .hasNumberOfLogs(3)
+                .hasLogItem(la -> la
+                        .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
+                        .withMessage("Certificate {0} is trusted, revocation data checks are not required.",
+                                l -> rootCert.getSubjectX500Principal())
+                        .withCertificate(rootCert)
+                )
+                .hasLogItem(la -> la
+                        .withCheckName(CertificateChainValidator.EXTENSIONS_CHECK)
+                        .withMessage(CertificateChainValidator.EXTENSION_MISSING,
+                                l -> "2.5.29.19")
+                        .withCertificate(rootCert)
+                )
+                .hasLogItem(la -> la
+                        .withCheckName(CertificateChainValidator.EXTENSIONS_CHECK)
+                        .withMessage(CertificateChainValidator.EXTENSION_MISSING,
+                                l -> "2.5.29.19")
+                        .withCertificate(intermediateCert)
+                )
+        );
+    }
+
+    @Test
     public void revocationValidationCallTest() throws CertificateException, IOException {
         String chainName = CERTS_SRC + "chain.pem";
         Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);

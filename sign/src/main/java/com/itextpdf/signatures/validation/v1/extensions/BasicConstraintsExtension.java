@@ -32,7 +32,10 @@ import java.security.cert.X509Certificate;
 
 /**
  * Class representing "Basic Constraints" certificate extension.
+ *
+ * @deprecated since 8.0.5. To be removed.
  */
+@Deprecated
 public class BasicConstraintsExtension extends CertificateExtension {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
