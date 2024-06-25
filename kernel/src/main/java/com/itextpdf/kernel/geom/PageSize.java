@@ -33,7 +33,7 @@ public class PageSize extends Rectangle implements Cloneable {
     public static final PageSize A6 = new PageSize(298, 420);
     public static final PageSize A7 = new PageSize(210, 298);
     public static final PageSize A8 = new PageSize(148, 210);
-    public static final PageSize A9 = new PageSize(105, 547);
+    public static final PageSize A9 = new PageSize(105, 148);
     public static final PageSize A10 = new PageSize(74, 105);
 
     public static final PageSize B0 = new PageSize(2834, 4008);
