@@ -909,4 +909,23 @@ public class GridContainerTest extends ExtendedITextTest {
         }
         Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
+
+    @Test
+    public void marginsCollapsingIssueTest() throws IOException, InterruptedException {
+        String filename = DESTINATION_FOLDER + "marginsCollapsingIssueTest.pdf";
+        String cmpName = SOURCE_FOLDER + "cmp_marginsCollapsingIssueTest.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+            Div grid = new GridContainer().setBackgroundColor(ColorConstants.BLUE);
+            grid.add(new Paragraph("some grid text"));
+            Div div = new Div()
+                    .setBackgroundColor(ColorConstants.RED)
+                    .add(new Paragraph("some div text"))
+                    .add(grid);
+            div.setProperty(Property.COLLAPSING_MARGINS, Boolean.TRUE);
+
+            document.add(div);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+    }
 }

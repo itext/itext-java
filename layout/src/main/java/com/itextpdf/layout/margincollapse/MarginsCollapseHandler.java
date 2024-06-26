@@ -33,6 +33,7 @@ import com.itextpdf.layout.renderer.AbstractRenderer;
 import com.itextpdf.layout.renderer.BlockFormattingContextUtil;
 import com.itextpdf.layout.renderer.BlockRenderer;
 import com.itextpdf.layout.renderer.CellRenderer;
+import com.itextpdf.layout.renderer.GridContainerRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.LineRenderer;
 import com.itextpdf.layout.renderer.TableRenderer;
@@ -227,7 +228,9 @@ public class MarginsCollapseHandler {
         }
 
         MarginsCollapse ownCollapseAfter;
-        boolean lastChildMarginJoinedToParent = prevChildMarginInfo != null && prevChildMarginInfo.isIgnoreOwnMarginBottom() && !lastKidCollapsedAfterHasClearanceApplied;
+        final boolean lastChildMarginJoinedToParent = prevChildMarginInfo != null
+                && prevChildMarginInfo.isIgnoreOwnMarginBottom()
+                && !lastKidCollapsedAfterHasClearanceApplied;
         if (lastChildMarginJoinedToParent) {
             ownCollapseAfter = prevChildMarginInfo.getOwnCollapseAfter();
         } else {
@@ -486,7 +489,10 @@ public class MarginsCollapseHandler {
     }
 
     private static boolean isBlockElement(IRenderer renderer) {
-        return renderer instanceof BlockRenderer || renderer instanceof TableRenderer;
+        // GridContainerRenderer is inherited from BlockRenderer but only not to copy/paste some overloads.
+        // It doesn't use BlockRenderer#layout internally.
+        return (renderer instanceof BlockRenderer || renderer instanceof TableRenderer)
+                && !(renderer instanceof GridContainerRenderer);
     }
 
     private static boolean hasHeightProp(IRenderer renderer) {
