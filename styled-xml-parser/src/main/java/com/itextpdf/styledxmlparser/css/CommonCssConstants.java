@@ -350,6 +350,11 @@ public class CommonCssConstants {
     public static final String DISPLAY = "display";
 
     /**
+     * The Constant DENSE.
+     */
+    public static final String DENSE = "dense";
+
+    /**
      * The Constant EMPTY_CELLS.
      */
     public static final String EMPTY_CELLS = "empty-cells";
@@ -498,6 +503,81 @@ public class CommonCssConstants {
      * The Constant GAP.
      */
     public static final String GAP = "gap";
+
+    /**
+     * The Constant GRID.
+     */
+    public static final String GRID = "grid";
+
+    /**
+     * The Constant GRID_COLUMN.
+     */
+    public static final String GRID_COLUMN = "grid-column";
+
+    /**
+     * The Constant GRID_ROW.
+     */
+    public static final String GRID_ROW = "grid-row";
+
+    /**
+     * The Constant GRID_TEMPLATE.
+     */
+    public static final String GRID_TEMPLATE = "grid-template";
+
+    /**
+     * The Constant GRID_COLUMN_END.
+     */
+    public static final String GRID_COLUMN_END = "grid-column-end";
+
+    /**
+     * The Constant GRID_COLUMN_START.
+     */
+    public static final String GRID_COLUMN_START = "grid-column-start";
+
+    /**
+     * The Constant GRID_ROW_END.
+     */
+    public static final String GRID_ROW_END = "grid-row-end";
+
+    /**
+     * The Constant GRID_ROW_START.
+     */
+    public static final String GRID_ROW_START = "grid-row-start";
+
+    /**
+     * The Constant GRID_TEMPLATE_AREAS.
+     */
+    public static final String GRID_TEMPLATE_AREAS = "grid-template-areas";
+
+    /**
+     * The Constant GRID_TEMPLATE_COLUMNS.
+     */
+    public static final String GRID_TEMPLATE_COLUMNS = "grid-template-columns";
+
+    /**
+     * The Constant GRID_TEMPLATE_ROWS.
+     */
+    public static final String GRID_TEMPLATE_ROWS = "grid-template-rows";
+
+    /**
+     * The Constant GRID_AUTO_ROWS.
+     */
+    public static final String GRID_AUTO_ROWS = "grid-auto-rows";
+
+    /**
+     * The Constant GRID_AUTO_COLUMNS.
+     */
+    public static final String GRID_AUTO_COLUMNS = "grid-auto-columns";
+
+    /**
+     * The Constant GRID_AUTO_FLOW.
+     */
+    public static final String GRID_AUTO_FLOW = "grid-auto-flow";
+
+    /**
+     * The Constant AUTO_FLOW.
+     */
+    public static final String AUTO_FLOW = "auto-flow";
 
     /**
      * The Constant HANGING_PUNCTUATION.

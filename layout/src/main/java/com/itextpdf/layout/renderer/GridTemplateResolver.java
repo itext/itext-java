@@ -54,7 +54,7 @@ class GridTemplateResolver {
      * @return true if auto-fit repeat was encountered, false otherwise
      */
     boolean isCollapseNullLines() {
-        return autoRepeatResolver != null;
+        return autoRepeatResolver != null && autoRepeatResolver.repeat.isAutoFit();
     }
 
     /**

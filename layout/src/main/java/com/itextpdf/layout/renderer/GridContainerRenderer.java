@@ -92,13 +92,13 @@ public class GridContainerRenderer extends BlockRenderer {
         GridLayoutResult layoutResult = layoutGrid(layoutContext, actualBBox, grid);
 
         if (layoutResult.getOverflowRenderers().isEmpty()) {
-            this.occupiedArea = calculateContainerOccupiedArea(layoutContext, grid, true);
+            this.occupiedArea = calculateContainerOccupiedArea(layoutContext, true);
             return new LayoutResult(LayoutResult.FULL, this.occupiedArea, null, null);
         } else if (layoutResult.getSplitRenderers().isEmpty()) {
             IRenderer cause = layoutResult.getCauseOfNothing() == null ? this : layoutResult.getCauseOfNothing();
             return new LayoutResult(LayoutResult.NOTHING, null, null, this, cause);
         } else {
-            this.occupiedArea = calculateContainerOccupiedArea(layoutContext, grid, false);
+            this.occupiedArea = calculateContainerOccupiedArea(layoutContext, false);
             return new LayoutResult(LayoutResult.PARTIAL, this.occupiedArea,
                     createSplitRenderer(layoutResult.getSplitRenderers()),
                     createOverflowRenderer(layoutResult.getOverflowRenderers()));
@@ -271,7 +271,7 @@ public class GridContainerRenderer extends BlockRenderer {
     }
 
     // Calculate grid container occupied area based on its width/height properties and cell layout areas
-    private LayoutArea calculateContainerOccupiedArea(LayoutContext layoutContext, Grid grid, boolean isFull) {
+    private LayoutArea calculateContainerOccupiedArea(LayoutContext layoutContext, boolean isFull) {
         LayoutArea area = layoutContext.getArea().clone();
         final float totalHeight = updateOccupiedHeight(containerHeight, isFull);
         if (totalHeight < area.getBBox().getHeight() || isFull) {

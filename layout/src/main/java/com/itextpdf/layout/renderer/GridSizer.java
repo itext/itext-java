@@ -146,7 +146,7 @@ class GridSizer {
     private float calculateGridOccupiedHeight(List<Float> originalSizes) {
         // Calculate explicit height to ensure that even empty rows which covered by template would be considered
         float minHeight = 0.0f;
-        for (int i = 0; i < (templateRows == null ? 0 : templateRows.size()); ++i) {
+        for (int i = 0; i < (templateRows == null ? 0 : Math.min(templateRows.size(), originalSizes.size())); ++i) {
             minHeight += (float) originalSizes.get(i);
         }
         float maxHeight = sum(originalSizes);

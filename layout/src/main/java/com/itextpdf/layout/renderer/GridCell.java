@@ -146,6 +146,8 @@ class GridCell {
             if (intStart < intEnd) {
                 result[0] = intStart;
                 result[1] = intEnd - intStart;
+            } else if (intStart == intEnd) {
+                result[0] = intStart;
             } else {
                 result[0] = intEnd;
                 result[1] = intStart - intEnd;
