@@ -22,26 +22,21 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.font.constants.StandardFonts;
-import com.itextpdf.kernel.font.PdfFontFactory;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagging.IStructureNode;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
+import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import static org.junit.Assert.assertTrue;
@@ -111,6 +106,13 @@ public class PdfStructTreeRootTest extends ExtendedITextTest {
         PdfReader r = new PdfReader(new ByteArrayInputStream(os.toByteArray()));
         PdfDocument readPdfDoc = new PdfDocument(r);
         Assert.assertFalse(readPdfDoc.getStructTreeRoot().getPdfObject().containsKey(PdfName.IDTree));
+    }
 
+    @Test
+    public void cyclicReferencesTest() throws IOException {
+        String inFile = sourceFolder + "cyclicReferences.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(inFile), new PdfWriter(new ByteArrayOutputStream()));
+        AssertUtil.doesNotThrow(() -> pdfDoc.close());
     }
 }

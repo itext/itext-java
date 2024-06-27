@@ -28,6 +28,9 @@ import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
+import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -91,6 +94,31 @@ public class TaggedPdfReaderToolTest extends ExtendedITextTest {
             }
         } catch (IOException e) {
             Assert.fail("IOException is not expected to be triggered");
+        }
+    }
+
+    @Test
+    public void cyclicReferencesTest() throws IOException, ParserConfigurationException, SAXException {
+        String outXmlPath = DESTINATION_FOLDER + "cyclicReferences.xml";
+        String cmpXmlPath = SOURCE_FOLDER + "cmp_cyclicReferences.xml";
+
+        PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        doc.setTagged();
+        PdfStructElem kid1 = new PdfStructElem(doc, PdfStructTreeRoot.convertRoleToPdfName(StandardRoles.P));
+        PdfStructElem kid2 = new PdfStructElem(doc, PdfStructTreeRoot.convertRoleToPdfName(StandardRoles.DIV));
+        doc.getStructTreeRoot().addKid(kid1);
+        doc.getStructTreeRoot().addKid(kid2);
+        kid1.addKid(kid2);
+        kid2.addKid(kid1);
+
+        TaggedPdfReaderTool tool = new TaggedPdfReaderTool(doc);
+        try (OutputStream outXml = FileUtil.getFileOutputStream(outXmlPath)) {
+            tool.convertToXml(outXml, "UTF-8");
+        }
+
+        CompareTool compareTool = new CompareTool();
+        if (!compareTool.compareXmls(outXmlPath, cmpXmlPath)) {
+            Assert.fail("Resultant xml is different.");
         }
     }
 }

@@ -30,6 +30,8 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.tagging.IStructureNode;
+import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
+import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
@@ -53,6 +55,29 @@ public class TagTreeIteratorTest extends ExtendedITextTest {
     }
 
     @Test
+    public void tagTreeIteratorApproverNull() {
+        String errorMessage =
+                MessageFormatUtil.format(KernelExceptionMessageConstant.ARG_SHOULD_NOT_BE_NULL, "approver");
+        PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(), new WriterProperties()));
+        doc.setTagged();
+        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+                () -> new TagTreeIterator(doc.getStructTreeRoot(), null, TagTreeIterator.TreeTraversalOrder.PRE_ORDER));
+        Assert.assertEquals(e.getMessage(), errorMessage);
+    }
+
+    @Test
+    public void tagTreeIteratorHandlerNull() {
+        String errorMessage =
+                MessageFormatUtil.format(KernelExceptionMessageConstant.ARG_SHOULD_NOT_BE_NULL, "handler");
+        PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(), new WriterProperties()));
+        doc.setTagged();
+        TagTreeIterator it = new TagTreeIterator(doc.getStructTreeRoot());
+        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+                () -> it.addHandler(null));
+        Assert.assertEquals(e.getMessage(), errorMessage);
+    }
+
+    @Test
     public void traversalWithoutElements() {
         PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(), new WriterProperties()));
         doc.setTagged();
@@ -62,7 +87,6 @@ public class TagTreeIteratorTest extends ExtendedITextTest {
         iterator.traverse();
         Assert.assertEquals(1, handler.nodes.size());
     }
-
 
     @Test
     public void traversalWithSomeElements() {
@@ -92,6 +116,62 @@ public class TagTreeIteratorTest extends ExtendedITextTest {
         Assert.assertEquals(PdfName.Code, handler.nodes.get(6).getRole());
     }
 
+    @Test
+    public void postOrderTraversal() {
+        PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(), new WriterProperties()));
+        doc.setTagged();
+        TagTreePointer tp = new TagTreePointer(doc);
+
+        tp.addTag(StandardRoles.DIV);
+        tp.addTag(StandardRoles.P);
+        tp.addTag(StandardRoles.FIGURE);
+        tp.moveToParent();
+        tp.addTag(StandardRoles.DIV);
+        tp.addTag(StandardRoles.CODE);
+
+        TagTreeIterator iterator = new TagTreeIterator(doc.getStructTreeRoot(), new TagTreeIteratorElementApprover(),
+                TagTreeIterator.TreeTraversalOrder.POST_ORDER);
+        TestHandler handler = new TestHandler();
+
+        iterator.addHandler(handler);
+        iterator.traverse();
+        Assert.assertEquals(7, handler.nodes.size());
+        Assert.assertEquals(PdfName.Figure, handler.nodes.get(0).getRole());
+        Assert.assertEquals(PdfName.Code, handler.nodes.get(1).getRole());
+        Assert.assertEquals(PdfName.Div, handler.nodes.get(2).getRole());
+        Assert.assertEquals(PdfName.P, handler.nodes.get(3).getRole());
+        Assert.assertEquals(PdfName.Div, handler.nodes.get(4).getRole());
+        Assert.assertEquals(PdfName.Document, handler.nodes.get(5).getRole());
+        Assert.assertNull(handler.nodes.get(6).getRole());
+    }
+
+    @Test
+    public void cyclicReferencesTraversal() {
+        PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(), new WriterProperties()));
+        doc.setTagged();
+
+        PdfStructElem kid1 = new PdfStructElem(doc, PdfStructTreeRoot.convertRoleToPdfName(StandardRoles.P));
+        PdfStructElem kid2 = new PdfStructElem(doc, PdfStructTreeRoot.convertRoleToPdfName(StandardRoles.DIV));
+        doc.getStructTreeRoot().addKid(kid1);
+        doc.getStructTreeRoot().addKid(kid2);
+        kid1.addKid(kid2);
+        kid2.addKid(kid1);
+
+        TagTreeIterator iterator = new TagTreeIterator(doc.getStructTreeRoot(),
+                new TagTreeIteratorAvoidDuplicatesApprover(),
+                TagTreeIterator.TreeTraversalOrder.POST_ORDER);
+        TestHandler handler = new TestHandler();
+
+        iterator.addHandler(handler);
+        iterator.traverse();
+
+        Assert.assertEquals(3, handler.nodes.size());
+
+        Assert.assertEquals(PdfName.Div, handler.nodes.get(0).getRole());
+        Assert.assertEquals(PdfName.P, handler.nodes.get(1).getRole());
+        Assert.assertNull(handler.nodes.get(2).getRole());
+    }
+
     static class TestHandler implements ITagTreeIteratorHandler {
 
         final List<IStructureNode> nodes = new ArrayList<>();
@@ -101,6 +181,4 @@ public class TagTreeIteratorTest extends ExtendedITextTest {
             nodes.add(elem);
         }
     }
-
-
 }

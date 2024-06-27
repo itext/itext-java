@@ -23,17 +23,27 @@
 package com.itextpdf.kernel.pdf.tagutils;
 
 import com.itextpdf.kernel.pdf.tagging.IStructureNode;
+import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 
 /**
- * Handler for {@link TagTreeIterator}.
- * Is used to handle specific events during the traversal.
+ * Class that flushes struct elements while iterating over struct tree root with {@link TagTreeIterator}.
  */
-public interface ITagTreeIteratorHandler {
+public class TagTreeIteratorFlusher implements ITagTreeIteratorHandler {
 
     /**
-     * Called when the next element is reached during the traversal.
-     *
-     * @param elem the next element
+     * Creates a new instance of {@link TagTreeIteratorFlusher}
      */
-    void nextElement(IStructureNode elem);
+    public TagTreeIteratorFlusher() {
+        // Empty constructor
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void nextElement(IStructureNode elem) {
+        if (elem instanceof PdfStructElem && !((PdfStructElem) elem).isFlushed()) {
+            ((PdfStructElem) elem).flush();
+        }
+    }
 }

@@ -28,6 +28,7 @@ import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * This class is used to manage waiting tags state.
@@ -169,12 +170,11 @@ public class WaitingTagsManager {
             return;
         }
 
-        for (IStructureNode kid : elem.getKids()) {
-            if (kid instanceof PdfStructElem) {
-                flushStructElementAndItKids((PdfStructElem) kid);
-            }
-        }
-        elem.flush();
+        TagTreeIterator iterator = new TagTreeIterator(elem,
+                new WaitingTagsApprover(waitingTagToAssociatedObj.keySet()),
+                TagTreeIterator.TreeTraversalOrder.POST_ORDER);
+        iterator.addHandler(new TagTreeIteratorFlusher());
+        iterator.traverse();
     }
 
     private void removeWaitingStateAndFlushIfParentFlushed(PdfStructElem structElem) {
@@ -184,6 +184,20 @@ public class WaitingTagsManager {
             if (parent instanceof PdfStructElem && ((PdfStructElem) parent).isFlushed()) {
                 flushStructElementAndItKids(structElem);
             }
+        }
+    }
+
+    private static class WaitingTagsApprover extends TagTreeIteratorAvoidDuplicatesApprover {
+        private final Set<PdfDictionary> waitingTags;
+        public WaitingTagsApprover(Set<PdfDictionary> waitingTags) {
+            super();
+            this.waitingTags = waitingTags;
+        }
+
+        @Override
+        public boolean approve(IStructureNode elem) {
+            return super.approve(elem) && elem instanceof PdfStructElem &&
+                    (waitingTags == null || !waitingTags.contains(((PdfStructElem) elem).getPdfObject()));
         }
     }
 }

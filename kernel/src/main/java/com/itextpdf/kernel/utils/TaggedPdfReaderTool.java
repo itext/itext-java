@@ -50,6 +50,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -65,6 +66,8 @@ public class TaggedPdfReaderTool {
 
     // key - page dictionary; value - a mapping of mcids to text in them
     protected Map<PdfDictionary, Map<Integer, String>> parsedTags = new HashMap<>();
+
+    private final Set<PdfObject> inspectedStructTreeElems = new HashSet<>();
 
     /**
      * Constructs a {@link TaggedPdfReaderTool} via a given {@link PdfDocument}.
@@ -157,6 +160,11 @@ public class TaggedPdfReaderTool {
         try {
             if (kid instanceof PdfStructElem) {
                 PdfStructElem structElemKid = (PdfStructElem) kid;
+                if (inspectedStructTreeElems.contains(structElemKid.getPdfObject())) {
+                    return;
+                }
+                inspectedStructTreeElems.add(structElemKid.getPdfObject());
+
                 PdfName s = structElemKid.getRole();
                 String tagN = s.getValue();
                 String tag = fixTagName(tagN);

@@ -25,15 +25,25 @@ package com.itextpdf.kernel.pdf.tagutils;
 import com.itextpdf.kernel.pdf.tagging.IStructureNode;
 
 /**
- * Handler for {@link TagTreeIterator}.
- * Is used to handle specific events during the traversal.
+ * Element checker for {@link TagTreeIterator}.
+ * It is used to check whether specific element should be traversed.
  */
-public interface ITagTreeIteratorHandler {
+public class TagTreeIteratorElementApprover {
 
     /**
-     * Called when the next element is reached during the traversal.
-     *
-     * @param elem the next element
+     * Creates a new instance of {@link TagTreeIteratorElementApprover}
      */
-    void nextElement(IStructureNode elem);
+    public TagTreeIteratorElementApprover() {
+        // Empty constructor
+    }
+
+    /**
+     * Checks whether the element should be traversed.
+     *
+     * @param elem the element to check
+     * @return {@code true} if the element should be traversed, {@code false otherwise}
+     */
+    public boolean approve(IStructureNode elem) {
+        return elem != null;
+    }
 }
