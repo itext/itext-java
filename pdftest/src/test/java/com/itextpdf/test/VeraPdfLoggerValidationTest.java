@@ -23,7 +23,7 @@
 package com.itextpdf.test;
 
 import com.itextpdf.test.annotations.type.UnitTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator;  // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+import com.itextpdf.test.pdfa.VeraPdfValidator;
 import com.itextpdf.test.utils.FileUtil;
 
 import java.io.IOException;
@@ -32,7 +32,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-
+// Android-Conversion-Skip-File (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 @Category(UnitTest.class)
 public class VeraPdfLoggerValidationTest extends ExtendedITextTest {
 
@@ -49,7 +49,7 @@ public class VeraPdfLoggerValidationTest extends ExtendedITextTest {
         String source = "pdfA2b_checkValidatorLogsTest.pdf";
         String target = "checkValidatorLogsNoOutputTest.pdf";
         FileUtil.copy(SOURCE_FOLDER + source, DESTINATION_FOLDER + target);
-        Assert.assertNull(new VeraPdfValidator().validate(DESTINATION_FOLDER + target)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assert.assertNull(new VeraPdfValidator().validate(DESTINATION_FOLDER + target));
     }
 
     @Test
@@ -61,7 +61,7 @@ public class VeraPdfLoggerValidationTest extends ExtendedITextTest {
                 + "WARNING: Invalid embedded cff font. Charset range exceeds number of glyphs\n"
                 + "WARNING: Missing OutputConditionIdentifier in an output intent dictionary\n"
                 + "WARNING: The Top DICT does not begin with ROS operator";
-        Assert.assertEquals(expectedWarningsForFileWithWarnings, new VeraPdfValidator().validate(DESTINATION_FOLDER + target)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assert.assertEquals(expectedWarningsForFileWithWarnings, new VeraPdfValidator().validate(DESTINATION_FOLDER + target));
     }
 
     @Test
@@ -75,10 +75,10 @@ public class VeraPdfLoggerValidationTest extends ExtendedITextTest {
                 + "WARNING: Invalid embedded cff font. Charset range exceeds number of glyphs\n"
                 + "WARNING: Missing OutputConditionIdentifier in an output intent dictionary\n"
                 + "WARNING: The Top DICT does not begin with ROS operator";
-        Assert.assertEquals(expectedWarningsForFileWithWarnings, new VeraPdfValidator().validate(DESTINATION_FOLDER + fileNameWithWarnings)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assert.assertEquals(expectedWarningsForFileWithWarnings, new VeraPdfValidator().validate(DESTINATION_FOLDER + fileNameWithWarnings));
 
         //We check that the logs are empty after the first check
-        Assert.assertNull(new VeraPdfValidator().validate(DESTINATION_FOLDER + fileNameWithoutWarnings)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assert.assertNull(new VeraPdfValidator().validate(DESTINATION_FOLDER + fileNameWithoutWarnings));
     }
 
     @Test
@@ -88,7 +88,7 @@ public class VeraPdfLoggerValidationTest extends ExtendedITextTest {
         FileUtil.copy(SOURCE_FOLDER + source, DESTINATION_FOLDER + target);
 
         String expectedResponseForErrors = "VeraPDF verification failed. See verification results: file:";
-        String result =  new VeraPdfValidator().validate(DESTINATION_FOLDER + target); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android));
-        Assert.assertTrue(result.startsWith(expectedResponseForErrors)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        String result =  new VeraPdfValidator().validate(DESTINATION_FOLDER + target);
+        Assert.assertTrue(result.startsWith(expectedResponseForErrors));
     }
 }

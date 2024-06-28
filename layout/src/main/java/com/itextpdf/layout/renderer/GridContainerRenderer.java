@@ -23,7 +23,6 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.GridContainer;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
@@ -45,6 +44,7 @@ import java.util.List;
 public class GridContainerRenderer extends BlockRenderer {
     private boolean isFirstLayout = true;
     private float containerHeight = 0.0f;
+    private float containerWidth = 0.0f;
     /**
      * Creates a Grid renderer from its corresponding layout object.
      * @param modelElement the {@link GridContainer} which this object should manage
@@ -72,14 +72,13 @@ public class GridContainerRenderer extends BlockRenderer {
 
         Rectangle actualBBox = layoutContext.getArea().getBBox().clone();
         Float blockWidth = retrieveWidth(actualBBox.getWidth());
-        if (blockWidth != null) {
-            actualBBox.setWidth((float) blockWidth);
-        }
 
         ContinuousContainer.setupContinuousContainerIfNeeded(this);
         applyPaddings(actualBBox, false);
         applyBorderBox(actualBBox, false);
         applyMargins(actualBBox, false);
+        applyWidth(actualBBox, blockWidth, OverflowPropertyValue.VISIBLE);
+        containerWidth = actualBBox.getWidth();
 
         Float blockHeight = retrieveHeight();
         if (blockHeight != null && (float) blockHeight < actualBBox.getHeight()) {
@@ -100,7 +99,7 @@ public class GridContainerRenderer extends BlockRenderer {
         } else {
             this.occupiedArea = calculateContainerOccupiedArea(layoutContext, false);
             return new LayoutResult(LayoutResult.PARTIAL, this.occupiedArea,
-                    createSplitRenderer(layoutResult.getSplitRenderers()),
+                    GridMulticolUtil.createSplitRenderer(layoutResult.getSplitRenderers(), this),
                     createOverflowRenderer(layoutResult.getOverflowRenderers()));
         }
     }
@@ -139,18 +138,6 @@ public class GridContainerRenderer extends BlockRenderer {
         }
 
         return Boolean.FALSE;
-    }
-
-    private AbstractRenderer createSplitRenderer(List<IRenderer> children) {
-        AbstractRenderer splitRenderer = (AbstractRenderer) getNextRenderer();
-        splitRenderer.parent = parent;
-        splitRenderer.modelElement = modelElement;
-        splitRenderer.occupiedArea = occupiedArea;
-        splitRenderer.isLastRendererForModelElement = false;
-        splitRenderer.setChildRenderers(children);
-        splitRenderer.addAllProperties(getOwnProperties());
-        ContinuousContainer.setupContinuousContainerIfNeeded(splitRenderer);
-        return splitRenderer;
     }
 
     private AbstractRenderer createOverflowRenderer(List<IRenderer> children) {
@@ -273,67 +260,25 @@ public class GridContainerRenderer extends BlockRenderer {
     // Calculate grid container occupied area based on its width/height properties and cell layout areas
     private LayoutArea calculateContainerOccupiedArea(LayoutContext layoutContext, boolean isFull) {
         LayoutArea area = layoutContext.getArea().clone();
-        final float totalHeight = updateOccupiedHeight(containerHeight, isFull);
-        if (totalHeight < area.getBBox().getHeight() || isFull) {
-            area.getBBox().setHeight(totalHeight);
-            final Rectangle initialBBox = layoutContext.getArea().getBBox();
-            area.getBBox().setY(initialBBox.getY() + initialBBox.getHeight() - area.getBBox().getHeight());
-            recalculateHeightAndWidthAfterLayout(area.getBBox(), isFull);
-        }
-        return area;
-    }
+        final Rectangle areaBBox = area.getBBox();
 
-    // Recalculate height/width after grid sizing and re-apply height/width properties
-    private void recalculateHeightAndWidthAfterLayout(Rectangle bBox, boolean isFull) {
-        Float height = retrieveHeight();
-        if (height != null) {
-            height = updateOccupiedHeight((float) height, isFull);
-            float heightDelta = bBox.getHeight() - (float) height;
-            bBox.moveUp(heightDelta);
-            bBox.setHeight((float) height);
-        }
-        Float blockWidth = retrieveWidth(bBox.getWidth());
-        if (blockWidth != null) {
-            bBox.setWidth((float) blockWidth);
-        }
-    }
-
-    private float updateOccupiedHeight(float initialHeight, boolean isFull) {
-        if (isFull) {
-            initialHeight += safelyRetrieveFloatProperty(Property.PADDING_BOTTOM);
-            initialHeight += safelyRetrieveFloatProperty(Property.MARGIN_BOTTOM);
-            if (!this.hasOwnProperty(Property.BORDER) || this.<Border>getProperty(Property.BORDER) == null) {
-                initialHeight += safelyRetrieveFloatProperty(Property.BORDER_BOTTOM);
+        final float totalContainerHeight = GridMulticolUtil.updateOccupiedHeight(containerHeight, isFull, isFirstLayout, this);
+        if (totalContainerHeight < areaBBox.getHeight() || isFull) {
+            Float height = retrieveHeight();
+            if (height == null) {
+                areaBBox.setHeight(totalContainerHeight);
+            } else {
+                height = GridMulticolUtil.updateOccupiedHeight((float) height, isFull, isFirstLayout, this);
+                areaBBox.setHeight((float) height);
             }
         }
-        initialHeight += safelyRetrieveFloatProperty(Property.PADDING_TOP);
 
-        initialHeight += safelyRetrieveFloatProperty(Property.MARGIN_TOP);
+        final Rectangle initialBBox = layoutContext.getArea().getBBox();
+        areaBBox.setY(initialBBox.getY() + initialBBox.getHeight() - areaBBox.getHeight());
 
-        if (!this.hasOwnProperty(Property.BORDER) || this.<Border>getProperty(Property.BORDER) == null) {
-            initialHeight += safelyRetrieveFloatProperty(Property.BORDER_TOP);
-        }
-
-        // isFirstLayout is necessary to handle the case when grid container laid out on more
-        // than 2 pages, and on the last page layout result is full, but there is no bottom border
-        float TOP_AND_BOTTOM = isFull && isFirstLayout ? 2 : 1;
-        //If container laid out on more than 3 pages, then it is a page where there are no bottom and top borders
-        if (!isFull && !isFirstLayout) {
-            TOP_AND_BOTTOM = 0;
-        }
-        initialHeight += safelyRetrieveFloatProperty(Property.BORDER) * TOP_AND_BOTTOM;
-        return initialHeight;
-    }
-
-    private float safelyRetrieveFloatProperty(int property) {
-        final Object value = this.<Object>getProperty(property);
-        if (value instanceof UnitValue) {
-            return ((UnitValue) value).getValue();
-        }
-        if (value instanceof Border) {
-            return ((Border) value).getWidth();
-        }
-        return 0F;
+        final float totalContainerWidth = GridMulticolUtil.updateOccupiedWidth(containerWidth, this);
+        areaBBox.setWidth(totalContainerWidth);
+        return area;
     }
 
     // Grid layout algorithm is based on a https://drafts.csswg.org/css-grid/#layout-algorithm
