@@ -56,7 +56,11 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Verifies the signatures in an LTV document.
+ *
+ * @deprecated starting from 8.0.5.
+ * {@link com.itextpdf.signatures.validation.v1.SignatureValidator} should be used instead.
  */
+@Deprecated
 public class LtvVerifier extends RootStoreVerifier {
 
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();

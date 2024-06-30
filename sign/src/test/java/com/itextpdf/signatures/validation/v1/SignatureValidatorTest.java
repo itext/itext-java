@@ -131,7 +131,7 @@ public class SignatureValidatorTest extends ExtendedITextTest {
                     .setFreshness(ValidatorContexts.all(), CertificateSources.all(), TimeBasedContexts.all(),
                             Duration.ofDays(-2));
 
-            SignatureValidator signatureValidator = builder.buildSignatureValidator();
+            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
             report = signatureValidator.validateLatestSignature(document);
         }
 
@@ -171,7 +171,7 @@ public class SignatureValidatorTest extends ExtendedITextTest {
                     .setFreshness(ValidatorContexts.all(), CertificateSources.all(), TimeBasedContexts.all(),
                             Duration.ofDays(-2));
 
-            SignatureValidator signatureValidator = builder.buildSignatureValidator();
+            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
             report = signatureValidator.validateLatestSignature(document);
         }
 
@@ -215,7 +215,7 @@ public class SignatureValidatorTest extends ExtendedITextTest {
                             Duration.ofDays(-2))
                     .setContinueAfterFailure(ValidatorContexts.all() , CertificateSources.all(), false);
 
-            SignatureValidator signatureValidator = builder.buildSignatureValidator();
+            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
             report = signatureValidator.validateLatestSignature(document);
         }
 
@@ -242,7 +242,7 @@ public class SignatureValidatorTest extends ExtendedITextTest {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "docWithBrokenTimestamp.pdf"))) {
             mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
 
-            SignatureValidator signatureValidator = builder.buildSignatureValidator();
+            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
             report = signatureValidator.validateLatestSignature(document);
         }
 
@@ -265,7 +265,7 @@ public class SignatureValidatorTest extends ExtendedITextTest {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "modifiedDoc.pdf"))) {
             mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
 
-            SignatureValidator signatureValidator = builder.buildSignatureValidator();
+            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
             report = signatureValidator.validateLatestSignature(document);
         }
         AssertValidationReport.assertThat(report, a -> a
@@ -290,7 +290,7 @@ public class SignatureValidatorTest extends ExtendedITextTest {
 
         parameters.setContinueAfterFailure(ValidatorContexts.all(), CertificateSources.all(), false);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "modifiedDoc.pdf"))) {
-            SignatureValidator signatureValidator = builder.buildSignatureValidator();
+            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
             mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
 
             report = signatureValidator.validateLatestSignature(document);
@@ -323,7 +323,7 @@ public class SignatureValidatorTest extends ExtendedITextTest {
             mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
 
 
-            SignatureValidator signatureValidator = builder.buildSignatureValidator();
+            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
             signatureValidator.validateLatestSignature(document);
         }
 
@@ -347,7 +347,7 @@ public class SignatureValidatorTest extends ExtendedITextTest {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "docWithBrokenDss.pdf"))) {
             mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
 
-            SignatureValidator signatureValidator = builder.buildSignatureValidator();
+            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
             report = signatureValidator.validateLatestSignature(document);
         }
 
@@ -366,7 +366,7 @@ public class SignatureValidatorTest extends ExtendedITextTest {
 
         ValidationReport report;
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "validDoc.pdf"))) {
-            SignatureValidator signatureValidator = builder.buildSignatureValidator();
+            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
 
             report = signatureValidator.validateLatestSignature(document);
         }
@@ -388,7 +388,7 @@ public class SignatureValidatorTest extends ExtendedITextTest {
 
         ValidationReport report;
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "validDoc.pdf"))) {
-            SignatureValidator signatureValidator = builder.buildSignatureValidator();
+            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
 
             report = signatureValidator.validateLatestSignature(document);
         }
@@ -408,9 +408,9 @@ public class SignatureValidatorTest extends ExtendedITextTest {
 
         ValidationReport report;
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "validDoc.pdf"))) {
-            SignatureValidator signatureValidator = builder.buildSignatureValidator();
+            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
 
-            report = signatureValidator.validateSignatures(document);
+            report = signatureValidator.validateSignatures();
         }
 
         AssertValidationReport.assertThat(report, a -> a
@@ -425,8 +425,8 @@ public class SignatureValidatorTest extends ExtendedITextTest {
     @Test
     public void validateMultipleSignatures() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "docWithMultipleSignaturesAndTimeStamp.pdf"))) {
-            SignatureValidator signatureValidator = builder.buildSignatureValidator();
-            ValidationReport report = signatureValidator.validateSignatures(document);
+            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
+            ValidationReport report = signatureValidator.validateSignatures();
 
             AssertValidationReport.assertThat(report, r -> r
                     .hasStatus(ValidationResult.VALID)
@@ -488,7 +488,7 @@ public class SignatureValidatorTest extends ExtendedITextTest {
             mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
             mockCertificateChainValidator.onCallDo(c-> {throw new RuntimeException("Test chain validation failure");});
 
-            SignatureValidator signatureValidator = builder.buildSignatureValidator();
+            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
             ValidationReport report = signatureValidator.validateLatestSignature(document);
             AssertValidationReport.assertThat(report, r->
                     r.hasLogItem(l-> l
@@ -507,7 +507,7 @@ public class SignatureValidatorTest extends ExtendedITextTest {
             mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
             mockCertificateChainValidator.onCallDo(c-> {throw new RuntimeException("Test chain validation failure");});
 
-            SignatureValidator signatureValidator = builder.buildSignatureValidator();
+            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
             ValidationReport report = signatureValidator.validateLatestSignature(document);
             AssertValidationReport.assertThat(report, r->
                     r.hasLogItem(l-> l
@@ -528,7 +528,7 @@ public class SignatureValidatorTest extends ExtendedITextTest {
                 throw new RuntimeException("Test add know certificates failure");
             });
 
-            SignatureValidator signatureValidator = builder.buildSignatureValidator();
+            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
             ValidationReport report = signatureValidator.validateLatestSignature(document);
             AssertValidationReport.assertThat(report, r-> r
                     .hasLogItems(1,Integer.MAX_VALUE,l -> l.withMessage(SignatureValidator.ADD_KNOWN_CERTIFICATES_FAILED)));
@@ -546,7 +546,7 @@ public class SignatureValidatorTest extends ExtendedITextTest {
                 throw new RuntimeException("Test add know certificates failure");
             });
 
-            SignatureValidator signatureValidator = builder.buildSignatureValidator();
+            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
             ValidationReport report = signatureValidator.validateLatestSignature(document);
             AssertValidationReport.assertThat(report, r-> r
                     .hasLogItems(1,Integer.MAX_VALUE, l -> l.withMessage(SignatureValidator.ADD_KNOWN_CERTIFICATES_FAILED)));
@@ -564,7 +564,7 @@ public class SignatureValidatorTest extends ExtendedITextTest {
                 throw new RuntimeException("Test add know certificates failure");
             });
 
-            SignatureValidator signatureValidator = builder.buildSignatureValidator();
+            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
             ValidationReport report = signatureValidator.validateLatestSignature(document);
             AssertValidationReport.assertThat(report, r-> r
                     .hasLogItems(1,Integer.MAX_VALUE, l -> l.withMessage(SignatureValidator.ADD_KNOWN_CERTIFICATES_FAILED)));
@@ -584,8 +584,8 @@ public class SignatureValidatorTest extends ExtendedITextTest {
             });
 
 
-            SignatureValidator signatureValidator = builder.buildSignatureValidator();
-            ValidationReport report = signatureValidator.validateSignatures(document);
+            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
+            ValidationReport report = signatureValidator.validateSignatures();
             AssertValidationReport.assertThat(report, r-> r
                     .hasLogItem(l -> l.withMessage(SignatureValidator.REVISIONS_VALIDATION_FAILED)));
         }

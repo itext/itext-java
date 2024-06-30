@@ -95,8 +95,12 @@ public class CertificateChainValidator {
      *
      * @param crlClient {@link ICrlClient} to be used for CRL responses receiving
      *
-     * @return same instance of {@link CertificateChainValidator}
+     * @return same instance of {@link CertificateChainValidator}.
+     *
+     * @deprecated in favour of either {@link SignatureValidationProperties#addCrlClient}
+     * or {@link RevocationDataValidator#addCrlClient}. TODO DEVSIX-8398 To be removed.
      */
+    @Deprecated
     public CertificateChainValidator addCrlClient(ICrlClient crlClient) {
         revocationDataValidator.addCrlClient(crlClient);
         return this;
@@ -107,8 +111,12 @@ public class CertificateChainValidator {
      *
      * @param ocpsClient {@link IOcspClient} to be used for OCSP responses receiving
      *
-     * @return same instance of {@link CertificateChainValidator}
+     * @return same instance of {@link CertificateChainValidator}.
+     *
+     * @deprecated in favour of either {@link SignatureValidationProperties#addOcspClient}
+     * or {@link RevocationDataValidator#addOcspClient}. TODO DEVSIX-8398 To be removed.
      */
+    @Deprecated
     public CertificateChainValidator addOcspClient(IOcspClient ocpsClient) {
         revocationDataValidator.addOcspClient(ocpsClient);
         return this;
@@ -122,7 +130,7 @@ public class CertificateChainValidator {
      * @param validationDate {@link Date} against which certificate is expected to be validated. Usually signing
      *                       date
      *
-     * @return {@link ValidationReport} which contains detailed validation results
+     * @return {@link ValidationReport} which contains detailed validation results.
      */
     public ValidationReport validateCertificate(ValidationContext context, X509Certificate certificate,
             Date validationDate) {
@@ -140,7 +148,7 @@ public class CertificateChainValidator {
      * @param validationDate {@link Date} against which certificate is expected to be validated. Usually signing
      *                       date
      *
-     * @return {@link ValidationReport} which contains both provided and new validation results
+     * @return {@link ValidationReport} which contains both provided and new validation results.
      */
     public ValidationReport validate(ValidationReport result, ValidationContext context, X509Certificate certificate,
             Date validationDate) {

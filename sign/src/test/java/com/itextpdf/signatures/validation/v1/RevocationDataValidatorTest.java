@@ -618,7 +618,7 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
 
         TestOcspResponseBuilder ocspBuilder = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
         TestOcspClient testOcspClient = new TestOcspClient().addBuilderForCertIssuer(caCert, ocspBuilder);
-        OcspClientBouncyCastle ocspClient = new OcspClientBouncyCastle(null) {
+        OcspClientBouncyCastle ocspClient = new OcspClientBouncyCastle() {
             @Override
             public byte[] getEncoded(X509Certificate checkCert, X509Certificate rootCert, String url) {
                 return testOcspClient.getEncoded(checkCert, rootCert, url);

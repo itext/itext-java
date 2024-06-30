@@ -66,6 +66,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -91,6 +92,8 @@ public class DocumentRevisionsValidator {
     static final String FIELD_NOT_DICTIONARY =
             "Form field \"{0}\" or one of its widgets is not a dictionary. It will not be validated.";
     static final String FIELD_REMOVED = "Form field {0} was removed or unexpectedly modified.";
+    static final String LINEARIZED_NOT_SUPPORTED =
+            "Linearized PDF documents are not supported by DocumentRevisionsValidator.";
     static final String LOCKED_FIELD_KIDS_ADDED =
             "Kids were added to locked form field \"{0}\".";
     static final String LOCKED_FIELD_KIDS_REMOVED =
@@ -152,7 +155,7 @@ public class DocumentRevisionsValidator {
      *
      * @param metaInfo meta info to set
      *
-     * @return the same {@link DocumentRevisionsValidator} instance
+     * @return the same {@link DocumentRevisionsValidator} instance.
      */
     public DocumentRevisionsValidator setEventCountingMetaInfo(IMetaInfo metaInfo) {
         this.metaInfo = metaInfo;
@@ -165,7 +168,7 @@ public class DocumentRevisionsValidator {
      *
      * @param accessPermissions {@link AccessPermissions} docMDP validation level
      *
-     * @return the same {@link DocumentRevisionsValidator} instance
+     * @return the same {@link DocumentRevisionsValidator} instance.
      */
     public DocumentRevisionsValidator setAccessPermissions(AccessPermissions accessPermissions) {
         this.requestedAccessPermissions = accessPermissions;
@@ -223,7 +226,7 @@ public class DocumentRevisionsValidator {
         PdfSignature currentSignature = signatureUtil.getSignature(signatures.get(0));
         for (int i = 0; i < documentRevisions.size(); i++) {
             if (currentSignature != null &&
-                    revisionContainsSignature(documentRevisions.get(i), signatures.get(0), document)) {
+                    revisionContainsSignature(documentRevisions.get(i), signatures.get(0), document, report)) {
                 signatureFound = true;
                 if (isCertificationSignature(currentSignature)) {
                     if (certificationSignatureFound) {
@@ -260,53 +263,49 @@ public class DocumentRevisionsValidator {
         return report;
     }
 
-    void validateRevision(DocumentRevision previousRevision, DocumentRevision currentRevision, PdfDocument document,
-            ValidationReport validationReport, ValidationContext context) {
-        try (InputStream previousInputStream = createInputStreamFromRevision(document, previousRevision);
-                PdfReader previousReader = new PdfReader(previousInputStream)
-                        .setStrictnessLevel(StrictnessLevel.CONSERVATIVE);
-                PdfDocument documentWithoutRevision = new PdfDocument(previousReader,
-                        new DocumentProperties().setEventCountingMetaInfo(metaInfo));
-                InputStream currentInputStream = createInputStreamFromRevision(document, currentRevision);
-                PdfReader currentReader = new PdfReader(currentInputStream)
-                        .setStrictnessLevel(StrictnessLevel.CONSERVATIVE);
-                PdfDocument documentWithRevision = new PdfDocument(currentReader,
-                        new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
-            Set<PdfIndirectReference> indirectReferences = currentRevision.getModifiedObjects();
-            if (!compareCatalogs(documentWithoutRevision, documentWithRevision, validationReport, context)) {
-                return;
-            }
-            Set<PdfIndirectReference> currentAllowedReferences = createAllowedReferences(documentWithRevision);
-            Set<PdfIndirectReference> previousAllowedReferences = createAllowedReferences(documentWithoutRevision);
-            for (PdfIndirectReference indirectReference : indirectReferences) {
-                if (indirectReference.isFree()) {
-                    // In this boolean flag we check that reference which is about to be removed is the one which
-                    // changed in the new revision. For instance DSS reference was 5 0 obj and changed to be 6 0 obj.
-                    // In this case and only in this case reference with obj number 5 can be safely removed.
-                    boolean referenceAllowedToBeRemoved = previousAllowedReferences.stream().anyMatch(reference ->
-                            reference != null && reference.getObjNumber() == indirectReference.getObjNumber()) &&
-                            !currentAllowedReferences.stream().anyMatch(reference ->
-                                    reference != null && reference.getObjNumber() == indirectReference.getObjNumber());
-                    // If some reference wasn't in the previous document, it is safe to remove it,
-                    // since it is not possible to introduce new reference and remove it at the same revision.
-                    boolean referenceWasInPrevDocument =
-                            documentWithoutRevision.getPdfObject(indirectReference.getObjNumber()) != null;
-                    if (!isMaxGenerationObject(indirectReference) &&
-                            referenceWasInPrevDocument && !referenceAllowedToBeRemoved) {
-                        validationReport.addReportItem(new ReportItem(DOC_MDP_CHECK, MessageFormatUtil.format(
-                                OBJECT_REMOVED, indirectReference.getObjNumber()), unexpectedXrefChangesStatus));
-                    }
-                } else if (!checkAllowedReferences(currentAllowedReferences, previousAllowedReferences,
-                        indirectReference, documentWithoutRevision) &&
-                        !isAllowedStreamObj(indirectReference, documentWithRevision)) {
-                    validationReport.addReportItem(new ReportItem(DOC_MDP_CHECK, MessageFormatUtil.format(
-                            UNEXPECTED_ENTRY_IN_XREF, indirectReference.getObjNumber()), unexpectedXrefChangesStatus));
-                }
-            }
-        } catch (IOException | RuntimeException exception) {
-            validationReport.addReportItem(new ReportItem(DOC_MDP_CHECK, REVISIONS_READING_EXCEPTION,
-                    exception, ReportItemStatus.INDETERMINATE));
+    void validateRevision(DocumentRevision previousRevision, DocumentRevision currentRevision,
+            PdfDocument originalDocument, ValidationReport validationReport, ValidationContext context) {
+        createDocumentAndPerformOperation(previousRevision, originalDocument, validationReport,
+                documentWithoutRevision ->
+                        createDocumentAndPerformOperation(currentRevision, originalDocument, validationReport,
+                                documentWithRevision -> validateRevision(validationReport, context,
+                                        documentWithoutRevision, documentWithRevision, currentRevision)));
+    }
+
+    private boolean validateRevision(ValidationReport validationReport, ValidationContext context,
+            PdfDocument documentWithoutRevision, PdfDocument documentWithRevision, DocumentRevision currentRevision) {
+        Set<PdfIndirectReference> indirectReferences = currentRevision.getModifiedObjects();
+        if (!compareCatalogs(documentWithoutRevision, documentWithRevision, validationReport, context)) {
+            return false;
         }
+        Set<PdfIndirectReference> currentAllowedReferences = createAllowedReferences(documentWithRevision);
+        Set<PdfIndirectReference> previousAllowedReferences = createAllowedReferences(documentWithoutRevision);
+        for (PdfIndirectReference indirectReference : indirectReferences) {
+            if (indirectReference.isFree()) {
+                // In this boolean flag we check that reference which is about to be removed is the one which
+                // changed in the new revision. For instance DSS reference was 5 0 obj and changed to be 6 0 obj.
+                // In this case and only in this case reference with obj number 5 can be safely removed.
+                boolean referenceAllowedToBeRemoved = previousAllowedReferences.stream().anyMatch(reference ->
+                        reference != null && reference.getObjNumber() == indirectReference.getObjNumber()) &&
+                        !currentAllowedReferences.stream().anyMatch(reference -> reference != null &&
+                                reference.getObjNumber() == indirectReference.getObjNumber());
+                // If some reference wasn't in the previous document, it is safe to remove it,
+                // since it is not possible to introduce new reference and remove it at the same revision.
+                boolean referenceWasInPrevDocument =
+                        documentWithoutRevision.getPdfObject(indirectReference.getObjNumber()) != null;
+                if (!isMaxGenerationObject(indirectReference) &&
+                        referenceWasInPrevDocument && !referenceAllowedToBeRemoved) {
+                    validationReport.addReportItem(new ReportItem(DOC_MDP_CHECK, MessageFormatUtil.format(
+                            OBJECT_REMOVED, indirectReference.getObjNumber()), unexpectedXrefChangesStatus));
+                }
+            } else if (!checkAllowedReferences(currentAllowedReferences, previousAllowedReferences,
+                    indirectReference, documentWithoutRevision) &&
+                    !isAllowedStreamObj(indirectReference, documentWithRevision)) {
+                validationReport.addReportItem(new ReportItem(DOC_MDP_CHECK, MessageFormatUtil.format(
+                        UNEXPECTED_ENTRY_IN_XREF, indirectReference.getObjNumber()), unexpectedXrefChangesStatus));
+            }
+        }
+        return validationReport.getValidationResult() == ValidationResult.VALID;
     }
 
     //
@@ -325,6 +324,19 @@ public class DocumentRevisionsValidator {
         WindowRandomAccessSource source = new WindowRandomAccessSource(
                 raf.createSourceView(), 0, revision.getEofOffset());
         return new RASInputStream(source);
+    }
+
+    private static boolean isLinearizedPdf(PdfDocument originalDocument) {
+        for (int i = 0; i < originalDocument.getNumberOfPdfObjects(); ++i) {
+            PdfObject object = originalDocument.getPdfObject(i);
+            if (object instanceof PdfDictionary) {
+                PdfDictionary dictionary = (PdfDictionary) object;
+                if (dictionary.containsKey(new PdfName("Linearized"))) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private boolean stopValidation(ValidationReport result, ValidationContext validationContext) {
@@ -397,13 +409,10 @@ public class DocumentRevisionsValidator {
         }
     }
 
-    private void lockAllFormFields(DocumentRevision revision, List<String> excludedFields, PdfDocument document,
+    private void lockAllFormFields(DocumentRevision revision, List<String> excludedFields, PdfDocument originalDocument,
             ValidationReport report) {
-        try (InputStream inputStream = createInputStreamFromRevision(document, revision);
-                PdfReader reader = new PdfReader(inputStream);
-                PdfDocument documentWithRevision = new PdfDocument(reader,
-                        new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
-            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(documentWithRevision, false);
+        createDocumentAndPerformOperation(revision, originalDocument, report, document -> {
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(document, false);
             if (acroForm != null) {
                 for (String fieldName : acroForm.getAllFormFields().keySet()) {
                     if (!excludedFields.contains(fieldName)) {
@@ -411,10 +420,8 @@ public class DocumentRevisionsValidator {
                     }
                 }
             }
-        } catch (IOException | RuntimeException exception) {
-            report.addReportItem(new ReportItem(FIELD_MDP_CHECK, REVISIONS_READING_EXCEPTION, exception,
-                    ReportItemStatus.INDETERMINATE));
-        }
+            return true;
+        });
     }
 
     private void updateCertificationSignatureAccessPermissions(PdfSignature signature, ValidationReport report) {
@@ -468,17 +475,31 @@ public class DocumentRevisionsValidator {
         return false;
     }
 
-    private boolean revisionContainsSignature(DocumentRevision revision, String signature, PdfDocument document) {
-        try (InputStream inputStream = createInputStreamFromRevision(document, revision);
-                PdfReader reader = new PdfReader(inputStream);
+    private boolean revisionContainsSignature(DocumentRevision revision, String signature, PdfDocument originalDocument,
+            ValidationReport report) {
+        return createDocumentAndPerformOperation(revision, originalDocument, report, document -> {
+            SignatureUtil signatureUtil = new SignatureUtil(document);
+            return signatureUtil.signatureCoversWholeDocument(signature);
+        });
+    }
+
+    private boolean createDocumentAndPerformOperation(DocumentRevision revision, PdfDocument originalDocument,
+            ValidationReport report, Function<PdfDocument, Boolean> operation) {
+        try (InputStream inputStream = createInputStreamFromRevision(originalDocument, revision);
+                PdfReader reader = new PdfReader(inputStream).setStrictnessLevel(StrictnessLevel.CONSERVATIVE);
                 PdfDocument documentWithRevision = new PdfDocument(reader,
                         new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
-            SignatureUtil signatureUtil = new SignatureUtil(documentWithRevision);
-            return signatureUtil.signatureCoversWholeDocument(signature);
-        } catch (IOException | RuntimeException ignored) {
-            //ignored
+            return (boolean) operation.apply(documentWithRevision);
+        } catch (IOException | RuntimeException exception) {
+            if (isLinearizedPdf(originalDocument)) {
+                report.addReportItem(new ReportItem(DOC_MDP_CHECK, LINEARIZED_NOT_SUPPORTED, exception,
+                        ReportItemStatus.INDETERMINATE));
+            } else {
+                report.addReportItem(new ReportItem(DOC_MDP_CHECK, REVISIONS_READING_EXCEPTION, exception,
+                        ReportItemStatus.INDETERMINATE));
+            }
+            return false;
         }
-        return false;
     }
 
     private void resetClassFields() {

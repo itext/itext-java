@@ -514,7 +514,7 @@ public class PdfPadesSigner {
             crlClient = new CrlClientOnline();
         }
         if (ocspClient == null) {
-            ocspClient = new OcspClientBouncyCastle(null);
+            ocspClient = new OcspClientBouncyCastle();
         }
     }
 

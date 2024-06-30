@@ -28,7 +28,11 @@ import java.security.cert.X509Certificate;
  * Class that informs you that the verification of a Certificate
  * succeeded using a specific CertificateVerifier and for a specific
  * reason.
+ *
+ * @deprecated starting from 8.0.5.
+ * {@link com.itextpdf.signatures.validation.v1.report.ReportItem} should be used instead.
  */
+@Deprecated
 public class VerificationOK {
 
     /** The certificate that was verified successfully. */

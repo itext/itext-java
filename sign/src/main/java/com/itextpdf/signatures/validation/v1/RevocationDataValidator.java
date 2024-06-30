@@ -99,6 +99,8 @@ public class RevocationDataValidator {
         this.properties = builder.getProperties();
         this.ocspValidator = builder.getOCSPValidator();
         this.crlValidator = builder.getCRLValidator();
+        this.crlClients.addAll(this.properties.getCrlClients());
+        this.ocspClients.addAll(this.properties.getOcspClients());
     }
 
     /**
@@ -266,7 +268,7 @@ public class RevocationDataValidator {
                 (SignatureValidationProperties.OnlineFetching.FETCH_IF_NO_OTHER_DATA_AVAILABLE == onlineFetching
                         && ocspResponses.isEmpty())) {
             onRuntimeExceptionLog(() -> {
-                IBasicOCSPResp basicOCSPResp = new OcspClientBouncyCastle(null).getBasicOCSPResp(certificate,
+                IBasicOCSPResp basicOCSPResp = new OcspClientBouncyCastle().getBasicOCSPResp(certificate,
                         issuerCert, null);
                 fillOcspResponses(ocspResponses, basicOCSPResp, DateTimeUtil.getCurrentTimeDate(),
                         TimeBasedContext.PRESENT);

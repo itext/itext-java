@@ -29,6 +29,8 @@ import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.signatures.ICrlClient;
+import com.itextpdf.signatures.IOcspClient;
 import com.itextpdf.signatures.IssuingCertificateRetriever;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.builder.TestOcspResponseBuilder;
@@ -45,6 +47,10 @@ import com.itextpdf.signatures.validation.v1.report.ValidationReport;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport.ValidationResult;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
+
+import java.util.List;
+
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -99,7 +105,7 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
             certificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
             addRevDataClients();
 
-            SignatureValidator signatureValidator = builder.buildSignatureValidator();
+            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
             report = signatureValidator.validateLatestSignature(document);
         }
 
@@ -128,8 +134,8 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "shortValidityCertsWithOcsp.pdf"))) {
             certificateRetriever.setTrustedCertificates(Arrays.asList(rootCert, tsRootCert));
 
-            SignatureValidator signatureValidator = builder.buildSignatureValidator();
-            report = signatureValidator.validateSignatures(document);
+            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
+            report = signatureValidator.validateSignatures();
         }
 // ocsp validation date is wrong but why
         AssertValidationReport.assertThat(report, a -> a
@@ -169,8 +175,8 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "shortValidityCertsWithCrl.pdf"))) {
             certificateRetriever.setTrustedCertificates(Arrays.asList(rootCert, tsRootCert));
 
-            SignatureValidator signatureValidator = builder.buildSignatureValidator();
-            report = signatureValidator.validateSignatures(document);
+            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
+            report = signatureValidator.validateSignatures();
         }
 
         AssertValidationReport.assertThat(report, a -> a
@@ -196,6 +202,42 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
     }
 
     @Test
+    public void validateMultipleDocumentsTest() throws GeneralSecurityException, IOException {
+        String rootCertName = CERTS_SRC + "short_validity_root_cert.pem";
+        String tsRootCertName = CERTS_SRC + "ts_root_cert.pem";
+        X509Certificate rootCert = (X509Certificate) PemFileHelper.readFirstChain(rootCertName)[0];
+        X509Certificate tsRootCert = (X509Certificate) PemFileHelper.readFirstChain(tsRootCertName)[0];
+
+        // We need to set infinite freshness for first timestamp validation. Otherwise, test will fail.
+        builder.getProperties().setFreshness(ValidatorContexts.of(ValidatorContext.CRL_VALIDATOR), CertificateSources.of(
+                CertificateSource.TIMESTAMP), TimeBasedContexts.of(TimeBasedContext.PRESENT), Duration.ofDays(999999));
+
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "shortValidityCertsWithCrl.pdf"))) {
+            certificateRetriever.setTrustedCertificates(Arrays.asList(rootCert, tsRootCert));
+
+            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
+            signatureValidator.validateSignatures();
+        }
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "shortValidityCertsWithOcsp.pdf"))) {
+            certificateRetriever.setTrustedCertificates(Arrays.asList(rootCert, tsRootCert));
+
+            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
+            signatureValidator.validateSignatures();
+        }
+
+        List<ICrlClient> crlClients = builder.getProperties().getCrlClients();
+        List<IOcspClient> ocspClients = builder.getProperties().getOcspClients();
+        Assert.assertEquals(1, crlClients.size());
+        Assert.assertEquals(1, ocspClients.size());
+        Assert.assertTrue(crlClients.get(0) instanceof ValidationCrlClient);
+        Assert.assertTrue(ocspClients.get(0) instanceof ValidationOcspClient);
+        ValidationCrlClient validationCrlClient = (ValidationCrlClient) crlClients.get(0);
+        ValidationOcspClient validationOcspClient = (ValidationOcspClient) ocspClients.get(0);
+        Assert.assertEquals(2, validationCrlClient.getCrls().size());
+        Assert.assertEquals(2, validationOcspClient.getResponses().size());
+    }
+
+    @Test
     public void retrieveRevocationDataFromTheSignatureContainerTest() throws GeneralSecurityException, IOException {
         String rootCertName = CERTS_SRC + "rootRsa.pem";
         X509Certificate rootCert = (X509Certificate) PemFileHelper.readFirstChain(rootCertName)[0];
@@ -212,8 +254,8 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
                 new PdfReader(SOURCE_FOLDER + "revDataInTheSignatureContainer.pdf"))) {
             certificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
 
-            SignatureValidator signatureValidator = builder.buildSignatureValidator();
-            report = signatureValidator.validateSignatures(document);
+            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
+            report = signatureValidator.validateSignatures();
         }
 
         AssertValidationReport.assertThat(report, a -> a
@@ -254,8 +296,8 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "revDataInTheSignerInfo.pdf"))) {
             certificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
 
-            SignatureValidator signatureValidator = builder.buildSignatureValidator();
-            report = signatureValidator.validateSignatures(document);
+            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
+            report = signatureValidator.validateSignatures();
         }
 
         AssertValidationReport.assertThat(report, a -> a
@@ -301,7 +343,7 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
                     .setFreshness(ValidatorContexts.all(), CertificateSources.all(), TimeBasedContexts.all(),
                             Duration.ofDays(-2));
 
-            SignatureValidator signatureValidator = builder.buildSignatureValidator();
+            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
             report = signatureValidator.validateLatestSignature(document);
         }
 
@@ -325,7 +367,7 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
 
         ValidationReport report;
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "validDocWithoutChain.pdf"))) {
-            SignatureValidator signatureValidator = builder.buildSignatureValidator();
+            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
             certificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
             parameters.setRevocationOnlineFetching(ValidatorContexts.all(), CertificateSources.all(),
                             TimeBasedContexts.all(), SignatureValidationProperties.OnlineFetching.NEVER_FETCH)
@@ -365,7 +407,7 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
             certificateRetriever.addKnownCertificates(Collections.singletonList(intermediateCert));
             addRevDataClients();
 
-            SignatureValidator signatureValidator = builder.buildSignatureValidator();
+            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
             report = signatureValidator.validateLatestSignature(document);
         }
         AssertValidationReport.assertThat(report, a -> a
@@ -386,7 +428,7 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
 
         ValidationReport report;
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "validDoc.pdf"))) {
-            SignatureValidator signatureValidator = builder.buildSignatureValidator();
+            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
             parameters.setRevocationOnlineFetching(ValidatorContexts.all(), CertificateSources.all(),
                             TimeBasedContexts.all(), SignatureValidationProperties.OnlineFetching.NEVER_FETCH)
                     .setFreshness(ValidatorContexts.all(), CertificateSources.all(), TimeBasedContexts.all(),
@@ -422,8 +464,8 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "signatureSigningCertExpired.pdf"))) {
             SignatureValidator signatureValidator = new ValidatorChainBuilder()
                     .withTrustedCertificates(Arrays.asList(trustedCerts))
-                    .withRevocationDataValidator(new MockRevocationDataValidator()).buildSignatureValidator();
-            ValidationReport report = signatureValidator.validateSignatures(document);
+                    .withRevocationDataValidator(new MockRevocationDataValidator()).buildSignatureValidator(document);
+            ValidationReport report = signatureValidator.validateSignatures();
 
             AssertValidationReport.assertThat(report, r -> r
                     .hasStatus(ValidationResult.VALID)
@@ -449,8 +491,8 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
             SignatureValidator signatureValidator = new ValidatorChainBuilder()
                     .withSignatureValidationProperties(new SignatureValidationProperties()
                             .setContinueAfterFailure(ValidatorContexts.all(), CertificateSources.all(), false))
-                    .withRevocationDataValidator(new MockRevocationDataValidator()).buildSignatureValidator();
-            ValidationReport report = signatureValidator.validateSignatures(document);
+                    .withRevocationDataValidator(new MockRevocationDataValidator()).buildSignatureValidator(document);
+            ValidationReport report = signatureValidator.validateSignatures();
 
             AssertValidationReport.assertThat(report, r -> r
                     .hasStatus(ValidationResult.INDETERMINATE)

@@ -102,6 +102,22 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     }
 
     @Test
+    public void linearizedDocTest() throws IOException {
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "linearizedDoc.pdf"))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
+
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INDETERMINATE)
+                    .hasNumberOfFailures(1).hasNumberOfLogs(1)
+                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                            .withMessage(DocumentRevisionsValidator.LINEARIZED_NOT_SUPPORTED)
+                            .withStatus(ReportItemStatus.INDETERMINATE)));
+
+            Assert.assertEquals(AccessPermissions.ANNOTATION_MODIFICATION, validator.getAccessPermissions());
+        }
+    }
+
+    @Test
     public void multipleRevisionsDocumentWithoutPermissionsTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "multipleRevisionsDocumentWithoutPermissions.pdf"))) {
             DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();

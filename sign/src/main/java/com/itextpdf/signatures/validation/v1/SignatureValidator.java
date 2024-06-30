@@ -39,6 +39,8 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfStream;
 
 import com.itextpdf.signatures.CertificateUtil;
+import com.itextpdf.signatures.ICrlClient;
+import com.itextpdf.signatures.IOcspClient;
 import com.itextpdf.signatures.IssuingCertificateRetriever;
 import com.itextpdf.signatures.PdfPKCS7;
 import com.itextpdf.signatures.SignatureUtil;
@@ -71,7 +73,7 @@ import static com.itextpdf.signatures.validation.v1.SafeCalling.onRuntimeExcepti
 /**
  * Validator class, which is expected to be used for signatures validation.
  */
-class SignatureValidator {
+public class SignatureValidator {
     public static final String VALIDATING_SIGNATURE_NAME = "Validating signature {0}";
     static final String TIMESTAMP_VERIFICATION = "Timestamp verification check.";
     static final String SIGNATURE_VERIFICATION = "Signature verification check.";
@@ -92,8 +94,6 @@ class SignatureValidator {
             "Unexpected exception occurred retrieving prove of existence from timestamp signature";
     static final String CHAIN_VALIDATION_FAILED =
             "Unexpected exception occurred during certificate chain validation.";
-    static final String CERTIFITICATE_VERIFICATION_FAILED =
-            "Unexpected exception occurred during mathematical certificate verification.";
     static final String REVISIONS_VALIDATION_FAILED = "Unexpected exception occurred during revisions validation.";
     static final String ADD_KNOWN_CERTIFICATES_FAILED =
             "Unexpected exception occurred adding known certificates to certificate retriever.";
@@ -107,21 +107,23 @@ class SignatureValidator {
     private final SignatureValidationProperties properties;
     private Date lastKnownPoE = DateTimeUtil.getCurrentTimeDate();
     private IMetaInfo metaInfo = new ValidationMetaInfo();
-    private final ValidationOcspClient validationOcspClient = new ValidationOcspClient();
-    private final ValidationCrlClient validationCrlClient = new ValidationCrlClient();
+    private final PdfDocument originalDocument;
+    private ValidationOcspClient validationOcspClient;
+    private ValidationCrlClient validationCrlClient;
 
     /**
      * Creates new instance of {@link SignatureValidator}.
      *
-     * @param builder See {@link ValidatorChainBuilder}
+     * @param originalDocument {@link PdfDocument} instance which will be validated
+     * @param builder          see {@link ValidatorChainBuilder}
      */
-    SignatureValidator(ValidatorChainBuilder builder) {
+    protected SignatureValidator(PdfDocument originalDocument, ValidatorChainBuilder builder) {
+        this.originalDocument = originalDocument;
         this.certificateRetriever = builder.getCertificateRetriever();
         this.properties = builder.getProperties();
         this.certificateChainValidator = builder.getCertificateChainValidator();
         this.documentRevisionsValidator = builder.getDocumentRevisionsValidator();
-        builder.getRevocationDataValidator().addOcspClient(validationOcspClient);
-        builder.getRevocationDataValidator().addCrlClient(validationCrlClient);
+        findValidationClients();
     }
 
     /**
@@ -137,28 +139,25 @@ class SignatureValidator {
     }
 
     /**
-     * Validate all signatures in the document
-     *
-     * @param document the document to be validated
+     * Validate all signatures in the document.
      *
      * @return {@link ValidationReport} which contains detailed validation results
      */
-    public ValidationReport validateSignatures(PdfDocument document) {
+    public ValidationReport validateSignatures() {
         ValidationReport report = new ValidationReport();
         onRuntimeExceptionLog(() -> {
             documentRevisionsValidator.setEventCountingMetaInfo(metaInfo);
             ValidationReport revisionsValidationReport =
-                    documentRevisionsValidator.validateAllDocumentRevisions(validationContext, document);
+                    documentRevisionsValidator.validateAllDocumentRevisions(validationContext, originalDocument);
             report.merge(revisionsValidationReport);
         }, report, e ->
-                new ReportItem(SIGNATURE_VERIFICATION, REVISIONS_VALIDATION_FAILED, e,
-                        ReportItemStatus.INDETERMINATE));
+                new ReportItem(SIGNATURE_VERIFICATION, REVISIONS_VALIDATION_FAILED, e, ReportItemStatus.INDETERMINATE));
 
         if (stopValidation(report, validationContext)) {
             return report;
         }
 
-        SignatureUtil util = new SignatureUtil(document);
+        SignatureUtil util = new SignatureUtil(originalDocument);
         List<String> signatureNames = util.getSignatureNames();
         Collections.reverse(signatureNames);
 
@@ -241,6 +240,21 @@ class SignatureValidator {
             updateValidationClients(pkcs7, validationReport, validationContext, document);
         }
         return validationReport.merge(signatureReport);
+    }
+
+    private void findValidationClients() {
+        for (IOcspClient ocspClient : this.properties.getOcspClients()) {
+            if (ocspClient.getClass() == ValidationOcspClient.class) {
+                validationOcspClient = (ValidationOcspClient) ocspClient;
+                break;
+            }
+        }
+        for (ICrlClient crlClient : this.properties.getCrlClients()) {
+            if (crlClient.getClass() == ValidationCrlClient.class) {
+                validationCrlClient = (ValidationCrlClient) crlClient;
+                break;
+            }
+        }
     }
 
     private PdfPKCS7 mathematicallyVerifySignature(ValidationReport validationReport, PdfDocument document) {

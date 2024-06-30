@@ -110,8 +110,8 @@ public class ValidationMetaInfoEventsTest extends ExtendedITextTest {
     @Test
     public void signatureValidatorSingleEventTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "multipleRevisionsDocument.pdf"))) {
-            SignatureValidator validator = builder.buildSignatureValidator();
-            validator.validateSignatures(document);
+            SignatureValidator validator = builder.buildSignatureValidator(document);
+            validator.validateSignatures();
         }
 
         List<AbstractContextBasedITextEvent> events = handler.getEvents();
@@ -129,9 +129,9 @@ public class ValidationMetaInfoEventsTest extends ExtendedITextTest {
     public void signatureValidatorZeroEventsTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "multipleRevisionsDocument.pdf"),
                 new DocumentProperties().setEventCountingMetaInfo(new ValidationMetaInfo()))) {
-            SignatureValidator validator = builder.buildSignatureValidator();
+            SignatureValidator validator = builder.buildSignatureValidator(document);
             validator.setEventCountingMetaInfo(new ValidationMetaInfo());
-            validator.validateSignatures(document);
+            validator.validateSignatures();
         }
 
         List<AbstractContextBasedITextEvent> events = handler.getEvents();

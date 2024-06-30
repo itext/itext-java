@@ -51,7 +51,11 @@ import java.util.List;
 /**
  * Class that allows you to verify a certificate against
  * one or more OCSP responses.
+ *
+ * @deprecated starting from 8.0.5.
+ * {@link com.itextpdf.signatures.validation.v1.OCSPValidator} should be used instead.
  */
+@Deprecated
 public class OCSPVerifier extends RootStoreVerifier {
 
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
@@ -330,7 +334,7 @@ public class OCSPVerifier extends RootStoreVerifier {
                 }
                 // 2.2. Try to check responderCert for revocation using Authority Information Access for OCSP responses
                 // or CRL Distribution Points for CRL responses using default clients.
-                IBasicOCSPResp responderOcspResp = new OcspClientBouncyCastle(null)
+                IBasicOCSPResp responderOcspResp = new OcspClientBouncyCastle()
                         .getBasicOCSPResp(responderCert, issuerCert, null);
                 if (verifyOcsp(responderOcspResp, responderCert, issuerCert, ocspResp.getProducedAt())) {
                     return;
@@ -402,7 +406,7 @@ public class OCSPVerifier extends RootStoreVerifier {
         if (signCert == null && issuerCert == null) {
             return null;
         }
-        OcspClientBouncyCastle ocsp = new OcspClientBouncyCastle(null);
+        OcspClientBouncyCastle ocsp = new OcspClientBouncyCastle();
         return ocsp.getBasicOCSPResp(signCert, issuerCert, null);
     }
 
