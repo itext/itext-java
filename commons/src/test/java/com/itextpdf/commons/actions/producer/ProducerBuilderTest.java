@@ -185,6 +185,42 @@ public class ProducerBuilderTest extends ExtendedITextTest {
         Assert.assertEquals("||", newProducerLine);
     }
 
+    @Test
+    public void modifiedUsingEqualsCurrentProducerTest() {
+        List<ConfirmedEventWrapper> events = getEvents("some Author", 1, 2, 3);
+        String newProducerLine = ProducerBuilder.modifyProducer(events
+                , "Old producer; modified using some Author");
+
+        Assert.assertEquals("Old producer; modified using some Author", newProducerLine);
+    }
+
+    @Test
+    public void prevModifiedUsingEqualsCurrentProducerTest() {
+        List<ConfirmedEventWrapper> events = getEvents("some Author", 1, 2, 3);
+        String newProducerLine = ProducerBuilder.modifyProducer(events
+                , "Old producer; modified using some Author; modified using another tool");
+
+        Assert.assertEquals("Old producer; modified using some Author; modified using another tool; " +
+                "modified using some Author", newProducerLine);
+    }
+
+    @Test
+    public void severalModifiedUsingEqualsCurrentProducerTest() {
+        List<ConfirmedEventWrapper> events = getEvents("some Author", 1, 2, 3);
+        String newProducerLine = ProducerBuilder.modifyProducer(events
+                , "Old producer; modified using some Author; modified using some Author");
+
+        Assert.assertEquals("Old producer; modified using some Author; modified using some Author", newProducerLine);
+    }
+
+    @Test
+    public void oldProducerEqualsCurrentProducerTest() {
+        List<ConfirmedEventWrapper> events = getEvents("some Author", 1, 2, 3);
+        String newProducerLine = ProducerBuilder.modifyProducer(events, "some Author");
+
+        Assert.assertEquals("some Author", newProducerLine);
+    }
+
     private List<ConfirmedEventWrapper> getEvents(String initialProducerLine, int ... indexes) {
         List<ConfirmedEventWrapper> events = new ArrayList<>();
 
