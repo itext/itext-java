@@ -83,7 +83,8 @@ public class ShorthandResolverFactory {
         shorthandResolvers.put(CommonCssConstants.TEXT_DECORATION, new TextDecorationShorthandResolver());
         shorthandResolvers.put(CommonCssConstants.FLEX, new FlexShorthandResolver());
         shorthandResolvers.put(CommonCssConstants.FLEX_FLOW, new FlexFlowShorthandResolver());
-        shorthandResolvers.put(CommonCssConstants.GAP, new GapShorthandResolver());
+        shorthandResolvers.put(CommonCssConstants.GAP, new GapShorthandResolver(CommonCssConstants.GAP));
+        shorthandResolvers.put(CommonCssConstants.GRID_GAP, new GapShorthandResolver(CommonCssConstants.GRID_GAP));
         shorthandResolvers.put(CommonCssConstants.PLACE_ITEMS, new PlaceItemsShorthandResolver());
         shorthandResolvers.put(CommonCssConstants.COLUMNS, new ColumnsShorthandResolver());
         shorthandResolvers.put(CommonCssConstants.COLUMN_RULE, new ColumnRuleShortHandResolver());

@@ -113,17 +113,18 @@ public class CssDefaultValidator implements ICssDeclarationValidator {
                 new MultiTypeDeclarationValidator(new CssNumberValueValidator(false),
                         new CssLengthValueValidator(false), new CssPercentageValueValidator(false), normalValidator,
                         inheritInitialUnsetValidator));
-        defaultValidators.put(CommonCssConstants.COLUMN_GAP,
-                new MultiTypeDeclarationValidator(new CssLengthValueValidator(false),
-                        new CssPercentageValueValidator(false), normalValidator));
+        final MultiTypeDeclarationValidator gapValidator = new MultiTypeDeclarationValidator(
+                new CssLengthValueValidator(false), new CssPercentageValueValidator(false), normalValidator,
+                inheritInitialUnsetValidator);
+        defaultValidators.put(CommonCssConstants.COLUMN_GAP, gapValidator);
+        defaultValidators.put(CommonCssConstants.GRID_COLUMN_GAP, gapValidator);
         defaultValidators.put(CommonCssConstants.COLUMN_WIDTH,
                 new MultiTypeDeclarationValidator(new CssLengthValueValidator(false),
                         new CssPercentageValueValidator(false), new CssEnumValidator(CommonCssConstants.AUTO)));
         defaultValidators.put(CommonCssConstants.COLUMN_COUNT, new MultiTypeDeclarationValidator(
                 new CssIntegerNumberValueValidator(false, false), new CssEnumValidator(CommonCssConstants.AUTO)));
-        defaultValidators.put(CommonCssConstants.ROW_GAP, new MultiTypeDeclarationValidator(
-                new CssLengthValueValidator(false), new CssPercentageValueValidator(false), normalValidator,
-                inheritInitialUnsetValidator));
+        defaultValidators.put(CommonCssConstants.ROW_GAP, gapValidator);
+        defaultValidators.put(CommonCssConstants.GRID_ROW_GAP, gapValidator);
         defaultValidators.put(CommonCssConstants.FLEX_GROW, new MultiTypeDeclarationValidator(
                 new CssNumberValueValidator(false), inheritInitialUnsetValidator));
         defaultValidators.put(CommonCssConstants.FLEX_SHRINK, new MultiTypeDeclarationValidator(

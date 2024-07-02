@@ -530,14 +530,28 @@ public class CommonCssConstants {
     public static final String GRID_COLUMN_END = "grid-column-end";
 
     /**
+     * The Constant GRID_COLUMN_GAP.
+     */
+    public static final String GRID_COLUMN_GAP = "grid-column-gap";
+
+    /**
      * The Constant GRID_COLUMN_START.
      */
     public static final String GRID_COLUMN_START = "grid-column-start";
 
     /**
+     * The Constant GRID_GAP.
+     */
+    public static final String GRID_GAP = "grid-gap";
+
+    /**
      * The Constant GRID_ROW_END.
      */
     public static final String GRID_ROW_END = "grid-row-end";
+    /**
+     * The Constant GRID_ROW_GAP.
+     */
+    public static final String GRID_ROW_GAP = "grid-row-gap";
 
     /**
      * The Constant GRID_ROW_START.

@@ -90,7 +90,7 @@ public class ImageRenderInfo extends AbstractRenderInfo {
      * <li>get image bytes with {@link PdfImageXObject#getImageBytes(boolean)}, these image bytes
      * represent native image, i.e you can write these bytes to disk and get just an usual image;
      * <li>obtain PdfStream object which contains image dictionary with {@link PdfImageXObject#getPdfObject()} method;
-     * <li>convert image to {@link java.awt.image.BufferedImage} with {@link PdfImageXObject#getBufferedImage()};
+     * <li>convert image to {@link java.awt.image.BufferedImage} with {@link PdfImageXObject#getBufferedImage()};  // Android-Conversion-Skip-Line (java.awt library isn't available on Android)
      * </ul>
      *
      * @return the {@link PdfImageXObject image}
