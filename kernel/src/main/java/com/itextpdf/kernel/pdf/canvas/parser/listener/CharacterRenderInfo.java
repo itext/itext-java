@@ -59,12 +59,12 @@ public class CharacterRenderInfo extends TextChunk {
                 if (chunk.sameLine(lastChunk)) {
                     // we only insert a blank space if the trailing character of the previous string wasn't a space, and the leading character of the current string isn't a space
                     if (chunk.getLocation().isAtWordBoundary(lastChunk.getLocation()) && !chunk.getText().startsWith(" ") && !chunk.getText().endsWith(" ")) {
-                        sb.append(' ');
+                        putCharsWithIndex(" ", i, indexMap, sb);
                     }
                     putCharsWithIndex(chunk.getText(), i, indexMap, sb);
                 } else {
                     // we insert a newline character in the resulting string if the chunks are placed on different lines
-                    sb.append('\n');
+                    putCharsWithIndex("\n", i, indexMap, sb);
                     putCharsWithIndex(chunk.getText(), i, indexMap, sb);
                 }
             }
