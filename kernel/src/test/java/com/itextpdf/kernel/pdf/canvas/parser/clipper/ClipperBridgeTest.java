@@ -106,6 +106,19 @@ public class ClipperBridgeTest extends ExtendedITextTest {
         Assert.assertEquals(EndType.OPEN_ROUND, ClipperBridge.getEndType(LineCapStyle.ROUND));
     }
 
+    @Test
+    public void longRectWidthTest() {
+        LongRect longRect = new LongRect(14900000000000000L, 21275000000000000L, 71065802001953128L, 71075000000000000L);
+        Assert.assertEquals(561.658, ClipperBridge.longRectCalculateWidth(longRect), 0.001f);
+    }
+
+
+    @Test
+    public void longRectHeightTest() {
+        LongRect longRect = new LongRect(14900000000000000L, 21275000000000000L, 71065802001953128L, 71075000000000000L);
+        Assert.assertEquals(498, ClipperBridge.longRectCalculateHeight(longRect), 0.001f);
+    }
+
     private boolean areShapesEqual(IShape expected, IShape actual) {
         if (expected == actual) {
             return true;
