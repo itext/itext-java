@@ -49,24 +49,23 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class BackgroundImageTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/BackgroundImageTest/";
     public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/BackgroundImageTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(DESTINATION_FOLDER);
     }
@@ -76,8 +75,8 @@ public class BackgroundImageTest extends ExtendedITextTest {
         PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "itis.jpg"));
         BackgroundImage backgroundImage = new BackgroundImage.Builder().setImage(xObject).build();
 
-        Assert.assertEquals(BackgroundRepeatValue.REPEAT, backgroundImage.getRepeat().getXAxisRepeat());
-        Assert.assertEquals(BackgroundRepeatValue.REPEAT, backgroundImage.getRepeat().getYAxisRepeat());
+        Assertions.assertEquals(BackgroundRepeatValue.REPEAT, backgroundImage.getRepeat().getXAxisRepeat());
+        Assertions.assertEquals(BackgroundRepeatValue.REPEAT, backgroundImage.getRepeat().getYAxisRepeat());
 
         backgroundImageGenericTest("backgroundImage", backgroundImage);
     }
@@ -89,11 +88,11 @@ public class BackgroundImageTest extends ExtendedITextTest {
         Field[] imageFields = image.getClass().getDeclaredFields();
         BackgroundImage copyImage = new BackgroundImage(image);
         Field[] copyImageFields = copyImage.getClass().getDeclaredFields();
-        Assert.assertEquals(imageFields.length, copyImageFields.length);
+        Assertions.assertEquals(imageFields.length, copyImageFields.length);
         for (int i = 0; i < imageFields.length; i++) {
             Field imageField = imageFields[i];
             Field copyImageField = copyImageFields[i];
-            Assert.assertEquals(imageField, copyImageField);
+            Assertions.assertEquals(imageField, copyImageField);
         }
     }
 
@@ -102,8 +101,8 @@ public class BackgroundImageTest extends ExtendedITextTest {
         PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "itis.jpg"));
         BackgroundImage backgroundImage = new BackgroundImage.Builder().setImage(xObject).build();
 
-        Assert.assertEquals(BackgroundBox.BORDER_BOX, backgroundImage.getBackgroundClip());
-        Assert.assertEquals(BackgroundBox.PADDING_BOX, backgroundImage.getBackgroundOrigin());
+        Assertions.assertEquals(BackgroundBox.BORDER_BOX, backgroundImage.getBackgroundClip());
+        Assertions.assertEquals(BackgroundBox.PADDING_BOX, backgroundImage.getBackgroundOrigin());
 
         backgroundImageGenericTest("backgroundImage", backgroundImage);
     }
@@ -114,8 +113,8 @@ public class BackgroundImageTest extends ExtendedITextTest {
         BackgroundImage backgroundImage = new BackgroundImage.Builder().setImage(xObject)
                 .setBackgroundClip(BackgroundBox.CONTENT_BOX).setBackgroundOrigin(BackgroundBox.CONTENT_BOX).build();
 
-        Assert.assertEquals(BackgroundBox.CONTENT_BOX, backgroundImage.getBackgroundClip());
-        Assert.assertEquals(BackgroundBox.CONTENT_BOX, backgroundImage.getBackgroundOrigin());
+        Assertions.assertEquals(BackgroundBox.CONTENT_BOX, backgroundImage.getBackgroundClip());
+        Assertions.assertEquals(BackgroundBox.CONTENT_BOX, backgroundImage.getBackgroundOrigin());
 
         backgroundImageGenericTest("backgroundImage", backgroundImage);
     }
@@ -191,10 +190,10 @@ public class BackgroundImageTest extends ExtendedITextTest {
         PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "itis.jpg"));
         BackgroundImage backgroundImage = new BackgroundImage.Builder().setImage(xObject).build();
 
-        Assert.assertEquals(BackgroundRepeatValue.REPEAT, backgroundImage.getRepeat().getXAxisRepeat());
-        Assert.assertEquals(BackgroundRepeatValue.REPEAT, backgroundImage.getRepeat().getYAxisRepeat());
+        Assertions.assertEquals(BackgroundRepeatValue.REPEAT, backgroundImage.getRepeat().getXAxisRepeat());
+        Assertions.assertEquals(BackgroundRepeatValue.REPEAT, backgroundImage.getRepeat().getYAxisRepeat());
 
-        Assert.assertTrue(backgroundImage.isBackgroundSpecified());
+        Assertions.assertTrue(backgroundImage.isBackgroundSpecified());
 
         String outFileName = DESTINATION_FOLDER + "backgroundImageForText.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_backgroundImageForText.pdf";
@@ -211,7 +210,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
 
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -232,7 +231,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
             doc.add(new Paragraph(textElement));
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -253,7 +252,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
             doc.add(new Paragraph(textElement));
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -275,7 +274,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
             doc.add(new Paragraph(textElement));
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -296,7 +295,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
             doc.add(new Paragraph(textElement));
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -317,7 +316,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
             doc.add(new Paragraph(textElement));
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -339,7 +338,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
             doc.add(new Paragraph(textElement));
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -361,7 +360,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
             doc.add(new Paragraph(textElement));
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -370,8 +369,8 @@ public class BackgroundImageTest extends ExtendedITextTest {
         BackgroundImage backgroundImage = new BackgroundImage
                 .Builder().setImage(xObject).setBackgroundRepeat(new BackgroundRepeat(BackgroundRepeatValue.NO_REPEAT, BackgroundRepeatValue.REPEAT)).build();
 
-        Assert.assertEquals(BackgroundRepeatValue.NO_REPEAT, backgroundImage.getRepeat().getXAxisRepeat());
-        Assert.assertEquals(BackgroundRepeatValue.REPEAT, backgroundImage.getRepeat().getYAxisRepeat());
+        Assertions.assertEquals(BackgroundRepeatValue.NO_REPEAT, backgroundImage.getRepeat().getXAxisRepeat());
+        Assertions.assertEquals(BackgroundRepeatValue.REPEAT, backgroundImage.getRepeat().getYAxisRepeat());
 
         backgroundImageGenericTest("backgroundImageWithoutRepeatX", backgroundImage);
     }
@@ -382,8 +381,8 @@ public class BackgroundImageTest extends ExtendedITextTest {
         BackgroundImage backgroundImage = new BackgroundImage
                 .Builder().setImage(xObject).setBackgroundRepeat(new BackgroundRepeat(BackgroundRepeatValue.REPEAT, BackgroundRepeatValue.NO_REPEAT)).build();
 
-        Assert.assertEquals(BackgroundRepeatValue.REPEAT, backgroundImage.getRepeat().getXAxisRepeat());
-        Assert.assertEquals(BackgroundRepeatValue.NO_REPEAT, backgroundImage.getRepeat().getYAxisRepeat());
+        Assertions.assertEquals(BackgroundRepeatValue.REPEAT, backgroundImage.getRepeat().getXAxisRepeat());
+        Assertions.assertEquals(BackgroundRepeatValue.NO_REPEAT, backgroundImage.getRepeat().getYAxisRepeat());
 
         backgroundImageGenericTest("backgroundImageWithoutRepeatY", backgroundImage);
     }
@@ -394,8 +393,8 @@ public class BackgroundImageTest extends ExtendedITextTest {
         BackgroundImage backgroundImage = new BackgroundImage
                 .Builder().setImage(xObject).setBackgroundRepeat(new BackgroundRepeat(BackgroundRepeatValue.NO_REPEAT)).build();
 
-        Assert.assertEquals(BackgroundRepeatValue.NO_REPEAT, backgroundImage.getRepeat().getXAxisRepeat());
-        Assert.assertEquals(BackgroundRepeatValue.NO_REPEAT, backgroundImage.getRepeat().getYAxisRepeat());
+        Assertions.assertEquals(BackgroundRepeatValue.NO_REPEAT, backgroundImage.getRepeat().getXAxisRepeat());
+        Assertions.assertEquals(BackgroundRepeatValue.NO_REPEAT, backgroundImage.getRepeat().getYAxisRepeat());
 
         backgroundImageGenericTest("backgroundImageWithoutRepeatXY", backgroundImage);
     }
@@ -431,8 +430,8 @@ public class BackgroundImageTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)))) {
             BackgroundImage backgroundImage = new BackgroundImage.Builder().setImage(createFormXObject(pdfDocument, "itis.jpg")).build();
 
-            Assert.assertEquals(BackgroundRepeatValue.REPEAT, backgroundImage.getRepeat().getXAxisRepeat());
-            Assert.assertEquals(BackgroundRepeatValue.REPEAT, backgroundImage.getRepeat().getYAxisRepeat());
+            Assertions.assertEquals(BackgroundRepeatValue.REPEAT, backgroundImage.getRepeat().getXAxisRepeat());
+            Assertions.assertEquals(BackgroundRepeatValue.REPEAT, backgroundImage.getRepeat().getYAxisRepeat());
 
             backgroundXObjectGenericTest(filename, backgroundImage, pdfDocument);
         }
@@ -450,8 +449,8 @@ public class BackgroundImageTest extends ExtendedITextTest {
                     .setImage(createFormXObject(pdfDocument, "itis.jpg"))
                     .setBackgroundRepeat(new BackgroundRepeat(BackgroundRepeatValue.NO_REPEAT, BackgroundRepeatValue.REPEAT)).build();
 
-            Assert.assertEquals(BackgroundRepeatValue.NO_REPEAT, backgroundImage.getRepeat().getXAxisRepeat());
-            Assert.assertEquals(BackgroundRepeatValue.REPEAT, backgroundImage.getRepeat().getYAxisRepeat());
+            Assertions.assertEquals(BackgroundRepeatValue.NO_REPEAT, backgroundImage.getRepeat().getXAxisRepeat());
+            Assertions.assertEquals(BackgroundRepeatValue.REPEAT, backgroundImage.getRepeat().getYAxisRepeat());
 
             backgroundXObjectGenericTest(filename, backgroundImage, pdfDocument);
         }
@@ -469,8 +468,8 @@ public class BackgroundImageTest extends ExtendedITextTest {
                     .Builder().setImage(createFormXObject(pdfDocument, "itis.jpg"))
                     .setBackgroundRepeat(new BackgroundRepeat(BackgroundRepeatValue.REPEAT, BackgroundRepeatValue.NO_REPEAT)).build();
 
-            Assert.assertEquals(BackgroundRepeatValue.REPEAT, backgroundImage.getRepeat().getXAxisRepeat());
-            Assert.assertEquals(BackgroundRepeatValue.NO_REPEAT, backgroundImage.getRepeat().getYAxisRepeat());
+            Assertions.assertEquals(BackgroundRepeatValue.REPEAT, backgroundImage.getRepeat().getXAxisRepeat());
+            Assertions.assertEquals(BackgroundRepeatValue.NO_REPEAT, backgroundImage.getRepeat().getYAxisRepeat());
 
             backgroundXObjectGenericTest(filename, backgroundImage, pdfDocument);
         }
@@ -488,8 +487,8 @@ public class BackgroundImageTest extends ExtendedITextTest {
                     .Builder().setImage(createFormXObject(pdfDocument, "itis.jpg"))
                     .setBackgroundRepeat(new BackgroundRepeat(BackgroundRepeatValue.NO_REPEAT)).build();
 
-            Assert.assertEquals(BackgroundRepeatValue.NO_REPEAT, backgroundImage.getRepeat().getXAxisRepeat());
-            Assert.assertEquals(BackgroundRepeatValue.NO_REPEAT, backgroundImage.getRepeat().getYAxisRepeat());
+            Assertions.assertEquals(BackgroundRepeatValue.NO_REPEAT, backgroundImage.getRepeat().getXAxisRepeat());
+            Assertions.assertEquals(BackgroundRepeatValue.NO_REPEAT, backgroundImage.getRepeat().getYAxisRepeat());
 
             backgroundXObjectGenericTest(filename, backgroundImage, pdfDocument);
         }
@@ -531,7 +530,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
 
             pdfDocument.close();
 
-            Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+            Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
 
         }
     }
@@ -566,7 +565,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
 
             pdfDocument.close();
 
-            Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+            Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
 
         }
     }
@@ -695,10 +694,10 @@ public class BackgroundImageTest extends ExtendedITextTest {
 
     private void backgroundImageGenericTest(String filename, Object backgroundImage, Double angle) throws IOException, InterruptedException {
         if (backgroundImage instanceof BackgroundImage) {
-            Assert.assertTrue(((BackgroundImage) backgroundImage).isBackgroundSpecified());
+            Assertions.assertTrue(((BackgroundImage) backgroundImage).isBackgroundSpecified());
         } else {
             for (BackgroundImage image : (List<BackgroundImage>) backgroundImage) {
-                Assert.assertTrue((image).isBackgroundSpecified());
+                Assertions.assertTrue((image).isBackgroundSpecified());
             }
         }
 
@@ -731,11 +730,11 @@ public class BackgroundImageTest extends ExtendedITextTest {
 
         pdfDocument.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     private void backgroundXObjectGenericTest(String filename, BackgroundImage backgroundImage, PdfDocument pdfDocument) throws IOException, InterruptedException {
-        Assert.assertTrue(backgroundImage.isBackgroundSpecified());
+        Assertions.assertTrue(backgroundImage.isBackgroundSpecified());
 
         String outFileName = DESTINATION_FOLDER + filename + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + filename + ".pdf";
@@ -756,7 +755,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
 
         pdfDocument.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 }
 

@@ -60,16 +60,13 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
+
 
 import java.security.cert.X509CRL;
 import java.util.ArrayList;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -82,8 +79,11 @@ import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 
-@Category(BouncyCastleUnitTest.class)
+@Tag("BouncyCastleUnitTest")
 public class RevocationDataValidatorTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
     private static final String SOURCE_FOLDER =
@@ -105,7 +105,7 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
     private MockOCSPValidator mockOCSPValidator;
     private MockSignatureValidationProperties mockParameters;
 
-    @BeforeClass
+    @BeforeAll
     public static void before()
             throws CertificateException, IOException, AbstractOperatorCreationException, AbstractPKCSException {
         Security.addProvider(FACTORY.getProvider());
@@ -123,7 +123,7 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
         trustedOcspResponderCert = (X509Certificate) PemFileHelper.readFirstChain(ocspResponderCertFileName)[0];
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         certificateRetriever = new IssuingCertificateRetriever();
         parameters = new SignatureValidationProperties();
@@ -168,19 +168,19 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
                 .hasNumberOfLogs(1)
                 .hasLogItem(reportItem));
         // there should be one call per ocspClient
-        Assert.assertEquals(1, ocspClient.getCalls().size());
+        Assertions.assertEquals(1, ocspClient.getCalls().size());
 
         // There was only one ocsp response so we expect 1 call to the ocsp validator
-        Assert.assertEquals(1, mockOCSPValidator.calls.size());
+        Assertions.assertEquals(1, mockOCSPValidator.calls.size());
 
         // the validationDate should be passed as is
-        Assert.assertEquals(checkDate, mockOCSPValidator.calls.get(0).validationDate);
+        Assertions.assertEquals(checkDate, mockOCSPValidator.calls.get(0).validationDate);
 
         // the response should be passed as is
-        Assert.assertEquals(ocspClient.getCalls().get(0).response, mockOCSPValidator.calls.get(0).ocspResp);
+        Assertions.assertEquals(ocspClient.getCalls().get(0).response, mockOCSPValidator.calls.get(0).ocspResp);
 
         // There should be a new report generated and any logs must be copied the actual report.
-        Assert.assertNotEquals(report, mockOCSPValidator.calls.get(0).report);
+        Assertions.assertNotEquals(report, mockOCSPValidator.calls.get(0).report);
     }
 
     @Test
@@ -213,14 +213,14 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
                 .hasNumberOfLogs(1)
                 .hasLogItem(reportItem));
         // there should be one call per CrlClient
-        Assert.assertEquals(1, crlClient.getCalls().size());
+        Assertions.assertEquals(1, crlClient.getCalls().size());
         // since there was one response there should be one validator call
-        Assert.assertEquals(1, mockCrlValidator.calls.size());
-        Assert.assertEquals(checkCert, mockCrlValidator.calls.get(0).certificate);
-        Assert.assertEquals(checkDate, mockCrlValidator.calls.get(0).validationDate);
+        Assertions.assertEquals(1, mockCrlValidator.calls.size());
+        Assertions.assertEquals(checkCert, mockCrlValidator.calls.get(0).certificate);
+        Assertions.assertEquals(checkDate, mockCrlValidator.calls.get(0).validationDate);
         // There should be a new report generated and any logs must be copied the actual report.
-        Assert.assertNotEquals(report, mockCrlValidator.calls.get(0).report);
-        Assert.assertEquals(crlClient.getCalls().get(0).responses.get(0), mockCrlValidator.calls.get(0).crl);
+        Assertions.assertNotEquals(report, mockCrlValidator.calls.get(0).report);
+        Assertions.assertEquals(crlClient.getCalls().get(0).responses.get(0), mockCrlValidator.calls.get(0).crl);
     }
 
     @Test
@@ -254,9 +254,9 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
         ValidationReport report = new ValidationReport();
         validator.validate(report, baseContext, checkCert, checkDate);
 
-        Assert.assertEquals(crlClient3.getCalls().get(0).responses.get(0), mockCrlValidator.calls.get(0).crl);
-        Assert.assertEquals(crlClient2.getCalls().get(0).responses.get(0), mockCrlValidator.calls.get(1).crl);
-        Assert.assertEquals(crlClient1.getCalls().get(0).responses.get(0), mockCrlValidator.calls.get(2).crl);
+        Assertions.assertEquals(crlClient3.getCalls().get(0).responses.get(0), mockCrlValidator.calls.get(0).crl);
+        Assertions.assertEquals(crlClient2.getCalls().get(0).responses.get(0), mockCrlValidator.calls.get(1).crl);
+        Assertions.assertEquals(crlClient1.getCalls().get(0).responses.get(0), mockCrlValidator.calls.get(2).crl);
     }
 
     @Test
@@ -302,9 +302,9 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
 
         validator.validate(report, baseContext, checkCert, checkDate);
 
-        Assert.assertEquals(ocspClient2.getCalls().get(0).response, mockOCSPValidator.calls.get(0).ocspResp);
-        Assert.assertEquals(ocspClient3.getCalls().get(0).response, mockOCSPValidator.calls.get(1).ocspResp);
-        Assert.assertEquals(ocspClient1.getCalls().get(0).response, mockOCSPValidator.calls.get(2).ocspResp);
+        Assertions.assertEquals(ocspClient2.getCalls().get(0).response, mockOCSPValidator.calls.get(0).ocspResp);
+        Assertions.assertEquals(ocspClient3.getCalls().get(0).response, mockOCSPValidator.calls.get(1).ocspResp);
+        Assertions.assertEquals(ocspClient1.getCalls().get(0).response, mockOCSPValidator.calls.get(2).ocspResp);
     }
 
     @Test
@@ -646,16 +646,16 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
         });
         validator.validate(report, baseContext, checkCert, checkDate);
 
-        Assert.assertTrue(mockOCSPValidator.calls.get(0).timeStamp.before(mockOCSPValidator.calls.get(1).timeStamp));
-        Assert.assertTrue(mockOCSPValidator.calls.get(1).timeStamp.before(mockCrlValidator.calls.get(0).timeStamp));
-        Assert.assertTrue(mockCrlValidator.calls.get(0).timeStamp.before(mockCrlValidator.calls.get(1).timeStamp));
-        Assert.assertTrue(mockCrlValidator.calls.get(1).timeStamp.before(mockOCSPValidator.calls.get(2).timeStamp));
+        Assertions.assertTrue(mockOCSPValidator.calls.get(0).timeStamp.before(mockOCSPValidator.calls.get(1).timeStamp));
+        Assertions.assertTrue(mockOCSPValidator.calls.get(1).timeStamp.before(mockCrlValidator.calls.get(0).timeStamp));
+        Assertions.assertTrue(mockCrlValidator.calls.get(0).timeStamp.before(mockCrlValidator.calls.get(1).timeStamp));
+        Assertions.assertTrue(mockCrlValidator.calls.get(1).timeStamp.before(mockOCSPValidator.calls.get(2).timeStamp));
 
-        Assert.assertEquals(ocspClient1.getCalls().get(0).response, mockOCSPValidator.calls.get(2).ocspResp);
-        Assert.assertEquals(ocspClient2.getCalls().get(0).response, mockOCSPValidator.calls.get(1).ocspResp);
-        Assert.assertEquals(ocspClient3.getCalls().get(0).response, mockOCSPValidator.calls.get(0).ocspResp);
-        Assert.assertEquals(crlClient.getCalls().get(0).responses.get(0), mockCrlValidator.calls.get(1).crl);
-        Assert.assertEquals(crlClient.getCalls().get(0).responses.get(1), mockCrlValidator.calls.get(0).crl);
+        Assertions.assertEquals(ocspClient1.getCalls().get(0).response, mockOCSPValidator.calls.get(2).ocspResp);
+        Assertions.assertEquals(ocspClient2.getCalls().get(0).response, mockOCSPValidator.calls.get(1).ocspResp);
+        Assertions.assertEquals(ocspClient3.getCalls().get(0).response, mockOCSPValidator.calls.get(0).ocspResp);
+        Assertions.assertEquals(crlClient.getCalls().get(0).responses.get(0), mockCrlValidator.calls.get(1).crl);
+        Assertions.assertEquals(crlClient.getCalls().get(0).responses.get(1), mockCrlValidator.calls.get(0).crl);
     }
 
 @Test
@@ -664,11 +664,11 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
 
         Date ocspGeneration = DateTimeUtil.addDaysToDate(checkDate, 2);
         // Here we check that proper generation time was set.
-        mockOCSPValidator.onCallDo(c -> Assert.assertEquals(ocspGeneration, c.responseGenerationDate));
+        mockOCSPValidator.onCallDo(c -> Assertions.assertEquals(ocspGeneration, c.responseGenerationDate));
 
         Date crlGeneration = DateTimeUtil.addDaysToDate(checkDate, 3);
         // Here we check that proper generation time was set.
-        mockCrlValidator.onCallDo(c -> Assert.assertEquals(crlGeneration, c.responseGenerationDate));
+        mockCrlValidator.onCallDo(c -> Assertions.assertEquals(crlGeneration, c.responseGenerationDate));
 
         ValidationReport report = new ValidationReport();
         RevocationDataValidator validator = validatorChainBuilder.getRevocationDataValidator();
@@ -676,7 +676,7 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
         ValidationOcspClient ocspClient = new ValidationOcspClient() {
             @Override
             public byte[] getEncoded(X509Certificate checkCert, X509Certificate issuerCert, String url) {
-                Assert.fail("This method shall not be called");
+                Assertions.fail("This method shall not be called");
                 return null;
             }
         };
@@ -691,7 +691,7 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
         ValidationCrlClient crlClient = new ValidationCrlClient() {
             @Override
             public Collection<byte[]> getEncoded(X509Certificate checkCert, String url) {
-                Assert.fail("This method shall not be called");
+                Assertions.fail("This method shall not be called");
                 return null;
             }
         };
@@ -708,9 +708,9 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
     public void timeBasedContextProperlySetValidationClientsTest() throws GeneralSecurityException, IOException {
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
 
-        mockOCSPValidator.onCallDo(c -> Assert.assertEquals(TimeBasedContext.HISTORICAL, c.context.getTimeBasedContext()));
+        mockOCSPValidator.onCallDo(c -> Assertions.assertEquals(TimeBasedContext.HISTORICAL, c.context.getTimeBasedContext()));
 
-        mockCrlValidator.onCallDo(c -> Assert.assertEquals(TimeBasedContext.HISTORICAL, c.context.getTimeBasedContext()));
+        mockCrlValidator.onCallDo(c -> Assertions.assertEquals(TimeBasedContext.HISTORICAL, c.context.getTimeBasedContext()));
 
         ValidationReport report = new ValidationReport();
         RevocationDataValidator validator = validatorChainBuilder.getRevocationDataValidator();
@@ -739,8 +739,8 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
         certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
 
-        mockOCSPValidator.onCallDo(c -> Assert.assertEquals(TimeBasedContext.PRESENT, c.context.getTimeBasedContext()));
-        mockCrlValidator.onCallDo(c -> Assert.assertEquals(TimeBasedContext.PRESENT, c.context.getTimeBasedContext()));
+        mockOCSPValidator.onCallDo(c -> Assertions.assertEquals(TimeBasedContext.PRESENT, c.context.getTimeBasedContext()));
+        mockCrlValidator.onCallDo(c -> Assertions.assertEquals(TimeBasedContext.PRESENT, c.context.getTimeBasedContext()));
 
         ValidationReport report = new ValidationReport();
         RevocationDataValidator validator = validatorChainBuilder.getRevocationDataValidator();
@@ -759,8 +759,8 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
         certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
 
-        mockOCSPValidator.onCallDo(c -> Assert.assertEquals(TimeBasedContext.PRESENT, c.context.getTimeBasedContext()));
-        mockCrlValidator.onCallDo(c -> Assert.assertEquals(TimeBasedContext.PRESENT, c.context.getTimeBasedContext()));
+        mockOCSPValidator.onCallDo(c -> Assertions.assertEquals(TimeBasedContext.PRESENT, c.context.getTimeBasedContext()));
+        mockCrlValidator.onCallDo(c -> Assertions.assertEquals(TimeBasedContext.PRESENT, c.context.getTimeBasedContext()));
 
         ValidationReport report = new ValidationReport();
         RevocationDataValidator validator = validatorChainBuilder.getRevocationDataValidator();

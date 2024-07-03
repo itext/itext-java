@@ -40,22 +40,21 @@ import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.FileNotFoundException;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class InlineBlockTest extends ExtendedITextTest {
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/InlineBlockTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/InlineBlockTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
@@ -99,7 +98,7 @@ public class InlineBlockTest extends ExtendedITextTest {
         doc.add(p4);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -140,7 +139,7 @@ public class InlineBlockTest extends ExtendedITextTest {
         System.out.println(SystemUtil.getRelativeTimeMillis() - start);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -173,6 +172,6 @@ public class InlineBlockTest extends ExtendedITextTest {
             );
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(output, cmp, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(output, cmp, destinationFolder));
     }
 }

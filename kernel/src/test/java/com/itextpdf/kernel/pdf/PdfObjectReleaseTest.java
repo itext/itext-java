@@ -30,27 +30,26 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfObjectReleaseTest extends ExtendedITextTest {
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/PdfObjectReleaseTest/";
     public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/PdfObjectReleaseTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(DESTINATION_FOLDER);
     }
@@ -89,7 +88,7 @@ public class PdfObjectReleaseTest extends ExtendedITextTest {
             doc.getCatalog().getPdfObject().release();
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(release, srcFile, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(release, srcFile, DESTINATION_FOLDER));
     }
 
     @Test
@@ -102,7 +101,7 @@ public class PdfObjectReleaseTest extends ExtendedITextTest {
             doc.getCatalog().getPdfObject().getAsDictionary(PdfName.Pages).release();
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(release, srcFile, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(release, srcFile, DESTINATION_FOLDER));
     }
 
     @Test
@@ -115,7 +114,7 @@ public class PdfObjectReleaseTest extends ExtendedITextTest {
             doc.getStructTreeRoot().getPdfObject().release();
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(release, srcFile, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(release, srcFile, DESTINATION_FOLDER));
     }
 
     @Test
@@ -133,7 +132,7 @@ public class PdfObjectReleaseTest extends ExtendedITextTest {
             annots.getPdfObject().release();
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFile, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFile, DESTINATION_FOLDER));
     }
 
     @Test
@@ -148,10 +147,10 @@ public class PdfObjectReleaseTest extends ExtendedITextTest {
 
             doc.getCatalog().put(PdfName.Outlines, releasedObj);
         } finally {
-            Exception e = Assert.assertThrows(PdfException.class,
+            Exception e = Assertions.assertThrows(PdfException.class,
                     () -> doc.close()
             );
-            Assert.assertEquals("Cannot write object after it was released."
+            Assertions.assertEquals("Cannot write object after it was released."
                     + " In normal situation the object must be read once again before being written.", e.getMessage());
         }
     }
@@ -176,6 +175,6 @@ public class PdfObjectReleaseTest extends ExtendedITextTest {
 
         stamperRelease.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outStampingRelease, outPureStamping, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outStampingRelease, outPureStamping, DESTINATION_FOLDER));
     }
 }

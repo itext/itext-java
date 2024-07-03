@@ -23,13 +23,12 @@
 package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PathOperatorSplitTest extends ExtendedITextTest {
 
     @Test
@@ -48,7 +47,7 @@ public class PathOperatorSplitTest extends ExtendedITextTest {
 
     private void testSplitting(String originalStr, String[] expectedSplitting) {
         String[] result = PathSvgNodeRenderer.splitPathStringIntoOperators(originalStr);
-        Assert.assertArrayEquals(expectedSplitting, result);
+        Assertions.assertArrayEquals(expectedSplitting, result);
     }
 
 }

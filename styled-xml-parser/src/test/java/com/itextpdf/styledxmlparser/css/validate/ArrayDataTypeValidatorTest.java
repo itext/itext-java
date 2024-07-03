@@ -25,37 +25,36 @@ package com.itextpdf.styledxmlparser.css.validate;
 import com.itextpdf.styledxmlparser.css.validate.impl.datatype.ArrayDataTypeValidator;
 import com.itextpdf.styledxmlparser.css.validate.impl.datatype.CssBlendModeValidator;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class ArrayDataTypeValidatorTest extends ExtendedITextTest {
 
     @Test
     public void nullValueTest() {
         final ICssDataTypeValidator validator = new ArrayDataTypeValidator(new TestValidator());
-        Assert.assertFalse(validator.isValid(null));
+        Assertions.assertFalse(validator.isValid(null));
     }
 
     @Test
     public void normalValueTest() {
         final ICssDataTypeValidator validator = new ArrayDataTypeValidator(new TestValidator());
-        Assert.assertTrue(validator.isValid(""));
-        Assert.assertTrue(validator.isValid("test"));
-        Assert.assertTrue(validator.isValid("test is, test, ttest"));
-        Assert.assertTrue(validator.isValid("(te,st)"));
-        Assert.assertTrue(validator.isValid("(te,st), test,"));
+        Assertions.assertTrue(validator.isValid(""));
+        Assertions.assertTrue(validator.isValid("test"));
+        Assertions.assertTrue(validator.isValid("test is, test, ttest"));
+        Assertions.assertTrue(validator.isValid("(te,st)"));
+        Assertions.assertTrue(validator.isValid("(te,st), test,"));
     }
 
     @Test
     public void invalidValuesTest() {
         final ICssDataTypeValidator validator = new ArrayDataTypeValidator(new TestValidator());
-        Assert.assertFalse(validator.isValid("norma"));
-        Assert.assertFalse(validator.isValid("te,st"));
-        Assert.assertFalse(validator.isValid("(te,st),, test,"));
+        Assertions.assertFalse(validator.isValid("norma"));
+        Assertions.assertFalse(validator.isValid("te,st"));
+        Assertions.assertFalse(validator.isValid("(te,st),, test,"));
     }
 
     private static class TestValidator implements ICssDataTypeValidator {

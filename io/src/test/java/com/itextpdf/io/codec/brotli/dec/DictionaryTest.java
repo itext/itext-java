@@ -6,23 +6,19 @@
 
 package com.itextpdf.io.codec.brotli.dec;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.ByteBuffer;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 /**
  * Tests for {@link Dictionary}.
  */
-@Category(UnitTest.class)
-@RunWith(JUnit4.class)
+@Tag("UnitTest")
 public class DictionaryTest extends ExtendedITextTest {
 
     @Test

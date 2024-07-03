@@ -38,20 +38,19 @@ import com.itextpdf.signatures.validation.v1.context.TimeBasedContext;
 import com.itextpdf.signatures.validation.v1.context.ValidationContext;
 import com.itextpdf.signatures.validation.v1.context.ValidatorContext;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.security.Security;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class ValidationMetaInfoEventsTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/validation/v1/ValidationMetaInfoEventsTest/";
 
@@ -60,18 +59,18 @@ public class ValidationMetaInfoEventsTest extends ExtendedITextTest {
     private final ValidationContext validationContext = new ValidationContext(
             ValidatorContext.DOCUMENT_REVISIONS_VALIDATOR, CertificateSource.SIGNER_CERT, TimeBasedContext.PRESENT);
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         Security.addProvider(BouncyCastleFactoryCreator.getFactory().getProvider());
     }
 
-    @Before
+    @BeforeEach
     public void setUpHandler() {
         handler = new StoreEventsHandler(UnknownContext.PERMISSIVE);
         EventManager.getInstance().register(handler);
     }
 
-    @After
+    @AfterEach
     public void resetHandler() {
         EventManager.getInstance().unregister(handler);
     }
@@ -84,14 +83,14 @@ public class ValidationMetaInfoEventsTest extends ExtendedITextTest {
         }
 
         List<AbstractContextBasedITextEvent> events = handler.getEvents();
-        Assert.assertEquals(2, events.size());
-        Assert.assertTrue(events.get(0) instanceof ITextCoreProductEvent);
+        Assertions.assertEquals(2, events.size());
+        Assertions.assertTrue(events.get(0) instanceof ITextCoreProductEvent);
         ITextCoreProductEvent iTextCoreProductEvent = (ITextCoreProductEvent) events.get(0);
-        Assert.assertEquals(ITextCoreProductEvent.PROCESS_PDF, iTextCoreProductEvent.getEventType());
+        Assertions.assertEquals(ITextCoreProductEvent.PROCESS_PDF, iTextCoreProductEvent.getEventType());
         // Only first iTextCoreProductEvent is confirmed.
-        Assert.assertTrue(events.get(1) instanceof ConfirmEvent);
+        Assertions.assertTrue(events.get(1) instanceof ConfirmEvent);
         ConfirmEvent confirmEvent = (ConfirmEvent) events.get(1);
-        Assert.assertEquals(iTextCoreProductEvent, confirmEvent.getConfirmedEvent());
+        Assertions.assertEquals(iTextCoreProductEvent, confirmEvent.getConfirmedEvent());
     }
 
     @Test
@@ -104,7 +103,7 @@ public class ValidationMetaInfoEventsTest extends ExtendedITextTest {
         }
 
         List<AbstractContextBasedITextEvent> events = handler.getEvents();
-        Assert.assertEquals(0, events.size());
+        Assertions.assertEquals(0, events.size());
     }
 
     @Test
@@ -115,14 +114,14 @@ public class ValidationMetaInfoEventsTest extends ExtendedITextTest {
         }
 
         List<AbstractContextBasedITextEvent> events = handler.getEvents();
-        Assert.assertEquals(2, events.size());
-        Assert.assertTrue(events.get(0) instanceof ITextCoreProductEvent);
+        Assertions.assertEquals(2, events.size());
+        Assertions.assertTrue(events.get(0) instanceof ITextCoreProductEvent);
         ITextCoreProductEvent iTextCoreProductEvent = (ITextCoreProductEvent) events.get(0);
-        Assert.assertEquals(ITextCoreProductEvent.PROCESS_PDF, iTextCoreProductEvent.getEventType());
+        Assertions.assertEquals(ITextCoreProductEvent.PROCESS_PDF, iTextCoreProductEvent.getEventType());
         // Only first iTextCoreProductEvent is confirmed.
-        Assert.assertTrue(events.get(1) instanceof ConfirmEvent);
+        Assertions.assertTrue(events.get(1) instanceof ConfirmEvent);
         ConfirmEvent confirmEvent = (ConfirmEvent) events.get(1);
-        Assert.assertEquals(iTextCoreProductEvent, confirmEvent.getConfirmedEvent());
+        Assertions.assertEquals(iTextCoreProductEvent, confirmEvent.getConfirmedEvent());
     }
 
     @Test
@@ -135,7 +134,7 @@ public class ValidationMetaInfoEventsTest extends ExtendedITextTest {
         }
 
         List<AbstractContextBasedITextEvent> events = handler.getEvents();
-        Assert.assertEquals(0, events.size());
+        Assertions.assertEquals(0, events.size());
     }
 
     private static class StoreEventsHandler extends AbstractContextBasedEventHandler {

@@ -74,19 +74,18 @@ import com.itextpdf.layout.properties.VerticalAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import javax.xml.parsers.ParserConfigurationException;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 import org.xml.sax.SAXException;
 
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class LayoutTaggingTest extends ExtendedITextTest {
 
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/LayoutTaggingTest/";
@@ -94,7 +93,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/LayoutTaggingTest/";
     public static final String fontsFolder = "./src/test/resources/com/itextpdf/layout/fonts/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
@@ -1044,7 +1043,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpPdf, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpPdf, destinationFolder, "diff"));
     }
 
     @Test
@@ -1316,7 +1315,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
         errorMessage += taggedStructureDifferences == null ? "" : taggedStructureDifferences + "\n";
         errorMessage += contentDifferences == null ? "" : contentDifferences;
         if (!errorMessage.isEmpty()) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 }

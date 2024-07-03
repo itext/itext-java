@@ -47,24 +47,23 @@ import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.pdfa.PdfADocument;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfACheckerTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfa/pdfs/";
 
     private PdfAChecker pdfAChecker;
 
-    @Before
+    @BeforeEach
     public void before() {
         pdfAChecker = new EmptyPdfAChecker();
         pdfAChecker.setFullCheckMode(true);
@@ -106,7 +105,8 @@ public class PdfACheckerTest extends ExtendedITextTest {
         PdfADocument pdfa = new PdfADocument(new PdfReader(new File(SOURCE_FOLDER + "InlineImagesPdfA.pdf")), new PdfWriter(new ByteArrayOutputStream()).setSmartMode(true));
         PdfStream firstContentStream = pdfa.getPage(1).getFirstContentStream();
         testChecker.setFullCheckMode(true);
-        Assert.assertThrows("NullPointer was not thrown on inline image.", NullPointerException.class, ()-> testChecker.checkContentStream(firstContentStream));
+        Assertions.assertThrows(NullPointerException.class, () -> testChecker.checkContentStream(firstContentStream),
+                "NullPointer was not thrown on inline image.");
     }
 
     private static class EmptyPdfAChecker extends PdfAChecker {

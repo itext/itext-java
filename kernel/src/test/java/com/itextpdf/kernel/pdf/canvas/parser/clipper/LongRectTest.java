@@ -23,33 +23,32 @@
 package com.itextpdf.kernel.pdf.canvas.parser.clipper;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class LongRectTest extends ExtendedITextTest {
 
     @Test
     public void defaultConstructorTest() {
         final LongRect rect = new LongRect();
 
-        Assert.assertEquals(0, rect.right);
-        Assert.assertEquals(0, rect.bottom);
-        Assert.assertEquals(0, rect.left);
-        Assert.assertEquals(0, rect.top);
+        Assertions.assertEquals(0, rect.right);
+        Assertions.assertEquals(0, rect.bottom);
+        Assertions.assertEquals(0, rect.left);
+        Assertions.assertEquals(0, rect.top);
     }
 
     @Test
     public void longParamConstructorTest() {
         final LongRect rect = new LongRect(5, 15, 6, 10);
 
-        Assert.assertEquals(5, rect.left);
-        Assert.assertEquals(15, rect.top);
-        Assert.assertEquals(6, rect.right);
-        Assert.assertEquals(10, rect.bottom);
+        Assertions.assertEquals(5, rect.left);
+        Assertions.assertEquals(15, rect.top);
+        Assertions.assertEquals(6, rect.right);
+        Assertions.assertEquals(10, rect.bottom);
     }
 
     @Test
@@ -58,9 +57,9 @@ public class LongRectTest extends ExtendedITextTest {
 
         final LongRect newRect = new LongRect(rect);
 
-        Assert.assertEquals(10, newRect.bottom);
-        Assert.assertEquals(6, newRect.right);
-        Assert.assertEquals(5, newRect.left);
-        Assert.assertEquals(15, newRect.top);
+        Assertions.assertEquals(10, newRect.bottom);
+        Assertions.assertEquals(6, newRect.right);
+        Assertions.assertEquals(5, newRect.left);
+        Assertions.assertEquals(15, newRect.top);
     }
 }

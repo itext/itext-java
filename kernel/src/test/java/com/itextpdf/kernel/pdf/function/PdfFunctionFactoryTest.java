@@ -29,13 +29,12 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfFunctionFactoryTest extends ExtendedITextTest {
 
     @Test
@@ -49,7 +48,7 @@ public class PdfFunctionFactoryTest extends ExtendedITextTest {
         stream.put(PdfName.BitsPerSample, new PdfNumber(1));
         IPdfFunction function = PdfFunctionFactory.create(stream);
 
-        Assert.assertTrue(function instanceof PdfType0Function);
+        Assertions.assertTrue(function instanceof PdfType0Function);
     }
 
     @Test
@@ -61,7 +60,7 @@ public class PdfFunctionFactoryTest extends ExtendedITextTest {
         object.put(PdfName.N, new PdfNumber(2));
         IPdfFunction function = PdfFunctionFactory.create(object);
 
-        Assert.assertTrue(function instanceof PdfType2Function);
+        Assertions.assertTrue(function instanceof PdfType2Function);
     }
 
     @Test
@@ -79,7 +78,7 @@ public class PdfFunctionFactoryTest extends ExtendedITextTest {
         object.put(PdfName.Encode, new PdfArray(new double[] {0, 1, 0, 1}));
         IPdfFunction function = PdfFunctionFactory.create(object);
 
-        Assert.assertTrue(function instanceof PdfType3Function);
+        Assertions.assertTrue(function instanceof PdfType3Function);
     }
 
 
@@ -94,7 +93,7 @@ public class PdfFunctionFactoryTest extends ExtendedITextTest {
         stream.put(PdfName.BitsPerSample, new PdfNumber(1));
         IPdfFunction function = PdfFunctionFactory.create(stream);
 
-        Assert.assertTrue(function instanceof PdfType4Function);
+        Assertions.assertTrue(function instanceof PdfType4Function);
     }
 
 
@@ -107,9 +106,9 @@ public class PdfFunctionFactoryTest extends ExtendedITextTest {
         stream.put(PdfName.Range, new PdfArray(
                 new double[] {1,2,3,4,5,6}));
         stream.put(PdfName.BitsPerSample, new PdfNumber(1));
-        Exception ex = Assert.assertThrows(PdfException.class, () -> PdfFunctionFactory.create(stream));
+        Exception ex = Assertions.assertThrows(PdfException.class, () -> PdfFunctionFactory.create(stream));
 
-        Assert.assertEquals("Invalid function type 1", ex.getMessage());
+        Assertions.assertEquals("Invalid function type 1", ex.getMessage());
     }
 
     @Test
@@ -121,9 +120,9 @@ public class PdfFunctionFactoryTest extends ExtendedITextTest {
         dict.put(PdfName.Range, new PdfArray(
                 new double[] {1,2,3,4,5,6}));
         dict.put(PdfName.BitsPerSample, new PdfNumber(1));
-        Exception ex = Assert.assertThrows(PdfException.class, () -> PdfFunctionFactory.create(dict));
+        Exception ex = Assertions.assertThrows(PdfException.class, () -> PdfFunctionFactory.create(dict));
 
-        Assert.assertEquals("Invalid object type, a function type 0 requires a stream object", ex.getMessage());
+        Assertions.assertEquals("Invalid object type, a function type 0 requires a stream object", ex.getMessage());
     }
 
     @Test
@@ -135,16 +134,16 @@ public class PdfFunctionFactoryTest extends ExtendedITextTest {
         dict.put(PdfName.Range, new PdfArray(
                 new double[] {1,2,3,4,5,6}));
         dict.put(PdfName.BitsPerSample, new PdfNumber(1));
-        Exception ex = Assert.assertThrows(PdfException.class, () -> PdfFunctionFactory.create(dict));
+        Exception ex = Assertions.assertThrows(PdfException.class, () -> PdfFunctionFactory.create(dict));
 
-        Assert.assertEquals("Invalid object type, a function type 4 requires a stream object", ex.getMessage());
+        Assertions.assertEquals("Invalid object type, a function type 4 requires a stream object", ex.getMessage());
     }
 
     @Test
     public void testArrayThrows() {
         PdfArray array = new PdfArray();
-        Exception ex = Assert.assertThrows(PdfException.class, () -> PdfFunctionFactory.create(array));
+        Exception ex = Assertions.assertThrows(PdfException.class, () -> PdfFunctionFactory.create(array));
 
-        Assert.assertEquals("Invalid object type, a function must be either a Dictionary or a Stream", ex.getMessage());
+        Assertions.assertEquals("Invalid object type, a function must be either a Dictionary or a Stream", ex.getMessage());
     }
 }

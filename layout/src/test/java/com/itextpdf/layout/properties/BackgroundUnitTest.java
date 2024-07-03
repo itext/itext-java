@@ -24,13 +24,12 @@ package com.itextpdf.layout.properties;
 
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class BackgroundUnitTest extends ExtendedITextTest {
 
     final static float EPS = 0.00001f;
@@ -41,8 +40,8 @@ public class BackgroundUnitTest extends ExtendedITextTest {
         final float opacity = 10f;
         final BackgroundBox backgroundClip = BackgroundBox.BORDER_BOX;
         final Background background = new Background(deviceRgbColor, opacity, backgroundClip);
-        Assert.assertEquals(deviceRgbColor, background.getColor());
-        Assert.assertEquals(opacity, background.getOpacity(), EPS);
-        Assert.assertEquals(backgroundClip, background.getBackgroundClip());
+        Assertions.assertEquals(deviceRgbColor, background.getColor());
+        Assertions.assertEquals(opacity, background.getOpacity(), EPS);
+        Assertions.assertEquals(backgroundClip, background.getBackgroundClip());
     }
 }

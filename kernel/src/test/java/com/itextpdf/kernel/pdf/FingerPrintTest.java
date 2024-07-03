@@ -25,20 +25,19 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.commons.actions.data.ProductData;
 import com.itextpdf.test.ExtendedITextTest;
 
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class FingerPrintTest extends ExtendedITextTest {
 
     private ProductData productData;
     private ProductData productData2;
     private ProductData duplicateProductData;
 
-    @Before
+    @BeforeEach
     public void beforeTest() {
         this.productData = new ProductData("pdfProduct", "pdfProduct", "7.0.0", 1900, 2000);
         this.productData2 = new ProductData("pdfProduct2", "pdfProduct2", "7.0.0", 1900, 2000);
@@ -48,16 +47,16 @@ public class FingerPrintTest extends ExtendedITextTest {
     @Test
     public void normalAddTest() {
         FingerPrint fingerPrint = new FingerPrint();
-        Assert.assertTrue(fingerPrint.registerProduct(productData));
-        Assert.assertTrue(fingerPrint.registerProduct(productData2));
-        Assert.assertEquals(2, fingerPrint.getProducts().size());
+        Assertions.assertTrue(fingerPrint.registerProduct(productData));
+        Assertions.assertTrue(fingerPrint.registerProduct(productData2));
+        Assertions.assertEquals(2, fingerPrint.getProducts().size());
     }
 
     @Test
     public void duplicateTest() {
         FingerPrint fingerPrint = new FingerPrint();
         fingerPrint.registerProduct(productData);
-        Assert.assertFalse(fingerPrint.registerProduct(duplicateProductData));
+        Assertions.assertFalse(fingerPrint.registerProduct(duplicateProductData));
     }
 }
 

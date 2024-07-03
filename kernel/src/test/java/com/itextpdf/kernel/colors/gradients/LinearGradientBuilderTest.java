@@ -32,28 +32,27 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.File;
 import java.io.IOException;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class LinearGradientBuilderTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/colors/gradients/LinearGradientBuilderTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/colors/gradients/LinearGradientBuilderTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -63,7 +62,7 @@ public class LinearGradientBuilderTest extends ExtendedITextTest {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
         AbstractLinearGradientBuilder gradientBuilder = new LinearGradientBuilder();
 
-        Assert.assertNull(gradientBuilder.buildColor(targetBoundingBox, null, null));
+        Assertions.assertNull(gradientBuilder.buildColor(targetBoundingBox, null, null));
     }
 
     @Test
@@ -241,7 +240,7 @@ public class LinearGradientBuilderTest extends ExtendedITextTest {
                         targetBoundingBox.getRight() - 100f, targetBoundingBox.getTop() - 100f)
                 .setSpreadMethod(GradientSpreadMethod.PAD);
 
-        Assert.assertNull(gradientBuilder.buildColor(null, null, null));
+        Assertions.assertNull(gradientBuilder.buildColor(null, null, null));
     }
 
     @Test
@@ -711,7 +710,7 @@ public class LinearGradientBuilderTest extends ExtendedITextTest {
                 .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue(), -10d, OffsetType.RELATIVE))
                 .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(),  -5d, OffsetType.RELATIVE));
 
-        Assert.assertNull(gradientBuilder.buildColor(targetBoundingBox, null, null));
+        Assertions.assertNull(gradientBuilder.buildColor(targetBoundingBox, null, null));
     }
 
     @Test
@@ -724,7 +723,7 @@ public class LinearGradientBuilderTest extends ExtendedITextTest {
                 .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue(), 5d, OffsetType.RELATIVE))
                 .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(),  10d, OffsetType.RELATIVE));
 
-        Assert.assertNull(gradientBuilder.buildColor(targetBoundingBox, null, null));
+        Assertions.assertNull(gradientBuilder.buildColor(targetBoundingBox, null, null));
     }
 
     @Test
@@ -737,7 +736,7 @@ public class LinearGradientBuilderTest extends ExtendedITextTest {
                 .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue(), 0.5d, OffsetType.RELATIVE))
                 .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(),  0.5d, OffsetType.RELATIVE));
 
-        Assert.assertNull(gradientBuilder.buildColor(targetBoundingBox, null, null));
+        Assertions.assertNull(gradientBuilder.buildColor(targetBoundingBox, null, null));
     }
 
     @Test
@@ -782,7 +781,7 @@ public class LinearGradientBuilderTest extends ExtendedITextTest {
                     .fillStroke();
         }
 
-        Assert.assertNull(new CompareTool()
+        Assertions.assertNull(new CompareTool()
                 .compareByContent(outPdfPath, sourceFolder + "cmp_" + fileName, destinationFolder, "diff"));
     }
 
@@ -799,7 +798,7 @@ public class LinearGradientBuilderTest extends ExtendedITextTest {
                     .fillStroke();
         }
 
-        Assert.assertNull(new CompareTool()
+        Assertions.assertNull(new CompareTool()
                 .compareByContent(outPdfPath, sourceFolder + "cmp_" + fileName, destinationFolder, "diff"));
     }
 }

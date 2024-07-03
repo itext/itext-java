@@ -26,13 +26,12 @@ import com.itextpdf.kernel.pdf.IsoKey;
 import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class ValidationContainerTest extends ExtendedITextTest {
     @Test
     public void validateObjectTest() {
@@ -40,11 +39,11 @@ public class ValidationContainerTest extends ExtendedITextTest {
         container.validate(null, IsoKey.FONT, null, null, null);
         final CustomValidationChecker checker = new CustomValidationChecker();
         container.addChecker(checker);
-        Assert.assertTrue(container.containsChecker(checker));
+        Assertions.assertTrue(container.containsChecker(checker));
 
-        Assert.assertFalse(checker.objectValidationPerformed);
+        Assertions.assertFalse(checker.objectValidationPerformed);
         container.validate(null, IsoKey.FONT, null, null, null);
-        Assert.assertTrue(checker.objectValidationPerformed);
+        Assertions.assertTrue(checker.objectValidationPerformed);
     }
 
     @Test
@@ -55,9 +54,9 @@ public class ValidationContainerTest extends ExtendedITextTest {
         final CustomValidationChecker checker = new CustomValidationChecker();
         container.addChecker(checker);
 
-        Assert.assertFalse(checker.documentValidationPerformed);
+        Assertions.assertFalse(checker.documentValidationPerformed);
         container.validate(context);
-        Assert.assertTrue(checker.documentValidationPerformed);
+        Assertions.assertTrue(checker.documentValidationPerformed);
     }
 
     private static class CustomValidationChecker implements IValidationChecker {

@@ -52,7 +52,6 @@ import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignTestPortUtil;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -63,12 +62,12 @@ import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(BouncyCastleIntegrationTest.class)
+@Tag("BouncyCastleIntegrationTest")
 public class SignDeferredTest extends ExtendedITextTest {
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
@@ -80,7 +79,7 @@ public class SignDeferredTest extends ExtendedITextTest {
     private static final char[] password = "testpassphrase".toCharArray();
     private static final String HASH_ALGORITHM = DigestAlgorithms.SHA256;
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         Security.addProvider(FACTORY.getProvider());
         createOrClearDestinationFolder(destinationFolder);
@@ -131,9 +130,9 @@ public class SignDeferredTest extends ExtendedITextTest {
 
         // This size is definitely not enough
         int estimatedSize = -1;
-        Exception e = Assert.assertThrows(IOException.class,
+        Exception e = Assertions.assertThrows(IOException.class,
                 () -> signer.signExternalContainer(external, estimatedSize));
-        Assert.assertEquals(SignExceptionMessageConstant.NOT_ENOUGH_SPACE, e.getMessage());
+        Assertions.assertEquals(SignExceptionMessageConstant.NOT_ENOUGH_SPACE, e.getMessage());
     }
 
     @Test
@@ -157,9 +156,9 @@ public class SignDeferredTest extends ExtendedITextTest {
         // This size is definitely not enough, however, the size check will pass.
         // The test will fail lately on an invalid key
         int estimatedSize = 0;
-        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+        Exception e = Assertions.assertThrows(IllegalArgumentException.class,
                 () -> signer.signExternalContainer(external, estimatedSize));
-        Assert.assertEquals(SignExceptionMessageConstant.TOO_BIG_KEY, e.getMessage());
+        Assertions.assertEquals(SignExceptionMessageConstant.TOO_BIG_KEY, e.getMessage());
     }
 
     @Test
@@ -184,8 +183,8 @@ public class SignDeferredTest extends ExtendedITextTest {
 
         // validate result
         TestSignUtils.basicCheckSignedDoc(outFileName, sigFieldName);
-        Assert.assertNull(new CompareTool().compareVisually(outFileName, cmpFileName, destinationFolder, null));
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
+        Assertions.assertNull(new CompareTool().compareVisually(outFileName, cmpFileName, destinationFolder, null));
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
     }
 
     @Test
@@ -236,29 +235,29 @@ public class SignDeferredTest extends ExtendedITextTest {
 
         // validate result
         TestSignUtils.basicCheckSignedDoc(outFileName, sigFieldName);
-        Assert.assertNull(new CompareTool().compareVisually(outFileName, cmpFileName, destinationFolder, null));
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
+        Assertions.assertNull(new CompareTool().compareVisually(outFileName, cmpFileName, destinationFolder, null));
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
     }
 
     static void validateTemplateForSignedDeferredResult(String output, String sigFieldName, PdfName filter, PdfName subFilter, int estimatedSize) throws IOException {
         PdfDocument outDocument = new PdfDocument(new PdfReader(output));
 
         PdfObject outSigDictObj = PdfFormCreator.getAcroForm(outDocument, false).getField(sigFieldName).getValue();
-        Assert.assertTrue(outSigDictObj.isDictionary());
+        Assertions.assertTrue(outSigDictObj.isDictionary());
 
         PdfDictionary outSigDict = (PdfDictionary) outSigDictObj;
 
         PdfArray byteRange = outSigDict.getAsArray(PdfName.ByteRange);
-        Assert.assertNotNull(byteRange);
-        Assert.assertTrue(byteRange.size() == 4);
+        Assertions.assertNotNull(byteRange);
+        Assertions.assertTrue(byteRange.size() == 4);
 
-        Assert.assertEquals(filter, outSigDict.getAsName(PdfName.Filter));
-        Assert.assertEquals(subFilter, outSigDict.getAsName(PdfName.SubFilter));
+        Assertions.assertEquals(filter, outSigDict.getAsName(PdfName.Filter));
+        Assertions.assertEquals(subFilter, outSigDict.getAsName(PdfName.SubFilter));
 
         PdfString outSigContents = outSigDict.getAsString(PdfName.Contents);
 
-        Assert.assertTrue(outSigContents.isHexWriting());
-        Assert.assertArrayEquals(new byte[estimatedSize], outSigContents.getValueBytes());
+        Assertions.assertTrue(outSigContents.isHexWriting());
+        Assertions.assertArrayEquals(new byte[estimatedSize], outSigContents.getValueBytes());
     }
 
     static byte[] calcDocBytesHash(InputStream docBytes) {

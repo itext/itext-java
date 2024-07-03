@@ -28,14 +28,13 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfTextExtractorTest extends ExtendedITextTest {
 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/parser/PdfTextExtractorTest/";
@@ -47,7 +46,7 @@ public class PdfTextExtractorTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFile))) {
             String text = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1));
             // Here we check that no NPE wasn't thrown. There is no text on the page so the extracted string should be empty.
-            Assert.assertEquals("", text);
+            Assertions.assertEquals("", text);
         }
     }
 
@@ -58,7 +57,7 @@ public class PdfTextExtractorTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFile))) {
             String text = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1));
             // Here we check that no NPE wasn't thrown. There is no text on the page so the extracted string should be empty.
-            Assert.assertEquals("", text);
+            Assertions.assertEquals("", text);
         }
     }
 
@@ -66,7 +65,7 @@ public class PdfTextExtractorTest extends ExtendedITextTest {
     public void type3FontNoCMapTest() throws IOException {
         String inFile = sourceFolder + "type3NoCMap.pdf";
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFile))) {
-            Assert.assertEquals("*0*", PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1)));
+            Assertions.assertEquals("*0*", PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1)));
         }
     }
 
@@ -74,7 +73,7 @@ public class PdfTextExtractorTest extends ExtendedITextTest {
     public void noBaseEncodingTest() throws IOException {
         String inFile = sourceFolder + "noBaseEncoding.pdf";
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFile))) {
-            Assert.assertEquals("HELLO WORLD", PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1)));
+            Assertions.assertEquals("HELLO WORLD", PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1)));
         }
     }
 
@@ -82,7 +81,7 @@ public class PdfTextExtractorTest extends ExtendedITextTest {
     public void simpleFontWithoutEncodingToUnicodeTest() throws IOException {
         String inFile = sourceFolder + "simpleFontWithoutEncodingToUnicode.pdf";
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFile))) {
-            Assert.assertEquals("MyriadPro-Bold font.", PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1)));
+            Assertions.assertEquals("MyriadPro-Bold font.", PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1)));
         }
     }
 
@@ -90,7 +89,7 @@ public class PdfTextExtractorTest extends ExtendedITextTest {
     public void simpleFontWithPartialToUnicodeTest() throws IOException {
         String inFile = sourceFolder + "simpleFontWithPartialToUnicode.pdf";
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFile))) {
-            Assert.assertEquals("Registered", PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1)));
+            Assertions.assertEquals("Registered", PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1)));
         }
     }
 
@@ -98,7 +97,7 @@ public class PdfTextExtractorTest extends ExtendedITextTest {
     public void type0FontToUnicodeTest() throws IOException {
         String inFile = sourceFolder + "type0FontToUnicode.pdf";
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFile))) {
-            Assert.assertEquals("€ 390", PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1)));
+            Assertions.assertEquals("€ 390", PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1)));
         }
     }
 
@@ -109,7 +108,7 @@ public class PdfTextExtractorTest extends ExtendedITextTest {
         // संस्कृत म्
         String expected = "\u0938\u0902\u0938\u094d\u0915\u0943\u0924 \u092e\u094d";
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFile))) {
-            Assert.assertEquals(expected, PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1)));
+            Assertions.assertEquals(expected, PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1)));
         }
     }
 
@@ -121,7 +120,7 @@ public class PdfTextExtractorTest extends ExtendedITextTest {
         //संस्कृत म्
         String expected = "\u0943\n\u0938\u0902\u0938\u094d\u0915\u0943\u0924 \u092e\u094d";
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFile))) {
-            Assert.assertEquals(expected, PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1)));
+            Assertions.assertEquals(expected, PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1)));
         }
     }
 
@@ -129,7 +128,7 @@ public class PdfTextExtractorTest extends ExtendedITextTest {
     public void shortOctalDataAsTextTest() throws IOException {
         String inFile = sourceFolder + "shortOctalDataAsText.pdf";
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFile))) {
-            Assert.assertEquals("EC", PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1)));
+            Assertions.assertEquals("EC", PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1)));
         }
     }
 
@@ -138,8 +137,8 @@ public class PdfTextExtractorTest extends ExtendedITextTest {
         String inFile = sourceFolder + "notDefaultCodespacesCyrillic.pdf";
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFile))) {
             String extractedText = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1));
-            Assert.assertTrue(extractedText.contains("бронирование"));
-            Assert.assertTrue(extractedText.contains("From"));
+            Assertions.assertTrue(extractedText.contains("бронирование"));
+            Assertions.assertTrue(extractedText.contains("From"));
         }
     }
 
@@ -148,7 +147,7 @@ public class PdfTextExtractorTest extends ExtendedITextTest {
         String inFile = sourceFolder + "notDefaultCodespacesChinese.pdf";
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFile))) {
             String extractedText = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1));
-            Assert.assertTrue(extractedText.contains("L3B 廠： 新竹科學工業園區新竹市東區力行二路 1 號"));
+            Assertions.assertTrue(extractedText.contains("L3B 廠： 新竹科學工業園區新竹市東區力行二路 1 號"));
         }
     }
 
@@ -157,8 +156,8 @@ public class PdfTextExtractorTest extends ExtendedITextTest {
         String inFile = sourceFolder + "SameCidForDifferentCodes.pdf";
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFile))) {
             String extractedText = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1));
-            Assert.assertTrue(extractedText.contains("18个月"));
-            Assert.assertFalse(extractedText.contains("18个⽉"));
+            Assertions.assertTrue(extractedText.contains("18个月"));
+            Assertions.assertFalse(extractedText.contains("18个⽉"));
         }
     }
 }

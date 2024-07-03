@@ -42,30 +42,29 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.OutputStream;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-@Category(BouncyCastleIntegrationTest.class)
+@Tag("BouncyCastleIntegrationTest")
 public class UnencryptedWrapperTest extends ExtendedITextTest {
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/crypto/UnencryptedWrapperTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/crypto/UnencryptedWrapperTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -115,7 +114,7 @@ public class UnencryptedWrapperTest extends ExtendedITextTest {
         canvas.release();
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPath, cmpPath, destinationFolder, diff));
+        Assertions.assertNull(new CompareTool().compareByContent(outPath, cmpPath, destinationFolder, diff));
     }
 
     private void extractEncrypted(String encryptedName, String wrapperName, byte[] password) throws IOException, InterruptedException {
@@ -133,15 +132,15 @@ public class UnencryptedWrapperTest extends ExtendedITextTest {
         document.close();
 
         PdfEncryptedPayload ep = encryptedDocument.getEncryptedPayload();
-        Assert.assertEquals(PdfEncryptedPayloadFileSpecFactory.generateFileDisplay(ep), encryptedDocument.getName());
+        Assertions.assertEquals(PdfEncryptedPayloadFileSpecFactory.generateFileDisplay(ep), encryptedDocument.getName());
         if (password != null) {
-            Assert.assertNull(new CompareTool().compareByContent(outPath, cmpPath, destinationFolder, diff, password, password));
+            Assertions.assertNull(new CompareTool().compareByContent(outPath, cmpPath, destinationFolder, diff, password, password));
         } else {
             RandomAccessFileOrArray raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().createBestSource(cmpPath));
             byte[] cmpBytes = new byte[(int) raf.length()];
             raf.readFully(cmpBytes);
             raf.close();
-            Assert.assertArrayEquals(cmpBytes, encryptedDocumentBytes);
+            Assertions.assertArrayEquals(cmpBytes, encryptedDocumentBytes);
         }
     }
 }

@@ -26,20 +26,19 @@ import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.signatures.testutils.X509MockCertificate;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
 import java.security.Security;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(BouncyCastleUnitTest.class)
+@Tag("BouncyCastleUnitTest")
 public class CertificateSupportedCriticalExtensionsTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         Security.addProvider(BOUNCY_CASTLE_FACTORY.getProvider());
     }
@@ -52,7 +51,7 @@ public class CertificateSupportedCriticalExtensionsTest extends ExtendedITextTes
                 .setCriticalExtensionOIDs(OID.X509Extensions.KEY_USAGE, OID.X509Extensions.BASIC_CONSTRAINTS)
                 .setKeyUsage(true, true);
 
-        Assert.assertFalse(SignUtils.hasUnsupportedCriticalExtension(cert));
+        Assertions.assertFalse(SignUtils.hasUnsupportedCriticalExtension(cert));
     }
 
     @Test
@@ -63,7 +62,7 @@ public class CertificateSupportedCriticalExtensionsTest extends ExtendedITextTes
                 .setCriticalExtensionOIDs(OID.X509Extensions.BASIC_CONSTRAINTS)
                 .setKeyUsage(true, true);
 
-        Assert.assertFalse(SignUtils.hasUnsupportedCriticalExtension(cert));
+        Assertions.assertFalse(SignUtils.hasUnsupportedCriticalExtension(cert));
     }
 
     @Test
@@ -75,7 +74,7 @@ public class CertificateSupportedCriticalExtensionsTest extends ExtendedITextTes
                 .setExtendedKeyUsage(OID.X509Extensions.ID_KP_TIMESTAMPING)
                 .setKeyUsage(true, true);
 
-        Assert.assertTrue(SignUtils.hasUnsupportedCriticalExtension(cert));
+        Assertions.assertTrue(SignUtils.hasUnsupportedCriticalExtension(cert));
     }
 
     @Test
@@ -87,7 +86,7 @@ public class CertificateSupportedCriticalExtensionsTest extends ExtendedITextTes
                 .setExtendedKeyUsage("Not ID KP TIMESTAMPING.")
                 .setKeyUsage(true, true);
 
-        Assert.assertFalse(SignUtils.hasUnsupportedCriticalExtension(cert));
+        Assertions.assertFalse(SignUtils.hasUnsupportedCriticalExtension(cert));
     }
 
     @Test
@@ -98,7 +97,7 @@ public class CertificateSupportedCriticalExtensionsTest extends ExtendedITextTes
                 .setCriticalExtensionOIDs(OID.X509Extensions.ID_KP_TIMESTAMPING)
                 .setKeyUsage(true, true);
 
-        Assert.assertTrue(SignUtils.hasUnsupportedCriticalExtension(cert));
+        Assertions.assertTrue(SignUtils.hasUnsupportedCriticalExtension(cert));
     }
 
     @Test
@@ -109,7 +108,7 @@ public class CertificateSupportedCriticalExtensionsTest extends ExtendedITextTes
                 .setCriticalExtensionOIDs("Totally not supported OID")
                 .setKeyUsage(true, true);
 
-        Assert.assertTrue(SignUtils.hasUnsupportedCriticalExtension(cert));
+        Assertions.assertTrue(SignUtils.hasUnsupportedCriticalExtension(cert));
     }
 
     @Test
@@ -118,14 +117,14 @@ public class CertificateSupportedCriticalExtensionsTest extends ExtendedITextTes
 
         cert.setHasUnsupportedCriticalExtension(false);
 
-        Assert.assertFalse(SignUtils.hasUnsupportedCriticalExtension(cert));
+        Assertions.assertFalse(SignUtils.hasUnsupportedCriticalExtension(cert));
     }
 
     @Test
     public void certificateIsNullTest() {
-        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+        Exception e = Assertions.assertThrows(IllegalArgumentException.class,
                 () -> SignUtils.hasUnsupportedCriticalExtension(null)
         );
-        Assert.assertEquals("X509Certificate can't be null.", e.getMessage());
+        Assertions.assertEquals("X509Certificate can't be null.", e.getMessage());
     }
 }

@@ -31,28 +31,27 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class EncodingTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/EncodingTest/";
     public static final String outputFolder = "./target/test/com/itextpdf/kernel/pdf/EncodingTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(outputFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(outputFolder);
     }
@@ -77,7 +76,7 @@ public class EncodingTest extends ExtendedITextTest {
         canvas.release();
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outputFolder + fileName, sourceFolder + "cmp_" + fileName, outputFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outputFolder + fileName, sourceFolder + "cmp_" + fileName, outputFolder, "diff_"));
     }
 
     @Test
@@ -101,7 +100,7 @@ public class EncodingTest extends ExtendedITextTest {
                 restoreState();
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outputFolder + fileName, sourceFolder + "cmp_" + fileName, outputFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outputFolder + fileName, sourceFolder + "cmp_" + fileName, outputFolder, "diff_"));
     }
 
     @Test
@@ -123,7 +122,7 @@ public class EncodingTest extends ExtendedITextTest {
                 restoreState();
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outputFolder + fileName, sourceFolder + "cmp_" + fileName, outputFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outputFolder + fileName, sourceFolder + "cmp_" + fileName, outputFolder, "diff_"));
     }
 
     @Test
@@ -157,7 +156,7 @@ public class EncodingTest extends ExtendedITextTest {
         doc.close();
 
 
-        Assert.assertNull(new CompareTool().compareByContent(outputFolder + fileName, sourceFolder + "cmp_" + fileName, outputFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outputFolder + fileName, sourceFolder + "cmp_" + fileName, outputFolder, "diff_"));
     }
 
     @Test
@@ -189,7 +188,7 @@ public class EncodingTest extends ExtendedITextTest {
         doc.close();
 
 
-        Assert.assertNull(new CompareTool().compareByContent(outputFolder + fileName, sourceFolder + "cmp_" + fileName, outputFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outputFolder + fileName, sourceFolder + "cmp_" + fileName, outputFolder, "diff_"));
     }
 
     @Test
@@ -211,7 +210,7 @@ public class EncodingTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outputFolder + fileName, sourceFolder + "cmp_" + fileName, outputFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outputFolder + fileName, sourceFolder + "cmp_" + fileName, outputFolder, "diff_"));
     }
 
     @Test
@@ -227,7 +226,7 @@ public class EncodingTest extends ExtendedITextTest {
         fillSymbolDefaultPage(font, doc.addNewPage());
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outputFolder + fileName, sourceFolder + "cmp_" + fileName, outputFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outputFolder + fileName, sourceFolder + "cmp_" + fileName, outputFolder, "diff_"));
     }
 
     private void fillSymbolDefaultPage(PdfFont font, PdfPage page) {
@@ -312,7 +311,7 @@ public class EncodingTest extends ExtendedITextTest {
                 restoreState();
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outputFolder + fileName, sourceFolder + "cmp_" + fileName, outputFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outputFolder + fileName, sourceFolder + "cmp_" + fileName, outputFolder, "diff_"));
     }
 
     @Test
@@ -363,7 +362,7 @@ public class EncodingTest extends ExtendedITextTest {
                 restoreState();
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outputFolder + fileName, sourceFolder + "cmp_" + fileName, outputFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outputFolder + fileName, sourceFolder + "cmp_" + fileName, outputFolder, "diff_"));
     }
 
     @Test
@@ -385,7 +384,7 @@ public class EncodingTest extends ExtendedITextTest {
                 restoreState();
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outputFolder + fileName, sourceFolder + "cmp_" + fileName, outputFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outputFolder + fileName, sourceFolder + "cmp_" + fileName, outputFolder, "diff_"));
     }
 
     @Test
@@ -393,7 +392,7 @@ public class EncodingTest extends ExtendedITextTest {
         String fileName = sourceFolder + "encodingStream01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(fileName));
         String extractedText = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1));
-        Assert.assertEquals("abc", extractedText);
+        Assertions.assertEquals("abc", extractedText);
     }
 
     @Test
@@ -401,6 +400,6 @@ public class EncodingTest extends ExtendedITextTest {
         String fileName = sourceFolder + "differentCodeSpaceRangeLengths01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(fileName));
         String extractedText = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1));
-        Assert.assertEquals("Hello\u7121\u540dworld\u6b98\u528d", extractedText);
+        Assertions.assertEquals("Hello\u7121\u540dworld\u6b98\u528d", extractedText);
     }
 }

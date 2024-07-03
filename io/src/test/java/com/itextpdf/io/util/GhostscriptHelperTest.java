@@ -26,18 +26,17 @@ import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.SystemUtil;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 // Android-Conversion-Skip-File (ghostscript isn't available on Android)
 public class GhostscriptHelperTest extends ExtendedITextTest {
     private final static String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/util/GhostscriptHelperTest/";
@@ -47,7 +46,7 @@ public class GhostscriptHelperTest extends ExtendedITextTest {
     // The value of this threshold should be definitely less than the length of the help message.
     private static final int SYSTEM_OUT_LENGTH_LIMIT = 450;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
@@ -55,7 +54,7 @@ public class GhostscriptHelperTest extends ExtendedITextTest {
     @Test
     public void ghostScriptEnvVarIsDefault() {
         GhostscriptHelper ghostscriptHelper = new GhostscriptHelper();
-        Assert.assertNotNull(ghostscriptHelper.getCliExecutionCommand());
+        Assertions.assertNotNull(ghostscriptHelper.getCliExecutionCommand());
     }
 
     @Test
@@ -68,22 +67,22 @@ public class GhostscriptHelperTest extends ExtendedITextTest {
 
         GhostscriptHelper ghostscriptHelper = new GhostscriptHelper(gsExec);
 
-        Assert.assertNotNull(ghostscriptHelper.getCliExecutionCommand());
+        Assertions.assertNotNull(ghostscriptHelper.getCliExecutionCommand());
     }
 
     @Test
     public void ghostScriptEnvVarIsNull() {
         GhostscriptHelper ghostscriptHelper = new GhostscriptHelper(null);
 
-        Assert.assertNotNull(ghostscriptHelper.getCliExecutionCommand());
+        Assertions.assertNotNull(ghostscriptHelper.getCliExecutionCommand());
     }
 
     @Test
     public void ghostScriptEnvVarIsIncorrect() {
-        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+        Exception e = Assertions.assertThrows(IllegalArgumentException.class,
                 () -> new GhostscriptHelper("-")
         );
-        Assert.assertEquals(IoExceptionMessageConstant.GS_ENVIRONMENT_VARIABLE_IS_NOT_SPECIFIED, e.getMessage());
+        Assertions.assertEquals(IoExceptionMessageConstant.GS_ENVIRONMENT_VARIABLE_IS_NOT_SPECIFIED, e.getMessage());
     }
 
     @Test
@@ -93,11 +92,11 @@ public class GhostscriptHelperTest extends ExtendedITextTest {
 
         GhostscriptHelper ghostscriptHelper = new GhostscriptHelper();
 
-        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+        Exception e = Assertions.assertThrows(IllegalArgumentException.class,
                 () -> ghostscriptHelper.runGhostScriptImageGeneration(inputPdf, "-",
                         "outputPageImage.png", "1")
         );
-        Assert.assertEquals(exceptionMessage, e.getMessage());
+        Assertions.assertEquals(exceptionMessage, e.getMessage());
     }
 
     @Test
@@ -108,11 +107,11 @@ public class GhostscriptHelperTest extends ExtendedITextTest {
 
         GhostscriptHelper ghostscriptHelper = new GhostscriptHelper();
 
-        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+        Exception e = Assertions.assertThrows(IllegalArgumentException.class,
                 () -> ghostscriptHelper.runGhostScriptImageGeneration(inputPdf, DESTINATION_FOLDER,
                         "outputPageImage.png", invalidPageList)
         );
-        Assert.assertEquals(exceptionMessage, e.getMessage());
+        Assertions.assertEquals(exceptionMessage, e.getMessage());
     }
 
     @Test
@@ -123,8 +122,8 @@ public class GhostscriptHelperTest extends ExtendedITextTest {
         ghostscriptHelper.runGhostScriptImageGeneration(inputPdf, DESTINATION_FOLDER,
                 "specificPage", "1");
 
-        Assert.assertEquals(1, FileUtil.listFilesInDirectory(DESTINATION_FOLDER, true).length);
-        Assert.assertTrue(FileUtil.fileExists(DESTINATION_FOLDER + "specificPage-001.png"));
+        Assertions.assertEquals(1, FileUtil.listFilesInDirectory(DESTINATION_FOLDER, true).length);
+        Assertions.assertTrue(FileUtil.fileExists(DESTINATION_FOLDER + "specificPage-001.png"));
     }
 
     @Test
@@ -136,10 +135,10 @@ public class GhostscriptHelperTest extends ExtendedITextTest {
         ghostscriptHelper.runGhostScriptImageGeneration(inputPdf, DESTINATION_FOLDER,
                 imageFileName, "1,3");
 
-        Assert.assertEquals(2, FileUtil.listFilesInDirectory(DESTINATION_FOLDER, true).length);
-        Assert.assertTrue(
+        Assertions.assertEquals(2, FileUtil.listFilesInDirectory(DESTINATION_FOLDER, true).length);
+        Assertions.assertTrue(
                 FileUtil.fileExists(DESTINATION_FOLDER + "imageHandlerUtilTest.pdf_severalSpecificPages-001.png"));
-        Assert.assertTrue(
+        Assertions.assertTrue(
                 FileUtil.fileExists(DESTINATION_FOLDER + "imageHandlerUtilTest.pdf_severalSpecificPages-002.png"));
     }
 
@@ -151,10 +150,10 @@ public class GhostscriptHelperTest extends ExtendedITextTest {
         String imageFileName = new File(inputPdf).getName() + "_allPages";
         ghostscriptHelper.runGhostScriptImageGeneration(inputPdf, DESTINATION_FOLDER, imageFileName);
 
-        Assert.assertEquals(3, FileUtil.listFilesInDirectory(DESTINATION_FOLDER, true).length);
-        Assert.assertTrue(FileUtil.fileExists(DESTINATION_FOLDER + "imageHandlerUtilTest.pdf_allPages-001.png"));
-        Assert.assertTrue(FileUtil.fileExists(DESTINATION_FOLDER + "imageHandlerUtilTest.pdf_allPages-002.png"));
-        Assert.assertTrue(FileUtil.fileExists(DESTINATION_FOLDER + "imageHandlerUtilTest.pdf_allPages-003.png"));
+        Assertions.assertEquals(3, FileUtil.listFilesInDirectory(DESTINATION_FOLDER, true).length);
+        Assertions.assertTrue(FileUtil.fileExists(DESTINATION_FOLDER + "imageHandlerUtilTest.pdf_allPages-001.png"));
+        Assertions.assertTrue(FileUtil.fileExists(DESTINATION_FOLDER + "imageHandlerUtilTest.pdf_allPages-002.png"));
+        Assertions.assertTrue(FileUtil.fileExists(DESTINATION_FOLDER + "imageHandlerUtilTest.pdf_allPages-003.png"));
     }
 
     @Test
@@ -175,8 +174,8 @@ public class GhostscriptHelperTest extends ExtendedITextTest {
         String maliciousResult1 = DESTINATION_FOLDER + "output1.txt";
         String maliciousResult2 = DESTINATION_FOLDER + "output2.txt";
 
-        Assert.assertFalse(FileUtil.fileExists(maliciousResult1));
-        Assert.assertFalse(FileUtil.fileExists(maliciousResult2));
+        Assertions.assertFalse(FileUtil.fileExists(maliciousResult1));
+        Assertions.assertFalse(FileUtil.fileExists(maliciousResult2));
     }
 
     @Test
@@ -190,10 +189,10 @@ public class GhostscriptHelperTest extends ExtendedITextTest {
 
         GhostscriptHelper ghostscriptHelper = new GhostscriptHelper();
         ghostscriptHelper.runGhostScriptImageGeneration(psFile, DESTINATION_FOLDER, name);
-        Assert.assertTrue(FileUtil.fileExists(resultantImage));
+        Assertions.assertTrue(FileUtil.fileExists(resultantImage));
 
         ImageMagickHelper imageMagickHelper = new ImageMagickHelper();
-        Assert.assertTrue(imageMagickHelper.runImageMagickImageCompare(resultantImage, cmpResultantImage, diff));
+        Assertions.assertTrue(imageMagickHelper.runImageMagickImageCompare(resultantImage, cmpResultantImage, diff));
     }
 
     @Test
@@ -206,7 +205,7 @@ public class GhostscriptHelperTest extends ExtendedITextTest {
 
         // In .NET the type of the thrown exception is different, therefore we just check here that
         // any exception has been thrown.
-        Assert.assertThrows(Exception.class, () ->
+        Assertions.assertThrows(Exception.class, () ->
                 ghostscriptHelper.runGhostScriptImageGeneration(inputPdf, DESTINATION_FOLDER, outputImagePattern));
     }
 
@@ -228,7 +227,7 @@ public class GhostscriptHelperTest extends ExtendedITextTest {
         } finally {
             System.out.flush();
             StandardOutUtil.restoreStandardOut(storedPrintStream);
-            Assert.assertTrue(baos.toByteArray().length < SYSTEM_OUT_LENGTH_LIMIT);
+            Assertions.assertTrue(baos.toByteArray().length < SYSTEM_OUT_LENGTH_LIMIT);
             baos.close();
         }
     }
@@ -244,7 +243,7 @@ public class GhostscriptHelperTest extends ExtendedITextTest {
 
         // In .NET the type of the thrown exception is different, therefore we just check here that
         // any exception has been thrown.
-        Assert.assertThrows(Exception.class, () ->
+        Assertions.assertThrows(Exception.class, () ->
                 ghostscriptHelper.runGhostScriptImageGeneration(inputPdf, DESTINATION_FOLDER,
                         outputImagePattern, pageList));
     }
@@ -259,7 +258,7 @@ public class GhostscriptHelperTest extends ExtendedITextTest {
 
         // In .NET the type of the thrown exception is different, therefore we just check here that
         // any exception has been thrown.
-        Assert.assertThrows(Exception.class,
+        Assertions.assertThrows(Exception.class,
                 () -> ghostscriptHelper.runGhostScriptImageGeneration(inputPdf, destinationFolder,
                         outputImagePattern));
     }

@@ -33,25 +33,24 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 import org.xml.sax.SAXException;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class XfdfWriterTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/XfdfWriterTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/forms/XfdfWriterTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
@@ -71,7 +70,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "simpleFormWithOneField.xfdf",
                 sourceFolder + "cmp_simpleFormWithOneField.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -89,7 +88,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "simpleFormWithMultipleFields.xfdf",
                 sourceFolder + "cmp_simpleFormWithMultipleFields.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
 
     }
 
@@ -109,7 +108,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfValueRichText.xfdf",
                 sourceFolder + "cmp_xfdfValueRichText.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
 
@@ -128,7 +127,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfHierarchyFields.xfdf",
                 sourceFolder + "cmp_xfdfHierarchyFields.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -145,7 +144,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfFreeText.xfdf",
                 sourceFolder + "cmp_xfdfFreeText.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -163,7 +162,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfHighlightedText.xfdf",
                 sourceFolder + "cmp_xfdfHighlightedText.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -181,7 +180,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfUnderlineText.xfdf",
                 sourceFolder + "cmp_xfdfUnderlineText.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -199,7 +198,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfPopupNewFlags.xfdf",
                 sourceFolder + "cmp_xfdfPopupNewFlags.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -216,7 +215,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfStrikeout.xfdf",
                 sourceFolder + "cmp_xfdfStrikeout.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -234,7 +233,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfSquigglyText.xfdf",
                 sourceFolder + "cmp_xfdfSquigglyText.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -250,7 +249,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfLine.xfdf",
                 sourceFolder + "cmp_xfdfLine.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -266,7 +265,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfCircle.xfdf",
                 sourceFolder + "cmp_xfdfCircle.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -282,7 +281,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfSquare.xfdf",
                 sourceFolder + "cmp_xfdfSquare.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -300,7 +299,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfSquareAndCircleInteriorColor.xfdf",
                 sourceFolder + "cmp_xfdfSquareAndCircleInteriorColor.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -317,7 +316,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfCaret.xfdf",
                 sourceFolder + "cmp_xfdfCaret.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -334,7 +333,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfPolygon.xfdf",
                 sourceFolder + "cmp_xfdfPolygon.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -352,7 +351,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfPolyline.xfdf",
                 sourceFolder + "cmp_xfdfPolyline.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -368,7 +367,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfStamp.xfdf",
                 sourceFolder + "cmp_xfdfStamp.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -386,7 +385,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfStampWithAppearance.xfdf",
                 sourceFolder + "cmp_xfdfStampWithAppearance.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -403,7 +402,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfInk.xfdf",
                 sourceFolder + "cmp_xfdfInk.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -422,7 +421,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfFileAttachment.xfdf",
                 sourceFolder + "cmp_xfdfFileAttachment.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -439,7 +438,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfSound.xfdf",
                 sourceFolder + "cmp_xfdfSound.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -455,7 +454,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfLink.xfdf",
                 sourceFolder + "cmp_xfdfLink.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -473,7 +472,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfLinkBorderStyle.xfdf",
                 sourceFolder + "cmp_xfdfLinkBorderStyle.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -490,7 +489,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfLinkDest.xfdf",
                 sourceFolder + "cmp_xfdfLinkDest.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -507,7 +506,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfLinkDestFit.xfdf",
                 sourceFolder + "cmp_xfdfLinkDestFit.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -525,7 +524,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfLinkDestFitB.xfdf",
                 sourceFolder + "cmp_xfdfLinkDestFitB.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -543,7 +542,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfLinkDestFitR.xfdf",
                 sourceFolder + "cmp_xfdfLinkDestFitR.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -561,7 +560,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfLinkDestFitH.xfdf",
                 sourceFolder + "cmp_xfdfLinkDestFitH.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -579,7 +578,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfLinkDestFitBH.xfdf",
                 sourceFolder + "cmp_xfdfLinkDestFitBH.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -597,7 +596,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfLinkDestFitBV.xfdf",
                 sourceFolder + "cmp_xfdfLinkDestFitBV.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -615,7 +614,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfLinkDestFitV.xfdf",
                 sourceFolder + "cmp_xfdfLinkDestFitV.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -632,7 +631,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfRedact.xfdf",
                 sourceFolder + "cmp_xfdfRedact.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -650,7 +649,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfProjection.xfdf",
                 sourceFolder + "cmp_xfdfProjection.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -668,7 +667,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfLinkAllParams.xfdf",
                 sourceFolder + "cmp_xfdfLinkAllParams.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -686,7 +685,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfReplaceText.xfdf",
                 sourceFolder + "cmp_xfdfReplaceText.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -703,7 +702,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfArrow.xfdf",
                 sourceFolder + "cmp_xfdfArrow.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -720,7 +719,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfCallout.xfdf",
                 sourceFolder + "cmp_xfdfCallout.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -737,7 +736,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfCloud.xfdf",
                 sourceFolder + "cmp_xfdfCloud.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -755,7 +754,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfCloudNested.xfdf",
                 sourceFolder + "cmp_xfdfCloudNested.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -774,7 +773,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfTextBoxAllParams.xfdf",
                 sourceFolder + "cmp_xfdfTextBoxAllParams.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -793,7 +792,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfJavaScriptForms.xfdf",
                 sourceFolder + "cmp_xfdfJavaScriptForms.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -811,7 +810,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfAttrColor.xfdf",
                 sourceFolder + "cmp_xfdfAttrColor.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -830,7 +829,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfAttrFlagsOpacity.xfdf",
                 sourceFolder + "cmp_xfdfAttrFlagsOpacity.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -848,7 +847,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfAttrTitle.xfdf",
                 sourceFolder + "cmp_xfdfAttrTitle.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -865,7 +864,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfReferenceFor3DMeasurement.xfdf",
                 sourceFolder + "cmp_xfdfReferenceFor3DMeasurement.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -884,7 +883,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfReferenceFor3DAngular.xfdf",
                 sourceFolder + "cmp_xfdfReferenceFor3DAngular.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -903,7 +902,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfReferenceFor3DRadial.xfdf",
                 sourceFolder + "cmp_xfdfReferenceFor3DRadial.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -922,7 +921,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfSubelementContents.xfdf",
                 sourceFolder + "cmp_xfdfSubelementContents.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -942,7 +941,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfSubelementOverlayAppearance.xfdf",
                 sourceFolder + "cmp_xfdfSubelementOverlayAppearance.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -961,7 +960,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfButton.xfdf",
                 sourceFolder + "cmp_xfdfButton.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -980,7 +979,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfCheckBox.xfdf",
                 sourceFolder + "cmp_xfdfCheckBox.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -996,7 +995,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfList.xfdf",
                 sourceFolder + "cmp_xfdfList.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -1015,7 +1014,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfDropDown.xfdf",
                 sourceFolder + "cmp_xfdfDropDown.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -1033,14 +1032,14 @@ public class XfdfWriterTest extends ExtendedITextTest {
         String valuePresent = "value";
         String valueAbsent = null;
 
-        Exception e = Assert.assertThrows(XfdfException.class,
+        Exception e = Assertions.assertThrows(XfdfException.class,
                 () -> annot.addAttribute(new AttributeObject(nameAbsent, valuePresent))
         );
-        Assert.assertEquals(XfdfException.ATTRIBUTE_NAME_OR_VALUE_MISSING, e.getMessage());
-        Exception e2 = Assert.assertThrows(XfdfException.class,
+        Assertions.assertEquals(XfdfException.ATTRIBUTE_NAME_OR_VALUE_MISSING, e.getMessage());
+        Exception e2 = Assertions.assertThrows(XfdfException.class,
                 () -> annot.addAttribute(new AttributeObject(namePresent, valueAbsent))
         );
-        Assert.assertEquals(XfdfException.ATTRIBUTE_NAME_OR_VALUE_MISSING, e2.getMessage());
+        Assertions.assertEquals(XfdfException.ATTRIBUTE_NAME_OR_VALUE_MISSING, e2.getMessage());
     }
 
     @Test
@@ -1057,7 +1056,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
         }
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfAnnotationAttributes.xfdf",
                 sourceFolder + "xfdfAnnotationAttributes.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 
     @Test
@@ -1074,6 +1073,6 @@ public class XfdfWriterTest extends ExtendedITextTest {
         }
         if (!new CompareTool().compareXmls(destinationFolder + "xfdfOnlyRequiredAnnotationAttributes.xfdf",
                 sourceFolder + "xfdfOnlyRequiredAnnotationAttributes.xfdf"))
-            Assert.fail("Xfdf files are not equal");
+            Assertions.fail("Xfdf files are not equal");
     }
 }

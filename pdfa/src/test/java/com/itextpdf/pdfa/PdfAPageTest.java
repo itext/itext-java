@@ -38,23 +38,22 @@ import com.itextpdf.pdfa.logs.PdfALogMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfAPageTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
     private static final String destinationFolder = "./target/test/com/itextpdf/pdfa/PdfAPageTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
@@ -82,15 +81,15 @@ public class PdfAPageTest extends ExtendedITextTest {
         }
 
         // Before closing document have 3 pages, but no one call of end page event
-        Assert.assertEquals(pageCount, document.getPdfDocument().getNumberOfPages());
-        Assert.assertEquals(0, eventHandler.getCounter());
+        Assertions.assertEquals(pageCount, document.getPdfDocument().getNumberOfPages());
+        Assertions.assertEquals(0, eventHandler.getCounter());
 
         document.close();
 
         // During the closing event was called on each document page
-        Assert.assertEquals(pageCount, eventHandler.getCounter());
+        Assertions.assertEquals(pageCount, eventHandler.getCounter());
 
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -113,14 +112,14 @@ public class PdfAPageTest extends ExtendedITextTest {
             pdfDoc.addNewPage().flush(false);
         }
 
-        Assert.assertEquals(pageCount, pdfDoc.getNumberOfPages());
-        Assert.assertEquals(0, eventHandler.getCounter());
+        Assertions.assertEquals(pageCount, pdfDoc.getNumberOfPages());
+        Assertions.assertEquals(0, eventHandler.getCounter());
 
         pdfDoc.close();
 
-        Assert.assertEquals(pageCount, eventHandler.getCounter());
+        Assertions.assertEquals(pageCount, eventHandler.getCounter());
 
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -141,14 +140,14 @@ public class PdfAPageTest extends ExtendedITextTest {
             pdfDoc.addNewPage();
         }
 
-        Assert.assertEquals(pageCount, pdfDoc.getNumberOfPages());
-        Assert.assertEquals(0, eventHandler.getCounter());
+        Assertions.assertEquals(pageCount, pdfDoc.getNumberOfPages());
+        Assertions.assertEquals(0, eventHandler.getCounter());
 
         pdfDoc.close();
 
-        Assert.assertEquals(pageCount, eventHandler.getCounter());
+        Assertions.assertEquals(pageCount, eventHandler.getCounter());
 
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -169,14 +168,14 @@ public class PdfAPageTest extends ExtendedITextTest {
             pdfDoc.addNewPage().flush(true);
         }
 
-        Assert.assertEquals(pageCount, pdfDoc.getNumberOfPages());
-        Assert.assertEquals(pageCount, eventHandler.getCounter());
+        Assertions.assertEquals(pageCount, pdfDoc.getNumberOfPages());
+        Assertions.assertEquals(pageCount, eventHandler.getCounter());
 
         pdfDoc.close();
 
-        Assert.assertEquals(pageCount, eventHandler.getCounter());
+        Assertions.assertEquals(pageCount, eventHandler.getCounter());
 
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -199,14 +198,14 @@ public class PdfAPageTest extends ExtendedITextTest {
             page.flush(false);
         }
 
-        Assert.assertEquals(pageCount, pdfDoc.getNumberOfPages());
-        Assert.assertEquals(pageCount, eventHandler.getCounter());
+        Assertions.assertEquals(pageCount, pdfDoc.getNumberOfPages());
+        Assertions.assertEquals(pageCount, eventHandler.getCounter());
 
         pdfDoc.close();
 
-        Assert.assertEquals(pageCount, eventHandler.getCounter());
+        Assertions.assertEquals(pageCount, eventHandler.getCounter());
 
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     static class EndPageEventHandler implements IEventHandler {

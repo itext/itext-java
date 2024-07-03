@@ -23,10 +23,9 @@
 package com.itextpdf.styledxmlparser.jsoup.nodes;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.util.Iterator;
 import java.util.List;
@@ -35,7 +34,7 @@ import java.util.Map;
 /**
  * Tests for Attributes.
  */
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class AttributesTest extends ExtendedITextTest {
 
     @Test
@@ -45,23 +44,23 @@ public class AttributesTest extends ExtendedITextTest {
         a.put("Hello", "There");
         a.put("data-name", "Jsoup");
 
-        Assert.assertEquals(3, a.size());
-        Assert.assertTrue(a.hasKey("Tot"));
-        Assert.assertTrue(a.hasKey("Hello"));
-        Assert.assertTrue(a.hasKey("data-name"));
-        Assert.assertFalse(a.hasKey("tot"));
-        Assert.assertTrue(a.hasKeyIgnoreCase("tot"));
-        Assert.assertEquals("There", a.getIgnoreCase("hEllo"));
+        Assertions.assertEquals(3, a.size());
+        Assertions.assertTrue(a.hasKey("Tot"));
+        Assertions.assertTrue(a.hasKey("Hello"));
+        Assertions.assertTrue(a.hasKey("data-name"));
+        Assertions.assertFalse(a.hasKey("tot"));
+        Assertions.assertTrue(a.hasKeyIgnoreCase("tot"));
+        Assertions.assertEquals("There", a.getIgnoreCase("hEllo"));
 
         Map<String, String> dataset = a.dataset();
-        Assert.assertEquals(1, dataset.size());
-        Assert.assertEquals("Jsoup", dataset.get("name"));
-        Assert.assertEquals("", a.get("tot"));
-        Assert.assertEquals("a&p", a.get("Tot"));
-        Assert.assertEquals("a&p", a.getIgnoreCase("tot"));
+        Assertions.assertEquals(1, dataset.size());
+        Assertions.assertEquals("Jsoup", dataset.get("name"));
+        Assertions.assertEquals("", a.get("tot"));
+        Assertions.assertEquals("a&p", a.get("Tot"));
+        Assertions.assertEquals("a&p", a.getIgnoreCase("tot"));
 
-        Assert.assertEquals(" Tot=\"a&amp;p\" Hello=\"There\" data-name=\"Jsoup\"", a.html());
-        Assert.assertEquals(a.html(), a.toString());
+        Assertions.assertEquals(" Tot=\"a&amp;p\" Hello=\"There\" data-name=\"Jsoup\"", a.html());
+        Assertions.assertEquals(a.html(), a.toString());
     }
 
     @Test
@@ -70,19 +69,19 @@ public class AttributesTest extends ExtendedITextTest {
         a.put("Tot", "a&p");
         a.put("Hello", "There");
 
-        Assert.assertFalse(a.hasKey("Foo"));
+        Assertions.assertFalse(a.hasKey("Foo"));
         Iterator<Attribute> iterator = a.iterator();
-        Assert.assertTrue(iterator.hasNext());
+        Assertions.assertTrue(iterator.hasNext());
         Attribute attr = iterator.next();
         attr.setKey("Foo");
         attr = iterator.next();
         attr.setKey("Bar");
         attr.setValue("Qux");
 
-        Assert.assertEquals("a&p", a.get("Foo"));
-        Assert.assertEquals("Qux", a.get("Bar"));
-        Assert.assertFalse(a.hasKey("Tot"));
-        Assert.assertFalse(a.hasKey("Hello"));
+        Assertions.assertEquals("a&p", a.get("Foo"));
+        Assertions.assertEquals("Qux", a.get("Bar"));
+        Assertions.assertFalse(a.hasKey("Tot"));
+        Assertions.assertFalse(a.hasKey("Hello"));
     }
 
     @Test public void testIteratorHasNext() {
@@ -94,9 +93,9 @@ public class AttributesTest extends ExtendedITextTest {
         int seen = 0;
         for (Attribute attribute : a) {
             seen++;
-            Assert.assertEquals(String.valueOf(seen), attribute.getValue());
+            Assertions.assertEquals(String.valueOf(seen), attribute.getValue());
         }
-        Assert.assertEquals(3, seen);
+        Assertions.assertEquals(3, seen);
     }
 
     @Test
@@ -111,11 +110,11 @@ public class AttributesTest extends ExtendedITextTest {
 
         int i = 0;
         for (Attribute attribute : a) {
-            Assert.assertEquals(datas[i][0], attribute.getKey());
-            Assert.assertEquals(datas[i][1], attribute.getValue());
+            Assertions.assertEquals(datas[i][0], attribute.getKey());
+            Assertions.assertEquals(datas[i][1], attribute.getValue());
             i++;
         }
-        Assert.assertEquals(datas.length, i);
+        Assertions.assertEquals(datas.length, i);
     }
 
     @Test
@@ -127,17 +126,17 @@ public class AttributesTest extends ExtendedITextTest {
         a.put(Attributes.internalKey("another"), "example.com");
 
         Iterator<Attribute> it = a.iterator();
-        Assert.assertTrue(it.hasNext());
-        Assert.assertEquals("One", it.next().getKey());
-        Assert.assertTrue(it.hasNext());
-        Assert.assertEquals("Two", it.next().getKey());
-        Assert.assertFalse(it.hasNext());
+        Assertions.assertTrue(it.hasNext());
+        Assertions.assertEquals("One", it.next().getKey());
+        Assertions.assertTrue(it.hasNext());
+        Assertions.assertEquals("Two", it.next().getKey());
+        Assertions.assertFalse(it.hasNext());
 
         int seen = 0;
         for (Attribute attribute : a) {
             seen++;
         }
-        Assert.assertEquals(2, seen);
+        Assertions.assertEquals(2, seen);
     }
 
     @Test
@@ -149,9 +148,9 @@ public class AttributesTest extends ExtendedITextTest {
         a.put(Attributes.internalKey("another"), "example.com");
 
         List<Attribute> attributes = a.asList();
-        Assert.assertEquals(2, attributes.size());
-        Assert.assertEquals("One", attributes.get(0).getKey());
-        Assert.assertEquals("Two", attributes.get(1). getKey());
+        Assertions.assertEquals(2, attributes.size());
+        Assertions.assertEquals("One", attributes.get(0).getKey());
+        Assertions.assertEquals("Two", attributes.get(1). getKey());
     }
 
     @Test public void htmlSkipsInternals() {
@@ -161,7 +160,7 @@ public class AttributesTest extends ExtendedITextTest {
         a.put("Two", "Two");
         a.put(Attributes.internalKey("another"), "example.com");
 
-        Assert.assertEquals(" One=\"One\" Two=\"Two\"", a.html());
+        Assertions.assertEquals(" One=\"One\" Two=\"Two\"", a.html());
     }
 
     @Test
@@ -169,7 +168,7 @@ public class AttributesTest extends ExtendedITextTest {
         Attributes a = new Attributes();
 
         Iterator<Attribute> iterator = a.iterator();
-        Assert.assertFalse(iterator.hasNext());
+        Assertions.assertFalse(iterator.hasNext());
     }
 
     @Test
@@ -181,12 +180,12 @@ public class AttributesTest extends ExtendedITextTest {
         a.put("hello", "There");
         a.put("data-name", "Jsoup");
 
-        Assert.assertEquals(5, a.size());
+        Assertions.assertEquals(5, a.size());
         a.remove("Tot");
         a.remove("Hello");
-        Assert.assertEquals(3, a.size());
-        Assert.assertTrue(a.hasKey("tot"));
-        Assert.assertFalse(a.hasKey("Tot"));
+        Assertions.assertEquals(3, a.size());
+        Assertions.assertTrue(a.hasKey("tot"));
+        Assertions.assertFalse(a.hasKey("Tot"));
     }
 
     @Test
@@ -196,8 +195,8 @@ public class AttributesTest extends ExtendedITextTest {
         for(Attribute at : a) {
             at.setKey("b");
         }
-        Assert.assertFalse(a.hasKey("a"));
-        Assert.assertTrue(a.hasKey("b"));
+        Assertions.assertFalse(a.hasKey("a"));
+        Assertions.assertTrue(a.hasKey("b"));
     }
 
     @Test
@@ -207,23 +206,23 @@ public class AttributesTest extends ExtendedITextTest {
         ats.put("B", "b");
         ats.put("c", null);
 
-        Assert.assertTrue(ats.hasDeclaredValueForKey("a"));
-        Assert.assertFalse(ats.hasDeclaredValueForKey("A"));
-        Assert.assertTrue(ats.hasDeclaredValueForKeyIgnoreCase("A"));
+        Assertions.assertTrue(ats.hasDeclaredValueForKey("a"));
+        Assertions.assertFalse(ats.hasDeclaredValueForKey("A"));
+        Assertions.assertTrue(ats.hasDeclaredValueForKeyIgnoreCase("A"));
 
-        Assert.assertFalse(ats.hasDeclaredValueForKey("c"));
-        Assert.assertFalse(ats.hasDeclaredValueForKey("C"));
-        Assert.assertFalse(ats.hasDeclaredValueForKeyIgnoreCase("C"));
+        Assertions.assertFalse(ats.hasDeclaredValueForKey("c"));
+        Assertions.assertFalse(ats.hasDeclaredValueForKey("C"));
+        Assertions.assertFalse(ats.hasDeclaredValueForKeyIgnoreCase("C"));
     }
 
     @Test public void testSizeWhenHasInternal() {
         Attributes a = new Attributes();
         a.put("One", "One");
         a.put("Two", "Two");
-        Assert.assertEquals(2, a.size());
+        Assertions.assertEquals(2, a.size());
 
         a.put(Attributes.internalKey("baseUri"), "example.com");
         a.put(Attributes.internalKey("another"), "example.com");
-        Assert.assertEquals(2, a.size());
+        Assertions.assertEquals(2, a.size());
     }
 }

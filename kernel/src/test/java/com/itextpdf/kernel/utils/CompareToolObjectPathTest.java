@@ -27,14 +27,13 @@ import com.itextpdf.kernel.pdf.PdfIndirectReference;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.objectpathitems.ObjectPath;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class CompareToolObjectPathTest extends ExtendedITextTest {
 
     @Test
@@ -42,21 +41,21 @@ public class CompareToolObjectPathTest extends ExtendedITextTest {
         PdfIndirectReference firstReference = createIndirectReference(null, 41, 0);
         PdfIndirectReference secondReference = createIndirectReference(null, 42, 0);
         ObjectPath path = new ObjectPath(firstReference, secondReference);
-        Assert.assertTrue(path.equals(path));
-        Assert.assertFalse(path.equals(null));
+        Assertions.assertTrue(path.equals(path));
+        Assertions.assertFalse(path.equals(null));
 
-        Assert.assertFalse(new ObjectPath(firstReference, secondReference).equals(
+        Assertions.assertFalse(new ObjectPath(firstReference, secondReference).equals(
                 new ObjectPath(null, secondReference)));
-        Assert.assertFalse(new ObjectPath(null, secondReference).equals(
+        Assertions.assertFalse(new ObjectPath(null, secondReference).equals(
                 new ObjectPath(firstReference, secondReference)));
-        Assert.assertFalse(new ObjectPath(firstReference, secondReference).equals(
+        Assertions.assertFalse(new ObjectPath(firstReference, secondReference).equals(
                 new ObjectPath(firstReference, null)));
-        Assert.assertFalse(new ObjectPath(firstReference, secondReference).equals(
+        Assertions.assertFalse(new ObjectPath(firstReference, secondReference).equals(
                 new ObjectPath(null, secondReference)));
 
-        Assert.assertFalse(new ObjectPath(firstReference, secondReference).equals(
+        Assertions.assertFalse(new ObjectPath(firstReference, secondReference).equals(
                 new ObjectPath(new TestIndirectReference(null, 41, 0), secondReference)));
-        Assert.assertFalse(new ObjectPath(firstReference, secondReference).equals(
+        Assertions.assertFalse(new ObjectPath(firstReference, secondReference).equals(
                 new ObjectPath(firstReference, new TestIndirectReference(null, 42, 0))));
     }
 
@@ -72,33 +71,33 @@ public class CompareToolObjectPathTest extends ExtendedITextTest {
             PdfIndirectReference obj41Gen0 = createIndirectReference(firstDoc, 41, 0);
             PdfIndirectReference obj42Gen0 = createIndirectReference(firstDoc, 42, 0);
 
-            Assert.assertTrue(new ObjectPath(obj41Gen0, obj42Gen0).equals(
+            Assertions.assertTrue(new ObjectPath(obj41Gen0, obj42Gen0).equals(
                     new ObjectPath(createIndirectReference(firstDoc, 41, 0), obj42Gen0)));
-            Assert.assertTrue(new ObjectPath(obj41Gen0, obj42Gen0).equals(
+            Assertions.assertTrue(new ObjectPath(obj41Gen0, obj42Gen0).equals(
                     new ObjectPath(obj41Gen0, createIndirectReference(firstDoc, 42, 0))));
 
-            Assert.assertFalse(new ObjectPath(obj41Gen0, obj42Gen0).equals(
+            Assertions.assertFalse(new ObjectPath(obj41Gen0, obj42Gen0).equals(
                     new ObjectPath(createIndirectReference(firstDoc, 42, 0), obj42Gen0)));
-            Assert.assertFalse(new ObjectPath(obj41Gen0, obj42Gen0).equals(
+            Assertions.assertFalse(new ObjectPath(obj41Gen0, obj42Gen0).equals(
                     new ObjectPath(obj41Gen0, createIndirectReference(firstDoc, 41, 0))));
 
-            Assert.assertFalse(new ObjectPath(obj41Gen0, obj42Gen0).equals(
+            Assertions.assertFalse(new ObjectPath(obj41Gen0, obj42Gen0).equals(
                     new ObjectPath(createIndirectReference(firstDoc, 41, 1), obj42Gen0)));
-            Assert.assertFalse(new ObjectPath(obj41Gen0, obj42Gen0).equals(
+            Assertions.assertFalse(new ObjectPath(obj41Gen0, obj42Gen0).equals(
                     new ObjectPath(obj41Gen0, createIndirectReference(firstDoc, 42, 1))));
 
             // TODO: DEVSIX-4756 start asserting false
-            Assert.assertTrue(new ObjectPath(obj41Gen0, obj42Gen0).equals(
+            Assertions.assertTrue(new ObjectPath(obj41Gen0, obj42Gen0).equals(
                     new ObjectPath(createIndirectReference(null, 41, 0), obj42Gen0)));
             // TODO: DEVSIX-4756 start asserting false
-            Assert.assertTrue(new ObjectPath(obj41Gen0, obj42Gen0).equals(
+            Assertions.assertTrue(new ObjectPath(obj41Gen0, obj42Gen0).equals(
                     new ObjectPath(obj41Gen0, createIndirectReference(null, 42, 0))));
 
             // TODO: DEVSIX-4756 start asserting false
-            Assert.assertTrue(new ObjectPath(obj41Gen0, obj42Gen0).equals(
+            Assertions.assertTrue(new ObjectPath(obj41Gen0, obj42Gen0).equals(
                     new ObjectPath(createIndirectReference(secondDoc, 41, 0), obj42Gen0)));
             // TODO: DEVSIX-4756 start asserting false
-            Assert.assertTrue(new ObjectPath(obj41Gen0, obj42Gen0).equals(
+            Assertions.assertTrue(new ObjectPath(obj41Gen0, obj42Gen0).equals(
                     new ObjectPath(obj41Gen0, createIndirectReference(secondDoc, 42, 0))));
 
         }
@@ -116,44 +115,44 @@ public class CompareToolObjectPathTest extends ExtendedITextTest {
             PdfIndirectReference obj41Gen0 = createIndirectReference(firstDoc, 41, 0);
             PdfIndirectReference obj42Gen0 = createIndirectReference(firstDoc, 42, 0);
 
-            Assert.assertEquals(new ObjectPath(obj41Gen0, obj42Gen0).hashCode(),
+            Assertions.assertEquals(new ObjectPath(obj41Gen0, obj42Gen0).hashCode(),
                     new ObjectPath(
                             createIndirectReference(firstDoc, 41, 0),
                             createIndirectReference(firstDoc, 42, 0)
                     ).hashCode());
 
-            Assert.assertNotEquals(new ObjectPath(obj41Gen0, obj42Gen0).hashCode(),
+            Assertions.assertNotEquals(new ObjectPath(obj41Gen0, obj42Gen0).hashCode(),
                     new ObjectPath(
                             createIndirectReference(firstDoc, 42, 0),
                             obj42Gen0
                     ).hashCode());
-            Assert.assertNotEquals(new ObjectPath(obj41Gen0, obj42Gen0).hashCode(),
+            Assertions.assertNotEquals(new ObjectPath(obj41Gen0, obj42Gen0).hashCode(),
                     new ObjectPath(
                             obj41Gen0,
                             createIndirectReference(firstDoc, 41, 0)
                     ).hashCode());
 
             // TODO: DEVSIX-4756 start asserting not equals
-            Assert.assertEquals(new ObjectPath(obj41Gen0, obj42Gen0).hashCode(),
+            Assertions.assertEquals(new ObjectPath(obj41Gen0, obj42Gen0).hashCode(),
                     new ObjectPath(
                             createIndirectReference(null, 41, 0),
                             createIndirectReference(firstDoc, 42, 0)
                     ).hashCode());
             // TODO: DEVSIX-4756 start asserting not equals
-            Assert.assertEquals(new ObjectPath(obj41Gen0, obj42Gen0).hashCode(),
+            Assertions.assertEquals(new ObjectPath(obj41Gen0, obj42Gen0).hashCode(),
                     new ObjectPath(
                             createIndirectReference(firstDoc, 41, 0),
                             createIndirectReference(null, 42, 0)
                     ).hashCode());
 
             // TODO: DEVSIX-4756 start asserting not equals
-            Assert.assertEquals(new ObjectPath(obj41Gen0, obj42Gen0).hashCode(),
+            Assertions.assertEquals(new ObjectPath(obj41Gen0, obj42Gen0).hashCode(),
                     new ObjectPath(
                             createIndirectReference(secondDoc, 41, 0),
                             createIndirectReference(firstDoc, 42, 0)
                     ).hashCode());
             // TODO: DEVSIX-4756 start asserting not equals
-            Assert.assertEquals(new ObjectPath(obj41Gen0, obj42Gen0).hashCode(),
+            Assertions.assertEquals(new ObjectPath(obj41Gen0, obj42Gen0).hashCode(),
                     new ObjectPath(
                             createIndirectReference(firstDoc, 41, 0),
                             createIndirectReference(secondDoc, 42, 0)

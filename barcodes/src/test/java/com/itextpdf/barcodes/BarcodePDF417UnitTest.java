@@ -23,13 +23,12 @@
 package com.itextpdf.barcodes;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class BarcodePDF417UnitTest extends ExtendedITextTest {
 
     @Test
@@ -37,7 +36,7 @@ public class BarcodePDF417UnitTest extends ExtendedITextTest {
         BarcodePDF417 barcode = new BarcodePDF417();
         barcode.setCodeRows(150);
 
-        Assert.assertEquals(150, barcode.getCodeRows());
+        Assertions.assertEquals(150, barcode.getCodeRows());
     }
 
     @Test
@@ -45,7 +44,7 @@ public class BarcodePDF417UnitTest extends ExtendedITextTest {
         BarcodePDF417 barcode = new BarcodePDF417();
         barcode.setCodeColumns(150);
 
-        Assert.assertEquals(150, barcode.getCodeColumns());
+        Assertions.assertEquals(150, barcode.getCodeColumns());
     }
 
     @Test
@@ -53,7 +52,7 @@ public class BarcodePDF417UnitTest extends ExtendedITextTest {
         BarcodePDF417 barcode = new BarcodePDF417();
         barcode.setLenCodewords(150);
 
-        Assert.assertEquals(150, barcode.getLenCodewords());
+        Assertions.assertEquals(150, barcode.getLenCodewords());
     }
 
     @Test
@@ -61,14 +60,14 @@ public class BarcodePDF417UnitTest extends ExtendedITextTest {
         BarcodePDF417 barcode = new BarcodePDF417();
         barcode.setErrorLevel(3);
 
-        Assert.assertEquals(3, barcode.getErrorLevel());
+        Assertions.assertEquals(3, barcode.getErrorLevel());
     }
 
     @Test
     public void barcode417GetCodeWordsTest() {
         BarcodePDF417 barcode = new BarcodePDF417();
 
-        Assert.assertEquals(928, barcode.getCodewords().length);
+        Assertions.assertEquals(928, barcode.getCodewords().length);
     }
 
     @Test
@@ -76,7 +75,7 @@ public class BarcodePDF417UnitTest extends ExtendedITextTest {
         BarcodePDF417 barcode = new BarcodePDF417();
         barcode.setOptions(100);
 
-        Assert.assertEquals(100, barcode.getOptions());
+        Assertions.assertEquals(100, barcode.getOptions());
     }
 
     @Test
@@ -88,6 +87,6 @@ public class BarcodePDF417UnitTest extends ExtendedITextTest {
         BarcodePDF417 barcode = new BarcodePDF417();
         barcode.setCode(text);
 
-        Assert.assertEquals(928, barcode.getMaxSquare());
+        Assertions.assertEquals(928, barcode.getMaxSquare());
     }
 }

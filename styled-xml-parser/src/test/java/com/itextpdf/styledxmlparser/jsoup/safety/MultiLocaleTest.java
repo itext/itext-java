@@ -25,42 +25,33 @@ package com.itextpdf.styledxmlparser.jsoup.safety;
 import com.itextpdf.styledxmlparser.jsoup.Jsoup;
 import com.itextpdf.styledxmlparser.jsoup.TextUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(Parameterized.class)
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class MultiLocaleTest extends ExtendedITextTest {
 
     private final Locale defaultLocale = Locale.getDefault();
 
-    @Parameterized.Parameters
-    public static Collection<Locale> locales() {
+    public static Collection<Locale> Locales() {
         return Arrays.asList(Locale.ENGLISH, new Locale("tr"));
     }
 
-    @After
+    @AfterEach
     public void setDefaultLocale() {
         Locale.setDefault(defaultLocale);
     }
 
-    private Locale locale;
-
-    public MultiLocaleTest(Locale locale) {
-        this.locale = locale;
-    }
-
-    @Test
-    public void safeListedProtocolShouldBeRetained() {
+    @ParameterizedTest
+    @MethodSource("Locales")
+    public void safeListedProtocolShouldBeRetained(Locale locale) {
         Locale.setDefault(locale);
 
         Whitelist safelist = (Whitelist) Whitelist.none()
@@ -70,11 +61,12 @@ public class MultiLocaleTest extends ExtendedITextTest {
 
         String cleanHtml = Jsoup.clean("<a href=\"SOMETHING://x\"></a>", safelist);
 
-        Assert.assertEquals("<a href=\"SOMETHING://x\"></a>", TextUtil.stripNewlines(cleanHtml));
+        Assertions.assertEquals("<a href=\"SOMETHING://x\"></a>", TextUtil.stripNewlines(cleanHtml));
     }
 
-    @Test
-    public void cleanerSafeListedProtocolShouldBeRetained() {
+    @ParameterizedTest
+    @MethodSource("Locales")
+    public void cleanerSafeListedProtocolShouldBeRetained(Locale locale) {
         Locale.setDefault(locale);
 
         Safelist safelist = Safelist.none()
@@ -84,11 +76,12 @@ public class MultiLocaleTest extends ExtendedITextTest {
 
         String cleanHtml = Jsoup.clean("<a href=\"SOMETHING://x\"></a>", safelist);
 
-        Assert.assertEquals("<a href=\"SOMETHING://x\"></a>", TextUtil.stripNewlines(cleanHtml));
+        Assertions.assertEquals("<a href=\"SOMETHING://x\"></a>", TextUtil.stripNewlines(cleanHtml));
     }
 
-    @Test
-    public void compatibilitySafeListedProtocolShouldBeRetained() {
+    @ParameterizedTest
+    @MethodSource("Locales")
+    public void compatibilitySafeListedProtocolShouldBeRetained(Locale locale) {
         Locale.setDefault(locale);
 
         Whitelist safelist = (Whitelist) Whitelist.none()
@@ -98,6 +91,6 @@ public class MultiLocaleTest extends ExtendedITextTest {
 
         String cleanHtml = Jsoup.clean("<a href=\"SOMETHING://x\"></a>", safelist);
 
-        Assert.assertEquals("<a href=\"SOMETHING://x\"></a>", TextUtil.stripNewlines(cleanHtml));
+        Assertions.assertEquals("<a href=\"SOMETHING://x\"></a>", TextUtil.stripNewlines(cleanHtml));
     }
 }

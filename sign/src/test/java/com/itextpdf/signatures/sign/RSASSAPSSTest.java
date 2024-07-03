@@ -43,7 +43,6 @@ import com.itextpdf.signatures.SignatureUtil;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -55,12 +54,12 @@ import java.security.KeyException;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(BouncyCastleUnitTest.class)
+@Tag("BouncyCastleUnitTest")
 public class RSASSAPSSTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
@@ -70,7 +69,7 @@ public class RSASSAPSSTest extends ExtendedITextTest {
     private static final String SIGNATURE_FIELD = "Signature";
     private static final char[] SAMPLE_KEY_PASSPHRASE = "pdfpdfpdfsecretsecret".toCharArray();
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         Security.addProvider(FACTORY.getProvider());
         createOrClearDestinationFolder(DESTINATION_FOLDER);
@@ -88,7 +87,7 @@ public class RSASSAPSSTest extends ExtendedITextTest {
                 RSASSAPSSMechanismParams.createForDigestAlgorithm(digestName)
         );
 
-        Assert.assertNull(
+        Assertions.assertNull(
                 SignaturesCompareTool.compareSignatures(
                         Paths.get(DESTINATION_FOLDER, outFileName).toString(),
                         Paths.get(SOURCE_FOLDER, cmpFileName).toString()
@@ -109,7 +108,7 @@ public class RSASSAPSSTest extends ExtendedITextTest {
                 RSASSAPSSMechanismParams.createForDigestAlgorithm(digestName)
         );
 
-        Assert.assertNull(
+        Assertions.assertNull(
                 SignaturesCompareTool.compareSignatures(
                         Paths.get(DESTINATION_FOLDER, outFileName).toString(),
                         Paths.get(SOURCE_FOLDER, cmpFileName).toString()
@@ -149,8 +148,8 @@ public class RSASSAPSSTest extends ExtendedITextTest {
                 Paths.get(DESTINATION_FOLDER, outFileName).toString(),
                 Paths.get(SOURCE_FOLDER, cmpFileName).toString()
         );
-        Assert.assertTrue(cmpOut.contains("out: Integer(40)"));
-        Assert.assertTrue(cmpOut.contains("cmp: Integer(32)"));
+        Assertions.assertTrue(cmpOut.contains("out: Integer(40)"));
+        Assertions.assertTrue(cmpOut.contains("cmp: Integer(32)"));
     }
 
     @Test
@@ -162,7 +161,7 @@ public class RSASSAPSSTest extends ExtendedITextTest {
 
             SignatureUtil u = new SignatureUtil(pdfDoc);
             String provider = FACTORY.getProviderName();
-            PdfException pdfException = Assert.assertThrows(
+            PdfException pdfException = Assertions.assertThrows(
                     PdfException.class,
                     () -> u.readSignatureData(SIGNATURE_FIELD, provider)
             );
@@ -198,8 +197,8 @@ public class RSASSAPSSTest extends ExtendedITextTest {
         try (PdfReader r = new PdfReader(fileName); PdfDocument pdfDoc = new PdfDocument(r)) {
             SignatureUtil u = new SignatureUtil(pdfDoc);
             PdfPKCS7 data = u.readSignatureData(SIGNATURE_FIELD, FACTORY.getProviderName());
-            Assert.assertEquals(SecurityIDs.ID_RSASSA_PSS, data.getSignatureMechanismOid());
-            Assert.assertTrue(data.verifySignatureIntegrityAndAuthenticity());
+            Assertions.assertEquals(SecurityIDs.ID_RSASSA_PSS, data.getSignatureMechanismOid());
+            Assertions.assertTrue(data.verifySignatureIntegrityAndAuthenticity());
         }
     }
 

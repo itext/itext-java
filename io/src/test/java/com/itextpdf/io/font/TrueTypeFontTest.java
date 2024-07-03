@@ -24,7 +24,6 @@ package com.itextpdf.io.font;
 
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,11 +32,11 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class TrueTypeFontTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/font/sharedFontsResourceFiles/";
 
@@ -49,9 +48,9 @@ public class TrueTypeFontTest extends ExtendedITextTest {
         FontProgram fontProgram = FontProgramFactory.createFont(SOURCE_FOLDER + "NotoSansJP-Regular_charsetDataFormat0.otf");
         Glyph glyph = fontProgram.getGlyph(jpChar);
 
-        Assert.assertArrayEquals(new char[] {jpChar}, glyph.getUnicodeChars());
-        Assert.assertEquals(20449, glyph.getUnicode());
-        Assert.assertEquals(10195, glyph.getCode());
+        Assertions.assertArrayEquals(new char[] {jpChar}, glyph.getUnicodeChars());
+        Assertions.assertEquals(20449, glyph.getUnicode());
+        Assertions.assertEquals(10195, glyph.getCode());
     }
 
     @Test
@@ -62,9 +61,9 @@ public class TrueTypeFontTest extends ExtendedITextTest {
         FontProgram fontProgram = FontProgramFactory.createFont(SOURCE_FOLDER + "NotoSansSC-Regular.otf");
         Glyph glyph = fontProgram.getGlyph(chChar);
 
-        Assert.assertArrayEquals(new char[] {chChar}, glyph.getUnicodeChars());
-        Assert.assertEquals(26131, glyph.getUnicode());
-        Assert.assertEquals(20292, glyph.getCode());
+        Assertions.assertArrayEquals(new char[] {chChar}, glyph.getUnicodeChars());
+        Assertions.assertEquals(26131, glyph.getUnicode());
+        Assertions.assertEquals(20292, glyph.getCode());
     }
 
     @Test
@@ -75,9 +74,9 @@ public class TrueTypeFontTest extends ExtendedITextTest {
         FontProgram fontProgram = FontProgramFactory.createFont(SOURCE_FOLDER + "NotoSansTC-Regular.otf");
         Glyph glyph = fontProgram.getGlyph(chChar);
 
-        Assert.assertArrayEquals(new char[] {chChar}, glyph.getUnicodeChars());
-        Assert.assertEquals(26131, glyph.getUnicode());
-        Assert.assertEquals(20292, glyph.getCode());
+        Assertions.assertArrayEquals(new char[] {chChar}, glyph.getUnicodeChars());
+        Assertions.assertEquals(26131, glyph.getUnicode());
+        Assertions.assertEquals(20292, glyph.getCode());
     }
 
     @Test
@@ -92,7 +91,7 @@ public class TrueTypeFontTest extends ExtendedITextTest {
         HashSet<Integer> glyphs = new HashSet<>(Collections.singletonList(charCidInFont));
         Set<Integer> actualResult = trueTypeFontProgram.mapGlyphsCidsToGids(glyphs);
 
-        Assert.assertEquals(1, actualResult.size());
-        Assert.assertTrue(actualResult.contains(charGidInFont));
+        Assertions.assertEquals(1, actualResult.size());
+        Assertions.assertTrue(actualResult.contains(charGidInFont));
     }
 }

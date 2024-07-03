@@ -33,30 +33,29 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfLayerTest extends ExtendedITextTest {
 
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/layer/PdfLayerTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/layer/PdfLayerTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -67,7 +66,7 @@ public class PdfLayerTest extends ExtendedITextTest {
 
         Collection<PdfName> defaultIntents = pdfLayer.getIntents();
 
-        Assert.assertArrayEquals(new PdfName[] {PdfName.View}, defaultIntents.toArray(new PdfName[1]));
+        Assertions.assertArrayEquals(new PdfName[] {PdfName.View}, defaultIntents.toArray(new PdfName[1]));
     }
 
     @Test
@@ -76,7 +75,7 @@ public class PdfLayerTest extends ExtendedITextTest {
 
         Collection<PdfName> defaultIntents = pdfLayer.getIntents();
 
-        Assert.assertArrayEquals(new PdfName[] {PdfName.Design}, defaultIntents.toArray(new PdfName[1]));
+        Assertions.assertArrayEquals(new PdfName[] {PdfName.Design}, defaultIntents.toArray(new PdfName[1]));
     }
 
     @Test
@@ -86,7 +85,7 @@ public class PdfLayerTest extends ExtendedITextTest {
 
         Collection<PdfName> defaultIntents = pdfLayer.getIntents();
 
-        Assert.assertArrayEquals(new PdfName[] {PdfName.Design, custom}, defaultIntents.toArray(new PdfName[2]));
+        Assertions.assertArrayEquals(new PdfName[] {PdfName.Design, custom}, defaultIntents.toArray(new PdfName[2]));
     }
 
     @Test
@@ -97,7 +96,7 @@ public class PdfLayerTest extends ExtendedITextTest {
         pdfLayer.setIntents(null);
         Collection<PdfName> postNullIntents = pdfLayer.getIntents();
 
-        Assert.assertArrayEquals(new PdfName[] {PdfName.View}, postNullIntents.toArray(new PdfName[1]));
+        Assertions.assertArrayEquals(new PdfName[] {PdfName.View}, postNullIntents.toArray(new PdfName[1]));
     }
 
     @Test
@@ -108,7 +107,7 @@ public class PdfLayerTest extends ExtendedITextTest {
         pdfLayer.setIntents(Collections.<PdfName>emptyList());
         Collection<PdfName> postNullIntents = pdfLayer.getIntents();
 
-        Assert.assertArrayEquals(new PdfName[] {PdfName.View}, postNullIntents.toArray(new PdfName[1]));
+        Assertions.assertArrayEquals(new PdfName[] {PdfName.View}, postNullIntents.toArray(new PdfName[1]));
     }
 
 
@@ -286,7 +285,7 @@ public class PdfLayerTest extends ExtendedITextTest {
         // start of test assertion logic
         PdfDocument resPdf = new PdfDocument(CompareTool.createOutputReader(outPdf));
         PdfDictionary d = resPdf.getCatalog().getPdfObject().getAsDictionary(PdfName.OCProperties).getAsDictionary(PdfName.D);
-        Assert.assertEquals(PdfOCProperties.OC_CONFIG_NAME_PATTERN + "2", d.getAsString(PdfName.Name).toUnicodeString());
+        Assertions.assertEquals(PdfOCProperties.OC_CONFIG_NAME_PATTERN + "2", d.getAsString(PdfName.Name).toUnicodeString());
 
         PdfLayerTestUtils.compareLayers(outPdf, cmpPdf);
     }
@@ -409,7 +408,7 @@ public class PdfLayerTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "input_layered.pdf"),
                 CompareTool.createTestPdfWriter(destinationFolder + "output_copy_layered.pdf"));
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "output_copy_layered.pdf", sourceFolder + "cmp_output_copy_layered.pdf", destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "output_copy_layered.pdf", sourceFolder + "cmp_output_copy_layered.pdf", destinationFolder, "diff"));
     }
 
     @Test
@@ -433,7 +432,7 @@ public class PdfLayerTest extends ExtendedITextTest {
         }
 
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "output_layered.pdf", sourceFolder + "cmp_output_layered.pdf", destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "output_layered.pdf", sourceFolder + "cmp_output_layered.pdf", destinationFolder, "diff"));
     }
 
 }

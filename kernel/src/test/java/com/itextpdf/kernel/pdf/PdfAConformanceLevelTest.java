@@ -28,19 +28,18 @@ import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.kernel.xmp.impl.XMPMetaImpl;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfAConformanceLevelTest extends ExtendedITextTest {
     @Test
     public void getConformanceTest() {
-        Assert.assertEquals(PdfAConformanceLevel.PDF_A_4, PdfAConformanceLevel.getConformanceLevel("4", null));
-        Assert.assertEquals(PdfAConformanceLevel.PDF_A_4E, PdfAConformanceLevel.getConformanceLevel("4", "E"));
-        Assert.assertEquals(PdfAConformanceLevel.PDF_A_4F, PdfAConformanceLevel.getConformanceLevel("4", "F"));
+        Assertions.assertEquals(PdfAConformanceLevel.PDF_A_4, PdfAConformanceLevel.getConformanceLevel("4", null));
+        Assertions.assertEquals(PdfAConformanceLevel.PDF_A_4E, PdfAConformanceLevel.getConformanceLevel("4", "E"));
+        Assertions.assertEquals(PdfAConformanceLevel.PDF_A_4F, PdfAConformanceLevel.getConformanceLevel("4", "F"));
     }
 
     @Test
@@ -48,7 +47,7 @@ public class PdfAConformanceLevelTest extends ExtendedITextTest {
         XMPMeta meta = new XMPMetaImpl();
         meta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, "4");
         PdfAConformanceLevel level = PdfAConformanceLevel.getConformanceLevel(meta);
-        Assert.assertEquals(PdfAConformanceLevel.PDF_A_4, level);
+        Assertions.assertEquals(PdfAConformanceLevel.PDF_A_4, level);
     }
 
     @Test
@@ -57,17 +56,17 @@ public class PdfAConformanceLevelTest extends ExtendedITextTest {
         meta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, "2");
         meta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.CONFORMANCE, "B");
         PdfAConformanceLevel level = PdfAConformanceLevel.getConformanceLevel(meta);
-        Assert.assertEquals(PdfAConformanceLevel.PDF_A_2B, level);
+        Assertions.assertEquals(PdfAConformanceLevel.PDF_A_2B, level);
     }
 
     @Test
     public void getPdfAConformanceLevel01Test() {
-        Assert.assertNull(PdfAConformanceLevel.getPDFAConformance(null, null));
+        Assertions.assertNull(PdfAConformanceLevel.getPDFAConformance(null, null));
     }
 
     @Test
     public void getPdfAConformanceLevel02Test() {
-        Assert.assertEquals(PdfAConformanceLevel.PDF_A_1A,
+        Assertions.assertEquals(PdfAConformanceLevel.PDF_A_1A,
                 PdfAConformanceLevel.getPDFAConformance(PdfAConformanceLevel.PDF_A_1A, null));
     }
 
@@ -75,7 +74,7 @@ public class PdfAConformanceLevelTest extends ExtendedITextTest {
     @Test
     public void getPdfAConformanceLevel03Test() {
         try(PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))){
-            Assert.assertEquals(PdfAConformanceLevel.PDF_A_1A,
+            Assertions.assertEquals(PdfAConformanceLevel.PDF_A_1A,
                     PdfAConformanceLevel.getPDFAConformance(PdfAConformanceLevel.PDF_A_1A, pdfDocument));
         }
     }
@@ -83,7 +82,7 @@ public class PdfAConformanceLevelTest extends ExtendedITextTest {
     @Test
     public void getPdfAConformanceLevel04Test() {
         try(PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))){
-            Assert.assertNull(PdfAConformanceLevel.getPDFAConformance(null, pdfDocument));
+            Assertions.assertNull(PdfAConformanceLevel.getPDFAConformance(null, pdfDocument));
         }
     }
 }

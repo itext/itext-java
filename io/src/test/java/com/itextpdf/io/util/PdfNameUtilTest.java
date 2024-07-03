@@ -23,24 +23,23 @@
 package com.itextpdf.io.util;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfNameUtilTest extends ExtendedITextTest {
     @Test
     public void decodeNameTest(){
         // /#C3#9Cberschrift_1
         byte[] name1Content = new byte[] {35, 67, 51, 35, 57, 67, 98, 101, 114, 115, 99, 104, 114, 105, 102, 116, 95, 49};
-        Assert.assertEquals("Ã\u009Cberschrift_1", PdfNameUtil.decodeName(name1Content));
+        Assertions.assertEquals("Ã\u009Cberschrift_1", PdfNameUtil.decodeName(name1Content));
         // /TOC-1
         byte[] name2Content = new byte[] {84, 79, 67, 45, 49};
-        Assert.assertEquals("TOC-1", PdfNameUtil.decodeName(name2Content));
+        Assertions.assertEquals("TOC-1", PdfNameUtil.decodeName(name2Content));
         // /NormalParagraphStyle
         byte[] name3Content = new byte[] {78, 111, 114, 109, 97, 108, 80, 97, 114, 97, 103, 114, 97, 112, 104, 83, 116, 121, 108, 101};
-        Assert.assertEquals("NormalParagraphStyle", PdfNameUtil.decodeName(name3Content));
+        Assertions.assertEquals("NormalParagraphStyle", PdfNameUtil.decodeName(name3Content));
     }
 }

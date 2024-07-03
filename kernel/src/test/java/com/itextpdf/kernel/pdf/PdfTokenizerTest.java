@@ -31,15 +31,14 @@ import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfTokenizerTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfTokeniserTest/";
 
@@ -56,47 +55,47 @@ public class PdfTokenizerTest extends ExtendedITextTest {
         tok = new PdfTokenizer(new RandomAccessFileOrArray(factory.createSource(testHexString.getBytes(StandardCharsets.ISO_8859_1))));
         tok.nextToken();
         pdfString = new PdfString(tok.getByteContent(), tok.isHexString());
-        Assert.assertEquals("\r\n\tUser\u0090s Guide", pdfString.getValue());
+        Assertions.assertEquals("\r\n\tUser\u0090s Guide", pdfString.getValue());
 
         String testUnicodeString = "ΑΒΓΗ€•♣⋅";
         pdfString = new PdfString(PdfEncodings.convertToBytes(testUnicodeString, PdfEncodings.UNICODE_BIG), false);
-        Assert.assertEquals(testUnicodeString, pdfString.toUnicodeString());
+        Assertions.assertEquals(testUnicodeString, pdfString.toUnicodeString());
 
         pdfString = new PdfString("FEFF041F04400438043204350442".getBytes(StandardCharsets.ISO_8859_1), true);
-        Assert.assertEquals("\u041F\u0440\u0438\u0432\u0435\u0442", pdfString.toUnicodeString());
+        Assertions.assertEquals("\u041F\u0440\u0438\u0432\u0435\u0442", pdfString.toUnicodeString());
 
         pdfString = new PdfString("FEFF041F04400438043204350442".getBytes(StandardCharsets.ISO_8859_1), false);
-        Assert.assertEquals("FEFF041F04400438043204350442", pdfString.toUnicodeString());
+        Assertions.assertEquals("FEFF041F04400438043204350442", pdfString.toUnicodeString());
 
         String specialCharacter = "\r\n\t\\n\\r\\t\\f";
         pdfString = new PdfString(specialCharacter.getBytes(StandardCharsets.ISO_8859_1), false);
-        Assert.assertEquals("\n\t\n\r\t\f", pdfString.toUnicodeString());
+        Assertions.assertEquals("\n\t\n\r\t\f", pdfString.toUnicodeString());
 
         String symbol = "\u0001\u0004\u0006\u000E\u001F";
         pdfString = new PdfString(symbol.getBytes(StandardCharsets.ISO_8859_1), false);
-        Assert.assertEquals(symbol, pdfString.toUnicodeString());
+        Assertions.assertEquals(symbol, pdfString.toUnicodeString());
 
 
         String testString1 ="These\\\n two\\\r strings\\\n are the same";
         pdfString = new PdfString(testString1.getBytes(StandardCharsets.ISO_8859_1), false);
-        Assert.assertEquals("These two strings are the same", pdfString.getValue());
+        Assertions.assertEquals("These two strings are the same", pdfString.getValue());
 
         String testString2 ="This string contains \\245two octal characters\\307";
         pdfString = new PdfString(testString2.getBytes(StandardCharsets.ISO_8859_1), false);
-        Assert.assertEquals("This string contains \u00A5two octal characters\u00C7", pdfString.getValue());
+        Assertions.assertEquals("This string contains \u00A5two octal characters\u00C7", pdfString.getValue());
 
 
         String testString3 ="\\0053";
         pdfString = new PdfString(testString3.getBytes(StandardCharsets.ISO_8859_1), false);
-        Assert.assertEquals("\u00053", pdfString.getValue());
+        Assertions.assertEquals("\u00053", pdfString.getValue());
 
         String testString4 ="\\053";
         pdfString = new PdfString(testString4.getBytes(StandardCharsets.ISO_8859_1), false);
-        Assert.assertEquals("+", pdfString.getValue());
+        Assertions.assertEquals("+", pdfString.getValue());
 
         byte[] b = new byte[]{(byte)46,(byte)56,(byte)40};
         pdfString = new PdfString(b,false);
-        Assert.assertEquals(new String(b),pdfString.getValue());
+        Assertions.assertEquals(new String(b),pdfString.getValue());
     }
 
     @Test
@@ -112,13 +111,13 @@ public class PdfTokenizerTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(filename);
         PdfDocument d = new PdfDocument(reader);
         // text in pdf: int array ( 223,227, 235,240)
-        Assert.assertEquals(d.getDocumentInfo().getTitle(), title);
+        Assertions.assertEquals(d.getDocumentInfo().getTitle(), title);
         // text in pdf: This string\9078 contains \245two octal characters\307
-        Assert.assertEquals(d.getDocumentInfo().getAuthor(), author);
+        Assertions.assertEquals(d.getDocumentInfo().getAuthor(), author);
         // text in pdf: iText\r 6\n
-        Assert.assertEquals(d.getDocumentInfo().getCreator(), creator);
+        Assertions.assertEquals(d.getDocumentInfo().getCreator(), creator);
         // text in pdf: \053
-        Assert.assertEquals(d.getDocumentInfo().getSubject(), subject);
+        Assertions.assertEquals(d.getDocumentInfo().getSubject(), subject);
 
     }
 
@@ -135,105 +134,105 @@ public class PdfTokenizerTest extends ExtendedITextTest {
         PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(factory.createSource(data.getBytes(StandardCharsets.ISO_8859_1))));
 
         tok.nextValidToken();
-        Assert.assertEquals(tok.getTokenType(), PdfTokenizer.TokenType.StartDic);
+        Assertions.assertEquals(tok.getTokenType(), PdfTokenizer.TokenType.StartDic);
 
         tok.nextValidToken();
-        Assert.assertEquals(tok.getTokenType(), PdfTokenizer.TokenType.Name);
+        Assertions.assertEquals(tok.getTokenType(), PdfTokenizer.TokenType.Name);
         PdfName name = new PdfName(tok.getByteContent());
-        Assert.assertEquals("Size", name.getValue());
+        Assertions.assertEquals("Size", name.getValue());
 
         tok.nextValidToken();
-        Assert.assertEquals(tok.getTokenType(), PdfTokenizer.TokenType.Number);
+        Assertions.assertEquals(tok.getTokenType(), PdfTokenizer.TokenType.Number);
         PdfNumber num = new PdfNumber(tok.getByteContent());
-        Assert.assertEquals("70.", num.toString());
+        Assertions.assertEquals("70.", num.toString());
 
         tok.nextValidToken();
-        Assert.assertEquals(tok.getTokenType(), PdfTokenizer.TokenType.Name);
+        Assertions.assertEquals(tok.getTokenType(), PdfTokenizer.TokenType.Name);
         name = new PdfName(tok.getByteContent());
-        Assert.assertEquals("Value ", name.getValue());
+        Assertions.assertEquals("Value ", name.getValue());
 
         tok.nextValidToken();
-        Assert.assertEquals(tok.getTokenType(), PdfTokenizer.TokenType.Number);
+        Assertions.assertEquals(tok.getTokenType(), PdfTokenizer.TokenType.Number);
         num = new PdfNumber(tok.getByteContent());
-        Assert.assertNotSame("0.1", num.toString());
+        Assertions.assertNotSame("0.1", num.toString());
 
         tok.nextValidToken();
-        Assert.assertEquals(tok.getTokenType(), PdfTokenizer.TokenType.Name);
+        Assertions.assertEquals(tok.getTokenType(), PdfTokenizer.TokenType.Name);
         name = new PdfName(tok.getByteContent());
-        Assert.assertEquals("Root", name.getValue());
+        Assertions.assertEquals("Root", name.getValue());
 
         tok.nextValidToken();
-        Assert.assertEquals(tok.getTokenType(), PdfTokenizer.TokenType.Ref);
+        Assertions.assertEquals(tok.getTokenType(), PdfTokenizer.TokenType.Ref);
         PdfIndirectReference ref = new PdfIndirectReference(null, tok.getObjNr(), tok.getGenNr());
-        Assert.assertEquals("46 0 R", ref.toString());
+        Assertions.assertEquals("46 0 R", ref.toString());
 
         tok.nextValidToken();
-        Assert.assertEquals(tok.getTokenType(), PdfTokenizer.TokenType.Name);
+        Assertions.assertEquals(tok.getTokenType(), PdfTokenizer.TokenType.Name);
         name = new PdfName(tok.getByteContent());
-        Assert.assertEquals("Info", name.getValue());
+        Assertions.assertEquals("Info", name.getValue());
 
         tok.nextValidToken();
-        Assert.assertEquals(tok.getTokenType(), PdfTokenizer.TokenType.Ref);
+        Assertions.assertEquals(tok.getTokenType(), PdfTokenizer.TokenType.Ref);
         ref = new PdfIndirectReference(null, tok.getObjNr(), tok.getGenNr());
-        Assert.assertEquals("44 0 R", ref.toString());
+        Assertions.assertEquals("44 0 R", ref.toString());
 
         tok.nextValidToken();
-        Assert.assertEquals(tok.getTokenType(), PdfTokenizer.TokenType.Name);
+        Assertions.assertEquals(tok.getTokenType(), PdfTokenizer.TokenType.Name);
         name = new PdfName(tok.getByteContent());
-        Assert.assertEquals("ID", name.getValue());
+        Assertions.assertEquals("ID", name.getValue());
 
         tok.nextValidToken();
-        Assert.assertEquals(tok.getTokenType(), PdfTokenizer.TokenType.StartArray);
+        Assertions.assertEquals(tok.getTokenType(), PdfTokenizer.TokenType.StartArray);
 
         tok.nextValidToken();
-        Assert.assertEquals(tok.getTokenType(), PdfTokenizer.TokenType.String);
-        Assert.assertTrue(tok.isHexString());
+        Assertions.assertEquals(tok.getTokenType(), PdfTokenizer.TokenType.String);
+        Assertions.assertTrue(tok.isHexString());
         PdfString str = new PdfString(tok.getByteContent(), tok.isHexString());
-        Assert.assertEquals("some hex string ", str.getValue());
+        Assertions.assertEquals("some hex string ", str.getValue());
 
         tok.nextValidToken();
-        Assert.assertEquals(tok.getTokenType(), PdfTokenizer.TokenType.String);
-        Assert.assertFalse(tok.isHexString());
+        Assertions.assertEquals(tok.getTokenType(), PdfTokenizer.TokenType.String);
+        Assertions.assertFalse(tok.isHexString());
         str = new PdfString(tok.getByteContent(), tok.isHexString());
-        Assert.assertEquals("some simple string ", str.getValue());
+        Assertions.assertEquals("some simple string ", str.getValue());
 
         tok.nextValidToken();
-        Assert.assertEquals(tok.getTokenType(), PdfTokenizer.TokenType.String);
-        Assert.assertTrue(tok.isHexString());
+        Assertions.assertEquals(tok.getTokenType(), PdfTokenizer.TokenType.String);
+        Assertions.assertTrue(tok.isHexString());
         str = new PdfString(tok.getByteContent(), tok.isHexString());
-        Assert.assertEquals("\u008C%G\u00D5\u008DK\u00D2\u00C6\u00F3\u00D3+\u0083\u000B\u00E3%\u009D ", str.getValue());
+        Assertions.assertEquals("\u008C%G\u00D5\u008DK\u00D2\u00C6\u00F3\u00D3+\u0083\u000B\u00E3%\u009D ", str.getValue());
 
         tok.nextValidToken();
-        Assert.assertEquals(tok.getTokenType(), PdfTokenizer.TokenType.Number);
+        Assertions.assertEquals(tok.getTokenType(), PdfTokenizer.TokenType.Number);
         num = new PdfNumber(tok.getByteContent());
-        Assert.assertEquals("-70.1", num.toString());
+        Assertions.assertEquals("-70.1", num.toString());
 
         tok.nextValidToken();
-        Assert.assertEquals(tok.getTokenType(), PdfTokenizer.TokenType.Number);
+        Assertions.assertEquals(tok.getTokenType(), PdfTokenizer.TokenType.Number);
         num = new PdfNumber(tok.getByteContent());
-        Assert.assertEquals("-0.2", num.toString());
+        Assertions.assertEquals("-0.2", num.toString());
 
         tok.nextValidToken();
-        Assert.assertEquals(tok.getTokenType(), PdfTokenizer.TokenType.EndArray);
+        Assertions.assertEquals(tok.getTokenType(), PdfTokenizer.TokenType.EndArray);
 
         tok.nextValidToken();
-        Assert.assertEquals(tok.getTokenType(), PdfTokenizer.TokenType.Name);
+        Assertions.assertEquals(tok.getTokenType(), PdfTokenizer.TokenType.Name);
         name = new PdfName(tok.getByteContent());
-        Assert.assertEquals("Name1", name.getValue());
+        Assertions.assertEquals("Name1", name.getValue());
 
         tok.nextValidToken();
-        Assert.assertEquals(tok.getTokenType(), PdfTokenizer.TokenType.Number);
+        Assertions.assertEquals(tok.getTokenType(), PdfTokenizer.TokenType.Number);
         num = new PdfNumber(tok.getByteContent());
-        Assert.assertEquals("0", num.toString());
+        Assertions.assertEquals("0", num.toString());
 
         tok.nextValidToken();
-        Assert.assertEquals(tok.getTokenType(), PdfTokenizer.TokenType.Name);
+        Assertions.assertEquals(tok.getTokenType(), PdfTokenizer.TokenType.Name);
         name = new PdfName(tok.getByteContent());
-        Assert.assertEquals("Prev", name.getValue());
+        Assertions.assertEquals("Prev", name.getValue());
 
         tok.nextValidToken();
-        Assert.assertEquals(tok.getTokenType(), PdfTokenizer.TokenType.Number);
+        Assertions.assertEquals(tok.getTokenType(), PdfTokenizer.TokenType.Number);
         num = new PdfNumber(tok.getByteContent());
-        Assert.assertEquals("-116.23", num.toString());
+        Assertions.assertEquals("-116.23", num.toString());
     }
 }

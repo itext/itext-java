@@ -29,26 +29,25 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfExtGStateTest extends ExtendedITextTest{
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfExtGStateTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/PdfExtGStateTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -97,28 +96,28 @@ public class PdfExtGStateTest extends ExtendedITextTest{
         page.flush();
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationDocument, sourceFolder + "cmp_egsTest1.pdf", destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destinationDocument, sourceFolder + "cmp_egsTest1.pdf", destinationFolder, "diff_"));
     }
 
     @Test
     public void blackPointCompensationTest1() {
         PdfExtGState pdfExtGState = new PdfExtGState();
         pdfExtGState.setUseBlackPointCompensation(true);
-        Assert.assertTrue(pdfExtGState.isBlackPointCompensationUsed());
+        Assertions.assertTrue(pdfExtGState.isBlackPointCompensationUsed());
     }
 
     @Test
     public void blackPointCompensationTest2() {
         PdfExtGState pdfExtGState = new PdfExtGState();
         pdfExtGState.setUseBlackPointCompensation(false);
-        Assert.assertFalse(pdfExtGState.isBlackPointCompensationUsed());
+        Assertions.assertFalse(pdfExtGState.isBlackPointCompensationUsed());
     }
 
     @Test
     public void blackPointCompensationTest3() {
         PdfExtGState pdfExtGState = new PdfExtGState();
         PdfObject useBlackPoint = pdfExtGState.getPdfObject().getAsName(PdfName.UseBlackPtComp);
-        Assert.assertNull(useBlackPoint);
+        Assertions.assertNull(useBlackPoint);
     }
 
     @Test
@@ -126,7 +125,7 @@ public class PdfExtGStateTest extends ExtendedITextTest{
         PdfExtGState pdfExtGState = new PdfExtGState();
         PdfDictionary pdfExtGStateObj = pdfExtGState.getPdfObject();
         pdfExtGStateObj.put(PdfName.UseBlackPtComp, PdfName.ON);
-        Assert.assertTrue(pdfExtGState.isBlackPointCompensationUsed());
+        Assertions.assertTrue(pdfExtGState.isBlackPointCompensationUsed());
     }
 
     @Test
@@ -134,7 +133,7 @@ public class PdfExtGStateTest extends ExtendedITextTest{
         PdfExtGState pdfExtGState = new PdfExtGState();
         PdfDictionary pdfExtGStateObj = pdfExtGState.getPdfObject();
         pdfExtGStateObj.put(PdfName.UseBlackPtComp, PdfName.OFF);
-        Assert.assertFalse(pdfExtGState.isBlackPointCompensationUsed());
+        Assertions.assertFalse(pdfExtGState.isBlackPointCompensationUsed());
     }
 
     @Test
@@ -142,7 +141,7 @@ public class PdfExtGStateTest extends ExtendedITextTest{
         PdfExtGState pdfExtGState = new PdfExtGState();
         pdfExtGState.setUseBlackPointCompensation(true);
         PdfName useBlackPtComp = pdfExtGState.getPdfObject().getAsName(PdfName.UseBlackPtComp);
-        Assert.assertEquals("PdfName is different from expected.", PdfName.ON, useBlackPtComp);
+        Assertions.assertEquals(PdfName.ON, useBlackPtComp, "PdfName is different from expected.");
     }
 
     @Test
@@ -150,6 +149,6 @@ public class PdfExtGStateTest extends ExtendedITextTest{
         PdfExtGState pdfExtGState = new PdfExtGState();
         pdfExtGState.setUseBlackPointCompensation(false);
         PdfName useBlackPtComp = pdfExtGState.getPdfObject().getAsName(PdfName.UseBlackPtComp);
-        Assert.assertEquals("PdfName is different from expected.", PdfName.OFF, useBlackPtComp);
+        Assertions.assertEquals(PdfName.OFF, useBlackPtComp, "PdfName is different from expected.");
     }
 }

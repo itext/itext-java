@@ -43,11 +43,10 @@ import com.itextpdf.signatures.testutils.builder.TestCrlBuilder;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -65,7 +64,7 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collections;
 
-@Category(BouncyCastleUnitTest.class)
+@Tag("BouncyCastleUnitTest")
 public class CMSContainerTest extends ExtendedITextTest {
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
@@ -78,7 +77,7 @@ public class CMSContainerTest extends ExtendedITextTest {
 
     private byte[] testCrlResponse;
 
-    @Before
+    @BeforeEach
     public void init()
             throws IOException, CertificateException, AbstractPKCSException, AbstractOperatorCreationException {
         Security.addProvider(FACTORY.getProvider());
@@ -116,7 +115,7 @@ public class CMSContainerTest extends ExtendedITextTest {
         sut.setSignerInfo(si);
 
         byte[] serRes = sut.serialize();
-        Assert.assertEquals(serializedAsString(Base64.decode(CMSTestHelper.EXPECTED_RESULT_CMS_CONTAINER_TEST)),
+        Assertions.assertEquals(serializedAsString(Base64.decode(CMSTestHelper.EXPECTED_RESULT_CMS_CONTAINER_TEST)),
                 serializedAsString(serRes));
     }
 
@@ -141,7 +140,7 @@ public class CMSContainerTest extends ExtendedITextTest {
 
         byte[] serRes = sut.serialize();
 
-        Assert.assertEquals(serializedAsString(Base64.decode(CMSTestHelper.CMS_CONTAINER_WITH_OCSP_AND_CRL)),
+        Assertions.assertEquals(serializedAsString(Base64.decode(CMSTestHelper.CMS_CONTAINER_WITH_OCSP_AND_CRL)),
                 serializedAsString(serRes));
     }
 
@@ -167,23 +166,23 @@ public class CMSContainerTest extends ExtendedITextTest {
 
         long size = sut.getSizeEstimation();
 
-        Assert.assertEquals(4821, size);
+        Assertions.assertEquals(4821, size);
     }
 
     @Test
     public void testDeserialization() throws CertificateException, IOException, CRLException {
         byte[] rawData = Base64.decode(CMSTestHelper.EXPECTED_RESULT_CMS_CONTAINER_TEST);
         CMSContainer sd = new CMSContainer(rawData);
-        Assert.assertEquals("2.16.840.1.101.3.4.2.3", sd.getDigestAlgorithm().getAlgorithmOid());
-        Assert.assertEquals("1.2.840.113549.1.7.1", sd.getEncapContentInfo().getContentType());
-        Assert.assertEquals(3, sd.getCertificates().size());
-        Assert.assertEquals(0, sd.getCrls().size());
-        Assert.assertEquals(0, sd.getOcsps().size());
+        Assertions.assertEquals("2.16.840.1.101.3.4.2.3", sd.getDigestAlgorithm().getAlgorithmOid());
+        Assertions.assertEquals("1.2.840.113549.1.7.1", sd.getEncapContentInfo().getContentType());
+        Assertions.assertEquals(3, sd.getCertificates().size());
+        Assertions.assertEquals(0, sd.getCrls().size());
+        Assertions.assertEquals(0, sd.getOcsps().size());
         for (X509Certificate certificate : chain) {
-            Assert.assertTrue(sd.getCertificates().stream()
+            Assertions.assertTrue(sd.getCertificates().stream()
                     .anyMatch(c -> certificate.getSerialNumber().toString().equals(c.getSerialNumber().toString())));
         }
-        Assert.assertEquals(chain[0].getSerialNumber().toString(),
+        Assertions.assertEquals(chain[0].getSerialNumber().toString(),
                 sd.getSignerInfo().getSigningCertificate().getSerialNumber().toString());
     }
 
@@ -191,16 +190,16 @@ public class CMSContainerTest extends ExtendedITextTest {
     public void testDeserializationWithRevocationData() throws CertificateException, IOException, CRLException {
         byte[] rawData = Base64.decode(CMSTestHelper.CMS_CONTAINER_WITH_OCSP_AND_CRL);
         CMSContainer sd = new CMSContainer(rawData);
-        Assert.assertEquals("2.16.840.1.101.3.4.2.3", sd.getDigestAlgorithm().getAlgorithmOid());
-        Assert.assertEquals("1.2.840.113549.1.7.1", sd.getEncapContentInfo().getContentType());
-        Assert.assertEquals(3, sd.getCertificates().size());
-        Assert.assertEquals(1, sd.getCrls().size());
-        Assert.assertEquals(1, sd.getOcsps().size());
+        Assertions.assertEquals("2.16.840.1.101.3.4.2.3", sd.getDigestAlgorithm().getAlgorithmOid());
+        Assertions.assertEquals("1.2.840.113549.1.7.1", sd.getEncapContentInfo().getContentType());
+        Assertions.assertEquals(3, sd.getCertificates().size());
+        Assertions.assertEquals(1, sd.getCrls().size());
+        Assertions.assertEquals(1, sd.getOcsps().size());
         for (X509Certificate certificate : chain) {
-            Assert.assertTrue(sd.getCertificates().stream()
+            Assertions.assertTrue(sd.getCertificates().stream()
                     .anyMatch(c -> certificate.getSerialNumber().toString().equals(c.getSerialNumber().toString())));
         }
-        Assert.assertEquals(chain[0].getSerialNumber().toString(),
+        Assertions.assertEquals(chain[0].getSerialNumber().toString(),
                 sd.getSignerInfo().getSigningCertificate().getSerialNumber().toString());
     }
 
@@ -209,54 +208,54 @@ public class CMSContainerTest extends ExtendedITextTest {
     public void testDeserializationWithIncorrectRevocationData() throws CertificateException, IOException, CRLException {
         byte[] rawData = Base64.decode(CMSTestHelper.CMS_CONTAINER_WITH_INCORRECT_REV_INFO);
         CMSContainer sd = new CMSContainer(rawData);
-        Assert.assertEquals(1, sd.getCrls().size());
-        Assert.assertEquals(1, sd.getOcsps().size());
-        Assert.assertEquals(1, sd.otherRevocationInfo.size());
+        Assertions.assertEquals(1, sd.getCrls().size());
+        Assertions.assertEquals(1, sd.getOcsps().size());
+        Assertions.assertEquals(1, sd.otherRevocationInfo.size());
     }
 
     @Test
     public void createPkcs7WithRevocationInfoTest() {
         PdfPKCS7 pkcs7 = new PdfPKCS7(Base64.decode(CMSTestHelper.CMS_CONTAINER_WITH_OCSP_AND_CRL),
                 PdfName.Adbe_pkcs7_detached, FACTORY.getProviderName());
-        Assert.assertEquals(1, pkcs7.getSignedDataCRLs().size());
-        Assert.assertEquals(1, pkcs7.getSignedDataOcsps().size());
+        Assertions.assertEquals(1, pkcs7.getSignedDataCRLs().size());
+        Assertions.assertEquals(1, pkcs7.getSignedDataOcsps().size());
     }
 
     @Test
     public void testMultipleDigestAlgorithms() {
         byte[] rawData = Base64.decode(CMSTestHelper.SERIALIZED_B64_2DIGEST_ALGOS);
-        Exception e = Assert.assertThrows(PdfException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfException.class, () -> {
             CMSContainer sd = new CMSContainer(rawData);
         });
-        Assert.assertEquals(SignExceptionMessageConstant.CMS_ONLY_ONE_SIGNER_ALLOWED, e.getMessage());
+        Assertions.assertEquals(SignExceptionMessageConstant.CMS_ONLY_ONE_SIGNER_ALLOWED, e.getMessage());
     }
 
 
     @Test
     public void testMultipleSignerInfos() {
         byte[] rawData = Base64.decode(CMSTestHelper.SERIALIZED_B64_2SIGNERS);
-        Exception e = Assert.assertThrows(PdfException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfException.class, () -> {
             CMSContainer sd = new CMSContainer(rawData);
         });
-        Assert.assertEquals(SignExceptionMessageConstant.CMS_ONLY_ONE_SIGNER_ALLOWED, e.getMessage());
+        Assertions.assertEquals(SignExceptionMessageConstant.CMS_ONLY_ONE_SIGNER_ALLOWED, e.getMessage());
     }
 
     @Test
     public void testCertificatesMissing() {
         byte[] rawData = Base64.decode(CMSTestHelper.SERIALIZED_B64_MISSING_CERTIFICATES);
-        Exception e = Assert.assertThrows(PdfException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfException.class, () -> {
             CMSContainer sd = new CMSContainer(rawData);
         });
-        Assert.assertEquals(SignExceptionMessageConstant.CMS_MISSING_CERTIFICATES, e.getMessage());
+        Assertions.assertEquals(SignExceptionMessageConstant.CMS_MISSING_CERTIFICATES, e.getMessage());
     }
 
     @Test
     public void testCertificatesEmpty() {
         byte[] rawData = Base64.decode(CMSTestHelper.SERIALIZED_B64_EMPTY_CERTIFICATES);
-        Exception e = Assert.assertThrows(PdfException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfException.class, () -> {
             CMSContainer sd = new CMSContainer(rawData);
         });
-        Assert.assertEquals(SignExceptionMessageConstant.CMS_MISSING_CERTIFICATES, e.getMessage());
+        Assertions.assertEquals(SignExceptionMessageConstant.CMS_MISSING_CERTIFICATES, e.getMessage());
     }
 
     private String toUnixStringEnding(String in) {

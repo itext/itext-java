@@ -24,16 +24,15 @@ package com.itextpdf.signatures.validation.v1.extensions;
 
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
 import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(BouncyCastleUnitTest.class)
+@Tag("BouncyCastleUnitTest")
 public class BasicConstraintsExtensionTest extends ExtendedITextTest {
     private static final String certsSrc = "./src/test/resources/com/itextpdf/signatures/validation/v1/extensions/BasicConstraintsExtensionTest/";
 
@@ -44,7 +43,7 @@ public class BasicConstraintsExtensionTest extends ExtendedITextTest {
 
         BasicConstraintsExtension extension = new BasicConstraintsExtension(-2);
 
-        Assert.assertFalse(extension.existsInCertificate(certificate));
+        Assertions.assertFalse(extension.existsInCertificate(certificate));
     }
 
     @Test
@@ -54,7 +53,7 @@ public class BasicConstraintsExtensionTest extends ExtendedITextTest {
 
         BasicConstraintsExtension extension = new BasicConstraintsExtension(10);
 
-        Assert.assertFalse(extension.existsInCertificate(certificate));
+        Assertions.assertFalse(extension.existsInCertificate(certificate));
     }
 
     @Test
@@ -64,7 +63,7 @@ public class BasicConstraintsExtensionTest extends ExtendedITextTest {
 
         BasicConstraintsExtension extension = new BasicConstraintsExtension(true);
 
-        Assert.assertTrue(extension.existsInCertificate(certificate));
+        Assertions.assertTrue(extension.existsInCertificate(certificate));
     }
 
     @Test
@@ -74,7 +73,7 @@ public class BasicConstraintsExtensionTest extends ExtendedITextTest {
 
         BasicConstraintsExtension extension = new BasicConstraintsExtension(false);
 
-        Assert.assertFalse(extension.existsInCertificate(certificate));
+        Assertions.assertFalse(extension.existsInCertificate(certificate));
     }
 
     @Test
@@ -84,7 +83,7 @@ public class BasicConstraintsExtensionTest extends ExtendedITextTest {
 
         BasicConstraintsExtension extension = new BasicConstraintsExtension(10);
 
-        Assert.assertTrue(extension.existsInCertificate(certificate));
+        Assertions.assertTrue(extension.existsInCertificate(certificate));
     }
 
     @Test
@@ -94,7 +93,7 @@ public class BasicConstraintsExtensionTest extends ExtendedITextTest {
 
         BasicConstraintsExtension extension = new BasicConstraintsExtension(2);
 
-        Assert.assertTrue(extension.existsInCertificate(certificate));
+        Assertions.assertTrue(extension.existsInCertificate(certificate));
     }
 
     @Test
@@ -104,7 +103,7 @@ public class BasicConstraintsExtensionTest extends ExtendedITextTest {
 
         BasicConstraintsExtension extension = new BasicConstraintsExtension(10);
 
-        Assert.assertFalse(extension.existsInCertificate(certificate));
+        Assertions.assertFalse(extension.existsInCertificate(certificate));
     }
 
     @Test
@@ -114,7 +113,7 @@ public class BasicConstraintsExtensionTest extends ExtendedITextTest {
 
         BasicConstraintsExtension extension = new BasicConstraintsExtension(false);
 
-        Assert.assertTrue(extension.existsInCertificate(certificate));
+        Assertions.assertTrue(extension.existsInCertificate(certificate));
     }
 
     @Test
@@ -124,6 +123,6 @@ public class BasicConstraintsExtensionTest extends ExtendedITextTest {
 
         BasicConstraintsExtension extension = new BasicConstraintsExtension(10);
 
-        Assert.assertFalse(extension.existsInCertificate(certificate));
+        Assertions.assertFalse(extension.existsInCertificate(certificate));
     }
 }

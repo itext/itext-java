@@ -35,24 +35,23 @@ import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfA1bCheckfieldAppearanceTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
     public static final String cmpFolder = "./src/test/resources/com/itextpdf/pdfa/cmp/PdfA1bCheckfieldAppearanceTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/pdfa/PdfA1bCheckfieldAppearanceTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
@@ -77,7 +76,7 @@ public class PdfA1bCheckfieldAppearanceTest extends ExtendedITextTest {
         form.addField(chk);
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPath, cmpPath, destinationFolder, diff));
+        Assertions.assertNull(new CompareTool().compareByContent(outPath, cmpPath, destinationFolder, diff));
     }
 
     @Test
@@ -100,6 +99,6 @@ public class PdfA1bCheckfieldAppearanceTest extends ExtendedITextTest {
         form.addField(chk);
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPath, cmpPath, destinationFolder, diff));
+        Assertions.assertNull(new CompareTool().compareByContent(outPath, cmpPath, destinationFolder, diff));
     }
 }

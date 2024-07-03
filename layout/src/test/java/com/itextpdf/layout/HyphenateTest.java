@@ -26,33 +26,21 @@ import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.layout.hyphenation.Hyphenation;
 import com.itextpdf.layout.hyphenation.HyphenationConfig;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(Parameterized.class)
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class HyphenateTest extends ExtendedITextTest {
-
-	private final String lang;
-	private final String testWord;
 
 	private List<String> errors = new ArrayList<>();
 
-	public HyphenateTest(String testName, String lang, String testWord) {
-		this.lang = lang;
-		this.testWord = testWord;
-	}
-
-	@Parameterized.Parameters(name = "{0}")
-	public static Iterable<Object[]> hyphenationProperties() {
+	public static Iterable<Object[]> HyphenationProperties() {
 		return Arrays.asList(new Object[][]{
 				{"African", "af", "country"},
 				{"Assamese", "as", "\u09A8\u09AE\u09B8\u09CD\u0995\u09BE\u09F0"},
@@ -127,11 +115,12 @@ public class HyphenateTest extends ExtendedITextTest {
 		});
 	}
 
-	@Test
-	public void runTest() {
+	@ParameterizedTest(name = "{0}")
+	@MethodSource("HyphenationProperties")
+	public void runTest(String name, String lang, String testWord) {
 		errors.clear();
 		tryHyphenate(lang, testWord);
-		Assert.assertTrue(buildReport(), errors.isEmpty());
+		Assertions.assertTrue(errors.isEmpty(), buildReport());
 	}
 
 	private void tryHyphenate(String lang, String testWorld) {

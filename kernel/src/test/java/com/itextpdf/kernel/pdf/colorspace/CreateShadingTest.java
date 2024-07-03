@@ -43,28 +43,27 @@ import com.itextpdf.kernel.pdf.function.PdfType3Function;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.utils.CompareTool.CompareResult;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class CreateShadingTest extends ExtendedITextTest {
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/colorspace/CreateShadingTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/colorspace/CreateShadingTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -233,11 +232,11 @@ public class CreateShadingTest extends ExtendedITextTest {
         PdfObject outShDictionary = outPdf.getPage(1).getResources().getResourceObject(PdfName.Shading, resName);
         PdfObject cmpShDictionary = cmpPdf.getPage(1).getResources().getResourceObject(PdfName.Shading, resName);
 
-        Assert.assertTrue(outShDictionary.isDictionary());
+        Assertions.assertTrue(outShDictionary.isDictionary());
 
         CompareResult compareResult = new CompareTool()
                 .compareDictionariesStructure((PdfDictionary) outShDictionary, (PdfDictionary) cmpShDictionary);
-        Assert.assertNull(compareResult);
+        Assertions.assertNull(compareResult);
 
         outPdf.close();
         cmpPdf.close();

@@ -23,14 +23,13 @@
 package com.itextpdf.kernel.pdf.canvas.parser.clipper;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PolyTreeTest extends ExtendedITextTest {
 
     @Test
@@ -41,13 +40,13 @@ public class PolyTreeTest extends ExtendedITextTest {
         List<PolyNode> allPolys = tree.getAllPolys();
         allPolys.add(new PolyNode());
 
-        Assert.assertFalse(allPolys.isEmpty());
-        Assert.assertEquals(1, tree.getChildCount());
+        Assertions.assertFalse(allPolys.isEmpty());
+        Assertions.assertEquals(1, tree.getChildCount());
 
         tree.Clear();
 
-        Assert.assertTrue(allPolys.isEmpty());
-        Assert.assertEquals(0, tree.getChildCount());
+        Assertions.assertTrue(allPolys.isEmpty());
+        Assertions.assertEquals(0, tree.getChildCount());
     }
 
     @Test
@@ -60,21 +59,21 @@ public class PolyTreeTest extends ExtendedITextTest {
         tree.addChild(firstChild);
         tree.addChild(secondChild);
 
-        Assert.assertSame(firstChild, tree.getFirst());
+        Assertions.assertSame(firstChild, tree.getFirst());
     }
 
     @Test
     public void getFistChildInEmptyPolyTreeTest() {
         PolyTree tree = new PolyTree();
 
-        Assert.assertNull(tree.getFirst());
+        Assertions.assertNull(tree.getFirst());
     }
 
     @Test
     public void getTotalSizePolyTreeEmptyTest() {
         PolyTree tree = new PolyTree();
 
-        Assert.assertEquals(0, tree.getTotalSize());
+        Assertions.assertEquals(0, tree.getTotalSize());
     }
 
     @Test
@@ -87,7 +86,7 @@ public class PolyTreeTest extends ExtendedITextTest {
 
         tree.addChild(new PolyNode());
 
-        Assert.assertEquals(1, tree.getTotalSize());
+        Assertions.assertEquals(1, tree.getTotalSize());
     }
 
     @Test
@@ -101,6 +100,6 @@ public class PolyTreeTest extends ExtendedITextTest {
 
         tree.addChild(node);
 
-        Assert.assertEquals(2, tree.getTotalSize());
+        Assertions.assertEquals(2, tree.getTotalSize());
     }
 }

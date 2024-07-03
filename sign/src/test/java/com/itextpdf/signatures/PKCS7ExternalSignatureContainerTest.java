@@ -44,7 +44,6 @@ import com.itextpdf.signatures.testutils.client.TestCrlClient;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
 import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -55,13 +54,13 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(BouncyCastleUnitTest.class)
+@Tag("BouncyCastleUnitTest")
 public class PKCS7ExternalSignatureContainerTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
     private static final boolean FIPS_MODE = "BCFIPS".equals(FACTORY.getProviderName());
@@ -84,13 +83,13 @@ public class PKCS7ExternalSignatureContainerTest extends ExtendedITextTest {
     private X509Certificate caCert;
     private PrivateKey caPrivateKey;
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         Security.addProvider(FACTORY.getProvider());
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
-    @Before
+    @BeforeEach
     public void init()
             throws IOException, CertificateException, AbstractPKCSException, AbstractOperatorCreationException {
         pk = PemFileHelper.readFirstKey(CERTS_SRC + "signCertRsa01.pem", PASSWORD);
@@ -111,7 +110,7 @@ public class PKCS7ExternalSignatureContainerTest extends ExtendedITextTest {
                 pk, chain, DigestAlgorithms.SHA256);
         pdfSigner.signExternalContainer(pkcs7ExternalSignatureContainer, 12000);
 
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
     }
 
     @Test
@@ -131,7 +130,7 @@ public class PKCS7ExternalSignatureContainerTest extends ExtendedITextTest {
 
         pdfSigner.signExternalContainer(pkcs7ExternalSignatureContainer, 12000);
 
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
     }
 
     @Test
@@ -149,7 +148,7 @@ public class PKCS7ExternalSignatureContainerTest extends ExtendedITextTest {
         pkcs7ExternalSignatureContainer.setOcspClient(ocspClient);
         pdfSigner.signExternalContainer(pkcs7ExternalSignatureContainer, 12000);
 
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
     }
 
     @Test
@@ -169,7 +168,7 @@ public class PKCS7ExternalSignatureContainerTest extends ExtendedITextTest {
 
         pdfSigner.signExternalContainer(pkcs7ExternalSignatureContainer, 12000);
 
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
     }
 
     @Test
@@ -183,7 +182,7 @@ public class PKCS7ExternalSignatureContainerTest extends ExtendedITextTest {
         pkcs7ExternalSignatureContainer.setSignatureType(PdfSigner.CryptoStandard.CADES);
         pdfSigner.signExternalContainer(pkcs7ExternalSignatureContainer, 12000);
 
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
     }
 
     @Test
@@ -199,7 +198,7 @@ public class PKCS7ExternalSignatureContainerTest extends ExtendedITextTest {
         pkcs7ExternalSignatureContainer.setSignaturePolicy(policy);
         pdfSigner.signExternalContainer(pkcs7ExternalSignatureContainer, 12000);
 
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
     }
 
     private static ByteArrayInputStream createSimpleDocument() {

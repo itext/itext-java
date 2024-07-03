@@ -61,16 +61,15 @@ import com.itextpdf.layout.renderer.TableRenderer;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class TableTest extends AbstractTableTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/TableTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/TableTest/";
@@ -82,7 +81,7 @@ public class TableTest extends AbstractTableTest {
     private static final String MIDDLE_TEXT_CONTENT = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
             "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
@@ -101,8 +100,8 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("cell 1, 2")));
         doc.add(table);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
-        Assert.assertEquals("Cell[row=0, col=0, rowspan=1, colspan=1]", table.getCell(0, 0).toString());
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertEquals("Cell[row=0, col=0, rowspan=1, colspan=1]", table.getCell(0, 0).toString());
     }
 
     @Test
@@ -123,7 +122,7 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell());
         doc.add(table);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -149,7 +148,7 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("cell 2, 2\n" + textContent2)));
         doc.add(table);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -168,7 +167,7 @@ public class TableTest extends AbstractTableTest {
         table.addCell(new Cell().add(new Paragraph("cell 3, 1\n" + TEXT_CONTENT)));
         doc.add(table);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -187,7 +186,7 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("cell 3, 2\n" + TEXT_CONTENT)));
         doc.add(table);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -206,7 +205,7 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("cell 3, 1\n" + TEXT_CONTENT)));
         doc.add(table);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -225,7 +224,7 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("cell 3, 2\n" + TEXT_CONTENT)));
         doc.add(table);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -251,7 +250,7 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("cell 4, 3\n" + middleTextContent)));
         doc.add(table);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -280,7 +279,7 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("cell 5, 3\n" + middleTextContent)));
         doc.add(table);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -321,7 +320,7 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("2, 2")));
         doc.add(table3);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -354,7 +353,7 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().setKeepTogether(true).add(new Paragraph("cell 7, 2\n" + middleTextContent)));
         doc.add(table);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -395,7 +394,7 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("cell 11, 2\n" + shortTextContent)));
         doc.add(table);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -426,7 +425,7 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("cell 7, 2\n" + middleTextContent)));
         doc.add(table);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -458,7 +457,7 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("cell 6, 3\n" + middleTextContent)));
         doc.add(table);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -493,7 +492,7 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("cell 7, 3\n" + middleTextContent)));
         doc.add(table);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -518,7 +517,7 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("cell 2, 2\n" + longTextContent)));
         doc.add(table);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -549,7 +548,7 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("cell 2, 2\n" + longTextContent)));
         doc.add(table);
         doc.close();
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
@@ -580,7 +579,7 @@ public class TableTest extends AbstractTableTest {
 
         doc.add(table);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -612,7 +611,7 @@ public class TableTest extends AbstractTableTest {
 
         doc.add(table);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -643,7 +642,7 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("cell 6, 3\n" + MIDDLE_TEXT_CONTENT)));
         doc.add(table);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -670,7 +669,7 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("cell 6, 3\n" + MIDDLE_TEXT_CONTENT)));
         doc.add(table);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -703,7 +702,7 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("cell 6, 3\n" + middleTextContent)));
         doc.add(table);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -722,7 +721,7 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("cell 1, 4")));
         doc.add(table);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -769,7 +768,7 @@ public class TableTest extends AbstractTableTest {
         table.complete();
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -791,7 +790,7 @@ public class TableTest extends AbstractTableTest {
         // will be added on the second page
         doc.add(table);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -818,7 +817,7 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("cell 5, 1\n" + middleTextContent)));
         doc.add(table);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -845,7 +844,7 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("cell 5, 1\n" + TEXT_CONTENT)));
         doc.add(table);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -869,7 +868,7 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("cell 5, 1\n" + TEXT_CONTENT)));
         doc.add(table);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -896,7 +895,7 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("cell 5, 1\n" + TEXT_CONTENT)));
         doc.add(table);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -920,7 +919,7 @@ public class TableTest extends AbstractTableTest {
 
         doc.add(table);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -941,7 +940,7 @@ public class TableTest extends AbstractTableTest {
         table.setBorderTop(new SolidBorder(ColorConstants.GREEN, 50)).setBorderBottom(new SolidBorder(ColorConstants.ORANGE, 40));
         doc.add(table);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -972,7 +971,7 @@ public class TableTest extends AbstractTableTest {
 
         doc.add(table);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -1005,7 +1004,7 @@ public class TableTest extends AbstractTableTest {
         doc.setRenderer(new RotatedDocumentRenderer(doc, pdfDoc));
         doc.add(table);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -1032,7 +1031,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @LogMessages(messages = {
@@ -1062,7 +1061,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @LogMessages(messages = {
@@ -1086,7 +1085,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -1138,7 +1137,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(outertable);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -1170,7 +1169,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(t);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -1192,7 +1191,7 @@ public class TableTest extends AbstractTableTest {
         outerTable.setMarginTop(10);
         doc.add(outerTable);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @LogMessages(messages = {
@@ -1232,7 +1231,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -1263,7 +1262,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -1291,7 +1290,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -1310,7 +1309,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -1329,7 +1328,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @LogMessages(messages = {
@@ -1405,7 +1404,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @LogMessages(messages = {
@@ -1508,7 +1507,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -1593,7 +1592,7 @@ public class TableTest extends AbstractTableTest {
 
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -1619,7 +1618,7 @@ public class TableTest extends AbstractTableTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -1639,7 +1638,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -1660,7 +1659,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -1681,7 +1680,7 @@ public class TableTest extends AbstractTableTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -1701,7 +1700,7 @@ public class TableTest extends AbstractTableTest {
         document.add(table);
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -1735,7 +1734,7 @@ public class TableTest extends AbstractTableTest {
         addTableBelowToCheckThatOccupiedAreaIsCorrect(doc);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -1756,7 +1755,7 @@ public class TableTest extends AbstractTableTest {
         addTableBelowToCheckThatOccupiedAreaIsCorrect(doc);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
 
     }
 
@@ -1780,7 +1779,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -1806,7 +1805,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -1833,7 +1832,7 @@ public class TableTest extends AbstractTableTest {
 
         doc.add(table);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -1855,7 +1854,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -1884,7 +1883,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -1907,7 +1906,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -1939,7 +1938,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -1965,7 +1964,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -1995,7 +1994,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -2022,7 +2021,7 @@ public class TableTest extends AbstractTableTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -2044,7 +2043,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
 	@Test
@@ -2065,7 +2064,7 @@ public class TableTest extends AbstractTableTest {
 		doc.add(table);
 
 		doc.close();
-		Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+		Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
 	}
 
     @Test
@@ -2090,7 +2089,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -2114,7 +2113,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -2137,7 +2136,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -2161,7 +2160,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -2183,7 +2182,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -2204,7 +2203,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -2228,7 +2227,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -2262,7 +2261,7 @@ public class TableTest extends AbstractTableTest {
 
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -2282,7 +2281,7 @@ public class TableTest extends AbstractTableTest {
                 .add(new Paragraph("Long long long Long long long Long long long Long long long text")));
         doc.add(table);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -2302,7 +2301,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -2324,7 +2323,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -2346,7 +2345,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -2380,7 +2379,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -2407,7 +2406,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(outerTable);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -2435,7 +2434,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(outerTable);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -2453,7 +2452,7 @@ public class TableTest extends AbstractTableTest {
         table.addCell(cell);
         doc.add(table);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -2471,7 +2470,7 @@ public class TableTest extends AbstractTableTest {
         table.addCell(cell);
         doc.add(table);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -2489,7 +2488,7 @@ public class TableTest extends AbstractTableTest {
         table.addCell(cell);
         doc.add(table);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -2507,7 +2506,7 @@ public class TableTest extends AbstractTableTest {
         table.addCell(cell);
         doc.add(table);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -2530,7 +2529,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -2602,7 +2601,7 @@ public class TableTest extends AbstractTableTest {
         document.add(table);
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -2625,7 +2624,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -2651,8 +2650,8 @@ public class TableTest extends AbstractTableTest {
 
         MinMaxWidth minMaxWidth = overflowRenderer.getMinMaxWidth();
 
-        Assert.assertEquals(result.getOccupiedArea().getBBox().getWidth(), minMaxWidth.getMaxWidth(), 0.0001);
-        Assert.assertEquals(minMaxWidth.getMaxWidth(), minMaxWidth.getMinWidth(), 0.0001);
+        Assertions.assertEquals(result.getOccupiedArea().getBBox().getWidth(), minMaxWidth.getMaxWidth(), 0.0001);
+        Assertions.assertEquals(minMaxWidth.getMaxWidth(), minMaxWidth.getMinWidth(), 0.0001);
 
         // not enough to place using max-width approach, but more than required for min-width approach
         areaWidth = 70;
@@ -2663,8 +2662,8 @@ public class TableTest extends AbstractTableTest {
 
         minMaxWidth = overflowRenderer.getMinMaxWidth();
 
-        Assert.assertEquals(result.getOccupiedArea().getBBox().getWidth(), minMaxWidth.getMaxWidth(), 0.0001);
-        Assert.assertEquals(minMaxWidth.getMaxWidth(), minMaxWidth.getMinWidth(), 0.0001);
+        Assertions.assertEquals(result.getOccupiedArea().getBBox().getWidth(), minMaxWidth.getMaxWidth(), 0.0001);
+        Assertions.assertEquals(minMaxWidth.getMaxWidth(), minMaxWidth.getMinWidth(), 0.0001);
 
 
         // enough to place using max-width approach
@@ -2676,8 +2675,8 @@ public class TableTest extends AbstractTableTest {
 
         minMaxWidth = overflowRenderer.getMinMaxWidth();
 
-        Assert.assertEquals(result.getOccupiedArea().getBBox().getWidth(), minMaxWidth.getMaxWidth(), 0.0001);
-        Assert.assertEquals(minMaxWidth.getMaxWidth(), minMaxWidth.getMinWidth(), 0.0001);
+        Assertions.assertEquals(result.getOccupiedArea().getBBox().getWidth(), minMaxWidth.getMaxWidth(), 0.0001);
+        Assertions.assertEquals(minMaxWidth.getMaxWidth(), minMaxWidth.getMinWidth(), 0.0001);
     }
 
 
@@ -2710,7 +2709,7 @@ public class TableTest extends AbstractTableTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -2744,7 +2743,7 @@ public class TableTest extends AbstractTableTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -2767,7 +2766,7 @@ public class TableTest extends AbstractTableTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -2809,7 +2808,7 @@ public class TableTest extends AbstractTableTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -2841,7 +2840,7 @@ public class TableTest extends AbstractTableTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -2885,7 +2884,7 @@ public class TableTest extends AbstractTableTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -2907,7 +2906,7 @@ public class TableTest extends AbstractTableTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
 
     }
 
@@ -2950,7 +2949,7 @@ public class TableTest extends AbstractTableTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     private void addTable(Table table, boolean addParagraphBefore, boolean addParagraphAfter, Document doc) {
@@ -3015,7 +3014,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -3045,7 +3044,7 @@ public class TableTest extends AbstractTableTest {
         }
         doc.add(table);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -3070,7 +3069,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -3102,7 +3101,7 @@ public class TableTest extends AbstractTableTest {
         addTableBelowToCheckThatOccupiedAreaIsCorrect(doc);
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -3135,7 +3134,7 @@ public class TableTest extends AbstractTableTest {
         addTableBelowToCheckThatOccupiedAreaIsCorrect(doc);
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -3159,7 +3158,7 @@ public class TableTest extends AbstractTableTest {
         addTableBelowToCheckThatOccupiedAreaIsCorrect(doc);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -3198,7 +3197,7 @@ public class TableTest extends AbstractTableTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -3238,7 +3237,7 @@ public class TableTest extends AbstractTableTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -3266,7 +3265,7 @@ public class TableTest extends AbstractTableTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename,
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + filename,
                 sourceFolder + "cmp_" + filename, destinationFolder, "diff"));
     }
 
@@ -3301,7 +3300,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -3335,7 +3334,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -3368,7 +3367,7 @@ public class TableTest extends AbstractTableTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename,
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + filename,
                 sourceFolder + "cmp_" + filename, destinationFolder));
     }
 
@@ -3403,7 +3402,7 @@ public class TableTest extends AbstractTableTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename,
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + filename,
                 sourceFolder + "cmp_" + filename, destinationFolder));
     }
 
@@ -3442,7 +3441,7 @@ public class TableTest extends AbstractTableTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename,
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + filename,
                 sourceFolder + "cmp_" + filename, destinationFolder));
     }
 
@@ -3471,7 +3470,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
                 sourceFolder + "cmp_" + fileName, destinationFolder));
     }
 
@@ -3501,7 +3500,7 @@ public class TableTest extends AbstractTableTest {
             doc.add(table);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
                 sourceFolder + "cmp_" + fileName, destinationFolder));
     }
 
@@ -3531,7 +3530,7 @@ public class TableTest extends AbstractTableTest {
 
         Rectangle tableRectRelayout = result.getOccupiedArea().getBBox();
 
-        Assert.assertTrue(tableRect.equalsWithEpsilon(tableRectRelayout));
+        Assertions.assertTrue(tableRect.equalsWithEpsilon(tableRectRelayout));
         }
     }
 
@@ -3566,7 +3565,7 @@ public class TableTest extends AbstractTableTest {
             doc.add(table);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
                 sourceFolder + "cmp_" + fileName, destinationFolder));
     }
 
@@ -3585,7 +3584,7 @@ public class TableTest extends AbstractTableTest {
 
         doc.add(new Table(new float[]{1, 1}).addCell(new Cell().setHeight(10.0f)));
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -3611,7 +3610,7 @@ public class TableTest extends AbstractTableTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
                 sourceFolder + "cmp_" + fileName, destinationFolder));
     }
 
@@ -3641,7 +3640,7 @@ public class TableTest extends AbstractTableTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
                 sourceFolder + "cmp_" + fileName, destinationFolder));
     }
 
@@ -3668,7 +3667,7 @@ public class TableTest extends AbstractTableTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
                 sourceFolder + "cmp_" + fileName, destinationFolder));
     }
 

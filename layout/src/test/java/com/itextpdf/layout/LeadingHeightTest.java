@@ -44,15 +44,14 @@ import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class LeadingHeightTest extends ExtendedITextTest {
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/LeadingHeightTest/";
@@ -63,7 +62,7 @@ public class LeadingHeightTest extends ExtendedITextTest {
     private static final int HEIGHT_EXACT_THAT_REQUIRED = 0;
     private static final int HEIGHT_MORE_THAN_REQUIRED = 100;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
@@ -87,7 +86,7 @@ public class LeadingHeightTest extends ExtendedITextTest {
         addTable(doc, 50, "RETIREMENT PLANNING: BECAUSE YOU CAN’T BE A FINANCIAL PLANNER FOREVER.", HEIGHT_LESS_THAN_REQUIRED);
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -110,7 +109,7 @@ public class LeadingHeightTest extends ExtendedITextTest {
         doc.close();
         //Partial text expected to be present in the document
         //There should be only "RETIREMENT PLANNING: BECAUSE YOU CAN’T BE A FINANCIAL"
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -139,7 +138,7 @@ public class LeadingHeightTest extends ExtendedITextTest {
         doc.add(ph2);
         doc.close();
         //Full text expected to be present on the first page
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     private void addTable(Document doc, int y, String text, int heightParam)

@@ -32,16 +32,14 @@ import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class XfdfReaderUnitTest extends ExtendedITextTest {
 
     @Test
@@ -72,9 +70,9 @@ public class XfdfReaderUnitTest extends ExtendedITextTest {
         xfdfReader.mergeXfdfIntoPdf(xfdfObject, pdfDocument, "smth");
         List<PdfAnnotation> annotations = pdfDocument.getPage(1).getAnnotations();
 
-        Assert.assertNotNull(annotations);
-        Assert.assertEquals(1, annotations.size());
-        Assert.assertEquals(PdfName.Square, annotations.get(0).getSubtype());
+        Assertions.assertNotNull(annotations);
+        Assertions.assertEquals(1, annotations.size());
+        Assertions.assertEquals(PdfName.Square, annotations.get(0).getSubtype());
 
         pdfDocument.close();
     }

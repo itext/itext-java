@@ -51,15 +51,14 @@ import com.itextpdf.signatures.validation.v1.report.ReportItem.ReportItemStatus;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport.ValidationResult;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -72,7 +71,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 
-@Category(BouncyCastleUnitTest.class)
+@Tag("BouncyCastleUnitTest")
 public class SignatureValidatorTest extends ExtendedITextTest {
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/validation/v1/SignatureValidatorTest/certs/";
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/validation/v1/SignatureValidatorTest/";
@@ -86,12 +85,12 @@ public class SignatureValidatorTest extends ExtendedITextTest {
     private MockChainValidator mockCertificateChainValidator;
     private MockDocumentRevisionsValidator mockDocumentRevisionsValidator;
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         Security.addProvider(FACTORY.getProvider());
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         mockCertificateChainValidator = new MockChainValidator();
         parameters = new SignatureValidationProperties();
@@ -141,11 +140,11 @@ public class SignatureValidatorTest extends ExtendedITextTest {
                 .hasStatus(ValidationResult.VALID)
                 .hasNumberOfLogs(1).hasNumberOfFailures(0));
 
-        Assert.assertEquals(1, mockCertificateChainValidator.verificationCalls.size());
+        Assertions.assertEquals(1, mockCertificateChainValidator.verificationCalls.size());
         MockChainValidator.ValidationCallBack call = mockCertificateChainValidator.verificationCalls.get(0);
-        Assert.assertEquals(CertificateSource.TIMESTAMP, call.context.getCertificateSource());
-        Assert.assertEquals(ValidatorContext.SIGNATURE_VALIDATOR, call.context.getValidatorContext());
-        Assert.assertEquals(timeStampCert.getSubjectX500Principal(), call.certificate.getSubjectX500Principal());
+        Assertions.assertEquals(CertificateSource.TIMESTAMP, call.context.getCertificateSource());
+        Assertions.assertEquals(ValidatorContext.SIGNATURE_VALIDATOR, call.context.getValidatorContext());
+        Assertions.assertEquals(timeStampCert.getSubjectX500Principal(), call.certificate.getSubjectX500Principal());
     }
 
     @Test
@@ -310,7 +309,7 @@ public class SignatureValidatorTest extends ExtendedITextTest {
                         .withStatus(ReportItem.ReportItemStatus.INVALID))
         );
         // check that no requests are made after failure
-        Assert.assertEquals(0, mockCertificateChainValidator.verificationCalls.size());
+        Assertions.assertEquals(0, mockCertificateChainValidator.verificationCalls.size());
     }
 
     @Test
@@ -329,12 +328,12 @@ public class SignatureValidatorTest extends ExtendedITextTest {
             signatureValidator.validateLatestSignature(document);
         }
 
-        Assert.assertEquals(2, mockCertificateRetriever.addKnownCertificatesCalls.size());
+        Assertions.assertEquals(2, mockCertificateRetriever.addKnownCertificatesCalls.size());
         Collection<Certificate> dssCall = mockCertificateRetriever.addKnownCertificatesCalls.get(0);
-        Assert.assertEquals(3, dssCall.size());
-        Assert.assertEquals(1, dssCall.stream().filter(c -> ((X509Certificate) c).equals(rootCert)).count());
-        Assert.assertEquals(1, dssCall.stream().filter(c -> ((X509Certificate) c).equals(intermediateCert)).count());
-        Assert.assertEquals(1, dssCall.stream().filter(c -> ((X509Certificate) c).equals(signCert)).count());
+        Assertions.assertEquals(3, dssCall.size());
+        Assertions.assertEquals(1, dssCall.stream().filter(c -> ((X509Certificate) c).equals(rootCert)).count());
+        Assertions.assertEquals(1, dssCall.stream().filter(c -> ((X509Certificate) c).equals(intermediateCert)).count());
+        Assertions.assertEquals(1, dssCall.stream().filter(c -> ((X509Certificate) c).equals(signCert)).count());
 
     }
 
@@ -457,24 +456,24 @@ public class SignatureValidatorTest extends ExtendedITextTest {
             // 2 signatures with timestamp
             // 3 document timestamps
             List<ValidationCallBack> verificationCalls = mockCertificateChainValidator.verificationCalls;
-            Assert.assertEquals(7, verificationCalls.size());
-            Assert.assertEquals(TimeBasedContext.PRESENT, verificationCalls.get(0).context.getTimeBasedContext());
+            Assertions.assertEquals(7, verificationCalls.size());
+            Assertions.assertEquals(TimeBasedContext.PRESENT, verificationCalls.get(0).context.getTimeBasedContext());
             for (int i = 1; i < verificationCalls.size(); ++i) {
-                Assert.assertEquals(TimeBasedContext.HISTORICAL, verificationCalls.get(i).context.getTimeBasedContext());
+                Assertions.assertEquals(TimeBasedContext.HISTORICAL, verificationCalls.get(i).context.getTimeBasedContext());
             }
-            Assert.assertTrue(verificationCalls.stream().anyMatch(c ->
+            Assertions.assertTrue(verificationCalls.stream().anyMatch(c ->
                     c.certificate.getSerialNumber().toString().equals("1491571297")
                             && c.checkDate.equals(date3)));
-            Assert.assertTrue(verificationCalls.stream().anyMatch(c ->
+            Assertions.assertTrue(verificationCalls.stream().anyMatch(c ->
                     c.certificate.getSerialNumber().toString().equals("1491571297")
                             && c.checkDate.equals(date2)));
-            Assert.assertTrue(verificationCalls.stream().anyMatch(c ->
+            Assertions.assertTrue(verificationCalls.stream().anyMatch(c ->
                     c.certificate.getSerialNumber().toString().equals("1491571297")
                             && c.checkDate.equals(date1)));
-            Assert.assertTrue(verificationCalls.stream().anyMatch(c ->
+            Assertions.assertTrue(verificationCalls.stream().anyMatch(c ->
                     c.certificate.getSerialNumber().toString().equals("1550593058")
                             && c.checkDate.equals(date2)));
-            Assert.assertTrue(verificationCalls.stream().anyMatch(c ->
+            Assertions.assertTrue(verificationCalls.stream().anyMatch(c ->
                     c.certificate.getSerialNumber().toString().equals("1701704311986")
                             && c.checkDate.equals(date1)));
         }
@@ -605,12 +604,12 @@ public class SignatureValidatorTest extends ExtendedITextTest {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "timestampSignatureDoc.pdf"))) {
             SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
             signatureValidator.validateSignatures();
-            Exception exception = Assert.assertThrows(PdfException.class,
+            Exception exception = Assertions.assertThrows(PdfException.class,
                     () -> signatureValidator.validateSignatures());
-            Assert.assertEquals(SignatureValidator.VALIDATION_PERFORMED, exception.getMessage());
-            exception = Assert.assertThrows(PdfException.class,
+            Assertions.assertEquals(SignatureValidator.VALIDATION_PERFORMED, exception.getMessage());
+            exception = Assertions.assertThrows(PdfException.class,
                     () -> signatureValidator.validateSignature("Signature1"));
-            Assert.assertEquals(SignatureValidator.VALIDATION_PERFORMED, exception.getMessage());
+            Assertions.assertEquals(SignatureValidator.VALIDATION_PERFORMED, exception.getMessage());
         }
     }
 

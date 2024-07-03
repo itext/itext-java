@@ -23,25 +23,24 @@
 package com.itextpdf.io.util;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 // Android-Conversion-Skip-Line (Directly use xerces library to unify behavior with vanilla java (where xerces is implemented into JRE))
 // Android-Conversion-Replace import org.apache.xerces.jaxp.DocumentBuilderFactoryImpl;
 // Android-Conversion-Replace import org.apache.xerces.jaxp.SAXParserFactoryImpl;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 import org.w3c.dom.Document;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.SAXParserFactory;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class XmlUtilTest extends ExtendedITextTest {
 
     @Test
     public void initNewXmlDocumentTest() throws Exception {
         Document doc = XmlUtil.initNewXmlDocument();
-        Assert.assertNotNull(doc);
+        Assertions.assertNotNull(doc);
     }
 
     @Test
@@ -49,7 +48,7 @@ public class XmlUtilTest extends ExtendedITextTest {
         DocumentBuilderFactory factory = XmlUtil.getDocumentBuilderFactory();
 
         // Android-Conversion-Skip-Line (Directly use xerces library to unify behavior with vanilla java (where xerces is implemented into JRE))
-        Assert.assertEquals(DocumentBuilderFactory.newInstance().getClass(), factory.getClass()); // Android-Conversion-Replace Assert.assertEquals(DocumentBuilderFactoryImpl.class, factory.getClass());
+        Assertions.assertEquals(DocumentBuilderFactory.newInstance().getClass(), factory.getClass()); // Android-Conversion-Replace Assertions.assertEquals(DocumentBuilderFactoryImpl.class, factory.getClass());
     }
 
     @Test
@@ -57,6 +56,6 @@ public class XmlUtilTest extends ExtendedITextTest {
         SAXParserFactory factory = XmlUtil.createSAXParserFactory();
 
         // Android-Conversion-Skip-Line (Directly use xerces library to unify behavior with vanilla java (where xerces is implemented into JRE))
-        Assert.assertEquals(SAXParserFactory.newInstance().getClass(), factory.getClass()); // Android-Conversion-Replace Assert.assertEquals(SAXParserFactoryImpl.class, factory.getClass());
+        Assertions.assertEquals(SAXParserFactory.newInstance().getClass(), factory.getClass()); // Android-Conversion-Replace Assertions.assertEquals(SAXParserFactoryImpl.class, factory.getClass());
     }
 }

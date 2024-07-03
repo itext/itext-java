@@ -26,12 +26,11 @@ import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.impl.TextLeafSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.TextSvgBranchRenderer;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class SvgTextUtilTest extends ExtendedITextTest {
 
     public static float EPS = 0.0001f;
@@ -43,7 +42,7 @@ public class SvgTextUtilTest extends ExtendedITextTest {
 
         String actual = SvgTextUtil.trimLeadingWhitespace(toTrim);
         String expected = "to trim  \t";
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -52,7 +51,7 @@ public class SvgTextUtilTest extends ExtendedITextTest {
 
         String actual = SvgTextUtil.trimLeadingWhitespace(toTrim);
         String expected = "";
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -61,7 +60,7 @@ public class SvgTextUtilTest extends ExtendedITextTest {
 
         String actual = SvgTextUtil.trimLeadingWhitespace(toTrim);
         String expected = "to Test  ";
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -70,7 +69,7 @@ public class SvgTextUtilTest extends ExtendedITextTest {
 
         String actual = SvgTextUtil.trimLeadingWhitespace(toTrim);
         String expected = "to Test  ";
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -79,7 +78,7 @@ public class SvgTextUtilTest extends ExtendedITextTest {
 
         String actual = SvgTextUtil.trimLeadingWhitespace(toTrim);
         String expected = "\u00A0to Test  ";
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -88,7 +87,7 @@ public class SvgTextUtilTest extends ExtendedITextTest {
 
         String actual = SvgTextUtil.trimLeadingWhitespace(toTrim);
         String expected = "";
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -97,7 +96,7 @@ public class SvgTextUtilTest extends ExtendedITextTest {
 
         String actual = SvgTextUtil.trimLeadingWhitespace(toTrim);
         String expected = "\n Test ";
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     //Trim trailing tests
@@ -107,7 +106,7 @@ public class SvgTextUtilTest extends ExtendedITextTest {
 
         String actual = SvgTextUtil.trimTrailingWhitespace(toTrim);
         String expected = "\t \t   to trim";
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -116,7 +115,7 @@ public class SvgTextUtilTest extends ExtendedITextTest {
 
         String actual = SvgTextUtil.trimTrailingWhitespace(toTrim);
         String expected = "";
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -125,7 +124,7 @@ public class SvgTextUtilTest extends ExtendedITextTest {
 
         String actual = SvgTextUtil.trimTrailingWhitespace(toTrim);
         String expected = "   to Test";
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -134,7 +133,7 @@ public class SvgTextUtilTest extends ExtendedITextTest {
 
         String actual = SvgTextUtil.trimTrailingWhitespace(toTrim);
         String expected = " to Test";
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -143,7 +142,7 @@ public class SvgTextUtilTest extends ExtendedITextTest {
 
         String actual = SvgTextUtil.trimTrailingWhitespace(toTrim);
         String expected = " to Test\u00A0";
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -152,7 +151,7 @@ public class SvgTextUtilTest extends ExtendedITextTest {
 
         String actual = SvgTextUtil.trimTrailingWhitespace(toTrim);
         String expected = "";
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -161,7 +160,7 @@ public class SvgTextUtilTest extends ExtendedITextTest {
 
         String actual = SvgTextUtil.trimTrailingWhitespace(toTrim);
         String expected = " to trim \n";
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -169,7 +168,7 @@ public class SvgTextUtilTest extends ExtendedITextTest {
         String expected = "";
 
         String actual = SvgTextUtil.trimLeadingWhitespace(null);
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -177,7 +176,7 @@ public class SvgTextUtilTest extends ExtendedITextTest {
         String expected = "";
 
         String actual = SvgTextUtil.trimTrailingWhitespace(null);
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -185,7 +184,7 @@ public class SvgTextUtilTest extends ExtendedITextTest {
         String toTrim = "A";
         String actual = SvgTextUtil.trimTrailingWhitespace(toTrim);
         String expected = "A";
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -227,7 +226,7 @@ public class SvgTextUtilTest extends ExtendedITextTest {
         };
         //Create expected
         String[] expected = new String[]{"text", " tspan text", " after text"};
-        Assert.assertArrayEquals(expected, actual);
+        Assertions.assertArrayEquals(expected, actual);
     }
 
     @Test
@@ -271,7 +270,7 @@ public class SvgTextUtilTest extends ExtendedITextTest {
         };
         //Create expected
         String[] expected = new String[]{"text", "tspan text", " after text"};//No preceding whitespace on the second element
-        Assert.assertArrayEquals(expected, actual);
+        Assertions.assertArrayEquals(expected, actual);
     }
 
     @Test
@@ -285,7 +284,7 @@ public class SvgTextUtilTest extends ExtendedITextTest {
         //Run
         float actual = SvgTextUtil.resolveFontSize(root, 10);
 
-        Assert.assertEquals(expected, actual, EPS);
+        Assertions.assertEquals(expected, actual, EPS);
     }
 
     @Test
@@ -299,7 +298,7 @@ public class SvgTextUtilTest extends ExtendedITextTest {
         //Run
         float actual = SvgTextUtil.resolveFontSize(root, 10);
 
-        Assert.assertEquals(expected, actual, EPS);
+        Assertions.assertEquals(expected, actual, EPS);
     }
 
     @Test
@@ -313,7 +312,7 @@ public class SvgTextUtilTest extends ExtendedITextTest {
         //Run
         float actual = SvgTextUtil.resolveFontSize(root, 10);
 
-        Assert.assertEquals(expected, actual, EPS);
+        Assertions.assertEquals(expected, actual, EPS);
     }
 
     @Test
@@ -328,47 +327,47 @@ public class SvgTextUtilTest extends ExtendedITextTest {
         // Parent's font-size doesn't impact the result in this test
         float actual = SvgTextUtil.resolveFontSize(root, 10);
 
-        Assert.assertEquals(expected, actual, EPS);
+        Assertions.assertEquals(expected, actual, EPS);
     }
 
     @Test
     public void testFilterReferenceValueMarkerReference() {
-        Assert.assertEquals("MarkerCircle", SvgTextUtil.filterReferenceValue("url(#MarkerCircle)"));
+        Assertions.assertEquals("MarkerCircle", SvgTextUtil.filterReferenceValue("url(#MarkerCircle)"));
     }
 
     @Test
     public void testFilterReferenceValueMarkerFullEntry() {
-        Assert.assertEquals("marker-end: MarkerArrow;",
+        Assertions.assertEquals("marker-end: MarkerArrow;",
                 SvgTextUtil.filterReferenceValue("marker-end: url(#MarkerArrow);"));
     }
 
     @Test
     public void testFilterReferenceValueSimpleReference() {
-        Assert.assertEquals("figure11",
+        Assertions.assertEquals("figure11",
                 SvgTextUtil.filterReferenceValue("#figure11"));
     }
 
     @Test
     public void testFilterReferenceValueNoFilter() {
-        Assert.assertEquals("circle",
+        Assertions.assertEquals("circle",
                 SvgTextUtil.filterReferenceValue("circle"));
     }
 
     @Test
     public void testFilterReferenceValueEmptyString() {
-        Assert.assertEquals("",
+        Assertions.assertEquals("",
                 SvgTextUtil.filterReferenceValue(""));
     }
 
     @Test
     public void testFilterReferenceValueNumberString() {
-        Assert.assertEquals("16554245",
+        Assertions.assertEquals("16554245",
                 SvgTextUtil.filterReferenceValue("16554245"));
     }
 
     @Test
     public void testFilterReferenceValueFilteredValues() {
-        Assert.assertEquals("",
+        Assertions.assertEquals("",
                 SvgTextUtil.filterReferenceValue("))url(####)"));
     }
 }

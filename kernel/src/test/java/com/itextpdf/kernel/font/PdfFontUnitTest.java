@@ -36,17 +36,16 @@ import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.regex.Pattern;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfFontUnitTest extends ExtendedITextTest {
     public static final int FONT_METRICS_DESCENT = -40;
     public static final int FONT_METRICS_ASCENT = 700;
@@ -189,7 +188,7 @@ public class PdfFontUnitTest extends ExtendedITextTest {
     public void constructorWithoutParamsTest() {
         TestFont font = new TestFont();
 
-        Assert.assertEquals(PdfName.Font, font.getPdfObject().get(PdfName.Type));
+        Assertions.assertEquals(PdfName.Font, font.getPdfObject().get(PdfName.Type));
     }
 
     @Test
@@ -199,42 +198,42 @@ public class PdfFontUnitTest extends ExtendedITextTest {
 
         TestFont font = new TestFont(dictionary);
 
-        Assert.assertEquals(PdfName.Font, font.getPdfObject().get(PdfName.Type));
-        Assert.assertEquals(PdfName.B, font.getPdfObject().get(PdfName.A));
+        Assertions.assertEquals(PdfName.Font, font.getPdfObject().get(PdfName.Type));
+        Assertions.assertEquals(PdfName.B, font.getPdfObject().get(PdfName.A));
     }
 
     @Test
     public void containsGlyphTest() {
         TestFont font = new TestFont();
 
-        Assert.assertTrue(font.containsGlyph(TestFont.SIMPLE_GLYPH));
-        Assert.assertFalse(font.containsGlyph(111));
+        Assertions.assertTrue(font.containsGlyph(TestFont.SIMPLE_GLYPH));
+        Assertions.assertFalse(font.containsGlyph(111));
     }
 
     @Test
     public void zeroGlyphIsAllowedOnlyIfFontIsSymbolicTest() {
         TestFont font = new TestFont();
 
-        Assert.assertFalse(font.containsGlyph(TestFont.ZERO_CODE_GLYPH));
+        Assertions.assertFalse(font.containsGlyph(TestFont.ZERO_CODE_GLYPH));
 
         font.setFontProgram(new TestFontProgram());
-        Assert.assertTrue(font.containsGlyph(TestFont.ZERO_CODE_GLYPH));
+        Assertions.assertTrue(font.containsGlyph(TestFont.ZERO_CODE_GLYPH));
     }
 
     @Test
     public void getWidthUnicodeTest() {
         TestFont font = new TestFont();
 
-        Assert.assertEquals(TestFont.SIMPLE_GLYPH_WIDTH, font.getWidth(TestFont.SIMPLE_GLYPH));
-        Assert.assertEquals(0, font.getWidth(111));
+        Assertions.assertEquals(TestFont.SIMPLE_GLYPH_WIDTH, font.getWidth(TestFont.SIMPLE_GLYPH));
+        Assertions.assertEquals(0, font.getWidth(111));
     }
 
     @Test
     public void getWidthFontSizeTest() {
         TestFont font = new TestFont();
         double expectedValue = TestFont.SIMPLE_GLYPH_WIDTH * FONT_SIZE / (double) FontProgram.UNITS_NORMALIZATION;
-        Assert.assertEquals(expectedValue, font.getWidth(TestFont.SIMPLE_GLYPH, FONT_SIZE), 0.1);
-        Assert.assertEquals(0, font.getWidth(111));
+        Assertions.assertEquals(expectedValue, font.getWidth(TestFont.SIMPLE_GLYPH, FONT_SIZE), 0.1);
+        Assertions.assertEquals(0, font.getWidth(111));
     }
 
     @Test
@@ -242,7 +241,7 @@ public class PdfFontUnitTest extends ExtendedITextTest {
         TestFont font = new TestFont();
         char[] text = getSentence(3);
         String textAsString = new String(text);
-        Assert.assertEquals(3 * TestFont.SIMPLE_GLYPH_WIDTH, font.getWidth(textAsString));
+        Assertions.assertEquals(3 * TestFont.SIMPLE_GLYPH_WIDTH, font.getWidth(textAsString));
     }
 
     @Test
@@ -254,7 +253,7 @@ public class PdfFontUnitTest extends ExtendedITextTest {
                 (char) TestFont.SIMPLE_GLYPH,
         };
         String textAsString = new String(text);
-        Assert.assertEquals(TestFont.COMPLEX_GLYPH_WIDTH + TestFont.SIMPLE_GLYPH_WIDTH,
+        Assertions.assertEquals(TestFont.COMPLEX_GLYPH_WIDTH + TestFont.SIMPLE_GLYPH_WIDTH,
                 font.getWidth(textAsString));
     }
 
@@ -267,7 +266,7 @@ public class PdfFontUnitTest extends ExtendedITextTest {
                 (char) 333,
         };
         String textAsString = new String(text);
-        Assert.assertEquals(0, font.getWidth(textAsString));
+        Assertions.assertEquals(0, font.getWidth(textAsString));
     }
 
     @Test
@@ -276,7 +275,7 @@ public class PdfFontUnitTest extends ExtendedITextTest {
         char[] text = getSentence(3);
         String textAsString = new String(text);
         double expectedValue = 3 * TestFont.SIMPLE_GLYPH_WIDTH * FONT_SIZE / (double) FontProgram.UNITS_NORMALIZATION;
-        Assert.assertEquals(expectedValue, font.getWidth(textAsString, FONT_SIZE), 0.1);
+        Assertions.assertEquals(expectedValue, font.getWidth(textAsString, FONT_SIZE), 0.1);
     }
 
     @Test
@@ -285,21 +284,21 @@ public class PdfFontUnitTest extends ExtendedITextTest {
 
         int expectedDescent = font.getGlyph(TestFont.SIMPLE_GLYPH).getBbox()[1];
         float expectedValue = (float) (expectedDescent * FONT_SIZE / (float) FontProgram.UNITS_NORMALIZATION);
-        Assert.assertEquals(expectedValue, font.getDescent(TestFont.SIMPLE_GLYPH, FONT_SIZE), 0.1);
+        Assertions.assertEquals(expectedValue, font.getDescent(TestFont.SIMPLE_GLYPH, FONT_SIZE), 0.1);
     }
 
     @Test
     public void descentCannotBePositiveTest() {
         TestFont font = new TestFont();
 
-        Assert.assertEquals(0, font.getDescent(TestFont.SIMPLE_GLYPH_WITH_POSITIVE_DESCENT, 50), 0.1);
+        Assertions.assertEquals(0, font.getDescent(TestFont.SIMPLE_GLYPH_WITH_POSITIVE_DESCENT, 50), 0.1);
     }
 
     @Test
     public void getDescentOfUnknownGlyphTest() {
         TestFont font = new TestFont();
 
-        Assert.assertEquals(0, font.getDescent(111, 50), 0.1);
+        Assertions.assertEquals(0, font.getDescent(111, 50), 0.1);
     }
 
     @Test
@@ -308,7 +307,7 @@ public class PdfFontUnitTest extends ExtendedITextTest {
         font.setFontProgram(new TestFontProgram());
 
         float expectedValue = (float) (FONT_METRICS_DESCENT * FONT_SIZE / (double) FontProgram.UNITS_NORMALIZATION);
-        Assert.assertEquals(expectedValue, font.getDescent(TestFont.SIMPLE_GLYPH_WITHOUT_BBOX, FONT_SIZE), 0.1);
+        Assertions.assertEquals(expectedValue, font.getDescent(TestFont.SIMPLE_GLYPH_WITHOUT_BBOX, FONT_SIZE), 0.1);
     }
 
     @Test
@@ -323,7 +322,7 @@ public class PdfFontUnitTest extends ExtendedITextTest {
         int expectedMinDescent = Math.min(font.getGlyph(TestFont.SIMPLE_GLYPH).getBbox()[1],
                 font.getGlyph(TestFont.COMPLEX_GLYPH).getBbox()[1]);
         float expectedValue = (float) (expectedMinDescent * FONT_SIZE / (double) FontProgram.UNITS_NORMALIZATION);
-        Assert.assertEquals(expectedValue, font.getDescent(textAsString, FONT_SIZE), 0.1);
+        Assertions.assertEquals(expectedValue, font.getDescent(textAsString, FONT_SIZE), 0.1);
     }
 
     @Test
@@ -338,7 +337,7 @@ public class PdfFontUnitTest extends ExtendedITextTest {
         int expectedMinDescent = Math.min(font.getGlyph(TestFont.SIMPLE_GLYPH).getBbox()[1],
                 FONT_METRICS_DESCENT);
         float expectedValue = (float) (expectedMinDescent * FONT_SIZE / (double) FontProgram.UNITS_NORMALIZATION);
-        Assert.assertEquals(expectedValue, font.getDescent(textAsString, FONT_SIZE), 0.1);
+        Assertions.assertEquals(expectedValue, font.getDescent(textAsString, FONT_SIZE), 0.1);
     }
 
     @Test
@@ -347,7 +346,7 @@ public class PdfFontUnitTest extends ExtendedITextTest {
 
         int expectedAscent = font.getGlyph(TestFont.SIMPLE_GLYPH).getBbox()[3];
         float expectedValue = (float) (expectedAscent * FONT_SIZE / (double) FontProgram.UNITS_NORMALIZATION);
-        Assert.assertEquals(expectedValue, font.getAscent(TestFont.SIMPLE_GLYPH, FONT_SIZE), 0.1);
+        Assertions.assertEquals(expectedValue, font.getAscent(TestFont.SIMPLE_GLYPH, FONT_SIZE), 0.1);
     }
 
     @Test
@@ -356,7 +355,7 @@ public class PdfFontUnitTest extends ExtendedITextTest {
         font.setFontProgram(new TestFontProgram());
 
         float expectedValue = (float) (FONT_METRICS_ASCENT * FONT_SIZE / (double) FontProgram.UNITS_NORMALIZATION);
-        Assert.assertEquals(expectedValue, font.getAscent(TestFont.SIMPLE_GLYPH_WITHOUT_BBOX, FONT_SIZE), 0.1);
+        Assertions.assertEquals(expectedValue, font.getAscent(TestFont.SIMPLE_GLYPH_WITHOUT_BBOX, FONT_SIZE), 0.1);
     }
 
     @Test
@@ -372,7 +371,7 @@ public class PdfFontUnitTest extends ExtendedITextTest {
                 font.getGlyph(TestFont.SIMPLE_GLYPH).getBbox()[3],
                 font.getGlyph(TestFont.COMPLEX_GLYPH).getBbox()[3]);
         float expectedValue = (float) (expectedMaxAscent * FONT_SIZE / (double) FontProgram.UNITS_NORMALIZATION);
-        Assert.assertEquals(expectedValue, font.getAscent(textAsString, FONT_SIZE), 0.1);
+        Assertions.assertEquals(expectedValue, font.getAscent(textAsString, FONT_SIZE), 0.1);
     }
 
     @Test
@@ -388,25 +387,25 @@ public class PdfFontUnitTest extends ExtendedITextTest {
                 font.getGlyph(TestFont.SIMPLE_GLYPH).getBbox()[3],
                 FONT_METRICS_ASCENT);
         float expectedValue = (float) (expectedMaxAscent * FONT_SIZE / (double) FontProgram.UNITS_NORMALIZATION);
-        Assert.assertEquals(expectedValue, font.getAscent(textAsString, FONT_SIZE), 0.1);
+        Assertions.assertEquals(expectedValue, font.getAscent(textAsString, FONT_SIZE), 0.1);
     }
 
     @Test
     public void isEmbeddedTest() {
         TestFont font = new TestFont();
-        Assert.assertFalse(font.isEmbedded());
+        Assertions.assertFalse(font.isEmbedded());
 
         font.embedded = true;
-        Assert.assertTrue(font.isEmbedded());
+        Assertions.assertTrue(font.isEmbedded());
     }
 
     @Test
     public void isSubsetTest() {
         TestFont font = new TestFont();
-        Assert.assertTrue(font.isSubset());
+        Assertions.assertTrue(font.isSubset());
 
         font.setSubset(false);
-        Assert.assertFalse(font.isSubset());
+        Assertions.assertFalse(font.isSubset());
     }
 
     @Test
@@ -420,10 +419,10 @@ public class PdfFontUnitTest extends ExtendedITextTest {
         font.addSubsetRange(range1);
         font.addSubsetRange(range2);
 
-        Assert.assertTrue(font.isSubset());
-        Assert.assertEquals(2, font.subsetRanges.size());
-        Assert.assertArrayEquals(range1, font.subsetRanges.get(0));
-        Assert.assertArrayEquals(range2, font.subsetRanges.get(1));
+        Assertions.assertTrue(font.isSubset());
+        Assertions.assertEquals(2, font.subsetRanges.size());
+        Assertions.assertArrayEquals(range1, font.subsetRanges.get(0));
+        Assertions.assertArrayEquals(range2, font.subsetRanges.get(1));
     }
 
     @Test
@@ -433,8 +432,8 @@ public class PdfFontUnitTest extends ExtendedITextTest {
         String wordsAsString = new String(words);
         double width = 6 * font.getWidth(TestFont.SIMPLE_GLYPH, FONT_SIZE);
         List<String> result = font.splitString(wordsAsString, FONT_SIZE, (float) width + 0.01f);
-        Assert.assertEquals(1, result.size());
-        Assert.assertEquals(wordsAsString, result.get(0));
+        Assertions.assertEquals(1, result.size());
+        Assertions.assertEquals(wordsAsString, result.get(0));
     }
 
     @Test
@@ -444,10 +443,10 @@ public class PdfFontUnitTest extends ExtendedITextTest {
         String wordsAsString = new String(words);
         double width = 4 * font.getWidth(TestFont.SIMPLE_GLYPH, FONT_SIZE);
         List<String> result = font.splitString(wordsAsString, FONT_SIZE, (float) width + 0.01f);
-        Assert.assertEquals(3, result.size());
-        Assert.assertEquals(new String(getSentence(3)), result.get(0));
-        Assert.assertEquals(new String(getSentence(4)), result.get(1));
-        Assert.assertEquals(new String(getSentence(2)), result.get(2));
+        Assertions.assertEquals(3, result.size());
+        Assertions.assertEquals(new String(getSentence(3)), result.get(0));
+        Assertions.assertEquals(new String(getSentence(4)), result.get(1));
+        Assertions.assertEquals(new String(getSentence(2)), result.get(2));
     }
 
     @Test
@@ -457,10 +456,10 @@ public class PdfFontUnitTest extends ExtendedITextTest {
         String wordsAsString = new String(words);
         double width = 3 * font.getWidth(TestFont.SIMPLE_GLYPH, FONT_SIZE);
         List<String> result = font.splitString(wordsAsString, FONT_SIZE, (float) width + 0.01f);
-        Assert.assertEquals(3, result.size());
-        Assert.assertEquals(new String(getSentence(3)), result.get(0));
-        Assert.assertEquals(new String(getSentence(3)), result.get(1));
-        Assert.assertEquals(new String(getSentence(1, 2)), result.get(2));
+        Assertions.assertEquals(3, result.size());
+        Assertions.assertEquals(new String(getSentence(3)), result.get(0));
+        Assertions.assertEquals(new String(getSentence(3)), result.get(1));
+        Assertions.assertEquals(new String(getSentence(1, 2)), result.get(2));
     }
 
     @Test
@@ -470,11 +469,11 @@ public class PdfFontUnitTest extends ExtendedITextTest {
         String wordsAsString = new String(words);
         double width = 3 * font.getWidth(TestFont.SIMPLE_GLYPH, FONT_SIZE);
         List<String> result = font.splitString(wordsAsString, FONT_SIZE, (float) width + 0.01f);
-        Assert.assertEquals(4, result.size());
-        Assert.assertEquals(new String(getSentence(2)), result.get(0));
-        Assert.assertEquals(new String(getSentence(3)), result.get(1));
-        Assert.assertEquals(new String(getSentence(1)), result.get(2));
-        Assert.assertEquals(new String(getSentence(3)), result.get(3));
+        Assertions.assertEquals(4, result.size());
+        Assertions.assertEquals(new String(getSentence(2)), result.get(0));
+        Assertions.assertEquals(new String(getSentence(3)), result.get(1));
+        Assertions.assertEquals(new String(getSentence(1)), result.get(2));
+        Assertions.assertEquals(new String(getSentence(3)), result.get(3));
     }
 
     @Test
@@ -484,11 +483,11 @@ public class PdfFontUnitTest extends ExtendedITextTest {
         String wordsAsString = new String(words);
         double width = font.getWidth(TestFont.SIMPLE_GLYPH, FONT_SIZE) / 2.;
         List<String> result = font.splitString(wordsAsString, FONT_SIZE, (float) width + 0.01f);
-        Assert.assertEquals(4, result.size());
-        Assert.assertEquals(new String(getSentence(1)), result.get(0));
-        Assert.assertEquals(new String(getSentence(1)), result.get(1));
-        Assert.assertEquals(new String(getSentence(1)), result.get(2));
-        Assert.assertEquals(new String(getSentence(0)), result.get(3));
+        Assertions.assertEquals(4, result.size());
+        Assertions.assertEquals(new String(getSentence(1)), result.get(0));
+        Assertions.assertEquals(new String(getSentence(1)), result.get(1));
+        Assertions.assertEquals(new String(getSentence(1)), result.get(2));
+        Assertions.assertEquals(new String(getSentence(0)), result.get(3));
     }
 
 
@@ -503,21 +502,21 @@ public class PdfFontUnitTest extends ExtendedITextTest {
         String wordsAsString = new String(words);
         double width = 10 * font.getWidth(TestFont.SIMPLE_GLYPH, FONT_SIZE);
         List<String> result = font.splitString(wordsAsString, FONT_SIZE, (float) width + 0.01f);
-        Assert.assertEquals(2, result.size());
-        Assert.assertEquals(new String(getSentence(1)), result.get(0));
-        Assert.assertEquals(new String(getSentence(1)), result.get(1));
+        Assertions.assertEquals(2, result.size());
+        Assertions.assertEquals(new String(getSentence(1)), result.get(0));
+        Assertions.assertEquals(new String(getSentence(1)), result.get(1));
     }
 
     @Test
     public void isBuiltWithTest() {
         TestFont font = new TestFont();
-        Assert.assertFalse(font.isBuiltWith("Any String Here", "Any Encoding"));
+        Assertions.assertFalse(font.isBuiltWith("Any String Here", "Any Encoding"));
     }
 
     @Test
     public void isWrappedObjectMustBeIndirectTest() {
         TestFont font = new TestFont();
-        Assert.assertTrue(font.isWrappedObjectMustBeIndirect());
+        Assertions.assertTrue(font.isWrappedObjectMustBeIndirect());
     }
 
     @Test
@@ -528,22 +527,22 @@ public class PdfFontUnitTest extends ExtendedITextTest {
         String onlyEmbeddedFontName = TestFont.updateSubsetPrefix(fontName, false, true);
         String justFontName = TestFont.updateSubsetPrefix(fontName, false, false);
 
-        Assert.assertEquals(fontName, onlySubsetFontName);
-        Assert.assertEquals(fontName, onlyEmbeddedFontName);
-        Assert.assertEquals(fontName, justFontName);
+        Assertions.assertEquals(fontName, onlySubsetFontName);
+        Assertions.assertEquals(fontName, onlyEmbeddedFontName);
+        Assertions.assertEquals(fontName, justFontName);
 
         Pattern prefixPattern = Pattern.compile("^[A-Z]{6}\\+FontTest$");
-        Assert.assertTrue(prefixPattern.matcher(embeddedSubsetFontName).matches());
+        Assertions.assertTrue(prefixPattern.matcher(embeddedSubsetFontName).matches());
     }
 
     @Test
     public void getEmptyPdfStreamTest() {
         TestFont font = new TestFont();
 
-        Exception e = Assert.assertThrows(PdfException.class,
+        Exception e = Assertions.assertThrows(PdfException.class,
                 () -> font.getPdfFontStream(null, null)
         );
-        Assert.assertEquals(KernelExceptionMessageConstant.FONT_EMBEDDING_ISSUE, e.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.FONT_EMBEDDING_ISSUE, e.getMessage());
     }
 
     @Test
@@ -555,10 +554,10 @@ public class PdfFontUnitTest extends ExtendedITextTest {
         }
         int[] fontStreamLength = new int[] {10, 20, 30};
         PdfStream stream = font.getPdfFontStream(data, fontStreamLength);
-        Assert.assertArrayEquals(data, stream.getBytes());
-        Assert.assertEquals(10, stream.getAsNumber(new PdfName("Length1")).intValue());
-        Assert.assertEquals(20, stream.getAsNumber(new PdfName("Length2")).intValue());
-        Assert.assertEquals(30, stream.getAsNumber(new PdfName("Length3")).intValue());
+        Assertions.assertArrayEquals(data, stream.getBytes());
+        Assertions.assertEquals(10, stream.getAsNumber(new PdfName("Length1")).intValue());
+        Assertions.assertEquals(20, stream.getAsNumber(new PdfName("Length2")).intValue());
+        Assertions.assertEquals(30, stream.getAsNumber(new PdfName("Length3")).intValue());
     }
 
     @Test
@@ -566,15 +565,15 @@ public class PdfFontUnitTest extends ExtendedITextTest {
         TestFont font = new TestFont();
         TestFontProgram program = new TestFontProgram();
 
-        Assert.assertNull(font.getFontProgram());
+        Assertions.assertNull(font.getFontProgram());
         font.setFontProgram(program);
-        Assert.assertEquals(program, font.getFontProgram());
+        Assertions.assertEquals(program, font.getFontProgram());
     }
 
     @Test
     public void toStringTest() {
         TestFont font = new TestFont();
-        Assert.assertEquals("PdfFont{fontProgram=" + font.fontProgram + "}", font.toString());
+        Assertions.assertEquals("PdfFont{fontProgram=" + font.fontProgram + "}", font.toString());
     }
 
     @Test
@@ -587,9 +586,9 @@ public class PdfFontUnitTest extends ExtendedITextTest {
             font.getPdfObject().makeIndirect(document);
 
             PdfDictionary dictionary = new PdfDictionary();
-            Assert.assertTrue(font.makeObjectIndirect(dictionary));
-            Assert.assertNotNull(dictionary.getIndirectReference());
-            Assert.assertEquals(document, dictionary.getIndirectReference().getDocument());
+            Assertions.assertTrue(font.makeObjectIndirect(dictionary));
+            Assertions.assertNotNull(dictionary.getIndirectReference());
+            Assertions.assertEquals(document, dictionary.getIndirectReference().getDocument());
         }
     }
 
@@ -598,8 +597,8 @@ public class PdfFontUnitTest extends ExtendedITextTest {
         TestFont font = new TestFont();
 
         PdfDictionary dictionary = new PdfDictionary();
-        Assert.assertFalse(font.makeObjectIndirect(dictionary));
-        Assert.assertNull(dictionary.getIndirectReference());
+        Assertions.assertFalse(font.makeObjectIndirect(dictionary));
+        Assertions.assertNull(dictionary.getIndirectReference());
     }
 
     private char[] getSentence(int... lengthsOfWords) {
@@ -629,24 +628,24 @@ public class PdfFontUnitTest extends ExtendedITextTest {
     @Test
     public void cannotGetFontStreamForNullBytesTest() throws IOException {
         PdfFont pdfFont = PdfFontFactory.createFont();
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> pdfFont.getPdfFontStream(null, new int[] {1}));
-        Assert.assertEquals(KernelExceptionMessageConstant.FONT_EMBEDDING_ISSUE, exception.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.FONT_EMBEDDING_ISSUE, exception.getMessage());
     }
 
     @Test
     public void cannotGetFontStreamForNullLengthsTest() throws IOException {
         PdfFont pdfFont = PdfFontFactory.createFont();
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> pdfFont.getPdfFontStream(new byte[] {1}, null));
-        Assert.assertEquals(KernelExceptionMessageConstant.FONT_EMBEDDING_ISSUE, exception.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.FONT_EMBEDDING_ISSUE, exception.getMessage());
     }
 
     @Test
     public void cannotGetFontStreamForNullBytesAndLengthsTest() throws IOException {
         PdfFont pdfFont = PdfFontFactory.createFont();
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> pdfFont.getPdfFontStream(null, null));
-        Assert.assertEquals(KernelExceptionMessageConstant.FONT_EMBEDDING_ISSUE, exception.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.FONT_EMBEDDING_ISSUE, exception.getMessage());
     }
 }

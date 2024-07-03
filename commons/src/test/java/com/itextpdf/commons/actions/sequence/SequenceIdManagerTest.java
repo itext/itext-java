@@ -25,23 +25,22 @@ package com.itextpdf.commons.actions.sequence;
 import com.itextpdf.commons.exceptions.CommonsExceptionMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class SequenceIdManagerTest extends ExtendedITextTest {
 
     @Test
     public void setIdentifier() {
         IdentifiableElement element = new IdentifiableElement();
-        Assert.assertNull(SequenceIdManager.getSequenceId(element));
+        Assertions.assertNull(SequenceIdManager.getSequenceId(element));
 
         SequenceId sequenceId = new SequenceId();
         SequenceIdManager.setSequenceId(element, sequenceId);
-        Assert.assertEquals(sequenceId, SequenceIdManager.getSequenceId(element));
+        Assertions.assertEquals(sequenceId, SequenceIdManager.getSequenceId(element));
     }
 
     @Test
@@ -51,10 +50,10 @@ public class SequenceIdManagerTest extends ExtendedITextTest {
         SequenceId sequenceId2 = new SequenceId();
         SequenceIdManager.setSequenceId(element, sequenceId1);
 
-        Exception e = Assert.assertThrows(IllegalStateException.class,
+        Exception e = Assertions.assertThrows(IllegalStateException.class,
                 () -> SequenceIdManager.setSequenceId(element, sequenceId2));
 
-        Assert.assertEquals(MessageFormatUtil.format(CommonsExceptionMessageConstant.ELEMENT_ALREADY_HAS_IDENTIFIER,
+        Assertions.assertEquals(MessageFormatUtil.format(CommonsExceptionMessageConstant.ELEMENT_ALREADY_HAS_IDENTIFIER,
                 sequenceId1.getId(), sequenceId2.getId()), e.getMessage());
     }
 

@@ -41,7 +41,6 @@ import com.itextpdf.pdfua.exceptions.PdfUALogMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -49,25 +48,25 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfUATableTest extends ExtendedITextTest {
 
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfua/PdfUATableTest/";
 
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/FreeSans.ttf";
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
     private UaValidationTestFramework framework;
-    @Before
+    @BeforeEach
     public void initializeFramework(){
         framework = new UaValidationTestFramework(DESTINATION_FOLDER);
     }

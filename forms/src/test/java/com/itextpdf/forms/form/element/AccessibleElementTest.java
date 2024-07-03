@@ -35,31 +35,20 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.tagging.IAccessibleElement;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 
-@Category(IntegrationTest.class)
-@RunWith(Parameterized.class)
+@Tag("IntegrationTest")
 public class AccessibleElementTest extends ExtendedITextTest {
-    private final TestContainer testContainer;
-
-    public AccessibleElementTest(TestContainer index) {
-        this.testContainer = index;
-    }
-
-
-    @Parameterized.Parameters(name = "{0}")
-    public static Collection<Object[]> getDataTestFixtureData() {
+    public static Collection<Object[]> GetDataTestFixtureData() {
         int amountOfEntries = 8;
         List<Object[]> data = new ArrayList<>();
         for (int i = 0; i < amountOfEntries; i++) {
@@ -97,8 +86,9 @@ public class AccessibleElementTest extends ExtendedITextTest {
         }
     }
 
-    @Test
-    public void testInteractive() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("GetDataTestFixtureData")
+    public void testInteractive(TestContainer testContainer) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(baos));
         pdfDocument.setTagged();
@@ -116,15 +106,16 @@ public class AccessibleElementTest extends ExtendedITextTest {
         IStructureNode kid = documentStruct.getKids().get(0);
         PdfStructElem elem = (PdfStructElem) kid;
         PdfDictionary obj = elem.getPdfObject();
-        Assert.assertEquals(PdfName.Form, elem.getRole());
-        Assert.assertTrue(obj.containsKey(PdfName.Lang));
-        Assert.assertEquals("en", obj.getAsString(PdfName.Lang).getValue());
+        Assertions.assertEquals(PdfName.Form, elem.getRole());
+        Assertions.assertTrue(obj.containsKey(PdfName.Lang));
+        Assertions.assertEquals("en", obj.getAsString(PdfName.Lang).getValue());
         document.close();
         pdfDocument.close();
     }
 
-    @Test
-    public void testNonInteractive() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("GetDataTestFixtureData")
+    public void testNonInteractive(TestContainer testContainer) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(baos));
         pdfDocument.setTagged();
@@ -141,15 +132,16 @@ public class AccessibleElementTest extends ExtendedITextTest {
         IStructureNode kid = documentStruct.getKids().get(0);
         PdfStructElem elem = (PdfStructElem) kid;
         PdfDictionary obj = elem.getPdfObject();
-        Assert.assertEquals(PdfName.Form, elem.getRole());
-        Assert.assertTrue(obj.containsKey(PdfName.Lang));
-        Assert.assertEquals("en", obj.getAsString(PdfName.Lang).getValue());
+        Assertions.assertEquals(PdfName.Form, elem.getRole());
+        Assertions.assertTrue(obj.containsKey(PdfName.Lang));
+        Assertions.assertEquals("en", obj.getAsString(PdfName.Lang).getValue());
         document.close();
         pdfDocument.close();
     }
 
-    @Test
-    public void testInteractiveProperty() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("GetDataTestFixtureData")
+    public void testInteractiveProperty(TestContainer testContainer) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(baos));
         pdfDocument.setTagged();
@@ -168,9 +160,9 @@ public class AccessibleElementTest extends ExtendedITextTest {
         IStructureNode kid = documentStruct.getKids().get(0);
         PdfStructElem elem = (PdfStructElem) kid;
         PdfDictionary obj = elem.getPdfObject();
-        Assert.assertEquals(PdfName.Form, elem.getRole());
-        Assert.assertTrue(obj.containsKey(PdfName.Lang));
-        Assert.assertEquals("en", obj.getAsString(PdfName.Lang).getValue());
+        Assertions.assertEquals(PdfName.Form, elem.getRole());
+        Assertions.assertTrue(obj.containsKey(PdfName.Lang));
+        Assertions.assertEquals("en", obj.getAsString(PdfName.Lang).getValue());
         document.close();
         pdfDocument.close();
     }

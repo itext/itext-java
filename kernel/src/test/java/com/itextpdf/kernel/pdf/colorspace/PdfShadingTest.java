@@ -44,14 +44,13 @@ import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs.Pattern;
 import com.itextpdf.kernel.pdf.function.IPdfFunction;
 import com.itextpdf.kernel.pdf.function.PdfType4Function;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.nio.charset.StandardCharsets;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfShadingTest extends ExtendedITextTest {
 
     @Test
@@ -59,10 +58,10 @@ public class PdfShadingTest extends ExtendedITextTest {
         boolean[] extendArray = null;
         Rgb color = new Rgb();
 
-        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+        Exception e = Assertions.assertThrows(IllegalArgumentException.class,
                 () -> new Axial(color, 0f, 0f, new float[] {0f, 0f, 0f}, 0.5f, 0.5f, new float[] {0.5f, 0.5f, 0.5f},
                         extendArray));
-        Assert.assertEquals("extend", e.getMessage());
+        Assertions.assertEquals("extend", e.getMessage());
     }
 
     @Test
@@ -70,10 +69,10 @@ public class PdfShadingTest extends ExtendedITextTest {
         boolean[] extendArray = new boolean[] {true};
         Rgb color = new Rgb();
 
-        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+        Exception e = Assertions.assertThrows(IllegalArgumentException.class,
                 () -> new Axial(color, 0f, 0f, new float[] {0f, 0f, 0f}, 0.5f, 0.5f, new float[] {0.5f, 0.5f, 0.5f},
                         extendArray));
-        Assert.assertEquals("extend", e.getMessage());
+        Assertions.assertEquals("extend", e.getMessage());
     }
 
     @Test
@@ -81,10 +80,10 @@ public class PdfShadingTest extends ExtendedITextTest {
         boolean[] extendArray = null;
         Rgb color = new Rgb();
 
-        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+        Exception e = Assertions.assertThrows(IllegalArgumentException.class,
                 () -> new Radial(color, 0f, 0f, 0f, new float[] {0f, 0f, 0f}, 0.5f, 0.5f, 10f,
                         new float[] {0.5f, 0.5f, 0.5f}, extendArray));
-        Assert.assertEquals("extend", e.getMessage());
+        Assertions.assertEquals("extend", e.getMessage());
     }
 
     @Test
@@ -92,10 +91,10 @@ public class PdfShadingTest extends ExtendedITextTest {
         boolean[] extendArray = new boolean[] {true, false, false};
         Rgb color = new Rgb();
 
-        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+        Exception e = Assertions.assertThrows(IllegalArgumentException.class,
                 () -> new Radial(color, 0f, 0f, 0f, new float[] {0f, 0f, 0f}, 0.5f, 0.5f, 10f,
                         new float[] {0.5f, 0.5f, 0.5f}, extendArray));
-        Assert.assertEquals("extend", e.getMessage());
+        Assertions.assertEquals("extend", e.getMessage());
     }
 
     @Test
@@ -108,11 +107,11 @@ public class PdfShadingTest extends ExtendedITextTest {
                 ShadingType.AXIAL);
 
         Axial axial = new Axial(axialShadingDictionary);
-        Assert.assertArrayEquals(coordsArray, axial.getCoords().toFloatArray(), 0f);
-        Assert.assertArrayEquals(domainArray, axial.getDomain().toFloatArray(), 0f);
-        Assert.assertArrayEquals(extendArray, axial.getExtend().toBooleanArray());
-        Assert.assertEquals(ShadingType.AXIAL, axial.getShadingType());
-        Assert.assertEquals(PdfName.DeviceRGB, axial.getColorSpace());
+        Assertions.assertArrayEquals(coordsArray, axial.getCoords().toFloatArray(), 0f);
+        Assertions.assertArrayEquals(domainArray, axial.getDomain().toFloatArray(), 0f);
+        Assertions.assertArrayEquals(extendArray, axial.getExtend().toBooleanArray());
+        Assertions.assertEquals(ShadingType.AXIAL, axial.getShadingType());
+        Assertions.assertEquals(PdfName.DeviceRGB, axial.getColorSpace());
     }
 
     @Test
@@ -124,7 +123,7 @@ public class PdfShadingTest extends ExtendedITextTest {
         PdfDictionary axialShadingDictionary = initShadingDictionary(coordsArray, domainArray, extendArray, ShadingType.AXIAL);
 
         Axial axial = new Axial(axialShadingDictionary);
-        Assert.assertTrue(axial.getFunction() instanceof PdfDictionary);
+        Assertions.assertTrue(axial.getFunction() instanceof PdfDictionary);
 
         byte[] ps = "{2 copy sin abs sin abs 3 index 10 mul sin  1 sub abs}".getBytes(StandardCharsets.ISO_8859_1);
         float[] domain = new float[] {0, 1000, 0, 1000};
@@ -133,9 +132,9 @@ public class PdfShadingTest extends ExtendedITextTest {
 
         axial.setFunction(functions);
         final PdfObject funcObj = axial.getFunction();
-        Assert.assertTrue(funcObj instanceof PdfArray);
-        Assert.assertEquals(1, ((PdfArray) funcObj).size());
-        Assert.assertEquals(functions[0].getAsPdfObject(), ((PdfArray) funcObj).get(0));
+        Assertions.assertTrue(funcObj instanceof PdfArray);
+        Assertions.assertEquals(1, ((PdfArray) funcObj).size());
+        Assertions.assertEquals(functions[0].getAsPdfObject(), ((PdfArray) funcObj).get(0));
     }
 
     @Test
@@ -149,10 +148,10 @@ public class PdfShadingTest extends ExtendedITextTest {
 
         Axial axial = (Axial) PdfShading.makeShading(axialShadingDictionary);
 
-        Assert.assertArrayEquals(coordsArray, axial.getCoords().toFloatArray(), 0f);
-        Assert.assertArrayEquals(domainArray, axial.getDomain().toFloatArray(), 0f);
-        Assert.assertArrayEquals(extendArray, axial.getExtend().toBooleanArray());
-        Assert.assertEquals(ShadingType.AXIAL, axial.getShadingType());
+        Assertions.assertArrayEquals(coordsArray, axial.getCoords().toFloatArray(), 0f);
+        Assertions.assertArrayEquals(domainArray, axial.getDomain().toFloatArray(), 0f);
+        Assertions.assertArrayEquals(extendArray, axial.getExtend().toBooleanArray());
+        Assertions.assertEquals(ShadingType.AXIAL, axial.getShadingType());
     }
 
     @Test
@@ -164,10 +163,10 @@ public class PdfShadingTest extends ExtendedITextTest {
         PdfDictionary axialShadingDictionary = initShadingDictionary(coordsArray, null, null, ShadingType.AXIAL);
 
         Axial axial = new Axial(axialShadingDictionary);
-        Assert.assertArrayEquals(coordsArray, axial.getCoords().toFloatArray(), 0f);
-        Assert.assertArrayEquals(defaultDomainArray, axial.getDomain().toFloatArray(), 0f);
-        Assert.assertArrayEquals(defaultExtendArray, axial.getExtend().toBooleanArray());
-        Assert.assertEquals(ShadingType.AXIAL, axial.getShadingType());
+        Assertions.assertArrayEquals(coordsArray, axial.getCoords().toFloatArray(), 0f);
+        Assertions.assertArrayEquals(defaultDomainArray, axial.getDomain().toFloatArray(), 0f);
+        Assertions.assertArrayEquals(defaultExtendArray, axial.getExtend().toBooleanArray());
+        Assertions.assertEquals(ShadingType.AXIAL, axial.getShadingType());
     }
 
     @Test
@@ -180,10 +179,10 @@ public class PdfShadingTest extends ExtendedITextTest {
                 ShadingType.RADIAL);
 
         Radial radial = new Radial(radialShadingDictionary);
-        Assert.assertArrayEquals(coordsArray, radial.getCoords().toFloatArray(), 0f);
-        Assert.assertArrayEquals(domainArray, radial.getDomain().toFloatArray(), 0f);
-        Assert.assertArrayEquals(extendArray, radial.getExtend().toBooleanArray());
-        Assert.assertEquals(ShadingType.RADIAL, radial.getShadingType());
+        Assertions.assertArrayEquals(coordsArray, radial.getCoords().toFloatArray(), 0f);
+        Assertions.assertArrayEquals(domainArray, radial.getDomain().toFloatArray(), 0f);
+        Assertions.assertArrayEquals(extendArray, radial.getExtend().toBooleanArray());
+        Assertions.assertEquals(ShadingType.RADIAL, radial.getShadingType());
     }
 
     @Test
@@ -196,10 +195,10 @@ public class PdfShadingTest extends ExtendedITextTest {
                 ShadingType.RADIAL);
 
         Radial radial = (Radial) PdfShading.makeShading(radialShadingDictionary);
-        Assert.assertArrayEquals(coordsArray, radial.getCoords().toFloatArray(), 0f);
-        Assert.assertArrayEquals(domainArray, radial.getDomain().toFloatArray(), 0f);
-        Assert.assertArrayEquals(extendArray, radial.getExtend().toBooleanArray());
-        Assert.assertEquals(ShadingType.RADIAL, radial.getShadingType());
+        Assertions.assertArrayEquals(coordsArray, radial.getCoords().toFloatArray(), 0f);
+        Assertions.assertArrayEquals(domainArray, radial.getDomain().toFloatArray(), 0f);
+        Assertions.assertArrayEquals(extendArray, radial.getExtend().toBooleanArray());
+        Assertions.assertEquals(ShadingType.RADIAL, radial.getShadingType());
     }
 
     @Test
@@ -211,26 +210,26 @@ public class PdfShadingTest extends ExtendedITextTest {
         PdfDictionary radialShadingDictionary = initShadingDictionary(coordsArray, null, null, ShadingType.RADIAL);
 
         Radial radial = new Radial(radialShadingDictionary);
-        Assert.assertArrayEquals(coordsArray, radial.getCoords().toFloatArray(), 0f);
-        Assert.assertArrayEquals(defaultDomainArray, radial.getDomain().toFloatArray(), 0f);
-        Assert.assertArrayEquals(defaultExtendArray, radial.getExtend().toBooleanArray());
-        Assert.assertEquals(ShadingType.RADIAL, radial.getShadingType());
+        Assertions.assertArrayEquals(coordsArray, radial.getCoords().toFloatArray(), 0f);
+        Assertions.assertArrayEquals(defaultDomainArray, radial.getDomain().toFloatArray(), 0f);
+        Assertions.assertArrayEquals(defaultExtendArray, radial.getExtend().toBooleanArray());
+        Assertions.assertEquals(ShadingType.RADIAL, radial.getShadingType());
     }
 
     @Test
     public void makeShadingShouldFailOnMissingShadeType() {
         PdfDictionary shade = new PdfDictionary();
         shade.put(PdfName.ColorSpace, new PdfArray());
-        Exception error = Assert.assertThrows(PdfException.class, () -> PdfShading.makeShading(shade));
-        Assert.assertEquals(KernelExceptionMessageConstant.SHADING_TYPE_NOT_FOUND, error.getMessage());
+        Exception error = Assertions.assertThrows(PdfException.class, () -> PdfShading.makeShading(shade));
+        Assertions.assertEquals(KernelExceptionMessageConstant.SHADING_TYPE_NOT_FOUND, error.getMessage());
     }
 
     @Test
     public void makeShadingShouldFailOnMissingColorSpace() {
         PdfDictionary shade = new PdfDictionary();
         shade.put(PdfName.ShadingType, new PdfArray());
-        Exception error = Assert.assertThrows(PdfException.class, () -> PdfShading.makeShading(shade));
-        Assert.assertEquals(KernelExceptionMessageConstant.COLOR_SPACE_NOT_FOUND, error.getMessage());
+        Exception error = Assertions.assertThrows(PdfException.class, () -> PdfShading.makeShading(shade));
+        Assertions.assertEquals(KernelExceptionMessageConstant.COLOR_SPACE_NOT_FOUND, error.getMessage());
     }
 
     @Test
@@ -240,10 +239,10 @@ public class PdfShadingTest extends ExtendedITextTest {
                 new float[] {0, 1, 0, 1, 0, 1}, ps);
 
         Pattern colorSpace = new Pattern();
-        Exception ex = Assert.assertThrows(IllegalArgumentException.class,
+        Exception ex = Assertions.assertThrows(IllegalArgumentException.class,
                 () -> new FunctionBased(colorSpace, function));
 
-        Assert.assertEquals("colorSpace", ex.getMessage());
+        Assertions.assertEquals("colorSpace", ex.getMessage());
     }
 
     @Test
@@ -257,16 +256,16 @@ public class PdfShadingTest extends ExtendedITextTest {
         FunctionBased shade = new FunctionBased(new PdfDeviceCs.Rgb(), function);
 
         PdfDictionary object = shade.getPdfObject();
-        Assert.assertEquals(1, object.getAsInt(PdfName.ShadingType).intValue());
-        Assert.assertEquals(PdfName.DeviceRGB, object.getAsName(PdfName.ColorSpace));
+        Assertions.assertEquals(1, object.getAsInt(PdfName.ShadingType).intValue());
+        Assertions.assertEquals(PdfName.DeviceRGB, object.getAsName(PdfName.ColorSpace));
         PdfStream functionStream = object.getAsStream(PdfName.Function);
 
         PdfArray functionDomain = functionStream.getAsArray(PdfName.Domain);
-        Assert.assertArrayEquals(domain, functionDomain.toFloatArray(), 0.0f);
+        Assertions.assertArrayEquals(domain, functionDomain.toFloatArray(), 0.0f);
 
         PdfArray functionRange = functionStream.getAsArray(PdfName.Range);
-        Assert.assertArrayEquals(range, functionRange.toFloatArray(), 0.0f);
-        Assert.assertEquals(4, functionStream.getAsInt(PdfName.FunctionType).intValue());
+        Assertions.assertArrayEquals(range, functionRange.toFloatArray(), 0.0f);
+        Assertions.assertEquals(4, functionStream.getAsInt(PdfName.FunctionType).intValue());
     }
 
     @Test
@@ -290,19 +289,19 @@ public class PdfShadingTest extends ExtendedITextTest {
         PdfShading shade = PdfShading.makeShading(shadingDict);
 
         PdfDictionary object = shade.getPdfObject();
-        Assert.assertEquals(1, object.getAsInt(PdfName.ShadingType).intValue());
-        Assert.assertEquals(PdfName.DeviceRGB, object.getAsName(PdfName.ColorSpace));
+        Assertions.assertEquals(1, object.getAsInt(PdfName.ShadingType).intValue());
+        Assertions.assertEquals(PdfName.DeviceRGB, object.getAsName(PdfName.ColorSpace));
         PdfStream functionStream = object.getAsStream(PdfName.Function);
 
         PdfArray functionDomain = functionStream.getAsArray(PdfName.Domain);
-        Assert.assertArrayEquals(domain.toDoubleArray(), functionDomain.toDoubleArray(), 0.0);
+        Assertions.assertArrayEquals(domain.toDoubleArray(), functionDomain.toDoubleArray(), 0.0);
 
         PdfArray functionRange = functionStream.getAsArray(PdfName.Range);
-        Assert.assertArrayEquals(range.toDoubleArray(), functionRange.toDoubleArray(), 0.0);
+        Assertions.assertArrayEquals(range.toDoubleArray(), functionRange.toDoubleArray(), 0.0);
 
-        Assert.assertEquals(4, functionStream.getAsInt(PdfName.FunctionType).intValue());
+        Assertions.assertEquals(4, functionStream.getAsInt(PdfName.FunctionType).intValue());
 
-        Assert.assertEquals(functionStream, shade.getFunction());
+        Assertions.assertEquals(functionStream, shade.getFunction());
     }
 
     @Test
@@ -311,8 +310,8 @@ public class PdfShadingTest extends ExtendedITextTest {
 
         PdfDictionary radialShadingDictionary = initShadingDictionary(coordsArray, null, null, 21);
 
-        Exception e = Assert.assertThrows(PdfException.class, () -> PdfShading.makeShading(radialShadingDictionary));
-        Assert.assertEquals(KernelExceptionMessageConstant.UNEXPECTED_SHADING_TYPE, e.getMessage());
+        Exception e = Assertions.assertThrows(PdfException.class, () -> PdfShading.makeShading(radialShadingDictionary));
+        Assertions.assertEquals(KernelExceptionMessageConstant.UNEXPECTED_SHADING_TYPE, e.getMessage());
     }
 
     @Test
@@ -338,12 +337,12 @@ public class PdfShadingTest extends ExtendedITextTest {
 
         FreeFormGouraudShadedTriangleMesh shade = (FreeFormGouraudShadedTriangleMesh) PdfShading.makeShading(stream);
 
-        Assert.assertEquals(PdfName.DeviceRGB, shade.getColorSpace());
-        Assert.assertEquals(4, shade.getShadingType());
-        Assert.assertEquals(32, shade.getBitsPerCoordinate());
-        Assert.assertEquals(8, shade.getBitsPerComponent());
-        Assert.assertEquals(8, shade.getBitsPerFlag());
-        Assert.assertEquals(y, shade.getDecode().getAsNumber(2).intValue());
+        Assertions.assertEquals(PdfName.DeviceRGB, shade.getColorSpace());
+        Assertions.assertEquals(4, shade.getShadingType());
+        Assertions.assertEquals(32, shade.getBitsPerCoordinate());
+        Assertions.assertEquals(8, shade.getBitsPerComponent());
+        Assertions.assertEquals(8, shade.getBitsPerFlag());
+        Assertions.assertEquals(y, shade.getDecode().getAsNumber(2).intValue());
     }
 
     @Test
@@ -369,12 +368,12 @@ public class PdfShadingTest extends ExtendedITextTest {
         LatticeFormGouraudShadedTriangleMesh shade = (LatticeFormGouraudShadedTriangleMesh) PdfShading.makeShading(
                 stream);
 
-        Assert.assertEquals(PdfName.DeviceRGB, shade.getColorSpace());
-        Assert.assertEquals(5, shade.getShadingType());
-        Assert.assertEquals(32, shade.getBitsPerCoordinate());
-        Assert.assertEquals(8, shade.getBitsPerComponent());
-        Assert.assertEquals(2, shade.getVerticesPerRow());
-        Assert.assertEquals(y, shade.getDecode().getAsNumber(2).intValue());
+        Assertions.assertEquals(PdfName.DeviceRGB, shade.getColorSpace());
+        Assertions.assertEquals(5, shade.getShadingType());
+        Assertions.assertEquals(32, shade.getBitsPerCoordinate());
+        Assertions.assertEquals(8, shade.getBitsPerComponent());
+        Assertions.assertEquals(2, shade.getVerticesPerRow());
+        Assertions.assertEquals(y, shade.getDecode().getAsNumber(2).intValue());
     }
 
     @Test
@@ -430,12 +429,12 @@ public class PdfShadingTest extends ExtendedITextTest {
 
         CoonsPatchMesh shade = (CoonsPatchMesh) PdfShading.makeShading(stream);
 
-        Assert.assertEquals(PdfName.DeviceRGB, shade.getColorSpace());
-        Assert.assertEquals(6, shade.getShadingType());
-        Assert.assertEquals(32, shade.getBitsPerCoordinate());
-        Assert.assertEquals(8, shade.getBitsPerComponent());
-        Assert.assertEquals(8, shade.getBitsPerFlag());
-        Assert.assertEquals(y, shade.getDecode().getAsNumber(2).intValue());
+        Assertions.assertEquals(PdfName.DeviceRGB, shade.getColorSpace());
+        Assertions.assertEquals(6, shade.getShadingType());
+        Assertions.assertEquals(32, shade.getBitsPerCoordinate());
+        Assertions.assertEquals(8, shade.getBitsPerComponent());
+        Assertions.assertEquals(8, shade.getBitsPerFlag());
+        Assertions.assertEquals(y, shade.getDecode().getAsNumber(2).intValue());
     }
 
     @Test
@@ -500,12 +499,12 @@ public class PdfShadingTest extends ExtendedITextTest {
 
         TensorProductPatchMesh shade = (TensorProductPatchMesh) PdfShading.makeShading(stream);
 
-        Assert.assertEquals(PdfName.DeviceRGB, shade.getColorSpace());
-        Assert.assertEquals(7, shade.getShadingType());
-        Assert.assertEquals(32, shade.getBitsPerCoordinate());
-        Assert.assertEquals(8, shade.getBitsPerComponent());
-        Assert.assertEquals(8, shade.getBitsPerFlag());
-        Assert.assertEquals(y, shade.getDecode().getAsNumber(2).intValue());
+        Assertions.assertEquals(PdfName.DeviceRGB, shade.getColorSpace());
+        Assertions.assertEquals(7, shade.getShadingType());
+        Assertions.assertEquals(32, shade.getBitsPerCoordinate());
+        Assertions.assertEquals(8, shade.getBitsPerComponent());
+        Assertions.assertEquals(8, shade.getBitsPerFlag());
+        Assertions.assertEquals(y, shade.getDecode().getAsNumber(2).intValue());
     }
 
     @Test
@@ -513,9 +512,9 @@ public class PdfShadingTest extends ExtendedITextTest {
         PdfDictionary dict = new PdfDictionary();
         dict.put(PdfName.ShadingType, new PdfNumber(8));
         dict.put(PdfName.ColorSpace, PdfName.DeviceRGB);
-        Exception e = Assert.assertThrows(PdfException.class, () -> PdfShading.makeShading(dict));
+        Exception e = Assertions.assertThrows(PdfException.class, () -> PdfShading.makeShading(dict));
 
-        Assert.assertEquals(KernelExceptionMessageConstant.UNEXPECTED_SHADING_TYPE, e.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.UNEXPECTED_SHADING_TYPE, e.getMessage());
     }
 
     private static PdfDictionary initShadingDictionary(float[] coordsArray, float[] domainArray, boolean[] extendArray,

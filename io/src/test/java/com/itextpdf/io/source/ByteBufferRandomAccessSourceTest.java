@@ -24,7 +24,6 @@ package com.itextpdf.io.source;
 
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -38,11 +37,11 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class ByteBufferRandomAccessSourceTest extends ExtendedITextTest {
 
     private final static String SOURCE_FILE = "./src/test/resources/com/itextpdf/io/source/RAF.txt";
@@ -85,15 +84,15 @@ public class ByteBufferRandomAccessSourceTest extends ExtendedITextTest {
             IRandomAccessSource source = new ByteBufferRandomAccessSource(
                     channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size()));
 
-            Assert.assertEquals(13, source.length());
-            Assert.assertEquals(72, source.get(0));
-            Assert.assertEquals(44, source.get(5));
-            Assert.assertEquals(33, source.get(12));
-            Assert.assertEquals(100, source.get(11));
-            Assert.assertEquals(-1, source.get(13));
+            Assertions.assertEquals(13, source.length());
+            Assertions.assertEquals(72, source.get(0));
+            Assertions.assertEquals(44, source.get(5));
+            Assertions.assertEquals(33, source.get(12));
+            Assertions.assertEquals(100, source.get(11));
+            Assertions.assertEquals(-1, source.get(13));
 
             long position = Integer.MAX_VALUE + 1L;
-            Assert.assertThrows(IllegalArgumentException.class, () -> source.get(position));
+            Assertions.assertThrows(IllegalArgumentException.class, () -> source.get(position));
         }
     }
 
@@ -108,15 +107,15 @@ public class ByteBufferRandomAccessSourceTest extends ExtendedITextTest {
             byte[] expected = new byte[] {72, 101, 108, 108, 111, 44, 32, 119, 111, 114, 108, 100, 33};
             byte[] result = new byte[13];
             source.get(0, result, 0, 13);
-            Assert.assertArrayEquals(expected, result);
+            Assertions.assertArrayEquals(expected, result);
 
             expected = new byte[] {111, 44, 32, 119, 111, 114, 108, 100};
             result = new byte[8];
             source.get(4, result, 0, 8);
-            Assert.assertArrayEquals(expected, result);
+            Assertions.assertArrayEquals(expected, result);
 
             long position = Integer.MAX_VALUE + 1L;
-            Assert.assertThrows(IllegalArgumentException.class, () -> source.get(position, new byte[6], 2, 4));
+            Assertions.assertThrows(IllegalArgumentException.class, () -> source.get(position, new byte[6], 2, 4));
         }
     }
 
@@ -143,8 +142,8 @@ public class ByteBufferRandomAccessSourceTest extends ExtendedITextTest {
             List<Integer> result1 = future1.get();
             List<Integer> result2 = future2.get();
 
-            Assert.assertEquals(expected, result1);
-            Assert.assertEquals(expected, result2);
+            Assertions.assertEquals(expected, result1);
+            Assertions.assertEquals(expected, result2);
         }
     }
 

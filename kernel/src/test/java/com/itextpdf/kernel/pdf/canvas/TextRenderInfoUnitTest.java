@@ -32,14 +32,13 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.canvas.parser.data.TextRenderInfo;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 import java.util.Arrays;
 import java.util.Stack;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class TextRenderInfoUnitTest extends ExtendedITextTest {
 
     @Test
@@ -55,8 +54,8 @@ public class TextRenderInfoUnitTest extends ExtendedITextTest {
         float singleSpaceWidth = testTRI.getSingleSpaceWidth();
         float iWidth = testTRI.getUnscaledWidth();
 
-        Assert.assertTrue(iWidth < singleSpaceWidth);
-        Assert.assertEquals(6.671999931335449, singleSpaceWidth, 0);
+        Assertions.assertTrue(iWidth < singleSpaceWidth);
+        Assertions.assertEquals(6.671999931335449, singleSpaceWidth, 0);
     }
 
     private static PdfDictionary initFontDictWithNotSpecifiedWidthOfSpaceChar() {

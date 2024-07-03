@@ -26,22 +26,22 @@ import com.itextpdf.signatures.testutils.X509MockCertificate;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class VerificationOKTest extends ExtendedITextTest {
     @Test
     public void toStringTest() {
         VerificationOK verificationOK = new VerificationOK(null, CRLVerifier.class, "Mock verification");
-        Assert.assertEquals(CRLVerifier.class.getName() + ": Mock verification", verificationOK.toString());
+        Assertions.assertEquals(CRLVerifier.class.getName() + ": Mock verification", verificationOK.toString());
     }
 
     @Test
     public void toStringWithCertificateNotNullTest() {
         VerificationOK verificationOK = new VerificationOK(new X509MockCertificate(), CRLVerifier.class, "Mock verification");
         // NPE is thrown because getSubjectDN method returns null for X509MockCertificate class.
-        Assert.assertThrows(NullPointerException.class, () -> verificationOK.toString());
+        Assertions.assertThrows(NullPointerException.class, () -> verificationOK.toString());
     }
 }

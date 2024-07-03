@@ -37,21 +37,20 @@ import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfA2CheckerGlyphsTest extends ExtendedITextTest {
 
     private final PdfA2Checker pdfA2Checker = new PdfA2Checker(PdfAConformanceLevel.PDF_A_2B);
 
-    @Before
+    @BeforeEach
     public void before() {
         pdfA2Checker.setFullCheckMode(true);
     }
@@ -102,10 +101,10 @@ public class PdfA2CheckerGlyphsTest extends ExtendedITextTest {
 
             PdfFont font = createFontWithCharProcsAndEncodingDifferences(document, charProcs, differences);
 
-            Exception e = Assert.assertThrows(PdfAConformanceException.class,
+            Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                     () -> pdfA2Checker.checkFontGlyphs(font, null)
             );
-            Assert.assertEquals(PdfaExceptionMessageConstant.A_FORM_XOBJECT_DICTIONARY_SHALL_NOT_CONTAIN_SUBTYPE2_KEY_WITH_A_VALUE_OF_PS, e.getMessage());
+            Assertions.assertEquals(PdfaExceptionMessageConstant.A_FORM_XOBJECT_DICTIONARY_SHALL_NOT_CONTAIN_SUBTYPE2_KEY_WITH_A_VALUE_OF_PS, e.getMessage());
         }
     }
 

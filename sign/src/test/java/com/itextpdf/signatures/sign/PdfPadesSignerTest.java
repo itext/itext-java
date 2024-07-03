@@ -40,12 +40,11 @@ import com.itextpdf.signatures.testutils.client.TestCrlClient;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
 import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
-import org.junit.Assert;
-import org.junit.Assume;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -57,7 +56,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 
-@Category(BouncyCastleIntegrationTest.class)
+@Tag("BouncyCastleIntegrationTest")
 public class PdfPadesSignerTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
@@ -68,7 +67,7 @@ public class PdfPadesSignerTest extends ExtendedITextTest {
 
     private static final boolean FIPS_MODE = "BCFIPS".equals(FACTORY.getProviderName());
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         Security.addProvider(FACTORY.getProvider());
         createOrClearDestinationFolder(destinationFolder);
@@ -104,9 +103,9 @@ public class PdfPadesSignerTest extends ExtendedITextTest {
         padesSigner.setTemporaryDirectoryPath(destinationFolder + "newPdf.pdf");
         padesSigner.setOcspClient(ocspClient).setCrlClient(crlClient);
 
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> padesSigner.signWithBaselineLTProfile(signerProperties, signRsaChain, pks, testTsa));
-        Assert.assertEquals(MessageFormatUtil.format(SignExceptionMessageConstant.PATH_IS_NOT_DIRECTORY,
+        Assertions.assertEquals(MessageFormatUtil.format(SignExceptionMessageConstant.PATH_IS_NOT_DIRECTORY,
                 destinationFolder + "newPdf.pdf"), exception.getMessage());
     }
 
@@ -131,9 +130,9 @@ public class PdfPadesSignerTest extends ExtendedITextTest {
         PdfPadesSigner padesSigner = createPdfPadesSigner(srcFileName, outFileName);
         padesSigner.setOcspClient(ocspClient).setCrlClient(crlClient);
 
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> padesSigner.prolongSignatures(testTsa));
-        Assert.assertEquals(SignExceptionMessageConstant.NO_SIGNATURES_TO_PROLONG, exception.getMessage());
+        Assertions.assertEquals(SignExceptionMessageConstant.NO_SIGNATURES_TO_PROLONG, exception.getMessage());
     }
 
     @Test
@@ -160,9 +159,9 @@ public class PdfPadesSignerTest extends ExtendedITextTest {
 
         padesSigner.setTemporaryDirectoryPath(destinationFolder);
 
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> padesSigner.signWithBaselineLTProfile(signerProperties, signRsaChain, pks, testTsa));
-        Assert.assertEquals(SignExceptionMessageConstant.DEFAULT_CLIENTS_CANNOT_BE_CREATED, exception.getMessage());
+        Assertions.assertEquals(SignExceptionMessageConstant.DEFAULT_CLIENTS_CANNOT_BE_CREATED, exception.getMessage());
     }
 
     @Test
@@ -198,7 +197,7 @@ public class PdfPadesSignerTest extends ExtendedITextTest {
         padesSigner.signWithBaselineLTAProfile(signerProperties, signRsaChain, pks, testTsa);
 
         TestSignUtils.basicCheckSignedDoc(outFileName, "Signature1");
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
     }
 
     @Test
@@ -235,16 +234,16 @@ public class PdfPadesSignerTest extends ExtendedITextTest {
 
         padesSigner.setOcspClient(ocspClient).setCrlClient(crlClient);
 
-        Exception e = Assert.assertThrows(IOException.class,
+        Exception e = Assertions.assertThrows(IOException.class,
                 () -> padesSigner.signWithBaselineLTAProfile(signerProperties, signRsaChain, pks, testTsa));
-        Assert.assertEquals(MessageFormatUtil.format(
+        Assertions.assertEquals(MessageFormatUtil.format(
                 SignExceptionMessageConstant.TOKEN_ESTIMATION_SIZE_IS_NOT_LARGE_ENOUGH, 1024, 2780), e.getMessage());
     }
 
     @Test
     public void padesSignatureEd25519Test()
             throws IOException, GeneralSecurityException, AbstractOperatorCreationException, AbstractPKCSException {
-        Assume.assumeFalse(FACTORY.isInApprovedOnlyMode());
+        Assumptions.assumeFalse(FACTORY.isInApprovedOnlyMode());
         String fileName = "padesSignatureEd25519Test.pdf";
         String outFileName = destinationFolder + fileName;
         String cmpFileName = sourceFolder + "cmp_" + fileName;
@@ -258,13 +257,13 @@ public class PdfPadesSignerTest extends ExtendedITextTest {
         PdfPadesSigner padesSigner = createPdfPadesSigner(srcFileName, outFileName);
         padesSigner.signWithBaselineBProfile(signerProperties, signEdDSAChain, signEdDSAPrivateKey);
         TestSignUtils.basicCheckSignedDoc(outFileName, "Signature1");
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
     }
 
     @Test
     public void padesSignatureEd448Test()
             throws IOException, GeneralSecurityException, AbstractOperatorCreationException, AbstractPKCSException {
-        Assume.assumeFalse(FACTORY.isInApprovedOnlyMode());
+        Assumptions.assumeFalse(FACTORY.isInApprovedOnlyMode());
         String fileName = "padesSignatureEd448Test.pdf";
         String outFileName = destinationFolder + fileName;
         String cmpFileName = sourceFolder + "cmp_" + fileName;
@@ -278,12 +277,12 @@ public class PdfPadesSignerTest extends ExtendedITextTest {
         PdfPadesSigner padesSigner = createPdfPadesSigner(srcFileName, outFileName);
         if (FIPS_MODE) {
             // SHAKE256 is currently not supported in BCFIPS
-            Exception exception = Assert.assertThrows(NoSuchAlgorithmException.class,
+            Exception exception = Assertions.assertThrows(NoSuchAlgorithmException.class,
                     () -> padesSigner.signWithBaselineBProfile(signerProperties, signEdDSAChain, signEdDSAPrivateKey));
         } else {
             padesSigner.signWithBaselineBProfile(signerProperties, signEdDSAChain, signEdDSAPrivateKey);
             TestSignUtils.basicCheckSignedDoc(outFileName, "Signature1");
-            Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
+            Assertions.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
         }
     }
 

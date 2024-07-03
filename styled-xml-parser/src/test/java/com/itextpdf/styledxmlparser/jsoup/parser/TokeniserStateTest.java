@@ -31,14 +31,13 @@ import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
 import com.itextpdf.styledxmlparser.jsoup.nodes.TextNode;
 import com.itextpdf.styledxmlparser.jsoup.select.Elements;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.util.Arrays;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class TokeniserStateTest extends ExtendedITextTest {
 
     final char[] whiteSpace = { '\t', '\n', '\r', '\f', ' ' };
@@ -54,7 +53,7 @@ public class TokeniserStateTest extends ExtendedITextTest {
         for (char[] array : arrays) {
             char[] copy = Arrays.copyOf(array, array.length);
             Arrays.sort(array);
-            Assert.assertArrayEquals(array, copy);
+            Assertions.assertArrayEquals(array, copy);
         }
     }
 
@@ -63,7 +62,7 @@ public class TokeniserStateTest extends ExtendedITextTest {
         String body = "<textarea>You&I</textarea>";
         Document doc = Jsoup.parse(body);
         Elements els = doc.select("textarea");
-        Assert.assertEquals("You&I", els.text());
+        Assertions.assertEquals("You&I", els.text());
     }
 
     @Test
@@ -72,7 +71,7 @@ public class TokeniserStateTest extends ExtendedITextTest {
             String body = MessageFormatUtil.format("<div{0}>test</div>", c);
             Document doc = Jsoup.parse(body);
             Elements els = doc.select("div");
-            Assert.assertEquals("test", els.text());
+            Assertions.assertEquals("test", els.text());
         }
     }
 
@@ -85,22 +84,22 @@ public class TokeniserStateTest extends ExtendedITextTest {
         body = "<div>hello world</";
         doc = Jsoup.parse(body);
         els = doc.select("div");
-        Assert.assertEquals("hello world</", els.text());
+        Assertions.assertEquals("hello world</", els.text());
 
         body = "<div>hello world</div>";
         doc = Jsoup.parse(body);
         els = doc.select("div");
-        Assert.assertEquals("hello world", els.text());
+        Assertions.assertEquals("hello world", els.text());
 
         body = "<div>fake</></div>";
         doc = Jsoup.parse(body);
         els = doc.select("div");
-        Assert.assertEquals("fake", els.text());
+        Assertions.assertEquals("fake", els.text());
 
         body = "<div>fake</?</div>";
         doc = Jsoup.parse(body);
         els = doc.select("div");
-        Assert.assertEquals("fake", els.text());
+        Assertions.assertEquals("fake", els.text());
     }
 
     @Test
@@ -112,17 +111,17 @@ public class TokeniserStateTest extends ExtendedITextTest {
         body = "<textarea><fake></textarea>";
         doc = Jsoup.parse(body);
         els = doc.select("textarea");
-        Assert.assertEquals("<fake>", els.text());
+        Assertions.assertEquals("<fake>", els.text());
 
         body = "<textarea><open";
         doc = Jsoup.parse(body);
         els = doc.select("textarea");
-        Assert.assertEquals("", els.text());
+        Assertions.assertEquals("", els.text());
 
         body = "<textarea>hello world</?fake</textarea>";
         doc = Jsoup.parse(body);
         els = doc.select("textarea");
-        Assert.assertEquals("hello world</?fake", els.text());
+        Assertions.assertEquals("hello world</?fake", els.text());
     }
 
     @Test
@@ -131,7 +130,7 @@ public class TokeniserStateTest extends ExtendedITextTest {
             String body = MessageFormatUtil.format("<textarea>data</textarea{0}>", c);
             Document doc = Jsoup.parse(body);
             Elements els = doc.select("textarea");
-            Assert.assertEquals("data", els.text());
+            Assertions.assertEquals("data", els.text());
         }
     }
 
@@ -142,10 +141,10 @@ public class TokeniserStateTest extends ExtendedITextTest {
 
         Element body = doc.body();
         Comment comment = (Comment) body.childNode(1);
-        Assert.assertEquals(" <table><tr><td></table> --! --- ", comment.getData());
+        Assertions.assertEquals(" <table><tr><td></table> --! --- ", comment.getData());
         Element p = body.child(1);
         TextNode text = (TextNode) p.childNode(0);
-        Assert.assertEquals("Hello", text.getWholeText());
+        Assertions.assertEquals("Hello", text.getWholeText());
     }
 
     @Test
@@ -155,10 +154,10 @@ public class TokeniserStateTest extends ExtendedITextTest {
 
         Element body = doc.body();
         Comment comment = (Comment) body.childNode(1);
-        Assert.assertEquals(" <table><tr><td></table> --!-", comment.getData());
+        Assertions.assertEquals(" <table><tr><td></table> --!-", comment.getData());
         Element p = body.child(1);
         TextNode text = (TextNode) p.childNode(0);
-        Assert.assertEquals("Hello", text.getWholeText());
+        Assertions.assertEquals("Hello", text.getWholeText());
     }
 
     @Test
@@ -176,7 +175,7 @@ public class TokeniserStateTest extends ExtendedITextTest {
                     };
                 for (String html : htmls) {
                     Document doc = Jsoup.parse(html);
-                    Assert.assertEquals(expectedOutput, doc.childNode(0).outerHtml());
+                    Assertions.assertEquals(expectedOutput, doc.childNode(0).outerHtml());
                 }
             }
         }
@@ -197,7 +196,7 @@ public class TokeniserStateTest extends ExtendedITextTest {
                     };
                 for (String html : htmls) {
                     Document doc = Jsoup.parse(html);
-                    Assert.assertEquals(expectedOutput, doc.childNode(0).outerHtml());
+                    Assertions.assertEquals(expectedOutput, doc.childNode(0).outerHtml());
                 }
             }
         }
@@ -217,7 +216,7 @@ public class TokeniserStateTest extends ExtendedITextTest {
                     };
                 for (String html : htmls) {
                     Document doc = Jsoup.parse(html);
-                    Assert.assertEquals(expectedOutput, doc.childNode(0).outerHtml());
+                    Assertions.assertEquals(expectedOutput, doc.childNode(0).outerHtml());
                 }
             }
         }
@@ -227,7 +226,7 @@ public class TokeniserStateTest extends ExtendedITextTest {
         // out of spec, but clear author intent
         String html = "<p\n<p<div id=one <span>Two";
         Document doc = Jsoup.parse(html);
-        Assert.assertEquals("<p></p><p></p><div id=\"one\"><span>Two</span></div>", TextUtil.stripNewlines(doc.body().html()));
+        Assertions.assertEquals("<p></p><p></p><div id=\"one\"><span>Two</span></div>", TextUtil.stripNewlines(doc.body().html()));
     }
 
     @Test
@@ -240,7 +239,7 @@ public class TokeniserStateTest extends ExtendedITextTest {
 
         Parser.parseFragment(paddedSnippet, null, "", errorList);
 
-        Assert.assertEquals(CharacterReader.readAheadLimit - 1, errorList.get(0).getPosition());
+        Assertions.assertEquals(CharacterReader.readAheadLimit - 1, errorList.get(0).getPosition());
     }
 
     @Test
@@ -261,7 +260,7 @@ public class TokeniserStateTest extends ExtendedITextTest {
 
         Parser.parseFragment(triggeringSnippet, null, "", errorList);
 
-        Assert.assertEquals(6, errorList.get(0).getPosition());
+        Assertions.assertEquals(6, errorList.get(0).getPosition());
     }
 
     @Test
@@ -271,7 +270,7 @@ public class TokeniserStateTest extends ExtendedITextTest {
 
         Parser.parseFragment(triggeringSnippet, null, "", errorList);
 
-        Assert.assertEquals(7, errorList.get(0).getPosition());
+        Assertions.assertEquals(7, errorList.get(0).getPosition());
     }
 
     @Test
@@ -281,35 +280,35 @@ public class TokeniserStateTest extends ExtendedITextTest {
 
         Parser.parseFragment(triggeringSnippet, null, "", errorList);
 
-        Assert.assertEquals(5, errorList.get(0).getPosition());
+        Assertions.assertEquals(5, errorList.get(0).getPosition());
     }
 
     @Test
     public void rcData() {
         Document doc = Jsoup.parse("<title>One \0Two</title>");
-        Assert.assertEquals("One �Two", doc.title());
+        Assertions.assertEquals("One �Two", doc.title());
     }
 
     @Test
     public void plaintext() {
         Document doc = Jsoup.parse("<div>One<plaintext><div>Two</plaintext>\0no < Return");
-        Assert.assertEquals("<html><head></head><body><div>One<plaintext>&lt;div&gt;Two&lt;/plaintext&gt;�no &lt; Return</plaintext></div></body></html>", TextUtil.stripNewlines(doc.html()));
+        Assertions.assertEquals("<html><head></head><body><div>One<plaintext>&lt;div&gt;Two&lt;/plaintext&gt;�no &lt; Return</plaintext></div></body></html>", TextUtil.stripNewlines(doc.html()));
     }
 
     @Test
     public void nullInTag() {
         Document doc = Jsoup.parse("<di\0v>One</di\0v>Two");
-        Assert.assertEquals("<di�v>\n One\n</di�v>Two", doc.body().html());
+        Assertions.assertEquals("<di�v>\n One\n</di�v>Two", doc.body().html());
     }
 
     @Test
     public void attributeValUnquoted() {
         Document doc = Jsoup.parse("<p name=foo&lt;bar>");
         Element p = doc.selectFirst("p");
-        Assert.assertEquals("foo<bar", p.attr("name"));
+        Assertions.assertEquals("foo<bar", p.attr("name"));
 
         doc = Jsoup.parse("<p foo=");
-        Assert.assertEquals("<p foo></p>", doc.body().html());
+        Assertions.assertEquals("<p foo></p>", doc.body().html());
     }
 
     @Test
@@ -317,8 +316,8 @@ public class TokeniserStateTest extends ExtendedITextTest {
         String body = "<textarea>data</textare >";
         ParseErrorList errorList = ParseErrorList.tracking(1);
         Parser.parseFragment(body, null, "", errorList);
-        Assert.assertEquals(1, errorList.size());
-        Assert.assertTrue(errorList.get(0).getErrorMessage()
+        Assertions.assertEquals(1, errorList.size());
+        Assertions.assertTrue(errorList.get(0).getErrorMessage()
                 .contains("Unexpected token"));
     }
 
@@ -327,7 +326,7 @@ public class TokeniserStateTest extends ExtendedITextTest {
         String body = "<textarea>data</textarea/>";
         Document doc = Jsoup.parse(body);
         Elements els = doc.select("textarea");
-        Assert.assertEquals("data", els.text());
+        Assertions.assertEquals("data", els.text());
     }
 
     @Test
@@ -335,8 +334,8 @@ public class TokeniserStateTest extends ExtendedITextTest {
         String body = "<textarea>data</textare/>";
         ParseErrorList errorList = ParseErrorList.tracking(1);
         Parser.parseFragment(body, null, "", errorList);
-        Assert.assertEquals(1, errorList.size());
-        Assert.assertTrue(errorList.get(0).getErrorMessage()
+        Assertions.assertEquals(1, errorList.size());
+        Assertions.assertTrue(errorList.get(0).getErrorMessage()
                 .contains("Unexpected token"));
     }
 
@@ -345,7 +344,7 @@ public class TokeniserStateTest extends ExtendedITextTest {
         String body = "<script><!-- text --></script>";
         ParseErrorList errorList = ParseErrorList.tracking(1);
         Parser.parseFragment(body, null, "", errorList);
-        Assert.assertEquals(0, errorList.size());
+        Assertions.assertEquals(0, errorList.size());
     }
 
     @Test
@@ -353,7 +352,7 @@ public class TokeniserStateTest extends ExtendedITextTest {
         String body = "<script><!- text --></script>";
         ParseErrorList errorList = ParseErrorList.tracking(1);
         Parser.parseFragment(body, null, "", errorList);
-        Assert.assertEquals(0, errorList.size());
+        Assertions.assertEquals(0, errorList.size());
     }
 
     @Test
@@ -361,8 +360,8 @@ public class TokeniserStateTest extends ExtendedITextTest {
         String body = "<script><!-- ";
         ParseErrorList errorList = ParseErrorList.tracking(1);
         Parser.parseFragment(body, null, "", errorList);
-        Assert.assertEquals(1, errorList.size());
-        Assert.assertTrue(errorList.get(0).getErrorMessage()
+        Assertions.assertEquals(1, errorList.size());
+        Assertions.assertTrue(errorList.get(0).getErrorMessage()
                 .contains("Unexpectedly reached end of file (EOF) in input state"));
     }
 
@@ -371,7 +370,7 @@ public class TokeniserStateTest extends ExtendedITextTest {
         String body = "<script><!--<</script>";
         ParseErrorList errorList = ParseErrorList.tracking(1);
         Parser.parseFragment(body, null, "", errorList);
-        Assert.assertEquals(0, errorList.size());
+        Assertions.assertEquals(0, errorList.size());
     }
 
     @Test
@@ -379,8 +378,8 @@ public class TokeniserStateTest extends ExtendedITextTest {
         String body = "<script><!--a\0";
         ParseErrorList errorList = ParseErrorList.tracking(1);
         Parser.parseFragment(body, null, "", errorList);
-        Assert.assertEquals(1, errorList.size());
-        Assert.assertTrue(errorList.get(0).getErrorMessage()
+        Assertions.assertEquals(1, errorList.size());
+        Assertions.assertTrue(errorList.get(0).getErrorMessage()
                 .contains("Unexpected character"));
     }
 
@@ -389,8 +388,8 @@ public class TokeniserStateTest extends ExtendedITextTest {
         String body = "<script><!-- -";
         ParseErrorList errorList = ParseErrorList.tracking(1);
         Parser.parseFragment(body, null, "", errorList);
-        Assert.assertEquals(1, errorList.size());
-        Assert.assertTrue(errorList.get(0).getErrorMessage()
+        Assertions.assertEquals(1, errorList.size());
+        Assertions.assertTrue(errorList.get(0).getErrorMessage()
                 .contains("Unexpectedly reached end of file (EOF) in input state"));
     }
 
@@ -399,7 +398,7 @@ public class TokeniserStateTest extends ExtendedITextTest {
         String body = "<script><!-- -<</script>";
         ParseErrorList errorList = ParseErrorList.tracking(1);
         Parser.parseFragment(body, null, "", errorList);
-        Assert.assertEquals(0, errorList.size());
+        Assertions.assertEquals(0, errorList.size());
     }
 
     @Test
@@ -407,8 +406,8 @@ public class TokeniserStateTest extends ExtendedITextTest {
         String body = "<script><!-- -\0";
         ParseErrorList errorList = ParseErrorList.tracking(1);
         Parser.parseFragment(body, null, "", errorList);
-        Assert.assertEquals(1, errorList.size());
-        Assert.assertTrue(errorList.get(0).getErrorMessage()
+        Assertions.assertEquals(1, errorList.size());
+        Assertions.assertTrue(errorList.get(0).getErrorMessage()
                 .contains("Unexpected character"));
     }
 
@@ -417,8 +416,8 @@ public class TokeniserStateTest extends ExtendedITextTest {
         String body = "<script><!-- --";
         ParseErrorList errorList = ParseErrorList.tracking(1);
         Parser.parseFragment(body, null, "", errorList);
-        Assert.assertEquals(1, errorList.size());
-        Assert.assertTrue(errorList.get(0).getErrorMessage()
+        Assertions.assertEquals(1, errorList.size());
+        Assertions.assertTrue(errorList.get(0).getErrorMessage()
                 .contains("Unexpectedly reached end of file (EOF) in input state"));
     }
 
@@ -427,7 +426,7 @@ public class TokeniserStateTest extends ExtendedITextTest {
         String body = "<script><!-- --<</script>";
         ParseErrorList errorList = ParseErrorList.tracking(1);
         Parser.parseFragment(body, null, "", errorList);
-        Assert.assertEquals(0, errorList.size());
+        Assertions.assertEquals(0, errorList.size());
     }
 
     @Test
@@ -435,8 +434,8 @@ public class TokeniserStateTest extends ExtendedITextTest {
         String body = "<script><!-- --\0";
         ParseErrorList errorList = ParseErrorList.tracking(1);
         Parser.parseFragment(body, null, "", errorList);
-        Assert.assertEquals(1, errorList.size());
-        Assert.assertTrue(errorList.get(0).getErrorMessage()
+        Assertions.assertEquals(1, errorList.size());
+        Assertions.assertTrue(errorList.get(0).getErrorMessage()
                 .contains("Unexpected character"));
     }
 
@@ -445,7 +444,7 @@ public class TokeniserStateTest extends ExtendedITextTest {
         String body = "<script><!-- --</---></script>";
         ParseErrorList errorList = ParseErrorList.tracking(1);
         Parser.parseFragment(body, null, "", errorList);
-        Assert.assertEquals(0, errorList.size());
+        Assertions.assertEquals(0, errorList.size());
     }
 
     @Test
@@ -453,8 +452,8 @@ public class TokeniserStateTest extends ExtendedITextTest {
         String body = "<script><!--<script><\0!-";
         ParseErrorList errorList = ParseErrorList.tracking(1);
         Parser.parseFragment(body, null, "", errorList);
-        Assert.assertEquals(1, errorList.size());
-        Assert.assertTrue(errorList.get(0).getErrorMessage()
+        Assertions.assertEquals(1, errorList.size());
+        Assertions.assertTrue(errorList.get(0).getErrorMessage()
                 .contains("Unexpected character"));
     }
 
@@ -463,8 +462,8 @@ public class TokeniserStateTest extends ExtendedITextTest {
         String body = "<script><!--<script><!-";
         ParseErrorList errorList = ParseErrorList.tracking(1);
         Parser.parseFragment(body, null, "", errorList);
-        Assert.assertEquals(1, errorList.size());
-        Assert.assertTrue(errorList.get(0).getErrorMessage()
+        Assertions.assertEquals(1, errorList.size());
+        Assertions.assertTrue(errorList.get(0).getErrorMessage()
                 .contains("Unexpectedly reached end of file (EOF) in input state"));
     }
 
@@ -473,7 +472,7 @@ public class TokeniserStateTest extends ExtendedITextTest {
         String body = "<script><!--<script><!-- --></script>";
         ParseErrorList errorList = ParseErrorList.tracking(1);
         Parser.parseFragment(body, null, "", errorList);
-        Assert.assertEquals(0, errorList.size());
+        Assertions.assertEquals(0, errorList.size());
     }
 
     @Test
@@ -481,7 +480,7 @@ public class TokeniserStateTest extends ExtendedITextTest {
         String body = "<script><!--<script><!-< --></script>";
         ParseErrorList errorList = ParseErrorList.tracking(1);
         Parser.parseFragment(body, null, "", errorList);
-        Assert.assertEquals(0, errorList.size());
+        Assertions.assertEquals(0, errorList.size());
     }
 
     @Test
@@ -489,8 +488,8 @@ public class TokeniserStateTest extends ExtendedITextTest {
         String body = "<script><!--<script><!-\0 --></script>";
         ParseErrorList errorList = ParseErrorList.tracking(1);
         Parser.parseFragment(body, null, "", errorList);
-        Assert.assertEquals(1, errorList.size());
-        Assert.assertTrue(errorList.get(0).getErrorMessage()
+        Assertions.assertEquals(1, errorList.size());
+        Assertions.assertTrue(errorList.get(0).getErrorMessage()
                 .contains("Unexpected character"));
     }
 
@@ -499,8 +498,8 @@ public class TokeniserStateTest extends ExtendedITextTest {
         String body = "<script><!--<script><!-";
         ParseErrorList errorList = ParseErrorList.tracking(1);
         Parser.parseFragment(body, null, "", errorList);
-        Assert.assertEquals(1, errorList.size());
-        Assert.assertTrue(errorList.get(0).getErrorMessage()
+        Assertions.assertEquals(1, errorList.size());
+        Assertions.assertTrue(errorList.get(0).getErrorMessage()
                 .contains("Unexpectedly reached end of file (EOF) in input state"));
     }
 
@@ -509,7 +508,7 @@ public class TokeniserStateTest extends ExtendedITextTest {
         String body = "<script><!--<script><!-aaa --></script>";
         ParseErrorList errorList = ParseErrorList.tracking(1);
         Parser.parseFragment(body, null, "", errorList);
-        Assert.assertEquals(0, errorList.size());
+        Assertions.assertEquals(0, errorList.size());
     }
 
     @Test
@@ -517,7 +516,7 @@ public class TokeniserStateTest extends ExtendedITextTest {
         String body = "<script><!--<script><!--- --></script>";
         ParseErrorList errorList = ParseErrorList.tracking(1);
         Parser.parseFragment(body, null, "", errorList);
-        Assert.assertEquals(0, errorList.size());
+        Assertions.assertEquals(0, errorList.size());
     }
 
     @Test
@@ -525,7 +524,7 @@ public class TokeniserStateTest extends ExtendedITextTest {
         String body = "<script><!--<script><!--< --></script>";
         ParseErrorList errorList = ParseErrorList.tracking(1);
         Parser.parseFragment(body, null, "", errorList);
-        Assert.assertEquals(0, errorList.size());
+        Assertions.assertEquals(0, errorList.size());
     }
 
     @Test
@@ -533,8 +532,8 @@ public class TokeniserStateTest extends ExtendedITextTest {
         String body = "<script><!--<script><!--\0 --></script>";
         ParseErrorList errorList = ParseErrorList.tracking(1);
         Parser.parseFragment(body, null, "", errorList);
-        Assert.assertEquals(1, errorList.size());
-        Assert.assertTrue(errorList.get(0).getErrorMessage()
+        Assertions.assertEquals(1, errorList.size());
+        Assertions.assertTrue(errorList.get(0).getErrorMessage()
                 .contains("Unexpected character"));
     }
 
@@ -543,8 +542,8 @@ public class TokeniserStateTest extends ExtendedITextTest {
         String body = "<script><!--<script><!--";
         ParseErrorList errorList = ParseErrorList.tracking(1);
         Parser.parseFragment(body, null, "", errorList);
-        Assert.assertEquals(1, errorList.size());
-        Assert.assertTrue(errorList.get(0).getErrorMessage()
+        Assertions.assertEquals(1, errorList.size());
+        Assertions.assertTrue(errorList.get(0).getErrorMessage()
                 .contains("Unexpectedly reached end of file (EOF) in input state"));
     }
 
@@ -553,7 +552,7 @@ public class TokeniserStateTest extends ExtendedITextTest {
         String body = "<script><!--<script><!--aaa --></script>";
         ParseErrorList errorList = ParseErrorList.tracking(1);
         Parser.parseFragment(body, null, "", errorList);
-        Assert.assertEquals(0, errorList.size());
+        Assertions.assertEquals(0, errorList.size());
     }
 
     @Test
@@ -561,8 +560,8 @@ public class TokeniserStateTest extends ExtendedITextTest {
         String body = "<p name< />";
         ParseErrorList errorList = ParseErrorList.tracking(1);
         Parser.parseFragment(body, null, "", errorList);
-        Assert.assertEquals(1, errorList.size());
-        Assert.assertTrue(errorList.get(0).getErrorMessage()
+        Assertions.assertEquals(1, errorList.size());
+        Assertions.assertTrue(errorList.get(0).getErrorMessage()
                 .contains("Unexpected character"));
     }
 
@@ -571,7 +570,7 @@ public class TokeniserStateTest extends ExtendedITextTest {
         String body = "<p name > />";
         ParseErrorList errorList = ParseErrorList.tracking(1);
         Parser.parseFragment(body, null, "", errorList);
-        Assert.assertEquals(0, errorList.size());
+        Assertions.assertEquals(0, errorList.size());
     }
 
     @Test
@@ -579,8 +578,8 @@ public class TokeniserStateTest extends ExtendedITextTest {
         String body = "<p name \0 />";
         ParseErrorList errorList = ParseErrorList.tracking(1);
         Parser.parseFragment(body, null, "", errorList);
-        Assert.assertEquals(1, errorList.size());
-        Assert.assertTrue(errorList.get(0).getErrorMessage()
+        Assertions.assertEquals(1, errorList.size());
+        Assertions.assertTrue(errorList.get(0).getErrorMessage()
                 .contains("Unexpected character"));
     }
 
@@ -589,8 +588,8 @@ public class TokeniserStateTest extends ExtendedITextTest {
         String body = "<p name ";
         ParseErrorList errorList = ParseErrorList.tracking(1);
         Parser.parseFragment(body, null, "", errorList);
-        Assert.assertEquals(1, errorList.size());
-        Assert.assertTrue(errorList.get(0).getErrorMessage()
+        Assertions.assertEquals(1, errorList.size());
+        Assertions.assertTrue(errorList.get(0).getErrorMessage()
                 .contains("Unexpectedly reached end of file (EOF) in input state"));
     }
 
@@ -599,8 +598,8 @@ public class TokeniserStateTest extends ExtendedITextTest {
         String body = "<p name <";
         ParseErrorList errorList = ParseErrorList.tracking(1);
         Parser.parseFragment(body, null, "", errorList);
-        Assert.assertEquals(1, errorList.size());
-        Assert.assertTrue(errorList.get(0).getErrorMessage()
+        Assertions.assertEquals(1, errorList.size());
+        Assertions.assertTrue(errorList.get(0).getErrorMessage()
                 .contains("Unexpected character"));
     }
 
@@ -609,8 +608,8 @@ public class TokeniserStateTest extends ExtendedITextTest {
         String body = "<p name=></p>";
         ParseErrorList errorList = ParseErrorList.tracking(1);
         Parser.parseFragment(body, null, "", errorList);
-        Assert.assertEquals(1, errorList.size());
-        Assert.assertTrue(errorList.get(0).getErrorMessage()
+        Assertions.assertEquals(1, errorList.size());
+        Assertions.assertTrue(errorList.get(0).getErrorMessage()
                 .contains("Unexpected character"));
     }
 
@@ -619,8 +618,8 @@ public class TokeniserStateTest extends ExtendedITextTest {
         String body = "<p name=<</p>";
         ParseErrorList errorList = ParseErrorList.tracking(1);
         Parser.parseFragment(body, null, "", errorList);
-        Assert.assertEquals(1, errorList.size());
-        Assert.assertTrue(errorList.get(0).getErrorMessage()
+        Assertions.assertEquals(1, errorList.size());
+        Assertions.assertTrue(errorList.get(0).getErrorMessage()
                 .contains("Unexpected character"));
     }
 
@@ -629,8 +628,8 @@ public class TokeniserStateTest extends ExtendedITextTest {
         String body = "<p name=\"\0\"></p>";
         ParseErrorList errorList = ParseErrorList.tracking(1);
         Parser.parseFragment(body, null, "", errorList);
-        Assert.assertEquals(1, errorList.size());
-        Assert.assertTrue(errorList.get(0).getErrorMessage()
+        Assertions.assertEquals(1, errorList.size());
+        Assertions.assertTrue(errorList.get(0).getErrorMessage()
                 .contains("Unexpected character"));
     }
 
@@ -639,8 +638,8 @@ public class TokeniserStateTest extends ExtendedITextTest {
         String body = "<p name='\0'></p>";
         ParseErrorList errorList = ParseErrorList.tracking(1);
         Parser.parseFragment(body, null, "", errorList);
-        Assert.assertEquals(1, errorList.size());
-        Assert.assertTrue(errorList.get(0).getErrorMessage()
+        Assertions.assertEquals(1, errorList.size());
+        Assertions.assertTrue(errorList.get(0).getErrorMessage()
                 .contains("Unexpected character"));
     }
 
@@ -649,7 +648,7 @@ public class TokeniserStateTest extends ExtendedITextTest {
         String body = "<p name=&a></p>";
         ParseErrorList errorList = ParseErrorList.tracking(1);
         Parser.parseFragment(body, null, "", errorList);
-        Assert.assertEquals(0, errorList.size());
+        Assertions.assertEquals(0, errorList.size());
     }
 
     @Test
@@ -657,8 +656,8 @@ public class TokeniserStateTest extends ExtendedITextTest {
         String body = "<p name=a\0></p>";
         ParseErrorList errorList = ParseErrorList.tracking(1);
         Parser.parseFragment(body, null, "", errorList);
-        Assert.assertEquals(1, errorList.size());
-        Assert.assertTrue(errorList.get(0).getErrorMessage()
+        Assertions.assertEquals(1, errorList.size());
+        Assertions.assertTrue(errorList.get(0).getErrorMessage()
                 .contains("Unexpected character"));
     }
 
@@ -667,79 +666,79 @@ public class TokeniserStateTest extends ExtendedITextTest {
         String body = "<p name=a";
         ParseErrorList errorList = ParseErrorList.tracking(1);
         Parser.parseFragment(body, null, "", errorList);
-        Assert.assertEquals(1, errorList.size());
-        Assert.assertTrue(errorList.get(0).getErrorMessage()
+        Assertions.assertEquals(1, errorList.size());
+        Assertions.assertTrue(errorList.get(0).getErrorMessage()
                 .contains("Unexpectedly reached end of file (EOF) in input state"));
     }
 
     @Test
     public void tokeniserStateToStringTest() {
-        Assert.assertEquals("Data", TokeniserState.Data.toString());
-        Assert.assertEquals("CharacterReferenceInData", TokeniserState.CharacterReferenceInData.toString());
-        Assert.assertEquals("Rcdata", TokeniserState.Rcdata.toString());
-        Assert.assertEquals("CharacterReferenceInRcdata", TokeniserState.CharacterReferenceInRcdata.toString());
-        Assert.assertEquals("Rawtext", TokeniserState.Rawtext.toString());
-        Assert.assertEquals("ScriptData", TokeniserState.ScriptData.toString());
-        Assert.assertEquals("PLAINTEXT", TokeniserState.PLAINTEXT.toString());
-        Assert.assertEquals("TagOpen", TokeniserState.TagOpen.toString());
-        Assert.assertEquals("EndTagOpen", TokeniserState.EndTagOpen.toString());
-        Assert.assertEquals("TagName", TokeniserState.TagName.toString());
-        Assert.assertEquals("RcdataLessthanSign", TokeniserState.RcdataLessthanSign.toString());
-        Assert.assertEquals("RCDATAEndTagOpen", TokeniserState.RCDATAEndTagOpen.toString());
-        Assert.assertEquals("RCDATAEndTagName", TokeniserState.RCDATAEndTagName.toString());
-        Assert.assertEquals("RawtextLessthanSign", TokeniserState.RawtextLessthanSign.toString());
-        Assert.assertEquals("RawtextEndTagOpen", TokeniserState.RawtextEndTagOpen.toString());
-        Assert.assertEquals("RawtextEndTagName", TokeniserState.RawtextEndTagName.toString());
-        Assert.assertEquals("ScriptDataLessthanSign", TokeniserState.ScriptDataLessthanSign.toString());
-        Assert.assertEquals("ScriptDataEndTagOpen", TokeniserState.ScriptDataEndTagOpen.toString());
-        Assert.assertEquals("ScriptDataEndTagName", TokeniserState.ScriptDataEndTagName.toString());
-        Assert.assertEquals("ScriptDataEscapeStart", TokeniserState.ScriptDataEscapeStart.toString());
-        Assert.assertEquals("ScriptDataEscapeStartDash", TokeniserState.ScriptDataEscapeStartDash.toString());
-        Assert.assertEquals("ScriptDataEscaped", TokeniserState.ScriptDataEscaped.toString());
-        Assert.assertEquals("ScriptDataEscapedDash", TokeniserState.ScriptDataEscapedDash.toString());
-        Assert.assertEquals("ScriptDataEscapedDashDash", TokeniserState.ScriptDataEscapedDashDash.toString());
-        Assert.assertEquals("ScriptDataEscapedLessthanSign", TokeniserState.ScriptDataEscapedLessthanSign.toString());
-        Assert.assertEquals("ScriptDataEscapedEndTagOpen", TokeniserState.ScriptDataEscapedEndTagOpen.toString());
-        Assert.assertEquals("ScriptDataEscapedEndTagName", TokeniserState.ScriptDataEscapedEndTagName.toString());
-        Assert.assertEquals("ScriptDataDoubleEscapeStart", TokeniserState.ScriptDataDoubleEscapeStart.toString());
-        Assert.assertEquals("ScriptDataDoubleEscaped", TokeniserState.ScriptDataDoubleEscaped.toString());
-        Assert.assertEquals("ScriptDataDoubleEscapedDash", TokeniserState.ScriptDataDoubleEscapedDash.toString());
-        Assert.assertEquals("ScriptDataDoubleEscapedDashDash", TokeniserState.ScriptDataDoubleEscapedDashDash.toString());
-        Assert.assertEquals("ScriptDataDoubleEscapedLessthanSign", TokeniserState.ScriptDataDoubleEscapedLessthanSign.toString());
-        Assert.assertEquals("ScriptDataDoubleEscapeEnd", TokeniserState.ScriptDataDoubleEscapeEnd.toString());
-        Assert.assertEquals("BeforeAttributeName", TokeniserState.BeforeAttributeName.toString());
-        Assert.assertEquals("AttributeName", TokeniserState.AttributeName.toString());
-        Assert.assertEquals("AfterAttributeName", TokeniserState.AfterAttributeName.toString());
-        Assert.assertEquals("BeforeAttributeValue", TokeniserState.BeforeAttributeValue.toString());
-        Assert.assertEquals("AttributeValue_doubleQuoted", TokeniserState.AttributeValue_doubleQuoted.toString());
-        Assert.assertEquals("AttributeValue_singleQuoted", TokeniserState.AttributeValue_singleQuoted.toString());
-        Assert.assertEquals("AttributeValue_unquoted", TokeniserState.AttributeValue_unquoted.toString());
-        Assert.assertEquals("AfterAttributeValue_quoted", TokeniserState.AfterAttributeValue_quoted.toString());
-        Assert.assertEquals("SelfClosingStartTag", TokeniserState.SelfClosingStartTag.toString());
-        Assert.assertEquals("BogusComment", TokeniserState.BogusComment.toString());
-        Assert.assertEquals("MarkupDeclarationOpen", TokeniserState.MarkupDeclarationOpen.toString());
-        Assert.assertEquals("CommentStart", TokeniserState.CommentStart.toString());
-        Assert.assertEquals("CommentStartDash", TokeniserState.CommentStartDash.toString());
-        Assert.assertEquals("Comment", TokeniserState.Comment.toString());
-        Assert.assertEquals("CommentEndDash", TokeniserState.CommentEndDash.toString());
-        Assert.assertEquals("CommentEnd", TokeniserState.CommentEnd.toString());
-        Assert.assertEquals("CommentEndBang", TokeniserState.CommentEndBang.toString());
-        Assert.assertEquals("Doctype", TokeniserState.Doctype.toString());
-        Assert.assertEquals("BeforeDoctypeName", TokeniserState.BeforeDoctypeName.toString());
-        Assert.assertEquals("DoctypeName", TokeniserState.DoctypeName.toString());
-        Assert.assertEquals("AfterDoctypeName", TokeniserState.AfterDoctypeName.toString());
-        Assert.assertEquals("AfterDoctypePublicKeyword", TokeniserState.AfterDoctypePublicKeyword.toString());
-        Assert.assertEquals("BeforeDoctypePublicIdentifier", TokeniserState.BeforeDoctypePublicIdentifier.toString());
-        Assert.assertEquals("DoctypePublicIdentifier_doubleQuoted", TokeniserState.DoctypePublicIdentifier_doubleQuoted.toString());
-        Assert.assertEquals("DoctypePublicIdentifier_singleQuoted", TokeniserState.DoctypePublicIdentifier_singleQuoted.toString());
-        Assert.assertEquals("AfterDoctypePublicIdentifier", TokeniserState.AfterDoctypePublicIdentifier.toString());
-        Assert.assertEquals("BetweenDoctypePublicAndSystemIdentifiers", TokeniserState.BetweenDoctypePublicAndSystemIdentifiers.toString());
-        Assert.assertEquals("AfterDoctypeSystemKeyword", TokeniserState.AfterDoctypeSystemKeyword.toString());
-        Assert.assertEquals("BeforeDoctypeSystemIdentifier", TokeniserState.BeforeDoctypeSystemIdentifier.toString());
-        Assert.assertEquals("DoctypeSystemIdentifier_doubleQuoted", TokeniserState.DoctypeSystemIdentifier_doubleQuoted.toString());
-        Assert.assertEquals("DoctypeSystemIdentifier_singleQuoted", TokeniserState.DoctypeSystemIdentifier_singleQuoted.toString());
-        Assert.assertEquals("AfterDoctypeSystemIdentifier", TokeniserState.AfterDoctypeSystemIdentifier.toString());
-        Assert.assertEquals("BogusDoctype", TokeniserState.BogusDoctype.toString());
-        Assert.assertEquals("CdataSection", TokeniserState.CdataSection.toString());
+        Assertions.assertEquals("Data", TokeniserState.Data.toString());
+        Assertions.assertEquals("CharacterReferenceInData", TokeniserState.CharacterReferenceInData.toString());
+        Assertions.assertEquals("Rcdata", TokeniserState.Rcdata.toString());
+        Assertions.assertEquals("CharacterReferenceInRcdata", TokeniserState.CharacterReferenceInRcdata.toString());
+        Assertions.assertEquals("Rawtext", TokeniserState.Rawtext.toString());
+        Assertions.assertEquals("ScriptData", TokeniserState.ScriptData.toString());
+        Assertions.assertEquals("PLAINTEXT", TokeniserState.PLAINTEXT.toString());
+        Assertions.assertEquals("TagOpen", TokeniserState.TagOpen.toString());
+        Assertions.assertEquals("EndTagOpen", TokeniserState.EndTagOpen.toString());
+        Assertions.assertEquals("TagName", TokeniserState.TagName.toString());
+        Assertions.assertEquals("RcdataLessthanSign", TokeniserState.RcdataLessthanSign.toString());
+        Assertions.assertEquals("RCDATAEndTagOpen", TokeniserState.RCDATAEndTagOpen.toString());
+        Assertions.assertEquals("RCDATAEndTagName", TokeniserState.RCDATAEndTagName.toString());
+        Assertions.assertEquals("RawtextLessthanSign", TokeniserState.RawtextLessthanSign.toString());
+        Assertions.assertEquals("RawtextEndTagOpen", TokeniserState.RawtextEndTagOpen.toString());
+        Assertions.assertEquals("RawtextEndTagName", TokeniserState.RawtextEndTagName.toString());
+        Assertions.assertEquals("ScriptDataLessthanSign", TokeniserState.ScriptDataLessthanSign.toString());
+        Assertions.assertEquals("ScriptDataEndTagOpen", TokeniserState.ScriptDataEndTagOpen.toString());
+        Assertions.assertEquals("ScriptDataEndTagName", TokeniserState.ScriptDataEndTagName.toString());
+        Assertions.assertEquals("ScriptDataEscapeStart", TokeniserState.ScriptDataEscapeStart.toString());
+        Assertions.assertEquals("ScriptDataEscapeStartDash", TokeniserState.ScriptDataEscapeStartDash.toString());
+        Assertions.assertEquals("ScriptDataEscaped", TokeniserState.ScriptDataEscaped.toString());
+        Assertions.assertEquals("ScriptDataEscapedDash", TokeniserState.ScriptDataEscapedDash.toString());
+        Assertions.assertEquals("ScriptDataEscapedDashDash", TokeniserState.ScriptDataEscapedDashDash.toString());
+        Assertions.assertEquals("ScriptDataEscapedLessthanSign", TokeniserState.ScriptDataEscapedLessthanSign.toString());
+        Assertions.assertEquals("ScriptDataEscapedEndTagOpen", TokeniserState.ScriptDataEscapedEndTagOpen.toString());
+        Assertions.assertEquals("ScriptDataEscapedEndTagName", TokeniserState.ScriptDataEscapedEndTagName.toString());
+        Assertions.assertEquals("ScriptDataDoubleEscapeStart", TokeniserState.ScriptDataDoubleEscapeStart.toString());
+        Assertions.assertEquals("ScriptDataDoubleEscaped", TokeniserState.ScriptDataDoubleEscaped.toString());
+        Assertions.assertEquals("ScriptDataDoubleEscapedDash", TokeniserState.ScriptDataDoubleEscapedDash.toString());
+        Assertions.assertEquals("ScriptDataDoubleEscapedDashDash", TokeniserState.ScriptDataDoubleEscapedDashDash.toString());
+        Assertions.assertEquals("ScriptDataDoubleEscapedLessthanSign", TokeniserState.ScriptDataDoubleEscapedLessthanSign.toString());
+        Assertions.assertEquals("ScriptDataDoubleEscapeEnd", TokeniserState.ScriptDataDoubleEscapeEnd.toString());
+        Assertions.assertEquals("BeforeAttributeName", TokeniserState.BeforeAttributeName.toString());
+        Assertions.assertEquals("AttributeName", TokeniserState.AttributeName.toString());
+        Assertions.assertEquals("AfterAttributeName", TokeniserState.AfterAttributeName.toString());
+        Assertions.assertEquals("BeforeAttributeValue", TokeniserState.BeforeAttributeValue.toString());
+        Assertions.assertEquals("AttributeValue_doubleQuoted", TokeniserState.AttributeValue_doubleQuoted.toString());
+        Assertions.assertEquals("AttributeValue_singleQuoted", TokeniserState.AttributeValue_singleQuoted.toString());
+        Assertions.assertEquals("AttributeValue_unquoted", TokeniserState.AttributeValue_unquoted.toString());
+        Assertions.assertEquals("AfterAttributeValue_quoted", TokeniserState.AfterAttributeValue_quoted.toString());
+        Assertions.assertEquals("SelfClosingStartTag", TokeniserState.SelfClosingStartTag.toString());
+        Assertions.assertEquals("BogusComment", TokeniserState.BogusComment.toString());
+        Assertions.assertEquals("MarkupDeclarationOpen", TokeniserState.MarkupDeclarationOpen.toString());
+        Assertions.assertEquals("CommentStart", TokeniserState.CommentStart.toString());
+        Assertions.assertEquals("CommentStartDash", TokeniserState.CommentStartDash.toString());
+        Assertions.assertEquals("Comment", TokeniserState.Comment.toString());
+        Assertions.assertEquals("CommentEndDash", TokeniserState.CommentEndDash.toString());
+        Assertions.assertEquals("CommentEnd", TokeniserState.CommentEnd.toString());
+        Assertions.assertEquals("CommentEndBang", TokeniserState.CommentEndBang.toString());
+        Assertions.assertEquals("Doctype", TokeniserState.Doctype.toString());
+        Assertions.assertEquals("BeforeDoctypeName", TokeniserState.BeforeDoctypeName.toString());
+        Assertions.assertEquals("DoctypeName", TokeniserState.DoctypeName.toString());
+        Assertions.assertEquals("AfterDoctypeName", TokeniserState.AfterDoctypeName.toString());
+        Assertions.assertEquals("AfterDoctypePublicKeyword", TokeniserState.AfterDoctypePublicKeyword.toString());
+        Assertions.assertEquals("BeforeDoctypePublicIdentifier", TokeniserState.BeforeDoctypePublicIdentifier.toString());
+        Assertions.assertEquals("DoctypePublicIdentifier_doubleQuoted", TokeniserState.DoctypePublicIdentifier_doubleQuoted.toString());
+        Assertions.assertEquals("DoctypePublicIdentifier_singleQuoted", TokeniserState.DoctypePublicIdentifier_singleQuoted.toString());
+        Assertions.assertEquals("AfterDoctypePublicIdentifier", TokeniserState.AfterDoctypePublicIdentifier.toString());
+        Assertions.assertEquals("BetweenDoctypePublicAndSystemIdentifiers", TokeniserState.BetweenDoctypePublicAndSystemIdentifiers.toString());
+        Assertions.assertEquals("AfterDoctypeSystemKeyword", TokeniserState.AfterDoctypeSystemKeyword.toString());
+        Assertions.assertEquals("BeforeDoctypeSystemIdentifier", TokeniserState.BeforeDoctypeSystemIdentifier.toString());
+        Assertions.assertEquals("DoctypeSystemIdentifier_doubleQuoted", TokeniserState.DoctypeSystemIdentifier_doubleQuoted.toString());
+        Assertions.assertEquals("DoctypeSystemIdentifier_singleQuoted", TokeniserState.DoctypeSystemIdentifier_singleQuoted.toString());
+        Assertions.assertEquals("AfterDoctypeSystemIdentifier", TokeniserState.AfterDoctypeSystemIdentifier.toString());
+        Assertions.assertEquals("BogusDoctype", TokeniserState.BogusDoctype.toString());
+        Assertions.assertEquals("CdataSection", TokeniserState.CdataSection.toString());
     }
 }

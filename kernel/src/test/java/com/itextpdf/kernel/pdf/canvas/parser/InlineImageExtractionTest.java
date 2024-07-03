@@ -36,7 +36,6 @@ import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs.Indexed;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -46,17 +45,17 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class InlineImageExtractionTest extends ExtendedITextTest {
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/canvas/parser/InlineImageExtractionTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/canvas/parser/InlineImageExtractionTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
@@ -72,11 +71,11 @@ public class InlineImageExtractionTest extends ExtendedITextTest {
 
         List<PdfStream> inlineImages = eventListener.getInlineImages();
 
-        Assert.assertEquals(1, inlineImages.size());
+        Assertions.assertEquals(1, inlineImages.size());
 
         byte[] imgBytes = inlineImages.get(0).getBytes();
         byte[] cmpImgBytes = Files.readAllBytes(Paths.get(sourceFolder, "imgtest.dat"));
-        Assert.assertArrayEquals(cmpImgBytes, imgBytes);
+        Assertions.assertArrayEquals(cmpImgBytes, imgBytes);
 
         PdfDictionary expectedDict = new PdfDictionary();
         expectedDict.put(PdfName.BitsPerComponent, new PdfNumber(8));
@@ -102,7 +101,7 @@ public class InlineImageExtractionTest extends ExtendedITextTest {
         Indexed expectedIndexedCs = new Indexed(PdfName.DeviceRGB, 255, new PdfString(indexedCsLookupData));
         expectedDict.put(PdfName.ColorSpace, expectedIndexedCs.getPdfObject());
 
-        Assert.assertTrue(new CompareTool().compareDictionaries(inlineImages.get(0), expectedDict));
+        Assertions.assertTrue(new CompareTool().compareDictionaries(inlineImages.get(0), expectedDict));
     }
 
     @Test
@@ -117,7 +116,7 @@ public class InlineImageExtractionTest extends ExtendedITextTest {
 
         byte[] cmpImgBytes = Files.readAllBytes(Paths.get(sourceFolder, "docWithInlineImageBytes.dat"));
 
-        Assert.assertArrayEquals(cmpImgBytes, data);
+        Assertions.assertArrayEquals(cmpImgBytes, data);
     }
 
     private static class InlineImageEventListener implements IEventListener {

@@ -32,27 +32,26 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class CreateImageStreamTest extends ExtendedITextTest {
 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/xobject/CreateImageStreamTest/";
     private static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/xobject/CreateImageStreamTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -88,7 +87,7 @@ public class CreateImageStreamTest extends ExtendedITextTest {
 
         pdfDocument.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(out, cmp, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(out, cmp, destinationFolder, "diff_"));
     }
 
     @Test
@@ -142,6 +141,6 @@ public class CreateImageStreamTest extends ExtendedITextTest {
                 .addXObjectFittedIntoRectangle(imageXObject, new Rectangle(0, 0, img.getWidth(), img.getHeight()));
         pdfDocument.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(out, cmp, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(out, cmp, destinationFolder, "diff_"));
     }
 }

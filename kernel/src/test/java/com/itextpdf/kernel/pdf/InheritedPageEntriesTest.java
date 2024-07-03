@@ -28,26 +28,25 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class InheritedPageEntriesTest extends ExtendedITextTest {
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/InheritedPageEntriesTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/InheritedPageEntriesTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -73,7 +72,7 @@ public class InheritedPageEntriesTest extends ExtendedITextTest {
 
         outFile.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outputFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outputFileName, cmpFileName, destinationFolder));
     }
 
     @Test
@@ -89,7 +88,7 @@ public class InheritedPageEntriesTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outputFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outputFileName, cmpFileName, destinationFolder));
     }
 
     @Test
@@ -109,7 +108,7 @@ public class InheritedPageEntriesTest extends ExtendedITextTest {
 
         pdfDoc2.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outputFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outputFileName, cmpFileName, destinationFolder));
     }
 
     @Test
@@ -120,7 +119,7 @@ public class InheritedPageEntriesTest extends ExtendedITextTest {
 
         PdfObject mediaBox = outFile.getPage(1).getPdfObject().get(PdfName.MediaBox);
         //Check if MediaBox in Page is absent
-        Assert.assertNull(mediaBox);
+        Assertions.assertNull(mediaBox);
 
         PdfArray array = outFile.getCatalog().getPdfObject().getAsDictionary(PdfName.Pages).getAsArray(PdfName.MediaBox);
         Rectangle rectangle = array.toRectangle();
@@ -129,7 +128,7 @@ public class InheritedPageEntriesTest extends ExtendedITextTest {
 
         outFile.close();
 
-        Assert.assertTrue(rectangle.equalsWithEpsilon(pageRect));
+        Assertions.assertTrue(rectangle.equalsWithEpsilon(pageRect));
     }
     
     @Test
@@ -140,7 +139,7 @@ public class InheritedPageEntriesTest extends ExtendedITextTest {
 
         PdfObject cropBox = outFile.getPage(1).getPdfObject().get(PdfName.CropBox);
         //Check if CropBox in Page is absent
-        Assert.assertNull(cropBox);
+        Assertions.assertNull(cropBox);
 
         PdfArray array = outFile.getCatalog().getPdfObject().getAsDictionary(PdfName.Pages).getAsArray(PdfName.CropBox);
         Rectangle rectangle = array.toRectangle();
@@ -149,6 +148,6 @@ public class InheritedPageEntriesTest extends ExtendedITextTest {
 
         outFile.close();
 
-        Assert.assertTrue(rectangle.equalsWithEpsilon(pageRect));
+        Assertions.assertTrue(rectangle.equalsWithEpsilon(pageRect));
     }
 }

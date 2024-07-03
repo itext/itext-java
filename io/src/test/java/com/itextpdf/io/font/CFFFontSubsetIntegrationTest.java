@@ -25,7 +25,6 @@ package com.itextpdf.io.font;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -36,11 +35,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class CFFFontSubsetIntegrationTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/font/CFFFontSubsetIntegrationTest/";
@@ -66,10 +65,10 @@ public class CFFFontSubsetIntegrationTest extends ExtendedITextTest {
                 subsetNotoSansCjkJpBoldCff(CJK_JP_BOLD_PATH, CJK_JP_BOLD_CFF_OFFSET, CJK_JP_BOLD_CFF_LENGTH, glyphsUsed);
 
         int expectedSubsetLength = 279337;
-        Assert.assertEquals(expectedSubsetLength, cffSubsetBytes.length);
+        Assertions.assertEquals(expectedSubsetLength, cffSubsetBytes.length);
 
         byte[] cmpBytes = Files.readAllBytes(Paths.get(cmpCff));
-        Assert.assertArrayEquals(cmpBytes, cffSubsetBytes);
+        Assertions.assertArrayEquals(cmpBytes, cffSubsetBytes);
     }
 
     @Test
@@ -87,10 +86,10 @@ public class CFFFontSubsetIntegrationTest extends ExtendedITextTest {
                 subsetNotoSansCjkJpBoldCff(CJK_JP_BOLD_PATH, CJK_JP_BOLD_CFF_OFFSET, CJK_JP_BOLD_CFF_LENGTH, glyphsUsed);
 
         int expectedSubsetLength = 365381;
-        Assert.assertEquals(expectedSubsetLength, cffSubsetBytes.length);
+        Assertions.assertEquals(expectedSubsetLength, cffSubsetBytes.length);
 
         byte[] cmpBytes = Files.readAllBytes(Paths.get(cmpCff));
-        Assert.assertArrayEquals(cmpBytes, cffSubsetBytes);
+        Assertions.assertArrayEquals(cmpBytes, cffSubsetBytes);
     }
 
     @Test
@@ -104,10 +103,10 @@ public class CFFFontSubsetIntegrationTest extends ExtendedITextTest {
                 subsetNotoSansCjkJpBoldCff(JP_REGULAR_PATH, JP_REGULAR_CFF_OFFSET, JP_REGULAR_CFF_LENGTH, glyphsUsed);
 
         int expectedSubsetLength = 121796;
-        Assert.assertEquals(expectedSubsetLength, cffSubsetBytes.length);
+        Assertions.assertEquals(expectedSubsetLength, cffSubsetBytes.length);
 
         byte[] cmpBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "subsetNotoSansJPRegularOneUsedGlyph.cff"));
-        Assert.assertArrayEquals(cmpBytes, cffSubsetBytes);
+        Assertions.assertArrayEquals(cmpBytes, cffSubsetBytes);
     }
 
     @Test
@@ -121,7 +120,7 @@ public class CFFFontSubsetIntegrationTest extends ExtendedITextTest {
         int expectedCharsetLength = 255;
         // skip over the format ID (1 byte) and the first SID (2 bytes)
         result.seek(result.fonts[0].charsetOffset + 3);
-        Assert.assertEquals(expectedCharsetLength - 2, result.getCard16());
+        Assertions.assertEquals(expectedCharsetLength - 2, result.getCard16());
     }
 
     private byte[] subsetNotoSansCjkJpBoldCff(String otfFile, int offsetToCff, int cffLength,

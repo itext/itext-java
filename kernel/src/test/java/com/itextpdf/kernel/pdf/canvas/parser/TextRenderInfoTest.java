@@ -32,7 +32,6 @@ import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.ITextExtractionStrategy;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.SimpleTextExtractionStrategy;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -40,11 +39,11 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class TextRenderInfoTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/parser/TextRenderInfoTest/";
@@ -78,7 +77,7 @@ public class TextRenderInfoTest extends ExtendedITextTest {
                         + "\u914d\u5f53\u8cb4\u65cf\u6307\u6570\u306e\u30d1\u30d5"
                         + "\u30a9\u30fc\u30de\u30f3\u30b9\u306f\u0053\uff06\u0050"
                         + "\u0035\u0030\u0030\u6307\u6570\u3092\u4e0a\u56de\u308b";
-        Assert.assertEquals(origText, result);
+        Assertions.assertEquals(origText, result);
     }
 
     @Test
@@ -92,10 +91,10 @@ public class TextRenderInfoTest extends ExtendedITextTest {
 
         processor.processPageContent(pdfDocument.getPage(FIRST_PAGE));
 
-        Assert.assertEquals(renderListener.getLineSegments().get(FIRST_ELEMENT_INDEX).getStartPoint().get(FIRST_ELEMENT_INDEX),
+        Assertions.assertEquals(renderListener.getLineSegments().get(FIRST_ELEMENT_INDEX).getStartPoint().get(FIRST_ELEMENT_INDEX),
                 origLineSegment.getStartPoint().get(FIRST_ELEMENT_INDEX), 1 / 2f);
 
-        Assert.assertEquals(renderListener.getLineSegments().get(FIRST_ELEMENT_INDEX).getEndPoint().get(FIRST_ELEMENT_INDEX),
+        Assertions.assertEquals(renderListener.getLineSegments().get(FIRST_ELEMENT_INDEX).getEndPoint().get(FIRST_ELEMENT_INDEX),
                 origLineSegment.getEndPoint().get(FIRST_ELEMENT_INDEX), 1 / 2f);
     }
 
@@ -110,7 +109,7 @@ public class TextRenderInfoTest extends ExtendedITextTest {
         ITextExtractionStrategy strategy = new SimpleTextExtractionStrategy();
 
         String result = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(FIRST_PAGE), strategy).trim();
-        Assert.assertEquals(expectedResult, result);
+        Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
@@ -123,7 +122,7 @@ public class TextRenderInfoTest extends ExtendedITextTest {
         ITextExtractionStrategy start = new SimpleTextExtractionStrategy();
 
         String result = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(FIRST_PAGE), start).trim();
-        Assert.assertEquals(expectedResult, result);
+        Assertions.assertEquals(expectedResult, result);
     }
 
     private static class TextPositionEventListener implements IEventListener {
@@ -171,8 +170,8 @@ public class TextRenderInfoTest extends ExtendedITextTest {
         }
 
         private void assertVectorsEqual(String message, Vector v1, Vector v2) {
-            Assert.assertEquals(message, v1.get(0), v2.get(0), 1 / 72f);
-            Assert.assertEquals(message, v1.get(1), v2.get(1), 1 / 72f);
+            Assertions.assertEquals(v1.get(0), v2.get(0), 1 / 72f, message);
+            Assertions.assertEquals(v1.get(1), v2.get(1), 1 / 72f, message);
         }
 
         @Override

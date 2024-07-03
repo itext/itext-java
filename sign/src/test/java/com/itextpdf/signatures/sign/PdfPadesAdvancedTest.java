@@ -29,7 +29,6 @@ import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationExcept
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.forms.form.element.SignatureFieldAppearance;
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -48,9 +47,6 @@ import com.itextpdf.signatures.testutils.client.AdvancedTestCrlClient;
 import com.itextpdf.signatures.testutils.client.AdvancedTestOcspClient;
 import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.LogMessage;
-import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -67,15 +63,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(Parameterized.class)
-@Category(BouncyCastleIntegrationTest.class)
+@Tag("BouncyCastleIntegrationTest")
 public class PdfPadesAdvancedTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/sign/PdfPadesAdvancedTest/certs/";
@@ -83,38 +77,14 @@ public class PdfPadesAdvancedTest extends ExtendedITextTest {
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/sign/PdfPadesAdvancedTest/";
 
     private static final char[] PASSWORD = "testpassphrase".toCharArray();
-    
-    private final String signingCertName;
-    private final String rootCertName;
-    private final Boolean isOcspRevoked;
-    private final String cmpFilePostfix;
-    
-    private final Integer amountOfCrlsForSign;
-    private final Integer amountOfOcspsForSign;
-    private final Integer amountOfCrlsForRoot;
-    private final Integer amountOfOcspsForRoot;
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         Security.addProvider(FACTORY.getProvider());
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
-    public PdfPadesAdvancedTest(Object signingCertName, Object rootCertName, Object isOcspRevoked, Object cmpFilePostfix,
-            Object amountOfCrlsForSign, Object amountOfOcspsForSign, Object amountOfCrlsForRoot, Object amountOfOcspsForRoot) {
-        this.signingCertName = (String) signingCertName;
-        this.rootCertName = (String) rootCertName;
-        this.isOcspRevoked = (Boolean) isOcspRevoked;
-        this.cmpFilePostfix = (String) cmpFilePostfix;
-        
-        this.amountOfCrlsForSign = (Integer) amountOfCrlsForSign;
-        this.amountOfOcspsForSign = (Integer) amountOfOcspsForSign;
-        this.amountOfCrlsForRoot = (Integer) amountOfCrlsForRoot;
-        this.amountOfOcspsForRoot = (Integer) amountOfOcspsForRoot;
-    }
-
-    @Parameterized.Parameters(name = "{3}: signing cert: {0}; root cert: {1}; revoked: {2}")
-    public static Iterable<Object[]> createParameters() {
+    public static Iterable<Object[]> CreateParameters() {
         List<Object[]> parameters = new ArrayList<>();
         parameters.addAll(createParametersUsingRootName("rootCertNoCrlNoOcsp", 0, 0));
         parameters.addAll(createParametersUsingRootName("rootCertCrlOcsp", 0, 1));
@@ -140,8 +110,11 @@ public class PdfPadesAdvancedTest extends ExtendedITextTest {
         );
     }
 
-    @Test
-    public void signWithAdvancedClientsTest()
+    @ParameterizedTest(name = "{3}: signing cert: {0}; root cert: {1}; revoked: {2}")
+    @MethodSource("CreateParameters")
+    public void signWithAdvancedClientsTest(String signingCertName, String rootCertName, Boolean isOcspRevoked,
+            String cmpFilePostfix, Integer amountOfCrlsForSign, Integer amountOfOcspsForSign,
+            Integer amountOfCrlsForRoot, Integer amountOfOcspsForRoot)
             throws IOException, GeneralSecurityException, AbstractOperatorCreationException, AbstractPKCSException, AbstractOCSPException {
         String srcFileName = SOURCE_FOLDER + "helloWorldDoc.pdf";
         String signCertFileName = CERTS_SRC + signingCertName;
@@ -191,9 +164,9 @@ public class PdfPadesAdvancedTest extends ExtendedITextTest {
         Certificate[] signRsaChain = new Certificate[] {signRsaCert, rootCert};
         if (signCertFileName.contains("NoOcspNoCrl") || (signCertFileName.contains("OcspNoCrl") && (boolean) isOcspRevoked)) {
             try {
-                Exception exception = Assert.assertThrows(PdfException.class,
+                Exception exception = Assertions.assertThrows(PdfException.class,
                         () -> padesSigner.signWithBaselineLTAProfile(signerProperties, signRsaChain, pks, testTsa));
-                Assert.assertEquals(SignExceptionMessageConstant.NO_REVOCATION_DATA_FOR_SIGNING_CERTIFICATE,
+                Assertions.assertEquals(SignExceptionMessageConstant.NO_REVOCATION_DATA_FOR_SIGNING_CERTIFICATE,
                         exception.getMessage());
             } finally {
                 outputStream.close();
@@ -202,12 +175,14 @@ public class PdfPadesAdvancedTest extends ExtendedITextTest {
             padesSigner.signWithBaselineLTAProfile(signerProperties, signRsaChain, pks, testTsa);
 
             TestSignUtils.basicCheckSignedDoc(new ByteArrayInputStream(outputStream.toByteArray()), "Signature1");
-            assertDss(outputStream, rootCert, signRsaCert, (X509Certificate) tsaChain[0], (X509Certificate) tsaChain[1]);
+            assertDss(outputStream, rootCert, signRsaCert, (X509Certificate) tsaChain[0], (X509Certificate) tsaChain[1],
+                    amountOfCrlsForRoot, amountOfCrlsForSign, amountOfOcspsForRoot, amountOfOcspsForSign);
         }
     }
-    
+
     private void assertDss(ByteArrayOutputStream outputStream, X509Certificate rootCert, X509Certificate signRsaCert,
-            X509Certificate tsaCert, X509Certificate rootTsaCert)
+            X509Certificate tsaCert, X509Certificate rootTsaCert, Integer amountOfCrlsForRoot,
+            Integer amountOfCrlsForSign, Integer amountOfOcspsForRoot, Integer amountOfOcspsForSign)
             throws AbstractOCSPException, CertificateException, IOException, CRLException {
         Map<String, Integer> expectedNumberOfCrls = new HashMap<>();
         if (amountOfCrlsForRoot + amountOfCrlsForSign != 0) {

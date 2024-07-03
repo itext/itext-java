@@ -34,16 +34,14 @@ import com.itextpdf.layout.properties.Background;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.TransparentColor;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class ButtonColorTest extends ExtendedITextTest {
 
     public static final String SOURCE_FOLDER =
@@ -51,7 +49,7 @@ public class ButtonColorTest extends ExtendedITextTest {
     public static final String DESTINATION_FOLDER =
             "./target/test/com/itextpdf/forms/form/element/ButtonColorTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
@@ -90,6 +88,6 @@ public class ButtonColorTest extends ExtendedITextTest {
             document.add(inputButton);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 }

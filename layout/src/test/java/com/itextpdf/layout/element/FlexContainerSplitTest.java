@@ -35,15 +35,14 @@ import com.itextpdf.layout.properties.*;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class FlexContainerSplitTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/FlexContainerSplitTest/";
@@ -56,7 +55,7 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
             + "cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. ";
     private static final String SHORT_TEXT = "Lorem ipsum dolor sit amet, consectetur adipiscing elit,?";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(DESTINATION_FOLDER);
     }
@@ -73,7 +72,7 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
             document.add(flexContainer);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -90,7 +89,7 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
             document.add(flexContainer);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -112,7 +111,7 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
             document.add(flexContainer);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -128,7 +127,7 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
             document.add(flexContainer);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -148,7 +147,7 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
             document.add(flexContainer);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -164,7 +163,7 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
             document.add(flexContainer);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -182,7 +181,7 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
             document.add(flexContainer);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -200,7 +199,7 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
             document.add(flexContainer);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -218,7 +217,7 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
             document.add(flexContainer);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -240,7 +239,7 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
             document.add(flexContainer);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -263,7 +262,7 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
             document.add(flexContainer);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -281,7 +280,7 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
             document.add(flexContainer);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -300,7 +299,7 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
             document.add(flexContainer);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -319,7 +318,7 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
             document.add(flexContainer);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -337,7 +336,7 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
             document.add(flexContainer);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -363,7 +362,7 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
             document.add(flexContainer);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     private Div createDefaultFlexContainer() {

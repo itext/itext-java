@@ -35,30 +35,28 @@ import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfCanvasXObjectTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/canvas/PdfCanvasXObjectTest/";
     public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/canvas/PdfCanvasXObjectTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(DESTINATION_FOLDER);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(DESTINATION_FOLDER);
     }
@@ -83,7 +81,7 @@ public class PdfCanvasXObjectTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -105,7 +103,7 @@ public class PdfCanvasXObjectTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -125,20 +123,20 @@ public class PdfCanvasXObjectTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
-    @Category(UnitTest.class)
+    @Tag("UnitTest")
     public void addCustomXObjectAtTest() {
         PdfXObject pdfXObject = new CustomPdfXObject(new PdfStream());
         PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
 
         PdfCanvas canvas = new PdfCanvas(document.addNewPage());
-        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+        Exception e = Assertions.assertThrows(IllegalArgumentException.class,
                 () -> canvas.addXObjectAt(pdfXObject, 0, 0)
         );
-        Assert.assertEquals("PdfFormXObject or PdfImageXObject expected.", e.getMessage());
+        Assertions.assertEquals("PdfFormXObject or PdfImageXObject expected.", e.getMessage());
     }
 
     // addXObjectFittedIntoRectangle(PdfXObject, Rectangle) test block (use PdfXObject#calculateProportionallyFitRectangleWithWidth)
@@ -162,7 +160,7 @@ public class PdfCanvasXObjectTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -184,7 +182,7 @@ public class PdfCanvasXObjectTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -207,7 +205,7 @@ public class PdfCanvasXObjectTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -230,7 +228,7 @@ public class PdfCanvasXObjectTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
     }
 
     // addXObjectFittedIntoRectangle(PdfXObject, Rectangle) test block (use PdfXObject#calculateProportionallyFitRectangleWithHeight)
@@ -254,7 +252,7 @@ public class PdfCanvasXObjectTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -276,7 +274,7 @@ public class PdfCanvasXObjectTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -299,7 +297,7 @@ public class PdfCanvasXObjectTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -322,7 +320,7 @@ public class PdfCanvasXObjectTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
     }
 
     // addXObjectFittedIntoRectangle(PdfXObject, Rectangle) test block
@@ -345,7 +343,7 @@ public class PdfCanvasXObjectTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -366,7 +364,7 @@ public class PdfCanvasXObjectTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -388,7 +386,7 @@ public class PdfCanvasXObjectTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -410,20 +408,20 @@ public class PdfCanvasXObjectTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
-    @Category(UnitTest.class)
+    @Tag("UnitTest")
     public void addCustomXObjectFittedIntoRectangleTest() {
         PdfXObject pdfXObject = new CustomPdfXObject(new PdfStream());
         PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
 
         PdfCanvas pdfCanvas = new PdfCanvas(document.addNewPage());
-        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+        Exception e = Assertions.assertThrows(IllegalArgumentException.class,
                 () -> pdfCanvas.addXObjectFittedIntoRectangle(pdfXObject, new Rectangle(0, 0, 0, 0))
         );
-        Assert.assertEquals("PdfFormXObject or PdfImageXObject expected.", e.getMessage());
+        Assertions.assertEquals("PdfFormXObject or PdfImageXObject expected.", e.getMessage());
     }
 
     // addXObject(PdfXObject) test block
@@ -446,7 +444,7 @@ public class PdfCanvasXObjectTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -468,7 +466,7 @@ public class PdfCanvasXObjectTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -488,7 +486,7 @@ public class PdfCanvasXObjectTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
     }
 
     // addXObjectWithTransformationMatrix(PdfXObject, float, float, float, float, float, float) test block
@@ -511,7 +509,7 @@ public class PdfCanvasXObjectTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -531,20 +529,20 @@ public class PdfCanvasXObjectTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
-    @Category(UnitTest.class)
+    @Tag("UnitTest")
     public void addCustomXObjectTest() {
         PdfXObject pdfXObject = new CustomPdfXObject(new PdfStream());
         PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
 
         PdfCanvas canvas = new PdfCanvas(document.addNewPage());
-        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+        Exception e = Assertions.assertThrows(IllegalArgumentException.class,
                 () -> canvas.addXObject(pdfXObject)
         );
-        Assert.assertEquals("PdfFormXObject or PdfImageXObject expected.", e.getMessage());
+        Assertions.assertEquals("PdfFormXObject or PdfImageXObject expected.", e.getMessage());
     }
 
     private static class CustomPdfXObject extends PdfXObject {
@@ -583,7 +581,7 @@ public class PdfCanvasXObjectTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -613,6 +611,6 @@ public class PdfCanvasXObjectTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
     }
 }

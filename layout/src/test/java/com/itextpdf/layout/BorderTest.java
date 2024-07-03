@@ -51,16 +51,15 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class BorderTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/BorderTest/";
@@ -71,7 +70,7 @@ public class BorderTest extends ExtendedITextTest {
     String outFileName;
     String cmpFileName;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
@@ -133,7 +132,7 @@ public class BorderTest extends ExtendedITextTest {
             new RoundDotsBorder(DeviceRgb.GREEN, 5).draw(canvas, new Rectangle(350, 400, 100, 100));
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
     }
 
     @Test
@@ -360,7 +359,7 @@ public class BorderTest extends ExtendedITextTest {
         document.close();
         String compareResult = new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff");
         if (compareResult != null) {
-            Assert.fail(compareResult);
+            Assertions.fail(compareResult);
         }
     }
 
@@ -382,6 +381,6 @@ public class BorderTest extends ExtendedITextTest {
 
         TestBorder border = new TestBorder(1f);
         float actual = border.publicGetDotsGap(distance, initialGap);
-        Assert.assertEquals(expected, actual, 0.0001f);
+        Assertions.assertEquals(expected, actual, 0.0001f);
     }
 }

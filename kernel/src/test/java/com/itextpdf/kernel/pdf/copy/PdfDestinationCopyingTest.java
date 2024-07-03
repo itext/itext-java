@@ -31,17 +31,16 @@ import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfDestinationCopyingTest extends ExtendedITextTest {
 
     public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/PdfDestinationCopyingTest/";
@@ -66,12 +65,12 @@ public class PdfDestinationCopyingTest extends ExtendedITextTest {
             SOURCE_FOLDER + "LinkAnnotationViaActionWithNextActionNamedDestination.pdf";
 
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(DESTINATION_FOLDER);
     }
@@ -102,7 +101,7 @@ public class PdfDestinationCopyingTest extends ExtendedITextTest {
             }
         }
 
-        Assert.assertNull(annot);
+        Assertions.assertNull(annot);
     }
 
     @Test
@@ -131,10 +130,10 @@ public class PdfDestinationCopyingTest extends ExtendedITextTest {
             }
         }
 
-        Assert.assertNotNull(annot);
+        Assertions.assertNotNull(annot);
         PdfDestination dest = PdfDestination.makeDestination(((PdfLinkAnnotation) annot).getDestinationObject());
 
-        Assert.assertEquals(resultDoc.getPage(5).getPdfObject(),
+        Assertions.assertEquals(resultDoc.getPage(5).getPdfObject(),
                 dest.getDestinationPage(resultDoc.getCatalog().getNameTree(PdfName.Dests)));
     }
 
@@ -163,9 +162,9 @@ public class PdfDestinationCopyingTest extends ExtendedITextTest {
                 break;
             }
         }
-        Assert.assertNull(annot);
+        Assertions.assertNull(annot);
         // verify wether name is removed
-        Assert.assertTrue(resultDoc.getCatalog().getNameTree(PdfName.Dests).getNames().isEmpty());
+        Assertions.assertTrue(resultDoc.getCatalog().getNameTree(PdfName.Dests).getNames().isEmpty());
     }
 
     @Test
@@ -194,10 +193,10 @@ public class PdfDestinationCopyingTest extends ExtendedITextTest {
             }
         }
 
-        Assert.assertNotNull(annot);
+        Assertions.assertNotNull(annot);
         PdfDestination dest = PdfDestination.makeDestination(((PdfLinkAnnotation) annot).getDestinationObject());
 
-        Assert.assertEquals(resultDoc.getPage(5).getPdfObject(),
+        Assertions.assertEquals(resultDoc.getPage(5).getPdfObject(),
                 dest.getDestinationPage(resultDoc.getCatalog().getNameTree(PdfName.Dests)));
     }
 
@@ -227,7 +226,7 @@ public class PdfDestinationCopyingTest extends ExtendedITextTest {
             }
         }
 
-        Assert.assertNull(annot);
+        Assertions.assertNull(annot);
     }
 
     @Test
@@ -256,10 +255,10 @@ public class PdfDestinationCopyingTest extends ExtendedITextTest {
             }
         }
 
-        Assert.assertNotNull(annot);        PdfDestination dest = PdfDestination.makeDestination(
+        Assertions.assertNotNull(annot);        PdfDestination dest = PdfDestination.makeDestination(
                 ((PdfLinkAnnotation) annot).getAction().get(PdfName.D));
 
-        Assert.assertEquals(resultDoc.getPage(5).getPdfObject(),
+        Assertions.assertEquals(resultDoc.getPage(5).getPdfObject(),
                 dest.getDestinationPage(resultDoc.getCatalog().getNameTree(PdfName.Dests)));
     }
 
@@ -289,10 +288,10 @@ public class PdfDestinationCopyingTest extends ExtendedITextTest {
             }
         }
 
-        Assert.assertNull(annot);
+        Assertions.assertNull(annot);
 
         // verify wether name is removed
-        Assert.assertTrue(resultDoc.getCatalog().getNameTree(PdfName.Dests).getNames().isEmpty());
+        Assertions.assertTrue(resultDoc.getCatalog().getNameTree(PdfName.Dests).getNames().isEmpty());
     }
 
     @Test
@@ -321,10 +320,10 @@ public class PdfDestinationCopyingTest extends ExtendedITextTest {
             }
         }
 
-        Assert.assertNotNull(annot);PdfDestination dest = PdfDestination.makeDestination(
+        Assertions.assertNotNull(annot);PdfDestination dest = PdfDestination.makeDestination(
                 ((PdfLinkAnnotation) annot).getAction().get(PdfName.D));
 
-        Assert.assertEquals(resultDoc.getPage(5).getPdfObject(),
+        Assertions.assertEquals(resultDoc.getPage(5).getPdfObject(),
                 dest.getDestinationPage(resultDoc.getCatalog().getNameTree(PdfName.Dests)));
     }
 
@@ -355,8 +354,8 @@ public class PdfDestinationCopyingTest extends ExtendedITextTest {
             }
         }
 
-        Assert.assertNotNull(annot);
-        Assert.assertNull(((PdfLinkAnnotation) annot).getAction().get(PdfName.Next));
+        Assertions.assertNotNull(annot);
+        Assertions.assertNull(((PdfLinkAnnotation) annot).getAction().get(PdfName.Next));
     }
 
     @Test
@@ -385,11 +384,11 @@ public class PdfDestinationCopyingTest extends ExtendedITextTest {
             }
         }
 
-        Assert.assertNotNull(annot);
+        Assertions.assertNotNull(annot);
         PdfDestination dest = PdfDestination.makeDestination(
                 ((PdfLinkAnnotation) annot).getAction().getAsDictionary(PdfName.Next).get(PdfName.D));
 
-        Assert.assertEquals(resultDoc.getPage(5).getPdfObject(),
+        Assertions.assertEquals(resultDoc.getPage(5).getPdfObject(),
                 dest.getDestinationPage(resultDoc.getCatalog().getNameTree(PdfName.Dests)));
     }
 
@@ -419,10 +418,10 @@ public class PdfDestinationCopyingTest extends ExtendedITextTest {
             }
         }
 
-        Assert.assertNotNull(annot);
-        Assert.assertNull(((PdfLinkAnnotation) annot).getAction().get(PdfName.Next));
+        Assertions.assertNotNull(annot);
+        Assertions.assertNull(((PdfLinkAnnotation) annot).getAction().get(PdfName.Next));
         // verify whether name is removed
-        Assert.assertTrue(resultDoc.getCatalog().getNameTree(PdfName.Dests).getNames().isEmpty());
+        Assertions.assertTrue(resultDoc.getCatalog().getNameTree(PdfName.Dests).getNames().isEmpty());
     }
 
     @Test
@@ -451,10 +450,10 @@ public class PdfDestinationCopyingTest extends ExtendedITextTest {
             }
         }
 
-        Assert.assertNotNull(annot);PdfDestination dest = PdfDestination.makeDestination(
+        Assertions.assertNotNull(annot);PdfDestination dest = PdfDestination.makeDestination(
                 ((PdfLinkAnnotation) annot).getAction().getAsDictionary(PdfName.Next).get(PdfName.D));
 
-        Assert.assertEquals(resultDoc.getPage(5).getPdfObject(),
+        Assertions.assertEquals(resultDoc.getPage(5).getPdfObject(),
                 dest.getDestinationPage(resultDoc.getCatalog().getNameTree(PdfName.Dests)));
     }
 }

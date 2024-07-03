@@ -32,23 +32,22 @@ import com.itextpdf.styledxmlparser.node.impl.jsoup.JsoupHtmlParser;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupDocumentNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class CssMatchingTest extends ExtendedITextTest {
 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/styledxmlparser/css/CssMatchingTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
     }
 
@@ -62,8 +61,8 @@ public class CssMatchingTest extends ExtendedITextTest {
         MediaDeviceDescription deviceDescription = new MediaDeviceDescription("all");
         IElementNode element = new JsoupElementNode(((JsoupDocumentNode)document).getDocument().getElementsByTag("p").first());
         List<CssDeclaration> declarations = css.getCssDeclarations(element, deviceDescription);
-        Assert.assertEquals(1, declarations.size());
-        Assert.assertEquals("font-weight: bold", declarations.get(0).toString());
+        Assertions.assertEquals(1, declarations.size());
+        Assertions.assertEquals("font-weight: bold", declarations.get(0).toString());
     }
 
     @Test
@@ -76,9 +75,9 @@ public class CssMatchingTest extends ExtendedITextTest {
         MediaDeviceDescription deviceDescription = new MediaDeviceDescription("all");
         IElementNode element = new JsoupElementNode(((JsoupDocumentNode)document).getDocument().getElementsByTag("p").first());
         List<CssDeclaration> declarations = css.getCssDeclarations(element, deviceDescription);
-        Assert.assertEquals(2, declarations.size());
-        Assert.assertEquals("font-weight: bold", declarations.get(1).toString());
-        Assert.assertEquals("color: red", declarations.get(0).toString());
+        Assertions.assertEquals(2, declarations.size());
+        Assertions.assertEquals("font-weight: bold", declarations.get(1).toString());
+        Assertions.assertEquals("color: red", declarations.get(0).toString());
     }
 
     @Test
@@ -91,9 +90,9 @@ public class CssMatchingTest extends ExtendedITextTest {
         MediaDeviceDescription deviceDescription = new MediaDeviceDescription("all");
         IElementNode element = new JsoupElementNode(((JsoupDocumentNode)document).getDocument().getElementsByTag("p").first());
         List<CssDeclaration> declarations = css.getCssDeclarations(element, deviceDescription);
-        Assert.assertEquals(2, declarations.size());
-        Assert.assertEquals("font-weight: bold", declarations.get(0).toString());
-        Assert.assertEquals("color: black", declarations.get(1).toString());
+        Assertions.assertEquals(2, declarations.size());
+        Assertions.assertEquals("font-weight: bold", declarations.get(0).toString());
+        Assertions.assertEquals("color: black", declarations.get(1).toString());
     }
 
     @Test
@@ -106,8 +105,8 @@ public class CssMatchingTest extends ExtendedITextTest {
         MediaDeviceDescription deviceDescription = new MediaDeviceDescription("all");
         IElementNode element = new JsoupElementNode(((JsoupDocumentNode)document).getDocument().getElementsByTag("p").first());
         List<CssDeclaration> declarations = css.getCssDeclarations(element, deviceDescription);
-        Assert.assertEquals(1, declarations.size());
-        Assert.assertEquals("font-size: 100px", declarations.get(0).toString());
+        Assertions.assertEquals(1, declarations.size());
+        Assertions.assertEquals("font-size: 100px", declarations.get(0).toString());
     }
 
     @Test
@@ -120,8 +119,8 @@ public class CssMatchingTest extends ExtendedITextTest {
         MediaDeviceDescription deviceDescription = new MediaDeviceDescription("all");
         IElementNode element = new JsoupElementNode(((JsoupDocumentNode)document).getDocument().getElementsByTag("p").first());
         List<CssDeclaration> declarations = css.getCssDeclarations(element, deviceDescription);
-        Assert.assertEquals(1, declarations.size());
-        Assert.assertEquals("color: red", declarations.get(0).toString());
+        Assertions.assertEquals(1, declarations.size());
+        Assertions.assertEquals("color: red", declarations.get(0).toString());
     }
 
     @Test
@@ -134,8 +133,8 @@ public class CssMatchingTest extends ExtendedITextTest {
         MediaDeviceDescription deviceDescription = new MediaDeviceDescription("all");
         IElementNode element = new JsoupElementNode(((JsoupDocumentNode)document).getDocument().getElementsByTag("p").first());
         List<CssDeclaration> declarations = css.getCssDeclarations(element, deviceDescription);
-        Assert.assertEquals(1, declarations.size());
-        Assert.assertEquals("color: blue", declarations.get(0).toString());
+        Assertions.assertEquals(1, declarations.size());
+        Assertions.assertEquals("color: blue", declarations.get(0).toString());
     }
 
 }

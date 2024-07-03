@@ -32,20 +32,20 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.ArrayList;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class SignaturePermissionsTest extends ExtendedITextTest {
 
     @Test
     public void defaultValuesTest() {
         SignaturePermissions permissions = new SignaturePermissions(new PdfDictionary(), null);
-        Assert.assertEquals(new ArrayList<>(), permissions.getFieldLocks());
-        Assert.assertTrue(permissions.isAnnotationsAllowed());
-        Assert.assertFalse(permissions.isCertification());
-        Assert.assertTrue(permissions.isFillInAllowed());
+        Assertions.assertEquals(new ArrayList<>(), permissions.getFieldLocks());
+        Assertions.assertTrue(permissions.isAnnotationsAllowed());
+        Assertions.assertFalse(permissions.isCertification());
+        Assertions.assertTrue(permissions.isFillInAllowed());
     }
 
     @Test
@@ -62,11 +62,11 @@ public class SignaturePermissionsTest extends ExtendedITextTest {
 
         SignaturePermissions permissions = new SignaturePermissions(dict, null);
 
-        Assert.assertTrue(permissions.isCertification());
+        Assertions.assertTrue(permissions.isCertification());
 
-        Assert.assertEquals(new ArrayList<>(), permissions.getFieldLocks());
-        Assert.assertTrue(permissions.isAnnotationsAllowed());
-        Assert.assertTrue(permissions.isFillInAllowed());
+        Assertions.assertEquals(new ArrayList<>(), permissions.getFieldLocks());
+        Assertions.assertTrue(permissions.isAnnotationsAllowed());
+        Assertions.assertTrue(permissions.isFillInAllowed());
     }
 
     @Test
@@ -92,14 +92,14 @@ public class SignaturePermissionsTest extends ExtendedITextTest {
 
         SignaturePermissions permissions = new SignaturePermissions(dict, null);
 
-        Assert.assertEquals(1, permissions.getFieldLocks().size());
+        Assertions.assertEquals(1, permissions.getFieldLocks().size());
         FieldLock fieldLock = permissions.getFieldLocks().get(0);
-        Assert.assertEquals(action, fieldLock.getAction());
-        Assert.assertEquals(fields, fieldLock.getFields());
+        Assertions.assertEquals(action, fieldLock.getAction());
+        Assertions.assertEquals(fields, fieldLock.getFields());
 
-        Assert.assertTrue(permissions.isAnnotationsAllowed());
-        Assert.assertFalse(permissions.isCertification());
-        Assert.assertTrue(permissions.isFillInAllowed());
+        Assertions.assertTrue(permissions.isAnnotationsAllowed());
+        Assertions.assertFalse(permissions.isCertification());
+        Assertions.assertTrue(permissions.isFillInAllowed());
     }
 
     @Test
@@ -128,15 +128,15 @@ public class SignaturePermissionsTest extends ExtendedITextTest {
 
         SignaturePermissions permissions = new SignaturePermissions(dict, null);
 
-        Assert.assertEquals(3, permissions.getFieldLocks().size());
+        Assertions.assertEquals(3, permissions.getFieldLocks().size());
         for(FieldLock fieldLock: permissions.getFieldLocks()) {
-            Assert.assertEquals(action, fieldLock.getAction());
-            Assert.assertEquals(fields, fieldLock.getFields());
+            Assertions.assertEquals(action, fieldLock.getAction());
+            Assertions.assertEquals(fields, fieldLock.getFields());
         }
 
-        Assert.assertTrue(permissions.isAnnotationsAllowed());
-        Assert.assertFalse(permissions.isCertification());
-        Assert.assertTrue(permissions.isFillInAllowed());
+        Assertions.assertTrue(permissions.isAnnotationsAllowed());
+        Assertions.assertFalse(permissions.isCertification());
+        Assertions.assertTrue(permissions.isFillInAllowed());
     }
 
     @Test
@@ -155,11 +155,11 @@ public class SignaturePermissionsTest extends ExtendedITextTest {
 
         SignaturePermissions permissions = new SignaturePermissions(dict, null);
 
-        Assert.assertFalse(permissions.isFillInAllowed());
-        Assert.assertFalse(permissions.isAnnotationsAllowed());
+        Assertions.assertFalse(permissions.isFillInAllowed());
+        Assertions.assertFalse(permissions.isAnnotationsAllowed());
 
-        Assert.assertEquals(new ArrayList<>(), permissions.getFieldLocks());
-        Assert.assertFalse(permissions.isCertification());
+        Assertions.assertEquals(new ArrayList<>(), permissions.getFieldLocks());
+        Assertions.assertFalse(permissions.isCertification());
     }
 
     @Test
@@ -178,11 +178,11 @@ public class SignaturePermissionsTest extends ExtendedITextTest {
 
         SignaturePermissions permissions = new SignaturePermissions(dict, null);
 
-        Assert.assertFalse(permissions.isAnnotationsAllowed());
+        Assertions.assertFalse(permissions.isAnnotationsAllowed());
 
-        Assert.assertEquals(new ArrayList<>(), permissions.getFieldLocks());
-        Assert.assertTrue(permissions.isFillInAllowed());
-        Assert.assertFalse(permissions.isCertification());
+        Assertions.assertEquals(new ArrayList<>(), permissions.getFieldLocks());
+        Assertions.assertTrue(permissions.isFillInAllowed());
+        Assertions.assertFalse(permissions.isCertification());
     }
 
     @Test
@@ -210,13 +210,13 @@ public class SignaturePermissionsTest extends ExtendedITextTest {
         SignaturePermissions previousPermissions = new SignaturePermissions(previousDict, null);
         SignaturePermissions permissions = new SignaturePermissions(new PdfDictionary(), previousPermissions);
 
-        Assert.assertEquals(1, permissions.getFieldLocks().size());
+        Assertions.assertEquals(1, permissions.getFieldLocks().size());
         FieldLock fieldLock = permissions.getFieldLocks().get(0);
-        Assert.assertEquals(action, fieldLock.getAction());
-        Assert.assertEquals(fields, fieldLock.getFields());
+        Assertions.assertEquals(action, fieldLock.getAction());
+        Assertions.assertEquals(fields, fieldLock.getFields());
 
-        Assert.assertFalse(permissions.isAnnotationsAllowed());
-        Assert.assertFalse(permissions.isCertification());
-        Assert.assertFalse(permissions.isFillInAllowed());
+        Assertions.assertFalse(permissions.isAnnotationsAllowed());
+        Assertions.assertFalse(permissions.isCertification());
+        Assertions.assertFalse(permissions.isFillInAllowed());
     }
 }

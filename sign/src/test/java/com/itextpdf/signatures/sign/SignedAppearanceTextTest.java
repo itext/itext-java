@@ -64,7 +64,6 @@ import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 
 import java.io.IOException;
@@ -77,13 +76,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(BouncyCastleIntegrationTest.class)
+@Tag("BouncyCastleIntegrationTest")
 public class SignedAppearanceTextTest extends ExtendedITextTest {
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
@@ -99,13 +98,13 @@ public class SignedAppearanceTextTest extends ExtendedITextTest {
     private Certificate[] chain;
     private PrivateKey pk;
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         Security.addProvider(FACTORY.getProvider());
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
-    @Before
+    @BeforeEach
     public void init()
             throws IOException, CertificateException, AbstractPKCSException, AbstractOperatorCreationException {
         pk = PemFileHelper.readFirstKey(CERTS_SRC + "signCertRsa01.pem", PASSWORD);
@@ -125,10 +124,10 @@ public class SignedAppearanceTextTest extends ExtendedITextTest {
                 .setContent(new SignedAppearanceText());
         sign(srcFile, fieldName, outPdf, "Test 1", "TestCity 1", rect, appearance);
 
-        Assert.assertNull(new CompareTool().compareVisually(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_",
+        Assertions.assertNull(new CompareTool().compareVisually(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_",
                 getTestMap(new Rectangle(36, 676, 200, 15))));
 
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf));
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf));
     }
 
     @Test
@@ -146,10 +145,10 @@ public class SignedAppearanceTextTest extends ExtendedITextTest {
                         .setLocationLine("Test City"));
 
         String outPdf = DESTINATION_FOLDER + "signPDFADocumentWithoutSettingFont.pdf";
-        Exception e = Assert.assertThrows(Exception.class, () -> {
+        Exception e = Assertions.assertThrows(Exception.class, () -> {
             sign(srcFile, fieldName, outPdf, "Test 1", "TestCity 1", rect, appearance);
         });
-        Assert.assertEquals(LayoutExceptionMessageConstant.INVALID_FONT_PROPERTY_VALUE, e.getMessage());
+        Assertions.assertEquals(LayoutExceptionMessageConstant.INVALID_FONT_PROPERTY_VALUE, e.getMessage());
     }
 
     @Test
@@ -168,10 +167,10 @@ public class SignedAppearanceTextTest extends ExtendedITextTest {
                         .setLocationLine("Test City"));
 
         String outPdf = DESTINATION_FOLDER + "signPDFADocumentBadFont.pdf";
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> {
             sign(srcFile, fieldName, outPdf, "Test 1", "TestCity 1", rect, appearance);
         });
-        Assert.assertEquals(e.getMessage(),
+        Assertions.assertEquals(e.getMessage(),
                 MessageFormatUtil.format(PdfaExceptionMessageConstant.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0,
                         "Courier"));
     }
@@ -181,7 +180,7 @@ public class SignedAppearanceTextTest extends ExtendedITextTest {
         String srcFile = DESTINATION_FOLDER + "simplePDFADocument.pdf";
         createSimplePDFADocument(srcFile).close();
 
-        Assert.assertNull(new VeraPdfValidator().validate(srcFile));  // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(srcFile));  // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
         String cmpPdf = SOURCE_FOLDER + "cmp_defaultSignedPDFAAppearanceTextTest.pdf";
         String outPdf = DESTINATION_FOLDER + "defaultSignedPDFAAppearanceTextTest.pdf";
 
@@ -198,11 +197,11 @@ public class SignedAppearanceTextTest extends ExtendedITextTest {
 
         sign(srcFile, fieldName, outPdf, "Test 1", "TestCity 1", rect, appearance);
 
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf));  // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
-        Assert.assertNull(new CompareTool().compareVisually(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_",
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf));  // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new CompareTool().compareVisually(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_",
                 getTestMap(rect)));
 
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf));
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf));
     }
 
 
@@ -242,8 +241,8 @@ public class SignedAppearanceTextTest extends ExtendedITextTest {
 
         sign(srcFile, fieldName, outPdf, "Test 1", "TestCity 1", rect, appearance);
 
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf));
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf));
     }
 
     private static Document createSimplePDFADocument(String filename) throws IOException {
@@ -275,10 +274,10 @@ public class SignedAppearanceTextTest extends ExtendedITextTest {
                 .setContent("", new SignedAppearanceText());
         sign(srcFile, fieldName, outPdf, "Test 2", "TestCity 2", rect, appearance);
 
-        Assert.assertNull(new CompareTool().compareVisually(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_",
+        Assertions.assertNull(new CompareTool().compareVisually(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_",
                 getTestMap(new Rectangle(136, 686, 100, 25))));
 
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf));
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf));
     }
 
     @Test
@@ -296,10 +295,10 @@ public class SignedAppearanceTextTest extends ExtendedITextTest {
                 .setContent(new SignedAppearanceText(), ImageDataFactory.create(imagePath));
         sign(srcFile, fieldName, outPdf, "Test 3", "TestCity 3", rect, appearance);
 
-        Assert.assertNull(new CompareTool().compareVisually(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_",
+        Assertions.assertNull(new CompareTool().compareVisually(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_",
                 getTestMap(new Rectangle(186, 681, 150, 36))));
 
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf));
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf));
     }
 
     @Test
@@ -321,10 +320,10 @@ public class SignedAppearanceTextTest extends ExtendedITextTest {
                         .setSignDate(DateTimeUtil.getCurrentTimeCalendar()));
         sign(srcFile, fieldName, outPdf, reason, location, rect, appearance);
 
-        Assert.assertNull(new CompareTool().compareVisually(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_",
+        Assertions.assertNull(new CompareTool().compareVisually(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_",
                 getTestMap(new Rectangle(36, 676, 200, 15))));
 
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf));
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf));
     }
 
     protected void sign(String src, String name, String dest,

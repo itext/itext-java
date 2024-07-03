@@ -46,7 +46,6 @@ import com.itextpdf.signatures.testutils.client.TestCrlClient;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
 import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -55,12 +54,12 @@ import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(BouncyCastleIntegrationTest.class)
+@Tag("BouncyCastleIntegrationTest")
 public class PadesSignatureLevelTest extends ExtendedITextTest {
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
@@ -71,7 +70,7 @@ public class PadesSignatureLevelTest extends ExtendedITextTest {
 
     private static final char[] password = "testpassphrase".toCharArray();
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         Security.addProvider(FACTORY.getProvider());
         createOrClearDestinationFolder(destinationFolder);
@@ -108,7 +107,7 @@ public class PadesSignatureLevelTest extends ExtendedITextTest {
 
         TestSignUtils.basicCheckSignedDoc(destinationFolder + "padesSignatureLevelTTest01.pdf", "Signature1");
 
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(
                 outFileName, sourceFolder + "cmp_padesSignatureLevelTTest01.pdf"));
     }
 
@@ -131,7 +130,7 @@ public class PadesSignatureLevelTest extends ExtendedITextTest {
         ltvVerification.merge();
         document.close();
 
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(
                 outFileName, sourceFolder + "cmp_padesSignatureLevelLTTest01.pdf"));
     }
 
@@ -150,7 +149,7 @@ public class PadesSignatureLevelTest extends ExtendedITextTest {
         TestTsaClient testTsa = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
         signer.timestamp(testTsa, "timestampSig1");
 
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(
                 outFileName, sourceFolder + "cmp_padesSignatureLevelLTATest01.pdf"));
     }
 }

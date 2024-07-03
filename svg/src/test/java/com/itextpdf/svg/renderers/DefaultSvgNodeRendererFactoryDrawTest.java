@@ -30,12 +30,10 @@ import com.itextpdf.svg.dummy.factories.DummySvgNodeFactory;
 import com.itextpdf.svg.dummy.renderers.impl.DummyProcessableSvgNodeRenderer;
 import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-@Category(UnitTest.class)
+@org.junit.jupiter.api.Tag("UnitTest")
 public class DefaultSvgNodeRendererFactoryDrawTest extends ExtendedITextTest {
     
     private final ISvgNodeRendererFactory fact = new DummySvgNodeFactory();
@@ -45,10 +43,10 @@ public class DefaultSvgNodeRendererFactoryDrawTest extends ExtendedITextTest {
         Element element = new Element(Tag.valueOf("processable"), "");
         IElementNode tag = new JsoupElementNode(element);
         ISvgNodeRenderer renderer = fact.createSvgNodeRendererForTag(tag, null);
-        Assert.assertTrue(renderer instanceof DummyProcessableSvgNodeRenderer);
+        Assertions.assertTrue(renderer instanceof DummyProcessableSvgNodeRenderer);
         renderer.draw(new SvgDrawContext(null, null));
         DummyProcessableSvgNodeRenderer processed = (DummyProcessableSvgNodeRenderer) renderer;
-        Assert.assertTrue(processed.isProcessed());
+        Assertions.assertTrue(processed.isProcessed());
     }
     
     @Test
@@ -63,9 +61,9 @@ public class DefaultSvgNodeRendererFactoryDrawTest extends ExtendedITextTest {
         parentRenderer.draw(new SvgDrawContext(null, null));
 
         DummyProcessableSvgNodeRenderer parentProcessed = (DummyProcessableSvgNodeRenderer) parentRenderer;
-        Assert.assertTrue(parentProcessed.isProcessed());
+        Assertions.assertTrue(parentProcessed.isProcessed());
         DummyProcessableSvgNodeRenderer childProcessed = (DummyProcessableSvgNodeRenderer) childRenderer;
         // child is not processed unless instructed thus in its parent
-        Assert.assertFalse(childProcessed.isProcessed());
+        Assertions.assertFalse(childProcessed.isProcessed());
     }
 }

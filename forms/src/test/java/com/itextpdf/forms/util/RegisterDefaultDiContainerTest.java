@@ -28,14 +28,12 @@ import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class RegisterDefaultDiContainerTest extends ExtendedITextTest {
 
     @Test
@@ -43,6 +41,6 @@ public class RegisterDefaultDiContainerTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         OnDuplicateFormFieldNameStrategy strategy = pdfDocument.getDiContainer()
                 .getInstance(OnDuplicateFormFieldNameStrategy.class);
-        Assert.assertEquals(MergeFieldsStrategy.class, strategy.getClass());
+        Assertions.assertEquals(MergeFieldsStrategy.class, strategy.getClass());
     }
 }

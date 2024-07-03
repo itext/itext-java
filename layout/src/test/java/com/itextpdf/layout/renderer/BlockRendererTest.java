@@ -45,21 +45,20 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class BlockRendererTest extends ExtendedITextTest {
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/BlockRendererTest/";
     public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/BlockRendererTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
@@ -74,13 +73,13 @@ public class BlockRendererTest extends ExtendedITextTest {
         float occupiedHeight = 17.981995f;
         float leftHeight = 24.567993f;
 
-        Assert.assertTrue(occupiedHeight + leftHeight < divHeight);
+        Assertions.assertTrue(occupiedHeight + leftHeight < divHeight);
 
         BlockRenderer blockRenderer = (BlockRenderer) div.createRendererSubTree();
         blockRenderer.occupiedArea = new LayoutArea(1, new Rectangle(0, 267.9681f, 0, occupiedHeight));
         AbstractRenderer renderer = blockRenderer.applyMinHeight(OverflowPropertyValue.FIT,
                 new Rectangle(0, 243.40012f, 0, leftHeight));
-        Assert.assertNull(renderer);
+        Assertions.assertNull(renderer);
     }
 
     @Test
@@ -116,7 +115,7 @@ public class BlockRendererTest extends ExtendedITextTest {
         document.add(div);
 
         document.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER));
     }
 
     @Test
@@ -126,7 +125,7 @@ public class BlockRendererTest extends ExtendedITextTest {
         div.setProperty(Property.FONT, PdfFontFactory.createFont(StandardFonts.TIMES_ROMAN));
         DivRenderer renderer = (DivRenderer) div.getRenderer();
         PdfFont font = renderer.getResolvedFont(pdfDocument);
-        Assert.assertEquals("Times-Roman", font.getFontProgram().getFontNames().getFontName());
+        Assertions.assertEquals("Times-Roman", font.getFontProgram().getFontNames().getFontName());
     }
 
 
@@ -135,7 +134,7 @@ public class BlockRendererTest extends ExtendedITextTest {
         Div div = new Div();
         DivRenderer renderer = (DivRenderer) div.getRenderer();
         PdfFont font = renderer.getResolvedFont(null);
-        Assert.assertNull(font);
+        Assertions.assertNull(font);
     }
 
 
@@ -150,7 +149,7 @@ public class BlockRendererTest extends ExtendedITextTest {
         div.setProperty(Property.FONT, new String[] {"courier"});
         DivRenderer renderer = (DivRenderer) div.getRenderer();
         PdfFont font = renderer.getResolvedFont(pdfDocument);
-        Assert.assertEquals("Courier", font.getFontProgram().getFontNames().getFontName());
+        Assertions.assertEquals("Courier", font.getFontProgram().getFontNames().getFontName());
     }
 
 
@@ -163,7 +162,7 @@ public class BlockRendererTest extends ExtendedITextTest {
         div.setProperty(Property.FONT, new String[] {"courier"});
         DivRenderer renderer = (DivRenderer) div.getRenderer();
         PdfFont font = renderer.getResolvedFont(pdfDocument);
-        Assert.assertEquals("Helvetica", font.getFontProgram().getFontNames().getFontName());
+        Assertions.assertEquals("Helvetica", font.getFontProgram().getFontNames().getFontName());
     }
 
     @Test
@@ -174,7 +173,7 @@ public class BlockRendererTest extends ExtendedITextTest {
         div.setProperty(Property.FONT, new String[] {"courier"});
         DivRenderer renderer = (DivRenderer) div.getRenderer();
         PdfFont font = renderer.getResolvedFont(null);
-        Assert.assertNull(font);
+        Assertions.assertNull(font);
     }
 
 }

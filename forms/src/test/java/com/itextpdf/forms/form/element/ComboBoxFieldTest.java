@@ -39,24 +39,23 @@ import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class ComboBoxFieldTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER =
             "./src/test/resources/com/itextpdf/forms/form/element/ComboBoxFieldTest/";
     public static final String DESTINATION_FOLDER =
             "./target/test/com/itextpdf/forms/form/element/ComboBoxFieldTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
@@ -86,7 +85,7 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
             document.add(comboBoxWithBorderAndBackgroundColor);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
 
@@ -124,7 +123,7 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
 
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
 
@@ -163,7 +162,7 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
             }
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -201,7 +200,7 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
             }
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -228,7 +227,7 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
             document.add(flattenComboBoxFieldWithPercentFont);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -247,7 +246,7 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
             document.add(flattenComboBoxField);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -265,7 +264,7 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
             document.add(flattenComboBoxField);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -282,7 +281,7 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
             document.add(flattenComboBoxField);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -306,7 +305,7 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
             document.add(flattenComboBoxField);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -325,7 +324,7 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
             document.add(flattenComboBoxField);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -356,7 +355,7 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
                 document.add(flattenComboBoxFieldSelected);
             }
         }
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -374,7 +373,7 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
             formComboBoxFieldSelected.addOption(new SelectFieldItem("option 2"));
             document.add(formComboBoxFieldSelected);
         }
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -405,7 +404,7 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
                 document.add(flattenComboBoxFieldSelected);
             }
         }
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
 
@@ -415,7 +414,7 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
         comboBoxField.addOption(new SelectFieldItem("option 1"));
         comboBoxField.addOption(new SelectFieldItem("option 2"));
 
-        Assert.assertNull(comboBoxField.getSelectedOption());
+        Assertions.assertNull(comboBoxField.getSelectedOption());
     }
 
     @Test
@@ -426,8 +425,8 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
         comboBoxField.addOption(new SelectFieldItem("option 3"));
 
         comboBoxField.setSelected("option 1");
-        Assert.assertEquals("option 1", comboBoxField.getSelectedOption().getDisplayValue());
-        Assert.assertEquals("option 1", comboBoxField.getSelectedOption().getExportValue());
+        Assertions.assertEquals("option 1", comboBoxField.getSelectedOption().getDisplayValue());
+        Assertions.assertEquals("option 1", comboBoxField.getSelectedOption().getExportValue());
 
     }
 
@@ -439,7 +438,7 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
         comboBoxField.addOption(new SelectFieldItem("option 3", "3"));
 
         comboBoxField.setSelected("1");
-        Assert.assertNull(comboBoxField.getSelectedOption());
+        Assertions.assertNull(comboBoxField.getSelectedOption());
     }
 
     @Test
@@ -450,8 +449,8 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
         comboBoxField.addOption(new SelectFieldItem("option 3", "3"));
 
         comboBoxField.setSelected("option 1");
-        Assert.assertEquals("option 1", comboBoxField.getSelectedOption().getExportValue());
-        Assert.assertEquals("1", comboBoxField.getSelectedOption().getDisplayValue());
+        Assertions.assertEquals("option 1", comboBoxField.getSelectedOption().getExportValue());
+        Assertions.assertEquals("1", comboBoxField.getSelectedOption().getDisplayValue());
     }
 
     @Test
@@ -462,8 +461,8 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
         comboBoxField.addOption(new SelectFieldItem("option 3"));
 
         comboBoxField.setSelected(1);
-        Assert.assertEquals("option 2", comboBoxField.getSelectedOption().getDisplayValue());
-        Assert.assertEquals("option 2", comboBoxField.getSelectedOption().getExportValue());
+        Assertions.assertEquals("option 2", comboBoxField.getSelectedOption().getDisplayValue());
+        Assertions.assertEquals("option 2", comboBoxField.getSelectedOption().getExportValue());
     }
 
     @Test
@@ -473,7 +472,7 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
         comboBoxField.addOption(new SelectFieldItem("option 2"));
         comboBoxField.addOption(new SelectFieldItem("option 3"));
 
-        Assert.assertThrows(IndexOutOfBoundsException.class, () -> comboBoxField.setSelected(3));
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> comboBoxField.setSelected(3));
     }
 
     @Test
@@ -482,7 +481,7 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
         comboBoxField.addOption(new SelectFieldItem("option 1"));
         comboBoxField.addOption(new SelectFieldItem("option 2"));
         comboBoxField.addOption(new SelectFieldItem("option 3"));
-        Assert.assertThrows(IndexOutOfBoundsException.class, () -> comboBoxField.setSelected(-1));
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> comboBoxField.setSelected(-1));
     }
 
     @Test
@@ -494,8 +493,8 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
         comboBoxField.addOption(new SelectFieldItem("option 3", "3"));
 
         comboBoxField.setSelected(option1);
-        Assert.assertEquals("option 1", comboBoxField.getSelectedOption().getExportValue());
-        Assert.assertEquals("1", comboBoxField.getSelectedOption().getDisplayValue());
+        Assertions.assertEquals("option 1", comboBoxField.getSelectedOption().getExportValue());
+        Assertions.assertEquals("1", comboBoxField.getSelectedOption().getDisplayValue());
     }
 
     @Test
@@ -505,7 +504,7 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
         comboBoxField.addOption(new SelectFieldItem("option 2", "2"));
 
         comboBoxField.setSelected((SelectFieldItem) null);
-        Assert.assertNull(comboBoxField.getSelectedOption());
+        Assertions.assertNull(comboBoxField.getSelectedOption());
     }
 
     @Test
@@ -515,7 +514,7 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
         comboBoxField.addOption(new SelectFieldItem("option 2", "2"));
 
         comboBoxField.setSelected(new SelectFieldItem("option 3", "3"));
-        Assert.assertNull(comboBoxField.getSelectedOption());
+        Assertions.assertNull(comboBoxField.getSelectedOption());
     }
 
     @Test
@@ -526,7 +525,7 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
         ComboBoxField comboBoxField = new ComboBoxField("test");
         comboBoxField.addOption(new SelectFieldItem("option 1", "1"));
         comboBoxField.addOption(new SelectFieldItem("option 1", "2"));
-        Assert.assertEquals(2, comboBoxField.getItems().size());
+        Assertions.assertEquals(2, comboBoxField.getItems().size());
     }
 
 
@@ -535,13 +534,13 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
         ComboBoxField comboBoxField = new ComboBoxField("test");
         comboBoxField.addOption(new SelectFieldItem("option 1", "1"));
         comboBoxField.addOption(new SelectFieldItem("option 2", "1"));
-        Assert.assertEquals(2, comboBoxField.getItems().size());
+        Assertions.assertEquals(2, comboBoxField.getItems().size());
     }
 
     @Test
     public void addingOptionWithNullExportValueTest() {
         ComboBoxField comboBoxField = new ComboBoxField("test");
-        Assert.assertThrows(IllegalArgumentException.class,
+        Assertions.assertThrows(IllegalArgumentException.class,
                 () -> comboBoxField.addOption(new SelectFieldItem("option 1", (String) null)));
     }
 
@@ -580,7 +579,7 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
 
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
 

@@ -24,19 +24,19 @@ package com.itextpdf.signatures;
 
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.util.Date;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class SignUtilsUnitTest extends ExtendedITextTest {
 
     @Test
     public void add180SecTest() {
         // use int value in month for porting compatibility
-        Assert.assertEquals(new Date(2021, 8, 19, 0, 3, 20),
+        Assertions.assertEquals(new Date(2021, 8, 19, 0, 3, 20),
                 SignUtils.add180Sec(new Date(2021, 8, 19, 0, 0, 20)));
     }
 }

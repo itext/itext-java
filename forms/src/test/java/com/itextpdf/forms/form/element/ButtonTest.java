@@ -55,22 +55,21 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.properties.VerticalAlignment;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class ButtonTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER =
             "./src/test/resources/com/itextpdf/forms/form/element/ButtonTest/";
     public static final String DESTINATION_FOLDER =
             "./target/test/com/itextpdf/forms/form/element/ButtonTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
@@ -98,7 +97,7 @@ public class ButtonTest extends ExtendedITextTest {
             document.add(flattenButton);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -130,7 +129,7 @@ public class ButtonTest extends ExtendedITextTest {
             document.add(flattenButton);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -160,7 +159,7 @@ public class ButtonTest extends ExtendedITextTest {
             document.add(flattenButton);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -188,7 +187,7 @@ public class ButtonTest extends ExtendedITextTest {
             document.add(flattenButton);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -205,7 +204,7 @@ public class ButtonTest extends ExtendedITextTest {
             document.add(formButton);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -240,7 +239,7 @@ public class ButtonTest extends ExtendedITextTest {
             form.addField(button);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -286,7 +285,7 @@ public class ButtonTest extends ExtendedITextTest {
             document.add(flattenButton2);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -339,7 +338,7 @@ public class ButtonTest extends ExtendedITextTest {
             document.add(button4);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -347,14 +346,14 @@ public class ButtonTest extends ExtendedITextTest {
         Button button = new Button("button");
         button.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
         ButtonRenderer buttonRenderer = new ButtonRenderer(button);
-        Assert.assertFalse(buttonRenderer.isFlatten());
+        Assertions.assertFalse(buttonRenderer.isFlatten());
         button.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
-        Assert.assertTrue(buttonRenderer.isFlatten());
+        Assertions.assertTrue(buttonRenderer.isFlatten());
         InputField inputField = new InputField("input");
         inputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
         button.add(inputField);
         buttonRenderer = (ButtonRenderer) button.createRendererSubTree();
-        Assert.assertTrue(((InputFieldRenderer)buttonRenderer.getChildRenderers().get(0)
+        Assertions.assertTrue(((InputFieldRenderer)buttonRenderer.getChildRenderers().get(0)
                 .setParent(buttonRenderer)).isFlatten());
     }
 }

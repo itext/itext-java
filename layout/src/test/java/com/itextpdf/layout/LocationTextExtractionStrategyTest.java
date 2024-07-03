@@ -48,19 +48,18 @@ import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.properties.TextAlignment;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.nio.file.Files;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStrategyTest {
 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/LocationTextExtractionStrategyTest/";
@@ -76,7 +75,7 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
 
         String text = PdfTextExtractor.getTextFromPage(doc.getPage(1), createRenderListenerForTest());
 
-        Assert.assertEquals("A\nAA\nB\nBB\nC\nCC\nD\nDD", text);
+        Assertions.assertEquals("A\nAA\nB\nBB\nC\nCC\nD\nDD", text);
     }
 
     @Test
@@ -88,8 +87,8 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
 
         String text = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1), createRenderListenerForTest());
 
-        Assert.assertEquals("A AA B BB C CC D DD", text);
-//        Assert.assertEquals("A\tAA\tB\tBB\tC\tCC\tD\tDD", text);
+        Assertions.assertEquals("A AA B BB C CC D DD", text);
+//        Assertions.assertEquals("A\tAA\tB\tBB\tC\tCC\tD\tDD", text);
     }
 
     @Test
@@ -100,7 +99,7 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
 
         String text = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1), createRenderListenerForTest());
 
-        Assert.assertEquals("A \nB \nC \nD", text);
+        Assertions.assertEquals("A \nB \nC \nD", text);
     }
 
     @Test
@@ -112,7 +111,7 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
 
         String text = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1), createRenderListenerForTest());
 
-        Assert.assertEquals("A \nB \nC \nD", text);
+        Assertions.assertEquals("A \nB \nC \nD", text);
     }
 
     @Test
@@ -124,7 +123,7 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
 
         String text = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1), createRenderListenerForTest());
 
-        Assert.assertEquals("A \nB \nC \nD", text);
+        Assertions.assertEquals("A \nB \nC \nD", text);
     }
 
     @Test
@@ -136,7 +135,7 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new ByteArrayInputStream(content)));
 
         String text = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1), createRenderListenerForTest());
-        Assert.assertEquals("A\nB\nX\nC", text);
+        Assertions.assertEquals("A\nB\nX\nC", text);
     }
 
     @Test
@@ -145,7 +144,7 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
         //TestResourceUtils.openBytesAsPdf(content);
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new ByteArrayInputStream(content)));
         String text = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1), createRenderListenerForTest());
-        Assert.assertEquals("WA", text);
+        Assertions.assertEquals("WA", text);
     }
 
     @Test
@@ -156,10 +155,10 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
         Vector parallelStart = new Vector(1.1f, 0, 1);
 
         float rsltAntiParallel = antiparallelStart.subtract(end).dot(end.subtract(start).normalize());
-        Assert.assertEquals(-0.1f, rsltAntiParallel, 0.0001);
+        Assertions.assertEquals(-0.1f, rsltAntiParallel, 0.0001);
 
         float rsltParallel = parallelStart.subtract(end).dot(end.subtract(start).normalize());
-        Assert.assertEquals(0.1f, rsltParallel, 0.0001);
+        Assertions.assertEquals(0.1f, rsltParallel, 0.0001);
 
     }
 
@@ -169,7 +168,7 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
         //TestResourceUtils.openBytesAsPdf(content);
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new ByteArrayInputStream(content)));
         String text = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1), createRenderListenerForTest());
-        Assert.assertEquals("Hello", text);
+        Assertions.assertEquals("Hello", text);
     }
 
     @Test
@@ -183,7 +182,7 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
                 "Great Place to Work Institute of San Francisco to evaluate \n" +
                 "trust in management, pride in work/company, and \n" +
                 "camaraderie. Responses were returned directly to us. ";
-        Assert.assertEquals(expectedText, text);
+        Assertions.assertEquals(expectedText, text);
     }
 
     @Test
@@ -192,7 +191,7 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new ByteArrayInputStream(content)));
         String text = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1), createRenderListenerForTest());
 
-        Assert.assertEquals("Preface", text);
+        Assertions.assertEquals("Preface", text);
     }
 
     @Test
@@ -201,7 +200,7 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new ByteArrayInputStream(content)));
         String text = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1), createRenderListenerForTest());
 
-        Assert.assertEquals("Preface", text);
+        Assertions.assertEquals("Preface", text);
     }
 
     @Test
@@ -218,14 +217,14 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
 
             byte[] bytes = Files.readAllBytes(java.nio.file.Paths.get(comparedTextFile));
 
-            Assert.assertEquals(new String(bytes, StandardCharsets.UTF_8), result);
-            Assert.assertEquals(177, pdfType3Font.getNumberOfGlyphs());
+            Assertions.assertEquals(new String(bytes, StandardCharsets.UTF_8), result);
+            Assertions.assertEquals(177, pdfType3Font.getNumberOfGlyphs());
 
-            Assert.assertEquals("gA", pdfType3Font.getFontEncoding().getDifference(10));
-            Assert.assertEquals(41, pdfType3Font.getFontProgram().getGlyphByCode(10).getUnicode());
+            Assertions.assertEquals("gA", pdfType3Font.getFontEncoding().getDifference(10));
+            Assertions.assertEquals(41, pdfType3Font.getFontProgram().getGlyphByCode(10).getUnicode());
 
-            Assert.assertEquals(".notdef", pdfType3Font.getFontEncoding().getDifference(210));
-            Assert.assertEquals(928, pdfType3Font.getFontProgram().getGlyphByCode(210).getUnicode());
+            Assertions.assertEquals(".notdef", pdfType3Font.getFontEncoding().getDifference(210));
+            Assertions.assertEquals(928, pdfType3Font.getFontProgram().getGlyphByCode(210).getUnicode());
         }
     }
 

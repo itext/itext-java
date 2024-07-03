@@ -40,26 +40,25 @@ import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.kernel.xmp.options.PropertyOptions;
 import com.itextpdf.kernel.xmp.options.SerializeOptions;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfAXmpTest extends ExtendedITextTest {
 
     public static final String cmpFolder = "./src/test/resources/com/itextpdf/pdfa/cmp/PdfAXmpTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/pdfa/PdfAXmpTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
@@ -79,9 +78,9 @@ public class PdfAXmpTest extends ExtendedITextTest {
         doc.close();
 
         CompareTool ct = new CompareTool();
-        Assert.assertNull(ct.compareByContent(outFile, cmpFile, destinationFolder));
-        Assert.assertNull(ct.compareDocumentInfo(outFile, cmpFile));
-        Assert.assertNull(ct.compareXmp(outFile, cmpFile, true));
+        Assertions.assertNull(ct.compareByContent(outFile, cmpFile, destinationFolder));
+        Assertions.assertNull(ct.compareDocumentInfo(outFile, cmpFile));
+        Assertions.assertNull(ct.compareXmp(outFile, cmpFile, true));
     }
 
     @Test
@@ -99,9 +98,9 @@ public class PdfAXmpTest extends ExtendedITextTest {
         doc.close();
 
         CompareTool ct = new CompareTool();
-        Assert.assertNull(ct.compareByContent(outFile, cmpFile, destinationFolder));
-        Assert.assertNull(ct.compareDocumentInfo(outFile, cmpFile));
-        Assert.assertNull(ct.compareXmp(outFile, cmpFile, true));
+        Assertions.assertNull(ct.compareByContent(outFile, cmpFile, destinationFolder));
+        Assertions.assertNull(ct.compareDocumentInfo(outFile, cmpFile));
+        Assertions.assertNull(ct.compareXmp(outFile, cmpFile, true));
     }
 
     @Test
@@ -130,8 +129,8 @@ public class PdfAXmpTest extends ExtendedITextTest {
             byte[] rdf = doc.getXmpMetadata();
             byte[] expectedRdf = cmpDoc.getXmpMetadata();
             // Comparing angle brackets, since it's the main difference between canonical and compact format.
-            Assert.assertEquals(count(expectedRdf, (byte)'<'), count(rdf, (byte)'<'));
-            Assert.assertNull(new CompareTool().compareXmp(cmpFile, outFile, true));
+            Assertions.assertEquals(count(expectedRdf, (byte)'<'), count(rdf, (byte)'<'));
+            Assertions.assertNull(new CompareTool().compareXmp(cmpFile, outFile, true));
         }
     }
 
@@ -146,7 +145,7 @@ public class PdfAXmpTest extends ExtendedITextTest {
         }
 
         CompareTool ct = new CompareTool();
-        Assert.assertNull(ct.compareXmp(outFile, cmpFile, true));
+        Assertions.assertNull(ct.compareXmp(outFile, cmpFile, true));
 
     }
 
@@ -158,10 +157,9 @@ public class PdfAXmpTest extends ExtendedITextTest {
         // check whether the pdfuaid NS URI was properly encoded as a URI with rdf:resource
         PdfDocument readDoc = new PdfDocument(new PdfReader(new ByteArrayInputStream(baos.toByteArray())));
         String xmpString = new String(readDoc.getXmpMetadata(), StandardCharsets.UTF_8);
-        Assert.assertTrue(
-                "Did not find expected namespaceURI definition",
-                xmpString.contains("<pdfaSchema:namespaceURI rdf:resource=\"http://www.aiim.org/pdfua/ns/id/\"/>")
-        );
+        Assertions.assertTrue(
+                xmpString.contains("<pdfaSchema:namespaceURI rdf:resource=\"http://www.aiim.org/pdfua/ns/id/\"/>"),
+                "Did not find expected namespaceURI definition");
 
     }
 

@@ -29,21 +29,20 @@ import com.itextpdf.pdfa.logs.PdfAConformanceLogMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Set;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfAIndirectResourcesTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/pdfs/";
     public static final String destinationFolder = "./target/test/com/itextpdf/pdfa/PdfAIndirectResourcesTest/";
 
-    @Before
+    @BeforeEach
     public void configure() {
         createDestinationFolder(destinationFolder);
     }

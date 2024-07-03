@@ -29,13 +29,12 @@ import com.itextpdf.layout.properties.TransparentColor;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.properties.VerticalAlignment;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class StylesTest extends ExtendedITextTest {
 
     public static float EPS = 0.0001f;
@@ -46,7 +45,7 @@ public class StylesTest extends ExtendedITextTest {
         myStyle.setFontColor(ColorConstants.RED);
 
         Style copiedStyle = new Style(myStyle);
-        Assert.assertEquals(ColorConstants.RED,
+        Assertions.assertEquals(ColorConstants.RED,
                 copiedStyle.<TransparentColor>getProperty(Property.FONT_COLOR).getColor());
     }
 
@@ -59,7 +58,7 @@ public class StylesTest extends ExtendedITextTest {
                 .addStyle(myStyle)
                 .setFontColor(ColorConstants.GREEN);
 
-        Assert.assertEquals(ColorConstants.GREEN,
+        Assertions.assertEquals(ColorConstants.GREEN,
                 p.getRenderer().<TransparentColor>getProperty(Property.FONT_COLOR).getColor());
     }
 
@@ -72,7 +71,7 @@ public class StylesTest extends ExtendedITextTest {
                 .setFontColor(ColorConstants.GREEN)
                 .addStyle(myStyle);
 
-        Assert.assertEquals(ColorConstants.GREEN,
+        Assertions.assertEquals(ColorConstants.GREEN,
                 p.getRenderer().<TransparentColor>getProperty(Property.FONT_COLOR).getColor());
     }
 
@@ -83,7 +82,7 @@ public class StylesTest extends ExtendedITextTest {
 
         Paragraph p = new Paragraph("text").addStyle(myStyle);
 
-        Assert.assertEquals(ColorConstants.RED,
+        Assertions.assertEquals(ColorConstants.RED,
                 p.getRenderer().<TransparentColor>getProperty(Property.FONT_COLOR).getColor());
     }
 
@@ -94,7 +93,7 @@ public class StylesTest extends ExtendedITextTest {
 
         Paragraph p = new Paragraph("text").addStyle(myStyle);
 
-        Assert.assertEquals(ColorConstants.RED,
+        Assertions.assertEquals(ColorConstants.RED,
                 p.getRenderer().<TransparentColor>getProperty(Property.FONT_COLOR).getColor());
 
         Style myStyle2 = new Style();
@@ -102,7 +101,7 @@ public class StylesTest extends ExtendedITextTest {
 
         p.addStyle(myStyle2);
 
-        Assert.assertEquals(ColorConstants.GREEN,
+        Assertions.assertEquals(ColorConstants.GREEN,
                 p.getRenderer().<TransparentColor>getProperty(Property.FONT_COLOR).getColor());
     }
 
@@ -110,7 +109,7 @@ public class StylesTest extends ExtendedITextTest {
     public void addNullAsStyleTest() {
         Paragraph p = new Paragraph("text");
 
-        Assert.assertThrows(IllegalArgumentException.class, () -> p.addStyle(null));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> p.addStyle(null));
     }
 
     @Test
@@ -126,13 +125,13 @@ public class StylesTest extends ExtendedITextTest {
         Paragraph p = new Paragraph("Hello, iText!");
         p.addStyle(style);
 
-        Assert.assertEquals(UnitValue.createPointValue(expectedMarginTop),
+        Assertions.assertEquals(UnitValue.createPointValue(expectedMarginTop),
                 p.<UnitValue>getProperty(Property.MARGIN_TOP));
-        Assert.assertEquals(UnitValue.createPointValue(expectedMarginRight),
+        Assertions.assertEquals(UnitValue.createPointValue(expectedMarginRight),
                 p.<UnitValue>getProperty(Property.MARGIN_RIGHT));
-        Assert.assertEquals(UnitValue.createPointValue(expectedMarginBottom),
+        Assertions.assertEquals(UnitValue.createPointValue(expectedMarginBottom),
                 p.<UnitValue>getProperty(Property.MARGIN_BOTTOM));
-        Assert.assertEquals(UnitValue.createPointValue(expectedMarginLeft),
+        Assertions.assertEquals(UnitValue.createPointValue(expectedMarginLeft),
                 p.<UnitValue>getProperty(Property.MARGIN_LEFT));
     }
 
@@ -146,7 +145,7 @@ public class StylesTest extends ExtendedITextTest {
         Paragraph p = new Paragraph("Hello, iText!");
         p.addStyle(style);
 
-        Assert.assertEquals(UnitValue.createPointValue(expectedMarginTop),
+        Assertions.assertEquals(UnitValue.createPointValue(expectedMarginTop),
                 p.<UnitValue>getProperty(Property.MARGIN_TOP));
     }
 
@@ -160,7 +159,7 @@ public class StylesTest extends ExtendedITextTest {
         Paragraph p = new Paragraph();
         p.addStyle(style);
 
-        Assert.assertEquals(expectedAlignment, p.<VerticalAlignment>getProperty(Property.VERTICAL_ALIGNMENT));
+        Assertions.assertEquals(expectedAlignment, p.<VerticalAlignment>getProperty(Property.VERTICAL_ALIGNMENT));
     }
 
     @Test
@@ -173,7 +172,7 @@ public class StylesTest extends ExtendedITextTest {
         Paragraph p = new Paragraph();
         p.addStyle(style);
 
-        Assert.assertEquals(expectedSpacingRatio, (float) p.<Float>getProperty(Property.SPACING_RATIO), EPS);
+        Assertions.assertEquals(expectedSpacingRatio, (float) p.<Float>getProperty(Property.SPACING_RATIO), EPS);
     }
 
     @Test
@@ -184,7 +183,7 @@ public class StylesTest extends ExtendedITextTest {
         Paragraph p1 = new Paragraph();
         p1.addStyle(trueStyle);
 
-        Assert.assertEquals(true, p1.isKeepTogether());
+        Assertions.assertEquals(true, p1.isKeepTogether());
     }
 
     @Test
@@ -195,7 +194,7 @@ public class StylesTest extends ExtendedITextTest {
         Paragraph p = new Paragraph();
         p.addStyle(falseStyle);
 
-        Assert.assertEquals(false, p.isKeepTogether());
+        Assertions.assertEquals(false, p.isKeepTogether());
     }
 
     @Test
@@ -208,7 +207,7 @@ public class StylesTest extends ExtendedITextTest {
         Paragraph p = new Paragraph();
         p.addStyle(style);
 
-        Assert.assertEquals(expectedRotationAngle, (float) p.<Float>getProperty(Property.ROTATION_ANGLE), EPS);
+        Assertions.assertEquals(expectedRotationAngle, (float) p.<Float>getProperty(Property.ROTATION_ANGLE), EPS);
     }
 
     @Test
@@ -221,7 +220,7 @@ public class StylesTest extends ExtendedITextTest {
         Paragraph p = new Paragraph();
         p.addStyle(style);
 
-        Assert.assertEquals(UnitValue.createPointValue(expectedWidth), p.<UnitValue>getProperty(Property.WIDTH));
+        Assertions.assertEquals(UnitValue.createPointValue(expectedWidth), p.<UnitValue>getProperty(Property.WIDTH));
     }
 
     @Test
@@ -234,7 +233,7 @@ public class StylesTest extends ExtendedITextTest {
         Paragraph p = new Paragraph();
         p.addStyle(style);
 
-        Assert.assertEquals(UnitValue.createPointValue(expectedWidth), p.<UnitValue>getProperty(Property.WIDTH));
+        Assertions.assertEquals(UnitValue.createPointValue(expectedWidth), p.<UnitValue>getProperty(Property.WIDTH));
     }
 
     @Test
@@ -247,7 +246,7 @@ public class StylesTest extends ExtendedITextTest {
         Paragraph p = new Paragraph();
         p.addStyle(style);
 
-        Assert.assertEquals(UnitValue.createPointValue(expectedHeight), p.<UnitValue>getProperty(Property.HEIGHT));
+        Assertions.assertEquals(UnitValue.createPointValue(expectedHeight), p.<UnitValue>getProperty(Property.HEIGHT));
     }
 
     @Test
@@ -260,7 +259,7 @@ public class StylesTest extends ExtendedITextTest {
         Paragraph p = new Paragraph();
         p.addStyle(style);
 
-        Assert.assertEquals(UnitValue.createPointValue(expectedHeight), p.<UnitValue>getProperty(Property.HEIGHT));
+        Assertions.assertEquals(UnitValue.createPointValue(expectedHeight), p.<UnitValue>getProperty(Property.HEIGHT));
     }
 
     @Test
@@ -273,7 +272,7 @@ public class StylesTest extends ExtendedITextTest {
         Paragraph p = new Paragraph();
         p.addStyle(style);
 
-        Assert.assertEquals(UnitValue.createPointValue(expectedMaxHeight),
+        Assertions.assertEquals(UnitValue.createPointValue(expectedMaxHeight),
                 p.<UnitValue>getProperty(Property.MAX_HEIGHT));
     }
 
@@ -287,7 +286,7 @@ public class StylesTest extends ExtendedITextTest {
         Paragraph p = new Paragraph();
         p.addStyle(style);
 
-        Assert.assertEquals(UnitValue.createPointValue(expectedMinHeight),
+        Assertions.assertEquals(UnitValue.createPointValue(expectedMinHeight),
                 p.<UnitValue>getProperty(Property.MIN_HEIGHT));
     }
 
@@ -301,7 +300,7 @@ public class StylesTest extends ExtendedITextTest {
         Paragraph p = new Paragraph();
         p.addStyle(style);
 
-        Assert.assertEquals(UnitValue.createPointValue(expectedMaxWidth), p.<UnitValue>getProperty(Property.MAX_WIDTH));
+        Assertions.assertEquals(UnitValue.createPointValue(expectedMaxWidth), p.<UnitValue>getProperty(Property.MAX_WIDTH));
     }
 
     @Test
@@ -314,6 +313,6 @@ public class StylesTest extends ExtendedITextTest {
         Paragraph p = new Paragraph();
         p.addStyle(style);
 
-        Assert.assertEquals(UnitValue.createPointValue(expectedMinWidth), p.<UnitValue>getProperty(Property.MIN_WIDTH));
+        Assertions.assertEquals(UnitValue.createPointValue(expectedMinWidth), p.<UnitValue>getProperty(Property.MIN_WIDTH));
     }
 }

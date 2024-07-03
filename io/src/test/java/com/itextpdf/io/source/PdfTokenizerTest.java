@@ -25,16 +25,15 @@ package com.itextpdf.io.source;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.source.PdfTokenizer.TokenType;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 import static com.itextpdf.io.exceptions.IoExceptionMessageConstant.ERROR_AT_FILE_POINTER;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfTokenizerTest extends ExtendedITextTest {
 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/io/util/";
@@ -50,22 +49,22 @@ public class PdfTokenizerTest extends ExtendedITextTest {
 
         tok.seek(0);
         tok.nextValidToken();
-        Assert.assertEquals(expectedTypes[0], tok.getTokenType());
-        Assert.assertEquals("Name1", tok.getStringValue());
+        Assertions.assertEquals(expectedTypes[0], tok.getTokenType());
+        Assertions.assertEquals("Name1", tok.getStringValue());
 
         tok.seek(7);
         tok.nextValidToken();
-        Assert.assertEquals(expectedTypes[1], tok.getTokenType());
-        Assert.assertEquals("70", tok.getStringValue());
+        Assertions.assertEquals(expectedTypes[1], tok.getTokenType());
+        Assertions.assertEquals("70", tok.getStringValue());
 
         tok.seek(8);
         tok.nextValidToken();
-        Assert.assertEquals(expectedTypes[1], tok.getTokenType());
-        Assert.assertEquals("0", tok.getStringValue());
+        Assertions.assertEquals(expectedTypes[1], tok.getTokenType());
+        Assertions.assertEquals("0", tok.getStringValue());
 
         tok.seek(9);
         tok.nextValidToken();
-        Assert.assertEquals(expectedTypes[2], tok.getTokenType());
+        Assertions.assertEquals(expectedTypes[2], tok.getTokenType());
     }
 
     @Test
@@ -77,34 +76,34 @@ public class PdfTokenizerTest extends ExtendedITextTest {
 
         tokenizer.seek(0);
         int symbol = tokenizer.peek();
-        Assert.assertEquals((int)'/', symbol);
-        Assert.assertEquals(0, tokenizer.getPosition());
+        Assertions.assertEquals((int)'/', symbol);
+        Assertions.assertEquals(0, tokenizer.getPosition());
 
         tokenizer.seek(7);
         symbol = tokenizer.peek();
-        Assert.assertEquals((int)'7', symbol);
-        Assert.assertEquals(7, tokenizer.getPosition());
+        Assertions.assertEquals((int)'7', symbol);
+        Assertions.assertEquals(7, tokenizer.getPosition());
 
         tokenizer.seek(9);
         symbol = tokenizer.peek();
-        Assert.assertEquals(-1, symbol);
-        Assert.assertEquals(9, tokenizer.getPosition());
+        Assertions.assertEquals(-1, symbol);
+        Assertions.assertEquals(9, tokenizer.getPosition());
 
         byte[] name = new byte[6];
         tokenizer.seek(0);
         int read = tokenizer.peek(name);
         byte[] expected = "/Name1".getBytes();
-        Assert.assertArrayEquals(expected, name);
-        Assert.assertEquals(0, tokenizer.getPosition());
-        Assert.assertEquals(6, read);
+        Assertions.assertArrayEquals(expected, name);
+        Assertions.assertEquals(0, tokenizer.getPosition());
+        Assertions.assertEquals(6, read);
 
         byte[] bigBuffer = new byte[13];
         read = tokenizer.peek(bigBuffer);
         expected = new byte[] {(byte) 47, (byte) 78, (byte) 97, (byte) 109, (byte) 101, (byte) 49, (byte) 32,
                                (byte) 55, (byte) 48, (byte) 0, (byte) 0, (byte) 0, (byte) 0};
-        Assert.assertArrayEquals(expected, bigBuffer);
-        Assert.assertEquals(0, tokenizer.getPosition());
-        Assert.assertEquals(9, read);
+        Assertions.assertArrayEquals(expected, bigBuffer);
+        Assertions.assertEquals(0, tokenizer.getPosition());
+        Assertions.assertEquals(9, read);
     }
 
     @Test
@@ -116,8 +115,8 @@ public class PdfTokenizerTest extends ExtendedITextTest {
                 factory.createSource(data.getBytes(StandardCharsets.ISO_8859_1))));
 
         tok.nextValidToken();
-        Assert.assertEquals(TokenType.Number, tok.getTokenType());
-        Assert.assertEquals(21474836470L, tok.getLongValue());
+        Assertions.assertEquals(TokenType.Number, tok.getTokenType());
+        Assertions.assertEquals(21474836470L, tok.getLongValue());
     }
 
     @Test
@@ -129,8 +128,8 @@ public class PdfTokenizerTest extends ExtendedITextTest {
                 factory.createSource(data.getBytes(StandardCharsets.ISO_8859_1))));
 
         tok.nextValidToken();
-        Assert.assertEquals(TokenType.Number, tok.getTokenType());
-        Assert.assertEquals(15, tok.getIntValue());
+        Assertions.assertEquals(TokenType.Number, tok.getTokenType());
+        Assertions.assertEquals(15, tok.getIntValue());
     }
 
     @Test
@@ -141,11 +140,11 @@ public class PdfTokenizerTest extends ExtendedITextTest {
         PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(
                 factory.createSource(data.getBytes(StandardCharsets.ISO_8859_1))));
 
-        Assert.assertEquals(0, tok.getPosition());
+        Assertions.assertEquals(0, tok.getPosition());
         tok.nextValidToken();
-        Assert.assertEquals(6, tok.getPosition());
+        Assertions.assertEquals(6, tok.getPosition());
         tok.nextValidToken();
-        Assert.assertEquals(11, tok.getPosition());
+        Assertions.assertEquals(11, tok.getPosition());
     }
 
     @Test
@@ -156,7 +155,7 @@ public class PdfTokenizerTest extends ExtendedITextTest {
         PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(
                 factory.createSource(data.getBytes(StandardCharsets.ISO_8859_1))));
 
-        Assert.assertEquals(6, tok.length());
+        Assertions.assertEquals(6, tok.length());
     }
 
     @Test
@@ -167,7 +166,7 @@ public class PdfTokenizerTest extends ExtendedITextTest {
         PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(
                 factory.createSource(data.getBytes(StandardCharsets.ISO_8859_1))));
 
-        Assert.assertEquals(9, tok.length());
+        Assertions.assertEquals(9, tok.length());
     }
 
     @Test
@@ -183,7 +182,7 @@ public class PdfTokenizerTest extends ExtendedITextTest {
                 (byte) tok.read(), (byte) tok.read(), (byte) tok.read(),
                 (byte) tok.read()
         };
-        Assert.assertEquals("/Name1 ", new String(read));
+        Assertions.assertEquals("/Name1 ", new String(read));
     }
 
     @Test
@@ -194,7 +193,7 @@ public class PdfTokenizerTest extends ExtendedITextTest {
         PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(
                 factory.createSource(data.getBytes(StandardCharsets.ISO_8859_1))));
 
-        Assert.assertEquals(data, tok.readString(data.length()));
+        Assertions.assertEquals(data, tok.readString(data.length()));
     }
 
     @Test
@@ -205,7 +204,7 @@ public class PdfTokenizerTest extends ExtendedITextTest {
         PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(
                 factory.createSource(data.getBytes(StandardCharsets.ISO_8859_1))));
 
-        Assert.assertEquals("/Name", tok.readString(5));
+        Assertions.assertEquals("/Name", tok.readString(5));
     }
 
     @Test
@@ -216,7 +215,7 @@ public class PdfTokenizerTest extends ExtendedITextTest {
         PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(
                 factory.createSource(data.getBytes(StandardCharsets.ISO_8859_1))));
 
-        Assert.assertEquals(data, tok.readString(data.length() + 10));
+        Assertions.assertEquals(data, tok.readString(data.length() + 10));
     }
 
     @Test
@@ -228,7 +227,7 @@ public class PdfTokenizerTest extends ExtendedITextTest {
                 factory.createSource(data.getBytes(StandardCharsets.ISO_8859_1))));
 
         tok.readFully(new byte[6]);
-        Assert.assertEquals(" 15", tok.readString(data.length()));
+        Assertions.assertEquals(" 15", tok.readString(data.length()));
     }
 
     @Test
@@ -240,7 +239,7 @@ public class PdfTokenizerTest extends ExtendedITextTest {
                 factory.createSource(data.getBytes(StandardCharsets.ISO_8859_1))));
 
         tok.readFully(new byte[7]);
-        Assert.assertEquals("15", tok.readString(data.length()));
+        Assertions.assertEquals("15", tok.readString(data.length()));
     }
 
     @Test
@@ -251,7 +250,7 @@ public class PdfTokenizerTest extends ExtendedITextTest {
         try (PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(
                 factory.createSource(data.getBytes(StandardCharsets.ISO_8859_1))))) {
             long eofPosition = tok.getNextEof();
-            Assert.assertEquals(data.length() + 1, eofPosition);
+            Assertions.assertEquals(data.length() + 1, eofPosition);
         }
     }
 
@@ -268,7 +267,7 @@ public class PdfTokenizerTest extends ExtendedITextTest {
         try (PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(
                 factory.createSource(stringBuilder.toString().getBytes(StandardCharsets.ISO_8859_1))))) {
             long eofPosition = tok.getNextEof();
-            Assert.assertEquals(data.length() * 20 + 6, eofPosition);
+            Assertions.assertEquals(data.length() * 20 + 6, eofPosition);
         }
     }
 
@@ -286,7 +285,7 @@ public class PdfTokenizerTest extends ExtendedITextTest {
         try (PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(
                 factory.createSource(stringBuilder.toString().getBytes(StandardCharsets.ISO_8859_1))))) {
             long eofPosition = tok.getNextEof();
-            Assert.assertEquals(124 + 6, eofPosition);
+            Assertions.assertEquals(124 + 6, eofPosition);
         }
     }
 
@@ -298,7 +297,7 @@ public class PdfTokenizerTest extends ExtendedITextTest {
         try (PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(
                 factory.createSource(data.getBytes(StandardCharsets.ISO_8859_1))))) {
             long eofPosition = tok.getNextEof();
-            Assert.assertEquals(data.indexOf("%%EOF") + 6, eofPosition);
+            Assertions.assertEquals(data.indexOf("%%EOF") + 6, eofPosition);
         }
     }
 
@@ -309,7 +308,7 @@ public class PdfTokenizerTest extends ExtendedITextTest {
         RandomAccessSourceFactory factory = new RandomAccessSourceFactory();
         try (PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(
                 factory.createSource(data.getBytes(StandardCharsets.ISO_8859_1))))) {
-            Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class, () -> tok.getNextEof());
+            Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class, () -> tok.getNextEof());
         }
     }
 
@@ -322,13 +321,13 @@ public class PdfTokenizerTest extends ExtendedITextTest {
                 factory.createSource(data.getBytes(StandardCharsets.ISO_8859_1))));
 
         tok.nextToken();
-        Assert.assertEquals("Name1", new String(tok.getDecodedStringContent()));
+        Assertions.assertEquals("Name1", new String(tok.getDecodedStringContent()));
 
         tok.nextToken();
-        Assert.assertEquals("15", new String(tok.getDecodedStringContent()));
+        Assertions.assertEquals("15", new String(tok.getDecodedStringContent()));
 
         tok.nextToken();
-        Assert.assertEquals("", new String(tok.getDecodedStringContent()));
+        Assertions.assertEquals("", new String(tok.getDecodedStringContent()));
     }
 
     @Test
@@ -340,8 +339,8 @@ public class PdfTokenizerTest extends ExtendedITextTest {
                 factory.createSource(data.getBytes(StandardCharsets.ISO_8859_1))));
 
         tok.nextToken();
-        Assert.assertTrue(tok.isHexString());
-        Assert.assertEquals("some hex string", new String(tok.getDecodedStringContent()));
+        Assertions.assertTrue(tok.isHexString());
+        Assertions.assertEquals("some hex string", new String(tok.getDecodedStringContent()));
     }
 
     @Test
@@ -350,10 +349,10 @@ public class PdfTokenizerTest extends ExtendedITextTest {
         PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(
                 factory.createSource("/Name1".getBytes(StandardCharsets.ISO_8859_1))));
 
-        Exception e = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class,
+        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
                 () ->  tok.throwError(ERROR_AT_FILE_POINTER, 0)
         );
-        Assert.assertEquals(MessageFormatUtil.format(ERROR_AT_FILE_POINTER, 0), e.getMessage());
+        Assertions.assertEquals(MessageFormatUtil.format(ERROR_AT_FILE_POINTER, 0), e.getMessage());
     }
 
     @Test
@@ -397,7 +396,7 @@ public class PdfTokenizerTest extends ExtendedITextTest {
         PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(factory.createSource(data.getBytes(StandardCharsets.ISO_8859_1))));
 
         tok.nextToken();
-        Assert.assertTrue(tok.tokenValueEqualsTo(data.getBytes(StandardCharsets.ISO_8859_1)));
+        Assertions.assertTrue(tok.tokenValueEqualsTo(data.getBytes(StandardCharsets.ISO_8859_1)));
     }
 
     @Test
@@ -408,7 +407,7 @@ public class PdfTokenizerTest extends ExtendedITextTest {
         PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(factory.createSource(data.getBytes(StandardCharsets.ISO_8859_1))));
 
         tok.nextToken();
-        Assert.assertFalse(tok.tokenValueEqualsTo(null));
+        Assertions.assertFalse(tok.tokenValueEqualsTo(null));
     }
 
     @Test
@@ -419,7 +418,7 @@ public class PdfTokenizerTest extends ExtendedITextTest {
         PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(factory.createSource(data.getBytes(StandardCharsets.ISO_8859_1))));
 
         tok.nextToken();
-        Assert.assertFalse(tok.tokenValueEqualsTo((data + "s").getBytes(StandardCharsets.ISO_8859_1)));
+        Assertions.assertFalse(tok.tokenValueEqualsTo((data + "s").getBytes(StandardCharsets.ISO_8859_1)));
     }
 
     @Test
@@ -430,7 +429,7 @@ public class PdfTokenizerTest extends ExtendedITextTest {
         PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(factory.createSource(data.getBytes(StandardCharsets.ISO_8859_1))));
 
         tok.nextToken();
-        Assert.assertFalse(tok.tokenValueEqualsTo("Somestring".getBytes(StandardCharsets.ISO_8859_1)));
+        Assertions.assertFalse(tok.tokenValueEqualsTo("Somestring".getBytes(StandardCharsets.ISO_8859_1)));
     }
 
     @Test
@@ -438,7 +437,7 @@ public class PdfTokenizerTest extends ExtendedITextTest {
         RandomAccessSourceFactory factory = new RandomAccessSourceFactory();
         PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(factory.createBestSource(sourceFolder + "test.pdf")));
 
-        Assert.assertEquals("PDF-1.7", tok.checkPdfHeader());
+        Assertions.assertEquals("PDF-1.7", tok.checkPdfHeader());
     }
 
     @Test
@@ -446,7 +445,7 @@ public class PdfTokenizerTest extends ExtendedITextTest {
         RandomAccessSourceFactory factory = new RandomAccessSourceFactory();
         PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(factory.createBestSource(sourceFolder + "test.pdf")));
 
-        Assert.assertEquals(0, tok.getHeaderOffset());
+        Assertions.assertEquals(0, tok.getHeaderOffset());
     }
 
     @Test
@@ -462,90 +461,90 @@ public class PdfTokenizerTest extends ExtendedITextTest {
         PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(factory.createSource(data.getBytes(StandardCharsets.ISO_8859_1))));
 
         tok.nextValidToken();
-        Assert.assertEquals(PdfTokenizer.TokenType.StartDic, tok.getTokenType());
+        Assertions.assertEquals(PdfTokenizer.TokenType.StartDic, tok.getTokenType());
 
         tok.nextValidToken();
-        Assert.assertEquals(PdfTokenizer.TokenType.Name, tok.getTokenType());
-        Assert.assertEquals("Size", new String(tok.getByteContent()));
+        Assertions.assertEquals(PdfTokenizer.TokenType.Name, tok.getTokenType());
+        Assertions.assertEquals("Size", new String(tok.getByteContent()));
 
         tok.nextValidToken();
-        Assert.assertEquals(PdfTokenizer.TokenType.Number, tok.getTokenType());
-        Assert.assertEquals("70.", new String(tok.getByteContent()));
+        Assertions.assertEquals(PdfTokenizer.TokenType.Number, tok.getTokenType());
+        Assertions.assertEquals("70.", new String(tok.getByteContent()));
 
         tok.nextValidToken();
-        Assert.assertEquals(PdfTokenizer.TokenType.Name, tok.getTokenType());
-        Assert.assertEquals("Value#20", new String(tok.getByteContent()));
+        Assertions.assertEquals(PdfTokenizer.TokenType.Name, tok.getTokenType());
+        Assertions.assertEquals("Value#20", new String(tok.getByteContent()));
 
         tok.nextValidToken();
-        Assert.assertEquals(PdfTokenizer.TokenType.Number, tok.getTokenType());
-        Assert.assertEquals(".1", new String(tok.getByteContent()));
+        Assertions.assertEquals(PdfTokenizer.TokenType.Number, tok.getTokenType());
+        Assertions.assertEquals(".1", new String(tok.getByteContent()));
 
         tok.nextValidToken();
-        Assert.assertEquals(PdfTokenizer.TokenType.Name, tok.getTokenType());
-        Assert.assertEquals("Root", new String(tok.getByteContent()));
+        Assertions.assertEquals(PdfTokenizer.TokenType.Name, tok.getTokenType());
+        Assertions.assertEquals("Root", new String(tok.getByteContent()));
 
         tok.nextValidToken();
-        Assert.assertEquals(PdfTokenizer.TokenType.Ref, tok.getTokenType());
-        Assert.assertEquals("46 0 R", "" + tok.getObjNr() + " " + tok.getGenNr()
+        Assertions.assertEquals(PdfTokenizer.TokenType.Ref, tok.getTokenType());
+        Assertions.assertEquals("46 0 R", "" + tok.getObjNr() + " " + tok.getGenNr()
                 + " " + new String(tok.getByteContent()));
 
         tok.nextValidToken();
-        Assert.assertEquals(PdfTokenizer.TokenType.Name, tok.getTokenType());
-        Assert.assertEquals("Info", new String(tok.getByteContent()));
+        Assertions.assertEquals(PdfTokenizer.TokenType.Name, tok.getTokenType());
+        Assertions.assertEquals("Info", new String(tok.getByteContent()));
 
         tok.nextValidToken();
-        Assert.assertEquals(PdfTokenizer.TokenType.Ref, tok.getTokenType());
-        Assert.assertEquals("44 0 R", "" + tok.getObjNr() + " " + tok.getGenNr()
+        Assertions.assertEquals(PdfTokenizer.TokenType.Ref, tok.getTokenType());
+        Assertions.assertEquals("44 0 R", "" + tok.getObjNr() + " " + tok.getGenNr()
                 + " " + new String(tok.getByteContent()));
 
         tok.nextValidToken();
-        Assert.assertEquals(PdfTokenizer.TokenType.Name, tok.getTokenType());
-        Assert.assertEquals("ID", new String(tok.getByteContent()));
+        Assertions.assertEquals(PdfTokenizer.TokenType.Name, tok.getTokenType());
+        Assertions.assertEquals("ID", new String(tok.getByteContent()));
 
         tok.nextValidToken();
-        Assert.assertEquals(PdfTokenizer.TokenType.StartArray, tok.getTokenType());
+        Assertions.assertEquals(PdfTokenizer.TokenType.StartArray, tok.getTokenType());
 
         tok.nextValidToken();
-        Assert.assertEquals(PdfTokenizer.TokenType.String, tok.getTokenType());
-        Assert.assertTrue(tok.isHexString());
-        Assert.assertEquals("736f6d652068657820737472696e672", new String(tok.getByteContent()));
+        Assertions.assertEquals(PdfTokenizer.TokenType.String, tok.getTokenType());
+        Assertions.assertTrue(tok.isHexString());
+        Assertions.assertEquals("736f6d652068657820737472696e672", new String(tok.getByteContent()));
 
         tok.nextValidToken();
-        Assert.assertEquals(PdfTokenizer.TokenType.String, tok.getTokenType());
-        Assert.assertFalse(tok.isHexString());
-        Assert.assertEquals("some simple string ", new String(tok.getByteContent()));
+        Assertions.assertEquals(PdfTokenizer.TokenType.String, tok.getTokenType());
+        Assertions.assertFalse(tok.isHexString());
+        Assertions.assertEquals("some simple string ", new String(tok.getByteContent()));
 
         tok.nextValidToken();
-        Assert.assertEquals(PdfTokenizer.TokenType.String, tok.getTokenType());
-        Assert.assertTrue(tok.isHexString());
-        Assert.assertEquals("8C2547D58D4BD2C6F3D32B830BE3259D2", new String(tok.getByteContent()));
+        Assertions.assertEquals(PdfTokenizer.TokenType.String, tok.getTokenType());
+        Assertions.assertTrue(tok.isHexString());
+        Assertions.assertEquals("8C2547D58D4BD2C6F3D32B830BE3259D2", new String(tok.getByteContent()));
 
         tok.nextValidToken();
-        Assert.assertEquals(PdfTokenizer.TokenType.Number, tok.getTokenType());
-        Assert.assertEquals("-70.1", new String(tok.getByteContent()));
+        Assertions.assertEquals(PdfTokenizer.TokenType.Number, tok.getTokenType());
+        Assertions.assertEquals("-70.1", new String(tok.getByteContent()));
 
         tok.nextValidToken();
-        Assert.assertEquals(PdfTokenizer.TokenType.Number, tok.getTokenType());
-        Assert.assertEquals("-0.2", new String(tok.getByteContent()));
+        Assertions.assertEquals(PdfTokenizer.TokenType.Number, tok.getTokenType());
+        Assertions.assertEquals("-0.2", new String(tok.getByteContent()));
 
         tok.nextValidToken();
-        Assert.assertEquals(PdfTokenizer.TokenType.EndArray, tok.getTokenType());
+        Assertions.assertEquals(PdfTokenizer.TokenType.EndArray, tok.getTokenType());
 
         tok.nextValidToken();
-        Assert.assertEquals(PdfTokenizer.TokenType.Name, tok.getTokenType());
-        Assert.assertEquals("Name1", new String(tok.getByteContent()));
+        Assertions.assertEquals(PdfTokenizer.TokenType.Name, tok.getTokenType());
+        Assertions.assertEquals("Name1", new String(tok.getByteContent()));
 
         tok.nextValidToken();
-        Assert.assertEquals(PdfTokenizer.TokenType.Number, tok.getTokenType());
-        Assert.assertEquals("0", new String(tok.getByteContent()));
+        Assertions.assertEquals(PdfTokenizer.TokenType.Number, tok.getTokenType());
+        Assertions.assertEquals("0", new String(tok.getByteContent()));
 
         tok.nextValidToken();
-        Assert.assertEquals(PdfTokenizer.TokenType.Name, tok.getTokenType());
-        Assert.assertEquals("Prev", new String(tok.getByteContent()));
+        Assertions.assertEquals(PdfTokenizer.TokenType.Name, tok.getTokenType());
+        Assertions.assertEquals("Prev", new String(tok.getByteContent()));
 
         tok.nextValidToken();
-        Assert.assertEquals(PdfTokenizer.TokenType.Number, tok.getTokenType());
-        Assert.assertEquals("-116.23", new String(tok.getByteContent()));
+        Assertions.assertEquals(PdfTokenizer.TokenType.Number, tok.getTokenType());
+        Assertions.assertEquals("-116.23", new String(tok.getByteContent()));
     }
 
     @Test
@@ -553,7 +552,7 @@ public class PdfTokenizerTest extends ExtendedITextTest {
         // 49 equal to string "1", octal 1 equals to 1 in decimal
         byte[] bytes = new byte[] {92, 49};
         byte[] result = PdfTokenizer.decodeStringContent(bytes, false);
-        Assert.assertArrayEquals(new byte[] {1}, result);
+        Assertions.assertArrayEquals(new byte[] {1}, result);
     }
 
     @Test
@@ -561,7 +560,7 @@ public class PdfTokenizerTest extends ExtendedITextTest {
         // 49 50 equal to string "12", octal 12 equals to 10 in decimal
         byte[] bytes = new byte[] {92, 49, 50};
         byte[] result = PdfTokenizer.decodeStringContent(bytes, false);
-        Assert.assertArrayEquals(new byte[] {10}, result);
+        Assertions.assertArrayEquals(new byte[] {10}, result);
     }
 
     @Test
@@ -569,7 +568,7 @@ public class PdfTokenizerTest extends ExtendedITextTest {
         // 49 50 51 equal to string "123", octal 123 equals to 83 in decimal
         byte[] bytes = new byte[] {92, 49, 50, 51};
         byte[] result = PdfTokenizer.decodeStringContent(bytes, false);
-        Assert.assertArrayEquals(new byte[] {83}, result);
+        Assertions.assertArrayEquals(new byte[] {83}, result);
     }
 
     @Test
@@ -577,7 +576,7 @@ public class PdfTokenizerTest extends ExtendedITextTest {
         // \0\(
         byte[] bytes = new byte[] {92, 48, 92, 40};
         byte[] result = PdfTokenizer.decodeStringContent(bytes, false);
-        Assert.assertArrayEquals(new byte[] {0, 40}, result);
+        Assertions.assertArrayEquals(new byte[] {0, 40}, result);
     }
 
     @Test
@@ -585,7 +584,7 @@ public class PdfTokenizerTest extends ExtendedITextTest {
         // \0&
         byte[] bytes = new byte[] {92, 48, 26};
         byte[] result = PdfTokenizer.decodeStringContent(bytes, false);
-        Assert.assertArrayEquals(new byte[] {0, 26}, result);
+        Assertions.assertArrayEquals(new byte[] {0, 26}, result);
     }
 
     @Test
@@ -593,7 +592,7 @@ public class PdfTokenizerTest extends ExtendedITextTest {
         // \12&
         byte[] bytes = new byte[] {92, 49, 50, 26};
         byte[] result = PdfTokenizer.decodeStringContent(bytes, false);
-        Assert.assertArrayEquals(new byte[] {10, 26}, result);
+        Assertions.assertArrayEquals(new byte[] {10, 26}, result);
     }
 
     @Test
@@ -601,7 +600,7 @@ public class PdfTokenizerTest extends ExtendedITextTest {
         // \0\23 + 4 which should not be taken into account
         byte[] bytes = new byte[] {92, 48, 92, 50, 51, 52};
         byte[] result = PdfTokenizer.decodeStringContent(bytes, 0, 4, false);
-        Assert.assertArrayEquals(new byte[] {0, 19}, result);
+        Assertions.assertArrayEquals(new byte[] {0, 19}, result);
     }
 
     private void checkTokenTypes(String data, TokenType... expectedTypes) throws Exception {
@@ -611,7 +610,7 @@ public class PdfTokenizerTest extends ExtendedITextTest {
 
         for (int i = 0; i < expectedTypes.length; i++) {
             tok.nextValidToken();
-            Assert.assertEquals("Position " + i, expectedTypes[i], tok.getTokenType());
+            Assertions.assertEquals(expectedTypes[i], tok.getTokenType(), "Position " + i);
         }
     }
 
@@ -622,7 +621,7 @@ public class PdfTokenizerTest extends ExtendedITextTest {
 
         for (int i = 0; i < expectedValues.length; i++) {
             tok.nextValidToken();
-            Assert.assertArrayEquals("Position " + i, expectedValues[i], tok.getByteContent());
+            Assertions.assertArrayEquals(expectedValues[i], tok.getByteContent(), "Position " + i);
         }
     }
 }

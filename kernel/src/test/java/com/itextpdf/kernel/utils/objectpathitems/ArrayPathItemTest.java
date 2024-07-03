@@ -23,12 +23,11 @@
 package com.itextpdf.kernel.utils.objectpathitems;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class ArrayPathItemTest extends ExtendedITextTest {
 
     @Test
@@ -38,8 +37,8 @@ public class ArrayPathItemTest extends ExtendedITextTest {
         ArrayPathItem arrayPathItem2 = new ArrayPathItem(index);
 
         boolean result = arrayPathItem1.equals(arrayPathItem2);
-        Assert.assertTrue(result);
-        Assert.assertEquals(arrayPathItem1.hashCode(), arrayPathItem2.hashCode());
+        Assertions.assertTrue(result);
+        Assertions.assertEquals(arrayPathItem1.hashCode(), arrayPathItem2.hashCode());
     }
 
     @Test
@@ -48,8 +47,8 @@ public class ArrayPathItemTest extends ExtendedITextTest {
         ArrayPathItem arrayPathItem2 = new ArrayPathItem(2);
 
         boolean result = arrayPathItem1.equals(arrayPathItem2);
-        Assert.assertFalse(result);
-        Assert.assertNotEquals(arrayPathItem1.hashCode(), arrayPathItem2.hashCode());
+        Assertions.assertFalse(result);
+        Assertions.assertNotEquals(arrayPathItem1.hashCode(), arrayPathItem2.hashCode());
     }
 
     @Test
@@ -57,6 +56,6 @@ public class ArrayPathItemTest extends ExtendedITextTest {
         int index = 1;
         ArrayPathItem arrayPathItem = new ArrayPathItem(index);
 
-        Assert.assertEquals(index, arrayPathItem.getIndex());
+        Assertions.assertEquals(index, arrayPathItem.getIndex());
     }
 }

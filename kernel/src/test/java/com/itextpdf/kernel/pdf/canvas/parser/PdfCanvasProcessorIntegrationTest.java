@@ -45,7 +45,6 @@ import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -54,22 +53,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 import java.io.IOException;
 import java.util.Set;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/parser/PdfCanvasProcessorTest/";
 
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/parser/PdfCanvasProcessorTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() {
         createDestinationFolder(DESTINATION_FOLDER);
     }
@@ -92,7 +91,7 @@ public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
         byte[] logBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "contentStreamProcessorTest_events_log.dat"));
         String expectedPageEventsLog = new String(logBytes, StandardCharsets.UTF_8);
 
-        Assert.assertEquals(expectedPageEventsLog, pageEventsLog.toString());
+        Assertions.assertEquals(expectedPageEventsLog, pageEventsLog.toString());
     }
 
     @Test
@@ -106,7 +105,7 @@ public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
             PdfCanvasProcessor processor = new PdfCanvasProcessor(new RecordEveryTextRenderEvent(textRenderInfo));
             processor.processPageContent(page);
         }
-        Assert.assertEquals("Expected fill opacity not found", expOpacity, textRenderInfo.get("FillOpacity"));
+        Assertions.assertEquals(expOpacity, textRenderInfo.get("FillOpacity"), "Expected fill opacity not found");
     }
 
     @Test
@@ -120,7 +119,7 @@ public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
             PdfCanvasProcessor processor = new PdfCanvasProcessor(new RecordEveryTextRenderEvent(textRenderInfo));
             processor.processPageContent(page);
         }
-        Assert.assertEquals("Expected stroke opacity not found", expOpacity, textRenderInfo.get("StrokeOpacity"));
+        Assertions.assertEquals(expOpacity, textRenderInfo.get("StrokeOpacity"), "Expected stroke opacity not found");
     }
 
     @Test
@@ -146,11 +145,11 @@ public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
         String resultantText = strategy.getResultantText();
         pdfDocument.close();
 
-        Assert.assertEquals("Hello World!\nHello World!\nHello World!\nHello World! Hello World! Hello World!", resultantText);
+        Assertions.assertEquals("Hello World!\nHello World!\nHello World!\nHello World! Hello World! Hello World!", resultantText);
     }
 
     @Test
-    @Ignore("DEVSIX-3608: this test currently throws StackOverflowError, which cannot be caught in .NET")
+    @Disabled("DEVSIX-3608: this test currently throws StackOverflowError, which cannot be caught in .NET")
     public void parseCircularReferencesInResourcesTest() throws IOException {
         String fileName = "circularReferencesInResources.pdf";
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + fileName))) {
@@ -158,7 +157,7 @@ public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
             PdfCanvasProcessor processor = new PdfCanvasProcessor(new NoOpEventListener());
             PdfPage page = pdfDocument.getFirstPage();
 
-            Assert.assertThrows(StackOverflowError.class, () -> processor.processPageContent(page));
+            Assertions.assertThrows(StackOverflowError.class, () -> processor.processPageContent(page));
         }
     }
 
@@ -178,7 +177,7 @@ public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
 
             Color renderInfo = colorParsingEventListener.getEncounteredPath().getFillColor();
 
-            Assert.assertNull(renderInfo);
+            Assertions.assertNull(renderInfo);
         }
     }
 
@@ -198,7 +197,7 @@ public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
             PathRenderInfo renderInfo = colorParsingEventListener.getEncounteredPath();
             PdfColorSpace colorSpace = renderInfo.getGraphicsState().getFillColor().getColorSpace();
 
-            Assert.assertTrue(colorSpace instanceof PdfSpecialCs.Pattern);
+            Assertions.assertTrue(colorSpace instanceof PdfSpecialCs.Pattern);
         }
     }
 
@@ -215,21 +214,21 @@ public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
         // Check caught image's ImageRenderInfo
         ImageRenderInfo imageRenderInfo = eventListener.getImageRenderInfo();
         final float EPS = 0.001f;
-        Assert.assertFalse(imageRenderInfo.isInline());
-        Assert.assertEquals(1024, imageRenderInfo.getImage().getWidth(), EPS);
-        Assert.assertEquals(768, imageRenderInfo.getImage().getHeight(), EPS);
-        Assert.assertEquals("/Im1", imageRenderInfo.getImageResourceName().toString());
-        Assert.assertEquals(new com.itextpdf.kernel.geom.Vector(212.67f, 676.25f, 1),
+        Assertions.assertFalse(imageRenderInfo.isInline());
+        Assertions.assertEquals(1024, imageRenderInfo.getImage().getWidth(), EPS);
+        Assertions.assertEquals(768, imageRenderInfo.getImage().getHeight(), EPS);
+        Assertions.assertEquals("/Im1", imageRenderInfo.getImageResourceName().toString());
+        Assertions.assertEquals(new com.itextpdf.kernel.geom.Vector(212.67f, 676.25f, 1),
                 imageRenderInfo.getStartPoint());
-        Assert.assertEquals(new Matrix(169.67f, 0, 0, 0, 127.25f, 0, 212.67f, 676.25f, 1),
+        Assertions.assertEquals(new Matrix(169.67f, 0, 0, 0, 127.25f, 0, 212.67f, 676.25f, 1),
                 imageRenderInfo.getImageCtm());
-        Assert.assertEquals(21590.508, imageRenderInfo.getArea(), EPS);
-        Assert.assertNull(imageRenderInfo.getColorSpaceDictionary());
-        Assert.assertEquals(1, imageRenderInfo.getCanvasTagHierarchy().size());
-        Assert.assertTrue(imageRenderInfo.hasMcid(5, true));
-        Assert.assertTrue(imageRenderInfo.hasMcid(5));
-        Assert.assertFalse(imageRenderInfo.hasMcid(1));
-        Assert.assertEquals(5, imageRenderInfo.getMcid());
+        Assertions.assertEquals(21590.508, imageRenderInfo.getArea(), EPS);
+        Assertions.assertNull(imageRenderInfo.getColorSpaceDictionary());
+        Assertions.assertEquals(1, imageRenderInfo.getCanvasTagHierarchy().size());
+        Assertions.assertTrue(imageRenderInfo.hasMcid(5, true));
+        Assertions.assertTrue(imageRenderInfo.hasMcid(5));
+        Assertions.assertFalse(imageRenderInfo.hasMcid(1));
+        Assertions.assertEquals(5, imageRenderInfo.getMcid());
     }
 
     private static class ColorParsingEventListener implements IEventListener {

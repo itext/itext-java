@@ -29,14 +29,13 @@ import com.itextpdf.commons.bouncycastle.asn1.IASN1Sequence;
 import com.itextpdf.commons.utils.Base64;
 import com.itextpdf.signatures.SecurityIDs;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 
-@Category(BouncyCastleUnitTest.class)
+@Tag("BouncyCastleUnitTest")
 public class EncapsulatedContentInfoTest extends ExtendedITextTest {
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
@@ -50,31 +49,31 @@ public class EncapsulatedContentInfoTest extends ExtendedITextTest {
         v.add(FACTORY.createASN1ObjectIdentifier(SecurityIDs.ID_PKCS7_DATA));
         IASN1Sequence testData = FACTORY.createDERSequence(v);
         EncapsulatedContentInfo sut = new EncapsulatedContentInfo(testData);
-        Assert.assertEquals(SecurityIDs.ID_PKCS7_DATA, sut.getContentType());
-        Assert.assertNull(sut.getContent());
+        Assertions.assertEquals(SecurityIDs.ID_PKCS7_DATA, sut.getContentType());
+        Assertions.assertNull(sut.getContent());
     }
 
     @Test
     public void testDeserializationWithContent() throws IOException {
         IASN1Sequence testData = FACTORY.createASN1Sequence(Base64.decode(ENCODED_WITH_CONTENT_B64));
         EncapsulatedContentInfo sut = new EncapsulatedContentInfo(testData);
-        Assert.assertEquals("1.2.840.113549.1.9.16.1.4", sut.getContentType());
-        Assert.assertNotNull(sut.getContent());
+        Assertions.assertEquals("1.2.840.113549.1.9.16.1.4", sut.getContentType());
+        Assertions.assertNotNull(sut.getContent());
     }
 
     @Test
     public void testCreation() {
         EncapsulatedContentInfo sut = new EncapsulatedContentInfo(SecurityIDs.ID_PKCS7_DATA);
-        Assert.assertEquals(SecurityIDs.ID_PKCS7_DATA, sut.getContentType());
-        Assert.assertNull(sut.getContent());
+        Assertions.assertEquals(SecurityIDs.ID_PKCS7_DATA, sut.getContentType());
+        Assertions.assertNull(sut.getContent());
     }
 
     @Test
     public void testCreationWithContent() {
         EncapsulatedContentInfo sut = new EncapsulatedContentInfo(SecurityIDs.ID_PKCS7_DATA,
                 FACTORY.createDEROctetString(new byte[20]));
-        Assert.assertEquals(SecurityIDs.ID_PKCS7_DATA, sut.getContentType());
-        Assert.assertNotNull(sut.getContent());
+        Assertions.assertEquals(SecurityIDs.ID_PKCS7_DATA, sut.getContentType());
+        Assertions.assertNotNull(sut.getContent());
     }
 
 }

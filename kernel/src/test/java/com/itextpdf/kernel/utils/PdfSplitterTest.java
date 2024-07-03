@@ -29,13 +29,12 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -43,18 +42,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfSplitterTest extends ExtendedITextTest{
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/utils/PdfSplitterTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/utils/PdfSplitterTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -86,7 +85,7 @@ public class PdfSplitterTest extends ExtendedITextTest{
             doc.close();
 
         for (int i = 1; i <= 3; i++) {
-            Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "splitDocument1_" + String.valueOf(i) + ".pdf",
+            Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "splitDocument1_" + String.valueOf(i) + ".pdf",
                     sourceFolder + "cmp/" + "cmp_splitDocument1_" + String.valueOf(i) + ".pdf", destinationFolder, "diff_"));
         }
     }
@@ -124,7 +123,7 @@ public class PdfSplitterTest extends ExtendedITextTest{
         });
 
         for (int i = 1; i <= 3; i++) {
-            Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "splitDocument2_" + String.valueOf(i) + ".pdf",
+            Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "splitDocument2_" + String.valueOf(i) + ".pdf",
                     sourceFolder + "cmp/" + "cmp_splitDocument2_" + String.valueOf(i) + ".pdf", destinationFolder, "diff_"));
         }
     }
@@ -158,7 +157,7 @@ public class PdfSplitterTest extends ExtendedITextTest{
         }
 
         for (int i = 1; i <= 2; i++) {
-            Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "splitDocument3_" + i + ".pdf",
+            Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "splitDocument3_" + i + ".pdf",
                     sourceFolder + "cmp/" + "cmp_splitDocument3_" + String.valueOf(i) + ".pdf", destinationFolder, "diff_"));
         }
     }
@@ -192,7 +191,7 @@ public class PdfSplitterTest extends ExtendedITextTest{
         }
 
         for (int i = 1; i <= 2; i++) {
-            Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "splitDocument4_" + i + ".pdf",
+            Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "splitDocument4_" + i + ".pdf",
                     sourceFolder + "cmp/" + "cmp_splitDocument4_" + String.valueOf(i) + ".pdf", destinationFolder, "diff_"));
         }
     }
@@ -210,8 +209,8 @@ public class PdfSplitterTest extends ExtendedITextTest{
         listTitles.add("Syncing iPod Content from Your iTunes Library");
         listTitles.add("Restoring or Transferring Your iPhone Settings");
         List<PdfDocument> list = splitter.splitByOutlines(listTitles);
-        Assert.assertEquals(1,list.get(0).getNumberOfPages());
-        Assert.assertEquals(2,list.get(1).getNumberOfPages());
+        Assertions.assertEquals(1,list.get(0).getNumberOfPages());
+        Assertions.assertEquals(2,list.get(1).getNumberOfPages());
         list.get(0).close();
         list.get(1).close();
     }
@@ -241,7 +240,7 @@ public class PdfSplitterTest extends ExtendedITextTest{
         }
 
         for (int i = 1; i <= 4; ++i) {
-            Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "splitBySize_part" + i + ".pdf",
+            Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "splitBySize_part" + i + ".pdf",
                                                                  sourceFolder + "cmp/" + "cmp_splitBySize_part" + i + ".pdf", destinationFolder, "diff_"));
         }
     }
@@ -264,7 +263,7 @@ public class PdfSplitterTest extends ExtendedITextTest{
                 doc.close();
             }
 
-            Assert.assertEquals(pagesCount / pagesCountInSplitDoc, splitDocuments.size());
+            Assertions.assertEquals(pagesCount / pagesCountInSplitDoc, splitDocuments.size());
         }
     }
 }

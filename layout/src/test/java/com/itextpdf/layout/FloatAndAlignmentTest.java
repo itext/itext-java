@@ -43,16 +43,15 @@ import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.FlexContainerRenderer;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class FloatAndAlignmentTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/FloatAndAlignmentTest/";
@@ -65,7 +64,7 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
             "qui officia deserunt mollit anim id est laborum.";
 
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
@@ -106,7 +105,7 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
         document.add( divParent3 );
 
         document.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff01_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff01_"));
     }
 
     @Test
@@ -144,7 +143,7 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
         document.add( divParent3 );
 
         document.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff01_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff01_"));
     }
 
     @Test
@@ -181,7 +180,7 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
         document.add( divParent3 );
 
         document.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff02_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff02_"));
     }
 
     @Test
@@ -219,7 +218,7 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
         document.add( divParent3 );
 
         document.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff02_sameFixedWidth_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff02_sameFixedWidth_"));
     }
 
 
@@ -232,7 +231,7 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
         String outFileName = destinationFolder + testName + ".pdf";
         String cmpFileName = sourceFolder + "cmp_" + testName + ".pdf";
         createDocumentWithBlocks( outFileName, HorizontalAlignment.CENTER );
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff03_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff03_"));
     }
 
     @Test
@@ -244,7 +243,7 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
         String outFileName = destinationFolder + testName + ".pdf";
         String cmpFileName = sourceFolder + "cmp_" + testName + ".pdf";
         createDocumentWithBlocks( outFileName, HorizontalAlignment.LEFT );
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff04_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff04_"));
     }
 
     @Test
@@ -261,7 +260,7 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
      * So, only FloatPropertyValue defines the position of element in such cases
      */
         createDocumentWithBlocks( outFileName, HorizontalAlignment.RIGHT );
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff05_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff05_"));
     }
 
     private void createDocumentWithBlocks(String outFileName, HorizontalAlignment horizontalAlignment) throws FileNotFoundException {
@@ -317,7 +316,7 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
         document.add(parentPara);
 
         document.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diffTextAlign01_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diffTextAlign01_"));
     }
 
     @Test
@@ -343,7 +342,7 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
         document.add(parentPara.setBorder(new DashedBorder(2)));
 
         document.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diffTextAlign02_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diffTextAlign02_"));
     }
 
     @Test
@@ -372,7 +371,7 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
         document.add(parentPara.setBorder(new DashedBorder(2)));
 
         document.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diffTextAlign03_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diffTextAlign03_"));
     }
 
     @Test
@@ -410,7 +409,7 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
                 }
             }
         } catch(Exception ex){}
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diffTextAlign04_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diffTextAlign04_"));
     }
 
     @Test
@@ -432,7 +431,7 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
         document.add(parentPara.setBorder(new DashedBorder(2)));
 
         document.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff_"));
     }
 
     @Test
@@ -469,7 +468,7 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
     @Test
@@ -506,7 +505,7 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
     @Test
@@ -549,7 +548,7 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
     @Test
@@ -589,7 +588,7 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
     @Test
@@ -629,7 +628,7 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
     @Test
@@ -675,7 +674,7 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
     @Test
@@ -733,7 +732,7 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
             document.add(wideDivWithBfc);
             document.add(new Paragraph("Plain text after wide div"));
         }
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff01_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff01_"));
     }
 
     @Test
@@ -778,7 +777,7 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
             document.add(flexContainer2);
             document.add(new Paragraph("Plain text after wide flex container"));
         }
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff01_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff01_"));
     }
 
     private Div createParentDiv(HorizontalAlignment horizontalAlignment, ClearPropertyValue clearPropertyValue, UnitValue width) {

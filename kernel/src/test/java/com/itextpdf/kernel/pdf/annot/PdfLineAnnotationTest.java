@@ -31,12 +31,11 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfLineAnnotationTest extends ExtendedITextTest {
     private static final float FLOAT_EPSILON_COMPARISON = 1E-6f;
 
@@ -45,7 +44,7 @@ public class PdfLineAnnotationTest extends ExtendedITextTest {
         float[] lineArray = new float[] {1f, 1f, 1f, 1f};
         PdfLineAnnotation pdfLineAnnotation = new PdfLineAnnotation(new Rectangle(10, 10), lineArray);
 
-        Assert.assertArrayEquals(lineArray, pdfLineAnnotation.getLine().toFloatArray(), FLOAT_EPSILON_COMPARISON);
+        Assertions.assertArrayEquals(lineArray, pdfLineAnnotation.getLine().toFloatArray(), FLOAT_EPSILON_COMPARISON);
     }
 
     @Test
@@ -56,7 +55,7 @@ public class PdfLineAnnotationTest extends ExtendedITextTest {
         dict.put(PdfName.Width, new PdfNumber(1));
         pdfLineAnnotation.setBorderStyle(dict);
 
-        Assert.assertEquals(dict, pdfLineAnnotation.getBorderStyle());
+        Assertions.assertEquals(dict, pdfLineAnnotation.getBorderStyle());
     }
 
     @Test
@@ -65,7 +64,7 @@ public class PdfLineAnnotationTest extends ExtendedITextTest {
 
         pdfLineAnnotation.setBorderStyle(PdfName.D);
 
-        Assert.assertEquals(PdfName.D, pdfLineAnnotation.getBorderStyle().getAsName(PdfName.S));
+        Assertions.assertEquals(PdfName.D, pdfLineAnnotation.getBorderStyle().getAsName(PdfName.S));
     }
 
     @Test
@@ -75,7 +74,7 @@ public class PdfLineAnnotationTest extends ExtendedITextTest {
         PdfArray array = new PdfArray(new float[]{1, 2});
         pdfLineAnnotation.setDashPattern(array);
 
-        Assert.assertArrayEquals(array.toFloatArray(),
+        Assertions.assertArrayEquals(array.toFloatArray(),
                 pdfLineAnnotation.getBorderStyle().getAsArray(PdfName.D).toFloatArray(), FLOAT_EPSILON_COMPARISON);
     }
 
@@ -86,7 +85,7 @@ public class PdfLineAnnotationTest extends ExtendedITextTest {
         PdfArray lineEndingStyles = new PdfArray(new float[]{1, 2});
         pdfLineAnnotation.setLineEndingStyles(lineEndingStyles);
 
-        Assert.assertArrayEquals(lineEndingStyles.toFloatArray(),
+        Assertions.assertArrayEquals(lineEndingStyles.toFloatArray(),
                 pdfLineAnnotation.getLineEndingStyles().toFloatArray(), FLOAT_EPSILON_COMPARISON);
     }
 
@@ -99,7 +98,7 @@ public class PdfLineAnnotationTest extends ExtendedITextTest {
         pdfLineAnnotation.setInteriorColor(array);
 
         Color expectedColor = Color.makeColor(PdfColorSpace.makeColorSpace(PdfName.DeviceRGB), colorValues);
-        Assert.assertEquals(expectedColor, pdfLineAnnotation.getInteriorColor());
+        Assertions.assertEquals(expectedColor, pdfLineAnnotation.getInteriorColor());
     }
 
     @Test
@@ -110,7 +109,7 @@ public class PdfLineAnnotationTest extends ExtendedITextTest {
         pdfLineAnnotation.setInteriorColor(colorValues);
 
         Color expectedColor = Color.makeColor(PdfColorSpace.makeColorSpace(PdfName.DeviceRGB), colorValues);
-        Assert.assertEquals(expectedColor, pdfLineAnnotation.getInteriorColor());
+        Assertions.assertEquals(expectedColor, pdfLineAnnotation.getInteriorColor());
     }
 
     @Test
@@ -120,14 +119,14 @@ public class PdfLineAnnotationTest extends ExtendedITextTest {
 
         pdfLineAnnotation.setLeaderLineLength(length);
 
-        Assert.assertEquals(length, pdfLineAnnotation.getLeaderLineLength(), FLOAT_EPSILON_COMPARISON);
+        Assertions.assertEquals(length, pdfLineAnnotation.getLeaderLineLength(), FLOAT_EPSILON_COMPARISON);
     }
 
     @Test
     public void getLeaderLineLengthNullTest() {
         PdfLineAnnotation pdfLineAnnotation = new PdfLineAnnotation(new PdfDictionary());
 
-        Assert.assertEquals(0, pdfLineAnnotation.getLeaderLineLength(), FLOAT_EPSILON_COMPARISON);
+        Assertions.assertEquals(0, pdfLineAnnotation.getLeaderLineLength(), FLOAT_EPSILON_COMPARISON);
     }
 
     @Test
@@ -137,14 +136,14 @@ public class PdfLineAnnotationTest extends ExtendedITextTest {
 
         pdfLineAnnotation.setLeaderLineExtension(length);
 
-        Assert.assertEquals(length, pdfLineAnnotation.getLeaderLineExtension(), FLOAT_EPSILON_COMPARISON);
+        Assertions.assertEquals(length, pdfLineAnnotation.getLeaderLineExtension(), FLOAT_EPSILON_COMPARISON);
     }
 
     @Test
     public void setAndGetLeaderLineExtensionNullTest() {
         PdfLineAnnotation pdfLineAnnotation = new PdfLineAnnotation(new PdfDictionary());
 
-        Assert.assertEquals(0, pdfLineAnnotation.getLeaderLineExtension(), FLOAT_EPSILON_COMPARISON);
+        Assertions.assertEquals(0, pdfLineAnnotation.getLeaderLineExtension(), FLOAT_EPSILON_COMPARISON);
     }
 
     @Test
@@ -154,14 +153,14 @@ public class PdfLineAnnotationTest extends ExtendedITextTest {
 
         pdfLineAnnotation.setLeaderLineOffset(length);
 
-        Assert.assertEquals(length, pdfLineAnnotation.getLeaderLineOffset(), FLOAT_EPSILON_COMPARISON);
+        Assertions.assertEquals(length, pdfLineAnnotation.getLeaderLineOffset(), FLOAT_EPSILON_COMPARISON);
     }
 
     @Test
     public void getLeaderLineOffsetNullTest() {
         PdfLineAnnotation pdfLineAnnotation = new PdfLineAnnotation(new PdfDictionary());
 
-        Assert.assertEquals(0, pdfLineAnnotation.getLeaderLineOffset(), FLOAT_EPSILON_COMPARISON);
+        Assertions.assertEquals(0, pdfLineAnnotation.getLeaderLineOffset(), FLOAT_EPSILON_COMPARISON);
     }
 
     @Test
@@ -171,14 +170,14 @@ public class PdfLineAnnotationTest extends ExtendedITextTest {
 
         pdfLineAnnotation.setContentsAsCaption(contentsAsCaption);
 
-        Assert.assertEquals(contentsAsCaption, pdfLineAnnotation.getContentsAsCaption());
+        Assertions.assertEquals(contentsAsCaption, pdfLineAnnotation.getContentsAsCaption());
     }
 
     @Test
     public void getContentsAsCaptionNullTest() {
         PdfLineAnnotation pdfLineAnnotation = new PdfLineAnnotation(new PdfDictionary());
 
-        Assert.assertFalse(pdfLineAnnotation.getContentsAsCaption());
+        Assertions.assertFalse(pdfLineAnnotation.getContentsAsCaption());
     }
 
     @Test
@@ -187,7 +186,7 @@ public class PdfLineAnnotationTest extends ExtendedITextTest {
 
         pdfLineAnnotation.setCaptionPosition(PdfName.Inline);
 
-        Assert.assertEquals(PdfName.Inline, pdfLineAnnotation.getCaptionPosition());
+        Assertions.assertEquals(PdfName.Inline, pdfLineAnnotation.getCaptionPosition());
     }
 
     @Test
@@ -198,7 +197,7 @@ public class PdfLineAnnotationTest extends ExtendedITextTest {
         measure.put(PdfName.Subtype, new PdfString(""));
         pdfLineAnnotation.setMeasure(measure);
 
-        Assert.assertEquals(measure, pdfLineAnnotation.getMeasure());
+        Assertions.assertEquals(measure, pdfLineAnnotation.getMeasure());
     }
 
     @Test
@@ -208,7 +207,7 @@ public class PdfLineAnnotationTest extends ExtendedITextTest {
 
         pdfLineAnnotation.setCaptionOffset(offset);
 
-        Assert.assertArrayEquals(offset.toFloatArray(), pdfLineAnnotation.getCaptionOffset().toFloatArray(),
+        Assertions.assertArrayEquals(offset.toFloatArray(), pdfLineAnnotation.getCaptionOffset().toFloatArray(),
                 FLOAT_EPSILON_COMPARISON);
     }
 
@@ -219,6 +218,6 @@ public class PdfLineAnnotationTest extends ExtendedITextTest {
 
         pdfLineAnnotation.setCaptionOffset(offset);
 
-        Assert.assertArrayEquals(offset, pdfLineAnnotation.getCaptionOffset().toFloatArray(), FLOAT_EPSILON_COMPARISON);
+        Assertions.assertArrayEquals(offset, pdfLineAnnotation.getCaptionOffset().toFloatArray(), FLOAT_EPSILON_COMPARISON);
     }
 }

@@ -24,17 +24,16 @@ package com.itextpdf.signatures.validation.v1.extensions;
 
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
 import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(BouncyCastleUnitTest.class)
+@Tag("BouncyCastleUnitTest")
 public class KeyUsageExtensionTest extends ExtendedITextTest {
     private static final String certsSrc = "./src/test/resources/com/itextpdf/signatures/validation/v1/extensions/KeyUsageExtensionTest/";
 
@@ -45,7 +44,7 @@ public class KeyUsageExtensionTest extends ExtendedITextTest {
 
         KeyUsageExtension extension = new KeyUsageExtension(0);
 
-        Assert.assertFalse(extension.existsInCertificate(certificate));
+        Assertions.assertFalse(extension.existsInCertificate(certificate));
     }
 
     @Test
@@ -55,7 +54,7 @@ public class KeyUsageExtensionTest extends ExtendedITextTest {
 
         KeyUsageExtension extension = new KeyUsageExtension(8);
 
-        Assert.assertFalse(extension.existsInCertificate(certificate));
+        Assertions.assertFalse(extension.existsInCertificate(certificate));
     }
 
     @Test
@@ -65,7 +64,7 @@ public class KeyUsageExtensionTest extends ExtendedITextTest {
 
         KeyUsageExtension extension = new KeyUsageExtension(KeyUsage.KEY_CERT_SIGN);
 
-        Assert.assertTrue(extension.existsInCertificate(certificate));
+        Assertions.assertTrue(extension.existsInCertificate(certificate));
     }
 
     @Test
@@ -75,7 +74,7 @@ public class KeyUsageExtensionTest extends ExtendedITextTest {
 
         KeyUsageExtension extension = new KeyUsageExtension(Arrays.asList(KeyUsage.KEY_CERT_SIGN, KeyUsage.CRL_SIGN));
 
-        Assert.assertFalse(extension.existsInCertificate(certificate));
+        Assertions.assertFalse(extension.existsInCertificate(certificate));
     }
 
     @Test
@@ -85,7 +84,7 @@ public class KeyUsageExtensionTest extends ExtendedITextTest {
 
         KeyUsageExtension extension = new KeyUsageExtension(KeyUsage.CRL_SIGN);
 
-        Assert.assertFalse(extension.existsInCertificate(certificate));
+        Assertions.assertFalse(extension.existsInCertificate(certificate));
     }
 
     @Test
@@ -95,7 +94,7 @@ public class KeyUsageExtensionTest extends ExtendedITextTest {
 
         KeyUsageExtension extension = new KeyUsageExtension(KeyUsage.DIGITAL_SIGNATURE);
 
-        Assert.assertTrue(extension.existsInCertificate(certificate));
+        Assertions.assertTrue(extension.existsInCertificate(certificate));
     }
 
     @Test
@@ -105,7 +104,7 @@ public class KeyUsageExtensionTest extends ExtendedITextTest {
 
         KeyUsageExtension extension = new KeyUsageExtension(KeyUsage.DECIPHER_ONLY);
 
-        Assert.assertTrue(extension.existsInCertificate(certificate));
+        Assertions.assertTrue(extension.existsInCertificate(certificate));
     }
 
     @Test
@@ -115,7 +114,7 @@ public class KeyUsageExtensionTest extends ExtendedITextTest {
 
         KeyUsageExtension extension = new KeyUsageExtension(KeyUsage.ENCIPHER_ONLY);
 
-        Assert.assertFalse(extension.existsInCertificate(certificate));
+        Assertions.assertFalse(extension.existsInCertificate(certificate));
     }
 
     @Test
@@ -125,7 +124,7 @@ public class KeyUsageExtensionTest extends ExtendedITextTest {
 
         KeyUsageExtension extension = new KeyUsageExtension(Arrays.asList(KeyUsage.CRL_SIGN, KeyUsage.NON_REPUDIATION));
 
-        Assert.assertTrue(extension.existsInCertificate(certificate));
+        Assertions.assertTrue(extension.existsInCertificate(certificate));
     }
 
     @Test
@@ -136,7 +135,7 @@ public class KeyUsageExtensionTest extends ExtendedITextTest {
         KeyUsageExtension extension = new KeyUsageExtension(Arrays.asList(KeyUsage.CRL_SIGN,
                 KeyUsage.NON_REPUDIATION, KeyUsage.KEY_ENCIPHERMENT));
 
-        Assert.assertTrue(extension.existsInCertificate(certificate));
+        Assertions.assertTrue(extension.existsInCertificate(certificate));
     }
 
     @Test
@@ -147,7 +146,7 @@ public class KeyUsageExtensionTest extends ExtendedITextTest {
         KeyUsageExtension extension = new KeyUsageExtension(Arrays.asList(KeyUsage.CRL_SIGN, KeyUsage.DECIPHER_ONLY,
                 KeyUsage.KEY_ENCIPHERMENT));
 
-        Assert.assertFalse(extension.existsInCertificate(certificate));
+        Assertions.assertFalse(extension.existsInCertificate(certificate));
     }
 
     @Test
@@ -157,7 +156,7 @@ public class KeyUsageExtensionTest extends ExtendedITextTest {
 
         KeyUsageExtension extension = new KeyUsageExtension(Arrays.asList(KeyUsage.DECIPHER_ONLY, KeyUsage.DIGITAL_SIGNATURE));
 
-        Assert.assertTrue(extension.existsInCertificate(certificate));
+        Assertions.assertTrue(extension.existsInCertificate(certificate));
     }
 
     @Test
@@ -168,7 +167,7 @@ public class KeyUsageExtensionTest extends ExtendedITextTest {
         KeyUsageExtension extension = new KeyUsageExtension(Arrays.asList(KeyUsage.DECIPHER_ONLY,
                 KeyUsage.DIGITAL_SIGNATURE, KeyUsage.KEY_AGREEMENT));
 
-        Assert.assertTrue(extension.existsInCertificate(certificate));
+        Assertions.assertTrue(extension.existsInCertificate(certificate));
     }
 
     @Test
@@ -179,6 +178,6 @@ public class KeyUsageExtensionTest extends ExtendedITextTest {
         KeyUsageExtension extension = new KeyUsageExtension(Arrays.asList(KeyUsage.CRL_SIGN, KeyUsage.DECIPHER_ONLY,
                 KeyUsage.DIGITAL_SIGNATURE));
 
-        Assert.assertFalse(extension.existsInCertificate(certificate));
+        Assertions.assertFalse(extension.existsInCertificate(certificate));
     }
 }

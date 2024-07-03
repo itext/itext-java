@@ -23,15 +23,14 @@
 package com.itextpdf.kernel.geom;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.Arrays;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class ShapeTransformUtilTest extends ExtendedITextTest {
     @Test
     public void transformBezierCurveTest() {
@@ -41,7 +40,7 @@ public class ShapeTransformUtilTest extends ExtendedITextTest {
 
         BezierCurve cmpBezierCurve = new BezierCurve(Arrays.asList(new Point(-5, -5), new Point(-5, 0), new Point(0, 0), new Point(0, -5)));
 
-        Assert.assertArrayEquals(cmpBezierCurve.getBasePoints().toArray(), outBezierCurve.getBasePoints().toArray());
+        Assertions.assertArrayEquals(cmpBezierCurve.getBasePoints().toArray(), outBezierCurve.getBasePoints().toArray());
     }
 
     @Test
@@ -52,7 +51,7 @@ public class ShapeTransformUtilTest extends ExtendedITextTest {
 
         Line cmpLine = new Line(new Point(-2.5, -5), new Point(2.5, 5));
 
-        Assert.assertArrayEquals(cmpLine.getBasePoints().toArray(), outLine.getBasePoints().toArray());
+        Assertions.assertArrayEquals(cmpLine.getBasePoints().toArray(), outLine.getBasePoints().toArray());
     }
 
     @Test
@@ -78,7 +77,7 @@ public class ShapeTransformUtilTest extends ExtendedITextTest {
             for (int j = 0; j < subpath.getSegments().size(); j++) {
                 IShape cmpShape = subpath.getSegments().get(j);
                 IShape outShape = outPath.getSubpaths().get(i).getSegments().get(j);
-                Assert.assertArrayEquals(cmpShape.getBasePoints().toArray(), outShape.getBasePoints().toArray());
+                Assertions.assertArrayEquals(cmpShape.getBasePoints().toArray(), outShape.getBasePoints().toArray());
             }
         }
     }

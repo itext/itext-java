@@ -34,21 +34,20 @@ import com.itextpdf.styledxmlparser.node.impl.jsoup.JsoupHtmlParser;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupDocumentNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 
 public class CssMediaRuleTest extends ExtendedITextTest {
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/styledxmlparser/css/media/MediaRuleTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
     }
 
@@ -63,10 +62,10 @@ public class CssMediaRuleTest extends ExtendedITextTest {
         MediaDeviceDescription deviceDescription = new MediaDeviceDescription(MediaType.PRINT);
         IElementNode element = new JsoupElementNode(((JsoupDocumentNode) document).getDocument().getElementsByTag("p").first());
         List<CssDeclaration> declarations = css.getCssDeclarations(element, deviceDescription);
-        Assert.assertEquals(3, declarations.size());
-        Assert.assertEquals("font-weight: bold", declarations.get(0).toString());
-        Assert.assertEquals("color: red", declarations.get(1).toString());
-        Assert.assertEquals("font-size: 20pt", declarations.get(2).toString());
+        Assertions.assertEquals(3, declarations.size());
+        Assertions.assertEquals("font-weight: bold", declarations.get(0).toString());
+        Assertions.assertEquals("color: red", declarations.get(1).toString());
+        Assertions.assertEquals("font-size: 20pt", declarations.get(2).toString());
     }
 
     @Test
@@ -87,10 +86,10 @@ public class CssMediaRuleTest extends ExtendedITextTest {
         List<CssDeclaration> declarations1 = css.getCssDeclarations(element, deviceDescription1);
         List<CssDeclaration> declarations2 = css.getCssDeclarations(element, deviceDescription2);
 
-        Assert.assertTrue(declarations1.equals(declarations2));
+        Assertions.assertTrue(declarations1.equals(declarations2));
 
-        Assert.assertEquals(1, declarations1.size());
-        Assert.assertEquals("font-weight: bold", declarations1.get(0).toString());
+        Assertions.assertEquals(1, declarations1.size());
+        Assertions.assertEquals("font-weight: bold", declarations1.get(0).toString());
     }
 
     @Test
@@ -104,8 +103,8 @@ public class CssMediaRuleTest extends ExtendedITextTest {
         deviceDescription.setResolution(300);
         IElementNode element = new JsoupElementNode(((JsoupDocumentNode) document).getDocument().getElementsByTag("p").first());
         List<CssDeclaration> declarations = css.getCssDeclarations(element, deviceDescription);
-        Assert.assertEquals(1, declarations.size());
-        Assert.assertEquals("color: black", declarations.get(0).toString());
+        Assertions.assertEquals(1, declarations.size());
+        Assertions.assertEquals("color: black", declarations.get(0).toString());
     }
 
     @Test
@@ -120,9 +119,9 @@ public class CssMediaRuleTest extends ExtendedITextTest {
 
         IElementNode element = new JsoupElementNode(((JsoupDocumentNode) document).getDocument().getElementsByTag("p").first());
         List<CssDeclaration> declarations = css.getCssDeclarations(element, deviceDescription);
-        Assert.assertEquals(2, declarations.size());
-        Assert.assertEquals("color: red", declarations.get(0).toString());
-        Assert.assertEquals("font-size: 20em", declarations.get(1).toString());
+        Assertions.assertEquals(2, declarations.size());
+        Assertions.assertEquals("color: red", declarations.get(0).toString());
+        Assertions.assertEquals("font-size: 20em", declarations.get(1).toString());
     }
 
     @Test
@@ -143,10 +142,10 @@ public class CssMediaRuleTest extends ExtendedITextTest {
         List<CssDeclaration> declarations1 = css.getCssDeclarations(element, deviceDescription1);
         List<CssDeclaration> declarations2 = css.getCssDeclarations(element, deviceDescription2);
 
-        Assert.assertEquals(0, declarations1.size());
+        Assertions.assertEquals(0, declarations1.size());
 
-        Assert.assertEquals(1, declarations2.size());
-        Assert.assertEquals("color: red", declarations2.get(0).toString());
+        Assertions.assertEquals(1, declarations2.size());
+        Assertions.assertEquals("color: red", declarations2.get(0).toString());
     }
 
     @Test
@@ -171,11 +170,11 @@ public class CssMediaRuleTest extends ExtendedITextTest {
         List<CssDeclaration> declarations2 = css.getCssDeclarations(element, deviceDescription2);
         List<CssDeclaration> declarations3 = css.getCssDeclarations(element, deviceDescription3);
 
-        Assert.assertTrue(declarations1.equals(declarations2));
-        Assert.assertEquals(0, declarations3.size());
+        Assertions.assertTrue(declarations1.equals(declarations2));
+        Assertions.assertEquals(0, declarations3.size());
 
-        Assert.assertEquals(1, declarations1.size());
-        Assert.assertEquals("color: red", declarations1.get(0).toString());
+        Assertions.assertEquals(1, declarations1.size());
+        Assertions.assertEquals("color: red", declarations1.get(0).toString());
     }
 
 
@@ -185,7 +184,7 @@ public class CssMediaRuleTest extends ExtendedITextTest {
         deviceDescription.setHeight(450);
         deviceDescription.setWidth(600);
         CssMediaRule rule = new CssMediaRule("@media all and (min-width: 600px) and (min-height: 600px)");
-        Assert.assertTrue(rule.matchMediaDevice(deviceDescription));
+        Assertions.assertTrue(rule.matchMediaDevice(deviceDescription));
     }
 
     @Test
@@ -194,6 +193,6 @@ public class CssMediaRuleTest extends ExtendedITextTest {
         String html = "<a id=\"123\" class=\"baz = 'bar'\" style = media= all and (min-width: 600px) />";
         IDocumentNode node = new JsoupHtmlParser().parse(html);
         List<CssRuleSet> ruleSets = new CssMediaRule("only all and (min-width: 600px) and (min-height: 600px)").getCssRuleSets(node, deviceDescription);
-        Assert.assertNotNull(ruleSets);
+        Assertions.assertNotNull(ruleSets);
     }
 }

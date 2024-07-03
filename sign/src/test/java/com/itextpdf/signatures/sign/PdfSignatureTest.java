@@ -35,11 +35,11 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfSignatureTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/sign/PdfSignatureTest/";
 
@@ -50,7 +50,7 @@ public class PdfSignatureTest extends ExtendedITextTest {
         signature.setByteRange(byteRange);
 
         PdfArray expected = new PdfArray((new int[] {0, 141, 16526, 2494}));
-        Assert.assertArrayEquals(expected.toIntArray(), signature.getByteRange().toIntArray());
+        Assertions.assertArrayEquals(expected.toIntArray(), signature.getByteRange().toIntArray());
     }
 
     @Test
@@ -60,7 +60,7 @@ public class PdfSignatureTest extends ExtendedITextTest {
         byte[] newContents = new PdfString("new iText signature").getValueBytes();
         signature.setContents(newContents);
 
-        Assert.assertEquals("new iText signature", signature.getContents().getValue());
+        Assertions.assertEquals("new iText signature", signature.getContents().getValue());
     }
 
     @Test
@@ -70,43 +70,43 @@ public class PdfSignatureTest extends ExtendedITextTest {
         byte[] certChain = new PdfString("Hello, iText!!").getValueBytes();
         signature.setCert(certChain);
 
-        Assert.assertEquals("Hello, iText!!", signature.getCertObject().toString());
+        Assertions.assertEquals("Hello, iText!!", signature.getCertObject().toString());
     }
 
     @Test
     public void getCertObjectTest() throws IOException {
         PdfSignature signature = getTestSignature(sourceFolder + "adbe.x509.rsa_sha1_signature.pdf");
 
-        Assert.assertTrue(signature.getCertObject().isArray());
+        Assertions.assertTrue(signature.getCertObject().isArray());
     }
 
     @Test
     public void setAndGetNameTest() throws IOException {
         PdfSignature signature = getTestSignature(sourceFolder + "simpleSignature.pdf");
-        Assert.assertNull(signature.getName());
+        Assertions.assertNull(signature.getName());
 
         String name = "iText person";
         signature.setName(name);
 
-        Assert.assertEquals(name, signature.getName());
+        Assertions.assertEquals(name, signature.getName());
     }
 
     @Test
     public void setSignatureCreatorTest() throws IOException {
         PdfSignature signature = getTestSignature(sourceFolder + "noPropBuilds.pdf");
-        Assert.assertNull(signature.getPdfObject().getAsDictionary(PdfName.Prop_Build));
+        Assertions.assertNull(signature.getPdfObject().getAsDictionary(PdfName.Prop_Build));
 
         signature.setSignatureCreator("iText.Name");
         String propBuild = signature.getPdfObject().getAsDictionary(PdfName.Prop_Build)
                 .getAsDictionary(PdfName.App).getAsName(PdfName.Name).getValue();
 
-        Assert.assertEquals("iText.Name", propBuild);
+        Assertions.assertEquals("iText.Name", propBuild);
     }
 
     @Test
     public void pdfSignatureAppDefaultConstructorTest() {
         PdfSignatureApp signatureApp = new PdfSignatureApp();
-        Assert.assertTrue(signatureApp.getPdfObject().isDictionary());
+        Assertions.assertTrue(signatureApp.getPdfObject().isDictionary());
     }
 
     @Test
@@ -114,8 +114,8 @@ public class PdfSignatureTest extends ExtendedITextTest {
         PdfSignature signature = getTestSignature(sourceFolder + "adbe.x509.rsa_sha1_signature.pdf");
         PdfObject certObject = signature.getCertObject();
 
-        Assert.assertTrue(certObject instanceof PdfArray);
-        Assert.assertNull(signature.getCert());
+        Assertions.assertTrue(certObject instanceof PdfArray);
+        Assertions.assertNull(signature.getCert());
     }
 
     private static PdfSignature getTestSignature(String pathToPdf) throws IOException {

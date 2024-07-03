@@ -29,13 +29,12 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfType0FunctionTest extends ExtendedITextTest {
 
     protected static final double DELTA = 1e-12;
@@ -59,7 +58,7 @@ public class PdfType0FunctionTest extends ExtendedITextTest {
             for (int j = 0; j < x.length; ++j) {
                 double actual = PdfType0Function.encode(x[j], encode[i][0], encode[i][1]);
 
-                Assert.assertEquals(expected[i][j], actual, DELTA);
+                Assertions.assertEquals(expected[i][j], actual, DELTA);
             }
         }
     }
@@ -80,7 +79,7 @@ public class PdfType0FunctionTest extends ExtendedITextTest {
         for (int i = 0; i < normals.length; ++i) {
             int[] actual = PdfType0Function.getFloor(normals[i], encode);
 
-            Assert.assertArrayEquals(expected[i], actual);
+            Assertions.assertArrayEquals(expected[i], actual);
         }
     }
 
@@ -91,7 +90,7 @@ public class PdfType0FunctionTest extends ExtendedITextTest {
             for (int sample = 0; sample < size; ++sample) {
                 int position = PdfType0Function.getSamplePosition(new int[] {sample}, sizeArr);
 
-                Assert.assertEquals(sample, position);
+                Assertions.assertEquals(sample, position);
             }
         }
     }
@@ -116,7 +115,7 @@ public class PdfType0FunctionTest extends ExtendedITextTest {
         for (int i = 0; i < size.length; ++i) {
             for (int j = 0; j < samples[i].length; ++j) {
                 int actual = PdfType0Function.getSamplePosition(samples[i][j], size[i]);
-                Assert.assertEquals(expected[i][j], actual);
+                Assertions.assertEquals(expected[i][j], actual);
             }
         }
     }
@@ -138,7 +137,7 @@ public class PdfType0FunctionTest extends ExtendedITextTest {
         for (int i = 0; i < normals.length; ++i) {
             double[] actual = PdfType0Function.getFloorWeights(normals[i], encode);
 
-            Assert.assertArrayEquals(expected[i], actual, DELTA);
+            Assertions.assertArrayEquals(expected[i], actual, DELTA);
         }
     }
 
@@ -151,7 +150,7 @@ public class PdfType0FunctionTest extends ExtendedITextTest {
         for (int i = 0; i < normals.length; ++i) {
             double actual = PdfType0Function.getFloorWeight(normals[i], encode[2 * i], encode[2 * i + 1]);
 
-            Assert.assertEquals(expected[i], actual, DELTA);
+            Assertions.assertEquals(expected[i], actual, DELTA);
         }
     }
 
@@ -172,7 +171,7 @@ public class PdfType0FunctionTest extends ExtendedITextTest {
 
         for (int i = 0; i < rhsVectors.length; ++i) {
             double[] actual = PdfType0Function.specialSweepMethod(rhsVectors[i]);
-             Assert.assertArrayEquals(expected[i], actual, DELTA);
+             Assertions.assertArrayEquals(expected[i], actual, DELTA);
         }
     }
 
@@ -180,9 +179,9 @@ public class PdfType0FunctionTest extends ExtendedITextTest {
     public void testNoInputException() {
         AbstractPdfFunction<PdfStream> function = new PdfType0Function(new PdfStream());
 
-        Exception e = Assert
+        Exception e = Assertions
                 .assertThrows(IllegalArgumentException.class, () -> function.calculate(new double[] {0}));
-        Assert.assertEquals(KernelExceptionMessageConstant.PDF_TYPE0_FUNCTION_NOT_NULL_PARAMETERS, e.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.PDF_TYPE0_FUNCTION_NOT_NULL_PARAMETERS, e.getMessage());
     }
 
     @Test
@@ -196,9 +195,9 @@ public class PdfType0FunctionTest extends ExtendedITextTest {
     @Test
     public void testInvalidBitsPerSampleException() {
         PdfType0Function function = generateSimplePdfFunction(new byte[] {0}, 3);
-        Exception e = Assert
+        Exception e = Assertions
                 .assertThrows(IllegalArgumentException.class, () -> function.calculate(new double[] {0}));
-        Assert.assertEquals(KernelExceptionMessageConstant.PDF_TYPE0_FUNCTION_BITS_PER_SAMPLE_INVALID_VALUE, e.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.PDF_TYPE0_FUNCTION_BITS_PER_SAMPLE_INVALID_VALUE, e.getMessage());
     }
 
     @Test
@@ -206,9 +205,9 @@ public class PdfType0FunctionTest extends ExtendedITextTest {
         PdfType0Function function = generateSimplePdfFunction(new byte[] {0}, 1);
         function.setOrder(2);
 
-        Exception e = Assert
+        Exception e = Assertions
                 .assertThrows(IllegalArgumentException.class, () -> function.calculate(new double[] {0}));
-        Assert.assertEquals(KernelExceptionMessageConstant.PDF_TYPE0_FUNCTION_INVALID_ORDER, e.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.PDF_TYPE0_FUNCTION_INVALID_ORDER, e.getMessage());
     }
 
     @Test
@@ -216,9 +215,9 @@ public class PdfType0FunctionTest extends ExtendedITextTest {
         PdfType0Function function = generateSimplePdfFunction(new byte[] {0}, 1);
         function.setDomain(new double[] {0, 1, 1});
 
-        Exception e = Assert
+        Exception e = Assertions
                 .assertThrows(IllegalArgumentException.class, () -> function.calculate(new double[] {0}));
-        Assert.assertEquals(KernelExceptionMessageConstant.PDF_TYPE0_FUNCTION_INVALID_DOMAIN, e.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.PDF_TYPE0_FUNCTION_INVALID_DOMAIN, e.getMessage());
     }
 
     @Test
@@ -226,9 +225,9 @@ public class PdfType0FunctionTest extends ExtendedITextTest {
         PdfType0Function function = generateSimplePdfFunction(new byte[] {0}, 1);
         function.setRange(new double[] {0, 1, 1});
 
-        Exception e = Assert
+        Exception e = Assertions
                 .assertThrows(IllegalArgumentException.class, () -> function.calculate(new double[] {0}));
-        Assert.assertEquals(KernelExceptionMessageConstant.PDF_TYPE0_FUNCTION_INVALID_RANGE, e.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.PDF_TYPE0_FUNCTION_INVALID_RANGE, e.getMessage());
     }
 
     @Test
@@ -236,9 +235,9 @@ public class PdfType0FunctionTest extends ExtendedITextTest {
         PdfType0Function function = generateSimplePdfFunction(new byte[] {0}, 1);
         function.setSize(new int[] {2, 2});
 
-        Exception e = Assert
+        Exception e = Assertions
                 .assertThrows(IllegalArgumentException.class, () -> function.calculate(new double[] {0}));
-        Assert.assertEquals(KernelExceptionMessageConstant.PDF_TYPE0_FUNCTION_INVALID_SIZE, e.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.PDF_TYPE0_FUNCTION_INVALID_SIZE, e.getMessage());
     }
 
     @Test
@@ -246,9 +245,9 @@ public class PdfType0FunctionTest extends ExtendedITextTest {
         PdfType0Function function = generateSimplePdfFunction(new byte[] {0}, 1);
         function.setEncode(new int[] {3, 4});
 
-        Exception e = Assert
+        Exception e = Assertions
                 .assertThrows(IllegalArgumentException.class, () -> function.calculate(new double[] {0}));
-        Assert.assertEquals(KernelExceptionMessageConstant.PDF_TYPE0_FUNCTION_INVALID_ENCODE, e.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.PDF_TYPE0_FUNCTION_INVALID_ENCODE, e.getMessage());
     }
 
     @Test
@@ -256,9 +255,9 @@ public class PdfType0FunctionTest extends ExtendedITextTest {
         PdfType0Function function = generateSimplePdfFunction(new byte[] {0}, 1);
         function.setDecode(new double[] {0});
 
-        Exception e = Assert
+        Exception e = Assertions
                 .assertThrows(IllegalArgumentException.class, () -> function.calculate(new double[] {0}));
-        Assert.assertEquals(KernelExceptionMessageConstant.PDF_TYPE0_FUNCTION_INVALID_DECODE, e.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.PDF_TYPE0_FUNCTION_INVALID_DECODE, e.getMessage());
     }
 
     @Test
@@ -266,9 +265,9 @@ public class PdfType0FunctionTest extends ExtendedITextTest {
         PdfType0Function function = generateSimplePdfFunction(new byte[] {0x0f, 0x0f}, 4);
         function.setSize(new int[] {5});
 
-        Exception e = Assert
+        Exception e = Assertions
                 .assertThrows(IllegalArgumentException.class, () -> function.calculate(new double[] {0}));
-        Assert.assertEquals(KernelExceptionMessageConstant.PDF_TYPE0_FUNCTION_INVALID_SAMPLES, e.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.PDF_TYPE0_FUNCTION_INVALID_SAMPLES, e.getMessage());
     }
 
     private PdfType0Function generateSimplePdfFunction(byte[] samples, int bitsPerSample) {

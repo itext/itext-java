@@ -54,17 +54,16 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class KeepTogetherTest extends ExtendedITextTest {
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/KeepTogetherTest/";
@@ -85,7 +84,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
     private static final String SMALL_TEXT = "Short text";
 
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
@@ -111,7 +110,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         p1.setKeepTogether(true);
         doc.add(p1);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -128,7 +127,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         doc.add(keptTogetherDiv);
 
         // If this line is not triggered, then an NPE occurred
-        Assert.assertTrue(true);
+        Assertions.assertTrue(true);
 
         doc.close();
     }
@@ -161,7 +160,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         doc.add(p1);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -180,7 +179,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         list.add("firstItem").add("secondItem").add("thirdItem").setKeepTogether(true).setListSymbol(ListNumberingType.DECIMAL);
         doc.add(list);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -207,7 +206,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
         doc.add(div);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -234,7 +233,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         doc.add(div);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -259,7 +258,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
         doc.add(div);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -324,7 +323,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
             // as the first add
             doc.add(keepTogetherDiv);
         }
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -346,11 +345,11 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
         doc.add(div);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
-    @Ignore("DEVSIX-1837: NPE")
+    @Disabled("DEVSIX-1837: NPE")
     public void keepTogetherInlineDiv01() throws IOException, InterruptedException {
         String cmpFileName = SOURCE_FOLDER + "cmp_keepTogetherInlineDiv01.pdf";
         String outFile = DESTINATION_FOLDER + "keepTogetherInlineDiv01.pdf";
@@ -369,7 +368,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
         doc.add(new Paragraph().add(div));
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -396,7 +395,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
         doc.add(new Paragraph().add(div));
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -431,7 +430,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
@@ -472,7 +471,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
@@ -508,7 +507,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
@@ -538,7 +537,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
@@ -570,7 +569,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
@@ -597,7 +596,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
         doc.add(div);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
 
@@ -630,7 +629,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
         doc.add(div2);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -662,7 +661,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
         doc.add(div2);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -693,7 +692,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
         doc.add(innerDiv);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -727,7 +726,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
         doc.add(outerDiv);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -756,7 +755,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
         doc.add(div2);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -785,7 +784,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
         doc.add(div2);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -820,7 +819,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         doc.add(outerDiv);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -839,7 +838,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         doc.add(createKeptTogetherDivWithSmallFloat(divHeight));
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -861,7 +860,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         doc.add(createKeptTogetherDivWithSmallFloat(divHeight));
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -880,7 +879,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         doc.add(createKeptTogetherParagraphWithSmallFloat(paragraphHeight));
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -902,7 +901,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         doc.add(createKeptTogetherParagraphWithSmallFloat(paragraphHeight));
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -927,7 +926,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
         addDivs(doc, innerDivHeight, new Style(), new Style(), first);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -955,7 +954,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         addDivs(doc, innerDivHeight, inner, predefined, first);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -983,7 +982,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         addDivs(doc, innerDivHeight, inner, predefined, first);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -1002,7 +1001,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         doc.add(createKeptTogetherTableWithSmallFloat(numOfRows));
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
 
@@ -1025,7 +1024,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         doc.add(createKeptTogetherTableWithSmallFloat(numOfRows));
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -1057,7 +1056,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
             doc.add(main);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER));
     }
 
     @Test
@@ -1091,7 +1090,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
             doc.add(main);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER));
     }
 
     @Test
@@ -1126,7 +1125,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
             doc.add(main);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER));
     }
 
     @Test
@@ -1163,7 +1162,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
             }
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER));
     }
 
     @Test
@@ -1200,7 +1199,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
             doc.add(main);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER));
     }
 
     @Test
@@ -1240,7 +1239,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
                 .setKeepTogether(true).setFontSize(24));
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER));
     }
 
     @Test
@@ -1283,7 +1282,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         doc.add(ktp);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER));
     }
 
     @Test
@@ -1318,7 +1317,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         doc.add(ktp);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER));
     }
 
     @Test
@@ -1338,7 +1337,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
             p.add(new Image(ImageDataFactory.create(SOURCE_FOLDER + "huge.png")));
             doc.add(p);
         }
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -1375,7 +1374,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
             }
             doc.close();
         }
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     private Div createChildDivWithText(Div parent, String text) {

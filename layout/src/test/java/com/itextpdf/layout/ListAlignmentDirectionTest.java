@@ -38,21 +38,18 @@ import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(Parameterized.class)
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class ListAlignmentDirectionTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/ListAlignmentDirectionTest/";
     public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/ListAlignmentDirectionTest/";
@@ -68,26 +65,12 @@ public class ListAlignmentDirectionTest extends ExtendedITextTest {
                     + "  <li style=\"background-color: yellow; text-align: {0}; direction: {1}\">Specific line</li>"
                     + "</ul>";
 
-    private TextAlignment itemTextAlignment;
-    private BaseDirection itemBaseDirection;
-    private TextAlignment listTextAlignment;
-    private BaseDirection listBaseDirection;
-
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
-    public ListAlignmentDirectionTest(Object itemTextAlignment, Object itemBaseDirection,
-            Object listTextAlignment, Object listBaseDirection) throws IOException {
-        this.itemTextAlignment = (TextAlignment) itemTextAlignment;
-        this.itemBaseDirection = (BaseDirection) itemBaseDirection;
-        this.listTextAlignment = (TextAlignment) listTextAlignment;
-        this.listBaseDirection = (BaseDirection) listBaseDirection;
-    }
-
-    @Parameterized.Parameters(name = PARAMETERS_NAME_PATTERN)
-    public static Iterable<Object[]> alignItemsAndJustifyContentProperties() {
+    public static Iterable<Object[]> AlignItemsAndJustifyContentProperties() {
         TextAlignment[] alignmentTestValues = new TextAlignment[] {TextAlignment.LEFT, TextAlignment.CENTER,
                 TextAlignment.RIGHT, TextAlignment.JUSTIFIED, TextAlignment.JUSTIFIED_ALL};
         BaseDirection[] directionTestValues = new BaseDirection[] {BaseDirection.LEFT_TO_RIGHT,
@@ -105,13 +88,15 @@ public class ListAlignmentDirectionTest extends ExtendedITextTest {
         return objectList;
     }
 
-    @Test
+    @ParameterizedTest(name = PARAMETERS_NAME_PATTERN)
+    @MethodSource("AlignItemsAndJustifyContentProperties")
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.TYPOGRAPHY_NOT_FOUND, count = 8))
     // TODO DEVSIX-5727 direction of the first list-item should define the symbol indent's side. Once the issue
     // is fixed, the corresponding cmps should be updated.
-    public void alignmentDirectionTest() throws Exception {
+    public void alignmentDirectionTest(TextAlignment itemTextAlignment, BaseDirection itemBaseDirection, TextAlignment listTextAlignment,
+            BaseDirection listBaseDirection) throws Exception {
         // Create an HTML for this test
-        createHtml();
+        createHtml(itemTextAlignment, itemBaseDirection, listTextAlignment, listBaseDirection);
         String fileName = MessageFormatUtil.format(
                 RESULTANT_FILE_NAME_PATTERN,
                 formatTextAlignment(itemTextAlignment),
@@ -135,7 +120,7 @@ public class ListAlignmentDirectionTest extends ExtendedITextTest {
         document.close();
 
         System.out.println("HTML: " + UrlUtil.getNormalizedFileUriString(DESTINATION_FOLDER + fileName + ".html") + "\n");
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff_"));
     }
 
     private static List createTestList(Style secondItemStyle) {
@@ -160,7 +145,8 @@ public class ListAlignmentDirectionTest extends ExtendedITextTest {
         return list;
     }
 
-    private void createHtml() throws IOException {
+    private void createHtml(TextAlignment itemTextAlignment, BaseDirection itemBaseDirection, TextAlignment listTextAlignment,
+            BaseDirection listBaseDirection) throws IOException {
         String fileName = MessageFormatUtil.format(
                 RESULTANT_FILE_NAME_PATTERN,
                 formatTextAlignment(itemTextAlignment),
@@ -198,7 +184,7 @@ public class ListAlignmentDirectionTest extends ExtendedITextTest {
             case JUSTIFIED_ALL:
                 return isHtml ? "justify" : "justify-all";
             default:
-                Assert.fail("Unexpected text alignment");
+                Assertions.fail("Unexpected text alignment");
                 return null;
         }
     }
@@ -210,7 +196,7 @@ public class ListAlignmentDirectionTest extends ExtendedITextTest {
             case RIGHT_TO_LEFT:
                 return "rtl";
             default:
-                Assert.fail("Unexpected base direction");
+                Assertions.fail("Unexpected base direction");
                 return null;
         }
     }

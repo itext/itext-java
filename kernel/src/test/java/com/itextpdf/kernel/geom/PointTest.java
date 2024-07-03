@@ -23,50 +23,49 @@
 package com.itextpdf.kernel.geom;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PointTest extends ExtendedITextTest {
     private static double EPSILON_COMPARISON = 1E-12;
 
     @Test
     public void defaultConstructorTest() {
         Point first = new Point();
-        Assert.assertEquals(0, first.x, EPSILON_COMPARISON);
-        Assert.assertEquals(0, first.y, EPSILON_COMPARISON);
+        Assertions.assertEquals(0, first.x, EPSILON_COMPARISON);
+        Assertions.assertEquals(0, first.y, EPSILON_COMPARISON);
     }
 
     @Test
     public void doubleParamConstructorTest() {
         Point first = new Point(0.13, 1.1);
-        Assert.assertEquals(0.13, first.getX(), EPSILON_COMPARISON);
-        Assert.assertEquals(1.1, first.getY(), EPSILON_COMPARISON);
+        Assertions.assertEquals(0.13, first.getX(), EPSILON_COMPARISON);
+        Assertions.assertEquals(1.1, first.getY(), EPSILON_COMPARISON);
     }
 
     @Test
     public void intParamConstructorTest() {
         Point first = new Point(2, 3);
-        Assert.assertEquals(2, first.x, EPSILON_COMPARISON);
-        Assert.assertEquals(3, first.y, EPSILON_COMPARISON);
+        Assertions.assertEquals(2, first.x, EPSILON_COMPARISON);
+        Assertions.assertEquals(3, first.y, EPSILON_COMPARISON);
     }
 
     @Test
     public void copyConstructorTest() {
         Point second = new Point(new Point(0.13, 1.1));
-        Assert.assertEquals(0.13, second.getX(), EPSILON_COMPARISON);
-        Assert.assertEquals(1.1, second.getY(), EPSILON_COMPARISON);
+        Assertions.assertEquals(0.13, second.getX(), EPSILON_COMPARISON);
+        Assertions.assertEquals(1.1, second.getY(), EPSILON_COMPARISON);
     }
 
     @Test
     public void equalsItselfTest() {
         Point first = new Point(1.23, 1.1);
 
-        Assert.assertTrue(first.equals(first));
-        Assert.assertEquals(first.hashCode(), first.hashCode());
+        Assertions.assertTrue(first.equals(first));
+        Assertions.assertEquals(first.hashCode(), first.hashCode());
     }
 
     @Test
@@ -74,9 +73,9 @@ public class PointTest extends ExtendedITextTest {
         Point first = new Point(1.23, 1.1);
         Point second = new Point(1.23, 1.1);
 
-        Assert.assertTrue(first.equals(second));
-        Assert.assertTrue(second.equals(first));
-        Assert.assertEquals(first.hashCode(), second.hashCode());
+        Assertions.assertTrue(first.equals(second));
+        Assertions.assertTrue(second.equals(first));
+        Assertions.assertEquals(first.hashCode(), second.hashCode());
     }
 
     @Test
@@ -84,15 +83,15 @@ public class PointTest extends ExtendedITextTest {
         Point first = new Point(1.23, 1.1);
         Point second = new Point(1.23, 1.2);
 
-        Assert.assertFalse(first.equals(second));
-        Assert.assertFalse(second.equals(first));
-        Assert.assertNotEquals(first.hashCode(), second.hashCode());
+        Assertions.assertFalse(first.equals(second));
+        Assertions.assertFalse(second.equals(first));
+        Assertions.assertNotEquals(first.hashCode(), second.hashCode());
     }
 
     @Test
     public void notEqualsToNullTest() {
         Point first = new Point(1.23, 1.1);
-        Assert.assertFalse(first.equals(null));
+        Assertions.assertFalse(first.equals(null));
     }
 
     @Test
@@ -101,7 +100,7 @@ public class PointTest extends ExtendedITextTest {
         Point second = new Point(1.1, 1.1);
 
         double expected = 0.02;
-        Assert.assertEquals(expected, Point.distanceSq(first.x, first.y, second.x, second.y), EPSILON_COMPARISON);
+        Assertions.assertEquals(expected, Point.distanceSq(first.x, first.y, second.x, second.y), EPSILON_COMPARISON);
     }
 
     @Test
@@ -110,7 +109,7 @@ public class PointTest extends ExtendedITextTest {
         Point second = new Point(1.1, 1.1);
 
         double expected = 0.02;
-        Assert.assertEquals(expected, first.distanceSq(second.x, second.y), EPSILON_COMPARISON);
+        Assertions.assertEquals(expected, first.distanceSq(second.x, second.y), EPSILON_COMPARISON);
     }
 
     @Test
@@ -119,13 +118,13 @@ public class PointTest extends ExtendedITextTest {
         Point second = new Point(1.1, 1.1);
 
         double expected = 0.02;
-        Assert.assertEquals(expected, first.distanceSq(second), EPSILON_COMPARISON);
+        Assertions.assertEquals(expected, first.distanceSq(second), EPSILON_COMPARISON);
     }
 
     @Test
     public void distanceItselfSquareTest() {
         Point first = new Point(1, 1);
-        Assert.assertEquals(0, first.distanceSq(first), EPSILON_COMPARISON);
+        Assertions.assertEquals(0, first.distanceSq(first), EPSILON_COMPARISON);
     }
 
     @Test
@@ -134,7 +133,7 @@ public class PointTest extends ExtendedITextTest {
         Point second = new Point(1.1, 1.1);
 
         double expected = Math.sqrt(0.02);
-        Assert.assertEquals(expected, Point.distance(first.x, first.y, second.x, second.y), EPSILON_COMPARISON);
+        Assertions.assertEquals(expected, Point.distance(first.x, first.y, second.x, second.y), EPSILON_COMPARISON);
     }
 
     @Test
@@ -143,7 +142,7 @@ public class PointTest extends ExtendedITextTest {
         Point second = new Point(1.1, 1.1);
 
         double expected = Math.sqrt(0.02);
-        Assert.assertEquals(expected, first.distance(second.x, second.y), EPSILON_COMPARISON);
+        Assertions.assertEquals(expected, first.distance(second.x, second.y), EPSILON_COMPARISON);
     }
 
     @Test
@@ -152,27 +151,27 @@ public class PointTest extends ExtendedITextTest {
         Point second = new Point(1.1, 1.1);
 
         double expected = Math.sqrt(0.02);
-        Assert.assertEquals(expected, first.distance(second), EPSILON_COMPARISON);
+        Assertions.assertEquals(expected, first.distance(second), EPSILON_COMPARISON);
     }
 
     @Test
     public void distanceItselfTest() {
         Point first = new Point(1, 1);
-        Assert.assertEquals(0, first.distance(first), EPSILON_COMPARISON);
+        Assertions.assertEquals(0, first.distance(first), EPSILON_COMPARISON);
     }
 
     @Test
     public void toStringTest() {
         Point first = new Point(1.23, 1.1);
-        Assert.assertEquals("Point: [x=1.23,y=1.1]", first.toString());
+        Assertions.assertEquals("Point: [x=1.23,y=1.1]", first.toString());
     }
 
     @Test
     public void cloneTest() {
         Point first = new Point(1.23, 1.1);
         Point clone = (Point) first.clone();
-        Assert.assertEquals(first, clone);
-        Assert.assertEquals(first.hashCode(), clone.hashCode());
+        Assertions.assertEquals(first, clone);
+        Assertions.assertEquals(first.hashCode(), clone.hashCode());
     }
 
     @Test
@@ -185,13 +184,13 @@ public class PointTest extends ExtendedITextTest {
         Point point = new Point(0, 0);
 
         point.translate(w, 0);
-        Assert.assertEquals(expectedPoints[1], point);
+        Assertions.assertEquals(expectedPoints[1], point);
         point.translate(0, h);
-        Assert.assertEquals(expectedPoints[2], point);
+        Assertions.assertEquals(expectedPoints[2], point);
         point.translate(-w, 0);
-        Assert.assertEquals(expectedPoints[3], point);
+        Assertions.assertEquals(expectedPoints[3], point);
         point.translate(0, -h);
-        Assert.assertEquals(expectedPoints[0], point);
+        Assertions.assertEquals(expectedPoints[0], point);
     }
 
     @Test
@@ -199,7 +198,7 @@ public class PointTest extends ExtendedITextTest {
         Point first = new Point(1.23, 1.1);
 
         Point location = first.getLocation();
-        Assert.assertTrue(first != location && first.equals(location));
+        Assertions.assertTrue(first != location && first.equals(location));
     }
 
     @Test
@@ -207,9 +206,9 @@ public class PointTest extends ExtendedITextTest {
         Point first = new Point(1.23, 1.1);
         Point second = new Point(3.59, 0.87);
 
-        Assert.assertNotEquals(first, second);
+        Assertions.assertNotEquals(first, second);
         first.setLocation(second);
-        Assert.assertEquals(first, second);
+        Assertions.assertEquals(first, second);
     }
 
     @Test
@@ -217,9 +216,9 @@ public class PointTest extends ExtendedITextTest {
         Point first = new Point(1.23, 1.1);
         Point second = new Point(3.59, 0.87);
 
-        Assert.assertNotEquals(first, second);
+        Assertions.assertNotEquals(first, second);
         first.setLocation(second.x, second.y);
-        Assert.assertEquals(first, second);
+        Assertions.assertEquals(first, second);
     }
 
     @Test
@@ -227,9 +226,9 @@ public class PointTest extends ExtendedITextTest {
         Point first = new Point(1.23, 1.1);
         Point second = new Point(3.59, 0.87);
 
-        Assert.assertNotEquals(first, second);
+        Assertions.assertNotEquals(first, second);
         first.setLocation((int) second.x, (int) second.y);
-        Assert.assertEquals(first, new Point(3, 0));
+        Assertions.assertEquals(first, new Point(3, 0));
     }
 
     @Test
@@ -237,8 +236,8 @@ public class PointTest extends ExtendedITextTest {
         Point first = new Point(1.23, 1.1);
         Point second = new Point(3.59, 0.87);
 
-        Assert.assertNotEquals(first, second);
+        Assertions.assertNotEquals(first, second);
         first.move(second.x, second.y);
-        Assert.assertEquals(first, second);
+        Assertions.assertEquals(first, second);
     }
 }

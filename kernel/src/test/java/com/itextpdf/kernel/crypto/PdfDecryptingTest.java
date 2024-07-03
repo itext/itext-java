@@ -34,7 +34,6 @@ import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,12 +45,12 @@ import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.spec.PKCS8EncodedKeySpec;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(BouncyCastleIntegrationTest.class)
+@Tag("BouncyCastleIntegrationTest")
 public class PdfDecryptingTest extends ExtendedITextTest {
 
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/kernel/crypto/PdfDecryptingTest/certs/";
@@ -59,7 +58,7 @@ public class PdfDecryptingTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/crypto/PdfDecryptingTest/";
     private static final String PROVIDER_NAME = BouncyCastleFactoryCreator.getFactory().getProviderName();
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpBeforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
         Security.addProvider(BouncyCastleFactoryCreator.getFactory().getProvider());
@@ -271,7 +270,7 @@ public class PdfDecryptingTest extends ExtendedITextTest {
         ReaderProperties readerProperties = new ReaderProperties().setPassword(password);
 
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + fileName, readerProperties))) {
-            Assert.assertTrue(
+            Assertions.assertTrue(
                     PdfTextExtractor.getTextFromPage(pdfDocument.getFirstPage()).startsWith("Content encrypted by "));
         }
     }
@@ -283,7 +282,7 @@ public class PdfDecryptingTest extends ExtendedITextTest {
                 certificate, certificateKey, PROVIDER_NAME, null);
 
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + fileName, readerProperties))) {
-            Assert.assertTrue(
+            Assertions.assertTrue(
                     PdfTextExtractor.getTextFromPage(pdfDocument.getFirstPage()).startsWith("Content encrypted by "));
         }
     }

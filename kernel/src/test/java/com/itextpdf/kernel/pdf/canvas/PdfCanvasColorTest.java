@@ -54,30 +54,29 @@ import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.kernel.pdf.function.PdfType4Function;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfCanvasColorTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/canvas/PdfCanvasColorTest/";
     public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/canvas/PdfCanvasColorTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(DESTINATION_FOLDER);
     }
@@ -100,7 +99,7 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
         canvas.release();
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "colorTest01.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "colorTest01.pdf",
                 SOURCE_FOLDER + "cmp_colorTest01.pdf", DESTINATION_FOLDER, "diff_"));
     }
 
@@ -134,7 +133,7 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
         canvas.release();
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "colorTest02.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "colorTest02.pdf",
                 SOURCE_FOLDER + "cmp_colorTest02.pdf", DESTINATION_FOLDER, "diff_"));
     }
 
@@ -167,7 +166,7 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
         canvas.release();
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "colorTest03.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "colorTest03.pdf",
                 SOURCE_FOLDER + "cmp_colorTest03.pdf", DESTINATION_FOLDER, "diff_"));
     }
 
@@ -203,7 +202,7 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
         newDocument.close();
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "colorTest04.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "colorTest04.pdf",
                 SOURCE_FOLDER + "cmp_colorTest04.pdf", DESTINATION_FOLDER, "diff_"));
     }
 
@@ -228,7 +227,7 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
         canvas.release();
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "colorTest05.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "colorTest05.pdf",
                 SOURCE_FOLDER + "cmp_colorTest05.pdf", DESTINATION_FOLDER, "diff_"));
     }
 
@@ -256,7 +255,7 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
         canvas.release();
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "colorTest06.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "colorTest06.pdf",
                 SOURCE_FOLDER + "cmp_colorTest06.pdf", DESTINATION_FOLDER, "diff_"));
     }
     
@@ -278,7 +277,7 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
         canvas.release();
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "colorTest07.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "colorTest07.pdf",
                 SOURCE_FOLDER + "cmp_colorTest07.pdf", DESTINATION_FOLDER, "diff_"));
     }
 
@@ -300,7 +299,7 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
         canvas.release();
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "colorTest07.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "colorTest07.pdf",
                 SOURCE_FOLDER + "cmp_colorTest07.pdf", DESTINATION_FOLDER, "diff_"));
     }
 
@@ -326,7 +325,7 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
         canvas.release();
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "colorTest08.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "colorTest08.pdf",
                 SOURCE_FOLDER + "cmp_colorTest08.pdf", DESTINATION_FOLDER, "diff_"));
     }
 
@@ -351,7 +350,7 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
         canvas.release();
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "colorTest08.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "colorTest08.pdf",
                 SOURCE_FOLDER + "cmp_colorTest08.pdf", DESTINATION_FOLDER, "diff_"));
     }
 
@@ -384,7 +383,7 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
         canvas.release();
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "makePatternColorTest.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "makePatternColorTest.pdf",
                 SOURCE_FOLDER + "cmp_makePatternColorTest.pdf", DESTINATION_FOLDER, "diff_"));
     }
 
@@ -411,7 +410,7 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
         canvas.release();
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + name,
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + name,
                 SOURCE_FOLDER + "cmp_" + name, DESTINATION_FOLDER));
     }
 
@@ -437,7 +436,7 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
         canvas.release();
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + name,
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + name,
                 SOURCE_FOLDER + "cmp_" + name, DESTINATION_FOLDER));
     }
 
@@ -465,7 +464,7 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
         canvas.release();
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + name,
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + name,
                 SOURCE_FOLDER + "cmp_" + name, DESTINATION_FOLDER));
     }
 
@@ -488,7 +487,7 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
         canvas.release();
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + name,
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + name,
                 SOURCE_FOLDER + "cmp_" + name, DESTINATION_FOLDER));
     }
 
@@ -534,9 +533,9 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
         String contentStreamString = new String(pageContentStreamBytes, StandardCharsets.US_ASCII);
         int p1Count = countSubstringOccurrences(contentStreamString, "/P1 scn");
         int p2Count = countSubstringOccurrences(contentStreamString, "/P2 scn");
-        Assert.assertEquals(1, p1Count);
-        Assert.assertEquals(1, p2Count);
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + name,
+        Assertions.assertEquals(1, p1Count);
+        Assertions.assertEquals(1, p2Count);
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + name,
                 SOURCE_FOLDER + "cmp_" + name, DESTINATION_FOLDER));
     }
 
@@ -583,9 +582,9 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
         String contentStreamString = new String(pageContentStreamBytes, StandardCharsets.US_ASCII);
         int p1Count = countSubstringOccurrences(contentStreamString, "/P1 scn");
         int p2Count = countSubstringOccurrences(contentStreamString, "/P2 scn");
-        Assert.assertEquals(2, p1Count);
-        Assert.assertEquals(2, p2Count);
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + name,
+        Assertions.assertEquals(2, p1Count);
+        Assertions.assertEquals(2, p2Count);
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + name,
                 SOURCE_FOLDER + "cmp_" + name, DESTINATION_FOLDER));
     }
 
@@ -596,7 +595,7 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
         PdfPattern.Tiling circle = new PdfPattern.Tiling(15, 15, 10, 20, false);
         new PdfPatternCanvas(circle, doc).circle(7.5f, 7.5f, 2.5f).fill().release();
 
-        Assert.assertThrows(IllegalArgumentException.class,
+        Assertions.assertThrows(IllegalArgumentException.class,
                 () -> new PatternColor(circle, new PdfSpecialCs.Pattern(), new float[0])
         );
     }
@@ -610,7 +609,7 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
 
         PatternColor redCirclePattern = new PatternColor(circle, ColorConstants.RED);
 
-        Assert.assertThrows(IllegalArgumentException.class, () -> new PatternColor(circle, redCirclePattern));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new PatternColor(circle, redCirclePattern));
     }
 
     private void setColorSameColorSpacesTest(String pdfName, boolean pattern) throws IOException, InterruptedException {
@@ -660,7 +659,7 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destFile, cmpFile, DESTINATION_FOLDER, "diff_"));
     }
 
     private static int countSubstringOccurrences(String str, String findStr) {

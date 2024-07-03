@@ -32,43 +32,27 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 
-@RunWith(Parameterized.class)
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class FieldsRotationTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/forms/fields/FieldsRotationTest/";
     public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/forms/fields/FieldsRotationTest/";
 
-    private final int[] pageRotation;
-    private final int[] fieldRotation;
-    private final boolean ignorePageRotation;
-    private final String testName;
-
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(DESTINATION_FOLDER);
     }
 
-    public FieldsRotationTest(Object pageRotation, Object fieldRotation, Object ignorePageRotation, Object testName) {
-        this.pageRotation = (int[]) pageRotation;
-        this.fieldRotation = (int[]) fieldRotation;
-        this.ignorePageRotation = (boolean) ignorePageRotation;
-        this.testName = (String) testName;
-    }
-
-    @Parameterized.Parameters(name = "{3}; ignore page rotation: {2}")
-    public static Iterable<Object[]> rotationRelatedProperties() {
+    public static Iterable<Object[]> RotationRelatedProperties() {
         return Arrays.asList(new Object[][]{
                 {new int[]{360, 90, 180, 270}, new int[]{0, 0, 0, 0}, true, "fieldsOnRotatedPagesDefault"},
                 {new int[]{360, 90, 180, 270}, new int[]{0, 0, 0, 0}, false, "fieldsOnRotatedPages"},
@@ -80,17 +64,19 @@ public class FieldsRotationTest extends ExtendedITextTest {
         });
     }
 
-    @Test
-    public void fieldRotationTest() throws IOException, InterruptedException {
+    @ParameterizedTest(name = "{3}; ignore page rotation: {2}")
+    @MethodSource("RotationRelatedProperties")
+    public void fieldRotationTest(int[] pageRotation, int[] fieldRotation, boolean ignorePageRotation, String testName)
+            throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + testName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName + ".pdf";
 
-        fillForm(outFileName);
+        fillForm(pageRotation, fieldRotation, ignorePageRotation, outFileName);
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
-    private void fillForm(String outPdf) throws FileNotFoundException {
+    private void fillForm(int[] pageRotation, int[] fieldRotation, boolean ignorePageRotation, String outPdf) throws FileNotFoundException {
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             PdfAcroForm form = PdfFormCreator.getAcroForm(document.getPdfDocument(), true);
 

@@ -30,16 +30,15 @@ import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class
 PdfFormCopyWithGotoTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/forms/PdfFormCopyWithGotoTest/";
@@ -62,7 +61,7 @@ PdfFormCopyWithGotoTest extends ExtendedITextTest {
             SOURCE_FOLDER + "LinkWidgetAAMouseUpNamedDestination.pdf";
 
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
@@ -92,9 +91,9 @@ PdfFormCopyWithGotoTest extends ExtendedITextTest {
                 break;
             }
         }
-        Assert.assertNull(((PdfWidgetAnnotation) annot).getAction());
+        Assertions.assertNull(((PdfWidgetAnnotation) annot).getAction());
         // verify wether name is removed
-        Assert.assertTrue(resultDoc.getCatalog().getNameTree(PdfName.Dests).getNames().isEmpty());
+        Assertions.assertTrue(resultDoc.getCatalog().getNameTree(PdfName.Dests).getNames().isEmpty());
     }
 
     @Test
@@ -123,11 +122,11 @@ PdfFormCopyWithGotoTest extends ExtendedITextTest {
                 break;
             }
         }
-        Assert.assertNotNull(annot);
+        Assertions.assertNotNull(annot);
         PdfDestination dest = PdfDestination.makeDestination(
                 ((PdfWidgetAnnotation) annot).getAction().get(PdfName.D));
 
-        Assert.assertEquals(resultDoc.getPage(5).getPdfObject(),
+        Assertions.assertEquals(resultDoc.getPage(5).getPdfObject(),
                 dest.getDestinationPage(resultDoc.getCatalog().getNameTree(PdfName.Dests)));
     }
 
@@ -157,9 +156,9 @@ PdfFormCopyWithGotoTest extends ExtendedITextTest {
                 break;
             }
         }
-        Assert.assertNull(((PdfWidgetAnnotation) annot).getAction());
+        Assertions.assertNull(((PdfWidgetAnnotation) annot).getAction());
         // verify wether name is removed
-        Assert.assertTrue(resultDoc.getCatalog().getNameTree(PdfName.Dests).getNames().isEmpty());
+        Assertions.assertTrue(resultDoc.getCatalog().getNameTree(PdfName.Dests).getNames().isEmpty());
     }
 
     @Test
@@ -188,11 +187,11 @@ PdfFormCopyWithGotoTest extends ExtendedITextTest {
                 break;
             }
         }
-        Assert.assertNotNull(annot);
+        Assertions.assertNotNull(annot);
         PdfDestination dest = PdfDestination.makeDestination(
                 ((PdfWidgetAnnotation) annot).getAction().get(PdfName.D));
 
-        Assert.assertEquals(resultDoc.getPage(5).getPdfObject(),
+        Assertions.assertEquals(resultDoc.getPage(5).getPdfObject(),
                 dest.getDestinationPage(resultDoc.getCatalog().getNameTree(PdfName.Dests)));
     }
 
@@ -222,9 +221,9 @@ PdfFormCopyWithGotoTest extends ExtendedITextTest {
                 break;
             }
         }
-        Assert.assertNull(((PdfWidgetAnnotation) annot).getAction());
+        Assertions.assertNull(((PdfWidgetAnnotation) annot).getAction());
         // verify wether name is removed
-        Assert.assertTrue(resultDoc.getCatalog().getNameTree(PdfName.Dests).getNames().isEmpty());
+        Assertions.assertTrue(resultDoc.getCatalog().getNameTree(PdfName.Dests).getNames().isEmpty());
     }
 
     @Test
@@ -253,11 +252,11 @@ PdfFormCopyWithGotoTest extends ExtendedITextTest {
                 break;
             }
         }
-        Assert.assertNotNull(annot);
+        Assertions.assertNotNull(annot);
         PdfDestination dest = PdfDestination.makeDestination(
                 ((PdfWidgetAnnotation) annot).getAdditionalAction().getAsDictionary(PdfName.U).get(PdfName.D));
 
-        Assert.assertEquals(resultDoc.getPage(5).getPdfObject(),
+        Assertions.assertEquals(resultDoc.getPage(5).getPdfObject(),
                 dest.getDestinationPage(resultDoc.getCatalog().getNameTree(PdfName.Dests)));
     }
 
@@ -288,9 +287,9 @@ PdfFormCopyWithGotoTest extends ExtendedITextTest {
                 break;
             }
         }
-        Assert.assertNull(((PdfWidgetAnnotation) annot).getAction());
+        Assertions.assertNull(((PdfWidgetAnnotation) annot).getAction());
         // verify wether name is removed
-        Assert.assertTrue(resultDoc.getCatalog().getNameTree(PdfName.Dests).getNames().isEmpty());
+        Assertions.assertTrue(resultDoc.getCatalog().getNameTree(PdfName.Dests).getNames().isEmpty());
     }
 
     @Test
@@ -319,11 +318,11 @@ PdfFormCopyWithGotoTest extends ExtendedITextTest {
                 break;
             }
         }
-        Assert.assertNotNull(annot);
+        Assertions.assertNotNull(annot);
         PdfDestination dest = PdfDestination.makeDestination(
                 ((PdfWidgetAnnotation) annot).getAdditionalAction().getAsDictionary(PdfName.U).get(PdfName.D));
 
-        Assert.assertEquals(resultDoc.getPage(5).getPdfObject(),
+        Assertions.assertEquals(resultDoc.getPage(5).getPdfObject(),
                 dest.getDestinationPage(resultDoc.getCatalog().getNameTree(PdfName.Dests)));
     }
 
@@ -353,9 +352,9 @@ PdfFormCopyWithGotoTest extends ExtendedITextTest {
                 break;
             }
         }
-        Assert.assertNull(((PdfWidgetAnnotation) annot).getAction());
+        Assertions.assertNull(((PdfWidgetAnnotation) annot).getAction());
         // verify wether name is removed
-        Assert.assertTrue(resultDoc.getCatalog().getNameTree(PdfName.Dests).getNames().isEmpty());
+        Assertions.assertTrue(resultDoc.getCatalog().getNameTree(PdfName.Dests).getNames().isEmpty());
     }
 
     @Test
@@ -384,11 +383,11 @@ PdfFormCopyWithGotoTest extends ExtendedITextTest {
                 break;
             }
         }
-        Assert.assertNotNull(annot);
+        Assertions.assertNotNull(annot);
         PdfDestination dest = PdfDestination.makeDestination(
                 ((PdfWidgetAnnotation) annot).getAdditionalAction().getAsDictionary(PdfName.D).get(PdfName.D));
 
-        Assert.assertEquals(resultDoc.getPage(5).getPdfObject(),
+        Assertions.assertEquals(resultDoc.getPage(5).getPdfObject(),
                 dest.getDestinationPage(resultDoc.getCatalog().getNameTree(PdfName.Dests)));
     }
 
@@ -419,9 +418,9 @@ PdfFormCopyWithGotoTest extends ExtendedITextTest {
                 break;
             }
         }
-        Assert.assertNull(((PdfWidgetAnnotation) annot).getAction());
+        Assertions.assertNull(((PdfWidgetAnnotation) annot).getAction());
         // verify wether name is removed
-        Assert.assertTrue(resultDoc.getCatalog().getNameTree(PdfName.Dests).getNames().isEmpty());
+        Assertions.assertTrue(resultDoc.getCatalog().getNameTree(PdfName.Dests).getNames().isEmpty());
     }
 
     @Test
@@ -450,11 +449,11 @@ PdfFormCopyWithGotoTest extends ExtendedITextTest {
                 break;
             }
         }
-        Assert.assertNotNull(annot);
+        Assertions.assertNotNull(annot);
         PdfDestination dest = PdfDestination.makeDestination(
                 ((PdfWidgetAnnotation) annot).getAdditionalAction().getAsDictionary(PdfName.D).get(PdfName.D));
 
-        Assert.assertEquals(resultDoc.getPage(5).getPdfObject(),
+        Assertions.assertEquals(resultDoc.getPage(5).getPdfObject(),
                 dest.getDestinationPage(resultDoc.getCatalog().getNameTree(PdfName.Dests)));
     }
 

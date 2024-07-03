@@ -27,18 +27,17 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(BouncyCastleUnitTest.class)
+@Tag("BouncyCastleUnitTest")
 public class LtvVerifierUnitTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/LtvVerifierUnitTest/";
 
@@ -50,7 +49,7 @@ public class LtvVerifierUnitTest extends ExtendedITextTest {
                 FileUtil.getInputStreamForFile(SOURCE_FOLDER + "ltvDoc.pdf"))));
 
         verifier1.setVerifier(verifier2);
-        Assert.assertSame(verifier2, verifier1.verifier);
+        Assertions.assertSame(verifier2, verifier1.verifier);
     }
 
     @Test
@@ -58,7 +57,7 @@ public class LtvVerifierUnitTest extends ExtendedITextTest {
         LtvVerifier verifier = new LtvVerifier(new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(SOURCE_FOLDER + "ltvDoc.pdf"))));
 
         verifier.setVerifyRootCertificate(true);
-        Assert.assertTrue(verifier.verifyRootCertificate);
+        Assertions.assertTrue(verifier.verifyRootCertificate);
     }
 
     @Test
@@ -67,7 +66,7 @@ public class LtvVerifierUnitTest extends ExtendedITextTest {
         verifier.pkcs7 = null;
 
         List<VerificationOK> list = Collections.<VerificationOK>emptyList();
-        Assert.assertSame(list, verifier.verify(list));
+        Assertions.assertSame(list, verifier.verify(list));
     }
 
     @Test
@@ -75,7 +74,7 @@ public class LtvVerifierUnitTest extends ExtendedITextTest {
         LtvVerifier verifier = new LtvVerifier(new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(SOURCE_FOLDER + "ltvDoc.pdf"))));
 
         verifier.dss = new PdfDictionary();
-        Assert.assertEquals(new ArrayList<>(), verifier.getCRLsFromDSS());
+        Assertions.assertEquals(new ArrayList<>(), verifier.getCRLsFromDSS());
     }
 
     @Test
@@ -83,6 +82,6 @@ public class LtvVerifierUnitTest extends ExtendedITextTest {
         LtvVerifier verifier = new LtvVerifier(new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(SOURCE_FOLDER + "ltvDoc.pdf"))));
 
         verifier.dss = new PdfDictionary();
-        Assert.assertEquals(new ArrayList<>(), verifier.getOCSPResponsesFromDSS());
+        Assertions.assertEquals(new ArrayList<>(), verifier.getOCSPResponsesFromDSS());
     }
 }

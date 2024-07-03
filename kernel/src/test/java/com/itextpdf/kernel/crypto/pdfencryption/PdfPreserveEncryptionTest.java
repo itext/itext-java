@@ -28,18 +28,17 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 
 
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfPreserveEncryptionTest extends ExtendedITextTest {
 
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/crypto/pdfencryption/PdfPreserveEncryptionTest/";
@@ -48,12 +47,12 @@ public class PdfPreserveEncryptionTest extends ExtendedITextTest {
 
     public PdfEncryptionTestUtils encryptionUtil = new PdfEncryptionTestUtils(destinationFolder, sourceFolder);
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -110,7 +109,7 @@ public class PdfPreserveEncryptionTest extends ExtendedITextTest {
         String compareResult = compareTool.compareByContent(out, sourceFolder + "cmp_" + filename, destinationFolder,
                 "diff_", PdfEncryptionTestUtils.USER, PdfEncryptionTestUtils.USER);
         if (compareResult != null) {
-            Assert.fail(compareResult);
+            Assertions.fail(compareResult);
         }
     }
 
@@ -130,7 +129,7 @@ public class PdfPreserveEncryptionTest extends ExtendedITextTest {
         String compareResult = compareTool.compareByContent(out, sourceFolder + "cmp_" + filename, destinationFolder,
                 "diff_", null, null);
         if (compareResult != null) {
-            Assert.fail(compareResult);
+            Assertions.fail(compareResult);
         }
     }
 }

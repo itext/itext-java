@@ -37,28 +37,27 @@ import java.nio.charset.StandardCharsets;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.util.Collections;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import static org.junit.Assert.fail;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
+import static org.junit.jupiter.api.Assertions.fail;
 
-@Category(BouncyCastleIntegrationTest.class)
+@Tag("BouncyCastleIntegrationTest")
 public class PdfStreamTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfStreamTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfStreamTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         createOrClearDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -83,7 +82,7 @@ public class PdfStreamTest extends ExtendedITextTest {
         document.getPage(1).getLastContentStream().setData(newContent, true);
 
         document.close();
-        Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder, "diff_"));
     }
 
     @Test
@@ -104,8 +103,8 @@ public class PdfStreamTest extends ExtendedITextTest {
         byte[] cmpImgBytes1 = readFile(sourceFolder + "cmp_img1.jpg");
         byte[] cmpImgBytes2 = readFile(sourceFolder + "cmp_img2.jpg");
 
-        Assert.assertArrayEquals(imgBytes1, cmpImgBytes1);
-        Assert.assertArrayEquals(imgBytes2, cmpImgBytes2);
+        Assertions.assertArrayEquals(imgBytes1, cmpImgBytes1);
+        Assertions.assertArrayEquals(imgBytes2, cmpImgBytes2);
     }
 
     @Test
@@ -129,8 +128,8 @@ public class PdfStreamTest extends ExtendedITextTest {
         PdfStream cmpStreamIm2 = srcDoc.getFirstPage().getResources().getResource(PdfName.XObject)
                 .getAsStream(new PdfName("Im2"));
 
-        Assert.assertNull(new CompareTool().compareStreamsStructure(outStreamIm1, cmpStreamIm1));
-        Assert.assertNull(new CompareTool().compareStreamsStructure(outStreamIm2, cmpStreamIm2));
+        Assertions.assertNull(new CompareTool().compareStreamsStructure(outStreamIm1, cmpStreamIm1));
+        Assertions.assertNull(new CompareTool().compareStreamsStructure(outStreamIm2, cmpStreamIm2));
 
         srcDoc.close();
         outDoc.close();
@@ -156,8 +155,8 @@ public class PdfStreamTest extends ExtendedITextTest {
         ((PdfStream)doc.getPdfObject(5)).getBytes();
         //Simulating that this flush happened automatically before normal stream flushing in close method
         ((PdfStream)doc.getPdfObject(5)).get(PdfName.Filter).flush();
-        Exception exception = Assert.assertThrows(PdfException.class, () -> doc.close());
-        Assert.assertEquals(
+        Exception exception = Assertions.assertThrows(PdfException.class, () -> doc.close());
+        Assertions.assertEquals(
                 MessageFormatUtil.format(KernelExceptionMessageConstant.FLUSHED_STREAM_FILTER_EXCEPTION, "5", "0"),
                 exception.getMessage());
     }
@@ -181,8 +180,8 @@ public class PdfStreamTest extends ExtendedITextTest {
         PdfDocument doc = new PdfDocument(reader, writer);
         //Simulating that this flush happened automatically before normal stream flushing in close method
         ((PdfStream)doc.getPdfObject(5)).get(PdfName.Filter).flush();
-        Exception exception = Assert.assertThrows(PdfException.class, () -> doc.close());
-        Assert.assertEquals(
+        Exception exception = Assertions.assertThrows(PdfException.class, () -> doc.close());
+        Assertions.assertEquals(
                 MessageFormatUtil.format(KernelExceptionMessageConstant.FLUSHED_STREAM_FILTER_EXCEPTION, "5", "0"),
                 exception.getMessage());
     }
@@ -231,7 +230,7 @@ public class PdfStreamTest extends ExtendedITextTest {
 
         PdfDocument doc = new PdfDocument(new PdfReader(file), CompareTool.createTestPdfWriter(destFile));
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder));
     }
 
     @LogMessages(messages = {
@@ -248,7 +247,7 @@ public class PdfStreamTest extends ExtendedITextTest {
         PdfStream stream = (PdfStream) doc.getPdfObject(5);
         stream.setCompressionLevel(CompressionConstants.BEST_COMPRESSION);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder));
     }
 
     @LogMessages(messages = {
@@ -269,7 +268,7 @@ public class PdfStreamTest extends ExtendedITextTest {
         //Simulating that this flush happened automatically before normal stream flushing in close method
         filterObject.flush();
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder));
     }
 
     @LogMessages(messages = {
@@ -296,7 +295,7 @@ public class PdfStreamTest extends ExtendedITextTest {
         writer.flushWaitingObjects(Collections.<PdfIndirectReference>emptySet());
         // There also was a NPE because FlateFilter was already flushed.
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder));
     }
 
     @LogMessages(messages = {
@@ -315,7 +314,7 @@ public class PdfStreamTest extends ExtendedITextTest {
         //Simulating that this flush happened automatically before normal stream flushing in close method
         stream.get(PdfName.DecodeParms).makeIndirect(stream.getIndirectReference().getDocument()).flush();
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder));
     }
 
     @LogMessages(messages = {
@@ -335,7 +334,7 @@ public class PdfStreamTest extends ExtendedITextTest {
         ((PdfDictionary)stream.get(PdfName.DecodeParms)).get(PdfName.Predictor).makeIndirect(stream.getIndirectReference()
                 .getDocument()).flush();
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder));
     }
 
     @LogMessages(messages = {
@@ -355,7 +354,7 @@ public class PdfStreamTest extends ExtendedITextTest {
         ((PdfDictionary)stream.get(PdfName.DecodeParms)).get(PdfName.Columns).makeIndirect(stream.getIndirectReference()
                 .getDocument()).flush();
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder));
     }
 
     @LogMessages(messages = {
@@ -375,7 +374,7 @@ public class PdfStreamTest extends ExtendedITextTest {
         ((PdfDictionary)stream.get(PdfName.DecodeParms)).get(PdfName.Colors).makeIndirect(stream.getIndirectReference()
                 .getDocument()).flush();
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder));
     }
 
     @LogMessages(messages = {
@@ -395,7 +394,7 @@ public class PdfStreamTest extends ExtendedITextTest {
         ((PdfDictionary)stream.get(PdfName.DecodeParms)).get(PdfName.BitsPerComponent).makeIndirect(stream.getIndirectReference()
                 .getDocument()).flush();
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder));
     }
 
     @LogMessages(messages = {
@@ -416,7 +415,7 @@ public class PdfStreamTest extends ExtendedITextTest {
         //Simulating that this flush happened automatically before normal stream flushing in close method
         stream.get(PdfName.Filter).makeIndirect(stream.getIndirectReference().getDocument()).flush();
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder));
     }
 
     @LogMessages(messages = {
@@ -437,6 +436,6 @@ public class PdfStreamTest extends ExtendedITextTest {
         //Simulating that this flush happened automatically before normal stream flushing in close method
         stream.get(PdfName.Filter).makeIndirect(stream.getIndirectReference().getDocument()).flush();
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder));
     }
 }

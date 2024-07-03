@@ -26,13 +26,12 @@ import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class TranslateTransformationTest extends ExtendedITextTest {
 
     @Test
@@ -40,15 +39,15 @@ public class TranslateTransformationTest extends ExtendedITextTest {
         AffineTransform expected = new AffineTransform(1d, 0d, 0d, 1d, 15d, 37.5d);
         AffineTransform actual = TransformUtils.parseTransform("translate(20, 50)");
 
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
     public void noTranslateValuesTest() {
-        Exception e = Assert.assertThrows(SvgProcessingException.class,
+        Exception e = Assertions.assertThrows(SvgProcessingException.class,
                 () -> TransformUtils.parseTransform("translate()")
         );
-        Assert.assertEquals(SvgExceptionMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES, e.getMessage());
+        Assertions.assertEquals(SvgExceptionMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES, e.getMessage());
     }
 
     @Test
@@ -56,7 +55,7 @@ public class TranslateTransformationTest extends ExtendedITextTest {
         AffineTransform expected = new AffineTransform(1d, 0d, 0d, 1d, 7.5d, 0d);
         AffineTransform actual = TransformUtils.parseTransform("translate(10)");
 
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -64,7 +63,7 @@ public class TranslateTransformationTest extends ExtendedITextTest {
         AffineTransform expected = new AffineTransform(1d, 0d, 0d, 1d, 17.25d, 43.5d);
         AffineTransform actual = TransformUtils.parseTransform("translate(23,58)");
 
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -72,14 +71,14 @@ public class TranslateTransformationTest extends ExtendedITextTest {
         AffineTransform expected = new AffineTransform(1d, 0d, 0d, 1d, -17.25d, -43.5d);
         AffineTransform actual = TransformUtils.parseTransform("translate(-23,-58)");
 
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
     public void tooManyTranslateValuesTest() {
-        Exception e = Assert.assertThrows(SvgProcessingException.class,
+        Exception e = Assertions.assertThrows(SvgProcessingException.class,
                 () -> TransformUtils.parseTransform("translate(1 2 3)")
         );
-        Assert.assertEquals(SvgExceptionMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES, e.getMessage());
+        Assertions.assertEquals(SvgExceptionMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES, e.getMessage());
     }
 }

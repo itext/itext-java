@@ -38,21 +38,20 @@ import com.itextpdf.kernel.pdf.xobject.PdfTransparencyGroup;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfA2CheckerTransparencyTest extends ExtendedITextTest {
 
     private PdfA2Checker pdfA2Checker;
 
-    @Before
+    @BeforeEach
     public void before() {
         pdfA2Checker = new PdfA2Checker(PdfAConformanceLevel.PDF_A_2B);
         pdfA2Checker.setFullCheckMode(true);
@@ -123,10 +122,10 @@ public class PdfA2CheckerTransparencyTest extends ExtendedITextTest {
             pageResources.addPattern(new PdfPattern.Shading(new PdfDictionary()));
             pageResources.addPattern(tillingPattern);
 
-            Exception e = Assert.assertThrows(PdfAConformanceException.class,
+            Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                     () -> pdfA2Checker.checkSinglePage(pageToCheck)
             );
-            Assert.assertEquals(PdfaExceptionMessageConstant.THE_DOCUMENT_DOES_NOT_CONTAIN_A_PDFA_OUTPUTINTENT_BUT_PAGE_CONTAINS_TRANSPARENCY_AND_DOES_NOT_CONTAIN_BLENDING_COLOR_SPACE,
+            Assertions.assertEquals(PdfaExceptionMessageConstant.THE_DOCUMENT_DOES_NOT_CONTAIN_A_PDFA_OUTPUTINTENT_BUT_PAGE_CONTAINS_TRANSPARENCY_AND_DOES_NOT_CONTAIN_BLENDING_COLOR_SPACE,
                     e.getMessage());
         }
     }
@@ -171,10 +170,10 @@ public class PdfA2CheckerTransparencyTest extends ExtendedITextTest {
             pageToCheck.addAnnotation(new PdfPopupAnnotation(new Rectangle(0f, 0f)));
             pageToCheck.addAnnotation(annotation);
 
-            Exception e = Assert.assertThrows(PdfAConformanceException.class,
+            Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                     () -> pdfA2Checker.checkSinglePage(pageToCheck)
             );
-            Assert.assertEquals(PdfaExceptionMessageConstant.THE_DOCUMENT_DOES_NOT_CONTAIN_A_PDFA_OUTPUTINTENT_BUT_PAGE_CONTAINS_TRANSPARENCY_AND_DOES_NOT_CONTAIN_BLENDING_COLOR_SPACE,
+            Assertions.assertEquals(PdfaExceptionMessageConstant.THE_DOCUMENT_DOES_NOT_CONTAIN_A_PDFA_OUTPUTINTENT_BUT_PAGE_CONTAINS_TRANSPARENCY_AND_DOES_NOT_CONTAIN_BLENDING_COLOR_SPACE,
                     e.getMessage());
         }
     }
@@ -199,10 +198,10 @@ public class PdfA2CheckerTransparencyTest extends ExtendedITextTest {
             pageToCheck.addAnnotation(new PdfPopupAnnotation(new Rectangle(0f, 0f)));
             pageToCheck.addAnnotation(annotation);
 
-            Exception e = Assert.assertThrows(PdfAConformanceException.class,
+            Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                     () -> pdfA2Checker.checkSinglePage(pageToCheck)
             );
-            Assert.assertEquals(PdfaExceptionMessageConstant.THE_DOCUMENT_DOES_NOT_CONTAIN_A_PDFA_OUTPUTINTENT_BUT_PAGE_CONTAINS_TRANSPARENCY_AND_DOES_NOT_CONTAIN_BLENDING_COLOR_SPACE,
+            Assertions.assertEquals(PdfaExceptionMessageConstant.THE_DOCUMENT_DOES_NOT_CONTAIN_A_PDFA_OUTPUTINTENT_BUT_PAGE_CONTAINS_TRANSPARENCY_AND_DOES_NOT_CONTAIN_BLENDING_COLOR_SPACE,
                     e.getMessage());
         }
     }

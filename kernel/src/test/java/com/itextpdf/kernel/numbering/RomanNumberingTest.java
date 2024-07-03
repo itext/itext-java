@@ -23,47 +23,46 @@
 package com.itextpdf.kernel.numbering;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class RomanNumberingTest extends ExtendedITextTest {
     @Test
     public void negativeConvertTest() {
-        Assert.assertEquals("-vi", RomanNumbering.convert(-6));
+        Assertions.assertEquals("-vi", RomanNumbering.convert(-6));
     }
 
     @Test
     public void zeroConvertTest() {
-        Assert.assertEquals("", RomanNumbering.convert(0));
+        Assertions.assertEquals("", RomanNumbering.convert(0));
     }
 
     @Test
     public void convertTest() {
-        Assert.assertEquals("mdclxvi", RomanNumbering.convert(1666));
-        Assert.assertEquals("mcmlxxxiii", RomanNumbering.convert(1983));
-        Assert.assertEquals("mmm", RomanNumbering.convert(3000));
-        Assert.assertEquals("|vi|", RomanNumbering.convert(6000));
-        Assert.assertEquals("|vi|dccxxxiii", RomanNumbering.convert(6733));
+        Assertions.assertEquals("mdclxvi", RomanNumbering.convert(1666));
+        Assertions.assertEquals("mcmlxxxiii", RomanNumbering.convert(1983));
+        Assertions.assertEquals("mmm", RomanNumbering.convert(3000));
+        Assertions.assertEquals("|vi|", RomanNumbering.convert(6000));
+        Assertions.assertEquals("|vi|dccxxxiii", RomanNumbering.convert(6733));
     }
 
     @Test
     public void toRomanTest() {
         String expected = "dcclvi";
-        Assert.assertEquals(expected.toUpperCase(), RomanNumbering.toRoman(756, true));
-        Assert.assertEquals(expected.toLowerCase(), RomanNumbering.toRoman(756, false));
+        Assertions.assertEquals(expected.toUpperCase(), RomanNumbering.toRoman(756, true));
+        Assertions.assertEquals(expected.toLowerCase(), RomanNumbering.toRoman(756, false));
     }
 
     @Test
     public void toRomanUpperCaseTest() {
-        Assert.assertEquals("CCCLXXXVI", RomanNumbering.toRomanUpperCase(386));
+        Assertions.assertEquals("CCCLXXXVI", RomanNumbering.toRomanUpperCase(386));
     }
 
     @Test
     public void toRomanLowerCaseTest() {
-        Assert.assertEquals("xxvi", RomanNumbering.toRomanLowerCase(26));
+        Assertions.assertEquals("xxvi", RomanNumbering.toRomanLowerCase(26));
     }
 }

@@ -29,11 +29,11 @@ import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class ProviderDigestUnitTest extends ExtendedITextTest {
 
     @Test
@@ -41,9 +41,9 @@ public class ProviderDigestUnitTest extends ExtendedITextTest {
     public void getMessageDigestSunPKCS11SHA1Test() throws GeneralSecurityException {
         ProviderDigest providerDigest = new ProviderDigest("SunPKCS11");
         MessageDigest digest = providerDigest.getMessageDigest(DigestAlgorithms.SHA1);
-        Assert.assertNotNull(digest);
-        Assert.assertEquals("SUN", digest.getProvider().getName());
-        Assert.assertEquals(DigestAlgorithms.SHA1, digest.getAlgorithm());
+        Assertions.assertNotNull(digest);
+        Assertions.assertEquals("SUN", digest.getProvider().getName());
+        Assertions.assertEquals(DigestAlgorithms.SHA1, digest.getAlgorithm());
     }
 
     @Test
@@ -51,32 +51,32 @@ public class ProviderDigestUnitTest extends ExtendedITextTest {
     public void getMessageDigestSUNSHA256Test() throws GeneralSecurityException {
         ProviderDigest providerDigest = new ProviderDigest("SUN");
         MessageDigest digest = providerDigest.getMessageDigest(DigestAlgorithms.SHA256);
-        Assert.assertNotNull(digest);
-        Assert.assertEquals("SUN", digest.getProvider().getName());
-        Assert.assertEquals(DigestAlgorithms.SHA256, digest.getAlgorithm());
+        Assertions.assertNotNull(digest);
+        Assertions.assertEquals("SUN", digest.getProvider().getName());
+        Assertions.assertEquals(DigestAlgorithms.SHA256, digest.getAlgorithm());
     }
 
     @Test
     public void getMessageDigestNoSuchProviderExceptionTest() {
         ProviderDigest providerDigest = new ProviderDigest("doesn't exist");
-        Exception e = Assert.assertThrows(NoSuchProviderException.class,
+        Exception e = Assertions.assertThrows(NoSuchProviderException.class,
                 () -> providerDigest.getMessageDigest(DigestAlgorithms.SHA256));
-        Assert.assertEquals("no such provider: doesn't exist", e.getMessage());
+        Assertions.assertEquals("no such provider: doesn't exist", e.getMessage());
     }
 
     @Test
     public void getMessageDigestNoSuchAlgorithmExceptionTest() {
         ProviderDigest providerDigest = new ProviderDigest("SunPKCS11");
-        Exception e = Assert.assertThrows(NoSuchAlgorithmException.class,
+        Exception e = Assertions.assertThrows(NoSuchAlgorithmException.class,
                 () -> providerDigest.getMessageDigest("doesn't exist"));
-        Assert.assertEquals("doesn't exist MessageDigest not available", e.getMessage());
+        Assertions.assertEquals("doesn't exist MessageDigest not available", e.getMessage());
     }
 
     @Test
     public void getMessageDigestMissingProviderExceptionTest() {
         ProviderDigest providerDigest = new ProviderDigest("");
-        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+        Exception e = Assertions.assertThrows(IllegalArgumentException.class,
                 () -> providerDigest.getMessageDigest(DigestAlgorithms.SHA1));
-        Assert.assertEquals("missing provider", e.getMessage());
+        Assertions.assertEquals("missing provider", e.getMessage());
     }
 }

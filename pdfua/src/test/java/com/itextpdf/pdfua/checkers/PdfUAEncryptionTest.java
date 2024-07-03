@@ -41,16 +41,15 @@ import com.itextpdf.pdfua.PdfUATestPdfDocument;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfUAEncryptionTest extends ExtendedITextTest {
 
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfua/PdfUAEncryptionTest/";
@@ -59,7 +58,7 @@ public class PdfUAEncryptionTest extends ExtendedITextTest {
     private static final byte[] USER_PASSWORD = "user".getBytes(StandardCharsets.UTF_8);
     private static final byte[] OWNER_PASSWORD = "owner".getBytes(StandardCharsets.UTF_8);
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
@@ -75,7 +74,7 @@ public class PdfUAEncryptionTest extends ExtendedITextTest {
              PdfUATestPdfDocument document = new PdfUATestPdfDocument(writer)) {
             writeTextToDocument(document);
         }
-        Assert.assertNull(new CompareTool().compareByContent(outPdf,
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf,
                 SOURCE_FOLDER + "cmp_" + "encryptWithPassword.pdf", DESTINATION_FOLDER, "diff", USER_PASSWORD, USER_PASSWORD));
     }
 
@@ -87,8 +86,8 @@ public class PdfUAEncryptionTest extends ExtendedITextTest {
                 .setStandardEncryption(USER_PASSWORD, OWNER_PASSWORD,  ~EncryptionConstants.ALLOW_SCREENREADERS, 3);
         PdfUATestPdfDocument document = new PdfUATestPdfDocument(new PdfWriter(outPdf, writerProperties));
         writeTextToDocument(document);
-        Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> document.close());
-        Assert.assertEquals(PdfUAExceptionMessageConstants.TENTH_BIT_OF_P_VALUE_IN_ENCRYPTION_SHOULD_BE_NON_ZERO,
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> document.close());
+        Assertions.assertEquals(PdfUAExceptionMessageConstants.TENTH_BIT_OF_P_VALUE_IN_ENCRYPTION_SHOULD_BE_NON_ZERO,
                 e.getMessage());
     }
 

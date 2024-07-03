@@ -24,13 +24,12 @@ package com.itextpdf.svg.renderers.path.impl;
 
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class EllipticalPathOperatorTest extends ExtendedITextTest {
     // tests for coordinates
     @Test
@@ -39,7 +38,7 @@ public class EllipticalPathOperatorTest extends ExtendedITextTest {
         // String array length = 7
         absoluteElliptic.setCoordinates(new String[]{"40", "40", "0", "0", "0", "20", "20"}, new Point());
         String[] result = absoluteElliptic.getCoordinates();
-        Assert.assertEquals(7, result.length);
+        Assertions.assertEquals(7, result.length);
     }
 
     @Test
@@ -48,7 +47,7 @@ public class EllipticalPathOperatorTest extends ExtendedITextTest {
         // String array length = 8
         absoluteElliptic.setCoordinates(new String[]{"40", "40", "0", "0", "0", "20", "20", "1"}, new Point());
         String[] result = absoluteElliptic.getCoordinates();
-        Assert.assertEquals(7, result.length);
+        Assertions.assertEquals(7, result.length);
     }
 
     @Test
@@ -57,7 +56,7 @@ public class EllipticalPathOperatorTest extends ExtendedITextTest {
         // String array length = 13
         absoluteElliptic.setCoordinates(new String[]{"40", "40", "0", "0", "0", "20", "20", "40", "40", "0", "0", "0", "20"}, new Point());
         String[] result = absoluteElliptic.getCoordinates();
-        Assert.assertEquals(7, result.length);
+        Assertions.assertEquals(7, result.length);
     }
 
     @Test
@@ -66,7 +65,7 @@ public class EllipticalPathOperatorTest extends ExtendedITextTest {
         // String array length = 14
         absoluteElliptic.setCoordinates(new String[]{"40", "40", "0", "0", "0", "20", "20", "40", "40", "0", "0", "0", "20", "20"}, new Point());
         String[] result = absoluteElliptic.getCoordinates();
-        Assert.assertEquals(7, result.length);
+        Assertions.assertEquals(7, result.length);
     }
 
     @Test
@@ -75,7 +74,7 @@ public class EllipticalPathOperatorTest extends ExtendedITextTest {
         // String array length = 17
         absoluteElliptic.setCoordinates(new String[]{"40", "40", "0", "0", "0", "20", "20", "40", "40", "0", "0", "0", "20", "20", "0", "1", "2"}, new Point());
         String[] result = absoluteElliptic.getCoordinates();
-        Assert.assertEquals(7, result.length);
+        Assertions.assertEquals(7, result.length);
     }
 
     @Test
@@ -83,7 +82,7 @@ public class EllipticalPathOperatorTest extends ExtendedITextTest {
         EllipticalCurveTo absoluteElliptic = new EllipticalCurveTo();
         // String array length = 6
 
-        Assert.assertThrows(IllegalArgumentException.class,
+        Assertions.assertThrows(IllegalArgumentException.class,
                 () -> absoluteElliptic.setCoordinates(new String[]{"40", "0", "0", "0", "20", "20"}, new Point())
         );
     }
@@ -93,24 +92,24 @@ public class EllipticalPathOperatorTest extends ExtendedITextTest {
         EllipticalCurveTo absoluteElliptic = new EllipticalCurveTo();
 
         // String array length = 0
-        Assert.assertThrows(IllegalArgumentException.class,
+        Assertions.assertThrows(IllegalArgumentException.class,
                 () -> absoluteElliptic.setCoordinates(new String[]{}, new Point())
         );
     }
 
     // rotate tests
     private void assertPointArrayArrayEquals(Point[][] expected, Point[][] actual) {
-        Assert.assertEquals(expected.length, actual.length);
+        Assertions.assertEquals(expected.length, actual.length);
         for (int i = 0; i < expected.length; i++) {
             assertPointArrayEquals(expected[i], actual[i]);
         }
     }
 
     private void assertPointArrayEquals(Point[] expected, Point[] actual) {
-        Assert.assertEquals(expected.length, actual.length);
+        Assertions.assertEquals(expected.length, actual.length);
         for (int i = 0; i < expected.length; i++) {
-            Assert.assertEquals(expected[i].x, actual[i].x, 0.00001);
-            Assert.assertEquals(expected[i].y, actual[i].y, 0.00001);
+            Assertions.assertEquals(expected[i].x, actual[i].x, 0.00001);
+            Assertions.assertEquals(expected[i].y, actual[i].y, 0.00001);
         }
     }
 

@@ -26,13 +26,12 @@ import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.pdf.PdfPagesTree.NullUnlimitedList;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfPagesTreeTest extends ExtendedITextTest {
     @Test
     public void generateTreeDocHasNoPagesTest() {
@@ -45,10 +44,10 @@ public class PdfPagesTreeTest extends ExtendedITextTest {
         NullUnlimitedList<String> list = new NullUnlimitedList<>();
         list.add("hey");
         list.add("bye");
-        Assert.assertEquals(2, list.size());
+        Assertions.assertEquals(2, list.size());
         list.add(-1, "hello");
         list.add(3, "goodbye");
-        Assert.assertEquals(2, list.size());
+        Assertions.assertEquals(2, list.size());
     }
 
     @Test
@@ -58,8 +57,8 @@ public class PdfPagesTreeTest extends ExtendedITextTest {
         list.add(null);
         list.add("bye");
         list.add(null);
-        Assert.assertEquals(4, list.size());
-        Assert.assertEquals(1, list.indexOf(null));
+        Assertions.assertEquals(4, list.size());
+        Assertions.assertEquals(1, list.indexOf(null));
     }
 
     @Test
@@ -67,9 +66,9 @@ public class PdfPagesTreeTest extends ExtendedITextTest {
         NullUnlimitedList<String> list = new NullUnlimitedList<>();
         list.add("hey");
         list.add("bye");
-        Assert.assertEquals(2, list.size());
+        Assertions.assertEquals(2, list.size());
         list.remove(-1);
         list.remove(2);
-        Assert.assertEquals(2, list.size());
+        Assertions.assertEquals(2, list.size());
     }
 }

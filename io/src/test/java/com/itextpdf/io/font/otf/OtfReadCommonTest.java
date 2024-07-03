@@ -28,17 +28,16 @@ import com.itextpdf.io.source.IRandomAccessSource;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.Map;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 import java.util.List;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class OtfReadCommonTest extends ExtendedITextTest {
     private static final String RESOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/font/otf/OtfReadCommonTest/";
 
@@ -54,12 +53,12 @@ public class OtfReadCommonTest extends ExtendedITextTest {
         RandomAccessFileOrArray rf = new RandomAccessFileOrArray(
                 new RandomAccessSourceFactory().createBestSource(path));
         List<Integer> glyphIds = OtfReadCommon.readCoverageFormat(rf, 0);
-        Assert.assertEquals(5, glyphIds.size());
-        Assert.assertEquals(0x38, (int) glyphIds.get(0));
-        Assert.assertEquals(0x3B, (int) glyphIds.get(1));
-        Assert.assertEquals(0x41, (int) glyphIds.get(2));
-        Assert.assertEquals(0x1042, (int) glyphIds.get(3));
-        Assert.assertEquals(0xA04A, (int) glyphIds.get(4));
+        Assertions.assertEquals(5, glyphIds.size());
+        Assertions.assertEquals(0x38, (int) glyphIds.get(0));
+        Assertions.assertEquals(0x3B, (int) glyphIds.get(1));
+        Assertions.assertEquals(0x41, (int) glyphIds.get(2));
+        Assertions.assertEquals(0x1042, (int) glyphIds.get(3));
+        Assertions.assertEquals(0xA04A, (int) glyphIds.get(4));
     }
 
     @Test
@@ -71,9 +70,9 @@ public class OtfReadCommonTest extends ExtendedITextTest {
         RandomAccessFileOrArray rf = new RandomAccessFileOrArray(
                 new RandomAccessSourceFactory().createBestSource(path));
         List<Integer> glyphIds = OtfReadCommon.readCoverageFormat(rf, 0);
-        Assert.assertEquals(10, glyphIds.size());
-        Assert.assertEquals(0xA04E, (int) glyphIds.get(0));
-        Assert.assertEquals(0xA057, (int) glyphIds.get(9));
+        Assertions.assertEquals(10, glyphIds.size());
+        Assertions.assertEquals(0xA04E, (int) glyphIds.get(0));
+        Assertions.assertEquals(0xA057, (int) glyphIds.get(9));
     }
 
     @Test
@@ -82,10 +81,10 @@ public class OtfReadCommonTest extends ExtendedITextTest {
                 null, null, 1);
         // at 15 we fill up all values
         GposValueRecord valueRecord = OtfReadCommon.readGposValueRecord(gposTableReader, 15);
-        Assert.assertEquals(2000,valueRecord.XAdvance);
-        Assert.assertEquals(2000,valueRecord.XPlacement);
-        Assert.assertEquals(2000,valueRecord.YAdvance);
-        Assert.assertEquals(2000,valueRecord.YPlacement);
+        Assertions.assertEquals(2000,valueRecord.XAdvance);
+        Assertions.assertEquals(2000,valueRecord.XPlacement);
+        Assertions.assertEquals(2000,valueRecord.YAdvance);
+        Assertions.assertEquals(2000,valueRecord.YPlacement);
     }
 
     class OpenTypeFontTableReaderTest extends OpenTypeFontTableReader {

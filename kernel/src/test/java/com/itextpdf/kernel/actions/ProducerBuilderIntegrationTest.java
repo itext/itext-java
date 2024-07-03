@@ -25,23 +25,22 @@ package com.itextpdf.kernel.actions;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class ProducerBuilderIntegrationTest extends ExtendedITextTest {
 
     private static String ITEXT_PRODUCER;
 
     private static final String MODIFIED_USING = "; modified using ";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() throws IOException {
         byte[] docBytes;
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
@@ -67,7 +66,7 @@ public class ProducerBuilderIntegrationTest extends ExtendedITextTest {
         }
 
         try (PdfDocument docReopen = new PdfDocument(new PdfReader(new ByteArrayInputStream(docBytes)))) {
-            Assert.assertEquals("someProducer" + MODIFIED_USING + ITEXT_PRODUCER
+            Assertions.assertEquals("someProducer" + MODIFIED_USING + ITEXT_PRODUCER
                     , docReopen.getDocumentInfo().getProducer());
         }
     }
@@ -83,7 +82,7 @@ public class ProducerBuilderIntegrationTest extends ExtendedITextTest {
         }
 
         try (PdfDocument docReopen = new PdfDocument(new PdfReader(new ByteArrayInputStream(docBytes)))) {
-            Assert.assertEquals("someProducer; modified using anotherProducer" + MODIFIED_USING + ITEXT_PRODUCER
+            Assertions.assertEquals("someProducer; modified using anotherProducer" + MODIFIED_USING + ITEXT_PRODUCER
                     , docReopen.getDocumentInfo().getProducer());
         }
     }
@@ -99,7 +98,7 @@ public class ProducerBuilderIntegrationTest extends ExtendedITextTest {
         }
 
         try (PdfDocument docReopen = new PdfDocument(new PdfReader(new ByteArrayInputStream(docBytes)))) {
-            Assert.assertEquals(ITEXT_PRODUCER, docReopen.getDocumentInfo().getProducer());
+            Assertions.assertEquals(ITEXT_PRODUCER, docReopen.getDocumentInfo().getProducer());
         }
     }
 
@@ -114,7 +113,7 @@ public class ProducerBuilderIntegrationTest extends ExtendedITextTest {
         }
 
         try (PdfDocument docReopen = new PdfDocument(new PdfReader(new ByteArrayInputStream(docBytes)))) {
-            Assert.assertEquals("someProducer" + MODIFIED_USING + ITEXT_PRODUCER
+            Assertions.assertEquals("someProducer" + MODIFIED_USING + ITEXT_PRODUCER
                     , docReopen.getDocumentInfo().getProducer());
         }
     }
@@ -131,7 +130,7 @@ public class ProducerBuilderIntegrationTest extends ExtendedITextTest {
         }
 
         try (PdfDocument docReopen = new PdfDocument(new PdfReader(new ByteArrayInputStream(docBytes)))) {
-            Assert.assertEquals("someProducer" + MODIFIED_USING + ITEXT_PRODUCER + MODIFIED_USING
+            Assertions.assertEquals("someProducer" + MODIFIED_USING + ITEXT_PRODUCER + MODIFIED_USING
                     + "thirdProducer" + MODIFIED_USING + ITEXT_PRODUCER, docReopen.getDocumentInfo().getProducer());
         }
     }

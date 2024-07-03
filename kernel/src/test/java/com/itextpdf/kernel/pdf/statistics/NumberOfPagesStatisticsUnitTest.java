@@ -29,33 +29,32 @@ import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.Collections;
 import java.util.Map;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class NumberOfPagesStatisticsUnitTest extends ExtendedITextTest {
 
     @Test
     public void defaultEventTest() {
         NumberOfPagesStatisticsEvent event = new NumberOfPagesStatisticsEvent(1, ITextCoreProductData.getInstance());
 
-        Assert.assertEquals(1, event.getNumberOfPages());
-        Assert.assertEquals(Collections.singletonList("numberOfPages"), event.getStatisticsNames());
-        Assert.assertEquals(NumberOfPagesStatisticsAggregator.class, event.createStatisticsAggregatorFromName("numberOfPages").getClass());
+        Assertions.assertEquals(1, event.getNumberOfPages());
+        Assertions.assertEquals(Collections.singletonList("numberOfPages"), event.getStatisticsNames());
+        Assertions.assertEquals(NumberOfPagesStatisticsAggregator.class, event.createStatisticsAggregatorFromName("numberOfPages").getClass());
     }
 
     @Test
     public void invalidArgumentEventTest() {
         Exception exception =
-                Assert.assertThrows(
+                Assertions.assertThrows(
                         IllegalStateException.class,
                         () -> new NumberOfPagesStatisticsEvent(-1, ITextCoreProductData.getInstance()));
-        Assert.assertEquals(KernelExceptionMessageConstant.NUMBER_OF_PAGES_CAN_NOT_BE_NEGATIVE, exception.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.NUMBER_OF_PAGES_CAN_NOT_BE_NEGATIVE, exception.getMessage());
     }
 
     @Test
@@ -71,17 +70,17 @@ public class NumberOfPagesStatisticsUnitTest extends ExtendedITextTest {
         Object aggregation = aggregator.retrieveAggregation();
         Map<String, Long> castedAggregation = (Map<String, Long>) aggregation;
 
-        Assert.assertEquals(1, castedAggregation.size());
+        Assertions.assertEquals(1, castedAggregation.size());
 
         Long numberOfPages = castedAggregation.get("1");
-        Assert.assertEquals(new Long(1L), numberOfPages);
+        Assertions.assertEquals(new Long(1L), numberOfPages);
     }
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = CommonsLogMessageConstant.INVALID_STATISTICS_NAME))
     public void invalidStatisticsNameEventTest() {
         NumberOfPagesStatisticsEvent event = new NumberOfPagesStatisticsEvent(5, ITextCoreProductData.getInstance());
-        Assert.assertNull(event.createStatisticsAggregatorFromName("invalid name"));
+        Assertions.assertNull(event.createStatisticsAggregatorFromName("invalid name"));
     }
 
     @Test
@@ -108,21 +107,21 @@ public class NumberOfPagesStatisticsUnitTest extends ExtendedITextTest {
         Object aggregation = aggregator.retrieveAggregation();
         Map<String, Long> castedAggregation = (Map<String, Long>) aggregation;
 
-        Assert.assertEquals(4, castedAggregation.size());
+        Assertions.assertEquals(4, castedAggregation.size());
 
         Long numberOfPages = castedAggregation.get("1");
-        Assert.assertEquals(new Long(1L), numberOfPages);
+        Assertions.assertEquals(new Long(1L), numberOfPages);
 
         numberOfPages = castedAggregation.get("2-10");
-        Assert.assertEquals(new Long(4L), numberOfPages);
+        Assertions.assertEquals(new Long(4L), numberOfPages);
 
-        Assert.assertNull(castedAggregation.get("11-100"));
+        Assertions.assertNull(castedAggregation.get("11-100"));
 
         numberOfPages = castedAggregation.get("101-1000");
-        Assert.assertEquals(new Long(2L), numberOfPages);
+        Assertions.assertEquals(new Long(2L), numberOfPages);
 
         numberOfPages = castedAggregation.get("1001+");
-        Assert.assertEquals(new Long(1L), numberOfPages);
+        Assertions.assertEquals(new Long(1L), numberOfPages);
     }
 
     @Test
@@ -131,7 +130,7 @@ public class NumberOfPagesStatisticsUnitTest extends ExtendedITextTest {
         Object aggregation = aggregator.retrieveAggregation();
         Map<String, Long> castedAggregation = (Map<String, Long>) aggregation;
 
-        Assert.assertTrue(castedAggregation.isEmpty());
+        Assertions.assertTrue(castedAggregation.isEmpty());
     }
 
     @Test
@@ -142,7 +141,7 @@ public class NumberOfPagesStatisticsUnitTest extends ExtendedITextTest {
         Object aggregation = aggregator.retrieveAggregation();
         Map<String, Long> castedAggregation = (Map<String, Long>) aggregation;
 
-        Assert.assertTrue(castedAggregation.isEmpty());
+        Assertions.assertTrue(castedAggregation.isEmpty());
     }
 
     @Test
@@ -173,20 +172,20 @@ public class NumberOfPagesStatisticsUnitTest extends ExtendedITextTest {
         Object aggregation = aggregator1.retrieveAggregation();
         Map<String, Long> castedAggregation = (Map<String, Long>) aggregation;
 
-        Assert.assertEquals(4, castedAggregation.size());
+        Assertions.assertEquals(4, castedAggregation.size());
 
         Long numberOfPages = castedAggregation.get("1");
-        Assert.assertEquals(new Long(1L), numberOfPages);
+        Assertions.assertEquals(new Long(1L), numberOfPages);
 
         numberOfPages = castedAggregation.get("2-10");
-        Assert.assertEquals(new Long(4L), numberOfPages);
+        Assertions.assertEquals(new Long(4L), numberOfPages);
 
-        Assert.assertNull(castedAggregation.get("11-100"));
+        Assertions.assertNull(castedAggregation.get("11-100"));
 
         numberOfPages = castedAggregation.get("101-1000");
-        Assert.assertEquals(new Long(2L), numberOfPages);
+        Assertions.assertEquals(new Long(2L), numberOfPages);
 
         numberOfPages = castedAggregation.get("1001+");
-        Assert.assertEquals(new Long(1L), numberOfPages);
+        Assertions.assertEquals(new Long(1L), numberOfPages);
     }
 }

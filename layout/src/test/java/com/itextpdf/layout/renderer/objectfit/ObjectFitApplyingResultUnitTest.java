@@ -23,20 +23,19 @@
 package com.itextpdf.layout.renderer.objectfit;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class ObjectFitApplyingResultUnitTest extends ExtendedITextTest {
     @Test
     public void constructorTest() {
         ObjectFitApplyingResult result = new ObjectFitApplyingResult(123., 456., true );
-        Assert.assertEquals(123., result.getRenderedImageWidth(), 0.001);
-        Assert.assertEquals(456., result.getRenderedImageHeight(), 0.001);
-        Assert.assertTrue(result.isImageCuttingRequired());
+        Assertions.assertEquals(123., result.getRenderedImageWidth(), 0.001);
+        Assertions.assertEquals(456., result.getRenderedImageHeight(), 0.001);
+        Assertions.assertTrue(result.isImageCuttingRequired());
     }
 
     @Test
@@ -45,8 +44,8 @@ public class ObjectFitApplyingResultUnitTest extends ExtendedITextTest {
         result.setRenderedImageWidth(123.);
         result.setRenderedImageHeight(456.);
         result.setImageCuttingRequired(true);
-        Assert.assertEquals(123., result.getRenderedImageWidth(), 0.001);
-        Assert.assertEquals(456., result.getRenderedImageHeight(), 0.001);
-        Assert.assertTrue(result.isImageCuttingRequired());
+        Assertions.assertEquals(123., result.getRenderedImageWidth(), 0.001);
+        Assertions.assertEquals(456., result.getRenderedImageHeight(), 0.001);
+        Assertions.assertTrue(result.isImageCuttingRequired());
     }
 }

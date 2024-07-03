@@ -41,7 +41,6 @@ import com.itextpdf.signatures.testutils.client.TestCrlClient;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
 import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -50,12 +49,12 @@ import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(BouncyCastleIntegrationTest.class)
+@Tag("BouncyCastleIntegrationTest")
 public class PadesTwoPhaseSigningTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/sign/PadesTwoPhaseSigningTest/";
@@ -63,7 +62,7 @@ public class PadesTwoPhaseSigningTest extends ExtendedITextTest {
     private static final String certsSrc = "./src/test/resources/com/itextpdf/signatures/certs/";
     private static final char[] PASSWORD = "testpassphrase".toCharArray();
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         Security.addProvider(FACTORY.getProvider());
         createOrClearDestinationFolder(destinationFolder);
@@ -101,12 +100,12 @@ public class PadesTwoPhaseSigningTest extends ExtendedITextTest {
             CMSContainer container = twoPhaseSigningHelper.createCMSContainerWithoutSignature(certChain,
                     DigestAlgorithms.SHA256, new PdfReader(srcFileName), preparedDoc, createSignerProperties());
 
-            Exception exception = Assert.assertThrows(PdfException.class, () ->
+            Exception exception = Assertions.assertThrows(PdfException.class, () ->
                     twoPhaseSigningHelper.signCMSContainerWithBaselineLTAProfile(
                             new PrivateKeySignature(signPrivateKey, DigestAlgorithms.SHA512, FACTORY.getProviderName()),
                             new PdfReader(new ByteArrayInputStream(preparedDoc.toByteArray())),
                             FileUtil.getFileOutputStream(outFileName), "Signature1", container));
-            Assert.assertEquals(MessageFormatUtil.format(SignExceptionMessageConstant.DIGEST_ALGORITHMS_ARE_NOT_SAME,
+            Assertions.assertEquals(MessageFormatUtil.format(SignExceptionMessageConstant.DIGEST_ALGORITHMS_ARE_NOT_SAME,
                     "SHA256", "SHA512"), exception.getMessage());
         }
     }
@@ -139,12 +138,12 @@ public class PadesTwoPhaseSigningTest extends ExtendedITextTest {
             CMSContainer container = twoPhaseSigningHelper.createCMSContainerWithoutSignature(certChain,
                     DigestAlgorithms.SHA256, new PdfReader(srcFileName), preparedDoc, createSignerProperties());
 
-            Exception exception = Assert.assertThrows(PdfException.class, () ->
+            Exception exception = Assertions.assertThrows(PdfException.class, () ->
                     twoPhaseSigningHelper.signCMSContainerWithBaselineLTAProfile(
                             new PrivateKeySignature(signPrivateKey, DigestAlgorithms.SHA256, FACTORY.getProviderName()),
                             new PdfReader(new ByteArrayInputStream(preparedDoc.toByteArray())),
                             FileUtil.getFileOutputStream(outFileName), "Signature1", container));
-            Assert.assertEquals(SignExceptionMessageConstant.TSA_CLIENT_IS_MISSING, exception.getMessage());
+            Assertions.assertEquals(SignExceptionMessageConstant.TSA_CLIENT_IS_MISSING, exception.getMessage());
         }
     }
 

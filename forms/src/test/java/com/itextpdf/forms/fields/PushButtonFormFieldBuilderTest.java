@@ -35,15 +35,14 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PushButtonFormFieldBuilderTest extends ExtendedITextTest {
 
     private static final PdfDocument DUMMY_DOCUMENT = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
@@ -54,8 +53,8 @@ public class PushButtonFormFieldBuilderTest extends ExtendedITextTest {
     public void constructorTest() {
         PushButtonFormFieldBuilder builder = new PushButtonFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
 
-        Assert.assertSame(DUMMY_DOCUMENT, builder.getDocument());
-        Assert.assertSame(DUMMY_NAME, builder.getFormFieldName());
+        Assertions.assertSame(DUMMY_DOCUMENT, builder.getDocument());
+        Assertions.assertSame(DUMMY_NAME, builder.getFormFieldName());
     }
 
     @Test
@@ -63,7 +62,7 @@ public class PushButtonFormFieldBuilderTest extends ExtendedITextTest {
         PushButtonFormFieldBuilder builder = new PushButtonFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
         builder.setCaption("Caption");
 
-        Assert.assertEquals("Caption", builder.getCaption());
+        Assertions.assertEquals("Caption", builder.getCaption());
     }
 
     @Test
@@ -97,17 +96,17 @@ public class PushButtonFormFieldBuilderTest extends ExtendedITextTest {
         List<PdfWidgetAnnotation> widgets = pushButtonFormField.getWidgets();
 
         if (widgetExpected) {
-            Assert.assertEquals(1, widgets.size());
+            Assertions.assertEquals(1, widgets.size());
 
             PdfWidgetAnnotation annotation = widgets.get(0);
 
-            Assert.assertTrue(DUMMY_RECTANGLE.equalsWithEpsilon(annotation.getRectangle().toRectangle()));
+            Assertions.assertTrue(DUMMY_RECTANGLE.equalsWithEpsilon(annotation.getRectangle().toRectangle()));
 
             PdfArray kids = new PdfArray();
             kids.add(annotation.getPdfObject());
             putIfAbsent(expectedDictionary, PdfName.Kids, kids);
         } else {
-            Assert.assertEquals(0, widgets.size());
+            Assertions.assertEquals(0, widgets.size());
         }
 
         putIfAbsent(expectedDictionary, PdfName.FT, PdfName.Btn);
@@ -117,7 +116,7 @@ public class PushButtonFormFieldBuilderTest extends ExtendedITextTest {
 
         expectedDictionary.makeIndirect(DUMMY_DOCUMENT);
         pushButtonFormField.makeIndirect(DUMMY_DOCUMENT);
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareDictionariesStructure(expectedDictionary, pushButtonFormField.getPdfObject()));
     }
 

@@ -32,28 +32,27 @@ import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class AreaBreakRendererUnitTest extends ExtendedITextTest {
 
     @Test
     public void addChildTestUnsupported() {
         AreaBreakRenderer areaBreakRenderer = new AreaBreakRenderer(new AreaBreak());
 
-        Assert.assertNull(areaBreakRenderer.getChildRenderers());
-        Assert.assertThrows(Exception.class, () -> areaBreakRenderer.addChild(new TextRenderer(new Text("Test"))));
+        Assertions.assertNull(areaBreakRenderer.getChildRenderers());
+        Assertions.assertThrows(Exception.class, () -> areaBreakRenderer.addChild(new TextRenderer(new Text("Test"))));
     }
 
     @Test
     public void drawTestUnsupported() {
         AreaBreakRenderer areaBreakRenderer = new AreaBreakRenderer(new AreaBreak());
 
-        Assert.assertThrows(UnsupportedOperationException.class,
+        Assertions.assertThrows(UnsupportedOperationException.class,
                 () -> areaBreakRenderer.draw(new DrawContext(new PdfDocument(new PdfWriter(new ByteArrayOutputStream())), null))
         );
     }
@@ -62,7 +61,7 @@ public class AreaBreakRendererUnitTest extends ExtendedITextTest {
     public void getOccupiedAreaTestUnsupported() {
         AreaBreakRenderer areaBreakRenderer = new AreaBreakRenderer(new AreaBreak());
 
-        Assert.assertThrows(UnsupportedOperationException.class, () -> areaBreakRenderer.getOccupiedArea());
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> areaBreakRenderer.getOccupiedArea());
     }
 
     @Test
@@ -70,7 +69,7 @@ public class AreaBreakRendererUnitTest extends ExtendedITextTest {
     //The BORDER property is chosen without any specific intention. It could be replaced with any other property.
     public void hasPropertyTest() {
         AreaBreakRenderer areaBreakRenderer = new AreaBreakRenderer(new AreaBreak());
-        Assert.assertFalse(areaBreakRenderer.hasProperty(Property.BORDER));
+        Assertions.assertFalse(areaBreakRenderer.hasProperty(Property.BORDER));
     }
 
     @Test
@@ -78,7 +77,7 @@ public class AreaBreakRendererUnitTest extends ExtendedITextTest {
     //The BORDER property is chosen without any specific intention. It could be replaced with any other property.
     public void hasOwnPropertyTest() {
         AreaBreakRenderer areaBreakRenderer = new AreaBreakRenderer(new AreaBreak());
-        Assert.assertFalse(areaBreakRenderer.hasProperty(Property.BORDER));
+        Assertions.assertFalse(areaBreakRenderer.hasProperty(Property.BORDER));
     }
 
     @Test
@@ -86,7 +85,7 @@ public class AreaBreakRendererUnitTest extends ExtendedITextTest {
     //The BORDER property is chosen without any specific intention. It could be replaced with any other property.
     public void getPropertyTest() {
         AreaBreakRenderer areaBreakRenderer = new AreaBreakRenderer(new AreaBreak());
-        Assert.assertNull(areaBreakRenderer.<Property>getProperty(Property.BORDER));
+        Assertions.assertNull(areaBreakRenderer.<Property>getProperty(Property.BORDER));
     }
 
     @Test
@@ -94,7 +93,7 @@ public class AreaBreakRendererUnitTest extends ExtendedITextTest {
     //The BORDER property is chosen without any specific intention. It could be replaced with any other property.
     public void getOwnPropertyTest() {
         AreaBreakRenderer areaBreakRenderer = new AreaBreakRenderer(new AreaBreak());
-        Assert.assertNull(areaBreakRenderer.<Property>getOwnProperty(Property.BORDER));
+        Assertions.assertNull(areaBreakRenderer.<Property>getOwnProperty(Property.BORDER));
     }
 
     @Test
@@ -102,7 +101,7 @@ public class AreaBreakRendererUnitTest extends ExtendedITextTest {
     //The BORDER property is chosen without any specific intention. It could be replaced with any other property.
     public void getDefaultPropertyTest() {
         AreaBreakRenderer areaBreakRenderer = new AreaBreakRenderer(new AreaBreak());
-        Assert.assertNull(areaBreakRenderer.<Property>getDefaultProperty(Property.BORDER));
+        Assertions.assertNull(areaBreakRenderer.<Property>getDefaultProperty(Property.BORDER));
     }
 
     @Test
@@ -110,7 +109,7 @@ public class AreaBreakRendererUnitTest extends ExtendedITextTest {
     public void getPropertyWithDefaultValueTestUnsupported() {
         AreaBreakRenderer areaBreakRenderer = new AreaBreakRenderer(new AreaBreak());
 
-        Assert.assertThrows(UnsupportedOperationException.class, () -> areaBreakRenderer.getProperty(Property.BORDER_RADIUS, 3));
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> areaBreakRenderer.getProperty(Property.BORDER_RADIUS, 3));
     }
 
     @Test
@@ -118,7 +117,7 @@ public class AreaBreakRendererUnitTest extends ExtendedITextTest {
     public void setPropertyTestUnsupported() {
         AreaBreakRenderer areaBreakRenderer = new AreaBreakRenderer(new AreaBreak());
 
-        Assert.assertThrows(UnsupportedOperationException.class, () -> areaBreakRenderer.setProperty(Property.BORDER_RADIUS, 5));
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> areaBreakRenderer.setProperty(Property.BORDER_RADIUS, 5));
     }
 
     @Test
@@ -133,50 +132,50 @@ public class AreaBreakRendererUnitTest extends ExtendedITextTest {
     public void getModelElementTest() {
         AreaBreak areaBreak = new AreaBreak();
         AreaBreakRenderer areaBreakRenderer = new AreaBreakRenderer(areaBreak);
-        Assert.assertNull(areaBreakRenderer.getModelElement());
+        Assertions.assertNull(areaBreakRenderer.getModelElement());
     }
 
     @Test
     public void getParentTest() {
         AreaBreakRenderer areaBreakRenderer = new AreaBreakRenderer(new AreaBreak());
-        Assert.assertNull(areaBreakRenderer.getParent());
+        Assertions.assertNull(areaBreakRenderer.getParent());
     }
 
     @Test
     public void setParentTest() {
         AreaBreakRenderer areaBreakRenderer = new AreaBreakRenderer(new AreaBreak());
-        Assert.assertEquals(areaBreakRenderer, areaBreakRenderer.setParent(new AreaBreakRenderer(new AreaBreak())));
+        Assertions.assertEquals(areaBreakRenderer, areaBreakRenderer.setParent(new AreaBreakRenderer(new AreaBreak())));
     }
 
     @Test
     public void isFlushedTest() {
         AreaBreakRenderer areaBreakRenderer = new AreaBreakRenderer(new AreaBreak());
-        Assert.assertFalse(areaBreakRenderer.isFlushed());
+        Assertions.assertFalse(areaBreakRenderer.isFlushed());
     }
 
     @Test
     public void moveTestUnsupported() {
         AreaBreakRenderer areaBreakRenderer = new AreaBreakRenderer(new AreaBreak());
 
-        Assert.assertThrows(UnsupportedOperationException.class, () -> areaBreakRenderer.move(2.0f, 2.0f));
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> areaBreakRenderer.move(2.0f, 2.0f));
     }
 
     @Test
     public void getNextRendererTest() {
         AreaBreakRenderer areaBreakRenderer = new AreaBreakRenderer(new AreaBreak());
-        Assert.assertNull(areaBreakRenderer.getNextRenderer());
+        Assertions.assertNull(areaBreakRenderer.getNextRenderer());
     }
 
     @Test
     public void layoutTest() {
         AreaBreakRenderer areaBreakRenderer = new AreaBreakRenderer(new AreaBreak());
         LayoutResult layoutResult = areaBreakRenderer.layout(new LayoutContext(null));
-        Assert.assertEquals(LayoutResult.NOTHING, layoutResult.getStatus());
-        Assert.assertNull(layoutResult.getOccupiedArea());
-        Assert.assertNull(layoutResult.getSplitRenderer());
-        Assert.assertNull(layoutResult.getOverflowRenderer());
-        Assert.assertEquals(areaBreakRenderer, layoutResult.getCauseOfNothing());
-        Assert.assertEquals(areaBreakRenderer.areaBreak, layoutResult.getAreaBreak());
+        Assertions.assertEquals(LayoutResult.NOTHING, layoutResult.getStatus());
+        Assertions.assertNull(layoutResult.getOccupiedArea());
+        Assertions.assertNull(layoutResult.getSplitRenderer());
+        Assertions.assertNull(layoutResult.getOverflowRenderer());
+        Assertions.assertEquals(areaBreakRenderer, layoutResult.getCauseOfNothing());
+        Assertions.assertEquals(areaBreakRenderer.areaBreak, layoutResult.getAreaBreak());
     }
 
 }

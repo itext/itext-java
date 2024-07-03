@@ -29,38 +29,37 @@ import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.Collections;
 import java.util.Map;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class SizeOfPdfStatisticsUnitTest extends ExtendedITextTest {
     @Test
     public void defaultEventTest() {
         SizeOfPdfStatisticsEvent event = new SizeOfPdfStatisticsEvent(0, ITextCoreProductData.getInstance());
 
-        Assert.assertEquals(0, event.getAmountOfBytes());
-        Assert.assertEquals(Collections.singletonList("pdfSize"), event.getStatisticsNames());
-        Assert.assertEquals(SizeOfPdfStatisticsAggregator.class, event.createStatisticsAggregatorFromName("pdfSize").getClass());
+        Assertions.assertEquals(0, event.getAmountOfBytes());
+        Assertions.assertEquals(Collections.singletonList("pdfSize"), event.getStatisticsNames());
+        Assertions.assertEquals(SizeOfPdfStatisticsAggregator.class, event.createStatisticsAggregatorFromName("pdfSize").getClass());
     }
 
     @Test
     public void invalidArgumentEventTest() {
         Exception exception =
-                Assert.assertThrows(IllegalArgumentException.class,
+                Assertions.assertThrows(IllegalArgumentException.class,
                         () -> new SizeOfPdfStatisticsEvent(-1, ITextCoreProductData.getInstance()));
-        Assert.assertEquals(KernelExceptionMessageConstant.AMOUNT_OF_BYTES_LESS_THAN_ZERO, exception.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.AMOUNT_OF_BYTES_LESS_THAN_ZERO, exception.getMessage());
     }
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = CommonsLogMessageConstant.INVALID_STATISTICS_NAME))
     public void invalidStatisticsNameEventTest() {
         SizeOfPdfStatisticsEvent event = new SizeOfPdfStatisticsEvent(5, ITextCoreProductData.getInstance());
-        Assert.assertNull(event.createStatisticsAggregatorFromName("invalid name"));
+        Assertions.assertNull(event.createStatisticsAggregatorFromName("invalid name"));
     }
 
     @Test
@@ -85,21 +84,21 @@ public class SizeOfPdfStatisticsUnitTest extends ExtendedITextTest {
         Object aggregation = aggregator.retrieveAggregation();
         Map<String, Long> castedAggregation = (Map<String, Long>) aggregation;
 
-        Assert.assertEquals(4, castedAggregation.size());
+        Assertions.assertEquals(4, castedAggregation.size());
 
         Long numberOfPages = castedAggregation.get("<128kb");
-        Assert.assertEquals(new Long(2L), numberOfPages);
+        Assertions.assertEquals(new Long(2L), numberOfPages);
 
         numberOfPages = castedAggregation.get("128kb-1mb");
-        Assert.assertEquals(new Long(2L), numberOfPages);
+        Assertions.assertEquals(new Long(2L), numberOfPages);
 
-        Assert.assertNull(castedAggregation.get("1mb-16mb"));
+        Assertions.assertNull(castedAggregation.get("1mb-16mb"));
 
         numberOfPages = castedAggregation.get("16mb-128mb");
-        Assert.assertEquals(new Long(1L), numberOfPages);
+        Assertions.assertEquals(new Long(1L), numberOfPages);
 
         numberOfPages = castedAggregation.get("128mb+");
-        Assert.assertEquals(new Long(2L), numberOfPages);
+        Assertions.assertEquals(new Long(2L), numberOfPages);
     }
 
     @Test
@@ -108,7 +107,7 @@ public class SizeOfPdfStatisticsUnitTest extends ExtendedITextTest {
         Object aggregation = aggregator.retrieveAggregation();
         Map<String, Long> castedAggregation = (Map<String, Long>) aggregation;
 
-        Assert.assertTrue(castedAggregation.isEmpty());
+        Assertions.assertTrue(castedAggregation.isEmpty());
     }
 
     @Test
@@ -119,7 +118,7 @@ public class SizeOfPdfStatisticsUnitTest extends ExtendedITextTest {
         Object aggregation = aggregator.retrieveAggregation();
         Map<String, Long> castedAggregation = (Map<String, Long>) aggregation;
 
-        Assert.assertTrue(castedAggregation.isEmpty());
+        Assertions.assertTrue(castedAggregation.isEmpty());
     }
 
     @Test
@@ -148,20 +147,20 @@ public class SizeOfPdfStatisticsUnitTest extends ExtendedITextTest {
         Object aggregation = aggregator1.retrieveAggregation();
         Map<String, Long> castedAggregation = (Map<String, Long>) aggregation;
 
-        Assert.assertEquals(4, castedAggregation.size());
+        Assertions.assertEquals(4, castedAggregation.size());
 
         Long numberOfPages = castedAggregation.get("<128kb");
-        Assert.assertEquals(new Long(2L), numberOfPages);
+        Assertions.assertEquals(new Long(2L), numberOfPages);
 
         numberOfPages = castedAggregation.get("128kb-1mb");
-        Assert.assertEquals(new Long(2L), numberOfPages);
+        Assertions.assertEquals(new Long(2L), numberOfPages);
 
-        Assert.assertNull(castedAggregation.get("1mb-16mb"));
+        Assertions.assertNull(castedAggregation.get("1mb-16mb"));
 
         numberOfPages = castedAggregation.get("16mb-128mb");
-        Assert.assertEquals(new Long(1L), numberOfPages);
+        Assertions.assertEquals(new Long(1L), numberOfPages);
 
         numberOfPages = castedAggregation.get("128mb+");
-        Assert.assertEquals(new Long(2L), numberOfPages);
+        Assertions.assertEquals(new Long(2L), numberOfPages);
     }
 }

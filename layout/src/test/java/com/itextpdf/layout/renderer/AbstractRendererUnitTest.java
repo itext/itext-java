@@ -59,16 +59,15 @@ import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class AbstractRendererUnitTest extends ExtendedITextTest {
 
     @Test
@@ -80,14 +79,14 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
 
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         PdfXObject pdfXObject = AbstractRenderer.createXObject(gradientBuilder, new Rectangle(0, 0, 20, 20), pdfDocument);
-        Assert.assertNotNull(pdfXObject.getPdfObject().get(PdfName.Resources));
+        Assertions.assertNotNull(pdfXObject.getPdfObject().get(PdfName.Resources));
     }
 
     @Test
     public void createXObjectWithNullLinearGradientTest() {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         PdfXObject pdfXObject = AbstractRenderer.createXObject(null, new Rectangle(0, 0, 20, 20), pdfDocument);
-        Assert.assertNull(pdfXObject.getPdfObject().get(PdfName.Resources));
+        Assertions.assertNull(pdfXObject.getPdfObject().get(PdfName.Resources));
     }
 
     @Test
@@ -96,7 +95,7 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
 
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         PdfXObject pdfXObject = AbstractRenderer.createXObject(gradientBuilder, new Rectangle(0, 0, 20, 20), pdfDocument);
-        Assert.assertNull(pdfXObject.getPdfObject().get(PdfName.Resources));
+        Assertions.assertNull(pdfXObject.getPdfObject().get(PdfName.Resources));
     }
 
     @Test
@@ -121,8 +120,8 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
                     return null;
                 }
                 object = xObject;
-                Assert.assertTrue(xObject instanceof PdfImageXObject);
-                Assert.assertEquals(Arrays.toString(((PdfImageXObject) xObject).getImageBytes(false)),
+                Assertions.assertTrue(xObject instanceof PdfImageXObject);
+                Assertions.assertEquals(Arrays.toString(((PdfImageXObject) xObject).getImageBytes(false)),
                         Arrays.toString(bytes));
                 return null;
             }
@@ -142,7 +141,7 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
                 }).build());
         renderer.setProperty(Property.BACKGROUND_IMAGE, images);
         renderer.drawBackground(context);
-        Assert.assertEquals(50, counter[0]);
+        Assertions.assertEquals(50, counter[0]);
     }
 
     @Test
@@ -167,8 +166,8 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
                     return null;
                 }
                 object = xObject;
-                Assert.assertTrue(xObject instanceof PdfImageXObject);
-                Assert.assertEquals(Arrays.toString(((PdfImageXObject) xObject).getImageBytes(false)),
+                Assertions.assertTrue(xObject instanceof PdfImageXObject);
+                Assertions.assertEquals(Arrays.toString(((PdfImageXObject) xObject).getImageBytes(false)),
                         Arrays.toString(bytes));
                 return null;
             }
@@ -189,7 +188,7 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
                 .build());
         renderer.setProperty(Property.BACKGROUND_IMAGE, images);
         renderer.drawBackground(context);
-        Assert.assertEquals(5, counter[0]);
+        Assertions.assertEquals(5, counter[0]);
     }
 
     @Test
@@ -214,8 +213,8 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
                     return null;
                 }
                 object = xObject;
-                Assert.assertTrue(xObject instanceof PdfImageXObject);
-                Assert.assertEquals(Arrays.toString(((PdfImageXObject) xObject).getImageBytes(false)),
+                Assertions.assertTrue(xObject instanceof PdfImageXObject);
+                Assertions.assertEquals(Arrays.toString(((PdfImageXObject) xObject).getImageBytes(false)),
                         Arrays.toString(bytes));
                 return null;
             }
@@ -236,7 +235,7 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
                 .build());
         renderer.setProperty(Property.BACKGROUND_IMAGE, images);
         renderer.drawBackground(context);
-        Assert.assertEquals(10, counter[0]);
+        Assertions.assertEquals(10, counter[0]);
     }
 
     @Test
@@ -261,8 +260,8 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
                     return null;
                 }
                 object = xObject;
-                Assert.assertTrue(xObject instanceof PdfImageXObject);
-                Assert.assertEquals(Arrays.toString(((PdfImageXObject) xObject).getImageBytes(false)),
+                Assertions.assertTrue(xObject instanceof PdfImageXObject);
+                Assertions.assertEquals(Arrays.toString(((PdfImageXObject) xObject).getImageBytes(false)),
                         Arrays.toString(bytes));
                 return null;
             }
@@ -284,7 +283,7 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
                 .build());
         renderer.setProperty(Property.BACKGROUND_IMAGE, images);
         renderer.drawBackground(context);
-        Assert.assertEquals(1, counter[0]);
+        Assertions.assertEquals(1, counter[0]);
     }
 
     @Test
@@ -307,11 +306,11 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
                     return null;
                 }
                 object = xObject;
-                Assert.assertTrue(xObject instanceof PdfImageXObject);
-                Assert.assertEquals(Arrays.toString(((PdfImageXObject) xObject).getImageBytes(false)),
+                Assertions.assertTrue(xObject instanceof PdfImageXObject);
+                Assertions.assertEquals(Arrays.toString(((PdfImageXObject) xObject).getImageBytes(false)),
                         Arrays.toString(bytes));
-                Assert.assertEquals(27, (int) rect.getX());
-                Assert.assertEquals(40, (int) rect.getY());
+                Assertions.assertEquals(27, (int) rect.getX());
+                Assertions.assertEquals(40, (int) rect.getY());
                 return null;
             }
         });
@@ -352,9 +351,9 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
                     return null;
                 }
                 object = xObject;
-                Assert.assertTrue(xObject instanceof PdfFormXObject);
-                Assert.assertEquals(-30, (int) rect.getX());
-                Assert.assertEquals(100, (int) rect.getY());
+                Assertions.assertTrue(xObject instanceof PdfFormXObject);
+                Assertions.assertEquals(-30, (int) rect.getX());
+                Assertions.assertEquals(100, (int) rect.getY());
                 return null;
             }
         });
@@ -389,9 +388,9 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
                     return null;
                 }
                 object = xObject;
-                Assert.assertTrue(xObject instanceof PdfFormXObject);
-                Assert.assertEquals(0, (int) rect.getX());
-                Assert.assertEquals(0, (int) rect.getY());
+                Assertions.assertTrue(xObject instanceof PdfFormXObject);
+                Assertions.assertEquals(0, (int) rect.getX());
+                Assertions.assertEquals(0, (int) rect.getY());
                 return null;
             }
         });
@@ -430,8 +429,8 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
                     return null;
                 }
                 object = xObject;
-                Assert.assertTrue(xObject instanceof PdfImageXObject);
-                Assert.assertEquals(Arrays.toString(((PdfImageXObject) xObject).getImageBytes(false)),
+                Assertions.assertTrue(xObject instanceof PdfImageXObject);
+                Assertions.assertEquals(Arrays.toString(((PdfImageXObject) xObject).getImageBytes(false)),
                         Arrays.toString(listBytes.get(counter[0]++)));
                 return null;
             }
@@ -460,7 +459,7 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
                     }
                 }).build()));
         renderer.drawBackground(context);
-        Assert.assertEquals(listBytes.size(), counter[0]);
+        Assertions.assertEquals(listBytes.size(), counter[0]);
     }
 
     @Test
@@ -491,11 +490,11 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
                     return null;
                 }
                 object = xObject;
-                Assert.assertTrue(xObject instanceof PdfImageXObject);
-                Assert.assertEquals(Arrays.toString(((PdfImageXObject) xObject).getImageBytes(false)),
+                Assertions.assertTrue(xObject instanceof PdfImageXObject);
+                Assertions.assertEquals(Arrays.toString(((PdfImageXObject) xObject).getImageBytes(false)),
                         Arrays.toString(listBytes.get(counter[0])));
-                Assert.assertEquals((int) listRectangles.get(counter[0]).getX(), (int) rect.getX());
-                Assert.assertEquals((int) listRectangles.get(counter[0]++).getY(), (int) rect.getY());
+                Assertions.assertEquals((int) listRectangles.get(counter[0]).getX(), (int) rect.getX());
+                Assertions.assertEquals((int) listRectangles.get(counter[0]++).getY(), (int) rect.getY());
                 return null;
             }
         });
@@ -524,7 +523,7 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
                 }).setBackgroundPosition(new BackgroundPosition().setPositionX(BackgroundPosition.PositionX.RIGHT)
                         .setPositionY(BackgroundPosition.PositionY.CENTER).setXShift(new UnitValue(UnitValue.PERCENT, 10))).build()));
         renderer.drawBackground(context);
-        Assert.assertEquals(listBytes.size(), counter[0]);
+        Assertions.assertEquals(listBytes.size(), counter[0]);
     }
 
     @Test
@@ -533,10 +532,10 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
         final PdfCanvas pdfCanvas = new PdfCanvas(pdfDocument.addNewPage()) {
             @Override
             public PdfCanvas rectangle(double x, double y, double width, double height) {
-                Assert.assertEquals(130.0, x, 0);
-                Assert.assertEquals(230.0, y, 0);
-                Assert.assertEquals(240.0, width, 0);
-                Assert.assertEquals(340.0, height, 0);
+                Assertions.assertEquals(130.0, x, 0);
+                Assertions.assertEquals(230.0, y, 0);
+                Assertions.assertEquals(240.0, width, 0);
+                Assertions.assertEquals(340.0, height, 0);
                 return this;
             }
         };
@@ -565,20 +564,20 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
         final PdfCanvas pdfCanvas = new PdfCanvas(pdfDocument.addNewPage()) {
             @Override
             public PdfCanvas rectangle(double x, double y, double width, double height) {
-                Assert.assertEquals(130.0, x, 0);
-                Assert.assertEquals(230.0, y, 0);
-                Assert.assertEquals(240.0, width, 0);
-                Assert.assertEquals(340.0, height, 0);
+                Assertions.assertEquals(130.0, x, 0);
+                Assertions.assertEquals(230.0, y, 0);
+                Assertions.assertEquals(240.0, width, 0);
+                Assertions.assertEquals(340.0, height, 0);
                 return this;
             }
 
             @Override
             public PdfCanvas addXObjectFittedIntoRectangle(PdfXObject xObject, Rectangle rect) {
-                Assert.assertEquals(rawImage, xObject);
-                Assert.assertEquals(100f, rect.getX(), 0);
-                Assert.assertEquals(550f, rect.getY(), 0);
-                Assert.assertEquals(50f, rect.getWidth(), 0);
-                Assert.assertEquals(50f, rect.getHeight(), 0);
+                Assertions.assertEquals(rawImage, xObject);
+                Assertions.assertEquals(100f, rect.getX(), 0);
+                Assertions.assertEquals(550f, rect.getY(), 0);
+                Assertions.assertEquals(50f, rect.getWidth(), 0);
+                Assertions.assertEquals(50f, rect.getHeight(), 0);
                 return this;
             }
         };
@@ -602,19 +601,19 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
         final PdfCanvas pdfCanvas = new PdfCanvas(pdfDocument.addNewPage()) {
             @Override
             public PdfCanvas rectangle(double x, double y, double width, double height) {
-                Assert.assertEquals(130.0, x, 0);
-                Assert.assertEquals(230.0, y, 0);
-                Assert.assertEquals(240.0, width, 0);
-                Assert.assertEquals(340.0, height, 0);
+                Assertions.assertEquals(130.0, x, 0);
+                Assertions.assertEquals(230.0, y, 0);
+                Assertions.assertEquals(240.0, width, 0);
+                Assertions.assertEquals(340.0, height, 0);
                 return this;
             }
 
             @Override
             public PdfCanvas addXObjectFittedIntoRectangle(PdfXObject xObject, Rectangle rect) {
-                Assert.assertEquals(100f, rect.getX(), 0);
-                Assert.assertEquals(200f, rect.getY(), 0);
-                Assert.assertEquals(300f, rect.getWidth(), 0);
-                Assert.assertEquals(400f, rect.getHeight(), 0);
+                Assertions.assertEquals(100f, rect.getX(), 0);
+                Assertions.assertEquals(200f, rect.getY(), 0);
+                Assertions.assertEquals(300f, rect.getWidth(), 0);
+                Assertions.assertEquals(400f, rect.getHeight(), 0);
                 return this;
             }
         };
@@ -652,7 +651,7 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
         abstractRenderer.applyLinkAnnotation(pdfDocument);
 
         // This test checks that there is log message and there is no NPE so assertions are not required
-        Assert.assertTrue(true);
+        Assertions.assertTrue(true);
     }
 
     @Test
@@ -675,6 +674,6 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
         Document document = new Document(doc);
         RootRenderer renderer = document.getRenderer();
         Rectangle rect = new Rectangle(0, 0);
-        Assert.assertThrows(ClassCastException.class, () -> renderer.applyMargins(rect, false));
+        Assertions.assertThrows(ClassCastException.class, () -> renderer.applyMargins(rect, false));
     }
 }

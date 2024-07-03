@@ -42,29 +42,28 @@ import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class ParentTreeTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/ParentTreeTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/ParentTreeTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -109,7 +108,7 @@ public class ParentTreeTest extends ExtendedITextTest {
         PdfDocument taggedPdf = new PdfDocument(new PdfReader(pdf), CompareTool.createTestPdfWriter(outPdf));
         taggedPdf.setTagged();
         taggedPdf.close();
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
     }
 
     @Test
@@ -121,7 +120,7 @@ public class ParentTreeTest extends ExtendedITextTest {
         PdfDocument taggedPdf = new PdfDocument(new PdfReader(pdf), CompareTool.createTestPdfWriter(outPdf));
         taggedPdf.setTagged();
         taggedPdf.close();
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
     }
 
     @Test
@@ -135,7 +134,7 @@ public class ParentTreeTest extends ExtendedITextTest {
         resource.get(new PdfName("Fm1")).flush();
 
         taggedPdf.close();
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
     }
 
     @Test
@@ -147,7 +146,7 @@ public class ParentTreeTest extends ExtendedITextTest {
         PdfDocument taggedPdf = new PdfDocument(new PdfReader(pdf), CompareTool.createTestPdfWriter(outPdf));
         taggedPdf.setTagged();
         taggedPdf.close();
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
     }
 
     @Test
@@ -163,7 +162,7 @@ public class ParentTreeTest extends ExtendedITextTest {
         srcPdf.close();
         outPdf.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outDoc, cmpPdf, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outDoc, cmpPdf, destinationFolder));
     }
 
     @Test
@@ -178,7 +177,7 @@ public class ParentTreeTest extends ExtendedITextTest {
 
         outPdf.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outDoc, cmpPdf, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outDoc, cmpPdf, destinationFolder));
     }
 
     @Test
@@ -367,7 +366,7 @@ public class ParentTreeTest extends ExtendedITextTest {
         PdfDocument taggedPdf = new PdfDocument(new PdfReader(pdf), CompareTool.createTestPdfWriter(outPdf));
         taggedPdf.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
     }
 
     @Test
@@ -377,7 +376,7 @@ public class ParentTreeTest extends ExtendedITextTest {
     public void objRefAsInvalidType() throws IOException {
         String pdf = sourceFolder + "objRefAsInvalidType.pdf";
         PdfDocument doc = new PdfDocument(new PdfReader(pdf));
-        Assert.assertNull(doc.getStructTreeRoot());
+        Assertions.assertNull(doc.getStructTreeRoot());
     }
 
     @Test
@@ -392,7 +391,7 @@ public class ParentTreeTest extends ExtendedITextTest {
         elem.removeKid(0);
         taggedPdf.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
     }
 
 
@@ -407,7 +406,7 @@ public class ParentTreeTest extends ExtendedITextTest {
 
         PdfDocument taggedPdf = new PdfDocument(new PdfReader(pdf), new PdfWriter(outPdf));
         taggedPdf.close();
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
     }
 
     @Test
@@ -421,7 +420,7 @@ public class ParentTreeTest extends ExtendedITextTest {
 
         PdfDocument taggedPdf = new PdfDocument(new PdfReader(pdf), new PdfWriter(outPdf));
         taggedPdf.close();
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
     }
 
     @Test
@@ -456,7 +455,7 @@ public class ParentTreeTest extends ExtendedITextTest {
         PdfDocument doc = new PdfDocument(new PdfReader(pdf), CompareTool.createTestPdfWriter(outPdf));
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
     }
 
     @Test
@@ -489,7 +488,7 @@ public class ParentTreeTest extends ExtendedITextTest {
         PdfDocument doc = new PdfDocument(new PdfReader(pdf), CompareTool.createTestPdfWriter(outPdf));
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
     }
 
     @Test
@@ -521,7 +520,7 @@ public class ParentTreeTest extends ExtendedITextTest {
 
         pdfDoc.getStructTreeRoot().addKid(elem);
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
     }
 
     @Test

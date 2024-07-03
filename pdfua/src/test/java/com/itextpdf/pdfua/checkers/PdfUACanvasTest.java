@@ -50,20 +50,19 @@ import com.itextpdf.pdfua.UaValidationTestFramework;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua
 // validation on Android)
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfUACanvasTest extends ExtendedITextTest {
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/FreeSans.ttf";
     private static final String FONT_FOLDER = "./src/test/resources/com/itextpdf/pdfua/font/";
@@ -73,12 +72,12 @@ public class PdfUACanvasTest extends ExtendedITextTest {
 
     private UaValidationTestFramework framework;
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
-    @Before
+    @BeforeEach
     public void initializeFramework() {
         framework = new UaValidationTestFramework(DESTINATION_FOLDER);
     }
@@ -135,13 +134,13 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                 .restoreState()
                 .closeTag();
         pdfDoc.close();
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareByContent(outPdf,
                         SOURCE_FOLDER + "cmp_01_005_TextContentIsCorrectlyTaggedAsContent.pdf",
                         DESTINATION_FOLDER,
                         "diff_")
         );
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
     @Test
@@ -159,10 +158,10 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                 .beginText()
                 .setFontAndSize(font, 12)
                 .moveText(200, 200);
-        Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> {
             canvas.showText("Hello World!");
         });
-        Assert.assertEquals(PdfUAExceptionMessageConstants.CONTENT_IS_NOT_REAL_CONTENT_AND_NOT_ARTIFACT,
+        Assertions.assertEquals(PdfUAExceptionMessageConstants.CONTENT_IS_NOT_REAL_CONTENT_AND_NOT_ARTIFACT,
                 e.getMessage());
     }
 
@@ -188,10 +187,10 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                 .closeTag();
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf,
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf,
                 SOURCE_FOLDER + "cmp_01_005_TextArtifactIsNotInTagTree.pdf",
                 DESTINATION_FOLDER, "diff_"));
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
     @Test
@@ -211,10 +210,10 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                 .setFontAndSize(font, 12)
                 .moveText(200, 200);
 
-        Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> {
             canvas.showText("Hello World!");
         });
-        Assert.assertEquals(PdfUAExceptionMessageConstants.CONTENT_WITH_MCID_BUT_MCID_NOT_FOUND_IN_STRUCT_TREE_ROOT,
+        Assertions.assertEquals(PdfUAExceptionMessageConstants.CONTENT_WITH_MCID_BUT_MCID_NOT_FOUND_IN_STRUCT_TREE_ROOT,
                 e.getMessage());
     }
 
@@ -232,10 +231,10 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                 .beginText()
                 .moveText(200, 200)
                 .setColor(ColorConstants.RED, true);
-        Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> {
             canvas.showText(glyphLine);
         });
-        Assert.assertEquals(PdfUAExceptionMessageConstants.CONTENT_IS_NOT_REAL_CONTENT_AND_NOT_ARTIFACT,
+        Assertions.assertEquals(PdfUAExceptionMessageConstants.CONTENT_IS_NOT_REAL_CONTENT_AND_NOT_ARTIFACT,
                 e.getMessage());
     }
 
@@ -259,10 +258,10 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                 .restoreState();
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf,
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf,
                 SOURCE_FOLDER + "cmp_01_005_TextGlyphLineContentIsArtifact.pdf",
                 DESTINATION_FOLDER, "diff_"));
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
     @Test
@@ -290,10 +289,10 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                 .restoreState();
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf,
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf,
                 SOURCE_FOLDER + "cmp_01_005_TextGlyphLineContentIsContentCorrect.pdf",
                 DESTINATION_FOLDER, "diff_"));
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
     @Test
@@ -318,10 +317,10 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                 .restoreState();
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf,
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf,
                 SOURCE_FOLDER + "cmp_01_005_allowPureBmcInArtifact.pdf",
                 DESTINATION_FOLDER, "diff_"));
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
     @Test
@@ -348,10 +347,10 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                 .restoreState();
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf,
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf,
                 SOURCE_FOLDER + "cmp_01_005_allowNestedPureBmcInArtifact.pdf",
                 DESTINATION_FOLDER, "diff_"));
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
     @Test
@@ -432,10 +431,10 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                 .closeTag();
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf,
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf,
                 SOURCE_FOLDER + "cmp_01_005_LineContentThatIsMarkedAsArtifact.pdf",
                 DESTINATION_FOLDER, "diff_"));
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
     @Test
@@ -560,10 +559,10 @@ public class PdfUACanvasTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf,
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf,
                 SOURCE_FOLDER + "cmp_01_005_RectangleMarkedArtifact.pdf",
                 DESTINATION_FOLDER, "diff_"));
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
     @Test
@@ -618,10 +617,10 @@ public class PdfUACanvasTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf,
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf,
                 SOURCE_FOLDER + "cmp_01_005_RectangleMarkedContent.pdf",
                 DESTINATION_FOLDER, "diff_"));
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
     @Test
@@ -647,8 +646,8 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                 .restoreState();
 
         pdfDoc.close();
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
-        Assert.assertNull(new CompareTool().compareByContent(outPdf,
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf,
                 SOURCE_FOLDER + "cmp_01_004_bezierCurveShouldBeTagged.pdf",
                 DESTINATION_FOLDER, "diff_"));
     }
@@ -672,8 +671,8 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                 .restoreState();
 
         pdfDoc.close();
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
-        Assert.assertNull(new CompareTool().compareByContent(outPdf,
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf,
                 SOURCE_FOLDER + "cmp_01_004_bezierMarkedAsArtifact.pdf",
                 DESTINATION_FOLDER, "diff_"));
     }
@@ -728,10 +727,10 @@ public class PdfUACanvasTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf,
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf,
                 SOURCE_FOLDER + "cmp_01_005_RandomOperationsWithoutActuallyAddingContent.pdf",
                 DESTINATION_FOLDER, "diff_"));
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
     @Test
@@ -756,10 +755,10 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                 .moveText(200, 200)
                 .showText("Hello World!")
                 .endText();
-        Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> {
             canvas.openTag(new CanvasTag(PdfName.Artifact));
         });
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 PdfUAExceptionMessageConstants.ARTIFACT_CANT_BE_INSIDE_REAL_CONTENT,
                 e.getMessage());
     }
@@ -793,11 +792,11 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                 .closeTag();
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf,
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf,
                         SOURCE_FOLDER + "cmp_validRoleAddedInsideMarkedContent.pdf",
                 DESTINATION_FOLDER, "diff_")
         );
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
     @Test
@@ -835,8 +834,8 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                 .closeTag();
         pdfDoc.close();
 
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
-        Assert.assertNull(new CompareTool().compareByContent(outPdf,
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf,
                 SOURCE_FOLDER + "cmp_validRoleAddedInsideMarkedContentMultiple.pdf",
                 DESTINATION_FOLDER, "diff_")
         );
@@ -880,8 +879,8 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                 .closeTag();
         pdfDoc.close();
 
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
-        Assert.assertNull(new CompareTool().compareByContent(outPdf,
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf,
                 SOURCE_FOLDER + "cmp_validRoleAddedInsideMarkedContentMCR_IN_MCR.pdf",
                 DESTINATION_FOLDER, "diff_")
         );
@@ -910,10 +909,10 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                 .moveText(200, 200)
                 .showText("Hello World!")
                 .endText();
-        Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> {
             canvas.openTag(tagPointer.getTagReference());
         });
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 PdfUAExceptionMessageConstants.REAL_CONTENT_CANT_BE_INSIDE_ARTIFACT,
                 e.getMessage());
     }
@@ -933,10 +932,10 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                 .showText("Please crash on close, tyvm")
                 .endText()
                 .closeTag();
-        Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> {
             pdfDoc.close();
         });
-        Assert.assertEquals(MessageFormatUtil.format(PdfUAExceptionMessageConstants.FONT_SHOULD_BE_EMBEDDED, "Courier"),
+        Assertions.assertEquals(MessageFormatUtil.format(PdfUAExceptionMessageConstants.FONT_SHOULD_BE_EMBEDDED, "Courier"),
                 e.getMessage());
     }
 
@@ -1004,7 +1003,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         framework.assertBothValid("validNoteTagPresent");
 
         String outPdf = DESTINATION_FOLDER + "layout_validNoteTagPresent.pdf";
-        Assert.assertNull(new CompareTool().compareByContent(outPdf,
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf,
                 SOURCE_FOLDER + "cmp_validNoteTagPresent.pdf",
                 DESTINATION_FOLDER, "diff_")
         );

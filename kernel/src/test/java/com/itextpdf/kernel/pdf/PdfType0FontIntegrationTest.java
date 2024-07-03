@@ -27,19 +27,18 @@ import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.stream.Collectors;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfType0FontIntegrationTest extends ExtendedITextTest {
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/PdfType0FontIntegrationTest/";
     private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/fonts/";
@@ -53,12 +52,12 @@ public class PdfType0FontIntegrationTest extends ExtendedITextTest {
     private static final String JAPANESE =
             "5た うぞせツそぇBぁデぢつっず信えいすてナおドぅだトヅでぉミ(:テかちぜ)じぃあづ";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(DESTINATION_FOLDER);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(DESTINATION_FOLDER);
     }
@@ -86,7 +85,7 @@ public class PdfType0FontIntegrationTest extends ExtendedITextTest {
         canvas.release();
 
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, DESTINATION_FOLDER));
     }
 
     @Test
@@ -115,7 +114,7 @@ public class PdfType0FontIntegrationTest extends ExtendedITextTest {
         canvas.release();
 
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, DESTINATION_FOLDER));
     }
 
     @Test
@@ -144,6 +143,6 @@ public class PdfType0FontIntegrationTest extends ExtendedITextTest {
         canvas.release();
 
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, DESTINATION_FOLDER));
     }
 }

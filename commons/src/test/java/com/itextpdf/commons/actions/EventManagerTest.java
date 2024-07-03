@@ -33,18 +33,17 @@ import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.List;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class EventManagerTest extends ExtendedITextTest {
 
-    @After
+    @AfterEach
     public void afterEach() {
         ProductProcessorFactoryKeeper.restoreDefaultProductProcessorFactory();
     }
@@ -70,15 +69,15 @@ public class EventManagerTest extends ExtendedITextTest {
         try {
             eventManager.onEvent(new ITextTestEvent(sequenceId, null, "test-event", ProductNameConstant.ITEXT_CORE));
         } catch (AggregatedException e) {
-            Assert.assertEquals("Error during event processing:\n"
+            Assertions.assertEquals("Error during event processing:\n"
                     + "0) ThrowArithmeticExpHandler\n"
                     + "1) ThrowIllegalArgumentExpHandler\n", e.getMessage());
 
             List<Exception> aggregatedExceptions = e.getAggregatedExceptions();
 
-            Assert.assertEquals(2, aggregatedExceptions.size());
-            Assert.assertEquals("ThrowArithmeticExpHandler", aggregatedExceptions.get(0).getMessage());
-            Assert.assertEquals("ThrowIllegalArgumentExpHandler", aggregatedExceptions.get(1).getMessage());
+            Assertions.assertEquals(2, aggregatedExceptions.size());
+            Assertions.assertEquals("ThrowArithmeticExpHandler", aggregatedExceptions.get(0).getMessage());
+            Assertions.assertEquals("ThrowIllegalArgumentExpHandler", aggregatedExceptions.get(1).getMessage());
         }
 
         eventManager.unregister(handler1);
@@ -92,10 +91,10 @@ public class EventManagerTest extends ExtendedITextTest {
         eventManager.register(handler1);
         try {
             SequenceId sequenceId = new SequenceId();
-            Exception exception = Assert.assertThrows(ArithmeticException.class,
+            Exception exception = Assertions.assertThrows(ArithmeticException.class,
                     () -> eventManager.onEvent(
                             new ITextTestEvent(sequenceId, null, "test-event", ProductNameConstant.ITEXT_CORE)));
-            Assert.assertEquals("ThrowArithmeticExpHandler", exception.getMessage());
+            Assertions.assertEquals("ThrowArithmeticExpHandler", exception.getMessage());
         } finally {
             eventManager.unregister(handler1);
         }
@@ -106,24 +105,24 @@ public class EventManagerTest extends ExtendedITextTest {
         EventManager eventManager = EventManager.getInstance();
         IEventHandler handler = new ThrowArithmeticExpHandler();
 
-        Assert.assertFalse(eventManager.isRegistered(handler));
+        Assertions.assertFalse(eventManager.isRegistered(handler));
 
         eventManager.register(handler);
-        Assert.assertTrue(eventManager.isRegistered(handler));
+        Assertions.assertTrue(eventManager.isRegistered(handler));
 
-        Assert.assertTrue(eventManager.unregister(handler));
-        Assert.assertFalse(eventManager.isRegistered(handler));
+        Assertions.assertTrue(eventManager.unregister(handler));
+        Assertions.assertFalse(eventManager.isRegistered(handler));
 
-        Assert.assertFalse(eventManager.unregister(handler));
+        Assertions.assertFalse(eventManager.unregister(handler));
     }
 
     @Test
     public void turningOffAgplTest() {
         IProductProcessorFactory defaultProductProcessorFactory = ProductProcessorFactoryKeeper.getProductProcessorFactory();
-        Assert.assertTrue(defaultProductProcessorFactory instanceof DefaultProductProcessorFactory);
+        Assertions.assertTrue(defaultProductProcessorFactory instanceof DefaultProductProcessorFactory);
         EventManager.acknowledgeAgplUsageDisableWarningMessage();
         IProductProcessorFactory underAgplProductProcessorFactory1 = ProductProcessorFactoryKeeper.getProductProcessorFactory();
-        Assert.assertTrue(underAgplProductProcessorFactory1 instanceof UnderAgplProductProcessorFactory);
+        Assertions.assertTrue(underAgplProductProcessorFactory1 instanceof UnderAgplProductProcessorFactory);
     }
 
     private static class ThrowArithmeticExpHandler implements IEventHandler {

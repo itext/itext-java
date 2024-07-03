@@ -49,20 +49,19 @@ import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.pdfa.VeraPdfValidator;// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfUAGraphicsTest extends ExtendedITextTest {
 
 
@@ -76,12 +75,12 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
 
     private UaValidationTestFramework framework;
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
-    @Before
+    @BeforeEach
     public void initializeFramework() {
         framework = new UaValidationTestFramework(DESTINATION_FOLDER);
     }
@@ -92,10 +91,10 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
                 new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
         Document document = new Document(pdfDoc);
         Image img = new Image(ImageDataFactory.create(DOG));
-        Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> {
             document.add(img);
         });
-        Assert.assertEquals(PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT, e.getMessage());
+        Assertions.assertEquals(PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT, e.getMessage());
     }
 
     @Test
@@ -112,10 +111,10 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
         Image img = new Image(ImageDataFactory.create(DOG));
         img.getAccessibilityProperties().setAlternateDescription("");
 
-        Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> {
             document.add(img);
         });
-        Assert.assertEquals(PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT, e.getMessage());
+        Assertions.assertEquals(PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT, e.getMessage());
     }
 
     @Test
@@ -220,8 +219,8 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
         img.getAccessibilityProperties().setAlternateDescription("Alternative description");
         document.add(img);
         document.close();
-        Assert.assertNull(new VeraPdfValidator().validate(OUTPUT_FILE));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
-        Assert.assertNull(new CompareTool().compareByContent(OUTPUT_FILE,
+        Assertions.assertNull(new VeraPdfValidator().validate(OUTPUT_FILE));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new CompareTool().compareByContent(OUTPUT_FILE,
                 SOURCE_FOLDER + "cmp_imageWithValidAlternativeDescription_OK.pdf",
                 DESTINATION_FOLDER, "diff_"));
     }
@@ -236,8 +235,8 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
         img.getAccessibilityProperties().setActualText("Actual text");
         document.add(img);
         document.close();
-        Assert.assertNull(new VeraPdfValidator().validate(OUTPUT_FILE));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
-        Assert.assertNull(
+        Assertions.assertNull(new VeraPdfValidator().validate(OUTPUT_FILE));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(
                 new CompareTool().compareByContent(OUTPUT_FILE, SOURCE_FOLDER + "cmp_imageWithValidActualText_OK.pdf",
                         DESTINATION_FOLDER, "diff_"));
     }
@@ -264,8 +263,8 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
 
         document.add(imgWithCaption);
         document.close();
-        Assert.assertNull(new VeraPdfValidator().validate(OUTPUT_FILE)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
-        Assert.assertNull(
+        Assertions.assertNull(new VeraPdfValidator().validate(OUTPUT_FILE)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(
                 new CompareTool().compareByContent(OUTPUT_FILE, SOURCE_FOLDER + "cmp_imageWithCaption_OK.pdf",
                         DESTINATION_FOLDER, "diff_"));
     }
@@ -288,10 +287,10 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
 
         // will not throw in layout but will throw on close this is expected
         document.add(imgWithCaption);
-        Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> {
             document.close();
         });
-        Assert.assertEquals(PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT, e.getMessage());
+        Assertions.assertEquals(PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT, e.getMessage());
     }
 
     @Test
@@ -301,10 +300,10 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
         Document document = new Document(pdfDoc);
         Image img = new Image(ImageDataFactory.create(DOG));
         img.getAccessibilityProperties().setActualText(null);
-        Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> {
             document.add(img);
         });
-        Assert.assertEquals(PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT, e.getMessage());
+        Assertions.assertEquals(PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT, e.getMessage());
     }
 
     @Test
@@ -351,7 +350,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
         canvas.closeTag();
 
         pdfDoc.close();
-        Assert.assertNull(new VeraPdfValidator().validate(OUTPUT_FILE)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(OUTPUT_FILE)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
         new CompareTool().compareByContent(OUTPUT_FILE, SOURCE_FOLDER + "cmp_imageDirectlyOnCanvas_OK.pdf",
                 DESTINATION_FOLDER, "diff_");
     }
@@ -370,10 +369,10 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
         canvas.openTag(tmp.getTagReference());
         canvas.addImageAt(ImageDataFactory.create(DOG), 200, 200, false);
         canvas.closeTag();
-        Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> {
             pdfDoc.close();
         });
-        Assert.assertEquals(PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT, e.getMessage());
+        Assertions.assertEquals(PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT, e.getMessage());
     }
 
     @Test
@@ -402,7 +401,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
         Document document = new Document(pdfDoc);
         document.add(new Div().setHeight(730).setBackgroundColor(ColorConstants.CYAN));
 
-        Assert.assertThrows(PdfUAConformanceException.class, () -> {
+        Assertions.assertThrows(PdfUAConformanceException.class, () -> {
             document.add(img);
         });
 
@@ -420,7 +419,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
         }
         table.addCell(img);
 
-        Assert.assertThrows(PdfUAConformanceException.class, () -> {
+        Assertions.assertThrows(PdfUAConformanceException.class, () -> {
             document.add(table);
         });
     }
@@ -433,7 +432,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
         Document document = new Document(pdfDoc);
         Div div = new Div();
         div.add(img);
-        Assert.assertThrows(PdfUAConformanceException.class, () -> {
+        Assertions.assertThrows(PdfUAConformanceException.class, () -> {
             document.add(div);
         });
     }
@@ -446,7 +445,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
         Document document = new Document(pdfDoc);
         Div div = new Div();
         div.add(img);
-        Assert.assertThrows(PdfUAConformanceException.class, () -> {
+        Assertions.assertThrows(PdfUAConformanceException.class, () -> {
             document.add(div);
         });
     }

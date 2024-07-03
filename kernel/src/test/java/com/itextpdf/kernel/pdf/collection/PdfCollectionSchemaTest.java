@@ -25,13 +25,12 @@ package com.itextpdf.kernel.pdf.collection;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfCollectionSchemaTest extends ExtendedITextTest {
     @Test
     public void fieldAddingTest() {
@@ -45,11 +44,11 @@ public class PdfCollectionSchemaTest extends ExtendedITextTest {
 
         schema.addField(fieldName, field);
         // should be the same instance
-        Assert.assertEquals(schema.getField(fieldName).getPdfObject(), pdfObject);
+        Assertions.assertEquals(schema.getField(fieldName).getPdfObject(), pdfObject);
     }
 
     @Test
     public void isWrappedObjectMustBeIndirectTest() {
-        Assert.assertFalse(new PdfCollectionSchema().isWrappedObjectMustBeIndirect());
+        Assertions.assertFalse(new PdfCollectionSchema().isWrappedObjectMustBeIndirect());
     }
 }

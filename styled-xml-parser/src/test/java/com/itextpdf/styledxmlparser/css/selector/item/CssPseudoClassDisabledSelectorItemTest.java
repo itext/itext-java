@@ -34,16 +34,15 @@ import com.itextpdf.styledxmlparser.node.impl.jsoup.JsoupHtmlParser;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupDocumentNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class CssPseudoClassDisabledSelectorItemTest extends ExtendedITextTest {
 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/styledxmlparser/css/selector/item/CssPseudoClassDisabledSelectorItemTest/";
@@ -58,9 +57,9 @@ public class CssPseudoClassDisabledSelectorItemTest extends ExtendedITextTest {
         IElementNode disabledInput = new JsoupElementNode(((JsoupDocumentNode)documentNode).getDocument().getElementsByTag("input").first());
         IElementNode enabledInput = new JsoupElementNode(((JsoupDocumentNode)documentNode).getDocument().getElementsByTag("input").get(1));
 
-        Assert.assertFalse(item.matches(documentNode));
-        Assert.assertTrue(item.matches(disabledInput));
-        Assert.assertFalse(item.matches(enabledInput));
-        Assert.assertFalse(item.matches(null));
+        Assertions.assertFalse(item.matches(documentNode));
+        Assertions.assertTrue(item.matches(disabledInput));
+        Assertions.assertFalse(item.matches(enabledInput));
+        Assertions.assertFalse(item.matches(null));
     }
 }

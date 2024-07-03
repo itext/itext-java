@@ -23,15 +23,14 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class SmartModePdfObjectsSerializerTest extends ExtendedITextTest {
 
     @Test
@@ -66,6 +65,6 @@ public class SmartModePdfObjectsSerializerTest extends ExtendedITextTest {
         SerializedObjectContent expected = new SerializedObjectContent(
                 stringBytes.toString().getBytes(StandardCharsets.UTF_8));
 
-        Assert.assertEquals(expected, serializedObject);
+        Assertions.assertEquals(expected, serializedObject);
     }
 }

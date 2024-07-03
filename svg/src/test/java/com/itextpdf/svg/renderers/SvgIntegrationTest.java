@@ -32,16 +32,15 @@ import com.itextpdf.svg.converter.SvgConverter;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import org.junit.Assert;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class SvgIntegrationTest extends ExtendedITextTest {
 
     public void convert(InputStream svg, OutputStream pdfOutputStream) throws IOException {
@@ -124,7 +123,7 @@ public class SvgIntegrationTest extends ExtendedITextTest {
     }
 
     protected void compare(String filename, String sourceFolder, String destinationFolder) throws IOException, InterruptedException {
-        Assert.assertNull(new CompareTool()
+        Assertions.assertNull(new CompareTool()
                 .compareByContent(destinationFolder + filename + ".pdf",
                         sourceFolder + "cmp_" + filename + ".pdf",
                         destinationFolder, "diff_"));

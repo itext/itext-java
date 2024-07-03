@@ -41,7 +41,6 @@ import com.itextpdf.signatures.testutils.client.TestCrlClient;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
 import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -51,17 +50,14 @@ import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
-import org.junit.Assert;
-import org.junit.Assume;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(Parameterized.class)
-@Category(BouncyCastleIntegrationTest.class)
+@Tag("BouncyCastleIntegrationTest")
 public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
     private static final boolean FIPS_MODE = "BCFIPS".equals(FACTORY.getProviderName());
@@ -70,35 +66,20 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/sign/PadesTwoPhaseSigningLevelsTest/";
     private static final String destinationFolder = "./target/test/com/itextpdf/signatures/sign/PadesTwoPhaseSigningLevelsTest/";
 
-    private final Boolean useTempFolder;
-    private final Integer comparisonPdfId;
-    private final String digestAlgorithm;
-    private final String signAlgorithm;
+    private String signAlgorithm;
     private String signCertName;
     private String rootCertName;
 
     private static final char[] PASSWORD = "testpassphrase".toCharArray();
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         Security.addProvider(FACTORY.getProvider());
         createOrClearDestinationFolder(destinationFolder);
     }
 
-    @Before
-    public void beforeTest() {
-        if ("ED448".equals(signAlgorithm)) {
-            Assume.assumeFalse(FACTORY.isInApprovedOnlyMode());
-        }
-    }
-
-    public PadesTwoPhaseSigningLevelsTest(Object useTempFolder, Object digestAlgorithm,
-            Object signAlgorithm, Object comparisonPdfId) {
-        this.useTempFolder = (Boolean) useTempFolder;
-        this.digestAlgorithm = (String) digestAlgorithm;
-        this.comparisonPdfId = (Integer) comparisonPdfId;
-        this.signAlgorithm = (String) signAlgorithm;
-        
+    public void setUp(String signAlgorithm) {
+        this.signAlgorithm = signAlgorithm;
         switch (this.signAlgorithm) {
             case "RSA":
                 signCertName = "signCertRsa01.pem";
@@ -113,19 +94,24 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
                 rootCertName = "rootEd448.pem";
                 break;
         }
+        if ("ED448".equals(signAlgorithm)) {
+            Assumptions.assumeFalse(FACTORY.isInApprovedOnlyMode());
+        }
     }
 
-    @Parameterized.Parameters(name = "{3}: folder path: {0}; digest algorithm: {1}; signature algorithm: {2}")
-    public static Iterable<Object[]> createParameters() {
+    public static Iterable<Object[]> CreateParameters() {
         return Arrays.asList(new Object[] {true, DigestAlgorithms.SHA256, "RSA", 1},
                 new Object[] {false, DigestAlgorithms.SHA256, "RSASSA", 2},
                 new Object[] {false, DigestAlgorithms.SHAKE256, "ED448", 3},
                 new Object[] {false, DigestAlgorithms.SHA3_384, "RSA", 4});
     }
 
-    @Test
+    @ParameterizedTest(name = "{3}: folder path: {0}; digest algorithm: {1}; signature algorithm: {2}")
+    @MethodSource("CreateParameters")
     // Android-Conversion-Ignore-Test (TODO DEVSIX-8113 Fix signatures tests)
-    public void twoStepSigningBaselineBTest() throws Exception {
+    public void twoStepSigningBaselineBTest(Boolean useTempFolder, String digestAlgorithm, String signAlgorithm,
+            Integer comparisonPdfId) throws Exception {
+        setUp(signAlgorithm);
         String fileName = "twoStepSigningBaselineBTest" + comparisonPdfId + ".pdf";
         String outFileName = destinationFolder + fileName;
         String cmpFileName = sourceFolder + "cmp_" + fileName;
@@ -146,7 +132,7 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
 
         try (ByteArrayOutputStream preparedDoc = new ByteArrayOutputStream()) {
             if (DigestAlgorithms.SHAKE256.equals(digestAlgorithm) && FIPS_MODE) {
-                Assert.assertThrows(NoSuchAlgorithmException.class, () ->
+                Assertions.assertThrows(NoSuchAlgorithmException.class, () ->
                         twoPhaseSigningHelper.createCMSContainerWithoutSignature(certChain, digestAlgorithm,
                                 new PdfReader(srcFileName), preparedDoc, createSignerProperties()));
                 return;
@@ -166,12 +152,15 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
                     FileUtil.getFileOutputStream(outFileName), "Signature1", container);
         }
         TestSignUtils.basicCheckSignedDoc(outFileName, "Signature1");
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
     }
 
-    @Test
+    @ParameterizedTest(name = "{3}: folder path: {0}; digest algorithm: {1}; signature algorithm: {2}")
+    @MethodSource("CreateParameters")
     // Android-Conversion-Ignore-Test (TODO DEVSIX-8113 Fix signatures tests)
-    public void twoStepSigningBaselineTTest() throws Exception {
+    public void twoStepSigningBaselineTTest(Boolean useTempFolder, String digestAlgorithm, String signAlgorithm,
+            Integer comparisonPdfId) throws Exception {
+        setUp(signAlgorithm);
         String fileName = "twoStepSigningBaselineTTest" + comparisonPdfId + ".pdf";
         String outFileName = destinationFolder + fileName;
         String cmpFileName = sourceFolder + "cmp_" + fileName;
@@ -198,7 +187,7 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
 
         try (ByteArrayOutputStream preparedDoc = new ByteArrayOutputStream()) {
             if (DigestAlgorithms.SHAKE256.equals(digestAlgorithm) && FIPS_MODE) {
-                Assert.assertThrows(NoSuchAlgorithmException.class, () ->
+                Assertions.assertThrows(NoSuchAlgorithmException.class, () ->
                         twoPhaseSigningHelper.createCMSContainerWithoutSignature(certChain, digestAlgorithm,
                                 new PdfReader(srcFileName), preparedDoc, createSignerProperties()));
                 return;
@@ -217,12 +206,15 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
                     FileUtil.getFileOutputStream(outFileName), "Signature1", container);
         }
         TestSignUtils.basicCheckSignedDoc(outFileName, "Signature1");
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
     }
 
-    @Test
+    @ParameterizedTest(name = "{3}: folder path: {0}; digest algorithm: {1}; signature algorithm: {2}")
+    @MethodSource("CreateParameters")
     // Android-Conversion-Ignore-Test (TODO DEVSIX-8113 Fix signatures tests)
-    public void twoStepSigningBaselineLTTest() throws Exception {
+    public void twoStepSigningBaselineLTTest(Boolean useTempFolder, String digestAlgorithm, String signAlgorithm,
+            Integer comparisonPdfId) throws Exception {
+        setUp(signAlgorithm);
         String fileName = "twoStepSigningBaselineLTTest" + comparisonPdfId + (FIPS_MODE && "RSASSA".equals(signAlgorithm) ? "_FIPS.pdf" : ".pdf");
         String outFileName = destinationFolder + fileName;
         String cmpFileName = sourceFolder + "cmp_" + fileName;
@@ -257,7 +249,7 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
 
         try (ByteArrayOutputStream preparedDoc = new ByteArrayOutputStream()) {
             if (DigestAlgorithms.SHAKE256.equals(digestAlgorithm) && FIPS_MODE) {
-                Assert.assertThrows(NoSuchAlgorithmException.class, () ->
+                Assertions.assertThrows(NoSuchAlgorithmException.class, () ->
                         twoPhaseSigningHelper.createCMSContainerWithoutSignature(certChain, digestAlgorithm,
                                 new PdfReader(srcFileName), preparedDoc, createSignerProperties()));
                 return;
@@ -276,12 +268,15 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
                     FileUtil.getFileOutputStream(outFileName), "Signature1", container);
         }
         TestSignUtils.basicCheckSignedDoc(outFileName, "Signature1");
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
     }
 
-    @Test
+    @ParameterizedTest(name = "{3}: folder path: {0}; digest algorithm: {1}; signature algorithm: {2}")
+    @MethodSource("CreateParameters")
     // Android-Conversion-Ignore-Test (TODO DEVSIX-8113 Fix signatures tests)
-    public void twoStepSigningBaselineLTATest() throws Exception {
+    public void twoStepSigningBaselineLTATest(Boolean useTempFolder, String digestAlgorithm, String signAlgorithm,
+            Integer comparisonPdfId) throws Exception {
+        setUp(signAlgorithm);
         String fileName = "twoStepSigningBaselineLTATest" + comparisonPdfId + (FIPS_MODE && "RSASSA".equals(signAlgorithm) ? "_FIPS.pdf" : ".pdf");
         String outFileName = destinationFolder + fileName;
         String cmpFileName = sourceFolder + "cmp_" + fileName;
@@ -316,7 +311,7 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
         
         try (ByteArrayOutputStream preparedDoc = new ByteArrayOutputStream()) {
             if (DigestAlgorithms.SHAKE256.equals(digestAlgorithm) && FIPS_MODE) {
-                Assert.assertThrows(NoSuchAlgorithmException.class, () ->
+                Assertions.assertThrows(NoSuchAlgorithmException.class, () ->
                         twoPhaseSigningHelper.createCMSContainerWithoutSignature(certChain, digestAlgorithm,
                                 new PdfReader(srcFileName), preparedDoc, createSignerProperties()));
                 return;
@@ -335,7 +330,7 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
                     FileUtil.getFileOutputStream(outFileName), "Signature1", container);
         }
         TestSignUtils.basicCheckSignedDoc(outFileName, "Signature1");
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
     }
 
     private SignerProperties createSignerProperties() {

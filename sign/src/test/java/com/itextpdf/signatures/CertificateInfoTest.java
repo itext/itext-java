@@ -26,17 +26,16 @@ import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(BouncyCastleUnitTest.class)
+@Tag("BouncyCastleUnitTest")
 public class CertificateInfoTest extends ExtendedITextTest {
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
@@ -44,7 +43,7 @@ public class CertificateInfoTest extends ExtendedITextTest {
 
     @Test
     public void X500InvalidDirectoryConstructorTest() {
-        Assert.assertThrows(IllegalArgumentException.class, () -> new CertificateInfo.X500Name("some_dir"));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new CertificateInfo.X500Name("some_dir"));
     }
 
     @Test
@@ -52,26 +51,26 @@ public class CertificateInfoTest extends ExtendedITextTest {
         CertificateInfo.X500Name name = new CertificateInfo.X500Name("some=dir,another=dir,some=value");
 
         Map<String, List<String>> values = name.getFields();
-        Assert.assertEquals(2, values.size());
+        Assertions.assertEquals(2, values.size());
 
-        Assert.assertEquals(Arrays.asList("dir", "value"), values.get("SOME"));
-        Assert.assertEquals(Collections.singletonList("dir"), values.get("ANOTHER"));
+        Assertions.assertEquals(Arrays.asList("dir", "value"), values.get("SOME"));
+        Assertions.assertEquals(Collections.singletonList("dir"), values.get("ANOTHER"));
     }
 
     @Test
     public void X500GetFieldTest() {
         CertificateInfo.X500Name name = new CertificateInfo.X500Name("some=value,another=dir,some=dir");
 
-        Assert.assertEquals("value", name.getField("SOME"));
-        Assert.assertEquals("dir", name.getField("ANOTHER"));
+        Assertions.assertEquals("value", name.getField("SOME"));
+        Assertions.assertEquals("dir", name.getField("ANOTHER"));
     }
 
     @Test
     public void X500GetFieldArrayTest() {
         CertificateInfo.X500Name name = new CertificateInfo.X500Name("some=value,another=dir,some=dir");
 
-        Assert.assertEquals(Arrays.asList("value", "dir"), name.getFieldArray("SOME"));
-        Assert.assertEquals(Collections.singletonList("dir"), name.getFieldArray("ANOTHER"));
+        Assertions.assertEquals(Arrays.asList("value", "dir"), name.getFieldArray("SOME"));
+        Assertions.assertEquals(Collections.singletonList("dir"), name.getFieldArray("ANOTHER"));
     }
 
     @Test
@@ -79,21 +78,21 @@ public class CertificateInfoTest extends ExtendedITextTest {
         CertificateInfo.X509NameTokenizer tokenizer = new CertificateInfo.X509NameTokenizer("quoted\",\"comma=escaped\\,comma_escaped\\\"quote");
         String token = tokenizer.nextToken();
 
-        Assert.assertEquals("quoted,comma=escaped,comma_escaped\"quote", token);
-        Assert.assertNull(tokenizer.nextToken());
+        Assertions.assertEquals("quoted,comma=escaped,comma_escaped\"quote", token);
+        Assertions.assertNull(tokenizer.nextToken());
     }
 
     @Test
     public void getIssuerFieldsExceptionTest() {
         Exception exception =
-                Assert.assertThrows(PdfException.class, () -> CertificateInfo.getIssuer(new byte[] {4, 8, 15, 16, 23, 42}));
-        Assert.assertEquals(EXPECTED_EXCEPTION_MESSAGE, exception.getCause().getMessage());
+                Assertions.assertThrows(PdfException.class, () -> CertificateInfo.getIssuer(new byte[] {4, 8, 15, 16, 23, 42}));
+        Assertions.assertEquals(EXPECTED_EXCEPTION_MESSAGE, exception.getCause().getMessage());
     }
 
     @Test
     public void getSubjectExceptionTest() {
         Exception exception =
-                Assert.assertThrows(PdfException.class, () -> CertificateInfo.getSubject(new byte[] {4, 8, 15, 16, 23, 42}));
-        Assert.assertEquals(EXPECTED_EXCEPTION_MESSAGE, exception.getCause().getMessage());
+                Assertions.assertThrows(PdfException.class, () -> CertificateInfo.getSubject(new byte[] {4, 8, 15, 16, 23, 42}));
+        Assertions.assertEquals(EXPECTED_EXCEPTION_MESSAGE, exception.getCause().getMessage());
     }
 }

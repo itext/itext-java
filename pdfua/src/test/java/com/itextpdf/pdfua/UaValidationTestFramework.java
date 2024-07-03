@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
 /**
  * Class that helps to test PDF/UA conformance.
@@ -83,7 +83,7 @@ public class UaValidationTestFramework {
         final String createdFileName = "vera_" + filename + ".pdf";
         String veraPdf = verAPdfResult(createdFileName);
         System.out.println(veraPdf);
-        Assert.assertNotNull(veraPdf);// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        Assertions.assertNotNull(veraPdf);// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 
         if (checkDocClosing) {
             System.out.println("Checking closing");
@@ -118,9 +118,9 @@ public class UaValidationTestFramework {
             sb.append("OnClosing no expection expected but was:\n").append(eClosing);
         }
         if (counter != 3) {
-            Assert.fail("One of the checks did not throw\n\n" + sb.toString());
+            Assertions.fail("One of the checks did not throw\n\n" + sb.toString());
         }
-        Assert.fail(sb.toString());
+        Assertions.fail(sb.toString());
     }
 
     public String verAPdfResult(String filename) throws FileNotFoundException {
@@ -149,13 +149,13 @@ public class UaValidationTestFramework {
     }
 
     private void checkError(Exception e, String expectedMsg) {
-        Assert.assertNotNull(e);
+        Assertions.assertNotNull(e);
         if (!(e instanceof PdfUAConformanceException)) {
             System.out.println(printStackTrace(e));
-            Assert.fail();
+            Assertions.fail();
         }
         if (expectedMsg != null) {
-            Assert.assertEquals(expectedMsg, e.getMessage());
+            Assertions.assertEquals(expectedMsg, e.getMessage());
         }
         System.out.println(printStackTrace(e));
     }

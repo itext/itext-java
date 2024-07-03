@@ -23,30 +23,29 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class FontProgramDescriptorFactoryTest extends ExtendedITextTest {
 
     @Test
     public void kozminNamesTest() {
         FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor("KozMinPro-Regular");
-        Assert.assertEquals("KozMinPro-Regular", descriptor.getFontName());
-        Assert.assertEquals("KozMinPro-Regular".toLowerCase(), descriptor.getFullNameLowerCase());
-        Assert.assertEquals(400, descriptor.getFontWeight());
+        Assertions.assertEquals("KozMinPro-Regular", descriptor.getFontName());
+        Assertions.assertEquals("KozMinPro-Regular".toLowerCase(), descriptor.getFullNameLowerCase());
+        Assertions.assertEquals(400, descriptor.getFontWeight());
     }
 
     @Test
     public void helveticaNamesTest() {
         FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor("Helvetica");
-        Assert.assertEquals("Helvetica", descriptor.getFontName());
-        Assert.assertEquals("helvetica", descriptor.getFullNameLowerCase());
-        Assert.assertEquals("helvetica", descriptor.getFullNameLowerCase());
-        Assert.assertEquals(500, descriptor.getFontWeight());
+        Assertions.assertEquals("Helvetica", descriptor.getFontName());
+        Assertions.assertEquals("helvetica", descriptor.getFullNameLowerCase());
+        Assertions.assertEquals("helvetica", descriptor.getFullNameLowerCase());
+        Assertions.assertEquals(500, descriptor.getFontWeight());
     }
 }

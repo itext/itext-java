@@ -24,121 +24,120 @@ package com.itextpdf.svg.renderers.path;
 
 import com.itextpdf.svg.renderers.path.impl.PathShapeMapper;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PathShapeMapperTest extends ExtendedITextTest {
 
     private static IPathShapeMapper mapper;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() {
         mapper = new PathShapeMapper();
     }
     @Test
     public void testExistsEllipseRel() {
-        Assert.assertNotNull(mapper.getMapping().get("a"));
+        Assertions.assertNotNull(mapper.getMapping().get("a"));
     }
     @Test
     public void testExistsEllipseAbs() {
-        Assert.assertNotNull(mapper.getMapping().get("A"));
+        Assertions.assertNotNull(mapper.getMapping().get("A"));
     }
     @Test
     public void testExistsCubicRel() {
-        Assert.assertNotNull(mapper.getMapping().get("c"));
+        Assertions.assertNotNull(mapper.getMapping().get("c"));
     }
     @Test
     public void testExistsCubicAbs() {
-        Assert.assertNotNull(mapper.getMapping().get("C"));
+        Assertions.assertNotNull(mapper.getMapping().get("C"));
     }
     @Test
     public void testExistsHorizontalLineRel() {
-        Assert.assertNotNull(mapper.getMapping().get("h"));
+        Assertions.assertNotNull(mapper.getMapping().get("h"));
     }
     @Test
     public void testExistsHorizontalLineAbs() {
-        Assert.assertNotNull(mapper.getMapping().get("H"));
+        Assertions.assertNotNull(mapper.getMapping().get("H"));
     }
     @Test
     public void testExistsLineRel() {
-        Assert.assertNotNull(mapper.getMapping().get("l"));
+        Assertions.assertNotNull(mapper.getMapping().get("l"));
     }
     @Test
     public void testExistsLineAbs() {
-        Assert.assertNotNull(mapper.getMapping().get("L"));
+        Assertions.assertNotNull(mapper.getMapping().get("L"));
     }
     @Test
     public void testExistsMoveRel() {
-        Assert.assertNotNull(mapper.getMapping().get("m"));
+        Assertions.assertNotNull(mapper.getMapping().get("m"));
     }
     @Test
     public void testExistsMoveAbs() {
-        Assert.assertNotNull(mapper.getMapping().get("M"));
+        Assertions.assertNotNull(mapper.getMapping().get("M"));
     }
     @Test
     public void testExistsQuadAbs() {
-        Assert.assertNotNull(mapper.getMapping().get("Q"));
+        Assertions.assertNotNull(mapper.getMapping().get("Q"));
     }
     @Test
     public void testExistsQuadRel() {
-        Assert.assertNotNull(mapper.getMapping().get("q"));
+        Assertions.assertNotNull(mapper.getMapping().get("q"));
     }
     @Test
     public void testExistsSmoothCubicAbs() {
-        Assert.assertNotNull(mapper.getMapping().get("S"));
+        Assertions.assertNotNull(mapper.getMapping().get("S"));
     }
     @Test
     public void testExistsSmoothCubicRel() {
-        Assert.assertNotNull(mapper.getMapping().get("s"));
+        Assertions.assertNotNull(mapper.getMapping().get("s"));
     }
     @Test
     public void testExistsVerticalLineRel() {
-        Assert.assertNotNull(mapper.getMapping().get("v"));
+        Assertions.assertNotNull(mapper.getMapping().get("v"));
     }
     @Test
     public void testExistsVerticalLineAbs() {
-        Assert.assertNotNull(mapper.getMapping().get("V"));
+        Assertions.assertNotNull(mapper.getMapping().get("V"));
     }
     @Test
     public void testExistsClosePathRel() {
-        Assert.assertNotNull(mapper.getMapping().get("z"));
+        Assertions.assertNotNull(mapper.getMapping().get("z"));
     }
     @Test
     public void testExistsClosePathAbs() {
-        Assert.assertNotNull(mapper.getMapping().get("Z"));
+        Assertions.assertNotNull(mapper.getMapping().get("Z"));
     }
     @Test
     public void testExistsSmoothQuadAbs() {
-        Assert.assertNotNull(mapper.getMapping().get("T"));
+        Assertions.assertNotNull(mapper.getMapping().get("T"));
     }
     @Test
     public void testExistsSmoothQuadRel() {
-        Assert.assertNotNull(mapper.getMapping().get("t"));
+        Assertions.assertNotNull(mapper.getMapping().get("t"));
     }
 
     // nonsensical operators
     @Test
     public void testNotExistsNonExistingOperator1() {
-        Assert.assertNull(mapper.getMapping().get("e"));
+        Assertions.assertNull(mapper.getMapping().get("e"));
     }
     @Test
     public void testNotExistsNonExistingOperator2() {
-        Assert.assertNull(mapper.getMapping().get("Y"));
+        Assertions.assertNull(mapper.getMapping().get("Y"));
     }
     @Test
     public void testNotExistsNonExistingOperator3() {
-        Assert.assertNull(mapper.getMapping().get("3"));
+        Assertions.assertNull(mapper.getMapping().get("3"));
     }
     @Test
     public void testNotExistsNonExistingOperator4() {
-        Assert.assertNull(mapper.getMapping().get("am"));
+        Assertions.assertNull(mapper.getMapping().get("am"));
     }
     @Test
     public void testNotExistsNonExistingOperator5() {
-        Assert.assertNull(mapper.getMapping().get("Pos"));
+        Assertions.assertNull(mapper.getMapping().get("Pos"));
     }
 }

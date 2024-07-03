@@ -6,20 +6,19 @@
 
 package com.itextpdf.io.codec.brotli.dec;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.ByteBuffer;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 /**
  * Tests for {@link Transform}.
  */
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class TransformTest extends ExtendedITextTest{
 
   private static long crc64(byte[] data) {

@@ -26,42 +26,33 @@ import com.itextpdf.styledxmlparser.jsoup.Jsoup;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Document;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
 
-@RunWith(Parameterized.class)
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class MultiLocaleTest extends ExtendedITextTest {
 
     private final Locale defaultLocale = Locale.getDefault();
 
-    @Parameterized.Parameters
-    public static Collection<Locale> locales() {
+    public static Collection<Locale> Locales() {
         return Arrays.asList(Locale.ENGLISH, new Locale("tr"));
     }
 
-    @After
+    @AfterEach
     public void setDefaultLocale() {
         Locale.setDefault(defaultLocale);
     }
 
-    private Locale locale;
-
-    public MultiLocaleTest(Locale locale) {
-        this.locale = locale;
-    }
-
-    @Test
-    public void testByAttribute() {
+    @ParameterizedTest
+    @MethodSource("Locales")
+    public void testByAttribute(Locale locale) {
         Locale.setDefault(locale);
 
         String h = "<div Title=Foo /><div Title=Bar /><div Style=Qux /><div title=Balim /><div title=SLIM />" +
@@ -69,88 +60,91 @@ public class MultiLocaleTest extends ExtendedITextTest {
         Document doc = Jsoup.parse(h);
 
         Elements withTitle = doc.select("[title]");
-        Assert.assertEquals(4, withTitle.size());
+        Assertions.assertEquals(4, withTitle.size());
 
         Elements foo = doc.select("[TITLE=foo]");
-        Assert.assertEquals(1, foo.size());
+        Assertions.assertEquals(1, foo.size());
 
         Elements foo2 = doc.select("[title=\"foo\"]");
-        Assert.assertEquals(1, foo2.size());
+        Assertions.assertEquals(1, foo2.size());
 
         Elements foo3 = doc.select("[title=\"Foo\"]");
-        Assert.assertEquals(1, foo3.size());
+        Assertions.assertEquals(1, foo3.size());
 
         Elements dataName = doc.select("[data-name=\"with spaces\"]");
-        Assert.assertEquals(1, dataName.size());
-        Assert.assertEquals("with spaces", dataName.first().attr("data-name"));
+        Assertions.assertEquals(1, dataName.size());
+        Assertions.assertEquals("with spaces", dataName.first().attr("data-name"));
 
         Elements not = doc.select("div[title!=bar]");
-        Assert.assertEquals(5, not.size());
-        Assert.assertEquals("Foo", not.first().attr("title"));
+        Assertions.assertEquals(5, not.size());
+        Assertions.assertEquals("Foo", not.first().attr("title"));
 
         Elements starts = doc.select("[title^=ba]");
-        Assert.assertEquals(2, starts.size());
-        Assert.assertEquals("Bar", starts.first().attr("title"));
-        Assert.assertEquals("Balim", starts.last().attr("title"));
+        Assertions.assertEquals(2, starts.size());
+        Assertions.assertEquals("Bar", starts.first().attr("title"));
+        Assertions.assertEquals("Balim", starts.last().attr("title"));
 
         Elements ends = doc.select("[title$=im]");
-        Assert.assertEquals(2, ends.size());
-        Assert.assertEquals("Balim", ends.first().attr("title"));
-        Assert.assertEquals("SLIM", ends.last().attr("title"));
+        Assertions.assertEquals(2, ends.size());
+        Assertions.assertEquals("Balim", ends.first().attr("title"));
+        Assertions.assertEquals("SLIM", ends.last().attr("title"));
 
         Elements contains = doc.select("[title*=i]");
-        Assert.assertEquals(2, contains.size());
-        Assert.assertEquals("Balim", contains.first().attr("title"));
-        Assert.assertEquals("SLIM", contains.last().attr("title"));
+        Assertions.assertEquals(2, contains.size());
+        Assertions.assertEquals("Balim", contains.first().attr("title"));
+        Assertions.assertEquals("SLIM", contains.last().attr("title"));
     }
 
-    @Test
-    public void testPseudoContains() {
+    @ParameterizedTest
+    @MethodSource("Locales")
+    public void testPseudoContains(Locale locale) {
         Locale.setDefault(locale);
 
         Document doc = Jsoup.parse("<div><p>The Rain.</p> <p class=light>The <i>RAIN</i>.</p> <p>Rain, the.</p></div>");
 
         Elements ps1 = doc.select("p:contains(Rain)");
-        Assert.assertEquals(3, ps1.size());
+        Assertions.assertEquals(3, ps1.size());
 
         Elements ps2 = doc.select("p:contains(the rain)");
-        Assert.assertEquals(2, ps2.size());
-        Assert.assertEquals("The Rain.", ps2.first().html());
-        Assert.assertEquals("The <i>RAIN</i>.", ps2.last().html());
+        Assertions.assertEquals(2, ps2.size());
+        Assertions.assertEquals("The Rain.", ps2.first().html());
+        Assertions.assertEquals("The <i>RAIN</i>.", ps2.last().html());
 
         Elements ps3 = doc.select("p:contains(the Rain):has(i)");
-        Assert.assertEquals(1, ps3.size());
-        Assert.assertEquals("light", ps3.first().className());
+        Assertions.assertEquals(1, ps3.size());
+        Assertions.assertEquals("light", ps3.first().className());
 
         Elements ps4 = doc.select(".light:contains(rain)");
-        Assert.assertEquals(1, ps4.size());
-        Assert.assertEquals("light", ps3.first().className());
+        Assertions.assertEquals(1, ps4.size());
+        Assertions.assertEquals("light", ps3.first().className());
 
         Elements ps5 = doc.select(":contains(rain)");
-        Assert.assertEquals(8, ps5.size()); // html, body, div,...
+        Assertions.assertEquals(8, ps5.size()); // html, body, div,...
 
         Elements ps6 = doc.select(":contains(RAIN)");
-        Assert.assertEquals(8, ps6.size());
+        Assertions.assertEquals(8, ps6.size());
     }
 
-    @Test
-    public void containsOwn() {
+    @ParameterizedTest
+    @MethodSource("Locales")
+    public void containsOwn(Locale locale) {
         Locale.setDefault(locale);
 
         Document doc = Jsoup.parse("<p id=1>Hello <b>there</b> igor</p>");
         Elements ps = doc.select("p:containsOwn(Hello IGOR)");
-        Assert.assertEquals(1, ps.size());
-        Assert.assertEquals("1", ps.first().id());
+        Assertions.assertEquals(1, ps.size());
+        Assertions.assertEquals("1", ps.first().id());
 
-        Assert.assertEquals(0, doc.select("p:containsOwn(there)").size());
+        Assertions.assertEquals(0, doc.select("p:containsOwn(there)").size());
 
         Document doc2 = Jsoup.parse("<p>Hello <b>there</b> IGOR</p>");
-        Assert.assertEquals(1, doc2.select("p:containsOwn(igor)").size());
+        Assertions.assertEquals(1, doc2.select("p:containsOwn(igor)").size());
 
     }
 
-    @Test
-    public void containsData() {
+    @ParameterizedTest
+    @MethodSource("Locales")
+    public void containsData(Locale locale) {
         Locale.setDefault(locale);
 
         String html = "<p>function</p><script>FUNCTION</script><style>item</style><span><!-- comments --></span>";
@@ -163,33 +157,34 @@ public class MultiLocaleTest extends ExtendedITextTest {
         Elements dataEls4 = body.select(":containsData(o)");
         Elements dataEls5 = body.select("style:containsData(ITEM)");
 
-        Assert.assertEquals(2, dataEls1.size()); // body and script
-        Assert.assertEquals(1, dataEls2.size());
-        Assert.assertEquals(dataEls1.last(), dataEls2.first());
-        Assert.assertEquals("<script>FUNCTION</script>", dataEls2.outerHtml());
-        Assert.assertEquals(1, dataEls3.size());
-        Assert.assertEquals("span", dataEls3.first().tagName());
-        Assert.assertEquals(3, dataEls4.size());
-        Assert.assertEquals("body", dataEls4.first().tagName());
-        Assert.assertEquals("script", dataEls4.get(1).tagName());
-        Assert.assertEquals("span", dataEls4.get(2).tagName());
-        Assert.assertEquals(1, dataEls5.size());
+        Assertions.assertEquals(2, dataEls1.size()); // body and script
+        Assertions.assertEquals(1, dataEls2.size());
+        Assertions.assertEquals(dataEls1.last(), dataEls2.first());
+        Assertions.assertEquals("<script>FUNCTION</script>", dataEls2.outerHtml());
+        Assertions.assertEquals(1, dataEls3.size());
+        Assertions.assertEquals("span", dataEls3.first().tagName());
+        Assertions.assertEquals(3, dataEls4.size());
+        Assertions.assertEquals("body", dataEls4.first().tagName());
+        Assertions.assertEquals("script", dataEls4.get(1).tagName());
+        Assertions.assertEquals("span", dataEls4.get(2).tagName());
+        Assertions.assertEquals(1, dataEls5.size());
     }
 
-    @Test
-    public void testByAttributeStarting() {
+    @ParameterizedTest
+    @MethodSource("Locales")
+    public void testByAttributeStarting(Locale locale) {
         Locale.setDefault(locale);
 
         Document doc = Jsoup.parse("<div id=1 ATTRIBUTE data-name=jsoup>Hello</div><p data-val=5 id=2>There</p><p id=3>No</p>");
         Elements withData = doc.select("[^data-]");
-        Assert.assertEquals(2, withData.size());
-        Assert.assertEquals("1", withData.first().id());
-        Assert.assertEquals("2", withData.last().id());
+        Assertions.assertEquals(2, withData.size());
+        Assertions.assertEquals("1", withData.first().id());
+        Assertions.assertEquals("2", withData.last().id());
 
         withData = doc.select("p[^data-]");
-        Assert.assertEquals(1, withData.size());
-        Assert.assertEquals("2", withData.first().id());
+        Assertions.assertEquals(1, withData.size());
+        Assertions.assertEquals("2", withData.first().id());
 
-        Assert.assertEquals(1, doc.select("[^attrib]").size());
+        Assertions.assertEquals(1, doc.select("[^attrib]").size());
     }
 }

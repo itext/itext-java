@@ -25,66 +25,65 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfArrayUnitTest extends ExtendedITextTest {
 
     @Test
     public void cannotConvertArrayOfPdfStringsToArrayOfBooleansTest() {
         PdfArray pdfArray = new PdfArray(new PdfString(""));
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> pdfArray.toBooleanArray());
-        Assert.assertEquals(KernelExceptionMessageConstant.CANNOT_CONVERT_PDF_ARRAY_TO_AN_ARRAY_OF_BOOLEANS,
+        Assertions.assertEquals(KernelExceptionMessageConstant.CANNOT_CONVERT_PDF_ARRAY_TO_AN_ARRAY_OF_BOOLEANS,
                 exception.getMessage());
     }
 
     @Test
     public void cannotConvertArrayOfPdfStringsToDoubleArrayTest() {
         PdfArray pdfArray = new PdfArray(new PdfString(""));
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> pdfArray.toDoubleArray());
-        Assert.assertEquals(KernelExceptionMessageConstant.CANNOT_CONVERT_PDF_ARRAY_TO_DOUBLE_ARRAY,
+        Assertions.assertEquals(KernelExceptionMessageConstant.CANNOT_CONVERT_PDF_ARRAY_TO_DOUBLE_ARRAY,
                 exception.getMessage());
     }
 
     @Test
     public void cannotConvertArrayOfPdfStringsToIntArrayTest() {
         PdfArray pdfArray = new PdfArray(new PdfString(""));
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> pdfArray.toIntArray());
-        Assert.assertEquals(KernelExceptionMessageConstant.CANNOT_CONVERT_PDF_ARRAY_TO_INT_ARRAY,
+        Assertions.assertEquals(KernelExceptionMessageConstant.CANNOT_CONVERT_PDF_ARRAY_TO_INT_ARRAY,
                 exception.getMessage());
     }
 
     @Test
     public void cannotConvertArrayOfPdfStringsToFloatArrayTest() {
         PdfArray pdfArray = new PdfArray(new PdfString(""));
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> pdfArray.toFloatArray());
-        Assert.assertEquals(KernelExceptionMessageConstant.CANNOT_CONVERT_PDF_ARRAY_TO_FLOAT_ARRAY,
+        Assertions.assertEquals(KernelExceptionMessageConstant.CANNOT_CONVERT_PDF_ARRAY_TO_FLOAT_ARRAY,
                 exception.getMessage());
     }
 
     @Test
     public void cannotConvertArrayOfPdfStringsToLongArrayTest() {
         PdfArray pdfArray = new PdfArray(new PdfString(""));
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> pdfArray.toLongArray());
-        Assert.assertEquals(KernelExceptionMessageConstant.CANNOT_CONVERT_PDF_ARRAY_TO_LONG_ARRAY,
+        Assertions.assertEquals(KernelExceptionMessageConstant.CANNOT_CONVERT_PDF_ARRAY_TO_LONG_ARRAY,
                 exception.getMessage());
     }
 
     @Test
     public void cannotConvertArrayOfPdfStringsToRectangleTest() {
         PdfArray pdfArray = new PdfArray(new PdfString(""));
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> pdfArray.toRectangle());
-        Assert.assertEquals(KernelExceptionMessageConstant.CANNOT_CONVERT_PDF_ARRAY_TO_RECTANGLE,
+        Assertions.assertEquals(KernelExceptionMessageConstant.CANNOT_CONVERT_PDF_ARRAY_TO_RECTANGLE,
                 exception.getMessage());
     }
 }

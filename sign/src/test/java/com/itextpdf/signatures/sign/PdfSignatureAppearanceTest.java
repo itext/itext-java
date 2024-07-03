@@ -62,7 +62,6 @@ import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.ITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -74,13 +73,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(BouncyCastleIntegrationTest.class)
+@Tag("BouncyCastleIntegrationTest")
 public class PdfSignatureAppearanceTest extends ExtendedITextTest {
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
@@ -93,13 +92,13 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
     private Certificate[] chain;
     private PrivateKey pk;
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         Security.addProvider(FACTORY.getProvider());
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
-    @Before
+    @BeforeEach
     public void init()
             throws IOException, CertificateException, AbstractPKCSException, AbstractOperatorCreationException {
         pk = PemFileHelper.readFirstKey(KEYSTORE_PATH, PASSWORD);
@@ -202,7 +201,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         new PdfDocument(new PdfReader(dest)).close();
 
         // Assert that the document can be rendered correctly
-        Assert.assertNull(new CompareTool().compareVisually(dest, cmp, DESTINATION_FOLDER, "diff_",
+        Assertions.assertNull(new CompareTool().compareVisually(dest, cmp, DESTINATION_FOLDER, "diff_",
                 getIgnoredAreaTestMap(new Rectangle(36, 748, 200, 100))));
     }
 
@@ -227,7 +226,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
                 FACTORY.getProviderName());
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
 
-        Assert.assertNull(new CompareTool().compareVisually(dest, SOURCE_FOLDER + "cmp_" + fileName, DESTINATION_FOLDER,
+        Assertions.assertNull(new CompareTool().compareVisually(dest, SOURCE_FOLDER + "cmp_" + fileName, DESTINATION_FOLDER,
                 "diff_"));
     }
 
@@ -243,7 +242,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
             testSignatureOnRotatedPage(i, PdfSignatureAppearance.RenderingMode.DESCRIPTION, assertionResults);
         }
 
-        Assert.assertEquals("", assertionResults.toString());
+        Assertions.assertEquals("", assertionResults.toString());
     }
 
     @Test
@@ -253,7 +252,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
 
             SignatureUtil sigUtil = new SignatureUtil(outputDoc);
             PdfPKCS7 signatureData = sigUtil.readSignatureData("Signature1");
-            Assert.assertTrue(signatureData.verifySignatureIntegrityAndAuthenticity());
+            Assertions.assertTrue(signatureData.verifySignatureIntegrityAndAuthenticity());
         }
     }
 
@@ -283,7 +282,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null,
                 0, PdfSigner.CryptoStandard.CADES);
 
-        Assert.assertNull(new CompareTool().compareVisually(
+        Assertions.assertNull(new CompareTool().compareVisually(
                 dest, SOURCE_FOLDER + "cmp_" + fileName, DESTINATION_FOLDER, "diff_"));
     }
 
@@ -315,7 +314,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null,
                 0, PdfSigner.CryptoStandard.CADES);
 
-        Assert.assertNull(new CompareTool().compareVisually(
+        Assertions.assertNull(new CompareTool().compareVisually(
                 dest, SOURCE_FOLDER + "cmp_" + fileName, DESTINATION_FOLDER, "diff_"));
     }
 
@@ -344,7 +343,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
 
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
 
-        Assert.assertNull(new CompareTool().compareVisually(
+        Assertions.assertNull(new CompareTool().compareVisually(
                 dest, SOURCE_FOLDER + "cmp_" + fileName, DESTINATION_FOLDER, "diff_"));
     }
 
@@ -648,8 +647,8 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
                 FACTORY.getProviderName());
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
 
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(dest, cmp));
-        Assert.assertNull(new CompareTool().compareVisually(dest, cmp, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(dest, cmp));
+        Assertions.assertNull(new CompareTool().compareVisually(dest, cmp, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -672,8 +671,8 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, FACTORY.getProviderName());
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
 
-        Assert.assertNull(new CompareTool().compareVisually(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf));
+        Assertions.assertNull(new CompareTool().compareVisually(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf));
     }
 
     private static void compareSignatureAppearances(String outPdf, String cmpPdf) throws IOException {
@@ -686,7 +685,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
                 PdfDictionary cmpN = (PdfDictionary) PdfFormCreator.getAcroForm(cmpDoc, false)
                         .getField("Signature1").getPdfObject()
                         .getAsDictionary(PdfName.AP).get(PdfName.N).getIndirectReference().getRefersTo();
-                Assert.assertNull(new CompareTool().compareDictionariesStructure(outN, cmpN));
+                Assertions.assertNull(new CompareTool().compareDictionariesStructure(outN, cmpN));
             }
         }
     }
@@ -711,7 +710,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, FACTORY.getProviderName());
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
 
-        Assert.assertNull(new CompareTool().compareVisually(dest, cmp, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareVisually(dest, cmp, DESTINATION_FOLDER, "diff_"));
     }
 
     private void testLayers(String src, String fileName, boolean useDeprecated)
@@ -855,8 +854,8 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
             }
         }
         float foundFontSize = Float.parseFloat(fontSize);
-        Assert.assertTrue(MessageFormatUtil.format("Font size: expected {0}, found {1}",
-                expectedFontSize, fontSize), Math.abs(foundFontSize - expectedFontSize) < 0.1 * expectedFontSize);
+        Assertions.assertTrue(Math.abs(foundFontSize - expectedFontSize) < 0.1 * expectedFontSize,
+                MessageFormatUtil.format("Font size: expected {0}, found {1}", expectedFontSize, fontSize));
     }
 
     private static Map<Integer, List<Rectangle>> getIgnoredAreaTestMap(Rectangle ignoredArea) {

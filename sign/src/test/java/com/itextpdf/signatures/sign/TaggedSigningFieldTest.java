@@ -35,15 +35,14 @@ import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 // TODO DEVSIX-5438: Change assertions after implementing signature field tagging
 public class TaggedSigningFieldTest extends ExtendedITextTest {
 
@@ -60,7 +59,7 @@ public class TaggedSigningFieldTest extends ExtendedITextTest {
             form.addField(signField);
 
             TagTreePointer tagPointer = new TagTreePointer(pdfDoc);
-            Assert.assertNotNull(tagPointer.moveToKid(StandardRoles.FORM));
+            Assertions.assertNotNull(tagPointer.moveToKid(StandardRoles.FORM));
         }
     }
 
@@ -77,7 +76,7 @@ public class TaggedSigningFieldTest extends ExtendedITextTest {
             form.addField(signField);
 
             TagTreePointer tagPointer = new TagTreePointer(pdfDoc);
-            Assert.assertNotNull(tagPointer.moveToKid(StandardRoles.FORM));
+            Assertions.assertNotNull(tagPointer.moveToKid(StandardRoles.FORM));
         }
     }
 
@@ -97,7 +96,7 @@ public class TaggedSigningFieldTest extends ExtendedITextTest {
             annotations.get(0).setFlag(PdfAnnotation.PRINT);
 
             TagTreePointer tagPointer = new TagTreePointer(pdfDoc);
-            Assert.assertNotNull(tagPointer.moveToKid(StandardRoles.FORM));
+            Assertions.assertNotNull(tagPointer.moveToKid(StandardRoles.FORM));
         }
     }
 
@@ -117,7 +116,7 @@ public class TaggedSigningFieldTest extends ExtendedITextTest {
             annotations.get(0).setFlag(PdfAnnotation.HIDDEN);
 
             TagTreePointer tagPointer = new TagTreePointer(pdfDoc);
-            Assert.assertNotNull(tagPointer.moveToKid(StandardRoles.FORM));
+            Assertions.assertNotNull(tagPointer.moveToKid(StandardRoles.FORM));
         }
     }
 
@@ -137,7 +136,7 @@ public class TaggedSigningFieldTest extends ExtendedITextTest {
             annotations.get(0).setFlag(PdfAnnotation.NO_VIEW);
 
             TagTreePointer tagPointer = new TagTreePointer(pdfDoc);
-            Assert.assertNotNull(tagPointer.moveToKid(StandardRoles.FORM));
+            Assertions.assertNotNull(tagPointer.moveToKid(StandardRoles.FORM));
         }
     }
 
@@ -157,7 +156,7 @@ public class TaggedSigningFieldTest extends ExtendedITextTest {
             annotations.get(0).setFlag(PdfAnnotation.INVISIBLE);
 
             TagTreePointer tagPointer = new TagTreePointer(pdfDoc);
-            Assert.assertNotNull(tagPointer.moveToKid(StandardRoles.FORM));
+            Assertions.assertNotNull(tagPointer.moveToKid(StandardRoles.FORM));
         }
     }
 
@@ -174,7 +173,7 @@ public class TaggedSigningFieldTest extends ExtendedITextTest {
             form.addField(signField);
 
             TagTreePointer tagPointer = new TagTreePointer(pdfDoc);
-            Assert.assertNotNull(tagPointer.moveToKid(StandardRoles.FORM));
+            Assertions.assertNotNull(tagPointer.moveToKid(StandardRoles.FORM));
         }
     }
 
@@ -194,7 +193,7 @@ public class TaggedSigningFieldTest extends ExtendedITextTest {
             annotations.get(0).setFlag(PdfAnnotation.HIDDEN);
 
             TagTreePointer tagPointer = new TagTreePointer(pdfDoc);
-            Assert.assertNotNull(tagPointer.moveToKid(StandardRoles.FORM));
+            Assertions.assertNotNull(tagPointer.moveToKid(StandardRoles.FORM));
         }
     }
 }

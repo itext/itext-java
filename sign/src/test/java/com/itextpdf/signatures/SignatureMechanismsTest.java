@@ -25,35 +25,35 @@ package com.itextpdf.signatures;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class SignatureMechanismsTest extends ExtendedITextTest {
 
     @Test
     public void getAlgorithmRSATest() {
-        Assert.assertEquals("RSA", SignatureMechanisms.getAlgorithm("1.2.840.113549.1.1.1"));
+        Assertions.assertEquals("RSA", SignatureMechanisms.getAlgorithm("1.2.840.113549.1.1.1"));
     }
 
     @Test
     public void getAlgorithmECDSATest() {
-        Assert.assertEquals("ECDSA", SignatureMechanisms.getAlgorithm("1.2.840.10045.2.1"));
+        Assertions.assertEquals("ECDSA", SignatureMechanisms.getAlgorithm("1.2.840.10045.2.1"));
     }
 
     @Test
     public void getAlgorithmEmptyTest() {
-        Assert.assertEquals("", SignatureMechanisms.getAlgorithm(""));
+        Assertions.assertEquals("", SignatureMechanisms.getAlgorithm(""));
     }
 
     @Test
     public void getAlgorithmEmptySpaceTest() {
-        Assert.assertEquals(" ", SignatureMechanisms.getAlgorithm(" "));
+        Assertions.assertEquals(" ", SignatureMechanisms.getAlgorithm(" "));
     }
 
     @Test
     public void getAlgorithmUndefinedTest() {
-        Assert.assertEquals("undefined", SignatureMechanisms.getAlgorithm("undefined"));
+        Assertions.assertEquals("undefined", SignatureMechanisms.getAlgorithm("undefined"));
     }
 }

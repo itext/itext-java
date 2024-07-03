@@ -23,18 +23,17 @@
 package com.itextpdf.styledxmlparser.jsoup;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PortUtilTest extends ExtendedITextTest {
     @Test
     public void trimControlCodesTest() {
         for (int i = 0; i < ' ' + 1; ++i) {
             String str = new String(new char[]{(char) i});
-            Assert.assertTrue(PortUtil.trimControlCodes(str).isEmpty());
+            Assertions.assertTrue(PortUtil.trimControlCodes(str).isEmpty());
         }
     }
 }

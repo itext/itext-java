@@ -38,27 +38,26 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.io.InputStream;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfCanvasInlineImagesTest extends ExtendedITextTest {
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/canvas/PdfCanvasInlineImagesTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/canvas/PdfCanvasInlineImagesTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -87,7 +86,7 @@ public class PdfCanvasInlineImagesTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool()
+        Assertions.assertNull(new CompareTool()
                 .compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder));
     }
 
@@ -142,7 +141,7 @@ public class PdfCanvasInlineImagesTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool()
+        Assertions.assertNull(new CompareTool()
                 .compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder));
     }
 
@@ -160,7 +159,7 @@ public class PdfCanvasInlineImagesTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool()
+        Assertions.assertNull(new CompareTool()
                 .compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder));
     }
 
@@ -176,7 +175,7 @@ public class PdfCanvasInlineImagesTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool()
+        Assertions.assertNull(new CompareTool()
                 .compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder));
     }
 
@@ -192,7 +191,7 @@ public class PdfCanvasInlineImagesTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool()
+        Assertions.assertNull(new CompareTool()
                 .compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder));
     }
 }

@@ -29,26 +29,25 @@ import com.itextpdf.kernel.pdf.annot.PdfTextAnnotation;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.IOException;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(BouncyCastleIntegrationTest.class)
+@Tag("BouncyCastleIntegrationTest")
 public class XrefStreamDocumentUpdatesTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/XrefStreamDocumentUpdatesTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/XrefStreamDocumentUpdatesTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -61,8 +60,8 @@ public class XrefStreamDocumentUpdatesTest extends ExtendedITextTest {
         PdfArray array = (PdfArray)  document.getCatalog().getPdfObject()
                 .get(new PdfName("CustomKey"));
 
-        Assert.assertTrue(array instanceof PdfArray);
-        Assert.assertEquals(0, array.size());
+        Assertions.assertTrue(array instanceof PdfArray);
+        Assertions.assertEquals(0, array.size());
     }
 
     @Test
@@ -87,8 +86,8 @@ public class XrefStreamDocumentUpdatesTest extends ExtendedITextTest {
         int expectNumberOfObjects = pdfDoc.getNumberOfPdfObjects();
 
         //output pdf document should be openable
-        Assert.assertEquals(10, expectNumberOfObjects);
-        Assert.assertEquals(PdfName.ObjStm, pageDict.get(PdfName.Type));
+        Assertions.assertEquals(10, expectNumberOfObjects);
+        Assertions.assertEquals(PdfName.ObjStm, pageDict.get(PdfName.Type));
     }
 
     @Test
@@ -111,8 +110,8 @@ public class XrefStreamDocumentUpdatesTest extends ExtendedITextTest {
         int expectNumberOfObjects = doc.getNumberOfPdfObjects();
 
         //output pdf document should be openable
-        Assert.assertEquals(9, expectNumberOfObjects);
-        Assert.assertEquals(PdfName.ObjStm, objStmDict.get(PdfName.Type));
+        Assertions.assertEquals(9, expectNumberOfObjects);
+        Assertions.assertEquals(PdfName.ObjStm, objStmDict.get(PdfName.Type));
         doc.close();
     }
 
@@ -134,9 +133,9 @@ public class XrefStreamDocumentUpdatesTest extends ExtendedITextTest {
 
         PdfXrefTable xref = pdfDoc1.getXref();
 
-        Assert.assertEquals(8, expectObjNumber);
-        Assert.assertEquals(0, expectGenNumber);
-        Assert.assertTrue(xref.get(5).isFree());
+        Assertions.assertEquals(8, expectObjNumber);
+        Assertions.assertEquals(0, expectGenNumber);
+        Assertions.assertTrue(xref.get(5).isFree());
 
         pdfDoc1.close();
     }
@@ -157,8 +156,8 @@ public class XrefStreamDocumentUpdatesTest extends ExtendedITextTest {
 
         pdfDocument.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, inFileName, destinationFolder));
-        Assert.assertEquals(PdfName.XRef, xrefStm.get(PdfName.Type));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, inFileName, destinationFolder));
+        Assertions.assertEquals(PdfName.XRef, xrefStm.get(PdfName.Type));
     }
 
     @Test
@@ -173,7 +172,7 @@ public class XrefStreamDocumentUpdatesTest extends ExtendedITextTest {
 
         pdfDocument.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, inFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, inFileName, destinationFolder));
     }
 
     @Test
@@ -209,9 +208,9 @@ public class XrefStreamDocumentUpdatesTest extends ExtendedITextTest {
             }
         }
 
-        Assert.assertEquals(((PdfNumber) doc.getTrailer().get(PdfName.Size)).intValue(), doc.getNumberOfPdfObjects());
+        Assertions.assertEquals(((PdfNumber) doc.getTrailer().get(PdfName.Size)).intValue(), doc.getNumberOfPdfObjects());
         doc.close();
-        Assert.assertEquals(1, xrefTableCounter);
+        Assertions.assertEquals(1, xrefTableCounter);
     }
 
     @Test
@@ -240,9 +239,9 @@ public class XrefStreamDocumentUpdatesTest extends ExtendedITextTest {
             }
         }
 
-        Assert.assertEquals(((PdfNumber) doc.getTrailer().get(PdfName.Size)).intValue(), doc.getNumberOfPdfObjects());
+        Assertions.assertEquals(((PdfNumber) doc.getTrailer().get(PdfName.Size)).intValue(), doc.getNumberOfPdfObjects());
         doc.close();
-        Assert.assertEquals(2, xrefTableCounter);
+        Assertions.assertEquals(2, xrefTableCounter);
     }
 
     @Test
@@ -274,9 +273,9 @@ public class XrefStreamDocumentUpdatesTest extends ExtendedITextTest {
             }
         }
 
-        Assert.assertEquals(((PdfNumber) doc.getTrailer().get(PdfName.Size)).intValue(), doc.getNumberOfPdfObjects());
+        Assertions.assertEquals(((PdfNumber) doc.getTrailer().get(PdfName.Size)).intValue(), doc.getNumberOfPdfObjects());
         doc.close();
-        Assert.assertEquals(1, xrefTableCounter);
+        Assertions.assertEquals(1, xrefTableCounter);
     }
 
     @Test
@@ -299,6 +298,6 @@ public class XrefStreamDocumentUpdatesTest extends ExtendedITextTest {
         pdfDoc2.close();
 
         //if document processed correctly, no errors should occur
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, inFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, inFileName, destinationFolder));
     }
 }

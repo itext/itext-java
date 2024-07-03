@@ -35,13 +35,12 @@ import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class InputFieldRendererTest extends ExtendedITextTest {
 
     private static final double EPS = 0.0001;
@@ -51,7 +50,7 @@ public class InputFieldRendererTest extends ExtendedITextTest {
         InputFieldRenderer inputFieldRenderer = new InputFieldRenderer(new InputField(""));
         inputFieldRenderer.setProperty(FormProperty.FORM_FIELD_PASSWORD_FLAG, null);
 
-        Assert.assertFalse(inputFieldRenderer.isPassword());
+        Assertions.assertFalse(inputFieldRenderer.isPassword());
     }
     
     @Test
@@ -59,7 +58,7 @@ public class InputFieldRendererTest extends ExtendedITextTest {
         InputFieldRenderer inputFieldRenderer = new InputFieldRenderer(new InputField(""));
         inputFieldRenderer.setProperty(FormProperty.FORM_FIELD_SIZE, null);
         
-        Assert.assertEquals(20, inputFieldRenderer.getSize());
+        Assertions.assertEquals(20, inputFieldRenderer.getSize());
     }
 
     @Test
@@ -68,9 +67,9 @@ public class InputFieldRendererTest extends ExtendedITextTest {
         areaRenderer.setProperty(Property.FONT_SIZE, UnitValue.createPointValue(10));
         MinMaxWidth minMaxWidth = new MinMaxWidth();
 
-        Assert.assertTrue(areaRenderer.callSetMinMaxWidthBasedOnFixedWidth(minMaxWidth));
-        Assert.assertEquals(122, minMaxWidth.getChildrenMaxWidth(), EPS);
-        Assert.assertEquals(122, minMaxWidth.getChildrenMinWidth(), EPS);
+        Assertions.assertTrue(areaRenderer.callSetMinMaxWidthBasedOnFixedWidth(minMaxWidth));
+        Assertions.assertEquals(122, minMaxWidth.getChildrenMaxWidth(), EPS);
+        Assertions.assertEquals(122, minMaxWidth.getChildrenMinWidth(), EPS);
     }
 
     @Test
@@ -80,9 +79,9 @@ public class InputFieldRendererTest extends ExtendedITextTest {
         areaRenderer.setProperty(Property.FONT_SIZE, UnitValue.createPointValue(10));
         MinMaxWidth minMaxWidth = new MinMaxWidth();
 
-        Assert.assertTrue(areaRenderer.callSetMinMaxWidthBasedOnFixedWidth(minMaxWidth));
-        Assert.assertEquals(122, minMaxWidth.getChildrenMaxWidth(), EPS);
-        Assert.assertEquals(0, minMaxWidth.getChildrenMinWidth(), EPS);
+        Assertions.assertTrue(areaRenderer.callSetMinMaxWidthBasedOnFixedWidth(minMaxWidth));
+        Assertions.assertEquals(122, minMaxWidth.getChildrenMaxWidth(), EPS);
+        Assertions.assertEquals(0, minMaxWidth.getChildrenMinWidth(), EPS);
     }
 
     @Test
@@ -92,23 +91,23 @@ public class InputFieldRendererTest extends ExtendedITextTest {
         areaRenderer.setProperty(Property.FONT_SIZE, UnitValue.createPointValue(10));
         MinMaxWidth minMaxWidth = new MinMaxWidth();
 
-        Assert.assertTrue(areaRenderer.callSetMinMaxWidthBasedOnFixedWidth(minMaxWidth));
-        Assert.assertEquals(122, minMaxWidth.getChildrenMaxWidth(), EPS);
-        Assert.assertEquals(0, minMaxWidth.getChildrenMinWidth(), EPS);
+        Assertions.assertTrue(areaRenderer.callSetMinMaxWidthBasedOnFixedWidth(minMaxWidth));
+        Assertions.assertEquals(122, minMaxWidth.getChildrenMaxWidth(), EPS);
+        Assertions.assertEquals(0, minMaxWidth.getChildrenMinWidth(), EPS);
     }
 
 
     @Test
     public void pdfAConformanceLevelTest() {
         InputFieldRenderer inputFieldRenderer = new InputFieldRenderer(new InputField(""));
-        Assert.assertNull(inputFieldRenderer.getGenericConformanceLevel(null));
+        Assertions.assertNull(inputFieldRenderer.getGenericConformanceLevel(null));
     }
 
     @Test
     public void pdfAConformanceLevelWithDocumentTest() {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         InputFieldRenderer inputFieldRenderer = new InputFieldRenderer(new InputField(""));
-        Assert.assertNull(inputFieldRenderer.getGenericConformanceLevel(pdfDocument));
+        Assertions.assertNull(inputFieldRenderer.getGenericConformanceLevel(pdfDocument));
     }
 
     @Test
@@ -116,7 +115,7 @@ public class InputFieldRendererTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         InputFieldRenderer inputFieldRenderer = new InputFieldRenderer(new InputField(""));
         inputFieldRenderer.setProperty(FormProperty.FORM_CONFORMANCE_LEVEL, PdfAConformanceLevel.PDF_A_1B);
-        Assert.assertEquals(PdfAConformanceLevel.PDF_A_1B, inputFieldRenderer.getGenericConformanceLevel(pdfDocument));
+        Assertions.assertEquals(PdfAConformanceLevel.PDF_A_1B, inputFieldRenderer.getGenericConformanceLevel(pdfDocument));
     }
 
     @Test
@@ -124,7 +123,7 @@ public class InputFieldRendererTest extends ExtendedITextTest {
         InputFieldRenderer inputFieldRendererWithoutPlaceholder = new InputFieldRenderer(new InputField(""));
 
         IRenderer paragraphRender = inputFieldRendererWithoutPlaceholder.createParagraphRenderer("");
-        Assert.assertTrue(paragraphRender instanceof ParagraphRenderer);
+        Assertions.assertTrue(paragraphRender instanceof ParagraphRenderer);
 
         InputField inputFieldWithEmptyPlaceholder = new InputField("");
         inputFieldWithEmptyPlaceholder.setPlaceholder(new Paragraph() {
@@ -136,8 +135,8 @@ public class InputFieldRendererTest extends ExtendedITextTest {
         InputFieldRenderer inputFieldRendererWithEmptyPlaceholder =
                 new InputFieldRenderer(inputFieldWithEmptyPlaceholder);
         paragraphRender = inputFieldRendererWithEmptyPlaceholder.createParagraphRenderer("");
-        Assert.assertTrue(paragraphRender instanceof ParagraphRenderer);
-        Assert.assertFalse(paragraphRender instanceof CustomParagraphRenderer);
+        Assertions.assertTrue(paragraphRender instanceof ParagraphRenderer);
+        Assertions.assertFalse(paragraphRender instanceof CustomParagraphRenderer);
 
         InputField inputFieldWithPlaceholder = new InputField("");
         inputFieldWithPlaceholder.setPlaceholder(new Paragraph() {
@@ -154,7 +153,7 @@ public class InputFieldRendererTest extends ExtendedITextTest {
         InputFieldRenderer inputFieldRendererWithPlaceholder =
                 new InputFieldRenderer(inputFieldWithPlaceholder);
         paragraphRender = inputFieldRendererWithPlaceholder.createParagraphRenderer("");
-        Assert.assertTrue(paragraphRender instanceof CustomParagraphRenderer);
+        Assertions.assertTrue(paragraphRender instanceof CustomParagraphRenderer);
     }
     
     private static class CustomParagraphRenderer extends ParagraphRenderer {

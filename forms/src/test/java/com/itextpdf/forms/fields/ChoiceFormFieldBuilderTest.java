@@ -37,16 +37,15 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class ChoiceFormFieldBuilderTest extends ExtendedITextTest {
     private static final PdfDocument DUMMY_DOCUMENT = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
     private static final String DUMMY_NAME = "dummy name";
@@ -57,8 +56,8 @@ public class ChoiceFormFieldBuilderTest extends ExtendedITextTest {
     public void constructorTest() {
         ChoiceFormFieldBuilder builder = new ChoiceFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
 
-        Assert.assertSame(DUMMY_DOCUMENT, builder.getDocument());
-        Assert.assertSame(DUMMY_NAME, builder.getFormFieldName());
+        Assertions.assertSame(DUMMY_DOCUMENT, builder.getDocument());
+        Assertions.assertSame(DUMMY_NAME, builder.getFormFieldName());
     }
 
     @Test
@@ -67,7 +66,7 @@ public class ChoiceFormFieldBuilderTest extends ExtendedITextTest {
 
         builder.setOptions(DUMMY_OPTIONS);
 
-        Assert.assertSame(DUMMY_OPTIONS, builder.getOptions());
+        Assertions.assertSame(DUMMY_OPTIONS, builder.getOptions());
     }
 
     @Test
@@ -79,7 +78,7 @@ public class ChoiceFormFieldBuilderTest extends ExtendedITextTest {
         builder.setOptions(options);
 
         for (int i = 0; i < options.length; ++i) {
-            Assert.assertEquals(
+            Assertions.assertEquals(
                     new PdfString(options[i], PdfEncodings.UNICODE_BIG), builder.getOptions().getAsString(i));
         }
     }
@@ -94,7 +93,7 @@ public class ChoiceFormFieldBuilderTest extends ExtendedITextTest {
 
         for (int i = 0; i < options.length; ++i) {
             for (int j = 0; j < options[i].length; ++j) {
-                Assert.assertEquals(
+                Assertions.assertEquals(
                         new PdfString(options[i][j], PdfEncodings.UNICODE_BIG),
                         builder.getOptions().getAsArray(i).getAsString(j));
             }
@@ -107,8 +106,8 @@ public class ChoiceFormFieldBuilderTest extends ExtendedITextTest {
 
         String[][] options = new String[][]{new String[]{"option1", "option2", "option3"}};
 
-        Exception exception = Assert.assertThrows(IllegalArgumentException.class, () -> builder.setOptions(options));
-        Assert.assertEquals(FormsExceptionMessageConstant.INNER_ARRAY_SHALL_HAVE_TWO_ELEMENTS, exception.getMessage());
+        Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () -> builder.setOptions(options));
+        Assertions.assertEquals(FormsExceptionMessageConstant.INNER_ARRAY_SHALL_HAVE_TWO_ELEMENTS, exception.getMessage());
     }
 
     @Test
@@ -215,17 +214,17 @@ public class ChoiceFormFieldBuilderTest extends ExtendedITextTest {
         List<PdfWidgetAnnotation> widgets = choiceFormField.getWidgets();
 
         if (widgetExpected) {
-            Assert.assertEquals(1, widgets.size());
+            Assertions.assertEquals(1, widgets.size());
 
             PdfWidgetAnnotation annotation = widgets.get(0);
 
-            Assert.assertTrue(DUMMY_RECTANGLE.equalsWithEpsilon(annotation.getRectangle().toRectangle()));
+            Assertions.assertTrue(DUMMY_RECTANGLE.equalsWithEpsilon(annotation.getRectangle().toRectangle()));
 
             PdfArray kids = new PdfArray();
             kids.add(annotation.getPdfObject());
             putIfAbsent(expectedDictionary, PdfName.Kids, kids);
         } else {
-            Assert.assertEquals(0, widgets.size());
+            Assertions.assertEquals(0, widgets.size());
         }
 
         putIfAbsent(expectedDictionary, PdfName.FT, PdfName.Ch);
@@ -237,7 +236,7 @@ public class ChoiceFormFieldBuilderTest extends ExtendedITextTest {
 
         expectedDictionary.makeIndirect(DUMMY_DOCUMENT);
         choiceFormField.makeIndirect(DUMMY_DOCUMENT);
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareDictionariesStructure(expectedDictionary, choiceFormField.getPdfObject()));
     }
 

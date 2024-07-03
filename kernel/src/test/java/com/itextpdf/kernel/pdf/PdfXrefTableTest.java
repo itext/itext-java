@@ -32,28 +32,27 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfXrefTableTest extends ExtendedITextTest {
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/PdfXrefTableTest/";
     public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/PdfXrefTableTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(DESTINATION_FOLDER);
     }
@@ -80,7 +79,7 @@ public class PdfXrefTableTest extends ExtendedITextTest {
     })
     public void openInvalidDocWithHugeRefTestDefaultMemoryLimitAwareHandler() {
         String inputFile = SOURCE_FOLDER + "invalidDocWithHugeRef.pdf";
-        Assert.assertThrows(MemoryLimitsAwareException.class,() ->
+        Assertions.assertThrows(MemoryLimitsAwareException.class,() ->
                 new PdfDocument(new PdfReader(inputFile)));
     }
 
@@ -93,9 +92,9 @@ public class PdfXrefTableTest extends ExtendedITextTest {
         String inputFile = SOURCE_FOLDER + "invalidDocWithHugeRef.pdf";
         ByteArrayOutputStream outputStream = new com.itextpdf.io.source.ByteArrayOutputStream();
 
-        Exception e = Assert.assertThrows(PdfException.class, () ->
+        Exception e = Assertions.assertThrows(PdfException.class, () ->
                 new PdfDocument(new PdfReader(inputFile), new PdfWriter(outputStream)));
-        Assert.assertEquals(KernelExceptionMessageConstant.XREF_STRUCTURE_SIZE_EXCEEDED_THE_LIMIT, e.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.XREF_STRUCTURE_SIZE_EXCEEDED_THE_LIMIT, e.getMessage());
     }
 
     @Test
@@ -134,9 +133,9 @@ public class PdfXrefTableTest extends ExtendedITextTest {
         0000000561 00000 n
         */
 
-        Assert.assertTrue(freeRef.isFree());
-        Assert.assertEquals(ref0.offsetOrIndex, freeRef.objNr);
-        Assert.assertEquals(1, freeRef.genNr);
+        Assertions.assertTrue(freeRef.isFree());
+        Assertions.assertEquals(ref0.offsetOrIndex, freeRef.objNr);
+        Assertions.assertEquals(1, freeRef.genNr);
     }
 
     @Test
@@ -187,12 +186,12 @@ public class PdfXrefTableTest extends ExtendedITextTest {
         0000000561 00000 n
         */
 
-        Assert.assertTrue(freeRef1.isFree());
-        Assert.assertEquals(ref0.offsetOrIndex, freeRef1.objNr);
-        Assert.assertEquals(1, freeRef1.genNr);
-        Assert.assertTrue(freeRef2.isFree());
-        Assert.assertEquals(freeRef1.offsetOrIndex, freeRef2.objNr);
-        Assert.assertEquals(1, freeRef2.genNr);
+        Assertions.assertTrue(freeRef1.isFree());
+        Assertions.assertEquals(ref0.offsetOrIndex, freeRef1.objNr);
+        Assertions.assertEquals(1, freeRef1.genNr);
+        Assertions.assertTrue(freeRef2.isFree());
+        Assertions.assertEquals(freeRef1.offsetOrIndex, freeRef2.objNr);
+        Assertions.assertEquals(1, freeRef2.genNr);
         pdfDocument.close();
     }
 }

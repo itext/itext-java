@@ -27,15 +27,14 @@ import com.itextpdf.commons.logs.CommonsLogMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.util.Collections;
 import java.util.List;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class AbstractStatisticsEventTest extends ExtendedITextTest {
     @Test
     public void constructorTest() {
@@ -43,11 +42,11 @@ public class AbstractStatisticsEventTest extends ExtendedITextTest {
                 new DummyStatisticsEvent(new ProductData("public name", "product name", "version", 15, 3000));
 
         ProductData data = dummyEvent.getProductData();
-        Assert.assertEquals("public name", data.getPublicProductName());
-        Assert.assertEquals("product name", data.getProductName());
-        Assert.assertEquals("version", data.getVersion());
-        Assert.assertEquals(15, data.getSinceCopyrightYear());
-        Assert.assertEquals(3000, data.getToCopyrightYear());
+        Assertions.assertEquals("public name", data.getPublicProductName());
+        Assertions.assertEquals("product name", data.getProductName());
+        Assertions.assertEquals("version", data.getVersion());
+        Assertions.assertEquals(15, data.getSinceCopyrightYear());
+        Assertions.assertEquals(3000, data.getToCopyrightYear());
     }
 
     @Test
@@ -56,7 +55,7 @@ public class AbstractStatisticsEventTest extends ExtendedITextTest {
         DummyStatisticsEvent dummyEvent =
                 new DummyStatisticsEvent(new ProductData("public name", "product name", "version", 15, 3000));
 
-        Assert.assertNull(dummyEvent.createStatisticsAggregatorFromName("statisticsName"));
+        Assertions.assertNull(dummyEvent.createStatisticsAggregatorFromName("statisticsName"));
     }
 
     static class DummyStatisticsEvent extends AbstractStatisticsEvent {

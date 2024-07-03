@@ -50,7 +50,6 @@ import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -64,14 +63,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import java.util.concurrent.TimeUnit;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Timeout;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfReaderTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/PdfReaderTest/";
@@ -83,12 +84,12 @@ public class PdfReaderTest extends ExtendedITextTest {
 
     static final byte[] USER_PASSWORD = "Hello".getBytes(StandardCharsets.ISO_8859_1);
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(DESTINATION_FOLDER);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(DESTINATION_FOLDER);
     }
@@ -106,27 +107,27 @@ public class PdfReaderTest extends ExtendedITextTest {
 
         PdfReader reader = CompareTool.createOutputReader(filename);
         pdfDoc = new PdfDocument(reader);
-        Assert.assertEquals(author, pdfDoc.getDocumentInfo().getAuthor());
-        Assert.assertEquals(creator, pdfDoc.getDocumentInfo().getCreator());
-        Assert.assertEquals(title, pdfDoc.getDocumentInfo().getTitle());
+        Assertions.assertEquals(author, pdfDoc.getDocumentInfo().getAuthor());
+        Assertions.assertEquals(creator, pdfDoc.getDocumentInfo().getCreator());
+        Assertions.assertEquals(title, pdfDoc.getDocumentInfo().getTitle());
         PdfObject object = pdfDoc.getPdfObject(1);
-        Assert.assertEquals(PdfObject.DICTIONARY, object.getType());
-        Assert.assertTrue(objectTypeEqualTo(object, PdfName.Catalog));
+        Assertions.assertEquals(PdfObject.DICTIONARY, object.getType());
+        Assertions.assertTrue(objectTypeEqualTo(object, PdfName.Catalog));
 
         object = pdfDoc.getPdfObject(2);
-        Assert.assertEquals(PdfObject.DICTIONARY, object.getType());
-        Assert.assertTrue(objectTypeEqualTo(object, PdfName.Pages));
+        Assertions.assertEquals(PdfObject.DICTIONARY, object.getType());
+        Assertions.assertTrue(objectTypeEqualTo(object, PdfName.Pages));
 
         object = pdfDoc.getPdfObject(3);
-        Assert.assertEquals(PdfObject.DICTIONARY, object.getType());
+        Assertions.assertEquals(PdfObject.DICTIONARY, object.getType());
 
         object = pdfDoc.getPdfObject(4);
-        Assert.assertEquals(PdfObject.DICTIONARY, object.getType());
-        Assert.assertTrue(objectTypeEqualTo(object, PdfName.Page));
+        Assertions.assertEquals(PdfObject.DICTIONARY, object.getType());
+        Assertions.assertTrue(objectTypeEqualTo(object, PdfName.Page));
 
-        Assert.assertEquals(PdfObject.STREAM, pdfDoc.getPdfObject(5).getType());
+        Assertions.assertEquals(PdfObject.STREAM, pdfDoc.getPdfObject(5).getType());
 
-        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
+        Assertions.assertFalse(reader.hasRebuiltXref(), "No need in rebuildXref()");
         pdfDoc.close();
     }
 
@@ -137,26 +138,26 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(reader);
 
         PdfObject object = pdfDoc.getPdfObject(1);
-        Assert.assertEquals(PdfObject.DICTIONARY, object.getType());
-        Assert.assertTrue(objectTypeEqualTo(object, PdfName.Catalog));
+        Assertions.assertEquals(PdfObject.DICTIONARY, object.getType());
+        Assertions.assertTrue(objectTypeEqualTo(object, PdfName.Catalog));
 
         object = pdfDoc.getPdfObject(2);
-        Assert.assertEquals(PdfObject.DICTIONARY, object.getType());
-        Assert.assertTrue(objectTypeEqualTo(object, PdfName.Pages));
+        Assertions.assertEquals(PdfObject.DICTIONARY, object.getType());
+        Assertions.assertTrue(objectTypeEqualTo(object, PdfName.Pages));
 
         object = pdfDoc.getPdfObject(3);
-        Assert.assertEquals(PdfObject.DICTIONARY, object.getType());
+        Assertions.assertEquals(PdfObject.DICTIONARY, object.getType());
 
         object = pdfDoc.getPdfObject(4);
-        Assert.assertEquals(PdfObject.DICTIONARY, object.getType());
-        Assert.assertTrue(objectTypeEqualTo(object, PdfName.Page));
+        Assertions.assertEquals(PdfObject.DICTIONARY, object.getType());
+        Assertions.assertTrue(objectTypeEqualTo(object, PdfName.Page));
 
         object = pdfDoc.getPdfObject(5);
-        Assert.assertEquals(PdfObject.STREAM, object.getType());
+        Assertions.assertEquals(PdfObject.STREAM, object.getType());
         String content = "100 100 100 100 re\nf\n";
-        Assert.assertArrayEquals(ByteUtils.getIsoBytes(content), ((PdfStream) object).getBytes());
+        Assertions.assertArrayEquals(ByteUtils.getIsoBytes(content), ((PdfStream) object).getBytes());
 
-        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
+        Assertions.assertFalse(reader.hasRebuiltXref(), "No need in rebuildXref()");
         reader.close();
         pdfDoc.close();
     }
@@ -181,14 +182,14 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfDictionary customDict1 = catalogDict.getAsDictionary(new PdfName("CustomDict1"));
         PdfDictionary customDict2 = catalogDict.getAsDictionary(new PdfName("CustomDict2"));
 
-        Assert.assertEquals(1, customDict1.size());
-        Assert.assertEquals(1, customDict2.size());
+        Assertions.assertEquals(1, customDict1.size());
+        Assertions.assertEquals(1, customDict2.size());
 
-        Assert.assertEquals("Hello world updated.", customDict1.getAsString(new PdfName("Key1")).getValue());
-        Assert.assertEquals("Hello world for second dictionary.",
+        Assertions.assertEquals("Hello world updated.", customDict1.getAsString(new PdfName("Key1")).getValue());
+        Assertions.assertEquals("Hello world for second dictionary.",
                 customDict2.getAsString(new PdfName("Key1")).getValue());
 
-        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
+        Assertions.assertFalse(reader.hasRebuiltXref(), "No need in rebuildXref()");
         pdfDoc.close();
     }
 
@@ -202,8 +203,8 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfDictionary customDict1 = catalogDict.getAsDictionary(new PdfName("CustomDict1"));
         PdfDictionary customDict2 = catalogDict.getAsDictionary(new PdfName("CustomDict2"));
 
-        Assert.assertTrue(customDict1.containsKey(new PdfName("CustomDict1Key1")));
-        Assert.assertTrue(customDict2.containsKey(new PdfName("CustomDict2Key1")));
+        Assertions.assertTrue(customDict1.containsKey(new PdfName("CustomDict1Key1")));
+        Assertions.assertTrue(customDict2.containsKey(new PdfName("CustomDict2Key1")));
 
         customDict2.clear();
         customDict1.release();
@@ -212,10 +213,10 @@ public class PdfReaderTest extends ExtendedITextTest {
         customDict1 = catalogDict.getAsDictionary(new PdfName("CustomDict1"));
         customDict2 = catalogDict.getAsDictionary(new PdfName("CustomDict2"));
 
-        Assert.assertTrue(customDict1.containsKey(new PdfName("CustomDict1Key1")));
-        Assert.assertFalse(customDict2.containsKey(new PdfName("CustomDict2Key1")));
+        Assertions.assertTrue(customDict1.containsKey(new PdfName("CustomDict1Key1")));
+        Assertions.assertFalse(customDict2.containsKey(new PdfName("CustomDict2Key1")));
 
-        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
+        Assertions.assertFalse(reader.hasRebuiltXref(), "No need in rebuildXref()");
         pdfDoc.close();
     }
 
@@ -225,7 +226,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(filename);
         PdfDocument document = new PdfDocument(reader);
 
-        Assert.assertEquals("Page count", 100, document.getNumberOfPages());
+        Assertions.assertEquals(100, document.getNumberOfPages(), "Page count");
 
         String contentTemplate = "q\n" +
                 "BT\n" +
@@ -240,11 +241,11 @@ public class PdfReaderTest extends ExtendedITextTest {
         for (int i = 1; i <= document.getNumberOfPages(); i++) {
             PdfPage page = document.getPage(i);
             byte[] content = page.getFirstContentStream().getBytes();
-            Assert.assertEquals("Page content " + i, MessageFormatUtil.format(contentTemplate, i), new String(content));
+            Assertions.assertEquals(MessageFormatUtil.format(contentTemplate, i), new String(content), "Page content " + i);
         }
 
-        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
-        Assert.assertFalse("No need in fixXref()", reader.hasFixedXref());
+        Assertions.assertFalse(reader.hasRebuiltXref(), "No need in rebuildXref()");
+        Assertions.assertFalse(reader.hasFixedXref(), "No need in fixXref()");
         document.close();
     }
 
@@ -261,27 +262,27 @@ public class PdfReaderTest extends ExtendedITextTest {
         document = new PdfDocument(reader);
 
         PdfObject object = document.getXref().get(1).getRefersTo();
-        Assert.assertEquals(PdfObject.DICTIONARY, object.getType());
-        Assert.assertTrue(objectTypeEqualTo(object, PdfName.Catalog));
+        Assertions.assertEquals(PdfObject.DICTIONARY, object.getType());
+        Assertions.assertTrue(objectTypeEqualTo(object, PdfName.Catalog));
 
         object = document.getXref().get(2).getRefersTo();
-        Assert.assertEquals(PdfObject.DICTIONARY, object.getType());
-        Assert.assertTrue(objectTypeEqualTo(object, PdfName.Pages));
+        Assertions.assertEquals(PdfObject.DICTIONARY, object.getType());
+        Assertions.assertTrue(objectTypeEqualTo(object, PdfName.Pages));
 
         object = document.getXref().get(3).getRefersTo();
-        Assert.assertEquals(PdfObject.DICTIONARY, object.getType());
+        Assertions.assertEquals(PdfObject.DICTIONARY, object.getType());
 
         object = document.getXref().get(4).getRefersTo();
-        Assert.assertEquals(PdfObject.DICTIONARY, object.getType());
-        Assert.assertTrue(objectTypeEqualTo(object, PdfName.Page));
+        Assertions.assertEquals(PdfObject.DICTIONARY, object.getType());
+        Assertions.assertTrue(objectTypeEqualTo(object, PdfName.Page));
 
-        Assert.assertEquals(PdfObject.STREAM, document.getXref().get(5).getRefersTo().getType());
+        Assertions.assertEquals(PdfObject.STREAM, document.getXref().get(5).getRefersTo().getType());
 
         object = document.getXref().get(6).getRefersTo();
-        Assert.assertEquals(PdfObject.BOOLEAN, object.getType());
-        Assert.assertNotNull(object.getIndirectReference());
+        Assertions.assertEquals(PdfObject.BOOLEAN, object.getType());
+        Assertions.assertNotNull(object.getIndirectReference());
 
-        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
+        Assertions.assertFalse(reader.hasRebuiltXref(), "No need in rebuildXref()");
         document.close();
     }
 
@@ -302,27 +303,27 @@ public class PdfReaderTest extends ExtendedITextTest {
         document = new PdfDocument(reader);
 
         pdfObject = document.getXref().get(1).getRefersTo();
-        Assert.assertEquals(PdfObject.DICTIONARY, pdfObject.getType());
-        Assert.assertTrue(objectTypeEqualTo(pdfObject, PdfName.Catalog));
+        Assertions.assertEquals(PdfObject.DICTIONARY, pdfObject.getType());
+        Assertions.assertTrue(objectTypeEqualTo(pdfObject, PdfName.Catalog));
 
         pdfObject = document.getXref().get(2).getRefersTo();
-        Assert.assertEquals(PdfObject.DICTIONARY, pdfObject.getType());
-        Assert.assertTrue(objectTypeEqualTo(pdfObject, PdfName.Pages));
+        Assertions.assertEquals(PdfObject.DICTIONARY, pdfObject.getType());
+        Assertions.assertTrue(objectTypeEqualTo(pdfObject, PdfName.Pages));
 
         pdfObject = document.getXref().get(3).getRefersTo();
-        Assert.assertEquals(PdfObject.DICTIONARY, pdfObject.getType());
+        Assertions.assertEquals(PdfObject.DICTIONARY, pdfObject.getType());
 
         pdfObject = document.getXref().get(4).getRefersTo();
-        Assert.assertEquals(PdfObject.DICTIONARY, pdfObject.getType());
-        Assert.assertTrue(objectTypeEqualTo(pdfObject, PdfName.Page));
+        Assertions.assertEquals(PdfObject.DICTIONARY, pdfObject.getType());
+        Assertions.assertTrue(objectTypeEqualTo(pdfObject, PdfName.Page));
 
-        Assert.assertEquals(PdfObject.STREAM, document.getXref().get(5).getRefersTo().getType());
+        Assertions.assertEquals(PdfObject.STREAM, document.getXref().get(5).getRefersTo().getType());
 
         for (int i = 6; i < document.getXref().size(); i++) {
-            Assert.assertEquals(PdfObject.DICTIONARY, document.getXref().get(i).getRefersTo().getType());
+            Assertions.assertEquals(PdfObject.DICTIONARY, document.getXref().get(i).getRefersTo().getType());
         }
 
-        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
+        Assertions.assertFalse(reader.hasRebuiltXref(), "No need in rebuildXref()");
         document.close();
     }
 
@@ -334,9 +335,9 @@ public class PdfReaderTest extends ExtendedITextTest {
         memoryLimitsAwareHandler.setMaxXObjectsSizePerPage(1024L*1024L*256L);
         PdfReader pdfReader = new PdfReader(fileName, new ReaderProperties().setMemoryLimitsAwareHandler(memoryLimitsAwareHandler));
         PdfDocument document = new PdfDocument(pdfReader);
-        Exception exception = Assert.assertThrows(MemoryLimitsAwareException.class,
+        Exception exception = Assertions.assertThrows(MemoryLimitsAwareException.class,
                 () -> PdfTextExtractor.getTextFromPage(document.getPage(1)));
-        Assert.assertEquals(KernelExceptionMessageConstant.TOTAL_XOBJECT_SIZE_ONE_PAGE_EXCEEDED_THE_LIMIT,
+        Assertions.assertEquals(KernelExceptionMessageConstant.TOTAL_XOBJECT_SIZE_ONE_PAGE_EXCEEDED_THE_LIMIT,
                 exception.getMessage());
     }
 
@@ -357,31 +358,31 @@ public class PdfReaderTest extends ExtendedITextTest {
         document = new PdfDocument(reader);
 
         pdfObject = document.getXref().get(1).getRefersTo();
-        Assert.assertEquals(PdfObject.DICTIONARY, pdfObject.getType());
-        Assert.assertTrue(objectTypeEqualTo(pdfObject, PdfName.Catalog));
+        Assertions.assertEquals(PdfObject.DICTIONARY, pdfObject.getType());
+        Assertions.assertTrue(objectTypeEqualTo(pdfObject, PdfName.Catalog));
 
         pdfObject = document.getXref().get(2).getRefersTo();
-        Assert.assertEquals(PdfObject.DICTIONARY, pdfObject.getType());
-        Assert.assertTrue(objectTypeEqualTo(pdfObject, PdfName.Pages));
+        Assertions.assertEquals(PdfObject.DICTIONARY, pdfObject.getType());
+        Assertions.assertTrue(objectTypeEqualTo(pdfObject, PdfName.Pages));
 
         pdfObject = document.getXref().get(3).getRefersTo();
-        Assert.assertEquals(PdfObject.DICTIONARY, pdfObject.getType());
+        Assertions.assertEquals(PdfObject.DICTIONARY, pdfObject.getType());
 
         pdfObject = document.getXref().get(4).getRefersTo();
-        Assert.assertEquals(PdfObject.DICTIONARY, pdfObject.getType());
-        Assert.assertTrue(objectTypeEqualTo(pdfObject, PdfName.Page));
+        Assertions.assertEquals(PdfObject.DICTIONARY, pdfObject.getType());
+        Assertions.assertTrue(objectTypeEqualTo(pdfObject, PdfName.Page));
 
-        Assert.assertEquals(PdfObject.STREAM, document.getXref().get(5).getRefersTo().getType());
+        Assertions.assertEquals(PdfObject.STREAM, document.getXref().get(5).getRefersTo().getType());
 
         for (int i = 6; i < 6 + 32; i++) {
-            Assert.assertEquals(PdfObject.DICTIONARY, document.getXref().get(6).getRefersTo().getType());
+            Assertions.assertEquals(PdfObject.DICTIONARY, document.getXref().get(6).getRefersTo().getType());
         }
 
         for (int i = 6 + 32; i < document.getXref().size(); i++) {
-            Assert.assertEquals(PdfObject.INDIRECT_REFERENCE, document.getXref().get(i).getRefersTo().getType());
+            Assertions.assertEquals(PdfObject.INDIRECT_REFERENCE, document.getXref().get(i).getRefersTo().getType());
         }
 
-        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
+        Assertions.assertFalse(reader.hasRebuiltXref(), "No need in rebuildXref()");
         document.close();
     }
 
@@ -393,28 +394,28 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfDocument document = new PdfDocument(reader);
 
         PdfObject object = document.getXref().get(1).getRefersTo();
-        Assert.assertEquals(PdfObject.DICTIONARY, object.getType());
-        Assert.assertTrue(objectTypeEqualTo(object, PdfName.Catalog));
+        Assertions.assertEquals(PdfObject.DICTIONARY, object.getType());
+        Assertions.assertTrue(objectTypeEqualTo(object, PdfName.Catalog));
 
         object = document.getXref().get(2).getRefersTo();
-        Assert.assertEquals(PdfObject.DICTIONARY, object.getType());
-        Assert.assertTrue(objectTypeEqualTo(object, PdfName.Pages));
+        Assertions.assertEquals(PdfObject.DICTIONARY, object.getType());
+        Assertions.assertTrue(objectTypeEqualTo(object, PdfName.Pages));
 
         object = document.getXref().get(3).getRefersTo();
-        Assert.assertTrue(object.getType() == PdfObject.DICTIONARY);
+        Assertions.assertTrue(object.getType() == PdfObject.DICTIONARY);
 
         object = document.getXref().get(4).getRefersTo();
-        Assert.assertEquals(PdfObject.DICTIONARY, object.getType());
-        Assert.assertTrue(objectTypeEqualTo(object, PdfName.Page));
+        Assertions.assertEquals(PdfObject.DICTIONARY, object.getType());
+        Assertions.assertTrue(objectTypeEqualTo(object, PdfName.Page));
 
-        Assert.assertEquals(PdfObject.STREAM, document.getXref().get(5).getRefersTo().getType());
+        Assertions.assertEquals(PdfObject.STREAM, document.getXref().get(5).getRefersTo().getType());
 
-        Assert.assertEquals(PdfObject.DICTIONARY, document.getXref().get(6).getRefersTo().getType());
+        Assertions.assertEquals(PdfObject.DICTIONARY, document.getXref().get(6).getRefersTo().getType());
         for (int i = 7; i < document.getXref().size(); i++) {
-            Assert.assertEquals(PdfObject.INDIRECT_REFERENCE, document.getXref().get(i).getRefersTo().getType());
+            Assertions.assertEquals(PdfObject.INDIRECT_REFERENCE, document.getXref().get(i).getRefersTo().getType());
         }
 
-        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
+        Assertions.assertFalse(reader.hasRebuiltXref(), "No need in rebuildXref()");
         document.close();
     }
 
@@ -427,27 +428,27 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfDocument document = new PdfDocument(reader);
 
         PdfObject object = document.getXref().get(1).getRefersTo();
-        Assert.assertEquals(PdfObject.DICTIONARY, object.getType());
-        Assert.assertTrue(objectTypeEqualTo(object, PdfName.Catalog));
+        Assertions.assertEquals(PdfObject.DICTIONARY, object.getType());
+        Assertions.assertTrue(objectTypeEqualTo(object, PdfName.Catalog));
 
         object = document.getXref().get(2).getRefersTo();
-        Assert.assertEquals(PdfObject.DICTIONARY, object.getType());
-        Assert.assertTrue(objectTypeEqualTo(object, PdfName.Pages));
+        Assertions.assertEquals(PdfObject.DICTIONARY, object.getType());
+        Assertions.assertTrue(objectTypeEqualTo(object, PdfName.Pages));
 
         object = document.getXref().get(3).getRefersTo();
-        Assert.assertEquals(PdfObject.DICTIONARY, object.getType());
+        Assertions.assertEquals(PdfObject.DICTIONARY, object.getType());
 
         object = document.getXref().get(4).getRefersTo();
-        Assert.assertEquals(PdfObject.DICTIONARY, object.getType());
-        Assert.assertTrue(objectTypeEqualTo(object, PdfName.Page));
+        Assertions.assertEquals(PdfObject.DICTIONARY, object.getType());
+        Assertions.assertTrue(objectTypeEqualTo(object, PdfName.Page));
 
-        Assert.assertEquals(PdfObject.STREAM, document.getXref().get(5).getRefersTo().getType());
-        Assert.assertEquals(PdfObject.DICTIONARY, document.getXref().get(6).getRefersTo().getType());
+        Assertions.assertEquals(PdfObject.STREAM, document.getXref().get(5).getRefersTo().getType());
+        Assertions.assertEquals(PdfObject.DICTIONARY, document.getXref().get(6).getRefersTo().getType());
         for (int i = 7; i < document.getXref().size(); i++) {
-            Assert.assertNull(document.getXref().get(i).getRefersTo());
+            Assertions.assertNull(document.getXref().get(i).getRefersTo());
         }
 
-        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
+        Assertions.assertFalse(reader.hasRebuiltXref(), "No need in rebuildXref()");
         document.close();
     }
 
@@ -459,24 +460,24 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         PdfDocument document = new PdfDocument(reader, writer);
         int pageCount = document.getNumberOfPages();
-        Assert.assertEquals(1000, pageCount);
+        Assertions.assertEquals(1000, pageCount);
 
         PdfPage testPage = document.getPage(1000);
         int testXref = testPage.getPdfObject().getIndirectReference().getObjNumber();
         document.movePage(1000, 1000);
-        Assert.assertEquals(testXref, testPage.getPdfObject().getIndirectReference().getObjNumber());
+        Assertions.assertEquals(testXref, testPage.getPdfObject().getIndirectReference().getObjNumber());
 
         for (int i = 1; i < document.getNumberOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
             String content = new String(page.getContentStream(0).getBytes());
-            Assert.assertTrue(content.contains("(" + i + ")"));
+            Assertions.assertTrue(content.contains("(" + i + ")"));
         }
 
         for (int i = 1; i < pageCount + 1; i++) {
             PdfPage page = document.getPage(1);
             document.removePage(page);
             String content = new String(page.getContentStream(0).getBytes());
-            Assert.assertTrue(content.contains("(" + i + ")"));
+            Assertions.assertTrue(content.contains("(" + i + ")"));
         }
         reader.close();
 
@@ -487,10 +488,10 @@ public class PdfReaderTest extends ExtendedITextTest {
             PdfPage page = document.getPage(pageNum);
             document.removePage(pageNum);
             String content = new String(page.getContentStream(0).getBytes());
-            Assert.assertTrue(content.contains("(" + pageNum + ")"));
+            Assertions.assertTrue(content.contains("(" + pageNum + ")"));
         }
 
-        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
+        Assertions.assertFalse(reader.hasRebuiltXref(), "No need in rebuildXref()");
         document.close();
     }
 
@@ -501,22 +502,22 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(filename);
         PdfDocument document = new PdfDocument(reader);
         int pageCount = document.getNumberOfPages();
-        Assert.assertEquals(1000, pageCount);
+        Assertions.assertEquals(1000, pageCount);
 
         for (int i = 1; i < document.getNumberOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
             String content = new String(page.getContentStream(0).getBytes());
-            Assert.assertTrue(content.contains("(" + i + ")"));
+            Assertions.assertTrue(content.contains("(" + i + ")"));
         }
 
         for (int i = 1; i < pageCount + 1; i++) {
             PdfPage page = document.getPage(1);
             document.removePage(page);
             String content = new String(page.getContentStream(0).getBytes());
-            Assert.assertTrue(content.contains("(" + i + ")"));
+            Assertions.assertTrue(content.contains("(" + i + ")"));
         }
 
-        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
+        Assertions.assertFalse(reader.hasRebuiltXref(), "No need in rebuildXref()");
         document.close();
 
         reader = new PdfReader(filename);
@@ -526,7 +527,7 @@ public class PdfReaderTest extends ExtendedITextTest {
             PdfPage page = document.getPage(pageNum);
             document.removePage(pageNum);
             String content = new String(page.getContentStream(0).getBytes());
-            Assert.assertTrue(content.contains("(" + pageNum + ")"));
+            Assertions.assertTrue(content.contains("(" + pageNum + ")"));
         }
         document.close();
     }
@@ -538,22 +539,22 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(filename);
         PdfDocument document = new PdfDocument(reader);
         int pageCount = document.getNumberOfPages();
-        Assert.assertEquals(10, pageCount);
+        Assertions.assertEquals(10, pageCount);
 
         for (int i = 1; i < document.getNumberOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
             String content = new String(page.getContentStream(0).getBytes());
-            Assert.assertTrue(content.contains("(" + i + ")"));
+            Assertions.assertTrue(content.contains("(" + i + ")"));
         }
 
         for (int i = 1; i < pageCount + 1; i++) {
             PdfPage page = document.getPage(1);
             document.removePage(page);
             String content = new String(page.getContentStream(0).getBytes());
-            Assert.assertTrue(content.contains("(" + i + ")"));
+            Assertions.assertTrue(content.contains("(" + i + ")"));
         }
 
-        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
+        Assertions.assertFalse(reader.hasRebuiltXref(), "No need in rebuildXref()");
         document.close();
 
         reader = new PdfReader(filename);
@@ -563,9 +564,9 @@ public class PdfReaderTest extends ExtendedITextTest {
             PdfPage page = document.getPage(pageNum);
             document.removePage(pageNum);
             String content = new String(page.getContentStream(0).getBytes());
-            Assert.assertTrue(content.contains("(" + pageNum + ")"));
+            Assertions.assertTrue(content.contains("(" + pageNum + ")"));
         }
-        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
+        Assertions.assertFalse(reader.hasRebuiltXref(), "No need in rebuildXref()");
         document.close();
     }
 
@@ -576,22 +577,22 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(filename);
         PdfDocument document = new PdfDocument(reader);
         int pageCount = document.getNumberOfPages();
-        Assert.assertEquals(3, pageCount);
+        Assertions.assertEquals(3, pageCount);
 
         for (int i = 1; i < document.getNumberOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
             String content = new String(page.getContentStream(0).getBytes());
-            Assert.assertTrue(content.startsWith(i + "00"));
+            Assertions.assertTrue(content.startsWith(i + "00"));
         }
 
         for (int i = 1; i < pageCount + 1; i++) {
             PdfPage page = document.getPage(1);
             document.removePage(page);
             String content = new String(page.getContentStream(0).getBytes());
-            Assert.assertTrue(content.startsWith(i + "00"));
+            Assertions.assertTrue(content.startsWith(i + "00"));
         }
 
-        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
+        Assertions.assertFalse(reader.hasRebuiltXref(), "No need in rebuildXref()");
         document.close();
 
         reader = new PdfReader(filename);
@@ -601,9 +602,9 @@ public class PdfReaderTest extends ExtendedITextTest {
             PdfPage page = document.getPage(pageNum);
             document.removePage(pageNum);
             String content = new String(page.getContentStream(0).getBytes());
-            Assert.assertTrue(content.startsWith(pageNum + "00"));
+            Assertions.assertTrue(content.startsWith(pageNum + "00"));
         }
-        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
+        Assertions.assertFalse(reader.hasRebuiltXref(), "No need in rebuildXref()");
         document.close();
     }
 
@@ -614,22 +615,22 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(filename);
         PdfDocument document = new PdfDocument(reader);
         int pageCount = document.getNumberOfPages();
-        Assert.assertEquals(3, pageCount);
+        Assertions.assertEquals(3, pageCount);
 
         for (int i = 1; i < document.getNumberOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
             String content = new String(page.getContentStream(0).getBytes());
-            Assert.assertTrue(content.startsWith(i + "00"));
+            Assertions.assertTrue(content.startsWith(i + "00"));
         }
 
         for (int i = 1; i < pageCount + 1; i++) {
             PdfPage page = document.getPage(1);
             document.removePage(page);
             String content = new String(page.getContentStream(0).getBytes());
-            Assert.assertTrue(content.startsWith(i + "00"));
+            Assertions.assertTrue(content.startsWith(i + "00"));
         }
 
-        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
+        Assertions.assertFalse(reader.hasRebuiltXref(), "No need in rebuildXref()");
         document.close();
 
         reader = new PdfReader(filename);
@@ -639,10 +640,10 @@ public class PdfReaderTest extends ExtendedITextTest {
             PdfPage page = document.getPage(pageNum);
             document.removePage(pageNum);
             String content = new String(page.getContentStream(0).getBytes());
-            Assert.assertTrue(content.startsWith(pageNum + "00"));
+            Assertions.assertTrue(content.startsWith(pageNum + "00"));
         }
 
-        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
+        Assertions.assertFalse(reader.hasRebuiltXref(), "No need in rebuildXref()");
         document.close();
     }
 
@@ -653,15 +654,15 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(filename);
         PdfDocument document = new PdfDocument(reader);
         int pageCount = document.getNumberOfPages();
-        Assert.assertEquals(2, pageCount);
+        Assertions.assertEquals(2, pageCount);
         PdfPage page = document.getPage(1);
         String content = new String(page.getContentStream(0).getBytes());
-        Assert.assertTrue(content.startsWith("100"));
+        Assertions.assertTrue(content.startsWith("100"));
 
         page = document.getPage(2);
         content = new String(page.getContentStream(0).getBytes());
-        Assert.assertTrue(content.startsWith("300"));
-        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
+        Assertions.assertTrue(content.startsWith("300"));
+        Assertions.assertFalse(reader.hasRebuiltXref(), "No need in rebuildXref()");
         document.close();
 
         reader = new PdfReader(filename);
@@ -670,13 +671,13 @@ public class PdfReaderTest extends ExtendedITextTest {
         page = document.getPage(2);
         document.removePage(page);
         content = new String(page.getContentStream(0).getBytes());
-        Assert.assertTrue(content.startsWith("300"));
+        Assertions.assertTrue(content.startsWith("300"));
         page = document.getPage(1);
         document.removePage(1);
         content = new String(page.getContentStream(0).getBytes());
-        Assert.assertTrue(content.startsWith("100"));
+        Assertions.assertTrue(content.startsWith("100"));
 
-        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
+        Assertions.assertFalse(reader.hasRebuiltXref(), "No need in rebuildXref()");
         document.close();
     }
 
@@ -687,15 +688,15 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(filename);
         PdfDocument document = new PdfDocument(reader);
         int pageCount = document.getNumberOfPages();
-        Assert.assertEquals(2, pageCount);
+        Assertions.assertEquals(2, pageCount);
         boolean exception = false;
         try {
             document.getPage(1);
         } catch (PdfException e) {
             exception = true;
         }
-        Assert.assertTrue(exception);
-        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
+        Assertions.assertTrue(exception);
+        Assertions.assertFalse(reader.hasRebuiltXref(), "No need in rebuildXref()");
         document.close();
     }
 
@@ -706,15 +707,15 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(filename);
         PdfDocument document = new PdfDocument(reader);
         int pageCount = document.getNumberOfPages();
-        Assert.assertEquals(1, pageCount);
+        Assertions.assertEquals(1, pageCount);
         boolean exception = false;
         try {
             document.getPage(1);
         } catch (PdfException e) {
             exception = true;
         }
-        Assert.assertTrue(exception);
-        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
+        Assertions.assertTrue(exception);
+        Assertions.assertFalse(reader.hasRebuiltXref(), "No need in rebuildXref()");
         document.close();
     }
 
@@ -725,16 +726,16 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(filename);
         PdfDocument document = new PdfDocument(reader);
         int pageCount = document.getNumberOfPages();
-        Assert.assertEquals(1, pageCount);
+        Assertions.assertEquals(1, pageCount);
         PdfPage page = document.getPage(1);
         String content = new String(page.getContentStream(0).getBytes());
-        Assert.assertTrue(content.startsWith("100"));
+        Assertions.assertTrue(content.startsWith("100"));
 
         page = document.getPage(1);
         document.removePage(1);
         content = new String(page.getContentStream(0).getBytes());
-        Assert.assertTrue(content.startsWith("100"));
-        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
+        Assertions.assertTrue(content.startsWith("100"));
+        Assertions.assertFalse(reader.hasRebuiltXref(), "No need in rebuildXref()");
         document.close();
     }
 
@@ -745,14 +746,14 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(filename);
         PdfDocument document = new PdfDocument(reader);
         int pageCount = document.getNumberOfPages();
-        Assert.assertEquals(1000, pageCount);
+        Assertions.assertEquals(1000, pageCount);
 
         Random rnd = new Random();
         for (int i = 1; i < document.getNumberOfPages() + 1; i++) {
             int pageNum = rnd.nextInt(document.getNumberOfPages()) + 1;
             PdfPage page = document.getPage(pageNum);
             String content = new String(page.getContentStream(0).getBytes());
-            Assert.assertTrue(content.contains("(" + pageNum + ")"));
+            Assertions.assertTrue(content.contains("(" + pageNum + ")"));
         }
 
         List<Integer> pageNums = new ArrayList<>(1000);
@@ -766,9 +767,9 @@ public class PdfReaderTest extends ExtendedITextTest {
             PdfPage page = document.getPage(index);
             document.removePage(index);
             String content = new String(page.getContentStream(0).getBytes());
-            Assert.assertTrue(content.contains("(" + pageNum + ")"));
+            Assertions.assertTrue(content.contains("(" + pageNum + ")"));
         }
-        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
+        Assertions.assertFalse(reader.hasRebuiltXref(), "No need in rebuildXref()");
         document.close();
     }
 
@@ -781,14 +782,14 @@ public class PdfReaderTest extends ExtendedITextTest {
         try {
             document.getPage(-30);
         } catch (IndexOutOfBoundsException e) {
-            Assert.assertEquals(
+            Assertions.assertEquals(
                     MessageFormatUtil.format(KernelExceptionMessageConstant.REQUESTED_PAGE_NUMBER_IS_OUT_OF_BOUNDS,
                             -30), e.getMessage());
         }
         try {
             document.getPage(0);
         } catch (IndexOutOfBoundsException e) {
-            Assert.assertEquals(
+            Assertions.assertEquals(
                     MessageFormatUtil.format(KernelExceptionMessageConstant.REQUESTED_PAGE_NUMBER_IS_OUT_OF_BOUNDS, 0),
                     e.getMessage());
         }
@@ -796,7 +797,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         try {
             document.getPage(25);
         } catch (IndexOutOfBoundsException e) {
-            Assert.assertEquals(
+            Assertions.assertEquals(
                     MessageFormatUtil.format(KernelExceptionMessageConstant.REQUESTED_PAGE_NUMBER_IS_OUT_OF_BOUNDS, 25),
                     e.getMessage());
         }
@@ -811,13 +812,13 @@ public class PdfReaderTest extends ExtendedITextTest {
 
         PdfReader reader = new PdfReader(filename);
         PdfDocument document = new PdfDocument(reader);
-        Assert.assertTrue("Need rebuildXref()", reader.hasRebuiltXref());
+        Assertions.assertTrue(reader.hasRebuiltXref(), "Need rebuildXref()");
 
         int pageCount = document.getNumberOfPages();
-        Assert.assertEquals(1, pageCount);
+        Assertions.assertEquals(1, pageCount);
 
         PdfPage page = document.getPage(1);
-        Assert.assertNotNull(page.getContentStream(0).getBytes());
+        Assertions.assertNotNull(page.getContentStream(0).getBytes());
 
         document.close();
     }
@@ -828,13 +829,13 @@ public class PdfReaderTest extends ExtendedITextTest {
 
         PdfReader reader = new PdfReader(filename);
         PdfDocument document = new PdfDocument(reader);
-        Assert.assertTrue("Need fixXref()", reader.hasFixedXref());
+        Assertions.assertTrue(reader.hasFixedXref(), "Need fixXref()");
 
         int pageCount = document.getNumberOfPages();
-        Assert.assertEquals(1, pageCount);
+        Assertions.assertEquals(1, pageCount);
 
         PdfPage page = document.getPage(1);
-        Assert.assertNotNull(page.getContentStream(0).getBytes());
+        Assertions.assertNotNull(page.getContentStream(0).getBytes());
 
         document.close();
     }
@@ -847,13 +848,13 @@ public class PdfReaderTest extends ExtendedITextTest {
 
         PdfReader reader = new PdfReader(filename);
         PdfDocument document = new PdfDocument(reader);
-        Assert.assertTrue("Need rebuildXref()", reader.hasRebuiltXref());
+        Assertions.assertTrue(reader.hasRebuiltXref(), "Need rebuildXref()");
 
         int pageCount = document.getNumberOfPages();
-        Assert.assertEquals(1, pageCount);
+        Assertions.assertEquals(1, pageCount);
 
         PdfPage page = document.getPage(1);
-        Assert.assertNotNull(page.getContentStream(0).getBytes());
+        Assertions.assertNotNull(page.getContentStream(0).getBytes());
 
         document.close();
     }
@@ -870,9 +871,9 @@ public class PdfReaderTest extends ExtendedITextTest {
         try {
             //NOTE test with abnormal object declaration that iText can't resolve.
             PdfDocument document = new PdfDocument(reader);
-            Assert.fail("Expect exception");
+            Assertions.fail("Expect exception");
         } catch (PdfException e) {
-            Assert.assertEquals(KernelExceptionMessageConstant.INVALID_PAGE_STRUCTURE_PAGES_MUST_BE_PDF_DICTIONARY,
+            Assertions.assertEquals(KernelExceptionMessageConstant.INVALID_PAGE_STRUCTURE_PAGES_MUST_BE_PDF_DICTIONARY,
                     e.getMessage());
         } finally {
             reader.close();
@@ -887,15 +888,15 @@ public class PdfReaderTest extends ExtendedITextTest {
 
         PdfReader reader = new PdfReader(filename);
         PdfDocument document = new PdfDocument(reader);
-        Assert.assertTrue("Need rebuildXref()", reader.hasRebuiltXref());
+        Assertions.assertTrue(reader.hasRebuiltXref(), "Need rebuildXref()");
 
         int pageCount = document.getNumberOfPages();
-        Assert.assertEquals(10, pageCount);
+        Assertions.assertEquals(10, pageCount);
 
         for (int i = 1; i < document.getNumberOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
             String content = new String(page.getContentStream(0).getBytes());
-            Assert.assertTrue(content.contains("(" + i + ")"));
+            Assertions.assertTrue(content.contains("(" + i + ")"));
         }
 
         document.close();
@@ -907,16 +908,16 @@ public class PdfReaderTest extends ExtendedITextTest {
 
         PdfReader reader = new PdfReader(filename);
         PdfDocument document = new PdfDocument(reader);
-        Assert.assertFalse("No need in fixXref()", reader.hasFixedXref());
-        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
+        Assertions.assertFalse(reader.hasFixedXref(), "No need in fixXref()");
+        Assertions.assertFalse(reader.hasRebuiltXref(), "No need in rebuildXref()");
 
         int pageCount = document.getNumberOfPages();
-        Assert.assertEquals(10, pageCount);
+        Assertions.assertEquals(10, pageCount);
 
         for (int i = 1; i < document.getNumberOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
             String content = new String(page.getContentStream(0).getBytes());
-            Assert.assertTrue(content.contains("(" + i + ")"));
+            Assertions.assertTrue(content.contains("(" + i + ")"));
         }
 
         document.close();
@@ -928,16 +929,16 @@ public class PdfReaderTest extends ExtendedITextTest {
 
         PdfReader reader = new PdfReader(filename);
         PdfDocument document = new PdfDocument(reader);
-        Assert.assertFalse("No need in fixXref()", reader.hasFixedXref());
-        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
+        Assertions.assertFalse(reader.hasFixedXref(), "No need in fixXref()");
+        Assertions.assertFalse(reader.hasRebuiltXref(), "No need in rebuildXref()");
 
         int pageCount = document.getNumberOfPages();
-        Assert.assertEquals(10, pageCount);
+        Assertions.assertEquals(10, pageCount);
 
         for (int i = 1; i < document.getNumberOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
             String content = new String(page.getContentStream(0).getBytes());
-            Assert.assertTrue(content.contains("(" + i + ")"));
+            Assertions.assertTrue(content.contains("(" + i + ")"));
         }
 
         document.close();
@@ -955,7 +956,7 @@ public class PdfReaderTest extends ExtendedITextTest {
             exception = true;
         }
 
-        Assert.assertTrue(exception);
+        Assertions.assertTrue(exception);
         reader.close();
     }
 
@@ -973,7 +974,7 @@ public class PdfReaderTest extends ExtendedITextTest {
             exception = true;
         }
 
-        Assert.assertTrue(exception);
+        Assertions.assertTrue(exception);
         reader.close();
     }
 
@@ -983,15 +984,15 @@ public class PdfReaderTest extends ExtendedITextTest {
 
         PdfReader reader = new PdfReader(filename);
         PdfDocument document = new PdfDocument(reader);
-        Assert.assertTrue("Need fixXref()", reader.hasFixedXref());
+        Assertions.assertTrue(reader.hasFixedXref(), "Need fixXref()");
 
         int pageCount = document.getNumberOfPages();
-        Assert.assertEquals(10, pageCount);
+        Assertions.assertEquals(10, pageCount);
 
         for (int i = 1; i < document.getNumberOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
             String content = new String(page.getContentStream(0).getBytes());
-            Assert.assertTrue(content.contains("(" + i + ")"));
+            Assertions.assertTrue(content.contains("(" + i + ")"));
         }
 
         document.close();
@@ -1010,7 +1011,7 @@ public class PdfReaderTest extends ExtendedITextTest {
             exception = true;
         }
 
-        Assert.assertTrue(exception);
+        Assertions.assertTrue(exception);
         reader.close();
     }
 
@@ -1022,19 +1023,19 @@ public class PdfReaderTest extends ExtendedITextTest {
 
         PdfReader reader = new PdfReader(filename);
         PdfDocument document = new PdfDocument(reader);
-        Assert.assertTrue("Need rebuildXref()", reader.hasRebuiltXref());
+        Assertions.assertTrue(reader.hasRebuiltXref(), "Need rebuildXref()");
 
-        Assert.assertEquals(author, document.getDocumentInfo().getAuthor());
-        Assert.assertEquals(creator, document.getDocumentInfo().getCreator());
-        Assert.assertEquals(title, document.getDocumentInfo().getTitle());
+        Assertions.assertEquals(author, document.getDocumentInfo().getAuthor());
+        Assertions.assertEquals(creator, document.getDocumentInfo().getCreator());
+        Assertions.assertEquals(title, document.getDocumentInfo().getTitle());
 
         int pageCount = document.getNumberOfPages();
-        Assert.assertEquals(10, pageCount);
+        Assertions.assertEquals(10, pageCount);
 
         for (int i = 1; i < document.getNumberOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
             String content = new String(page.getContentStream(0).getBytes());
-            Assert.assertTrue(content.contains("(" + i + ")"));
+            Assertions.assertTrue(content.contains("(" + i + ")"));
         }
 
         document.close();
@@ -1048,19 +1049,19 @@ public class PdfReaderTest extends ExtendedITextTest {
 
         PdfReader reader = new PdfReader(filename);
         PdfDocument document = new PdfDocument(reader);
-        Assert.assertTrue("Need rebuildXref()", reader.hasRebuiltXref());
+        Assertions.assertTrue(reader.hasRebuiltXref(), "Need rebuildXref()");
 
-        Assert.assertEquals(author, document.getDocumentInfo().getAuthor());
-        Assert.assertEquals(creator, document.getDocumentInfo().getCreator());
-        Assert.assertEquals(title, document.getDocumentInfo().getTitle());
+        Assertions.assertEquals(author, document.getDocumentInfo().getAuthor());
+        Assertions.assertEquals(creator, document.getDocumentInfo().getCreator());
+        Assertions.assertEquals(title, document.getDocumentInfo().getTitle());
 
         int pageCount = document.getNumberOfPages();
-        Assert.assertEquals(10, pageCount);
+        Assertions.assertEquals(10, pageCount);
 
         for (int i = 1; i < document.getNumberOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
             String content = new String(page.getContentStream(0).getBytes());
-            Assert.assertTrue(content.contains("(" + i + ")"));
+            Assertions.assertTrue(content.contains("(" + i + ")"));
         }
 
         document.close();
@@ -1074,20 +1075,20 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(filename);
         PdfDocument document = new PdfDocument(reader);
 
-        Assert.assertFalse("No need in fixXref()", reader.hasFixedXref());
-        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
+        Assertions.assertFalse(reader.hasFixedXref(), "No need in fixXref()");
+        Assertions.assertFalse(reader.hasRebuiltXref(), "No need in rebuildXref()");
 
-        Assert.assertEquals(null, document.getDocumentInfo().getAuthor());
-        Assert.assertEquals(null, document.getDocumentInfo().getCreator());
-        Assert.assertEquals(null, document.getDocumentInfo().getTitle());
+        Assertions.assertEquals(null, document.getDocumentInfo().getAuthor());
+        Assertions.assertEquals(null, document.getDocumentInfo().getCreator());
+        Assertions.assertEquals(null, document.getDocumentInfo().getTitle());
 
         int pageCount = document.getNumberOfPages();
-        Assert.assertEquals(10, pageCount);
+        Assertions.assertEquals(10, pageCount);
 
         for (int i = 1; i < document.getNumberOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
             String content = new String(page.getContentStream(0).getBytes());
-            Assert.assertTrue(content.contains("(" + i + ")"));
+            Assertions.assertTrue(content.contains("(" + i + ")"));
         }
 
         document.close();
@@ -1101,15 +1102,15 @@ public class PdfReaderTest extends ExtendedITextTest {
 
         PdfReader reader = new PdfReader(filename);
         PdfDocument document = new PdfDocument(reader);
-        Assert.assertTrue("Need rebuildXref()", reader.hasRebuiltXref());
+        Assertions.assertTrue(reader.hasRebuiltXref(), "Need rebuildXref()");
 
         int pageCount = document.getNumberOfPages();
-        Assert.assertEquals(10, pageCount);
+        Assertions.assertEquals(10, pageCount);
 
         for (int i = 1; i < document.getNumberOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
             String content = new String(page.getContentStream(0).getBytes());
-            Assert.assertTrue(content.contains("(" + i + ")"));
+            Assertions.assertTrue(content.contains("(" + i + ")"));
         }
 
         document.close();
@@ -1123,15 +1124,15 @@ public class PdfReaderTest extends ExtendedITextTest {
 
         PdfReader reader = new PdfReader(filename);
         PdfDocument document = new PdfDocument(reader);
-        Assert.assertTrue("Need rebuildXref()", reader.hasRebuiltXref());
+        Assertions.assertTrue(reader.hasRebuiltXref(), "Need rebuildXref()");
 
         int pageCount = document.getNumberOfPages();
-        Assert.assertEquals(10, pageCount);
+        Assertions.assertEquals(10, pageCount);
 
         for (int i = 1; i < document.getNumberOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
             String content = new String(page.getContentStream(0).getBytes());
-            Assert.assertTrue(content.contains("(" + i + ")"));
+            Assertions.assertTrue(content.contains("(" + i + ")"));
         }
 
         document.close();
@@ -1146,16 +1147,16 @@ public class PdfReaderTest extends ExtendedITextTest {
 
         PdfReader reader = new PdfReader(filename);
         PdfDocument document = new PdfDocument(reader);
-        Assert.assertFalse("No need in fixXref()", reader.hasFixedXref());
-        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
+        Assertions.assertFalse(reader.hasFixedXref(), "No need in fixXref()");
+        Assertions.assertFalse(reader.hasRebuiltXref(), "No need in rebuildXref()");
 
         int pageCount = document.getNumberOfPages();
-        Assert.assertEquals(1000, pageCount);
+        Assertions.assertEquals(1000, pageCount);
 
         for (int i = 1; i < 10; i++) {
             PdfPage page = document.getPage(i);
             String content = new String(page.getContentStream(0).getBytes());
-            Assert.assertTrue(content.contains("(" + i + ")"));
+            Assertions.assertTrue(content.contains("(" + i + ")"));
 
         }
 
@@ -1164,7 +1165,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         int i;
         PdfObject fontF1 = document.getPage(997).getPdfObject().getAsDictionary(PdfName.Resources)
                 .getAsDictionary(PdfName.Font).get(new PdfName("F1"));
-        Assert.assertTrue(fontF1 instanceof PdfNull);
+        Assertions.assertTrue(fontF1 instanceof PdfNull);
 
         //There is a generation number mismatch in xref table and object for 3093
         try {
@@ -1172,7 +1173,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         } catch (com.itextpdf.io.exceptions.IOException ex) {
             exception = true;
         }
-        Assert.assertTrue(exception);
+        Assertions.assertTrue(exception);
         exception = false;
 
         try {
@@ -1183,7 +1184,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         } catch (PdfException ex) {
             exception = true;
         }
-        Assert.assertFalse(exception);
+        Assertions.assertFalse(exception);
         document.close();
     }
 
@@ -1202,7 +1203,7 @@ public class PdfReaderTest extends ExtendedITextTest {
             exception = true;
         }
 
-        Assert.assertTrue(exception);
+        Assertions.assertTrue(exception);
         reader.close();
     }
 
@@ -1214,15 +1215,15 @@ public class PdfReaderTest extends ExtendedITextTest {
 
         PdfReader reader = new PdfReader(filename);
         PdfDocument document = new PdfDocument(reader);
-        Assert.assertTrue("Need rebuildXref()", reader.hasRebuiltXref());
+        Assertions.assertTrue(reader.hasRebuiltXref(), "Need rebuildXref()");
 
         int pageCount = document.getNumberOfPages();
-        Assert.assertEquals(10, pageCount);
+        Assertions.assertEquals(10, pageCount);
 
         for (int i = 1; i < document.getNumberOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
             String content = new String(page.getContentStream(0).getBytes());
-            Assert.assertTrue(content.contains("(" + i + ")"));
+            Assertions.assertTrue(content.contains("(" + i + ")"));
         }
 
         document.close();
@@ -1234,18 +1235,18 @@ public class PdfReaderTest extends ExtendedITextTest {
 
         PdfReader reader = new PdfReader(filename);
         PdfDocument document = new PdfDocument(reader);
-        Assert.assertFalse("No need in fixXref()", reader.hasFixedXref());
+        Assertions.assertFalse(reader.hasFixedXref(), "No need in fixXref()");
 
         int pageCount = document.getNumberOfPages();
-        Assert.assertEquals(10, pageCount);
+        Assertions.assertEquals(10, pageCount);
 
         for (int i = 1; i < document.getNumberOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
             String content = new String(page.getContentStream(0).getBytes());
-            Assert.assertTrue(content.contains("(" + i + ")"));
+            Assertions.assertTrue(content.contains("(" + i + ")"));
         }
 
-        Assert.assertTrue("Need live fixXref()", reader.hasFixedXref());
+        Assertions.assertTrue(reader.hasFixedXref(), "Need live fixXref()");
 
         document.close();
     }
@@ -1258,15 +1259,15 @@ public class PdfReaderTest extends ExtendedITextTest {
 
         PdfReader reader = new PdfReader(filename);
         PdfDocument document = new PdfDocument(reader);
-        Assert.assertTrue("Need rebuildXref()", reader.hasRebuiltXref());
+        Assertions.assertTrue(reader.hasRebuiltXref(), "Need rebuildXref()");
 
         int pageCount = document.getNumberOfPages();
-        Assert.assertEquals(10, pageCount);
+        Assertions.assertEquals(10, pageCount);
 
         for (int i = 1; i < document.getNumberOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
             String content = new String(page.getContentStream(0).getBytes());
-            Assert.assertTrue(content.contains("(" + i + ")"));
+            Assertions.assertTrue(content.contains("(" + i + ")"));
         }
 
         document.close();
@@ -1280,12 +1281,12 @@ public class PdfReaderTest extends ExtendedITextTest {
 
         PdfReader reader = new PdfReader(filename);
         PdfDocument document = new PdfDocument(reader);
-        Assert.assertTrue("Need rebuildXref()", reader.hasRebuiltXref());
+        Assertions.assertTrue(reader.hasRebuiltXref(), "Need rebuildXref()");
 
         int pageCount = document.getNumberOfPages();
-        Assert.assertEquals(1, pageCount);
+        Assertions.assertEquals(1, pageCount);
 
-        Assert.assertTrue(document.getDocumentInfo().getProducer().contains("iText Group NV (AGPL-version)"));
+        Assertions.assertTrue(document.getDocumentInfo().getProducer().contains("iText Group NV (AGPL-version)"));
 
         document.close();
     }
@@ -1297,19 +1298,19 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(filename);
         PdfDocument document = new PdfDocument(reader);
         int pageCount = document.getNumberOfPages();
-        Assert.assertEquals(1000, pageCount);
+        Assertions.assertEquals(1000, pageCount);
 
         for (int i = 1; i < document.getNumberOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
             String content = new String(page.getContentStream(0).getBytes());
-            Assert.assertFalse(content.length() == 0);
+            Assertions.assertFalse(content.length() == 0);
             content = new String(page.getContentStream(1).getBytes());
-            Assert.assertTrue(content.contains("(" + i + ")"));
+            Assertions.assertTrue(content.contains("(" + i + ")"));
             content = new String(page.getContentStream(2).getBytes());
-            Assert.assertTrue(content.contains("Append mode"));
+            Assertions.assertTrue(content.contains("Append mode"));
         }
 
-        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
+        Assertions.assertFalse(reader.hasRebuiltXref(), "No need in rebuildXref()");
 
         document.close();
     }
@@ -1321,19 +1322,19 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(filename);
         PdfDocument document = new PdfDocument(reader);
         int pageCount = document.getNumberOfPages();
-        Assert.assertEquals(1000, pageCount);
+        Assertions.assertEquals(1000, pageCount);
 
         for (int i = 1; i < document.getNumberOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
             String content = new String(page.getContentStream(0).getBytes());
-            Assert.assertFalse(content.length() == 0);
+            Assertions.assertFalse(content.length() == 0);
             content = new String(page.getContentStream(1).getBytes());
-            Assert.assertTrue(content.contains("(" + i + ")"));
+            Assertions.assertTrue(content.contains("(" + i + ")"));
             content = new String(page.getContentStream(2).getBytes());
-            Assert.assertTrue(content.contains("Append mode"));
+            Assertions.assertTrue(content.contains("Append mode"));
         }
 
-        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
+        Assertions.assertFalse(reader.hasRebuiltXref(), "No need in rebuildXref()");
 
         document.close();
     }
@@ -1345,19 +1346,19 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(filename);
         PdfDocument document = new PdfDocument(reader);
         int pageCount = document.getNumberOfPages();
-        Assert.assertEquals(10, pageCount);
+        Assertions.assertEquals(10, pageCount);
 
         for (int i = 1; i < document.getNumberOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
             String content = new String(page.getContentStream(0).getBytes());
-            Assert.assertFalse(content.length() == 0);
+            Assertions.assertFalse(content.length() == 0);
             content = new String(page.getContentStream(1).getBytes());
-            Assert.assertTrue(content.contains("(" + i + ")"));
+            Assertions.assertTrue(content.contains("(" + i + ")"));
             content = new String(page.getContentStream(2).getBytes());
-            Assert.assertTrue(content.contains("Append mode"));
+            Assertions.assertTrue(content.contains("Append mode"));
         }
 
-        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
+        Assertions.assertFalse(reader.hasRebuiltXref(), "No need in rebuildXref()");
 
         document.close();
     }
@@ -1369,19 +1370,19 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(filename);
         PdfDocument document = new PdfDocument(reader);
         int pageCount = document.getNumberOfPages();
-        Assert.assertEquals(10, pageCount);
+        Assertions.assertEquals(10, pageCount);
 
         for (int i = 1; i < document.getNumberOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
             String content = new String(page.getContentStream(0).getBytes());
-            Assert.assertFalse(content.length() == 0);
+            Assertions.assertFalse(content.length() == 0);
             content = new String(page.getContentStream(1).getBytes());
-            Assert.assertTrue(content.contains("(" + i + ")"));
+            Assertions.assertTrue(content.contains("(" + i + ")"));
             content = new String(page.getContentStream(2).getBytes());
-            Assert.assertTrue(content.contains("Append mode"));
+            Assertions.assertTrue(content.contains("Append mode"));
         }
 
-        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
+        Assertions.assertFalse(reader.hasRebuiltXref(), "No need in rebuildXref()");
 
         document.close();
     }
@@ -1395,20 +1396,20 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(filename);
         PdfDocument document = new PdfDocument(reader);
         int pageCount = document.getNumberOfPages();
-        Assert.assertEquals(10, pageCount);
+        Assertions.assertEquals(10, pageCount);
 
         for (int i = 1; i < document.getNumberOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
             String content = new String(page.getContentStream(0).getBytes());
-            Assert.assertFalse(content.length() == 0);
+            Assertions.assertFalse(content.length() == 0);
             content = new String(page.getContentStream(1).getBytes());
-            Assert.assertTrue(content.contains("(" + i + ")"));
+            Assertions.assertTrue(content.contains("(" + i + ")"));
             content = new String(page.getContentStream(2).getBytes());
-            Assert.assertTrue(content.contains("Append mode"));
+            Assertions.assertTrue(content.contains("Append mode"));
         }
 
-        Assert.assertTrue("Need rebuildXref()", reader.hasRebuiltXref());
-        Assert.assertNotNull("Invalid trailer", document.getTrailer().get(PdfName.ID));
+        Assertions.assertTrue(reader.hasRebuiltXref(), "Need rebuildXref()");
+        Assertions.assertNotNull(document.getTrailer().get(PdfName.ID), "Invalid trailer");
 
         document.close();
     }
@@ -1423,20 +1424,20 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfDocument document = new PdfDocument(reader);
 
         int pageCount = document.getNumberOfPages();
-        Assert.assertEquals(10, pageCount);
+        Assertions.assertEquals(10, pageCount);
 
         for (int i = 1; i < document.getNumberOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
             String content = new String(page.getContentStream(0).getBytes());
-            Assert.assertFalse(content.length() == 0);
+            Assertions.assertFalse(content.length() == 0);
             content = new String(page.getContentStream(1).getBytes());
-            Assert.assertTrue(content.contains("(" + i + ")"));
+            Assertions.assertTrue(content.contains("(" + i + ")"));
             content = new String(page.getContentStream(2).getBytes());
-            Assert.assertTrue(content.contains("Append mode"));
+            Assertions.assertTrue(content.contains("Append mode"));
         }
 
-        Assert.assertTrue("Need rebuildXref()", reader.hasRebuiltXref());
-        Assert.assertNotNull("Invalid trailer", document.getTrailer().get(PdfName.ID));
+        Assertions.assertTrue(reader.hasRebuiltXref(), "Need rebuildXref()");
+        Assertions.assertNotNull(document.getTrailer().get(PdfName.ID), "Invalid trailer");
 
         document.close();
     }
@@ -1448,8 +1449,8 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(filename);
         PdfDocument document = new PdfDocument(reader);
 
-        Assert.assertFalse("Need rebuildXref()", reader.hasRebuiltXref());
-        Assert.assertNotNull("Invalid trailer", document.getTrailer().get(PdfName.ID));
+        Assertions.assertFalse(reader.hasRebuiltXref(), "Need rebuildXref()");
+        Assertions.assertNotNull(document.getTrailer().get(PdfName.ID), "Invalid trailer");
 
         document.close();
     }
@@ -1461,14 +1462,15 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(filename);
         PdfDocument document = new PdfDocument(reader);
 
-        Assert.assertFalse("Need rebuildXref()", reader.hasRebuiltXref());
-        Assert.assertNotNull("Invalid trailer", document.getTrailer().get(PdfName.ID));
+        Assertions.assertFalse(reader.hasRebuiltXref(), "Need rebuildXref()");
+        Assertions.assertNotNull(document.getTrailer().get(PdfName.ID), "Invalid trailer");
 
         document.close();
     }
 
 
-    @Test(timeout = 1000)
+    @Test
+    @Timeout(unit = TimeUnit.MILLISECONDS, value = 1000)
     public void streamLengthCorrection1() throws IOException {
         synchronized (this) {
             String filename = SOURCE_FOLDER + "10PagesDocumentWithInvalidStreamLength.pdf";
@@ -1480,13 +1482,14 @@ public class PdfReaderTest extends ExtendedITextTest {
                 PdfPage page = pdfDoc.getPage(k);
                 page.getPdfObject().get(PdfName.MediaBox);
                 byte[] content = page.getFirstContentStream().getBytes();
-                Assert.assertEquals(57, content.length);
+                Assertions.assertEquals(57, content.length);
             }
             pdfDoc.close();
         }
     }
 
-    @Test(timeout = 1000)
+    @Test
+    @Timeout(unit = TimeUnit.MILLISECONDS, value = 1000)
     public void streamLengthCorrection2() throws IOException {
         synchronized (this) {
             String filename = SOURCE_FOLDER + "simpleCanvasWithDrawingLength1.pdf";
@@ -1496,12 +1499,13 @@ public class PdfReaderTest extends ExtendedITextTest {
             PdfPage page = pdfDoc.getPage(1);
             page.getPdfObject().get(PdfName.MediaBox);
             byte[] content = page.getFirstContentStream().getBytes();
-            Assert.assertEquals(696, content.length);
+            Assertions.assertEquals(696, content.length);
             pdfDoc.close();
         }
     }
 
-    @Test(timeout = 1000)
+    @Test
+    @Timeout(unit = TimeUnit.MILLISECONDS, value = 1000)
     public void streamLengthCorrection3() throws IOException {
         synchronized (this) {
             String filename = SOURCE_FOLDER + "simpleCanvasWithDrawingLength2.pdf";
@@ -1511,12 +1515,13 @@ public class PdfReaderTest extends ExtendedITextTest {
             PdfPage page = pdfDoc.getPage(1);
             page.getPdfObject().get(PdfName.MediaBox);
             byte[] content = page.getFirstContentStream().getBytes();
-            Assert.assertEquals(697, content.length);
+            Assertions.assertEquals(697, content.length);
             pdfDoc.close();
         }
     }
 
-    @Test(timeout = 1000)
+    @Test
+    @Timeout(unit = TimeUnit.MILLISECONDS, value = 1000)
     public void streamLengthCorrection4() throws IOException {
         synchronized (this) {
             String filename = SOURCE_FOLDER + "simpleCanvasWithDrawingLength3.pdf";
@@ -1526,12 +1531,13 @@ public class PdfReaderTest extends ExtendedITextTest {
             PdfPage page = pdfDoc.getPage(1);
             page.getPdfObject().get(PdfName.MediaBox);
             byte[] content = page.getFirstContentStream().getBytes();
-            Assert.assertEquals(696, content.length);
+            Assertions.assertEquals(696, content.length);
             pdfDoc.close();
         }
     }
 
-    @Test(timeout = 1000)
+    @Test
+    @Timeout(unit = TimeUnit.MILLISECONDS, value = 1000)
     public void streamLengthCorrection5() throws IOException {
         synchronized (this) {
             String filename = SOURCE_FOLDER + "simpleCanvasWithDrawingLength4.pdf";
@@ -1541,12 +1547,13 @@ public class PdfReaderTest extends ExtendedITextTest {
             PdfPage page = pdfDoc.getPage(1);
             page.getPdfObject().get(PdfName.MediaBox);
             byte[] content = page.getFirstContentStream().getBytes();
-            Assert.assertEquals(696, content.length);
+            Assertions.assertEquals(696, content.length);
             pdfDoc.close();
         }
     }
 
-    @Test(timeout = 1000)
+    @Test
+    @Timeout(unit = TimeUnit.MILLISECONDS, value = 1000)
     public void streamLengthCorrection6() throws IOException {
         synchronized (this) {
             String filename = SOURCE_FOLDER + "simpleCanvasWithDrawingWithInvalidStreamLength1.pdf";
@@ -1556,12 +1563,13 @@ public class PdfReaderTest extends ExtendedITextTest {
             PdfPage page = pdfDoc.getPage(1);
             page.getPdfObject().get(PdfName.MediaBox);
             byte[] content = page.getFirstContentStream().getBytes();
-            Assert.assertEquals(696, content.length);
+            Assertions.assertEquals(696, content.length);
             pdfDoc.close();
         }
     }
 
-    @Test(timeout = 1000)
+    @Test
+    @Timeout(unit = TimeUnit.MILLISECONDS, value = 1000)
     public void streamLengthCorrection7() throws IOException {
         synchronized (this) {
             String filename = SOURCE_FOLDER + "simpleCanvasWithDrawingWithInvalidStreamLength2.pdf";
@@ -1571,12 +1579,13 @@ public class PdfReaderTest extends ExtendedITextTest {
             PdfPage page = pdfDoc.getPage(1);
             page.getPdfObject().get(PdfName.MediaBox);
             byte[] content = page.getFirstContentStream().getBytes();
-            Assert.assertEquals(696, content.length);
+            Assertions.assertEquals(696, content.length);
             pdfDoc.close();
         }
     }
 
-    @Test(timeout = 1000)
+    @Test
+    @Timeout(unit = TimeUnit.MILLISECONDS, value = 1000)
     public void streamLengthCorrection8() throws IOException {
         synchronized (this) {
             String filename = SOURCE_FOLDER + "simpleCanvasWithDrawingWithInvalidStreamLength3.pdf";
@@ -1586,12 +1595,13 @@ public class PdfReaderTest extends ExtendedITextTest {
             PdfPage page = pdfDoc.getPage(1);
             page.getPdfObject().get(PdfName.MediaBox);
             byte[] content = page.getFirstContentStream().getBytes();
-            Assert.assertEquals(697, content.length);
+            Assertions.assertEquals(697, content.length);
             pdfDoc.close();
         }
     }
 
-    @Test(timeout = 1000)
+    @Test
+    @Timeout(unit = TimeUnit.MILLISECONDS, value = 1000)
     public void streamLengthCorrection9() throws IOException {
         synchronized (this) {
             String filename = SOURCE_FOLDER + "10PagesDocumentWithInvalidStreamLength2.pdf";
@@ -1603,7 +1613,7 @@ public class PdfReaderTest extends ExtendedITextTest {
                 PdfPage page = pdfDoc.getPage(k);
                 page.getPdfObject().get(PdfName.MediaBox);
                 byte[] content = page.getFirstContentStream().getBytes();
-                Assert.assertEquals(20, content.length);
+                Assertions.assertEquals(20, content.length);
             }
             pdfDoc.close();
             PdfReader.correctStreamLength = true;
@@ -1617,9 +1627,9 @@ public class PdfReaderTest extends ExtendedITextTest {
 
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(filename));
 
-        Assert.assertNull(pdfDoc.getPdfObject(8));
-        //Assert.assertFalse(pdfDoc.getReader().fixedXref);
-        Assert.assertFalse(pdfDoc.getReader().rebuiltXref);
+        Assertions.assertNull(pdfDoc.getPdfObject(8));
+        //Assertions.assertFalse(pdfDoc.getReader().fixedXref);
+        Assertions.assertFalse(pdfDoc.getReader().rebuiltXref);
 
         pdfDoc.close();
     }
@@ -1643,7 +1653,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         inputPdfDocument.close();
         outputPdfDocument.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outputFile, cmpFile, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outputFile, cmpFile, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -1652,7 +1662,7 @@ public class PdfReaderTest extends ExtendedITextTest {
 
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(filename));
 
-        Assert.assertEquals(PdfVersion.PDF_1_4, pdfDoc.getPdfVersion());
+        Assertions.assertEquals(PdfVersion.PDF_1_4, pdfDoc.getPdfVersion());
 
         pdfDoc.close();
     }
@@ -1670,9 +1680,9 @@ public class PdfReaderTest extends ExtendedITextTest {
 //      trailer
 //      <</Size 27/Root 1 0 R/Info 12 0 R//Prev 245232/XRefStm 244927>>
 //      startxref
-        Assert.assertFalse(reader.hasFixedXref());
-        Assert.assertFalse(reader.hasRebuiltXref());
-        Assert.assertTrue(((PdfDictionary) pdfDoc.getPdfObject(1)).containsKey(PdfName.AcroForm));
+        Assertions.assertFalse(reader.hasFixedXref());
+        Assertions.assertFalse(reader.hasRebuiltXref());
+        Assertions.assertTrue(((PdfDictionary) pdfDoc.getPdfObject(1)).containsKey(PdfName.AcroForm));
         pdfDoc.close();
     }
 
@@ -1683,11 +1693,11 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(filename);
         PdfDocument pdfDoc = new PdfDocument(reader);
 
-        Assert.assertFalse(reader.hasFixedXref());
-        Assert.assertFalse(reader.hasRebuiltXref());
+        Assertions.assertFalse(reader.hasFixedXref());
+        Assertions.assertFalse(reader.hasRebuiltXref());
 
         // problem that is tested here originally was found because the StructTreeRoot dictionary wasn't read
-        Assert.assertTrue(pdfDoc.isTagged());
+        Assertions.assertTrue(pdfDoc.isTagged());
         pdfDoc.close();
     }
 
@@ -1701,7 +1711,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         String dest = DESTINATION_FOLDER + "wrongTagStructureFlushingTest.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(source), CompareTool.createTestPdfWriter(dest));
         pdfDoc.setTagged();
-        Assert.assertEquals(PdfNull.PDF_NULL, ((PdfDictionary) pdfDoc.getPdfObject(12)).get(PdfName.Pg));
+        Assertions.assertEquals(PdfNull.PDF_NULL, ((PdfDictionary) pdfDoc.getPdfObject(12)).get(PdfName.Pg));
         pdfDoc.close();
     }
 
@@ -1712,10 +1722,10 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(filename);
         PdfDocument pdfDoc1 = new PdfDocument(reader);
 
-        Exception e = Assert.assertThrows(PdfException.class,
+        Exception e = Assertions.assertThrows(PdfException.class,
                 () -> new PdfDocument(reader)
         );
-        Assert.assertEquals(KernelExceptionMessageConstant.PDF_READER_HAS_BEEN_ALREADY_UTILIZED, e.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.PDF_READER_HAS_BEEN_ALREADY_UTILIZED, e.getMessage());
     }
 
     @Test
@@ -1726,17 +1736,17 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(filename);
         PdfDocument pdfDoc = new PdfDocument(reader);
         PdfObject pdfObject = pdfDoc.getPdfObject(4);
-        Assert.assertTrue(pdfObject.isDictionary());
-        Assert.assertEquals(PdfNull.PDF_NULL, ((PdfDictionary) pdfObject).get(PdfName.Pg));
+        Assertions.assertTrue(pdfObject.isDictionary());
+        Assertions.assertEquals(PdfNull.PDF_NULL, ((PdfDictionary) pdfObject).get(PdfName.Pg));
 
         pdfDoc.close();
     }
 
     @Test
-    @Ignore("DEVSIX-2133")
+    @Disabled("DEVSIX-2133")
     public void testFileIsNotLockedOnException() throws IOException {
         File nonPdfFileName = new File(SOURCE_FOLDER + "text_file.txt");
-        Assert.assertTrue(nonPdfFileName.exists());
+        Assertions.assertTrue(nonPdfFileName.exists());
         boolean exceptionThrown = false;
         try {
             PdfReader reader = new PdfReader(nonPdfFileName);
@@ -1747,7 +1757,7 @@ public class PdfReaderTest extends ExtendedITextTest {
             OutputStream stream = FileUtil.getFileOutputStream(nonPdfFileName);
             stream.write(new byte[] {0});
         }
-        Assert.assertTrue(exceptionThrown);
+        Assertions.assertTrue(exceptionThrown);
     }
 
 
@@ -1768,8 +1778,8 @@ public class PdfReaderTest extends ExtendedITextTest {
     public void hasRebuiltXrefPdfDocumentNotReadTest() throws IOException {
         PdfReader hasRebuiltXrefReader = pdfDocumentNotReadTestInit();
 
-        Exception e = Assert.assertThrows(PdfException.class, () -> hasRebuiltXrefReader.hasRebuiltXref());
-        Assert.assertEquals(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
+        Exception e = Assertions.assertThrows(PdfException.class, () -> hasRebuiltXrefReader.hasRebuiltXref());
+        Assertions.assertEquals(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
     }
 
     @Test
@@ -1791,8 +1801,8 @@ public class PdfReaderTest extends ExtendedITextTest {
     public void hasHybridXrefPdfDocumentNotReadTest() throws IOException {
         PdfReader hasHybridXrefPdfReader = pdfDocumentNotReadTestInit();
 
-        Exception e = Assert.assertThrows(PdfException.class, () -> hasHybridXrefPdfReader.hasHybridXref());
-        Assert.assertEquals(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
+        Exception e = Assertions.assertThrows(PdfException.class, () -> hasHybridXrefPdfReader.hasHybridXref());
+        Assertions.assertEquals(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
     }
 
     @Test
@@ -1814,8 +1824,8 @@ public class PdfReaderTest extends ExtendedITextTest {
     public void hasXrefStmPdfDocumentNotReadTest() throws IOException {
         PdfReader hasXrefStmReader = pdfDocumentNotReadTestInit();
 
-        Exception e = Assert.assertThrows(PdfException.class, () -> hasXrefStmReader.hasXrefStm());
-        Assert.assertEquals(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
+        Exception e = Assertions.assertThrows(PdfException.class, () -> hasXrefStmReader.hasXrefStm());
+        Assertions.assertEquals(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
     }
 
     @Test
@@ -1837,8 +1847,8 @@ public class PdfReaderTest extends ExtendedITextTest {
     public void hasFixedXrefPdfDocumentNotReadTest() throws IOException {
         PdfReader hasFixedXrefReader = pdfDocumentNotReadTestInit();
 
-        Exception e = Assert.assertThrows(PdfException.class, () -> hasFixedXrefReader.hasFixedXref());
-        Assert.assertEquals(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
+        Exception e = Assertions.assertThrows(PdfException.class, () -> hasFixedXrefReader.hasFixedXref());
+        Assertions.assertEquals(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
     }
 
     @Test
@@ -1860,8 +1870,8 @@ public class PdfReaderTest extends ExtendedITextTest {
     public void getLastXrefPdfDocumentNotReadTest() throws IOException {
         PdfReader getLastXrefReader = pdfDocumentNotReadTestInit();
 
-        Exception e = Assert.assertThrows(PdfException.class, () -> getLastXrefReader.getLastXref());
-        Assert.assertEquals(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
+        Exception e = Assertions.assertThrows(PdfException.class, () -> getLastXrefReader.getLastXref());
+        Assertions.assertEquals(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
     }
 
     @Test
@@ -1883,8 +1893,8 @@ public class PdfReaderTest extends ExtendedITextTest {
     public void getPermissionsPdfDocumentNotReadTest() throws IOException {
         PdfReader getPermissionsReader = pdfDocumentNotReadTestInit();
 
-        Exception e = Assert.assertThrows(PdfException.class, () -> getPermissionsReader.getPermissions());
-        Assert.assertEquals(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
+        Exception e = Assertions.assertThrows(PdfException.class, () -> getPermissionsReader.getPermissions());
+        Assertions.assertEquals(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
     }
 
     @Test
@@ -1906,10 +1916,10 @@ public class PdfReaderTest extends ExtendedITextTest {
     public void isOpenedWithFullPPdfDocumentNotReadTest() throws IOException {
         PdfReader isOpenedWithFullPReader = pdfDocumentNotReadTestInit();
 
-        Exception e = Assert.assertThrows(PdfException.class,
+        Exception e = Assertions.assertThrows(PdfException.class,
                 () -> isOpenedWithFullPReader.isOpenedWithFullPermission()
         );
-        Assert.assertEquals(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
     }
 
     @Test
@@ -1931,8 +1941,8 @@ public class PdfReaderTest extends ExtendedITextTest {
     public void getCryptoModePdfDocumentNotReadTest() throws IOException {
         PdfReader getCryptoModeReader = pdfDocumentNotReadTestInit();
 
-        Exception e = Assert.assertThrows(PdfException.class, () -> getCryptoModeReader.getCryptoMode());
-        Assert.assertEquals(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
+        Exception e = Assertions.assertThrows(PdfException.class, () -> getCryptoModeReader.getCryptoMode());
+        Assertions.assertEquals(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
     }
 
     @Test
@@ -1954,10 +1964,10 @@ public class PdfReaderTest extends ExtendedITextTest {
     public void computeUserPasswordPdfDocumentNotReadTest() throws IOException {
         PdfReader computeUserPasswordReader = pdfDocumentNotReadTestInit();
 
-        Exception e = Assert.assertThrows(PdfException.class,
+        Exception e = Assertions.assertThrows(PdfException.class,
                 () -> computeUserPasswordReader.computeUserPassword()
         );
-        Assert.assertEquals(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
     }
 
     @Test
@@ -1979,8 +1989,8 @@ public class PdfReaderTest extends ExtendedITextTest {
     public void getOriginalFileIdPdfDocumentNotReadTest() throws IOException {
         PdfReader getOriginalFileIdReader = pdfDocumentNotReadTestInit();
 
-        Exception e = Assert.assertThrows(PdfException.class, () -> getOriginalFileIdReader.getOriginalFileId());
-        Assert.assertEquals(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
+        Exception e = Assertions.assertThrows(PdfException.class, () -> getOriginalFileIdReader.getOriginalFileId());
+        Assertions.assertEquals(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
     }
 
     @Test
@@ -2002,8 +2012,8 @@ public class PdfReaderTest extends ExtendedITextTest {
     public void getModifiedFileIdPdfDocumentNotReadTest() throws IOException {
         PdfReader getModifiedFileIdReader = pdfDocumentNotReadTestInit();
 
-        Exception e = Assert.assertThrows(PdfException.class, () -> getModifiedFileIdReader.getModifiedFileId());
-        Assert.assertEquals(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
+        Exception e = Assertions.assertThrows(PdfException.class, () -> getModifiedFileIdReader.getModifiedFileId());
+        Assertions.assertEquals(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
     }
 
     @Test
@@ -2025,8 +2035,8 @@ public class PdfReaderTest extends ExtendedITextTest {
     public void isEncryptedPdfDocumentNotReadTest() throws IOException {
         PdfReader isEncryptedReader = pdfDocumentNotReadTestInit();
 
-        Exception e = Assert.assertThrows(PdfException.class, () -> isEncryptedReader.isEncrypted());
-        Assert.assertEquals(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
+        Exception e = Assertions.assertThrows(PdfException.class, () -> isEncryptedReader.isEncrypted());
+        Assertions.assertEquals(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
     }
 
     @Test
@@ -2053,26 +2063,26 @@ public class PdfReaderTest extends ExtendedITextTest {
     @Test
     public void noPdfVersionTest() throws IOException {
         PdfReader pdfReader = new PdfReader(SOURCE_FOLDER + "noPdfVersion.pdf");
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> pdfReader.readPdf());
-        Assert.assertEquals(KernelExceptionMessageConstant.PDF_VERSION_IS_NOT_VALID, exception.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.PDF_VERSION_IS_NOT_VALID, exception.getMessage());
     }
 
     @Test
     public void startxrefIsNotFollowedByANumberTest() throws IOException {
         PdfReader pdfReader = new PdfReader(SOURCE_FOLDER + "startxrefIsNotFollowedByANumber.pdf");
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> pdfReader.readXref());
-        Assert.assertEquals(KernelExceptionMessageConstant.PDF_STARTXREF_IS_NOT_FOLLOWED_BY_A_NUMBER,
+        Assertions.assertEquals(KernelExceptionMessageConstant.PDF_STARTXREF_IS_NOT_FOLLOWED_BY_A_NUMBER,
                 exception.getMessage());
     }
 
     @Test
     public void startxrefNotFoundTest() throws IOException {
         PdfReader pdfReader = new PdfReader(SOURCE_FOLDER + "startxrefNotFound.pdf");
-        Exception exception = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class,
+        Exception exception = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
                 () -> pdfReader.readXref());
-        Assert.assertEquals(KernelExceptionMessageConstant.PDF_STARTXREF_NOT_FOUND, exception.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.PDF_STARTXREF_NOT_FOUND, exception.getMessage());
     }
 
     @Test
@@ -2082,11 +2092,11 @@ public class PdfReaderTest extends ExtendedITextTest {
         //Later in the test we will need to delete a file. Since we do not want to delete it from sources, we will
         // copy it to destination folder.
         File copiedFile = copyFileForTest(fileName, copiedFileName);
-        Exception e = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class, () -> new PdfReader(fileName));
-        Assert.assertEquals(IoExceptionMessageConstant.PDF_HEADER_NOT_FOUND, e.getMessage());
+        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class, () -> new PdfReader(fileName));
+        Assertions.assertEquals(IoExceptionMessageConstant.PDF_HEADER_NOT_FOUND, e.getMessage());
         //This check is meaningfull only on Windows, since on other OS the fact of a stream being open doesn't
         // prevent the stream from being deleted.
-        Assert.assertTrue(FileUtil.deleteFile(copiedFile));
+        Assertions.assertTrue(FileUtil.deleteFile(copiedFile));
     }
 
     @Test
@@ -2095,10 +2105,10 @@ public class PdfReaderTest extends ExtendedITextTest {
         try (InputStream pdfStream = FileUtil.getInputStreamForFile(fileName)) {
             IRandomAccessSource randomAccessSource = new RandomAccessSourceFactory()
                     .createSource(pdfStream);
-            Exception e = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class,
+            Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
                     () -> new PdfReader(randomAccessSource, new ReaderProperties()));
             //An exception would be thrown, if stream is closed.
-            Assert.assertEquals(-1, pdfStream.read());
+            Assertions.assertEquals(-1, pdfStream.read());
         }
     }
 
@@ -2112,25 +2122,25 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfArray actual = (PdfArray) document.getPdfObject(4);
         PdfArray expected = new PdfArray(new float[] {5, 10, 15, 20});
         for (int i = 0; i < expected.size(); i++) {
-            Assert.assertEquals(expected.get(i), actual.get(i));
+            Assertions.assertEquals(expected.get(i), actual.get(i));
         }
     }
 
     @Test
     public void endArrayClosingBracketInsteadOfEndDicTest() {
         String fileName = SOURCE_FOLDER + "endArrayClosingBracketInsteadOfEndDic.pdf";
-        Exception exception = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class,
+        Exception exception = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
                 () -> new PdfDocument(new PdfReader(fileName)));
-        Assert.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.UNEXPECTED_TOKEN, "]"),
+        Assertions.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.UNEXPECTED_TOKEN, "]"),
                 exception.getCause().getMessage());
     }
 
     @Test
     public void endDicClosingBracketInsideTheDicTest() {
         String fileName = SOURCE_FOLDER + "endDicClosingBracketInsideTheDic.pdf";
-        Exception exception = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class,
+        Exception exception = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
                 () -> new PdfDocument(new PdfReader(fileName)));
-        Assert.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.UNEXPECTED_TOKEN, ">>"),
+        Assertions.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.UNEXPECTED_TOKEN, ">>"),
                 exception.getCause().getMessage());
     }
 
@@ -2144,7 +2154,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfArray actual = (PdfArray) document.getPdfObject(4);
         PdfArray expected = new PdfArray(new float[] {5, 10, 15, 20});
         for (int i = 0; i < expected.size(); i++) {
-            Assert.assertEquals(expected.get(i), actual.get(i));
+            Assertions.assertEquals(expected.get(i), actual.get(i));
         }
     }
 
@@ -2158,7 +2168,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfArray actual = (PdfArray) document.getPdfObject(4);
         PdfArray expected = new PdfArray(new float[] {5, 10, 15, 20});
         for (int i = 0; i < expected.size(); i++) {
-            Assert.assertEquals(expected.get(i), actual.get(i));
+            Assertions.assertEquals(expected.get(i), actual.get(i));
         }
     }
 
@@ -2173,7 +2183,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfArray actual = (PdfArray) document.getPdfObject(4);
         PdfArray expected = new PdfArray(new float[] {5, 10, 15, 20});
         for (int i = 0; i < expected.size(); i++) {
-            Assert.assertEquals(expected.get(i), actual.get(i));
+            Assertions.assertEquals(expected.get(i), actual.get(i));
         }
     }
 
@@ -2187,7 +2197,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfArray actual = (PdfArray) document.getPdfObject(4);
         PdfArray expected = new PdfArray(new float[] {5, 10, 15, 20});
         for (int i = 0; i < expected.size(); i++) {
-            Assert.assertEquals(expected.get(i), actual.get(i));
+            Assertions.assertEquals(expected.get(i), actual.get(i));
         }
     }
 
@@ -2201,7 +2211,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfArray actual = (PdfArray) document.getPdfObject(4);
         PdfArray expected = new PdfArray(new float[] {5, 10, 15, 20});
         for (int i = 0; i < expected.size(); i++) {
-            Assert.assertEquals(expected.get(i), actual.get(i));
+            Assertions.assertEquals(expected.get(i), actual.get(i));
         }
     }
 
@@ -2215,7 +2225,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfArray actual = (PdfArray) document.getPdfObject(4);
         PdfArray expected = new PdfArray(new float[] {5, 10, 15, 20});
         for (int i = 0; i < expected.size(); i++) {
-            Assert.assertEquals(expected.get(i), actual.get(i));
+            Assertions.assertEquals(expected.get(i), actual.get(i));
         }
     }
 
@@ -2230,7 +2240,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfArray actual = (PdfArray) document.getPdfObject(4);
         PdfArray expected = new PdfArray(new float[] {5, 10, 15, 20});
         for (int i = 0; i < expected.size(); i++) {
-            Assert.assertEquals(expected.get(i), actual.get(i));
+            Assertions.assertEquals(expected.get(i), actual.get(i));
         }
     }
 
@@ -2240,9 +2250,9 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(fileName);
         reader.setStrictnessLevel(StrictnessLevel.CONSERVATIVE);
         PdfDocument document = new PdfDocument(reader);
-        Exception exception = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class,
+        Exception exception = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
                 () -> document.getPdfObject(4));
-        Assert.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.UNEXPECTED_TOKEN, "obj"),
+        Assertions.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.UNEXPECTED_TOKEN, "obj"),
                 exception.getCause().getMessage());
     }
 
@@ -2257,9 +2267,9 @@ public class PdfReaderTest extends ExtendedITextTest {
 
             randomAccessSource.close();
 
-            Exception e = Assert.assertThrows(IllegalStateException.class,
+            Exception e = Assertions.assertThrows(IllegalStateException.class,
                     () -> new PdfReader(rasInputStream));
-            Assert.assertEquals(IoExceptionMessageConstant.ALREADY_CLOSED, e.getMessage());
+            Assertions.assertEquals(IoExceptionMessageConstant.ALREADY_CLOSED, e.getMessage());
         }
     }
 
@@ -2273,8 +2283,8 @@ public class PdfReaderTest extends ExtendedITextTest {
 
             try (PdfReader reader = new PdfReader(rasInputStream)) {
                 randomAccessSource.close();
-                Exception e = Assert.assertThrows(IllegalStateException.class, () -> new PdfDocument(reader));
-                Assert.assertEquals(IoExceptionMessageConstant.ALREADY_CLOSED, e.getMessage());
+                Exception e = Assertions.assertThrows(IllegalStateException.class, () -> new PdfDocument(reader));
+                Assertions.assertEquals(IoExceptionMessageConstant.ALREADY_CLOSED, e.getMessage());
             }
         }
     }
@@ -2306,22 +2316,22 @@ public class PdfReaderTest extends ExtendedITextTest {
     }
 
     private void readingNotCompletedTest(PdfReader reader) {
-        Exception e = Assert.assertThrows(PdfException.class, () -> new PdfDocument(reader));
-        Assert.assertEquals(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
+        Exception e = Assertions.assertThrows(PdfException.class, () -> new PdfDocument(reader));
+        Assertions.assertEquals(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
     }
 
     @Test
     public void getPdfAConformanceLevelPdfDocumentNotReadTest() throws IOException {
         PdfReader getModifiedFileIdReader = pdfDocumentNotReadTestInit();
 
-        Exception e = Assert.assertThrows(PdfException.class, () -> getModifiedFileIdReader.getPdfAConformanceLevel());
-        Assert.assertEquals(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
+        Exception e = Assertions.assertThrows(PdfException.class, () -> getModifiedFileIdReader.getPdfAConformanceLevel());
+        Assertions.assertEquals(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
     }
 
     @Test
     public void getPdfAConformanceLevelNoMetadataTest() throws IOException {
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(new ByteArrayInputStream(createPdfDocumentForTest())));
-        Assert.assertNull(pdfDoc.getReader().getPdfAConformanceLevel());
+        Assertions.assertNull(pdfDoc.getReader().getPdfAConformanceLevel());
     }
 
     @Test
@@ -2329,11 +2339,11 @@ public class PdfReaderTest extends ExtendedITextTest {
         String fileName = SOURCE_FOLDER + "xrefStreamPointsItself.pdf";
 
         try (PdfReader pdfReader = new PdfReader(fileName)) {
-            Exception exception = Assert.assertThrows(XrefCycledReferencesException.class,
+            Exception exception = Assertions.assertThrows(XrefCycledReferencesException.class,
                     () -> new PdfDocument(pdfReader));
 
-            Assert.assertEquals(StrictnessLevel.LENIENT, pdfReader.getStrictnessLevel());
-            Assert.assertEquals(KernelExceptionMessageConstant.XREF_STREAM_HAS_CYCLED_REFERENCES,
+            Assertions.assertEquals(StrictnessLevel.LENIENT, pdfReader.getStrictnessLevel());
+            Assertions.assertEquals(KernelExceptionMessageConstant.XREF_STREAM_HAS_CYCLED_REFERENCES,
                     exception.getMessage());
         }
     }
@@ -2344,11 +2354,11 @@ public class PdfReaderTest extends ExtendedITextTest {
 
         try (PdfReader pdfReader = new PdfReader(fileName)) {
             pdfReader.setStrictnessLevel(StrictnessLevel.CONSERVATIVE);
-            Exception exception = Assert.assertThrows(XrefCycledReferencesException.class,
+            Exception exception = Assertions.assertThrows(XrefCycledReferencesException.class,
                     () -> new PdfDocument(pdfReader));
 
-            Assert.assertEquals(StrictnessLevel.CONSERVATIVE, pdfReader.getStrictnessLevel());
-            Assert.assertEquals(KernelExceptionMessageConstant.XREF_STREAM_HAS_CYCLED_REFERENCES,
+            Assertions.assertEquals(StrictnessLevel.CONSERVATIVE, pdfReader.getStrictnessLevel());
+            Assertions.assertEquals(KernelExceptionMessageConstant.XREF_STREAM_HAS_CYCLED_REFERENCES,
                     exception.getMessage());
         }
     }
@@ -2360,10 +2370,10 @@ public class PdfReaderTest extends ExtendedITextTest {
         String fileName = SOURCE_FOLDER + "exactLimitOfObjectNr.pdf";
 
         try (PdfReader pdfReader = new PdfReader(fileName)) {
-            Exception exception = Assert.assertThrows(MemoryLimitsAwareException.class,
+            Exception exception = Assertions.assertThrows(MemoryLimitsAwareException.class,
                     () -> new PdfDocument(pdfReader));
 
-            Assert.assertEquals(KernelExceptionMessageConstant.XREF_STRUCTURE_SIZE_EXCEEDED_THE_LIMIT,
+            Assertions.assertEquals(KernelExceptionMessageConstant.XREF_STRUCTURE_SIZE_EXCEEDED_THE_LIMIT,
                     exception.getMessage());
         }
     }
@@ -2377,7 +2387,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         //trying to open the document to see that no error is thrown
         PdfReader pdfReader = new PdfReader(inputFile);
         PdfDocument document = new PdfDocument(pdfReader);
-        Assert.assertEquals(500000, document.getXref().getCapacity());
+        Assertions.assertEquals(500000, document.getXref().getCapacity());
         document.close();
     }
 
@@ -2386,11 +2396,11 @@ public class PdfReaderTest extends ExtendedITextTest {
         String fileName = SOURCE_FOLDER + "cycledReferencesInXrefStreams.pdf";
 
         try (PdfReader pdfReader = new PdfReader(fileName)) {
-            Exception exception = Assert.assertThrows(XrefCycledReferencesException.class,
+            Exception exception = Assertions.assertThrows(XrefCycledReferencesException.class,
                     () -> new PdfDocument(pdfReader));
 
-            Assert.assertEquals(StrictnessLevel.LENIENT, pdfReader.getStrictnessLevel());
-            Assert.assertEquals(KernelExceptionMessageConstant.XREF_STREAM_HAS_CYCLED_REFERENCES,
+            Assertions.assertEquals(StrictnessLevel.LENIENT, pdfReader.getStrictnessLevel());
+            Assertions.assertEquals(KernelExceptionMessageConstant.XREF_STREAM_HAS_CYCLED_REFERENCES,
                     exception.getMessage());
         }
     }
@@ -2401,11 +2411,11 @@ public class PdfReaderTest extends ExtendedITextTest {
 
         try (PdfReader pdfReader = new PdfReader(fileName)) {
             pdfReader.setStrictnessLevel(StrictnessLevel.CONSERVATIVE);
-            Exception exception = Assert.assertThrows(XrefCycledReferencesException.class,
+            Exception exception = Assertions.assertThrows(XrefCycledReferencesException.class,
                     () -> new PdfDocument(pdfReader));
 
-            Assert.assertEquals(StrictnessLevel.CONSERVATIVE, pdfReader.getStrictnessLevel());
-            Assert.assertEquals(KernelExceptionMessageConstant.XREF_STREAM_HAS_CYCLED_REFERENCES,
+            Assertions.assertEquals(StrictnessLevel.CONSERVATIVE, pdfReader.getStrictnessLevel());
+            Assertions.assertEquals(KernelExceptionMessageConstant.XREF_STREAM_HAS_CYCLED_REFERENCES,
                     exception.getMessage());
         }
     }
@@ -2419,8 +2429,8 @@ public class PdfReaderTest extends ExtendedITextTest {
         try (PdfReader pdfReader = new PdfReader(fileName)) {
             AssertUtil.doesNotThrow(() -> new PdfDocument(pdfReader));
 
-            Assert.assertEquals(StrictnessLevel.LENIENT, pdfReader.getStrictnessLevel());
-            Assert.assertTrue(pdfReader.hasRebuiltXref());
+            Assertions.assertEquals(StrictnessLevel.LENIENT, pdfReader.getStrictnessLevel());
+            Assertions.assertTrue(pdfReader.hasRebuiltXref());
         }
     }
 
@@ -2433,8 +2443,8 @@ public class PdfReaderTest extends ExtendedITextTest {
         try (PdfReader pdfReader = new PdfReader(fileName)) {
             AssertUtil.doesNotThrow(() -> new PdfDocument(pdfReader));
 
-            Assert.assertEquals(StrictnessLevel.LENIENT, pdfReader.getStrictnessLevel());
-            Assert.assertTrue(pdfReader.hasRebuiltXref());
+            Assertions.assertEquals(StrictnessLevel.LENIENT, pdfReader.getStrictnessLevel());
+            Assertions.assertTrue(pdfReader.hasRebuiltXref());
         }
     }
 
@@ -2444,11 +2454,11 @@ public class PdfReaderTest extends ExtendedITextTest {
 
         try (PdfReader pdfReader = new PdfReader(fileName)) {
             pdfReader.setStrictnessLevel(StrictnessLevel.CONSERVATIVE);
-            Exception exception = Assert.assertThrows(XrefCycledReferencesException.class,
+            Exception exception = Assertions.assertThrows(XrefCycledReferencesException.class,
                     () -> new PdfDocument(pdfReader));
 
-            Assert.assertEquals(StrictnessLevel.CONSERVATIVE, pdfReader.getStrictnessLevel());
-            Assert.assertEquals(KernelExceptionMessageConstant.XREF_TABLE_HAS_CYCLED_REFERENCES,
+            Assertions.assertEquals(StrictnessLevel.CONSERVATIVE, pdfReader.getStrictnessLevel());
+            Assertions.assertEquals(KernelExceptionMessageConstant.XREF_TABLE_HAS_CYCLED_REFERENCES,
                     exception.getMessage());
         }
     }
@@ -2459,11 +2469,11 @@ public class PdfReaderTest extends ExtendedITextTest {
 
         try (PdfReader pdfReader = new PdfReader(fileName)) {
             pdfReader.setStrictnessLevel(StrictnessLevel.CONSERVATIVE);
-            Exception exception = Assert.assertThrows(XrefCycledReferencesException.class,
+            Exception exception = Assertions.assertThrows(XrefCycledReferencesException.class,
                     () -> new PdfDocument(pdfReader));
 
-            Assert.assertEquals(StrictnessLevel.CONSERVATIVE, pdfReader.getStrictnessLevel());
-            Assert.assertEquals(KernelExceptionMessageConstant.XREF_TABLE_HAS_CYCLED_REFERENCES,
+            Assertions.assertEquals(StrictnessLevel.CONSERVATIVE, pdfReader.getStrictnessLevel());
+            Assertions.assertEquals(KernelExceptionMessageConstant.XREF_TABLE_HAS_CYCLED_REFERENCES,
                     exception.getMessage());
         }
     }
@@ -2473,8 +2483,8 @@ public class PdfReaderTest extends ExtendedITextTest {
         final String fileName = SOURCE_FOLDER + "xrefStreamInvalidSize.pdf";
 
         try (PdfReader reader = new PdfReader(fileName)) {
-            Exception ex = Assert.assertThrows(MemoryLimitsAwareException.class, () -> new PdfDocument(reader));
-            Assert.assertEquals(KernelExceptionMessageConstant.XREF_STRUCTURE_SIZE_EXCEEDED_THE_LIMIT, ex.getMessage());
+            Exception ex = Assertions.assertThrows(MemoryLimitsAwareException.class, () -> new PdfDocument(reader));
+            Assertions.assertEquals(KernelExceptionMessageConstant.XREF_STRUCTURE_SIZE_EXCEEDED_THE_LIMIT, ex.getMessage());
         }
     }
 
@@ -2495,15 +2505,15 @@ public class PdfReaderTest extends ExtendedITextTest {
             AssertUtil.doesNotThrow(() -> reader.getXrefPrev(indirectReferenceXrefPrev));
 
             // Check string xref prev with StrictnessLevel#LENIENT.
-            Exception exception = Assert.assertThrows(InvalidXRefPrevException.class,
+            Exception exception = Assertions.assertThrows(InvalidXRefPrevException.class,
                     () -> reader.getXrefPrev(stringXrefPrev));
-            Assert.assertEquals(KernelExceptionMessageConstant.XREF_PREV_SHALL_BE_DIRECT_NUMBER_OBJECT,
+            Assertions.assertEquals(KernelExceptionMessageConstant.XREF_PREV_SHALL_BE_DIRECT_NUMBER_OBJECT,
                     exception.getMessage());
 
             // Check indirect reference to string xref prev with StrictnessLevel#LENIENT.
-            exception = Assert.assertThrows(InvalidXRefPrevException.class,
+            exception = Assertions.assertThrows(InvalidXRefPrevException.class,
                     () -> reader.getXrefPrev(indirectReferenceToString));
-            Assert.assertEquals(KernelExceptionMessageConstant.XREF_PREV_SHALL_BE_DIRECT_NUMBER_OBJECT,
+            Assertions.assertEquals(KernelExceptionMessageConstant.XREF_PREV_SHALL_BE_DIRECT_NUMBER_OBJECT,
                     exception.getMessage());
         }
     }
@@ -2523,21 +2533,21 @@ public class PdfReaderTest extends ExtendedITextTest {
             AssertUtil.doesNotThrow(() -> reader.getXrefPrev(numberXrefPrev));
 
             // Check indirect reference to number xref prev with StrictnessLevel#CONSERVATIVE.
-            Exception exception = Assert.assertThrows(InvalidXRefPrevException.class,
+            Exception exception = Assertions.assertThrows(InvalidXRefPrevException.class,
                     () -> reader.getXrefPrev(indirectReferenceXrefPrev));
-            Assert.assertEquals(KernelExceptionMessageConstant.XREF_PREV_SHALL_BE_DIRECT_NUMBER_OBJECT,
+            Assertions.assertEquals(KernelExceptionMessageConstant.XREF_PREV_SHALL_BE_DIRECT_NUMBER_OBJECT,
                     exception.getMessage());
 
             // Check string xref prev with StrictnessLevel#CONSERVATIVE.
-            exception = Assert.assertThrows(InvalidXRefPrevException.class,
+            exception = Assertions.assertThrows(InvalidXRefPrevException.class,
                     () -> reader.getXrefPrev(stringXrefPrev));
-            Assert.assertEquals(KernelExceptionMessageConstant.XREF_PREV_SHALL_BE_DIRECT_NUMBER_OBJECT,
+            Assertions.assertEquals(KernelExceptionMessageConstant.XREF_PREV_SHALL_BE_DIRECT_NUMBER_OBJECT,
                     exception.getMessage());
 
             // Check indirect reference to string xref prev with StrictnessLevel#CONSERVATIVE.
-            exception = Assert.assertThrows(InvalidXRefPrevException.class,
+            exception = Assertions.assertThrows(InvalidXRefPrevException.class,
                     () -> reader.getXrefPrev(indirectReferenceToString));
-            Assert.assertEquals(KernelExceptionMessageConstant.XREF_PREV_SHALL_BE_DIRECT_NUMBER_OBJECT,
+            Assertions.assertEquals(KernelExceptionMessageConstant.XREF_PREV_SHALL_BE_DIRECT_NUMBER_OBJECT,
                     exception.getMessage());
         }
     }
@@ -2551,7 +2561,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         try (PdfReader reader = new PdfReader(fileName);
                 PdfDocument document = new PdfDocument(reader)) {
             final PdfDictionary documentTrailer = document.getTrailer();
-            Assert.assertTrue(documentTrailer.get(PdfName.Prev, false).isIndirectReference());
+            Assertions.assertTrue(documentTrailer.get(PdfName.Prev, false).isIndirectReference());
         }
 
         // Read/write pdf document to rewrite xref structure.
@@ -2564,7 +2574,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         try (PdfReader reader = CompareTool.createOutputReader(outputName);
                 PdfDocument document = new PdfDocument(reader)) {
             PdfDictionary trailer = document.getTrailer();
-            Assert.assertNull(trailer.get(PdfName.Prev, false));
+            Assertions.assertNull(trailer.get(PdfName.Prev, false));
         }
     }
 
@@ -2577,7 +2587,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         try (PdfReader reader = new PdfReader(fileName);
                 PdfDocument document = new PdfDocument(reader)) {
             final PdfDictionary documentTrailer = document.getTrailer();
-            Assert.assertTrue(documentTrailer.get(PdfName.Prev, false).isIndirectReference());
+            Assertions.assertTrue(documentTrailer.get(PdfName.Prev, false).isIndirectReference());
         }
 
         // Read and write document in append mode to not change previous xref prev.
@@ -2592,11 +2602,11 @@ public class PdfReaderTest extends ExtendedITextTest {
         try (PdfReader reader = CompareTool.createOutputReader(outputName);
                 PdfDocument document = new PdfDocument(reader)) {
             final PdfDictionary trailer = document.getTrailer();
-            Assert.assertFalse(trailer.get(PdfName.Prev, false).isIndirectReference());
+            Assertions.assertFalse(trailer.get(PdfName.Prev, false).isIndirectReference());
             PdfNumber prevPointer = (PdfNumber) trailer.get(PdfName.Prev);
             reader.tokens.seek(prevPointer.longValue());
             final PdfDictionary previousTrailer = reader.readXrefSection();
-            Assert.assertTrue(previousTrailer.get(PdfName.Prev, false).isIndirectReference());
+            Assertions.assertTrue(previousTrailer.get(PdfName.Prev, false).isIndirectReference());
         }
     }
 
@@ -2607,9 +2617,9 @@ public class PdfReaderTest extends ExtendedITextTest {
         // Simply open document with StrictnessLevel#CONSERVATIVE.
         try (PdfReader reader = new PdfReader(fileName)) {
             reader.setStrictnessLevel(StrictnessLevel.CONSERVATIVE);
-            Exception exception = Assert.assertThrows(InvalidXRefPrevException.class, () -> new PdfDocument(reader));
+            Exception exception = Assertions.assertThrows(InvalidXRefPrevException.class, () -> new PdfDocument(reader));
 
-            Assert.assertEquals(KernelExceptionMessageConstant.XREF_PREV_SHALL_BE_DIRECT_NUMBER_OBJECT,
+            Assertions.assertEquals(KernelExceptionMessageConstant.XREF_PREV_SHALL_BE_DIRECT_NUMBER_OBJECT,
                     exception.getMessage());
         }
 
@@ -2618,10 +2628,10 @@ public class PdfReaderTest extends ExtendedITextTest {
         try (PdfReader reader = new PdfReader(fileName);
                 PdfWriter writer = new PdfWriter(new ByteArrayOutputStream())) {
             reader.setStrictnessLevel(StrictnessLevel.CONSERVATIVE);
-            Exception exception = Assert.assertThrows(InvalidXRefPrevException.class,
+            Exception exception = Assertions.assertThrows(InvalidXRefPrevException.class,
                     () -> new PdfDocument(reader, writer, properties));
 
-            Assert.assertEquals(KernelExceptionMessageConstant.XREF_PREV_SHALL_BE_DIRECT_NUMBER_OBJECT,
+            Assertions.assertEquals(KernelExceptionMessageConstant.XREF_PREV_SHALL_BE_DIRECT_NUMBER_OBJECT,
                     exception.getMessage());
         }
 
@@ -2629,10 +2639,10 @@ public class PdfReaderTest extends ExtendedITextTest {
         try (PdfReader reader = new PdfReader(fileName);
                 PdfWriter writer = new PdfWriter(new ByteArrayOutputStream())) {
             reader.setStrictnessLevel(StrictnessLevel.CONSERVATIVE);
-            Exception exception = Assert.assertThrows(InvalidXRefPrevException.class,
+            Exception exception = Assertions.assertThrows(InvalidXRefPrevException.class,
                     () -> new PdfDocument(reader, writer));
 
-            Assert.assertEquals(KernelExceptionMessageConstant.XREF_PREV_SHALL_BE_DIRECT_NUMBER_OBJECT,
+            Assertions.assertEquals(KernelExceptionMessageConstant.XREF_PREV_SHALL_BE_DIRECT_NUMBER_OBJECT,
                     exception.getMessage());
         }
     }
@@ -2650,10 +2660,10 @@ public class PdfReaderTest extends ExtendedITextTest {
 
                 // 27600 is actual invalid length of stream. In reader StrictnessLevel#LENIENT we expect, that this
                 // length will be fixed.
-                Assert.assertNotEquals(27600, xmpMetadataStreamLength);
+                Assertions.assertNotEquals(27600, xmpMetadataStreamLength);
 
                 // 3090 is expected length of the stream after fix.
-                Assert.assertEquals(3090, xmpMetadataStreamLength);
+                Assertions.assertEquals(3090, xmpMetadataStreamLength);
             }
         }
     }
@@ -2664,15 +2674,15 @@ public class PdfReaderTest extends ExtendedITextTest {
         try (PdfReader reader = new PdfReader(fileName)) {
             reader.setStrictnessLevel(StrictnessLevel.CONSERVATIVE);
 
-            Exception exception = Assert.assertThrows(PdfException.class, () -> new PdfDocument(reader));
-            Assert.assertEquals(KernelExceptionMessageConstant.STREAM_SHALL_END_WITH_ENDSTREAM, exception.getMessage());
+            Exception exception = Assertions.assertThrows(PdfException.class, () -> new PdfDocument(reader));
+            Assertions.assertEquals(KernelExceptionMessageConstant.STREAM_SHALL_END_WITH_ENDSTREAM, exception.getMessage());
 
             PdfCatalog catalog = new PdfCatalog((PdfDictionary) reader.trailer.get(PdfName.Root, true));
             PdfStream xmpMetadataStream = catalog.getPdfObject().getAsStream(PdfName.Metadata);
 
             // 27600 is actual invalid length of stream. In reader StrictnessLevel#CONSERVATIVE we expect, that
             // exception would be thrown and length wouldn't be fixed.
-            Assert.assertEquals(27600, ((PdfNumber) xmpMetadataStream.get(PdfName.Length)).intValue());
+            Assertions.assertEquals(27600, ((PdfNumber) xmpMetadataStream.get(PdfName.Length)).intValue());
         }
     }
 
@@ -2688,7 +2698,7 @@ public class PdfReaderTest extends ExtendedITextTest {
             PdfStream pageContentStream = (PdfStream) pdfDoc.getPdfObject(5);
 
             // tokenizer's position after reading object should point to the end of the object's stream
-            Assert.assertEquals(pageContentStream.getOffset() + pageContentStream.getLength(), tokenizer.getPosition());
+            Assertions.assertEquals(pageContentStream.getOffset() + pageContentStream.getLength(), tokenizer.getPosition());
 
             // let's read next valid token and check that it means ending stream
             tokenizer.nextValidToken();
@@ -2713,7 +2723,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         for (int i = 0; i < 1000; ++i) {
             pdfTestDoc.getReader().getPdfAConformanceLevel();
         }
-        Assert.assertEquals(2, pdfTestDoc.getCounter());
+        Assertions.assertEquals(2, pdfTestDoc.getCounter());
     }
 
     @Test
@@ -2741,9 +2751,9 @@ public class PdfReaderTest extends ExtendedITextTest {
                 PdfDocument linearizedWithGoodXrefTable = new PdfDocument(
                         new PdfReader(SOURCE_FOLDER + goodFilePath))) {
 
-            Assert.assertEquals(linearizedWithGoodXrefTable.getNumberOfPages(),
+            Assertions.assertEquals(linearizedWithGoodXrefTable.getNumberOfPages(),
                     linearizedWithBadXrefTable.getNumberOfPages());
-            Assert.assertEquals(linearizedWithGoodXrefTable.getOriginalDocumentId(),
+            Assertions.assertEquals(linearizedWithGoodXrefTable.getOriginalDocumentId(),
                     linearizedWithBadXrefTable.getOriginalDocumentId());
 
             PdfDictionary goodTrailer = linearizedWithGoodXrefTable.getTrailer();
@@ -2752,10 +2762,10 @@ public class PdfReaderTest extends ExtendedITextTest {
             // offsets
             // and there we take the last trailer but the good document takes the fist trailer because its
             // linearized
-            Assert.assertEquals(goodTrailer.size(), badTrailer.size());
-            Assert.assertEquals(goodTrailer.get(PdfName.ID).toString(), badTrailer.get(PdfName.ID).toString());
-            Assert.assertEquals(goodTrailer.get(PdfName.Info).toString(), badTrailer.get(PdfName.Info).toString());
-            Assert.assertEquals(goodTrailer.get(PdfName.Root).toString(), badTrailer.get(PdfName.Root).toString());
+            Assertions.assertEquals(goodTrailer.size(), badTrailer.size());
+            Assertions.assertEquals(goodTrailer.get(PdfName.ID).toString(), badTrailer.get(PdfName.ID).toString());
+            Assertions.assertEquals(goodTrailer.get(PdfName.Info).toString(), badTrailer.get(PdfName.Info).toString());
+            Assertions.assertEquals(goodTrailer.get(PdfName.Root).toString(), badTrailer.get(PdfName.Root).toString());
         }
     }
 
@@ -2765,25 +2775,25 @@ public class PdfReaderTest extends ExtendedITextTest {
 
         PdfReader reader = new PdfReader(new File(filename), new ReaderProperties());
         PdfDocument pdfDoc = new PdfDocument(reader);
-        Assert.assertEquals(author, pdfDoc.getDocumentInfo().getAuthor());
-        Assert.assertEquals(creator, pdfDoc.getDocumentInfo().getCreator());
-        Assert.assertEquals(title, pdfDoc.getDocumentInfo().getTitle());
+        Assertions.assertEquals(author, pdfDoc.getDocumentInfo().getAuthor());
+        Assertions.assertEquals(creator, pdfDoc.getDocumentInfo().getCreator());
+        Assertions.assertEquals(title, pdfDoc.getDocumentInfo().getTitle());
         PdfObject object = pdfDoc.getPdfObject(1);
-        Assert.assertEquals(PdfObject.DICTIONARY, object.getType());
-        Assert.assertTrue(objectTypeEqualTo(object, PdfName.Catalog));
+        Assertions.assertEquals(PdfObject.DICTIONARY, object.getType());
+        Assertions.assertTrue(objectTypeEqualTo(object, PdfName.Catalog));
 
         object = pdfDoc.getPdfObject(2);
-        Assert.assertEquals(PdfObject.DICTIONARY, object.getType());
-        Assert.assertTrue(objectTypeEqualTo(object, PdfName.Pages));
+        Assertions.assertEquals(PdfObject.DICTIONARY, object.getType());
+        Assertions.assertTrue(objectTypeEqualTo(object, PdfName.Pages));
 
         object = pdfDoc.getPdfObject(3);
-        Assert.assertEquals(PdfObject.DICTIONARY, object.getType());
+        Assertions.assertEquals(PdfObject.DICTIONARY, object.getType());
 
         object = pdfDoc.getPdfObject(4);
-        Assert.assertEquals(PdfObject.DICTIONARY, object.getType());
-        Assert.assertTrue(objectTypeEqualTo(object, PdfName.Page));
+        Assertions.assertEquals(PdfObject.DICTIONARY, object.getType());
+        Assertions.assertTrue(objectTypeEqualTo(object, PdfName.Page));
 
-        Assert.assertEquals(PdfObject.STREAM, pdfDoc.getPdfObject(5).getType());
+        Assertions.assertEquals(PdfObject.STREAM, pdfDoc.getPdfObject(5).getType());
     }
 
     @Test
@@ -2793,25 +2803,25 @@ public class PdfReaderTest extends ExtendedITextTest {
                 .setPassword(USER_PASSWORD));
 
         PdfDocument pdfDoc = new PdfDocument(reader);
-        Assert.assertEquals(author, pdfDoc.getDocumentInfo().getAuthor());
-        Assert.assertEquals(creator, pdfDoc.getDocumentInfo().getCreator());
-        Assert.assertEquals(title, pdfDoc.getDocumentInfo().getTitle());
+        Assertions.assertEquals(author, pdfDoc.getDocumentInfo().getAuthor());
+        Assertions.assertEquals(creator, pdfDoc.getDocumentInfo().getCreator());
+        Assertions.assertEquals(title, pdfDoc.getDocumentInfo().getTitle());
         PdfObject object = pdfDoc.getPdfObject(1);
-        Assert.assertEquals(PdfObject.DICTIONARY, object.getType());
-        Assert.assertTrue(objectTypeEqualTo(object, PdfName.Catalog));
+        Assertions.assertEquals(PdfObject.DICTIONARY, object.getType());
+        Assertions.assertTrue(objectTypeEqualTo(object, PdfName.Catalog));
 
         object = pdfDoc.getPdfObject(2);
-        Assert.assertEquals(PdfObject.DICTIONARY, object.getType());
-        Assert.assertTrue(objectTypeEqualTo(object, PdfName.Pages));
+        Assertions.assertEquals(PdfObject.DICTIONARY, object.getType());
+        Assertions.assertTrue(objectTypeEqualTo(object, PdfName.Pages));
 
         object = pdfDoc.getPdfObject(3);
-        Assert.assertEquals(PdfObject.DICTIONARY, object.getType());
+        Assertions.assertEquals(PdfObject.DICTIONARY, object.getType());
 
         object = pdfDoc.getPdfObject(4);
-        Assert.assertEquals(PdfObject.DICTIONARY, object.getType());
-        Assert.assertTrue(objectTypeEqualTo(object, PdfName.Page));
+        Assertions.assertEquals(PdfObject.DICTIONARY, object.getType());
+        Assertions.assertTrue(objectTypeEqualTo(object, PdfName.Page));
 
-        Assert.assertEquals(PdfObject.STREAM, pdfDoc.getPdfObject(5).getType());
+        Assertions.assertEquals(PdfObject.STREAM, pdfDoc.getPdfObject(5).getType());
     }
 
     @Test
@@ -2839,8 +2849,8 @@ public class PdfReaderTest extends ExtendedITextTest {
             }
         };
 
-        Exception e = Assert.assertThrows(PdfException.class, () -> new PdfDocument(pdfReader));
-        Assert.assertEquals(MessageFormatUtil.format(
+        Exception e = Assertions.assertThrows(PdfException.class, () -> new PdfDocument(pdfReader));
+        Assertions.assertEquals(MessageFormatUtil.format(
                 KernelExceptionMessageConstant.INVALID_OBJECT_STREAM_NUMBER, 5, 4, 492), e.getMessage());
     }
 
@@ -2855,7 +2865,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         };
         memoryLimitsAwareHandler.setMaxSizeOfDecompressedPdfStreamsSum(100000);
 
-        Assert.assertThrows(MemoryLimitsAwareException.class, () -> {
+        Assertions.assertThrows(MemoryLimitsAwareException.class, () -> {
             try (final PdfReader reader = new PdfReader(file,
                     new ReaderProperties().setMemoryLimitsAwareHandler(memoryLimitsAwareHandler));
                     final PdfDocument document = new PdfDocument(reader);) {
@@ -2869,7 +2879,7 @@ public class PdfReaderTest extends ExtendedITextTest {
     public void incorrectFilePositionInSubsectionCauseTest() throws IOException {
         PdfReader pdfReader = new PdfReader(SOURCE_FOLDER + "incorrectFilePositionInSubsection.pdf").setStrictnessLevel(StrictnessLevel.LENIENT);
         new PdfDocument(pdfReader);
-        Assert.assertTrue("Need rebuildXref()", pdfReader.hasRebuiltXref());
+        Assertions.assertTrue(pdfReader.hasRebuiltXref(), "Need rebuildXref()");
     }
 
     @LogMessages(messages = @LogMessage(messageTemplate =
@@ -2878,7 +2888,7 @@ public class PdfReaderTest extends ExtendedITextTest {
     public void noSubsectionCauseTest() throws IOException {
         PdfReader pdfReader = new PdfReader(SOURCE_FOLDER + "noSubsection.pdf").setStrictnessLevel(StrictnessLevel.LENIENT);
         new PdfDocument(pdfReader);
-        Assert.assertTrue("Need rebuildXref()", pdfReader.hasRebuiltXref());
+        Assertions.assertTrue(pdfReader.hasRebuiltXref(), "Need rebuildXref()");
     }
 
     @LogMessages(messages = @LogMessage(messageTemplate =
@@ -2887,7 +2897,7 @@ public class PdfReaderTest extends ExtendedITextTest {
     public void invalidRefCauseXrefRebuildTest() throws IOException {
         PdfReader pdfReader = new PdfReader(SOURCE_FOLDER + "invalidRefCauseXrefRebuild.pdf").setStrictnessLevel(StrictnessLevel.LENIENT);
         new PdfDocument(pdfReader);
-        Assert.assertTrue("Need rebuildXref()", pdfReader.hasRebuiltXref());
+        Assertions.assertTrue(pdfReader.hasRebuiltXref(), "Need rebuildXref()");
     }
 
     @LogMessages(messages = @LogMessage(messageTemplate =
@@ -2896,7 +2906,7 @@ public class PdfReaderTest extends ExtendedITextTest {
     public void startxrefNotFoundCauseTest() throws IOException {
         PdfReader pdfReader = new PdfReader(SOURCE_FOLDER + "startxrefNotFound.pdf").setStrictnessLevel(StrictnessLevel.LENIENT);
         new PdfDocument(pdfReader);
-        Assert.assertTrue("Need rebuildXref()", pdfReader.hasRebuiltXref());
+        Assertions.assertTrue(pdfReader.hasRebuiltXref(), "Need rebuildXref()");
     }
 
     private static PdfDictionary getTestPdfDictionary() {

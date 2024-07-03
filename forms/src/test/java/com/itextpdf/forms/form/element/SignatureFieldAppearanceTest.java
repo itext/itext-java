@@ -66,23 +66,22 @@ import com.itextpdf.layout.renderer.FlexContainerRenderer;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class SignatureFieldAppearanceTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER =
             "./src/test/resources/com/itextpdf/forms/form/element/SignatureFieldAppearanceTest/";
     public static final String DESTINATION_FOLDER =
             "./target/test/com/itextpdf/forms/form/element/SignatureFieldAppearanceTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
@@ -108,7 +107,7 @@ public class SignatureFieldAppearanceTest extends ExtendedITextTest {
             document.add(flattenSigField);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -129,7 +128,7 @@ public class SignatureFieldAppearanceTest extends ExtendedITextTest {
             document.add(formSigField);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -163,7 +162,7 @@ public class SignatureFieldAppearanceTest extends ExtendedITextTest {
             document.add(flattenSigField);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -204,7 +203,7 @@ public class SignatureFieldAppearanceTest extends ExtendedITextTest {
             document.add(topSigField);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -225,7 +224,7 @@ public class SignatureFieldAppearanceTest extends ExtendedITextTest {
             document.add(formSigField);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -243,7 +242,7 @@ public class SignatureFieldAppearanceTest extends ExtendedITextTest {
             document.add(formSigField);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -264,7 +263,7 @@ public class SignatureFieldAppearanceTest extends ExtendedITextTest {
             document.add(formSigField);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -285,7 +284,7 @@ public class SignatureFieldAppearanceTest extends ExtendedITextTest {
             document.add(formSigField);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -331,7 +330,7 @@ public class SignatureFieldAppearanceTest extends ExtendedITextTest {
             document.add(flattenSigField2);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -391,7 +390,7 @@ public class SignatureFieldAppearanceTest extends ExtendedITextTest {
             PdfFormCreator.getAcroForm(document.getPdfDocument(), false).flattenFields();
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -404,7 +403,7 @@ public class SignatureFieldAppearanceTest extends ExtendedITextTest {
             sigField.setContent("test");
             document.add(sigField);
         }
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -423,8 +422,8 @@ public class SignatureFieldAppearanceTest extends ExtendedITextTest {
         sigField.setInteractive(true);
         sigField.setBorder(new SolidBorder(ColorConstants.GREEN, 1));
 
-        Exception e = Assert.assertThrows(IllegalStateException.class, () -> document.add(sigField));
-        Assert.assertEquals(LayoutExceptionMessageConstant.INVALID_FONT_PROPERTY_VALUE, e.getMessage());
+        Exception e = Assertions.assertThrows(IllegalStateException.class, () -> document.add(sigField));
+        Assertions.assertEquals(LayoutExceptionMessageConstant.INVALID_FONT_PROPERTY_VALUE, e.getMessage());
 
     }
 
@@ -468,7 +467,7 @@ public class SignatureFieldAppearanceTest extends ExtendedITextTest {
             form.flattenFields();
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -503,7 +502,7 @@ public class SignatureFieldAppearanceTest extends ExtendedITextTest {
             document.add(appearance);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -516,6 +515,6 @@ public class SignatureFieldAppearanceTest extends ExtendedITextTest {
             PdfAcroForm acroForm = PdfFormCreator.getAcroForm(document, false);
             acroForm.flattenFields();
         }
-        Assert.assertNull(new CompareTool().compareVisually(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareVisually(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
     }
 }

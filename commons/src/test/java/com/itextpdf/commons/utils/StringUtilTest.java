@@ -23,17 +23,16 @@
 package com.itextpdf.commons.utils;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.regex.Pattern;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 /**
  * At the moment there is no StringUtil class in Java, but there is one in C# and we are testing
  */
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class StringUtilTest extends ExtendedITextTest {
 
     private static final char SPLIT_PERIOD = '.';
@@ -50,7 +49,7 @@ public class StringUtilTest extends ExtendedITextTest {
         String source = "a01aa78ab89b";
         String[] expected = new String[] {"a01", "a", "a78", "a", "b89", "b"};
         String[] result = pattern.split(source);
-        Assert.assertArrayEquals(expected, result);
+        Assertions.assertArrayEquals(expected, result);
     }
 
     @Test
@@ -59,7 +58,7 @@ public class StringUtilTest extends ExtendedITextTest {
         String source = "";
         String[] expected = new String[] {""};
         String[] result = pattern.split(source);
-        Assert.assertArrayEquals(expected, result);
+        Assertions.assertArrayEquals(expected, result);
     }
 
     @Test
@@ -68,7 +67,7 @@ public class StringUtilTest extends ExtendedITextTest {
         String source = "a01aa78ab89b";
         String[] expected = new String[] {"a01", "a", "a78", "a", "b89", "b"};
         String[] result = source.split("(?=[ab])");
-        Assert.assertArrayEquals(expected, result);
+        Assertions.assertArrayEquals(expected, result);
     }
 
     @Test
@@ -76,7 +75,7 @@ public class StringUtilTest extends ExtendedITextTest {
         String source = "";
         String[] expected = new String[] {""};
         String[] result = source.split("(?=[ab])");
-        Assert.assertArrayEquals(expected, result);
+        Assertions.assertArrayEquals(expected, result);
     }
 
     @Test
@@ -86,14 +85,14 @@ public class StringUtilTest extends ExtendedITextTest {
                 ""
         };
         String[] result = StringSplitUtil.splitKeepTrailingWhiteSpace(source, SPLIT_PERIOD);
-        Assert.assertArrayEquals(source.split(String.valueOf(SPLIT_PERIOD)), result);
-        Assert.assertArrayEquals(expected, result);
+        Assertions.assertArrayEquals(source.split(String.valueOf(SPLIT_PERIOD)), result);
+        Assertions.assertArrayEquals(expected, result);
     }
 
     @Test
     public void splitKeepEmptyParts02() {
         String source = null;
-        Assert.assertThrows(Exception.class,
+        Assertions.assertThrows(Exception.class,
                 () -> StringSplitUtil.splitKeepTrailingWhiteSpace(source, SPLIT_PERIOD));
     }
 
@@ -102,7 +101,7 @@ public class StringUtilTest extends ExtendedITextTest {
         String source = "test.test1";
         String[] expected = new String[] {"test", "test1"};
         String[] result = StringSplitUtil.splitKeepTrailingWhiteSpace(source, SPLIT_PERIOD);
-        Assert.assertArrayEquals(expected, result);
+        Assertions.assertArrayEquals(expected, result);
     }
 
 
@@ -111,7 +110,7 @@ public class StringUtilTest extends ExtendedITextTest {
         String source = "test..test1";
         String[] expected = new String[] {"test", "", "test1"};
         String[] result = StringSplitUtil.splitKeepTrailingWhiteSpace(source, SPLIT_PERIOD);
-        Assert.assertArrayEquals(expected, result);
+        Assertions.assertArrayEquals(expected, result);
     }
 
     @Test
@@ -119,7 +118,7 @@ public class StringUtilTest extends ExtendedITextTest {
         String source = "test...test1";
         String[] expected = new String[] {"test", "", "", "test1"};
         String[] result = StringSplitUtil.splitKeepTrailingWhiteSpace(source, SPLIT_PERIOD);
-        Assert.assertArrayEquals(expected, result);
+        Assertions.assertArrayEquals(expected, result);
     }
 
     @Test
@@ -127,7 +126,7 @@ public class StringUtilTest extends ExtendedITextTest {
         String source = ".test1";
         String[] expected = new String[] {"", "test1"};
         String[] result = StringSplitUtil.splitKeepTrailingWhiteSpace(source, SPLIT_PERIOD);
-        Assert.assertArrayEquals(expected, result);
+        Assertions.assertArrayEquals(expected, result);
     }
 
     @Test
@@ -135,7 +134,7 @@ public class StringUtilTest extends ExtendedITextTest {
         String source = "test.";
         String[] expected = new String[] {"test", ""};
         String[] result = StringSplitUtil.splitKeepTrailingWhiteSpace(source, SPLIT_PERIOD);
-        Assert.assertArrayEquals(expected, result);
+        Assertions.assertArrayEquals(expected, result);
     }
 
     @Test
@@ -143,7 +142,7 @@ public class StringUtilTest extends ExtendedITextTest {
         String source = "test..";
         String[] expected = new String[] {"test", "", ""};
         String[] result = StringSplitUtil.splitKeepTrailingWhiteSpace(source, SPLIT_PERIOD);
-        Assert.assertArrayEquals(expected, result);
+        Assertions.assertArrayEquals(expected, result);
     }
 
 }

@@ -26,14 +26,13 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.styledxmlparser.css.pseudo.CssPseudoElementNode;
 import com.itextpdf.styledxmlparser.node.IAttributes;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.HashMap;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PageMarginBoxContextNodeTest extends ExtendedITextTest {
 
     @Test
@@ -42,34 +41,34 @@ public class PageMarginBoxContextNodeTest extends ExtendedITextTest {
         PageMarginBoxContextNode pageMarginBoxContextNode
                 = new PageMarginBoxContextNode(new PageContextNode(), marginBoxName);
 
-        Assert.assertEquals(marginBoxName, pageMarginBoxContextNode.getMarginBoxName());
-        Assert.assertEquals(PageMarginBoxContextNode.PAGE_MARGIN_BOX_TAG, pageMarginBoxContextNode.name());
+        Assertions.assertEquals(marginBoxName, pageMarginBoxContextNode.getMarginBoxName());
+        Assertions.assertEquals(PageMarginBoxContextNode.PAGE_MARGIN_BOX_TAG, pageMarginBoxContextNode.name());
 
-        Assert.assertThrows(UnsupportedOperationException.class, () -> pageMarginBoxContextNode.getLang());
-        Assert.assertNull(pageMarginBoxContextNode.getAdditionalHtmlStyles());
-        Assert.assertThrows(UnsupportedOperationException.class,
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> pageMarginBoxContextNode.getLang());
+        Assertions.assertNull(pageMarginBoxContextNode.getAdditionalHtmlStyles());
+        Assertions.assertThrows(UnsupportedOperationException.class,
                 () -> pageMarginBoxContextNode.addAdditionalHtmlStyles(new HashMap<>()));
 
         IAttributes attributes = pageMarginBoxContextNode.getAttributes();
-        Assert.assertNotNull(attributes);
-        Assert.assertEquals(0, attributes.size());
+        Assertions.assertNotNull(attributes);
+        Assertions.assertEquals(0, attributes.size());
 
         String someKey = "someKey";
         String someValue = "someValue";
-        Assert.assertThrows(UnsupportedOperationException.class,
+        Assertions.assertThrows(UnsupportedOperationException.class,
                 () -> attributes.setAttribute(someKey, someValue));
-        Assert.assertNull(attributes.getAttribute(someKey));
-        Assert.assertNull(pageMarginBoxContextNode.getAttribute(someKey));
+        Assertions.assertNull(attributes.getAttribute(someKey));
+        Assertions.assertNull(pageMarginBoxContextNode.getAttribute(someKey));
 
-        Assert.assertNull(pageMarginBoxContextNode.getContainingBlockForMarginBox());
+        Assertions.assertNull(pageMarginBoxContextNode.getContainingBlockForMarginBox());
         Rectangle someRectangle = new Rectangle(100, 100);
         pageMarginBoxContextNode.setContainingBlockForMarginBox(someRectangle);
-        Assert.assertEquals(someRectangle, pageMarginBoxContextNode.getContainingBlockForMarginBox());
+        Assertions.assertEquals(someRectangle, pageMarginBoxContextNode.getContainingBlockForMarginBox());
 
-        Assert.assertNull(pageMarginBoxContextNode.getPageMarginBoxRectangle());
+        Assertions.assertNull(pageMarginBoxContextNode.getPageMarginBoxRectangle());
         Rectangle someRectangle2 = new Rectangle(200, 200);
         pageMarginBoxContextNode.setPageMarginBoxRectangle(someRectangle2);
-        Assert.assertEquals(someRectangle2, pageMarginBoxContextNode.getPageMarginBoxRectangle());
+        Assertions.assertEquals(someRectangle2, pageMarginBoxContextNode.getPageMarginBoxRectangle());
 
     }
 
@@ -80,9 +79,9 @@ public class PageMarginBoxContextNodeTest extends ExtendedITextTest {
         CssPseudoElementNode pseudoElementNode = new CssPseudoElementNode(pageContextNode, "test");
 
         // Pass this mode to the constructor
-        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+        Exception e = Assertions.assertThrows(IllegalArgumentException.class,
                 () -> new PageMarginBoxContextNode(pseudoElementNode, "test"));
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 "Page-margin-box context node shall have a page context node as parent.",
                 e.getMessage());
 

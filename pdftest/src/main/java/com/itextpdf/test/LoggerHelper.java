@@ -33,29 +33,29 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.lang.annotation.Annotation;
 import java.text.MessageFormat;
-import org.junit.Assert;
-import org.junit.runner.Description;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.LoggerFactory;
 
 public class LoggerHelper {
 
-    static <T extends Annotation> T getTestAnnotation(Description description, Class<T> annotationClass) {
-        T annotation = description.getAnnotation(annotationClass);
+    static <T extends Annotation> T getTestAnnotation(ExtensionContext context, Class<T> annotationClass) {
+        T annotation = context.getRequiredTestMethod().getAnnotation(annotationClass);
         if (annotation == null) {
-            annotation = description.getTestClass().getAnnotation(annotationClass);
+            annotation = context.getRequiredTestClass().getAnnotation(annotationClass);
         }
         return annotation;
     }
 
-    static void failWrongMessageCount(int expected, int actual, String messageTemplate, Description description) {
-        Assert.fail(MessageFormat.format("{0}:{1} Expected to find {2}, but found {3} messages with the following content: \"{4}\"",
-                description.getClassName(), description.getMethodName(), expected, actual, messageTemplate));
+    static void failWrongMessageCount(int expected, int actual, String messageTemplate, ExtensionContext context) {
+        Assertions.fail(MessageFormat.format("{0}:{1} Expected to find {2}, but found {3} messages with the following content: \"{4}\"",
+                context.getRequiredTestClass().getName(), context.getRequiredTestMethod().getName(), expected, actual, messageTemplate));
     }
 
-    static void failWrongTotalCount(int expected, int actual, Description description) {
-        Assert.fail(MessageFormat.format("{0}.{1}: The test does not check the message logging - {2} messages",
-                description.getClassName(),
-                description.getMethodName(),
+    static void failWrongTotalCount(int expected, int actual, ExtensionContext context) {
+        Assertions.fail(MessageFormat.format("{0}.{1}: The test does not check the message logging - {2} messages",
+                context.getRequiredTestClass().getName(),
+                context.getRequiredTestMethod().getName(),
                 expected - actual));
     }
 

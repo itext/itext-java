@@ -24,12 +24,11 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.kernel.exceptions.MemoryLimitsAwareException;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class MemoryLimitsAwareOutputStreamTest extends ExtendedITextTest {
 
     @Test
@@ -40,12 +39,12 @@ public class MemoryLimitsAwareOutputStreamTest extends ExtendedITextTest {
         MemoryLimitsAwareOutputStream stream = new MemoryLimitsAwareOutputStream();
 
         stream.setMaxStreamSize(100);
-        Assert.assertEquals(100, stream.getMaxStreamSize());
+        Assertions.assertEquals(100, stream.getMaxStreamSize());
 
         stream.write(bigArray, 0, bigArray.length);
 
-        Assert.assertEquals(bigArray.length, stream.size());
-        Assert.assertThrows(MemoryLimitsAwareException.class, () -> stream.write(smallArray, 0, smallArray.length));
+        Assertions.assertEquals(bigArray.length, stream.size());
+        Assertions.assertThrows(MemoryLimitsAwareException.class, () -> stream.write(smallArray, 0, smallArray.length));
     }
 
     @Test
@@ -56,14 +55,14 @@ public class MemoryLimitsAwareOutputStreamTest extends ExtendedITextTest {
 
         stream.setMaxStreamSize(-100);
 
-        Assert.assertEquals(-100, stream.getMaxStreamSize());
-        Assert.assertThrows(MemoryLimitsAwareException.class, () -> stream.write(zeroArray, 0, zeroArray.length));
+        Assertions.assertEquals(-100, stream.getMaxStreamSize());
+        Assertions.assertThrows(MemoryLimitsAwareException.class, () -> stream.write(zeroArray, 0, zeroArray.length));
     }
 
     @Test
     public void testIncorrectLength() {
         MemoryLimitsAwareOutputStream stream = new MemoryLimitsAwareOutputStream();
 
-        Assert.assertThrows(IndexOutOfBoundsException.class, () -> stream.write(new byte[1],0,  -1));
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> stream.write(new byte[1],0,  -1));
     }
 }

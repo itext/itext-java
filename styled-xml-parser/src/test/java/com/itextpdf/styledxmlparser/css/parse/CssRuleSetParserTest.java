@@ -25,14 +25,13 @@ package com.itextpdf.styledxmlparser.css.parse;
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class CssRuleSetParserTest extends ExtendedITextTest {
 
     @Test
@@ -56,9 +55,9 @@ public class CssRuleSetParserTest extends ExtendedITextTest {
         };
 
         List<CssDeclaration> declarations = CssRuleSetParser.parsePropertyDeclarations(src);
-        Assert.assertEquals(expected.length, declarations.size());
+        Assertions.assertEquals(expected.length, declarations.size());
         for (int i = 0; i < expected.length; i++) {
-            Assert.assertEquals(expected[i], declarations.get(i).toString());
+            Assertions.assertEquals(expected[i], declarations.get(i).toString());
         }
     }
 }

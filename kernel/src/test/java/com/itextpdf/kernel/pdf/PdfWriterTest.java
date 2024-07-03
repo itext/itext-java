@@ -29,14 +29,13 @@ import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.OutputStream;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
@@ -45,17 +44,17 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TreeMap;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfWriterTest extends ExtendedITextTest {
 
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfWriterTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -72,13 +71,13 @@ public class PdfWriterTest extends ExtendedITextTest {
 
         PdfReader reader = CompareTool.createOutputReader(destinationFolder + "emptyDocument.pdf");
         PdfDocument pdfDocument = new PdfDocument(reader);
-        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
-        Assert.assertNotNull(pdfDocument.getPage(1));
+        Assertions.assertEquals(false, reader.hasRebuiltXref(), "Rebuilt");
+        Assertions.assertNotNull(pdfDocument.getPage(1));
         String date = pdfDocument.getDocumentInfo().getPdfObject().getAsString(PdfName.CreationDate).getValue();
         Calendar cl = PdfDate.decode(date);
         double diff = DateTimeUtil.getUtcMillisFromEpoch(null) - DateTimeUtil.getUtcMillisFromEpoch(cl);
         String message = "Unexpected creation date. Different from now is " + (float) diff / 1000 + "s";
-        Assert.assertTrue(message, diff < 5000);
+        Assertions.assertTrue(diff < 5000, message);
         pdfDocument.close();
 
     }
@@ -149,17 +148,17 @@ public class PdfWriterTest extends ExtendedITextTest {
     private void validateUseObjectForMultipleTimesTest(String filename) throws IOException {
         PdfReader reader = CompareTool.createOutputReader(filename);
         PdfDocument pdfDoc = new PdfDocument(reader);
-        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        Assertions.assertEquals(false, reader.hasRebuiltXref(), "Rebuilt");
         PdfDictionary page = pdfDoc.getPage(1).getPdfObject();
-        Assert.assertNotNull(page);
+        Assertions.assertNotNull(page);
         PdfDictionary helloWorld = page.getAsDictionary(new PdfName("HelloWorld"));
-        Assert.assertNotNull(helloWorld);
+        Assertions.assertNotNull(helloWorld);
         PdfString world = helloWorld.getAsString(new PdfName("Hello"));
-        Assert.assertEquals("World", world.toString());
+        Assertions.assertEquals("World", world.toString());
         helloWorld = pdfDoc.getCatalog().getPdfObject().getAsDictionary(new PdfName("HelloWorld"));
-        Assert.assertNotNull(helloWorld);
+        Assertions.assertNotNull(helloWorld);
         world = helloWorld.getAsString(new PdfName("Hello"));
-        Assert.assertEquals("World", world.toString());
+        Assertions.assertEquals("World", world.toString());
         pdfDoc.close();
     }
 
@@ -201,19 +200,19 @@ public class PdfWriterTest extends ExtendedITextTest {
 
         PdfReader reader = CompareTool.createOutputReader(destinationFolder + "copyObject1_2.pdf");
         PdfDocument pdfDocument = new PdfDocument(reader);
-        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        Assertions.assertEquals(false, reader.hasRebuiltXref(), "Rebuilt");
         PdfDictionary catalog = pdfDocument.getCatalog().getPdfObject();
         PdfArray a = (PdfArray) catalog.get(new PdfName("aDirect"));
-        Assert.assertNotNull(a);
-        Assert.assertEquals(1, ((PdfNumber) ((PdfArray) a.get(0)).get(0)).intValue());
-        Assert.assertEquals(2, ((PdfNumber) ((PdfArray) a.get(0)).get(1)).intValue());
-        Assert.assertEquals(true, ((PdfBoolean) a.get(1)).getValue());
-        Assert.assertEquals(1, ((PdfNumber) ((PdfDictionary) a.get(2)).get(new PdfName("one"))).intValue());
-        Assert.assertEquals(2, ((PdfNumber) ((PdfDictionary) a.get(2)).get(new PdfName("two"))).intValue());
-        Assert.assertEquals(new PdfName("name"), a.get(3));
-        Assert.assertTrue(a.get(4).isNull());
-        Assert.assertEquals(100, ((PdfNumber) a.get(5)).intValue());
-        Assert.assertEquals("string", ((PdfString) a.get(6)).toUnicodeString());
+        Assertions.assertNotNull(a);
+        Assertions.assertEquals(1, ((PdfNumber) ((PdfArray) a.get(0)).get(0)).intValue());
+        Assertions.assertEquals(2, ((PdfNumber) ((PdfArray) a.get(0)).get(1)).intValue());
+        Assertions.assertEquals(true, ((PdfBoolean) a.get(1)).getValue());
+        Assertions.assertEquals(1, ((PdfNumber) ((PdfDictionary) a.get(2)).get(new PdfName("one"))).intValue());
+        Assertions.assertEquals(2, ((PdfNumber) ((PdfDictionary) a.get(2)).get(new PdfName("two"))).intValue());
+        Assertions.assertEquals(new PdfName("name"), a.get(3));
+        Assertions.assertTrue(a.get(4).isNull());
+        Assertions.assertEquals(100, ((PdfNumber) a.get(5)).intValue());
+        Assertions.assertEquals("string", ((PdfString) a.get(6)).toUnicodeString());
         pdfDocument.close();
 
     }
@@ -261,20 +260,20 @@ public class PdfWriterTest extends ExtendedITextTest {
 
         PdfReader reader = CompareTool.createOutputReader(destinationFolder + "copyObject2_2.pdf");
         PdfDocument pdfDocument = new PdfDocument(reader);
-        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        Assertions.assertEquals(false, reader.hasRebuiltXref(), "Rebuilt");
         PdfDictionary catalog = pdfDocument.getCatalog().getPdfObject();
         PdfArray a = catalog.getAsArray(new PdfName("aDirect"));
-        Assert.assertNotNull(a);
-        Assert.assertEquals(1, ((PdfNumber) ((PdfArray) a.get(0)).get(0)).intValue());
-        Assert.assertEquals(2, ((PdfArray) a.get(0)).getAsNumber(1).intValue());
-        Assert.assertEquals(true, ((PdfBoolean) a.get(1)).getValue());
-        Assert.assertEquals(1, ((PdfNumber) ((PdfDictionary) a.get(2)).get(new PdfName("one"))).intValue());
-        Assert.assertEquals(2, ((PdfDictionary) a.get(2)).getAsNumber(new PdfName("two")).intValue());
-        Assert.assertEquals(new PdfName("name"), a.get(3));
+        Assertions.assertNotNull(a);
+        Assertions.assertEquals(1, ((PdfNumber) ((PdfArray) a.get(0)).get(0)).intValue());
+        Assertions.assertEquals(2, ((PdfArray) a.get(0)).getAsNumber(1).intValue());
+        Assertions.assertEquals(true, ((PdfBoolean) a.get(1)).getValue());
+        Assertions.assertEquals(1, ((PdfNumber) ((PdfDictionary) a.get(2)).get(new PdfName("one"))).intValue());
+        Assertions.assertEquals(2, ((PdfDictionary) a.get(2)).getAsNumber(new PdfName("two")).intValue());
+        Assertions.assertEquals(new PdfName("name"), a.get(3));
 
-        Assert.assertTrue(a.get(4).isNull());
-        Assert.assertEquals(100, ((PdfNumber) a.get(5)).intValue());
-        Assert.assertEquals("string", ((PdfString) a.get(6)).toUnicodeString());
+        Assertions.assertTrue(a.get(4).isNull());
+        Assertions.assertEquals(100, ((PdfNumber) a.get(5)).intValue());
+        Assertions.assertEquals("string", ((PdfString) a.get(6)).toUnicodeString());
         pdfDocument.close();
     }
 
@@ -318,13 +317,13 @@ public class PdfWriterTest extends ExtendedITextTest {
         {
             PdfReader reader = CompareTool.createOutputReader(destinationFolder + "copyObject3_2.pdf");
             PdfDocument pdfDocument = new PdfDocument(reader);
-            Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+            Assertions.assertEquals(false, reader.hasRebuiltXref(), "Rebuilt");
             PdfDictionary catalog = pdfDocument.getCatalog().getPdfObject();
             PdfArray arr1 = catalog.getAsArray(new PdfName("arr1"));
             PdfArray arr2 = arr1.getAsArray(0);
             PdfDictionary dic1 = arr2.getAsDictionary(0);
             PdfDictionary dic2 = dic1.getAsDictionary(new PdfName("dic2"));
-            Assert.assertEquals(arr1, dic2.getAsArray(new PdfName("arr1")));
+            Assertions.assertEquals(arr1, dic2.getAsArray(new PdfName("arr1")));
             pdfDocument.close();
         }
     }
@@ -363,11 +362,11 @@ public class PdfWriterTest extends ExtendedITextTest {
 
         PdfReader reader = CompareTool.createOutputReader(destinationFolder + "copyObject4_2.pdf");
         PdfDocument pdfDocument = new PdfDocument(reader);
-        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        Assertions.assertEquals(false, reader.hasRebuiltXref(), "Rebuilt");
         PdfDictionary catalog = pdfDocument.getCatalog().getPdfObject();
         PdfStream stream = (PdfStream) catalog.getAsStream(new PdfName("stream"));
         byte[] bytes = stream.getBytes();
-        Assert.assertArrayEquals(ByteUtils.getIsoBytes("[1 2 3]"), bytes);
+        Assertions.assertArrayEquals(ByteUtils.getIsoBytes("[1 2 3]"), bytes);
         pdfDocument.close();
     }
 
@@ -400,14 +399,14 @@ public class PdfWriterTest extends ExtendedITextTest {
 
         PdfReader reader = CompareTool.createOutputReader(destinationFolder + "copyObject5_2.pdf");
         PdfDocument pdfDocument = new PdfDocument(reader);
-        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
-        Assert.assertEquals(8, reader.trailer.getAsNumber(PdfName.Size).intValue());
+        Assertions.assertEquals(false, reader.hasRebuiltXref(), "Rebuilt");
+        Assertions.assertEquals(8, reader.trailer.getAsNumber(PdfName.Size).intValue());
         byte[] bytes = pdfDocument.getPage(1).getContentBytes();
         // getting content bytes results in adding '\n' for each content stream
         // so we should compare String with '\n' at the end
-        Assert.assertArrayEquals(ByteUtils.getIsoBytes("%Page_1\n"), bytes);
+        Assertions.assertArrayEquals(ByteUtils.getIsoBytes("%Page_1\n"), bytes);
         bytes = pdfDocument.getPage(2).getContentBytes();
-        Assert.assertArrayEquals(ByteUtils.getIsoBytes("%Page_2\n"), bytes);
+        Assertions.assertArrayEquals(ByteUtils.getIsoBytes("%Page_2\n"), bytes);
         pdfDocument.close();
     }
 
@@ -442,25 +441,25 @@ public class PdfWriterTest extends ExtendedITextTest {
 
         PdfReader reader = CompareTool.createOutputReader(destinationFolder + "copyObject6_2.pdf");
         PdfDocument pdfDocument = new PdfDocument(reader);
-        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        Assertions.assertEquals(false, reader.hasRebuiltXref(), "Rebuilt");
 
         PdfObject obj1 = pdfDocument.getPage(1).getPdfObject().get(new PdfName("HelloWorldCopy1"));
 
         PdfIndirectReference ref1 = obj1.getIndirectReference();
-        Assert.assertEquals(6, ref1.objNr);
-        Assert.assertEquals(0, ref1.genNr);
+        Assertions.assertEquals(6, ref1.objNr);
+        Assertions.assertEquals(0, ref1.genNr);
 
         PdfObject obj2 = pdfDocument.getPage(1).getPdfObject().get(new PdfName("HelloWorldCopy2"));
 
         PdfIndirectReference ref2 = obj2.getIndirectReference();
-        Assert.assertEquals(7, ref2.getObjNumber());
-        Assert.assertEquals(0, ref2.getGenNumber());
+        Assertions.assertEquals(7, ref2.getObjNumber());
+        Assertions.assertEquals(0, ref2.getGenNumber());
 
         PdfObject obj3 = pdfDocument.getPage(1).getPdfObject().get(new PdfName("HelloWorldCopy3"));
 
         PdfIndirectReference ref3 = obj3.getIndirectReference();
-        Assert.assertEquals(7, ref3.getObjNumber());
-        Assert.assertEquals(0, ref3.getGenNumber());
+        Assertions.assertEquals(7, ref3.getObjNumber());
+        Assertions.assertEquals(0, ref3.getGenNumber());
 
         pdfDocument.close();
     }
@@ -494,7 +493,7 @@ public class PdfWriterTest extends ExtendedITextTest {
             pdfDoc2.close();
         }
 
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 KernelExceptionMessageConstant.CANNOT_COPY_INDIRECT_OBJECT_FROM_THE_DOCUMENT_THAT_IS_BEING_WRITTEN, exceptionMessage);
     }
 
@@ -523,7 +522,7 @@ public class PdfWriterTest extends ExtendedITextTest {
             pdfDoc.close();
         }
 
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 KernelExceptionMessageConstant.DOCUMENT_FOR_COPY_TO_CANNOT_BE_NULL, exceptionMessage);
     }
 
@@ -536,7 +535,7 @@ public class PdfWriterTest extends ExtendedITextTest {
         pdfDoc.close();
         try {
             fos.write(1);
-            Assert.fail("Exception expected");
+            Assertions.fail("Exception expected");
         } catch (Exception e) {
             //ignored
         }
@@ -578,10 +577,10 @@ public class PdfWriterTest extends ExtendedITextTest {
 
         PdfReader reader = CompareTool.createOutputReader(filename);
         PdfDocument pdfDocument = new PdfDocument(reader);
-        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
-        Assert.assertEquals("Page count", 1, pdfDocument.getNumberOfPages());
+        Assertions.assertEquals(false, reader.hasRebuiltXref(), "Rebuilt");
+        Assertions.assertEquals(1, pdfDocument.getNumberOfPages(), "Page count");
         PdfDictionary page = pdfDocument.getPage(1).getPdfObject();
-        Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
+        Assertions.assertEquals(PdfName.Page, page.get(PdfName.Type));
         pdfDocument.close();
     }
 
@@ -603,21 +602,21 @@ public class PdfWriterTest extends ExtendedITextTest {
         document.close();
 
 //        com.itextpdf.text.pdf.PdfReader reader = new PdfReader(filename);
-//        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
-//        Assert.assertNotNull(reader.getPageN(1));
+//        Assertions.assertEquals("Rebuilt", false, reader.isRebuilt());
+//        Assertions.assertNotNull(reader.getPageN(1));
 //        String date = reader.getDocumentInfo().get("CreationDate");
 //        Calendar cl = com.itextpdf.text.pdf.PdfDate.decode(date);
 //        long diff = new GregorianCalendar().getTimeInMillis() - cl.getTimeInMillis();
 //        String message = "Unexpected creation date. Different from now is " + (float)diff/1000 + "s";
-//        Assert.assertTrue(message, diff < 5000);
+//        Assertions.assertTrue(diff < 5000, message);
 //        reader.close();
 
         PdfReader reader6 = CompareTool.createOutputReader(filename);
         document = new PdfDocument(reader6);
-        Assert.assertEquals("Rebuilt", false, reader6.hasRebuiltXref());
-        Assert.assertEquals("Fixed", false, reader6.hasFixedXref());
+        Assertions.assertEquals(false, reader6.hasRebuiltXref(), "Rebuilt");
+        Assertions.assertEquals(false, reader6.hasFixedXref(), "Fixed");
         PdfStream pdfStream = (PdfStream) document.getXref().get(streamIndirectNumber).getRefersTo();
-        Assert.assertArrayEquals("Stream by InputStream", streamContent.getBytes(), pdfStream.getBytes());
+        Assertions.assertArrayEquals(streamContent.getBytes(), pdfStream.getBytes(), "Stream by InputStream");
         document.close();
     }
 }

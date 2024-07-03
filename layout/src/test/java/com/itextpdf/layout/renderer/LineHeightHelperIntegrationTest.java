@@ -33,17 +33,16 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.RenderingMode;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class LineHeightHelperIntegrationTest extends ExtendedITextTest {
 
     private static final String CMP = "./src/test/resources/com/itextpdf/layout/LineHeightHelperIntegrationTest/";
@@ -54,7 +53,7 @@ public class LineHeightHelperIntegrationTest extends ExtendedITextTest {
             + "Remember mistaken opinions it pleasure of debating. "
             + "Court front maids forty if aware their at. Chicken use are pressed removed.";
 
-    @BeforeClass
+    @BeforeAll
     public static void createDestFolder() {
         createDestinationFolder(DESTINATION);
     }
@@ -65,7 +64,7 @@ public class LineHeightHelperIntegrationTest extends ExtendedITextTest {
         String cmpPdf = CMP + "cmp_" + name;
         String outPdf = DESTINATION + name;
         testFont(PdfFontFactory.createFont(StandardFonts.COURIER), outPdf);
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION));
     }
 
     @Test
@@ -74,7 +73,7 @@ public class LineHeightHelperIntegrationTest extends ExtendedITextTest {
         String cmpPdf = CMP + "cmp_" + name;
         String outPdf = DESTINATION + name;
         testFont(PdfFontFactory.createFont(StandardFonts.HELVETICA), outPdf);
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION));
     }
 
     @Test
@@ -83,7 +82,7 @@ public class LineHeightHelperIntegrationTest extends ExtendedITextTest {
         String cmpPdf = CMP + "cmp_" + name;
         String outPdf = DESTINATION + name;
         testFont(PdfFontFactory.createFont(StandardFonts.TIMES_ROMAN), outPdf);
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION));
     }
 
     private void testFont(PdfFont font, String outPdf) throws FileNotFoundException {

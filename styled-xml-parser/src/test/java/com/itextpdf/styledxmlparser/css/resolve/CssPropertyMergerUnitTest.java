@@ -23,12 +23,11 @@
 package com.itextpdf.styledxmlparser.css.resolve;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class CssPropertyMergerUnitTest extends ExtendedITextTest {
 
     @Test
@@ -39,7 +38,7 @@ public class CssPropertyMergerUnitTest extends ExtendedITextTest {
         String expected="underline strikethrough bold";
         String actual = CssPropertyMerger.mergeTextDecoration(firstValue,secondValue);
 
-        Assert.assertEquals(expected,actual);
+        Assertions.assertEquals(expected,actual);
     }
 
     @Test
@@ -50,7 +49,7 @@ public class CssPropertyMergerUnitTest extends ExtendedITextTest {
         String expected="underline strikethrough bold";
         String actual = CssPropertyMerger.mergeTextDecoration(firstValue,secondValue);
 
-        Assert.assertEquals(expected,actual);
+        Assertions.assertEquals(expected,actual);
 
     }
 
@@ -62,7 +61,7 @@ public class CssPropertyMergerUnitTest extends ExtendedITextTest {
         String expected="underline strikethrough bold";
         String actual = CssPropertyMerger.mergeTextDecoration(firstValue,secondValue);
 
-        Assert.assertEquals(expected,actual);
+        Assertions.assertEquals(expected,actual);
     }
 
     @Test
@@ -73,7 +72,7 @@ public class CssPropertyMergerUnitTest extends ExtendedITextTest {
         String expected="strikethrough bold";
         String actual = CssPropertyMerger.mergeTextDecoration(firstValue,secondValue);
 
-        Assert.assertEquals(expected,actual);
+        Assertions.assertEquals(expected,actual);
     }
 
     @Test
@@ -84,7 +83,7 @@ public class CssPropertyMergerUnitTest extends ExtendedITextTest {
         String expected="underline";
         String actual = CssPropertyMerger.mergeTextDecoration(firstValue,secondValue);
 
-        Assert.assertEquals(expected,actual);
+        Assertions.assertEquals(expected,actual);
     }
 
     @Test
@@ -95,7 +94,7 @@ public class CssPropertyMergerUnitTest extends ExtendedITextTest {
         String expected=null;
         String actual = CssPropertyMerger.mergeTextDecoration(firstValue,secondValue);
 
-        Assert.assertEquals(expected,actual);
+        Assertions.assertEquals(expected,actual);
     }
 
 
@@ -107,7 +106,7 @@ public class CssPropertyMergerUnitTest extends ExtendedITextTest {
         String expected="none";
         String actual = CssPropertyMerger.mergeTextDecoration(firstValue,secondValue);
 
-        Assert.assertEquals(expected,actual);
+        Assertions.assertEquals(expected,actual);
     }
 
     @Test
@@ -118,7 +117,7 @@ public class CssPropertyMergerUnitTest extends ExtendedITextTest {
         String expected="underline";
         String actual = CssPropertyMerger.mergeTextDecoration(firstValue,secondValue);
 
-        Assert.assertEquals(expected,actual);
+        Assertions.assertEquals(expected,actual);
     }
 
     @Test
@@ -129,7 +128,7 @@ public class CssPropertyMergerUnitTest extends ExtendedITextTest {
         String expected="strikethrough";
         String actual = CssPropertyMerger.mergeTextDecoration(firstValue,secondValue);
 
-        Assert.assertEquals(expected,actual);
+        Assertions.assertEquals(expected,actual);
     }
 
     @Test
@@ -140,7 +139,7 @@ public class CssPropertyMergerUnitTest extends ExtendedITextTest {
         String expected="none";
         String actual = CssPropertyMerger.mergeTextDecoration(firstValue,secondValue);
 
-        Assert.assertEquals(expected,actual);
+        Assertions.assertEquals(expected,actual);
     }
 
 }

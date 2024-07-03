@@ -23,12 +23,11 @@
 package com.itextpdf.kernel.utils.objectpathitems;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class OffsetPathItemTest extends ExtendedITextTest {
 
     @Test
@@ -38,8 +37,8 @@ public class OffsetPathItemTest extends ExtendedITextTest {
         OffsetPathItem offsetPathItem2 = new OffsetPathItem(offset);
 
         boolean result = offsetPathItem1.equals(offsetPathItem2);
-        Assert.assertTrue(result);
-        Assert.assertEquals(offsetPathItem1.hashCode(), offsetPathItem2.hashCode());
+        Assertions.assertTrue(result);
+        Assertions.assertEquals(offsetPathItem1.hashCode(), offsetPathItem2.hashCode());
     }
 
     @Test
@@ -48,8 +47,8 @@ public class OffsetPathItemTest extends ExtendedITextTest {
         OffsetPathItem offsetPathItem2 = new OffsetPathItem(2);
 
         boolean result = offsetPathItem1.equals(offsetPathItem2);
-        Assert.assertFalse(result);
-        Assert.assertNotEquals(offsetPathItem1.hashCode(), offsetPathItem2.hashCode());
+        Assertions.assertFalse(result);
+        Assertions.assertNotEquals(offsetPathItem1.hashCode(), offsetPathItem2.hashCode());
     }
 
     @Test
@@ -57,6 +56,6 @@ public class OffsetPathItemTest extends ExtendedITextTest {
         int offset = 1;
         OffsetPathItem offsetPathItem = new OffsetPathItem(offset);
 
-        Assert.assertEquals(offset, offsetPathItem.getOffset());
+        Assertions.assertEquals(offset, offsetPathItem.getOffset());
     }
 }

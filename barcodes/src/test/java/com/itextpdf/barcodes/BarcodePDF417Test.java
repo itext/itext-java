@@ -37,28 +37,27 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class BarcodePDF417Test extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/barcodes/";
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/barcodes/BarcodePDF417/";
     
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(DESTINATION_FOLDER);
     }
@@ -83,7 +82,7 @@ public class BarcodePDF417Test extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename,
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename,
                 DESTINATION_FOLDER, "diff_"));
     }
 
@@ -107,7 +106,7 @@ public class BarcodePDF417Test extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename,
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename,
                 DESTINATION_FOLDER, "diff_"));
     }
 
@@ -124,7 +123,7 @@ public class BarcodePDF417Test extends ExtendedITextTest {
 
         pdfDocument.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename,
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename,
                 DESTINATION_FOLDER, "diff_"));
     }
 
@@ -149,7 +148,7 @@ public class BarcodePDF417Test extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertEquals(10, barcode.getAspectRatio(), 0);
+        Assertions.assertEquals(10, barcode.getAspectRatio(), 0);
     }
 
     @Test
@@ -174,7 +173,7 @@ public class BarcodePDF417Test extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertEquals(0.5, barcode.getAspectRatio(), 0);
+        Assertions.assertEquals(0.5, barcode.getAspectRatio(), 0);
     }
 
     // Android-Conversion-Skip-Block-Start (java.awt library isn't available on Android)
@@ -202,7 +201,7 @@ public class BarcodePDF417Test extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename,
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename,
                 SOURCE_FOLDER + "cmp_" + filename, DESTINATION_FOLDER));
     }
 
@@ -228,7 +227,7 @@ public class BarcodePDF417Test extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename,
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename,
                 SOURCE_FOLDER + "cmp_" + filename, DESTINATION_FOLDER));
     }
     // Android-Conversion-Skip-Block-End
@@ -254,7 +253,7 @@ public class BarcodePDF417Test extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertEquals(15, barcode.getYHeight(), 0);
+        Assertions.assertEquals(15, barcode.getYHeight(), 0);
     }
 
     @Test
@@ -282,7 +281,7 @@ public class BarcodePDF417Test extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename,
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename,
                 SOURCE_FOLDER + "cmp_" + filename, DESTINATION_FOLDER));
     }
 
@@ -302,7 +301,7 @@ public class BarcodePDF417Test extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename,
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename,
                 SOURCE_FOLDER + "cmp_" + filename, DESTINATION_FOLDER));
     }
 
@@ -322,7 +321,7 @@ public class BarcodePDF417Test extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename,
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename,
                 SOURCE_FOLDER + "cmp_" + filename, DESTINATION_FOLDER));
     }
 
@@ -342,7 +341,7 @@ public class BarcodePDF417Test extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename,
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename,
                 SOURCE_FOLDER + "cmp_" + filename, DESTINATION_FOLDER));
     }
 
@@ -359,7 +358,7 @@ public class BarcodePDF417Test extends ExtendedITextTest {
         barcode.setCodeRows(150);
         barcode.placeBarcode(canvas, null);
 
-        Assert.assertEquals(8, barcode.getCodeRows());
+        Assertions.assertEquals(8, barcode.getCodeRows());
     }
 
     @Test
@@ -375,7 +374,7 @@ public class BarcodePDF417Test extends ExtendedITextTest {
         barcode.setCodeColumns(150);
         barcode.placeBarcode(canvas, null);
 
-        Assert.assertEquals(1, barcode.getCodeColumns());
+        Assertions.assertEquals(1, barcode.getCodeColumns());
     }
 
     @Test
@@ -391,7 +390,7 @@ public class BarcodePDF417Test extends ExtendedITextTest {
         barcode.setLenCodewords(150);
         barcode.placeBarcode(canvas, null);
 
-        Assert.assertEquals(8, barcode.getLenCodewords());
+        Assertions.assertEquals(8, barcode.getLenCodewords());
     }
 
     @Test
@@ -407,7 +406,7 @@ public class BarcodePDF417Test extends ExtendedITextTest {
         barcode.setErrorLevel(3);
         barcode.placeBarcode(canvas, null);
 
-        Assert.assertEquals(2, barcode.getErrorLevel());
+        Assertions.assertEquals(2, barcode.getErrorLevel());
     }
 
     @Test
@@ -423,7 +422,7 @@ public class BarcodePDF417Test extends ExtendedITextTest {
         barcode.setOptions(63);
         barcode.placeBarcode(canvas, null);
 
-        Assert.assertEquals(63, barcode.getOptions());
+        Assertions.assertEquals(63, barcode.getOptions());
     }
 
     @Test
@@ -438,20 +437,20 @@ public class BarcodePDF417Test extends ExtendedITextTest {
         BarcodePDF417 barcode = new BarcodePDF417();
         barcode.setOptions(64);
 
-        Exception e = Assert.assertThrows(PdfException.class,
+        Exception e = Assertions.assertThrows(PdfException.class,
                 () -> barcode.placeBarcode(canvas, null)
         );
-        Assert.assertEquals("Invalid codeword size.", e.getMessage());
-        Assert.assertEquals(64, barcode.getOptions());
+        Assertions.assertEquals("Invalid codeword size.", e.getMessage());
+        Assertions.assertEquals(64, barcode.getOptions());
     }
 
     @Test
     public void lenCodewordsIsNotEnoughTest() {
         BarcodePDF417 barcodePDF417 = new BarcodePDF417();
         barcodePDF417.setOptions(BarcodePDF417.PDF417_USE_RAW_CODEWORDS);
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> barcodePDF417.paintCode());
-        Assert.assertEquals(BarcodesExceptionMessageConstant.INVALID_CODEWORD_SIZE, exception.getMessage());
+        Assertions.assertEquals(BarcodesExceptionMessageConstant.INVALID_CODEWORD_SIZE, exception.getMessage());
     }
 
     @Test
@@ -460,9 +459,9 @@ public class BarcodePDF417Test extends ExtendedITextTest {
         barcodePDF417.setOptions(BarcodePDF417.PDF417_USE_RAW_CODEWORDS);
         // lenCodeWords should be bigger than 1
         barcodePDF417.setLenCodewords(0);
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> barcodePDF417.paintCode());
-        Assert.assertEquals(BarcodesExceptionMessageConstant.INVALID_CODEWORD_SIZE, exception.getMessage());
+        Assertions.assertEquals(BarcodesExceptionMessageConstant.INVALID_CODEWORD_SIZE, exception.getMessage());
     }
 
     @Test
@@ -471,9 +470,9 @@ public class BarcodePDF417Test extends ExtendedITextTest {
         barcodePDF417.setOptions(BarcodePDF417.PDF417_USE_RAW_CODEWORDS);
         // lenCodeWords should be smaller than MAX_DATA_CODEWORDS
         barcodePDF417.setLenCodewords(927);
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> barcodePDF417.paintCode());
-        Assert.assertEquals(BarcodesExceptionMessageConstant.INVALID_CODEWORD_SIZE, exception.getMessage());
+        Assertions.assertEquals(BarcodesExceptionMessageConstant.INVALID_CODEWORD_SIZE, exception.getMessage());
     }
 
     @Test
@@ -502,7 +501,7 @@ public class BarcodePDF417Test extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename,
                         DESTINATION_FOLDER, "diff_"));
     }

@@ -32,7 +32,6 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -44,11 +43,11 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(BouncyCastleUnitTest.class)
+@Tag("BouncyCastleUnitTest")
 public class CrlClientOnlineTest extends ExtendedITextTest {
 
     private static final String certSrc = "./src/test/resources/com/itextpdf/signatures/sign/CrlClientOnlineTest/";
@@ -68,7 +67,7 @@ public class CrlClientOnlineTest extends ExtendedITextTest {
         };
         CrlClientOnline crlClientOnline = new CrlClientOnline(urls);
 
-        Assert.assertEquals(2, crlClientOnline.getUrlsSize());
+        Assertions.assertEquals(2, crlClientOnline.getUrlsSize());
     }
 
     @Test
@@ -77,7 +76,7 @@ public class CrlClientOnlineTest extends ExtendedITextTest {
     })
     public void addCrlUrlTest() {
         CrlClientOnline crlClientOnline = new CrlClientOnline("https://examples.com");
-        Assert.assertEquals(1, crlClientOnline.getUrlsSize());
+        Assertions.assertEquals(1, crlClientOnline.getUrlsSize());
     }
 
     @Test
@@ -86,7 +85,7 @@ public class CrlClientOnlineTest extends ExtendedITextTest {
     })
     public void addEmptyCrlUrlTest() {
         CrlClientOnline crlClientOnline = new CrlClientOnline("");
-        Assert.assertEquals(0, crlClientOnline.getUrlsSize());
+        Assertions.assertEquals(0, crlClientOnline.getUrlsSize());
     }
 
     @Test
@@ -95,7 +94,7 @@ public class CrlClientOnlineTest extends ExtendedITextTest {
     })
     public void addWrongCrlUrlTest() {
         CrlClientOnline crlClientOnline = new CrlClientOnline("test");
-        Assert.assertEquals(0, crlClientOnline.getUrlsSize());
+        Assertions.assertEquals(0, crlClientOnline.getUrlsSize());
     }
 
     @Test
@@ -107,7 +106,7 @@ public class CrlClientOnlineTest extends ExtendedITextTest {
     public void checkCrlCertWithMalformedUrlTest() throws CertificateException, IOException {
         Certificate chain = CryptoUtil.readPublicCertificate(FileUtil.getInputStreamForFile(certWithMalformedUrl));
         CrlClientOnline crlClientOnline = new CrlClientOnline(new Certificate[] {chain});
-        Assert.assertEquals(0, crlClientOnline.getUrlsSize());
+        Assertions.assertEquals(0, crlClientOnline.getUrlsSize());
     }
 
     @Test
@@ -119,7 +118,7 @@ public class CrlClientOnlineTest extends ExtendedITextTest {
     public void checkCrlCertWithCorrectUrlTest() throws CertificateException, IOException {
         Certificate chain = CryptoUtil.readPublicCertificate(FileUtil.getInputStreamForFile(certWithCorrectUrl));
         CrlClientOnline crlClientOnline = new CrlClientOnline(new Certificate[] {chain});
-        Assert.assertEquals(1, crlClientOnline.getUrlsSize());
+        Assertions.assertEquals(1, crlClientOnline.getUrlsSize());
     }
 
     @Test
@@ -131,14 +130,14 @@ public class CrlClientOnlineTest extends ExtendedITextTest {
         // Root certificate with 1 CRL and leaf certificate with 3 CRLs in 3 Distribution Points.
         Certificate[] chain = PemFileHelper.readFirstChain(chainWithSeveralUrls);
         CrlClientOnline crlClientOnline = new CrlClientOnline(chain);
-        Assert.assertEquals(4, crlClientOnline.getUrlsSize());
+        Assertions.assertEquals(4, crlClientOnline.getUrlsSize());
     }
 
     @Test
     public void cannotGetEncodedWhenCertIsNullTest() throws CertificateEncodingException {
         CrlClientOnline crlClientOnline = new CrlClientOnline();
-        Assert.assertNull(crlClientOnline.getEncoded(null, ""));
-        Assert.assertEquals(0, crlClientOnline.getUrlsSize());
+        Assertions.assertNull(crlClientOnline.getEncoded(null, ""));
+        Assertions.assertEquals(0, crlClientOnline.getUrlsSize());
     }
 
     @Test
@@ -157,7 +156,7 @@ public class CrlClientOnlineTest extends ExtendedITextTest {
         };
         X509Certificate checkCert = (X509Certificate) PemFileHelper.readFirstChain(chainWithSeveralUrls)[1];
         Collection<byte[]> bytes = crlClientOnline.getEncoded(checkCert, null);
-        Assert.assertEquals(3, bytes.size());
+        Assertions.assertEquals(3, bytes.size());
     }
 
     @Test
@@ -173,8 +172,8 @@ public class CrlClientOnlineTest extends ExtendedITextTest {
         CrlClientOnline crlClientOnline = new CrlClientOnline("http://www.example.com/crl/test.crl");
         X509Certificate checkCert = new X509MockCertificate();
         Collection<byte[]> bytes = crlClientOnline.getEncoded(checkCert, "http://www.example.com/crl/test.crl");
-        Assert.assertTrue(bytes.isEmpty());
-        Assert.assertEquals(1, crlClientOnline.getUrlsSize());
+        Assertions.assertTrue(bytes.isEmpty());
+        Assertions.assertEquals(1, crlClientOnline.getUrlsSize());
     }
 
     @Test
@@ -191,7 +190,7 @@ public class CrlClientOnlineTest extends ExtendedITextTest {
         CrlClientOnline crlClientOnline = new CrlClientOnline();
         X509Certificate checkCert = new X509MockCertificate();
         Collection<byte[]> bytes = crlClientOnline.getEncoded(checkCert, "http://www.example.com/crl/test.crl");
-        Assert.assertTrue(bytes.isEmpty());
-        Assert.assertEquals(0, crlClientOnline.getUrlsSize());
+        Assertions.assertTrue(bytes.isEmpty());
+        Assertions.assertEquals(0, crlClientOnline.getUrlsSize());
     }
 }

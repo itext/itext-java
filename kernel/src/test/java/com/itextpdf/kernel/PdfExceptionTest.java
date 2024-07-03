@@ -25,19 +25,18 @@ package com.itextpdf.kernel;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfExceptionTest extends ExtendedITextTest {
 
     @Test
     public void whenCreatedPdfExceptionWrapsCauseWithUnknownExceptionMessageTest() {
-        Exception e = Assert.assertThrows(PdfException.class,
+        Exception e = Assertions.assertThrows(PdfException.class,
                 () -> {throw new PdfException(new Exception("itext"));});
-        Assert.assertEquals(KernelExceptionMessageConstant.UNKNOWN_PDF_EXCEPTION, e.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.UNKNOWN_PDF_EXCEPTION, e.getMessage());
     }
 }

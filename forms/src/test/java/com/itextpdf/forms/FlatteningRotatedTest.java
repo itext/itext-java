@@ -30,29 +30,23 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(Parameterized.class)
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class FlatteningRotatedTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/FlatteningRotatedTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/forms/FlatteningRotatedTest/";
 
-    private final String inputPdfFileName;
-
-    @Parameterized.Parameters(name = "{0}")
-    public static Collection<Object[]> inputFileNames() {
+    public static Collection<Object[]> InputFileNames() {
         List<Object[]> inputFileNames = new ArrayList<Object[]>();
         for (int pageRot = 0; pageRot < 360; pageRot += 90) {
             for (int fieldRot = 0; fieldRot < 360; fieldRot += 90) {
@@ -62,17 +56,14 @@ public class FlatteningRotatedTest extends ExtendedITextTest {
         return inputFileNames;
     }
 
-    public FlatteningRotatedTest(Object inputPdfFileName) {
-        this.inputPdfFileName = (String) inputPdfFileName;
-    }
-
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
 
-    @Test
-    public void formFlatteningTest_DefaultAppearanceGeneration_Rot() throws IOException, InterruptedException {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("InputFileNames")
+    public void formFlatteningTest_DefaultAppearanceGeneration_Rot(String inputPdfFileName) throws IOException, InterruptedException {
         String src = sourceFolder + inputPdfFileName + ".pdf";
         String dest = destinationFolder + inputPdfFileName + ".pdf";
         String dest_flattened = destinationFolder + inputPdfFileName + "_flattened.pdf";
@@ -87,11 +78,11 @@ public class FlatteningRotatedTest extends ExtendedITextTest {
                 field.getFirstFormAnnotation().setBorderColor(ColorConstants.BLUE);
             }
         }
-        Assert.assertNull(new CompareTool().compareByContent(dest, cmp, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(dest, cmp, destinationFolder, "diff_"));
 
         try (PdfDocument doc = new PdfDocument(new PdfReader(dest), new PdfWriter(dest_flattened))) {
             PdfFormCreator.getAcroForm(doc, true).flattenFields();
         }
-        Assert.assertNull(new CompareTool().compareByContent(dest_flattened, cmp_flattened, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(dest_flattened, cmp_flattened, destinationFolder, "diff_"));
     }
 }

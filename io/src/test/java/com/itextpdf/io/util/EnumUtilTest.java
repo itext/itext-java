@@ -23,29 +23,28 @@
 package com.itextpdf.io.util;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class EnumUtilTest extends ExtendedITextTest {
     @Test
     public void testEnumUtilSameAmount() {
-        Assert.assertEquals(3, EnumUtil.getAllValuesOfEnum(TestEnum1.class).size());
+        Assertions.assertEquals(3, EnumUtil.getAllValuesOfEnum(TestEnum1.class).size());
     }
 
     @Test
     public void testEnumUtilSameValues() {
         List<TestEnum1> list = EnumUtil.getAllValuesOfEnum(TestEnum1.class);
-        Assert.assertTrue(list.contains(TestEnum1.A));
-        Assert.assertTrue(list.contains(TestEnum1.B));
-        Assert.assertTrue(list.contains(TestEnum1.C));
-        Assert.assertEquals(TestEnum1.A, list.get(0));
-        Assert.assertEquals(TestEnum1.B, list.get(1));
-        Assert.assertEquals(TestEnum1.C, list.get(2));
+        Assertions.assertTrue(list.contains(TestEnum1.A));
+        Assertions.assertTrue(list.contains(TestEnum1.B));
+        Assertions.assertTrue(list.contains(TestEnum1.C));
+        Assertions.assertEquals(TestEnum1.A, list.get(0));
+        Assertions.assertEquals(TestEnum1.B, list.get(1));
+        Assertions.assertEquals(TestEnum1.C, list.get(2));
     }
 }
 

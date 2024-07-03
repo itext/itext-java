@@ -27,11 +27,11 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfSignatureBuildPropertiesUnitTest extends ExtendedITextTest {
 
     @Test
@@ -41,9 +41,9 @@ public class PdfSignatureBuildPropertiesUnitTest extends ExtendedITextTest {
         properties.getPdfObject().put(PdfName.App, appPropDic);
         properties.setSignatureCreator("sign_creator");
         PdfObject appDict = properties.getPdfObject().get(PdfName.App);
-        Assert.assertTrue(appDict instanceof PdfDictionary);
+        Assertions.assertTrue(appDict instanceof PdfDictionary);
         PdfObject name = ((PdfDictionary) appDict).get(PdfName.Name);
-        Assert.assertTrue(name instanceof PdfName);
-        Assert.assertEquals("sign_creator", ((PdfName) name).getValue());
+        Assertions.assertTrue(name instanceof PdfName);
+        Assertions.assertEquals("sign_creator", ((PdfName) name).getValue());
     }
 }

@@ -34,18 +34,16 @@ import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * These tests will make sure that a NullPointerException is never thrown: if a
@@ -55,7 +53,7 @@ import org.junit.experimental.categories.Category;
  * If the (optional) {@link ISvgConverterProperties} parameter is null, this
  * should NOT throw an exception as this is caught in the library.
  */
-@Category(UnitTest.class)
+@org.junit.jupiter.api.Tag("UnitTest")
 public class SvgConverterUnitNullTest extends ExtendedITextTest {
 
     // we cannot easily mock the PdfDocument, so we make do with as close to unit testing as we can
@@ -63,43 +61,43 @@ public class SvgConverterUnitNullTest extends ExtendedITextTest {
     private final String content = "<svg width=\"10\" height=\"10\"/>";
     private InputStream is;
 
-    @Before
+    @BeforeEach
     public void setup() {
         doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         doc.addNewPage();
         is = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
     }
 
-    @After
+    @AfterEach
     public void teardown() {
         doc.close();
     }
 
     @Test
     public void drawOnDocumentStringNullTest() {
-        Assert.assertThrows(SvgProcessingException.class, () -> SvgConverter.drawOnDocument((String) null, doc, 1));
+        Assertions.assertThrows(SvgProcessingException.class, () -> SvgConverter.drawOnDocument((String) null, doc, 1));
     }
 
     @Test
     public void drawOnDocumentInputStreamNullTest() throws IOException {
-        Assert.assertThrows(SvgProcessingException.class,
+        Assertions.assertThrows(SvgProcessingException.class,
                 () -> SvgConverter.drawOnDocument((InputStream) null, doc, 1)
         );
     }
 
     @Test
     public void drawOnDocumentDocNullTest() throws IOException {
-        Assert.assertThrows(SvgProcessingException.class, () -> SvgConverter.drawOnDocument(is, null, 1));
+        Assertions.assertThrows(SvgProcessingException.class, () -> SvgConverter.drawOnDocument(is, null, 1));
     }
 
     @Test
     public void drawOnDocumentAllNullTest() {
-        Assert.assertThrows(SvgProcessingException.class, () -> SvgConverter.drawOnDocument((String) null, null, 1));
+        Assertions.assertThrows(SvgProcessingException.class, () -> SvgConverter.drawOnDocument((String) null, null, 1));
     }
 
     @Test
     public void drawOnDocumentAllNullTest2() throws IOException {
-        Assert.assertThrows(SvgProcessingException.class,
+        Assertions.assertThrows(SvgProcessingException.class,
                 () -> SvgConverter.drawOnDocument((InputStream) null, null, 1)
         );
     }
@@ -117,28 +115,28 @@ public class SvgConverterUnitNullTest extends ExtendedITextTest {
     @Test
     public void drawOnPageStringNullTest() {
         PdfPage page = doc.getFirstPage();
-        Assert.assertThrows(SvgProcessingException.class, () -> SvgConverter.drawOnPage((String) null, page));
+        Assertions.assertThrows(SvgProcessingException.class, () -> SvgConverter.drawOnPage((String) null, page));
     }
 
     @Test
     public void drawOnPageInputStreamNullTest() throws IOException {
         PdfPage page = doc.getFirstPage();
-        Assert.assertThrows(SvgProcessingException.class, () -> SvgConverter.drawOnPage((InputStream) null, page));
+        Assertions.assertThrows(SvgProcessingException.class, () -> SvgConverter.drawOnPage((InputStream) null, page));
     }
 
     @Test
     public void drawOnPageDocNullTest() throws IOException {
-        Assert.assertThrows(SvgProcessingException.class, () -> SvgConverter.drawOnPage(is, null));
+        Assertions.assertThrows(SvgProcessingException.class, () -> SvgConverter.drawOnPage(is, null));
     }
 
     @Test
     public void drawOnPageAllNullTest() {
-        Assert.assertThrows(SvgProcessingException.class, () -> SvgConverter.drawOnPage((String) null, null));
+        Assertions.assertThrows(SvgProcessingException.class, () -> SvgConverter.drawOnPage((String) null, null));
     }
 
     @Test
     public void drawOnPageAllNullTest2() throws IOException {
-        Assert.assertThrows(SvgProcessingException.class, () -> SvgConverter.drawOnPage((InputStream) null, null));
+        Assertions.assertThrows(SvgProcessingException.class, () -> SvgConverter.drawOnPage((InputStream) null, null));
     }
 
     @Test
@@ -156,28 +154,28 @@ public class SvgConverterUnitNullTest extends ExtendedITextTest {
     @Test
     public void drawOnCanvasStringNullTest() {
         PdfCanvas canvas = new PdfCanvas(doc.getLastPage());
-        Assert.assertThrows(SvgProcessingException.class, () -> SvgConverter.drawOnDocument((String) null, doc, 1));
+        Assertions.assertThrows(SvgProcessingException.class, () -> SvgConverter.drawOnDocument((String) null, doc, 1));
     }
 
     @Test
     public void drawOnCanvasInputStreamNullTest() throws IOException {
         PdfCanvas canvas = new PdfCanvas(doc.getLastPage());
-        Assert.assertThrows(SvgProcessingException.class, () -> SvgConverter.drawOnCanvas((InputStream) null, canvas));
+        Assertions.assertThrows(SvgProcessingException.class, () -> SvgConverter.drawOnCanvas((InputStream) null, canvas));
     }
 
     @Test
     public void drawOnCanvasDocNullTest() throws IOException {
-        Assert.assertThrows(SvgProcessingException.class, () -> SvgConverter.drawOnCanvas(is, null));
+        Assertions.assertThrows(SvgProcessingException.class, () -> SvgConverter.drawOnCanvas(is, null));
     }
 
     @Test
     public void drawOnCanvasAllNullTest() {
-        Assert.assertThrows(SvgProcessingException.class, () -> SvgConverter.drawOnCanvas((String) null, null));
+        Assertions.assertThrows(SvgProcessingException.class, () -> SvgConverter.drawOnCanvas((String) null, null));
     }
 
     @Test
     public void drawOnCanvasAllNullTest2() throws IOException {
-        Assert.assertThrows(SvgProcessingException.class, () -> SvgConverter.drawOnCanvas((InputStream) null, null));
+        Assertions.assertThrows(SvgProcessingException.class, () -> SvgConverter.drawOnCanvas((InputStream) null, null));
     }
 
     @Test
@@ -194,48 +192,48 @@ public class SvgConverterUnitNullTest extends ExtendedITextTest {
 
     @Test
     public void convertToXObjectStringNullTest() {
-        Assert.assertThrows(SvgProcessingException.class, () -> SvgConverter.convertToXObject((String) null, doc));
+        Assertions.assertThrows(SvgProcessingException.class, () -> SvgConverter.convertToXObject((String) null, doc));
     }
 
     @Test
     public void convertToXObjectInputStreamNullTest() throws IOException {
-        Assert.assertThrows(SvgProcessingException.class, () -> SvgConverter.convertToXObject((InputStream) null, doc));
+        Assertions.assertThrows(SvgProcessingException.class, () -> SvgConverter.convertToXObject((InputStream) null, doc));
     }
 
     @Test
     public void convertToXObjectRendererNullTest() {
-        Assert.assertThrows(SvgProcessingException.class, () -> SvgConverter.convertToXObject((ISvgNodeRenderer) null, doc));
+        Assertions.assertThrows(SvgProcessingException.class, () -> SvgConverter.convertToXObject((ISvgNodeRenderer) null, doc));
     }
 
     @Test
     public void convertToXObjectDocWithStringNullTest() throws IOException {
-        Assert.assertThrows(SvgProcessingException.class, () -> SvgConverter.convertToXObject(is, null));
+        Assertions.assertThrows(SvgProcessingException.class, () -> SvgConverter.convertToXObject(is, null));
     }
 
     @Test
     public void convertToXObjectDocWithStreamNullTest() throws IOException {
-        Assert.assertThrows(SvgProcessingException.class, () -> SvgConverter.convertToXObject(is, null));
+        Assertions.assertThrows(SvgProcessingException.class, () -> SvgConverter.convertToXObject(is, null));
     }
 
     @Test
     public void convertToXObjectDocWithRendererNullTest() throws IOException {
         ISvgNodeRenderer renderer = SvgConverter.process(SvgConverter.parse(is), null).getRootRenderer();
-        Assert.assertThrows(SvgProcessingException.class, () -> SvgConverter.convertToXObject(renderer, null));
+        Assertions.assertThrows(SvgProcessingException.class, () -> SvgConverter.convertToXObject(renderer, null));
     }
 
     @Test
     public void convertToXObjectAllWithStringNullTest() {
-        Assert.assertThrows(SvgProcessingException.class, () -> SvgConverter.convertToXObject((String) null, null));
+        Assertions.assertThrows(SvgProcessingException.class, () -> SvgConverter.convertToXObject((String) null, null));
     }
 
     @Test
     public void convertToXObjectAllWithStreamNullTest() throws IOException {
-        Assert.assertThrows(SvgProcessingException.class, () -> SvgConverter.convertToXObject((InputStream) null, null));
+        Assertions.assertThrows(SvgProcessingException.class, () -> SvgConverter.convertToXObject((InputStream) null, null));
     }
 
     @Test
     public void convertToXObjectAllWithRendererNullTest() {
-        Assert.assertThrows(SvgProcessingException.class, () -> SvgConverter.convertToXObject((ISvgNodeRenderer) null, null));
+        Assertions.assertThrows(SvgProcessingException.class, () -> SvgConverter.convertToXObject((ISvgNodeRenderer) null, null));
     }
 
     @Test
@@ -250,12 +248,12 @@ public class SvgConverterUnitNullTest extends ExtendedITextTest {
 
     @Test
     public void parseStringNullTest() {
-        Assert.assertThrows(SvgProcessingException.class, () -> SvgConverter.parse((String) null));
+        Assertions.assertThrows(SvgProcessingException.class, () -> SvgConverter.parse((String) null));
     }
 
     @Test
     public void parseStreamNullTest() throws IOException {
-        Assert.assertThrows(SvgProcessingException.class, () -> SvgConverter.parse((InputStream) null));
+        Assertions.assertThrows(SvgProcessingException.class, () -> SvgConverter.parse((InputStream) null));
     }
 
     @Test
@@ -265,12 +263,12 @@ public class SvgConverterUnitNullTest extends ExtendedITextTest {
 
     @Test
     public void parseStringPropsNullTest() throws IOException {
-        Assert.assertThrows(SvgProcessingException.class, () -> SvgConverter.parse(null, null));
+        Assertions.assertThrows(SvgProcessingException.class, () -> SvgConverter.parse(null, null));
     }
 
     @Test
     public void processAllNullTest() {
-        Assert.assertThrows(SvgProcessingException.class, () -> SvgConverter.process(null, null));
+        Assertions.assertThrows(SvgProcessingException.class, () -> SvgConverter.process(null, null));
     }
 
     @Test

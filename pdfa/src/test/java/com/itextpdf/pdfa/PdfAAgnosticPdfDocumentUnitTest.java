@@ -37,20 +37,19 @@ import com.itextpdf.pdfa.logs.PdfALogMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfAAgnosticPdfDocumentUnitTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
     public static final String destinationFolder = "./target/test/com/itextpdf/pdfa/AgnosticPdfDocumentUnitTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
@@ -61,16 +60,16 @@ public class PdfAAgnosticPdfDocumentUnitTest extends ExtendedITextTest {
                 new PdfWriter(new ByteArrayOutputStream()));
 
         pdfDoc.flushObjectPublic(pdfDoc.getPage(1).getPdfObject(), true);
-        Assert.assertTrue(pdfDoc.getPage(1).getPdfObject().isFlushed());
+        Assertions.assertTrue(pdfDoc.getPage(1).getPdfObject().isFlushed());
 
         pdfDoc.checkIsoConformancePublic(); // Does nothing for PdfDocument
-        Assert.assertFalse(pdfDoc.getPageFactoryPublic() instanceof PdfAPageFactory);
-        Assert.assertNull(pdfDoc.getConformanceLevel());
+        Assertions.assertFalse(pdfDoc.getPageFactoryPublic() instanceof PdfAPageFactory);
+        Assertions.assertNull(pdfDoc.getConformanceLevel());
 
         pdfDoc.updateXmpMetadataPublic();
         XMPMeta xmpMeta = XMPMetaFactory.parseFromBuffer(pdfDoc.getXmpMetadata(true));
-        Assert.assertNull(xmpMeta.getProperty(XMPConst.NS_PDFA_ID, XMPConst.PART));
-        Assert.assertNull(xmpMeta.getProperty(XMPConst.NS_PDFA_ID, XMPConst.CONFORMANCE));
+        Assertions.assertNull(xmpMeta.getProperty(XMPConst.NS_PDFA_ID, XMPConst.PART));
+        Assertions.assertNull(xmpMeta.getProperty(XMPConst.NS_PDFA_ID, XMPConst.CONFORMANCE));
 
         pdfDoc.close();
     }
@@ -79,7 +78,7 @@ public class PdfAAgnosticPdfDocumentUnitTest extends ExtendedITextTest {
     public void getDefaultFont() throws IOException {
         TestAgnosticPdfDocument pdfDoc = new TestAgnosticPdfDocument(new PdfReader(sourceFolder + "pdfs/simpleDoc.pdf"),
                 new PdfWriter(new ByteArrayOutputStream()));
-        Assert.assertNotNull(pdfDoc.getDefaultFont());
+        Assertions.assertNotNull(pdfDoc.getDefaultFont());
     }
 
     @Test
@@ -90,20 +89,20 @@ public class PdfAAgnosticPdfDocumentUnitTest extends ExtendedITextTest {
                 new PdfWriter(new ByteArrayOutputStream()), new StampingProperties());
 
         pdfADoc.flushObjectPublic(pdfADoc.getPage(1).getPdfObject(), true);
-        Assert.assertFalse(pdfADoc.getPage(1).getPdfObject().isFlushed());
+        Assertions.assertFalse(pdfADoc.getPage(1).getPdfObject().isFlushed());
 
         pdfADoc.checkIsoConformancePublic();
-        Assert.assertEquals(PdfAConformanceLevel.PDF_A_2B, pdfADoc.getConformanceLevel());
-        Assert.assertTrue(pdfADoc.getPageFactoryPublic() instanceof PdfAPageFactory);
+        Assertions.assertEquals(PdfAConformanceLevel.PDF_A_2B, pdfADoc.getConformanceLevel());
+        Assertions.assertTrue(pdfADoc.getPageFactoryPublic() instanceof PdfAPageFactory);
 
         pdfADoc.updateXmpMetadataPublic();
         XMPMeta xmpMeta = XMPMetaFactory.parseFromBuffer(pdfADoc.getXmpMetadata(true));
-        Assert.assertNotNull(xmpMeta.getProperty(XMPConst.NS_PDFA_ID, XMPConst.PART));
-        Assert.assertNotNull(xmpMeta.getProperty(XMPConst.NS_PDFA_ID, XMPConst.CONFORMANCE));
+        Assertions.assertNotNull(xmpMeta.getProperty(XMPConst.NS_PDFA_ID, XMPConst.PART));
+        Assertions.assertNotNull(xmpMeta.getProperty(XMPConst.NS_PDFA_ID, XMPConst.CONFORMANCE));
 
         // Extra PdfA error message check
         pdfADoc.flushObjectPublic(pdfADoc.getCatalog().getPdfObject(), true);
-        Assert.assertFalse(pdfADoc.getCatalog().getPdfObject().isFlushed());
+        Assertions.assertFalse(pdfADoc.getCatalog().getPdfObject().isFlushed());
 
         pdfADoc.close();
     }

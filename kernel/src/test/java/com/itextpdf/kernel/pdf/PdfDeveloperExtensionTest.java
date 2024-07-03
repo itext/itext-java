@@ -24,9 +24,8 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -36,11 +35,11 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfDeveloperExtensionTest extends ExtendedITextTest {
 
 
@@ -172,8 +171,8 @@ public class PdfDeveloperExtensionTest extends ExtendedITextTest {
                 int level = exts
                         .getAsDictionary(i)
                         .getAsInt(PdfName.ExtensionLevel).intValue();
-                assertTrue("Level " + level + " is not in expected level list", expectedLevels.contains(level));
-                assertFalse("Level " + level + " appears multiple times", seen.contains(level));
+                assertTrue(expectedLevels.contains(level), "Level " + level + " is not in expected level list");
+                assertFalse(seen.contains(level), "Level " + level + " appears multiple times");
                 seen.add(level);
             }
         }

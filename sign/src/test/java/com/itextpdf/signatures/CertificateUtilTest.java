@@ -24,20 +24,19 @@ package com.itextpdf.signatures;
 
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
 import java.io.IOException;
 import java.security.cert.CRL;
 import java.security.cert.CRLException;
 import java.security.cert.CertificateException;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.security.cert.X509Certificate;
 import java.util.List;
 
-@Category(BouncyCastleUnitTest.class)
+@Tag("BouncyCastleUnitTest")
 public class CertificateUtilTest extends ExtendedITextTest {
 
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/certs/";
@@ -48,7 +47,7 @@ public class CertificateUtilTest extends ExtendedITextTest {
                 (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "adobeExtensionCert.pem")[0];
         String url = CertificateUtil.getTSAURL(tsaCert);
 
-        Assert.assertEquals("https://itextpdf.com/en", url);
+        Assertions.assertEquals("https://itextpdf.com/en", url);
     }
 
     @Test
@@ -57,7 +56,7 @@ public class CertificateUtilTest extends ExtendedITextTest {
                 (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "tsCertRsa.pem")[0];
         String url = CertificateUtil.getTSAURL(tsaCert);
 
-        Assert.assertNull(url);
+        Assertions.assertNull(url);
     }
 
     @Test
@@ -65,12 +64,12 @@ public class CertificateUtilTest extends ExtendedITextTest {
         X509Certificate tsaCert = (X509Certificate)
                 PemFileHelper.readFirstChain(CERTS_SRC + "adobeExtensionCertWithoutTag.pem")[0];
 
-        Assert.assertThrows(NullPointerException.class, () -> CertificateUtil.getTSAURL(tsaCert));
+        Assertions.assertThrows(NullPointerException.class, () -> CertificateUtil.getTSAURL(tsaCert));
     }
     
     @Test
     public void getCRLFromStringNullTest() throws CertificateException, CRLException, IOException {
-        Assert.assertNull(CertificateUtil.getCRL((String) null));
+        Assertions.assertNull(CertificateUtil.getCRL((String) null));
     }
 
     @Test
@@ -79,7 +78,7 @@ public class CertificateUtilTest extends ExtendedITextTest {
                 (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "rootRsa.pem")[0];
         CRL crl = CertificateUtil.getCRL(tsaCert);
         
-        Assert.assertNull(crl);
+        Assertions.assertNull(crl);
     }
 
     @Test
@@ -88,6 +87,6 @@ public class CertificateUtilTest extends ExtendedITextTest {
                 (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "rootRsa.pem")[0];
         List<CRL> crls = CertificateUtil.getCRLs(tsaCert);
 
-        Assert.assertTrue(crls.isEmpty());
+        Assertions.assertTrue(crls.isEmpty());
     }
 }

@@ -26,7 +26,7 @@ import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.kernel.utils.CompareTool;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -67,7 +67,7 @@ public class PdfEncryptionTestUtils {
         String compareResult = compareTool.compareByContent(destinationFolder + filename,
                 sourceFolder + "cmp_" + filename, destinationFolder, "diff_", USER, USER);
         if (compareResult != null) {
-            Assert.fail(compareResult);
+            Assertions.fail(compareResult);
         }
     }
 
@@ -87,11 +87,11 @@ public class PdfEncryptionTestUtils {
                 .getAsString(new PdfName(CUSTOM_INFO_ENTRY_KEY)).toUnicodeString();
 
         if (!expectError) {
-            Assert.assertTrue("Expected content: \n" + pageContent, expectedContentFound);
-            Assert.assertEquals("Encrypted custom", CUSTOM_INFO_ENTRY_VALUE, actualCustomInfoEntry);
+            Assertions.assertTrue(expectedContentFound, "Expected content: \n" + pageContent);
+            Assertions.assertEquals( CUSTOM_INFO_ENTRY_VALUE, actualCustomInfoEntry, "Encrypted custom");
         } else {
-            Assert.assertFalse("Expected content: \n" + pageContent, expectedContentFound);
-            Assert.assertNotEquals("Encrypted custom", CUSTOM_INFO_ENTRY_VALUE, actualCustomInfoEntry);
+            Assertions.assertFalse(expectedContentFound, "Expected content: \n" + pageContent);
+            Assertions.assertNotEquals(CUSTOM_INFO_ENTRY_VALUE, actualCustomInfoEntry, "Encrypted custom");
         }
 
         document.close();

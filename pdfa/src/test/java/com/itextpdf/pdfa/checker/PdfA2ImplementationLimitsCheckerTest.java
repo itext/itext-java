@@ -36,21 +36,20 @@ import com.itextpdf.kernel.pdf.function.PdfType4Function;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfA2ImplementationLimitsCheckerTest extends ExtendedITextTest {
     private PdfA2Checker pdfA2Checker;
 
-    @Before
+    @BeforeEach
     public void before() {
         pdfA2Checker = new PdfA2Checker(PdfAConformanceLevel.PDF_A_2B);
         pdfA2Checker.setFullCheckMode(true);
@@ -61,15 +60,15 @@ public class PdfA2ImplementationLimitsCheckerTest extends ExtendedITextTest {
         final int maxAllowedLength = pdfA2Checker.getMaxStringLength();
         final int testLength = maxAllowedLength + 1;
 
-        Assert.assertEquals(testLength, 32768);
+        Assertions.assertEquals(testLength, 32768);
         PdfString longString = PdfACheckerTestUtils.getLongString(testLength);
 
         // An exception should be thrown as provided String is longer then
         // it is allowed per specification
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkPdfObject(longString)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.PDF_STRING_IS_TOO_LONG, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.PDF_STRING_IS_TOO_LONG, e.getMessage());
     }
 
     @Test
@@ -79,7 +78,7 @@ public class PdfA2ImplementationLimitsCheckerTest extends ExtendedITextTest {
         final int maxAllowedLength = pdfA2Checker.getMaxStringLength();
         final int testLength = maxAllowedLength + 1;
 
-        Assert.assertEquals(testLength, 32768);
+        Assertions.assertEquals(testLength, 32768);
 
         PdfString longString = PdfACheckerTestUtils.getLongString(testLength);
         String newContentString = PdfACheckerTestUtils.getStreamWithValue(longString);
@@ -88,10 +87,10 @@ public class PdfA2ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
         // An exception should be thrown as content stream has a string which
         // is longer then it is allowed per specification
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkContentStream(stream)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.PDF_STRING_IS_TOO_LONG, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.PDF_STRING_IS_TOO_LONG, e.getMessage());
     }
 
     @Test
@@ -128,18 +127,18 @@ public class PdfA2ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
         // TODO DEVSIX-4182
         // An exception is thrown as any number greater then 32767 is considered as Integer
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkPdfObject(largeNumber)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.INTEGER_NUMBER_IS_OUT_OF_RANGE, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.INTEGER_NUMBER_IS_OUT_OF_RANGE, e.getMessage());
     }
 
     @Test
     public void deviceNColorspaceWithMoreThan32Components() {
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> checkColorspace(buildDeviceNColorspace(34))
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.THE_NUMBER_OF_COLOR_COMPONENTS_IN_DEVICE_N_COLORSPACE_SHOULD_NOT_EXCEED, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.THE_NUMBER_OF_COLOR_COMPONENTS_IN_DEVICE_N_COLORSPACE_SHOULD_NOT_EXCEED, e.getMessage());
     }
 
     @Test

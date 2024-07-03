@@ -22,12 +22,11 @@
  */
 package com.itextpdf.kernel.pdf.function;
 
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfType0Order3FunctionTest extends AbstractPdfType0FunctionTest {
 
     private static final int CUBIC_INTERPOLATION_ORDER = 3;

@@ -28,28 +28,27 @@ import com.itextpdf.commons.actions.sequence.SequenceId;
 import com.itextpdf.kernel.actions.data.ITextCoreProductData;
 import com.itextpdf.kernel.actions.ecosystem.TestMetaInfo;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class ITextCoreProductEventTest extends ExtendedITextTest {
     @Test
     public void openDocumentEventTest() {
         SequenceId sequenceId = new SequenceId();
         ITextCoreProductEvent event = ITextCoreProductEvent.createProcessPdfEvent(sequenceId, new TestMetaInfo("meta data"), EventConfirmationType.ON_CLOSE);
 
-        Assert.assertEquals(ITextCoreProductEvent.PROCESS_PDF, event.getEventType());
-        Assert.assertEquals(ProductNameConstant.ITEXT_CORE, event.getProductName());
-        Assert.assertEquals(EventConfirmationType.ON_CLOSE, event.getConfirmationType());
-        Assert.assertEquals(sequenceId, event.getSequenceId());
+        Assertions.assertEquals(ITextCoreProductEvent.PROCESS_PDF, event.getEventType());
+        Assertions.assertEquals(ProductNameConstant.ITEXT_CORE, event.getProductName());
+        Assertions.assertEquals(EventConfirmationType.ON_CLOSE, event.getConfirmationType());
+        Assertions.assertEquals(sequenceId, event.getSequenceId());
 
-        Assert.assertEquals(ITextCoreProductData.getInstance().getPublicProductName(), event.getProductData().getPublicProductName());
-        Assert.assertEquals(ITextCoreProductData.getInstance().getProductName(), event.getProductData().getProductName());
-        Assert.assertEquals(ITextCoreProductData.getInstance().getVersion(), event.getProductData().getVersion());
-        Assert.assertEquals(ITextCoreProductData.getInstance().getSinceCopyrightYear(), event.getProductData().getSinceCopyrightYear());
-        Assert.assertEquals(ITextCoreProductData.getInstance().getToCopyrightYear(), event.getProductData().getToCopyrightYear());
+        Assertions.assertEquals(ITextCoreProductData.getInstance().getPublicProductName(), event.getProductData().getPublicProductName());
+        Assertions.assertEquals(ITextCoreProductData.getInstance().getProductName(), event.getProductData().getProductName());
+        Assertions.assertEquals(ITextCoreProductData.getInstance().getVersion(), event.getProductData().getVersion());
+        Assertions.assertEquals(ITextCoreProductData.getInstance().getSinceCopyrightYear(), event.getProductData().getSinceCopyrightYear());
+        Assertions.assertEquals(ITextCoreProductData.getInstance().getToCopyrightYear(), event.getProductData().getToCopyrightYear());
     }
 }

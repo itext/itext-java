@@ -25,16 +25,15 @@ package com.itextpdf.io.font.otf;
 import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class OpenTypeFontTableReaderTest extends ExtendedITextTest {
     private static final String RESOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/font/otf/OpenTypeFontTableReaderTest/";
 
@@ -46,15 +45,15 @@ public class OpenTypeFontTableReaderTest extends ExtendedITextTest {
         GlyphSubstitutionTableReader gsub = fontProgram.getGsubTable();
         ScriptRecord mym2 = gsub.getScriptRecords().get(0);
 
-        Assert.assertEquals("mym2", mym2.tag);
+        Assertions.assertEquals("mym2", mym2.tag);
         // default LangSys has no tag
-        Assert.assertEquals("", gsub.getLanguageRecord("mym2").tag);
-        Assert.assertEquals(LanguageTags.SGAW_KAREN, gsub.getLanguageRecord("mym2", LanguageTags.SGAW_KAREN).tag);
-        Assert.assertEquals(LanguageTags.MON, gsub.getLanguageRecord("mym2", LanguageTags.MON).tag);
+        Assertions.assertEquals("", gsub.getLanguageRecord("mym2").tag);
+        Assertions.assertEquals(LanguageTags.SGAW_KAREN, gsub.getLanguageRecord("mym2", LanguageTags.SGAW_KAREN).tag);
+        Assertions.assertEquals(LanguageTags.MON, gsub.getLanguageRecord("mym2", LanguageTags.MON).tag);
 
-        Assert.assertNull(gsub.getLanguageRecord(null));
-        Assert.assertNull(gsub.getLanguageRecord("mym3"));
-        Assert.assertNull(gsub.getLanguageRecord("mym3", LanguageTags.SGAW_KAREN));
+        Assertions.assertNull(gsub.getLanguageRecord(null));
+        Assertions.assertNull(gsub.getLanguageRecord("mym3"));
+        Assertions.assertNull(gsub.getLanguageRecord("mym3", LanguageTags.SGAW_KAREN));
     }
 
 
@@ -72,10 +71,10 @@ public class OpenTypeFontTableReaderTest extends ExtendedITextTest {
 
         int[] lookupsLocations = gsub.getLookups(firstRecord).stream().mapToInt(record -> record.subTableLocations[0]).toArray();
         int[] expected = new int[]{142610, 142436};
-        Assert.assertArrayEquals(expected, lookupsLocations);
+        Assertions.assertArrayEquals(expected, lookupsLocations);
 
         lookupsLocations = gsub.getLookups(records).stream().mapToInt(record -> record.subTableLocations[0]).toArray();
         expected = new int[]{142436, 142538, 142610, 143908};
-        Assert.assertArrayEquals(expected, lookupsLocations);
+        Assertions.assertArrayEquals(expected, lookupsLocations);
     }
 }

@@ -46,7 +46,6 @@ import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -55,19 +54,19 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.function.Consumer;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfA4MetaDataTest extends ExtendedITextTest {
 
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfa/PdfA4ActionCheckTest/";
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfa/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
@@ -77,10 +76,10 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
         PdfDictionary dictionary = new PdfDictionary();
 
         PdfA4Checker checker = new PdfA4Checker(PdfAConformanceLevel.PDF_A_4);
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> {
             new PdfA4Checker(PdfAConformanceLevel.PDF_A_4).checkMetaData(dictionary);
         });
-        Assert.assertEquals(e.getMessage(), PdfAConformanceException.A_CATALOG_DICTIONARY_SHALL_CONTAIN_METADATA_ENTRY);
+        Assertions.assertEquals(e.getMessage(), PdfAConformanceException.A_CATALOG_DICTIONARY_SHALL_CONTAIN_METADATA_ENTRY);
     }
 
 
@@ -93,10 +92,10 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
         PdfA4Checker checker = new PdfA4Checker(PdfAConformanceLevel.PDF_A_4);
         PdfDictionary catalog = new PdfDictionary();
         catalog.put(PdfName.Metadata, new PdfStream(bytes));
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> {
             checker.checkMetaData(catalog);
         });
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 PdfaExceptionMessageConstant.XMP_METADATA_HEADER_PACKET_MAY_NOT_CONTAIN_BYTES_OR_ENCODING_ATTRIBUTE,
                 e.getMessage());
     }
@@ -110,10 +109,10 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
         PdfA4Checker checker = new PdfA4Checker(PdfAConformanceLevel.PDF_A_4);
         PdfDictionary catalog = new PdfDictionary();
         catalog.put(PdfName.Metadata, new PdfStream(bytes));
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> {
             checker.checkMetaData(catalog);
         });
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 PdfaExceptionMessageConstant.XMP_METADATA_HEADER_PACKET_MAY_NOT_CONTAIN_BYTES_OR_ENCODING_ATTRIBUTE,
                 e.getMessage());
 
@@ -128,10 +127,10 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
         PdfA4Checker checker = new PdfA4Checker(PdfAConformanceLevel.PDF_A_4);
         PdfDictionary catalog = new PdfDictionary();
         catalog.put(PdfName.Metadata, new PdfStream(bytes));
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> {
             checker.checkMetaData(catalog);
         });
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 PdfaExceptionMessageConstant.XMP_METADATA_HEADER_PACKET_MAY_NOT_CONTAIN_BYTES_OR_ENCODING_ATTRIBUTE,
                 e.getMessage());
     }
@@ -155,7 +154,7 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
         PdfDictionary catalog = new PdfDictionary();
         catalog.put(PdfName.Metadata, new PdfStream(xmpContent.getBytes(StandardCharsets.UTF_8)));
 
-        Exception e = Assert.assertThrows(PdfException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfException.class, () -> {
             checker.checkMetaData(catalog);
         });
     }
@@ -168,11 +167,11 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
         PdfDictionary catalog = new PdfDictionary();
         catalog.put(PdfName.Metadata, new PdfStream(xmpContent.getBytes(StandardCharsets.UTF_8)));
 
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> {
             checker.checkMetaData(catalog);
         });
 
-        Assert.assertEquals(MessageFormatUtil.format(
+        Assertions.assertEquals(MessageFormatUtil.format(
                         PdfaExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_PART, "4"),
                 e.getMessage());
     }
@@ -183,10 +182,10 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
         PdfA4Checker checker = new PdfA4Checker(PdfAConformanceLevel.PDF_A_4);
         PdfDictionary catalog = new PdfDictionary();
         catalog.put(PdfName.Metadata, new PdfStream(bytes));
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> {
             checker.checkMetaData(catalog);
         });
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 PdfaExceptionMessageConstant.XMP_METADATA_HEADER_PACKET_MAY_NOT_CONTAIN_BYTES_OR_ENCODING_ATTRIBUTE,
                 e.getMessage());
 
@@ -202,10 +201,10 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
         PdfDictionary catalog = generateCustomXmpCatalog(pdfADocument, (xmpMeta -> {
             xmpMeta.deleteProperty(XMPConst.NS_PDFA_ID, XMPConst.PART);
         }));
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> {
             new PdfA4Checker(conformanceLevel).checkMetaData(catalog);
         });
-        Assert.assertEquals(MessageFormatUtil.format(
+        Assertions.assertEquals(MessageFormatUtil.format(
                         PdfaExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_PART, "4"),
                 e.getMessage());
     }
@@ -224,10 +223,10 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
                 throw new PdfException(e);
             }
         }));
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> {
             new PdfA4Checker(conformanceLevel).checkMetaData(catalog);
         });
-        Assert.assertEquals(MessageFormatUtil.format(
+        Assertions.assertEquals(MessageFormatUtil.format(
                         PdfaExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_PART, "4"),
                 e.getMessage());
     }
@@ -246,10 +245,10 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
                 throw new PdfException(e);
             }
         }));
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> {
             new PdfA4Checker(conformanceLevel).checkMetaData(catalog);
         });
-        Assert.assertEquals(MessageFormatUtil.format(
+        Assertions.assertEquals(MessageFormatUtil.format(
                         PdfaExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_PART, "4"),
                 e.getMessage());
     }
@@ -264,10 +263,10 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
         PdfDictionary catalog = generateCustomXmpCatalog(pdfADocument, (xmpMeta -> {
             xmpMeta.deleteProperty(XMPConst.NS_PDFA_ID, XMPConst.REV);
         }));
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> {
             new PdfA4Checker(conformanceLevel).checkMetaData(catalog);
         });
-        Assert.assertEquals(PdfaExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_REV,
+        Assertions.assertEquals(PdfaExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_REV,
                 e.getMessage());
     }
 
@@ -285,10 +284,10 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
                 throw new PdfException(e);
             }
         }));
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> {
             new PdfA4Checker(conformanceLevel).checkMetaData(catalog);
         });
-        Assert.assertEquals(PdfaExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_REV,
+        Assertions.assertEquals(PdfaExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_REV,
                 e.getMessage());
     }
 
@@ -307,10 +306,10 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
                 throw new PdfException(e);
             }
         }));
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> {
             new PdfA4Checker(conformanceLevel).checkMetaData(catalog);
         });
-        Assert.assertEquals(PdfaExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_REV,
+        Assertions.assertEquals(PdfaExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_REV,
                 e.getMessage());
     }
 
@@ -328,10 +327,10 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
                 throw new PdfException(e);
             }
         }));
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> {
             new PdfA4Checker(conformanceLevel).checkMetaData(catalog);
         });
-        Assert.assertEquals(PdfaExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_REV,
+        Assertions.assertEquals(PdfaExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_REV,
                 e.getMessage());
     }
 
@@ -419,10 +418,10 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
                 throw new PdfException(e);
             }
         }));
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> {
             new PdfA4Checker(conformanceLevel).checkMetaData(catalog);
         });
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 PdfaExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_CONFORMANCE,
                 e.getMessage());
     }
@@ -448,9 +447,9 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         XMPMetaFactory.serialize(xmpMeta, baos);
         catalog.put(PdfName.Metadata, new PdfStream(baos.toByteArray()));
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> new PdfA4Checker(conformanceLevel).checkMetaData(catalog));
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 MessageFormatUtil.format(PdfaExceptionMessageConstant.XMP_METADATA_HISTORY_ENTRY_SHALL_CONTAIN_KEY,
                         "stEvt:when"), e.getMessage());
     }
@@ -464,9 +463,9 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         XMPMetaFactory.serialize(xmpMeta, baos);
         catalog.put(PdfName.Metadata, new PdfStream(baos.toByteArray()));
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> new PdfA4Checker(conformanceLevel).checkMetaData(catalog));
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 MessageFormatUtil.format(PdfaExceptionMessageConstant.XMP_METADATA_HISTORY_ENTRY_SHALL_CONTAIN_KEY,
                         "stEvt:action"), e.getMessage());
     }
@@ -481,7 +480,7 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
         XMPMetaFactory.serialize(xmpMeta, baos);
         catalog.put(PdfName.Metadata, new PdfStream(baos.toByteArray()));
         new PdfA4Checker(conformanceLevel).checkMetaData(catalog);
-        Assert.assertTrue(true);
+        Assertions.assertTrue(true);
     }
 
     @Test
@@ -501,10 +500,10 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
                 throw new PdfException(e);
             }
         }));
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> {
             new PdfA4Checker(conformanceLevel).checkMetaData(catalog);
         });
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 PdfaExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_CONFORMANCE,
                 e.getMessage());
     }
@@ -522,10 +521,10 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         XMPMetaFactory.serialize(xmpMeta, os);
         doc.setXmpMetadata(xmpMeta, new SerializeOptions().setEncodeUTF16BE(true));
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> {
             doc.close();
         });
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 PdfaExceptionMessageConstant.INVALID_XMP_METADATA_ENCODING,
                 e.getMessage());
     }
@@ -540,10 +539,10 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
                         FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm")));
         doc.addNewPage();
         doc.getPage(1).setXmpMetadata(bytes);
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> {
             doc.close();
         });
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 PdfaExceptionMessageConstant.INVALID_XMP_METADATA_ENCODING,
                 e.getMessage());
     }
@@ -551,7 +550,7 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
     private void generatePdfADocument(PdfAConformanceLevel conformanceLevel, String outPdf,
             Consumer<PdfDocument> consumer) throws IOException {
         if (outPdf == null) {
-            Assert.fail();
+            Assertions.fail();
         }
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         PdfADocument doc = new PdfADocument(writer, conformanceLevel,

@@ -40,29 +40,28 @@ import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Map;
 
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PageFlushingTest extends ExtendedITextTest {
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PageFlushingTest/";
     private static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PageFlushingTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -306,11 +305,11 @@ public class PageFlushingTest extends ExtendedITextTest {
         flushingHelper.appendModeFlush(1);
 
         // annotation is flushed
-        Assert.assertTrue(annotObj.isFlushed());
+        Assertions.assertTrue(annotObj.isFlushed());
         // page is not flushed
-        Assert.assertFalse(pageIndRef.checkState(PdfObject.FLUSHED));
+        Assertions.assertFalse(pageIndRef.checkState(PdfObject.FLUSHED));
         // page is released
-        Assert.assertNull(pageIndRef.refersTo);
+        Assertions.assertNull(pageIndRef.refersTo);
 
         // exception is not thrown
 
@@ -338,15 +337,15 @@ public class PageFlushingTest extends ExtendedITextTest {
         flushingHelper.unsafeFlushDeep(1);
 
         // annotation is flushed
-        Assert.assertTrue(aDict.isFlushed());
+        Assertions.assertTrue(aDict.isFlushed());
         // page is not flushed
-        Assert.assertFalse(page1IndRef.checkState(PdfObject.FLUSHED));
+        Assertions.assertFalse(page1IndRef.checkState(PdfObject.FLUSHED));
         // page is released
-        Assert.assertNull(page1IndRef.refersTo);
+        Assertions.assertNull(page1IndRef.refersTo);
         // page is not flushed
-        Assert.assertFalse(page2IndRef.checkState(PdfObject.FLUSHED));
+        Assertions.assertFalse(page2IndRef.checkState(PdfObject.FLUSHED));
         // page is released
-        Assert.assertNull(page2IndRef.refersTo);
+        Assertions.assertNull(page2IndRef.refersTo);
 
         // exception is not thrown
 
@@ -374,8 +373,8 @@ public class PageFlushingTest extends ExtendedITextTest {
         PageFlushingHelper flushingHelper = new PageFlushingHelper(pdfDoc);
         flushingHelper.unsafeFlushDeep(1);
 
-        Assert.assertTrue(dict1.isFlushed());
-        Assert.assertTrue(arr1.isFlushed());
+        Assertions.assertTrue(dict1.isFlushed());
+        Assertions.assertTrue(arr1.isFlushed());
 
         pdfDoc.close();
 
@@ -419,10 +418,10 @@ public class PageFlushingTest extends ExtendedITextTest {
         PdfDocument result = new PdfDocument(CompareTool.createOutputReader(outputFile));
         PdfObject page15Res = result.getPage(15).getPdfObject().get(PdfName.Resources, false);
         PdfObject page34Res = result.getPage(34).getPdfObject().get(PdfName.Resources, false);
-        Assert.assertTrue(page15Res.isDictionary());
-        Assert.assertEquals(numOfAddedXObjectsPerPage, ((PdfDictionary)page15Res).getAsDictionary(PdfName.XObject).size());
-        Assert.assertTrue(page34Res.isDictionary());
-        Assert.assertNotEquals(page15Res, page34Res);
+        Assertions.assertTrue(page15Res.isDictionary());
+        Assertions.assertEquals(numOfAddedXObjectsPerPage, ((PdfDictionary)page15Res).getAsDictionary(PdfName.XObject).size());
+        Assertions.assertTrue(page34Res.isDictionary());
+        Assertions.assertNotEquals(page15Res, page34Res);
 
         result.close();
     }
@@ -522,14 +521,14 @@ public class PageFlushingTest extends ExtendedITextTest {
         }
 
         if (pdfDoc.getXref().size() != total || flushedActual != flushedExpected || notReadActual != notReadExpected) {
-            Assert.fail(MessageFormatUtil.format("\nExpected total: {0}, flushed: {1}, not read: {2};" +
+            Assertions.fail(MessageFormatUtil.format("\nExpected total: {0}, flushed: {1}, not read: {2};" +
                             "\nbut actual was: {3}, flushed: {4}, not read: {5}.",
                     total, flushedExpected, notReadExpected, pdfDoc.getXref().size(), flushedActual, notReadActual
             ));
         }
-        Assert.assertEquals("wrong num of total objects", total, pdfDoc.getXref().size());
-        Assert.assertEquals("wrong num of flushed objects", flushedExpected, flushedActual);
-        Assert.assertEquals("wrong num of not read objects", notReadExpected, notReadActual);
+        Assertions.assertEquals(total, pdfDoc.getXref().size(), "wrong num of total objects");
+        Assertions.assertEquals(flushedExpected, flushedActual, "wrong num of flushed objects");
+        Assertions.assertEquals(notReadExpected, notReadActual, "wrong num of not read objects");
     }
 
     private static void addContentToPage(PdfPage pdfPage, PdfFont font, PdfImageXObject xObject) throws IOException {

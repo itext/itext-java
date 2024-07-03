@@ -29,15 +29,14 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfVisibilityExpressionTest extends ExtendedITextTest {
 
     @Test
@@ -57,9 +56,9 @@ public class PdfVisibilityExpressionTest extends ExtendedITextTest {
         PdfVisibilityExpression expression = new PdfVisibilityExpression(array);
 
         PdfObject expressionObject = expression.getPdfObject();
-        Assert.assertTrue(expressionObject instanceof PdfArray);
-        Assert.assertEquals(3, ((PdfArray) expressionObject).size());
-        Assert.assertEquals(PdfName.And, ((PdfArray) expressionObject).getAsName(0));
+        Assertions.assertTrue(expressionObject instanceof PdfArray);
+        Assertions.assertEquals(3, ((PdfArray) expressionObject).size());
+        Assertions.assertEquals(PdfName.And, ((PdfArray) expressionObject).getAsName(0));
     }
 
     @Test
@@ -74,9 +73,9 @@ public class PdfVisibilityExpressionTest extends ExtendedITextTest {
         expression.addOperand(new PdfLayer((PdfDictionary) new PdfDictionary().makeIndirect(tempDoc)));
 
         PdfObject expressionObject = expression.getPdfObject();
-        Assert.assertTrue(expressionObject instanceof PdfArray);
-        Assert.assertEquals(3, ((PdfArray) expressionObject).size());
-        Assert.assertEquals(PdfName.And, ((PdfArray) expressionObject).getAsName(0));
+        Assertions.assertTrue(expressionObject instanceof PdfArray);
+        Assertions.assertEquals(3, ((PdfArray) expressionObject).size());
+        Assertions.assertEquals(PdfName.And, ((PdfArray) expressionObject).getAsName(0));
     }
 
     @Test
@@ -98,14 +97,14 @@ public class PdfVisibilityExpressionTest extends ExtendedITextTest {
         expression.addOperand(nestedExpression);
 
         PdfObject expressionObject = expression.getPdfObject();
-        Assert.assertTrue(expressionObject instanceof PdfArray);
-        Assert.assertEquals(3, ((PdfArray) expressionObject).size());
-        Assert.assertEquals(PdfName.Or, ((PdfArray) expressionObject).getAsName(0));
+        Assertions.assertTrue(expressionObject instanceof PdfArray);
+        Assertions.assertEquals(3, ((PdfArray) expressionObject).size());
+        Assertions.assertEquals(PdfName.Or, ((PdfArray) expressionObject).getAsName(0));
 
         PdfObject child = ((PdfArray) expressionObject).get(2);
-        Assert.assertTrue(child instanceof PdfArray);
-        Assert.assertEquals(3, ((PdfArray) child).size());
-        Assert.assertEquals(PdfName.And, ((PdfArray) child).get(0));
+        Assertions.assertTrue(child instanceof PdfArray);
+        Assertions.assertEquals(3, ((PdfArray) child).size());
+        Assertions.assertEquals(PdfName.And, ((PdfArray) child).get(0));
     }
 
 }

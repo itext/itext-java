@@ -35,15 +35,14 @@ import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfPolyGeomAnnotationTest extends ExtendedITextTest {
     private static final float FLOAT_EPSILON_COMPARISON = 1E-6f;
 
@@ -53,9 +52,9 @@ public class PdfPolyGeomAnnotationTest extends ExtendedITextTest {
         float[] vertices = new float[]{1, 1, 1, 1};
         PdfPolyGeomAnnotation pdfPolyGeomAnnotation = PdfPolyGeomAnnotation.createPolygon(rect, vertices);
 
-        Assert.assertTrue("Rectangles are not equal",
-                pdfPolyGeomAnnotation.getRectangle().toRectangle().equalsWithEpsilon(rect));
-        Assert.assertArrayEquals(vertices, pdfPolyGeomAnnotation.getVertices().toFloatArray(), FLOAT_EPSILON_COMPARISON);
+        Assertions.assertTrue(pdfPolyGeomAnnotation.getRectangle().toRectangle().equalsWithEpsilon(rect),
+                "Rectangles are not equal");
+        Assertions.assertArrayEquals(vertices, pdfPolyGeomAnnotation.getVertices().toFloatArray(), FLOAT_EPSILON_COMPARISON);
     }
 
     @Test
@@ -64,9 +63,8 @@ public class PdfPolyGeomAnnotationTest extends ExtendedITextTest {
         float[] vertices = new float[]{1, 1, 1, 1};
         PdfPolyGeomAnnotation pdfPolyGeomAnnotation = PdfPolyGeomAnnotation.createPolyLine(rect, vertices);
 
-        Assert.assertTrue("Rectangles are not equal",
-                pdfPolyGeomAnnotation.getRectangle().toRectangle().equalsWithEpsilon(rect));
-        Assert.assertArrayEquals(vertices, pdfPolyGeomAnnotation.getVertices().toFloatArray(), FLOAT_EPSILON_COMPARISON);
+        Assertions.assertTrue(pdfPolyGeomAnnotation.getRectangle().toRectangle().equalsWithEpsilon(rect), "Rectangles are not equal");
+        Assertions.assertArrayEquals(vertices, pdfPolyGeomAnnotation.getVertices().toFloatArray(), FLOAT_EPSILON_COMPARISON);
     }
 
     @Test
@@ -76,7 +74,7 @@ public class PdfPolyGeomAnnotationTest extends ExtendedITextTest {
         float[] vertices = new float[]{1, 1, 1, 1};
         pdfPolyGeomAnnotation.setVertices(vertices);
 
-        Assert.assertArrayEquals(vertices, pdfPolyGeomAnnotation.getVertices().toFloatArray(), FLOAT_EPSILON_COMPARISON);
+        Assertions.assertArrayEquals(vertices, pdfPolyGeomAnnotation.getVertices().toFloatArray(), FLOAT_EPSILON_COMPARISON);
     }
 
     @Test
@@ -89,7 +87,7 @@ public class PdfPolyGeomAnnotationTest extends ExtendedITextTest {
         float[] vertices = new float[]{1, 1, 1, 1};
         pdfPolyGeomAnnotation.setVertices(vertices);
 
-        Assert.assertArrayEquals(vertices, pdfPolyGeomAnnotation.getVertices().toFloatArray(), FLOAT_EPSILON_COMPARISON);
+        Assertions.assertArrayEquals(vertices, pdfPolyGeomAnnotation.getVertices().toFloatArray(), FLOAT_EPSILON_COMPARISON);
     }
 
     @Test
@@ -99,7 +97,7 @@ public class PdfPolyGeomAnnotationTest extends ExtendedITextTest {
         PdfArray vertices = new PdfArray(new float[]{1, 1, 1, 1});
         pdfPolyGeomAnnotation.setVertices(vertices);
 
-        Assert.assertArrayEquals(vertices.toFloatArray(), pdfPolyGeomAnnotation.getVertices().toFloatArray(), FLOAT_EPSILON_COMPARISON);
+        Assertions.assertArrayEquals(vertices.toFloatArray(), pdfPolyGeomAnnotation.getVertices().toFloatArray(), FLOAT_EPSILON_COMPARISON);
     }
 
     @Test
@@ -112,7 +110,7 @@ public class PdfPolyGeomAnnotationTest extends ExtendedITextTest {
         PdfArray vertices = new PdfArray(new float[]{1, 1, 1, 1});
         pdfPolyGeomAnnotation.setVertices(vertices);
 
-        Assert.assertArrayEquals(vertices.toFloatArray(), pdfPolyGeomAnnotation.getVertices().toFloatArray(), FLOAT_EPSILON_COMPARISON);
+        Assertions.assertArrayEquals(vertices.toFloatArray(), pdfPolyGeomAnnotation.getVertices().toFloatArray(), FLOAT_EPSILON_COMPARISON);
     }
 
     @Test
@@ -124,7 +122,7 @@ public class PdfPolyGeomAnnotationTest extends ExtendedITextTest {
         PdfArray lineEndingStyles = new PdfArray(new float[]{1, 2});
         pdfPolyGeomAnnotation.setLineEndingStyles(lineEndingStyles);
 
-        Assert.assertArrayEquals(lineEndingStyles.toFloatArray(),
+        Assertions.assertArrayEquals(lineEndingStyles.toFloatArray(),
                 pdfPolyGeomAnnotation.getLineEndingStyles().toFloatArray(), FLOAT_EPSILON_COMPARISON);
     }
 
@@ -138,7 +136,7 @@ public class PdfPolyGeomAnnotationTest extends ExtendedITextTest {
         measure.put(PdfName.Subtype, new PdfString(""));
         pdfPolyGeomAnnotation.setMeasure(measure);
 
-        Assert.assertEquals(measure, pdfPolyGeomAnnotation.getMeasure());
+        Assertions.assertEquals(measure, pdfPolyGeomAnnotation.getMeasure());
     }
 
     @Test
@@ -150,7 +148,7 @@ public class PdfPolyGeomAnnotationTest extends ExtendedITextTest {
         PdfArray path = new PdfArray(arrays);
         pdfPolyGeomAnnotation.setPath(path);
 
-        Assert.assertEquals(path.toString(), pdfPolyGeomAnnotation.getPath().toString());
+        Assertions.assertEquals(path.toString(), pdfPolyGeomAnnotation.getPath().toString());
     }
 
     @Test
@@ -164,7 +162,7 @@ public class PdfPolyGeomAnnotationTest extends ExtendedITextTest {
         PdfArray path = new PdfArray(arrays);
         pdfPolyGeomAnnotation.setPath(path);
 
-        Assert.assertEquals(path, pdfPolyGeomAnnotation.getPath());
+        Assertions.assertEquals(path, pdfPolyGeomAnnotation.getPath());
     }
 
     @Test
@@ -175,7 +173,7 @@ public class PdfPolyGeomAnnotationTest extends ExtendedITextTest {
         style.put(PdfName.Width, new PdfNumber(1));
         pdfPolyGeomAnnotation.setBorderStyle(style);
 
-        Assert.assertEquals(style, pdfPolyGeomAnnotation.getBorderStyle());
+        Assertions.assertEquals(style, pdfPolyGeomAnnotation.getBorderStyle());
     }
 
     @Test
@@ -184,7 +182,7 @@ public class PdfPolyGeomAnnotationTest extends ExtendedITextTest {
 
         pdfPolyGeomAnnotation.setBorderStyle(PdfName.D);
 
-        Assert.assertEquals(PdfName.D, pdfPolyGeomAnnotation.getBorderStyle().getAsName(PdfName.S));
+        Assertions.assertEquals(PdfName.D, pdfPolyGeomAnnotation.getBorderStyle().getAsName(PdfName.S));
     }
 
     @Test
@@ -194,7 +192,7 @@ public class PdfPolyGeomAnnotationTest extends ExtendedITextTest {
         PdfArray array = new PdfArray(new float[]{1, 2});
         pdfPolyGeomAnnotation.setDashPattern(array);
 
-        Assert.assertEquals(array, pdfPolyGeomAnnotation.getBorderStyle().getAsArray(PdfName.D));
+        Assertions.assertEquals(array, pdfPolyGeomAnnotation.getBorderStyle().getAsArray(PdfName.D));
     }
 
     @Test
@@ -204,7 +202,7 @@ public class PdfPolyGeomAnnotationTest extends ExtendedITextTest {
         PdfDictionary dict = new PdfDictionary();
         pdfPolyGeomAnnotation.setBorderEffect(dict);
 
-        Assert.assertEquals(dict, pdfPolyGeomAnnotation.getBorderEffect());
+        Assertions.assertEquals(dict, pdfPolyGeomAnnotation.getBorderEffect());
     }
 
     @Test
@@ -216,7 +214,7 @@ public class PdfPolyGeomAnnotationTest extends ExtendedITextTest {
         pdfPolyGeomAnnotation.setInteriorColor(array);
 
         Color expectedColor = Color.makeColor(PdfColorSpace.makeColorSpace(PdfName.DeviceRGB), colorValues);
-        Assert.assertEquals(expectedColor, pdfPolyGeomAnnotation.getInteriorColor());
+        Assertions.assertEquals(expectedColor, pdfPolyGeomAnnotation.getInteriorColor());
     }
 
     @Test
@@ -227,6 +225,6 @@ public class PdfPolyGeomAnnotationTest extends ExtendedITextTest {
         pdfPolyGeomAnnotation.setInteriorColor(colorValues);
 
         Color expectedColor = Color.makeColor(PdfColorSpace.makeColorSpace(PdfName.DeviceRGB), colorValues);
-        Assert.assertEquals(expectedColor, pdfPolyGeomAnnotation.getInteriorColor());
+        Assertions.assertEquals(expectedColor, pdfPolyGeomAnnotation.getInteriorColor());
     }
 }

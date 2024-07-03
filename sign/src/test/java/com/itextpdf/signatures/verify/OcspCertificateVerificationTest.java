@@ -32,18 +32,17 @@ import com.itextpdf.signatures.testutils.client.TestOcspClient;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.Security;
 import java.security.cert.X509Certificate;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(BouncyCastleUnitTest.class)
+@Tag("BouncyCastleUnitTest")
 public class OcspCertificateVerificationTest extends ExtendedITextTest {
     
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
@@ -65,7 +64,7 @@ public class OcspCertificateVerificationTest extends ExtendedITextTest {
     private static X509Certificate checkCert;
     private static X509Certificate rootCert;
 
-    @BeforeClass
+    @BeforeAll
     public static void before() throws Exception {
         Security.addProvider(PROVIDER);
         checkCert = (X509Certificate) PemFileHelper.readFirstChain(signOcspCert)[0];
@@ -76,7 +75,7 @@ public class OcspCertificateVerificationTest extends ExtendedITextTest {
     public void keyStoreWithRootOcspCertificateTest() throws Exception {
         IBasicOCSPResp response = getOcspResponse();
 
-        Assert.assertTrue(CertificateVerification.verifyOcspCertificates(
+        Assertions.assertTrue(CertificateVerification.verifyOcspCertificates(
                 response, PemFileHelper.initStore(rootOcspCert, password, PROVIDER), null));
     }
 
@@ -84,7 +83,7 @@ public class OcspCertificateVerificationTest extends ExtendedITextTest {
     public void keyStoreWithSignOcspCertificateTest() throws Exception {
         IBasicOCSPResp response = getOcspResponse();
 
-        Assert.assertFalse(CertificateVerification.verifyOcspCertificates(
+        Assertions.assertFalse(CertificateVerification.verifyOcspCertificates(
                 response, PemFileHelper.initStore(signOcspCert, password, PROVIDER), null));
     }
 
@@ -92,14 +91,14 @@ public class OcspCertificateVerificationTest extends ExtendedITextTest {
     public void keyStoreWithNotOcspAndOcspCertificatesTest() throws Exception {
         IBasicOCSPResp response = getOcspResponse();
 
-        Assert.assertTrue(CertificateVerification.verifyOcspCertificates(
+        Assertions.assertTrue(CertificateVerification.verifyOcspCertificates(
                 response, PemFileHelper.initStore(notOcspAndOcspCert, password, PROVIDER), null));
     }
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = ANY_LOG_MESSAGE))
     public void keyStoreWithNotOcspCertificateTest() throws Exception {
-        Assert.assertFalse(CertificateVerification.verifyOcspCertificates(
+        Assertions.assertFalse(CertificateVerification.verifyOcspCertificates(
                 null, PemFileHelper.initStore(signOcspCert, password, PROVIDER), null));
     }
 

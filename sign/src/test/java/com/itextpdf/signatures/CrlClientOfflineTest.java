@@ -40,11 +40,11 @@ import java.security.GeneralSecurityException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class CrlClientOfflineTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/CrlClientOfflineTest/";
@@ -54,10 +54,10 @@ public class CrlClientOfflineTest extends ExtendedITextTest {
 
     @Test
     public void checkUnknownPdfExceptionWhenCrlIsNull() {
-        Exception e = Assert.assertThrows(PdfException.class,
+        Exception e = Assertions.assertThrows(PdfException.class,
                 () -> listOfByteArrays = new CrlClientOffline(
                         BouncyCastleFactoryCreator.getFactory().createNullCrl()).getEncoded(null, ""));
-        Assert.assertEquals(KernelExceptionMessageConstant.UNKNOWN_PDF_EXCEPTION, e.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.UNKNOWN_PDF_EXCEPTION, e.getMessage());
     }
 
     @Test
@@ -152,7 +152,7 @@ public class CrlClientOfflineTest extends ExtendedITextTest {
 
         //These checks are enough, because there is exactly one element in the collection,
         //and these are the same test bytes 
-        Assert.assertEquals(1, listOfByteArrays.size());
-        Assert.assertTrue(listOfByteArrays.contains(testBytes));
+        Assertions.assertEquals(1, listOfByteArrays.size());
+        Assertions.assertTrue(listOfByteArrays.contains(testBytes));
     }
 }

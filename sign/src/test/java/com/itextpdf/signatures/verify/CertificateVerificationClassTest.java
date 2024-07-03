@@ -42,7 +42,6 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -62,13 +61,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(BouncyCastleUnitTest.class)
+@Tag("BouncyCastleUnitTest")
 public class CertificateVerificationClassTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
@@ -81,13 +80,13 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/certs/";
     private static final char[] PASSWORD = "testpassphrase".toCharArray();
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         Security.addProvider(PROVIDER);
         ITextTest.removeCryptographyRestrictions();
     }
 
-    @AfterClass
+    @AfterAll
     public static void after() {
         ITextTest.restoreCryptographyRestrictions();
     }
@@ -102,7 +101,7 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
 
         List<VerificationException> verificationExceptions = CertificateVerification.verifyCertificates(certChain, caKeyStore);
 
-        Assert.assertTrue(verificationExceptions.isEmpty());
+        Assertions.assertTrue(verificationExceptions.isEmpty());
     }
 
     @Test
@@ -111,7 +110,7 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
 
         KeyStore caKeyStore = PemFileHelper.initStore(tsaCertFileName, PASSWORD, PROVIDER);
 
-        Assert.assertTrue(verifyTimestampCertificates(tsaCertFileName, caKeyStore));
+        Assertions.assertTrue(verifyTimestampCertificates(tsaCertFileName, caKeyStore));
     }
 
     @Test
@@ -122,7 +121,7 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
 
         KeyStore caKeyStore = PemFileHelper.initStore(notTsaCertFileName, PASSWORD, PROVIDER);
 
-        Assert.assertFalse(verifyTimestampCertificates(tsaCertFileName, caKeyStore));
+        Assertions.assertFalse(verifyTimestampCertificates(tsaCertFileName, caKeyStore));
     }
 
     @Test
@@ -130,7 +129,7 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
     public void keyStoreWithoutCertificatesTest() throws Exception {
         String tsaCertFileName = CERTS_SRC + "tsCertRsa.pem";
 
-        Assert.assertFalse(verifyTimestampCertificates(tsaCertFileName, null));
+        Assertions.assertFalse(verifyTimestampCertificates(tsaCertFileName, null));
     }
 
     @Test
@@ -143,7 +142,7 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
         final String verificationResult = CertificateVerification.verifyCertificate(expiredCert, null);
         final String expectedResultString = SignaturesTestUtils.getExpiredMessage(expiredCert);
 
-        Assert.assertEquals(expectedResultString, verificationResult);
+        Assertions.assertEquals(expectedResultString, verificationResult);
     }
 
     @Test
@@ -153,7 +152,7 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
 
         final String verificationResult = CertificateVerification.verifyCertificate(unsupportedExtensionCert, null);
 
-        Assert.assertEquals(CertificateVerification.HAS_UNSUPPORTED_EXTENSIONS, verificationResult);
+        Assertions.assertEquals(CertificateVerification.HAS_UNSUPPORTED_EXTENSIONS, verificationResult);
     }
 
     @Test
@@ -195,7 +194,7 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
 
         final String verificationResult = CertificateVerification.verifyCertificate(checkCert, crls);
 
-        Assert.assertEquals(CertificateVerification.CERTIFICATE_REVOKED, verificationResult);
+        Assertions.assertEquals(CertificateVerification.CERTIFICATE_REVOKED, verificationResult);
     }
 
     @Test
@@ -205,7 +204,7 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
 
         final String verificationResult = CertificateVerification.verifyCertificate(rootCert, Collections.<CRL>emptyList());
 
-        Assert.assertNull(verificationResult);
+        Assertions.assertNull(verificationResult);
     }
 
     @Test
@@ -232,7 +231,7 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
             crls.add(SignTestPortUtil.parseCrlFromStream(new ByteArrayInputStream(crlBytes)));
         }
 
-        Assert.assertNull(CertificateVerification.verifyCertificate(rootCert, crls));
+        Assertions.assertNull(CertificateVerification.verifyCertificate(rootCert, crls));
     }
 
     @Test
@@ -244,8 +243,8 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
         List<VerificationException> resultedExceptionList = CertificateVerification.verifyCertificates(emptyCertChain,
                 null, (Collection<CRL>) null);
 
-        Assert.assertEquals(1, resultedExceptionList.size());
-        Assert.assertEquals(expectedResult, resultedExceptionList.get(0).getMessage());
+        Assertions.assertEquals(1, resultedExceptionList.size());
+        Assertions.assertEquals(expectedResult, resultedExceptionList.get(0).getMessage());
     }
 
     @Test
@@ -265,8 +264,8 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
                 FACTORY.createX500Name((X509Certificate) validCertChain[2]).toString(),
                 SignExceptionMessageConstant.CANNOT_BE_VERIFIED_CERTIFICATE_CHAIN);
 
-        Assert.assertEquals(1, resultedExceptionList.size());
-        Assert.assertEquals(expectedResult, resultedExceptionList.get(0).getMessage());
+        Assertions.assertEquals(1, resultedExceptionList.size());
+        Assertions.assertEquals(expectedResult, resultedExceptionList.get(0).getMessage());
     }
 
     @Test
@@ -281,7 +280,7 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
         List<VerificationException> resultedExceptionList = CertificateVerification.verifyCertificates(validCertChain,
                 emptyKeyStore, (Collection<CRL>) null);
 
-        Assert.assertEquals(0, resultedExceptionList.size());
+        Assertions.assertEquals(0, resultedExceptionList.size());
     }
 
     @Test
@@ -300,7 +299,7 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
         List<VerificationException> resultedExceptionList = CertificateVerification.verifyCertificates(validCertChain,
                 null, (Collection<CRL>) null);
 
-        Assert.assertEquals(2, resultedExceptionList.size());
+        Assertions.assertEquals(2, resultedExceptionList.size());
         final String expectedFirstResultMessage = MessageFormatUtil.format(
                 SignExceptionMessageConstant.CERTIFICATE_TEMPLATE_FOR_EXCEPTION_MESSAGE,
                 expiredCertName, SignaturesTestUtils.getExpiredMessage(expectedExpiredCert));
@@ -308,8 +307,8 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
                 SignExceptionMessageConstant.CERTIFICATE_TEMPLATE_FOR_EXCEPTION_MESSAGE,
                 rootCertName, SignExceptionMessageConstant.CANNOT_BE_VERIFIED_CERTIFICATE_CHAIN);
 
-        Assert.assertEquals(expectedFirstResultMessage, resultedExceptionList.get(0).getMessage());
-        Assert.assertEquals(expectedSecondResultMessage, resultedExceptionList.get(1).getMessage());
+        Assertions.assertEquals(expectedFirstResultMessage, resultedExceptionList.get(0).getMessage());
+        Assertions.assertEquals(expectedSecondResultMessage, resultedExceptionList.get(1).getMessage());
     }
 
     private static boolean verifyTimestampCertificates(String tsaClientCertificate, KeyStore caKeyStore)

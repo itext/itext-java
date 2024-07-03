@@ -25,16 +25,15 @@ package com.itextpdf.io.font.otf;
 import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class GsubLookupType6Test extends ExtendedITextTest {
 
     private static final String RESOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/font/otf/GsubLookupType6Test/";
@@ -54,9 +53,9 @@ public class GsubLookupType6Test extends ExtendedITextTest {
 
         GsubLookupType6 lookup = (GsubLookupType6) gsubTableReader.getLookupTable(57);
 
-        Assert.assertEquals(233, gl.get(0).getCode());
-        Assert.assertTrue(lookup.transformLine(gl));
-        Assert.assertEquals(234, gl.get(0).getCode());
+        Assertions.assertEquals(233, gl.get(0).getCode());
+        Assertions.assertTrue(lookup.transformLine(gl));
+        Assertions.assertEquals(234, gl.get(0).getCode());
     }
 
     @Test
@@ -74,9 +73,9 @@ public class GsubLookupType6Test extends ExtendedITextTest {
 
         GsubLookupType6 lookup = (GsubLookupType6) gsubTableReader.getLookupTable(54);
 
-        Assert.assertEquals(233, gl.get(0).getCode());
-        Assert.assertFalse(lookup.transformLine(gl));
-        Assert.assertEquals(233, gl.get(0).getCode());
+        Assertions.assertEquals(233, gl.get(0).getCode());
+        Assertions.assertFalse(lookup.transformLine(gl));
+        Assertions.assertEquals(233, gl.get(0).getCode());
     }
 
 

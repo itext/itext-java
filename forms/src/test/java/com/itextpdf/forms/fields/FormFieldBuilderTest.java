@@ -27,14 +27,12 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfUAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 import java.io.ByteArrayOutputStream;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class FormFieldBuilderTest extends ExtendedITextTest {
     private static final PdfDocument DUMMY_DOCUMENT = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
     private static final String DUMMY_NAME = "dummy name";
@@ -43,8 +41,8 @@ public class FormFieldBuilderTest extends ExtendedITextTest {
     public void constructorTest() {
         TestBuilder builder = new TestBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
 
-        Assert.assertSame(DUMMY_DOCUMENT, builder.getDocument());
-        Assert.assertSame(DUMMY_NAME, builder.getFormFieldName());
+        Assertions.assertSame(DUMMY_DOCUMENT, builder.getDocument());
+        Assertions.assertSame(DUMMY_NAME, builder.getFormFieldName());
     }
 
 
@@ -52,14 +50,14 @@ public class FormFieldBuilderTest extends ExtendedITextTest {
     public void getSetConformanceLevelTest() {
         TestBuilder builder = new TestBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
         builder.setGenericConformanceLevel(PdfAConformanceLevel.PDF_A_1A);
-        Assert.assertSame(PdfAConformanceLevel.PDF_A_1A, builder.getGenericConformanceLevel());
+        Assertions.assertSame(PdfAConformanceLevel.PDF_A_1A, builder.getGenericConformanceLevel());
     }
 
     @Test
     public void getSetConformanceLevelDepreceatedTest() {
         TestBuilder builder = new TestBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
         builder.setConformanceLevel(PdfAConformanceLevel.PDF_A_1A);
-        Assert.assertSame(PdfAConformanceLevel.PDF_A_1A, builder.getConformanceLevel());
+        Assertions.assertSame(PdfAConformanceLevel.PDF_A_1A, builder.getConformanceLevel());
     }
 
 
@@ -67,7 +65,7 @@ public class FormFieldBuilderTest extends ExtendedITextTest {
     public void getSetConformanceLevelDifferentTest() {
         TestBuilder builder = new TestBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
         builder.setGenericConformanceLevel(PdfUAConformanceLevel.PDFUA_1);
-        Assert.assertNull(builder.getConformanceLevel());
+        Assertions.assertNull(builder.getConformanceLevel());
     }
 
     private static class TestBuilder extends FormFieldBuilder<TestBuilder> {

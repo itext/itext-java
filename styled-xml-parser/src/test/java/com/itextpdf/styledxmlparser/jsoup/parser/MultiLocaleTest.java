@@ -24,42 +24,34 @@ package com.itextpdf.styledxmlparser.jsoup.parser;
 
 import com.itextpdf.styledxmlparser.jsoup.nodes.Attributes;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
 
-@RunWith(Parameterized.class)
-@Category(UnitTest.class)
+@org.junit.jupiter.api.Tag("UnitTest")
 public class MultiLocaleTest extends ExtendedITextTest {
 
     private final Locale defaultLocale = Locale.getDefault();
 
-    @Parameterized.Parameters
-    public static Collection<Locale> locales() {
+    public static Collection<Locale> Locales() {
         return Arrays.asList(Locale.ENGLISH, new Locale("tr"));
     }
 
-    @After
+    @AfterEach
     public void setDefaultLocale() {
         Locale.setDefault(defaultLocale);
     }
 
-    private Locale locale;
-
-    public MultiLocaleTest(Locale locale) {
-        this.locale = locale;
-    }
-
-    @Test
-    public void caseSupport() {
+    @ParameterizedTest
+    @MethodSource("Locales")
+    public void caseSupport(Locale locale) {
         Locale.setDefault(locale);
 
         ParseSettings bothOn = new ParseSettings(true, true);
@@ -67,31 +59,33 @@ public class MultiLocaleTest extends ExtendedITextTest {
         ParseSettings tagOn = new ParseSettings(true, false);
         ParseSettings attrOn = new ParseSettings(false, true);
 
-        Assert.assertEquals("IMG", bothOn.normalizeTag("IMG"));
-        Assert.assertEquals("ID", bothOn.normalizeAttribute("ID"));
+        Assertions.assertEquals("IMG", bothOn.normalizeTag("IMG"));
+        Assertions.assertEquals("ID", bothOn.normalizeAttribute("ID"));
 
-        Assert.assertEquals("img", bothOff.normalizeTag("IMG"));
-        Assert.assertEquals("id", bothOff.normalizeAttribute("ID"));
+        Assertions.assertEquals("img", bothOff.normalizeTag("IMG"));
+        Assertions.assertEquals("id", bothOff.normalizeAttribute("ID"));
 
-        Assert.assertEquals("IMG", tagOn.normalizeTag("IMG"));
-        Assert.assertEquals("id", tagOn.normalizeAttribute("ID"));
+        Assertions.assertEquals("IMG", tagOn.normalizeTag("IMG"));
+        Assertions.assertEquals("id", tagOn.normalizeAttribute("ID"));
 
-        Assert.assertEquals("img", attrOn.normalizeTag("IMG"));
-        Assert.assertEquals("ID", attrOn.normalizeAttribute("ID"));
+        Assertions.assertEquals("img", attrOn.normalizeTag("IMG"));
+        Assertions.assertEquals("ID", attrOn.normalizeAttribute("ID"));
     }
 
-    @Test
-    public void attributeCaseNormalization() {
+    @ParameterizedTest
+    @MethodSource("Locales")
+    public void attributeCaseNormalization(Locale locale) {
         Locale.setDefault(locale);
 
         ParseSettings parseSettings = new ParseSettings(false, false);
         String normalizedAttribute = parseSettings.normalizeAttribute("HIDDEN");
 
-        Assert.assertEquals("hidden", normalizedAttribute);
+        Assertions.assertEquals("hidden", normalizedAttribute);
     }
 
-    @Test
-    public void attributesCaseNormalization() {
+    @ParameterizedTest
+    @MethodSource("Locales")
+    public void attributesCaseNormalization(Locale locale) {
         Locale.setDefault(locale);
 
         ParseSettings parseSettings = new ParseSettings(false, false);
@@ -100,15 +94,16 @@ public class MultiLocaleTest extends ExtendedITextTest {
 
         Attributes normalizedAttributes = parseSettings.normalizeAttributes(attributes);
 
-        Assert.assertEquals("item", normalizedAttributes.asList().get(0).getKey());
+        Assertions.assertEquals("item", normalizedAttributes.asList().get(0).getKey());
     }
 
-    @Test
-    public void canBeInsensitive() {
+    @ParameterizedTest
+    @MethodSource("Locales")
+    public void canBeInsensitive(Locale locale) {
         Locale.setDefault(locale);
 
         Tag script1 = Tag.valueOf("script", ParseSettings.htmlDefault);
         Tag script2 = Tag.valueOf("SCRIPT", ParseSettings.htmlDefault);
-        Assert.assertSame(script1, script2);
+        Assertions.assertSame(script1, script2);
     }
 }

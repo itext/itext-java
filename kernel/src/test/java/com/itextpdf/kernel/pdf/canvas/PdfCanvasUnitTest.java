@@ -32,13 +32,12 @@ import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfCanvasUnitTest extends ExtendedITextTest {
 
     @Test
@@ -47,10 +46,10 @@ public class PdfCanvasUnitTest extends ExtendedITextTest {
         PdfStream pdfStream = new PdfStream();
         PdfResources pdfResources = new PdfResources();
         PdfCanvas pdfCanvas = new PdfCanvas(pdfStream, pdfResources, pdfDocument);
-        Assert.assertTrue(pdfCanvas.gsStack.isEmpty());
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Assertions.assertTrue(pdfCanvas.gsStack.isEmpty());
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> pdfCanvas.restoreState());
-        Assert.assertEquals(KernelExceptionMessageConstant.UNBALANCED_SAVE_RESTORE_STATE_OPERATORS,
+        Assertions.assertEquals(KernelExceptionMessageConstant.UNBALANCED_SAVE_RESTORE_STATE_OPERATORS,
                 exception.getMessage());
     }
 
@@ -60,9 +59,9 @@ public class PdfCanvasUnitTest extends ExtendedITextTest {
         PdfStream pdfStream = new PdfStream();
         PdfResources pdfResources = new PdfResources();
         PdfCanvas pdfCanvas = new PdfCanvas(pdfStream, pdfResources, pdfDocument);
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> pdfCanvas.endLayer());
-        Assert.assertEquals(KernelExceptionMessageConstant.UNBALANCED_LAYER_OPERATORS, exception.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.UNBALANCED_LAYER_OPERATORS, exception.getMessage());
     }
 
     @Test
@@ -71,9 +70,9 @@ public class PdfCanvasUnitTest extends ExtendedITextTest {
         PdfStream pdfStream = new PdfStream();
         PdfResources pdfResources = new PdfResources();
         PdfCanvas pdfCanvas = new PdfCanvas(pdfStream, pdfResources, pdfDocument);
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> pdfCanvas.endMarkedContent());
-        Assert.assertEquals(KernelExceptionMessageConstant.UNBALANCED_BEGIN_END_MARKED_CONTENT_OPERATORS,
+        Assertions.assertEquals(KernelExceptionMessageConstant.UNBALANCED_BEGIN_END_MARKED_CONTENT_OPERATORS,
                 exception.getMessage());
     }
 
@@ -82,9 +81,9 @@ public class PdfCanvasUnitTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         PdfPage pdfPage = pdfDocument.addNewPage();
         PdfCanvas pdfCanvas = new PdfCanvas(pdfPage);
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> pdfCanvas.showText("text"));
-        Assert.assertEquals(KernelExceptionMessageConstant.FONT_AND_SIZE_MUST_BE_SET_BEFORE_WRITING_ANY_TEXT,
+        Assertions.assertEquals(KernelExceptionMessageConstant.FONT_AND_SIZE_MUST_BE_SET_BEFORE_WRITING_ANY_TEXT,
                 exception.getMessage());
     }
 
@@ -94,9 +93,9 @@ public class PdfCanvasUnitTest extends ExtendedITextTest {
         PdfPage pdfPage = pdfDocument.addNewPage();
         PdfCanvas pdfCanvas = new PdfCanvas(pdfPage);
         PdfArray pdfArray = new PdfArray();
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> pdfCanvas.showText(pdfArray));
-        Assert.assertEquals(KernelExceptionMessageConstant.FONT_AND_SIZE_MUST_BE_SET_BEFORE_WRITING_ANY_TEXT,
+        Assertions.assertEquals(KernelExceptionMessageConstant.FONT_AND_SIZE_MUST_BE_SET_BEFORE_WRITING_ANY_TEXT,
                 exception.getMessage());
     }
 }

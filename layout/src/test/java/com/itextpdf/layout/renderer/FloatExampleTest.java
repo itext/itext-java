@@ -43,16 +43,15 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class FloatExampleTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/FloatExampleTest/";
@@ -63,7 +62,7 @@ public class FloatExampleTest extends ExtendedITextTest {
     private static final float DIV_BORDER_WIDTH = 1f;
 
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
@@ -142,7 +141,7 @@ public class FloatExampleTest extends ExtendedITextTest {
                 Property.MAX_WIDTH, new UnitValue(UnitValue.PERCENT, 60f), ClearPropertyValue.BOTH, firstImage, lastImage);
 
         document.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder,
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder,
                 "diff01_"));
     }
 
@@ -176,7 +175,7 @@ public class FloatExampleTest extends ExtendedITextTest {
                 ClearPropertyValue.BOTH, firstImage, lastImage);
 
         document.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder,
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder,
                 "diff01_"));
     }
 

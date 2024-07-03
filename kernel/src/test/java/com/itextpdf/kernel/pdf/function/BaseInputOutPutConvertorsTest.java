@@ -27,18 +27,17 @@ import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs.Separation;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class BaseInputOutPutConvertorsTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/function/BaseInputOutPutConvertorsTest/";
@@ -90,7 +89,7 @@ public class BaseInputOutPutConvertorsTest extends ExtendedITextTest {
         Separation sep1 = new Separation(new PdfName("SEP_RGB"), PdfName.DeviceRGB, fnct1.getPdfObject());
 
         IPdfFunction func = sep1.getTintTransformation();
-        Exception ex = Assert.assertThrows(IllegalArgumentException.class, () ->
+        Exception ex = Assertions.assertThrows(IllegalArgumentException.class, () ->
                 func.calculateFromByteArray(original, 10, original.length, 1, 1));
 
         assertEquals(KernelExceptionMessageConstant.INVALID_LENGTH, ex.getMessage());
@@ -117,7 +116,7 @@ public class BaseInputOutPutConvertorsTest extends ExtendedITextTest {
         Separation sep1 = new Separation(new PdfName("SEP_RGB"), PdfName.DeviceRGB, fnct1.getPdfObject());
 
         IPdfFunction func = sep1.getTintTransformation();
-        Exception ex = Assert.assertThrows(IllegalArgumentException.class, () ->
+        Exception ex = Assertions.assertThrows(IllegalArgumentException.class, () ->
                 func.calculateFromByteArray(original, 0, original.length, 11*8, 1));
 
         assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.INVALID_LENGTH_FOR_WORDSIZE, 11), ex.getMessage());

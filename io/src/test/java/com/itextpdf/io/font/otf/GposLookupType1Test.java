@@ -25,16 +25,15 @@ package com.itextpdf.io.font.otf;
 import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class GposLookupType1Test extends ExtendedITextTest {
     private static final String RESOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/font/otf/GposLookupType1Test/";
 
@@ -49,11 +48,11 @@ public class GposLookupType1Test extends ExtendedITextTest {
         GlyphLine gl = new GlyphLine(glyphs);
         gl.idx = 0;
 
-        Assert.assertEquals(0, gl.get(0).getXAdvance());
+        Assertions.assertEquals(0, gl.get(0).getXAdvance());
 
-        Assert.assertTrue(lookup.transformOne(gl));
+        Assertions.assertTrue(lookup.transformOne(gl));
 
-        Assert.assertEquals(219, gl.get(0).getXAdvance());
+        Assertions.assertEquals(219, gl.get(0).getXAdvance());
     }
 
     @Test
@@ -67,11 +66,11 @@ public class GposLookupType1Test extends ExtendedITextTest {
         GlyphLine gl = new GlyphLine(glyphs);
         gl.idx = 0;
 
-        Assert.assertEquals(0, gl.get(0).getXAdvance());
+        Assertions.assertEquals(0, gl.get(0).getXAdvance());
 
-        Assert.assertFalse(lookup.transformOne(gl));
+        Assertions.assertFalse(lookup.transformOne(gl));
 
-        Assert.assertEquals(0, gl.get(0).getXAdvance());
+        Assertions.assertEquals(0, gl.get(0).getXAdvance());
     }
 
     @Test
@@ -83,18 +82,18 @@ public class GposLookupType1Test extends ExtendedITextTest {
         List<Glyph> glyphs = Arrays.asList(new Glyph(fontProgram.getGlyphByCode(401)),
                 new Glyph(fontProgram.getGlyphByCode(5)));
         GlyphLine gl = new GlyphLine(glyphs);
-        Assert.assertEquals(0, gl.get(0).getXAdvance());
-        Assert.assertTrue(lookup.transformOne(gl));
-        Assert.assertEquals(109, gl.get(0).getXAdvance());
+        Assertions.assertEquals(0, gl.get(0).getXAdvance());
+        Assertions.assertTrue(lookup.transformOne(gl));
+        Assertions.assertEquals(109, gl.get(0).getXAdvance());
 
         // Subtable type 2 defines different GposValueRecords for different coverage glyphs
 
         glyphs = Arrays.asList(new Glyph(fontProgram.getGlyphByCode(508)),
                 new Glyph(fontProgram.getGlyphByCode(5)));
         gl = new GlyphLine(glyphs);
-        Assert.assertEquals(0, gl.get(0).getXAdvance());
-        Assert.assertTrue(lookup.transformOne(gl));
-        Assert.assertEquals(158, gl.get(0).getXAdvance());
+        Assertions.assertEquals(0, gl.get(0).getXAdvance());
+        Assertions.assertTrue(lookup.transformOne(gl));
+        Assertions.assertEquals(158, gl.get(0).getXAdvance());
     }
 
 }

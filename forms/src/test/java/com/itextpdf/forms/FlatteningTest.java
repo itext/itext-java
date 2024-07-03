@@ -34,20 +34,18 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 import java.io.IOException;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class FlatteningTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/FlatteningTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/forms/FlatteningTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
@@ -63,7 +61,7 @@ public class FlatteningTest extends ExtendedITextTest {
         PdfFormCreator.getAcroForm(doc, false).flattenFields();
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(dest, cmp, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(dest, cmp, destinationFolder, "diff_"));
     }
 
     @Test
@@ -80,7 +78,7 @@ public class FlatteningTest extends ExtendedITextTest {
         acroForm.flattenFields();
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(dest, cmp, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(dest, cmp, destinationFolder, "diff_"));
     }
 
     @Test
@@ -95,6 +93,6 @@ public class FlatteningTest extends ExtendedITextTest {
         acroForm.flattenFields();
         String textAfterFlatten = PdfTextExtractor.getTextFromPage(document.getPage(1));
         document.close();
-        Assert.assertTrue("Pdf does not contain the expected text", textAfterFlatten.contains("hiddenFieldValue"));
+        Assertions.assertTrue(textAfterFlatten.contains("hiddenFieldValue"), "Pdf does not contain the expected text");
     }
 }

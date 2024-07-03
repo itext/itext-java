@@ -27,15 +27,14 @@ import com.itextpdf.io.util.XmlUtil;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 import org.w3c.dom.Document;
 
 import java.util.Stack;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class TrailerPathTest extends ExtendedITextTest {
 
     @Test
@@ -49,8 +48,8 @@ public class TrailerPathTest extends ExtendedITextTest {
         TrailerPath path2 = new TrailerPath(src, dest, stack);
 
         boolean result = path1.equals(path2);
-        Assert.assertTrue(result);
-        Assert.assertEquals(path1.hashCode(), path2.hashCode());
+        Assertions.assertTrue(result);
+        Assertions.assertEquals(path1.hashCode(), path2.hashCode());
     }
 
     @Test
@@ -66,8 +65,8 @@ public class TrailerPathTest extends ExtendedITextTest {
         TrailerPath path2 = new TrailerPath(src, dest, stack);
 
         boolean result = path1.equals(path2);
-        Assert.assertFalse(result);
-        Assert.assertNotEquals(path1.hashCode(), path2.hashCode());
+        Assertions.assertFalse(result);
+        Assertions.assertNotEquals(path1.hashCode(), path2.hashCode());
     }
 
     @Test
@@ -82,8 +81,8 @@ public class TrailerPathTest extends ExtendedITextTest {
         TrailerPath path2 = new TrailerPath(path1);
 
         boolean result = path1.equals(path2);
-        Assert.assertTrue(result);
-        Assert.assertEquals(path1.hashCode(), path2.hashCode());
+        Assertions.assertTrue(result);
+        Assertions.assertEquals(path1.hashCode(), path2.hashCode());
     }
 
     @Test
@@ -95,7 +94,7 @@ public class TrailerPathTest extends ExtendedITextTest {
         stack.push(new ArrayPathItem(1));
         TrailerPath path1 = new TrailerPath(src, dest, stack);
 
-        Assert.assertEquals("Base cmp object: trailer. Base out object: trailer\nArray index: 1",
+        Assertions.assertEquals("Base cmp object: trailer. Base out object: trailer\nArray index: 1",
                 path1.toString());
     }
 
@@ -107,8 +106,8 @@ public class TrailerPathTest extends ExtendedITextTest {
 
         TrailerPath path = new TrailerPath(cmp, out, stack);
 
-        Assert.assertEquals(cmp, path.getCmpDocument());
-        Assert.assertEquals(out, path.getOutDocument());
+        Assertions.assertEquals(cmp, path.getCmpDocument());
+        Assertions.assertEquals(out, path.getOutDocument());
     }
 
     @Test
@@ -121,7 +120,7 @@ public class TrailerPathTest extends ExtendedITextTest {
         TrailerPath path1 = new TrailerPath(src, dest, stack);
         Document doc = XmlUtil.initNewXmlDocument();
 
-        Assert.assertNotNull(path1.toXmlNode(doc));
+        Assertions.assertNotNull(path1.toXmlNode(doc));
     }
 
     private static PdfDocument createDocument() {

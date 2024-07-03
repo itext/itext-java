@@ -38,20 +38,18 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 import java.io.IOException;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfAcroFormIntegrationTest extends ExtendedITextTest {
     public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/forms/PdfAcroFormIntegrationTest/";
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/forms/PdfAcroFormIntegrationTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(DESTINATION_FOLDER);
     }
@@ -60,7 +58,7 @@ public class PdfAcroFormIntegrationTest extends ExtendedITextTest {
     public void orphanedNamelessFormFieldTest() throws IOException {
         try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "orphanedFormField.pdf"))) {
             PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
-            Assert.assertEquals(3, form.getRootFormFields().size());
+            Assertions.assertEquals(3, form.getRootFormFields().size());
         }
     }
 
@@ -73,18 +71,18 @@ public class PdfAcroFormIntegrationTest extends ExtendedITextTest {
         try (PdfDocument sourceDoc = new PdfDocument(new PdfReader(srcFileName), new PdfWriter(outFileName))) {
             PdfAcroForm acroForm = PdfFormCreator.getAcroForm(sourceDoc, true);
 
-            Assert.assertEquals(1, acroForm.getFields().size());
-            Assert.assertNull(acroForm.getField("Field").getKids());
+            Assertions.assertEquals(1, acroForm.getFields().size());
+            Assertions.assertNull(acroForm.getField("Field").getKids());
 
             PdfFormField field = acroForm.copyField("Field");
             field.getPdfObject().put(PdfName.Rect, new PdfArray(new Rectangle(210, 490, 150, 22)));
             acroForm.addField(field);
 
-            Assert.assertEquals(1, acroForm.getFields().size());
-            Assert.assertEquals(2, acroForm.getField("Field").getKids().size());
+            Assertions.assertEquals(1, acroForm.getFields().size());
+            Assertions.assertEquals(2, acroForm.getField("Field").getKids().size());
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -107,10 +105,10 @@ public class PdfAcroFormIntegrationTest extends ExtendedITextTest {
             root.addKid(firstField);
             root.addKid(secondField, false);
 
-            Assert.assertEquals(1, acroForm.getFields().size());
-            Assert.assertEquals(2, root.getKids().size());
+            Assertions.assertEquals(1, acroForm.getFields().size());
+            Assertions.assertEquals(2, root.getKids().size());
         }
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -118,15 +116,15 @@ public class PdfAcroFormIntegrationTest extends ExtendedITextTest {
         String srcFileName = SOURCE_FOLDER + "cmp_fieldsWithTheSameNamesButDifferentValues.pdf";
         try (PdfDocument document = new PdfDocument(new PdfReader(srcFileName))) {
             PdfAcroForm acroForm = PdfFormCreator.getAcroForm(document, true);
-            Assert.assertEquals(1, acroForm.getFields().size());
+            Assertions.assertEquals(1, acroForm.getFields().size());
 
             PdfFormField root = acroForm.getField("root");
-            Assert.assertEquals(2, root.getKids().size());
+            Assertions.assertEquals(2, root.getKids().size());
 
             root.getChildField("field").setValue("field");
             PdfFormCreator.getAcroForm(document, true);
             // Check that fields weren't merged
-            Assert.assertEquals(2, root.getKids().size());
+            Assertions.assertEquals(2, root.getKids().size());
         }
     }
 
@@ -137,15 +135,15 @@ public class PdfAcroFormIntegrationTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "processFieldsWithTheSameNamesInWritingMode.pdf";
         try (PdfDocument document = new PdfDocument(new PdfReader(srcFileName), new PdfWriter(outFileName))) {
             PdfAcroForm acroForm = PdfFormCreator.getAcroForm(document, true);
-            Assert.assertEquals(1, acroForm.getFields().size());
+            Assertions.assertEquals(1, acroForm.getFields().size());
 
             PdfFormField root = acroForm.getField("root");
-            Assert.assertEquals(2, root.getKids().size());
+            Assertions.assertEquals(2, root.getKids().size());
 
             root.getChildField("field").setValue("field");
             PdfFormCreator.getAcroForm(document, true);
             // Check that fields were merged
-            Assert.assertEquals(1, root.getKids().size());
+            Assertions.assertEquals(1, root.getKids().size());
         }
     }
 
@@ -165,11 +163,11 @@ public class PdfAcroFormIntegrationTest extends ExtendedITextTest {
                         .setBorderColor(new DeviceRgb(51, 0, 102)).setBorderWidth(5);
             }
         }
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff_"));
         try (PdfDocument document = new PdfDocument(new PdfReader(cmpFileName), new PdfWriter(outFileName2))) {
             PdfFormCreator.getAcroForm(document, true).enableRegenerationForAllFields();
         }
-        Assert.assertNull(new CompareTool().compareByContent(outFileName2, cmpFileName2, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName2, cmpFileName2, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -187,6 +185,6 @@ public class PdfAcroFormIntegrationTest extends ExtendedITextTest {
             }
             acroForm.enableRegenerationForAllFields();
         }
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff_"));
     }
 }

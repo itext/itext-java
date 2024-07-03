@@ -25,16 +25,15 @@ package com.itextpdf.io.font.otf;
 import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class GsubLookupType4Test extends ExtendedITextTest {
 
     private static final String RESOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/font/otf/GsubLookupType4Test/";
@@ -57,6 +56,6 @@ public class GsubLookupType4Test extends ExtendedITextTest {
         GsubLookupType4 lookup = (GsubLookupType4) gsubTableReader.getLookupTable(6);
 
         //Assert that no exception is thrown if gl.idx = gl.end
-        Assert.assertFalse(lookup.transformOne(gl));
+        Assertions.assertFalse(lookup.transformOne(gl));
     }
 }

@@ -32,13 +32,12 @@ import com.itextpdf.svg.dummy.renderers.impl.DummySvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class UseUnitTest extends ExtendedITextTest {
 
     @Test
@@ -56,6 +55,6 @@ public class UseUnitTest extends ExtendedITextTest {
 
         pdfDocument.close();
 
-        Assert.assertFalse(renderer.isDrawn());
+        Assertions.assertFalse(renderer.isDrawn());
     }
 }

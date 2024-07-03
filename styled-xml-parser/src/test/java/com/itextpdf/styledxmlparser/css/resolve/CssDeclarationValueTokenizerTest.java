@@ -24,16 +24,15 @@ package com.itextpdf.styledxmlparser.css.resolve;
 
 import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class CssDeclarationValueTokenizerTest extends ExtendedITextTest {
     @Test
     public void functionTest01() {
@@ -101,13 +100,13 @@ public class CssDeclarationValueTokenizerTest extends ExtendedITextTest {
     private void runTest(String src, List<String> tokenValues, List<CssDeclarationValueTokenizer.TokenType> tokenTypes) {
         CssDeclarationValueTokenizer tokenizer = new CssDeclarationValueTokenizer(src);
         CssDeclarationValueTokenizer.Token token = null;
-        Assert.assertTrue("Value and type arrays size should be equal", tokenValues.size() == tokenTypes.size());
+        Assertions.assertTrue(tokenValues.size() == tokenTypes.size(), "Value and type arrays size should be equal");
         int index = 0;
         while ((token = tokenizer.getNextValidToken()) != null) {
-            Assert.assertEquals(tokenValues.get(index), token.getValue());
-            Assert.assertEquals(tokenTypes.get(index), token.getType());
+            Assertions.assertEquals(tokenValues.get(index), token.getValue());
+            Assertions.assertEquals(tokenTypes.get(index), token.getType());
             ++index;
         }
-        Assert.assertTrue(index == tokenValues.size());
+        Assertions.assertTrue(index == tokenValues.size());
     }
 }

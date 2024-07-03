@@ -49,12 +49,11 @@ import com.itextpdf.signatures.validation.v1.mocks.MockTrustedCertificatesStore;
 import com.itextpdf.signatures.validation.v1.report.ReportItem;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -68,7 +67,7 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.Date;
 
-@Category(BouncyCastleUnitTest.class)
+@Tag("BouncyCastleUnitTest")
 public class OCSPValidatorTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/validation/v1/OCSPValidatorTest/";
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
@@ -86,7 +85,7 @@ public class OCSPValidatorTest extends ExtendedITextTest {
     private ValidatorChainBuilder validatorChainBuilder;
     private MockChainValidator mockCertificateChainValidator;
 
-    @BeforeClass
+    @BeforeAll
     public static void before()
             throws CertificateException, IOException, AbstractOperatorCreationException, AbstractPKCSException {
         Security.addProvider(FACTORY.getProvider());
@@ -102,7 +101,7 @@ public class OCSPValidatorTest extends ExtendedITextTest {
         ocspRespPrivateKey = PemFileHelper.readFirstKey(ocspResponderCertFileName, PASSWORD);
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         certificateRetriever = new IssuingCertificateRetriever();
         parameters = new SignatureValidationProperties();
@@ -127,11 +126,11 @@ public class OCSPValidatorTest extends ExtendedITextTest {
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
         validateTest(checkDate);
 
-        Assert.assertEquals(1, mockCertificateChainValidator.verificationCalls.size());
-        Assert.assertEquals(responderCert, mockCertificateChainValidator.verificationCalls.get(0).certificate);
-        Assert.assertEquals(ValidatorContext.OCSP_VALIDATOR, mockCertificateChainValidator.verificationCalls.get(0).context.getValidatorContext());
-        Assert.assertEquals(CertificateSource.OCSP_ISSUER, mockCertificateChainValidator.verificationCalls.get(0).context.getCertificateSource());
-        Assert.assertEquals(checkDate, mockCertificateChainValidator.verificationCalls.get(0).checkDate);
+        Assertions.assertEquals(1, mockCertificateChainValidator.verificationCalls.size());
+        Assertions.assertEquals(responderCert, mockCertificateChainValidator.verificationCalls.get(0).certificate);
+        Assertions.assertEquals(ValidatorContext.OCSP_VALIDATOR, mockCertificateChainValidator.verificationCalls.get(0).context.getValidatorContext());
+        Assertions.assertEquals(CertificateSource.OCSP_ISSUER, mockCertificateChainValidator.verificationCalls.get(0).context.getCertificateSource());
+        Assertions.assertEquals(checkDate, mockCertificateChainValidator.verificationCalls.get(0).checkDate);
     }
 
     @Test
@@ -155,7 +154,7 @@ public class OCSPValidatorTest extends ExtendedITextTest {
                         .withMessage(RevocationDataValidator.SELF_SIGNED_CERTIFICATE)
                         .withCertificate(caCert))
         );
-        Assert.assertEquals(0, mockCertificateChainValidator.verificationCalls.size());
+        Assertions.assertEquals(0, mockCertificateChainValidator.verificationCalls.size());
     }
 
     @Test
@@ -199,7 +198,7 @@ public class OCSPValidatorTest extends ExtendedITextTest {
                         .withMessage(OCSPValidator.SERIAL_NUMBERS_DO_NOT_MATCH)
                         .withCertificate(checkCert))
         );
-        Assert.assertEquals(0, mockCertificateChainValidator.verificationCalls.size());
+        Assertions.assertEquals(0, mockCertificateChainValidator.verificationCalls.size());
     }
 
 
@@ -320,7 +319,7 @@ public class OCSPValidatorTest extends ExtendedITextTest {
                         .withMessage(OCSPValidator.CERT_STATUS_IS_UNKNOWN)
                         .withCertificate(checkCert)));
 
-        Assert.assertEquals(0, mockCertificateChainValidator.verificationCalls.size());
+        Assertions.assertEquals(0, mockCertificateChainValidator.verificationCalls.size());
     }
 
     @Test

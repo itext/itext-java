@@ -25,16 +25,15 @@ package com.itextpdf.io.font.otf;
 import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class GposLookupType4Test extends ExtendedITextTest {
 
     private static final String RESOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/font/otf/GposLookupType4Test/";
@@ -49,12 +48,12 @@ public class GposLookupType4Test extends ExtendedITextTest {
         GlyphLine gl = new GlyphLine(glyphs);
         gl.idx = 2;
 
-        Assert.assertEquals(0, gl.get(2).getXPlacement());
-        Assert.assertEquals(0, gl.get(2).getAnchorDelta());
+        Assertions.assertEquals(0, gl.get(2).getXPlacement());
+        Assertions.assertEquals(0, gl.get(2).getAnchorDelta());
 
         lookup.transformOne(gl);
 
-        Assert.assertEquals(364, gl.get(2).getXPlacement());
-        Assert.assertEquals(-2, gl.get(2).getAnchorDelta());
+        Assertions.assertEquals(364, gl.get(2).getXPlacement());
+        Assertions.assertEquals(-2, gl.get(2).getAnchorDelta());
     }
 }

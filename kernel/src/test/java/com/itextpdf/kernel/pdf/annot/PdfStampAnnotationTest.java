@@ -25,32 +25,31 @@ package com.itextpdf.kernel.pdf.annot;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfStampAnnotationTest extends ExtendedITextTest {
 
     @Test
     public void setAndGetRotationTest() {
         PdfStampAnnotation stamp = new PdfStampAnnotation(new Rectangle(0, 0, 100, 50));
         stamp.setRotation(45);
-        Assert.assertEquals(45, stamp.getRotation().intValue());
+        Assertions.assertEquals(45, stamp.getRotation().intValue());
     }
 
     @Test
     public void setAndGetIconNameTest() {
         PdfStampAnnotation stamp = new PdfStampAnnotation(new Rectangle(0, 0, 100, 50));
         stamp.setIconName(new PdfName("SBApproved"));
-        Assert.assertEquals("SBApproved", stamp.getIconName().getValue());
+        Assertions.assertEquals("SBApproved", stamp.getIconName().getValue());
     }
 
     @Test
     public void setAndGetStampNameTest() {
         PdfStampAnnotation stamp = new PdfStampAnnotation(new Rectangle(0, 0, 100, 50));
         stamp.setStampName(new PdfName("SBApproved"));
-        Assert.assertEquals("SBApproved", stamp.getIconName().getValue());
+        Assertions.assertEquals("SBApproved", stamp.getIconName().getValue());
     }
 }

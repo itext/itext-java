@@ -27,34 +27,33 @@ import com.itextpdf.commons.logs.CommonsLogMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Set;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class ZipFileReaderTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/commons/utils/ZipFileReaderTest/";
 
     @Test
     public void constructorWithNullPathTest() {
-        Exception ex = Assert.assertThrows(IOException.class, () -> new ZipFileReader(null));
-        Assert.assertEquals(CommonsExceptionMessageConstant.FILE_NAME_CAN_NOT_BE_NULL, ex.getMessage());
+        Exception ex = Assertions.assertThrows(IOException.class, () -> new ZipFileReader(null));
+        Assertions.assertEquals(CommonsExceptionMessageConstant.FILE_NAME_CAN_NOT_BE_NULL, ex.getMessage());
     }
 
     @Test
     public void constructorWithInvalidPathTest() {
-        Assert.assertThrows(Exception.class, () -> new ZipFileReader("invalidPath"));
+        Assertions.assertThrows(Exception.class, () -> new ZipFileReader("invalidPath"));
     }
 
     @Test
     public void constructorWithNonZipPathTest() {
-        Assert.assertThrows(Exception.class, () -> new ZipFileReader(SOURCE_FOLDER + "firstFile.txt"));
+        Assertions.assertThrows(Exception.class, () -> new ZipFileReader(SOURCE_FOLDER + "firstFile.txt"));
     }
 
     @Test
@@ -63,7 +62,7 @@ public class ZipFileReaderTest extends ExtendedITextTest {
         try (ZipFileReader fileReader = new ZipFileReader(SOURCE_FOLDER + "emptyZip.zip")) {
             Set<String> nameSet = fileReader.getFileNames();
 
-            Assert.assertTrue(nameSet.isEmpty());
+            Assertions.assertTrue(nameSet.isEmpty());
         }
     }
 
@@ -72,14 +71,14 @@ public class ZipFileReaderTest extends ExtendedITextTest {
         try (ZipFileReader fileReader = new ZipFileReader(SOURCE_FOLDER + "archive.zip")) {
             Set<String> nameSet = fileReader.getFileNames();
 
-            Assert.assertNotNull(nameSet);
-            Assert.assertEquals(6, nameSet.size());
-            Assert.assertTrue(nameSet.contains("firstFile.txt"));
-            Assert.assertTrue(nameSet.contains("secondFile.txt"));
-            Assert.assertTrue(nameSet.contains("subfolder/thirdFile.txt"));
-            Assert.assertTrue(nameSet.contains("subfolder/fourthFile.txt"));
-            Assert.assertTrue(nameSet.contains("subfolder/subsubfolder/fifthFile.txt"));
-            Assert.assertTrue(nameSet.contains("subfolder/subsubfolder/sixthFile.txt"));
+            Assertions.assertNotNull(nameSet);
+            Assertions.assertEquals(6, nameSet.size());
+            Assertions.assertTrue(nameSet.contains("firstFile.txt"));
+            Assertions.assertTrue(nameSet.contains("secondFile.txt"));
+            Assertions.assertTrue(nameSet.contains("subfolder/thirdFile.txt"));
+            Assertions.assertTrue(nameSet.contains("subfolder/fourthFile.txt"));
+            Assertions.assertTrue(nameSet.contains("subfolder/subsubfolder/fifthFile.txt"));
+            Assertions.assertTrue(nameSet.contains("subfolder/subsubfolder/sixthFile.txt"));
         }
     }
 
@@ -91,8 +90,8 @@ public class ZipFileReaderTest extends ExtendedITextTest {
             fileReader.setThresholdSize(10000);
             Set<String> nameSet = fileReader.getFileNames();
 
-            Assert.assertNotNull(nameSet);
-            Assert.assertEquals(0, nameSet.size());
+            Assertions.assertNotNull(nameSet);
+            Assertions.assertEquals(0, nameSet.size());
         }
     }
 
@@ -103,8 +102,8 @@ public class ZipFileReaderTest extends ExtendedITextTest {
             fileReader.setThresholdRatio(5);
             Set<String> nameSet = fileReader.getFileNames();
 
-            Assert.assertNotNull(nameSet);
-            Assert.assertEquals(0, nameSet.size());
+            Assertions.assertNotNull(nameSet);
+            Assertions.assertEquals(0, nameSet.size());
         }
     }
 
@@ -115,8 +114,8 @@ public class ZipFileReaderTest extends ExtendedITextTest {
             fileReader.setThresholdEntries(5);
             Set<String> nameSet = fileReader.getFileNames();
 
-            Assert.assertNotNull(nameSet);
-            Assert.assertTrue(nameSet.size() <= 5);
+            Assertions.assertNotNull(nameSet);
+            Assertions.assertTrue(nameSet.size() <= 5);
         }
     }
 
@@ -124,8 +123,8 @@ public class ZipFileReaderTest extends ExtendedITextTest {
     public void readFromZipWithNullPathTest() throws IOException {
         try (ZipFileReader reader = new ZipFileReader(SOURCE_FOLDER + "archive.zip")) {
 
-            Exception ex = Assert.assertThrows(IOException.class, () -> reader.readFromZip(null));
-            Assert.assertEquals(CommonsExceptionMessageConstant.FILE_NAME_CAN_NOT_BE_NULL, ex.getMessage());
+            Exception ex = Assertions.assertThrows(IOException.class, () -> reader.readFromZip(null));
+            Assertions.assertEquals(CommonsExceptionMessageConstant.FILE_NAME_CAN_NOT_BE_NULL, ex.getMessage());
         }
     }
 
@@ -134,8 +133,8 @@ public class ZipFileReaderTest extends ExtendedITextTest {
         final String fileName = "name";
 
         try (ZipFileReader reader = new ZipFileReader(SOURCE_FOLDER + "archive.zip")) {
-            Exception ex = Assert.assertThrows(IOException.class, () -> reader.readFromZip(fileName));
-            Assert.assertEquals(MessageFormatUtil
+            Exception ex = Assertions.assertThrows(IOException.class, () -> reader.readFromZip(fileName));
+            Assertions.assertEquals(MessageFormatUtil
                     .format(CommonsExceptionMessageConstant.ZIP_ENTRY_NOT_FOUND, fileName), ex.getMessage());
         }
     }
@@ -145,8 +144,8 @@ public class ZipFileReaderTest extends ExtendedITextTest {
         final String fileName = "thirdFile.txt";
 
         try (ZipFileReader reader = new ZipFileReader(SOURCE_FOLDER + "archive.zip")) {
-            Exception ex = Assert.assertThrows(IOException.class, () -> reader.readFromZip(fileName));
-            Assert.assertEquals(MessageFormatUtil
+            Exception ex = Assertions.assertThrows(IOException.class, () -> reader.readFromZip(fileName));
+            Assertions.assertEquals(MessageFormatUtil
                     .format(CommonsExceptionMessageConstant.ZIP_ENTRY_NOT_FOUND, fileName), ex.getMessage());
         }
     }
@@ -156,8 +155,8 @@ public class ZipFileReaderTest extends ExtendedITextTest {
         try (ZipFileReader reader = new ZipFileReader(SOURCE_FOLDER + "archive.zip");
                 InputStream inputStream = reader.readFromZip("firstFile.txt")) {
 
-            Assert.assertNotNull(inputStream);
-            Assert.assertEquals("1", convertInputStreamToString(inputStream));
+            Assertions.assertNotNull(inputStream);
+            Assertions.assertEquals("1", convertInputStreamToString(inputStream));
         }
     }
 
@@ -166,8 +165,8 @@ public class ZipFileReaderTest extends ExtendedITextTest {
         try (ZipFileReader reader = new ZipFileReader(SOURCE_FOLDER + "archive.zip");
                 InputStream inputStream = reader.readFromZip("subfolder/thirdFile.txt")) {
 
-            Assert.assertNotNull(inputStream);
-            Assert.assertEquals("3", convertInputStreamToString(inputStream));
+            Assertions.assertNotNull(inputStream);
+            Assertions.assertEquals("3", convertInputStreamToString(inputStream));
         }
     }
 
@@ -176,8 +175,8 @@ public class ZipFileReaderTest extends ExtendedITextTest {
         try (ZipFileReader reader = new ZipFileReader(SOURCE_FOLDER + "archive.zip");
                 InputStream inputStream = reader.readFromZip("subfolder/subsubfolder/fifthFile.txt")) {
 
-            Assert.assertNotNull(inputStream);
-            Assert.assertEquals("5", convertInputStreamToString(inputStream));
+            Assertions.assertNotNull(inputStream);
+            Assertions.assertEquals("5", convertInputStreamToString(inputStream));
         }
     }
 
@@ -185,7 +184,7 @@ public class ZipFileReaderTest extends ExtendedITextTest {
     public void readFromZipWithClosedReaderTest() throws IOException {
         ZipFileReader reader = new ZipFileReader(SOURCE_FOLDER + "archive.zip");
         reader.close();
-        Assert.assertThrows(IllegalStateException.class,
+        Assertions.assertThrows(IllegalStateException.class,
                 () -> reader.readFromZip("subfolder/subsubfolder/fifthFile.txt"));
     }
 

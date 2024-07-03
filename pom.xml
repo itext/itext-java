@@ -95,7 +95,7 @@
     <javadoc-additionalOptions />
     <javadoc-link>https://docs.oracle.com/javase/8/docs/api/</javadoc-link>
     <javadoc.version>3.7.0</javadoc.version>
-    <junit.version>4.13.2</junit.version>
+    <junit.jupiter.version>5.10.2</junit.jupiter.version>
     <junitparams.version>1.0.4</junitparams.version>
     <logback.version>1.2.13</logback.version>
     <maven.compiler.source>1.8</maven.compiler.source>
@@ -128,15 +128,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>${junit.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>pl.pragmatists</groupId>
-      <artifactId>JUnitParams</artifactId>
-      <version>${junitparams.version}</version>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>${junit.jupiter.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -501,6 +495,12 @@
                   <exclude>com.itextpdf.signatures.validation.v1.DocumentRevisionsValidator</exclude>
                   <exclude>com.itextpdf.signatures.validation.v1.SignatureValidator</exclude>
                   <exclude>com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant</exclude>
+                  // TODO DEVSIX-8439 remove pdftest classes after 8.0.6 release
+                  <exclude>com.itextpdf.test.ExtendedITextTest</exclude>
+                  <exclude>com.itextpdf.test.ITextTest</exclude>
+                  <exclude>com.itextpdf.test.LogListener</exclude>
+                  <exclude>com.itextpdf.test.runners.RetryOnFailure</exclude>
+                  <exclude>com.itextpdf.test.runners.RetryRunner</exclude>
                 </excludes>
                 <excludeModules>
                   <excludeModule>bouncy-castle-adapter</excludeModule>
@@ -607,7 +607,7 @@
               <includes>
                 <include>**/*.java</include>
               </includes>
-              <groups>${slowtests},SlowTest,PerformanceTest,IntegrationTest,BouncyCastleIntegrationTest,SampleTest</groups>
+              <groups>SlowTest,PerformanceTest,IntegrationTest,BouncyCastleIntegrationTest,SampleTest</groups>
               <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
               <argLine>@{jacoco.agent.argLine}</argLine>
               <threadCount>1</threadCount>
@@ -630,7 +630,7 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
               <skipTests>false</skipTests>
-              <groups>${unittests},UnitTest,BouncyCastleUnitTest</groups>
+              <groups>UnitTest,BouncyCastleUnitTest</groups>
               <argLine>@{jacoco.agent.argLine}</argLine>
             </configuration>
           </plugin>
@@ -703,7 +703,7 @@
               <includes>
                 <include>**/*.java</include>
               </includes>
-              <groups>${bouncycastleintegrationtests}</groups>
+              <groups>BouncyCastleIntegrationTest</groups>
             </configuration>
             <executions>
               <execution>
@@ -731,7 +731,7 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
-              <groups>${bouncycastleunittests}</groups>
+              <groups>BouncyCastleUnitTest</groups>
             </configuration>
             <executions>
               <execution>

@@ -38,11 +38,10 @@ import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.canvas.parser.util.InlineImageParsingUtils.InlineImageParseException;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -50,7 +49,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class InlineImageParsingUtilsTest extends ExtendedITextTest {
 
     private static final String RESOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/canvas/parser/InlineImageParsingUtilsTest/";
@@ -67,7 +66,7 @@ public class InlineImageParsingUtilsTest extends ExtendedITextTest {
         array.add(stream);
         dictionary.put(colorSpace, array);
 
-        Assert.assertEquals(4, InlineImageParsingUtils.getComponentsPerPixel(colorSpace, dictionary));
+        Assertions.assertEquals(4, InlineImageParsingUtils.getComponentsPerPixel(colorSpace, dictionary));
     }
 
     @Test
@@ -79,7 +78,7 @@ public class InlineImageParsingUtilsTest extends ExtendedITextTest {
         array.add(colorSpace);
         dictionary.put(colorSpace, array);
 
-        Assert.assertEquals(1, InlineImageParsingUtils.getComponentsPerPixel(colorSpace, dictionary));
+        Assertions.assertEquals(1, InlineImageParsingUtils.getComponentsPerPixel(colorSpace, dictionary));
     }
 
     @Test
@@ -89,16 +88,16 @@ public class InlineImageParsingUtilsTest extends ExtendedITextTest {
         PdfDictionary dictionary = new PdfDictionary();
         dictionary.put(colorSpace, PdfName.DeviceCMYK);
 
-        Assert.assertEquals(4, InlineImageParsingUtils.getComponentsPerPixel(colorSpace, dictionary));
+        Assertions.assertEquals(4, InlineImageParsingUtils.getComponentsPerPixel(colorSpace, dictionary));
     }
 
     @Test
     public void csInDictAsNameNullTest() {
         PdfName colorSpace = PdfName.ICCBased;
         PdfDictionary dictionary = new PdfDictionary();
-        Exception exception = Assert.assertThrows(InlineImageParseException.class,
+        Exception exception = Assertions.assertThrows(InlineImageParseException.class,
                 () -> InlineImageParsingUtils.getComponentsPerPixel(colorSpace, dictionary));
-        Assert.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.UNEXPECTED_COLOR_SPACE, "/ICCBased"),
+        Assertions.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.UNEXPECTED_COLOR_SPACE, "/ICCBased"),
                 exception.getMessage());
     }
 
@@ -114,33 +113,33 @@ public class InlineImageParsingUtilsTest extends ExtendedITextTest {
         array.add(stream);
         dictionary.put(colorSpace, array);
 
-        Exception exception = Assert.assertThrows(InlineImageParseException.class,
+        Exception exception = Assertions.assertThrows(InlineImageParseException.class,
                 () -> InlineImageParsingUtils.getComponentsPerPixel(colorSpace, dictionary));
-        Assert.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.UNEXPECTED_COLOR_SPACE, "/ICCBased"),
+        Assertions.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.UNEXPECTED_COLOR_SPACE, "/ICCBased"),
                 exception.getMessage());
     }
 
     @Test
     public void nullCsTest() {
-        Assert.assertEquals(1, InlineImageParsingUtils.getComponentsPerPixel(null, null));
+        Assertions.assertEquals(1, InlineImageParsingUtils.getComponentsPerPixel(null, null));
     }
 
     @Test
     public void deviceGrayCsTest() {
         PdfName colorSpace = PdfName.DeviceGray;
-        Assert.assertEquals(1, InlineImageParsingUtils.getComponentsPerPixel(colorSpace, null));
+        Assertions.assertEquals(1, InlineImageParsingUtils.getComponentsPerPixel(colorSpace, null));
     }
 
     @Test
     public void deviceRGBCsTest() {
         PdfName colorSpace = PdfName.DeviceRGB;
-        Assert.assertEquals(3, InlineImageParsingUtils.getComponentsPerPixel(colorSpace, null));
+        Assertions.assertEquals(3, InlineImageParsingUtils.getComponentsPerPixel(colorSpace, null));
     }
 
     @Test
     public void deviceCMYKCsTest() {
         PdfName colorSpace = PdfName.DeviceCMYK;
-        Assert.assertEquals(4, InlineImageParsingUtils.getComponentsPerPixel(colorSpace, null));
+        Assertions.assertEquals(4, InlineImageParsingUtils.getComponentsPerPixel(colorSpace, null));
     }
 
     @Test
@@ -152,13 +151,13 @@ public class InlineImageParsingUtilsTest extends ExtendedITextTest {
                 ));
         PdfCanvasParser ps = new PdfCanvasParser(tokenizer, new PdfResources());
         List<PdfObject> objects = ps.parse(null);
-        Assert.assertEquals(2, objects.size());
-        Assert.assertTrue(objects.get(0) instanceof PdfStream);
-        Assert.assertEquals(new PdfLiteral("EI"), objects.get(1));
+        Assertions.assertEquals(2, objects.size());
+        Assertions.assertTrue(objects.get(0) instanceof PdfStream);
+        Assertions.assertEquals(new PdfLiteral("EI"), objects.get(1));
         //Getting encoded bytes of an image, can't use PdfStream#getBytes() here because it decodes an image
         byte[] image = ((ByteArrayOutputStream) ((PdfStream)objects.get(0)).getOutputStream().getOutputStream()).toByteArray();
         byte[] cmpImage = Files.readAllBytes(Paths.get(RESOURCE_FOLDER, "cmp_img.dat"));
-        Assert.assertArrayEquals(cmpImage, image);
+        Assertions.assertArrayEquals(cmpImage, image);
     }
 
     @Test
@@ -205,10 +204,10 @@ public class InlineImageParsingUtilsTest extends ExtendedITextTest {
         );
         PdfCanvasParser ps = new PdfCanvasParser(tokenizer, new PdfResources());
         List<PdfObject> objects = ps.parse(null);
-        Assert.assertEquals(2, objects.size());
-        Assert.assertTrue(objects.get(0) instanceof PdfStream);
-        Assert.assertEquals(new PdfLiteral("EI"), objects.get(1));
+        Assertions.assertEquals(2, objects.size());
+        Assertions.assertTrue(objects.get(0) instanceof PdfStream);
+        Assertions.assertEquals(new PdfLiteral("EI"), objects.get(1));
         String image = new String(((PdfStream)objects.get(0)).getBytes(), StandardCharsets.ISO_8859_1);
-        Assert.assertEquals(image, cmpImgData);
+        Assertions.assertEquals(image, cmpImgData);
     }
 }

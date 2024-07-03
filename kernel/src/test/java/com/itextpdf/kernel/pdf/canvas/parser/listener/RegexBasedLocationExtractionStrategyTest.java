@@ -27,7 +27,6 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.canvas.parser.PdfCanvasProcessor;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,11 +34,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class RegexBasedLocationExtractionStrategyTest extends ExtendedITextTest {
 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/parser/RegexBasedLocationExtractionStrategyTest/";
@@ -65,15 +64,15 @@ public class RegexBasedLocationExtractionStrategyTest extends ExtendedITextTest 
         }
 
         // compare
-        Assert.assertEquals(1, locationList.size());
+        Assertions.assertEquals(1, locationList.size());
 
         IPdfTextLocation loc = locationList.get(0);
 
-        Assert.assertEquals("{{Signature}}", loc.getText());
-        Assert.assertEquals(23, (int) loc.getRectangle().getX());
-        Assert.assertEquals(375, (int) loc.getRectangle().getY());
-        Assert.assertEquals(55, (int) loc.getRectangle().getWidth());
-        Assert.assertEquals(11, (int) loc.getRectangle().getHeight());
+        Assertions.assertEquals("{{Signature}}", loc.getText());
+        Assertions.assertEquals(23, (int) loc.getRectangle().getX());
+        Assertions.assertEquals(375, (int) loc.getRectangle().getY());
+        Assertions.assertEquals(55, (int) loc.getRectangle().getWidth());
+        Assertions.assertEquals(11, (int) loc.getRectangle().getHeight());
 
         // close
         pdfDocument.close();
@@ -104,16 +103,16 @@ public class RegexBasedLocationExtractionStrategyTest extends ExtendedITextTest 
         }
 
         // compare
-        Assert.assertEquals(1, locationList.size());
+        Assertions.assertEquals(1, locationList.size());
 
         IPdfTextLocation loc = locationList.get(0);
 
-        Assert.assertEquals("ca", loc.getText());
+        Assertions.assertEquals("ca", loc.getText());
         Rectangle rect = loc.getRectangle();
-        Assert.assertEquals(36, rect.getX(), 0.0001);
-        Assert.assertEquals(655.4600, rect.getY(), 0.0001);
-        Assert.assertEquals(25.1000, rect.getWidth(), 0.0001);
-        Assert.assertEquals(20, rect.getHeight(), 0.0001);
+        Assertions.assertEquals(36, rect.getX(), 0.0001);
+        Assertions.assertEquals(655.4600, rect.getY(), 0.0001);
+        Assertions.assertEquals(25.1000, rect.getWidth(), 0.0001);
+        Assertions.assertEquals(20, rect.getHeight(), 0.0001);
 
         pdfDocument.close();
     }
@@ -139,16 +138,16 @@ public class RegexBasedLocationExtractionStrategyTest extends ExtendedITextTest 
         }
 
         // compare
-        Assert.assertEquals(1, locationList.size());
+        Assertions.assertEquals(1, locationList.size());
 
         IPdfTextLocation loc = locationList.get(0);
 
-        Assert.assertEquals("al", loc.getText());
+        Assertions.assertEquals("al", loc.getText());
         Rectangle rect = loc.getRectangle();
-        Assert.assertEquals(48.7600, rect.getX(), 0.0001);
-        Assert.assertEquals(655.4600, rect.getY(), 0.0001);
-        Assert.assertEquals(25.9799, rect.getWidth(), 0.0001);
-        Assert.assertEquals(20, rect.getHeight(), 0.0001);
+        Assertions.assertEquals(48.7600, rect.getX(), 0.0001);
+        Assertions.assertEquals(655.4600, rect.getY(), 0.0001);
+        Assertions.assertEquals(25.9799, rect.getWidth(), 0.0001);
+        Assertions.assertEquals(20, rect.getHeight(), 0.0001);
 
         pdfDocument.close();
     }
@@ -174,16 +173,16 @@ public class RegexBasedLocationExtractionStrategyTest extends ExtendedITextTest 
         }
 
         // compare
-        Assert.assertEquals(1, locationList.size());
+        Assertions.assertEquals(1, locationList.size());
 
         IPdfTextLocation loc = locationList.get(0);
 
-        Assert.assertEquals("l", loc.getText());
+        Assertions.assertEquals("l", loc.getText());
         Rectangle rect = loc.getRectangle();
-        Assert.assertEquals(61.0999, rect.getX(), 0.0001);
-        Assert.assertEquals(655.4600, rect.getY(), 0.0001);
-        Assert.assertEquals(13.6399, rect.getWidth(), 0.0001);
-        Assert.assertEquals(20, rect.getHeight(), 0.0001);
+        Assertions.assertEquals(61.0999, rect.getX(), 0.0001);
+        Assertions.assertEquals(655.4600, rect.getY(), 0.0001);
+        Assertions.assertEquals(13.6399, rect.getWidth(), 0.0001);
+        Assertions.assertEquals(20, rect.getHeight(), 0.0001);
 
         pdfDocument.close();
     }
@@ -207,9 +206,9 @@ public class RegexBasedLocationExtractionStrategyTest extends ExtendedITextTest 
         }
 
         // compare
-        Assert.assertEquals(2, locationList.size());
-        Assert.assertTrue(locationList.get(0).getRectangle().equalsWithEpsilon(new Rectangle(188.512f, 450f, 14.800003f, 25.791992f)));
-        Assert.assertTrue(locationList.get(1).getRectangle().equalsWithEpsilon(new Rectangle(36f, 746.688f, 25.792f, 14.799988f)));
+        Assertions.assertEquals(2, locationList.size());
+        Assertions.assertTrue(locationList.get(0).getRectangle().equalsWithEpsilon(new Rectangle(188.512f, 450f, 14.800003f, 25.791992f)));
+        Assertions.assertTrue(locationList.get(1).getRectangle().equalsWithEpsilon(new Rectangle(36f, 746.688f, 25.792f, 14.799988f)));
 
         pdfDocument.close();
     }
@@ -222,9 +221,9 @@ public class RegexBasedLocationExtractionStrategyTest extends ExtendedITextTest 
         List<IPdfTextLocation> locations = new ArrayList<>(extractionStrategy.getResultantLocations());
         pdfDocument.close();
 
-        Assert.assertEquals(1, locations.size());
-        Assert.assertEquals(" start", locations.get(0).getText());
-        Assert.assertTrue(
+        Assertions.assertEquals(1, locations.size());
+        Assertions.assertEquals(" start", locations.get(0).getText());
+        Assertions.assertTrue(
                 new Rectangle(92.3f, 743.3970f, 20.6159f, 13.2839f).equalsWithEpsilon(locations.get(0).getRectangle()));
     }
 
@@ -236,9 +235,9 @@ public class RegexBasedLocationExtractionStrategyTest extends ExtendedITextTest 
         List<IPdfTextLocation> locations = new ArrayList<>(extractionStrategy.getResultantLocations());
         pdfDocument.close();
 
-        Assert.assertEquals(1, locations.size());
-        Assert.assertEquals("\nstart", locations.get(0).getText());
-        Assert.assertTrue(
+        Assertions.assertEquals(1, locations.size());
+        Assertions.assertEquals("\nstart", locations.get(0).getText());
+        Assertions.assertTrue(
                 new Rectangle(56.8f, 729.5970f, 20.6159f, 13.2839f).equalsWithEpsilon(locations.get(0).getRectangle()));
     }
 
@@ -251,9 +250,9 @@ public class RegexBasedLocationExtractionStrategyTest extends ExtendedITextTest 
         List<IPdfTextLocation> locations = new ArrayList<>(extractionStrategy.getResultantLocations());
         pdfDocument.close();
 
-        Assert.assertEquals(1, locations.size());
-        Assert.assertEquals(" start ", locations.get(0).getText());
-        Assert.assertTrue(
+        Assertions.assertEquals(1, locations.size());
+        Assertions.assertEquals(" start ", locations.get(0).getText());
+        Assertions.assertTrue(
                 new Rectangle(92.3f, 743.3970f, 20.6159f, 13.2839f).equalsWithEpsilon(locations.get(0).getRectangle()));
     }
 
@@ -266,9 +265,9 @@ public class RegexBasedLocationExtractionStrategyTest extends ExtendedITextTest 
         List<IPdfTextLocation> locations = new ArrayList<>(extractionStrategy.getResultantLocations());
         pdfDocument.close();
 
-        Assert.assertEquals(1, locations.size());
-        Assert.assertEquals("\nstart\n", locations.get(0).getText());
-        Assert.assertTrue(
+        Assertions.assertEquals(1, locations.size());
+        Assertions.assertEquals("\nstart\n", locations.get(0).getText());
+        Assertions.assertTrue(
                 new Rectangle(56.8f, 729.5970f, 20.6159f, 13.2839f).equalsWithEpsilon(locations.get(0).getRectangle()));
     }
 
@@ -282,12 +281,12 @@ public class RegexBasedLocationExtractionStrategyTest extends ExtendedITextTest 
         List<IPdfTextLocation> locations = new ArrayList<>(extractionStrategy.getResultantLocations());
         pdfDocument.close();
 
-        Assert.assertEquals(2, locations.size());
-        Assert.assertEquals("hello\nworld", locations.get(0).getText());
-        Assert.assertEquals("hello\nworld", locations.get(1).getText());
-        Assert.assertTrue(
+        Assertions.assertEquals(2, locations.size());
+        Assertions.assertEquals("hello\nworld", locations.get(0).getText());
+        Assertions.assertEquals("hello\nworld", locations.get(1).getText());
+        Assertions.assertTrue(
                 new Rectangle(56.8f, 729.5970f, 27.8999f, 13.2839f).equalsWithEpsilon(locations.get(0).getRectangle()));
-        Assert.assertTrue(
+        Assertions.assertTrue(
                 new Rectangle(56.8f, 743.3970f, 23.9039f, 13.2839f).equalsWithEpsilon(locations.get(1).getRectangle()));
     }
 
@@ -300,7 +299,7 @@ public class RegexBasedLocationExtractionStrategyTest extends ExtendedITextTest 
         List<IPdfTextLocation> locations = new ArrayList<>(extractionStrategy.getResultantLocations());
         pdfDocument.close();
 
-        Assert.assertEquals(0, locations.size());
+        Assertions.assertEquals(0, locations.size());
     }
 
     @Test
@@ -311,7 +310,7 @@ public class RegexBasedLocationExtractionStrategyTest extends ExtendedITextTest 
         List<IPdfTextLocation> locations = new ArrayList<>(extractionStrategy.getResultantLocations());
         pdfDocument.close();
 
-        Assert.assertEquals(0, locations.size());
+        Assertions.assertEquals(0, locations.size());
     }
 
     @Test
@@ -322,7 +321,7 @@ public class RegexBasedLocationExtractionStrategyTest extends ExtendedITextTest 
             pdfCanvasProcessor.processPageContent(pdfDocument.getPage(1));
             pdfCanvasProcessor.processPageContent(pdfDocument.getPage(2));
             List<IPdfTextLocation> locations = new ArrayList<>(extractionStrategy.getResultantLocations());
-            Assert.assertEquals(13, locations.size());
+            Assertions.assertEquals(13, locations.size());
         }
     }
 }

@@ -24,20 +24,19 @@ package com.itextpdf.commons.actions.processors;
 
 import com.itextpdf.commons.actions.ProductNameConstant;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class UnderAgplProductProcessorFactoryTest extends ExtendedITextTest {
 
     @Test
     public void createUnderAgplProductProcessor() {
         UnderAgplProductProcessorFactory underAgplProductProcessorFactory = new UnderAgplProductProcessorFactory();
         ITextProductEventProcessor processor = underAgplProductProcessorFactory.createProcessor(ProductNameConstant.ITEXT_CORE);
-        Assert.assertNotNull(processor);
-        Assert.assertTrue(processor instanceof UnderAgplITextProductEventProcessor);
+        Assertions.assertNotNull(processor);
+        Assertions.assertTrue(processor instanceof UnderAgplITextProductEventProcessor);
     }
 }

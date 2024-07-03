@@ -33,23 +33,17 @@ import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.classic.spi.StackTraceElementProxy;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.read.ListAppender;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.rules.TestWatcher;
-import org.junit.runner.Description;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.SubstituteLoggerFactory;
-import java.lang.annotation.Annotation;
 
-public class LogListener extends TestWatcher implements BeforeEachCallback, AfterEachCallback {
+public class LogListener implements BeforeEachCallback, AfterEachCallback {
 
     private static final String ROOT_ITEXT_PACKAGE = "com.itextpdf";
     private static final String ITEXT_LICENCING_PACKAGE = "com.itextpdf.licensing";
@@ -67,43 +61,13 @@ public class LogListener extends TestWatcher implements BeforeEachCallback, Afte
     }
 
     @Override
-    public void beforeEach(ExtensionContext extensionContext) throws Exception {
-        Description description = convertToDescription(extensionContext);
-        before(description);
+    public void beforeEach(ExtensionContext extensionContext) {
+        before(extensionContext);
     }
 
     @Override
-    public void afterEach(ExtensionContext extensionContext) throws Exception {
-        Description description = convertToDescription(extensionContext);
-        checkLogMessages(description);
-        after();
-    }
-
-    private static Description convertToDescription(ExtensionContext extensionContext) {
-        Method testMethod = extensionContext.getRequiredTestMethod();
-        Class<?> testClass = extensionContext.getRequiredTestClass();
-
-        Annotation[] methodAnnotations = testMethod.getAnnotations();
-        Annotation[] classAnnotations = testClass.getAnnotations();
-
-        List<Annotation> allAnnotations = new ArrayList<>();
-
-        Collections.addAll(allAnnotations, methodAnnotations);
-
-        Collections.addAll(allAnnotations, classAnnotations);
-
-        Annotation[] annotationsArray = allAnnotations.toArray(new Annotation[0]);
-        return Description.createTestDescription(testClass, testMethod.getName(), annotationsArray);
-    }
-
-    @Override
-    protected void starting(Description description) {
-        before(description);
-    }
-
-    @Override
-    protected void finished(Description description) {
-        checkLogMessages(description);
+    public void afterEach(ExtensionContext context) {
+        checkLogMessages(context);
         after();
     }
 
@@ -148,10 +112,10 @@ public class LogListener extends TestWatcher implements BeforeEachCallback, Afte
         return listAppender.list.size();
     }
 
-    private void before(Description description) {
+    private void before(ExtensionContext context) {
         listAppender.clear();
 
-        LogMessages logMessages = LoggerHelper.getTestAnnotation(description, LogMessages.class);
+        LogMessages logMessages = LoggerHelper.getTestAnnotation(context, LogMessages.class);
         if (logMessages != null) {
             Map<String, Boolean> expectedTemplates = new HashMap<>();
             LogMessage[] messages = logMessages.messages();
@@ -190,8 +154,8 @@ public class LogListener extends TestWatcher implements BeforeEachCallback, Afte
         }
     }
 
-    private void checkLogMessages(Description description) {
-        LogMessages logMessages = LoggerHelper.getTestAnnotation(description, LogMessages.class);
+    private void checkLogMessages(ExtensionContext context) {
+        LogMessages logMessages = LoggerHelper.getTestAnnotation(context, LogMessages.class);
         int checkedMessages = 0;
         if (logMessages != null) {
             LogMessage[] messages = logMessages.messages();
@@ -199,14 +163,14 @@ public class LogListener extends TestWatcher implements BeforeEachCallback, Afte
                 int foundCount = contains(logMessage);
                 if (foundCount != logMessage.count() && !logMessages.ignore() && !logMessage.ignore()) {
                     LoggerHelper.failWrongMessageCount(logMessage.count(), foundCount, logMessage.messageTemplate(),
-                            description);
+                            context);
                 } else {
                     checkedMessages += foundCount;
                 }
             }
         }
         if (getSize() > checkedMessages) {
-            LoggerHelper.failWrongTotalCount(getSize(), checkedMessages, description);
+            LoggerHelper.failWrongTotalCount(getSize(), checkedMessages, context);
         }
     }
 

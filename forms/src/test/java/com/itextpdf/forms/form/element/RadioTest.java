@@ -50,23 +50,22 @@ import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class RadioTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER =
             "./src/test/resources/com/itextpdf/forms/form/element/RadioTest/";
     public static final String DESTINATION_FOLDER =
             "./target/test/com/itextpdf/forms/form/element/RadioTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
@@ -92,7 +91,7 @@ public class RadioTest extends ExtendedITextTest {
             document.add(flattenRadio2);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -117,7 +116,7 @@ public class RadioTest extends ExtendedITextTest {
             document.add(flattenRadio2);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -125,8 +124,8 @@ public class RadioTest extends ExtendedITextTest {
         try (Document document = new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream())))) {
             Radio formRadio = createRadioButton("radio button 1", null, null, null, true, false);
 
-            Exception e = Assert.assertThrows(PdfException.class, () -> document.add(formRadio));
-            Assert.assertEquals(FormsExceptionMessageConstant.EMPTY_RADIO_GROUP_NAME, e.getMessage());
+            Exception e = Assertions.assertThrows(PdfException.class, () -> document.add(formRadio));
+            Assertions.assertEquals(FormsExceptionMessageConstant.EMPTY_RADIO_GROUP_NAME, e.getMessage());
         }
     }
 
@@ -135,8 +134,8 @@ public class RadioTest extends ExtendedITextTest {
         try (Document document = new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream())))) {
             Radio formRadio = createRadioButton("", "radioGroup", null, null, true, false);
 
-            Exception e = Assert.assertThrows(PdfException.class, () -> document.add(formRadio));
-            Assert.assertEquals(FormsExceptionMessageConstant.APEARANCE_NAME_MUST_BE_PROVIDED, e.getMessage());
+            Exception e = Assertions.assertThrows(PdfException.class, () -> document.add(formRadio));
+            Assertions.assertEquals(FormsExceptionMessageConstant.APEARANCE_NAME_MUST_BE_PROVIDED, e.getMessage());
         }
     }
 
@@ -156,7 +155,7 @@ public class RadioTest extends ExtendedITextTest {
             document.add(formRadio2);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -211,7 +210,7 @@ public class RadioTest extends ExtendedITextTest {
             document.add(flattenRadio5);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -245,7 +244,7 @@ public class RadioTest extends ExtendedITextTest {
             document.add(flattenRadio2);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -275,7 +274,7 @@ public class RadioTest extends ExtendedITextTest {
             document.add(flattenRadio2);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     // This is the test for TODO: DEVSIX-7425 - Border radius 50% doesn't draw rounded borders
@@ -297,7 +296,7 @@ public class RadioTest extends ExtendedITextTest {
             document.add(flattenRadio2);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -314,7 +313,7 @@ public class RadioTest extends ExtendedITextTest {
             document.add(flattenRadio1);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -335,7 +334,7 @@ public class RadioTest extends ExtendedITextTest {
             document.add(div);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -353,17 +352,17 @@ public class RadioTest extends ExtendedITextTest {
             radio.setProperty(Property.PADDING_RIGHT, UnitValue.createPointValue(20));
 
             // Paddings are always 0 for radio buttons
-            Assert.assertEquals(radio.<UnitValue>getProperty(Property.PADDING_BOTTOM), UnitValue.createPointValue(0));
-            Assert.assertEquals(radio.<UnitValue>getProperty(Property.PADDING_TOP), UnitValue.createPointValue(0));
-            Assert.assertEquals(radio.<UnitValue>getProperty(Property.PADDING_LEFT), UnitValue.createPointValue(0));
-            Assert.assertEquals(radio.<UnitValue>getProperty(Property.PADDING_RIGHT), UnitValue.createPointValue(0));
+            Assertions.assertEquals(radio.<UnitValue>getProperty(Property.PADDING_BOTTOM), UnitValue.createPointValue(0));
+            Assertions.assertEquals(radio.<UnitValue>getProperty(Property.PADDING_TOP), UnitValue.createPointValue(0));
+            Assertions.assertEquals(radio.<UnitValue>getProperty(Property.PADDING_LEFT), UnitValue.createPointValue(0));
+            Assertions.assertEquals(radio.<UnitValue>getProperty(Property.PADDING_RIGHT), UnitValue.createPointValue(0));
 
             radio.setSize(100);
             div.add(radio);
             document.add(div);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -388,7 +387,7 @@ public class RadioTest extends ExtendedITextTest {
                 }
             }
         }
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     static private Radio createRadioButton(String name, String groupName, Border border, Color backgroundColor,

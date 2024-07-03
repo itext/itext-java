@@ -23,21 +23,20 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfDictionaryTokenizerTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfDictionaryTokenizerTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfDictionaryTokenizerTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
@@ -68,7 +67,7 @@ public class PdfDictionaryTokenizerTest extends ExtendedITextTest {
         // ItalicAngle -12.-23 turns into -12.
 
         String result = getItalicAngleValue(inPath);
-        Assert.assertEquals(EXPECTED, result);
+        Assertions.assertEquals(EXPECTED, result);
     }
 
     @Test
@@ -96,7 +95,7 @@ public class PdfDictionaryTokenizerTest extends ExtendedITextTest {
         // ItalicAngle -12.-23 turns into -12.
 
         String result = getItalicAngleValue(inPath);
-        Assert.assertEquals(EXPECTED, result);
+        Assertions.assertEquals(EXPECTED, result);
     }
 
     private String getItalicAngleValue(String inPath) throws IOException {

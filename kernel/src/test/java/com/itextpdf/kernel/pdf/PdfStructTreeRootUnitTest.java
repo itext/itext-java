@@ -28,13 +28,12 @@ import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfStructTreeRootUnitTest extends ExtendedITextTest {
 
     @Test
@@ -43,9 +42,9 @@ public class PdfStructTreeRootUnitTest extends ExtendedITextTest {
         PdfPage pdfPage = pdfDocument.addNewPage(1);
         pdfPage.flush();
         PdfStructTreeRoot pdfStructTreeRoot = new PdfStructTreeRoot(pdfDocument);
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> pdfStructTreeRoot.move(pdfPage, -1));
-        Assert.assertEquals(MessageFormatUtil
+        Assertions.assertEquals(MessageFormatUtil
                         .format(KernelExceptionMessageConstant.CANNOT_MOVE_PAGES_IN_PARTLY_FLUSHED_DOCUMENT, 1),
                 exception.getMessage());
     }

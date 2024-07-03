@@ -40,7 +40,6 @@ import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -54,14 +53,12 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(Parameterized.class)
-@Category(BouncyCastleIntegrationTest.class)
+@Tag("BouncyCastleIntegrationTest")
 public class PdfPadesWithMissingCertTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
@@ -70,33 +67,25 @@ public class PdfPadesWithMissingCertTest extends ExtendedITextTest {
     private static final String destinationFolder = "./target/test/com/itextpdf/signatures/sign/PdfPadesWithMissingCertTest/";
 
     private static final char[] PASSWORD = "testpassphrase".toCharArray();
-    
-    private final String missingCertName1;
-    private final String missingCertName2;
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         Security.addProvider(FACTORY.getProvider());
         createOrClearDestinationFolder(destinationFolder);
     }
 
-    public PdfPadesWithMissingCertTest(Object missingCertName1, Object missingCertName2) {
-        this.missingCertName1 = (String) missingCertName1;
-        this.missingCertName2 = (String) missingCertName2;
-    }
-
-    @Parameterized.Parameters(name = "first missing cert: {0}; second missing cert: {1};")
-    public static Iterable<Object[]> createParameters() {
+    public static Iterable<Object[]> CreateParameters() {
         return Arrays.asList(new Object[] {"missing_cert1.cer", "missing_cert2.cer"},
                 new Object[] {"missing_cert1.crt", "missing_cert2.crt"},
                 new Object[] {null, "missing_certs.p7b"},
                 new Object[] {"not_existing_file", "not_existing_file"},
                 new Object[] {"missing_cert1.der", "missing_cert2.der"});
     }
-    
-    @Test
+
+    @ParameterizedTest(name = "first missing cert: {0}; second missing cert: {1};")
+    @MethodSource("CreateParameters")
     @LogMessages(messages = @LogMessage(messageTemplate = SignLogMessageConstant.UNABLE_TO_PARSE_AIA_CERT), ignore = true)
-    public void missingCertTest()
+    public void missingCertTest(String missingCertName1, String missingCertName2)
             throws GeneralSecurityException, IOException, AbstractOperatorCreationException, AbstractPKCSException {
         String srcFileName = sourceFolder + "helloWorldDoc.pdf";
         String signCertFileName = certsSrc + "sign_cert.pem";

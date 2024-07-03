@@ -23,35 +23,34 @@
 package com.itextpdf.layout.font;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 import java.util.Random;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class RangeTest extends ExtendedITextTest {
 
     @Test
     public void testWrongRange() {
-        Assert.assertThrows(IllegalArgumentException.class, () -> new RangeBuilder().addRange(11, 10));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new RangeBuilder().addRange(11, 10));
     }
 
     @Test
     public void testWrongRangeSize() {
-        Assert.assertThrows(IllegalArgumentException.class, () -> new RangeBuilder().create());
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new RangeBuilder().create());
     }
 
     @Test
     public void testFullRange() {
-        Assert.assertTrue(RangeBuilder.getFullRange().contains(new Random().nextInt()));
+        Assertions.assertTrue(RangeBuilder.getFullRange().contains(new Random().nextInt()));
 
-        Assert.assertTrue(RangeBuilder.getFullRange().equals(RangeBuilder.getFullRange()));
+        Assertions.assertTrue(RangeBuilder.getFullRange().equals(RangeBuilder.getFullRange()));
 
-        Assert.assertTrue(RangeBuilder.getFullRange() == RangeBuilder.getFullRange());
+        Assertions.assertTrue(RangeBuilder.getFullRange() == RangeBuilder.getFullRange());
 
-        Assert.assertFalse(RangeBuilder.getFullRange().equals(new RangeBuilder().addRange(1).create()));
+        Assertions.assertFalse(RangeBuilder.getFullRange().equals(new RangeBuilder().addRange(1).create()));
     }
 
     @Test
@@ -67,18 +66,18 @@ public class RangeTest extends ExtendedITextTest {
                 .create();
 
 
-        Assert.assertTrue(range.hashCode() == range2.hashCode());
-        Assert.assertTrue(range.equals(range2));
-        Assert.assertEquals(range.toString(), range2.toString());
+        Assertions.assertTrue(range.hashCode() == range2.hashCode());
+        Assertions.assertTrue(range.equals(range2));
+        Assertions.assertEquals(range.toString(), range2.toString());
 
         Range range3 = new RangeBuilder(25)
                 .addRange((char) 26)
                 .addRange((char) 1, (char) 7)
                 .create();
 
-        Assert.assertFalse(range2.hashCode() == range3.hashCode());
-        Assert.assertFalse(range2.equals(range3));
-        Assert.assertNotEquals(range2.toString(), range3.toString());
+        Assertions.assertFalse(range2.hashCode() == range3.hashCode());
+        Assertions.assertFalse(range2.equals(range3));
+        Assertions.assertNotEquals(range2.toString(), range3.toString());
 
         Range range4 = new RangeBuilder(26)
                 .addRange((char) 25)
@@ -86,9 +85,9 @@ public class RangeTest extends ExtendedITextTest {
                 .addRange((char) 3, (char) 7)
                 .create();
 
-        Assert.assertTrue(range3.hashCode() == range4.hashCode());
-        Assert.assertTrue(range3.equals(range4));
-        Assert.assertEquals(range3.toString(), range4.toString());
+        Assertions.assertTrue(range3.hashCode() == range4.hashCode());
+        Assertions.assertTrue(range3.equals(range4));
+        Assertions.assertEquals(range3.toString(), range4.toString());
     }
 
     @Test
@@ -103,23 +102,23 @@ public class RangeTest extends ExtendedITextTest {
                 .addRange(8, 15)
                 .addRange(25, 30)
                 .create();
-        Assert.assertEquals("[(0; 22), (25; 30), (33; 40)]", range.toString());
+        Assertions.assertEquals("[(0; 22), (25; 30), (33; 40)]", range.toString());
 
-        Assert.assertTrue(range.contains(0));
-        Assert.assertTrue(range.contains(10));
-        Assert.assertTrue(range.contains(22));
-        Assert.assertTrue(range.contains(25));
-        Assert.assertTrue(range.contains(27));
-        Assert.assertTrue(range.contains(30));
-        Assert.assertTrue(range.contains(33));
-        Assert.assertTrue(range.contains(34));
-        Assert.assertTrue(range.contains(40));
+        Assertions.assertTrue(range.contains(0));
+        Assertions.assertTrue(range.contains(10));
+        Assertions.assertTrue(range.contains(22));
+        Assertions.assertTrue(range.contains(25));
+        Assertions.assertTrue(range.contains(27));
+        Assertions.assertTrue(range.contains(30));
+        Assertions.assertTrue(range.contains(33));
+        Assertions.assertTrue(range.contains(34));
+        Assertions.assertTrue(range.contains(40));
 
-        Assert.assertFalse(range.contains(-1));
-        Assert.assertFalse(range.contains(23));
-        Assert.assertFalse(range.contains(31));
-        Assert.assertFalse(range.contains(32));
-        Assert.assertFalse(range.contains(41));
+        Assertions.assertFalse(range.contains(-1));
+        Assertions.assertFalse(range.contains(23));
+        Assertions.assertFalse(range.contains(31));
+        Assertions.assertFalse(range.contains(32));
+        Assertions.assertFalse(range.contains(41));
     }
 
     @Test
@@ -129,15 +128,15 @@ public class RangeTest extends ExtendedITextTest {
                 .addRange(3)
                 .addRange(6)
                 .create();
-        Assert.assertEquals("[(1; 1), (2; 2), (3; 3), (6; 6)]", range.toString());
+        Assertions.assertEquals("[(1; 1), (2; 2), (3; 3), (6; 6)]", range.toString());
 
-        Assert.assertTrue(range.contains(1));
-        Assert.assertTrue(range.contains(2));
-        Assert.assertTrue(range.contains(3));
-        Assert.assertTrue(range.contains(6));
+        Assertions.assertTrue(range.contains(1));
+        Assertions.assertTrue(range.contains(2));
+        Assertions.assertTrue(range.contains(3));
+        Assertions.assertTrue(range.contains(6));
 
-        Assert.assertFalse(range.contains(0));
-        Assert.assertFalse(range.contains(5));
-        Assert.assertFalse(range.contains(7));
+        Assertions.assertFalse(range.contains(0));
+        Assertions.assertFalse(range.contains(5));
+        Assertions.assertFalse(range.contains(7));
     }
 }

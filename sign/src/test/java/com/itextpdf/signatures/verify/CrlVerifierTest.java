@@ -35,11 +35,10 @@ import com.itextpdf.signatures.testutils.TimeTestUtil;
 import com.itextpdf.signatures.testutils.builder.TestCrlBuilder;
 import com.itextpdf.signatures.testutils.client.TestCrlClient;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -50,14 +49,14 @@ import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 
-@Category(BouncyCastleUnitTest.class)
+@Tag("BouncyCastleUnitTest")
 public class CrlVerifierTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
     
     private static final String certsSrc = "./src/test/resources/com/itextpdf/signatures/certs/";
     private static final char[] password = "testpassphrase".toCharArray();
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         Security.addProvider(FACTORY.getProvider());
     }
@@ -69,7 +68,7 @@ public class CrlVerifierTest extends ExtendedITextTest {
         X509Certificate caCert = (X509Certificate) PemFileHelper.readFirstChain(caCertP12FileName)[0];
         PrivateKey caPrivateKey = PemFileHelper.readFirstKey(caCertP12FileName, password);
         TestCrlBuilder crlBuilder = new TestCrlBuilder(caCert, caPrivateKey, DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, -1));
-        Assert.assertTrue(verifyTest(crlBuilder));
+        Assertions.assertTrue(verifyTest(crlBuilder));
     }
 
     @Test
@@ -85,7 +84,7 @@ public class CrlVerifierTest extends ExtendedITextTest {
         crlBuilder.addCrlEntry(checkCert, DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, -40),
                 FACTORY.createCRLReason().getKeyCompromise());
 
-        Assert.assertThrows(VerificationException.class, () -> verifyTest(crlBuilder));
+        Assertions.assertThrows(VerificationException.class, () -> verifyTest(crlBuilder));
     }
 
     @Test
@@ -97,7 +96,7 @@ public class CrlVerifierTest extends ExtendedITextTest {
         TestCrlBuilder crlBuilder = new TestCrlBuilder(caCert, caPrivateKey, DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, -2));
         crlBuilder.setNextUpdate(DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, -1));
 
-        Assert.assertFalse(verifyTest(crlBuilder));
+        Assertions.assertFalse(verifyTest(crlBuilder));
     }
 
     private boolean verifyTest(TestCrlBuilder crlBuilder) throws GeneralSecurityException, IOException {

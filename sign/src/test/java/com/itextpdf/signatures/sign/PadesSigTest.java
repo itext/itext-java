@@ -44,20 +44,19 @@ import com.itextpdf.signatures.TestSignUtils;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(BouncyCastleIntegrationTest.class)
+@Tag("BouncyCastleIntegrationTest")
 public class PadesSigTest extends ExtendedITextTest {
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
@@ -68,7 +67,7 @@ public class PadesSigTest extends ExtendedITextTest {
 
     private static final char[] password = "testpassphrase".toCharArray();
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         Security.addProvider(FACTORY.getProvider());
         createOrClearDestinationFolder(destinationFolder);
@@ -80,7 +79,7 @@ public class PadesSigTest extends ExtendedITextTest {
         signApproval(certsSrc + "signCertRsa01.pem", destinationFolder + "padesRsaSigTest01.pdf");
 
         TestSignUtils.basicCheckSignedDoc(destinationFolder + "padesRsaSigTest01.pdf", "Signature1");
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(destinationFolder
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(destinationFolder
                 + "padesRsaSigTest01.pdf", sourceFolder + "cmp_padesRsaSigTest01.pdf"));
     }
 
@@ -90,12 +89,12 @@ public class PadesSigTest extends ExtendedITextTest {
         signApproval(certsSrc + "signCertRsaWithChain.pem", destinationFolder + "padesRsaSigTestWithChain01.pdf");
 
         TestSignUtils.basicCheckSignedDoc(destinationFolder + "padesRsaSigTestWithChain01.pdf", "Signature1");
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(destinationFolder
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(destinationFolder
                 + "padesRsaSigTestWithChain01.pdf", sourceFolder + "cmp_padesRsaSigTestWithChain01.pdf"));
     }
 
     @Test
-    @Ignore("DEVSIX-1620: For some reason signatures created with the given cert (either by iText or acrobat) are considered invalid")
+    @Disabled("DEVSIX-1620: For some reason signatures created with the given cert (either by iText or acrobat) are considered invalid")
     public void padesDsaSigTest01()
             throws IOException, GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
         signApproval(certsSrc + "signCertDsa01.pem", destinationFolder + "padesDsaSigTest01.pdf");
@@ -108,7 +107,7 @@ public class PadesSigTest extends ExtendedITextTest {
                 destinationFolder + "padesEccSigTest01.pdf");
 
         TestSignUtils.basicCheckSignedDoc(destinationFolder + "padesEccSigTest01.pdf", "Signature1");
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(destinationFolder
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(destinationFolder
                 + "padesEccSigTest01.pdf", sourceFolder + "cmp_padesEccSigTest01.pdf"));
     }
 
@@ -132,7 +131,7 @@ public class PadesSigTest extends ExtendedITextTest {
         signApproval(certsSrc + "signCertRsa01.pem", destinationFolder + "padesEpesProfileTest01.pdf", sigPolicyIdentifier);
 
         TestSignUtils.basicCheckSignedDoc(destinationFolder + "padesEpesProfileTest01.pdf", "Signature1");
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(destinationFolder +
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(destinationFolder +
                 "padesEpesProfileTest01.pdf", sourceFolder + "cmp_padesEpesProfileTest01.pdf"));
     }
 
@@ -148,7 +147,7 @@ public class PadesSigTest extends ExtendedITextTest {
         signApproval(certsSrc + "signCertRsa01.pem", signedFileName, spi);
 
         TestSignUtils.basicCheckSignedDoc(signedFileName, "Signature1");
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(signedFileName,
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(signedFileName,
                 sourceFolder + "cmp_signaturePolicyInfoUnavailableUrl_signed.pdf"));
     }
 

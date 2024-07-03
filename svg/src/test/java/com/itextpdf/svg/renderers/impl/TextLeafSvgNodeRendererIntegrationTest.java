@@ -26,13 +26,12 @@ import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class TextLeafSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
 
     @Test
@@ -43,7 +42,7 @@ public class TextLeafSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
         PdfFont font = PdfFontFactory.createFont();
         float actual = toTest.getTextContentLength(12, font);
         float expected = 17.085f;
-        Assert.assertEquals(expected, actual, 1e-6f);
+        Assertions.assertEquals(expected, actual, 1e-6f);
     }
 
     @Test
@@ -53,7 +52,7 @@ public class TextLeafSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
         PdfFont font = PdfFontFactory.createFont();
         float actual = toTest.getTextContentLength(12, font);
         float expected = 27.336f;
-        Assert.assertEquals(expected, actual,1e-6f);
+        Assertions.assertEquals(expected, actual,1e-6f);
     }
 
     @Test
@@ -64,7 +63,7 @@ public class TextLeafSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
         PdfFont font = PdfFontFactory.createFont();
         float actual = toTest.getTextContentLength(12, font);
         float expected = 0.0f;
-        Assert.assertEquals(expected, actual, 1e-6f);
+        Assertions.assertEquals(expected, actual, 1e-6f);
     }
 
     @Test
@@ -75,6 +74,6 @@ public class TextLeafSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
         PdfFont font = PdfFontFactory.createFont();
         float actual = toTest.getTextContentLength(12, font);
         float expected = 27.336f;
-        Assert.assertEquals(expected, actual,1e-6f);
+        Assertions.assertEquals(expected, actual,1e-6f);
     }
 }

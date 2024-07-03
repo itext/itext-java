@@ -27,19 +27,18 @@ import com.itextpdf.commons.actions.data.ProductData;
 import com.itextpdf.commons.actions.processors.ITextProductEventProcessor;
 import com.itextpdf.commons.actions.sequence.SequenceId;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.util.List;
 import java.util.Map;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class AbstractITextConfigurationEventTest extends ExtendedITextTest {
 
-    @After
+    @AfterEach
     public void after() {
         ProductEventHandler.INSTANCE.clearProcessors();
     }
@@ -51,8 +50,8 @@ public class AbstractITextConfigurationEventTest extends ExtendedITextTest {
         event.addProcessor(processor);
 
         Map<String, ITextProductEventProcessor> processors = ProductEventHandler.INSTANCE.getProcessors();
-        Assert.assertEquals(1, processors.size());
-        Assert.assertTrue(processors.values().contains(processor));
+        Assertions.assertEquals(1, processors.size());
+        Assertions.assertTrue(processors.values().contains(processor));
     }
 
     @Test
@@ -61,7 +60,7 @@ public class AbstractITextConfigurationEventTest extends ExtendedITextTest {
         ITextProductEventProcessor processor = new TestITextProductEventProcessor();
         event.addProcessor(processor);
 
-        Assert.assertEquals(ProductEventHandler.INSTANCE.getProcessors(), event.getProcessors());
+        Assertions.assertEquals(ProductEventHandler.INSTANCE.getProcessors(), event.getProcessors());
     }
 
     @Test
@@ -73,7 +72,7 @@ public class AbstractITextConfigurationEventTest extends ExtendedITextTest {
         event.removeProcessor(processor.getProductName());
 
         Map<String, ITextProductEventProcessor> processors = ProductEventHandler.INSTANCE.getProcessors();
-        Assert.assertEquals(0, processors.size());
+        Assertions.assertEquals(0, processors.size());
     }
 
     @Test
@@ -82,7 +81,7 @@ public class AbstractITextConfigurationEventTest extends ExtendedITextTest {
         ITextProductEventProcessor processor = new TestITextProductEventProcessor();
         event.addProcessor(processor);
 
-        Assert.assertEquals(processor, event.getActiveProcessor(processor.getProductName()));
+        Assertions.assertEquals(processor, event.getActiveProcessor(processor.getProductName()));
     }
 
     @Test
@@ -93,8 +92,8 @@ public class AbstractITextConfigurationEventTest extends ExtendedITextTest {
         configurationEvent.addEvent(id, processEvent);
 
         List<AbstractProductProcessITextEvent> events = ProductEventHandler.INSTANCE.getEvents(id);
-        Assert.assertEquals(1, events.size());
-        Assert.assertEquals(processEvent, events.get(0));
+        Assertions.assertEquals(1, events.size());
+        Assertions.assertEquals(processEvent, events.get(0));
     }
 
     @Test
@@ -104,7 +103,7 @@ public class AbstractITextConfigurationEventTest extends ExtendedITextTest {
         configurationEvent.addEvent(id, new TestAbstractProductProcessITextEvent());
         configurationEvent.addEvent(id, new TestAbstractProductProcessITextEvent());
 
-        Assert.assertEquals(ProductEventHandler.INSTANCE.getEvents(id), configurationEvent.getEvents(id));
+        Assertions.assertEquals(ProductEventHandler.INSTANCE.getEvents(id), configurationEvent.getEvents(id));
     }
 
     static class TestAbstractITextConfigurationEvent extends AbstractITextConfigurationEvent {

@@ -69,23 +69,22 @@ import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Map;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfFormFieldTest extends ExtendedITextTest {
 
     public static final String destinationFolder = "./target/test/com/itextpdf/forms/PdfFormFieldTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/PdfFormFieldTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
@@ -109,9 +108,9 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         Map<String, PdfFormField> fields = form.getAllFormFields();
         PdfFormField field = fields.get("Text1");
 
-        Assert.assertEquals(4, fields.size());
-        Assert.assertEquals("Text1", field.getFieldName().toUnicodeString());
-        Assert.assertEquals("TestField", field.getValue().toString());
+        Assertions.assertEquals(4, fields.size());
+        Assertions.assertEquals("Text1", field.getFieldName().toUnicodeString());
+        Assertions.assertEquals("TestField", field.getValue().toString());
     }
 
     @Test
@@ -131,7 +130,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_formFieldTest02.pdf", destinationFolder, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -156,7 +155,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_formFieldTest03.pdf", destinationFolder, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -180,7 +179,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_formFieldTest04.pdf", destinationFolder, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
     
@@ -203,7 +202,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
             form.addField(textFormField);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -229,7 +228,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         String errorMessage = compareTool.compareByContent(filename,
                 sourceFolder + "cmp_textFieldLeadingSpacesAreNotTrimmed.pdf", destinationFolder, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -241,7 +240,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         Map<String, PdfFormField> formFields = form.getAllFormFields();
         // 帐号1: account number 1
         String fieldName = "\u5E10\u53F71";
-        Assert.assertEquals(fieldName, formFields.keySet().toArray(new String[1])[0]);
+        Assertions.assertEquals(fieldName, formFields.keySet().toArray(new String[1])[0]);
     }
 
     @Test
@@ -251,7 +250,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         // 帐号1: account number 1
         String fieldName = "\u5E10\u53F71";
-        Assert.assertNotNull(form.getField(fieldName));
+        Assertions.assertNotNull(form.getField(fieldName));
     }
 
     @Test
@@ -261,7 +260,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         String fieldValue = form.getField("fieldName").getValueAsString();
         // Trailing newline is not trimmed which seems to match Acrobat's behavior on copy-paste
-        Assert.assertEquals("some value\n", fieldValue);
+        Assertions.assertEquals("some value\n", fieldValue);
     }
 
     @Test
@@ -293,7 +292,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_choiceFieldTest01.pdf", destinationFolder, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -335,7 +334,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_buttonFieldTest01.pdf", destinationFolder, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
 
     }
@@ -364,7 +363,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_" + file, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_" + file, destinationFolder, "diff_"));
     }
 
     @Test
@@ -400,7 +399,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_" + file, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_" + file, destinationFolder, "diff_"));
     }
 
     @Test
@@ -438,7 +437,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_" + file, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_" + file, destinationFolder, "diff_"));
     }
 
     @Test
@@ -465,7 +464,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_" + file, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_" + file, destinationFolder, "diff_"));
     }
 
     @Test
@@ -492,7 +491,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_" + file, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_" + file, destinationFolder, "diff_"));
     }
 
     @Test
@@ -519,7 +518,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_" + file, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_" + file, destinationFolder, "diff_"));
     }
 
     @Test
@@ -536,7 +535,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_buttonFieldTest02.pdf", destinationFolder, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -555,7 +554,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(destFilename, sourceFolder + "cmp_realFontSizeRegenerateAppearance.pdf", destinationFolder, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -577,7 +576,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         form.addField(root);
 
-        Assert.assertEquals(3, form.getAllFormFields().size());
+        Assertions.assertEquals(3, form.getAllFormFields().size());
     }
 
     @Test
@@ -601,7 +600,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -626,7 +625,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -650,7 +649,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -670,7 +669,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -690,7 +689,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
             }
         }
         document.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + output,
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + output,
                 sourceFolder + "cmp_" + output, destinationFolder, "diff"));
     }
 
@@ -706,7 +705,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfFormField field = acro.getField("number");
         field.setValue("20150044DR");
         document.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + output,
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + output,
                 sourceFolder + "cmp_" + output, destinationFolder, "diff"));
     }
 
@@ -731,7 +730,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_flushedPagesTest.pdf", destinationFolder, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -761,7 +760,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -788,7 +787,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -820,7 +819,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff" + testName + "_"));
     }
 
@@ -859,7 +858,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         fillAcroForm(pdfDocument, text);
         pdfDocument.close();
 
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff" + testName + "_"));
     }
 
@@ -887,7 +886,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff" + testName + "_"));
     }
 
@@ -922,7 +921,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         fillAcroForm(pdfDocument, text);
         pdfDocument.close();
 
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff" + testName + "_"));
     }
 
@@ -947,7 +946,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -986,7 +985,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -1016,7 +1015,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -1041,7 +1040,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -1061,7 +1060,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -1082,7 +1081,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         form.addField(button);
 
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
     }
 
     @Test
@@ -1101,7 +1100,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -1118,7 +1117,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         destDoc.close();
 
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareByContent(destFilename, cmpFilename, destinationFolder, "diff_"));
     }
 
@@ -1137,7 +1136,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -1164,7 +1163,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -1197,7 +1196,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_wrapPrecedingContentOnFlattenTest.pdf", destinationFolder, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -1256,7 +1255,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(fileName, sourceFolder + "cmp_pdfWithDifferentFieldsTest.pdf", destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(fileName, sourceFolder + "cmp_pdfWithDifferentFieldsTest.pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -1291,15 +1290,15 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename,
                         destinationFolder, "diff_"));
     }
 
     @Test
     public void testMakeField() {
-        Assert.assertNull(PdfFormField.makeFormField(new PdfNumber(1), null));
-        Assert.assertNull(PdfFormField.makeFormField(new PdfArray(), null));
+        Assertions.assertNull(PdfFormField.makeFormField(new PdfNumber(1), null));
+        Assertions.assertNull(PdfFormField.makeFormField(new PdfArray(), null));
     }
 
     @Test
@@ -1324,7 +1323,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
             da = ((PdfDictionary) pdfDoc.getPdfObject(objectNumber)).getAsString(PdfName.DA);
         }
 
-        Assert.assertEquals("/F1 35 Tf 1 0 1 rg", da.toString());
+        Assertions.assertEquals("/F1 35 Tf 1 0 1 rg", da.toString());
     }
 
     @Test
@@ -1351,19 +1350,19 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfDocument resPdf = new PdfDocument(new PdfReader(filename));
         PdfArray fieldsArr = resPdf.getCatalog().getPdfObject()
                 .getAsDictionary(PdfName.AcroForm).getAsArray(PdfName.Fields);
-        Assert.assertEquals(1, fieldsArr.size());
+        Assertions.assertEquals(1, fieldsArr.size());
 
         PdfDictionary field = fieldsArr.getAsDictionary(0);
         PdfDictionary fieldP = field.getAsDictionary(PdfName.P);
-        Assert.assertEquals(resPdf.getPage(2).getPdfObject(), fieldP);
+        Assertions.assertEquals(resPdf.getPage(2).getPdfObject(), fieldP);
 
-        Assert.assertNull(resPdf.getPage(1).getPdfObject().getAsArray(PdfName.Annots));
+        Assertions.assertNull(resPdf.getPage(1).getPdfObject().getAsArray(PdfName.Annots));
 
         PdfArray secondPageAnnots = resPdf.getPage(2).getPdfObject().getAsArray(PdfName.Annots);
-        Assert.assertEquals(1, secondPageAnnots.size());
-        Assert.assertEquals(field, secondPageAnnots.get(0));
+        Assertions.assertEquals(1, secondPageAnnots.size());
+        Assertions.assertEquals(field, secondPageAnnots.get(0));
 
-        Assert.assertNull(resPdf.getPage(3).getPdfObject().getAsArray(PdfName.Annots));
+        Assertions.assertNull(resPdf.getPage(3).getPdfObject().getAsArray(PdfName.Annots));
     }
 
     private void createAcroForm(PdfDocument pdfDoc, PdfAcroForm form, PdfFont font, String text, int offSet) {
@@ -1416,7 +1415,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         pdfDocument.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -1443,7 +1442,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         pdfDocument.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + outputFile,
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + outputFile,
                 sourceFolder + "cmp_" + outputFile, destinationFolder, "diff_"));
     }
 
@@ -1457,7 +1456,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         fillAcroForm(pdfDocument, text);
         pdfDocument.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "fillUnmergedTextFormField.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "fillUnmergedTextFormField.pdf",
                 sourceFolder + "cmp_" + "fillUnmergedTextFormField.pdf", destinationFolder, "diff_"));
     }
 
@@ -1488,7 +1487,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_choiceFieldAutoSize01Test.pdf", destinationFolder, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -1513,7 +1512,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_choiceFieldAutoSize02Test.pdf", destinationFolder, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -1545,7 +1544,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_borderWidthIndentSingleLineTest.pdf", destinationFolder, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -1568,7 +1567,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
             form.release();
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outStampingRelease, outPureStamping, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outStampingRelease, outPureStamping, destinationFolder));
     }
 
     @Test
@@ -1587,12 +1586,12 @@ public class PdfFormFieldTest extends ExtendedITextTest {
             root.addKid(child);
 
             acroForm.addField(root);
-            Assert.assertEquals(2, acroForm.fields.size());
+            Assertions.assertEquals(2, acroForm.fields.size());
             PdfArray fieldKids = root.getKids();
-            Assert.assertEquals(2, fieldKids.size());
+            Assertions.assertEquals(2, fieldKids.size());
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
     }
 
     @Test
@@ -1615,7 +1614,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         pdfAcroForm.getField("checkbox").setValue("Off");
         pdfDocument.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
     }
 
     @Test
@@ -1628,13 +1627,13 @@ public class PdfFormFieldTest extends ExtendedITextTest {
             for (AbstractPdfFormField field : acroForm.getAllFormFieldsAndAnnotations()) {
                 if (field instanceof PdfFormField && "child".equals(field.getPdfObject().get(PdfName.V).toString())) {
                     // Child has value "root" still because it doesn't contain T entry
-                    Assert.assertEquals("root", ((PdfFormField) field).getValue().toString());
+                    Assertions.assertEquals("root", ((PdfFormField) field).getValue().toString());
                 }
                 field.regenerateField();
             }
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
     }
 
     @Test
@@ -1694,7 +1693,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
             acroForm.addField(checkBoxField);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
     }
 
     @Test
@@ -1711,7 +1710,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
             acroForm.addField(textField);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
     }
 
     @Test
@@ -1719,7 +1718,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         try (PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
             PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
             form.setSignatureFlag(1);
-            Assert.assertEquals(1, form.getSignatureFlags());
+            Assertions.assertEquals(1, form.getSignatureFlags());
         }
     }
 
@@ -1743,33 +1742,33 @@ public class PdfFormFieldTest extends ExtendedITextTest {
                     .setBorderWidth(3).setBorderColor(ColorConstants.DARK_GRAY).setBackgroundColor(ColorConstants.PINK)
                     .setVisibility(PdfFormAnnotation.VISIBLE);
 
-            Assert.assertEquals(0, root.getCounter());
-            Assert.assertEquals(0, parent.getCounter());
-            Assert.assertEquals(0, child.getCounter());
+            Assertions.assertEquals(0, root.getCounter());
+            Assertions.assertEquals(0, parent.getCounter());
+            Assertions.assertEquals(0, child.getCounter());
 
             root.enableFieldRegeneration();
 
-            Assert.assertEquals(1, root.getCounter());
-            Assert.assertEquals(1, parent.getCounter());
-            Assert.assertEquals(1, child.getCounter());
+            Assertions.assertEquals(1, root.getCounter());
+            Assertions.assertEquals(1, parent.getCounter());
+            Assertions.assertEquals(1, child.getCounter());
 
             // Disable only root field regeneration
             root.disableCurrentFieldRegeneration();
             root.regenerateField();
 
-            Assert.assertEquals(1, root.getCounter());
-            Assert.assertEquals(2, parent.getCounter());
-            Assert.assertEquals(2, child.getCounter());
+            Assertions.assertEquals(1, root.getCounter());
+            Assertions.assertEquals(2, parent.getCounter());
+            Assertions.assertEquals(2, child.getCounter());
 
             root.enableCurrentFieldRegeneration();
 
-            Assert.assertEquals(2, root.getCounter());
-            Assert.assertEquals(3, parent.getCounter());
-            Assert.assertEquals(3, child.getCounter());
+            Assertions.assertEquals(2, root.getCounter());
+            Assertions.assertEquals(3, parent.getCounter());
+            Assertions.assertEquals(3, child.getCounter());
 
             form.addField(root);
         }
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
     }
 
     @Test
@@ -1793,33 +1792,33 @@ public class PdfFormFieldTest extends ExtendedITextTest {
                     .setVisibility(PdfFormAnnotation.VISIBLE);
             root.regenerateField();
 
-            Assert.assertEquals(1, root.getCounter());
-            Assert.assertEquals(0, parent.getCounter());
-            Assert.assertEquals(0, child.getCounter());
+            Assertions.assertEquals(1, root.getCounter());
+            Assertions.assertEquals(0, parent.getCounter());
+            Assertions.assertEquals(0, child.getCounter());
 
             parent.enableFieldRegeneration();
 
-            Assert.assertEquals(1, root.getCounter());
-            Assert.assertEquals(1, parent.getCounter());
-            Assert.assertEquals(1, child.getCounter());
+            Assertions.assertEquals(1, root.getCounter());
+            Assertions.assertEquals(1, parent.getCounter());
+            Assertions.assertEquals(1, child.getCounter());
 
             // Disable only parent field regeneration
             parent.disableCurrentFieldRegeneration();
             root.regenerateField();
 
-            Assert.assertEquals(2, root.getCounter());
-            Assert.assertEquals(1, parent.getCounter());
-            Assert.assertEquals(2, child.getCounter());
+            Assertions.assertEquals(2, root.getCounter());
+            Assertions.assertEquals(1, parent.getCounter());
+            Assertions.assertEquals(2, child.getCounter());
 
             parent.enableCurrentFieldRegeneration();
 
-            Assert.assertEquals(2, root.getCounter());
-            Assert.assertEquals(2, parent.getCounter());
-            Assert.assertEquals(3, child.getCounter());
+            Assertions.assertEquals(2, root.getCounter());
+            Assertions.assertEquals(2, parent.getCounter());
+            Assertions.assertEquals(3, child.getCounter());
 
             form.addField(root);
         }
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
     }
 
     @Test
@@ -1842,15 +1841,15 @@ public class PdfFormFieldTest extends ExtendedITextTest {
                     .setBackgroundColor(ColorConstants.BLUE);
             root.regenerateField();
 
-            Assert.assertEquals(1, root.getCounter());
-            Assert.assertEquals(1, parent.getCounter());
-            Assert.assertEquals(0, child.getCounter());
+            Assertions.assertEquals(1, root.getCounter());
+            Assertions.assertEquals(1, parent.getCounter());
+            Assertions.assertEquals(0, child.getCounter());
 
             child.enableFieldRegeneration();
 
-            Assert.assertEquals(1, root.getCounter());
-            Assert.assertEquals(1, parent.getCounter());
-            Assert.assertEquals(1, child.getCounter());
+            Assertions.assertEquals(1, root.getCounter());
+            Assertions.assertEquals(1, parent.getCounter());
+            Assertions.assertEquals(1, child.getCounter());
 
             // Disable only child field regeneration (so widget should be regenerated)
             child.disableCurrentFieldRegeneration();
@@ -1859,13 +1858,13 @@ public class PdfFormFieldTest extends ExtendedITextTest {
                     .setBorderWidth(3).setBorderColor(ColorConstants.DARK_GRAY).setBackgroundColor(ColorConstants.PINK)
                     .setVisibility(PdfFormAnnotation.VISIBLE);
 
-            Assert.assertEquals(1, root.getCounter());
-            Assert.assertEquals(1, parent.getCounter());
-            Assert.assertEquals(1, child.getCounter());
+            Assertions.assertEquals(1, root.getCounter());
+            Assertions.assertEquals(1, parent.getCounter());
+            Assertions.assertEquals(1, child.getCounter());
 
             form.addField(root);
         }
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
     }
 
     @Test
@@ -1905,7 +1904,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         form.addField(signField);
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(fileName, sourceFolder + "cmp_signatureLayersTest.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(fileName, sourceFolder + "cmp_signatureLayersTest.pdf",
                 destinationFolder, "diff_"));
     }
 
@@ -1931,7 +1930,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(fileName,
+        Assertions.assertNull(new CompareTool().compareByContent(fileName,
                 sourceFolder + "cmp_pdfWithSignatureFieldTest.pdf", destinationFolder, "diff_"));
     }
 
@@ -1959,7 +1958,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(fileName,
+        Assertions.assertNull(new CompareTool().compareByContent(fileName,
                 sourceFolder + "cmp_pdfWithSignatureAndFontInBuilderFieldTest.pdf", destinationFolder,
                 "diff_"));
     }

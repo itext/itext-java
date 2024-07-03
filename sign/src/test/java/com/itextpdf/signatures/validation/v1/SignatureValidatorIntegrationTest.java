@@ -46,15 +46,12 @@ import com.itextpdf.signatures.validation.v1.report.ReportItem;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport.ValidationResult;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -67,8 +64,11 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 
-@Category(BouncyCastleIntegrationTest.class)
+@Tag("BouncyCastleIntegrationTest")
 public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/validation/v1/SignatureValidatorIntegrationTest/certs/";
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/validation/v1/SignatureValidatorIntegrationTest/";
@@ -79,12 +79,12 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
     private IssuingCertificateRetriever certificateRetriever;
     private ValidatorChainBuilder builder;
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         Security.addProvider(FACTORY.getProvider());
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         parameters = new SignatureValidationProperties();
         certificateRetriever = new IssuingCertificateRetriever();
@@ -227,14 +227,14 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
 
         List<ICrlClient> crlClients = builder.getProperties().getCrlClients();
         List<IOcspClient> ocspClients = builder.getProperties().getOcspClients();
-        Assert.assertEquals(1, crlClients.size());
-        Assert.assertEquals(1, ocspClients.size());
-        Assert.assertTrue(crlClients.get(0) instanceof ValidationCrlClient);
-        Assert.assertTrue(ocspClients.get(0) instanceof ValidationOcspClient);
+        Assertions.assertEquals(1, crlClients.size());
+        Assertions.assertEquals(1, ocspClients.size());
+        Assertions.assertTrue(crlClients.get(0) instanceof ValidationCrlClient);
+        Assertions.assertTrue(ocspClients.get(0) instanceof ValidationOcspClient);
         ValidationCrlClient validationCrlClient = (ValidationCrlClient) crlClients.get(0);
         ValidationOcspClient validationOcspClient = (ValidationOcspClient) ocspClients.get(0);
-        Assert.assertEquals(2, validationCrlClient.getCrls().size());
-        Assert.assertEquals(2, validationOcspClient.getResponses().size());
+        Assertions.assertEquals(2, validationCrlClient.getCrls().size());
+        Assertions.assertEquals(2, validationOcspClient.getResponses().size());
     }
 
     @Test

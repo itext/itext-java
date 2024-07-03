@@ -30,14 +30,13 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.Arrays;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfStreamDecodeTest extends ExtendedITextTest {
 
     private static final byte[] BYTES = new byte[] {
@@ -74,7 +73,7 @@ public class PdfStreamDecodeTest extends ExtendedITextTest {
         PdfStream pdfStream = new PdfStream(FLATE_DECODED_BYTES);
         pdfStream.put(PdfName.Filter, new PdfArray(Arrays.asList((PdfObject) PdfName.FlateDecode, (PdfObject) PdfName.DCTDecode)));
 
-        Assert.assertArrayEquals(BYTES, pdfStream.getBytes());
+        Assertions.assertArrayEquals(BYTES, pdfStream.getBytes());
     }
 
     @Test
@@ -82,10 +81,10 @@ public class PdfStreamDecodeTest extends ExtendedITextTest {
         PdfStream pdfStream = new PdfStream(FLATE_DECODED_BYTES);
         pdfStream.put(PdfName.Filter, new PdfArray(Arrays.asList((PdfObject) PdfName.FlateDecode, (PdfObject) PdfName.JBIG2Decode)));
 
-        Exception e = Assert.assertThrows(PdfException.class,
+        Exception e = Assertions.assertThrows(PdfException.class,
                 () -> pdfStream.getBytes(true)
         );
-        Assert.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.THIS_FILTER_IS_NOT_SUPPORTED, PdfName.JBIG2Decode), e.getMessage());
+        Assertions.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.THIS_FILTER_IS_NOT_SUPPORTED, PdfName.JBIG2Decode), e.getMessage());
     }
 
     @Test
@@ -96,6 +95,6 @@ public class PdfStreamDecodeTest extends ExtendedITextTest {
         PdfStream pdfStream = new PdfStream(FLATE_DECODED_BYTES);
         pdfStream.put(PdfName.Filter, new PdfArray(Arrays.asList((PdfObject) PdfName.FlateDecode, (PdfObject) PdfName.JPXDecode)));
 
-        Assert.assertArrayEquals(BYTES, pdfStream.getBytes());
+        Assertions.assertArrayEquals(BYTES, pdfStream.getBytes());
     }
 }

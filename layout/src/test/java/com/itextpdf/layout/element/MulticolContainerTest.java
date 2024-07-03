@@ -46,18 +46,17 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.function.Consumer;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class MulticolContainerTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/MulticolContainerTest/";
     public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/MulticolContainerTest/";
@@ -67,7 +66,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
     private static final Color DEFAULT_BACKGROUND_COLOR = ColorConstants.CYAN;
     private static final Border DEFAULT_BORDER = new SolidBorder(ColorConstants.RED, 5F);
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(DESTINATION_FOLDER);
     }
@@ -121,7 +120,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
             table.addCell(new Cell());
             document.add(table);
         }
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -475,7 +474,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
 
             document.add(columnContainer);
         }
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -501,7 +500,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
 
             document.add(columnContainer);
         }
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -533,7 +532,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
 
             document.add(columnContainer);
         }
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -674,7 +673,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
 
             document.add(columnContainer);
         }
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -706,7 +705,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
 
             document.add(columnContainer);
         }
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -738,7 +737,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
 
             document.add(columnContainer);
         }
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -769,7 +768,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
 
             document.add(columnContainer);
         }
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -966,11 +965,11 @@ public class MulticolContainerTest extends ExtendedITextTest {
             doc.add(new Paragraph("ELEMENT BELOW").setBackgroundColor(ColorConstants.YELLOW));
         }
         CompareTool compareTool = new CompareTool();
-        Assert.assertNull(compareTool.compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(compareTool.compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
-    @Ignore("DEVSIX-7630")
+    @Disabled("DEVSIX-7630")
     public void heightMultiPage() throws IOException, InterruptedException {
         String testName = "heightMultiPage";
         String filename = DESTINATION_FOLDER + testName + ".pdf";
@@ -989,7 +988,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
             doc.add(new Paragraph("ELEMENT BELOW").setBackgroundColor(ColorConstants.YELLOW));
         }
         CompareTool compareTool = new CompareTool();
-        Assert.assertNull(compareTool.compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(compareTool.compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -1017,7 +1016,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
             document.add(columnContainer);
         }
         //expecting 2 columns with ~260px width each
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -1034,7 +1033,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
             columnContainer.add(paragraph);
             document.add(columnContainer);
         }
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -1048,8 +1047,8 @@ public class MulticolContainerTest extends ExtendedITextTest {
             columnContainer.setProperty(Property.COLUMN_GAP, -20.0f);
             Paragraph paragraph = createDummyParagraph();
             columnContainer.add(paragraph);
-            Throwable exception = Assert.assertThrows(IllegalStateException.class, () -> document.add(columnContainer));
-            Assert.assertEquals(LayoutExceptionMessageConstant.INVALID_COLUMN_PROPERTIES, exception.getMessage());
+            Throwable exception = Assertions.assertThrows(IllegalStateException.class, () -> document.add(columnContainer));
+            Assertions.assertEquals(LayoutExceptionMessageConstant.INVALID_COLUMN_PROPERTIES, exception.getMessage());
         }
     }
 
@@ -1066,7 +1065,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
             columnContainer.add(paragraph);
             document.add(columnContainer);
         }
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -1082,7 +1081,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
             columnContainer.add(paragraph);
             document.add(columnContainer);
         }
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -1099,7 +1098,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
             columnContainer.add(paragraph);
             document.add(columnContainer);
         }
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
 
@@ -1121,7 +1120,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
             columnContainer.add(div);
             document.add(columnContainer);
         }
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -1137,7 +1136,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
             columnContainer.add(paragraph);
             document.add(columnContainer);
         }
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -1153,7 +1152,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
             columnContainer.add(paragraph);
             document.add(columnContainer);
         }
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
 
@@ -1170,7 +1169,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
             columnContainer.add(paragraph);
             document.add(columnContainer);
         }
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
     private void executeTest(String testName, Consumer<MulticolContainer> executor, boolean wrapByP)
             throws IOException, InterruptedException {
@@ -1191,7 +1190,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
             }
         }
         CompareTool compareTool = new CompareTool();
-        Assert.assertNull(compareTool.compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(compareTool.compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
 
     private void executeTest(String testName, Consumer<MulticolContainer> executor) throws IOException, InterruptedException {

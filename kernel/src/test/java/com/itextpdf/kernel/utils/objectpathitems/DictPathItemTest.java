@@ -24,12 +24,11 @@ package com.itextpdf.kernel.utils.objectpathitems;
 
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class DictPathItemTest extends ExtendedITextTest {
 
     @Test
@@ -39,8 +38,8 @@ public class DictPathItemTest extends ExtendedITextTest {
         DictPathItem dictPathItem2 = new DictPathItem(name);
 
         boolean result = dictPathItem1.equals(dictPathItem2);
-        Assert.assertTrue(result);
-        Assert.assertEquals(dictPathItem1.hashCode(), dictPathItem2.hashCode());
+        Assertions.assertTrue(result);
+        Assertions.assertEquals(dictPathItem1.hashCode(), dictPathItem2.hashCode());
     }
 
     @Test
@@ -49,8 +48,8 @@ public class DictPathItemTest extends ExtendedITextTest {
         DictPathItem dictPathItem2 = new DictPathItem(new PdfName("test2"));
 
         boolean result = dictPathItem1.equals(dictPathItem2);
-        Assert.assertFalse(result);
-        Assert.assertNotEquals(dictPathItem1.hashCode(), dictPathItem2.hashCode());
+        Assertions.assertFalse(result);
+        Assertions.assertNotEquals(dictPathItem1.hashCode(), dictPathItem2.hashCode());
     }
 
     @Test
@@ -58,6 +57,6 @@ public class DictPathItemTest extends ExtendedITextTest {
         PdfName name = new PdfName("test");
         DictPathItem dictPathItem = new DictPathItem(name);
 
-        Assert.assertEquals(name, dictPathItem.getKey());
+        Assertions.assertEquals(name, dictPathItem.getKey());
     }
 }

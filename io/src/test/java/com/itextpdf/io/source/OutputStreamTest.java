@@ -27,18 +27,17 @@ import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class OutputStreamTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/source/OSTEST.txt";
@@ -63,7 +62,7 @@ public class OutputStreamTest extends ExtendedITextTest {
             stream.setLocalHighPrecision(true);
             stream.writeDouble(expected);
             stream.flush();
-            Assert.assertEquals(Objects.toString(expected), new String(bytes.toByteArray(), StandardCharsets.UTF_8));
+            Assertions.assertEquals(Objects.toString(expected), new String(bytes.toByteArray(), StandardCharsets.UTF_8));
         }
     }
 
@@ -77,7 +76,7 @@ public class OutputStreamTest extends ExtendedITextTest {
             stream.setLocalHighPrecision(false);
             stream.writeDouble(expected);
             stream.flush();
-            Assert.assertEquals("0", new String(bytes.toByteArray(), StandardCharsets.UTF_8));
+            Assertions.assertEquals("0", new String(bytes.toByteArray(), StandardCharsets.UTF_8));
         }
     }
 
@@ -93,7 +92,7 @@ public class OutputStreamTest extends ExtendedITextTest {
                         = new OutputStream<>(bytes)) {
             stream.writeDouble(Double.NaN);
             stream.flush();
-            Assert.assertEquals(expected, new String(bytes.toByteArray(), StandardCharsets.UTF_8));
+            Assertions.assertEquals(expected, new String(bytes.toByteArray(), StandardCharsets.UTF_8));
         }
     }
 
@@ -106,7 +105,7 @@ public class OutputStreamTest extends ExtendedITextTest {
                         = new OutputStream<>(bytes)) {
             stream.write(expected);
             stream.flush();
-            Assert.assertArrayEquals(expected, bytes.toByteArray());
+            Assertions.assertArrayEquals(expected, bytes.toByteArray());
         }
     }
 
@@ -119,7 +118,7 @@ public class OutputStreamTest extends ExtendedITextTest {
                         = new OutputStream<>(bytes)) {
             stream.writeBytes(expected);
             stream.flush();
-            Assert.assertArrayEquals(expected, bytes.toByteArray());
+            Assertions.assertArrayEquals(expected, bytes.toByteArray());
         }
     }
 
@@ -132,7 +131,7 @@ public class OutputStreamTest extends ExtendedITextTest {
                         = new OutputStream<>(bytes)) {
             stream.writeByte(expected);
             stream.flush();
-            Assert.assertArrayEquals(new byte[] {expected}, bytes.toByteArray());
+            Assertions.assertArrayEquals(new byte[] {expected}, bytes.toByteArray());
         }
     }
 
@@ -145,7 +144,7 @@ public class OutputStreamTest extends ExtendedITextTest {
                         = new OutputStream<>(bytes)) {
             stream.writeInteger(expected);
             stream.flush();
-            Assert.assertEquals(Objects.toString(expected), new String(bytes.toByteArray(), StandardCharsets.UTF_8));
+            Assertions.assertEquals(Objects.toString(expected), new String(bytes.toByteArray(), StandardCharsets.UTF_8));
         }
     }
 
@@ -158,7 +157,7 @@ public class OutputStreamTest extends ExtendedITextTest {
                         = new OutputStream<>(bytes)) {
             stream.writeLong(expected);
             stream.flush();
-            Assert.assertEquals(Objects.toString(expected), new String(bytes.toByteArray(), StandardCharsets.UTF_8));
+            Assertions.assertEquals(Objects.toString(expected), new String(bytes.toByteArray(), StandardCharsets.UTF_8));
         }
     }
 
@@ -171,7 +170,7 @@ public class OutputStreamTest extends ExtendedITextTest {
                         = new OutputStream<>(bytes)) {
             stream.writeFloats(expected);
             stream.flush();
-            Assert.assertEquals(expected[0] + " " + expected[1], new String(bytes.toByteArray(), StandardCharsets.UTF_8));
+            Assertions.assertEquals(expected[0] + " " + expected[1], new String(bytes.toByteArray(), StandardCharsets.UTF_8));
         }
     }
 
@@ -184,14 +183,14 @@ public class OutputStreamTest extends ExtendedITextTest {
                         = new OutputStream<>(bytes)) {
             stream.writeBytes(new byte[] {(byte) 15, (byte) 233, (byte) 58, (byte) 97}, 1, 2);
             stream.flush();
-            Assert.assertArrayEquals(expected, bytes.toByteArray());
+            Assertions.assertArrayEquals(expected, bytes.toByteArray());
         }
     }
 
     @Test()
     public void writeBytesIOExceptionTest() throws IOException {
         //Testing that the exception is thrown, not using specific one because of .NET compatability
-        Assert.assertThrows(Exception.class,() -> {
+        Assertions.assertThrows(Exception.class,() -> {
             byte[] bytesToWrite = new byte[] {(byte) 71};
             try (java.io.OutputStream bytes = IO_EXCEPTION_OUTPUT_STREAM;
                     OutputStream<ByteArrayOutputStream> stream
@@ -204,7 +203,7 @@ public class OutputStreamTest extends ExtendedITextTest {
     @Test()
     public void writeByteIOExceptionTest() throws IOException {
         //Testing that the exception is thrown, not using specific one because of .NET compatability
-        Assert.assertThrows(Exception.class,() -> {
+        Assertions.assertThrows(Exception.class,() -> {
             byte byteToWrite = (byte) 71;
             try (java.io.OutputStream bytes = IO_EXCEPTION_OUTPUT_STREAM;
                     OutputStream<ByteArrayOutputStream> stream
@@ -217,7 +216,7 @@ public class OutputStreamTest extends ExtendedITextTest {
     @Test()
     public void writeByteIntIOExceptionTest() throws IOException {
         //Testing that the exception is thrown, not using specific one because of .NET compatability
-        Assert.assertThrows(Exception.class,() -> {
+        Assertions.assertThrows(Exception.class,() -> {
             //the data is random
             int byteToWrite = 71;
             try (java.io.OutputStream bytes = IO_EXCEPTION_OUTPUT_STREAM;
@@ -231,7 +230,7 @@ public class OutputStreamTest extends ExtendedITextTest {
     @Test()
     public void writeDoubleIOExceptionTest() throws IOException {
         //Testing that the exception is thrown, not using specific one because of .NET compatability
-        Assert.assertThrows(Exception.class,() -> {
+        Assertions.assertThrows(Exception.class,() -> {
             //the data is random
             double num = 55.55d;
             try (java.io.OutputStream bytes = IO_EXCEPTION_OUTPUT_STREAM;
@@ -245,7 +244,7 @@ public class OutputStreamTest extends ExtendedITextTest {
     @Test()
     public void writeLongIOExceptionTest() throws IOException {
         //Testing that the exception is thrown, not using specific one because of .NET compatability
-        Assert.assertThrows(Exception.class,() -> {
+        Assertions.assertThrows(Exception.class,() -> {
             //the data is random
             long num = 55L;
             try (java.io.OutputStream bytes = IO_EXCEPTION_OUTPUT_STREAM;
@@ -265,7 +264,7 @@ public class OutputStreamTest extends ExtendedITextTest {
             stream.writeString(expected);
             stream.writeNewLine();
             stream.flush();
-            Assert.assertEquals(expected + '\n', new String(bytes.toByteArray(), StandardCharsets.UTF_8));
+            Assertions.assertEquals(expected + '\n', new String(bytes.toByteArray(), StandardCharsets.UTF_8));
         }
     }
 
@@ -288,14 +287,14 @@ public class OutputStreamTest extends ExtendedITextTest {
                 OutputStream<ByteArrayOutputStream> stream
                         = new OutputStream<>(bytes)) {
             stream.assignBytes(expected, 4);
-            Assert.assertArrayEquals(expected, bytes.toByteArray());
+            Assertions.assertArrayEquals(expected, bytes.toByteArray());
         }
     }
 
     @Test
     public void assignBytesExceptionTest() throws IOException {
         //Testing that the exception is thrown, not using specific one because of .NET compatability
-        Assert.assertThrows(Exception.class,() -> {
+        Assertions.assertThrows(Exception.class,() -> {
             //the data is random
             byte[] bytes = new byte[] {(byte) 15, (byte) 233, (byte) 58, (byte) 97};
             try (java.io.OutputStream outputStream = IO_EXCEPTION_OUTPUT_STREAM;
@@ -322,7 +321,7 @@ public class OutputStreamTest extends ExtendedITextTest {
     @Test
     public void resetExceptionTest() throws IOException {
         //Testing that the exception is thrown, not using specific one because of .NET compatability
-        Assert.assertThrows(Exception.class,() -> {
+        Assertions.assertThrows(Exception.class,() -> {
             try (java.io.OutputStream bytes = IO_EXCEPTION_OUTPUT_STREAM;
                     OutputStream<ByteArrayOutputStream> stream
                             = new OutputStream<>(bytes)) {
@@ -345,7 +344,7 @@ public class OutputStreamTest extends ExtendedITextTest {
             stream.setLocalHighPrecision(false);
             stream.writeDouble(numberToWrite);
             stream.flush();
-            Assert.assertEquals("2", new String(bytes.toByteArray(), StandardCharsets.UTF_8));
+            Assertions.assertEquals("2", new String(bytes.toByteArray(), StandardCharsets.UTF_8));
         } finally {
             OutputStream.setHighPrecision(highPrecision);
         }

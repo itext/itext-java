@@ -25,14 +25,13 @@ package com.itextpdf.kernel.pdf.canvas.parser.clipper;
 import com.itextpdf.kernel.pdf.canvas.parser.clipper.IClipper.EndType;
 import com.itextpdf.kernel.pdf.canvas.parser.clipper.IClipper.JoinType;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PolyNodeTest extends ExtendedITextTest {
 
     @Test
@@ -42,8 +41,8 @@ public class PolyNodeTest extends ExtendedITextTest {
         PolyNode child = new PolyNode();
         node.addChild(child);
 
-        Assert.assertSame(child, node.getChilds().get(0));
-        Assert.assertEquals(1,  node.getChilds().size());
+        Assertions.assertSame(child, node.getChilds().get(0));
+        Assertions.assertEquals(1,  node.getChilds().size());
     }
 
     @Test
@@ -52,7 +51,7 @@ public class PolyNodeTest extends ExtendedITextTest {
 
         List<PolyNode> childs = node.getChilds();
 
-        Assert.assertThrows(UnsupportedOperationException.class, () -> childs.add(new PolyNode()));
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> childs.add(new PolyNode()));
     }
 
     @Test
@@ -60,15 +59,15 @@ public class PolyNodeTest extends ExtendedITextTest {
         PolyNode node = new PolyNode();
         node.addChild(new PolyNode());
 
-        Assert.assertEquals(1, node.getChildCount());
+        Assertions.assertEquals(1, node.getChildCount());
     }
 
     @Test
     public void getContourAndPolygonTest() {
         PolyNode node = new PolyNode();
 
-        Assert.assertTrue(node.getContour()instanceof Path);
-        Assert.assertSame(node.getContour(), node.getPolygon());
+        Assertions.assertTrue(node.getContour()instanceof Path);
+        Assertions.assertSame(node.getContour(), node.getPolygon());
     }
 
     @Test
@@ -76,7 +75,7 @@ public class PolyNodeTest extends ExtendedITextTest {
         PolyNode node = new PolyNode();
         node.setEndType(EndType.CLOSED_POLYGON);
 
-        Assert.assertEquals(EndType.CLOSED_POLYGON, node.getEndType());
+        Assertions.assertEquals(EndType.CLOSED_POLYGON, node.getEndType());
     }
 
     @Test
@@ -84,7 +83,7 @@ public class PolyNodeTest extends ExtendedITextTest {
         PolyNode node = new PolyNode();
         node.setJoinType(JoinType.ROUND);
 
-        Assert.assertEquals(JoinType.ROUND, node.getJoinType());
+        Assertions.assertEquals(JoinType.ROUND, node.getJoinType());
     }
 
     @Test
@@ -92,7 +91,7 @@ public class PolyNodeTest extends ExtendedITextTest {
         PolyNode node = new PolyNode();
         node.setOpen(true);
 
-        Assert.assertTrue(node.isOpen());
+        Assertions.assertTrue(node.isOpen());
     }
 
     @Test
@@ -102,7 +101,7 @@ public class PolyNodeTest extends ExtendedITextTest {
         PolyNode child = new PolyNode();
         child.setParent(parentNode);
 
-        Assert.assertSame(parentNode, child.getParent());
+        Assertions.assertSame(parentNode, child.getParent());
     }
 
     @Test
@@ -111,14 +110,14 @@ public class PolyNodeTest extends ExtendedITextTest {
         node.addChild(new PolyNode());
         node.addChild(new PolyNode());
 
-        Assert.assertSame(node.getChilds().get(0), node.getNext());
+        Assertions.assertSame(node.getChilds().get(0), node.getNext());
     }
 
     @Test
     public void getNextNoChildsTest() {
         PolyNode node = new PolyNode();
 
-        Assert.assertNull(node.getNext());
+        Assertions.assertNull(node.getNext());
     }
 
     @Test
@@ -132,14 +131,14 @@ public class PolyNodeTest extends ExtendedITextTest {
         child1.setParent(node);
         child2.setParent(node);
 
-        Assert.assertSame(child2, child1.getNext());
+        Assertions.assertSame(child2, child1.getNext());
     }
 
     @Test
     public void isHoleTest() {
         PolyNode node = new PolyNode();
 
-        Assert.assertTrue(node.isHole());
+        Assertions.assertTrue(node.isHole());
     }
 
     @Test
@@ -149,6 +148,6 @@ public class PolyNodeTest extends ExtendedITextTest {
 
         node.addChild(child);
 
-        Assert.assertFalse(child.isHole());
+        Assertions.assertFalse(child.isHole());
     }
 }

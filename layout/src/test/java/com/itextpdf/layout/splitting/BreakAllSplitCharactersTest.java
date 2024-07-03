@@ -25,55 +25,54 @@ package com.itextpdf.layout.splitting;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class BreakAllSplitCharactersTest extends ExtendedITextTest {
 
     private static final char charWithFalse = '\u201b';
 
     @Test
     public void lastCharTest() {
-        Assert.assertFalse(isSplitCharacter(new int[]{charWithFalse, charWithFalse, charWithFalse}, 1));
-        Assert.assertTrue(isSplitCharacter(new int[]{charWithFalse, charWithFalse, charWithFalse}, 2));
+        Assertions.assertFalse(isSplitCharacter(new int[]{charWithFalse, charWithFalse, charWithFalse}, 1));
+        Assertions.assertTrue(isSplitCharacter(new int[]{charWithFalse, charWithFalse, charWithFalse}, 2));
     }
 
     @Test
     public void currentIsNotUnicodeTest() {
-        Assert.assertTrue(isSplitCharacter(new int[]{charWithFalse, -1, charWithFalse}, 1));
+        Assertions.assertTrue(isSplitCharacter(new int[]{charWithFalse, -1, charWithFalse}, 1));
     }
 
     @Test
     public void nextIsNotUnicodeTest() {
-        Assert.assertTrue(isSplitCharacter(new int[]{charWithFalse, charWithFalse, -1}, 1));
+        Assertions.assertTrue(isSplitCharacter(new int[]{charWithFalse, charWithFalse, -1}, 1));
     }
 
     @Test
     public void beforeSpaceTest() {
-        Assert.assertTrue(isSplitCharacter(new int[]{'a', 'a', ' '}, 0));
-        Assert.assertFalse(isSplitCharacter(new int[]{'a', 'a', ' '}, 1));
-        Assert.assertTrue(isSplitCharacter(new int[]{'a', ' ', ' '}, 1));
-        Assert.assertTrue(isSplitCharacter(new int[]{'a', '-', ' '}, 1));
-        Assert.assertTrue(isSplitCharacter(new int[]{'a', '\u2010', ' '}, 1));
-        Assert.assertTrue(isSplitCharacter(new int[]{'a', '\u2004', ' '}, 1));
+        Assertions.assertTrue(isSplitCharacter(new int[]{'a', 'a', ' '}, 0));
+        Assertions.assertFalse(isSplitCharacter(new int[]{'a', 'a', ' '}, 1));
+        Assertions.assertTrue(isSplitCharacter(new int[]{'a', ' ', ' '}, 1));
+        Assertions.assertTrue(isSplitCharacter(new int[]{'a', '-', ' '}, 1));
+        Assertions.assertTrue(isSplitCharacter(new int[]{'a', '\u2010', ' '}, 1));
+        Assertions.assertTrue(isSplitCharacter(new int[]{'a', '\u2004', ' '}, 1));
     }
 
     @Test
     public void beforeSymbolTest() {
-        Assert.assertFalse(isSplitCharacter(new int[]{charWithFalse, charWithFalse}, 0));
-        Assert.assertTrue(isSplitCharacter(new int[]{charWithFalse, 'a'}, 0));
+        Assertions.assertFalse(isSplitCharacter(new int[]{charWithFalse, charWithFalse}, 0));
+        Assertions.assertTrue(isSplitCharacter(new int[]{charWithFalse, 'a'}, 0));
         // non spacing mark
-        Assert.assertTrue(isSplitCharacter(new int[]{charWithFalse, '\u0303'}, 0));
+        Assertions.assertTrue(isSplitCharacter(new int[]{charWithFalse, '\u0303'}, 0));
         // combining mark
-        Assert.assertTrue(isSplitCharacter(new int[]{charWithFalse, '\u093e'}, 0));
+        Assertions.assertTrue(isSplitCharacter(new int[]{charWithFalse, '\u093e'}, 0));
         // enclosing mark
-        Assert.assertTrue(isSplitCharacter(new int[]{charWithFalse, '\u0488'}, 0));
+        Assertions.assertTrue(isSplitCharacter(new int[]{charWithFalse, '\u0488'}, 0));
     }
 
     private static boolean isSplitCharacter(int[] unicodes, int glyphPosition) {

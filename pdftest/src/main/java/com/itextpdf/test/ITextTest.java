@@ -30,8 +30,6 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.concurrent.TimeUnit;
-import org.junit.Rule;
-import org.junit.rules.Timeout;
 
 /**
  * This is a generic class for testing. Subclassing it, or its subclasses is considered a good practice of
@@ -39,9 +37,6 @@ import org.junit.rules.Timeout;
  */
 @org.junit.jupiter.api.Timeout(value = 5, unit = TimeUnit.MINUTES)
 public abstract class ITextTest {
-
-    @Rule
-    public Timeout testTimeout = getTestTimeout();
 
     /**
      * Creates a folder with a given path, including all necessary nonexistent parent directories.
@@ -141,10 +136,6 @@ public abstract class ITextTest {
 
     public static void printPathToConsole(String path, String comment) {
         System.out.println(comment + "file://" + new File(path).toURI().normalize().getPath());
-    }
-
-    protected Timeout getTestTimeout() {
-        return new Timeout(5, TimeUnit.MINUTES);
     }
 
     protected byte[] readFile(String filename) throws IOException {

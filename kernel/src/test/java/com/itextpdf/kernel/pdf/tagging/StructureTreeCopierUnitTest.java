@@ -26,15 +26,14 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class StructureTreeCopierUnitTest extends ExtendedITextTest {
 
     private static final Map<PdfName, PdfObject> td = new HashMap<>();
@@ -52,7 +51,7 @@ public class StructureTreeCopierUnitTest extends ExtendedITextTest {
         PdfDictionary obj = new PdfDictionary(td);
         PdfDictionary parent = new PdfDictionary(tr);
 
-        Assert.assertTrue(StructureTreeCopier.shouldTableElementBeCopied(obj, parent));
+        Assertions.assertTrue(StructureTreeCopier.shouldTableElementBeCopied(obj, parent));
     }
 
     @Test
@@ -60,7 +59,7 @@ public class StructureTreeCopierUnitTest extends ExtendedITextTest {
         PdfDictionary obj = new PdfDictionary(th);
         PdfDictionary parent = new PdfDictionary(tr);
 
-        Assert.assertTrue(StructureTreeCopier.shouldTableElementBeCopied(obj, parent));
+        Assertions.assertTrue(StructureTreeCopier.shouldTableElementBeCopied(obj, parent));
     }
 
     @Test
@@ -68,7 +67,7 @@ public class StructureTreeCopierUnitTest extends ExtendedITextTest {
         PdfDictionary obj = new PdfDictionary(td);
         PdfDictionary parent = new PdfDictionary(td);
 
-        Assert.assertFalse(StructureTreeCopier.shouldTableElementBeCopied(obj, parent));
+        Assertions.assertFalse(StructureTreeCopier.shouldTableElementBeCopied(obj, parent));
     }
 
     @Test
@@ -76,7 +75,7 @@ public class StructureTreeCopierUnitTest extends ExtendedITextTest {
         PdfDictionary obj = new PdfDictionary(tr);
         PdfDictionary parent = new PdfDictionary(td);
 
-        Assert.assertTrue(StructureTreeCopier.shouldTableElementBeCopied(obj, parent));
+        Assertions.assertTrue(StructureTreeCopier.shouldTableElementBeCopied(obj, parent));
     }
 
     @Test
@@ -84,7 +83,7 @@ public class StructureTreeCopierUnitTest extends ExtendedITextTest {
         PdfDictionary obj = new PdfDictionary(tr);
         PdfDictionary parent = new PdfDictionary(tr);
 
-        Assert.assertTrue(StructureTreeCopier.shouldTableElementBeCopied(obj, parent));
+        Assertions.assertTrue(StructureTreeCopier.shouldTableElementBeCopied(obj, parent));
     }
 
     @Test
@@ -92,6 +91,6 @@ public class StructureTreeCopierUnitTest extends ExtendedITextTest {
         PdfDictionary obj = new PdfDictionary(th);
         PdfDictionary parent = new PdfDictionary(th);
 
-        Assert.assertFalse(StructureTreeCopier.shouldTableElementBeCopied(obj, parent));
+        Assertions.assertFalse(StructureTreeCopier.shouldTableElementBeCopied(obj, parent));
     }
 }

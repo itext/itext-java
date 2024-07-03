@@ -23,19 +23,18 @@
 package com.itextpdf.forms.xfdf;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class XfdfWriterUnitTest extends ExtendedITextTest {
 
     @Test
@@ -55,8 +54,8 @@ public class XfdfWriterUnitTest extends ExtendedITextTest {
 
         Node childOfFields = fields.getFirstChild();
 
-        Assert.assertNotNull(childOfFields);
-        Assert.assertNull(childOfFields.getFirstChild());
+        Assertions.assertNotNull(childOfFields);
+        Assertions.assertNull(childOfFields.getFirstChild());
     }
 
     @Test
@@ -75,8 +74,8 @@ public class XfdfWriterUnitTest extends ExtendedITextTest {
 
         Node childOfFields = fields.getFirstChild();
 
-        Assert.assertNotNull(childOfFields);
-        Assert.assertNull(childOfFields.getFirstChild());
+        Assertions.assertNotNull(childOfFields);
+        Assertions.assertNull(childOfFields.getFirstChild());
     }
 
     @Test
@@ -96,8 +95,8 @@ public class XfdfWriterUnitTest extends ExtendedITextTest {
 
         Node childOfFields = fields.getFirstChild();
 
-        Assert.assertNotNull(childOfFields);
-        Assert.assertEquals("value", childOfFields.getFirstChild().getNodeName());
-        Assert.assertEquals("testValue", childOfFields.getFirstChild().getTextContent());
+        Assertions.assertNotNull(childOfFields);
+        Assertions.assertEquals("value", childOfFields.getFirstChild().getNodeName());
+        Assertions.assertEquals("testValue", childOfFields.getFirstChild().getTextContent());
     }
 }

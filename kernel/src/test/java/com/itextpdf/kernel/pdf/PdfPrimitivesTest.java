@@ -28,20 +28,18 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Random;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfPrimitivesTest extends ExtendedITextTest{
 
     static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfPrimitivesTest/";
@@ -79,12 +77,12 @@ public class PdfPrimitivesTest extends ExtendedITextTest{
         }
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -239,10 +237,10 @@ public class PdfPrimitivesTest extends ExtendedITextTest{
     public void equalStrings() {
         PdfString a = (PdfString) new PdfString("abcd").makeIndirect(new PdfDocument(new PdfWriter(new ByteArrayOutputStream())));
         PdfString b = new PdfString("abcd".getBytes(StandardCharsets.US_ASCII));
-        Assert.assertTrue(a.equals(b));
+        Assertions.assertTrue(a.equals(b));
 
         PdfString c = new PdfString("abcd", "UTF-8");
-        Assert.assertFalse(c.equals(a));
+        Assertions.assertFalse(c.equals(a));
     }
 
     @Test
@@ -254,13 +252,13 @@ public class PdfPrimitivesTest extends ExtendedITextTest{
             PdfNumber num1 = (PdfNumber) new PdfNumber(1).makeIndirect(document);
             PdfNumber num2 = new PdfNumber(2);
 
-            Assert.assertFalse(num1.equals(num2));
+            Assertions.assertFalse(num1.equals(num2));
 
             int hashCode = num1.hashCode();
             num1.increment();
 
-            Assert.assertTrue(num1.equals(num2));
-            Assert.assertNotEquals(hashCode, num1.hashCode());
+            Assertions.assertTrue(num1.equals(num2));
+            Assertions.assertNotEquals(hashCode, num1.hashCode());
         }
 
         PdfNumber a = new PdfNumber(1);
@@ -268,48 +266,48 @@ public class PdfPrimitivesTest extends ExtendedITextTest{
         PdfNumber b = new PdfNumber(2);
         PdfNumber bContent = new PdfNumber(b.getInternalContent());
 
-        Assert.assertTrue(a.equals(aContent));
-        Assert.assertEquals(a.hashCode(), aContent.hashCode());
-        Assert.assertTrue(b.equals(bContent));
-        Assert.assertEquals(b.hashCode(), bContent.hashCode());
-        Assert.assertFalse(aContent.equals(bContent));
-        Assert.assertNotEquals(aContent.hashCode(), bContent.hashCode());
+        Assertions.assertTrue(a.equals(aContent));
+        Assertions.assertEquals(a.hashCode(), aContent.hashCode());
+        Assertions.assertTrue(b.equals(bContent));
+        Assertions.assertEquals(b.hashCode(), bContent.hashCode());
+        Assertions.assertFalse(aContent.equals(bContent));
+        Assertions.assertNotEquals(aContent.hashCode(), bContent.hashCode());
 
         aContent.increment();
 
-        Assert.assertFalse(a.equals(aContent));
-        Assert.assertNotEquals(a.hashCode(), aContent.hashCode());
-        Assert.assertTrue(aContent.equals(bContent));
-        Assert.assertEquals(aContent.hashCode(), bContent.hashCode());
+        Assertions.assertFalse(a.equals(aContent));
+        Assertions.assertNotEquals(a.hashCode(), aContent.hashCode());
+        Assertions.assertTrue(aContent.equals(bContent));
+        Assertions.assertEquals(aContent.hashCode(), bContent.hashCode());
     }
 
     @Test
     public void equalNames() {
         PdfName a = (PdfName) new PdfName("abcd").makeIndirect(new PdfDocument(new PdfWriter(new ByteArrayOutputStream())));
         PdfName b = new PdfName("abcd");
-        Assert.assertTrue(a.equals(b));
+        Assertions.assertTrue(a.equals(b));
     }
 
     @Test
     public void equalBoolean() {
         PdfBoolean f = (PdfBoolean) new PdfBoolean(false).makeIndirect(new PdfDocument(new PdfWriter(new ByteArrayOutputStream())));
         PdfBoolean t = new PdfBoolean(true);
-        Assert.assertFalse(f.equals(t));
-        Assert.assertTrue(f.equals(PdfBoolean.FALSE));
-        Assert.assertTrue(t.equals(PdfBoolean.TRUE));
+        Assertions.assertFalse(f.equals(t));
+        Assertions.assertTrue(f.equals(PdfBoolean.FALSE));
+        Assertions.assertTrue(t.equals(PdfBoolean.TRUE));
     }
 
     @Test
     public void equalNulls() {
         PdfNull a = (PdfNull) new PdfNull().makeIndirect(new PdfDocument(new PdfWriter(new ByteArrayOutputStream())));;
-        Assert.assertTrue(a.equals(PdfNull.PDF_NULL));
+        Assertions.assertTrue(a.equals(PdfNull.PDF_NULL));
     }
 
     @Test
     public void equalLiterals() {
         PdfLiteral a = new PdfLiteral("abcd");
         PdfLiteral b = new PdfLiteral("abcd".getBytes(StandardCharsets.US_ASCII));
-        Assert.assertTrue(a.equals(b));
+        Assertions.assertTrue(a.equals(b));
     }
 
     private PdfArray generatePdfArrayWithFloatNumbers(PdfDocument doc, boolean indirects) {

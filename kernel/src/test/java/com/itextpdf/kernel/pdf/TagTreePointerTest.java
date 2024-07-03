@@ -45,7 +45,6 @@ import com.itextpdf.kernel.pdf.tagutils.WaitingTagsManager;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.ByteArrayInputStream;
@@ -55,27 +54,27 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 import org.xml.sax.SAXException;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class TagTreePointerTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/TagTreePointerTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/TagTreePointerTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -355,12 +354,12 @@ public class TagTreePointerTest extends ExtendedITextTest {
         TagTreePointer pointer = new TagTreePointer(document);
         AccessibilityProperties properties = pointer.moveToKid(StandardRoles.DIV).getProperties();
         String language = properties.getLanguage();
-        Assert.assertEquals("en-Us", language);
+        Assertions.assertEquals("en-Us", language);
         properties.setLanguage("EN-GB");
 
         pointer.moveToRoot().moveToKid(2, StandardRoles.P).getProperties().setRole(StandardRoles.H6);
         String role = pointer.getProperties().getRole();
-        Assert.assertEquals("H6", role);
+        Assertions.assertEquals("H6", role);
         document.close();
 
         compareResult("tagTreePointerTest08.pdf", "cmp_tagTreePointerTest08.pdf", "diff08_");
@@ -377,18 +376,18 @@ public class TagTreePointerTest extends ExtendedITextTest {
         AccessibilityProperties properties = pointer.moveToKid(StandardRoles.DIV).getProperties();
         String altDescription = "Alternate Description";
         properties.setAlternateDescription(altDescription);
-        Assert.assertEquals(altDescription, properties.getAlternateDescription());
+        Assertions.assertEquals(altDescription, properties.getAlternateDescription());
         String expansion = "expansion";
         properties.setExpansion(expansion);
-        Assert.assertEquals(expansion, properties.getExpansion());
+        Assertions.assertEquals(expansion, properties.getExpansion());
         properties.setNamespace(new PdfNamespace(StandardNamespaces.PDF_2_0));
-        Assert.assertEquals(StandardNamespaces.PDF_2_0, properties.getNamespace().getNamespaceName());
+        Assertions.assertEquals(StandardNamespaces.PDF_2_0, properties.getNamespace().getNamespaceName());
         String phoneme = "phoneme";
         properties.setPhoneme(phoneme);
-        Assert.assertEquals(phoneme, properties.getPhoneme());
+        Assertions.assertEquals(phoneme, properties.getPhoneme());
         String phoneticAlphabet = "Phonetic Alphabet";
         properties.setPhoneticAlphabet(phoneticAlphabet);
-        Assert.assertEquals(phoneticAlphabet, properties.getPhoneticAlphabet());
+        Assertions.assertEquals(phoneticAlphabet, properties.getPhoneticAlphabet());
 
         document.close();
 
@@ -405,14 +404,14 @@ public class TagTreePointerTest extends ExtendedITextTest {
 
         TagTreePointer pointer = new TagTreePointer(document);
         AccessibilityProperties properties = pointer.moveToKid(StandardRoles.DIV).getProperties();
-        Assert.assertNotNull(properties.getAttributesList());
-        Assert.assertNotNull(properties.addAttributes(0, null));
+        Assertions.assertNotNull(properties.getAttributesList());
+        Assertions.assertNotNull(properties.addAttributes(0, null));
         properties.clearAttributes();
-        Assert.assertTrue(properties.getAttributesList().isEmpty());
+        Assertions.assertTrue(properties.getAttributesList().isEmpty());
         properties.addRef(pointer);
-        Assert.assertFalse(properties.getRefsList().isEmpty());
+        Assertions.assertFalse(properties.getRefsList().isEmpty());
         properties.clearRefs();
-        Assert.assertTrue(properties.getRefsList().isEmpty());
+        Assertions.assertTrue(properties.getRefsList().isEmpty());
 
         document.close();
 
@@ -430,29 +429,29 @@ public class TagTreePointerTest extends ExtendedITextTest {
         TagTreePointer pointer = new TagTreePointer(document);
         AccessibilityProperties properties = new DefaultAccessibilityProperties(StandardRoles.DIV);
         properties.setRole(StandardRoles.H6);
-        Assert.assertEquals(StandardRoles.H6, properties.getRole());
+        Assertions.assertEquals(StandardRoles.H6, properties.getRole());
         String actualText = "Test text";
         properties.setActualText(actualText);
-        Assert.assertEquals(actualText, properties.getActualText());
+        Assertions.assertEquals(actualText, properties.getActualText());
         String language = "EN-GB";
         properties.setLanguage(language);
-        Assert.assertEquals(language, properties.getLanguage());
+        Assertions.assertEquals(language, properties.getLanguage());
         String alternateDescription = "Alternate Description";
         properties.setAlternateDescription(alternateDescription);
-        Assert.assertEquals(alternateDescription, properties.getAlternateDescription());
+        Assertions.assertEquals(alternateDescription, properties.getAlternateDescription());
         String expansion = "expansion";
         properties.setExpansion(expansion);
-        Assert.assertEquals(expansion, properties.getExpansion());
+        Assertions.assertEquals(expansion, properties.getExpansion());
         properties.setNamespace(new PdfNamespace(StandardNamespaces.PDF_2_0));
-        Assert.assertEquals(StandardNamespaces.PDF_2_0, properties.getNamespace().getNamespaceName());
+        Assertions.assertEquals(StandardNamespaces.PDF_2_0, properties.getNamespace().getNamespaceName());
         String phoneme = "phoneme";
         properties.setPhoneme(phoneme);
-        Assert.assertEquals(phoneme, properties.getPhoneme());
+        Assertions.assertEquals(phoneme, properties.getPhoneme());
         String phoneticAlphabet = "phoneticAlphabet";
         properties.setPhoneticAlphabet(phoneticAlphabet);
-        Assert.assertEquals(phoneticAlphabet, properties.getPhoneticAlphabet());
+        Assertions.assertEquals(phoneticAlphabet, properties.getPhoneticAlphabet());
         properties.addRef(pointer);
-        Assert.assertFalse(properties.getRefsList().isEmpty());
+        Assertions.assertFalse(properties.getRefsList().isEmpty());
         pointer.addTag(properties);
 
         document.close();
@@ -476,11 +475,11 @@ public class TagTreePointerTest extends ExtendedITextTest {
         properties.addAttributes(1, testAttr);
         properties.getAttributesList();
         properties.clearAttributes();
-        Assert.assertTrue(properties.getAttributesList().isEmpty());
+        Assertions.assertTrue(properties.getAttributesList().isEmpty());
         properties.addRef(pointer);
-        Assert.assertFalse(properties.getRefsList().isEmpty());
+        Assertions.assertFalse(properties.getRefsList().isEmpty());
         properties.clearRefs();
-        Assert.assertTrue(properties.getRefsList().isEmpty());
+        Assertions.assertTrue(properties.getRefsList().isEmpty());
         pointer.addTag(properties);
 
         document.close();
@@ -1194,9 +1193,9 @@ public class TagTreePointerTest extends ExtendedITextTest {
 
         try {
             properties.addAttributes(10, testAttr);
-            Assert.fail();
+            Assertions.fail();
         } catch (Exception e) {
-            Assert.assertTrue(ExceptionUtil.isOutOfRange(e));
+            Assertions.assertTrue(ExceptionUtil.isOutOfRange(e));
         }
 
         document.close();
@@ -1301,35 +1300,35 @@ public class TagTreePointerTest extends ExtendedITextTest {
         try {
             // 1 attribute array
             pointer.moveToKid(1).getProperties().addAttributes(5, new PdfStructureAttributes(testAttrDict));
-            Assert.fail();
+            Assertions.fail();
         } catch (Exception e) {
-            Assert.assertTrue(ExceptionUtil.isOutOfRange(e));
+            Assertions.assertTrue(ExceptionUtil.isOutOfRange(e));
         }
 
         pointer.moveToRoot();
         try {
             // 3 attributes
             pointer.moveToKid(2).getProperties().addAttributes(5, new PdfStructureAttributes(testAttrDict));
-            Assert.fail();
+            Assertions.fail();
         } catch (Exception e) {
-            Assert.assertTrue(ExceptionUtil.isOutOfRange(e));
+            Assertions.assertTrue(ExceptionUtil.isOutOfRange(e));
         }
 
         pointer.moveToRoot();
         try {
             // 1 attribute dictionary
             pointer.moveToKid(0).moveToKid(StandardRoles.LI).moveToKid(StandardRoles.LBODY).getProperties().addAttributes(5, new PdfStructureAttributes(testAttrDict));
-            Assert.fail();
+            Assertions.fail();
         } catch (Exception e) {
-            Assert.assertTrue(ExceptionUtil.isOutOfRange(e));
+            Assertions.assertTrue(ExceptionUtil.isOutOfRange(e));
         }
 
         try {
             // no attributes
             pointer.moveToKid(StandardRoles.P).moveToKid(StandardRoles.SPAN).getProperties().addAttributes(5, new PdfStructureAttributes(testAttrDict));
-            Assert.fail();
+            Assertions.fail();
         } catch (Exception e) {
-            Assert.assertTrue(ExceptionUtil.isOutOfRange(e));
+            Assertions.assertTrue(ExceptionUtil.isOutOfRange(e));
         }
 
         document.close();

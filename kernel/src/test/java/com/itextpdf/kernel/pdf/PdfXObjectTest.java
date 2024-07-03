@@ -36,14 +36,12 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -53,7 +51,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfXObjectTest extends ExtendedITextTest{
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/PdfXObjectTest/";
     public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/PdfXObjectTest/";
@@ -64,12 +62,12 @@ public class PdfXObjectTest extends ExtendedITextTest{
             SOURCE_FOLDER + "WP_20140410_001.tif"};
 
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(DESTINATION_FOLDER);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(DESTINATION_FOLDER);
     }
@@ -102,8 +100,8 @@ public class PdfXObjectTest extends ExtendedITextTest{
         page.flush();
         document.close();
 
-        Assert.assertTrue(new File(destinationDocument).length() < 20 * 1024 * 1024);
-        Assert.assertNull(new CompareTool().compareByContent(destinationDocument, SOURCE_FOLDER + "cmp_documentFromImages1.pdf",
+        Assertions.assertTrue(new File(destinationDocument).length() < 20 * 1024 * 1024);
+        Assertions.assertNull(new CompareTool().compareByContent(destinationDocument, SOURCE_FOLDER + "cmp_documentFromImages1.pdf",
                 DESTINATION_FOLDER, "diff_"));
     }
 
@@ -126,7 +124,7 @@ public class PdfXObjectTest extends ExtendedITextTest{
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationDocument, SOURCE_FOLDER + "cmp_documentFromImages2.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationDocument, SOURCE_FOLDER + "cmp_documentFromImages2.pdf",
                 DESTINATION_FOLDER, "diff_"));
     }
 
@@ -169,7 +167,7 @@ public class PdfXObjectTest extends ExtendedITextTest{
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationDocument, SOURCE_FOLDER + "cmp_documentWithForms1.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationDocument, SOURCE_FOLDER + "cmp_documentWithForms1.pdf",
                 DESTINATION_FOLDER, "diff_"));
 
     }
@@ -237,13 +235,13 @@ public class PdfXObjectTest extends ExtendedITextTest{
         String case1 = "<</BBox [0 0 20 20 ] /Filter /FlateDecode /FormType 1 /Length 12 /Matrix [1 0 0 1 0 0 ] /Resources <<>> /Subtype /Form /Type /XObject >>";
         Integer countOut1 = mapOut.get(case1);
         Integer countIn1 = mapIn.get(case1);
-        Assert.assertTrue(countOut1.equals(1) && countIn1.equals(6));
+        Assertions.assertTrue(countOut1.equals(1) && countIn1.equals(6));
 
         //the following object appears 1 time in the original pdf file and just once in the output file
         String case2 = "<</BaseFont /ZapfDingbats /Subtype /Type1 /Type /Font >>";
         Integer countOut2 = mapOut.get(case2);
         Integer countIn2 = mapIn.get(case2);
-        Assert.assertTrue(countOut2.equals(countIn2) && countOut2.equals(1));
+        Assertions.assertTrue(countOut2.equals(countIn2) && countOut2.equals(1));
 
         //from the original pdf the object "<</BBox [0 0 20 20 ] /Filter /FlateDecode /FormType 1 /Length 70 /Matrix [1 0 0 1 0 0 ] /Resources <</Font <</ZaDb 2 0 R >> >> /Subtype /Form /Type /XObject >>";
         //is going to be found changed in the output pdf referencing the referenced object with another id which is retrieved through the hashmap
@@ -251,7 +249,7 @@ public class PdfXObjectTest extends ExtendedITextTest{
         Integer countIdIn = mapOutId.get(case3).get(0);
         //EXPECTED to be as the original but with different referenced object and marked as modified
         String expected = "<</BBox [0 0 20 20 ] /Filter /FlateDecode /FormType 1 /Length 70 /Matrix [1 0 0 1 0 0 ] /Resources <</Font <</ZaDb " + countIdIn + " 0 R Modified; >> >> /Subtype /Form /Type /XObject >>";
-        Assert.assertTrue(mapOut.get(expected).equals(1));
+        Assertions.assertTrue(mapOut.get(expected).equals(1));
     }
 
     @Test
@@ -280,18 +278,18 @@ public class PdfXObjectTest extends ExtendedITextTest{
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
-    @Category(UnitTest.class)
+    @Tag("UnitTest")
     public void calculateProportionallyFitRectangleWithWidthForCustomXObjectTest() {
         PdfXObject pdfXObject = new CustomPdfXObject(new PdfStream());
 
-        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+        Exception e = Assertions.assertThrows(IllegalArgumentException.class,
                 () -> PdfXObject.calculateProportionallyFitRectangleWithWidth(pdfXObject, 0, 0, 20)
         );
-        Assert.assertEquals("PdfFormXObject or PdfImageXObject expected.", e.getMessage());
+        Assertions.assertEquals("PdfFormXObject or PdfImageXObject expected.", e.getMessage());
     }
 
     @Test
@@ -320,18 +318,18 @@ public class PdfXObjectTest extends ExtendedITextTest{
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
-    @Category(UnitTest.class)
+    @Tag("UnitTest")
     public void calculateProportionallyFitRectangleWithHeightForCustomXObjectTest() {
         PdfXObject pdfXObject = new CustomPdfXObject(new PdfStream());
 
-        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+        Exception e = Assertions.assertThrows(IllegalArgumentException.class,
                 () -> PdfXObject.calculateProportionallyFitRectangleWithHeight(pdfXObject, 0, 0, 20)
         );
-        Assert.assertEquals("PdfFormXObject or PdfImageXObject expected.", e.getMessage());
+        Assertions.assertEquals("PdfFormXObject or PdfImageXObject expected.", e.getMessage());
     }
 
     private static class CustomPdfXObject extends PdfXObject {

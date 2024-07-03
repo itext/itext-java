@@ -38,14 +38,13 @@ import com.itextpdf.kernel.pdf.annot.PdfFileAttachmentAnnotation;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfTargetTest extends ExtendedITextTest {
 
     @Test
@@ -53,21 +52,21 @@ public class PdfTargetTest extends ExtendedITextTest {
         PdfDictionary dictionary = new PdfDictionary();
         PdfTarget target = PdfTarget.create(dictionary);
 
-        Assert.assertEquals(dictionary, target.getPdfObject());
+        Assertions.assertEquals(dictionary, target.getPdfObject());
     }
 
     @Test
     public void createParentInstanceTest() {
         PdfTarget target = PdfTarget.createParentTarget();
         PdfDictionary dictionary = target.getPdfObject();
-        Assert.assertEquals(PdfName.P, dictionary.get(PdfName.R));
+        Assertions.assertEquals(PdfName.P, dictionary.get(PdfName.R));
     }
 
     @Test
     public void createChildInstanceTest() {
         PdfTarget target = PdfTarget.createChildTarget();
         PdfDictionary dictionary = target.getPdfObject();
-        Assert.assertEquals(PdfName.C, dictionary.get(PdfName.R));
+        Assertions.assertEquals(PdfName.C, dictionary.get(PdfName.R));
     }
 
     @Test
@@ -76,8 +75,8 @@ public class PdfTargetTest extends ExtendedITextTest {
 
         PdfTarget target = PdfTarget.createChildTarget(embeddedFileName);
         PdfDictionary dictionary = target.getPdfObject();
-        Assert.assertEquals(PdfName.C, dictionary.get(PdfName.R));
-        Assert.assertEquals(new PdfString(embeddedFileName), dictionary.get(PdfName.N));
+        Assertions.assertEquals(PdfName.C, dictionary.get(PdfName.R));
+        Assertions.assertEquals(new PdfString(embeddedFileName), dictionary.get(PdfName.N));
     }
 
     @Test
@@ -88,9 +87,9 @@ public class PdfTargetTest extends ExtendedITextTest {
         PdfTarget target = PdfTarget.createChildTarget(namedDestination, annotationIdentifier);
 
         PdfDictionary dictionary = target.getPdfObject();
-        Assert.assertEquals(PdfName.C, dictionary.get(PdfName.R));
-        Assert.assertEquals(new PdfString(namedDestination), dictionary.get(PdfName.P));
-        Assert.assertEquals(new PdfString(annotationIdentifier), dictionary.get(PdfName.A));
+        Assertions.assertEquals(PdfName.C, dictionary.get(PdfName.R));
+        Assertions.assertEquals(new PdfString(namedDestination), dictionary.get(PdfName.P));
+        Assertions.assertEquals(new PdfString(annotationIdentifier), dictionary.get(PdfName.A));
     }
 
     @Test
@@ -101,9 +100,9 @@ public class PdfTargetTest extends ExtendedITextTest {
         PdfTarget target = PdfTarget.createChildTarget(pageNumber, annotationIndex);
 
         PdfDictionary dictionary = target.getPdfObject();
-        Assert.assertEquals(PdfName.C, dictionary.get(PdfName.R));
-        Assert.assertEquals(new PdfNumber(pageNumber - 1), dictionary.get(PdfName.P));
-        Assert.assertEquals(new PdfNumber(annotationIndex), dictionary.get(PdfName.A));
+        Assertions.assertEquals(PdfName.C, dictionary.get(PdfName.R));
+        Assertions.assertEquals(new PdfNumber(pageNumber - 1), dictionary.get(PdfName.P));
+        Assertions.assertEquals(new PdfNumber(annotationIndex), dictionary.get(PdfName.A));
     }
 
     @Test
@@ -113,8 +112,8 @@ public class PdfTargetTest extends ExtendedITextTest {
         PdfTarget target = PdfTarget.create(new PdfDictionary());
         target.setName(name);
 
-        Assert.assertEquals(name, target.getName());
-        Assert.assertEquals(new PdfString(name), target.getPdfObject().get(PdfName.N));
+        Assertions.assertEquals(name, target.getName());
+        Assertions.assertEquals(new PdfString(name), target.getPdfObject().get(PdfName.N));
 
     }
 
@@ -130,8 +129,8 @@ public class PdfTargetTest extends ExtendedITextTest {
         PdfTarget target = PdfTarget.create(oldDictionary);
 
         target.setTarget(PdfTarget.create(newDictionary));
-        Assert.assertEquals(newDictionary, target.getTarget().getPdfObject());
-        Assert.assertEquals(newDictionary, target.getPdfObject().get(PdfName.T));
+        Assertions.assertEquals(newDictionary, target.getTarget().getPdfObject());
+        Assertions.assertEquals(newDictionary, target.getPdfObject().get(PdfName.T));
     }
 
     @Test
@@ -153,8 +152,8 @@ public class PdfTargetTest extends ExtendedITextTest {
             target.setAnnotation(annotation2, document);
 
             PdfDictionary dictionary = target.getPdfObject();
-            Assert.assertEquals(0, dictionary.getAsNumber(PdfName.P).intValue());
-            Assert.assertEquals(2, dictionary.getAsNumber(PdfName.A).intValue());
+            Assertions.assertEquals(0, dictionary.getAsNumber(PdfName.P).intValue());
+            Assertions.assertEquals(2, dictionary.getAsNumber(PdfName.A).intValue());
         }
     }
 
@@ -178,8 +177,8 @@ public class PdfTargetTest extends ExtendedITextTest {
             target.setAnnotation(annotation2, document);
 
             PdfDictionary dictionary = target.getPdfObject();
-            Assert.assertEquals(0, dictionary.getAsNumber(PdfName.P).intValue());
-            Assert.assertEquals(-1, dictionary.getAsNumber(PdfName.A).intValue());
+            Assertions.assertEquals(0, dictionary.getAsNumber(PdfName.P).intValue());
+            Assertions.assertEquals(-1, dictionary.getAsNumber(PdfName.A).intValue());
         }
     }
 
@@ -193,10 +192,10 @@ public class PdfTargetTest extends ExtendedITextTest {
 
             PdfTarget target = PdfTarget.create(new PdfDictionary());
 
-            Exception e = Assert.assertThrows(PdfException.class,
+            Exception e = Assertions.assertThrows(PdfException.class,
                     () -> target.setAnnotation(annotation, document)
             );
-            Assert.assertEquals(KernelExceptionMessageConstant.ANNOTATION_SHALL_HAVE_REFERENCE_TO_PAGE, e.getMessage());
+            Assertions.assertEquals(KernelExceptionMessageConstant.ANNOTATION_SHALL_HAVE_REFERENCE_TO_PAGE, e.getMessage());
         }
     }
 
@@ -215,7 +214,7 @@ public class PdfTargetTest extends ExtendedITextTest {
             PdfTarget target = PdfTarget.create(new PdfDictionary());
             target.setAnnotation(annotation, document);
 
-            Assert.assertEquals(annotation.getPdfObject(), target.getAnnotation(document).getPdfObject());
+            Assertions.assertEquals(annotation.getPdfObject(), target.getAnnotation(document).getPdfObject());
         }
     }
 
@@ -232,7 +231,7 @@ public class PdfTargetTest extends ExtendedITextTest {
             document.addNewPage();
             document.getPage(1).addAnnotation(annotation);
 
-            Assert.assertEquals(annotation.getPdfObject(), target.getAnnotation(document).getPdfObject());
+            Assertions.assertEquals(annotation.getPdfObject(), target.getAnnotation(document).getPdfObject());
         }
     }
 
@@ -255,7 +254,7 @@ public class PdfTargetTest extends ExtendedITextTest {
 
             PdfAnnotation retrievedAnnotation = target.getAnnotation(document);
 
-            Assert.assertEquals(annotation.getPdfObject(), retrievedAnnotation.getPdfObject());
+            Assertions.assertEquals(annotation.getPdfObject(), retrievedAnnotation.getPdfObject());
         }
     }
 
@@ -275,7 +274,7 @@ public class PdfTargetTest extends ExtendedITextTest {
                     new PdfArray(new PdfNumber(1)));
             PdfAnnotation annotation = target.getAnnotation(document);
 
-            Assert.assertNull(annotation);
+            Assertions.assertNull(annotation);
         }
     }
 
@@ -288,8 +287,8 @@ public class PdfTargetTest extends ExtendedITextTest {
         PdfTarget target = PdfTarget.create(dictionary);
         target.put(key1, new PdfNumber(23))
                 .put(key2, new PdfString("Hello, world!"));
-        Assert.assertEquals(23, dictionary.getAsNumber(key1).intValue());
-        Assert.assertEquals("Hello, world!", dictionary.getAsString(key2).getValue());
+        Assertions.assertEquals(23, dictionary.getAsNumber(key1).intValue());
+        Assertions.assertEquals("Hello, world!", dictionary.getAsString(key2).getValue());
     }
 
 
@@ -298,16 +297,16 @@ public class PdfTargetTest extends ExtendedITextTest {
         PdfDictionary pdfObject = new PdfDictionary();
         PdfTarget target = PdfTarget.create(pdfObject);
 
-        Assert.assertFalse(target.isWrappedObjectMustBeIndirect());
+        Assertions.assertFalse(target.isWrappedObjectMustBeIndirect());
     }
 
     @Test
     public void noAnnotationPageReferenceTest() {
         PdfFileAttachmentAnnotation pdfAnnotation = new PdfFileAttachmentAnnotation(new Rectangle(100, 100));
         PdfTarget pdfTarget = PdfTarget.create(new PdfDictionary());
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> pdfTarget.setAnnotation(pdfAnnotation, null));
-        Assert.assertEquals(KernelExceptionMessageConstant.ANNOTATION_SHALL_HAVE_REFERENCE_TO_PAGE,
+        Assertions.assertEquals(KernelExceptionMessageConstant.ANNOTATION_SHALL_HAVE_REFERENCE_TO_PAGE,
                 exception.getMessage());
     }
 }

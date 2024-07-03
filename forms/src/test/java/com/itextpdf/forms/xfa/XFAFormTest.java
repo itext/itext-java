@@ -31,23 +31,22 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 import org.w3c.dom.Node;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class XFAFormTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/xfa/XFAFormTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/forms/xfa/XFAFormTest/";
     public static final String XML = sourceFolder + "xfa.xml";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
@@ -63,7 +62,7 @@ public class XFAFormTest extends ExtendedITextTest {
         doc.addNewPage();
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -77,7 +76,7 @@ public class XFAFormTest extends ExtendedITextTest {
         doc.addNewPage();
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -91,7 +90,7 @@ public class XFAFormTest extends ExtendedITextTest {
         doc.addNewPage();
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -109,7 +108,7 @@ public class XFAFormTest extends ExtendedITextTest {
         XfaForm xfaForm = acroForm.getXfaForm();
         xfaForm.findFieldName("TextField1");
         String secondRun = xfaForm.findFieldName("TextField1");
-        Assert.assertNotNull(secondRun);
+        Assertions.assertNotNull(secondRun);
     }
 
     @Test
@@ -119,7 +118,7 @@ public class XFAFormTest extends ExtendedITextTest {
         PdfAcroForm acroForm = PdfFormCreator.getAcroForm(pdfDocument, true);
         XfaForm xfaForm = acroForm.getXfaForm();
         String name = xfaForm.findFieldName("TextField1");
-        Assert.assertNull(name);
+        Assertions.assertNull(name);
     }
 
     @Test
@@ -130,8 +129,8 @@ public class XFAFormTest extends ExtendedITextTest {
         XfaForm xfa = new XfaForm(pdfDocument);
 
         Node node = xfa.findDatasetsNode("Number1");
-        Assert.assertNotNull(node);
-        Assert.assertEquals("Number1", node.getNodeName());
+        Assertions.assertNotNull(node);
+        Assertions.assertEquals("Number1", node.getNodeName());
     }
 
     @Test
@@ -139,8 +138,8 @@ public class XFAFormTest extends ExtendedITextTest {
         String inFileName = sourceFolder + "TextField1.pdf";
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFileName))) {
             XfaForm xfaForm = new XfaForm(pdfDocument);
-            Assert.assertEquals("Test", xfaForm.getNodeTextByPath("xdp.datasets.data.form1"));
-            Assert.assertNull(xfaForm.getNodeTextByPath("xdp.datasets.noElement"));
+            Assertions.assertEquals("Test", xfaForm.getNodeTextByPath("xdp.datasets.data.form1"));
+            Assertions.assertNull(xfaForm.getNodeTextByPath("xdp.datasets.noElement"));
         }
     }
 }

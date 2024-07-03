@@ -26,29 +26,15 @@ import com.itextpdf.test.ExtendedITextTest;
 
 import java.util.Arrays;
 
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(Parameterized.class)
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class MessageFormatUtilTest extends ExtendedITextTest {
 
-    private String expectedResult;
-    private String pattern;
-    private Object[] arguments;
-
-    public MessageFormatUtilTest(Object expectedResult, Object pattern, Object arguments, Object name) {
-        this.expectedResult = (String) expectedResult;
-        this.pattern = (String) pattern;
-        this.arguments = (Object[]) arguments;
-    }
-
-    @Parameterized.Parameters(name = "{index}: {3} format: {1}; {0}")
-    public static Iterable<Object[]> dataSource() {
+    public static Iterable<Object[]> DataSource() {
         return Arrays.asList(new Object[][]{
                 {"Plain message with params 1 test", "Plain message with params {0} {1}", new Object[]{1, "test"}, "test with simple params"},
                 {"Message with 'single quotes'", "Message with 'single quotes'", new Object[0], "test with single quotes"},
@@ -63,8 +49,9 @@ public class MessageFormatUtilTest extends ExtendedITextTest {
         });
     }
 
-    @Test
-    public void testFormatting() {
-        Assert.assertEquals(expectedResult, MessageFormatUtil.format(pattern, arguments));
+    @ParameterizedTest(name = "{index}: {3} format: {1}; {0}")
+    @MethodSource("DataSource")
+    public void testFormatting(String expectedResult, String pattern, Object[] arguments, String name) {
+        Assertions.assertEquals(expectedResult, MessageFormatUtil.format(pattern, arguments));
     }
 }

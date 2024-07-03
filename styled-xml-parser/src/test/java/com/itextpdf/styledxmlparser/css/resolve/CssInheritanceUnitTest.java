@@ -24,23 +24,22 @@ package com.itextpdf.styledxmlparser.css.resolve;
 
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class CssInheritanceUnitTest extends ExtendedITextTest {
 
     @Test
     public void isInheritablePositiveTest(){
         IStyleInheritance cssInheritance = new CssInheritance();
-        Assert.assertTrue(cssInheritance.isInheritable(CommonCssConstants.FONT_SIZE));
+        Assertions.assertTrue(cssInheritance.isInheritable(CommonCssConstants.FONT_SIZE));
     }
 
     @Test
     public void isInheritableNegativeTest(){
         IStyleInheritance cssInheritance = new CssInheritance();
-        Assert.assertFalse(cssInheritance.isInheritable(CommonCssConstants.FOCUS));
+        Assertions.assertFalse(cssInheritance.isInheritable(CommonCssConstants.FOCUS));
     }
 }

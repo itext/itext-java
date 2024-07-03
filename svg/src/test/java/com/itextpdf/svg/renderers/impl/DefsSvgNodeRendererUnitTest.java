@@ -28,15 +28,14 @@ import com.itextpdf.svg.converter.SvgConverter;
 import com.itextpdf.svg.processors.ISvgProcessorResult;
 import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class DefsSvgNodeRendererUnitTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/DefsSvgNodeRendererTest/";
@@ -46,7 +45,7 @@ public class DefsSvgNodeRendererUnitTest extends ExtendedITextTest {
         INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(sourceFolder + "onlyDefsWithNoChildren.svg"));
         ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg, null);
 
-        Assert.assertTrue(result.getNamedObjects().isEmpty());
+        Assertions.assertTrue(result.getNamedObjects().isEmpty());
     }
 
     @Test
@@ -54,7 +53,7 @@ public class DefsSvgNodeRendererUnitTest extends ExtendedITextTest {
         INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(sourceFolder + "onlyDefsWithOneChild.svg"));
         ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg, null);
 
-        Assert.assertTrue(result.getNamedObjects().get("circle1") instanceof CircleSvgNodeRenderer);
+        Assertions.assertTrue(result.getNamedObjects().get("circle1") instanceof CircleSvgNodeRenderer);
     }
 
     @Test
@@ -62,9 +61,9 @@ public class DefsSvgNodeRendererUnitTest extends ExtendedITextTest {
         INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(sourceFolder + "onlyDefsWithMultipleChildren.svg"));
         ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg, null);
 
-        Assert.assertTrue(result.getNamedObjects().get("circle1") instanceof CircleSvgNodeRenderer);
-        Assert.assertTrue(result.getNamedObjects().get("line1") instanceof LineSvgNodeRenderer);
-        Assert.assertTrue(result.getNamedObjects().get("rect1") instanceof RectangleSvgNodeRenderer);
+        Assertions.assertTrue(result.getNamedObjects().get("circle1") instanceof CircleSvgNodeRenderer);
+        Assertions.assertTrue(result.getNamedObjects().get("line1") instanceof LineSvgNodeRenderer);
+        Assertions.assertTrue(result.getNamedObjects().get("rect1") instanceof RectangleSvgNodeRenderer);
     }
 
     @Test
@@ -72,12 +71,12 @@ public class DefsSvgNodeRendererUnitTest extends ExtendedITextTest {
         INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(sourceFolder + "onlyDefsWithOneChild.svg"));
         ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg, null);
 
-        Assert.assertNull(result.getNamedObjects().get("circle1").getParent());
+        Assertions.assertNull(result.getNamedObjects().get("circle1").getParent());
     }
 
     @Test
     public void noObjectBoundingBoxTest() {
         DefsSvgNodeRenderer renderer = new DefsSvgNodeRenderer();
-        Assert.assertNull(renderer.getObjectBoundingBox(null));
+        Assertions.assertNull(renderer.getObjectBoundingBox(null));
     }
 }

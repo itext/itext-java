@@ -23,14 +23,13 @@
 package com.itextpdf.io.font.otf;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.util.Arrays;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class ActualTextIteratorTest extends ExtendedITextTest {
 
     @Test
@@ -41,7 +40,7 @@ public class ActualTextIteratorTest extends ExtendedITextTest {
         ActualTextIterator actualTextIterator = new ActualTextIterator(glyphLine);
         GlyphLine.GlyphLinePart part = actualTextIterator.next();
         // When actual text is the same as the result by text extraction, we should omit redundant actual text in the content stream
-        Assert.assertNull(part.actualText);
+        Assertions.assertNull(part.actualText);
     }
 
 }

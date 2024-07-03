@@ -35,14 +35,12 @@ import com.itextpdf.svg.processors.impl.SvgProcessorContext;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
-@Category(UnitTest.class)
+@org.junit.jupiter.api.Tag("UnitTest")
 public class XLinkTest extends ExtendedITextTest {
 
     @Test
@@ -57,7 +55,7 @@ public class XLinkTest extends ExtendedITextTest {
 
         SvgStyleResolver sr = new SvgStyleResolver(new SvgProcessorContext(new SvgConverterProperties()));
         Map<String, String> attr = sr.resolveStyles(node, new SvgCssContext());
-        Assert.assertEquals(value, attr.get("xlink:href"));
+        Assertions.assertEquals(value, attr.get("xlink:href"));
     }
 
     @Test
@@ -71,20 +69,20 @@ public class XLinkTest extends ExtendedITextTest {
 
         SvgStyleResolver sr = new SvgStyleResolver(new SvgProcessorContext(new SvgConverterProperties()));
         Map<String, String> attr = sr.resolveStyles(node, new SvgCssContext());
-        Assert.assertEquals(value1, attr.get("xlink:href"));
+        Assertions.assertEquals(value1, attr.get("xlink:href"));
 
         String value2 = "data:...,.";
         imageAttributes.put(new Attribute("xlink:href", value2));
 
         sr = new SvgStyleResolver(new SvgProcessorContext(new SvgConverterProperties()));
         attr = sr.resolveStyles(node, new SvgCssContext());
-        Assert.assertEquals(value2, attr.get("xlink:href"));
+        Assertions.assertEquals(value2, attr.get("xlink:href"));
 
         String value3 = "dAtA:...,.";
         imageAttributes.put(new Attribute("xlink:href", value3));
 
         sr = new SvgStyleResolver(new SvgProcessorContext(new SvgConverterProperties()));
         attr = sr.resolveStyles(node, new SvgCssContext());
-        Assert.assertEquals(value3, attr.get("xlink:href"));
+        Assertions.assertEquals(value3, attr.get("xlink:href"));
     }
 }

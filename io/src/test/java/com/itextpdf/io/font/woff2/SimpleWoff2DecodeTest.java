@@ -22,8 +22,8 @@
  */
 package com.itextpdf.io.font.woff2;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
@@ -32,7 +32,7 @@ public class SimpleWoff2DecodeTest extends Woff2DecodeTest {
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/io/font/woff2/SimpleWoff2Decode/";
     private static final String targetFolder = "./target/test/com/itextpdf/io/font/woff2/SimpleWoff2Decode/";
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() {
         if (DEBUG) {
             createOrClearDestinationFolder(targetFolder);

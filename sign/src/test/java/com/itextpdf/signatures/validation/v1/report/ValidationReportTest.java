@@ -24,16 +24,15 @@ package com.itextpdf.signatures.validation.v1.report;
 
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
-@Category(BouncyCastleUnitTest.class)
+@Tag("BouncyCastleUnitTest")
 public class ValidationReportTest extends ExtendedITextTest {
 
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/certs/";
@@ -41,7 +40,7 @@ public class ValidationReportTest extends ExtendedITextTest {
     @Test
     public void getValidationResultWithNoLogsShouldBeValid() {
         ValidationReport sut = new ValidationReport();
-        Assert.assertEquals(ValidationReport.ValidationResult.VALID, sut.getValidationResult());
+        Assertions.assertEquals(ValidationReport.ValidationResult.VALID, sut.getValidationResult());
     }
 
     @Test
@@ -50,7 +49,7 @@ public class ValidationReportTest extends ExtendedITextTest {
         sut.addReportItem(new ReportItem("test1", "test1", ReportItem.ReportItemStatus.INFO));
         sut.addReportItem(new ReportItem("test2", "test2", ReportItem.ReportItemStatus.INFO));
         sut.addReportItem(new ReportItem("test3", "test3", ReportItem.ReportItemStatus.INFO));
-        Assert.assertEquals(ValidationReport.ValidationResult.VALID, sut.getValidationResult());
+        Assertions.assertEquals(ValidationReport.ValidationResult.VALID, sut.getValidationResult());
     }
 
     @Test
@@ -59,7 +58,7 @@ public class ValidationReportTest extends ExtendedITextTest {
         sut.addReportItem(new ReportItem("test1", "test1", ReportItem.ReportItemStatus.INFO));
         sut.addReportItem(new ReportItem("test2", "test2", ReportItem.ReportItemStatus.INDETERMINATE));
         sut.addReportItem(new ReportItem("test3", "test3", ReportItem.ReportItemStatus.INFO));
-        Assert.assertEquals(ValidationReport.ValidationResult.INDETERMINATE, sut.getValidationResult());
+        Assertions.assertEquals(ValidationReport.ValidationResult.INDETERMINATE, sut.getValidationResult());
     }
 
     @Test
@@ -68,7 +67,7 @@ public class ValidationReportTest extends ExtendedITextTest {
         sut.addReportItem(new ReportItem("test1", "test1", ReportItem.ReportItemStatus.INFO));
         sut.addReportItem(new ReportItem("test2", "test2", ReportItem.ReportItemStatus.INVALID));
         sut.addReportItem(new ReportItem("test3", "test3", ReportItem.ReportItemStatus.INDETERMINATE));
-        Assert.assertEquals(ValidationReport.ValidationResult.INVALID, sut.getValidationResult());
+        Assertions.assertEquals(ValidationReport.ValidationResult.INVALID, sut.getValidationResult());
     }
 
     @Test
@@ -79,9 +78,9 @@ public class ValidationReportTest extends ExtendedITextTest {
         sut.addReportItem(failure1);
         ReportItem failure2 = new ReportItem("test3", "test3", ReportItem.ReportItemStatus.INDETERMINATE);
         sut.addReportItem(failure2);
-        Assert.assertTrue(sut.getFailures().contains(failure1));
-        Assert.assertTrue(sut.getFailures().contains(failure2));
-        Assert.assertEquals(2, sut.getFailures().size());
+        Assertions.assertTrue(sut.getFailures().contains(failure1));
+        Assertions.assertTrue(sut.getFailures().contains(failure2));
+        Assertions.assertEquals(2, sut.getFailures().size());
     }
 
     @Test
@@ -94,8 +93,8 @@ public class ValidationReportTest extends ExtendedITextTest {
         sut.addReportItem(failure1);
         ReportItem failure2 = new ReportItem("test3", "test3", ReportItem.ReportItemStatus.INDETERMINATE);
         sut.addReportItem(failure2);
-        Assert.assertTrue(sut.getCertificateFailures().contains(failure1));
-        Assert.assertEquals(1, sut.getCertificateFailures().size());
+        Assertions.assertTrue(sut.getCertificateFailures().contains(failure1));
+        Assertions.assertEquals(1, sut.getCertificateFailures().size());
     }
 
     @Test
@@ -109,10 +108,10 @@ public class ValidationReportTest extends ExtendedITextTest {
         sut.addReportItem(failure1);
         ReportItem failure2 = new ReportItem("test3", "test3", ReportItem.ReportItemStatus.INDETERMINATE);
         sut.addReportItem(failure2);
-        Assert.assertEquals(item1, sut.getLogs().get(0));
-        Assert.assertEquals(failure1, sut.getLogs().get(1));
-        Assert.assertEquals(failure2, sut.getLogs().get(2));
-        Assert.assertEquals(3, sut.getLogs().size());
+        Assertions.assertEquals(item1, sut.getLogs().get(0));
+        Assertions.assertEquals(failure1, sut.getLogs().get(1));
+        Assertions.assertEquals(failure2, sut.getLogs().get(2));
+        Assertions.assertEquals(3, sut.getLogs().size());
     }
 
     @Test
@@ -125,8 +124,8 @@ public class ValidationReportTest extends ExtendedITextTest {
         sut.addReportItem(failure1);
         ReportItem failure2 = new ReportItem("test3", "test3", ReportItem.ReportItemStatus.INDETERMINATE);
         sut.addReportItem(failure2);
-        Assert.assertTrue(sut.getCertificateLogs().contains(failure1));
-        Assert.assertEquals(1, sut.getCertificateLogs().size());
+        Assertions.assertTrue(sut.getCertificateLogs().contains(failure1));
+        Assertions.assertEquals(1, sut.getCertificateLogs().size());
     }
 
     @Test
@@ -140,11 +139,11 @@ public class ValidationReportTest extends ExtendedITextTest {
         ReportItem failure2 = new ReportItem("test3check", "test3message", ReportItem.ReportItemStatus.INDETERMINATE);
         sut.addReportItem(failure2);
 
-        Assert.assertTrue(sut.toString().contains("INVALID"));
-        Assert.assertTrue(sut.toString().contains("test1check"));
-        Assert.assertTrue(sut.toString().contains("test1message"));
-        Assert.assertTrue(sut.toString().contains("test2check"));
-        Assert.assertTrue(sut.toString().contains("test2message"));
-        Assert.assertTrue(sut.toString().contains("test3check"));
+        Assertions.assertTrue(sut.toString().contains("INVALID"));
+        Assertions.assertTrue(sut.toString().contains("test1check"));
+        Assertions.assertTrue(sut.toString().contains("test1message"));
+        Assertions.assertTrue(sut.toString().contains("test2check"));
+        Assertions.assertTrue(sut.toString().contains("test2message"));
+        Assertions.assertTrue(sut.toString().contains("test3check"));
     }
 }

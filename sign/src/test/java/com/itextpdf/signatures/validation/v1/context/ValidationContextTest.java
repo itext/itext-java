@@ -25,19 +25,19 @@ package com.itextpdf.signatures.validation.v1.context;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class ValidationContextTest extends ExtendedITextTest {
     @Test
     public void testInitializingConstructor() {
         ValidationContext sut = new ValidationContext(ValidatorContext.CRL_VALIDATOR, CertificateSource.CERT_ISSUER,
                 TimeBasedContext.HISTORICAL);
-        Assert.assertEquals(ValidatorContext.CRL_VALIDATOR, sut.getValidatorContext());
-        Assert.assertEquals(CertificateSource.CERT_ISSUER, sut.getCertificateSource());
-        Assert.assertEquals(TimeBasedContext.HISTORICAL, sut.getTimeBasedContext());
+        Assertions.assertEquals(ValidatorContext.CRL_VALIDATOR, sut.getValidatorContext());
+        Assertions.assertEquals(CertificateSource.CERT_ISSUER, sut.getCertificateSource());
+        Assertions.assertEquals(TimeBasedContext.HISTORICAL, sut.getTimeBasedContext());
     }
 
     @Test
@@ -45,7 +45,7 @@ public class ValidationContextTest extends ExtendedITextTest {
         ValidationContext sut = new ValidationContext(ValidatorContext.CRL_VALIDATOR, CertificateSource.CERT_ISSUER,
                 TimeBasedContext.HISTORICAL);
         sut = sut.setCertificateSource(CertificateSource.CRL_ISSUER);
-        Assert.assertEquals(CertificateSource.CRL_ISSUER, sut.getCertificateSource());
+        Assertions.assertEquals(CertificateSource.CRL_ISSUER, sut.getCertificateSource());
     }
 
     @Test
@@ -53,7 +53,7 @@ public class ValidationContextTest extends ExtendedITextTest {
         ValidationContext sut = new ValidationContext(ValidatorContext.CRL_VALIDATOR, CertificateSource.CERT_ISSUER,
                 TimeBasedContext.HISTORICAL);
         sut = sut.setTimeBasedContext(TimeBasedContext.PRESENT);
-        Assert.assertEquals(TimeBasedContext.PRESENT, sut.getTimeBasedContext());
+        Assertions.assertEquals(TimeBasedContext.PRESENT, sut.getTimeBasedContext());
     }
 
     @Test
@@ -61,7 +61,7 @@ public class ValidationContextTest extends ExtendedITextTest {
         ValidationContext sut = new ValidationContext(ValidatorContext.CRL_VALIDATOR, CertificateSource.CERT_ISSUER,
                 TimeBasedContext.HISTORICAL);
         sut = sut.setValidatorContext(ValidatorContext.SIGNATURE_VALIDATOR);
-        Assert.assertEquals(ValidatorContext.SIGNATURE_VALIDATOR, sut.getValidatorContext());
+        Assertions.assertEquals(ValidatorContext.SIGNATURE_VALIDATOR, sut.getValidatorContext());
     }
 
     @Test
@@ -70,8 +70,8 @@ public class ValidationContextTest extends ExtendedITextTest {
                 TimeBasedContext.HISTORICAL);
         ValidationContext sutB = new ValidationContext(ValidatorContext.CRL_VALIDATOR, CertificateSource.CERT_ISSUER,
                 TimeBasedContext.HISTORICAL);
-        Assert.assertEquals(sutA, sutB);
-        Assert.assertEquals(sutB, sutA);
+        Assertions.assertEquals(sutA, sutB);
+        Assertions.assertEquals(sutB, sutA);
     }
 
     @Test
@@ -84,10 +84,10 @@ public class ValidationContextTest extends ExtendedITextTest {
                 TimeBasedContext.HISTORICAL);
         ValidationContext sutD = new ValidationContext(ValidatorContext.CRL_VALIDATOR, CertificateSource.CERT_ISSUER,
                 TimeBasedContext.PRESENT);
-        Assert.assertNotEquals(sutA, sutB);
-        Assert.assertNotEquals(sutB, sutA);
-        Assert.assertNotEquals(sutC, sutA);
-        Assert.assertNotEquals(sutD, sutA);
+        Assertions.assertNotEquals(sutA, sutB);
+        Assertions.assertNotEquals(sutB, sutA);
+        Assertions.assertNotEquals(sutC, sutA);
+        Assertions.assertNotEquals(sutD, sutA);
     }
 
     @Test
@@ -103,10 +103,10 @@ public class ValidationContextTest extends ExtendedITextTest {
         ValidationContext sutD = new ValidationContext(ValidatorContext.CRL_VALIDATOR, CertificateSource.CERT_ISSUER,
                 TimeBasedContext.PRESENT);
 
-        Assert.assertEquals(sutA.hashCode(), sut0.hashCode());
-        Assert.assertNotEquals(sutA.hashCode(), sutB.hashCode());
-        Assert.assertNotEquals(sutA.hashCode(), sutC.hashCode());
-        Assert.assertNotEquals(sutA.hashCode(), sutD.hashCode());
+        Assertions.assertEquals(sutA.hashCode(), sut0.hashCode());
+        Assertions.assertNotEquals(sutA.hashCode(), sutB.hashCode());
+        Assertions.assertNotEquals(sutA.hashCode(), sutC.hashCode());
+        Assertions.assertNotEquals(sutA.hashCode(), sutD.hashCode());
     }
 
     @Test
@@ -130,9 +130,9 @@ public class ValidationContextTest extends ExtendedITextTest {
         ValidationContext vc5 = new ValidationContext(ValidatorContext.OCSP_VALIDATOR,
                 CertificateSource.OCSP_ISSUER,
                 TimeBasedContext.PRESENT);
-        Assert.assertEquals(vc1.hashCode(), vc2.hashCode());
-        Assert.assertNotEquals(vc1.hashCode(), vc3.hashCode());
-        Assert.assertNotEquals(vc1.hashCode(), vc4.hashCode());
-        Assert.assertNotEquals(vc1.hashCode(), vc5.hashCode());
+        Assertions.assertEquals(vc1.hashCode(), vc2.hashCode());
+        Assertions.assertNotEquals(vc1.hashCode(), vc3.hashCode());
+        Assertions.assertNotEquals(vc1.hashCode(), vc4.hashCode());
+        Assertions.assertNotEquals(vc1.hashCode(), vc5.hashCode());
     }
 }

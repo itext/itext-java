@@ -24,18 +24,17 @@ package com.itextpdf.signatures.validation.v1.extensions;
 
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
 import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collections;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(BouncyCastleUnitTest.class)
+@Tag("BouncyCastleUnitTest")
 public class ExtendedKeyUsageExtensionTest extends ExtendedITextTest {
     private static final String certsSrc = "./src/test/resources/com/itextpdf/signatures/validation/v1/extensions/ExtendedKeyUsageExtensionTest/";
 
@@ -46,7 +45,7 @@ public class ExtendedKeyUsageExtensionTest extends ExtendedITextTest {
 
         ExtendedKeyUsageExtension extension = new ExtendedKeyUsageExtension(Collections.<String>emptyList());
 
-        Assert.assertFalse(extension.existsInCertificate(certificate));
+        Assertions.assertFalse(extension.existsInCertificate(certificate));
     }
 
     @Test
@@ -57,7 +56,7 @@ public class ExtendedKeyUsageExtensionTest extends ExtendedITextTest {
         ExtendedKeyUsageExtension extension = new ExtendedKeyUsageExtension(
                 Collections.singletonList(ExtendedKeyUsageExtension.TIME_STAMPING));
 
-        Assert.assertFalse(extension.existsInCertificate(certificate));
+        Assertions.assertFalse(extension.existsInCertificate(certificate));
     }
 
     @Test
@@ -68,7 +67,7 @@ public class ExtendedKeyUsageExtensionTest extends ExtendedITextTest {
         ExtendedKeyUsageExtension extension = new ExtendedKeyUsageExtension(
                 Collections.singletonList(ExtendedKeyUsageExtension.TIME_STAMPING));
 
-        Assert.assertTrue(extension.existsInCertificate(certificate));
+        Assertions.assertTrue(extension.existsInCertificate(certificate));
     }
 
     @Test
@@ -79,7 +78,7 @@ public class ExtendedKeyUsageExtensionTest extends ExtendedITextTest {
         ExtendedKeyUsageExtension extension = new ExtendedKeyUsageExtension(
                 Collections.singletonList(ExtendedKeyUsageExtension.OCSP_SIGNING));
 
-        Assert.assertFalse(extension.existsInCertificate(certificate));
+        Assertions.assertFalse(extension.existsInCertificate(certificate));
     }
 
     @Test
@@ -90,7 +89,7 @@ public class ExtendedKeyUsageExtensionTest extends ExtendedITextTest {
         ExtendedKeyUsageExtension extension = new ExtendedKeyUsageExtension(
                 Collections.singletonList(ExtendedKeyUsageExtension.OCSP_SIGNING));
 
-        Assert.assertTrue(extension.existsInCertificate(certificate));
+        Assertions.assertTrue(extension.existsInCertificate(certificate));
     }
 
     @Test
@@ -101,7 +100,7 @@ public class ExtendedKeyUsageExtensionTest extends ExtendedITextTest {
         ExtendedKeyUsageExtension extension = new ExtendedKeyUsageExtension(
                 Collections.singletonList(ExtendedKeyUsageExtension.CODE_SIGNING));
 
-        Assert.assertFalse(extension.existsInCertificate(certificate));
+        Assertions.assertFalse(extension.existsInCertificate(certificate));
     }
 
     @Test
@@ -112,7 +111,7 @@ public class ExtendedKeyUsageExtensionTest extends ExtendedITextTest {
         ExtendedKeyUsageExtension extension = new ExtendedKeyUsageExtension(
                 Collections.singletonList(ExtendedKeyUsageExtension.CODE_SIGNING));
 
-        Assert.assertTrue(extension.existsInCertificate(certificate));
+        Assertions.assertTrue(extension.existsInCertificate(certificate));
     }
 
     @Test
@@ -123,7 +122,7 @@ public class ExtendedKeyUsageExtensionTest extends ExtendedITextTest {
         ExtendedKeyUsageExtension extension = new ExtendedKeyUsageExtension(
                 Arrays.asList(ExtendedKeyUsageExtension.CODE_SIGNING, ExtendedKeyUsageExtension.OCSP_SIGNING));
 
-        Assert.assertTrue(extension.existsInCertificate(certificate));
+        Assertions.assertTrue(extension.existsInCertificate(certificate));
     }
 
     @Test
@@ -134,7 +133,7 @@ public class ExtendedKeyUsageExtensionTest extends ExtendedITextTest {
         ExtendedKeyUsageExtension extension = new ExtendedKeyUsageExtension(
                 Arrays.asList(ExtendedKeyUsageExtension.TIME_STAMPING, ExtendedKeyUsageExtension.OCSP_SIGNING));
 
-        Assert.assertTrue(extension.existsInCertificate(certificate));
+        Assertions.assertTrue(extension.existsInCertificate(certificate));
     }
 
     @Test
@@ -145,7 +144,7 @@ public class ExtendedKeyUsageExtensionTest extends ExtendedITextTest {
         ExtendedKeyUsageExtension extension = new ExtendedKeyUsageExtension(Arrays.asList(
                 ExtendedKeyUsageExtension.TIME_STAMPING, ExtendedKeyUsageExtension.ANY_EXTENDED_KEY_USAGE_OID));
 
-        Assert.assertFalse(extension.existsInCertificate(certificate));
+        Assertions.assertFalse(extension.existsInCertificate(certificate));
     }
 
     @Test
@@ -156,7 +155,7 @@ public class ExtendedKeyUsageExtensionTest extends ExtendedITextTest {
         ExtendedKeyUsageExtension extension = new ExtendedKeyUsageExtension(
                 Arrays.asList(ExtendedKeyUsageExtension.OCSP_SIGNING, ExtendedKeyUsageExtension.CLIENT_AUTH));
 
-        Assert.assertTrue(extension.existsInCertificate(certificate));
+        Assertions.assertTrue(extension.existsInCertificate(certificate));
     }
 
     @Test
@@ -168,6 +167,6 @@ public class ExtendedKeyUsageExtensionTest extends ExtendedITextTest {
                 Arrays.asList(ExtendedKeyUsageExtension.CODE_SIGNING, ExtendedKeyUsageExtension.CLIENT_AUTH));
 
         // Certificate contains any_extended_key_usage OID, that's why results is always true.
-        Assert.assertTrue(extension.existsInCertificate(certificate));
+        Assertions.assertTrue(extension.existsInCertificate(certificate));
     }
 }

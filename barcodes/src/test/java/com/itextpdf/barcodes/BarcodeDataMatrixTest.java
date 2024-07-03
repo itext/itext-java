@@ -31,27 +31,26 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class BarcodeDataMatrixTest extends ExtendedITextTest {
 
     public static final String destinationFolder = "./target/test/com/itextpdf/barcodes/BarcodeDataMatrix/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/barcodes/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -69,7 +68,7 @@ public class BarcodeDataMatrixTest extends ExtendedITextTest {
         barcode.placeBarcode(canvas, ColorConstants.GREEN, 5);
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -84,7 +83,7 @@ public class BarcodeDataMatrixTest extends ExtendedITextTest {
         barcode2.placeBarcode(canvas, ColorConstants.GREEN, 10);
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -103,7 +102,7 @@ public class BarcodeDataMatrixTest extends ExtendedITextTest {
         barcode3.placeBarcode(canvas, ColorConstants.BLACK, 10);
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -122,7 +121,7 @@ public class BarcodeDataMatrixTest extends ExtendedITextTest {
         barcode3.placeBarcode(canvas, ColorConstants.BLACK, 10);
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -141,7 +140,7 @@ public class BarcodeDataMatrixTest extends ExtendedITextTest {
         barcode3.placeBarcode(canvas, ColorConstants.BLACK, 10);
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -160,7 +159,7 @@ public class BarcodeDataMatrixTest extends ExtendedITextTest {
         barcode3.placeBarcode(canvas, ColorConstants.BLACK, 10);
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -174,7 +173,7 @@ public class BarcodeDataMatrixTest extends ExtendedITextTest {
 
         int result = bc.setCode(aCode);
 
-        Assert.assertEquals(result, BarcodeDataMatrix.DM_ERROR_TEXT_TOO_BIG);
+        Assertions.assertEquals(result, BarcodeDataMatrix.DM_ERROR_TEXT_TOO_BIG);
     }
 
     @Test
@@ -184,7 +183,7 @@ public class BarcodeDataMatrixTest extends ExtendedITextTest {
         barcodeDataMatrix.setHeight(18);
         int result = barcodeDataMatrix.setCode("AbcdFFghijklmnopqrstuWXSQ");
 
-        Assert.assertEquals(BarcodeDataMatrix.DM_ERROR_TEXT_TOO_BIG, result);
+        Assertions.assertEquals(BarcodeDataMatrix.DM_ERROR_TEXT_TOO_BIG, result);
     }
 
     @Test
@@ -194,7 +193,7 @@ public class BarcodeDataMatrixTest extends ExtendedITextTest {
         barcodeDataMatrix.setHeight(17);
         int result = barcodeDataMatrix.setCode("AbcdFFghijklmnopqrstuWXSQ");
 
-        Assert.assertEquals(BarcodeDataMatrix.DM_ERROR_INVALID_SQUARE, result);
+        Assertions.assertEquals(BarcodeDataMatrix.DM_ERROR_INVALID_SQUARE, result);
     }
 
     @Test
@@ -204,7 +203,7 @@ public class BarcodeDataMatrixTest extends ExtendedITextTest {
         barcodeDataMatrix.setHeight(12);
         int result = barcodeDataMatrix.setCode("AbcdFFghijklmnopqrstuWXSQ");
 
-        Assert.assertEquals(BarcodeDataMatrix.DM_ERROR_TEXT_TOO_BIG, result);
+        Assertions.assertEquals(BarcodeDataMatrix.DM_ERROR_TEXT_TOO_BIG, result);
     }
 
     @Test
@@ -215,7 +214,7 @@ public class BarcodeDataMatrixTest extends ExtendedITextTest {
         byte[] str = "AbcdFFghijklmnop".getBytes();
         int result = barcodeDataMatrix.setCode(str, 0, str.length);
 
-        Assert.assertEquals(BarcodeDataMatrix.DM_NO_ERROR, result);
+        Assertions.assertEquals(BarcodeDataMatrix.DM_NO_ERROR, result);
     }
 
     @Test
@@ -225,7 +224,7 @@ public class BarcodeDataMatrixTest extends ExtendedITextTest {
         barcodeDataMatrix.setHeight(18);
         byte[] str = "AbcdFFghijklmnop".getBytes();
 
-        Exception e = Assert.assertThrows(IndexOutOfBoundsException.class, () -> barcodeDataMatrix.setCode(str, -1, str.length));
+        Exception e = Assertions.assertThrows(IndexOutOfBoundsException.class, () -> barcodeDataMatrix.setCode(str, -1, str.length));
     }
 
     @Test
@@ -235,7 +234,7 @@ public class BarcodeDataMatrixTest extends ExtendedITextTest {
         barcodeDataMatrix.setHeight(18);
         byte[] str = "AbcdFFghijklmnop".getBytes();
 
-        Assert.assertThrows(IndexOutOfBoundsException.class, () -> barcodeDataMatrix.setCode(str, 0, str.length + 1));
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> barcodeDataMatrix.setCode(str, 0, str.length + 1));
     }
 
     @Test
@@ -245,7 +244,7 @@ public class BarcodeDataMatrixTest extends ExtendedITextTest {
         barcodeDataMatrix.setHeight(18);
         byte[] str = "AbcdFFghijklmnop".getBytes();
 
-        Assert.assertThrows(IndexOutOfBoundsException.class, () -> barcodeDataMatrix.setCode(str, 0, -1));
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> barcodeDataMatrix.setCode(str, 0, -1));
     }
 
     @Test
@@ -256,7 +255,7 @@ public class BarcodeDataMatrixTest extends ExtendedITextTest {
         byte[] str = "AbcdFFghijklmnop".getBytes();
         int result = barcodeDataMatrix.setCode(str, str.length, 0);
 
-        Assert.assertEquals(BarcodeDataMatrix.DM_NO_ERROR, result);
+        Assertions.assertEquals(BarcodeDataMatrix.DM_NO_ERROR, result);
     }
 
     @Test
@@ -271,6 +270,6 @@ public class BarcodeDataMatrixTest extends ExtendedITextTest {
         barcode.placeBarcode(canvas, ColorConstants.BLACK, 3);
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder));
     }
 }

@@ -42,12 +42,11 @@ import com.itextpdf.signatures.validation.v1.mocks.MockIssuingCertificateRetriev
 import com.itextpdf.signatures.validation.v1.report.ReportItem;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.ByteArrayInputStream;
 import java.security.PrivateKey;
@@ -59,7 +58,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 
-@Category(BouncyCastleUnitTest.class)
+@Tag("BouncyCastleUnitTest")
 public class CRLValidatorTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/validation/v1/CRLValidatorTest/";
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
@@ -75,12 +74,12 @@ public class CRLValidatorTest extends ExtendedITextTest {
     private IssuingCertificateRetriever certificateRetriever;
     private ValidatorChainBuilder validatorChainBuilder;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpOnce() {
         Security.addProvider(FACTORY.getProvider());
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         certificateRetriever = new IssuingCertificateRetriever();
         SignatureValidationProperties parameters = new SignatureValidationProperties();
@@ -135,13 +134,13 @@ public class CRLValidatorTest extends ExtendedITextTest {
         );
         ValidationReport report = performValidation("happyPath", TimeTestUtil.TEST_DATE_TIME, crl);
 
-        Assert.assertEquals(ValidationReport.ValidationResult.VALID, report.getValidationResult());
+        Assertions.assertEquals(ValidationReport.ValidationResult.VALID, report.getValidationResult());
 
-        Assert.assertEquals(1, mockChainValidator.verificationCalls.size());
-        Assert.assertEquals(crlIssuerCert, mockChainValidator.verificationCalls.get(0).certificate);
-        Assert.assertEquals(CertificateSource.CRL_ISSUER,
+        Assertions.assertEquals(1, mockChainValidator.verificationCalls.size());
+        Assertions.assertEquals(crlIssuerCert, mockChainValidator.verificationCalls.get(0).certificate);
+        Assertions.assertEquals(CertificateSource.CRL_ISSUER,
                 mockChainValidator.verificationCalls.get(0).context.getCertificateSource());
-        Assert.assertEquals(ValidatorContext.CRL_VALIDATOR,
+        Assertions.assertEquals(ValidatorContext.CRL_VALIDATOR,
                 mockChainValidator.verificationCalls.get(0).context.getValidatorContext());
     }
 
@@ -261,7 +260,7 @@ public class CRLValidatorTest extends ExtendedITextTest {
     public void crlContainsOnlyUserCertsTest() throws Exception {
         String crlPath = SOURCE_FOLDER + "issuingDistributionPointTest/onlyUser.crl";
         ValidationReport report = checkCrlScope(crlPath);
-        Assert.assertEquals(ValidationReport.ValidationResult.VALID, report.getValidationResult());
+        Assertions.assertEquals(ValidationReport.ValidationResult.VALID, report.getValidationResult());
     }
 
     @Test
@@ -496,7 +495,7 @@ public class CRLValidatorTest extends ExtendedITextTest {
                 DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, -5),
                 DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, +5)
         );
-        mockChainValidator.onCallDo(c -> Assert.assertEquals(TimeTestUtil.TEST_DATE_TIME, c.checkDate));
+        mockChainValidator.onCallDo(c -> Assertions.assertEquals(TimeTestUtil.TEST_DATE_TIME, c.checkDate));
 
         ValidationReport report = performValidation("happyPath", TimeTestUtil.TEST_DATE_TIME, crl);
         AssertValidationReport.assertThat(report, a -> a

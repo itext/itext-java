@@ -28,21 +28,20 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.ByteArrayOutputStream;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfAnnotationMakeTest extends ExtendedITextTest {
 
     @Test
     public void makePdfAnnotationTest() {
         PdfDictionary object = new PdfDictionary();
         PdfAnnotation result = PdfAnnotation.makeAnnotation(object);
-        Assert.assertNull(result.getSubtype());
+        Assertions.assertNull(result.getSubtype());
     }
 
     @Test
@@ -50,7 +49,7 @@ public class PdfAnnotationMakeTest extends ExtendedITextTest {
         PdfDictionary object = new PdfDictionary();
         object.put(PdfName.Subtype, PdfName.Text);
         PdfAnnotation result = PdfAnnotation.makeAnnotation(object);
-        Assert.assertTrue(result instanceof PdfTextAnnotation);
+        Assertions.assertTrue(result instanceof PdfTextAnnotation);
     }
 
     @Test
@@ -61,7 +60,7 @@ public class PdfAnnotationMakeTest extends ExtendedITextTest {
             PdfObject indirect = object.makeIndirect(doc);
             object.put(PdfName.Subtype, PdfName.Text);
             PdfAnnotation result = PdfAnnotation.makeAnnotation(indirect);
-            Assert.assertTrue(result instanceof PdfTextAnnotation);
+            Assertions.assertTrue(result instanceof PdfTextAnnotation);
         }
     }
 
@@ -70,7 +69,7 @@ public class PdfAnnotationMakeTest extends ExtendedITextTest {
         PdfDictionary object = new PdfDictionary();
         object.put(PdfName.Subtype, PdfName.Polygon);
         PdfAnnotation result = PdfAnnotation.makeAnnotation(object);
-        Assert.assertTrue(result instanceof PdfPolyGeomAnnotation);
+        Assertions.assertTrue(result instanceof PdfPolyGeomAnnotation);
     }
 
     @Test
@@ -79,6 +78,6 @@ public class PdfAnnotationMakeTest extends ExtendedITextTest {
         // from DEVSIX-2661
         object.put(PdfName.Subtype, new PdfName("BatesN"));
         PdfAnnotation result = PdfAnnotation.makeAnnotation(object);
-        Assert.assertTrue(result instanceof PdfAnnotation.PdfUnknownAnnotation);
+        Assertions.assertTrue(result instanceof PdfAnnotation.PdfUnknownAnnotation);
     }
 }

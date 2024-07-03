@@ -25,13 +25,12 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfViewerPreferencesUnitTest extends ExtendedITextTest {
 
     @Test
@@ -39,9 +38,9 @@ public class PdfViewerPreferencesUnitTest extends ExtendedITextTest {
         PdfViewerPreferences preferences = new PdfViewerPreferences();
         PdfName pdfName = PdfName.PrintScaling;
         PdfArray pdfArray = new PdfArray(pdfName);
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> preferences.setEnforce(pdfArray));
-        Assert.assertEquals(KernelExceptionMessageConstant.PRINT_SCALING_ENFORCE_ENTRY_INVALID,
+        Assertions.assertEquals(KernelExceptionMessageConstant.PRINT_SCALING_ENFORCE_ENTRY_INVALID,
                 exception.getMessage());
     }
 }

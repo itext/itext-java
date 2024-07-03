@@ -32,20 +32,19 @@ import com.itextpdf.kernel.font.Type3Glyph;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfFontCacheTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfFontCacheTest/";
     private static final String fontsFolder = "./src/test/resources/com/itextpdf/kernel/pdf/fonts/";
@@ -55,12 +54,12 @@ public class PdfFontCacheTest extends ExtendedITextTest {
     static final String pangramme = "Amazingly few discotheques provide jukeboxes " +
             "but it now while sayingly ABEFGHJKNOPQRSTUWYZ?";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -81,8 +80,8 @@ public class PdfFontCacheTest extends ExtendedITextTest {
         addPagesWithFonts(pdfDoc, "KozMinPro-Regular", "Adobe-Japan1-0", TextSetChinese);
         pdfDoc.close();
 
-        Assert.assertEquals(2, countPdfFonts(filename));
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertEquals(2, countPdfFonts(filename));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -100,8 +99,8 @@ public class PdfFontCacheTest extends ExtendedITextTest {
         addPagesWithFonts(pdfDoc, font, "MacRoman", TextSetWithABC);
         pdfDoc.close();
 
-        Assert.assertEquals(2, countPdfFonts(filename));
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertEquals(2, countPdfFonts(filename));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -120,8 +119,8 @@ public class PdfFontCacheTest extends ExtendedITextTest {
         addPagesWithFonts(pdfDoc, font, encoding, TextSetWithABC);
         pdfDoc.close();
 
-        Assert.assertEquals(1, countPdfFonts(filename));
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertEquals(1, countPdfFonts(filename));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -143,8 +142,8 @@ public class PdfFontCacheTest extends ExtendedITextTest {
         pdfDoc.close();
 
         //Flushed fonts cannot be reused.
-        Assert.assertEquals(3, countPdfFonts(filename));
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertEquals(3, countPdfFonts(filename));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -165,8 +164,8 @@ public class PdfFontCacheTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertEquals(1, countPdfFonts(filename));
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertEquals(1, countPdfFonts(filename));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -188,8 +187,8 @@ public class PdfFontCacheTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertEquals(1, countPdfFonts(filename));
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertEquals(1, countPdfFonts(filename));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -209,8 +208,8 @@ public class PdfFontCacheTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertEquals(1, countPdfFonts(filename));
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertEquals(1, countPdfFonts(filename));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -227,8 +226,8 @@ public class PdfFontCacheTest extends ExtendedITextTest {
         addPagesWithFonts(pdfDoc, font, "", TextSetWithABC);
         pdfDoc.close();
 
-        Assert.assertEquals(2, countPdfFonts(filename));
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertEquals(2, countPdfFonts(filename));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -245,8 +244,8 @@ public class PdfFontCacheTest extends ExtendedITextTest {
         addPagesWithFonts(pdfDoc, font, PdfEncodings.WINANSI, TextSetWithABC);
         pdfDoc.close();
 
-        Assert.assertEquals(2, countPdfFonts(filename));
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertEquals(2, countPdfFonts(filename));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -264,8 +263,8 @@ public class PdfFontCacheTest extends ExtendedITextTest {
         addPagesWithFonts(pdfDoc, font, "", embeddingStrategy, TextSetWithABC);
         pdfDoc.close();
 
-        Assert.assertEquals(2, countPdfFonts(filename));
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertEquals(2, countPdfFonts(filename));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -283,8 +282,8 @@ public class PdfFontCacheTest extends ExtendedITextTest {
         addPagesWithFonts(pdfDoc, font, PdfEncodings.WINANSI, embeddingStrategy, TextSetWithABC);
         pdfDoc.close();
 
-        Assert.assertEquals(2, countPdfFonts(filename));
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertEquals(2, countPdfFonts(filename));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -303,8 +302,8 @@ public class PdfFontCacheTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertEquals(1, countPdfFonts(filename));
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertEquals(1, countPdfFonts(filename));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -323,8 +322,8 @@ public class PdfFontCacheTest extends ExtendedITextTest {
         addPagesWithFonts(pdfDoc, font, encoding, TextSetWithABC);
         pdfDoc.close();
 
-        Assert.assertEquals(1, countPdfFonts(filename));
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertEquals(1, countPdfFonts(filename));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -343,8 +342,8 @@ public class PdfFontCacheTest extends ExtendedITextTest {
         addPagesWithFonts(pdfDoc, font, encoding, TextSetWithABC);
         pdfDoc.close();
 
-        Assert.assertEquals(1, countPdfFonts(filename));
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertEquals(1, countPdfFonts(filename));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -368,8 +367,8 @@ public class PdfFontCacheTest extends ExtendedITextTest {
         //Flushed fonts cannot be reused.
         //For some reason Acrobat shows only one font in Properties.
         //RUPS shows 3 instances of the same font.
-        Assert.assertEquals(3, countPdfFonts(filename));
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertEquals(3, countPdfFonts(filename));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -388,8 +387,8 @@ public class PdfFontCacheTest extends ExtendedITextTest {
         addPagesWithFonts(pdfDoc, font, encoding, TextSetWithABC);
         pdfDoc.close();
 
-        Assert.assertEquals(1, countPdfFonts(filename));
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertEquals(1, countPdfFonts(filename));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -411,8 +410,8 @@ public class PdfFontCacheTest extends ExtendedITextTest {
         pdfDoc.close();
 
         //Flushed fonts cannot be reused.
-        Assert.assertEquals(3, countPdfFonts(filename));
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertEquals(3, countPdfFonts(filename));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -431,8 +430,8 @@ public class PdfFontCacheTest extends ExtendedITextTest {
         addPagesWithFonts(pdfDoc, font, encoding, TextSetInternational);
         pdfDoc.close();
 
-        Assert.assertEquals(1, countPdfFonts(filename));
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertEquals(1, countPdfFonts(filename));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -454,8 +453,8 @@ public class PdfFontCacheTest extends ExtendedITextTest {
         pdfDoc.close();
 
         //Flushed fonts cannot be reused.
-        Assert.assertEquals(3, countPdfFonts(filename));
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertEquals(3, countPdfFonts(filename));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -474,8 +473,8 @@ public class PdfFontCacheTest extends ExtendedITextTest {
         String encoding = "WinAnsiEncoding";
 
         PdfDictionary fontDict = (PdfDictionary) pdfDoc.getPdfObject(6);
-        Assert.assertEquals(font, fontDict.getAsName(PdfName.BaseFont).getValue());
-        Assert.assertEquals(encoding, fontDict.getAsName(PdfName.Encoding).getValue());
+        Assertions.assertEquals(font, fontDict.getAsName(PdfName.BaseFont).getValue());
+        Assertions.assertEquals(encoding, fontDict.getAsName(PdfName.Encoding).getValue());
 
 
         PdfFont documentFont = PdfFontFactory.createFont(fontDict);
@@ -495,7 +494,7 @@ public class PdfFontCacheTest extends ExtendedITextTest {
                 .release();
 
         //There is only one just loaded and used document font.
-        Assert.assertEquals(1, pdfDoc.getDocumentFonts().size());
+        Assertions.assertEquals(1, pdfDoc.getDocumentFonts().size());
 
         addPagesWithFonts(pdfDoc, font, "WinAnsi", TextSetWithABC);
         addPagesWithFonts(pdfDoc, font, null, TextSetWithABC);
@@ -503,8 +502,8 @@ public class PdfFontCacheTest extends ExtendedITextTest {
 
         //We cannot rely on font name for a document font, so we treat them as two different fonts.
         //However we're trying to detect standard fonts in this case, so it will work.
-        Assert.assertEquals(1, countPdfFonts(filename));
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertEquals(1, countPdfFonts(filename));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -523,8 +522,8 @@ public class PdfFontCacheTest extends ExtendedITextTest {
         String encoding = "WinAnsiEncoding";
 
         PdfDictionary fontDict = (PdfDictionary) pdfDoc.getPdfObject(6);
-        Assert.assertEquals(font, fontDict.getAsName(PdfName.BaseFont).getValue());
-        Assert.assertEquals(encoding, fontDict.getAsName(PdfName.Encoding).getValue());
+        Assertions.assertEquals(font, fontDict.getAsName(PdfName.BaseFont).getValue());
+        Assertions.assertEquals(encoding, fontDict.getAsName(PdfName.Encoding).getValue());
 
 
         PdfFont documentFont = PdfFontFactory.createFont(fontDict);
@@ -544,15 +543,15 @@ public class PdfFontCacheTest extends ExtendedITextTest {
                 .release();
 
         //There is only one just loaded and used document font.
-        Assert.assertEquals(1, pdfDoc.getDocumentFonts().size());
+        Assertions.assertEquals(1, pdfDoc.getDocumentFonts().size());
 
         addPagesWithFonts(pdfDoc, font, null, TextSetWithABC);
         addPagesWithFonts(pdfDoc, font, "MacRoman", TextSetWithABC);
         pdfDoc.close();
 
         //Two different encodings were used -> two fonts are expected.
-        Assert.assertEquals(2, countPdfFonts(filename));
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertEquals(2, countPdfFonts(filename));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
     @Test
     public void createDocumentWithTrueTypeAboriginalFromDocument() throws IOException, InterruptedException {
@@ -570,8 +569,8 @@ public class PdfFontCacheTest extends ExtendedITextTest {
         String encoding = "WinAnsiEncoding";
 
         PdfDictionary fontDict = (PdfDictionary) pdfDoc.getPdfObject(6);
-        Assert.assertEquals(font, fontDict.getAsName(PdfName.BaseFont).getValue());
-        Assert.assertEquals(encoding, fontDict.getAsName(PdfName.Encoding).getValue());
+        Assertions.assertEquals(font, fontDict.getAsName(PdfName.BaseFont).getValue());
+        Assertions.assertEquals(encoding, fontDict.getAsName(PdfName.Encoding).getValue());
 
         PdfFont documentFont = PdfFontFactory.createFont(fontDict);
 
@@ -590,14 +589,14 @@ public class PdfFontCacheTest extends ExtendedITextTest {
                 .release();
 
         //There is only one just loaded and used document font.
-        Assert.assertEquals(1, pdfDoc.getDocumentFonts().size());
+        Assertions.assertEquals(1, pdfDoc.getDocumentFonts().size());
 
         addPagesWithFonts(pdfDoc, fontsFolder + "abserif4_5.ttf", "WinAnsi", TextSetWithABC);
         pdfDoc.close();
 
         //We cannot rely on font name for a document font, so we treat them as two different fonts.
-        Assert.assertEquals(2, countPdfFonts(filename));
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertEquals(2, countPdfFonts(filename));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -616,8 +615,8 @@ public class PdfFontCacheTest extends ExtendedITextTest {
         String encoding = "WinAnsiEncoding";
 
         PdfDictionary fontDict = (PdfDictionary) pdfDoc.getPdfObject(6);
-        Assert.assertEquals(font, fontDict.getAsName(PdfName.BaseFont).getValue());
-        Assert.assertEquals(encoding, fontDict.getAsName(PdfName.Encoding).getValue());
+        Assertions.assertEquals(font, fontDict.getAsName(PdfName.BaseFont).getValue());
+        Assertions.assertEquals(encoding, fontDict.getAsName(PdfName.Encoding).getValue());
 
         PdfFont documentFont = PdfFontFactory.createFont(fontDict);
 
@@ -636,15 +635,15 @@ public class PdfFontCacheTest extends ExtendedITextTest {
                 .release();
 
         //There is only one just loaded and used document font.
-        Assert.assertEquals(1, pdfDoc.getDocumentFonts().size());
+        Assertions.assertEquals(1, pdfDoc.getDocumentFonts().size());
 
         addPagesWithFonts(pdfDoc, fontsFolder + "NotoSansCJKjp-Bold.otf", encoding,
                 EmbeddingStrategy.FORCE_NOT_EMBEDDED, TextSetWithABC);
         pdfDoc.close();
 
         //We cannot rely on font name for a document font, so we treat them as two different fonts.
-        Assert.assertEquals(2, countPdfFonts(filename));
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertEquals(2, countPdfFonts(filename));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -663,8 +662,8 @@ public class PdfFontCacheTest extends ExtendedITextTest {
         String encoding = "Identity-H";
 
         PdfDictionary fontDict = (PdfDictionary) pdfDoc.getPdfObject(6);
-        Assert.assertEquals(font, fontDict.getAsName(PdfName.BaseFont).getValue());
-        Assert.assertEquals(encoding, fontDict.getAsName(PdfName.Encoding).getValue());
+        Assertions.assertEquals(font, fontDict.getAsName(PdfName.BaseFont).getValue());
+        Assertions.assertEquals(encoding, fontDict.getAsName(PdfName.Encoding).getValue());
 
         PdfFont documentFont = PdfFontFactory.createFont(fontDict);
 
@@ -683,14 +682,14 @@ public class PdfFontCacheTest extends ExtendedITextTest {
                 .release();
 
         //There is only one just loaded and used document font.
-        Assert.assertEquals(1, pdfDoc.getDocumentFonts().size());
+        Assertions.assertEquals(1, pdfDoc.getDocumentFonts().size());
 
         addPagesWithFonts(pdfDoc, fontsFolder + "abserif4_5.ttf", encoding, TextSetWithABC);
         pdfDoc.close();
 
         //We cannot rely on font name for a document font, so we treat them as two different fonts.
-        Assert.assertEquals(2, countPdfFonts(filename));
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertEquals(2, countPdfFonts(filename));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -709,8 +708,8 @@ public class PdfFontCacheTest extends ExtendedITextTest {
         String font = "NotoSansCJKjp-Bold-" + encoding;
 
         PdfDictionary fontDict = (PdfDictionary) pdfDoc.getPdfObject(6);
-        Assert.assertEquals(font, fontDict.getAsName(PdfName.BaseFont).getValue());
-        Assert.assertEquals(encoding, fontDict.getAsName(PdfName.Encoding).getValue());
+        Assertions.assertEquals(font, fontDict.getAsName(PdfName.BaseFont).getValue());
+        Assertions.assertEquals(encoding, fontDict.getAsName(PdfName.Encoding).getValue());
 
         PdfFont documentFont = PdfFontFactory.createFont(fontDict);
 
@@ -729,15 +728,15 @@ public class PdfFontCacheTest extends ExtendedITextTest {
                 .release();
 
         //There is only one just loaded and used document font.
-        Assert.assertEquals(1, pdfDoc.getDocumentFonts().size());
+        Assertions.assertEquals(1, pdfDoc.getDocumentFonts().size());
 
         addPagesWithFonts(pdfDoc, fontsFolder + "NotoSansCJKjp-Bold.otf", PdfEncodings.WINANSI,
                 EmbeddingStrategy.PREFER_NOT_EMBEDDED, TextSetWithABC);
         pdfDoc.close();
 
         //We cannot rely on font name for a document font, so we treat them as two different fonts.
-        Assert.assertEquals(2, countPdfFonts(filename));
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertEquals(2, countPdfFonts(filename));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -786,10 +785,10 @@ public class PdfFontCacheTest extends ExtendedITextTest {
         pdfDoc.close();
 
         //PdfType3Font comparing returns false;
-        Assert.assertEquals(2, countPdfFonts(filename));
+        Assertions.assertEquals(2, countPdfFonts(filename));
 
         // reading and comparing text
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     private void addPagesWithFonts(PdfDocument pdfDoc, String fontProgram, String fontEncoding, String[] text) throws IOException {

@@ -49,7 +49,6 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 
 import java.io.FileInputStream;
@@ -61,43 +60,43 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfA4ActionCheckTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfa/";
     private static final String CMP_FOLDER = SOURCE_FOLDER + "cmp/PdfA4ActionCheckTest/";
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfa/PdfA4ActionCheckTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() throws FileNotFoundException {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     public void pdfA4ForbiddenActions_LAUNCH_ActionToPage_Test() {
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> generatePdfADocument(PdfAConformanceLevel.PDF_A_4, null, (doc) -> {
                     doc.getFirstPage()
                             .setAdditionalAction(PdfName.O, PdfAction.createLaunch(new PdfStringFS("launch.sh")));
                 }));
-        Assert.assertEquals(PdfaExceptionMessageConstant.PAGE_AA_DICTIONARY_SHALL_CONTAIN_ONLY_ALLOWED_KEYS,
+        Assertions.assertEquals(PdfaExceptionMessageConstant.PAGE_AA_DICTIONARY_SHALL_CONTAIN_ONLY_ALLOWED_KEYS,
                 e.getMessage());
     }
 
     @Test
     public void pdfA4ForbiddenActions_SOUND_ActionToPage_Test() {
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> {
             generatePdfADocument(PdfAConformanceLevel.PDF_A_4, null, (doc) -> {
                 InputStream is = null;
                 try {
                     is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sample.aif");
                 } catch (IOException er) {
-                    Assert.fail(er.getMessage());
+                    Assertions.fail(er.getMessage());
                 }
                 PdfStream sound1 = new PdfStream(doc, is);
                 sound1.put(PdfName.R, new PdfNumber(32117));
@@ -108,25 +107,25 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
                 doc.addNewPage().setAdditionalAction(PdfName.O, PdfAction.createSound(sound1));
             });
         });
-        Assert.assertEquals(PdfaExceptionMessageConstant.PAGE_AA_DICTIONARY_SHALL_CONTAIN_ONLY_ALLOWED_KEYS,
+        Assertions.assertEquals(PdfaExceptionMessageConstant.PAGE_AA_DICTIONARY_SHALL_CONTAIN_ONLY_ALLOWED_KEYS,
                 e.getMessage());
     }
 
     @Test
     public void pdfA4ForbiddenActions_MOVIE_ActionToPage_Test() throws FileNotFoundException {
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> {
             generatePdfADocument(PdfAConformanceLevel.PDF_A_4, null, (doc) -> {
                 doc.addNewPage()
                         .setAdditionalAction(PdfName.O, PdfAction.createMovie(null, "Some movie", PdfName.Play));
             });
         });
-        Assert.assertEquals(PdfaExceptionMessageConstant.PAGE_AA_DICTIONARY_SHALL_CONTAIN_ONLY_ALLOWED_KEYS,
+        Assertions.assertEquals(PdfaExceptionMessageConstant.PAGE_AA_DICTIONARY_SHALL_CONTAIN_ONLY_ALLOWED_KEYS,
                 e.getMessage());
     }
 
     @Test
     public void pdfA4ForbiddenActions_RESETFORM_ActionToPage_Test() throws FileNotFoundException {
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> {
             generatePdfADocument(PdfAConformanceLevel.PDF_A_4, null, (doc) -> {
                 CheckBox checkBox = new CheckBox("test");
                 checkBox.setChecked(true);
@@ -135,26 +134,26 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
                 doc.addNewPage().setAdditionalAction(PdfName.O, PdfAction.createResetForm(new Object[] {"test"}, 0));
             });
         });
-        Assert.assertEquals(PdfaExceptionMessageConstant.PAGE_AA_DICTIONARY_SHALL_CONTAIN_ONLY_ALLOWED_KEYS,
+        Assertions.assertEquals(PdfaExceptionMessageConstant.PAGE_AA_DICTIONARY_SHALL_CONTAIN_ONLY_ALLOWED_KEYS,
                 e.getMessage());
     }
 
     @Test
     public void pdfA4ForbiddenActions_IMPORTDATA_ActionToPage_Test() {
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> generatePdfADocument(PdfAConformanceLevel.PDF_A_4, null, (doc) -> {
                     doc.addNewPage();
                     PdfDictionary openActions = new PdfDictionary();
                     openActions.put(PdfName.S, PdfName.ImportData);
                     doc.addNewPage().setAdditionalAction(PdfName.O, new PdfAction(openActions));
                 }));
-        Assert.assertEquals(PdfaExceptionMessageConstant.PAGE_AA_DICTIONARY_SHALL_CONTAIN_ONLY_ALLOWED_KEYS,
+        Assertions.assertEquals(PdfaExceptionMessageConstant.PAGE_AA_DICTIONARY_SHALL_CONTAIN_ONLY_ALLOWED_KEYS,
                 e.getMessage());
     }
 
     @Test
     public void pdfA4ForbiddenActions_HIDE_ActionToPage_Test() throws FileNotFoundException {
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> {
             generatePdfADocument(PdfAConformanceLevel.PDF_A_4, null, (doc) -> {
                 PdfAnnotation[] annotations = new PdfAnnotation[] {
                         new PdfLineAnnotation(new Rectangle(10, 10, 200, 200), new float[] {50, 750, 50, 750}),
@@ -162,13 +161,13 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
                 doc.addNewPage().setAdditionalAction(PdfName.O, PdfAction.createHide(annotations, true));
             });
         });
-        Assert.assertEquals(PdfaExceptionMessageConstant.PAGE_AA_DICTIONARY_SHALL_CONTAIN_ONLY_ALLOWED_KEYS,
+        Assertions.assertEquals(PdfaExceptionMessageConstant.PAGE_AA_DICTIONARY_SHALL_CONTAIN_ONLY_ALLOWED_KEYS,
                 e.getMessage());
     }
 
     @Test
     public void pdfA4ForbiddenActions_RENDITION_ActionToPage_Test() throws FileNotFoundException {
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> {
             generatePdfADocument(PdfAConformanceLevel.PDF_A_4, null, doc -> {
                 doc.addNewPage().setAdditionalAction(PdfName.O, PdfAction.createRendition("empty",
                         PdfFileSpec.createEmbeddedFileSpec(doc, null, "bing", "bing", new PdfDictionary(),
@@ -176,75 +175,75 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
 
             });
         });
-        Assert.assertEquals(PdfaExceptionMessageConstant.PAGE_AA_DICTIONARY_SHALL_CONTAIN_ONLY_ALLOWED_KEYS,
+        Assertions.assertEquals(PdfaExceptionMessageConstant.PAGE_AA_DICTIONARY_SHALL_CONTAIN_ONLY_ALLOWED_KEYS,
                 e.getMessage());
     }
 
     @Test
     public void pdfA4ForbiddenActions_TRANS_ActionToPage_Test() throws FileNotFoundException {
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> generatePdfADocument(PdfAConformanceLevel.PDF_A_4, null, doc -> {
                     PdfDictionary openActions = new PdfDictionary();
                     openActions.put(PdfName.S, PdfName.Trans);
                     doc.addNewPage().setAdditionalAction(PdfName.O, new PdfAction(openActions));
                 }));
-        Assert.assertEquals(PdfaExceptionMessageConstant.PAGE_AA_DICTIONARY_SHALL_CONTAIN_ONLY_ALLOWED_KEYS,
+        Assertions.assertEquals(PdfaExceptionMessageConstant.PAGE_AA_DICTIONARY_SHALL_CONTAIN_ONLY_ALLOWED_KEYS,
                 e.getMessage());
 
     }
 
     @Test
     public void pdfA4ForbiddenActions_SETSTATE_ActionToPage_Test() throws FileNotFoundException {
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> generatePdfADocument(PdfAConformanceLevel.PDF_A_4, null, doc -> {
                     PdfDictionary action = new PdfDictionary();
                     action.put(PdfName.S, PdfName.SetState);
 
                     doc.addNewPage().setAdditionalAction(PdfName.O, new PdfAction(action));
                 }));
-        Assert.assertEquals(PdfaExceptionMessageConstant.PAGE_AA_DICTIONARY_SHALL_CONTAIN_ONLY_ALLOWED_KEYS,
+        Assertions.assertEquals(PdfaExceptionMessageConstant.PAGE_AA_DICTIONARY_SHALL_CONTAIN_ONLY_ALLOWED_KEYS,
                 e.getMessage());
     }
 
 
     @Test
     public void pdfA4ForbiddenActions_NOOP_ActionToPage_Test() {
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> generatePdfADocument(PdfAConformanceLevel.PDF_A_4, null, doc -> {
                     PdfDictionary action = new PdfDictionary();
                     action.put(PdfName.S, PdfName.NoOp);
                     doc.addNewPage().setAdditionalAction(PdfName.O, new PdfAction(action));
                 }));
-        Assert.assertEquals(PdfaExceptionMessageConstant.PAGE_AA_DICTIONARY_SHALL_CONTAIN_ONLY_ALLOWED_KEYS,
+        Assertions.assertEquals(PdfaExceptionMessageConstant.PAGE_AA_DICTIONARY_SHALL_CONTAIN_ONLY_ALLOWED_KEYS,
                 e.getMessage());
     }
 
     @Test
     public void pdfA4ForbiddenActions_SETOCGSTATE_ActionToPage_Test() {
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> generatePdfADocument(PdfAConformanceLevel.PDF_A_4, null, doc -> {
                     doc.addNewPage().setAdditionalAction(PdfName.O, PdfAction.createSetOcgState(new ArrayList<>()));
                 }));
-        Assert.assertEquals(PdfaExceptionMessageConstant.PAGE_AA_DICTIONARY_SHALL_CONTAIN_ONLY_ALLOWED_KEYS,
+        Assertions.assertEquals(PdfaExceptionMessageConstant.PAGE_AA_DICTIONARY_SHALL_CONTAIN_ONLY_ALLOWED_KEYS,
                 e.getMessage());
     }
 
     @Test
     public void pdfA4ForbiddenActions_GOTO3DVIEW_ActionToPage_Test() throws FileNotFoundException {
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> generatePdfADocument(PdfAConformanceLevel.PDF_A_4, null, doc -> {
                     PdfDictionary action = new PdfDictionary();
                     action.put(PdfName.S, PdfName.GoTo3DView);
                     doc.addNewPage().setAdditionalAction(PdfName.O, new PdfAction(action));
                 }));
-        Assert.assertEquals(PdfaExceptionMessageConstant.PAGE_AA_DICTIONARY_SHALL_CONTAIN_ONLY_ALLOWED_KEYS,
+        Assertions.assertEquals(PdfaExceptionMessageConstant.PAGE_AA_DICTIONARY_SHALL_CONTAIN_ONLY_ALLOWED_KEYS,
                 e.getMessage());
     }
 
 
     @Test
     public void pdfA4_SETOCGSTATE_InCatalog_Test() {
-        Exception pdfa4Exception = Assert.assertThrows(PdfAConformanceException.class, () -> {
+        Exception pdfa4Exception = Assertions.assertThrows(PdfAConformanceException.class, () -> {
             generatePdfADocument(PdfAConformanceLevel.PDF_A_4, null, doc -> {
                 doc.getCatalog().setAdditionalAction(PdfName.O, PdfAction.createSetOcgState(new ArrayList<>()));
             });
@@ -252,19 +251,19 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
         String messageFormat = MessageFormatUtil.format(
                 PdfaExceptionMessageConstant.CATALOG_AA_DICTIONARY_SHALL_CONTAIN_ONLY_ALLOWED_KEYS,
                 PdfName.SetOCGState.getValue());
-        Assert.assertEquals(messageFormat, pdfa4Exception.getMessage());
+        Assertions.assertEquals(messageFormat, pdfa4Exception.getMessage());
     }
 
     @Test
     public void pdfA4_SETOCGSTATE_Annotation_Test() {
-        Exception pdfa4Exception = Assert.assertThrows(PdfAConformanceException.class, () -> {
+        Exception pdfa4Exception = Assertions.assertThrows(PdfAConformanceException.class, () -> {
             generatePdfADocument(PdfAConformanceLevel.PDF_A_4, null, doc -> {
                 doc.addNewPage().addAnnotation(constructAnnotationWithAction(PdfName.SetOCGState));
             });
         });
         String messageFormat = MessageFormatUtil.format(PdfAConformanceException._0_ACTIONS_ARE_NOT_ALLOWED,
                 PdfName.SetOCGState.getValue());
-        Assert.assertEquals(messageFormat, pdfa4Exception.getMessage());
+        Assertions.assertEquals(messageFormat, pdfa4Exception.getMessage());
     }
 
 
@@ -281,14 +280,14 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
 
     @Test
     public void pdfA4_SETGOTO3DVIEW_Annotation_Test() {
-        Exception pdfa4Exception = Assert.assertThrows(PdfAConformanceException.class, () -> {
+        Exception pdfa4Exception = Assertions.assertThrows(PdfAConformanceException.class, () -> {
             generatePdfADocument(PdfAConformanceLevel.PDF_A_4, null, doc -> {
                 doc.addNewPage().addAnnotation(constructAnnotationWithAction(PdfName.GoTo3DView));
             });
         });
         String messageFormat = MessageFormatUtil.format(PdfAConformanceException._0_ACTIONS_ARE_NOT_ALLOWED,
                 PdfName.GoTo3DView.getValue());
-        Assert.assertEquals(messageFormat, pdfa4Exception.getMessage());
+        Assertions.assertEquals(messageFormat, pdfa4Exception.getMessage());
     }
 
     @Test
@@ -335,7 +334,7 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
 
     @Test
     public void pdfA4F_SETOCGSTATE_InCatalog_Test() {
-        Exception pdfa4Exception = Assert.assertThrows(PdfAConformanceException.class, () -> {
+        Exception pdfa4Exception = Assertions.assertThrows(PdfAConformanceException.class, () -> {
             generatePdfADocument(PdfAConformanceLevel.PDF_A_4F, null, doc -> {
                 doc.getCatalog().setAdditionalAction(PdfName.O, PdfAction.createSetOcgState(new ArrayList<>()));
             });
@@ -343,12 +342,12 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
         String messageFormat = MessageFormatUtil.format(
                 PdfaExceptionMessageConstant.CATALOG_AA_DICTIONARY_SHALL_CONTAIN_ONLY_ALLOWED_KEYS,
                 PdfName.SetOCGState.getValue());
-        Assert.assertEquals(messageFormat, pdfa4Exception.getMessage());
+        Assertions.assertEquals(messageFormat, pdfa4Exception.getMessage());
     }
 
     @Test
     public void pdfA4E_SETOCGSTATE_InCatalog_Test() {
-        Exception pdfa4Exception = Assert.assertThrows(PdfAConformanceException.class, () -> {
+        Exception pdfa4Exception = Assertions.assertThrows(PdfAConformanceException.class, () -> {
             generatePdfADocument(PdfAConformanceLevel.PDF_A_4E, null, doc -> {
                 doc.getCatalog().setAdditionalAction(PdfName.O, PdfAction.createSetOcgState(new ArrayList<>()));
             });
@@ -356,12 +355,12 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
         String messageFormat = MessageFormatUtil.format(
                 PdfaExceptionMessageConstant.CATALOG_AA_DICTIONARY_SHALL_CONTAIN_ONLY_ALLOWED_KEYS,
                 PdfName.SetOCGState.getValue());
-        Assert.assertEquals(messageFormat, pdfa4Exception.getMessage());
+        Assertions.assertEquals(messageFormat, pdfa4Exception.getMessage());
     }
 
     @Test
     public void pdfA4_GOTO3DVIEW_InCatalog_Test() {
-        Exception pdfa4Exception = Assert.assertThrows(PdfAConformanceException.class, () -> {
+        Exception pdfa4Exception = Assertions.assertThrows(PdfAConformanceException.class, () -> {
             generatePdfADocument(PdfAConformanceLevel.PDF_A_4, null, doc -> {
                 PdfDictionary action = new PdfDictionary();
                 action.put(PdfName.S, PdfName.GoTo3DView);
@@ -372,31 +371,31 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
         String messageFormat = MessageFormatUtil.format(
                 PdfaExceptionMessageConstant.CATALOG_AA_DICTIONARY_SHALL_CONTAIN_ONLY_ALLOWED_KEYS,
                 PdfName.GoTo3DView.getValue());
-        Assert.assertEquals(messageFormat, pdfa4Exception.getMessage());
+        Assertions.assertEquals(messageFormat, pdfa4Exception.getMessage());
     }
 
     @Test
     public void pdfA4F_GOTO3DView_InCatalog_Test() {
-        Exception pdfa4Exception = Assert.assertThrows(PdfAConformanceException.class, () -> {
+        Exception pdfa4Exception = Assertions.assertThrows(PdfAConformanceException.class, () -> {
             generatePdfADocument(PdfAConformanceLevel.PDF_A_4F, null, doc -> {
                 PdfDictionary action = new PdfDictionary();
                 action.put(PdfName.S, PdfName.GoTo3DView);
                 doc.getCatalog().setAdditionalAction(PdfName.O, new PdfAction(action));
             });
         });
-        Assert.assertEquals(pdfa4Exception.getMessage(),
+        Assertions.assertEquals(pdfa4Exception.getMessage(),
                 PdfaExceptionMessageConstant.CATALOG_AA_DICTIONARY_SHALL_CONTAIN_ONLY_ALLOWED_KEYS);
     }
 
     @Test
     public void pdfA4E_GOTO3DView_InCatalog_Test() {
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> generatePdfADocument(PdfAConformanceLevel.PDF_A_4E, null, doc -> {
                     PdfDictionary action = new PdfDictionary();
                     action.put(PdfName.S, PdfName.GoTo3DView);
                     doc.getCatalog().setAdditionalAction(PdfName.O, new PdfAction(action));
                 }));
-        Assert.assertEquals(PdfaExceptionMessageConstant.CATALOG_AA_DICTIONARY_SHALL_CONTAIN_ONLY_ALLOWED_KEYS,
+        Assertions.assertEquals(PdfaExceptionMessageConstant.CATALOG_AA_DICTIONARY_SHALL_CONTAIN_ONLY_ALLOWED_KEYS,
                 e.getMessage());
     }
 
@@ -446,11 +445,11 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
     }
 
     private void compareResult(String outPdf, String cmpPdf) throws IOException, InterruptedException {
-        Assert.assertNull(// Android-Conversion-Skip-Line TODO DEVSIX-7377
+        Assertions.assertNull(// Android-Conversion-Skip-Line TODO DEVSIX-7377
                 new VeraPdfValidator().validate(outPdf));// Android-Conversion-Skip-Line TODO DEVSIX-7377
         String result = new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_");
         if (result != null) {
-            Assert.fail(result);
+            Assertions.fail(result);
         }
     }
 

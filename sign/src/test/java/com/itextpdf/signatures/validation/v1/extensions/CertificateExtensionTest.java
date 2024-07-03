@@ -28,16 +28,15 @@ import com.itextpdf.signatures.OID;
 import com.itextpdf.signatures.OID.X509Extensions;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
 import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(BouncyCastleUnitTest.class)
+@Tag("BouncyCastleUnitTest")
 public class CertificateExtensionTest extends ExtendedITextTest {
     private static final String certsSrc = "./src/test/resources/com/itextpdf/signatures/validation/v1/extensions/CertificateExtensionTest/";
 
@@ -51,7 +50,7 @@ public class CertificateExtensionTest extends ExtendedITextTest {
         CertificateExtension extension = new CertificateExtension(
                 OID.X509Extensions.KEY_USAGE, null);
 
-        Assert.assertTrue(extension.existsInCertificate(certificate));
+        Assertions.assertTrue(extension.existsInCertificate(certificate));
     }
 
     @Test
@@ -62,7 +61,7 @@ public class CertificateExtensionTest extends ExtendedITextTest {
         CertificateExtension extension = new CertificateExtension(
                 OID.X509Extensions.KEY_USAGE, FACTORY.createKeyUsage(98).toASN1Primitive());
 
-        Assert.assertFalse(extension.existsInCertificate(certificate));
+        Assertions.assertFalse(extension.existsInCertificate(certificate));
     }
 
     @Test
@@ -73,7 +72,7 @@ public class CertificateExtensionTest extends ExtendedITextTest {
         CertificateExtension extension = new CertificateExtension(
                 X509Extensions.BASIC_CONSTRAINTS, FACTORY.createKeyUsage(98).toASN1Primitive());
 
-        Assert.assertFalse(extension.existsInCertificate(certificate));
+        Assertions.assertFalse(extension.existsInCertificate(certificate));
     }
 
     @Test
@@ -84,7 +83,7 @@ public class CertificateExtensionTest extends ExtendedITextTest {
         CertificateExtension extension = new CertificateExtension(
                 OID.X509Extensions.KEY_USAGE, FACTORY.createKeyUsage(98).toASN1Primitive());
 
-        Assert.assertTrue(extension.existsInCertificate(certificate));
+        Assertions.assertTrue(extension.existsInCertificate(certificate));
     }
 
     @Test
@@ -96,7 +95,7 @@ public class CertificateExtensionTest extends ExtendedITextTest {
                 OID.X509Extensions.KEY_USAGE, FACTORY.createKeyUsage(66).toASN1Primitive());
 
         // CertificateExtension#existsInCertificate only returns true in case of complete match, therefore false.
-        Assert.assertFalse(extension.existsInCertificate(certificate));
+        Assertions.assertFalse(extension.existsInCertificate(certificate));
     }
 
     @Test
@@ -107,7 +106,7 @@ public class CertificateExtensionTest extends ExtendedITextTest {
         CertificateExtension extension = new CertificateExtension(
                 OID.X509Extensions.KEY_USAGE, FACTORY.createKeyUsage(32802).toASN1Primitive());
 
-        Assert.assertFalse(extension.existsInCertificate(certificate));
+        Assertions.assertFalse(extension.existsInCertificate(certificate));
     }
 
     @Test
@@ -118,7 +117,7 @@ public class CertificateExtensionTest extends ExtendedITextTest {
         CertificateExtension extension2 = new CertificateExtension(
                 OID.X509Extensions.KEY_USAGE, FACTORY.createKeyUsage(32802).toASN1Primitive());
 
-        Assert.assertEquals(extension1, extension2);
+        Assertions.assertEquals(extension1, extension2);
     }
 
     @Test
@@ -126,7 +125,7 @@ public class CertificateExtensionTest extends ExtendedITextTest {
         CertificateExtension extension1 = new CertificateExtension(
                 OID.X509Extensions.KEY_USAGE, FACTORY.createKeyUsage(32802).toASN1Primitive());
 
-        Assert.assertNotEquals("extension1", extension1);
+        Assertions.assertNotEquals("extension1", extension1);
     }
 
     @Test
@@ -137,7 +136,7 @@ public class CertificateExtensionTest extends ExtendedITextTest {
         CertificateExtension extension2 = new CertificateExtension(
                 X509Extensions.EXTENDED_KEY_USAGE, FACTORY.createKeyUsage(32802).toASN1Primitive());
 
-        Assert.assertNotEquals(extension1, extension2);
+        Assertions.assertNotEquals(extension1, extension2);
     }
 
     @Test
@@ -148,7 +147,7 @@ public class CertificateExtensionTest extends ExtendedITextTest {
         CertificateExtension extension2 = new CertificateExtension(
                 OID.X509Extensions.KEY_USAGE, FACTORY.createKeyUsage(32800).toASN1Primitive());
 
-        Assert.assertNotEquals(extension1, extension2);
+        Assertions.assertNotEquals(extension1, extension2);
     }
 
     @Test
@@ -159,7 +158,7 @@ public class CertificateExtensionTest extends ExtendedITextTest {
         CertificateExtension extension2 = new CertificateExtension(
                 OID.X509Extensions.KEY_USAGE, FACTORY.createKeyUsage(32802).toASN1Primitive());
 
-        Assert.assertEquals(extension1.hashCode(), extension2.hashCode());
+        Assertions.assertEquals(extension1.hashCode(), extension2.hashCode());
     }
 
     @Test
@@ -170,7 +169,7 @@ public class CertificateExtensionTest extends ExtendedITextTest {
         CertificateExtension extension2 = new CertificateExtension(
                 OID.X509Extensions.KEY_USAGE, FACTORY.createKeyUsage(32800).toASN1Primitive());
 
-        Assert.assertNotEquals(extension1.hashCode(), extension2.hashCode());
+        Assertions.assertNotEquals(extension1.hashCode(), extension2.hashCode());
     }
 
     @Test
@@ -181,7 +180,7 @@ public class CertificateExtensionTest extends ExtendedITextTest {
         CertificateExtension extension2 = new CertificateExtension(
                 X509Extensions.EXTENDED_KEY_USAGE, FACTORY.createKeyUsage(32802).toASN1Primitive());
 
-        Assert.assertNotEquals(extension1.hashCode(), extension2.hashCode());
+        Assertions.assertNotEquals(extension1.hashCode(), extension2.hashCode());
     }
 
 
@@ -189,14 +188,14 @@ public class CertificateExtensionTest extends ExtendedITextTest {
     public void getExtensionValueTest() {
         CertificateExtension extension = new CertificateExtension(
                 OID.X509Extensions.KEY_USAGE, FACTORY.createKeyUsage(32802).toASN1Primitive());
-        Assert.assertEquals(FACTORY.createKeyUsage(32802).toASN1Primitive(), extension.getExtensionValue());
+        Assertions.assertEquals(FACTORY.createKeyUsage(32802).toASN1Primitive(), extension.getExtensionValue());
     }
 
     @Test
     public void getExtensionOidTest() {
         CertificateExtension extension = new CertificateExtension(
                 OID.X509Extensions.KEY_USAGE, FACTORY.createKeyUsage(32802).toASN1Primitive());
-        Assert.assertEquals(OID.X509Extensions.KEY_USAGE, extension.getExtensionOid());
+        Assertions.assertEquals(OID.X509Extensions.KEY_USAGE, extension.getExtensionOid());
     }
 
 }

@@ -25,14 +25,13 @@ package com.itextpdf.io.font;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class CFFFontTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/font/sharedFontsResourceFiles/";
@@ -55,13 +54,13 @@ public class CFFFontTest extends ExtendedITextTest {
 
         cffFont.seek(0);
         // Get int (bin 0000 0001 0000 0000  0000 0100 0000 0011)
-        Assert.assertEquals(16778243, cffFont.getInt());
+        Assertions.assertEquals(16778243, cffFont.getInt());
         cffFont.seek(0);
         // Gets the first short (bin 0000 0001 0000 0000)
-        Assert.assertEquals(256, cffFont.getShort());
+        Assertions.assertEquals(256, cffFont.getShort());
         cffFont.seek(2);
         // Gets the second short (bin 0000 0100 0000 0011)
-        Assert.assertEquals(1027, cffFont.getShort());
+        Assertions.assertEquals(1027, cffFont.getShort());
     }
 
     @Test
@@ -82,8 +81,8 @@ public class CFFFontTest extends ExtendedITextTest {
 
 
         cffFont.seek(0);
-        Assert.assertEquals(0, cffFont.getPosition());
+        Assertions.assertEquals(0, cffFont.getPosition());
         cffFont.seek(16);
-        Assert.assertEquals(16, cffFont.getPosition());
+        Assertions.assertEquals(16, cffFont.getPosition());
     }
 }

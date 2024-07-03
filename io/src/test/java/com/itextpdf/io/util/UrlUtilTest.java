@@ -24,7 +24,6 @@ package com.itextpdf.io.util;
 
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,17 +38,17 @@ import java.nio.file.Paths;
 // Android-Conversion-Skip-Line (Security provider is required for working getFinalConnection through SSL on Android)
 // Android-Conversion-Replace import java.security.Security;
 // Android-Conversion-Replace import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class UrlUtilTest extends ExtendedITextTest {
 
     private static final String destinationFolder = "./target/test/com/itextpdf/io/UrlUtilTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         // Android-Conversion-Skip-Line (Security provider is required for working getFinalConnection through SSL on Android)
         // Android-Conversion-Replace Security.addProvider(new BouncyCastleProvider());
@@ -67,9 +66,9 @@ public class UrlUtilTest extends ExtendedITextTest {
         try {
             finalConnection = UrlUtil.getFinalConnection(initialUrl);
 
-            Assert.assertNotNull(finalConnection);
-            Assert.assertNotEquals(initialUrl, finalConnection.getURL());
-            Assert.assertEquals(expectedURL, finalConnection.getURL());
+            Assertions.assertNotNull(finalConnection);
+            Assertions.assertNotEquals(initialUrl, finalConnection.getURL());
+            Assertions.assertEquals(expectedURL, finalConnection.getURL());
         } finally {
             finalConnection.getInputStream().close();
         }
@@ -81,7 +80,7 @@ public class UrlUtilTest extends ExtendedITextTest {
     public void getInputStreamOfFinalConnectionThrowExceptionTest() throws IOException {
         URL invalidUrl = new URL("http://itextpdf");
 
-        Assert.assertThrows(UnknownHostException.class, () -> UrlUtil.getInputStreamOfFinalConnection(invalidUrl));
+        Assertions.assertThrows(UnknownHostException.class, () -> UrlUtil.getInputStreamOfFinalConnection(invalidUrl));
     }
 
     // This test checks that when we pass valid url and trying get stream related to final redirected url, it would
@@ -91,7 +90,7 @@ public class UrlUtilTest extends ExtendedITextTest {
         URL initialUrl = new URL("http://itextpdf.com");
         InputStream streamOfFinalConnectionOfInvalidUrl = UrlUtil.getInputStreamOfFinalConnection(initialUrl);
 
-        Assert.assertNotNull(streamOfFinalConnectionOfInvalidUrl);
+        Assertions.assertNotNull(streamOfFinalConnectionOfInvalidUrl);
     }
 
     @Test
@@ -101,20 +100,20 @@ public class UrlUtilTest extends ExtendedITextTest {
         // Android-Conversion-Skip-Line (TODO DEVSIX-7371 investigate different behavior of a few iTextCore tests on Java and Android)
         String expected = absolutePathRoot + destinationFolder; // Android-Conversion-Replace String expected = absolutePathRoot + destinationFolder.substring(1);
         File tempFile = FileUtil.createTempFile(destinationFolder);
-        Assert.assertEquals(expected, FileUtil.getParentDirectoryUri(tempFile));
+        Assertions.assertEquals(expected, FileUtil.getParentDirectoryUri(tempFile));
     }
 
     @Test
     public void nullBaseUriTest() throws IOException {
         String expected = "";
         File tempFile = null;
-        Assert.assertEquals(expected, FileUtil.getParentDirectoryUri(tempFile));
+        Assertions.assertEquals(expected, FileUtil.getParentDirectoryUri(tempFile));
     }
 
     @Test
     public void toAbsoluteUriTest() throws IOException, URISyntaxException {
         String expected = "http://itextpdf.com/";
-        Assert.assertEquals(expected, UrlUtil.toAbsoluteURI(new URI(expected)));
+        Assertions.assertEquals(expected, UrlUtil.toAbsoluteURI(new URI(expected)));
     }
 
     @Test
@@ -123,7 +122,7 @@ public class UrlUtilTest extends ExtendedITextTest {
         InputStream openStream = UrlUtil.openStream(new File(resPath).toURI().toURL());
 
         String actual = new String(StreamUtil.inputStreamToArray(openStream), StandardCharsets.UTF_8);
-        Assert.assertEquals("Hello world from text file!", actual);
+        Assertions.assertEquals("Hello world from text file!", actual);
 
     }
 }

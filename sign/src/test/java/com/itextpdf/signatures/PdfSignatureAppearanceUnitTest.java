@@ -49,7 +49,6 @@ import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.signatures.PdfSignatureAppearance.RenderingMode;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -58,16 +57,16 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.Calendar;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 /**
  * The idea of this test is to check the {@link PdfSignatureAppearance}'s getters.
  * For actual result of setters invocations one should check the integration test for this class.
  */
-@Category(BouncyCastleUnitTest.class)
+@Tag("BouncyCastleUnitTest")
 public class PdfSignatureAppearanceUnitTest extends ExtendedITextTest {
     // The source folder points to the integration test, so that the resources are nor duplicated
     public static final String SOURCE_FOLDER
@@ -82,7 +81,7 @@ public class PdfSignatureAppearanceUnitTest extends ExtendedITextTest {
 
     private static Certificate[] chain;
 
-    @BeforeClass
+    @BeforeAll
     public static void before() throws IOException, CertificateException {
         Security.addProvider(BOUNCY_CASTLE_FACTORY.getProvider());
         createOrClearDestinationFolder(DESTINATION_FOLDER);
@@ -95,16 +94,16 @@ public class PdfSignatureAppearanceUnitTest extends ExtendedITextTest {
 
         String newReasonCaption = "Hello World";
 
-        Assert.assertNull(signatureAppearance.getLayer2Text());
+        Assertions.assertNull(signatureAppearance.getLayer2Text());
 
         String layer2Text = signatureAppearance.generateSignatureText().generateDescriptionText();
         // There is no text from new reason caption in the default layer 2 text
-        Assert.assertFalse(layer2Text.contains(newReasonCaption));
+        Assertions.assertFalse(layer2Text.contains(newReasonCaption));
 
         signatureAppearance.setReasonCaption(newReasonCaption);
         layer2Text = signatureAppearance.generateSignatureText().generateDescriptionText();
         // Now layer 2 text contains text from new reason caption
-        Assert.assertTrue(layer2Text.contains(newReasonCaption));
+        Assertions.assertTrue(layer2Text.contains(newReasonCaption));
     }
 
     @Test
@@ -113,16 +112,16 @@ public class PdfSignatureAppearanceUnitTest extends ExtendedITextTest {
 
         String newLocationCaption = "Hello World";
 
-        Assert.assertNull(signatureAppearance.getLayer2Text());
+        Assertions.assertNull(signatureAppearance.getLayer2Text());
 
         String layer2Text = signatureAppearance.generateSignatureText().generateDescriptionText();
         // There is no text from new location caption in the default layer 2 text
-        Assert.assertFalse(layer2Text.contains(newLocationCaption));
+        Assertions.assertFalse(layer2Text.contains(newLocationCaption));
 
         signatureAppearance.setLocationCaption(newLocationCaption);
         layer2Text = signatureAppearance.generateSignatureText().generateDescriptionText();
         // Now layer 2 text contains text from new location caption
-        Assert.assertTrue(layer2Text.contains(newLocationCaption));
+        Assertions.assertTrue(layer2Text.contains(newLocationCaption));
     }
 
     @Test
@@ -130,88 +129,88 @@ public class PdfSignatureAppearanceUnitTest extends ExtendedITextTest {
         PdfSignatureAppearance signatureAppearance = getTestSignatureAppearance();
 
         RenderingMode defaultMode = signatureAppearance.getRenderingMode();
-        Assert.assertEquals(RenderingMode.DESCRIPTION, defaultMode);
+        Assertions.assertEquals(RenderingMode.DESCRIPTION, defaultMode);
 
         RenderingMode testRenderingMode = RenderingMode.GRAPHIC_AND_DESCRIPTION;
         signatureAppearance.setRenderingMode(testRenderingMode);
-        Assert.assertEquals(testRenderingMode, signatureAppearance.getRenderingMode());
+        Assertions.assertEquals(testRenderingMode, signatureAppearance.getRenderingMode());
     }
 
     @Test
     public void signatureCreatorSetGetTest() throws IOException {
         PdfSignatureAppearance signatureAppearance = getTestSignatureAppearance();
 
-        Assert.assertEquals("", signatureAppearance.getSignatureCreator());
+        Assertions.assertEquals("", signatureAppearance.getSignatureCreator());
 
         String signatureCreator = "Hello World";
         signatureAppearance.setSignatureCreator(signatureCreator);
-        Assert.assertEquals(signatureCreator, signatureAppearance.getSignatureCreator());
+        Assertions.assertEquals(signatureCreator, signatureAppearance.getSignatureCreator());
     }
 
     @Test
     public void contactSetGetTest() throws IOException {
         PdfSignatureAppearance signatureAppearance = getTestSignatureAppearance();
 
-        Assert.assertEquals("", signatureAppearance.getContact());
+        Assertions.assertEquals("", signatureAppearance.getContact());
 
         String contact = "Hello World";
         signatureAppearance.setContact(contact);
-        Assert.assertEquals(contact, signatureAppearance.getContact());
+        Assertions.assertEquals(contact, signatureAppearance.getContact());
     }
 
     @Test
     public void certificateSetGetTest() throws IOException {
         PdfSignatureAppearance signatureAppearance = getTestSignatureAppearance();
 
-        Assert.assertNull(signatureAppearance.getCertificate());
+        Assertions.assertNull(signatureAppearance.getCertificate());
 
         Certificate testCertificate = chain[0];
         signatureAppearance.setCertificate(testCertificate);
-        Assert.assertEquals(testCertificate, signatureAppearance.getCertificate());
+        Assertions.assertEquals(testCertificate, signatureAppearance.getCertificate());
     }
 
     @Test
     public void signatureGraphicSetGetTest() throws IOException {
         PdfSignatureAppearance signatureAppearance = getTestSignatureAppearance();
 
-        Assert.assertNull(signatureAppearance.getSignatureGraphic());
+        Assertions.assertNull(signatureAppearance.getSignatureGraphic());
 
         ImageData testImageData = ImageDataFactory.create(SOURCE_FOLDER + "itext.png");
         signatureAppearance.setSignatureGraphic(testImageData);
-        Assert.assertEquals(testImageData, signatureAppearance.getSignatureGraphic());
+        Assertions.assertEquals(testImageData, signatureAppearance.getSignatureGraphic());
     }
 
     @Test
     public void imageSetGetTest() throws IOException {
         PdfSignatureAppearance signatureAppearance = getTestSignatureAppearance();
 
-        Assert.assertNull(signatureAppearance.getImage());
+        Assertions.assertNull(signatureAppearance.getImage());
 
         ImageData testImageData = ImageDataFactory.create(SOURCE_FOLDER + "itext.png");
         signatureAppearance.setImage(testImageData);
-        Assert.assertEquals(testImageData, signatureAppearance.getImage());
+        Assertions.assertEquals(testImageData, signatureAppearance.getImage());
     }
 
     @Test
     public void imageScalingSetGetTest() throws IOException {
         PdfSignatureAppearance signatureAppearance = getTestSignatureAppearance();
 
-        Assert.assertEquals(0, signatureAppearance.getImageScale(), 0.0001);
+        Assertions.assertEquals(0, signatureAppearance.getImageScale(), 0.0001);
 
         float newScale = 1F;
         signatureAppearance.setImageScale(newScale);
-        Assert.assertEquals(newScale, signatureAppearance.getImageScale(), 0.0001);
+        Assertions.assertEquals(newScale, signatureAppearance.getImageScale(), 0.0001);
     }
 
     @Test
     public void layer2FontSetGetTest() throws IOException {
         PdfSignatureAppearance signatureAppearance = getTestSignatureAppearance();
 
-        Assert.assertNull(signatureAppearance.getLayer2Font());
+        Assertions.assertNull(signatureAppearance.getLayer2Font());
 
         PdfFont newFont = PdfFontFactory.createFont();
         signatureAppearance.setLayer2Font(newFont);
-        Assert.assertEquals(newFont, signatureAppearance.getLayer2Font());
+        Assertions.assertEquals(newFont, signatureAppearance.getLayer2Font());
     }
 
     @Test
@@ -222,9 +221,9 @@ public class PdfSignatureAppearanceUnitTest extends ExtendedITextTest {
         fontProvider.getFontSet().addFont(StandardFonts.HELVETICA, "");
         String fontFamilyName = "fontFamily";
         appearance.setFontProvider(fontProvider).setFontFamily(fontFamilyName);
-        Assert.assertEquals(fontProvider,
+        Assertions.assertEquals(fontProvider,
                 appearance.getSignatureAppearance().<FontProvider>getProperty(Property.FONT_PROVIDER));
-        Assert.assertEquals(fontFamilyName,
+        Assertions.assertEquals(fontFamilyName,
                 ((String[]) appearance.getSignatureAppearance().<String[]>getProperty(Property.FONT))[0]);
     }
 
@@ -232,11 +231,11 @@ public class PdfSignatureAppearanceUnitTest extends ExtendedITextTest {
     public void layer2FontSizeSetGetTest() throws IOException {
         PdfSignatureAppearance signatureAppearance = getTestSignatureAppearance();
 
-        Assert.assertEquals(0, signatureAppearance.getLayer2FontSize(), 0.0001);
+        Assertions.assertEquals(0, signatureAppearance.getLayer2FontSize(), 0.0001);
 
         float newSize = 12F;
         signatureAppearance.setLayer2FontSize(newSize);
-        Assert.assertEquals(newSize, signatureAppearance.getLayer2FontSize(), 0.0001);
+        Assertions.assertEquals(newSize, signatureAppearance.getLayer2FontSize(), 0.0001);
     }
 
 
@@ -244,11 +243,11 @@ public class PdfSignatureAppearanceUnitTest extends ExtendedITextTest {
     public void layer2FontColorSetGetTest() throws IOException {
         PdfSignatureAppearance signatureAppearance = getTestSignatureAppearance();
 
-        Assert.assertNull(signatureAppearance.getLayer2FontColor());
+        Assertions.assertNull(signatureAppearance.getLayer2FontColor());
 
         Color newColor = ColorConstants.RED;
         signatureAppearance.setLayer2FontColor(newColor);
-        Assert.assertEquals(newColor, signatureAppearance.getLayer2FontColor());
+        Assertions.assertEquals(newColor, signatureAppearance.getLayer2FontColor());
     }
 
     @Test
@@ -258,7 +257,7 @@ public class PdfSignatureAppearanceUnitTest extends ExtendedITextTest {
                 new Rectangle(0, 100), 1);
         PdfFormXObject xObject = appearance.getAppearance();
 
-        Assert.assertTrue(new Rectangle(0, 0).equalsWithEpsilon(xObject.getBBox().toRectangle()));
+        Assertions.assertTrue(new Rectangle(0, 0).equalsWithEpsilon(xObject.getBBox().toRectangle()));
     }
 
     @Test
@@ -267,7 +266,7 @@ public class PdfSignatureAppearanceUnitTest extends ExtendedITextTest {
 
         Calendar current = DateTimeUtil.getCurrentTimeCalendar();
         appearance.setSignDate(current);
-        Assert.assertEquals(current, appearance.getSignDate());
+        Assertions.assertEquals(current, appearance.getSignDate());
     }
 
     @Test
@@ -275,11 +274,11 @@ public class PdfSignatureAppearanceUnitTest extends ExtendedITextTest {
         try (Document ignored = new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream())))) {
             PdfSignatureAppearance appearance = new PdfSignatureAppearance(null, new Rectangle(100, 100), 1);
             appearance.setRenderingMode(RenderingMode.GRAPHIC_AND_DESCRIPTION);
-            Assert.assertThrows(IllegalStateException.class, () -> appearance.getSignatureAppearance());
+            Assertions.assertThrows(IllegalStateException.class, () -> appearance.getSignatureAppearance());
 
             PdfSignatureAppearance appearance2 = new PdfSignatureAppearance(null, new Rectangle(100, 100), 1);
             appearance2.setRenderingMode(RenderingMode.GRAPHIC);
-            Assert.assertThrows(IllegalStateException.class, () -> appearance2.getSignatureAppearance());
+            Assertions.assertThrows(IllegalStateException.class, () -> appearance2.getSignatureAppearance());
         }
     }
 
@@ -324,7 +323,7 @@ public class PdfSignatureAppearanceUnitTest extends ExtendedITextTest {
             document.add(field3);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     private static PdfSignatureAppearance getTestSignatureAppearance() throws IOException {

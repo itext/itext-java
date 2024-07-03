@@ -28,16 +28,15 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PreserveAspectRatioSvgNodeRendererUnitTest extends ExtendedITextTest {
 
     private static final Rectangle VIEWPORT_VALUE = PageSize.DEFAULT;
@@ -141,7 +140,7 @@ public class PreserveAspectRatioSvgNodeRendererUnitTest extends ExtendedITextTes
         String[] cmpAlignAndMeet = new String[]{align, meet};
         String[] outAlignAndMeet = retrieveAlignAndMeet(align, meet);
 
-        Assert.assertArrayEquals(cmpAlignAndMeet, outAlignAndMeet);
+        Assertions.assertArrayEquals(cmpAlignAndMeet, outAlignAndMeet);
     }
 
     @Test
@@ -151,7 +150,7 @@ public class PreserveAspectRatioSvgNodeRendererUnitTest extends ExtendedITextTes
         String[] cmpAlignAndMeet = new String[]{align, meet};
         String[] outAlignAndMeet = retrieveAlignAndMeet(align, meet);
 
-        Assert.assertArrayEquals(cmpAlignAndMeet, outAlignAndMeet);
+        Assertions.assertArrayEquals(cmpAlignAndMeet, outAlignAndMeet);
     }
 
     @Test
@@ -161,7 +160,7 @@ public class PreserveAspectRatioSvgNodeRendererUnitTest extends ExtendedITextTes
         String[] cmpAlignAndMeet = new String[]{align, meet};
         String[] outAlignAndMeet = retrieveAlignAndMeet(align, "");
 
-        Assert.assertArrayEquals(cmpAlignAndMeet, outAlignAndMeet);
+        Assertions.assertArrayEquals(cmpAlignAndMeet, outAlignAndMeet);
     }
 
     @Test
@@ -172,7 +171,7 @@ public class PreserveAspectRatioSvgNodeRendererUnitTest extends ExtendedITextTes
         String[] outAlignAndMeet = retrieveAlignAndMeet("", meet);
 
         //should fail, because align attribute must be present
-        Assert.assertFalse(Arrays.equals(cmpAlignAndMeet, outAlignAndMeet));
+        Assertions.assertFalse(Arrays.equals(cmpAlignAndMeet, outAlignAndMeet));
     }
 
     @Test
@@ -183,7 +182,7 @@ public class PreserveAspectRatioSvgNodeRendererUnitTest extends ExtendedITextTes
         String[] outAlignAndMeet = retrieveAlignAndMeet("", meet);
 
         //should fail, because align attribute must be present
-        Assert.assertFalse(Arrays.equals(cmpAlignAndMeet, outAlignAndMeet));
+        Assertions.assertFalse(Arrays.equals(cmpAlignAndMeet, outAlignAndMeet));
     }
 
     @Test
@@ -193,7 +192,7 @@ public class PreserveAspectRatioSvgNodeRendererUnitTest extends ExtendedITextTes
         String[] cmpAlignAndMeet = new String[]{align, meet};
         String[] outAlignAndMeet = retrieveAlignAndMeet(align, meet);
 
-        Assert.assertArrayEquals(cmpAlignAndMeet, outAlignAndMeet);
+        Assertions.assertArrayEquals(cmpAlignAndMeet, outAlignAndMeet);
     }
 
     @Test
@@ -203,7 +202,7 @@ public class PreserveAspectRatioSvgNodeRendererUnitTest extends ExtendedITextTes
         String[] cmpAlignAndMeet = new String[]{align, meet};
         String[] outAlignAndMeet = retrieveAlignAndMeet(align, meet);
 
-        Assert.assertArrayEquals(cmpAlignAndMeet, outAlignAndMeet);
+        Assertions.assertArrayEquals(cmpAlignAndMeet, outAlignAndMeet);
     }
 
     @Test
@@ -213,7 +212,7 @@ public class PreserveAspectRatioSvgNodeRendererUnitTest extends ExtendedITextTes
         String[] cmpAlignAndMeet = new String[]{align, meet};
         String[] outAlignAndMeet = retrieveAlignAndMeet("", "");
 
-        Assert.assertArrayEquals(cmpAlignAndMeet, outAlignAndMeet);
+        Assertions.assertArrayEquals(cmpAlignAndMeet, outAlignAndMeet);
     }
 
     private void processAspectRatioPositionAndCompare(String alignValue, AffineTransform cmpTransform) {
@@ -232,7 +231,7 @@ public class PreserveAspectRatioSvgNodeRendererUnitTest extends ExtendedITextTes
 
         AffineTransform outTransform = renderer.processAspectRatioPosition(context, viewboxValues, alignValue, scaleWidth, scaleHeight);
 
-        Assert.assertTrue(cmpTransform.equals(outTransform));
+        Assertions.assertTrue(cmpTransform.equals(outTransform));
     }
 
     private String[] retrieveAlignAndMeet(String align, String meet) {

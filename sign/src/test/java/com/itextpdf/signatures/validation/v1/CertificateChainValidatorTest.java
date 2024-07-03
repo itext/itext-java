@@ -47,7 +47,6 @@ import com.itextpdf.signatures.validation.v1.report.ReportItem;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport.ValidationResult;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
 import java.io.IOException;
 import java.security.cert.Certificate;
@@ -57,12 +56,12 @@ import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(BouncyCastleUnitTest.class)
+@Tag("BouncyCastleUnitTest")
 public class CertificateChainValidatorTest extends ExtendedITextTest {
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/validation/v1/CertificateChainValidatorTest/";
 
@@ -73,7 +72,7 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
             CertificateSource.SIGNER_CERT, TimeBasedContext.PRESENT);
     private MockRevocationDataValidator mockRevocationDataValidator;
 
-    @Before
+    @BeforeEach
     public void setup() {
         mockRevocationDataValidator = new MockRevocationDataValidator();
         properties = new SignatureValidationProperties();
@@ -189,19 +188,19 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         validator.validateCertificate(baseContext, signingCert, TimeTestUtil.TEST_DATE_TIME);
 
 
-        Assert.assertEquals(2, mockRevocationDataValidator.calls.size());
+        Assertions.assertEquals(2, mockRevocationDataValidator.calls.size());
 
         MockRevocationDataValidator.RevocationDataValidatorCall call1 = mockRevocationDataValidator.calls.get(0);
-        Assert.assertEquals(signingCert, call1.certificate);
-        Assert.assertEquals(CertificateSource.SIGNER_CERT, call1.context.getCertificateSource());
-        Assert.assertEquals(ValidatorContext.CERTIFICATE_CHAIN_VALIDATOR, call1.context.getValidatorContext());
-        Assert.assertEquals(TimeTestUtil.TEST_DATE_TIME, call1.validationDate);
+        Assertions.assertEquals(signingCert, call1.certificate);
+        Assertions.assertEquals(CertificateSource.SIGNER_CERT, call1.context.getCertificateSource());
+        Assertions.assertEquals(ValidatorContext.CERTIFICATE_CHAIN_VALIDATOR, call1.context.getValidatorContext());
+        Assertions.assertEquals(TimeTestUtil.TEST_DATE_TIME, call1.validationDate);
 
         MockRevocationDataValidator.RevocationDataValidatorCall call2 = mockRevocationDataValidator.calls.get(1);
-        Assert.assertEquals(intermediateCert, call2.certificate);
-        Assert.assertEquals(CertificateSource.CERT_ISSUER, call2.context.getCertificateSource());
-        Assert.assertEquals(ValidatorContext.CERTIFICATE_CHAIN_VALIDATOR, call2.context.getValidatorContext());
-        Assert.assertEquals(TimeTestUtil.TEST_DATE_TIME, call2.validationDate);
+        Assertions.assertEquals(intermediateCert, call2.certificate);
+        Assertions.assertEquals(CertificateSource.CERT_ISSUER, call2.context.getCertificateSource());
+        Assertions.assertEquals(ValidatorContext.CERTIFICATE_CHAIN_VALIDATOR, call2.context.getValidatorContext());
+        Assertions.assertEquals(TimeTestUtil.TEST_DATE_TIME, call2.validationDate);
     }
 
     @Test
@@ -223,29 +222,29 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
 
         ValidationReport report = validator.validateCertificate(baseContext, signingCert, DateTimeUtil.getCurrentTimeDate());
 
-        Assert.assertEquals(ValidationResult.INVALID, report.getValidationResult());
-        Assert.assertEquals(3, report.getFailures().size());
-        Assert.assertEquals(4, report.getLogs().size());
-        Assert.assertEquals(report.getFailures().get(0), report.getLogs().get(0));
-        Assert.assertEquals(report.getFailures().get(1), report.getLogs().get(1));
-        Assert.assertEquals(report.getFailures().get(2), report.getLogs().get(2));
+        Assertions.assertEquals(ValidationResult.INVALID, report.getValidationResult());
+        Assertions.assertEquals(3, report.getFailures().size());
+        Assertions.assertEquals(4, report.getLogs().size());
+        Assertions.assertEquals(report.getFailures().get(0), report.getLogs().get(0));
+        Assertions.assertEquals(report.getFailures().get(1), report.getLogs().get(1));
+        Assertions.assertEquals(report.getFailures().get(2), report.getLogs().get(2));
 
         CertificateReportItem failure1 = report.getCertificateFailures().get(0);
-        Assert.assertEquals(signingCert, failure1.getCertificate());
-        Assert.assertEquals("Required certificate extensions check.", failure1.getCheckName());
-        Assert.assertEquals(MessageFormatUtil.format(
+        Assertions.assertEquals(signingCert, failure1.getCertificate());
+        Assertions.assertEquals("Required certificate extensions check.", failure1.getCheckName());
+        Assertions.assertEquals(MessageFormatUtil.format(
                 "Required extension {0} is missing or incorrect.", X509Extensions.KEY_USAGE), failure1.getMessage());
 
         CertificateReportItem failure2 = report.getCertificateFailures().get(1);
-        Assert.assertEquals(intermediateCert, failure2.getCertificate());
-        Assert.assertEquals("Required certificate extensions check.", failure2.getCheckName());
-        Assert.assertEquals(MessageFormatUtil.format(
+        Assertions.assertEquals(intermediateCert, failure2.getCertificate());
+        Assertions.assertEquals("Required certificate extensions check.", failure2.getCheckName());
+        Assertions.assertEquals(MessageFormatUtil.format(
                 "Required extension {0} is missing or incorrect.", X509Extensions.KEY_USAGE), failure2.getMessage());
 
         CertificateReportItem failure3 = report.getCertificateFailures().get(2);
-        Assert.assertEquals(rootCert, failure3.getCertificate());
-        Assert.assertEquals("Required certificate extensions check.", failure3.getCheckName());
-        Assert.assertEquals(MessageFormatUtil.format(
+        Assertions.assertEquals(rootCert, failure3.getCertificate());
+        Assertions.assertEquals("Required certificate extensions check.", failure3.getCheckName());
+        Assertions.assertEquals(MessageFormatUtil.format(
                 "Required extension {0} is missing or incorrect.", X509Extensions.KEY_USAGE), failure3.getMessage());
     }
 
@@ -268,15 +267,15 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
 
         ValidationReport report = validator.validateCertificate(baseContext, signingCert, DateTimeUtil.getCurrentTimeDate());
 
-        Assert.assertEquals(ValidationResult.INVALID, report.getValidationResult());
-        Assert.assertEquals(1, report.getFailures().size());
-        Assert.assertEquals(1, report.getLogs().size());
-        Assert.assertEquals(report.getFailures().get(0), report.getLogs().get(0));
+        Assertions.assertEquals(ValidationResult.INVALID, report.getValidationResult());
+        Assertions.assertEquals(1, report.getFailures().size());
+        Assertions.assertEquals(1, report.getLogs().size());
+        Assertions.assertEquals(report.getFailures().get(0), report.getLogs().get(0));
 
         CertificateReportItem failure1 = report.getCertificateFailures().get(0);
-        Assert.assertEquals(signingCert, failure1.getCertificate());
-        Assert.assertEquals("Required certificate extensions check.", failure1.getCheckName());
-        Assert.assertEquals(MessageFormatUtil.format(
+        Assertions.assertEquals(signingCert, failure1.getCertificate());
+        Assertions.assertEquals("Required certificate extensions check.", failure1.getCheckName());
+        Assertions.assertEquals(MessageFormatUtil.format(
                 "Required extension {0} is missing or incorrect.", X509Extensions.KEY_USAGE), failure1.getMessage());
     }
 
@@ -849,14 +848,14 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
     public void addCrlClientPasstroughTest() {
         CertificateChainValidator validator = validatorChainBuilder.buildCertificateChainValidator();
         validator.addCrlClient(new TestCrlClient());
-        Assert.assertEquals(1, mockRevocationDataValidator.crlClientsAdded.size());
+        Assertions.assertEquals(1, mockRevocationDataValidator.crlClientsAdded.size());
     }
 
     @Test
     public void addOcdpClientPasstroughTest() {
         CertificateChainValidator validator = validatorChainBuilder.buildCertificateChainValidator();
         validator.addOcspClient(new TestOcspClient());
-        Assert.assertEquals(1, mockRevocationDataValidator.ocspClientsAdded.size());
+        Assertions.assertEquals(1, mockRevocationDataValidator.ocspClientsAdded.size());
     }
 
     @Test
@@ -885,7 +884,7 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         AssertValidationReport.assertThat(report, a -> a
                 .hasStatus(ValidationResult.INVALID)
                 );
-        Assert.assertEquals(0, mockCertificateRetriever.getCrlIssuerCertificatesCalls.size());
-        Assert.assertEquals(1, mockRevocationDataValidator.calls.size());
+        Assertions.assertEquals(0, mockCertificateRetriever.getCrlIssuerCertificatesCalls.size());
+        Assertions.assertEquals(1, mockRevocationDataValidator.calls.size());
     }
 }

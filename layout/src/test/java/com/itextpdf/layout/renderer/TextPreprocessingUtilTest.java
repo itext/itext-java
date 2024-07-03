@@ -28,20 +28,19 @@ import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.IOException;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class TextPreprocessingUtilTest extends ExtendedITextTest {
     private static PdfFont pdfFont;
 
-    @BeforeClass
+    @BeforeAll
     public static void initializeFont() throws IOException {
         pdfFont = PdfFontFactory.createFont();
     }
@@ -75,7 +74,7 @@ public class TextPreprocessingUtilTest extends ExtendedITextTest {
         TextPreprocessingUtil.replaceSpecialWhitespaceGlyphs(glyphLine, pdfFont);
 
         Glyph glyph = glyphLine.get(0);
-        Assert.assertEquals(regularGlyph, glyph);
+        Assertions.assertEquals(regularGlyph, glyph);
     }
 
     private void specialWhitespaceGlyphTest(int unicode) {
@@ -87,9 +86,9 @@ public class TextPreprocessingUtilTest extends ExtendedITextTest {
 
         Glyph glyph = glyphLine.get(0);
         Glyph space = pdfFont.getGlyph('\u0020');
-        Assert.assertEquals(space.getCode(), glyph.getCode());
-        Assert.assertEquals(space.getWidth(), glyph.getWidth());
-        Assert.assertEquals(space.getUnicode(), glyph.getUnicode());
-        Assert.assertArrayEquals(TextUtil.convertFromUtf32(unicode), glyph.getChars());
+        Assertions.assertEquals(space.getCode(), glyph.getCode());
+        Assertions.assertEquals(space.getWidth(), glyph.getWidth());
+        Assertions.assertEquals(space.getUnicode(), glyph.getUnicode());
+        Assertions.assertArrayEquals(TextUtil.convertFromUtf32(unicode), glyph.getChars());
     }
 }

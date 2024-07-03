@@ -25,21 +25,20 @@ package com.itextpdf.io.util;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.Arrays;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class TextUtilTest extends ExtendedITextTest {
 
     private Glyph carriageReturn;
     private Glyph lineFeed;
 
-    @Before
+    @BeforeEach
     public void before() {
         this.carriageReturn = new Glyph(0, 0, '\r');
         this.lineFeed = new Glyph(0, 0, '\n');
@@ -84,42 +83,42 @@ public class TextUtilTest extends ExtendedITextTest {
     @Test
     public void isLetterPositiveTest() {
         Glyph glyph = new Glyph(0, 0, 'a');
-        Assert.assertTrue(TextUtil.isLetterOrDigit(glyph));
+        Assertions.assertTrue(TextUtil.isLetterOrDigit(glyph));
     }
 
     @Test
     public void isDigitPositiveTest() {
         Glyph glyph = new Glyph(0, 0, '8');
-        Assert.assertTrue(TextUtil.isLetterOrDigit(glyph));
+        Assertions.assertTrue(TextUtil.isLetterOrDigit(glyph));
     }
 
     @Test
     public void isLetterOrDigitNegativeTest() {
         Glyph glyph = new Glyph(0, 0, '-');
-        Assert.assertFalse(TextUtil.isLetterOrDigit(glyph));
+        Assertions.assertFalse(TextUtil.isLetterOrDigit(glyph));
     }
 
     @Test
     public void isMarkPositiveTest() {
         // TAI THAM SIGN KHUEN TONE-3
         Glyph glyph = new Glyph(0, 0, 0x1A77);
-        Assert.assertTrue(TextUtil.isMark(glyph));
+        Assertions.assertTrue(TextUtil.isMark(glyph));
     }
 
     @Test
     public void isMarkNegativeTest() {
         Glyph glyph = new Glyph(0, 0, '-');
-        Assert.assertFalse(TextUtil.isMark(glyph));
+        Assertions.assertFalse(TextUtil.isMark(glyph));
     }
 
     @Test
     public void isDiacriticTest() {
-        Assert.assertTrue(TextUtil.isDiacritic("\u0303".charAt(0)));
-        Assert.assertFalse(TextUtil.isDiacritic("\u006b".charAt(0)));
+        Assertions.assertTrue(TextUtil.isDiacritic("\u0303".charAt(0)));
+        Assertions.assertFalse(TextUtil.isDiacritic("\u006b".charAt(0)));
     }
 
     private void helper(boolean expected, int currentCRPosition, Glyph...glyphs) {
         GlyphLine glyphLine = new GlyphLine(Arrays.asList(glyphs));
-        Assert.assertTrue(expected == TextUtil.isCarriageReturnFollowedByLineFeed(glyphLine, currentCRPosition));
+        Assertions.assertTrue(expected == TextUtil.isCarriageReturnFollowedByLineFeed(glyphLine, currentCRPosition));
     }
 }

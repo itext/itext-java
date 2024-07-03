@@ -37,13 +37,12 @@ import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfType3FontTest extends ExtendedITextTest {
     private static final float EPS = 1e-4f;
 
@@ -65,14 +64,14 @@ public class PdfType3FontTest extends ExtendedITextTest {
                 return null;
             }
         };
-        Assert.assertNotNull(type3Font.getFontProgram());
+        Assertions.assertNotNull(type3Font.getFontProgram());
         int spaceGlyphCode = 32;
         Glyph glyph = type3Font.getFontProgram().getGlyph(spaceGlyphCode);
-        Assert.assertEquals(new Glyph(spaceGlyphCode, 0, new char[]{' '}), glyph);
+        Assertions.assertEquals(new Glyph(spaceGlyphCode, 0, new char[]{' '}), glyph);
 
         int AGlyphCode = 65;
         glyph = type3Font.getFontProgram().getGlyph(AGlyphCode);
-        Assert.assertEquals(new Glyph(AGlyphCode, 0, new char[] {'A'}), glyph);
+        Assertions.assertEquals(new Glyph(AGlyphCode, 0, new char[] {'A'}), glyph);
     }
 
     @Test
@@ -92,11 +91,11 @@ public class PdfType3FontTest extends ExtendedITextTest {
         };
 
         Type3Glyph type3Glyph = type3Font.addGlyph('A', 1, 2, 3, 5, 8);
-        Assert.assertEquals(0, type3Glyph.getWx(), EPS);
-        Assert.assertEquals(0, type3Glyph.getLlx(), EPS);
-        Assert.assertEquals(0, type3Glyph.getLly(), EPS);
-        Assert.assertEquals(0, type3Glyph.getUrx(), EPS);
-        Assert.assertEquals(0, type3Glyph.getUry(), EPS);
+        Assertions.assertEquals(0, type3Glyph.getWx(), EPS);
+        Assertions.assertEquals(0, type3Glyph.getLlx(), EPS);
+        Assertions.assertEquals(0, type3Glyph.getLly(), EPS);
+        Assertions.assertEquals(0, type3Glyph.getUrx(), EPS);
+        Assertions.assertEquals(0, type3Glyph.getUry(), EPS);
     }
 
     @Test
@@ -111,9 +110,9 @@ public class PdfType3FontTest extends ExtendedITextTest {
 
         String fontStretch = "test";
         type3Font.setFontStretch(fontStretch);
-        Assert.assertNotNull(type3Font.fontProgram);
-        Assert.assertNotNull(type3Font.fontProgram.getFontNames());
-        Assert.assertEquals(fontStretch, type3Font.fontProgram.getFontNames().getFontStretch());
+        Assertions.assertNotNull(type3Font.fontProgram);
+        Assertions.assertNotNull(type3Font.fontProgram.getFontNames());
+        Assertions.assertEquals(fontStretch, type3Font.fontProgram.getFontNames().getFontStretch());
     }
 
     @Test
@@ -128,8 +127,8 @@ public class PdfType3FontTest extends ExtendedITextTest {
 
         int randomTestFontFlagsValue = 5;
         type3Font.setPdfFontFlags(randomTestFontFlagsValue);
-        Assert.assertNotNull(type3Font.fontProgram);
-        Assert.assertEquals(randomTestFontFlagsValue, type3Font.fontProgram.getPdfFontFlags());
+        Assertions.assertNotNull(type3Font.fontProgram);
+        Assertions.assertEquals(randomTestFontFlagsValue, type3Font.fontProgram.getPdfFontFlags());
     }
 
     @Test
@@ -143,7 +142,7 @@ public class PdfType3FontTest extends ExtendedITextTest {
         PdfType3Font type3Font = new PdfType3Font(dictionary);
 
         int cannotEncodeAndAUnicodeBiggerThan32TestValue = 333;
-        Assert.assertNull(type3Font.getGlyph(cannotEncodeAndAUnicodeBiggerThan32TestValue));
+        Assertions.assertNull(type3Font.getGlyph(cannotEncodeAndAUnicodeBiggerThan32TestValue));
     }
 
     @Test
@@ -161,13 +160,13 @@ public class PdfType3FontTest extends ExtendedITextTest {
             }
         };
 
-        Assert.assertFalse(type3Font.containsGlyph(333));
-        Assert.assertFalse(type3Font.containsGlyph(-5));
-        Assert.assertFalse(type3Font.containsGlyph(32));
+        Assertions.assertFalse(type3Font.containsGlyph(333));
+        Assertions.assertFalse(type3Font.containsGlyph(-5));
+        Assertions.assertFalse(type3Font.containsGlyph(32));
         type3Font.addGlyph(' ', 0, 0, 0, 1, 1);
-        Assert.assertTrue(type3Font.containsGlyph(32));
+        Assertions.assertTrue(type3Font.containsGlyph(32));
         type3Font.addGlyph('A', 0, 0, 0, 0, 0);
-        Assert.assertTrue(type3Font.containsGlyph(65));
+        Assertions.assertTrue(type3Font.containsGlyph(65));
     }
 
     @Test
@@ -180,10 +179,10 @@ public class PdfType3FontTest extends ExtendedITextTest {
         dictionary.put(PdfName.Widths, new PdfArray());
         PdfType3Font type3Font = new DisableEnsureUnderlyingObjectHasIndirectReference(dictionary);
 
-        Exception e = Assert.assertThrows(PdfException.class,
+        Exception e = Assertions.assertThrows(PdfException.class,
                 () -> type3Font.flush()
         );
-        Assert.assertEquals(KernelExceptionMessageConstant.NO_GLYPHS_DEFINED_FOR_TYPE_3_FONT, e.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.NO_GLYPHS_DEFINED_FOR_TYPE_3_FONT, e.getMessage());
     }
 
     @Test
@@ -204,9 +203,9 @@ public class PdfType3FontTest extends ExtendedITextTest {
                 return null;
             }
         };
-        Assert.assertNotNull(type3Font.fontProgram);
-        Assert.assertNotNull(type3Font.fontProgram.getFontNames());
-        Assert.assertEquals(fontStretch, type3Font.fontProgram.getFontNames().getFontStretch());
+        Assertions.assertNotNull(type3Font.fontProgram);
+        Assertions.assertNotNull(type3Font.fontProgram.getFontNames());
+        Assertions.assertEquals(fontStretch, type3Font.fontProgram.getFontNames().getFontStretch());
     }
 
     @Test
@@ -252,10 +251,10 @@ public class PdfType3FontTest extends ExtendedITextTest {
         dictionary.put(PdfName.ToUnicode, PdfName.IdentityH);
         dictionary.put(PdfName.Encoding, new PdfName("zapfdingbatsencoding"));
 
-        Exception e = Assert.assertThrows(PdfException.class,
+        Exception e = Assertions.assertThrows(PdfException.class,
                 () -> new PdfType3Font(dictionary)
         );
-        Assert.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.MISSING_REQUIRED_FIELD_IN_FONT_DICTIONARY, PdfName.FontMatrix), e.getMessage());
+        Assertions.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.MISSING_REQUIRED_FIELD_IN_FONT_DICTIONARY, PdfName.FontMatrix), e.getMessage());
     }
 
     @Test
@@ -265,10 +264,10 @@ public class PdfType3FontTest extends ExtendedITextTest {
         dictionary.put(PdfName.ToUnicode, PdfName.IdentityH);
         dictionary.put(PdfName.Encoding, new PdfName("zapfdingbatsencoding"));
 
-        Exception e = Assert.assertThrows(PdfException.class,
+        Exception e = Assertions.assertThrows(PdfException.class,
                 () -> new PdfType3Font(dictionary)
         );
-        Assert.assertEquals(MessageFormatUtil.format(
+        Assertions.assertEquals(MessageFormatUtil.format(
                 KernelExceptionMessageConstant.MISSING_REQUIRED_FIELD_IN_FONT_DICTIONARY, PdfName.Widths), e.getMessage());
     }
 

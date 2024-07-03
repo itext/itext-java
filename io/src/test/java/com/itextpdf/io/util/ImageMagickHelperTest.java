@@ -26,17 +26,16 @@ import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.SystemUtil;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 // Android-Conversion-Skip-File (imagemagick isn't available on Android)
 public class ImageMagickHelperTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/util/ImageMagickHelperTest/";
@@ -49,7 +48,7 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
     // less than the length of the help message.
     private static final int SYSTEM_OUT_LENGTH_LIMIT = 50;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
@@ -57,7 +56,7 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
     @Test
     public void imageMagickEnvVarIsDefault() {
         ImageMagickHelper imageMagickHelper = new ImageMagickHelper();
-        Assert.assertNotNull(imageMagickHelper.getCliExecutionCommand());
+        Assertions.assertNotNull(imageMagickHelper.getCliExecutionCommand());
     }
 
     @Test
@@ -71,7 +70,7 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
 
         ImageMagickHelper imageMagickHelper = new ImageMagickHelper(compareExec);
 
-        Assert.assertNotNull(imageMagickHelper.getCliExecutionCommand());
+        Assertions.assertNotNull(imageMagickHelper.getCliExecutionCommand());
     }
 
     @Test
@@ -83,16 +82,16 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
         ImageMagickHelper imageMagickHelper = new ImageMagickHelper(null);
         boolean result = imageMagickHelper.runImageMagickImageCompare(inputImage, cmpImage, diff);
 
-        Assert.assertTrue(result);
-        Assert.assertTrue(FileUtil.fileExists(diff));
+        Assertions.assertTrue(result);
+        Assertions.assertTrue(FileUtil.fileExists(diff));
     }
 
     @Test
     public void imageMagickEnvVarIsIncorrect() {
-        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+        Exception e = Assertions.assertThrows(IllegalArgumentException.class,
                 () -> new ImageMagickHelper("-")
         );
-        Assert.assertEquals(IoExceptionMessageConstant.COMPARE_COMMAND_SPECIFIED_INCORRECTLY, e.getMessage());
+        Assertions.assertEquals(IoExceptionMessageConstant.COMPARE_COMMAND_SPECIFIED_INCORRECTLY, e.getMessage());
     }
 
     @Test
@@ -104,8 +103,8 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
         ImageMagickHelper imageMagickHelper = new ImageMagickHelper();
         boolean result = imageMagickHelper.runImageMagickImageCompare(inputImage, cmpImage, diff);
 
-        Assert.assertTrue(result);
-        Assert.assertTrue(FileUtil.fileExists(diff));
+        Assertions.assertTrue(result);
+        Assertions.assertTrue(FileUtil.fileExists(diff));
     }
 
     @Test
@@ -117,8 +116,8 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
         ImageMagickHelper imageMagickHelper = new ImageMagickHelper();
         boolean result = imageMagickHelper.runImageMagickImageCompare(inputImage, cmpImage, diff, "0.5");
 
-        Assert.assertTrue(result);
-        Assert.assertTrue(FileUtil.fileExists(diff));
+        Assertions.assertTrue(result);
+        Assertions.assertTrue(FileUtil.fileExists(diff));
     }
 
     @Test
@@ -130,8 +129,8 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
         ImageMagickHelper imageMagickHelper = new ImageMagickHelper();
         boolean result = imageMagickHelper.runImageMagickImageCompare(inputImage, cmpImage, diff);
 
-        Assert.assertFalse(result);
-        Assert.assertTrue(FileUtil.fileExists(diff));
+        Assertions.assertFalse(result);
+        Assertions.assertTrue(FileUtil.fileExists(diff));
     }
 
     @Test
@@ -143,8 +142,8 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
         ImageMagickHelper imageMagickHelper = new ImageMagickHelper();
         boolean result = imageMagickHelper.runImageMagickImageCompare(inputImage, cmpImage, diff, "0.1");
 
-        Assert.assertFalse(result);
-        Assert.assertTrue(FileUtil.fileExists(diff));
+        Assertions.assertFalse(result);
+        Assertions.assertTrue(FileUtil.fileExists(diff));
     }
 
     @Test
@@ -156,8 +155,8 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
         ImageMagickHelper imageMagickHelper = new ImageMagickHelper();
         boolean result = imageMagickHelper.runImageMagickImageCompare(inputImage, cmpImage, diff, "2.1");
 
-        Assert.assertTrue(result);
-        Assert.assertTrue(FileUtil.fileExists(diff));
+        Assertions.assertTrue(result);
+        Assertions.assertTrue(FileUtil.fileExists(diff));
     }
 
     @Test
@@ -175,14 +174,14 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
 
             // In .NET the type of the thrown exception is different, therefore we just check here that
             // any exception has been thrown.
-            Assert.assertThrows(Exception.class,
+            Assertions.assertThrows(Exception.class,
                     () -> imageMagickHelper.runImageMagickImageCompare(outImage, cmpImage, diff));
 
             // Previously a lengthy help message was printed
             System.out.flush();
-            Assert.assertTrue(baos.toByteArray().length < SYSTEM_OUT_LENGTH_LIMIT);
+            Assertions.assertTrue(baos.toByteArray().length < SYSTEM_OUT_LENGTH_LIMIT);
         } catch (IOException e) {
-            Assert.fail("No exception is excepted here.");
+            Assertions.fail("No exception is excepted here.");
         } finally {
             StandardOutUtil.restoreStandardOut(storedPrintStream);
         }
@@ -202,14 +201,14 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
 
             // In .NET the type of the thrown exception is different, therefore we just check here that
             // any exception has been thrown.
-            Assert.assertThrows(Exception.class,
+            Assertions.assertThrows(Exception.class,
                     () -> imageMagickHelper.runImageMagickImageCompare(outImage, cmpImage, diff));
 
             // Previously a lengthy help message was printed
             System.out.flush();
-            Assert.assertTrue(baos.toByteArray().length < SYSTEM_OUT_LENGTH_LIMIT);
+            Assertions.assertTrue(baos.toByteArray().length < SYSTEM_OUT_LENGTH_LIMIT);
         } catch (IOException e) {
-            Assert.fail("No exception is excepted here.");
+            Assertions.fail("No exception is excepted here.");
         } finally {
             StandardOutUtil.restoreStandardOut(storedPrintStream);
         }
@@ -231,14 +230,14 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
 
             // In .NET the type of the thrown exception is different, therefore we just check here that
             // any exception has been thrown.
-            Assert.assertThrows(Exception.class,
+            Assertions.assertThrows(Exception.class,
                     () -> imageMagickHelper.runImageMagickImageCompare(outImage, cmpImage, diff, fuzziness));
 
             // Previously a lengthy help message was printed
             System.out.flush();
-            Assert.assertTrue(baos.toByteArray().length < SYSTEM_OUT_LENGTH_LIMIT);
+            Assertions.assertTrue(baos.toByteArray().length < SYSTEM_OUT_LENGTH_LIMIT);
         } catch (IOException e) {
-            Assert.fail("No exception is excepted here.");
+            Assertions.fail("No exception is excepted here.");
         } finally {
             StandardOutUtil.restoreStandardOut(storedPrintStream);
         }
@@ -254,7 +253,7 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
         String diff = DESTINATION_FOLDER + "diff_equalImages.png";
 
         ImageMagickHelper imageMagickHelper = new ImageMagickHelper();
-        Assert.assertThrows(Exception.class,
+        Assertions.assertThrows(Exception.class,
                 () -> imageMagickHelper.runImageMagickImageCompare(
                         image + "' '" + differentImage + "' '" + diff,
                         image,
@@ -271,7 +270,7 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
         String secondDiff = DESTINATION_FOLDER + "diff_secondEqualImages.png";
 
         ImageMagickHelper imageMagickHelper = new ImageMagickHelper();
-        Assert.assertThrows(Exception.class,
+        Assertions.assertThrows(Exception.class,
                 () -> imageMagickHelper.runImageMagickImageCompare(
                         image,
                         image + "' '" + secondDiff,
@@ -289,7 +288,7 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
         String diff = DESTINATION_FOLDER + "diff.png";
 
         ImageMagickHelper imageMagickHelper = new ImageMagickHelper();
-        Assert.assertThrows(Exception.class, () ->
+        Assertions.assertThrows(Exception.class, () ->
                 imageMagickHelper.runImageMagickImageCompare(
                         image + "' -metric AE -fuzz 1% '" + differentImage + "' '" + diff,
                         image,
@@ -312,19 +311,19 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
                     image,
                     diff, "1");
 
-            Assert.assertTrue(result);
-            Assert.assertTrue(FileUtil.fileExists(diff));
+            Assertions.assertTrue(result);
+            Assertions.assertTrue(FileUtil.fileExists(diff));
 
             System.out.flush();
             String output = new String(baos.toByteArray()).trim();
 
             // This check is implemented in such a peculiar way because of .NET autoporting
-            Assert.assertEquals('0', output.charAt(output.length() - 1));
+            Assertions.assertEquals('0', output.charAt(output.length() - 1));
             if (output.length() > 1) {
-                Assert.assertFalse(Character.isDigit(output.charAt(output.length() - 2)));
+                Assertions.assertFalse(Character.isDigit(output.charAt(output.length() - 2)));
             }
         } catch (Exception e) {
-            Assert.fail("No exception is expected here.");
+            Assertions.fail("No exception is expected here.");
         } finally {
             StandardOutUtil.restoreStandardOut(storedPrintStream);
         }
@@ -341,8 +340,8 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
                 diff,
                 "1");
 
-        Assert.assertTrue(result.isComparingResultSuccessful());
-        Assert.assertEquals(0, result.getDiffPixels());
+        Assertions.assertTrue(result.isComparingResultSuccessful());
+        Assertions.assertEquals(0, result.getDiffPixels());
     }
 
     @Test
@@ -356,7 +355,7 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
                 image2,
                 diff, "1");
 
-        Assert.assertFalse(result.isComparingResultSuccessful());
+        Assertions.assertFalse(result.isComparingResultSuccessful());
     }
 
     @Test
@@ -372,7 +371,7 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
                 "0",
                 0);
 
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     @Test
@@ -388,7 +387,7 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
                 "20",
                 2000000);
 
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     @Test
@@ -404,7 +403,7 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
                 "20",
                 2000);
 
-        Assert.assertFalse(result);
+        Assertions.assertFalse(result);
     }
 
 }

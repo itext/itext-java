@@ -27,50 +27,50 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.security.KeyStore;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class KeyStoreUtilUnitTest extends ExtendedITextTest {
 
     @Test
     // Android-Conversion-Ignore-Test (TODO DEVSIX-6446 fix differences in java.security)
     public void loadCacertsKeyStoreSUNTest() {
         KeyStore keyStore = KeyStoreUtil.loadCacertsKeyStore("SUN");
-        Assert.assertEquals("JKS", keyStore.getType());
-        Assert.assertEquals("SUN", keyStore.getProvider().getName());
+        Assertions.assertEquals("JKS", keyStore.getType());
+        Assertions.assertEquals("SUN", keyStore.getProvider().getName());
     }
 
     @Test
     // Android-Conversion-Ignore-Test (TODO DEVSIX-6446 fix differences in java.security)
     public void loadCaCertsKeyStoreNoSuchProviderTest() {
-        PdfException e = Assert.assertThrows(PdfException.class,
+        PdfException e = Assertions.assertThrows(PdfException.class,
                 () -> KeyStoreUtil.loadCacertsKeyStore("unknown provider"));
-        Assert.assertEquals("no such provider: unknown provider", e.getCause().getMessage());
+        Assertions.assertEquals("no such provider: unknown provider", e.getCause().getMessage());
     }
 
     @Test
     // Android-Conversion-Ignore-Test (TODO DEVSIX-6446 fix differences in java.security)
     public void loadCaCertsKeyStoreJKSNotFoundTest() {
-        PdfException e = Assert.assertThrows(PdfException.class,
+        PdfException e = Assertions.assertThrows(PdfException.class,
                 () -> KeyStoreUtil.loadCacertsKeyStore("SunPCSC"));
-        Assert.assertEquals("JKS not found", e.getCause().getMessage());
+        Assertions.assertEquals("JKS not found", e.getCause().getMessage());
     }
 
     @Test
     // Android-Conversion-Ignore-Test (TODO DEVSIX-6446 fix differences in java.security)
     public void loadCaCertsKeyStoreNullTest() {
         KeyStore keyStore = KeyStoreUtil.loadCacertsKeyStore(null);
-        Assert.assertEquals("JKS", keyStore.getType());
-        Assert.assertEquals("SUN", keyStore.getProvider().getName());
+        Assertions.assertEquals("JKS", keyStore.getType());
+        Assertions.assertEquals("SUN", keyStore.getProvider().getName());
     }
 
     @Test
     // Android-Conversion-Ignore-Test (TODO DEVSIX-6446 fix differences in java.security)
     public void loadCaCertsKeyStoreEmptyTest() {
-        PdfException e = Assert.assertThrows(PdfException.class,
+        PdfException e = Assertions.assertThrows(PdfException.class,
                 () -> KeyStoreUtil.loadCacertsKeyStore(""));
-        Assert.assertEquals("missing provider", e.getCause().getMessage());
+        Assertions.assertEquals("missing provider", e.getCause().getMessage());
     }
 }

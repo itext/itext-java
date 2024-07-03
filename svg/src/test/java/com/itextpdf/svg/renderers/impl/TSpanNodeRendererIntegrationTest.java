@@ -28,22 +28,21 @@ import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class TSpanNodeRendererIntegrationTest extends SvgIntegrationTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/TSpanNodeRendererIntegrationTest/";
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/renderers/impl/TSpanNodeRendererIntegrationTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         ITextTest.createDestinationFolder(DESTINATION_FOLDER);
     }
@@ -66,7 +65,7 @@ public class TSpanNodeRendererIntegrationTest extends SvgIntegrationTest {
 
     @Test
     public void TSpanRelativeMoveInvalidXTest() throws IOException, InterruptedException {
-        Assert.assertThrows(StyledXMLParserException.class,
+        Assertions.assertThrows(StyledXMLParserException.class,
                 () -> convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-relativeMove-invalidX")
         );
     }
@@ -88,7 +87,7 @@ public class TSpanNodeRendererIntegrationTest extends SvgIntegrationTest {
 
     @Test
     public void TSpanRelativeMoveInvalidYTest() throws IOException, InterruptedException {
-        Assert.assertThrows(StyledXMLParserException.class,
+        Assertions.assertThrows(StyledXMLParserException.class,
                 () -> convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-relativeMove-invalidY")
         );
     }
@@ -116,7 +115,7 @@ public class TSpanNodeRendererIntegrationTest extends SvgIntegrationTest {
     
     @Test
     public void TSpanAbsolutePositionInvalidXTest() throws IOException, InterruptedException {
-        Assert.assertThrows(StyledXMLParserException.class,
+        Assertions.assertThrows(StyledXMLParserException.class,
                 () -> convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-absolutePosition-invalidX")
         );
     }
@@ -138,7 +137,7 @@ public class TSpanNodeRendererIntegrationTest extends SvgIntegrationTest {
 
     @Test
     public void TSpanAbsolutePositionInvalidYTest() throws IOException, InterruptedException {
-        Assert.assertThrows(StyledXMLParserException.class,
+        Assertions.assertThrows(StyledXMLParserException.class,
                 () -> convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-absolutePosition-invalidY")
         );
     }

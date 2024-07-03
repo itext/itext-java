@@ -29,18 +29,17 @@ import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExceptionTestUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfXrefTableUnitTest extends ExtendedITextTest {
     @Test
     public void checkNumberOfIndirectObjectsTest() {
         PdfXrefTable table = new PdfXrefTable();
-        Assert.assertEquals(0, table.getCountOfIndirectObjects());
+        Assertions.assertEquals(0, table.getCountOfIndirectObjects());
 
         int numberOfReferences = 10;
 
@@ -48,7 +47,7 @@ public class PdfXrefTableUnitTest extends ExtendedITextTest {
             table.add(new PdfIndirectReference(null, i + 1));
         }
 
-        Assert.assertEquals(numberOfReferences, table.getCountOfIndirectObjects());
+        Assertions.assertEquals(numberOfReferences, table.getCountOfIndirectObjects());
     }
 
     @Test
@@ -66,8 +65,8 @@ public class PdfXrefTableUnitTest extends ExtendedITextTest {
         int freeReferenceNumber = 5;
         table.freeReference(table.get(freeReferenceNumber));
 
-        Assert.assertEquals(numberOfReferences - 1, table.getCountOfIndirectObjects());
-        Assert.assertTrue(table.get(freeReferenceNumber).isFree());
+        Assertions.assertEquals(numberOfReferences - 1, table.getCountOfIndirectObjects());
+        Assertions.assertTrue(table.get(freeReferenceNumber).isFree());
     }
 
     @Test
@@ -80,8 +79,8 @@ public class PdfXrefTableUnitTest extends ExtendedITextTest {
             table.add(new PdfIndirectReference(null, i * 25));
         }
 
-        Assert.assertEquals(numberOfReferences, table.getCountOfIndirectObjects());
-        Assert.assertEquals(226, table.size());
+        Assertions.assertEquals(numberOfReferences, table.getCountOfIndirectObjects());
+        Assertions.assertEquals(226, table.size());
     }
 
     @Test
@@ -95,9 +94,9 @@ public class PdfXrefTableUnitTest extends ExtendedITextTest {
             xrefTable.add(new PdfIndirectReference(null, i));
         }
 
-        Exception exception = Assert.assertThrows(MemoryLimitsAwareException.class,
+        Exception exception = Assertions.assertThrows(MemoryLimitsAwareException.class,
                 () -> xrefTable.add(new PdfIndirectReference(null, numberOfReferences)));
-        Assert.assertEquals(KernelExceptionMessageConstant.XREF_STRUCTURE_SIZE_EXCEEDED_THE_LIMIT,
+        Assertions.assertEquals(KernelExceptionMessageConstant.XREF_STRUCTURE_SIZE_EXCEEDED_THE_LIMIT,
                 exception.getMessage());
     }
 
@@ -109,9 +108,9 @@ public class PdfXrefTableUnitTest extends ExtendedITextTest {
 
         // There we add 2 instead of 1 since xref structures used 1-based indexes, so we decrement the capacity
         // before check.
-        Exception ex = Assert.assertThrows(MemoryLimitsAwareException.class,
+        Exception ex = Assertions.assertThrows(MemoryLimitsAwareException.class,
                 () -> xrefTable.setCapacity(newCapacityExceededTheLimit));
-        Assert.assertEquals(KernelExceptionMessageConstant.XREF_STRUCTURE_SIZE_EXCEEDED_THE_LIMIT, ex.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.XREF_STRUCTURE_SIZE_EXCEEDED_THE_LIMIT, ex.getMessage());
     }
 
     @Test
@@ -119,9 +118,9 @@ public class PdfXrefTableUnitTest extends ExtendedITextTest {
         final MemoryLimitsAwareHandler memoryLimitsAwareHandler = new MemoryLimitsAwareHandler();
         memoryLimitsAwareHandler.setMaxNumberOfElementsInXrefStructure(20);
 
-        Exception ex = Assert.assertThrows(MemoryLimitsAwareException.class,
+        Exception ex = Assertions.assertThrows(MemoryLimitsAwareException.class,
                 () -> new PdfXrefTable(30, memoryLimitsAwareHandler));
-        Assert.assertEquals(KernelExceptionMessageConstant.XREF_STRUCTURE_SIZE_EXCEEDED_THE_LIMIT, ex.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.XREF_STRUCTURE_SIZE_EXCEEDED_THE_LIMIT, ex.getMessage());
     }
 
     @Test
@@ -130,7 +129,7 @@ public class PdfXrefTableUnitTest extends ExtendedITextTest {
         memoryLimitsAwareHandler.setMaxNumberOfElementsInXrefStructure(20);
         final PdfXrefTable xrefTable = new PdfXrefTable(0, memoryLimitsAwareHandler);
 
-        Assert.assertEquals(20, xrefTable.getCapacity());
+        Assertions.assertEquals(20, xrefTable.getCapacity());
     }
 
     @Test
@@ -138,10 +137,10 @@ public class PdfXrefTableUnitTest extends ExtendedITextTest {
         PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         document.xref.add(new PdfIndirectReferenceProxy(document, 11, Long.MAX_VALUE));
 
-        Exception e = Assert.assertThrows(PdfException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfException.class, () -> {
             document.close();
         });
-        Assert.assertEquals(KernelExceptionMessageConstant.XREF_HAS_AN_ENTRY_WITH_TOO_BIG_OFFSET, e.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.XREF_HAS_AN_ENTRY_WITH_TOO_BIG_OFFSET, e.getMessage());
     }
 
 
@@ -151,10 +150,10 @@ public class PdfXrefTableUnitTest extends ExtendedITextTest {
         PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         document.xref.add(new PdfIndirectReferenceProxy(document, 11, justOver10gbLogical));
 
-        Exception e = Assert.assertThrows(PdfException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfException.class, () -> {
             document.close();
         });
-        Assert.assertEquals(KernelExceptionMessageConstant.XREF_HAS_AN_ENTRY_WITH_TOO_BIG_OFFSET, e.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.XREF_HAS_AN_ENTRY_WITH_TOO_BIG_OFFSET, e.getMessage());
     }
 
     @Test
@@ -163,10 +162,10 @@ public class PdfXrefTableUnitTest extends ExtendedITextTest {
         PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         document.xref.add(new PdfIndirectReferenceProxy(document, 11, justOver10gbLogical));
 
-        Exception e = Assert.assertThrows(PdfException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfException.class, () -> {
             document.close();
         });
-        Assert.assertEquals(KernelExceptionMessageConstant.XREF_HAS_AN_ENTRY_WITH_TOO_BIG_OFFSET, e.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.XREF_HAS_AN_ENTRY_WITH_TOO_BIG_OFFSET, e.getMessage());
     }
 
     @Test

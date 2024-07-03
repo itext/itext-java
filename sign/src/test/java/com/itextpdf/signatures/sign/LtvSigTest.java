@@ -47,7 +47,6 @@ import com.itextpdf.signatures.testutils.client.TestCrlClient;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
 import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -59,12 +58,12 @@ import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(BouncyCastleIntegrationTest.class)
+@Tag("BouncyCastleIntegrationTest")
 public class LtvSigTest extends ExtendedITextTest {
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
@@ -75,7 +74,7 @@ public class LtvSigTest extends ExtendedITextTest {
 
     private static final char[] PASSWORD = "testpassphrase".toCharArray();
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         Security.addProvider(FACTORY.getProvider());
         createOrClearDestinationFolder(DESTINATION_FOLDER);
@@ -109,7 +108,7 @@ public class LtvSigTest extends ExtendedITextTest {
 
         basicCheckLtvDoc("ltvEnabledTsTest01.pdf", "timestampSig1");
 
-        Assert.assertNull(
+        Assertions.assertNull(
                 SignaturesCompareTool.compareSignatures(ltvTsFileName, SOURCE_FOLDER + "cmp_ltvEnabledTsTest01.pdf"));
     }
 
@@ -141,7 +140,7 @@ public class LtvSigTest extends ExtendedITextTest {
         signer.signDetached(new BouncyCastleDigest(), pks, signChain, crlNotAvailableList, testOcspClient, testTsa, 0,
                 PdfSigner.CryptoStandard.CADES);
 
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(
                 ltvFileName, SOURCE_FOLDER + "cmp_ltvEnabledSingleSignatureNoCrlDataTest.pdf"));
     }
 
@@ -166,7 +165,7 @@ public class LtvSigTest extends ExtendedITextTest {
         signer.signDetached(new BouncyCastleDigest(), pks, signChain, Collections.<ICrlClient>singletonList(testCrlClient), null,
                 testTsa, 0, PdfSigner.CryptoStandard.CADES);
 
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(
                 ltvFileName, SOURCE_FOLDER + "cmp_ltvEnabledSingleSignatureNoOcspDataTest.pdf"));
     }
 
@@ -198,7 +197,7 @@ public class LtvSigTest extends ExtendedITextTest {
 
         basicCheckLtvDoc("secondLtvOriginalHasNoVriTs01.pdf", "timestampSig2");
 
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(
                 ltvTsFileName, SOURCE_FOLDER + "cmp_secondLtvOriginalHasNoVriTs01.pdf"));
     }
 
@@ -243,8 +242,8 @@ public class LtvSigTest extends ExtendedITextTest {
     private void basicCheckLtvDoc(String outFileName, String tsSigName) throws IOException, GeneralSecurityException {
         PdfDocument outDocument = new PdfDocument(new PdfReader(DESTINATION_FOLDER + outFileName));
         PdfDictionary dssDict = outDocument.getCatalog().getPdfObject().getAsDictionary(PdfName.DSS);
-        Assert.assertNotNull(dssDict);
-        Assert.assertEquals(4, dssDict.size());
+        Assertions.assertNotNull(dssDict);
+        Assertions.assertEquals(4, dssDict.size());
         outDocument.close();
 
         TestSignUtils.basicCheckSignedDoc(DESTINATION_FOLDER + outFileName, tsSigName);

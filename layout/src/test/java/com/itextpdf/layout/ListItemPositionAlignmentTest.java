@@ -40,21 +40,18 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(Parameterized.class)
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class ListItemPositionAlignmentTest extends ExtendedITextTest {
 
 	public static final String SOURCE_FOLDER  = "./src/test/resources/com/itextpdf/layout/ListItemPositionAlignmentTest/";
@@ -71,28 +68,12 @@ public class ListItemPositionAlignmentTest extends ExtendedITextTest {
 			+ "  <li style=\"background-color: yellow; direction: {2}; symbol-alignment:{1}; symbol-position: {0}\">Specific item</li>"
 			+ "</ul>";
 
-	private BaseDirection listBaseDirection;
-	private BaseDirection listItemBaseDirection;
-	private ListSymbolAlignment listSymbolAlignment;
-	private ListSymbolPosition listSymbolPosition;
-	private Integer comparisonPdfId;
-
-	@BeforeClass
+	@BeforeAll
 	public static void beforeClass() {
 		createOrClearDestinationFolder(DESTINATION_FOLDER);
 	}
 
-	public ListItemPositionAlignmentTest(Object listBaseDirection, Object listItemBaseDirection,
-	                                     Object listSymbolAlignment, Object listSymbolPosition, Object comparisonPdfId) throws IOException {
-		this.listBaseDirection = (BaseDirection) listBaseDirection;
-		this.listItemBaseDirection = (BaseDirection) listItemBaseDirection;
-		this.listSymbolAlignment = (ListSymbolAlignment) listSymbolAlignment;
-		this.listSymbolPosition = (ListSymbolPosition) listSymbolPosition;
-		this.comparisonPdfId = (Integer) comparisonPdfId;
-	}
-
-	@Parameterized.Parameters(name = PARAMETERS_NAME_PATTERN)
-	public static Iterable<Object[]> baseDirectionAndSymbolAlignmentProperties() {
+	public static Iterable<Object[]> BaseDirectionAndSymbolAlignmentProperties() {
 		BaseDirection[] directionTestValues = new BaseDirection[]{BaseDirection.LEFT_TO_RIGHT,
 		                                                          BaseDirection.RIGHT_TO_LEFT};
 		ListSymbolAlignment[] listSymbolAlignmentTestValues = new ListSymbolAlignment[]{ListSymbolAlignment.LEFT,
@@ -114,11 +95,14 @@ public class ListItemPositionAlignmentTest extends ExtendedITextTest {
 		return objectList;
 	}
 
-	@Test
+	@ParameterizedTest(name = PARAMETERS_NAME_PATTERN)
+	@MethodSource("BaseDirectionAndSymbolAlignmentProperties")
 	@LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.TYPOGRAPHY_NOT_FOUND, count = 8)})
-	public void defaultListIemPositionAlignmentTest() throws IOException, InterruptedException {
+	public void defaultListIemPositionAlignmentTest(BaseDirection listBaseDirection, BaseDirection listItemBaseDirection,
+			ListSymbolAlignment listSymbolAlignment, ListSymbolPosition listSymbolPosition, Integer comparisonPdfId)
+			throws IOException, InterruptedException {
 		// Create an HTML for this test
-		createHtml();
+		createHtml(listBaseDirection, listItemBaseDirection, listSymbolAlignment, listSymbolPosition);
 		String fileName = MessageFormatUtil.format(
 				RESULTANT_FILE_NAME_PATTERN,
 				formatSymbolPosition(listSymbolPosition),
@@ -131,16 +115,17 @@ public class ListItemPositionAlignmentTest extends ExtendedITextTest {
 		PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
 		Document document = new Document(pdfDocument);
- 		List list = createTestList();
+ 		List list = createTestList(listBaseDirection, listItemBaseDirection, listSymbolAlignment, listSymbolPosition);
 		document.add(list);
 
 		document.close();
 
 		System.out.println("HTML: " + UrlUtil.getNormalizedFileUriString(DESTINATION_FOLDER + fileName + ".html") + "\n");
-		Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+		Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
 	}
 
-	private List createTestList() {
+	private List createTestList(BaseDirection listBaseDirection, BaseDirection listItemBaseDirection,
+			ListSymbolAlignment listSymbolAlignment, ListSymbolPosition listSymbolPosition) {
 		List list = new List();
 		list.setSymbolIndent(20);
 		list.setListSymbol("\u2022");
@@ -163,7 +148,8 @@ public class ListItemPositionAlignmentTest extends ExtendedITextTest {
 		return list;
 	}
 
-	private void createHtml() throws IOException {
+	private void createHtml(BaseDirection listBaseDirection, BaseDirection listItemBaseDirection,
+			ListSymbolAlignment listSymbolAlignment, ListSymbolPosition listSymbolPosition) throws IOException {
 		String fileName = MessageFormatUtil.format(
 				RESULTANT_FILE_NAME_PATTERN,
 				formatSymbolPosition(listSymbolPosition),
@@ -191,7 +177,7 @@ public class ListItemPositionAlignmentTest extends ExtendedITextTest {
 			case RIGHT_TO_LEFT:
 				return "rtl";
 			default:
-				Assert.fail("Unexpected base direction");
+				Assertions.fail("Unexpected base direction");
 				return null;
 		}
 	}
@@ -203,7 +189,7 @@ public class ListItemPositionAlignmentTest extends ExtendedITextTest {
 			case RIGHT:
 				return "right";
 			default:
-				Assert.fail("Unexpected symbol alignment");
+				Assertions.fail("Unexpected symbol alignment");
 				return null;
 		}
 	}
@@ -215,7 +201,7 @@ public class ListItemPositionAlignmentTest extends ExtendedITextTest {
 			case INSIDE:
 				return "inside";
 			default:
-				Assert.fail("Unexpected symbol position");
+				Assertions.fail("Unexpected symbol position");
 				return null;
 		}
 	}

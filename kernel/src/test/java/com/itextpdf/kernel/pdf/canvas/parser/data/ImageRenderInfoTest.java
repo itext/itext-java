@@ -31,16 +31,15 @@ import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.canvas.CanvasTag;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.net.MalformedURLException;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.util.*;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class ImageRenderInfoTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/parser/data/"
             + "ImageRenderInfoTest/";
@@ -58,18 +57,18 @@ public class ImageRenderInfoTest extends ExtendedITextTest {
         ImageRenderInfo imageRenderInfo = new ImageRenderInfo(tagHierarchy, new TestGraphicsState(), matrix,
                 imageStream, new PdfName("Im1"), new PdfDictionary(), true);
 
-        Assert.assertTrue(imageRenderInfo.isInline());
-        Assert.assertEquals(image.getWidth(), imageRenderInfo.getImage().getWidth(), EPS);
-        Assert.assertEquals("/Im1", imageRenderInfo.getImageResourceName().toString());
-        Assert.assertEquals(new com.itextpdf.kernel.geom.Vector(0.5f, 0, 1), imageRenderInfo.getStartPoint());
-        Assert.assertEquals(matrix, imageRenderInfo.getImageCtm());
-        Assert.assertEquals(4, imageRenderInfo.getArea(), EPS);
-        Assert.assertEquals(0, imageRenderInfo.getColorSpaceDictionary().size());
-        Assert.assertEquals(1, imageRenderInfo.getCanvasTagHierarchy().size());
-        Assert.assertTrue(imageRenderInfo.hasMcid(2, true));
-        Assert.assertTrue(imageRenderInfo.hasMcid(2));
-        Assert.assertFalse(imageRenderInfo.hasMcid(1));
-        Assert.assertEquals(2, imageRenderInfo.getMcid());
+        Assertions.assertTrue(imageRenderInfo.isInline());
+        Assertions.assertEquals(image.getWidth(), imageRenderInfo.getImage().getWidth(), EPS);
+        Assertions.assertEquals("/Im1", imageRenderInfo.getImageResourceName().toString());
+        Assertions.assertEquals(new com.itextpdf.kernel.geom.Vector(0.5f, 0, 1), imageRenderInfo.getStartPoint());
+        Assertions.assertEquals(matrix, imageRenderInfo.getImageCtm());
+        Assertions.assertEquals(4, imageRenderInfo.getArea(), EPS);
+        Assertions.assertEquals(0, imageRenderInfo.getColorSpaceDictionary().size());
+        Assertions.assertEquals(1, imageRenderInfo.getCanvasTagHierarchy().size());
+        Assertions.assertTrue(imageRenderInfo.hasMcid(2, true));
+        Assertions.assertTrue(imageRenderInfo.hasMcid(2));
+        Assertions.assertFalse(imageRenderInfo.hasMcid(1));
+        Assertions.assertEquals(2, imageRenderInfo.getMcid());
     }
 
     private class TestGraphicsState extends CanvasGraphicsState {

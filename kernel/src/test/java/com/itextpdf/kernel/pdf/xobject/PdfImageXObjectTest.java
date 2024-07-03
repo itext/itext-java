@@ -34,28 +34,27 @@ import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfImageXObjectTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/xobject/PdfImageXObjectTest/";
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/xobject/PdfImageXObjectTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(DESTINATION_FOLDER);
     }
@@ -77,7 +76,7 @@ public class PdfImageXObjectTest extends ExtendedITextTest {
         canvas.addXObjectFittedIntoRectangle(imageXObject, new Rectangle(50, 500, 200, 200));
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpfile, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpfile, DESTINATION_FOLDER));
     }
 
     @Test
@@ -175,7 +174,7 @@ public class PdfImageXObjectTest extends ExtendedITextTest {
             canvas.addXObjectFittedIntoRectangle(imageXObject, new Rectangle(50, 500, 200, 200));
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFile, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFile, DESTINATION_FOLDER));
     }
 
     @Test
@@ -199,7 +198,7 @@ public class PdfImageXObjectTest extends ExtendedITextTest {
                 new StampingProperties())) {
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(destFilename, cmpFilename, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(destFilename, cmpFilename, DESTINATION_FOLDER));
     }
 
     private void convertAndCompare(String outFilename, String cmpFilename, String imageFilename)
@@ -224,7 +223,7 @@ public class PdfImageXObjectTest extends ExtendedITextTest {
         PdfStream cmpStream = cmpDoc.getFirstPage().getResources().getResource(PdfName.XObject).getAsStream(new PdfName("Im1"));
 
 
-        Assert.assertNull(new CompareTool().compareStreamsStructure(outStream, cmpStream));
+        Assertions.assertNull(new CompareTool().compareStreamsStructure(outStream, cmpStream));
 
         cmpDoc.close();
         outDoc.close();
@@ -251,7 +250,7 @@ public class PdfImageXObjectTest extends ExtendedITextTest {
         PdfStream cmpStream = cmpDoc.getFirstPage().getResources().getResource(PdfName.XObject).getAsStream(new PdfName("Im1"));
 
 
-        Assert.assertNull(new CompareTool().compareStreamsStructure(outStream, cmpStream));
+        Assertions.assertNull(new CompareTool().compareStreamsStructure(outStream, cmpStream));
 
         cmpDoc.close();
         outDoc.close();

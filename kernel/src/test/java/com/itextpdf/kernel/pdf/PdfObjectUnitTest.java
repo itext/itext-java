@@ -26,14 +26,13 @@ import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfObjectUnitTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/PdfObjectUnitTest/";
@@ -42,9 +41,9 @@ public class PdfObjectUnitTest extends ExtendedITextTest {
     public void noWriterForMakingIndirectTest() throws IOException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + "noWriterForMakingIndirect.pdf"));
         PdfDictionary pdfDictionary = new PdfDictionary();
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> pdfDictionary.makeIndirect(pdfDocument));
-        Assert.assertEquals(KernelExceptionMessageConstant.THERE_IS_NO_ASSOCIATE_PDF_WRITER_FOR_MAKING_INDIRECTS,
+        Assertions.assertEquals(KernelExceptionMessageConstant.THERE_IS_NO_ASSOCIATE_PDF_WRITER_FOR_MAKING_INDIRECTS,
                 exception.getMessage());
     }
 
@@ -52,9 +51,9 @@ public class PdfObjectUnitTest extends ExtendedITextTest {
     public void copyDocInReadingModeTest() throws IOException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + "copyDocInReadingMode.pdf"));
         PdfDictionary pdfDictionary = new PdfDictionary();
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> pdfDictionary.processCopying(pdfDocument, true));
-        Assert.assertEquals(KernelExceptionMessageConstant.CANNOT_COPY_TO_DOCUMENT_OPENED_IN_READING_MODE,
+        Assertions.assertEquals(KernelExceptionMessageConstant.CANNOT_COPY_TO_DOCUMENT_OPENED_IN_READING_MODE,
                 exception.getMessage());
     }
 
@@ -62,9 +61,9 @@ public class PdfObjectUnitTest extends ExtendedITextTest {
     public void copyIndirectObjectTest() {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         PdfObject pdfObject = pdfDocument.getPdfObject(1);
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> pdfObject.copyTo(pdfDocument, true));
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 KernelExceptionMessageConstant.CANNOT_COPY_INDIRECT_OBJECT_FROM_THE_DOCUMENT_THAT_IS_BEING_WRITTEN,
                 exception.getMessage());
     }
@@ -74,8 +73,8 @@ public class PdfObjectUnitTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         PdfObject pdfObject = pdfDocument.getPdfObject(1);
         pdfObject.flush();
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> pdfObject.copyContent(pdfObject, pdfDocument));
-        Assert.assertEquals(KernelExceptionMessageConstant.CANNOT_COPY_FLUSHED_OBJECT, exception.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.CANNOT_COPY_FLUSHED_OBJECT, exception.getMessage());
     }
 }

@@ -30,10 +30,9 @@ import com.itextpdf.styledxmlparser.jsoup.parser.ParseSettings;
 import com.itextpdf.styledxmlparser.jsoup.parser.Parser;
 import com.itextpdf.styledxmlparser.jsoup.select.Elements;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -43,7 +42,7 @@ import java.nio.charset.StandardCharsets;
 /**
  Tests for Document.
 */
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class DocumentTest extends ExtendedITextTest {
     private static final String charsetUtf8 = "UTF-8";
     private static final String charsetIso8859 = "ISO-8859-1";
@@ -52,63 +51,63 @@ public class DocumentTest extends ExtendedITextTest {
     @Test public void setTextPreservesDocumentStructure() {
         Document doc = Jsoup.parse("<p>Hello</p>");
         doc.text("Replaced");
-        Assert.assertEquals("Replaced", doc.text());
-        Assert.assertEquals("Replaced", doc.body().text());
-        Assert.assertEquals(1, doc.select("head").size());
+        Assertions.assertEquals("Replaced", doc.text());
+        Assertions.assertEquals("Replaced", doc.body().text());
+        Assertions.assertEquals(1, doc.select("head").size());
     }
 
     @Test public void testTitles() {
         Document noTitle = Jsoup.parse("<p>Hello</p>");
         Document withTitle = Jsoup.parse("<title>First</title><title>Ignore</title><p>Hello</p>");
 
-        Assert.assertEquals("", noTitle.title());
+        Assertions.assertEquals("", noTitle.title());
         noTitle.title("Hello");
-        Assert.assertEquals("Hello", noTitle.title());
-        Assert.assertEquals("Hello", noTitle.select("title").first().text());
+        Assertions.assertEquals("Hello", noTitle.title());
+        Assertions.assertEquals("Hello", noTitle.select("title").first().text());
 
-        Assert.assertEquals("First", withTitle.title());
+        Assertions.assertEquals("First", withTitle.title());
         withTitle.title("Hello");
-        Assert.assertEquals("Hello", withTitle.title());
-        Assert.assertEquals("Hello", withTitle.select("title").first().text());
+        Assertions.assertEquals("Hello", withTitle.title());
+        Assertions.assertEquals("Hello", withTitle.select("title").first().text());
 
         Document normaliseTitle = Jsoup.parse("<title>   Hello\nthere   \n   now   \n");
-        Assert.assertEquals("Hello there now", normaliseTitle.title());
+        Assertions.assertEquals("Hello there now", normaliseTitle.title());
     }
 
     @Test public void testOutputEncoding() {
         Document doc = Jsoup.parse("<p title=π>π & < > </p>");
         // default is utf-8
-        Assert.assertEquals("<p title=\"π\">π &amp; &lt; &gt; </p>", doc.body().html());
-        Assert.assertEquals("UTF-8", doc.outputSettings().charset().name());
+        Assertions.assertEquals("<p title=\"π\">π &amp; &lt; &gt; </p>", doc.body().html());
+        Assertions.assertEquals("UTF-8", doc.outputSettings().charset().name());
 
         doc.outputSettings().charset("ascii");
-        Assert.assertEquals(Entities.EscapeMode.base, doc.outputSettings().escapeMode());
-        Assert.assertEquals("<p title=\"&#x3c0;\">&#x3c0; &amp; &lt; &gt; </p>", doc.body().html());
+        Assertions.assertEquals(Entities.EscapeMode.base, doc.outputSettings().escapeMode());
+        Assertions.assertEquals("<p title=\"&#x3c0;\">&#x3c0; &amp; &lt; &gt; </p>", doc.body().html());
 
         doc.outputSettings().escapeMode(Entities.EscapeMode.extended);
-        Assert.assertEquals("<p title=\"&pi;\">&pi; &amp; &lt; &gt; </p>", doc.body().html());
+        Assertions.assertEquals("<p title=\"&pi;\">&pi; &amp; &lt; &gt; </p>", doc.body().html());
     }
 
     @Test public void testXhtmlReferences() {
         Document doc = Jsoup.parse("&lt; &gt; &amp; &quot; &apos; &times;");
         doc.outputSettings().escapeMode(Entities.EscapeMode.xhtml);
-        Assert.assertEquals("&lt; &gt; &amp; \" ' ×", doc.body().html());
+        Assertions.assertEquals("&lt; &gt; &amp; \" ' ×", doc.body().html());
     }
 
     @Test public void testNormalisesStructure() {
         Document doc = Jsoup.parse("<html><head><script>one</script><noscript><p>two</p></noscript></head><body><p>three</p></body><p>four</p></html>");
-        Assert.assertEquals("<html><head><script>one</script><noscript>&lt;p&gt;two</noscript></head><body><p>three</p><p>four</p></body></html>", TextUtil.stripNewlines(doc.html()));
+        Assertions.assertEquals("<html><head><script>one</script><noscript>&lt;p&gt;two</noscript></head><body><p>three</p><p>four</p></body></html>", TextUtil.stripNewlines(doc.html()));
     }
 
     @Test public void accessorsWillNormalizeStructure() {
         Document doc = new Document("");
-        Assert.assertEquals("", doc.html());
+        Assertions.assertEquals("", doc.html());
 
         Element body = doc.body();
-        Assert.assertEquals("body", body.tagName());
+        Assertions.assertEquals("body", body.tagName());
         Element head = doc.head();
-        Assert.assertEquals("head", head.tagName());
-        Assert.assertEquals("<html><head></head><body></body></html>", TextUtil.stripNewlines(doc.html()));
+        Assertions.assertEquals("head", head.tagName());
+        Assertions.assertEquals("<html><head></head><body></body></html>", TextUtil.stripNewlines(doc.html()));
     }
 
     @Test public void accessorsAreCaseInsensitive() {
@@ -116,41 +115,41 @@ public class DocumentTest extends ExtendedITextTest {
         Document doc = parser.parseInput("<!DOCTYPE html><HTML><HEAD><TITLE>SHOUTY</TITLE></HEAD><BODY>HELLO</BODY></HTML>", "");
 
         Element body = doc.body();
-        Assert.assertEquals("BODY", body.tagName());
-        Assert.assertEquals("body", body.normalName());
+        Assertions.assertEquals("BODY", body.tagName());
+        Assertions.assertEquals("body", body.normalName());
         Element head = doc.head();
-        Assert.assertEquals("HEAD", head.tagName());
-        Assert.assertEquals("body", body.normalName());
+        Assertions.assertEquals("HEAD", head.tagName());
+        Assertions.assertEquals("body", body.normalName());
 
         Element root = doc.selectFirst("html");
-        Assert.assertEquals("HTML", root.tagName());
-        Assert.assertEquals("html", root.normalName());
-        Assert.assertEquals("SHOUTY", doc.title());
+        Assertions.assertEquals("HTML", root.tagName());
+        Assertions.assertEquals("html", root.normalName());
+        Assertions.assertEquals("SHOUTY", doc.title());
     }
 
     @Test public void testClone() {
         Document doc = Jsoup.parse("<title>Hello</title> <p>One<p>Two");
         Document clone = (Document) doc.clone();
 
-        Assert.assertEquals("<html><head><title>Hello</title> </head><body><p>One</p><p>Two</p></body></html>", TextUtil.stripNewlines(clone.html()));
+        Assertions.assertEquals("<html><head><title>Hello</title> </head><body><p>One</p><p>Two</p></body></html>", TextUtil.stripNewlines(clone.html()));
         clone.title("Hello there");
         clone.select("p").first().text("One more").attr("id", "1");
-        Assert.assertEquals("<html><head><title>Hello there</title> </head><body><p id=\"1\">One more</p><p>Two</p></body></html>", TextUtil.stripNewlines(clone.html()));
-        Assert.assertEquals("<html><head><title>Hello</title> </head><body><p>One</p><p>Two</p></body></html>", TextUtil.stripNewlines(doc.html()));
+        Assertions.assertEquals("<html><head><title>Hello there</title> </head><body><p id=\"1\">One more</p><p>Two</p></body></html>", TextUtil.stripNewlines(clone.html()));
+        Assertions.assertEquals("<html><head><title>Hello</title> </head><body><p>One</p><p>Two</p></body></html>", TextUtil.stripNewlines(doc.html()));
     }
 
     @Test public void testClonesDeclarations() {
         Document doc = Jsoup.parse("<!DOCTYPE html><html><head><title>Doctype test");
         Document clone = (Document) doc.clone();
 
-        Assert.assertEquals(doc.html(), clone.html());
-        Assert.assertEquals("<!doctype html><html><head><title>Doctype test</title></head><body></body></html>",
+        Assertions.assertEquals(doc.html(), clone.html());
+        Assertions.assertEquals("<!doctype html><html><head><title>Doctype test</title></head><body></body></html>",
                 TextUtil.stripNewlines(clone.html()));
     }
 
     @Test public void testLocationFromString() {
         Document doc = Jsoup.parse("<p>Hello");
-        Assert.assertEquals("", doc.location());
+        Assertions.assertEquals("", doc.location());
     }
 
     @Test public void testHtmlAndXmlSyntax() {
@@ -158,7 +157,7 @@ public class DocumentTest extends ExtendedITextTest {
         Document doc = Jsoup.parse(h);
 
         doc.outputSettings().syntax(Syntax.html);
-        Assert.assertEquals("<!doctype html>\n" +
+        Assertions.assertEquals("<!doctype html>\n" +
                 "<html>\n" +
                 " <head></head>\n" +
                 " <body>\n" +
@@ -167,7 +166,7 @@ public class DocumentTest extends ExtendedITextTest {
                 "</html>", doc.html());
 
         doc.outputSettings().syntax(Document.OutputSettings.Syntax.xml);
-        Assert.assertEquals("<!DOCTYPE html>\n" +
+        Assertions.assertEquals("<!DOCTYPE html>\n" +
                 "<html>\n" +
                 " <head></head>\n" +
                 " <body>\n" +
@@ -178,7 +177,7 @@ public class DocumentTest extends ExtendedITextTest {
 
     @Test public void htmlParseDefaultsToHtmlOutputSyntax() {
         Document doc = Jsoup.parse("x");
-        Assert.assertEquals(Syntax.html, doc.outputSettings().syntax());
+        Assertions.assertEquals(Syntax.html, doc.outputSettings().syntax());
     }
 
     @Test public void testHtmlAppendable() {
@@ -188,7 +187,7 @@ public class DocumentTest extends ExtendedITextTest {
 
     	outputSettings.prettyPrint(false);
     	document.outputSettings(outputSettings);
-    	Assert.assertEquals(htmlContent, document.html(new StringBuffer()).toString());
+    	Assertions.assertEquals(htmlContent, document.html(new StringBuffer()).toString());
     }
 
     @Test public void testOverflowClone() {
@@ -202,10 +201,10 @@ public class DocumentTest extends ExtendedITextTest {
         Document doc = Jsoup.parse(sb.toString());
 
         String expectedLink = "https://jsoup.org/example.html";
-        Assert.assertEquals(expectedLink, doc.selectFirst("a").attr("abs:href"));
+        Assertions.assertEquals(expectedLink, doc.selectFirst("a").attr("abs:href"));
         Document clone = (Document) doc.clone();
         doc.hasSameValue(clone);
-        Assert.assertEquals(expectedLink, clone.selectFirst("a").attr("abs:href"));
+        Assertions.assertEquals(expectedLink, clone.selectFirst("a").attr("abs:href"));
     }
 
     @Test public void DocumentsWithSameContentAreEqual() {
@@ -213,10 +212,10 @@ public class DocumentTest extends ExtendedITextTest {
         Document docB = Jsoup.parse("<div/>One");
         Document docC = Jsoup.parse("<div/>Two");
 
-        Assert.assertNotEquals(docA, docB);
-        Assert.assertEquals(docA, docA);
-        Assert.assertEquals(docA.hashCode(), docA.hashCode());
-        Assert.assertNotEquals(docA.hashCode(), docC.hashCode());
+        Assertions.assertNotEquals(docA, docB);
+        Assertions.assertEquals(docA, docA);
+        Assertions.assertEquals(docA.hashCode(), docA.hashCode());
+        Assertions.assertNotEquals(docA.hashCode(), docC.hashCode());
     }
 
     @Test public void DocumentsWithSameContentAreVerifiable() {
@@ -224,8 +223,8 @@ public class DocumentTest extends ExtendedITextTest {
         Document docB = Jsoup.parse("<div/>One");
         Document docC = Jsoup.parse("<div/>Two");
 
-        Assert.assertTrue(docA.hasSameValue(docB));
-        Assert.assertFalse(docA.hasSameValue(docC));
+        Assertions.assertTrue(docA.hasSameValue(docB));
+        Assertions.assertFalse(docA.hasSameValue(docC));
     }
 
     @Test
@@ -240,12 +239,12 @@ public class DocumentTest extends ExtendedITextTest {
                                         " </head>\n" +
                                         " <body></body>\n" +
                                         "</html>";
-        Assert.assertEquals(htmlCharsetUTF8, doc.toString());
+        Assertions.assertEquals(htmlCharsetUTF8, doc.toString());
 
         Element selectedElement = doc.select("meta[charset]").first();
-        Assert.assertEquals(charsetUtf8, doc.charset().name());
-        Assert.assertEquals(charsetUtf8, selectedElement.attr("charset"));
-        Assert.assertEquals(doc.charset(), doc.outputSettings().charset());
+        Assertions.assertEquals(charsetUtf8, doc.charset().name());
+        Assertions.assertEquals(charsetUtf8, selectedElement.attr("charset"));
+        Assertions.assertEquals(doc.charset(), doc.outputSettings().charset());
     }
 
     @Test
@@ -260,12 +259,12 @@ public class DocumentTest extends ExtendedITextTest {
                                         " </head>\n" +
                                         " <body></body>\n" +
                                         "</html>";
-        Assert.assertEquals(htmlCharsetISO, doc.toString());
+        Assertions.assertEquals(htmlCharsetISO, doc.toString());
 
         Element selectedElement = doc.select("meta[charset]").first();
-        Assert.assertEquals(charsetIso8859, doc.charset().name());
-        Assert.assertEquals(charsetIso8859, selectedElement.attr("charset"));
-        Assert.assertEquals(doc.charset(), doc.outputSettings().charset());
+        Assertions.assertEquals(charsetIso8859, doc.charset().name());
+        Assertions.assertEquals(charsetIso8859, selectedElement.attr("charset"));
+        Assertions.assertEquals(doc.charset(), doc.outputSettings().charset());
     }
 
     @Test
@@ -274,7 +273,7 @@ public class DocumentTest extends ExtendedITextTest {
         docNoCharset.updateMetaCharsetElement(true);
         docNoCharset.charset(Charset.forName(charsetUtf8));
 
-        Assert.assertEquals(charsetUtf8, docNoCharset.select("meta[charset]").first().attr("charset"));
+        Assertions.assertEquals(charsetUtf8, docNoCharset.select("meta[charset]").first().attr("charset"));
 
         final String htmlCharsetUTF8 = "<html>\n" +
                                         " <head>\n" +
@@ -282,7 +281,7 @@ public class DocumentTest extends ExtendedITextTest {
                                         " </head>\n" +
                                         " <body></body>\n" +
                                         "</html>";
-        Assert.assertEquals(htmlCharsetUTF8, docNoCharset.toString());
+        Assertions.assertEquals(htmlCharsetUTF8, docNoCharset.toString());
     }
 
     @Test
@@ -293,8 +292,8 @@ public class DocumentTest extends ExtendedITextTest {
                                         " <head></head>\n" +
                                         " <body></body>\n" +
                                         "</html>";
-        Assert.assertEquals(htmlNoCharset, docDisabled.toString());
-        Assert.assertNull(docDisabled.select("meta[charset]").first());
+        Assertions.assertEquals(htmlNoCharset, docDisabled.toString());
+        Assertions.assertNull(docDisabled.select("meta[charset]").first());
     }
 
     @Test
@@ -308,15 +307,15 @@ public class DocumentTest extends ExtendedITextTest {
                                     " </head>\n" +
                                     " <body></body>\n" +
                                     "</html>";
-        Assert.assertEquals(htmlCharset, doc.toString());
+        Assertions.assertEquals(htmlCharset, doc.toString());
 
         Element selectedElement = doc.select("meta[charset]").first();
-        Assert.assertNotNull(selectedElement);
-        Assert.assertEquals("dontTouch", selectedElement.attr("charset"));
+        Assertions.assertNotNull(selectedElement);
+        Assertions.assertEquals("dontTouch", selectedElement.attr("charset"));
 
         selectedElement = doc.select("meta[name=charset]").first();
-        Assert.assertNotNull(selectedElement);
-        Assert.assertEquals("dontTouch", selectedElement.attr("content"));
+        Assertions.assertNotNull(selectedElement);
+        Assertions.assertEquals("dontTouch", selectedElement.attr("content"));
     }
 
     @Test
@@ -325,8 +324,8 @@ public class DocumentTest extends ExtendedITextTest {
         doc.charset(Charset.forName(charsetUtf8));
 
         Element selectedElement = doc.select("meta[charset]").first();
-        Assert.assertEquals(charsetUtf8, selectedElement.attr("charset"));
-        Assert.assertTrue(doc.select("meta[name=charset]").isEmpty());
+        Assertions.assertEquals(charsetUtf8, selectedElement.attr("charset"));
+        Assertions.assertTrue(doc.select("meta[name=charset]").isEmpty());
     }
 
     @Test
@@ -342,7 +341,7 @@ public class DocumentTest extends ExtendedITextTest {
                                         " <body></body>\n" +
                                         "</html>";
 
-        Assert.assertEquals(htmlCharsetUTF8, doc.toString());
+        Assertions.assertEquals(htmlCharsetUTF8, doc.toString());
     }
 
     @Test
@@ -355,12 +354,12 @@ public class DocumentTest extends ExtendedITextTest {
                                         "<root>\n" +
                                         " node\n" +
                                         "</root>";
-        Assert.assertEquals(xmlCharsetUTF8, doc.toString());
+        Assertions.assertEquals(xmlCharsetUTF8, doc.toString());
 
         XmlDeclaration selectedNode = (XmlDeclaration) doc.childNode(0);
-        Assert.assertEquals(charsetUtf8, doc.charset().name());
-        Assert.assertEquals(charsetUtf8, selectedNode.attr("encoding"));
-        Assert.assertEquals(doc.charset(), doc.outputSettings().charset());
+        Assertions.assertEquals(charsetUtf8, doc.charset().name());
+        Assertions.assertEquals(charsetUtf8, selectedNode.attr("encoding"));
+        Assertions.assertEquals(doc.charset(), doc.outputSettings().charset());
     }
 
     @Test
@@ -373,12 +372,12 @@ public class DocumentTest extends ExtendedITextTest {
                                         "<root>\n" +
                                         " node\n" +
                                         "</root>";
-        Assert.assertEquals(xmlCharsetISO, doc.toString());
+        Assertions.assertEquals(xmlCharsetISO, doc.toString());
 
         XmlDeclaration selectedNode = (XmlDeclaration) doc.childNode(0);
-        Assert.assertEquals(charsetIso8859, doc.charset().name());
-        Assert.assertEquals(charsetIso8859, selectedNode.attr("encoding"));
-        Assert.assertEquals(doc.charset(), doc.outputSettings().charset());
+        Assertions.assertEquals(charsetIso8859, doc.charset().name());
+        Assertions.assertEquals(charsetIso8859, selectedNode.attr("encoding"));
+        Assertions.assertEquals(doc.charset(), doc.outputSettings().charset());
     }
 
     @Test
@@ -391,10 +390,10 @@ public class DocumentTest extends ExtendedITextTest {
                                         "<root>\n" +
                                         " node\n" +
                                         "</root>";
-        Assert.assertEquals(xmlCharsetUTF8, doc.toString());
+        Assertions.assertEquals(xmlCharsetUTF8, doc.toString());
 
         XmlDeclaration selectedNode = (XmlDeclaration) doc.childNode(0);
-        Assert.assertEquals(charsetUtf8, selectedNode.attr("encoding"));
+        Assertions.assertEquals(charsetUtf8, selectedNode.attr("encoding"));
     }
 
     @Test
@@ -404,7 +403,7 @@ public class DocumentTest extends ExtendedITextTest {
         final String xmlNoCharset = "<root>\n" +
                                     " node\n" +
                                     "</root>";
-        Assert.assertEquals(xmlNoCharset, doc.toString());
+        Assertions.assertEquals(xmlNoCharset, doc.toString());
     }
 
     @Test
@@ -415,17 +414,17 @@ public class DocumentTest extends ExtendedITextTest {
                                     "<root>\n" +
                                     " node\n" +
                                     "</root>";
-        Assert.assertEquals(xmlCharset, doc.toString());
+        Assertions.assertEquals(xmlCharset, doc.toString());
 
         XmlDeclaration selectedNode = (XmlDeclaration) doc.childNode(0);
-        Assert.assertEquals("dontTouch", selectedNode.attr("encoding"));
-        Assert.assertEquals("dontTouch", selectedNode.attr("version"));
+        Assertions.assertEquals("dontTouch", selectedNode.attr("encoding"));
+        Assertions.assertEquals("dontTouch", selectedNode.attr("version"));
     }
 
     @Test
     public void testMetaCharsetUpdatedDisabledPerDefault() {
         final Document doc = createHtmlDocument("none");
-        Assert.assertFalse(doc.updateMetaCharsetElement());
+        Assertions.assertFalse(doc.updateMetaCharsetElement());
     }
 
     private Document createHtmlDocument(String charset) {
@@ -469,8 +468,8 @@ public class DocumentTest extends ExtendedITextTest {
 
         String output = new String(doc.html().getBytes(doc.outputSettings().charset()), doc.outputSettings().charset());
 
-        Assert.assertFalse(output.contains("?"));
-        Assert.assertTrue(output.contains("&#xa0;") || output.contains("&nbsp;"));
+        Assertions.assertFalse(output.contains("?"));
+        Assertions.assertTrue(output.contains("&#xa0;") || output.contains("&nbsp;"));
     }
 
     @Test public void parseAndHtmlOnDifferentThreads() throws InterruptedException {
@@ -480,7 +479,7 @@ public class DocumentTest extends ExtendedITextTest {
         final Document doc = Jsoup.parse(html);
         final String[] out = new String[1];
         final Elements p = doc.select("p");
-        Assert.assertEquals(html, p.outerHtml());
+        Assertions.assertEquals(html, p.outerHtml());
 
         Thread thread = new Thread(() -> {
             out[0] = p.outerHtml();
@@ -489,39 +488,39 @@ public class DocumentTest extends ExtendedITextTest {
         thread.start();
         thread.join();
 
-        Assert.assertEquals(html, out[0]);
-        Assert.assertEquals(StandardCharsets.US_ASCII, doc.outputSettings().charset());
-        Assert.assertEquals(asci, p.outerHtml());
+        Assertions.assertEquals(html, out[0]);
+        Assertions.assertEquals(StandardCharsets.US_ASCII, doc.outputSettings().charset());
+        Assertions.assertEquals(asci, p.outerHtml());
     }
 
     @Test public void testDocumentTypeGet() {
         String html = "\n\n<!-- comment -->  <!doctype html><p>One</p>";
         Document doc = Jsoup.parse(html);
         DocumentType documentType = doc.documentType();
-        Assert.assertNotNull(documentType);
-        Assert.assertEquals("html", documentType.name());
+        Assertions.assertNotNull(documentType);
+        Assertions.assertEquals("html", documentType.name());
     }
 
     @Test public void framesetSupportsBodyMethod() {
         String html = "<html><head><title>Frame Test</title></head><frameset id=id><frame src=foo.html></frameset>";
         Document doc = Jsoup.parse(html);
         Element head = doc.head();
-        Assert.assertNotNull(head);
-        Assert.assertEquals("Frame Test", doc.title());
+        Assertions.assertNotNull(head);
+        Assertions.assertEquals("Frame Test", doc.title());
 
         // Frameset docs per html5 spec have no body element - but instead a frameset elelemt
-        Assert.assertNull(doc.selectFirst("body"));
+        Assertions.assertNull(doc.selectFirst("body"));
         Element frameset = doc.selectFirst("frameset");
-        Assert.assertNotNull(frameset);
+        Assertions.assertNotNull(frameset);
 
         // the body() method returns body or frameset and does not otherwise modify the document
         // doing it in body() vs parse keeps the html close to original for round-trip option
         Element body = doc.body();
-        Assert.assertNotNull(body);
-        Assert.assertSame(frameset, body);
-        Assert.assertEquals("frame", body.child(0).tagName());
+        Assertions.assertNotNull(body);
+        Assertions.assertSame(frameset, body);
+        Assertions.assertEquals("frame", body.child(0).tagName());
 
-        Assert.assertNull(doc.selectFirst("body")); // did not vivify a body element
+        Assertions.assertNull(doc.selectFirst("body")); // did not vivify a body element
 
         String expected = "<html>\n" +
             " <head>\n" +
@@ -531,6 +530,6 @@ public class DocumentTest extends ExtendedITextTest {
             "  <frame src=\"foo.html\">\n" +
             " </frameset>\n" +
             "</html>";
-        Assert.assertEquals(expected, doc.html());
+        Assertions.assertEquals(expected, doc.html());
     }
 }

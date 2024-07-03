@@ -23,13 +23,12 @@
 package com.itextpdf.io.image;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class RawImageHelperTest extends ExtendedITextTest {
 
     @Test
@@ -40,7 +39,7 @@ public class RawImageHelperTest extends ExtendedITextTest {
         RawImageHelper.updateImageAttributes(pngImageData1, null);
 
         Boolean blackIs1 = (Boolean) pngImageData1.getDecodeParms().get("BlackIs1");
-        Assert.assertTrue("CCITT_BLACKIS1 is false.", blackIs1);
+        Assertions.assertTrue(blackIs1, "CCITT_BLACKIS1 is false.");
     }
 
     @Test
@@ -51,7 +50,7 @@ public class RawImageHelperTest extends ExtendedITextTest {
         RawImageHelper.updateImageAttributes(pngImageData1, null);
 
         Boolean blackIs1 = (Boolean) pngImageData1.getDecodeParms().get("EncodedByteAlign");
-        Assert.assertTrue("CCITT_ENCODEDBYTEALIGN is false.", blackIs1);
+        Assertions.assertTrue(blackIs1, "CCITT_ENCODEDBYTEALIGN is false.");
     }
 
     @Test
@@ -62,7 +61,7 @@ public class RawImageHelperTest extends ExtendedITextTest {
         RawImageHelper.updateImageAttributes(pngImageData1, null);
 
         Boolean blackIs1 = (Boolean) pngImageData1.getDecodeParms().get("EndOfLine");
-        Assert.assertTrue("CCITT_ENDOFLINE is false.", blackIs1);
+        Assertions.assertTrue(blackIs1, "CCITT_ENDOFLINE is false.");
     }
 
     @Test
@@ -73,6 +72,6 @@ public class RawImageHelperTest extends ExtendedITextTest {
         RawImageHelper.updateImageAttributes(pngImageData1, null);
 
         Boolean blackIs1 = (Boolean) pngImageData1.getDecodeParms().get("EndOfBlock");
-        Assert.assertFalse("CCITT_ENDOFBLOCK is true.", blackIs1);
+        Assertions.assertFalse(blackIs1, "CCITT_ENDOFBLOCK is true.");
     }
 }

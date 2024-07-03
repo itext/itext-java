@@ -23,28 +23,27 @@
 package com.itextpdf.kernel.geom;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PageSizeUnitTest extends ExtendedITextTest {
 
     @Test
     public void constructFromRectangleTest() {
         Rectangle rectangle = new Rectangle(0, 0, 100, 200);
         PageSize pageSize = new PageSize(rectangle);
-        Assert.assertEquals(rectangle.x, pageSize.x, 1e-5);
-        Assert.assertEquals(rectangle.y, pageSize.y, 1e-5);
-        Assert.assertEquals(rectangle.width, pageSize.width, 1e-5);
-        Assert.assertEquals(rectangle.height, pageSize.height, 1e-5);
+        Assertions.assertEquals(rectangle.x, pageSize.x, 1e-5);
+        Assertions.assertEquals(rectangle.y, pageSize.y, 1e-5);
+        Assertions.assertEquals(rectangle.width, pageSize.width, 1e-5);
+        Assertions.assertEquals(rectangle.height, pageSize.height, 1e-5);
     }
 
     @Test
     public void A9pageSizeTest() {
         PageSize size = new PageSize(PageSize.A9);
-        Assert.assertEquals(148, size.height, 1e-5);
-        Assert.assertEquals(105, size.width, 1e-5);
+        Assertions.assertEquals(148, size.height, 1e-5);
+        Assertions.assertEquals(105, size.width, 1e-5);
     }
 }

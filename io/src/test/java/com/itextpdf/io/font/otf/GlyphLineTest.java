@@ -26,17 +26,16 @@ import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class GlyphLineTest extends ExtendedITextTest {
 
     private static List<Glyph> constructGlyphListFromString(String text, TrueTypeFont font) {
@@ -62,7 +61,7 @@ public class GlyphLineTest extends ExtendedITextTest {
         one.end++;
         two.end++;
 
-        Assert.assertTrue(one.equals(two));
+        Assertions.assertTrue(one.equals(two));
     }
 
     @Test
@@ -74,19 +73,19 @@ public class GlyphLineTest extends ExtendedITextTest {
 
         GlyphLine childLine1 = new GlyphLine(constructGlyphListFromString(" Liberte", font));
         containerLine.add(childLine1);
-        Assert.assertEquals(containerLine.end, 12);
+        Assertions.assertEquals(containerLine.end, 12);
         containerLine.end = 20;
         GlyphLine childLine2 = new GlyphLine(constructGlyphListFromString(" Egalite", font));
         containerLine.add(childLine2);
-        Assert.assertEquals(containerLine.end, 20);
+        Assertions.assertEquals(containerLine.end, 20);
         containerLine.start = 10;
         GlyphLine childLine3 = new GlyphLine(constructGlyphListFromString(" Fraternite", font));
         containerLine.add(childLine3);
-        Assert.assertEquals(containerLine.start, 10);
+        Assertions.assertEquals(containerLine.start, 10);
         containerLine.start = 0;
         containerLine.add(constructGlyphListFromString("!", font).get(0));
         containerLine.end = 40;
-        Assert.assertEquals(containerLine.glyphs.size(), 40);
+        Assertions.assertEquals(containerLine.glyphs.size(), 40);
     }
 
     @Test
@@ -97,17 +96,17 @@ public class GlyphLineTest extends ExtendedITextTest {
         List<Glyph> glyphs = constructGlyphListFromString("Viva France!", font);
 
         GlyphLine containerLine = new GlyphLine(glyphs);
-        Assert.assertNull(containerLine.actualText);
+        Assertions.assertNull(containerLine.actualText);
 
         containerLine.setActualText(0, 1, "TEST");
-        Assert.assertNotNull(containerLine.actualText);
-        Assert.assertEquals(12, containerLine.actualText.size());
-        Assert.assertEquals("TEST", containerLine.actualText.get(0).value);
+        Assertions.assertNotNull(containerLine.actualText);
+        Assertions.assertEquals(12, containerLine.actualText.size());
+        Assertions.assertEquals("TEST", containerLine.actualText.get(0).value);
 
         containerLine.add(new GlyphLine(glyphs));
-        Assert.assertEquals(24, containerLine.actualText.size());
+        Assertions.assertEquals(24, containerLine.actualText.size());
         for (int i = 13; i < 24; i++) {
-            Assert.assertNull(containerLine.actualText.get(i));
+            Assertions.assertNull(containerLine.actualText.get(i));
         }
     }
 
@@ -124,12 +123,12 @@ public class GlyphLineTest extends ExtendedITextTest {
         containerLine.add(childLine);
         containerLine.end = 16;
         for (int i = 0; i < 9; i++) {
-            Assert.assertNull(containerLine.actualText.get(i));
+            Assertions.assertNull(containerLine.actualText.get(i));
         }
         for (int i = 9; i < 16; i++) {
-            Assert.assertEquals("Viva", containerLine.actualText.get(i).value);
+            Assertions.assertEquals("Viva", containerLine.actualText.get(i).value);
         }
-        Assert.assertEquals("France---Viva", containerLine.toString());
+        Assertions.assertEquals("France---Viva", containerLine.toString());
     }
 
     @Test
@@ -145,17 +144,17 @@ public class GlyphLineTest extends ExtendedITextTest {
 
         containerLine.add(childLine);
         containerLine.end = 16;
-        Assert.assertNull(containerLine.actualText.get(0));
+        Assertions.assertNull(containerLine.actualText.get(0));
         for (int i = 1; i < 5; i++) {
-            Assert.assertEquals("id", containerLine.actualText.get(i).value);
+            Assertions.assertEquals("id", containerLine.actualText.get(i).value);
         }
         for (int i = 5; i < 9; i++) {
-            Assert.assertNull(containerLine.actualText.get(i));
+            Assertions.assertNull(containerLine.actualText.get(i));
         }
         for (int i = 9; i < 16; i++) {
-            Assert.assertEquals("Viva", containerLine.actualText.get(i).value);
+            Assertions.assertEquals("Viva", containerLine.actualText.get(i).value);
         }
-        Assert.assertEquals("Fide---Viva", containerLine.toString());
+        Assertions.assertEquals("Fide---Viva", containerLine.toString());
     }
 
     @Test
@@ -170,7 +169,7 @@ public class GlyphLineTest extends ExtendedITextTest {
         lineToBeReplaced.replaceContent(lineToBeCopied);
 
         // Test that no exception has been thrown. Also check the content.
-        Assert.assertEquals("Belarus", lineToBeReplaced.toString());
+        Assertions.assertEquals("Belarus", lineToBeReplaced.toString());
     }
 
     @Test
@@ -188,12 +187,12 @@ public class GlyphLineTest extends ExtendedITextTest {
 
         line.substituteOneToMany(font.getGsubTable(), new int[] {39, 40});
 
-        Assert.assertNotNull(line.actualText);
-        Assert.assertEquals(3, line.actualText.size());
-        Assert.assertSame(line.actualText.get(1), line.actualText.get(2));
-        Assert.assertEquals(expectedActualTextForSecondGlyph, line.actualText.get(1).value);
+        Assertions.assertNotNull(line.actualText);
+        Assertions.assertEquals(3, line.actualText.size());
+        Assertions.assertSame(line.actualText.get(1), line.actualText.get(2));
+        Assertions.assertEquals(expectedActualTextForSecondGlyph, line.actualText.get(1).value);
         // check that it hasn't been corrupted
-        Assert.assertEquals(expectedActualTextForFirstGlyph, line.actualText.get(0).value);
+        Assertions.assertEquals(expectedActualTextForFirstGlyph, line.actualText.get(0).value);
     }
 
     @Test
@@ -208,10 +207,10 @@ public class GlyphLineTest extends ExtendedITextTest {
 
         line.substituteOneToMany(font.getGsubTable(), new int[] {39, 40});
 
-        Assert.assertNotNull(line.actualText);
-        Assert.assertEquals(2, line.actualText.size());
-        Assert.assertSame(line.actualText.get(0), line.actualText.get(1));
-        Assert.assertEquals(expectedActualTextForFirstGlyph, line.actualText.get(0).value);
+        Assertions.assertNotNull(line.actualText);
+        Assertions.assertEquals(2, line.actualText.size());
+        Assertions.assertSame(line.actualText.get(0), line.actualText.get(1));
+        Assertions.assertEquals(expectedActualTextForFirstGlyph, line.actualText.get(0).value);
     }
 
     @Test
@@ -224,7 +223,7 @@ public class GlyphLineTest extends ExtendedITextTest {
 
         line.substituteOneToMany(font.getGsubTable(), new int[] {39, 40});
 
-        Assert.assertNull(line.actualText);
+        Assertions.assertNull(line.actualText);
     }
 }
 

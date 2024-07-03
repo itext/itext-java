@@ -23,33 +23,32 @@
 package com.itextpdf.commons.utils;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class MapUtilTest extends ExtendedITextTest {
 
     @Test
     public void nullMapsAreEqualTest() {
-        Assert.assertTrue(MapUtil.equals(null, null));
+        Assertions.assertTrue(MapUtil.equals(null, null));
     }
 
     @Test
     public void nullMapIsNotEqualToEmptyMapTest() {
-        Assert.assertFalse(MapUtil.equals(new HashMap<String, String>(), null));
-        Assert.assertFalse(MapUtil.equals(null, new HashMap<String, String>()));
+        Assertions.assertFalse(MapUtil.equals(new HashMap<String, String>(), null));
+        Assertions.assertFalse(MapUtil.equals(null, new HashMap<String, String>()));
     }
 
     @Test
     public void mapsOfDifferentTypesAreNotEqualTest() {
-        Assert.assertFalse(MapUtil.equals(new HashMap<String, String>(), new TreeMap<>()));
+        Assertions.assertFalse(MapUtil.equals(new HashMap<String, String>(), new TreeMap<>()));
     }
 
     @Test
@@ -61,7 +60,7 @@ public class MapUtilTest extends ExtendedITextTest {
         m2.put("m1", "m1");
         m2.put("m2", "m2");
 
-        Assert.assertFalse(MapUtil.equals(m1, m2));
+        Assertions.assertFalse(MapUtil.equals(m1, m2));
     }
 
     @Test
@@ -69,7 +68,7 @@ public class MapUtilTest extends ExtendedITextTest {
         Map<String, String> m1 = Collections.<String, String>singletonMap("nullKey", null);
         Map<String, String> m2 = Collections.singletonMap("notNullKey", "notNull");
 
-        Assert.assertFalse(MapUtil.equals(m1, m2));
+        Assertions.assertFalse(MapUtil.equals(m1, m2));
     }
 
     @Test
@@ -79,7 +78,7 @@ public class MapUtilTest extends ExtendedITextTest {
 
         Map<String, String> m2 = new HashMap<>();
         m2.put("m2", "value");
-        Assert.assertFalse(MapUtil.equals(m1, m2));
+        Assertions.assertFalse(MapUtil.equals(m1, m2));
     }
 
     @Test
@@ -89,7 +88,7 @@ public class MapUtilTest extends ExtendedITextTest {
 
         Map<String, String> m2 = new HashMap<>();
         m2.put("key", "m2");
-        Assert.assertFalse(MapUtil.equals(m1, m2));
+        Assertions.assertFalse(MapUtil.equals(m1, m2));
     }
 
     @Test
@@ -99,33 +98,33 @@ public class MapUtilTest extends ExtendedITextTest {
 
         Map<String, String> m2 = new HashMap<>();
         m2.put("key", "value");
-        Assert.assertTrue(MapUtil.equals(m1, m2));
+        Assertions.assertTrue(MapUtil.equals(m1, m2));
     }
 
     @Test
     public void putIfNotNullTest() {
         Map<String, String> m1 = new HashMap<>();
         MapUtil.putIfNotNull(m1, "key", null);
-        Assert.assertTrue(m1.isEmpty());
+        Assertions.assertTrue(m1.isEmpty());
         MapUtil.putIfNotNull(m1, "key", "value");
-        Assert.assertFalse(m1.isEmpty());
-        Assert.assertEquals("value", m1.get("key"));
+        Assertions.assertFalse(m1.isEmpty());
+        Assertions.assertEquals("value", m1.get("key"));
 
     }
 
     @Test
     public void nullMapsEqualEqualHashCodeTest() {
-        Assert.assertEquals(MapUtil.getHashCode((Map<String, String>)null), MapUtil.getHashCode((Map<String, String>)null));
+        Assertions.assertEquals(MapUtil.getHashCode((Map<String, String>)null), MapUtil.getHashCode((Map<String, String>)null));
     }
 
     @Test
     public void nullMapEmptyMapDiffHashCodeTest() {
-        Assert.assertEquals(MapUtil.getHashCode((Map<String, String>)null), MapUtil.getHashCode(new HashMap<String, String>()));
+        Assertions.assertEquals(MapUtil.getHashCode((Map<String, String>)null), MapUtil.getHashCode(new HashMap<String, String>()));
     }
 
     @Test
     public void mapsOfDifferentTypesHashCodeTest() {
-        Assert.assertEquals(MapUtil.getHashCode(new TreeMap<>()),
+        Assertions.assertEquals(MapUtil.getHashCode(new TreeMap<>()),
                 MapUtil.getHashCode(new HashMap<String, String>()));
     }
 
@@ -136,7 +135,7 @@ public class MapUtilTest extends ExtendedITextTest {
 
         Map<String, String> m2 = new HashMap<>();
         m2.put("key", "value");
-        Assert.assertEquals(MapUtil.getHashCode(m1), MapUtil.getHashCode(m2));
+        Assertions.assertEquals(MapUtil.getHashCode(m1), MapUtil.getHashCode(m2));
     }
 
     @Test
@@ -156,7 +155,7 @@ public class MapUtilTest extends ExtendedITextTest {
         expectedMap.put(2, 15);
         expectedMap.put(3, 10);
         expectedMap.put(4, 5);
-        Assert.assertEquals(expectedMap, destination);
+        Assertions.assertEquals(expectedMap, destination);
     }
 
     @Test
@@ -168,6 +167,6 @@ public class MapUtilTest extends ExtendedITextTest {
         Map<Integer, Integer> expectedMap = new HashMap<>(map);
 
         MapUtil.merge(map, map, (d, s) -> d + s);
-        Assert.assertEquals(expectedMap, map);
+        Assertions.assertEquals(expectedMap, map);
     }
 }

@@ -44,11 +44,10 @@ import com.itextpdf.signatures.validation.v1.context.ValidatorContexts;
 import com.itextpdf.signatures.validation.v1.report.ReportItem;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 import java.security.PrivateKey;
@@ -57,7 +56,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
 
-@Category(BouncyCastleUnitTest.class)
+@Tag("BouncyCastleUnitTest")
 public class RevocationDataValidatorIntegrationTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
     private static final String SOURCE_FOLDER =
@@ -76,7 +75,7 @@ public class RevocationDataValidatorIntegrationTest extends ExtendedITextTest {
     private final ValidationContext baseContext = new ValidationContext(ValidatorContext.SIGNATURE_VALIDATOR,
             CertificateSource.SIGNER_CERT, TimeBasedContext.PRESENT);
 
-    @BeforeClass
+    @BeforeAll
     public static void before()
             throws CertificateException, IOException, AbstractOperatorCreationException, AbstractPKCSException {
         Security.addProvider(FACTORY.getProvider());
@@ -92,7 +91,7 @@ public class RevocationDataValidatorIntegrationTest extends ExtendedITextTest {
         ocspRespPrivateKey = PemFileHelper.readFirstKey(ocspResponderCertFileName, PASSWORD);
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         certificateRetriever = new IssuingCertificateRetriever();
         parameters = new SignatureValidationProperties();

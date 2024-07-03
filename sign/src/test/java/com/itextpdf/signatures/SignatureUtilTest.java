@@ -30,25 +30,24 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.signatures.testutils.TimeTestUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.security.Security;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 import java.util.List;
 
-@Category(BouncyCastleIntegrationTest.class)
+@Tag("BouncyCastleIntegrationTest")
 public class SignatureUtilTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/SignatureUtilTest/";
     private static final double EPS = 0.001;
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         Security.addProvider(BOUNCY_CASTLE_FACTORY.getProvider());
     }
@@ -60,8 +59,8 @@ public class SignatureUtilTest extends ExtendedITextTest {
         SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
         List<String> signatureNames = signatureUtil.getSignatureNames();
 
-        Assert.assertEquals(1, signatureNames.size());
-        Assert.assertEquals("Signature1", signatureNames.get(0));
+        Assertions.assertEquals(1, signatureNames.size());
+        Assertions.assertEquals("Signature1", signatureNames.get(0));
     }
 
     @Test
@@ -71,7 +70,7 @@ public class SignatureUtilTest extends ExtendedITextTest {
         SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
         List<String> signatureNames = signatureUtil.getSignatureNames();
 
-        Assert.assertEquals(0, signatureNames.size());
+        Assertions.assertEquals(0, signatureNames.size());
     }
 
     @Test
@@ -80,7 +79,7 @@ public class SignatureUtilTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
         SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
 
-        Assert.assertFalse(signatureUtil.signatureCoversWholeDocument("Signature1"));
+        Assertions.assertFalse(signatureUtil.signatureCoversWholeDocument("Signature1"));
     }
 
     @Test
@@ -89,7 +88,7 @@ public class SignatureUtilTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
         SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
 
-        Assert.assertFalse(signatureUtil.signatureCoversWholeDocument("Signature1"));
+        Assertions.assertFalse(signatureUtil.signatureCoversWholeDocument("Signature1"));
     }
 
     @Test
@@ -98,7 +97,7 @@ public class SignatureUtilTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
         SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
 
-        Assert.assertFalse(signatureUtil.signatureCoversWholeDocument("Signature1"));
+        Assertions.assertFalse(signatureUtil.signatureCoversWholeDocument("Signature1"));
     }
 
     @Test
@@ -107,7 +106,7 @@ public class SignatureUtilTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
         SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
 
-        Assert.assertFalse(signatureUtil.signatureCoversWholeDocument("Signature1"));
+        Assertions.assertFalse(signatureUtil.signatureCoversWholeDocument("Signature1"));
     }
 
     @Test
@@ -116,7 +115,7 @@ public class SignatureUtilTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
         SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
 
-        Assert.assertTrue(signatureUtil.signatureCoversWholeDocument("Signature1"));
+        Assertions.assertTrue(signatureUtil.signatureCoversWholeDocument("Signature1"));
     }
 
     @Test
@@ -125,7 +124,7 @@ public class SignatureUtilTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
         SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
 
-        Assert.assertTrue(signatureUtil.signatureCoversWholeDocument("sig"));
+        Assertions.assertTrue(signatureUtil.signatureCoversWholeDocument("sig"));
     }
 
     @Test
@@ -134,7 +133,7 @@ public class SignatureUtilTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
         SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
 
-        Assert.assertTrue(signatureUtil.signatureCoversWholeDocument("Signature1"));
+        Assertions.assertTrue(signatureUtil.signatureCoversWholeDocument("Signature1"));
     }
 
     @Test
@@ -143,7 +142,7 @@ public class SignatureUtilTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
         SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
 
-        Assert.assertTrue(signatureUtil.signatureCoversWholeDocument("Signature1"));
+        Assertions.assertTrue(signatureUtil.signatureCoversWholeDocument("Signature1"));
     }
 
     @Test
@@ -152,7 +151,7 @@ public class SignatureUtilTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
         SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
 
-        Assert.assertFalse(signatureUtil.signatureCoversWholeDocument("Signature1"));
+        Assertions.assertFalse(signatureUtil.signatureCoversWholeDocument("Signature1"));
     }
 
     @Test
@@ -161,7 +160,7 @@ public class SignatureUtilTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
         SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
 
-        Assert.assertTrue(signatureUtil.signatureCoversWholeDocument("Signature1"));
+        Assertions.assertTrue(signatureUtil.signatureCoversWholeDocument("Signature1"));
     }
 
     @Test
@@ -170,7 +169,7 @@ public class SignatureUtilTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
         SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
 
-        Assert.assertFalse(signatureUtil.signatureCoversWholeDocument("Signature1"));
+        Assertions.assertFalse(signatureUtil.signatureCoversWholeDocument("Signature1"));
     }
 
 
@@ -180,7 +179,7 @@ public class SignatureUtilTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
         SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
 
-        Assert.assertFalse(signatureUtil.signatureCoversWholeDocument("Signature1"));
+        Assertions.assertFalse(signatureUtil.signatureCoversWholeDocument("Signature1"));
     }
 
     @Test
@@ -189,7 +188,7 @@ public class SignatureUtilTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
         SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
 
-        Assert.assertFalse(signatureUtil.signatureCoversWholeDocument("Signature1"));
+        Assertions.assertFalse(signatureUtil.signatureCoversWholeDocument("Signature1"));
     }
 
     @Test
@@ -198,7 +197,7 @@ public class SignatureUtilTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
         SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
 
-        Assert.assertTrue(signatureUtil.signatureCoversWholeDocument("Signature1"));
+        Assertions.assertTrue(signatureUtil.signatureCoversWholeDocument("Signature1"));
     }
 
     @Test
@@ -207,7 +206,7 @@ public class SignatureUtilTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
         SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
 
-        Assert.assertNull(signatureUtil.readSignatureData("Signature1", null));
+        Assertions.assertNull(signatureUtil.readSignatureData("Signature1", null));
     }
 
     @Test
@@ -217,13 +216,13 @@ public class SignatureUtilTest extends ExtendedITextTest {
         SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
 
         PdfPKCS7 pkcs7 = signatureUtil.readSignatureData("Signature1");
-        Assert.assertNotNull(pkcs7);
-        Assert.assertEquals("Test 1", pkcs7.getReason());
-        Assert.assertNull(pkcs7.getSignName());
-        Assert.assertEquals("TestCity", pkcs7.getLocation());
+        Assertions.assertNotNull(pkcs7);
+        Assertions.assertEquals("Test 1", pkcs7.getReason());
+        Assertions.assertNull(pkcs7.getSignName());
+        Assertions.assertEquals("TestCity", pkcs7.getLocation());
         // The number corresponds to 18 May, 2021 17:23:59.
         double expectedMillis = (double) 1621347839000L;
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 TimeTestUtil.getFullDaysMillis(expectedMillis),
                 TimeTestUtil.getFullDaysMillis(DateTimeUtil.getUtcMillisFromEpoch(pkcs7.getSignDate())),
                 EPS);
@@ -236,14 +235,14 @@ public class SignatureUtilTest extends ExtendedITextTest {
         SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
 
         PdfPKCS7 pkcs7 = signatureUtil.readSignatureData("Signature1");
-        Assert.assertNotNull(pkcs7);
-        Assert.assertNotNull(pkcs7);
-        Assert.assertEquals("Test", pkcs7.getReason());
-        Assert.assertNull(pkcs7.getSignName());
-        Assert.assertEquals("TestCity", pkcs7.getLocation());
+        Assertions.assertNotNull(pkcs7);
+        Assertions.assertNotNull(pkcs7);
+        Assertions.assertEquals("Test", pkcs7.getReason());
+        Assertions.assertNull(pkcs7.getSignName());
+        Assertions.assertEquals("TestCity", pkcs7.getLocation());
         // The number corresponds to 18 May, 2021 11:28:40.
         double expectedMillis = (double) 1621326520000L;
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 TimeTestUtil.getFullDaysMillis(expectedMillis),
                 TimeTestUtil.getFullDaysMillis(DateTimeUtil.getUtcMillisFromEpoch(pkcs7.getSignDate())),
                 EPS);
@@ -255,7 +254,7 @@ public class SignatureUtilTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
         SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
 
-        Assert.assertThrows(PdfException.class,
+        Assertions.assertThrows(PdfException.class,
                 () -> signatureUtil.readSignatureData("Signature1"));
     }
 
@@ -265,7 +264,7 @@ public class SignatureUtilTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
         SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
 
-        Assert.assertTrue(signatureUtil.doesSignatureFieldExist("Signature1"));
+        Assertions.assertTrue(signatureUtil.doesSignatureFieldExist("Signature1"));
     }
 
     @Test
@@ -274,7 +273,7 @@ public class SignatureUtilTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
         SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
 
-        Assert.assertTrue(signatureUtil.doesSignatureFieldExist("Signature1"));
+        Assertions.assertTrue(signatureUtil.doesSignatureFieldExist("Signature1"));
     }
 
     @Test
@@ -283,7 +282,7 @@ public class SignatureUtilTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
         SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
 
-        Assert.assertFalse(signatureUtil.doesSignatureFieldExist("Signature1"));
+        Assertions.assertFalse(signatureUtil.doesSignatureFieldExist("Signature1"));
     }
 
     @Test
@@ -292,7 +291,7 @@ public class SignatureUtilTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
         SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
 
-        Assert.assertEquals(1, signatureUtil.getTotalRevisions());
+        Assertions.assertEquals(1, signatureUtil.getTotalRevisions());
     }
 
     @Test
@@ -301,7 +300,7 @@ public class SignatureUtilTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
         SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
 
-        Assert.assertEquals(1, signatureUtil.getRevision("Signature1"));
+        Assertions.assertEquals(1, signatureUtil.getRevision("Signature1"));
     }
 
     @Test
@@ -310,7 +309,7 @@ public class SignatureUtilTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
         SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
 
-        Assert.assertEquals(0, signatureUtil.getRevision("Signature1"));
+        Assertions.assertEquals(0, signatureUtil.getRevision("Signature1"));
     }
 
     @Test
@@ -319,7 +318,7 @@ public class SignatureUtilTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
         SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
 
-        Assert.assertEquals(1, signatureUtil.getRevision("Signature1"));
+        Assertions.assertEquals(1, signatureUtil.getRevision("Signature1"));
     }
 
     @Test
@@ -328,7 +327,7 @@ public class SignatureUtilTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
         SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
 
-        Assert.assertNotNull(signatureUtil.extractRevision("Signature1"));
+        Assertions.assertNotNull(signatureUtil.extractRevision("Signature1"));
     }
 
     @Test
@@ -337,6 +336,6 @@ public class SignatureUtilTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
         SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
 
-        Assert.assertNull(signatureUtil.extractRevision("Signature1"));
+        Assertions.assertNull(signatureUtil.extractRevision("Signature1"));
     }
 }

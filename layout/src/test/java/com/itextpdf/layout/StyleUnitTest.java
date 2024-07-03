@@ -26,13 +26,12 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.properties.VerticalAlignment;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class StyleUnitTest extends ExtendedITextTest {
 
     public static float EPS = 0.0001f;
@@ -46,20 +45,20 @@ public class StyleUnitTest extends ExtendedITextTest {
 
         Style style = new Style();
 
-        Assert.assertNull(style.getMarginTop());
-        Assert.assertNull(style.getMarginRight());
-        Assert.assertNull(style.getMarginBottom());
-        Assert.assertNull(style.getMarginLeft());
+        Assertions.assertNull(style.getMarginTop());
+        Assertions.assertNull(style.getMarginRight());
+        Assertions.assertNull(style.getMarginBottom());
+        Assertions.assertNull(style.getMarginLeft());
         
         style.setMargins(expectedMarginTop, expectedMarginRight, expectedMarginBottom, expectedMarginLeft);
 
-        Assert.assertEquals(UnitValue.createPointValue(expectedMarginTop),
+        Assertions.assertEquals(UnitValue.createPointValue(expectedMarginTop),
                 style.getMarginTop());
-        Assert.assertEquals(UnitValue.createPointValue(expectedMarginRight),
+        Assertions.assertEquals(UnitValue.createPointValue(expectedMarginRight),
                 style.getMarginRight());
-        Assert.assertEquals(UnitValue.createPointValue(expectedMarginBottom),
+        Assertions.assertEquals(UnitValue.createPointValue(expectedMarginBottom),
                 style.getMarginBottom());
-        Assert.assertEquals(UnitValue.createPointValue(expectedMarginLeft),
+        Assertions.assertEquals(UnitValue.createPointValue(expectedMarginLeft),
                 style.getMarginLeft());
     }
 
@@ -69,17 +68,17 @@ public class StyleUnitTest extends ExtendedITextTest {
 
         Style style = new Style();
 
-        Assert.assertNull(style.getMarginTop());
-        Assert.assertNull(style.getMarginRight());
-        Assert.assertNull(style.getMarginBottom());
-        Assert.assertNull(style.getMarginLeft());
+        Assertions.assertNull(style.getMarginTop());
+        Assertions.assertNull(style.getMarginRight());
+        Assertions.assertNull(style.getMarginBottom());
+        Assertions.assertNull(style.getMarginLeft());
 
         style.setMargin(expectedMargin);
 
-        Assert.assertEquals(UnitValue.createPointValue(expectedMargin), style.getMarginTop());
-        Assert.assertEquals(UnitValue.createPointValue(expectedMargin), style.getMarginRight());
-        Assert.assertEquals(UnitValue.createPointValue(expectedMargin), style.getMarginBottom());
-        Assert.assertEquals(UnitValue.createPointValue(expectedMargin), style.getMarginLeft());
+        Assertions.assertEquals(UnitValue.createPointValue(expectedMargin), style.getMarginTop());
+        Assertions.assertEquals(UnitValue.createPointValue(expectedMargin), style.getMarginRight());
+        Assertions.assertEquals(UnitValue.createPointValue(expectedMargin), style.getMarginBottom());
+        Assertions.assertEquals(UnitValue.createPointValue(expectedMargin), style.getMarginLeft());
     }
 
     @Test
@@ -88,11 +87,11 @@ public class StyleUnitTest extends ExtendedITextTest {
 
         Style style = new Style();
 
-        Assert.assertNull(style.getMarginLeft());
+        Assertions.assertNull(style.getMarginLeft());
 
         style.setMarginLeft(expLeftMargin);
 
-        Assert.assertEquals(UnitValue.createPointValue(expLeftMargin), style.getMarginLeft());
+        Assertions.assertEquals(UnitValue.createPointValue(expLeftMargin), style.getMarginLeft());
     }
 
     @Test
@@ -101,11 +100,11 @@ public class StyleUnitTest extends ExtendedITextTest {
 
         Style style = new Style();
 
-        Assert.assertNull(style.getMarginRight());
+        Assertions.assertNull(style.getMarginRight());
 
         style.setMarginRight(expRightMargin);
 
-        Assert.assertEquals(UnitValue.createPointValue(expRightMargin), style.getMarginRight());
+        Assertions.assertEquals(UnitValue.createPointValue(expRightMargin), style.getMarginRight());
     }
 
     @Test
@@ -114,11 +113,11 @@ public class StyleUnitTest extends ExtendedITextTest {
 
         Style style = new Style();
 
-        Assert.assertNull(style.getMarginTop());
+        Assertions.assertNull(style.getMarginTop());
 
         style.setMarginTop(expTopMargin);
 
-        Assert.assertEquals(UnitValue.createPointValue(expTopMargin), style.getMarginTop());
+        Assertions.assertEquals(UnitValue.createPointValue(expTopMargin), style.getMarginTop());
     }
 
     @Test
@@ -127,11 +126,11 @@ public class StyleUnitTest extends ExtendedITextTest {
 
         Style style = new Style();
 
-        Assert.assertNull(style.getMarginTop());
+        Assertions.assertNull(style.getMarginTop());
 
         style.setMarginBottom(expBottomMargin);
 
-        Assert.assertEquals(UnitValue.createPointValue(expBottomMargin), style.getMarginBottom());
+        Assertions.assertEquals(UnitValue.createPointValue(expBottomMargin), style.getMarginBottom());
     }
 
     @Test
@@ -140,11 +139,11 @@ public class StyleUnitTest extends ExtendedITextTest {
 
         Style style = new Style();
 
-        Assert.assertNull(style.getPaddingLeft());
+        Assertions.assertNull(style.getPaddingLeft());
 
         style.setPaddingLeft(expLeftPadding);
 
-        Assert.assertEquals(UnitValue.createPointValue(expLeftPadding), style.getPaddingLeft());
+        Assertions.assertEquals(UnitValue.createPointValue(expLeftPadding), style.getPaddingLeft());
     }
 
     @Test
@@ -153,11 +152,11 @@ public class StyleUnitTest extends ExtendedITextTest {
 
         Style style = new Style();
 
-        Assert.assertNull(style.getPaddingRight());
+        Assertions.assertNull(style.getPaddingRight());
 
         style.setPaddingRight(expRightPadding);
 
-        Assert.assertEquals(UnitValue.createPointValue(expRightPadding), style.getPaddingRight());
+        Assertions.assertEquals(UnitValue.createPointValue(expRightPadding), style.getPaddingRight());
     }
 
     @Test
@@ -166,11 +165,11 @@ public class StyleUnitTest extends ExtendedITextTest {
 
         Style style = new Style();
 
-        Assert.assertNull(style.getPaddingTop());
+        Assertions.assertNull(style.getPaddingTop());
 
         style.setPaddingTop(expTopPadding);
 
-        Assert.assertEquals(UnitValue.createPointValue(expTopPadding), style.getPaddingTop());
+        Assertions.assertEquals(UnitValue.createPointValue(expTopPadding), style.getPaddingTop());
     }
 
     @Test
@@ -179,11 +178,11 @@ public class StyleUnitTest extends ExtendedITextTest {
 
         Style style = new Style();
 
-        Assert.assertNull(style.getPaddingBottom());
+        Assertions.assertNull(style.getPaddingBottom());
 
         style.setPaddingBottom(expBottomPadding);
 
-        Assert.assertEquals(UnitValue.createPointValue(expBottomPadding), style.getPaddingBottom());
+        Assertions.assertEquals(UnitValue.createPointValue(expBottomPadding), style.getPaddingBottom());
     }
 
     @Test
@@ -191,17 +190,17 @@ public class StyleUnitTest extends ExtendedITextTest {
         float expPadding = 10;
         Style style = new Style();
 
-        Assert.assertNull(style.getPaddingTop());
-        Assert.assertNull(style.getPaddingRight());
-        Assert.assertNull(style.getPaddingBottom());
-        Assert.assertNull(style.getPaddingLeft());
+        Assertions.assertNull(style.getPaddingTop());
+        Assertions.assertNull(style.getPaddingRight());
+        Assertions.assertNull(style.getPaddingBottom());
+        Assertions.assertNull(style.getPaddingLeft());
 
         style.setPadding(expPadding);
 
-        Assert.assertEquals(UnitValue.createPointValue(expPadding), style.getPaddingTop());
-        Assert.assertEquals(UnitValue.createPointValue(expPadding), style.getPaddingRight());
-        Assert.assertEquals(UnitValue.createPointValue(expPadding), style.getPaddingBottom());
-        Assert.assertEquals(UnitValue.createPointValue(expPadding), style.getPaddingLeft());
+        Assertions.assertEquals(UnitValue.createPointValue(expPadding), style.getPaddingTop());
+        Assertions.assertEquals(UnitValue.createPointValue(expPadding), style.getPaddingRight());
+        Assertions.assertEquals(UnitValue.createPointValue(expPadding), style.getPaddingBottom());
+        Assertions.assertEquals(UnitValue.createPointValue(expPadding), style.getPaddingLeft());
     }
 
     @Test
@@ -213,17 +212,17 @@ public class StyleUnitTest extends ExtendedITextTest {
 
         Style style = new Style();
 
-        Assert.assertNull(style.getPaddingTop());
-        Assert.assertNull(style.getPaddingRight());
-        Assert.assertNull(style.getPaddingBottom());
-        Assert.assertNull(style.getPaddingLeft());
+        Assertions.assertNull(style.getPaddingTop());
+        Assertions.assertNull(style.getPaddingRight());
+        Assertions.assertNull(style.getPaddingBottom());
+        Assertions.assertNull(style.getPaddingLeft());
 
         style.setPaddings(expPaddingTop, expPaddingRight, expPaddingBottom, expPaddingLeft);
 
-        Assert.assertEquals(UnitValue.createPointValue(expPaddingLeft), style.getPaddingLeft());
-        Assert.assertEquals(UnitValue.createPointValue(expPaddingBottom), style.getPaddingBottom());
-        Assert.assertEquals(UnitValue.createPointValue(expPaddingTop), style.getPaddingTop());
-        Assert.assertEquals(UnitValue.createPointValue(expPaddingRight), style.getPaddingRight());
+        Assertions.assertEquals(UnitValue.createPointValue(expPaddingLeft), style.getPaddingLeft());
+        Assertions.assertEquals(UnitValue.createPointValue(expPaddingBottom), style.getPaddingBottom());
+        Assertions.assertEquals(UnitValue.createPointValue(expPaddingTop), style.getPaddingTop());
+        Assertions.assertEquals(UnitValue.createPointValue(expPaddingRight), style.getPaddingRight());
     }
 
     @Test
@@ -232,11 +231,11 @@ public class StyleUnitTest extends ExtendedITextTest {
 
         Style style = new Style();
 
-        Assert.assertNull(style.<VerticalAlignment>getProperty(Property.VERTICAL_ALIGNMENT));
+        Assertions.assertNull(style.<VerticalAlignment>getProperty(Property.VERTICAL_ALIGNMENT));
 
         style.setVerticalAlignment(expectedAlignment);
 
-        Assert.assertEquals(expectedAlignment, style.<VerticalAlignment>getProperty(Property.VERTICAL_ALIGNMENT));
+        Assertions.assertEquals(expectedAlignment, style.<VerticalAlignment>getProperty(Property.VERTICAL_ALIGNMENT));
     }
 
     @Test
@@ -245,11 +244,11 @@ public class StyleUnitTest extends ExtendedITextTest {
 
         Style style = new Style();
 
-        Assert.assertNull(style.<VerticalAlignment>getProperty(Property.VERTICAL_ALIGNMENT));
+        Assertions.assertNull(style.<VerticalAlignment>getProperty(Property.VERTICAL_ALIGNMENT));
 
         style.setVerticalAlignment(expectedAlignment);
 
-        Assert.assertEquals(expectedAlignment, style.<VerticalAlignment>getProperty(Property.VERTICAL_ALIGNMENT));
+        Assertions.assertEquals(expectedAlignment, style.<VerticalAlignment>getProperty(Property.VERTICAL_ALIGNMENT));
     }
 
     @Test
@@ -258,11 +257,11 @@ public class StyleUnitTest extends ExtendedITextTest {
 
         Style style = new Style();
 
-        Assert.assertNull(style.<VerticalAlignment>getProperty(Property.VERTICAL_ALIGNMENT));
+        Assertions.assertNull(style.<VerticalAlignment>getProperty(Property.VERTICAL_ALIGNMENT));
 
         style.setVerticalAlignment(expectedAlignment);
 
-        Assert.assertEquals(expectedAlignment, style.<VerticalAlignment>getProperty(Property.VERTICAL_ALIGNMENT));
+        Assertions.assertEquals(expectedAlignment, style.<VerticalAlignment>getProperty(Property.VERTICAL_ALIGNMENT));
     }
 
     @Test
@@ -271,44 +270,44 @@ public class StyleUnitTest extends ExtendedITextTest {
 
         Style style = new Style();
 
-        Assert.assertNull(style.<Float>getProperty(Property.SPACING_RATIO));
+        Assertions.assertNull(style.<Float>getProperty(Property.SPACING_RATIO));
 
         style.setSpacingRatio(expectedSpacingRatio);
 
-        Assert.assertEquals(expectedSpacingRatio, (float)style.<Float>getProperty(Property.SPACING_RATIO), EPS);
+        Assertions.assertEquals(expectedSpacingRatio, (float)style.<Float>getProperty(Property.SPACING_RATIO), EPS);
     }
 
     @Test
     public void setKeepTogetherTrueTest() {
         Style style = new Style();
 
-        Assert.assertNull(style.<Boolean>getProperty(Property.KEEP_TOGETHER));
+        Assertions.assertNull(style.<Boolean>getProperty(Property.KEEP_TOGETHER));
 
         style.setKeepTogether(true);
 
-        Assert.assertEquals(true, style.<Boolean>getProperty(Property.KEEP_TOGETHER));
+        Assertions.assertEquals(true, style.<Boolean>getProperty(Property.KEEP_TOGETHER));
     }
 
     @Test
     public void setKeepTogetherFalseTest() {
         Style style = new Style();
 
-        Assert.assertNull(style.<Boolean>getProperty(Property.KEEP_TOGETHER));
+        Assertions.assertNull(style.<Boolean>getProperty(Property.KEEP_TOGETHER));
 
         style.setKeepTogether(false);
 
-        Assert.assertEquals(false, style.<Boolean>getProperty(Property.KEEP_TOGETHER));
+        Assertions.assertEquals(false, style.<Boolean>getProperty(Property.KEEP_TOGETHER));
     }
 
     @Test
     public void isKeepTogetherTest() {
         Style style = new Style();
 
-        Assert.assertNull(style.<Boolean>getProperty(Property.KEEP_TOGETHER));
+        Assertions.assertNull(style.<Boolean>getProperty(Property.KEEP_TOGETHER));
 
         style.setKeepTogether(true);
 
-        Assert.assertEquals(true, style.isKeepTogether());
+        Assertions.assertEquals(true, style.isKeepTogether());
     }
 
     @Test
@@ -317,11 +316,11 @@ public class StyleUnitTest extends ExtendedITextTest {
 
         Style style = new Style();
 
-        Assert.assertNull(style.<Float>getProperty(Property.ROTATION_ANGLE));
+        Assertions.assertNull(style.<Float>getProperty(Property.ROTATION_ANGLE));
 
         style.setRotationAngle(expectedRotationAngle);
 
-        Assert.assertEquals(expectedRotationAngle, (float)style.<Float>getProperty(Property.ROTATION_ANGLE), EPS);
+        Assertions.assertEquals(expectedRotationAngle, (float)style.<Float>getProperty(Property.ROTATION_ANGLE), EPS);
     }
 
     @Test
@@ -330,11 +329,11 @@ public class StyleUnitTest extends ExtendedITextTest {
 
         Style style = new Style();
 
-        Assert.assertNull(style.<Float>getProperty(Property.ROTATION_ANGLE));
+        Assertions.assertNull(style.<Float>getProperty(Property.ROTATION_ANGLE));
 
         style.setRotationAngle(expectedRotationAngle);
 
-        Assert.assertEquals(expectedRotationAngle, (float)style.<Float>getProperty(Property.ROTATION_ANGLE), EPS);
+        Assertions.assertEquals(expectedRotationAngle, (float)style.<Float>getProperty(Property.ROTATION_ANGLE), EPS);
     }
 
     @Test
@@ -343,11 +342,11 @@ public class StyleUnitTest extends ExtendedITextTest {
 
         Style style = new Style();
 
-        Assert.assertNull(style.getWidth());
+        Assertions.assertNull(style.getWidth());
 
         style.setWidth(expectedWidth);
 
-        Assert.assertEquals(UnitValue.createPointValue(expectedWidth), style.getWidth());
+        Assertions.assertEquals(UnitValue.createPointValue(expectedWidth), style.getWidth());
     }
 
     @Test
@@ -356,11 +355,11 @@ public class StyleUnitTest extends ExtendedITextTest {
 
         Style style = new Style();
 
-        Assert.assertNull(style.getWidth());
+        Assertions.assertNull(style.getWidth());
 
         style.setWidth(UnitValue.createPointValue(expectedWidth));
 
-        Assert.assertEquals(UnitValue.createPointValue(expectedWidth), style.getWidth());
+        Assertions.assertEquals(UnitValue.createPointValue(expectedWidth), style.getWidth());
     }
 
     @Test
@@ -369,11 +368,11 @@ public class StyleUnitTest extends ExtendedITextTest {
 
         Style style = new Style();
 
-        Assert.assertNull(style.getHeight());
+        Assertions.assertNull(style.getHeight());
 
         style.setHeight(expectedHeight);
 
-        Assert.assertEquals(UnitValue.createPointValue(expectedHeight), style.getHeight());
+        Assertions.assertEquals(UnitValue.createPointValue(expectedHeight), style.getHeight());
     }
 
     @Test
@@ -382,11 +381,11 @@ public class StyleUnitTest extends ExtendedITextTest {
 
         Style style = new Style();
 
-        Assert.assertNull(style.getHeight());
+        Assertions.assertNull(style.getHeight());
 
         style.setHeight(UnitValue.createPointValue(expectedHeight));
 
-        Assert.assertEquals(UnitValue.createPointValue(expectedHeight), style.getHeight());
+        Assertions.assertEquals(UnitValue.createPointValue(expectedHeight), style.getHeight());
     }
 
     @Test
@@ -395,11 +394,11 @@ public class StyleUnitTest extends ExtendedITextTest {
 
         Style style = new Style();
 
-        Assert.assertNull(style.<UnitValue>getProperty(Property.MAX_HEIGHT));
+        Assertions.assertNull(style.<UnitValue>getProperty(Property.MAX_HEIGHT));
 
         style.setMaxHeight(expectedMaxHeight);
 
-        Assert.assertEquals(UnitValue.createPointValue(expectedMaxHeight), style.<UnitValue>getProperty(Property.MAX_HEIGHT));
+        Assertions.assertEquals(UnitValue.createPointValue(expectedMaxHeight), style.<UnitValue>getProperty(Property.MAX_HEIGHT));
     }
 
     @Test
@@ -408,11 +407,11 @@ public class StyleUnitTest extends ExtendedITextTest {
 
         Style style = new Style();
 
-        Assert.assertNull(style.<UnitValue>getProperty(Property.MAX_HEIGHT));
+        Assertions.assertNull(style.<UnitValue>getProperty(Property.MAX_HEIGHT));
 
         style.setMaxHeight(UnitValue.createPointValue(expectedMaxHeight));
 
-        Assert.assertEquals(UnitValue.createPointValue(expectedMaxHeight), style.<UnitValue>getProperty(Property.MAX_HEIGHT));
+        Assertions.assertEquals(UnitValue.createPointValue(expectedMaxHeight), style.<UnitValue>getProperty(Property.MAX_HEIGHT));
     }
 
     @Test
@@ -421,11 +420,11 @@ public class StyleUnitTest extends ExtendedITextTest {
 
         Style style = new Style();
 
-        Assert.assertNull(style.<UnitValue>getProperty(Property.MIN_HEIGHT));
+        Assertions.assertNull(style.<UnitValue>getProperty(Property.MIN_HEIGHT));
 
         style.setMinHeight(expectedMinHeight);
 
-        Assert.assertEquals(UnitValue.createPointValue(expectedMinHeight), style.<UnitValue>getProperty(Property.MIN_HEIGHT));
+        Assertions.assertEquals(UnitValue.createPointValue(expectedMinHeight), style.<UnitValue>getProperty(Property.MIN_HEIGHT));
     }
 
     @Test
@@ -434,11 +433,11 @@ public class StyleUnitTest extends ExtendedITextTest {
 
         Style style = new Style();
 
-        Assert.assertNull(style.<UnitValue>getProperty(Property.MIN_HEIGHT));
+        Assertions.assertNull(style.<UnitValue>getProperty(Property.MIN_HEIGHT));
 
         style.setMinHeight(UnitValue.createPointValue(expectedMinHeight));
 
-        Assert.assertEquals(UnitValue.createPointValue(expectedMinHeight), style.<UnitValue>getProperty(Property.MIN_HEIGHT));
+        Assertions.assertEquals(UnitValue.createPointValue(expectedMinHeight), style.<UnitValue>getProperty(Property.MIN_HEIGHT));
     }
 
     @Test
@@ -447,11 +446,11 @@ public class StyleUnitTest extends ExtendedITextTest {
 
         Style style = new Style();
 
-        Assert.assertNull(style.<UnitValue>getProperty(Property.MAX_WIDTH));
+        Assertions.assertNull(style.<UnitValue>getProperty(Property.MAX_WIDTH));
 
         style.setMaxWidth(expectedMaxWidth);
 
-        Assert.assertEquals(UnitValue.createPointValue(expectedMaxWidth), style.<UnitValue>getProperty(Property.MAX_WIDTH));
+        Assertions.assertEquals(UnitValue.createPointValue(expectedMaxWidth), style.<UnitValue>getProperty(Property.MAX_WIDTH));
     }
 
     @Test
@@ -460,11 +459,11 @@ public class StyleUnitTest extends ExtendedITextTest {
 
         Style style = new Style();
 
-        Assert.assertNull(style.<UnitValue>getProperty(Property.MAX_WIDTH));
+        Assertions.assertNull(style.<UnitValue>getProperty(Property.MAX_WIDTH));
 
         style.setMaxWidth(UnitValue.createPointValue(expectedMaxWidth));
 
-        Assert.assertEquals(UnitValue.createPointValue(expectedMaxWidth), style.<UnitValue>getProperty(Property.MAX_WIDTH));
+        Assertions.assertEquals(UnitValue.createPointValue(expectedMaxWidth), style.<UnitValue>getProperty(Property.MAX_WIDTH));
     }
 
     @Test
@@ -473,11 +472,11 @@ public class StyleUnitTest extends ExtendedITextTest {
 
         Style style = new Style();
 
-        Assert.assertNull(style.<UnitValue>getProperty(Property.MIN_WIDTH));
+        Assertions.assertNull(style.<UnitValue>getProperty(Property.MIN_WIDTH));
 
         style.setMinWidth(expectedMinWidth);
 
-        Assert.assertEquals(UnitValue.createPointValue(expectedMinWidth), style.<UnitValue>getProperty(Property.MIN_WIDTH));
+        Assertions.assertEquals(UnitValue.createPointValue(expectedMinWidth), style.<UnitValue>getProperty(Property.MIN_WIDTH));
     }
 
     @Test
@@ -486,10 +485,10 @@ public class StyleUnitTest extends ExtendedITextTest {
 
         Style style = new Style();
 
-        Assert.assertNull(style.<UnitValue>getProperty(Property.MIN_WIDTH));
+        Assertions.assertNull(style.<UnitValue>getProperty(Property.MIN_WIDTH));
 
         style.setMinWidth(UnitValue.createPointValue(expectedMinWidth));
 
-        Assert.assertEquals(UnitValue.createPointValue(expectedMinWidth), style.<UnitValue>getProperty(Property.MIN_WIDTH));
+        Assertions.assertEquals(UnitValue.createPointValue(expectedMinWidth), style.<UnitValue>getProperty(Property.MIN_WIDTH));
     }
 }

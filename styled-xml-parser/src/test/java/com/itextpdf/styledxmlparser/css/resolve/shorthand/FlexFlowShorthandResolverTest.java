@@ -29,15 +29,14 @@ import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.FlexFlowShorthand
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.util.Collections;
 import java.util.List;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class FlexFlowShorthandResolverTest extends ExtendedITextTest {
     @Test
     public void initialOrInheritOrUnsetValuesTest() {
@@ -45,27 +44,27 @@ public class FlexFlowShorthandResolverTest extends ExtendedITextTest {
 
         String initialShorthand = CommonCssConstants.INITIAL;
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(initialShorthand);
-        Assert.assertEquals(2, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.FLEX_DIRECTION, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals(CommonCssConstants.INITIAL, resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_WRAP, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals(CommonCssConstants.INITIAL, resolvedShorthand.get(1).getExpression());
+        Assertions.assertEquals(2, resolvedShorthand.size());
+        Assertions.assertEquals(CommonCssConstants.FLEX_DIRECTION, resolvedShorthand.get(0).getProperty());
+        Assertions.assertEquals(CommonCssConstants.INITIAL, resolvedShorthand.get(0).getExpression());
+        Assertions.assertEquals(CommonCssConstants.FLEX_WRAP, resolvedShorthand.get(1).getProperty());
+        Assertions.assertEquals(CommonCssConstants.INITIAL, resolvedShorthand.get(1).getExpression());
 
         String inheritShorthand = CommonCssConstants.INHERIT;
         resolvedShorthand = resolver.resolveShorthand(inheritShorthand);
-        Assert.assertEquals(2, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.FLEX_DIRECTION, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals(CommonCssConstants.INHERIT, resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_WRAP, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals(CommonCssConstants.INHERIT, resolvedShorthand.get(1).getExpression());
+        Assertions.assertEquals(2, resolvedShorthand.size());
+        Assertions.assertEquals(CommonCssConstants.FLEX_DIRECTION, resolvedShorthand.get(0).getProperty());
+        Assertions.assertEquals(CommonCssConstants.INHERIT, resolvedShorthand.get(0).getExpression());
+        Assertions.assertEquals(CommonCssConstants.FLEX_WRAP, resolvedShorthand.get(1).getProperty());
+        Assertions.assertEquals(CommonCssConstants.INHERIT, resolvedShorthand.get(1).getExpression());
 
         String unsetShorthand = CommonCssConstants.UNSET;
         resolvedShorthand = resolver.resolveShorthand(unsetShorthand);
-        Assert.assertEquals(2, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.FLEX_DIRECTION, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals(CommonCssConstants.UNSET, resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_WRAP, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals(CommonCssConstants.UNSET, resolvedShorthand.get(1).getExpression());
+        Assertions.assertEquals(2, resolvedShorthand.size());
+        Assertions.assertEquals(CommonCssConstants.FLEX_DIRECTION, resolvedShorthand.get(0).getProperty());
+        Assertions.assertEquals(CommonCssConstants.UNSET, resolvedShorthand.get(0).getExpression());
+        Assertions.assertEquals(CommonCssConstants.FLEX_WRAP, resolvedShorthand.get(1).getProperty());
+        Assertions.assertEquals(CommonCssConstants.UNSET, resolvedShorthand.get(1).getExpression());
     }
 
     @Test
@@ -74,11 +73,11 @@ public class FlexFlowShorthandResolverTest extends ExtendedITextTest {
 
         String initialWithSpacesShorthand = "  initial  ";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(initialWithSpacesShorthand);
-        Assert.assertEquals(2, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.FLEX_DIRECTION, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals(CommonCssConstants.INITIAL, resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_WRAP, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals(CommonCssConstants.INITIAL, resolvedShorthand.get(1).getExpression());
+        Assertions.assertEquals(2, resolvedShorthand.size());
+        Assertions.assertEquals(CommonCssConstants.FLEX_DIRECTION, resolvedShorthand.get(0).getProperty());
+        Assertions.assertEquals(CommonCssConstants.INITIAL, resolvedShorthand.get(0).getExpression());
+        Assertions.assertEquals(CommonCssConstants.FLEX_WRAP, resolvedShorthand.get(1).getProperty());
+        Assertions.assertEquals(CommonCssConstants.INITIAL, resolvedShorthand.get(1).getExpression());
     }
 
     @Test
@@ -87,13 +86,13 @@ public class FlexFlowShorthandResolverTest extends ExtendedITextTest {
         IShorthandResolver resolver = new FlexFlowShorthandResolver();
 
         String containsInitialShorthand = "row initial ";
-        Assert.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(containsInitialShorthand));
+        Assertions.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(containsInitialShorthand));
 
         String containsInheritShorthand = "inherit wrap";
-        Assert.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(containsInheritShorthand));
+        Assertions.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(containsInheritShorthand));
 
         String containsUnsetShorthand = "wrap unset";
-        Assert.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(containsUnsetShorthand));
+        Assertions.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(containsUnsetShorthand));
     }
 
     @Test
@@ -101,10 +100,10 @@ public class FlexFlowShorthandResolverTest extends ExtendedITextTest {
     public void emptyShorthandTest() {
         IShorthandResolver resolver = new FlexFlowShorthandResolver();
         String emptyShorthand = "";
-        Assert.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(emptyShorthand));
+        Assertions.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(emptyShorthand));
 
         String shorthandWithSpaces = "    ";
-        Assert.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(shorthandWithSpaces));
+        Assertions.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(shorthandWithSpaces));
     }
 
     @Test
@@ -114,11 +113,11 @@ public class FlexFlowShorthandResolverTest extends ExtendedITextTest {
         String shorthand = "column";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(2, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.FLEX_DIRECTION, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals("column", resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_WRAP, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals("nowrap", resolvedShorthand.get(1).getExpression());
+        Assertions.assertEquals(2, resolvedShorthand.size());
+        Assertions.assertEquals(CommonCssConstants.FLEX_DIRECTION, resolvedShorthand.get(0).getProperty());
+        Assertions.assertEquals("column", resolvedShorthand.get(0).getExpression());
+        Assertions.assertEquals(CommonCssConstants.FLEX_WRAP, resolvedShorthand.get(1).getProperty());
+        Assertions.assertEquals("nowrap", resolvedShorthand.get(1).getExpression());
     }
 
     @Test
@@ -128,11 +127,11 @@ public class FlexFlowShorthandResolverTest extends ExtendedITextTest {
         String shorthand = CommonCssConstants.WRAP_REVERSE;
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(2, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.FLEX_WRAP, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals(CommonCssConstants.WRAP_REVERSE, resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_DIRECTION, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals(CommonCssConstants.ROW, resolvedShorthand.get(1).getExpression());
+        Assertions.assertEquals(2, resolvedShorthand.size());
+        Assertions.assertEquals(CommonCssConstants.FLEX_WRAP, resolvedShorthand.get(0).getProperty());
+        Assertions.assertEquals(CommonCssConstants.WRAP_REVERSE, resolvedShorthand.get(0).getExpression());
+        Assertions.assertEquals(CommonCssConstants.FLEX_DIRECTION, resolvedShorthand.get(1).getProperty());
+        Assertions.assertEquals(CommonCssConstants.ROW, resolvedShorthand.get(1).getExpression());
     }
 
     @Test
@@ -143,7 +142,7 @@ public class FlexFlowShorthandResolverTest extends ExtendedITextTest {
         String shorthand = "invalid";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(0, resolvedShorthand.size());
+        Assertions.assertEquals(0, resolvedShorthand.size());
     }
 
     @Test
@@ -153,10 +152,10 @@ public class FlexFlowShorthandResolverTest extends ExtendedITextTest {
         String shorthand = CommonCssConstants.ROW_REVERSE + " " + CommonCssConstants.WRAP;
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(CommonCssConstants.FLEX_DIRECTION, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals(CommonCssConstants.ROW_REVERSE, resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_WRAP, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals(CommonCssConstants.WRAP, resolvedShorthand.get(1).getExpression());
+        Assertions.assertEquals(CommonCssConstants.FLEX_DIRECTION, resolvedShorthand.get(0).getProperty());
+        Assertions.assertEquals(CommonCssConstants.ROW_REVERSE, resolvedShorthand.get(0).getExpression());
+        Assertions.assertEquals(CommonCssConstants.FLEX_WRAP, resolvedShorthand.get(1).getProperty());
+        Assertions.assertEquals(CommonCssConstants.WRAP, resolvedShorthand.get(1).getExpression());
     }
 
     @Test
@@ -166,10 +165,10 @@ public class FlexFlowShorthandResolverTest extends ExtendedITextTest {
         String shorthand = "wrap-reverse column";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(CommonCssConstants.FLEX_DIRECTION, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals(CommonCssConstants.COLUMN, resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_WRAP, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals(CommonCssConstants.WRAP_REVERSE, resolvedShorthand.get(1).getExpression());
+        Assertions.assertEquals(CommonCssConstants.FLEX_DIRECTION, resolvedShorthand.get(0).getProperty());
+        Assertions.assertEquals(CommonCssConstants.COLUMN, resolvedShorthand.get(0).getExpression());
+        Assertions.assertEquals(CommonCssConstants.FLEX_WRAP, resolvedShorthand.get(1).getProperty());
+        Assertions.assertEquals(CommonCssConstants.WRAP_REVERSE, resolvedShorthand.get(1).getExpression());
     }
 
     @Test
@@ -180,7 +179,7 @@ public class FlexFlowShorthandResolverTest extends ExtendedITextTest {
         String shorthand = "column-reverse row";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(Collections.<CssDeclaration>emptyList(), resolvedShorthand);
+        Assertions.assertEquals(Collections.<CssDeclaration>emptyList(), resolvedShorthand);
     }
 
     @Test
@@ -191,7 +190,7 @@ public class FlexFlowShorthandResolverTest extends ExtendedITextTest {
         String shorthand = "nowrap wrap-reverse";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(Collections.<CssDeclaration>emptyList(), resolvedShorthand);
+        Assertions.assertEquals(Collections.<CssDeclaration>emptyList(), resolvedShorthand);
     }
 
     @Test
@@ -202,6 +201,6 @@ public class FlexFlowShorthandResolverTest extends ExtendedITextTest {
         String shorthand = "column-reverse invalid";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(Collections.<CssDeclaration>emptyList(), resolvedShorthand);
+        Assertions.assertEquals(Collections.<CssDeclaration>emptyList(), resolvedShorthand);
     }
 }

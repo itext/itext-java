@@ -23,18 +23,15 @@
 package com.itextpdf.kernel.pdf.function.utils;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.util.Arrays;
 import java.util.Collection;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(Parameterized.class)
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class SampleExtractorTest extends ExtendedITextTest {
 
     private static final String PARAMETERS_NAME_PATTERN = "{0}bitsPerSample";
@@ -42,8 +39,7 @@ public class SampleExtractorTest extends ExtendedITextTest {
     private static final byte[] SAMPLES = {0x01, 0x23, 0x45, 0x67,
             (byte) 0x89, (byte) 0xab, (byte) 0xcd, (byte) 0xef};
 
-    @Parameterized.Parameters(name = PARAMETERS_NAME_PATTERN)
-    public static Collection<Object[]> samplesInfo() {
+    public static Collection<Object[]> SamplesInfo() {
         return Arrays.asList(new Object[][] {
                 {1, new long[] {
                         0, 0, 0, 0, 0, 0, 0, 1,
@@ -92,25 +88,18 @@ public class SampleExtractorTest extends ExtendedITextTest {
         });
     }
 
-    private final int bitsPerSample;
-    private final long[] expected;
-
-    public SampleExtractorTest(Object bitsPerSample, Object expected) {
-        this.bitsPerSample = (int) bitsPerSample;
-        this.expected = (long[]) expected;
-    }
-
-    @Test
-    public void testSamplesExtraction() {
+    @ParameterizedTest(name = PARAMETERS_NAME_PATTERN)
+    @MethodSource("SamplesInfo")
+    public void testSamplesExtraction(int bitsPerSample, long[] expected) {
         long[] actual = new long[(SAMPLES.length << 3) / bitsPerSample];
-        Assert.assertEquals(expected.length, actual.length);
+        Assertions.assertEquals(expected.length, actual.length);
 
         AbstractSampleExtractor extractor = AbstractSampleExtractor.createExtractor(bitsPerSample);
         for (int i = 0; i < actual.length; ++i) {
             actual[i] = extractor.extract(SAMPLES, i);
         }
 
-        Assert.assertArrayEquals(expected, actual);
+        Assertions.assertArrayEquals(expected, actual);
     }
 
 }

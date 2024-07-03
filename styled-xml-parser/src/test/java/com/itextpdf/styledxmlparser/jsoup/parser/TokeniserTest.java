@@ -32,15 +32,14 @@ import com.itextpdf.styledxmlparser.jsoup.nodes.Node;
 import com.itextpdf.styledxmlparser.jsoup.nodes.TextNode;
 import com.itextpdf.styledxmlparser.jsoup.select.Elements;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class TokeniserTest extends ExtendedITextTest {
     @Test
     public void bufferUpInAttributeVal() {
@@ -65,8 +64,8 @@ public class TokeniserTest extends ExtendedITextTest {
             Document doc = Jsoup.parse(html);
             String src = doc.select("img").attr("src");
 
-            Assert.assertTrue(src.contains("X"));
-            Assert.assertTrue(src.contains(tail));
+            Assertions.assertTrue(src.contains("X"));
+            Assertions.assertTrue(src.contains(tail));
         }
     }
 
@@ -82,11 +81,11 @@ public class TokeniserTest extends ExtendedITextTest {
 
         Document doc = Parser.htmlParser().settings(ParseSettings.preserveCase).parseInput(html, "");
         Elements els = doc.select(tag);
-        Assert.assertEquals(1, els.size());
+        Assertions.assertEquals(1, els.size());
         Element el = els.first();
-        Assert.assertNotNull(el);
-        Assert.assertEquals("One", el.text());
-        Assert.assertEquals(tag, el.tagName());
+        Assertions.assertNotNull(el);
+        Assertions.assertEquals("One", el.text());
+        Assertions.assertEquals(tag, el.tagName());
     }
 
     @Test public void handleSuperLargeAttributeName() {
@@ -99,13 +98,13 @@ public class TokeniserTest extends ExtendedITextTest {
 
         Document doc = Jsoup.parse(html);
         Elements els = doc.getElementsByAttribute(attrName);
-        Assert.assertEquals(1, els.size());
+        Assertions.assertEquals(1, els.size());
         Element el = els.first();
-        Assert.assertNotNull(el);
-        Assert.assertEquals("One", el.text());
+        Assertions.assertNotNull(el);
+        Assertions.assertEquals("One", el.text());
         Attribute attribute = el.attributes().asList().get(0);
-        Assert.assertEquals(attrName.toLowerCase(), attribute.getKey());
-        Assert.assertEquals("foo", attribute.getValue());
+        Assertions.assertEquals(attrName.toLowerCase(), attribute.getKey());
+        Assertions.assertEquals("foo", attribute.getValue());
     }
 
     @Test public void handleLargeText() {
@@ -118,11 +117,11 @@ public class TokeniserTest extends ExtendedITextTest {
 
         Document doc = Jsoup.parse(html);
         Elements els = doc.select("p");
-        Assert.assertEquals(1, els.size());
+        Assertions.assertEquals(1, els.size());
         Element el = els.first();
 
-        Assert.assertNotNull(el);
-        Assert.assertEquals(text, el.text());
+        Assertions.assertNotNull(el);
+        Assertions.assertEquals(text, el.text());
     }
 
     @Test public void handleLargeComment() {
@@ -135,12 +134,12 @@ public class TokeniserTest extends ExtendedITextTest {
 
         Document doc = Jsoup.parse(html);
         Elements els = doc.select("p");
-        Assert.assertEquals(1, els.size());
+        Assertions.assertEquals(1, els.size());
         Element el = els.first();
 
-        Assert.assertNotNull(el);
+        Assertions.assertNotNull(el);
         Comment child = (Comment) el.childNode(0);
-        Assert.assertEquals(" " + comment + " ", child.getData());
+        Assertions.assertEquals(" " + comment + " ", child.getData());
     }
 
     @Test public void handleLargeCdata() {
@@ -153,13 +152,13 @@ public class TokeniserTest extends ExtendedITextTest {
 
         Document doc = Jsoup.parse(html);
         Elements els = doc.select("p");
-        Assert.assertEquals(1, els.size());
+        Assertions.assertEquals(1, els.size());
         Element el = els.first();
 
-        Assert.assertNotNull(el);
+        Assertions.assertNotNull(el);
         TextNode child = (TextNode) el.childNode(0);
-        Assert.assertEquals(cdata, el.text());
-        Assert.assertEquals(cdata, child.getWholeText());
+        Assertions.assertEquals(cdata, el.text());
+        Assertions.assertEquals(cdata, child.getWholeText());
     }
 
     @Test public void handleLargeTitle() {
@@ -172,38 +171,38 @@ public class TokeniserTest extends ExtendedITextTest {
 
         Document doc = Jsoup.parse(html);
         Elements els = doc.select("title");
-        Assert.assertEquals(1, els.size());
+        Assertions.assertEquals(1, els.size());
         Element el = els.first();
 
-        Assert.assertNotNull(el);
+        Assertions.assertNotNull(el);
         TextNode child = (TextNode) el.childNode(0);
-        Assert.assertEquals(title, el.text());
-        Assert.assertEquals(title, child.getWholeText());
-        Assert.assertEquals(title, doc.title());
+        Assertions.assertEquals(title, el.text());
+        Assertions.assertEquals(title, child.getWholeText());
+        Assertions.assertEquals(title, doc.title());
     }
 
     @Test public void cp1252Entities() {
-        Assert.assertEquals("\u20ac", Jsoup.parse("&#0128;").text());
-        Assert.assertEquals("\u201a", Jsoup.parse("&#0130;").text());
-        Assert.assertEquals("\u20ac", Jsoup.parse("&#x80;").text());
+        Assertions.assertEquals("\u20ac", Jsoup.parse("&#0128;").text());
+        Assertions.assertEquals("\u201a", Jsoup.parse("&#0130;").text());
+        Assertions.assertEquals("\u20ac", Jsoup.parse("&#x80;").text());
     }
 
     @Test public void cp1252EntitiesProduceError() {
         Parser parser = new Parser(new HtmlTreeBuilder());
         parser.setTrackErrors(10);
-        Assert.assertEquals("\u20ac", parser.parseInput("<html><body>&#0128;</body></html>", "").text());
-        Assert.assertEquals(1, parser.getErrors().size());
+        Assertions.assertEquals("\u20ac", parser.parseInput("<html><body>&#0128;</body></html>", "").text());
+        Assertions.assertEquals(1, parser.getErrors().size());
     }
 
     @Test public void cp1252SubstitutionTable() throws UnsupportedEncodingException {
         for (int i = 0; i < Tokeniser.win1252Extensions.length; i++) {
             String s = new String(new byte[]{ (byte) (i + Tokeniser.win1252ExtensionsStart) }, "Windows-1252");
-            Assert.assertEquals(1, s.length());
+            Assertions.assertEquals(1, s.length());
 
             // some of these characters are illegal
             if (s.charAt(0) == '\ufffd') { continue; }
 
-            Assert.assertEquals(s.charAt(0), Tokeniser.win1252Extensions[i]);
+            Assertions.assertEquals(s.charAt(0), Tokeniser.win1252Extensions[i]);
         }
     }
 
@@ -219,8 +218,8 @@ public class TokeniserTest extends ExtendedITextTest {
         Document doc = parser.parseInput(testMarkup, "");
 
         Node commentNode = doc.body().childNode(0);
-        Assert.assertTrue(commentNode instanceof Comment);
-        Assert.assertEquals(expectedCommentData, ((Comment)commentNode).getData());
+        Assertions.assertTrue(commentNode instanceof Comment);
+        Assertions.assertEquals(expectedCommentData, ((Comment)commentNode).getData());
     }
 
     @Test public void canParseCdataEndingAtEdgeOfBuffer() {
@@ -236,7 +235,7 @@ public class TokeniserTest extends ExtendedITextTest {
         Document doc = parser.parseInput(testMarkup, "");
 
         Node cdataNode = doc.body().childNode(0);
-        Assert.assertTrue(cdataNode instanceof CDataNode);
-        Assert.assertEquals(cdataContents, ((CDataNode)cdataNode).text());
+        Assertions.assertTrue(cdataNode instanceof CDataNode);
+        Assertions.assertEquals(cdataContents, ((CDataNode)cdataNode).text());
     }
 }

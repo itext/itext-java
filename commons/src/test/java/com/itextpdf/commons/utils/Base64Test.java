@@ -23,23 +23,22 @@
 package com.itextpdf.commons.utils;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class Base64Test extends ExtendedITextTest {
 
     @Test
     public void testEncodeObjectForNullObject() {
-        Assert.assertEquals("rO0ABXA=", Base64.encodeObject(null));
+        Assertions.assertEquals("rO0ABXA=", Base64.encodeObject(null));
     }
 
     @Test
     public void testDecodeForSourceIsEmptyArray() {
-        Assert.assertEquals("", Base64.encodeBytes(new byte[] {}));
+        Assertions.assertEquals("", Base64.encodeBytes(new byte[] {}));
     }
 
     @Test
@@ -61,8 +60,8 @@ public class Base64Test extends ExtendedITextTest {
         String generatedHeader = generatedBase64.substring(startIndexHeader, endIndexHeaderWithoutOsFlag);
         String generatedFooter = generatedBase64.substring(startIndexFooter, endIndexFooter);
 
-        Assert.assertEquals(expectedHeaderWithoutOsFlag, generatedHeader);
-        Assert.assertEquals(expectedFooter, generatedFooter);
+        Assertions.assertEquals(expectedHeaderWithoutOsFlag, generatedHeader);
+        Assertions.assertEquals(expectedFooter, generatedFooter);
     }
 
 }

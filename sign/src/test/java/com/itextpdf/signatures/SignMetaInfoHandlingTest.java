@@ -46,13 +46,12 @@ import com.itextpdf.signatures.testutils.client.TestCrlClient;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
 import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.ByteArrayInputStream;
 import java.security.PrivateKey;
@@ -63,7 +62,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class SignMetaInfoHandlingTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/SignMetaInfoHandlingTest/";
     public static final String CERTS = "./src/test/resources/com/itextpdf/signatures/certs/";
@@ -97,18 +96,18 @@ public class SignMetaInfoHandlingTest extends ExtendedITextTest {
         }
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         Security.addProvider(BouncyCastleFactoryCreator.getFactory().getProvider());
     }
 
-    @Before
+    @BeforeEach
     public void setUpHandler() {
         handler = new StoreEventsHandler(UnknownContext.PERMISSIVE);
         EventManager.getInstance().register(handler);
     }
 
-    @After
+    @AfterEach
     public void resetHandler() {
         EventManager.getInstance().unregister(handler);
     }
@@ -124,10 +123,10 @@ public class SignMetaInfoHandlingTest extends ExtendedITextTest {
 
         List<AbstractProductProcessITextEvent> confirmedEvents = CONFIGURATION_ACCESS.getPublicEvents(docSequenceId);
         // No confirmed events.
-        Assert.assertEquals(0, confirmedEvents.size());
+        Assertions.assertEquals(0, confirmedEvents.size());
 
         List<AbstractContextBasedITextEvent> events = handler.getEvents();
-        Assert.assertEquals(0, events.size());
+        Assertions.assertEquals(0, events.size());
     }
 
     @Test
@@ -144,14 +143,14 @@ public class SignMetaInfoHandlingTest extends ExtendedITextTest {
         padesSigner.signWithBaselineLTProfile(signerProperties, signRsaChain, signRsaPrivateKey, testTsa);
 
         List<AbstractContextBasedITextEvent> events = handler.getEvents();
-        Assert.assertEquals(2, events.size());
-        Assert.assertTrue(events.get(0) instanceof ITextCoreProductEvent);
+        Assertions.assertEquals(2, events.size());
+        Assertions.assertTrue(events.get(0) instanceof ITextCoreProductEvent);
         ITextCoreProductEvent iTextCoreProductEvent = (ITextCoreProductEvent) events.get(0);
-        Assert.assertEquals(ITextCoreProductEvent.PROCESS_PDF, iTextCoreProductEvent.getEventType());
+        Assertions.assertEquals(ITextCoreProductEvent.PROCESS_PDF, iTextCoreProductEvent.getEventType());
         // Only first iTextCoreProductEvent is confirmed.
-        Assert.assertTrue(events.get(1) instanceof ConfirmEvent);
+        Assertions.assertTrue(events.get(1) instanceof ConfirmEvent);
         ConfirmEvent confirmEvent = (ConfirmEvent) events.get(1);
-        Assert.assertEquals(iTextCoreProductEvent, confirmEvent.getConfirmedEvent());
+        Assertions.assertEquals(iTextCoreProductEvent, confirmEvent.getConfirmedEvent());
     }
 
     @Test
@@ -167,14 +166,14 @@ public class SignMetaInfoHandlingTest extends ExtendedITextTest {
         padesSigner.signWithBaselineLTAProfile(signerProperties, signRsaChain, signRsaPrivateKey, testTsa);
 
         List<AbstractContextBasedITextEvent> events = handler.getEvents();
-        Assert.assertEquals(2, events.size());
-        Assert.assertTrue(events.get(0) instanceof ITextCoreProductEvent);
+        Assertions.assertEquals(2, events.size());
+        Assertions.assertTrue(events.get(0) instanceof ITextCoreProductEvent);
         ITextCoreProductEvent iTextCoreProductEvent = (ITextCoreProductEvent) events.get(0);
-        Assert.assertEquals(ITextCoreProductEvent.PROCESS_PDF, iTextCoreProductEvent.getEventType());
+        Assertions.assertEquals(ITextCoreProductEvent.PROCESS_PDF, iTextCoreProductEvent.getEventType());
         // Only first iTextCoreProductEvent is confirmed.
-        Assert.assertTrue(events.get(1) instanceof ConfirmEvent);
+        Assertions.assertTrue(events.get(1) instanceof ConfirmEvent);
         ConfirmEvent confirmEvent = (ConfirmEvent) events.get(1);
-        Assert.assertEquals(iTextCoreProductEvent, confirmEvent.getConfirmedEvent());
+        Assertions.assertEquals(iTextCoreProductEvent, confirmEvent.getConfirmedEvent());
     }
 
     @Test
@@ -201,21 +200,21 @@ public class SignMetaInfoHandlingTest extends ExtendedITextTest {
         }
 
         List<AbstractContextBasedITextEvent> events = handler.getEvents();
-        Assert.assertEquals(4, events.size());
-        Assert.assertTrue(events.get(0) instanceof ITextCoreProductEvent);
+        Assertions.assertEquals(4, events.size());
+        Assertions.assertTrue(events.get(0) instanceof ITextCoreProductEvent);
         ITextCoreProductEvent iTextCoreProductEvent = (ITextCoreProductEvent) events.get(0);
-        Assert.assertEquals(ITextCoreProductEvent.PROCESS_PDF, iTextCoreProductEvent.getEventType());
+        Assertions.assertEquals(ITextCoreProductEvent.PROCESS_PDF, iTextCoreProductEvent.getEventType());
         // First iTextCoreProductEvent is confirmed (coming from createCMSContainerWithoutSignature).
-        Assert.assertTrue(events.get(1) instanceof ConfirmEvent);
+        Assertions.assertTrue(events.get(1) instanceof ConfirmEvent);
         ConfirmEvent confirmEvent = (ConfirmEvent) events.get(1);
-        Assert.assertEquals(iTextCoreProductEvent, confirmEvent.getConfirmedEvent());
-        Assert.assertTrue(events.get(2) instanceof ITextCoreProductEvent);
+        Assertions.assertEquals(iTextCoreProductEvent, confirmEvent.getConfirmedEvent());
+        Assertions.assertTrue(events.get(2) instanceof ITextCoreProductEvent);
         iTextCoreProductEvent = (ITextCoreProductEvent) events.get(2);
-        Assert.assertEquals(ITextCoreProductEvent.PROCESS_PDF, iTextCoreProductEvent.getEventType());
+        Assertions.assertEquals(ITextCoreProductEvent.PROCESS_PDF, iTextCoreProductEvent.getEventType());
         // Second iTextCoreProductEvent is confirmed (coming from signCMSContainerWithBaselineLTProfile).
-        Assert.assertTrue(events.get(3) instanceof ConfirmEvent);
+        Assertions.assertTrue(events.get(3) instanceof ConfirmEvent);
         confirmEvent = (ConfirmEvent) events.get(3);
-        Assert.assertEquals(iTextCoreProductEvent, confirmEvent.getConfirmedEvent());
+        Assertions.assertEquals(iTextCoreProductEvent, confirmEvent.getConfirmedEvent());
     }
 
     @Test
@@ -242,21 +241,21 @@ public class SignMetaInfoHandlingTest extends ExtendedITextTest {
         }
 
         List<AbstractContextBasedITextEvent> events = handler.getEvents();
-        Assert.assertEquals(4, events.size());
-        Assert.assertTrue(events.get(0) instanceof ITextCoreProductEvent);
+        Assertions.assertEquals(4, events.size());
+        Assertions.assertTrue(events.get(0) instanceof ITextCoreProductEvent);
         ITextCoreProductEvent iTextCoreProductEvent = (ITextCoreProductEvent) events.get(0);
-        Assert.assertEquals(ITextCoreProductEvent.PROCESS_PDF, iTextCoreProductEvent.getEventType());
+        Assertions.assertEquals(ITextCoreProductEvent.PROCESS_PDF, iTextCoreProductEvent.getEventType());
         // First iTextCoreProductEvent is confirmed (coming from createCMSContainerWithoutSignature).
-        Assert.assertTrue(events.get(1) instanceof ConfirmEvent);
+        Assertions.assertTrue(events.get(1) instanceof ConfirmEvent);
         ConfirmEvent confirmEvent = (ConfirmEvent) events.get(1);
-        Assert.assertEquals(iTextCoreProductEvent, confirmEvent.getConfirmedEvent());
-        Assert.assertTrue(events.get(2) instanceof ITextCoreProductEvent);
+        Assertions.assertEquals(iTextCoreProductEvent, confirmEvent.getConfirmedEvent());
+        Assertions.assertTrue(events.get(2) instanceof ITextCoreProductEvent);
         iTextCoreProductEvent = (ITextCoreProductEvent) events.get(2);
-        Assert.assertEquals(ITextCoreProductEvent.PROCESS_PDF, iTextCoreProductEvent.getEventType());
+        Assertions.assertEquals(ITextCoreProductEvent.PROCESS_PDF, iTextCoreProductEvent.getEventType());
         // Second iTextCoreProductEvent is confirmed (coming from signCMSContainerWithBaselineLTAProfile).
-        Assert.assertTrue(events.get(3) instanceof ConfirmEvent);
+        Assertions.assertTrue(events.get(3) instanceof ConfirmEvent);
         confirmEvent = (ConfirmEvent) events.get(3);
-        Assert.assertEquals(iTextCoreProductEvent, confirmEvent.getConfirmedEvent());
+        Assertions.assertEquals(iTextCoreProductEvent, confirmEvent.getConfirmedEvent());
     }
 
     @Test
@@ -274,7 +273,7 @@ public class SignMetaInfoHandlingTest extends ExtendedITextTest {
         padesSigner.signWithBaselineLTProfile(signerProperties, signRsaChain, signRsaPrivateKey, testTsa);
 
         List<AbstractContextBasedITextEvent> events = handler.getEvents();
-        Assert.assertEquals(0, events.size());
+        Assertions.assertEquals(0, events.size());
     }
 
     private static class TestConfigurationEvent extends AbstractITextConfigurationEvent {

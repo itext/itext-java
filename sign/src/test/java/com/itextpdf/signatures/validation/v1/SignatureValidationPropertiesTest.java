@@ -34,15 +34,15 @@ import com.itextpdf.signatures.validation.v1.extensions.CertificateExtension;
 import com.itextpdf.signatures.validation.v1.extensions.KeyUsageExtension;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.time.Duration;
 import java.util.Collections;
 import java.util.function.Consumer;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class SignatureValidationPropertiesTest extends ExtendedITextTest {
 
     @Test
@@ -56,19 +56,19 @@ public class SignatureValidationPropertiesTest extends ExtendedITextTest {
                 new IncrementalFreshnessValueSetter(10, 1).getAction());
 
         // test the last value added
-        Assert.assertEquals(Duration.ofDays(18),
+        Assertions.assertEquals(Duration.ofDays(18),
                 sut.getParametersValueFor(ValidatorContext.SIGNATURE_VALIDATOR, CertificateSource.TIMESTAMP,
                         TimeBasedContext.HISTORICAL,
                         (p -> p.getFreshness())));
 
         //test the fifth value added
-        Assert.assertEquals(Duration.ofDays(14),
+        Assertions.assertEquals(Duration.ofDays(14),
                 sut.getParametersValueFor(ValidatorContext.CRL_VALIDATOR, CertificateSource.SIGNER_CERT,
                         TimeBasedContext.HISTORICAL,
                         (p -> p.getFreshness())));
 
         // test the general default
-        Assert.assertEquals(SignatureValidationProperties.DEFAULT_FRESHNESS_HISTORICAL,
+        Assertions.assertEquals(SignatureValidationProperties.DEFAULT_FRESHNESS_HISTORICAL,
                 sut.getParametersValueFor(ValidatorContext.CERTIFICATE_CHAIN_VALIDATOR, CertificateSource.OCSP_ISSUER,
                         TimeBasedContext.HISTORICAL,
                         (p -> p.getFreshness())));
@@ -87,7 +87,7 @@ public class SignatureValidationPropertiesTest extends ExtendedITextTest {
                 new IncrementalFreshnessValueSetter(10, 1).getAction());
 
         // test the general default
-        Assert.assertEquals(SignatureValidationProperties.DEFAULT_FRESHNESS_PRESENT_OCSP,
+        Assertions.assertEquals(SignatureValidationProperties.DEFAULT_FRESHNESS_PRESENT_OCSP,
                 sut.getParametersValueFor(ValidatorContext.CERTIFICATE_CHAIN_VALIDATOR, CertificateSource.OCSP_ISSUER,
                         TimeBasedContext.PRESENT,
                         (p -> p.getFreshness())));
@@ -110,7 +110,7 @@ public class SignatureValidationPropertiesTest extends ExtendedITextTest {
                 p -> p.setFreshness(Duration.ofDays(25)));
 
         // test the general default
-        Assert.assertEquals(Duration.ofDays(25),
+        Assertions.assertEquals(Duration.ofDays(25),
                 sut.getParametersValueFor(ValidatorContext.OCSP_VALIDATOR, CertificateSource.SIGNER_CERT,
                         TimeBasedContext.PRESENT,
                         (p -> p.getFreshness())));
@@ -122,12 +122,12 @@ public class SignatureValidationPropertiesTest extends ExtendedITextTest {
         sut.setFreshness(ValidatorContexts.of(ValidatorContext.CRL_VALIDATOR),
                 CertificateSources.of(CertificateSource.CERT_ISSUER),
                 TimeBasedContexts.of(TimeBasedContext.HISTORICAL), Duration.ofDays(-10));
-        Assert.assertEquals(Duration.ofDays(-10),
+        Assertions.assertEquals(Duration.ofDays(-10),
                 sut.getFreshness(
                         new ValidationContext(ValidatorContext.CRL_VALIDATOR, CertificateSource.CERT_ISSUER,
                                 TimeBasedContext.HISTORICAL)));
 
-        Assert.assertEquals(SignatureValidationProperties.DEFAULT_FRESHNESS_PRESENT_CRL,
+        Assertions.assertEquals(SignatureValidationProperties.DEFAULT_FRESHNESS_PRESENT_CRL,
                 sut.getFreshness(
                         new ValidationContext(ValidatorContext.CRL_VALIDATOR, CertificateSource.CERT_ISSUER,
                                 TimeBasedContext.PRESENT)));
@@ -141,10 +141,10 @@ public class SignatureValidationPropertiesTest extends ExtendedITextTest {
         sut.setContinueAfterFailure(ValidatorContexts.of(ValidatorContext.SIGNATURE_VALIDATOR),
                 CertificateSources.of(CertificateSource.OCSP_ISSUER), false);
 
-        Assert.assertEquals(Boolean.TRUE, sut.getContinueAfterFailure(
+        Assertions.assertEquals(Boolean.TRUE, sut.getContinueAfterFailure(
                 new ValidationContext(ValidatorContext.SIGNATURE_VALIDATOR, CertificateSource.CERT_ISSUER,
                         TimeBasedContext.PRESENT)));
-        Assert.assertEquals(Boolean.FALSE, sut.getContinueAfterFailure(
+        Assertions.assertEquals(Boolean.FALSE, sut.getContinueAfterFailure(
                 new ValidationContext(ValidatorContext.SIGNATURE_VALIDATOR, CertificateSource.OCSP_ISSUER,
                         TimeBasedContext.PRESENT)));
     }
@@ -155,13 +155,13 @@ public class SignatureValidationPropertiesTest extends ExtendedITextTest {
         sut.setRevocationOnlineFetching(ValidatorContexts.of(ValidatorContext.CRL_VALIDATOR), CertificateSources.all(),
                 TimeBasedContexts.of(TimeBasedContext.PRESENT),
                 SignatureValidationProperties.OnlineFetching.ALWAYS_FETCH);
-        Assert.assertEquals(SignatureValidationProperties.DEFAULT_ONLINE_FETCHING, sut.getRevocationOnlineFetching(
+        Assertions.assertEquals(SignatureValidationProperties.DEFAULT_ONLINE_FETCHING, sut.getRevocationOnlineFetching(
                 new ValidationContext(ValidatorContext.CRL_VALIDATOR, CertificateSource.OCSP_ISSUER,
                         TimeBasedContext.HISTORICAL)));
-        Assert.assertEquals(SignatureValidationProperties.DEFAULT_ONLINE_FETCHING, sut.getRevocationOnlineFetching(
+        Assertions.assertEquals(SignatureValidationProperties.DEFAULT_ONLINE_FETCHING, sut.getRevocationOnlineFetching(
                 new ValidationContext(ValidatorContext.OCSP_VALIDATOR, CertificateSource.OCSP_ISSUER,
                         TimeBasedContext.PRESENT)));
-        Assert.assertEquals(SignatureValidationProperties.OnlineFetching.ALWAYS_FETCH, sut.getRevocationOnlineFetching(
+        Assertions.assertEquals(SignatureValidationProperties.OnlineFetching.ALWAYS_FETCH, sut.getRevocationOnlineFetching(
                 new ValidationContext(ValidatorContext.CRL_VALIDATOR, CertificateSource.OCSP_ISSUER,
                         TimeBasedContext.PRESENT)));
     }
@@ -176,13 +176,13 @@ public class SignatureValidationPropertiesTest extends ExtendedITextTest {
         sut.setRequiredExtensions(CertificateSources.of(CertificateSource.OCSP_ISSUER),
                 Collections.<CertificateExtension>singletonList(new KeyUsageExtension(3)));
 
-        Assert.assertEquals(Collections.singletonList(new KeyUsageExtension(1)),
+        Assertions.assertEquals(Collections.singletonList(new KeyUsageExtension(1)),
                 sut.getRequiredExtensions(new ValidationContext(ValidatorContext.CERTIFICATE_CHAIN_VALIDATOR,
                         CertificateSource.SIGNER_CERT, TimeBasedContext.PRESENT)));
-        Assert.assertEquals(Collections.singletonList(new KeyUsageExtension(2)), sut.getRequiredExtensions(
+        Assertions.assertEquals(Collections.singletonList(new KeyUsageExtension(2)), sut.getRequiredExtensions(
                 new ValidationContext(ValidatorContext.CERTIFICATE_CHAIN_VALIDATOR,
                         CertificateSource.CERT_ISSUER, TimeBasedContext.PRESENT)));
-        Assert.assertEquals(Collections.singletonList(new KeyUsageExtension(3)), sut.getRequiredExtensions(
+        Assertions.assertEquals(Collections.singletonList(new KeyUsageExtension(3)), sut.getRequiredExtensions(
                 new ValidationContext(ValidatorContext.CERTIFICATE_CHAIN_VALIDATOR,
                         CertificateSource.OCSP_ISSUER, TimeBasedContext.HISTORICAL)));
     }

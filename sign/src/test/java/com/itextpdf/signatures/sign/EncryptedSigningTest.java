@@ -41,7 +41,6 @@ import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -49,13 +48,13 @@ import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(BouncyCastleIntegrationTest.class)
+@Tag("BouncyCastleIntegrationTest")
 public class EncryptedSigningTest extends ExtendedITextTest {
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
@@ -69,13 +68,13 @@ public class EncryptedSigningTest extends ExtendedITextTest {
     private Certificate[] chain;
     private PrivateKey pk;
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         Security.addProvider(FACTORY.getProvider());
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
-    @Before
+    @BeforeEach
     public void init()
             throws IOException, CertificateException, AbstractPKCSException, AbstractOperatorCreationException {
         pk = PemFileHelper.readFirstKey(CERTS_SRC + "signCertRsa01.pem", PASSWORD);
@@ -106,7 +105,7 @@ public class EncryptedSigningTest extends ExtendedITextTest {
         //Password to open out and cmp files are the same
         ReaderProperties properties = new ReaderProperties().setPassword(ownerPass);
 
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf, properties, properties));
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf, properties, properties));
     }
 
     @Test
@@ -132,7 +131,7 @@ public class EncryptedSigningTest extends ExtendedITextTest {
                     FACTORY.getProviderName(), null);
 
             //Public key to open out and cmp files are the same
-            Assert.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf, properties, properties));
+            Assertions.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf, properties, properties));
         }
     }
 }

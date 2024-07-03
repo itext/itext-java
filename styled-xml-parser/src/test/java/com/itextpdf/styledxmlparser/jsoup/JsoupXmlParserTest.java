@@ -32,16 +32,14 @@ import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-@Category(UnitTest.class)
+@org.junit.jupiter.api.Tag("UnitTest")
 public class JsoupXmlParserTest extends ExtendedITextTest {
     @Test
     public void testXmlDeclarationAndComment() throws IOException {
@@ -50,7 +48,7 @@ public class JsoupXmlParserTest extends ExtendedITextTest {
         InputStream stream = new ByteArrayInputStream(xml.getBytes());
         IDocumentNode node = new JsoupXmlParser().parse(stream, "UTF-8");
         // only text (whitespace) child node shall be fetched.
-        Assert.assertEquals(1, node.childNodes().size());
+        Assertions.assertEquals(1, node.childNodes().size());
     }
 
     @Test
@@ -61,6 +59,6 @@ public class JsoupXmlParserTest extends ExtendedITextTest {
         Element jsoupSVGRoot = new Element(Tag.valueOf("svg"), "");
         INode root = new JsoupElementNode(jsoupSVGRoot);
         root.addChild(null);
-        Assert.assertEquals(0, root.childNodes().size());
+        Assertions.assertEquals(0, root.childNodes().size());
     }
 }

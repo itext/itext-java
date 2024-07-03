@@ -33,15 +33,14 @@ import com.itextpdf.kernel.pdf.canvas.parser.listener.ITextExtractionStrategy;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
     public class GlyphTextEventListenerTest extends ExtendedITextTest {
 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/parser/GlyphTextEventListenerTest/";
@@ -58,7 +57,7 @@ import org.junit.experimental.categories.Category;
         String extractedText = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1),
                 new GlyphTextEventListener(new FilteredTextEventListener(new LocationTextExtractionStrategy(),
                         new TextRegionEventFilter(new Rectangle(x1, y1, x2, y2)))));
-        Assert.assertEquals("1234\nt5678", extractedText);
+        Assertions.assertEquals("1234\nt5678", extractedText);
     }
 
     @Test
@@ -68,7 +67,7 @@ import org.junit.experimental.categories.Category;
         String extractedText = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1),
                 new GlyphTextEventListener(new FilteredTextEventListener(new LocationTextExtractionStrategy(),
                         new TextRegionEventFilter(new Rectangle(111, 855, 25, 12)))));
-        Assert.assertEquals("Your ", extractedText);
+        Assertions.assertEquals("Your ", extractedText);
     }
 
     @Test
@@ -95,8 +94,8 @@ import org.junit.experimental.categories.Category;
         PdfCanvasProcessor parser = new PdfCanvasProcessor(new GlyphEventListener(listener));
         parser.processPageContent(pdfDocument.getPage(1));
 
-        Assert.assertEquals("Your", region1Listener.getResultantText());
-        Assert.assertEquals("dju", region2Listener.getResultantText());
+        Assertions.assertEquals("Your", region1Listener.getResultantText());
+        Assertions.assertEquals("dju", region2Listener.getResultantText());
     }
 
 }

@@ -40,32 +40,31 @@ import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 import org.xml.sax.SAXException;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 // Android-Conversion-Skip-File (during Android conversion the class will be replaced by DeferredCompareTool)
 public class CompareToolTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/utils/CompareToolTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/utils/CompareToolTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() {
         createOrClearDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -80,11 +79,12 @@ public class CompareToolTest extends ExtendedITextTest {
         String cmpPdf = sourceFolder + "cmp_simple_pdf.pdf";
         String result = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder);
         System.out.println("\nRESULT:\n" + result);
-        Assert.assertNotNull("CompareTool must return differences found between the files", result);
-        Assert.assertTrue(result.contains("differs on page [1, 2]."));
+        Assertions.assertNotNull("CompareTool must return differences found between the files", result);
+        Assertions.assertTrue(result.contains("differs on page [1, 2]."));
         // Comparing the report to the reference one.
-        Assert.assertTrue("CompareTool report differs from the reference one", compareTool
-                .compareXmls(destinationFolder + "simple_pdf.report.xml", sourceFolder + "cmp_report01.xml"));
+        Assertions.assertTrue(
+                compareTool.compareXmls(destinationFolder + "simple_pdf.report.xml", sourceFolder + "cmp_report01.xml"),
+                "CompareTool report differs from the reference one");
     }
 
     @Test
@@ -97,11 +97,12 @@ public class CompareToolTest extends ExtendedITextTest {
         String cmpPdf = sourceFolder + "cmp_tagged_pdf.pdf";
         String result = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder);
         System.out.println("\nRESULT:\n" + result);
-        Assert.assertNotNull("CompareTool must return differences found between the files", result);
-        Assert.assertTrue(result.contains("Compare by content fails. No visual differences"));
+        Assertions.assertNotNull("CompareTool must return differences found between the files", result);
+        Assertions.assertTrue(result.contains("Compare by content fails. No visual differences"));
         // Comparing the report to the reference one.
-        Assert.assertTrue("CompareTool report differs from the reference one", compareTool
-                .compareXmls(destinationFolder + "tagged_pdf.report.xml", sourceFolder + "cmp_report02.xml"));
+        Assertions.assertTrue(
+                compareTool.compareXmls(destinationFolder + "tagged_pdf.report.xml", sourceFolder + "cmp_report02.xml"),
+                "CompareTool report differs from the reference one");
     }
 
     @Test
@@ -114,11 +115,11 @@ public class CompareToolTest extends ExtendedITextTest {
         String cmpPdf = sourceFolder + "cmp_screenAnnotation.pdf";
         String result = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder);
         System.out.println("\nRESULT:\n" + result);
-        Assert.assertNotNull("CompareTool must return differences found between the files", result);
-        Assert.assertTrue(result.contains("Compare by content fails. No visual differences"));
+        Assertions.assertNotNull("CompareTool must return differences found between the files", result);
+        Assertions.assertTrue(result.contains("Compare by content fails. No visual differences"));
         // Comparing the report to the reference one.
-        Assert.assertTrue("CompareTool report differs from the reference one", compareTool
-                .compareXmls(destinationFolder + "screenAnnotation.report.xml", sourceFolder + "cmp_report03.xml"));
+        Assertions.assertTrue(compareTool.compareXmls(destinationFolder + "screenAnnotation.report.xml",
+                sourceFolder + "cmp_report03.xml"), "CompareTool report differs from the reference one");
     }
 
 
@@ -133,11 +134,12 @@ public class CompareToolTest extends ExtendedITextTest {
         String cmpPdf = sourceFolder + "cmp_simple_pdf_with_space .pdf";
         String result = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder);
         System.out.println("\nRESULT:\n" + result);
-        Assert.assertNotNull("CompareTool must return differences found between the files", result);
-        Assert.assertTrue(result.contains("differs on page [1, 2]."));
+        Assertions.assertNotNull("CompareTool must return differences found between the files", result);
+        Assertions.assertTrue(result.contains("differs on page [1, 2]."));
         // Comparing the report to the reference one.
-        Assert.assertTrue("CompareTool report differs from the reference one", compareTool
-                .compareXmls(destinationFolder + "simple_pdf.report.xml", sourceFolder + "cmp_report01.xml"));
+        Assertions.assertTrue(
+                compareTool.compareXmls(destinationFolder + "simple_pdf.report.xml", sourceFolder + "cmp_report01.xml"),
+                "CompareTool report differs from the reference one");
 
     }
 
@@ -146,14 +148,14 @@ public class CompareToolTest extends ExtendedITextTest {
         String expectedMessage = "Document info fail. Expected: \"iText\u00ae <version> \u00a9<copyright years> Apryse Group NV (iText Software; licensed version)\", actual: \"iText\u00ae <version> \u00a9<copyright years> Apryse Group NV (AGPL-version)\"";
         String licensed = sourceFolder + "producerLicensed.pdf";
         String agpl = sourceFolder + "producerAGPL.pdf";
-        Assert.assertEquals(expectedMessage, new CompareTool().compareDocumentInfo(agpl, licensed));
+        Assertions.assertEquals(expectedMessage, new CompareTool().compareDocumentInfo(agpl, licensed));
     }
 
     @Test
     public void versionReplaceTest() {
         String initial = "iText® 1.10.10-SNAPSHOT (licensed to iText) ©2000-2018 Apryse Group NV";
         String replacedExpected = "iText® <version> (licensed to iText) ©<copyright years> Apryse Group NV";
-        Assert.assertEquals(replacedExpected, new CompareTool().convertProducerLine(initial));
+        Assertions.assertEquals(replacedExpected, new CompareTool().convertProducerLine(initial));
     }
 
     @Test
@@ -161,7 +163,7 @@ public class CompareToolTest extends ExtendedITextTest {
         String outPdf = sourceFolder + "simple_pdf.pdf";
         String cmpPdf = sourceFolder + "cmp_simple_pdf.pdf";
         new CompareTool(null, null).compareVisually(outPdf, cmpPdf, destinationFolder, "diff_");
-        Assert.assertTrue(new File(destinationFolder + "diff_1.png").exists());
+        Assertions.assertTrue(new File(destinationFolder + "diff_1.png").exists());
     }
 
     @Test
@@ -169,7 +171,7 @@ public class CompareToolTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         String outPdf = sourceFolder + "simple_pdf.pdf";
         String cmpPdf = sourceFolder + "cmp_simple_pdf.pdf";
-        Assert.assertEquals("XMP parsing failure!", compareTool.compareXmp(outPdf, cmpPdf));
+        Assertions.assertEquals("XMP parsing failure!", compareTool.compareXmp(outPdf, cmpPdf));
     }
 
     @Test
@@ -177,10 +179,10 @@ public class CompareToolTest extends ExtendedITextTest {
         String outPdf = sourceFolder + "simple_pdf.pdf";
         String cmpPdf = sourceFolder + "cmp_simple_pdf.pdf";
 
-        Exception e = Assert.assertThrows(CompareTool.CompareToolExecutionException.class,
+        Exception e = Assertions.assertThrows(CompareTool.CompareToolExecutionException.class,
                 () -> new CompareTool("unspecified", null).compareVisually(outPdf, cmpPdf, destinationFolder, "diff_")
         );
-        Assert.assertEquals(IoExceptionMessageConstant.GS_ENVIRONMENT_VARIABLE_IS_NOT_SPECIFIED, e.getMessage());
+        Assertions.assertEquals(IoExceptionMessageConstant.GS_ENVIRONMENT_VARIABLE_IS_NOT_SPECIFIED, e.getMessage());
     }
 
     @Test
@@ -193,8 +195,8 @@ public class CompareToolTest extends ExtendedITextTest {
         }
         String result = new CompareTool(gsExec, null)
                 .compareVisually(outPdf, cmpPdf, destinationFolder, "diff_");
-        Assert.assertFalse(result.contains(IoExceptionMessageConstant.COMPARE_COMMAND_IS_NOT_SPECIFIED));
-        Assert.assertTrue(new File(destinationFolder + "diff_1.png").exists());
+        Assertions.assertFalse(result.contains(IoExceptionMessageConstant.COMPARE_COMMAND_IS_NOT_SPECIFIED));
+        Assertions.assertTrue(new File(destinationFolder + "diff_1.png").exists());
     }
 
     @Test
@@ -209,7 +211,7 @@ public class CompareToolTest extends ExtendedITextTest {
         }
         String result = new CompareTool(gsExec, "unspecified")
                 .compareVisually(outPdf, cmpPdf, destinationFolder, "diff_");
-        Assert.assertTrue(result.contains(IoExceptionMessageConstant.COMPARE_COMMAND_SPECIFIED_INCORRECTLY));
+        Assertions.assertTrue(result.contains(IoExceptionMessageConstant.COMPARE_COMMAND_SPECIFIED_INCORRECTLY));
     }
 
     @Test
@@ -218,9 +220,9 @@ public class CompareToolTest extends ExtendedITextTest {
         String cmpPdf = sourceFolder + "compareVisuallyDiffTestTest2.pdf";
         String result = new CompareTool().compareVisually(outPdf, cmpPdf, destinationFolder, "diff_");
         System.out.println("\nRESULT:\n" + result);
-        Assert.assertTrue(result.contains("differs on page [1, 2]."));
-        Assert.assertTrue(new File(destinationFolder + "diff_1.png").exists());
-        Assert.assertTrue(new File(destinationFolder + "diff_2.png").exists());
+        Assertions.assertTrue(result.contains("differs on page [1, 2]."));
+        Assertions.assertTrue(new File(destinationFolder + "diff_1.png").exists());
+        Assertions.assertTrue(new File(destinationFolder + "diff_2.png").exists());
     }
 
     @Test
@@ -260,7 +262,7 @@ public class CompareToolTest extends ExtendedITextTest {
         page1secondDocument.flush();
         secondDocument.close();
 
-        Assert.assertNull(new CompareTool().compareLinkAnnotations(firstPdf, secondPdf));
+        Assertions.assertNull(new CompareTool().compareLinkAnnotations(firstPdf, secondPdf));
     }
 
     @Test
@@ -282,7 +284,7 @@ public class CompareToolTest extends ExtendedITextTest {
         page1SecondDocument.flush();
         secondDocument.close();
 
-        Assert.assertNotNull(new CompareTool().compareLinkAnnotations(firstPdf, secondPdf));
+        Assertions.assertNotNull(new CompareTool().compareLinkAnnotations(firstPdf, secondPdf));
     }
 
     @Test
@@ -300,11 +302,11 @@ public class CompareToolTest extends ExtendedITextTest {
         try (PdfReader reader = new PdfReader(inPdf, compareTool.getOutReaderProperties());
                 PdfDocument doc = new PdfDocument(reader)) {
             String[] docInfo = compareTool.convertDocInfoToStrings(doc.getDocumentInfo());
-            Assert.assertEquals("very long title to compare later on", docInfo[0]);
-            Assert.assertEquals("itextcore", docInfo[1]);
-            Assert.assertEquals("test file", docInfo[2]);
-            Assert.assertEquals("new job", docInfo[3]);
-            Assert.assertEquals("Adobe Acrobat Pro DC (64-bit) <version>", docInfo[4]);
+            Assertions.assertEquals("very long title to compare later on", docInfo[0]);
+            Assertions.assertEquals("itextcore", docInfo[1]);
+            Assertions.assertEquals("test file", docInfo[2]);
+            Assertions.assertEquals("new job", docInfo[3]);
+            Assertions.assertEquals("Adobe Acrobat Pro DC (64-bit) <version>", docInfo[4]);
                 }
     }
 
@@ -327,9 +329,9 @@ public class CompareToolTest extends ExtendedITextTest {
         page1SecondDocument.flush();
         secondDocument.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(firstPdf, secondPdf, destinationFolder));
-        Assert.assertFalse(new File(firstPdf).exists());
-        Assert.assertFalse(new File(secondPdf).exists());
+        Assertions.assertNull(new CompareTool().compareByContent(firstPdf, secondPdf, destinationFolder));
+        Assertions.assertFalse(new File(firstPdf).exists());
+        Assertions.assertFalse(new File(secondPdf).exists());
     }
 
     @Test
@@ -351,19 +353,19 @@ public class CompareToolTest extends ExtendedITextTest {
         page1SecondDocument.flush();
         secondDocument.close();
 
-        Assert.assertNotNull(new CompareTool().compareByContent(firstPdf, secondPdf, destinationFolder));
-        Assert.assertTrue(new File(firstPdf).exists());
-        Assert.assertTrue(new File(secondPdf).exists());
+        Assertions.assertNotNull(new CompareTool().compareByContent(firstPdf, secondPdf, destinationFolder));
+        Assertions.assertTrue(new File(firstPdf).exists());
+        Assertions.assertTrue(new File(secondPdf).exists());
     }
 
     @Test
     public void cleanupTest() throws FileNotFoundException {
         CompareTool.createTestPdfWriter(destinationFolder + "cleanupTest/cleanupTest.pdf");
-        Assert.assertNotNull(MemoryFirstPdfWriter.get(destinationFolder + "cleanupTest/cleanupTest.pdf"));
+        Assertions.assertNotNull(MemoryFirstPdfWriter.get(destinationFolder + "cleanupTest/cleanupTest.pdf"));
 
-        Assert.assertThrows(IllegalArgumentException.class, () -> CompareTool.cleanup(null));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> CompareTool.cleanup(null));
 
         CompareTool.cleanup(destinationFolder + "cleanupTest");
-        Assert.assertNull(MemoryFirstPdfWriter.get(destinationFolder + "cleanupTest/cleanupTest.pdf"));
+        Assertions.assertNull(MemoryFirstPdfWriter.get(destinationFolder + "cleanupTest/cleanupTest.pdf"));
     }
 }

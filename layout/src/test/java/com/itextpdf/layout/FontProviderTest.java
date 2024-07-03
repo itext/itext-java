@@ -42,11 +42,10 @@ import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.font.FontSelector;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -54,7 +53,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class FontProviderTest extends ExtendedITextTest {
 
     private static class PdfFontProvider extends FontProvider {
@@ -81,7 +80,7 @@ public class FontProviderTest extends ExtendedITextTest {
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/FontProviderTest/";
     public static final String fontsFolder = "./src/test/resources/com/itextpdf/layout/fonts/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
@@ -118,7 +117,7 @@ public class FontProviderTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
     }
 
     @Test
@@ -144,7 +143,7 @@ public class FontProviderTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
     }
 
     @Test
@@ -174,7 +173,7 @@ public class FontProviderTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
     }
 
     @Test
@@ -188,8 +187,8 @@ public class FontProviderTest extends ExtendedITextTest {
             Paragraph paragraph = new Paragraph("Hello world!")
                     .setFontFamily("ABRACADABRA_NO_FONT_PROVIDER_ANYWAY");
 
-            Exception e = Assert.assertThrows(IllegalStateException.class, () -> doc.add(paragraph));
-            Assert.assertEquals(LayoutExceptionMessageConstant.FONT_PROVIDER_NOT_SET_FONT_FAMILY_NOT_RESOLVED, e.getMessage());
+            Exception e = Assertions.assertThrows(IllegalStateException.class, () -> doc.add(paragraph));
+            Assertions.assertEquals(LayoutExceptionMessageConstant.FONT_PROVIDER_NOT_SET_FONT_FAMILY_NOT_RESOLVED, e.getMessage());
         }
     }
 }

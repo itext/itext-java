@@ -49,18 +49,17 @@ import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.properties.FloatPropertyValue;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import java.util.Arrays;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class TextRendererTest extends RendererUnitTest {
     private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/layout/fonts/";
 
@@ -87,7 +86,7 @@ public class TextRendererTest extends RendererUnitTest {
         LayoutResult result1 = textRenderer1.layout(layoutContext);
         LayoutResult result2 = textRenderer2.layout(layoutContext);
 
-        Assert.assertEquals(result1.getOccupiedArea(), result2.getOccupiedArea());
+        Assertions.assertEquals(result1.getOccupiedArea(), result2.getOccupiedArea());
     }
 
     @Test
@@ -103,7 +102,7 @@ public class TextRendererTest extends RendererUnitTest {
         rend.setProperty(Property.FONT_PROVIDER, fp);
         rend.setProperty(Property.FONT, new String[] {fontName});
         rend.setText(val);
-        Assert.assertEquals(val, rend.getText().toString());
+        Assertions.assertEquals(val, rend.getText().toString());
     }
 
     @Test
@@ -123,12 +122,12 @@ public class TextRendererTest extends RendererUnitTest {
         renderer.setText(glyphLine, pdfFont);
         GlyphLine actualLine = renderer.getText();
 
-        Assert.assertFalse(actualLine == glyphLine);
+        Assertions.assertFalse(actualLine == glyphLine);
         Glyph glyph = actualLine.get(0);
         Glyph space = pdfFont.getGlyph('\u0020');
         // Check that the glyph line has been processed using the replaceSpecialWhitespaceGlyphs method
-        Assert.assertEquals(space.getCode(), glyph.getCode());
-        Assert.assertEquals(space.getWidth(), glyph.getWidth());
+        Assertions.assertEquals(space.getCode(), glyph.getCode());
+        Assertions.assertEquals(space.getWidth(), glyph.getWidth());
     }
 
     @Test
@@ -151,14 +150,14 @@ public class TextRendererTest extends RendererUnitTest {
         renderer.setText(glyphLine, pdfFont);
         GlyphLine actualLine = renderer.getText();
 
-        Assert.assertFalse(actualLine == glyphLine);
+        Assertions.assertFalse(actualLine == glyphLine);
         Glyph glyph = actualLine.get(0);
         Glyph space = pdfFont.getGlyph('\u0020');
         // Check that the glyph line has been processed using the replaceSpecialWhitespaceGlyphs method
-        Assert.assertEquals(space.getCode(), glyph.getCode());
-        Assert.assertEquals(space.getWidth(), glyph.getWidth());
-        Assert.assertEquals(1, actualLine.start);
-        Assert.assertEquals(2, actualLine.end);
+        Assertions.assertEquals(space.getCode(), glyph.getCode());
+        Assertions.assertEquals(space.getWidth(), glyph.getWidth());
+        Assertions.assertEquals(1, actualLine.start);
+        Assertions.assertEquals(2, actualLine.end);
     }
 
     /**
@@ -190,7 +189,7 @@ public class TextRendererTest extends RendererUnitTest {
         TextRenderer textRenderer = createLayoutedTextRenderer("hello", doc);
         textRenderer.setProperty(Property.PADDING_TOP, UnitValue.createPointValue(20f));
         textRenderer.setProperty(Property.MARGIN_TOP, UnitValue.createPointValue(20f));
-        Assert.assertEquals(-2.980799674987793f, textRenderer.getDescent(), EPS);
+        Assertions.assertEquals(-2.980799674987793f, textRenderer.getDescent(), EPS);
     }
 
     @Test
@@ -201,7 +200,7 @@ public class TextRendererTest extends RendererUnitTest {
         textRenderer.setProperty(Property.MARGIN_TOP, UnitValue.createPointValue(20f));
         textRenderer.setProperty(Property.PADDING_RIGHT, UnitValue.createPointValue(20f));
         textRenderer.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
-        Assert.assertTrue(
+        Assertions.assertTrue(
                 new Rectangle(0, 986.68f, 25.343998f, 13.32f).equalsWithEpsilon(textRenderer.getOccupiedAreaBBox()));
     }
 
@@ -213,7 +212,7 @@ public class TextRendererTest extends RendererUnitTest {
         textRenderer.setProperty(Property.MARGIN_TOP, UnitValue.createPointValue(20f));
         textRenderer.setProperty(Property.PADDING_RIGHT, UnitValue.createPointValue(20f));
         textRenderer.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
-        Assert.assertTrue(new Rectangle(0, 986.68f, 5.343998f, -26.68f)
+        Assertions.assertTrue(new Rectangle(0, 986.68f, 5.343998f, -26.68f)
                 .equalsWithEpsilon(textRenderer.getInnerAreaBBox()));
     }
 
@@ -235,37 +234,37 @@ public class TextRendererTest extends RendererUnitTest {
         TextRenderer renderer = (TextRenderer) new TextRenderer(text);
         PdfFont pdfFont = renderer.resolveFirstPdfFont();
 
-        Assert.assertEquals("NotoSans", pdfFont.getFontProgram().getFontNames().getFontName());
+        Assertions.assertEquals("NotoSans", pdfFont.getFontProgram().getFontNames().getFontName());
     }
 
     @Test
     public void myanmarCharacterBelongsToSpecificScripts() {
         // u1042 MYANMAR DIGIT TWO
-        Assert.assertTrue(TextRenderer.codePointIsOfSpecialScript(4162));
+        Assertions.assertTrue(TextRenderer.codePointIsOfSpecialScript(4162));
     }
 
     @Test
     public void thaiCharacterBelongsToSpecificScripts() {
         // u0E19 THAI CHARACTER NO NU
-        Assert.assertTrue(TextRenderer.codePointIsOfSpecialScript(3609));
+        Assertions.assertTrue(TextRenderer.codePointIsOfSpecialScript(3609));
     }
 
     @Test
     public void laoCharacterBelongsToSpecificScripts() {
         // u0EC8 LAO TONE MAI EK
-        Assert.assertTrue(TextRenderer.codePointIsOfSpecialScript(3784));
+        Assertions.assertTrue(TextRenderer.codePointIsOfSpecialScript(3784));
     }
 
     @Test
     public void khmerCharacterBelongsToSpecificScripts() {
         // u1789 KHMER LETTER NYO
-        Assert.assertTrue(TextRenderer.codePointIsOfSpecialScript(6025));
+        Assertions.assertTrue(TextRenderer.codePointIsOfSpecialScript(6025));
     }
 
     @Test
     public void cyrillicCharacterDoesntBelongToSpecificScripts() {
         // u0433 Cyrillic Small Letter U
-        Assert.assertFalse(TextRenderer.codePointIsOfSpecialScript(1091));
+        Assertions.assertFalse(TextRenderer.codePointIsOfSpecialScript(1091));
     }
 
     @Test
@@ -278,7 +277,7 @@ public class TextRendererTest extends RendererUnitTest {
 
         MinMaxWidth minMaxWidth = textRenderer.getMinMaxWidth();
 
-        Assert.assertTrue(minMaxWidth.getMinWidth() < minMaxWidth.getMaxWidth());
+        Assertions.assertTrue(minMaxWidth.getMinWidth() < minMaxWidth.getMaxWidth());
     }
 
     @Test
@@ -297,11 +296,11 @@ public class TextRendererTest extends RendererUnitTest {
                 new Rectangle(fullWordWidth / 2, AbstractRenderer.INF));
 
         TextLayoutResult result = (TextLayoutResult) textRenderer.layout(new LayoutContext(layoutArea));
-        Assert.assertFalse(result.isWordHasBeenSplit());
+        Assertions.assertFalse(result.isWordHasBeenSplit());
 
         textRenderer.setProperty(Property.OVERFLOW_WRAP, OverflowWrapPropertyValue.BREAK_WORD);
         result = (TextLayoutResult) textRenderer.layout(new LayoutContext(layoutArea));
-        Assert.assertTrue(result.isWordHasBeenSplit());
+        Assertions.assertTrue(result.isWordHasBeenSplit());
     }
 
     @Test
@@ -317,7 +316,7 @@ public class TextRendererTest extends RendererUnitTest {
         text.setProperty(Property.OVERFLOW_WRAP, OverflowWrapPropertyValue.ANYWHERE);
         float maxWidthAndOverflowWrap = textRenderer.getMinMaxWidth().getMaxWidth();
 
-        Assert.assertEquals(maxWidthAndOverflowWrap, maxWidthNoOverflowWrap, 0.0001);
+        Assertions.assertEquals(maxWidthAndOverflowWrap, maxWidthNoOverflowWrap, 0.0001);
     }
 
     @Test
@@ -333,7 +332,7 @@ public class TextRendererTest extends RendererUnitTest {
         text.setProperty(Property.OVERFLOW_WRAP, OverflowWrapPropertyValue.ANYWHERE);
         float maxWidthAndOverflowWrap = textRenderer.getMinMaxWidth().getMaxWidth();
 
-        Assert.assertEquals(maxWidthAndOverflowWrap, maxWidthNoOverflowWrap, 0.0001);
+        Assertions.assertEquals(maxWidthAndOverflowWrap, maxWidthNoOverflowWrap, 0.0001);
     }
 
     @Test
@@ -349,7 +348,7 @@ public class TextRendererTest extends RendererUnitTest {
         text.setBold();
         float minWidthAndBoldSimulation = textRenderer.getMinMaxWidth().getMinWidth();
 
-        Assert.assertTrue(minWidthAndBoldSimulation > minWidthNoBoldSimulation);
+        Assertions.assertTrue(minWidthAndBoldSimulation > minWidthNoBoldSimulation);
     }
 
     @Test
@@ -365,7 +364,7 @@ public class TextRendererTest extends RendererUnitTest {
         text.setItalic();
         float minWidthAndItalicSimulation = textRenderer.getMinMaxWidth().getMinWidth();
 
-        Assert.assertTrue(minWidthAndItalicSimulation > minWidthNoItalicSimulation);
+        Assertions.assertTrue(minWidthAndItalicSimulation > minWidthNoItalicSimulation);
     }
 
     @Test
@@ -386,7 +385,7 @@ public class TextRendererTest extends RendererUnitTest {
         float expectedMinWidth = font.getWidth(longestWord, fontSize);
 
         MinMaxWidth minMaxWidth = textRenderer.getMinMaxWidth();
-        Assert.assertEquals(expectedMinWidth, minMaxWidth.getMinWidth(), 0.01f);
-        Assert.assertEquals(expectedMaxWidth, minMaxWidth.getMaxWidth(), 0.01f);
+        Assertions.assertEquals(expectedMinWidth, minMaxWidth.getMinWidth(), 0.01f);
+        Assertions.assertEquals(expectedMaxWidth, minMaxWidth.getMaxWidth(), 0.01f);
     }
 }

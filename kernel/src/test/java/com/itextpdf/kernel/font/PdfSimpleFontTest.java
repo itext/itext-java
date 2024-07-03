@@ -31,18 +31,17 @@ import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfOutputStream;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfSimpleFontTest extends ExtendedITextTest {
 
     private static final byte T_CODE = 116;
@@ -55,7 +54,7 @@ public class PdfSimpleFontTest extends ExtendedITextTest {
     private static Glyph T_GLYPH_FONT_SPECIFIC;
     private static Glyph E_GLYPH_CUSTOM_MAPPED;
 
-    @BeforeClass
+    @BeforeAll
     public static void init() {
         T_GLYPH_FONT_SPECIFIC = new Glyph(T_CODE, 278, 116, new int[]{14, -7, 257, 669});
         T_GLYPH_FONT_SPECIFIC.setChars(new char[]{'t'});
@@ -77,7 +76,7 @@ public class PdfSimpleFontTest extends ExtendedITextTest {
         glyphs.add(E_GLYPH_FONT_SPECIFIC);
         GlyphLine expected = new GlyphLine(glyphs, 0, 2);
 
-        Assert.assertEquals(expected, glyphLine);
+        Assertions.assertEquals(expected, glyphLine);
     }
 
     @Test
@@ -89,7 +88,7 @@ public class PdfSimpleFontTest extends ExtendedITextTest {
         glyphs.add(E_GLYPH_CUSTOM_MAPPED);
         GlyphLine expected = new GlyphLine(glyphs, 0, 1);
 
-        Assert.assertEquals(expected, glyphLine);
+        Assertions.assertEquals(expected, glyphLine);
     }
 
     @Test
@@ -97,13 +96,13 @@ public class PdfSimpleFontTest extends ExtendedITextTest {
         PdfSimpleFont<FontProgram> fontToTest = new TestSimpleFont(FontEncoding.createFontSpecificEncoding());
         List<Glyph> toAppend = new ArrayList<>();
         int processed = fontToTest.appendGlyphs("te", 0, 1, toAppend);
-        Assert.assertEquals(2, processed);
+        Assertions.assertEquals(2, processed);
 
         List<Glyph> glyphs = new ArrayList<>();
         glyphs.add(T_GLYPH_FONT_SPECIFIC);
         glyphs.add(E_GLYPH_FONT_SPECIFIC);
 
-        Assert.assertEquals(glyphs, toAppend);
+        Assertions.assertEquals(glyphs, toAppend);
     }
 
     @Test
@@ -111,13 +110,13 @@ public class PdfSimpleFontTest extends ExtendedITextTest {
         PdfSimpleFont<FontProgram> fontToTest = new TestSimpleFont(FontEncoding.createEmptyFontEncoding());
         List<Glyph> toAppend = new ArrayList<>();
         int processed = fontToTest.appendGlyphs("e ete", 0, 4, toAppend);
-        Assert.assertEquals(3, processed);
+        Assertions.assertEquals(3, processed);
 
         List<Glyph> glyphs = new ArrayList<>();
         glyphs.add(E_GLYPH_CUSTOM_MAPPED);
         glyphs.add(E_GLYPH_CUSTOM_MAPPED);
 
-        Assert.assertEquals(glyphs, toAppend);
+        Assertions.assertEquals(glyphs, toAppend);
     }
 
     @Test
@@ -125,12 +124,12 @@ public class PdfSimpleFontTest extends ExtendedITextTest {
         PdfSimpleFont<FontProgram> fontToTest = new TestSimpleFont(FontEncoding.createFontSpecificEncoding());
         List<Glyph> toAppend = new ArrayList<>();
         int processed = fontToTest.appendAnyGlyph("te", 0, toAppend);
-        Assert.assertEquals(1, processed);
+        Assertions.assertEquals(1, processed);
 
         List<Glyph> glyphs = new ArrayList<>();
         glyphs.add(T_GLYPH_FONT_SPECIFIC);
 
-        Assert.assertEquals(glyphs, toAppend);
+        Assertions.assertEquals(glyphs, toAppend);
     }
 
     @Test
@@ -138,12 +137,12 @@ public class PdfSimpleFontTest extends ExtendedITextTest {
         PdfSimpleFont<FontProgram> fontToTest = new TestSimpleFont(FontEncoding.createEmptyFontEncoding());
         List<Glyph> toAppend = new ArrayList<>();
         int processed = fontToTest.appendAnyGlyph("e ete", 0, toAppend);
-        Assert.assertEquals(1, processed);
+        Assertions.assertEquals(1, processed);
 
         List<Glyph> glyphs = new ArrayList<>();
         glyphs.add(E_GLYPH_CUSTOM_MAPPED);
 
-        Assert.assertEquals(glyphs, toAppend);
+        Assertions.assertEquals(glyphs, toAppend);
     }
 
     @Test
@@ -157,7 +156,7 @@ public class PdfSimpleFontTest extends ExtendedITextTest {
 
         byte[] bytes = fontToTest.convertToBytes(glyphLine);
 
-        Assert.assertArrayEquals(new byte[]{T_CODE, E_CODE}, bytes);
+        Assertions.assertArrayEquals(new byte[]{T_CODE, E_CODE}, bytes);
     }
 
     @Test
@@ -171,7 +170,7 @@ public class PdfSimpleFontTest extends ExtendedITextTest {
 
         byte[] bytes = fontToTest.convertToBytes(glyphLine);
 
-        Assert.assertArrayEquals(new byte[0], bytes);
+        Assertions.assertArrayEquals(new byte[0], bytes);
     }
 
     @Test
@@ -180,7 +179,7 @@ public class PdfSimpleFontTest extends ExtendedITextTest {
 
         byte[] bytes = fontToTest.convertToBytes((GlyphLine) null);
 
-        Assert.assertArrayEquals(new byte[0], bytes);
+        Assertions.assertArrayEquals(new byte[0], bytes);
     }
 
     @Test
@@ -189,7 +188,7 @@ public class PdfSimpleFontTest extends ExtendedITextTest {
 
         byte[] bytes = fontToTest.convertToBytes(E_GLYPH_FONT_SPECIFIC);
 
-        Assert.assertArrayEquals(new byte[]{E_CODE}, bytes);
+        Assertions.assertArrayEquals(new byte[]{E_CODE}, bytes);
     }
 
     @Test
@@ -200,7 +199,7 @@ public class PdfSimpleFontTest extends ExtendedITextTest {
 
         byte[] bytes = fontToTest.convertToBytes(E_GLYPH_FONT_SPECIFIC);
 
-        Assert.assertArrayEquals(new byte[]{E_CUSTOM_CODE}, bytes);
+        Assertions.assertArrayEquals(new byte[]{E_CUSTOM_CODE}, bytes);
     }
 
     @Test
@@ -209,7 +208,7 @@ public class PdfSimpleFontTest extends ExtendedITextTest {
 
         byte[] bytes = fontToTest.convertToBytes(E_GLYPH_FONT_SPECIFIC);
 
-        Assert.assertArrayEquals(new byte[0], bytes);
+        Assertions.assertArrayEquals(new byte[0], bytes);
     }
 
     @Test
@@ -226,7 +225,7 @@ public class PdfSimpleFontTest extends ExtendedITextTest {
             fontToTest.writeText(glyphLine, 0, 1, pos);
         }
 
-        Assert.assertArrayEquals(new byte[]{OPEN_BRACKET_CODE, T_CODE, E_CODE, CLOSE_BRACKET_CODE}, bos.toByteArray());
+        Assertions.assertArrayEquals(new byte[]{OPEN_BRACKET_CODE, T_CODE, E_CODE, CLOSE_BRACKET_CODE}, bos.toByteArray());
     }
 
     @Test
@@ -245,7 +244,7 @@ public class PdfSimpleFontTest extends ExtendedITextTest {
             fontToTest.writeText(glyphLine, 0, 1, pos);
         }
 
-        Assert.assertArrayEquals(new byte[]{OPEN_BRACKET_CODE, E_CUSTOM_CODE, CLOSE_BRACKET_CODE}, bos.toByteArray());
+        Assertions.assertArrayEquals(new byte[]{OPEN_BRACKET_CODE, E_CUSTOM_CODE, CLOSE_BRACKET_CODE}, bos.toByteArray());
     }
 
     @Test
@@ -262,7 +261,7 @@ public class PdfSimpleFontTest extends ExtendedITextTest {
             fontToTest.writeText(glyphLine, 0, 1, pos);
         }
 
-        Assert.assertArrayEquals(new byte[]{OPEN_BRACKET_CODE, CLOSE_BRACKET_CODE}, bos.toByteArray());
+        Assertions.assertArrayEquals(new byte[]{OPEN_BRACKET_CODE, CLOSE_BRACKET_CODE}, bos.toByteArray());
     }
 
     private static class TestSimpleFont extends PdfSimpleFont<FontProgram> {

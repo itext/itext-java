@@ -30,13 +30,12 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfCollectionFieldTest extends ExtendedITextTest {
 
     private static final PdfName[] ALLOWED_PDF_NAMES = {
@@ -66,7 +65,7 @@ public class PdfCollectionFieldTest extends ExtendedITextTest {
 
             PdfCollectionField field = new PdfCollectionField(pdfObject);
 
-            Assert.assertEquals(field.subType, EXPECTED_SUB_TYPES[i]);
+            Assertions.assertEquals(field.subType, EXPECTED_SUB_TYPES[i]);
         }
     }
 
@@ -77,7 +76,7 @@ public class PdfCollectionFieldTest extends ExtendedITextTest {
 
         PdfCollectionField field = new PdfCollectionField(pdfObject);
 
-        Assert.assertEquals(field.subType, PdfCollectionField.TEXT);
+        Assertions.assertEquals(field.subType, PdfCollectionField.TEXT);
     }
 
     @Test
@@ -87,8 +86,8 @@ public class PdfCollectionFieldTest extends ExtendedITextTest {
         for(int i = 0; i < ALLOWED_PDF_NAMES.length; i++) {
             PdfCollectionField field = new PdfCollectionField(fieldName, EXPECTED_SUB_TYPES[i]);
 
-            Assert.assertEquals(new PdfString(fieldName), field.getPdfObject().get(PdfName.N));
-            Assert.assertEquals(ALLOWED_PDF_NAMES[i], field.getPdfObject().get(PdfName.Subtype));
+            Assertions.assertEquals(new PdfString(fieldName), field.getPdfObject().get(PdfName.N));
+            Assertions.assertEquals(ALLOWED_PDF_NAMES[i], field.getPdfObject().get(PdfName.Subtype));
         }
     }
 
@@ -100,7 +99,7 @@ public class PdfCollectionFieldTest extends ExtendedITextTest {
 
         PdfCollectionField field = new PdfCollectionField(fieldName, unexpectedSubType);
 
-        Assert.assertEquals(defaultSubType, field.getPdfObject().get(PdfName.Subtype));
+        Assertions.assertEquals(defaultSubType, field.getPdfObject().get(PdfName.Subtype));
     }
 
     @Test
@@ -111,11 +110,11 @@ public class PdfCollectionFieldTest extends ExtendedITextTest {
         pdfObject.put(PdfName.Subtype, PdfName.S);
         PdfCollectionField field = new PdfCollectionField(pdfObject);
 
-        Assert.assertNull(field.getOrder());
+        Assertions.assertNull(field.getOrder());
 
         field.setOrder(testOrder);
 
-        Assert.assertEquals(testOrder, field.getOrder().intValue());
+        Assertions.assertEquals(testOrder, field.getOrder().intValue());
     }
 
     @Test
@@ -126,11 +125,11 @@ public class PdfCollectionFieldTest extends ExtendedITextTest {
         pdfObject.put(PdfName.Subtype, PdfName.S);
         PdfCollectionField field = new PdfCollectionField(pdfObject);
 
-        Assert.assertNull(field.getVisibility());
+        Assertions.assertNull(field.getVisibility());
 
         field.setVisibility(testVisibility);
 
-        Assert.assertEquals(testVisibility, field.getVisibility().getValue());
+        Assertions.assertEquals(testVisibility, field.getVisibility().getValue());
     }
 
     @Test
@@ -141,11 +140,11 @@ public class PdfCollectionFieldTest extends ExtendedITextTest {
         pdfObject.put(PdfName.Subtype, PdfName.S);
         PdfCollectionField field = new PdfCollectionField(pdfObject);
 
-        Assert.assertNull(field.getEditable());
+        Assertions.assertNull(field.getEditable());
 
         field.setEditable(testEditable);
 
-        Assert.assertEquals(testEditable, field.getEditable().getValue());
+        Assertions.assertEquals(testEditable, field.getEditable().getValue());
     }
 
     @Test
@@ -156,7 +155,7 @@ public class PdfCollectionFieldTest extends ExtendedITextTest {
         pdfObject.put(PdfName.Subtype, PdfName.S);
         PdfCollectionField field = new PdfCollectionField(pdfObject);
 
-        Assert.assertEquals(new PdfString(textValue), field.getValue(textValue));
+        Assertions.assertEquals(new PdfString(textValue), field.getValue(textValue));
     }
 
     @Test
@@ -168,7 +167,7 @@ public class PdfCollectionFieldTest extends ExtendedITextTest {
         pdfObject.put(PdfName.Subtype, PdfName.N);
         PdfCollectionField field = new PdfCollectionField(pdfObject);
 
-        Assert.assertEquals(numberValue, ((PdfNumber)field.getValue(numberValueAsString)).getValue(), 0.0001);
+        Assertions.assertEquals(numberValue, ((PdfNumber)field.getValue(numberValueAsString)).getValue(), 0.0001);
     }
 
     @Test
@@ -179,7 +178,7 @@ public class PdfCollectionFieldTest extends ExtendedITextTest {
         pdfObject.put(PdfName.Subtype, PdfName.D);
         PdfCollectionField field = new PdfCollectionField(pdfObject);
 
-        Assert.assertTrue(((PdfString)field.getValue(timeValueAsString)).getValue().startsWith("D:1986"));
+        Assertions.assertTrue(((PdfString)field.getValue(timeValueAsString)).getValue().startsWith("D:1986"));
     }
 
     @Test
@@ -191,8 +190,8 @@ public class PdfCollectionFieldTest extends ExtendedITextTest {
 
         // this line will throw an exception as getValue() method is not
         // supported for subType which differs from S, N and D.
-        Exception e = Assert.assertThrows(PdfException.class, () -> field.getValue(stringValue));
-        Assert.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.UNACCEPTABLE_FIELD_VALUE,
+        Exception e = Assertions.assertThrows(PdfException.class, () -> field.getValue(stringValue));
+        Assertions.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.UNACCEPTABLE_FIELD_VALUE,
                 stringValue, fieldName), e.getMessage());
     }
 
@@ -202,7 +201,7 @@ public class PdfCollectionFieldTest extends ExtendedITextTest {
         pdfObject.put(PdfName.Subtype, PdfName.S);
         PdfCollectionField field = new PdfCollectionField(pdfObject);
 
-        Assert.assertFalse(field.isWrappedObjectMustBeIndirect());
+        Assertions.assertFalse(field.isWrappedObjectMustBeIndirect());
     }
 
 }

@@ -22,9 +22,6 @@
  */
 package com.itextpdf.test;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,14 +34,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @ExtendWith(LogListener.class)
 public abstract class ExtendedITextTest extends ITextTest {
 
-    @Rule
-    public LogListener logListener = new LogListener();
-
     /**
      * This method is called before each test method is executed
      */
     @BeforeEach
-    @Before
     public void beforeTestMethodAction(){
     }
 
@@ -52,7 +45,6 @@ public abstract class ExtendedITextTest extends ITextTest {
      * This method is called after each test method is executed
      */
     @AfterEach
-    @After
     public void afterTestMethodAction(){
     }
 }

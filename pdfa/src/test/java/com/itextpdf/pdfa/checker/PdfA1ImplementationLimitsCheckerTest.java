@@ -46,23 +46,22 @@ import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
     private PdfA1Checker pdfA1Checker = new PdfA1Checker(PdfAConformanceLevel.PDF_A_1B);
     private final static int MAX_ARRAY_CAPACITY = 8191;
     private final static int MAX_DICTIONARY_CAPACITY = 4095;
 
-    @Before
+    @BeforeEach
     public void before() {
         pdfA1Checker.setFullCheckMode(true);
     }
@@ -77,17 +76,17 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
         final long minIntegerValue = pdfA1Checker.getMinIntegerValue();
         final double maxRealValue = pdfA1Checker.getMaxRealValue();
 
-        Assert.assertEquals(65535, maxStringLength);
-        Assert.assertEquals(127, maxNameLength);
+        Assertions.assertEquals(65535, maxStringLength);
+        Assertions.assertEquals(127, maxNameLength);
         PdfString longString = PdfACheckerTestUtils.getLongString(maxStringLength);
         PdfName longName = PdfACheckerTestUtils.getLongName(maxNameLength);
 
         PdfArray longArray = PdfACheckerTestUtils.getLongArray(maxArrayCapacity);
         PdfDictionary longDictionary = PdfACheckerTestUtils.getLongDictionary(maxDictionaryCapacity);
 
-        Assert.assertEquals(2147483647, maxIntegerValue);
-        Assert.assertEquals(-2147483648, minIntegerValue);
-        Assert.assertEquals(32767, maxRealValue, 0.001);
+        Assertions.assertEquals(2147483647, maxIntegerValue);
+        Assertions.assertEquals(-2147483648, minIntegerValue);
+        Assertions.assertEquals(32767, maxRealValue, 0.001);
 
         PdfNumber largeInteger = new PdfNumber(maxIntegerValue);
         PdfNumber negativeInteger = new PdfNumber(minIntegerValue);
@@ -126,10 +125,10 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
         // An exception should be thrown as provided String is longer then
         // it is allowed per specification
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA1Checker.checkPdfObject(longString)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.PDF_STRING_IS_TOO_LONG, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.PDF_STRING_IS_TOO_LONG, e.getMessage());
     }
 
     @Test
@@ -138,10 +137,10 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
         // An exception should be thrown as provided name is longer then
         // it is allowed per specification
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA1Checker.checkPdfObject(longName)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.PDF_NAME_IS_TOO_LONG, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.PDF_NAME_IS_TOO_LONG, e.getMessage());
     }
 
     @Test
@@ -150,10 +149,10 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
         // An exception should be thrown as provided integer is larger then
         // it is allowed per specification
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA1Checker.checkPdfObject(largeNumber)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.INTEGER_NUMBER_IS_OUT_OF_RANGE, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.INTEGER_NUMBER_IS_OUT_OF_RANGE, e.getMessage());
     }
 
     @Test
@@ -162,10 +161,10 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
         // An exception should be thrown as provided integer is smaller then
         // it is allowed per specification
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA1Checker.checkPdfObject(largeNumber)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.INTEGER_NUMBER_IS_OUT_OF_RANGE, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.INTEGER_NUMBER_IS_OUT_OF_RANGE, e.getMessage());
     }
 
     @Test
@@ -183,10 +182,10 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
         // An exception should be thrown as provided array has more elements then
         // it is allowed per specification
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA1Checker.checkPdfObject(longArray)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.MAXIMUM_ARRAY_CAPACITY_IS_EXCEEDED, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.MAXIMUM_ARRAY_CAPACITY_IS_EXCEEDED, e.getMessage());
     }
 
     @Test
@@ -195,10 +194,10 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
         // An exception should be thrown as provided dictionary has more entries
         // then it is allowed per specification
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA1Checker.checkPdfObject(longDictionary)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.MAXIMUM_DICTIONARY_CAPACITY_IS_EXCEEDED, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.MAXIMUM_DICTIONARY_CAPACITY_IS_EXCEEDED, e.getMessage());
     }
 
     @Test
@@ -207,10 +206,10 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
         // An exception should be thrown as dictionary of the stream has more entries
         // then it is allowed per specification
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA1Checker.checkPdfObject(longStream)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.MAXIMUM_DICTIONARY_CAPACITY_IS_EXCEEDED, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.MAXIMUM_DICTIONARY_CAPACITY_IS_EXCEEDED, e.getMessage());
     }
 
     @Test
@@ -219,10 +218,10 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
         // An exception should be thrown as dictionary contains value which is longer then
         // it is allowed per specification
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> checkInDictionary(longString)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.PDF_STRING_IS_TOO_LONG, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.PDF_STRING_IS_TOO_LONG, e.getMessage());
     }
 
     @Test
@@ -236,10 +235,10 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
         // An exception should be thrown as dictionary contains key which is longer then
         // it is allowed per specification
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA1Checker.checkPdfObject(dict)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.PDF_NAME_IS_TOO_LONG, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.PDF_NAME_IS_TOO_LONG, e.getMessage());
     }
 
     @Test
@@ -247,10 +246,10 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
         PdfString longString = buildLongString();
         // An exception should be thrown as one element is longer then
         // it is allowed per specification
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> checkInArray(longString)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.PDF_STRING_IS_TOO_LONG, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.PDF_STRING_IS_TOO_LONG, e.getMessage());
     }
 
     @Test
@@ -259,10 +258,10 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
         // An exception should be thrown as content stream has a string which
         // is longer then it is allowed per specification
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> checkInContentStream(longString)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.PDF_STRING_IS_TOO_LONG, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.PDF_STRING_IS_TOO_LONG, e.getMessage());
     }
 
     @Test
@@ -271,10 +270,10 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
         // An exception should be thrown as content stream has a name which
         // is longer then it is allowed per specification
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> checkInContentStream(longName)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.PDF_NAME_IS_TOO_LONG, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.PDF_NAME_IS_TOO_LONG, e.getMessage());
     }
 
     @Test
@@ -283,10 +282,10 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
         // An exception should be thrown as provided integer is larger then
         // it is allowed per specification
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> checkInContentStream(largeNumber)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.INTEGER_NUMBER_IS_OUT_OF_RANGE, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.INTEGER_NUMBER_IS_OUT_OF_RANGE, e.getMessage());
     }
 
     @Test
@@ -295,10 +294,10 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
         // An exception should be thrown as provided integer is smaller then
         // it is allowed per specification
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> checkInContentStream(largeNumber)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.INTEGER_NUMBER_IS_OUT_OF_RANGE, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.INTEGER_NUMBER_IS_OUT_OF_RANGE, e.getMessage());
     }
 
     @Test
@@ -317,10 +316,10 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
         // An exception should be thrown as provided array has more elements then
         // it is allowed per specification
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> checkInContentStream(longArray)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.MAXIMUM_ARRAY_CAPACITY_IS_EXCEEDED, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.MAXIMUM_ARRAY_CAPACITY_IS_EXCEEDED, e.getMessage());
     }
 
     @Test
@@ -329,10 +328,10 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
         // An exception should be thrown as provided dictionary has more entries
         // then it is allowed per specification
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> checkInContentStream(longDictionary)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.MAXIMUM_DICTIONARY_CAPACITY_IS_EXCEEDED, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.MAXIMUM_DICTIONARY_CAPACITY_IS_EXCEEDED, e.getMessage());
     }
 
 
@@ -369,10 +368,10 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
         // An exception should be thrown as content stream has a string which
         // is longer then it is allowed per specification
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> checkInArrayInContentStream(longString)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.PDF_STRING_IS_TOO_LONG, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.PDF_STRING_IS_TOO_LONG, e.getMessage());
     }
 
     @Test
@@ -381,10 +380,10 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
         // An exception should be thrown as content stream has a string which
         // is longer then it is allowed per specification
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> checkInDictionaryInContentStream(longString)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.PDF_STRING_IS_TOO_LONG, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.PDF_STRING_IS_TOO_LONG, e.getMessage());
     }
 
     @Test
@@ -398,10 +397,10 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
         // An exception should be thrown as content stream has a string which
         // is longer then it is allowed per specification
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> checkInContentStream(dict)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.PDF_NAME_IS_TOO_LONG, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.PDF_NAME_IS_TOO_LONG, e.getMessage());
     }
 
     @Test
@@ -410,10 +409,10 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
         // An exception should be thrown as there is a string element which
         // doesn't match the limitations provided in specification
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> checkInComplexStructure(longString)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.PDF_STRING_IS_TOO_LONG, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.PDF_STRING_IS_TOO_LONG, e.getMessage());
     }
 
     @Test
@@ -422,10 +421,10 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
         // An exception should be thrown as provided array has more elements then
         // it is allowed per specification
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> checkInComplexStructure(longArray)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.MAXIMUM_ARRAY_CAPACITY_IS_EXCEEDED, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.MAXIMUM_ARRAY_CAPACITY_IS_EXCEEDED, e.getMessage());
     }
 
     @Test
@@ -434,10 +433,10 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
         // An exception should be thrown as provided dictionary has more entries
         // then it is allowed per specification
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> checkInComplexStructure(longDictionary)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.MAXIMUM_DICTIONARY_CAPACITY_IS_EXCEEDED, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.MAXIMUM_DICTIONARY_CAPACITY_IS_EXCEEDED, e.getMessage());
     }
 
     @Test
@@ -446,10 +445,10 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
         // An exception should be thrown as form xobject content stream has a string which
         // is longer then it is allowed per specification
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> checkInFormXObject(longString)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.PDF_STRING_IS_TOO_LONG, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.PDF_STRING_IS_TOO_LONG, e.getMessage());
     }
 
     @Test
@@ -457,10 +456,10 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
         PdfString longString = buildLongString();
         // An exception should be thrown as tiling pattern's content stream has a string which
         // is longer then it is allowed per specification
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> checkInTilingPattern(longString)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.PDF_STRING_IS_TOO_LONG, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.PDF_STRING_IS_TOO_LONG, e.getMessage());
     }
 
     @Test
@@ -477,18 +476,18 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
         PdfString longString = buildLongString();
         // An exception should be thrown as content stream of type3 font has a string which
         // is longer then it is allowed per specification
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> checkInType3Font(longString)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.PDF_STRING_IS_TOO_LONG, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.PDF_STRING_IS_TOO_LONG, e.getMessage());
     }
 
     @Test
     public void deviceNColorspaceWithMoreThan8Components() {
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> checkColorspace(buildDeviceNColorspace(10))
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.THE_NUMBER_OF_COLOR_COMPONENTS_IN_DEVICE_N_COLORSPACE_SHOULD_NOT_EXCEED,
+        Assertions.assertEquals(PdfaExceptionMessageConstant.THE_NUMBER_OF_COLOR_COMPONENTS_IN_DEVICE_N_COLORSPACE_SHOULD_NOT_EXCEED,
                 e.getMessage());
     }
 
@@ -507,7 +506,7 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
         final int maxAllowedLength = pdfA1Checker.getMaxStringLength();
         final int testLength = maxAllowedLength + 1;
 
-        Assert.assertEquals(65536, testLength);
+        Assertions.assertEquals(65536, testLength);
 
         return PdfACheckerTestUtils.getLongString(testLength);
     }
@@ -517,7 +516,7 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
         final int maxAllowedLength = pdfA1Checker.getMaxNameLength();
         final int testLength = maxAllowedLength + 1;
 
-        Assert.assertEquals(128, testLength);
+        Assertions.assertEquals(128, testLength);
 
         return PdfACheckerTestUtils.getLongName(testLength);
     }

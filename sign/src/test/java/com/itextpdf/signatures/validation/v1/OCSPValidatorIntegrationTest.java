@@ -46,12 +46,11 @@ import com.itextpdf.signatures.validation.v1.report.CertificateReportItem;
 import com.itextpdf.signatures.validation.v1.report.ReportItem;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -64,7 +63,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 
-@Category(BouncyCastleUnitTest.class)
+@Tag("BouncyCastleUnitTest")
 public class OCSPValidatorIntegrationTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/validation/v1/OCSPValidatorTest/";
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
@@ -81,7 +80,7 @@ public class OCSPValidatorIntegrationTest extends ExtendedITextTest {
             CertificateSource.SIGNER_CERT, TimeBasedContext.PRESENT);
     private ValidatorChainBuilder validatorChainBuilder;
 
-    @BeforeClass
+    @BeforeAll
     public static void before()
             throws CertificateException, IOException, AbstractOperatorCreationException, AbstractPKCSException {
         Security.addProvider(FACTORY.getProvider());
@@ -97,7 +96,7 @@ public class OCSPValidatorIntegrationTest extends ExtendedITextTest {
         ocspRespPrivateKey = PemFileHelper.readFirstKey(ocspResponderCertFileName, PASSWORD);
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         certificateRetriever = new IssuingCertificateRetriever();
         parameters = new SignatureValidationProperties();
@@ -167,8 +166,8 @@ public class OCSPValidatorIntegrationTest extends ExtendedITextTest {
     public void validateAuthorizedOCSPResponderFromTheTrustedStoreTest() throws GeneralSecurityException, IOException {
         ValidationReport report = validateOcspWithoutCertsTest();
 
-        Assert.assertEquals(0, report.getFailures().size());
-        Assert.assertEquals(ValidationReport.ValidationResult.VALID, report.getValidationResult());
+        Assertions.assertEquals(0, report.getFailures().size());
+        Assertions.assertEquals(ValidationReport.ValidationResult.VALID, report.getValidationResult());
     }
 
     @Test

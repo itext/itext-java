@@ -23,35 +23,34 @@
 package com.itextpdf.commons.actions.data;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class ProductDataTest extends ExtendedITextTest {
     @Test
     public void productDataCreationTest() {
         ProductData productData = new ProductData("publicProductName", "productName", "1.2", 1900, 2100);
 
-        Assert.assertEquals("publicProductName", productData.getPublicProductName());
-        Assert.assertEquals("productName", productData.getProductName());
-        Assert.assertEquals("1.2", productData.getVersion());
-        Assert.assertEquals(1900, productData.getSinceCopyrightYear());
-        Assert.assertEquals(2100, productData.getToCopyrightYear());
+        Assertions.assertEquals("publicProductName", productData.getPublicProductName());
+        Assertions.assertEquals("productName", productData.getProductName());
+        Assertions.assertEquals("1.2", productData.getVersion());
+        Assertions.assertEquals(1900, productData.getSinceCopyrightYear());
+        Assertions.assertEquals(2100, productData.getToCopyrightYear());
     }
 
     @Test
     public void productDataAnotherCreationTest() {
         ProductData productData = new ProductData("publicProductName", "productName", "1.2", "4.0.0", 1900, 2100);
 
-        Assert.assertEquals("publicProductName", productData.getPublicProductName());
-        Assert.assertEquals("productName", productData.getProductName());
-        Assert.assertEquals("1.2", productData.getVersion());
-        Assert.assertEquals("4.0.0", productData.getMinCompatibleLicensingModuleVersion());
-        Assert.assertEquals(1900, productData.getSinceCopyrightYear());
-        Assert.assertEquals(2100, productData.getToCopyrightYear());
+        Assertions.assertEquals("publicProductName", productData.getPublicProductName());
+        Assertions.assertEquals("productName", productData.getProductName());
+        Assertions.assertEquals("1.2", productData.getVersion());
+        Assertions.assertEquals("4.0.0", productData.getMinCompatibleLicensingModuleVersion());
+        Assertions.assertEquals(1900, productData.getSinceCopyrightYear());
+        Assertions.assertEquals(2100, productData.getToCopyrightYear());
     }
 
     @Test
@@ -59,10 +58,10 @@ public class ProductDataTest extends ExtendedITextTest {
         ProductData a = new ProductData("publicProductName", "productName", "1.2", 1900, 2100);
         ProductData b = new ProductData("publicProductName", "productName", "1.2", 1900, 2100);
 
-        Assert.assertEquals(a, a);
+        Assertions.assertEquals(a, a);
 
-        Assert.assertEquals(a, b);
-        Assert.assertEquals(b, a);
+        Assertions.assertEquals(a, b);
+        Assertions.assertEquals(b, a);
     }
 
     @Test
@@ -70,7 +69,7 @@ public class ProductDataTest extends ExtendedITextTest {
         ProductData a = new ProductData("publicProductName", "productName", "1.2", 1900, 2100);
         ProductData d = new ProductData("publicProductName", "productName", "1.2", 1910, 2110);
 
-        Assert.assertNotEquals(a, d);
+        Assertions.assertNotEquals(a, d);
     }
 
     @Test
@@ -78,11 +77,11 @@ public class ProductDataTest extends ExtendedITextTest {
         ProductData a = new ProductData("publicProductName", "productName", "1.2", 1900, 2100);
         ProductData b = new ProductData("publicProductName", "productName", "1.2", 1900, 2100);
 
-        Assert.assertEquals(a, b);
-        Assert.assertEquals(a.hashCode(), b.hashCode());
+        Assertions.assertEquals(a, b);
+        Assertions.assertEquals(a.hashCode(), b.hashCode());
 
         int h1 = a.hashCode();
         int h2 = a.hashCode();
-        Assert.assertEquals(h1, h2);
+        Assertions.assertEquals(h1, h2);
     }
 }

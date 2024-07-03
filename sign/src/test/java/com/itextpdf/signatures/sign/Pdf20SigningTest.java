@@ -46,7 +46,6 @@ import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -59,13 +58,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(BouncyCastleIntegrationTest.class)
+@Tag("BouncyCastleIntegrationTest")
 public class Pdf20SigningTest extends ExtendedITextTest {
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
@@ -79,13 +78,13 @@ public class Pdf20SigningTest extends ExtendedITextTest {
     private Certificate[] chain;
     private PrivateKey pk;
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         Security.addProvider(FACTORY.getProvider());
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
-    @Before
+    @BeforeEach
     public void init()
             throws IOException, CertificateException, AbstractPKCSException, AbstractOperatorCreationException {
         pk = PemFileHelper.readFirstKey(KEYSTORE_PATH, PASSWORD);
@@ -106,7 +105,7 @@ public class Pdf20SigningTest extends ExtendedITextTest {
         PdfNumber sigFlag = doc.getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm)
                 .getAsNumber(PdfName.SigFlags);
 
-        Assert.assertEquals(new PdfNumber(3).intValue(), sigFlag.intValue());
+        Assertions.assertEquals(new PdfNumber(3).intValue(), sigFlag.intValue());
     }
 
     @Test
@@ -118,11 +117,11 @@ public class Pdf20SigningTest extends ExtendedITextTest {
 
         String fieldName = "Signature2";
 
-        Exception e = Assert.assertThrows(PdfException.class,
+        Exception e = Assertions.assertThrows(PdfException.class,
                 () -> sign(srcFile, fieldName, outPdf, chain, pk, DigestAlgorithms.RIPEMD160,
                         PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, true,
                         PdfSigner.CERTIFIED_NO_CHANGES_ALLOWED, null));
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 SignExceptionMessageConstant.CERTIFICATION_SIGNATURE_CREATION_FAILED_DOC_SHALL_NOT_CONTAIN_SIGS,
                 e.getMessage());
     }
@@ -156,7 +155,7 @@ public class Pdf20SigningTest extends ExtendedITextTest {
         list.add(rectangle2);
         map.put(1, list);
 
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(outPdfFileThree, cmpPdfFileThree));
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outPdfFileThree, cmpPdfFileThree));
     }
 
     @Test
@@ -171,10 +170,10 @@ public class Pdf20SigningTest extends ExtendedITextTest {
         sign(srcFile, fieldName, outPdf, chain, pk, DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CMS, "Test 1",
                 "TestCity", rect, false, true, PdfSigner.NOT_CERTIFIED, 12f);
 
-        Assert.assertNull(new CompareTool().compareVisually(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_",
+        Assertions.assertNull(new CompareTool().compareVisually(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_",
                 getTestMap(rect)));
 
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf));
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf));
     }
 
     @Test
@@ -189,10 +188,10 @@ public class Pdf20SigningTest extends ExtendedITextTest {
         sign(srcFile, fieldName, outPdf, chain, pk, DigestAlgorithms.SHA256,
                 PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, true, PdfSigner.NOT_CERTIFIED, 12f);
 
-        Assert.assertNull(new CompareTool().compareVisually(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_",
+        Assertions.assertNull(new CompareTool().compareVisually(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_",
                 getTestMap(rect)));
 
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf));
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf));
     }
 
     protected void sign(String src, String name, String dest, Certificate[] chain, PrivateKey pk,

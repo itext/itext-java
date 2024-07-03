@@ -36,24 +36,23 @@ import com.itextpdf.layout.properties.HorizontalAlignment;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 import org.xml.sax.SAXException;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class FloatImageTest extends ExtendedITextTest {
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/FloatImageTest/";
     private static final String destinationFolder = "./target/test/com/itextpdf/layout/FloatImageTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
@@ -82,9 +81,9 @@ public class FloatImageTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool()
+        Assertions.assertNull(new CompareTool()
                 .compareByContent(dest, sourceFolder + "cmp_floatAllClearNoneImage.pdf", destinationFolder));
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareTagStructures(dest, sourceFolder + "cmp_floatAllClearNoneImage.pdf"));
     }
 
@@ -112,9 +111,9 @@ public class FloatImageTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool()
+        Assertions.assertNull(new CompareTool()
                 .compareByContent(dest, sourceFolder + "cmp_floatAllClearBothImage.pdf", destinationFolder));
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareTagStructures(dest, sourceFolder + "cmp_floatAllClearBothImage.pdf"));
     }
 
@@ -141,9 +140,9 @@ public class FloatImageTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool()
+        Assertions.assertNull(new CompareTool()
                 .compareByContent(dest, sourceFolder + "cmp_floatNoneRightClearBothImage.pdf", destinationFolder));
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareTagStructures(dest, sourceFolder + "cmp_floatNoneRightClearBothImage.pdf"));
     }
 
@@ -169,9 +168,9 @@ public class FloatImageTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool()
+        Assertions.assertNull(new CompareTool()
                 .compareByContent(dest, sourceFolder + "cmp_floatNoneRightClearNoneImage.pdf", destinationFolder));
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareTagStructures(dest, sourceFolder + "cmp_floatNoneRightClearNoneImage.pdf"));
     }
 

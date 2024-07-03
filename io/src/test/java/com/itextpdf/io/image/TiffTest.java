@@ -31,17 +31,16 @@ import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class TiffTest extends ExtendedITextTest {
 
     private static final double DELTA = 1e-5;
@@ -52,9 +51,9 @@ public class TiffTest extends ExtendedITextTest {
         byte[] imageBytes = StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile(SOURCE_FOLDER + "WP_20140410_001.tif"));
         // Test a more specific entry point
         ImageData img = ImageDataFactory.createTiff(imageBytes, false, 1, false);
-        Assert.assertEquals(2592, img.getWidth(), 0);
-        Assert.assertEquals(1456, img.getHeight(), 0);
-        Assert.assertEquals(8, img.getBpc());
+        Assertions.assertEquals(2592, img.getWidth(), 0);
+        Assertions.assertEquals(1456, img.getHeight(), 0);
+        Assertions.assertEquals(8, img.getBpc());
     }
 
     @Test
@@ -69,36 +68,36 @@ public class TiffTest extends ExtendedITextTest {
     public void openTiff3() throws IOException {
         ImageData img = ImageDataFactory.create(SOURCE_FOLDER + "WP_20140410_001_monochrome.tiff");
 
-        Assert.assertEquals(2592, img.getWidth(), 0);
-        Assert.assertEquals(1456, img.getHeight(), 0);
-        Assert.assertEquals(8, img.getBpc());
+        Assertions.assertEquals(2592, img.getWidth(), 0);
+        Assertions.assertEquals(1456, img.getHeight(), 0);
+        Assertions.assertEquals(8, img.getBpc());
     }
 
     @Test
     public void openTiff4() throws IOException {
         ImageData img = ImageDataFactory.create(SOURCE_FOLDER + "WP_20140410_001_negate.tiff");
 
-        Assert.assertEquals(2592, img.getWidth(), 0);
-        Assert.assertEquals(1456, img.getHeight(), 0);
-        Assert.assertEquals(8, img.getBpc());
+        Assertions.assertEquals(2592, img.getWidth(), 0);
+        Assertions.assertEquals(1456, img.getHeight(), 0);
+        Assertions.assertEquals(8, img.getBpc());
     }
 
     @Test
     public void openTiff5() throws IOException {
         ImageData img = ImageDataFactory.create(SOURCE_FOLDER + "WP_20140410_001_year1900.tiff");
 
-        Assert.assertEquals(2592, img.getWidth(), 0);
-        Assert.assertEquals(1456, img.getHeight(), 0);
-        Assert.assertEquals(8, img.getBpc());
+        Assertions.assertEquals(2592, img.getWidth(), 0);
+        Assertions.assertEquals(1456, img.getHeight(), 0);
+        Assertions.assertEquals(8, img.getBpc());
     }
 
     @Test
     public void openTiff6() throws IOException {
         ImageData img = ImageDataFactory.create(SOURCE_FOLDER + "WP_20140410_001_year1980.tiff");
 
-        Assert.assertEquals(2592, img.getWidth(), 0);
-        Assert.assertEquals(1456, img.getHeight(), 0);
-        Assert.assertEquals(8, img.getBpc());
+        Assertions.assertEquals(2592, img.getWidth(), 0);
+        Assertions.assertEquals(1456, img.getHeight(), 0);
+        Assertions.assertEquals(8, img.getBpc());
     }
 
     @Test
@@ -108,7 +107,7 @@ public class TiffTest extends ExtendedITextTest {
                 new RandomAccessSourceFactory().createSource(bytes)), 0);
         String[] stringArray = new String[] {"iText? 7.1.7-SNAPSHOT ?2000-2019 iText Group NV (AGPL-version)\u0000"};
 
-        Assert.assertArrayEquals(stringArray, dir.getField(305).getAsStrings());
+        Assertions.assertArrayEquals(stringArray, dir.getField(305).getAsStrings());
     }
 
     @Test
@@ -135,10 +134,10 @@ public class TiffTest extends ExtendedITextTest {
     public void group3CompressionEolErrorCreateTiffImageTest() throws MalformedURLException {
         String sourceFile = SOURCE_FOLDER + "group3CompressionImageWithEolError.tif";
 
-        Exception e = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class,
+        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
                 () -> createTiff(sourceFile, 1, 1024D, 768D));
 
-        Assert.assertEquals(MessageFormatUtil.format(
+        Assertions.assertEquals(MessageFormatUtil.format(
                 IoExceptionMessageConstant.CANNOT_READ_TIFF_IMAGE), e.getMessage());
     }
 
@@ -147,9 +146,9 @@ public class TiffTest extends ExtendedITextTest {
     public void group3CompressionCreateImageDataTest() throws MalformedURLException {
         String sourceFile = SOURCE_FOLDER + "group3CompressionImage.tif";
         ImageData img = ImageDataFactory.create(UrlUtil.toURL(SOURCE_FOLDER + "group3CompressionImage.tif"));
-        Assert.assertEquals(1024, img.getWidth(), 0);
-        Assert.assertEquals(768, img.getHeight(), 0);
-        Assert.assertEquals(1, img.getBpc());
+        Assertions.assertEquals(1024, img.getWidth(), 0);
+        Assertions.assertEquals(768, img.getHeight(), 0);
+        Assertions.assertEquals(1, img.getBpc());
     }
 
     @Test
@@ -197,69 +196,69 @@ public class TiffTest extends ExtendedITextTest {
     @Test
     // TODO: DEVSIX-5791 (update test when support for adobeDeflate compression tiff image will be realized)
     public void adobeDeflateComp16BitMinIsBlackCreateTiffTest() {
-        Exception e = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class,
+        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
                 () -> ImageDataFactory.createTiff(UrlUtil.toURL(
                         SOURCE_FOLDER + "adobeDeflateCompression16BitMinIsBlack.tif"),
                         false, 1, false));
 
-        Assert.assertEquals(MessageFormatUtil.format(
+        Assertions.assertEquals(MessageFormatUtil.format(
                 IoExceptionMessageConstant.CANNOT_READ_TIFF_IMAGE), e.getMessage());
     }
 
     @Test
     // TODO: DEVSIX-5791 (update test when support for adobeDeflate compression tiff image will be realized)
     public void adobeDeflateComp16BitMinIsBlackCreateImageTest() {
-        Exception e = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class,
+        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
                 () -> ImageDataFactory.create(UrlUtil.toURL(
                         SOURCE_FOLDER + "adobeDeflateCompression16BitMinIsBlack.tif")));
 
-        Assert.assertEquals(MessageFormatUtil.format(
+        Assertions.assertEquals(MessageFormatUtil.format(
                 IoExceptionMessageConstant.CANNOT_READ_TIFF_IMAGE), e.getMessage());
     }
 
     @Test
     // TODO: DEVSIX-5791 (update test when support for adobeDeflate compression tiff image will be realized)
     public void adobeDeflateComp16BitMinIsWhiteCreateTiffTest() {
-        Exception e = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class,
+        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
                 () -> ImageDataFactory.createTiff(UrlUtil.toURL(
                         SOURCE_FOLDER + "adobeDeflateCompression16BitMinIsWhite.tif"),
                         false, 1, false));
 
-        Assert.assertEquals(MessageFormatUtil.format(
+        Assertions.assertEquals(MessageFormatUtil.format(
                 IoExceptionMessageConstant.CANNOT_READ_TIFF_IMAGE), e.getMessage());
     }
 
     @Test
     // TODO: DEVSIX-5791 (update test when support for adobeDeflate compression tiff image will be realized)
     public void adobeDeflateComp16BitMinIsWhiteCreateImageTest() {
-        Exception e = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class,
+        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
                 () -> ImageDataFactory.create(UrlUtil.toURL(
                         SOURCE_FOLDER + "adobeDeflateCompression16BitMinIsWhite.tif")));
 
-        Assert.assertEquals(MessageFormatUtil.format(
+        Assertions.assertEquals(MessageFormatUtil.format(
                 IoExceptionMessageConstant.CANNOT_READ_TIFF_IMAGE), e.getMessage());
     }
 
     @Test
     // TODO: DEVSIX-5791 (update test when support for adobeDeflate compression tiff image will be realized)
     public void adobeDeflateCompression16BitRgbCreateTiffTest() {
-        Exception e = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class,
+        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
                 () -> ImageDataFactory.createTiff(UrlUtil.toURL(
                         SOURCE_FOLDER + "adobeDeflateCompression16BitRgb.tif"),
                         false, 1, false));
 
-        Assert.assertEquals(MessageFormatUtil.format(
+        Assertions.assertEquals(MessageFormatUtil.format(
                 IoExceptionMessageConstant.CANNOT_READ_TIFF_IMAGE), e.getMessage());
     }
 
     @Test
     // TODO: DEVSIX-5791 (update test when support for adobeDeflate compression tiff image will be realized)
     public void adobeDeflateCompression16BitRgbCreateImageTest() {
-        Exception e = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class,
+        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
                 () -> ImageDataFactory.create(UrlUtil.toURL(
                         SOURCE_FOLDER + "adobeDeflateCompression16BitRgb.tif")));
 
-        Assert.assertEquals(MessageFormatUtil.format(
+        Assertions.assertEquals(MessageFormatUtil.format(
                 IoExceptionMessageConstant.CANNOT_READ_TIFF_IMAGE), e.getMessage());
     }
 
@@ -331,8 +330,8 @@ public class TiffTest extends ExtendedITextTest {
         ImageData img = ImageDataFactory.createTiff(UrlUtil.toURL(sourceFile),
                 false, 1, false);
 
-        Assert.assertEquals(bpc, img.getBpc(), DELTA);
-        Assert.assertEquals(width, img.getWidth(), DELTA);
-        Assert.assertEquals(height, img.getHeight(), DELTA);
+        Assertions.assertEquals(bpc, img.getBpc(), DELTA);
+        Assertions.assertEquals(width, img.getWidth(), DELTA);
+        Assertions.assertEquals(height, img.getHeight(), DELTA);
     }
 }

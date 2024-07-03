@@ -41,12 +41,11 @@ import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignTestPortUtil;
 import com.itextpdf.signatures.testutils.builder.TestCrlBuilder;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -63,7 +62,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-@Category(BouncyCastleUnitTest.class)
+@Tag("BouncyCastleUnitTest")
 public class SignerInfoTest extends ExtendedITextTest {
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
@@ -96,12 +95,12 @@ public class SignerInfoTest extends ExtendedITextTest {
     private X509Certificate signCert;
     private List<byte[]> testCrlResponse;
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         Security.addProvider(FACTORY.getProvider());
     }
 
-    @Before
+    @BeforeEach
     public void init()
             throws IOException, CertificateException, AbstractPKCSException, AbstractOperatorCreationException {
         signCert = chain.get(0);
@@ -124,16 +123,16 @@ public class SignerInfoTest extends ExtendedITextTest {
         si.setDigestAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_SHA512));
         si.serializeSignedAttributes();
 
-        Assert.assertThrows(IllegalStateException.class, () -> si.setSerializedSignedAttributes(new byte[1235]));
-        Assert.assertThrows(IllegalStateException.class,
+        Assertions.assertThrows(IllegalStateException.class, () -> si.setSerializedSignedAttributes(new byte[1235]));
+        Assertions.assertThrows(IllegalStateException.class,
                 () -> si.setCrlResponses(testCrlResponse));
-        Assert.assertThrows(IllegalStateException.class, () -> si.setOcspResponses(fakeOcspREsponses));
-        Assert.assertThrows(IllegalStateException.class, () -> si.setMessageDigest(new byte[1024]));
+        Assertions.assertThrows(IllegalStateException.class, () -> si.setOcspResponses(fakeOcspREsponses));
+        Assertions.assertThrows(IllegalStateException.class, () -> si.setMessageDigest(new byte[1024]));
 
         CmsAttribute attribute = new CmsAttribute("", FACTORY.createASN1Integer(1));
-        Assert.assertThrows(IllegalStateException.class,
+        Assertions.assertThrows(IllegalStateException.class,
                 () -> si.addSignedAttribute(attribute));
-        Assert.assertThrows(IllegalStateException.class, () ->
+        Assertions.assertThrows(IllegalStateException.class, () ->
                 si.addSignerCertificateToSignedAttributes(signCert, SecurityIDs.ID_SHA512));
     }
 
@@ -145,7 +144,7 @@ public class SignerInfoTest extends ExtendedITextTest {
         si.setMessageDigest(MESSAGE_DIGEST);
         si.setDigestAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_SHA512));
         byte[] serRes = si.serializeSignedAttributes();
-        Assert.assertEquals(serializedAsString(EXPECTEDRESULT_1), serializedAsString(serRes));
+        Assertions.assertEquals(serializedAsString(EXPECTEDRESULT_1), serializedAsString(serRes));
     }
 
     @Test
@@ -160,7 +159,7 @@ public class SignerInfoTest extends ExtendedITextTest {
         si.setMessageDigest(new byte[1024]);
         si.setDigestAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_SHA512));
         byte[] serRes = si.serializeSignedAttributes();
-        Assert.assertEquals(serializedAsString(EXPECTEDRESULT_2), serializedAsString(serRes));
+        Assertions.assertEquals(serializedAsString(EXPECTEDRESULT_2), serializedAsString(serRes));
     }
 
     @Test
@@ -172,17 +171,17 @@ public class SignerInfoTest extends ExtendedITextTest {
         si.setMessageDigest(new byte[1024]);
         si.setDigestAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_SHA512));
         byte[] serRes = si.serializeSignedAttributes();
-        Assert.assertEquals(serializedAsString(EXPECTEDRESULT_5), serializedAsString(serRes));
+        Assertions.assertEquals(serializedAsString(EXPECTEDRESULT_5), serializedAsString(serRes));
     }
 
     @Test
     public void testAddSignedAttribute() {
         SignerInfo si = new SignerInfo();
-        Assert.assertFalse(si.getSignedAttributes().stream().anyMatch(a ->
+        Assertions.assertFalse(si.getSignedAttributes().stream().anyMatch(a ->
                 Objects.equals(a.getType(), SecurityIDs.ID_SIGNING_TIME)));
         CmsAttribute attrib = new CmsAttribute(SecurityIDs.ID_SIGNING_TIME, FACTORY.createNullASN1Set());
         si.addSignedAttribute(attrib);
-        Assert.assertTrue(si.getSignedAttributes().stream().anyMatch(a ->
+        Assertions.assertTrue(si.getSignedAttributes().stream().anyMatch(a ->
                 Objects.equals(a.getType(), SecurityIDs.ID_SIGNING_TIME)));
     }
 
@@ -191,7 +190,7 @@ public class SignerInfoTest extends ExtendedITextTest {
         SignerInfo si = new SignerInfo();
         CmsAttribute attrib = new CmsAttribute(SecurityIDs.ID_SIGNING_TIME, FACTORY.createNullASN1Set());
         si.addUnSignedAttribute(attrib);
-        Assert.assertEquals(SecurityIDs.ID_SIGNING_TIME,
+        Assertions.assertEquals(SecurityIDs.ID_SIGNING_TIME,
                 SignTestPortUtil.<CmsAttribute>getFirstElement(si.getUnSignedAttributes()).getType());
     }
 
@@ -205,7 +204,7 @@ public class SignerInfoTest extends ExtendedITextTest {
         si.setDigestAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_SHA512));
         si.addSignerCertificateToSignedAttributes(signCert, "2.16.840.1.101.3.4.2.3");
         byte[] serRes = si.serializeSignedAttributes();
-        Assert.assertEquals(serializedAsString(EXPECTEDRESULT_3), serializedAsString(serRes));
+        Assertions.assertEquals(serializedAsString(EXPECTEDRESULT_3), serializedAsString(serRes));
     }
 
     @Test
@@ -217,7 +216,7 @@ public class SignerInfoTest extends ExtendedITextTest {
         si.setMessageDigest(new byte[1024]);
         si.setDigestAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_SHA512));
         byte[] serRes = si.serializeSignedAttributes();
-        Assert.assertEquals(serializedAsString(EXPECTEDRESULT_3), serializedAsString(serRes));
+        Assertions.assertEquals(serializedAsString(EXPECTEDRESULT_3), serializedAsString(serRes));
     }
 
     @Test
@@ -234,7 +233,7 @@ public class SignerInfoTest extends ExtendedITextTest {
         si.setDigestAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_SHA512));
         si.setSignature(new byte[512]);
         IDERSequence res = si.getAsDerSequence();
-        Assert.assertEquals(serializedAsString(EXPECTEDRESULT_4),
+        Assertions.assertEquals(serializedAsString(EXPECTEDRESULT_4),
                 serializedAsString(res.getEncoded()));
     }
 
@@ -254,7 +253,7 @@ public class SignerInfoTest extends ExtendedITextTest {
 
         long res = si.getEstimatedSize();
 
-        Assert.assertEquals(1973, res);
+        Assertions.assertEquals(1973, res);
     }
 
     @Test
@@ -272,11 +271,12 @@ public class SignerInfoTest extends ExtendedITextTest {
         SignerInfo si2 = new SignerInfo();
         si2.setSerializedSignedAttributes(serialized);
 
-        Assert.assertEquals(si.getSignedAttributes().size(), si2.getSignedAttributes().size());
+        Assertions.assertEquals(si.getSignedAttributes().size(), si2.getSignedAttributes().size());
         for (CmsAttribute attribute : si.getSignedAttributes()) {
-            Assert.assertTrue(MessageFormatUtil.format("Expected to find an attribute with id {0} and value {1}",
-                    attribute.getType(), attribute.getValue().toString()), si2.getSignedAttributes().stream()
-                    .anyMatch(a -> a.getType().equals(attribute.getType()) && a.getValue().equals(attribute.getValue())));
+            Assertions.assertTrue(si2.getSignedAttributes().stream().anyMatch(
+                            a -> a.getType().equals(attribute.getType()) && a.getValue().equals(attribute.getValue())),
+                    MessageFormatUtil.format("Expected to find an attribute with id {0} and value {1}",
+                            attribute.getType(), attribute.getValue().toString()));
         }
     }
 
@@ -294,7 +294,7 @@ public class SignerInfoTest extends ExtendedITextTest {
 
         long res = si.getEstimatedSize();
 
-        Assert.assertEquals(2485, res);
+        Assertions.assertEquals(2485, res);
     }
 
     @Test
@@ -313,7 +313,7 @@ public class SignerInfoTest extends ExtendedITextTest {
 
         SignerInfo si2 = new SignerInfo(encoded, Collections.singletonList(signCert));
 
-        Assert.assertEquals(si.getSignedAttributes().size(), si2.getSignedAttributes().size());
+        Assertions.assertEquals(si.getSignedAttributes().size(), si2.getSignedAttributes().size());
     }
 
 
@@ -330,7 +330,7 @@ public class SignerInfoTest extends ExtendedITextTest {
         SignerInfo si2 = new SignerInfo();
         si2.setSerializedSignedAttributes(attribs);
 
-        Assert.assertEquals(si.getSignedAttributes().size(), si2.getSignedAttributes().size());
+        Assertions.assertEquals(si.getSignedAttributes().size(), si2.getSignedAttributes().size());
     }
 
     @Test
@@ -338,16 +338,16 @@ public class SignerInfoTest extends ExtendedITextTest {
         IASN1Encodable testData = FACTORY.createASN1Primitive(
                 Base64.decode(CMSTestHelper.B64_ENCODED_NO_SIGNED_ATTRIBS));
         SignerInfo si = new SignerInfo(testData, chain);
-        Assert.assertEquals(0, si.getSignedAttributes().size());
+        Assertions.assertEquals(0, si.getSignedAttributes().size());
     }
 
     @Test
     public void testMissingSignerCertificate() throws IOException {
         IASN1Encodable testData = FACTORY.createASN1Primitive(
                 Base64.decode(CMSTestHelper.B64_ENCODED_NO_SIGNED_ATTRIBS));
-        Exception e = Assert.assertThrows(PdfException.class, () ->
+        Exception e = Assertions.assertThrows(PdfException.class, () ->
                 new SignerInfo(testData, chain.subList(1, chain.size() - 1)));
-        Assert.assertEquals(SignExceptionMessageConstant.CMS_CERTIFICATE_NOT_FOUND, e.getMessage());
+        Assertions.assertEquals(SignExceptionMessageConstant.CMS_CERTIFICATE_NOT_FOUND, e.getMessage());
     }
 
     @Test
@@ -355,16 +355,16 @@ public class SignerInfoTest extends ExtendedITextTest {
         IASN1Encodable testData = FACTORY.createASN1Primitive(
                 Base64.decode(CMSTestHelper.B64_ENCODED_SUBJECTKEY_IDENTIFIER));
         SignerInfo si = new SignerInfo(testData, chain);
-        Assert.assertEquals(signCert.getSerialNumber(), si.getSigningCertificate().getSerialNumber());
+        Assertions.assertEquals(signCert.getSerialNumber(), si.getSigningCertificate().getSerialNumber());
     }
 
     @Test
     public void testMissingCertificateWithSubjectKeyIdentifier() throws IOException {
         IASN1Encodable testData = FACTORY.createASN1Primitive(
                 Base64.decode(CMSTestHelper.B64_ENCODED_SUBJECTKEY_IDENTIFIER));
-        Exception e = Assert.assertThrows(PdfException.class, () ->
+        Exception e = Assertions.assertThrows(PdfException.class, () ->
                 new SignerInfo(testData, chain.subList(1, chain.size() - 1)));
-        Assert.assertEquals(SignExceptionMessageConstant.CMS_CERTIFICATE_NOT_FOUND, e.getMessage());
+        Assertions.assertEquals(SignExceptionMessageConstant.CMS_CERTIFICATE_NOT_FOUND, e.getMessage());
     }
 
     @Test
@@ -374,9 +374,9 @@ public class SignerInfoTest extends ExtendedITextTest {
         //should be tagged with 0
         v.add(FACTORY.createDERSequence(FACTORY.createASN1EncodableVector()));
         IASN1Encodable testData = FACTORY.createASN1Sequence(v);
-        Exception e = Assert.assertThrows(PdfException.class, () ->
+        Exception e = Assertions.assertThrows(PdfException.class, () ->
                 new SignerInfo(testData, chain.subList(1, chain.size() - 1)));
-        Assert.assertEquals(SignExceptionMessageConstant.CMS_INVALID_CONTAINER_STRUCTURE, e.getMessage());
+        Assertions.assertEquals(SignExceptionMessageConstant.CMS_INVALID_CONTAINER_STRUCTURE, e.getMessage());
     }
 
     private String toUnixStringEnding(String in) {

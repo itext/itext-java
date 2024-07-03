@@ -43,7 +43,6 @@ import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
 import com.itextpdf.kernel.pdf.canvas.parser.data.ImageRenderInfo;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -54,20 +53,20 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Set;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class GetImageBytesTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/xobject"
             + "/GetImageBytesTest/";
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/xobject/GetImageBytesTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
@@ -157,7 +156,7 @@ public class GetImageBytesTest extends ExtendedITextTest {
     // TODO: DEVSIX-3538 (update test after fix)
     // Android-Conversion-Ignore-Test (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
     public void testSeparationCSWithDeviceCMYKAsAlternative() throws Exception {
-        Assert.assertThrows(UnsupportedOperationException.class, () ->
+        Assertions.assertThrows(UnsupportedOperationException.class, () ->
         {
             testFile("separationCSWithDeviceCMYKAsAlternative.pdf", "Im1", "png");
         });
@@ -236,7 +235,7 @@ public class GetImageBytesTest extends ExtendedITextTest {
         processor.processPageContent(pdfDocument.getPage(1));
 
         java.util.List<byte[]> images = listener.getImages();
-        Assert.assertEquals(1, images.size());
+        Assertions.assertEquals(1, images.size());
 
         try (OutputStream fos = FileUtil.getFileOutputStream(outImageFileName)) {
             fos.write(images.get(0), 0, images.size());
@@ -247,11 +246,11 @@ public class GetImageBytesTest extends ExtendedITextTest {
         byte[] buf = new byte[expectedLen];
         try (InputStream is = FileUtil.getInputStreamForFile(cmpImageFileName)) {
             int read = is.read(buf, 0, buf.length);
-            Assert.assertEquals(expectedLen, read);
+            Assertions.assertEquals(expectedLen, read);
             read = is.read(buf, 0, buf.length);
-            Assert.assertTrue(read <= 0);
+            Assertions.assertTrue(read <= 0);
         }
-        Assert.assertArrayEquals(images.get(0), buf);
+        Assertions.assertArrayEquals(images.get(0), buf);
     }
 
     @Test
@@ -264,10 +263,10 @@ public class GetImageBytesTest extends ExtendedITextTest {
         ImageExtractor listener = new ImageExtractor();
         PdfCanvasProcessor processor = new PdfCanvasProcessor(listener);
 
-        Exception e = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class,
+        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
                 () -> processor.processPageContent(pdfDocument.getPage(1))
         );
-        Assert.assertEquals(MessageFormatUtil
+        Assertions.assertEquals(MessageFormatUtil
                         .format(IoExceptionMessageConstant.EXPECTED_TRAILING_ZERO_BITS_FOR_BYTE_ALIGNED_LINES),
                 e.getMessage());
     }
@@ -290,7 +289,7 @@ public class GetImageBytesTest extends ExtendedITextTest {
 
             PdfImageXObject img = new PdfImageXObject((PdfStream) obj);
 
-            Assert.assertEquals(expectedImageFormat, img.identifyImageFileExtension());
+            Assertions.assertEquals(expectedImageFormat, img.identifyImageFileExtension());
 
             byte[] result = img.getImageBytes(true);
             if (saveResult) {
@@ -304,7 +303,7 @@ public class GetImageBytesTest extends ExtendedITextTest {
             if (img.identifyImageFileExtension().equals("tif")) {
                 compareTiffImages(cmpBytes, result);
             } else {
-                Assert.assertArrayEquals(cmpBytes, result);
+                Assertions.assertArrayEquals(cmpBytes, result);
             }
         }
     }
@@ -315,7 +314,7 @@ public class GetImageBytesTest extends ExtendedITextTest {
         int resultNumDirectories = TIFFDirectory.getNumDirectories(new RandomAccessFileOrArray(
                 new RandomAccessSourceFactory().createSource(resultBytes)));
 
-        Assert.assertEquals(cmpNumDirectories, resultNumDirectories);
+        Assertions.assertEquals(cmpNumDirectories, resultNumDirectories);
 
         for (int dirNum = 0; dirNum < cmpNumDirectories; ++dirNum) {
             TIFFDirectory cmpDir = new TIFFDirectory(new RandomAccessFileOrArray(
@@ -323,13 +322,13 @@ public class GetImageBytesTest extends ExtendedITextTest {
             TIFFDirectory resultDir = new TIFFDirectory(new RandomAccessFileOrArray(
                     new RandomAccessSourceFactory().createSource(resultBytes)), dirNum);
 
-            Assert.assertEquals(cmpDir.getNumEntries(), resultDir.getNumEntries());
-            Assert.assertEquals(cmpDir.getIFDOffset(), resultDir.getIFDOffset());
-            Assert.assertEquals(cmpDir.getNextIFDOffset(), resultDir.getNextIFDOffset());
-            Assert.assertArrayEquals(cmpDir.getTags(), resultDir.getTags());
+            Assertions.assertEquals(cmpDir.getNumEntries(), resultDir.getNumEntries());
+            Assertions.assertEquals(cmpDir.getIFDOffset(), resultDir.getIFDOffset());
+            Assertions.assertEquals(cmpDir.getNextIFDOffset(), resultDir.getNextIFDOffset());
+            Assertions.assertArrayEquals(cmpDir.getTags(), resultDir.getTags());
 
             for (int tag : cmpDir.getTags()) {
-                Assert.assertEquals(cmpDir.isTagPresent(tag), resultDir.isTagPresent(tag));
+                Assertions.assertEquals(cmpDir.isTagPresent(tag), resultDir.isTagPresent(tag));
 
                 TIFFField cmpField = cmpDir.getField(tag);
                 TIFFField resultField = resultDir.getField(tag);
@@ -345,53 +344,53 @@ public class GetImageBytesTest extends ExtendedITextTest {
 
     private void compareFields(TIFFField cmpField, TIFFField resultField) {
         if (cmpField.getType() == TIFFField.TIFF_LONG) {
-            Assert.assertArrayEquals(cmpField.getAsLongs(), resultField.getAsLongs());
+            Assertions.assertArrayEquals(cmpField.getAsLongs(), resultField.getAsLongs());
         } else if (cmpField.getType() == TIFFField.TIFF_BYTE) {
-            Assert.assertArrayEquals(cmpField.getAsBytes(), resultField.getAsBytes());
+            Assertions.assertArrayEquals(cmpField.getAsBytes(), resultField.getAsBytes());
         } else if (cmpField.getType() == TIFFField.TIFF_SBYTE) {
-            Assert.assertArrayEquals(cmpField.getAsBytes(), resultField.getAsBytes());
+            Assertions.assertArrayEquals(cmpField.getAsBytes(), resultField.getAsBytes());
         } else if (cmpField.getType() == TIFFField.TIFF_SHORT) {
-            Assert.assertArrayEquals(cmpField.getAsChars(), resultField.getAsChars());
+            Assertions.assertArrayEquals(cmpField.getAsChars(), resultField.getAsChars());
         } else if (cmpField.getType() == TIFFField.TIFF_SLONG) {
-            Assert.assertArrayEquals(cmpField.getAsInts(), resultField.getAsInts());
+            Assertions.assertArrayEquals(cmpField.getAsInts(), resultField.getAsInts());
         } else if (cmpField.getType() == TIFFField.TIFF_SSHORT) {
-            Assert.assertArrayEquals(cmpField.getAsChars(), resultField.getAsChars());
+            Assertions.assertArrayEquals(cmpField.getAsChars(), resultField.getAsChars());
         } else if (cmpField.getType() == TIFFField.TIFF_UNDEFINED) {
-            Assert.assertArrayEquals(cmpField.getAsBytes(), resultField.getAsBytes());
+            Assertions.assertArrayEquals(cmpField.getAsBytes(), resultField.getAsBytes());
         } else if (cmpField.getType() == TIFFField.TIFF_DOUBLE) {
-            Assert.assertArrayEquals(cmpField.getAsDoubles(), resultField.getAsDoubles(), 0);
+            Assertions.assertArrayEquals(cmpField.getAsDoubles(), resultField.getAsDoubles(), 0);
         } else if (cmpField.getType() == TIFFField.TIFF_FLOAT) {
-            Assert.assertArrayEquals(cmpField.getAsFloats(), resultField.getAsFloats(), 0);
+            Assertions.assertArrayEquals(cmpField.getAsFloats(), resultField.getAsFloats(), 0);
         } else if (cmpField.getType() == TIFFField.TIFF_RATIONAL) {
-            Assert.assertArrayEquals(cmpField.getAsRationals(), resultField.getAsRationals());
+            Assertions.assertArrayEquals(cmpField.getAsRationals(), resultField.getAsRationals());
         } else if (cmpField.getType() == TIFFField.TIFF_SRATIONAL) {
-            Assert.assertArrayEquals(cmpField.getAsSRationals(), resultField.getAsSRationals());
+            Assertions.assertArrayEquals(cmpField.getAsSRationals(), resultField.getAsSRationals());
         } else if (cmpField.getType() == TIFFField.TIFF_ASCII) {
-            Assert.assertArrayEquals(cmpField.getAsStrings(), resultField.getAsStrings());
+            Assertions.assertArrayEquals(cmpField.getAsStrings(), resultField.getAsStrings());
         } else {
-            Assert.assertArrayEquals(cmpField.getAsBytes(), resultField.getAsBytes());
+            Assertions.assertArrayEquals(cmpField.getAsBytes(), resultField.getAsBytes());
         }
     }
 
     private void compareImageData(TIFFDirectory cmpDir, TIFFDirectory resultDir, byte[] cmpBytes, byte[] resultBytes) {
-        Assert.assertTrue(cmpDir.isTagPresent(TIFFConstants.TIFFTAG_STRIPOFFSETS));
-        Assert.assertTrue(cmpDir.isTagPresent(TIFFConstants.TIFFTAG_STRIPBYTECOUNTS));
-        Assert.assertTrue(resultDir.isTagPresent(TIFFConstants.TIFFTAG_STRIPOFFSETS));
-        Assert.assertTrue(resultDir.isTagPresent(TIFFConstants.TIFFTAG_STRIPBYTECOUNTS));
+        Assertions.assertTrue(cmpDir.isTagPresent(TIFFConstants.TIFFTAG_STRIPOFFSETS));
+        Assertions.assertTrue(cmpDir.isTagPresent(TIFFConstants.TIFFTAG_STRIPBYTECOUNTS));
+        Assertions.assertTrue(resultDir.isTagPresent(TIFFConstants.TIFFTAG_STRIPOFFSETS));
+        Assertions.assertTrue(resultDir.isTagPresent(TIFFConstants.TIFFTAG_STRIPBYTECOUNTS));
 
         long[] cmpImageOffsets = cmpDir.getField(TIFFConstants.TIFFTAG_STRIPOFFSETS).getAsLongs();
         long[] cmpStripByteCountsArray = cmpDir.getField(TIFFConstants.TIFFTAG_STRIPOFFSETS).getAsLongs();
         long[] resultImageOffsets = resultDir.getField(TIFFConstants.TIFFTAG_STRIPOFFSETS).getAsLongs();
         long[] resultStripByteCountsArray = resultDir.getField(TIFFConstants.TIFFTAG_STRIPOFFSETS).getAsLongs();
 
-        Assert.assertEquals(cmpImageOffsets.length, resultImageOffsets.length);
-        Assert.assertEquals(cmpStripByteCountsArray.length, resultStripByteCountsArray.length);
+        Assertions.assertEquals(cmpImageOffsets.length, resultImageOffsets.length);
+        Assertions.assertEquals(cmpStripByteCountsArray.length, resultStripByteCountsArray.length);
 
         for (int i = 0; i < cmpImageOffsets.length; ++i) {
             int cmpOffset = (int) cmpImageOffsets[i], cmpCounts = (int) cmpStripByteCountsArray[i];
             int resultOffset = (int) resultImageOffsets[i], resultCounts = (int) resultStripByteCountsArray[i];
 
-            Assert.assertArrayEquals(subArray(cmpBytes, cmpOffset, (cmpOffset + cmpCounts - 1)),
+            Assertions.assertArrayEquals(subArray(cmpBytes, cmpOffset, (cmpOffset + cmpCounts - 1)),
                     subArray(resultBytes, resultOffset, (resultOffset + resultCounts - 1)));
         }
     }
