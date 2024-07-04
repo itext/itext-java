@@ -56,11 +56,14 @@ import com.itextpdf.signatures.validation.v1.mocks.MockSignatureValidationProper
 import com.itextpdf.signatures.validation.v1.report.ReportItem;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.LogLevelConstants;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
-import java.security.cert.CRLException;
 import java.security.cert.X509CRL;
 import java.util.ArrayList;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -167,13 +170,13 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
         Assert.assertEquals(1, ocspClient.getCalls().size());
 
         // There was only one ocsp response so we expect 1 call to the ocsp validator
-        Assert.assertEquals(1,mockOCSPValidator.calls.size());
+        Assert.assertEquals(1, mockOCSPValidator.calls.size());
 
         // the validationDate should be passed as is
         Assert.assertEquals(checkDate, mockOCSPValidator.calls.get(0).validationDate);
 
         // the response should be passed as is
-        Assert.assertEquals(ocspClient.getCalls().get(0).response , mockOCSPValidator.calls.get(0).ocspResp);
+        Assert.assertEquals(ocspClient.getCalls().get(0).response, mockOCSPValidator.calls.get(0).ocspResp);
 
         // There should be a new report generated and any logs must be copied the actual report.
         Assert.assertNotEquals(report, mockOCSPValidator.calls.get(0).report);
@@ -199,7 +202,7 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
                 ReportItem.ReportItemStatus.INFO);
         mockCrlValidator.onCallDo(c -> c.report.addReportItem(reportItem));
 
-         RevocationDataValidator validator = validatorChainBuilder.buildRevocationDataValidator()
+        RevocationDataValidator validator = validatorChainBuilder.buildRevocationDataValidator()
                 .addCrlClient(crlClient);
         validator.validate(report, baseContext, checkCert, checkDate);
 
@@ -211,7 +214,7 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
         // there should be one call per CrlClient
         Assert.assertEquals(1, crlClient.getCalls().size());
         // since there was one response there should be one validator call
-        Assert.assertEquals(1 , mockCrlValidator.calls.size());
+        Assert.assertEquals(1, mockCrlValidator.calls.size());
         Assert.assertEquals(checkCert, mockCrlValidator.calls.get(0).certificate);
         Assert.assertEquals(checkDate, mockCrlValidator.calls.get(0).validationDate);
         // There should be a new report generated and any logs must be copied the actual report.
@@ -231,13 +234,13 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
 
         TestCrlBuilder builder2 = new TestCrlBuilder(caCert, caPrivateKey, checkDate);
         builder2.setNextUpdate(checkDate);
-        TestCrlClientWrapper crlClient2 =new TestCrlClientWrapper(
+        TestCrlClientWrapper crlClient2 = new TestCrlClientWrapper(
                 new TestCrlClient().addBuilderForCertIssuer(builder2));
 
         Date thisUpdate3 = DateTimeUtil.addDaysToDate(checkDate, +2);
         TestCrlBuilder builder3 = new TestCrlBuilder(caCert, caPrivateKey, thisUpdate3);
         builder3.setNextUpdate(DateTimeUtil.addDaysToDate(checkDate, -2));
-        TestCrlClientWrapper crlClient3 =new TestCrlClientWrapper(
+        TestCrlClientWrapper crlClient3 = new TestCrlClientWrapper(
                 new TestCrlClient().addBuilderForCertIssuer(builder3));
 
         RevocationDataValidator validator = validatorChainBuilder.buildRevocationDataValidator()
@@ -263,7 +266,7 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
         builder1.setProducedAt(checkDate);
         builder1.setThisUpdate(DateTimeUtil.getCalendar(checkDate));
         builder1.setNextUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(checkDate, 5)));
-        TestOcspClientWrapper ocspClient1 =  new TestOcspClientWrapper(
+        TestOcspClientWrapper ocspClient1 = new TestOcspClientWrapper(
                 new TestOcspClient().addBuilderForCertIssuer(caCert, builder1));
 
         TestOcspResponseBuilder builder2 = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
@@ -281,12 +284,15 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
                 new TestOcspClient().addBuilderForCertIssuer(caCert, builder3));
 
         mockOCSPValidator.onCallDo(c -> c.report.addReportItem(
-                new ReportItem("","", ReportItem.ReportItemStatus.INDETERMINATE)));
+                new ReportItem("", "", ReportItem.ReportItemStatus.INDETERMINATE)));
 
         ValidationReport report = new ValidationReport();
         certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
 
-        mockParameters.addRevocationOnlineFetchingResponse(SignatureValidationProperties .OnlineFetching.NEVER_FETCH)
+        mockParameters.addRevocationOnlineFetchingResponse(SignatureValidationProperties.OnlineFetching.NEVER_FETCH)
+                .addRevocationOnlineFetchingResponse(SignatureValidationProperties.OnlineFetching.NEVER_FETCH)
+                .addRevocationOnlineFetchingResponse(SignatureValidationProperties.OnlineFetching.NEVER_FETCH)
+                .addRevocationOnlineFetchingResponse(SignatureValidationProperties.OnlineFetching.NEVER_FETCH)
                 .addFreshnessResponse(Duration.ofDays(-2));
         RevocationDataValidator validator = validatorChainBuilder.buildRevocationDataValidator()
                 .addOcspClient(ocspClient1)
@@ -298,7 +304,6 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
         Assert.assertEquals(ocspClient2.getCalls().get(0).response, mockOCSPValidator.calls.get(0).ocspResp);
         Assert.assertEquals(ocspClient3.getCalls().get(0).response, mockOCSPValidator.calls.get(1).ocspResp);
         Assert.assertEquals(ocspClient1.getCalls().get(0).response, mockOCSPValidator.calls.get(2).ocspResp);
-
     }
 
     @Test
@@ -315,10 +320,10 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
         AssertValidationReport.assertThat(report, a -> a
                 .hasStatus(ValidationReport.ValidationResult.VALID)
                 .hasLogItem(la -> la
-                    .withCheckName(RevocationDataValidator.REVOCATION_DATA_CHECK)
-                    .withMessage(RevocationDataValidator.VALIDITY_ASSURED)
-                    .withCertificate(certificate)
-                   ));
+                        .withCheckName(RevocationDataValidator.REVOCATION_DATA_CHECK)
+                        .withMessage(RevocationDataValidator.VALIDITY_ASSURED)
+                        .withCertificate(certificate)
+                ));
     }
 
     @Test
@@ -340,11 +345,11 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
     }
 
     @Test
-    public void nocheckExtensionShouldNotFurtherValdiateTest() {
+    public void nocheckExtensionShouldNotFurtherValidateTest() {
         ValidationReport report = new ValidationReport();
 
         parameters.setRevocationOnlineFetching(ValidatorContexts.all(), CertificateSources.all(),
-                        TimeBasedContexts.all(), SignatureValidationProperties .OnlineFetching.NEVER_FETCH);
+                TimeBasedContexts.all(), SignatureValidationProperties.OnlineFetching.NEVER_FETCH);
         RevocationDataValidator validator = validatorChainBuilder.buildRevocationDataValidator();
 
         validator.validate(report, baseContext.setCertificateSource(CertificateSource.OCSP_ISSUER),
@@ -363,8 +368,8 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
         ValidationReport report = new ValidationReport();
 
         parameters.setRevocationOnlineFetching(ValidatorContexts.all(), CertificateSources.all(),
-                        TimeBasedContexts.all(), SignatureValidationProperties .OnlineFetching.NEVER_FETCH)
-                .setFreshness(ValidatorContexts.all(), CertificateSources.all(),TimeBasedContexts.all(),
+                        TimeBasedContexts.all(), SignatureValidationProperties.OnlineFetching.NEVER_FETCH)
+                .setFreshness(ValidatorContexts.all(), CertificateSources.all(), TimeBasedContexts.all(),
                         Duration.ofDays(-2));
         RevocationDataValidator validator = validatorChainBuilder.buildRevocationDataValidator();
 
@@ -372,40 +377,141 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
 
         AssertValidationReport.assertThat(report, a -> a
                 .hasLogItem(la -> la
-                    .withStatus(ReportItem.ReportItemStatus.INDETERMINATE)
-                    .withCheckName(RevocationDataValidator.REVOCATION_DATA_CHECK)
-                    .withMessage(RevocationDataValidator.NO_REVOCATION_DATA)
-                   ));
+                        .withStatus(ReportItem.ReportItemStatus.INDETERMINATE)
+                        .withCheckName(RevocationDataValidator.REVOCATION_DATA_CHECK)
+                        .withMessage(RevocationDataValidator.NO_REVOCATION_DATA)
+                ));
+    }
+
+    @Test
+    public void doNotFetchOcspOnlineIfCrlAvailableTest() throws Exception {
+        Date checkDate = TimeTestUtil.TEST_DATE_TIME;
+
+        Date thisUpdate = DateTimeUtil.addDaysToDate(checkDate, -2);
+        TestCrlBuilder builder = new TestCrlBuilder(caCert, caPrivateKey, thisUpdate);
+        builder.setNextUpdate(DateTimeUtil.addDaysToDate(checkDate, 2));
+        TestCrlClientWrapper crlClient = new TestCrlClientWrapper(new TestCrlClient().addBuilderForCertIssuer(builder));
+
+        mockOCSPValidator.onCallDo(c -> c.report.addReportItem(
+                new ReportItem("", "", ReportItem.ReportItemStatus.INDETERMINATE)));
+        certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
+
+        parameters.setRevocationOnlineFetching(ValidatorContexts.all(), CertificateSources.all(), TimeBasedContexts
+                        .all(), SignatureValidationProperties.OnlineFetching.FETCH_IF_NO_OTHER_DATA_AVAILABLE)
+                .setFreshness(ValidatorContexts.all(), CertificateSources.all(), TimeBasedContexts.all(),
+                        Duration.ofDays(-2));
+        RevocationDataValidator validator = validatorChainBuilder.buildRevocationDataValidator()
+                .addCrlClient(crlClient);
+
+        ValidationReport report = new ValidationReport();
+        validator.validate(report, baseContext, checkCert, TimeTestUtil.TEST_DATE_TIME);
+
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationReport.ValidationResult.VALID)
+                .hasNumberOfFailures(0).hasNumberOfLogs(0));
+    }
+
+    @Test
+    public void doNotFetchCrlOnlineIfOcspAvailableTest() throws Exception {
+        Date checkDate = TimeTestUtil.TEST_DATE_TIME;
+
+        TestOcspResponseBuilder builder = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
+        builder.setProducedAt(checkDate);
+        builder.setThisUpdate(DateTimeUtil.getCalendar(checkDate));
+        builder.setNextUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(checkDate, 5)));
+        TestOcspClientWrapper ocspClient = new TestOcspClientWrapper(
+                new TestOcspClient().addBuilderForCertIssuer(caCert, builder));
+
+        mockOCSPValidator.onCallDo(c -> c.report.addReportItem(
+                new ReportItem("", "", ReportItem.ReportItemStatus.INFO)));
+        certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
+
+        parameters.setRevocationOnlineFetching(ValidatorContexts.all(), CertificateSources.all(), TimeBasedContexts
+                        .all(), SignatureValidationProperties.OnlineFetching.FETCH_IF_NO_OTHER_DATA_AVAILABLE)
+                .setFreshness(ValidatorContexts.all(), CertificateSources.all(), TimeBasedContexts.all(),
+                        Duration.ofDays(-2));
+        RevocationDataValidator validator = validatorChainBuilder.buildRevocationDataValidator()
+                .addOcspClient(ocspClient);
+
+        ValidationReport report = new ValidationReport();
+        validator.validate(report, baseContext, checkCert, TimeTestUtil.TEST_DATE_TIME);
+
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationReport.ValidationResult.VALID)
+                .hasNumberOfFailures(0).hasNumberOfLogs(1));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = "Looking for CRL for certificate C=BY,O=iText,CN=iTextTestSignRsa",
+                    logLevel = LogLevelConstants.INFO),
+            @LogMessage(messageTemplate = "Skipped CRL url: Passed url can not be null.",
+                    logLevel = LogLevelConstants.INFO)
+    })
+    public void tryToFetchCrlOnlineIfOnlyIndeterminateOcspAvailableTest() throws Exception {
+        Date checkDate = TimeTestUtil.TEST_DATE_TIME;
+
+        TestOcspResponseBuilder builder = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
+        builder.setProducedAt(checkDate);
+        builder.setThisUpdate(DateTimeUtil.getCalendar(checkDate));
+        builder.setNextUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(checkDate, 5)));
+        TestOcspClientWrapper ocspClient = new TestOcspClientWrapper(
+                new TestOcspClient().addBuilderForCertIssuer(caCert, builder));
+
+        mockOCSPValidator.onCallDo(c -> c.report.addReportItem(
+                new ReportItem("", "", ReportItem.ReportItemStatus.INDETERMINATE)));
+        certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
+
+        parameters.setRevocationOnlineFetching(ValidatorContexts.of(ValidatorContext.CRL_VALIDATOR),
+                        CertificateSources.all(), TimeBasedContexts.all(),
+                        SignatureValidationProperties.OnlineFetching.FETCH_IF_NO_OTHER_DATA_AVAILABLE)
+                .setRevocationOnlineFetching(ValidatorContexts.of(ValidatorContext.OCSP_VALIDATOR),
+                        CertificateSources.all(), TimeBasedContexts.all(),
+                        SignatureValidationProperties.OnlineFetching.NEVER_FETCH)
+                .setFreshness(ValidatorContexts.all(), CertificateSources.all(), TimeBasedContexts.all(),
+                        Duration.ofDays(-2));
+        RevocationDataValidator validator = validatorChainBuilder.buildRevocationDataValidator()
+                .addOcspClient(ocspClient);
+
+        ValidationReport report = new ValidationReport();
+        validator.validate(report, baseContext, checkCert, TimeTestUtil.TEST_DATE_TIME);
+
+        AssertValidationReport.assertThat(report, a -> a
+                .hasLogItem(la -> la
+                        .withStatus(ReportItem.ReportItemStatus.INDETERMINATE)
+                        .withCheckName(RevocationDataValidator.REVOCATION_DATA_CHECK)
+                        .withMessage(RevocationDataValidator.NO_REVOCATION_DATA)
+                ));
     }
 
     @Test
     public void tryFetchRevocationDataOnlineTest() {
         ValidationReport report = new ValidationReport();
         parameters.setRevocationOnlineFetching(ValidatorContexts.all(), CertificateSources.all(),
-                        TimeBasedContexts.all(), SignatureValidationProperties .OnlineFetching.FETCH_IF_NO_OTHER_DATA_AVAILABLE)
-                .setFreshness(ValidatorContexts.all(), CertificateSources.all(),TimeBasedContexts.all(),
+                        TimeBasedContexts.all(), SignatureValidationProperties.OnlineFetching.ALWAYS_FETCH)
+                .setFreshness(ValidatorContexts.all(), CertificateSources.all(), TimeBasedContexts.all(),
                         Duration.ofDays(-2));
         RevocationDataValidator validator = validatorChainBuilder.buildRevocationDataValidator();
         validator.validate(report, baseContext, checkCert, TimeTestUtil.TEST_DATE_TIME);
 
         AssertValidationReport.assertThat(report, a -> a
                 .hasStatus(ValidationReport.ValidationResult.INDETERMINATE)
-                    .hasLogItem(la -> la.withCheckName(RevocationDataValidator.REVOCATION_DATA_CHECK)
-                    .withMessage(RevocationDataValidator.NO_REVOCATION_DATA)
-                   ));
+                .hasLogItem(la -> la.withCheckName(RevocationDataValidator.REVOCATION_DATA_CHECK)
+                        .withMessage(RevocationDataValidator.NO_REVOCATION_DATA)
+                ));
     }
 
     @Test
     public void crlEncodingErrorTest() throws Exception {
-        byte[] crl = new TestCrlBuilder(caCert,  caPrivateKey).makeCrl();
+        byte[] crl = new TestCrlBuilder(caCert, caPrivateKey).makeCrl();
         crl[5] = 0;
         ValidationReport report = new ValidationReport();
         parameters.setRevocationOnlineFetching(ValidatorContexts.all(), CertificateSources.all(),
-                        TimeBasedContexts.all(), SignatureValidationProperties .OnlineFetching.NEVER_FETCH)
-                .setFreshness(ValidatorContexts.all(), CertificateSources.all(),TimeBasedContexts.all(),
+                        TimeBasedContexts.all(), SignatureValidationProperties.OnlineFetching.NEVER_FETCH)
+                .setFreshness(ValidatorContexts.all(), CertificateSources.all(), TimeBasedContexts.all(),
                         Duration.ofDays(-2));
         parameters.setFreshness(ValidatorContexts.all(), CertificateSources.all(),
-                TimeBasedContexts.all(),Duration.ofDays(2));
+                TimeBasedContexts.all(), Duration.ofDays(2));
         RevocationDataValidator validator = validatorChainBuilder.buildRevocationDataValidator();
         validator.addCrlClient(new ICrlClient() {
                     @Override
@@ -423,13 +529,13 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
         AssertValidationReport.assertThat(report, a -> a
                 .hasStatus(ValidationReport.ValidationResult.INDETERMINATE)
                 .hasLogItem(la -> la
-                    .withCheckName(RevocationDataValidator.REVOCATION_DATA_CHECK)
-                    .withMessage(MessageFormatUtil.format(RevocationDataValidator.CANNOT_PARSE_CRL, "Test crl client."))
-                   )
+                        .withCheckName(RevocationDataValidator.REVOCATION_DATA_CHECK)
+                        .withMessage(MessageFormatUtil.format(RevocationDataValidator.CANNOT_PARSE_CRL, "Test crl client."))
+                )
                 .hasLogItem(la -> la
-                    .withCheckName(RevocationDataValidator.REVOCATION_DATA_CHECK)
-                    .withMessage(RevocationDataValidator.NO_REVOCATION_DATA)
-                   ));
+                        .withCheckName(RevocationDataValidator.REVOCATION_DATA_CHECK)
+                        .withMessage(RevocationDataValidator.NO_REVOCATION_DATA)
+                ));
 
     }
 
@@ -474,7 +580,7 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
         certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
 
         parameters.setRevocationOnlineFetching(ValidatorContexts.all(), CertificateSources.all(),
-                        TimeBasedContexts.all(), SignatureValidationProperties .OnlineFetching.NEVER_FETCH)
+                        TimeBasedContexts.all(), SignatureValidationProperties.OnlineFetching.NEVER_FETCH)
                 .setFreshness(ValidatorContexts.of(ValidatorContext.CRL_VALIDATOR), CertificateSources.all(),
                         TimeBasedContexts.all(), Duration.ofDays(-5));
         RevocationDataValidator validator = validatorChainBuilder.buildRevocationDataValidator()
@@ -484,16 +590,18 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
                 .addOcspClient(ocspClient3);
 
         mockCrlValidator.onCallDo(c -> {
-                c.report.addReportItem(new ReportItem("1","2", ReportItem.ReportItemStatus.INDETERMINATE));
-                try {
-                    Thread.sleep(10);
-                } catch (InterruptedException ignored) {}
-        });
-        mockOCSPValidator.onCallDo(c -> {
-            c.report.addReportItem(new ReportItem("1","2", ReportItem.ReportItemStatus.INDETERMINATE));
+            c.report.addReportItem(new ReportItem("1", "2", ReportItem.ReportItemStatus.INDETERMINATE));
             try {
                 Thread.sleep(10);
-            } catch (InterruptedException ignored) {}
+            } catch (InterruptedException ignored) {
+            }
+        });
+        mockOCSPValidator.onCallDo(c -> {
+            c.report.addReportItem(new ReportItem("1", "2", ReportItem.ReportItemStatus.INDETERMINATE));
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException ignored) {
+            }
         });
         validator.validate(report, baseContext, checkCert, checkDate);
 
@@ -669,7 +777,7 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
     }
 
     @Test
-    public void OCSPValidatorFailureTest() throws GeneralSecurityException, IOException {
+    public void OCSPValidatorFailureTest() throws GeneralSecurityException {
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
         Date revocationDate = DateTimeUtil.addDaysToDate(checkDate, -1);
         TestCrlBuilder builder = new TestCrlBuilder(caCert, caPrivateKey, checkDate);
@@ -684,8 +792,6 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
         mockParameters.addRevocationOnlineFetchingResponse(SignatureValidationProperties.OnlineFetching.NEVER_FETCH);
         mockParameters.addFreshnessResponse(Duration.ofDays(0));
 
-        ReportItem reportItem = new ReportItem("validator", "message",
-                ReportItem.ReportItemStatus.INFO);
         mockCrlValidator.onCallDo(c -> {
             throw new RuntimeException("Test OCSP client failure");
         });
@@ -750,6 +856,8 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
         certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
         mockParameters.addRevocationOnlineFetchingResponse(SignatureValidationProperties.OnlineFetching.NEVER_FETCH);
         mockParameters.addRevocationOnlineFetchingResponse(SignatureValidationProperties.OnlineFetching.NEVER_FETCH);
+        mockParameters.addRevocationOnlineFetchingResponse(SignatureValidationProperties.OnlineFetching.NEVER_FETCH);
+        mockParameters.addRevocationOnlineFetchingResponse(SignatureValidationProperties.OnlineFetching.NEVER_FETCH);
         mockParameters.addFreshnessResponse(Duration.ofDays(-2));
 
         RevocationDataValidator validator = validatorChainBuilder.buildRevocationDataValidator();
@@ -781,6 +889,8 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
         ValidationReport report = new ValidationReport();
         certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
 
+        mockParameters.addRevocationOnlineFetchingResponse(SignatureValidationProperties.OnlineFetching.NEVER_FETCH);
+        mockParameters.addRevocationOnlineFetchingResponse(SignatureValidationProperties.OnlineFetching.NEVER_FETCH);
         mockParameters.addRevocationOnlineFetchingResponse(SignatureValidationProperties.OnlineFetching.NEVER_FETCH);
         mockParameters.addRevocationOnlineFetchingResponse(SignatureValidationProperties.OnlineFetching.NEVER_FETCH);
         mockParameters.addFreshnessResponse(Duration.ofDays(0));

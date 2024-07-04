@@ -172,7 +172,62 @@ public class RevocationDataValidator {
         // Try to check responderCert for revocation using provided responder OCSP/CRL clients or
         // Authority Information Access for OCSP responses and CRL Distribution Points for CRL responses
         // using default clients.
-        validateRevocationData(report, localContext, certificate, validationDate, ocspResponses, crlResponses);
+        ValidationReport revDataValidationReport = new ValidationReport();
+        validateRevocationData(revDataValidationReport, localContext, certificate, validationDate, ocspResponses,
+                crlResponses);
+
+        if (ValidationReport.ValidationResult.INDETERMINATE == revDataValidationReport.getValidationResult()) {
+            List<CrlValidationInfo> onlineCrlResponses = new ArrayList<>();
+            List<OcspResponseValidationInfo> onlineOcspResponses = new ArrayList<>();
+            tryToFetchRevInfoOnline(report, context, certificate, onlineCrlResponses, onlineOcspResponses);
+            if (!onlineCrlResponses.isEmpty() || !onlineOcspResponses.isEmpty()) {
+                // Merge the report excluding NO_REVOCATION_DATA message.
+                for (ReportItem reportItem : revDataValidationReport.getLogs()) {
+                    if (!NO_REVOCATION_DATA.equals(reportItem.getMessage())) {
+                        report.addReportItem(reportItem);
+                    }
+                }
+                validateRevocationData(report, localContext, certificate, validationDate, onlineOcspResponses,
+                        onlineCrlResponses);
+                return;
+            }
+        }
+        report.merge(revDataValidationReport);
+    }
+
+    private static void fillOcspResponses(List<OcspResponseValidationInfo> ocspResponses, IBasicOCSPResp basicOCSPResp,
+                                          Date generationDate, TimeBasedContext timeBasedContext) {
+        if (basicOCSPResp != null) {
+            // Getting the responses.
+            ISingleResp[] singleResponses = basicOCSPResp.getResponses();
+            for (ISingleResp singleResponse : singleResponses) {
+                ocspResponses.add(new OcspResponseValidationInfo(singleResponse, basicOCSPResp, generationDate,
+                        timeBasedContext));
+            }
+        }
+    }
+
+    private static List<CrlValidationInfo> retrieveAllCRLResponsesUsingClient(ValidationReport report,
+                                                                              X509Certificate certificate,
+                                                                              ICrlClient crlClient) {
+        List<CrlValidationInfo> crlResponses = new ArrayList<>();
+        if (crlClient instanceof ValidationCrlClient) {
+            ValidationCrlClient validationCrlClient = (ValidationCrlClient) crlClient;
+            crlResponses.addAll(validationCrlClient.getCrls().values());
+        } else {
+            Collection<byte[]> crlBytesCollection = onExceptionLog(() ->
+                    crlClient.getEncoded(certificate, null), Collections.<byte[]>emptyList(), report, e ->
+                    new CertificateReportItem(certificate, REVOCATION_DATA_CHECK,
+                            MessageFormatUtil.format(CRL_CLIENT_FAILURE, crlClient), e, ReportItemStatus.INFO));
+            for (byte[] crlBytes : crlBytesCollection) {
+                onExceptionLog(() ->
+                        crlResponses.add(new CrlValidationInfo((X509CRL) CertificateUtil.parseCrlFromBytes(crlBytes),
+                                DateTimeUtil.getCurrentTimeDate(), TimeBasedContext.PRESENT)), report, e ->
+                        new CertificateReportItem(certificate, REVOCATION_DATA_CHECK,
+                                MessageFormatUtil.format(CANNOT_PARSE_CRL, crlClient), e, ReportItemStatus.INFO));
+            }
+        }
+        return crlResponses;
     }
 
     private void validateRevocationData(ValidationReport report, ValidationContext context, X509Certificate certificate,
@@ -264,9 +319,7 @@ public class RevocationDataValidator {
         }
         SignatureValidationProperties.OnlineFetching onlineFetching = properties.getRevocationOnlineFetching(
                 context.setValidatorContext(ValidatorContext.OCSP_VALIDATOR));
-        if (SignatureValidationProperties.OnlineFetching.ALWAYS_FETCH == onlineFetching ||
-                (SignatureValidationProperties.OnlineFetching.FETCH_IF_NO_OTHER_DATA_AVAILABLE == onlineFetching
-                        && ocspResponses.isEmpty())) {
+        if (SignatureValidationProperties.OnlineFetching.ALWAYS_FETCH == onlineFetching) {
             onRuntimeExceptionLog(() -> {
                 IBasicOCSPResp basicOCSPResp = new OcspClientBouncyCastle().getBasicOCSPResp(certificate,
                         issuerCert, null);
@@ -285,11 +338,9 @@ public class RevocationDataValidator {
         for (ICrlClient crlClient : crlClients) {
             crlResponses.addAll(retrieveAllCRLResponsesUsingClient(report, certificate, crlClient));
         }
-        SignatureValidationProperties.OnlineFetching onLineFetching = properties.getRevocationOnlineFetching(
+        SignatureValidationProperties.OnlineFetching onlineFetching = properties.getRevocationOnlineFetching(
                 context.setValidatorContext(ValidatorContext.CRL_VALIDATOR));
-        if (SignatureValidationProperties.OnlineFetching.ALWAYS_FETCH == onLineFetching ||
-                (SignatureValidationProperties.OnlineFetching.FETCH_IF_NO_OTHER_DATA_AVAILABLE == onLineFetching &&
-                        crlResponses.isEmpty())) {
+        if (SignatureValidationProperties.OnlineFetching.ALWAYS_FETCH == onlineFetching) {
             crlResponses.addAll(retrieveAllCRLResponsesUsingClient(report, certificate, new CrlClientOnline()));
         }
         // Sort all the CRL responses available based on the most recent revocation data.
@@ -297,39 +348,35 @@ public class RevocationDataValidator {
                 .collect(Collectors.toList());
     }
 
-    private static void fillOcspResponses(List<OcspResponseValidationInfo> ocspResponses, IBasicOCSPResp basicOCSPResp,
-            Date generationDate, TimeBasedContext timeBasedContext) {
-        if (basicOCSPResp != null) {
-            // Getting the responses.
-            ISingleResp[] singleResponses = basicOCSPResp.getResponses();
-            for (ISingleResp singleResponse : singleResponses) {
-                ocspResponses.add(new OcspResponseValidationInfo(singleResponse, basicOCSPResp, generationDate,
-                        timeBasedContext));
-            }
+    private void tryToFetchRevInfoOnline(ValidationReport report, ValidationContext context,
+                                         X509Certificate certificate,
+                                         List<CrlValidationInfo> onlineCrlResponses,
+                                         List<OcspResponseValidationInfo> onlineOcspResponses) {
+        SignatureValidationProperties.OnlineFetching crlOnlineFetching = properties.getRevocationOnlineFetching(
+                context.setValidatorContext(ValidatorContext.CRL_VALIDATOR));
+        if (SignatureValidationProperties.OnlineFetching.FETCH_IF_NO_OTHER_DATA_AVAILABLE == crlOnlineFetching) {
+            // Sort all the CRL responses available based on the most recent revocation data.
+            onlineCrlResponses.addAll(retrieveAllCRLResponsesUsingClient(report, certificate, new CrlClientOnline())
+                    .stream().sorted((o1, o2) ->
+                            o2.crl.getThisUpdate().compareTo(o1.crl.getThisUpdate())).collect(Collectors.toList()));
         }
-    }
-
-    private static List<CrlValidationInfo> retrieveAllCRLResponsesUsingClient(ValidationReport report,
-            X509Certificate certificate,
-            ICrlClient crlClient) {
-        List<CrlValidationInfo> crlResponses = new ArrayList<>();
-        if (crlClient instanceof ValidationCrlClient) {
-            ValidationCrlClient validationCrlClient = (ValidationCrlClient) crlClient;
-            crlResponses.addAll(validationCrlClient.getCrls().values());
-        } else {
-            Collection<byte[]> crlBytesCollection = onExceptionLog(() ->
-                    crlClient.getEncoded(certificate, null), Collections.<byte[]>emptyList(), report, e ->
-                    new CertificateReportItem(certificate, REVOCATION_DATA_CHECK,
-                            MessageFormatUtil.format(CRL_CLIENT_FAILURE, crlClient), e, ReportItemStatus.INFO));
-            for (byte[] crlBytes : crlBytesCollection) {
-                onExceptionLog(() ->
-                        crlResponses.add(new CrlValidationInfo((X509CRL) CertificateUtil.parseCrlFromBytes(crlBytes),
-                                DateTimeUtil.getCurrentTimeDate(), TimeBasedContext.PRESENT)), report, e ->
-                        new CertificateReportItem(certificate, REVOCATION_DATA_CHECK,
-                                MessageFormatUtil.format(CANNOT_PARSE_CRL, crlClient), e, ReportItemStatus.INFO));
-            }
+        SignatureValidationProperties.OnlineFetching ocspOnlineFetching = properties.getRevocationOnlineFetching(
+                context.setValidatorContext(ValidatorContext.OCSP_VALIDATOR));
+        if (SignatureValidationProperties.OnlineFetching.FETCH_IF_NO_OTHER_DATA_AVAILABLE == ocspOnlineFetching) {
+            onRuntimeExceptionLog(() -> {
+                IBasicOCSPResp basicOCSPResp = new OcspClientBouncyCastle().getBasicOCSPResp(certificate,
+                        (X509Certificate) certificateRetriever.retrieveIssuerCertificate(certificate), null);
+                List<OcspResponseValidationInfo> ocspResponses = new ArrayList<>();
+                fillOcspResponses(ocspResponses, basicOCSPResp, DateTimeUtil.getCurrentTimeDate(),
+                        TimeBasedContext.PRESENT);
+                // Sort all the OCSP responses available based on the most recent revocation data.
+                onlineOcspResponses.addAll(ocspResponses.stream().sorted((o1, o2) ->
+                                o2.singleResp.getThisUpdate().compareTo(o1.singleResp.getThisUpdate()))
+                        .collect(Collectors.toList()));
+            }, report, e -> new CertificateReportItem(certificate, REVOCATION_DATA_CHECK,
+                    MessageFormatUtil.format(OCSP_CLIENT_FAILURE, "OcspClientBouncyCastle"), e,
+                    ReportItemStatus.INDETERMINATE));
         }
-        return crlResponses;
     }
 
     /**
