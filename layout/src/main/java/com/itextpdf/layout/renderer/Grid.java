@@ -43,6 +43,7 @@ class Grid {
     private GridCell[][] rows = new GridCell[1][1];
     //Using array list instead of array for .NET portability
     private final List<Collection<GridCell>> uniqueCells = new ArrayList<>(2);
+    private final List<GridCell> itemsWithoutPlace = new ArrayList<>();
 
     /**
      * Creates a new grid instance.
@@ -139,6 +140,7 @@ class Grid {
                     }
                 }
             }
+            result.addAll(itemsWithoutPlace);
             uniqueCells.set(iterationOrder.ordinal(), result);
             return result;
         }
@@ -150,6 +152,7 @@ class Grid {
                 }
             }
         }
+        result.addAll(itemsWithoutPlace);
         uniqueCells.set(iterationOrder.ordinal(), result);
         return result;
     }
@@ -219,10 +222,18 @@ class Grid {
      * @param cell cell to and in the grid
      */
     private void addCell(GridCell cell) {
+        boolean placeFound = false;
         for (int i = cell.getRowStart(); i < cell.getRowEnd(); ++i) {
             for(int j = cell.getColumnStart(); j < cell.getColumnEnd(); ++j) {
-                rows[i][j] = cell;
+                if (rows[i][j] == null) {
+                    rows[i][j] = cell;
+                    placeFound = true;
+                }
             }
+        }
+
+        if (!placeFound) {
+            itemsWithoutPlace.add(cell);
         }
     }
 
@@ -462,9 +473,10 @@ class Grid {
                     //Move grid view cursor
                     pos = view.next();
                 }
-                //If cell restricts both x and y position grow and can't be fitted on a grid, throw an excpetion
+                // If cell restricts both x and y position grow and can't be fitted on a grid,
+                // exit occupying fixed position
                 if (view.isFixed()) {
-                    throw new IllegalArgumentException(LayoutExceptionMessageConstant.INVALID_CELL_INDEXES);
+                    break;
                 }
                 //If cell was not fitted while iterating grid, then there is not enough space to fit it, and grid
                 //has to be resized

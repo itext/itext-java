@@ -109,6 +109,10 @@ public class GridContainerRenderer extends BlockRenderer {
      */
     @Override
     public void addChild(IRenderer renderer) {
+        // The grid's items are not affected by the 'float' and 'clear' properties.
+        // Still let clear them on renderer level not model element
+        renderer.setProperty(Property.FLOAT, null);
+
         renderer.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
         renderer.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.VISIBLE);
         renderer.setProperty(Property.COLLAPSING_MARGINS, determineCollapsingMargins(renderer));
@@ -193,21 +197,20 @@ public class GridContainerRenderer extends BlockRenderer {
     }
 
     private static int processLayoutResult(GridLayoutResult layoutResult, GridCell cell, LayoutResult cellResult) {
-        IRenderer cellToRenderer = cell.getValue();
+        IRenderer overflowRenderer = cellResult.getOverflowRenderer();
         if (cellResult.getStatus() == LayoutResult.NOTHING) {
-            cellToRenderer.setProperty(Property.GRID_COLUMN_START, cell.getColumnStart() + 1);
-            cellToRenderer.setProperty(Property.GRID_COLUMN_END, cell.getColumnEnd() + 1);
-            cellToRenderer.setProperty(Property.GRID_ROW_START, cell.getRowStart() + 1);
-            cellToRenderer.setProperty(Property.GRID_ROW_END, cell.getRowEnd() + 1);
-            layoutResult.getOverflowRenderers().add(cellToRenderer);
+            overflowRenderer.setProperty(Property.GRID_COLUMN_START, cell.getColumnStart() + 1);
+            overflowRenderer.setProperty(Property.GRID_COLUMN_END, cell.getColumnEnd() + 1);
+            overflowRenderer.setProperty(Property.GRID_ROW_START, cell.getRowStart() + 1);
+            overflowRenderer.setProperty(Property.GRID_ROW_END, cell.getRowEnd() + 1);
+            layoutResult.getOverflowRenderers().add(overflowRenderer);
             layoutResult.setCauseOfNothing(cellResult.getCauseOfNothing());
             return cell.getRowStart();
         }
 
         // PARTIAL + FULL result handling
-        layoutResult.getSplitRenderers().add(cellToRenderer);
+        layoutResult.getSplitRenderers().add(cell.getValue());
         if (cellResult.getStatus() == LayoutResult.PARTIAL) {
-            IRenderer overflowRenderer = cellResult.getOverflowRenderer();
             overflowRenderer.setProperty(Property.GRID_COLUMN_START, cell.getColumnStart() + 1);
             overflowRenderer.setProperty(Property.GRID_COLUMN_END, cell.getColumnEnd() + 1);
             int rowStart = cell.getRowStart() + 1;

@@ -22,6 +22,7 @@
  */
 package com.itextpdf.layout.element;
 
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -44,6 +45,8 @@ import com.itextpdf.layout.properties.grid.PercentValue;
 import com.itextpdf.layout.properties.grid.PointValue;
 import com.itextpdf.layout.properties.grid.TemplateValue;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
@@ -374,13 +377,51 @@ public class GridContainerTest extends ExtendedITextTest {
     }
     
     @Test
-    public void overlapWithExistingColumnTest() throws IOException {
-        String filename = DESTINATION_FOLDER + "overlapWithExistingColumnTest.pdf";
+    public void overlapWithExistingItemTest() throws IOException, InterruptedException {
+        String filename = DESTINATION_FOLDER + "overlapWithExistingItemTest.pdf";
+        String cmpName = SOURCE_FOLDER + "cmp_overlapWithExistingItemTest.pdf";
 
         java.util.List<TemplateValue> templateColumns = new ArrayList<>();
-        templateColumns.add(new PointValue(100.0f));
-        templateColumns.add(new PointValue(100.0f));
-        templateColumns.add(new PointValue(100.0f));
+        templateColumns.add(MinContentValue.VALUE);
+        templateColumns.add(MinContentValue.VALUE);
+        templateColumns.add(MinContentValue.VALUE);
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+            GridContainer grid = new GridContainer();
+            SolidBorder border = new SolidBorder(ColorConstants.BLUE, 1);
+            grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, templateColumns);
+            Paragraph paragraph1 = new Paragraph("Two");
+            paragraph1.setProperty(Property.GRID_COLUMN_START, 1);
+            paragraph1.setProperty(Property.GRID_COLUMN_END, 3);
+            paragraph1.setProperty(Property.GRID_ROW_START, 1);
+            paragraph1.setProperty(Property.GRID_ROW_END, 3);
+            paragraph1.setBorder(border);
+            grid.add(paragraph1);
+            grid.add(new Paragraph("Three").setBorder(border));
+            grid.add(new Paragraph("Four").setBorder(border));
+            grid.add(new Paragraph("Five").setBorder(border));
+            Paragraph paragraph2 = new Paragraph("One (long content)");
+            paragraph2.setProperty(Property.GRID_COLUMN_START, 1);
+            paragraph2.setProperty(Property.GRID_COLUMN_END, 2);
+            paragraph2.setProperty(Property.GRID_ROW_START, 1);
+            paragraph2.setProperty(Property.GRID_ROW_END, 2);
+            paragraph2.setBorder(border);
+            grid.add(paragraph2);
+            document.add(grid);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void coverExistingItemTest() throws IOException, InterruptedException {
+        String filename = DESTINATION_FOLDER + "coverExistingItemTest.pdf";
+        String cmpName = SOURCE_FOLDER + "cmp_coverExistingItemTest.pdf";
+
+        java.util.List<TemplateValue> templateColumns = new ArrayList<>();
+        templateColumns.add(MinContentValue.VALUE);
+        templateColumns.add(MinContentValue.VALUE);
+        templateColumns.add(MinContentValue.VALUE);
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
@@ -396,17 +437,17 @@ public class GridContainerTest extends ExtendedITextTest {
             grid.add(new Paragraph("Three").setBorder(border));
             grid.add(new Paragraph("Four").setBorder(border));
             grid.add(new Paragraph("Five").setBorder(border));
-            Paragraph paragraph2 = new Paragraph("One");
+            Paragraph paragraph2 = new Paragraph("One (long content)");
             paragraph2.setProperty(Property.GRID_COLUMN_START, 1);
             paragraph2.setProperty(Property.GRID_COLUMN_END, 3);
             paragraph2.setProperty(Property.GRID_ROW_START, 1);
             paragraph2.setProperty(Property.GRID_ROW_END, 3);
             paragraph2.setBorder(border);
             grid.add(paragraph2);
-            Exception e = Assert.assertThrows(IllegalArgumentException.class, () ->
-                    document.add(grid));
-            Assert.assertEquals(LayoutExceptionMessageConstant.INVALID_CELL_INDEXES, e.getMessage());
+            document.add(grid);
         }
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test

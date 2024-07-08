@@ -53,8 +53,6 @@ public final class LayoutExceptionMessageConstant {
 
     public static final String INVALID_COLUMN_PROPERTIES =
             "Invalid column-count/column-width/column-gap properties, they're absent or have negative value";
-    public static final String INVALID_CELL_INDEXES =
-            "Invalid grid-column/grid-row properties, cells overlapping";
     public static final String INVALID_FONT_PROPERTY_VALUE = "Invalid FONT property value type.";
     public static final String TAGGING_HINTKEY_SHOULD_HAVE_ACCES = "TaggingHintKey should have accessibility properties" ;
     public static final String GRID_AUTO_REPEAT_CAN_BE_USED_ONLY_ONCE
