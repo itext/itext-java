@@ -80,9 +80,9 @@ public class PdfNumTree {
         if (numbers.length <= NODE_SIZE) {
             PdfDictionary dic = new PdfDictionary();
             PdfArray ar = new PdfArray();
-            for (int k = 0; k < numbers.length; ++k) {
-                ar.add(new PdfNumber((int) numbers[k]));
-                ar.add(items.get(numbers[k]));
+            for (Integer number : numbers) {
+                ar.add(new PdfNumber((int) number));
+                ar.add(items.get(number));
             }
             dic.put(PdfName.Nums, ar);
             return dic;

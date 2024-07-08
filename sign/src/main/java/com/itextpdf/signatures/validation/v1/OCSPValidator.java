@@ -126,8 +126,7 @@ public class OCSPValidator {
      * @param responseGenerationDate trusted date at which response is generated
      */
     public void validate(ValidationReport report, ValidationContext context, X509Certificate certificate,
-            ISingleResp singleResp, IBasicOCSPResp ocspResp, Date validationDate,
-            Date responseGenerationDate) {
+            ISingleResp singleResp, IBasicOCSPResp ocspResp, Date validationDate, Date responseGenerationDate) {
         ValidationContext localContext = context.setValidatorContext(ValidatorContext.OCSP_VALIDATOR);
         if (CertificateUtil.isSelfSigned(certificate)) {
             report.addReportItem(new CertificateReportItem(certificate, OCSP_CHECK,

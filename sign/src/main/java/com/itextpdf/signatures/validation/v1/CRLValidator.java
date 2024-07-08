@@ -325,7 +325,7 @@ public class CRLValidator {
     }
 
     private Certificate getRoot(Certificate cert) {
-        Certificate[] chain = certificateRetriever.retrieveMissingCertificates(new Certificate[] {cert});
+        Certificate[] chain = certificateRetriever.retrieveMissingCertificates(new Certificate[]{cert});
         return chain[chain.length - 1];
     }
 

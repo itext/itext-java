@@ -50,7 +50,6 @@ import java.security.SecureRandom;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -114,11 +113,7 @@ final class EncryptionUtils {
                 ICMSEnvelopedData data;
                 try {
                     data = BOUNCY_CASTLE_FACTORY.createCMSEnvelopedData(recipient.getValueBytes());
-                    Iterator<IRecipientInformation> recipientCertificatesIt =
-                            data.getRecipientInfos().getRecipients().iterator();
-                    while (recipientCertificatesIt.hasNext()) {
-                        IRecipientInformation recipientInfo = recipientCertificatesIt.next();
-
+                    for (IRecipientInformation recipientInfo : data.getRecipientInfos().getRecipients()) {
                         if (recipientInfo.getRID().match(certHolder) && !foundRecipient) {
                             envelopedData = PdfEncryptor.getContent(recipientInfo, (PrivateKey) certificateKey,
                                     certificateKeyProvider);

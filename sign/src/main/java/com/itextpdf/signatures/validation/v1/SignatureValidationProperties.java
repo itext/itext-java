@@ -66,14 +66,14 @@ public class SignatureValidationProperties {
      * Create {@link SignatureValidationProperties} with default values.
      */
     public SignatureValidationProperties() {
-        setContinueAfterFailure(ValidatorContexts.all(),CertificateSources.all(), DEFAULT_CONTINUE_AFTER_FAILURE);
-        setRevocationOnlineFetching(ValidatorContexts.all(),CertificateSources.all(), TimeBasedContexts.all(),
+        setContinueAfterFailure(ValidatorContexts.all(), CertificateSources.all(), DEFAULT_CONTINUE_AFTER_FAILURE);
+        setRevocationOnlineFetching(ValidatorContexts.all(), CertificateSources.all(), TimeBasedContexts.all(),
                 DEFAULT_ONLINE_FETCHING);
 
-        setFreshness(ValidatorContexts.all(),CertificateSources.all(),
+        setFreshness(ValidatorContexts.all(), CertificateSources.all(),
                 TimeBasedContexts.of(TimeBasedContext.HISTORICAL), DEFAULT_FRESHNESS_HISTORICAL);
-        setFreshness(ValidatorContexts.all(),CertificateSources.all(),
-                TimeBasedContexts.of(TimeBasedContext.PRESENT),DEFAULT_FRESHNESS_PRESENT_OCSP);
+        setFreshness(ValidatorContexts.all(), CertificateSources.all(),
+                TimeBasedContexts.of(TimeBasedContext.PRESENT), DEFAULT_FRESHNESS_PRESENT_OCSP);
         setFreshness(ValidatorContexts.of(ValidatorContext.CRL_VALIDATOR), CertificateSources.all(),
                 TimeBasedContexts.of(TimeBasedContext.PRESENT), DEFAULT_FRESHNESS_PRESENT_CRL);
 

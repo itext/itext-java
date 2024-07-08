@@ -120,7 +120,7 @@ public class PdfWriter extends PdfOutputStream {
      * @return true if to use full compression, false otherwise.
      */
     public boolean isFullCompression() {
-        return properties.isFullCompression != null ? (boolean) properties.isFullCompression : false;
+        return properties.isFullCompression != null && (boolean) properties.isFullCompression;
     }
 
     /**

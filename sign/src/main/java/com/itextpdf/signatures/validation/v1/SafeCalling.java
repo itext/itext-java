@@ -37,6 +37,7 @@ final class SafeCalling {
 
     /**
      * Adds a report item to the report when an exception is thrown in the action.
+     *
      * @param action            The action to perform
      * @param report            The report to add the ReportItem to
      * @param reportItemCreator A callback to generate a ReportItem
@@ -52,13 +53,14 @@ final class SafeCalling {
 
     /**
      * Adds a report item to the report when an exception is thrown in the action.
+     *
      * @param action            The action to perform
      * @param defaultValue      The value to return when an exception is thrown
      * @param report            The report to add the ReportItem to
      * @param reportItemCreator A callback to generate a ReportItem
+     * @param <T>
      *
      * @return The returned value from the action
-     * @param <T>
      */
     public static <T> T onExceptionLog(ThrowingSupplier<T> action, T defaultValue, ValidationReport report,
                                        Function<Exception, ReportItem> reportItemCreator) {
@@ -72,6 +74,7 @@ final class SafeCalling {
 
     /**
      * Adds a report item to the report when an exception is thrown in the action.
+     *
      * @param action            The action to perform
      * @param report            The report to add the ReportItem to
      * @param reportItemCreator A callback to generate a ReportItem
@@ -85,16 +88,16 @@ final class SafeCalling {
         }
     }
 
-
     /**
      * Adds a report item to the report when an exception is thrown in the action.
+     *
      * @param action            The action to perform
      * @param defaultValue      The value to return when an exception is thrown
      * @param report            The report to add the ReportItem to
      * @param reportItemCreator A callback to generate a ReportItem
+     * @param <T>
      *
      * @return The returned value from the action
-     * @param <T>
      */
     public static <T> T onRuntimeExceptionLog(Supplier<T> action, T defaultValue, ValidationReport report,
                                               Function<Exception, ReportItem> reportItemCreator) {
