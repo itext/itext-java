@@ -67,8 +67,7 @@ public class GridContainerRenderer extends BlockRenderer {
      */
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
-        //TODO DEVSIX-8331 enable continuous container
-        //this.setProperty(Property.TREAT_AS_CONTINUOUS_CONTAINER, Boolean.TRUE);
+        this.setProperty(Property.TREAT_AS_CONTINUOUS_CONTAINER, Boolean.TRUE);
 
         Rectangle actualBBox = layoutContext.getArea().getBBox().clone();
         Float blockWidth = retrieveWidth(actualBBox.getWidth());
@@ -91,6 +90,9 @@ public class GridContainerRenderer extends BlockRenderer {
         GridLayoutResult layoutResult = layoutGrid(layoutContext, actualBBox, grid);
 
         if (layoutResult.getOverflowRenderers().isEmpty()) {
+            final ContinuousContainer continuousContainer = this.<ContinuousContainer>getProperty(Property.TREAT_AS_CONTINUOUS_CONTAINER_RESULT);
+            continuousContainer.reApplyProperties(this);
+
             this.occupiedArea = calculateContainerOccupiedArea(layoutContext, true);
             return new LayoutResult(LayoutResult.FULL, this.occupiedArea, null, null);
         } else if (layoutResult.getSplitRenderers().isEmpty()) {

@@ -23,8 +23,10 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.UnitValue;
 
 /**
  * Wrapper renderer around grid item. It's expected there is always exactly 1 child renderer.
@@ -155,6 +157,16 @@ class GridItemRenderer extends BlockRenderer {
         final Rectangle rectangle = new Rectangle(0, 0, 0, initialHeight);
         if (AbstractRenderer.isBorderBoxSizing(renderer)) {
             renderer.applyMargins(rectangle, false);
+            // In BlockRenderer#layout, after applying continuous container, we call AbstractRenderer#retrieveMaxHeight,
+            // which calls AbstractRenderer#retrieveHeight where in case of BoxSizing we reduce the height for top
+            // padding and border. So to reduce the height for top + bottom border, padding and margin here we apply
+            // both top and bottom margin, but only bottom padding and border
+            UnitValue paddingBottom = renderer.<UnitValue>getProperty(Property.PADDING_BOTTOM);
+            if (paddingBottom.isPointValue()) {
+                rectangle.decreaseHeight(paddingBottom.getValue());
+            }
+            Border borderBottom = renderer.getBorders()[AbstractRenderer.BOTTOM_SIDE];
+            rectangle.decreaseHeight(borderBottom.getWidth());
         } else {
             renderer.applyMarginsBordersPaddings(rectangle, false);
         }

@@ -474,9 +474,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         FloatingHelper.removeFloatsAboveRendererBottom(floatRendererAreas, this);
 
-        ContinuousContainer.clearPropertiesFromOverFlowRenderer(overflowRenderer);
-
         if (layoutResult != LayoutResult.NOTHING) {
+            ContinuousContainer.clearPropertiesFromOverFlowRenderer(overflowRenderer);
             LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this,
                     layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection,
                     bfcHeightCorrection, marginsCollapsingEnabled);
@@ -676,7 +675,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
         }
         overflowRenderer.childRenderers.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
 
-        ContinuousContainer.clearPropertiesFromOverFlowRenderer(overflowRenderer);
+        if (layoutStatus != LayoutResult.NOTHING) {
+            ContinuousContainer.clearPropertiesFromOverFlowRenderer(overflowRenderer);
+        }
 
         if (childResult.getStatus() == LayoutResult.PARTIAL) {
             // Apply forced placement only on split renderer

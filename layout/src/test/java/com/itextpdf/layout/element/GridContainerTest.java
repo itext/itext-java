@@ -22,14 +22,13 @@
  */
 package com.itextpdf.layout.element;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.SolidBorder;
-import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
+import com.itextpdf.layout.properties.BoxSizingPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.properties.grid.AutoRepeatValue;
@@ -45,8 +44,6 @@ import com.itextpdf.layout.properties.grid.PercentValue;
 import com.itextpdf.layout.properties.grid.PointValue;
 import com.itextpdf.layout.properties.grid.TemplateValue;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.LogMessage;
-import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
@@ -966,6 +963,112 @@ public class GridContainerTest extends ExtendedITextTest {
             div.setProperty(Property.COLLAPSING_MARGINS, Boolean.TRUE);
 
             document.add(div);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void splitPageTest() throws IOException, InterruptedException {
+        String filename = DESTINATION_FOLDER + "splitPageTest.pdf";
+        String cmpName = SOURCE_FOLDER + "cmp_splitPageTest.pdf";
+        java.util.List<TemplateValue> columnsTemplate = new ArrayList<>();
+        columnsTemplate.add(new AutoRepeatValue(true, Arrays.asList((GridValue) new PointValue(200))));
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+            GridContainer grid = new GridContainer();
+            grid.setWidth(420);
+            grid.setBorder(new SolidBorder(20));
+            grid.setPadding(20);
+            grid.setMargin(20);
+            grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, columnsTemplate);
+            grid.setProperty(Property.COLUMN_GAP, 20.0f);
+            grid.add(new Paragraph("One").setBackgroundColor(ColorConstants.CYAN));
+            grid.add(new Paragraph("Two").setBackgroundColor(ColorConstants.CYAN));
+            grid.add(new Paragraph("Tree").setBackgroundColor(ColorConstants.CYAN));
+            grid.add(new Paragraph("Four").setBackgroundColor(ColorConstants.CYAN));
+            grid.add(new Paragraph("Five").setBackgroundColor(ColorConstants.CYAN));
+            grid.add(new Paragraph("Six").setBackgroundColor(ColorConstants.CYAN));
+            grid.add(new Paragraph("Seven").setBackgroundColor(ColorConstants.CYAN));
+            grid.add(new Paragraph("Eight").setBackgroundColor(ColorConstants.CYAN));
+            grid.add(new Paragraph("Nine").setBackgroundColor(ColorConstants.CYAN));
+
+            Div emptyDiv = new Div();
+            emptyDiv.setHeight(640);
+            emptyDiv.setBackgroundColor(ColorConstants.LIGHT_GRAY);
+            document.add(emptyDiv);
+            document.add(grid);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void borderBoxSizingTest() throws IOException, InterruptedException {
+        String filename = DESTINATION_FOLDER + "borderBoxSizingTest.pdf";
+        String cmpName = SOURCE_FOLDER + "cmp_borderBoxSizingTest.pdf";
+        java.util.List<TemplateValue> columnsTemplate = new ArrayList<>();
+        columnsTemplate.add(new AutoRepeatValue(true, Arrays.asList((GridValue) new PointValue(200))));
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+            GridContainer grid = new GridContainer();
+            grid.setWidth(420);
+            grid.setBorder(new SolidBorder(20));
+            grid.setPadding(20);
+            grid.setMargin(20);
+            grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, columnsTemplate);
+            grid.setProperty(Property.COLUMN_GAP, 20.0f);
+            grid.add(new Paragraph("One").setBackgroundColor(ColorConstants.CYAN));
+
+            final Paragraph two = new Paragraph("Two").setBackgroundColor(ColorConstants.CYAN);
+            two.setProperty(Property.BOX_SIZING, BoxSizingPropertyValue.BORDER_BOX);
+            two.setPadding(10);
+            two.setMargin(10);
+            two.setBorder(new SolidBorder(ColorConstants.BLUE, 10));
+
+            grid.add(two);
+            grid.add(new Paragraph("Tree").setBackgroundColor(ColorConstants.CYAN));
+            grid.add(new Paragraph("Four").setBackgroundColor(ColorConstants.CYAN));
+            grid.add(new Paragraph("Five").setBackgroundColor(ColorConstants.CYAN));
+            grid.add(new Paragraph("Six").setBackgroundColor(ColorConstants.CYAN));
+            grid.add(new Paragraph("Seven").setBackgroundColor(ColorConstants.CYAN));
+            grid.add(new Paragraph("Eight").setBackgroundColor(ColorConstants.CYAN));
+            grid.add(new Paragraph("Nine").setBackgroundColor(ColorConstants.CYAN));
+
+            document.add(grid);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void marginCollapsingTest() throws IOException, InterruptedException {
+        String filename = DESTINATION_FOLDER + "marginCollapsingTest.pdf";
+        String cmpName = SOURCE_FOLDER + "cmp_marginCollapsingTest.pdf";
+        java.util.List<TemplateValue> columnsTemplate = new ArrayList<>();
+        columnsTemplate.add(new AutoRepeatValue(true, Arrays.asList((GridValue) new PointValue(200))));
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+            GridContainer grid = new GridContainer();
+            grid.setWidth(420);
+            grid.setBorder(new SolidBorder(20));
+            grid.setPadding(20);
+            grid.setMargin(20);
+            grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, columnsTemplate);
+            grid.setProperty(Property.COLUMN_GAP, 20.0f);
+            grid.add(new Paragraph("One").setBackgroundColor(ColorConstants.CYAN));
+
+            Div twoParent = new Div();
+            final Paragraph two = new Paragraph("Two").setBackgroundColor(ColorConstants.CYAN);
+            twoParent.add(two);
+            twoParent.add(new Div());
+            grid.add(twoParent);
+            grid.add(new Paragraph("Tree").setBackgroundColor(ColorConstants.CYAN));
+            grid.add(new Paragraph("Four").setBackgroundColor(ColorConstants.CYAN));
+            grid.add(new Paragraph("Five").setBackgroundColor(ColorConstants.CYAN));
+            grid.add(new Paragraph("Six").setBackgroundColor(ColorConstants.CYAN));
+            grid.add(new Paragraph("Seven").setBackgroundColor(ColorConstants.CYAN));
+            grid.add(new Paragraph("Eight").setBackgroundColor(ColorConstants.CYAN));
+            grid.add(new Paragraph("Nine").setBackgroundColor(ColorConstants.CYAN));
+
+            document.add(grid);
         }
         Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
