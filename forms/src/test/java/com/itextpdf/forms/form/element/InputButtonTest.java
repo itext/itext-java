@@ -71,14 +71,14 @@ public class InputButtonTest extends ExtendedITextTest {
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             Button formInputButton = new Button("form input button");
-            formInputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
+            formInputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             formInputButton.setSingleLineValue("form input button");
             document.add(formInputButton);
 
             document.add(new Paragraph(""));
 
             Button flattenInputButton = new Button("flatten input button");
-            flattenInputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            flattenInputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenInputButton.setSingleLineValue("flatten input button");
             document.add(flattenInputButton);
         }
@@ -93,7 +93,7 @@ public class InputButtonTest extends ExtendedITextTest {
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             Button formInputButton = new Button("form input button");
-            formInputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
+            formInputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             formInputButton.setSingleLineValue("form input button");
             formInputButton.setFontColor(ColorConstants.BLUE);
             formInputButton.setBackgroundColor(ColorConstants.YELLOW);
@@ -103,7 +103,7 @@ public class InputButtonTest extends ExtendedITextTest {
             document.add(new Paragraph(""));
 
             Button flattenInputButton = new Button("flatten input button");
-            flattenInputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            flattenInputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenInputButton.setSingleLineValue("flatten input button");
             flattenInputButton.setFontColor(ColorConstants.BLUE);
             flattenInputButton.setBackgroundColor(ColorConstants.YELLOW);
@@ -122,7 +122,7 @@ public class InputButtonTest extends ExtendedITextTest {
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             // Create push button using html element
             Button formInputButton = new Button("button");
-            formInputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
+            formInputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             formInputButton.setSingleLineValue("html input button");
             formInputButton.setFontColor(ColorConstants.BLUE);
             formInputButton.setBackgroundColor(ColorConstants.YELLOW);
@@ -151,7 +151,7 @@ public class InputButtonTest extends ExtendedITextTest {
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             Button formInputButton = new Button("button");
-            formInputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
+            formInputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             formInputButton.setProperty(Property.WIDTH, UnitValue.createPointValue(280));
             formInputButton.setProperty(Property.HEIGHT, UnitValue.createPointValue(30));
             formInputButton.setSingleLineValue("text with default font size longer than button width won't be split");
@@ -172,7 +172,7 @@ public class InputButtonTest extends ExtendedITextTest {
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             Button formInputButton = new Button("button");
-            formInputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
+            formInputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             formInputButton.setProperty(Property.WIDTH, UnitValue.createPointValue(280));
             formInputButton.setProperty(Property.HEIGHT, UnitValue.createPointValue(30));
             formInputButton.setSingleLineValue("text with line break\n which will be split");
@@ -189,7 +189,7 @@ public class InputButtonTest extends ExtendedITextTest {
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             Button formInputButton = new Button("button");
-            formInputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
+            formInputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             formInputButton.setProperty(Property.PADDING_BOTTOM, UnitValue.createPointValue(15));
             formInputButton.setProperty(Property.PADDING_TOP, UnitValue.createPointValue(15));
             formInputButton.setFontSize(50);
@@ -208,7 +208,7 @@ public class InputButtonTest extends ExtendedITextTest {
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             Div div = new Div().setBackgroundColor(ColorConstants.PINK);
             Button formInputButton = new Button("button");
-            formInputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
+            formInputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             formInputButton.setProperty(Property.PADDING_BOTTOM, UnitValue.createPointValue(20));
             formInputButton.setProperty(Property.PADDING_TOP, UnitValue.createPointValue(20));
             formInputButton.setProperty(Property.PADDING_LEFT, UnitValue.createPointValue(20));

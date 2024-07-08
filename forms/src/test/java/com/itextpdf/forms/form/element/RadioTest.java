@@ -261,7 +261,7 @@ public class RadioTest extends ExtendedITextTest {
 
             Radio formRadio2 = createRadioButton("formRadio2", "form radio group",
                     new DottedBorder(ColorConstants.BLUE, 3), ColorConstants.GREEN, false, false);
-            formRadio2.setSize(20).setProperty(FormProperty.FORM_FIELD_RADIO_BORDER_CIRCLE, false);
+            formRadio2.setSize(20).setProperty(FormProperty.FORM_FIELD_RADIO_BORDER_CIRCLE, Boolean.FALSE);
             document.add(formRadio2);
 
             Radio flattenRadio1 = createRadioButton("flattenRadio1", "flatten radio group",
@@ -271,7 +271,7 @@ public class RadioTest extends ExtendedITextTest {
 
             Radio flattenRadio2 = createRadioButton("flattenRadio2", "flatten radio group",
                     new DottedBorder(ColorConstants.BLUE, 3), ColorConstants.GREEN, false, true);
-            flattenRadio2.setSize(20).setProperty(FormProperty.FORM_FIELD_RADIO_BORDER_CIRCLE, false);
+            flattenRadio2.setSize(20).setProperty(FormProperty.FORM_FIELD_RADIO_BORDER_CIRCLE, Boolean.FALSE);
             document.add(flattenRadio2);
         }
 
@@ -288,12 +288,12 @@ public class RadioTest extends ExtendedITextTest {
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             Radio flattenRadio1 = createRadioButton("flattenRadio1", "flatten radio group",
                     new SolidBorder(ColorConstants.LIGHT_GRAY, 1), ColorConstants.GREEN, false, true);
-            flattenRadio1.setProperty(FormProperty.FORM_FIELD_RADIO_BORDER_CIRCLE, true);
+            flattenRadio1.setProperty(FormProperty.FORM_FIELD_RADIO_BORDER_CIRCLE, Boolean.TRUE);
             document.add(flattenRadio1);
 
             Radio flattenRadio2 = createRadioButton("flattenRadio2", "flatten radio group",
                     new SolidBorder(ColorConstants.LIGHT_GRAY, 1), ColorConstants.GREEN, false, true);
-            flattenRadio2.setProperty(FormProperty.FORM_FIELD_RADIO_BORDER_CIRCLE, false);
+            flattenRadio2.setProperty(FormProperty.FORM_FIELD_RADIO_BORDER_CIRCLE, Boolean.FALSE);
             document.add(flattenRadio2);
         }
 

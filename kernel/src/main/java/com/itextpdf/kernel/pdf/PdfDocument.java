@@ -2101,7 +2101,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
             xref.initFreeReferencesList(this);
             if (writer != null) {
                 if (reader != null && reader.hasXrefStm() && writer.properties.isFullCompression == null) {
-                    writer.properties.isFullCompression = true;
+                    writer.properties.isFullCompression = Boolean.TRUE;
                 }
                 if (reader != null && !reader.isOpenedWithFullPermission()) {
                     throw new BadPasswordException(BadPasswordException.PdfReaderNotOpenedWithOwnerPassword);

@@ -212,7 +212,7 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
 
             ComboBoxField flattenComboBoxFieldWithFont = new ComboBoxField("flatten combo box field with font");
-            flattenComboBoxFieldWithFont.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            flattenComboBoxFieldWithFont.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenComboBoxFieldWithFont.setBackgroundColor(ColorConstants.RED);
             flattenComboBoxFieldWithFont.addOption(new SelectFieldItem("option 1"));
             flattenComboBoxFieldWithFont.addOption(new SelectFieldItem("option 2"));
@@ -220,7 +220,7 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
 
             ComboBoxField flattenComboBoxFieldWithPercentFont = new ComboBoxField(
                     "flatten combo box field with percent font");
-            flattenComboBoxFieldWithPercentFont.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            flattenComboBoxFieldWithPercentFont.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenComboBoxFieldWithPercentFont.setBackgroundColor(ColorConstants.RED);
             flattenComboBoxFieldWithPercentFont.addOption(new SelectFieldItem("option 1"));
             flattenComboBoxFieldWithPercentFont.addOption(new SelectFieldItem("option 2"));
@@ -298,7 +298,7 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
             document.add(div);
 
             ComboBoxField flattenComboBoxField = new ComboBoxField("flatten combo box cannot fit");
-            flattenComboBoxField.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            flattenComboBoxField.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenComboBoxField.setBackgroundColor(ColorConstants.RED);
             flattenComboBoxField.addOption(new SelectFieldItem("option 1"));
             flattenComboBoxField.addOption(new SelectFieldItem("option 2"));

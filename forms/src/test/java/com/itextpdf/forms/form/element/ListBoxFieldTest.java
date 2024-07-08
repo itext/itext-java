@@ -79,7 +79,7 @@ public class ListBoxFieldTest extends ExtendedITextTest {
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             ListBoxField flattenListBoxField = new ListBoxField("flatten empty list box field", 0, false);
-            flattenListBoxField.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            flattenListBoxField.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenListBoxField.setBackgroundColor(ColorConstants.RED);
             document.add(flattenListBoxField);
         }
@@ -100,13 +100,13 @@ public class ListBoxFieldTest extends ExtendedITextTest {
             document.add(formListBoxField);
 
             ListBoxField flattenListBoxField = new ListBoxField("flatten list box field", 2, false);
-            flattenListBoxField.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            flattenListBoxField.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenListBoxField.addOption("option 1", false);
             flattenListBoxField.addOption("option 2", true);
             document.add(flattenListBoxField);
 
             Paragraph option3 = new Paragraph("option 3");
-            option3.setProperty(FormProperty.FORM_FIELD_SELECTED, true);
+            option3.setProperty(FormProperty.FORM_FIELD_SELECTED, Boolean.TRUE);
             option3.setMargin(0);
             option3.setMultipliedLeading(2);
 
@@ -177,7 +177,7 @@ public class ListBoxFieldTest extends ExtendedITextTest {
             option1.setMargin(4);
 
             Paragraph option2 = new Paragraph("option 2");
-            option2.setProperty(FormProperty.FORM_FIELD_SELECTED, true);
+            option2.setProperty(FormProperty.FORM_FIELD_SELECTED, Boolean.TRUE);
             option2.setProperty(FormProperty.FORM_FIELD_LABEL, "option 2");
             option2.setMargin(4);
 
@@ -297,7 +297,7 @@ public class ListBoxFieldTest extends ExtendedITextTest {
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             Paragraph option1 = new Paragraph("option 1");
-            option1.setProperty(FormProperty.FORM_FIELD_SELECTED, true);
+            option1.setProperty(FormProperty.FORM_FIELD_SELECTED, Boolean.TRUE);
             option1.setProperty(FormProperty.FORM_FIELD_LABEL, "option 1");
 
             Paragraph option2 = new Paragraph("option 2");

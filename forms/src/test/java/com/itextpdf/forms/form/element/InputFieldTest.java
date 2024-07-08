@@ -72,12 +72,12 @@ public class InputFieldTest extends ExtendedITextTest {
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             InputField formInputField = new InputField("form input field");
-            formInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
+            formInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             formInputField.setProperty(FormProperty.FORM_FIELD_VALUE, "form input field");
             document.add(formInputField);
 
             InputField flattenInputField = new InputField("flatten input field");
-            flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenInputField.setProperty(FormProperty.FORM_FIELD_VALUE, "flatten input field");
             document.add(flattenInputField);
         }
@@ -114,7 +114,7 @@ public class InputFieldTest extends ExtendedITextTest {
             document.add(div);
 
             InputField flattenInputField = new InputField("input field does not fit");
-            flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenInputField.setProperty(FormProperty.FORM_FIELD_VALUE, "input field does not fit");
             flattenInputField.setProperty(Property.BORDER, new SolidBorder(2f));
             document.add(flattenInputField);
@@ -131,7 +131,7 @@ public class InputFieldTest extends ExtendedITextTest {
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             document.getPdfDocument().setTagged();
             InputField flattenInputField = new InputField("input field with lang");
-            flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
+            flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             flattenInputField.setProperty(FormProperty.FORM_FIELD_VALUE, "input field with lang");
 
             flattenInputField.setProperty(FormProperty.FORM_ACCESSIBILITY_LANGUAGE, "random_lang");
@@ -150,7 +150,7 @@ public class InputFieldTest extends ExtendedITextTest {
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             document.getPdfDocument().setTagged();
             InputField flattenInputField = new InputField("input field with null lang");
-            flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
+            flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             flattenInputField.setProperty(FormProperty.FORM_FIELD_VALUE, "input field with null lang");
 
             flattenInputField.setProperty(FormProperty.FORM_ACCESSIBILITY_LANGUAGE, null);
@@ -168,17 +168,17 @@ public class InputFieldTest extends ExtendedITextTest {
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             InputField formInputField = new InputField("form input field with password");
-            formInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
+            formInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             formInputField.setProperty(FormProperty.FORM_FIELD_VALUE, "form input field with password");
             formInputField.setProperty(Property.BORDER, new SolidBorder(2f));
-            formInputField.setProperty(FormProperty.FORM_FIELD_PASSWORD_FLAG, true);
+            formInputField.setProperty(FormProperty.FORM_FIELD_PASSWORD_FLAG, Boolean.TRUE);
             document.add(formInputField);
 
             InputField flattenInputField = new InputField("flatten input field with password");
-            flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenInputField.setProperty(FormProperty.FORM_FIELD_VALUE, "flatten input field with password");
             flattenInputField.setProperty(Property.BORDER, new SolidBorder(2f));
-            flattenInputField.setProperty(FormProperty.FORM_FIELD_PASSWORD_FLAG, true);
+            flattenInputField.setProperty(FormProperty.FORM_FIELD_PASSWORD_FLAG, Boolean.TRUE);
             document.add(flattenInputField);
         }
 
@@ -192,7 +192,7 @@ public class InputFieldTest extends ExtendedITextTest {
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             InputField flattenInputField = new InputField("flatten input field with height");
-            flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenInputField.setProperty(FormProperty.FORM_FIELD_VALUE, "flatten input field with height");
             flattenInputField.setProperty(Property.HEIGHT, new UnitValue(UnitValue.POINT, 100));
             flattenInputField.setProperty(Property.BORDER, new SolidBorder(2f));
@@ -209,7 +209,7 @@ public class InputFieldTest extends ExtendedITextTest {
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             InputField flattenInputField = new InputField("flatten input field with height");
-            flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenInputField.setProperty(FormProperty.FORM_FIELD_VALUE, "flatten input field with height");
             flattenInputField.setProperty(Property.MIN_HEIGHT, new UnitValue(UnitValue.POINT, 100));
             flattenInputField.setProperty(Property.BORDER, new SolidBorder(2f));
@@ -226,7 +226,7 @@ public class InputFieldTest extends ExtendedITextTest {
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             InputField flattenInputField = new InputField("flatten input field with height");
-            flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenInputField.setProperty(FormProperty.FORM_FIELD_VALUE, "flatten input field with height");
             flattenInputField.setProperty(Property.MAX_HEIGHT, new UnitValue(UnitValue.POINT, 10));
             flattenInputField.setProperty(Property.BORDER, new SolidBorder(2f));

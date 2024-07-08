@@ -82,7 +82,7 @@ public class ButtonTest extends ExtendedITextTest {
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             Button formButton = new Button("form button");
-            formButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
+            formButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             formButton.add(new Paragraph("form button"));
             formButton.add(new Paragraph("paragraph with yellow border inside button")
                     .setBorder(new SolidBorder(ColorConstants.YELLOW, 1)));
@@ -91,7 +91,7 @@ public class ButtonTest extends ExtendedITextTest {
             document.add(new Paragraph(""));
 
             Button flattenButton = new Button("flatten button");
-            flattenButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            flattenButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenButton.add(new Paragraph("flatten button"));
             flattenButton.add(new Paragraph("paragraph with pink border inside button")
                     .setBorder(new SolidBorder(ColorConstants.PINK, 1)));
@@ -109,7 +109,7 @@ public class ButtonTest extends ExtendedITextTest {
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             Button formButton = new Button("form button");
 
-            formButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
+            formButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             formButton.setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD));
             formButton.add(new Paragraph("form button"));
             formButton.add(new Paragraph("paragraph with yellow border inside button")
@@ -120,7 +120,7 @@ public class ButtonTest extends ExtendedITextTest {
             document.add(new Paragraph(""));
 
             Button flattenButton = new Button("flatten button");
-            flattenButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            flattenButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenButton.add(new Paragraph("flatten button"));
 
             flattenButton.setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD));
@@ -141,7 +141,7 @@ public class ButtonTest extends ExtendedITextTest {
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             Button formButton = new Button("form button");
 
-            formButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
+            formButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             formButton.setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD));
             formButton.add(new Paragraph("form button"));
             formButton.add(new Paragraph("paragraph with yellow border inside button")
@@ -151,7 +151,7 @@ public class ButtonTest extends ExtendedITextTest {
             document.add(new Paragraph(""));
 
             Button flattenButton = new Button("flatten button");
-            flattenButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            flattenButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenButton.add(new Paragraph("flatten button"));
 
             flattenButton.setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD));
@@ -170,7 +170,7 @@ public class ButtonTest extends ExtendedITextTest {
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             Button formButton = new Button("form button");
-            formButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
+            formButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             formButton.setValue("form button");
             formButton.setFontColor(ColorConstants.BLUE);
             formButton.setBackgroundColor(ColorConstants.YELLOW);
@@ -180,7 +180,7 @@ public class ButtonTest extends ExtendedITextTest {
             document.add(new Paragraph(""));
 
             Button flattenButton = new Button("flatten  button");
-            flattenButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            flattenButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenButton.setValue("flatten button");
             flattenButton.setFontColor(ColorConstants.BLUE);
             flattenButton.setBackgroundColor(ColorConstants.YELLOW);
@@ -198,7 +198,7 @@ public class ButtonTest extends ExtendedITextTest {
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             Button formButton = new Button("form button");
-            formButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
+            formButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             formButton.setValue("capture on bottom");
             formButton.setProperty(Property.VERTICAL_ALIGNMENT, VerticalAlignment.BOTTOM);
             formButton.setProperty(Property.HEIGHT, UnitValue.createPointValue(100));
@@ -217,7 +217,7 @@ public class ButtonTest extends ExtendedITextTest {
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             // Create push button using html element
             Button formButton = new Button("button");
-            formButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
+            formButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             formButton.setProperty(Property.WIDTH, UnitValue.createPointValue(100));
             formButton.setProperty(Property.HEIGHT, UnitValue.createPointValue(100));
             formButton.add(new Image(new PdfImageXObject(ImageDataFactory.create(
@@ -345,13 +345,13 @@ public class ButtonTest extends ExtendedITextTest {
     @Test
     public void isFlattenTest() {
         Button button = new Button("button");
-        button.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
+        button.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
         ButtonRenderer buttonRenderer = new ButtonRenderer(button);
         Assert.assertFalse(buttonRenderer.isFlatten());
-        button.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+        button.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
         Assert.assertTrue(buttonRenderer.isFlatten());
         InputField inputField = new InputField("input");
-        inputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
+        inputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
         button.add(inputField);
         buttonRenderer = (ButtonRenderer) button.createRendererSubTree();
         Assert.assertTrue(((InputFieldRenderer)buttonRenderer.getChildRenderers().get(0)

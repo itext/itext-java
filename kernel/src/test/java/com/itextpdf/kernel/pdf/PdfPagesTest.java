@@ -797,7 +797,7 @@ public class PdfPagesTest extends ExtendedITextTest {
     private static void verifyPagesOrder(String filename, int numOfPages) throws IOException {
         PdfReader reader = CompareTool.createOutputReader(filename);
         PdfDocument pdfDocument = new PdfDocument(reader);
-        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        Assert.assertEquals("Rebuilt", Boolean.FALSE, reader.hasRebuiltXref());
 
         for (int i = 1; i <= pdfDocument.getNumberOfPages(); i++) {
             PdfDictionary page = pdfDocument.getPage(i).getPdfObject();

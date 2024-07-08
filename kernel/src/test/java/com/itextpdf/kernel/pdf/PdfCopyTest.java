@@ -43,6 +43,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 
 @Category(IntegrationTest.class)
@@ -104,7 +105,7 @@ public class PdfCopyTest extends ExtendedITextTest {
 
         PdfReader reader = CompareTool.createOutputReader(destinationFolder + "copying1_2.pdf");
         PdfDocument pdfDocument = new PdfDocument(reader);
-        assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        assertFalse("Rebuilt", reader.hasRebuiltXref());
         PdfDictionary trailer = pdfDocument.getTrailer();
         PdfDictionary info = trailer.getAsDictionary(PdfName.Info);
         PdfName b = info.getAsName(new PdfName("a"));
@@ -136,7 +137,7 @@ public class PdfCopyTest extends ExtendedITextTest {
 
         PdfReader reader = CompareTool.createOutputReader(destinationFolder + "copying2_2.pdf");
         PdfDocument pdfDocument = new PdfDocument(reader);
-        assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        assertFalse("Rebuilt", reader.hasRebuiltXref());
         for (int i = 0; i < 5; i++) {
             byte[] bytes = pdfDocument.getPage(i + 1).getContentBytes();
             assertEquals("%page " + String.valueOf(i * 2 + 1) + "\n", new String(bytes));
@@ -162,7 +163,7 @@ public class PdfCopyTest extends ExtendedITextTest {
 
         PdfReader reader = CompareTool.createOutputReader(destinationFolder + "copying3_1.pdf");
         pdfDoc = new PdfDocument(reader);
-        assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        assertFalse("Rebuilt", reader.hasRebuiltXref());
 
         PdfDictionary dic0 = pdfDoc.getPage(1).getPdfObject().getAsDictionary(new PdfName("HelloWorld"));
         assertEquals(4, dic0.getIndirectReference().getObjNumber());

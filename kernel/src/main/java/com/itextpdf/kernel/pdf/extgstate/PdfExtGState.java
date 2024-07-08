@@ -690,9 +690,9 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
     public Boolean isBlackPointCompensationUsed() {
         PdfName useBlackPointCompensation = getPdfObject().getAsName(PdfName.UseBlackPtComp);
         if (PdfName.ON.equals(useBlackPointCompensation)) {
-            return true;
+            return Boolean.TRUE;
         } else if (PdfName.OFF.equals(useBlackPointCompensation)) {
-            return false;
+            return Boolean.FALSE;
         } else {
             return null;
         }

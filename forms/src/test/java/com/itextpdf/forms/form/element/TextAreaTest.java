@@ -66,12 +66,12 @@ public class TextAreaTest extends ExtendedITextTest {
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             TextArea formTextArea = new TextArea("form text area");
-            formTextArea.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
+            formTextArea.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             formTextArea.setProperty(FormProperty.FORM_FIELD_VALUE, "form\ntext\narea");
             document.add(formTextArea);
 
             TextArea flattenTextArea = new TextArea("flatten text area");
-            flattenTextArea.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            flattenTextArea.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenTextArea.setProperty(FormProperty.FORM_FIELD_VALUE, "flatten\ntext\narea");
             document.add(flattenTextArea);
         }
@@ -88,13 +88,13 @@ public class TextAreaTest extends ExtendedITextTest {
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             TextArea formTextArea = new TextArea("form text area");
-            formTextArea.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
+            formTextArea.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             formTextArea.setProperty(FormProperty.FORM_FIELD_VALUE, "form\ntext\narea");
             formTextArea.setProperty(Property.FONT_SIZE, UnitValue.createPercentValue(10));
             document.add(formTextArea);
 
             TextArea flattenTextArea = new TextArea("flatten text area");
-            flattenTextArea.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            flattenTextArea.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenTextArea.setProperty(FormProperty.FORM_FIELD_VALUE, "flatten\ntext\narea");
             formTextArea.setProperty(Property.FONT_SIZE, UnitValue.createPercentValue(10));
             document.add(flattenTextArea);
@@ -110,7 +110,7 @@ public class TextAreaTest extends ExtendedITextTest {
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             TextArea flattenTextArea = new TextArea("flatten text area with height");
-            flattenTextArea.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            flattenTextArea.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenTextArea.setProperty(FormProperty.FORM_FIELD_VALUE, "flatten\ntext area\nwith height");
             flattenTextArea.setProperty(Property.HEIGHT, new UnitValue(UnitValue.POINT, 100));
             flattenTextArea.setProperty(Property.BORDER, new SolidBorder(2f));
@@ -127,7 +127,7 @@ public class TextAreaTest extends ExtendedITextTest {
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             TextArea flattenTextArea = new TextArea("flatten text area with height");
-            flattenTextArea.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            flattenTextArea.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenTextArea.setProperty(FormProperty.FORM_FIELD_VALUE, "flatten\ntext area\nwith height");
             flattenTextArea.setProperty(Property.MIN_HEIGHT, new UnitValue(UnitValue.POINT, 100));
             flattenTextArea.setProperty(Property.BORDER, new SolidBorder(2f));
@@ -354,7 +354,7 @@ public class TextAreaTest extends ExtendedITextTest {
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             TextArea flattenTextArea = new TextArea("flatten text area with height");
-            flattenTextArea.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            flattenTextArea.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenTextArea.setProperty(FormProperty.FORM_FIELD_VALUE, "flatten\ntext area\nwith height");
             flattenTextArea.setProperty(Property.MAX_HEIGHT, new UnitValue(UnitValue.POINT, 28));
             flattenTextArea.setProperty(Property.BORDER, new SolidBorder(2f));

@@ -110,42 +110,42 @@ public class PdfObjectTest extends ExtendedITextTest {
         reference.setState(PdfObject.READING);
         reference.setState(PdfObject.MODIFIED);
 
-        Assert.assertEquals("Free", true, reference.checkState(PdfObject.FREE));
-        Assert.assertEquals("Reading", true, reference.checkState(PdfObject.READING));
-        Assert.assertEquals("Modified", true, reference.checkState(PdfObject.MODIFIED));
-        Assert.assertEquals("Free|Reading|Modified", true,
+        Assert.assertEquals("Free", Boolean.TRUE, reference.checkState(PdfObject.FREE));
+        Assert.assertEquals("Reading", Boolean.TRUE, reference.checkState(PdfObject.READING));
+        Assert.assertEquals("Modified", Boolean.TRUE, reference.checkState(PdfObject.MODIFIED));
+        Assert.assertEquals("Free|Reading|Modified", Boolean.TRUE,
                 reference.checkState((byte)(PdfObject.FREE |PdfObject.MODIFIED |PdfObject.READING)));
 
         reference.clearState(PdfObject.FREE);
 
-        Assert.assertEquals("Free", false, reference.checkState(PdfObject.FREE));
-        Assert.assertEquals("Reading", true, reference.checkState(PdfObject.READING));
-        Assert.assertEquals("Modified", true, reference.checkState(PdfObject.MODIFIED));
-        Assert.assertEquals("Reading|Modified", true,
+        Assert.assertEquals("Free", Boolean.FALSE, reference.checkState(PdfObject.FREE));
+        Assert.assertEquals("Reading", Boolean.TRUE, reference.checkState(PdfObject.READING));
+        Assert.assertEquals("Modified", Boolean.TRUE, reference.checkState(PdfObject.MODIFIED));
+        Assert.assertEquals("Reading|Modified", Boolean.TRUE,
                 reference.checkState((byte)(PdfObject.READING |PdfObject.MODIFIED)));
-        Assert.assertEquals("Free|Reading|Modified", false,
+        Assert.assertEquals("Free|Reading|Modified", Boolean.FALSE,
                 reference.checkState((byte)(PdfObject.FREE |PdfObject.READING |PdfObject.MODIFIED)));
 
         reference.clearState(PdfObject.READING);
 
-        Assert.assertEquals("Free", false, reference.checkState(PdfObject.FREE));
-        Assert.assertEquals("Reading", false, reference.checkState(PdfObject.READING));
-        Assert.assertEquals("Modified", true, reference.checkState(PdfObject.MODIFIED));
-        Assert.assertEquals("Free|Reading", false,
+        Assert.assertEquals("Free", Boolean.FALSE, reference.checkState(PdfObject.FREE));
+        Assert.assertEquals("Reading", Boolean.FALSE, reference.checkState(PdfObject.READING));
+        Assert.assertEquals("Modified", Boolean.TRUE, reference.checkState(PdfObject.MODIFIED));
+        Assert.assertEquals("Free|Reading", Boolean.FALSE,
                 reference.checkState((byte) (PdfObject.FREE | PdfObject.READING)));
 
         reference.clearState(PdfObject.MODIFIED);
 
-        Assert.assertEquals("Free", false, reference.checkState(PdfObject.FREE));
-        Assert.assertEquals("Reading", false, reference.checkState(PdfObject.READING));
-        Assert.assertEquals("Modified", false, reference.checkState(PdfObject.MODIFIED));
+        Assert.assertEquals("Free", Boolean.FALSE, reference.checkState(PdfObject.FREE));
+        Assert.assertEquals("Reading", Boolean.FALSE, reference.checkState(PdfObject.READING));
+        Assert.assertEquals("Modified", Boolean.FALSE, reference.checkState(PdfObject.MODIFIED));
 
 
-        Assert.assertEquals("Is InUse", true, !reference.isFree());
+        Assert.assertEquals("Is InUse", Boolean.TRUE, !reference.isFree());
 
         reference.setState(PdfObject.FREE);
 
-        Assert.assertEquals("Not IsInUse", false, !reference.isFree());
+        Assert.assertEquals("Not IsInUse", Boolean.FALSE, !reference.isFree());
     }
 
     @Test
