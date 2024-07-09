@@ -457,6 +457,115 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     }
 
     @Test
+    public void simpleTaggedDocTest() throws IOException {
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "simpleTaggedDoc.pdf"))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
+
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID).hasNumberOfLogs(0));
+        }
+    }
+
+    @Test
+    public void taggedDocAddAndRemoveAnnotationsTest() throws IOException {
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "taggedDocAddAndRemoveAnnotations.pdf"))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
+
+            // Annotations were removed, but were also considered modified objects and therefore are added to xref table.
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID).hasNumberOfLogs(2)
+                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                            .withMessage(DocumentRevisionsValidator.UNEXPECTED_ENTRY_IN_XREF, m -> "18")
+                            .withStatus(ReportItemStatus.INFO))
+                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                            .withMessage(DocumentRevisionsValidator.UNEXPECTED_ENTRY_IN_XREF, m -> "50")
+                            .withStatus(ReportItemStatus.INFO)));
+        }
+    }
+
+    @Test
+    public void taggedDocRemoveStructTreeElementTest() throws IOException {
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "taggedDocRemoveStructTreeElement.pdf"))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
+
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
+                    .hasNumberOfFailures(1)
+                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                            .withMessage(DocumentRevisionsValidator.STRUCT_TREE_ROOT_MODIFIED)
+                            .withStatus(ReportItemStatus.INVALID)));
+        }
+    }
+
+    @Test
+    public void taggedDocRemoveStructTreeAnnotationTest() throws IOException {
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "taggedDocRemoveStructTreeAnnotation.pdf"))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
+
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
+                    .hasNumberOfFailures(1)
+                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                            .withMessage(DocumentRevisionsValidator.STRUCT_TREE_ROOT_MODIFIED)
+                            .withStatus(ReportItemStatus.INVALID)));
+        }
+    }
+
+    @Test
+    public void taggedDocModifyAnnotationTest() throws IOException {
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "taggedDocModifyAnnotation.pdf"))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
+
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID).hasNumberOfLogs(0));
+        }
+    }
+
+    @Test
+    public void taggedDocModifyAnnotationAndStructElementTest() throws IOException {
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "taggedDocModifyAnnotationAndStructElement.pdf"))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
+
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
+                    .hasNumberOfFailures(2)
+                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                            .withMessage(DocumentRevisionsValidator.STRUCT_TREE_ROOT_MODIFIED)
+                            .withStatus(ReportItemStatus.INVALID))
+                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                            .withMessage(DocumentRevisionsValidator.STRUCT_TREE_ELEMENT_MODIFIED)
+                            .withStatus(ReportItemStatus.INVALID)));
+        }
+    }
+
+    @Test
+    public void taggedDocModifyAnnotationAndStructContentTest() throws IOException {
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "taggedDocModifyAnnotationAndStructContent.pdf"))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
+
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID).hasNumberOfLogs(0));
+        }
+    }
+
+    @Test
+    public void taggedDocModifyStructElementTest() throws IOException {
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "taggedDocModifyStructElement.pdf"))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
+
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
+                    .hasNumberOfFailures(2)
+                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                            .withMessage(DocumentRevisionsValidator.STRUCT_TREE_ROOT_MODIFIED)
+                            .withStatus(ReportItemStatus.INVALID))
+                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                            .withMessage(DocumentRevisionsValidator.STRUCT_TREE_ELEMENT_MODIFIED)
+                            .withStatus(ReportItemStatus.INVALID)));
+        }
+    }
+
+    @Test
     public void removeUnnamedFieldTest() throws Exception {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "removeUnnamedField.pdf"))) {
             DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();

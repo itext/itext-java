@@ -146,7 +146,7 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
             AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.INVALID)
                     .hasNumberOfFailures(1).hasNumberOfLogs(1)
                     .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
-                            .withMessage(DocumentRevisionsValidator.DEVELOPER_EXTENSION_REMOVED, i -> PdfName.ESIC)
+                            .withMessage(DocumentRevisionsValidator.BASE_VERSION_DECREASED, i -> PdfName.ESIC)
                             .withStatus(ReportItemStatus.INVALID)));
 
             validationReport = new ValidationReport();

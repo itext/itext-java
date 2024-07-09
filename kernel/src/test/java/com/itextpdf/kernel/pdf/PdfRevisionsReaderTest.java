@@ -199,7 +199,7 @@ public class PdfRevisionsReaderTest extends ExtendedITextTest {
 
             DocumentRevision secondRevision = revisionsReader.getAllRevisions().get(1);
             assertResultingRevision(secondRevision, 1, 2, 3, 4, 5, 6, 7, 8);
-            Assert.assertEquals(1550, secondRevision.getEofOffset());
+            Assert.assertEquals(1381, secondRevision.getEofOffset());
 
             DocumentRevision firstRevision = revisionsReader.getAllRevisions().get(2);
             assertResultingRevision(firstRevision);
