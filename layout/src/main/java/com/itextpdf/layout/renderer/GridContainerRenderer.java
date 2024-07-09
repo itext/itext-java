@@ -311,8 +311,8 @@ public class GridContainerRenderer extends BlockRenderer {
 
         // 8. Placing Grid Items
         Grid grid = Grid.Builder.forItems(renderer.getChildRenderers())
-                        .columns(templateColumns == null ? 1 : templateColumns.size())
-                        .rows(templateRows == null ? 1 : templateRows.size())
+                        .columns(templateColumns == null ? 0 : templateColumns.size())
+                        .rows(templateRows == null ? 0 : templateRows.size())
                         .flow(flow).build();
 
         // Collapse any empty repeated tracks if auto-fit was used

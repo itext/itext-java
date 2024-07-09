@@ -23,6 +23,7 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
+import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.grid.GridFlow;
 
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 /**
@@ -40,19 +42,42 @@ import java.util.stream.Collectors;
  * width = height = 1.
  */
 class Grid {
+    /**
+     * Cells container.
+     */
     private GridCell[][] rows = new GridCell[1][1];
+    /**
+     * Row start offset, it is not zero only if there are cells with negative indexes.
+     * Such cells should not be covered by templates, so the offset represents row from which template values
+     * should be considered.
+     */
+    private int rowOffset = 0;
+    /**
+     * Column start offset, it is not zero only if there are cells with negative indexes.
+     * Such cells should not be covered by templates, so the offset represents column from which template values
+     * should be considered.
+     */
+    private int columnOffset = 0;
     //Using array list instead of array for .NET portability
+    /**
+     * Unique grid cells cached values. first value of array contains unique cells in order from left to right
+     * and the second value contains cells in order from top to bottom.
+     */
     private final List<Collection<GridCell>> uniqueCells = new ArrayList<>(2);
     private final List<GridCell> itemsWithoutPlace = new ArrayList<>();
 
     /**
-     * Creates a new grid instance.
+     * Creates new grid instance.
      *
      * @param initialRowsCount initial number of row for the grid
      * @param initialColumnsCount initial number of columns for the grid
+     * @param columnOffset actual start(zero) position of columns, from where template should be applied
+     * @param rowOffset actual start(zero) position of rows, from where template should be applied
      */
-    Grid(int initialRowsCount, int initialColumnsCount) {
-        ensureGridSize(initialRowsCount, initialColumnsCount);
+    Grid(int initialRowsCount, int initialColumnsCount, int columnOffset, int rowOffset) {
+        resize(initialRowsCount, initialColumnsCount);
+        this.columnOffset = columnOffset;
+        this.rowOffset = rowOffset;
         //Add GridOrder.ROW and GridOrder.COLUMN cache for unique cells, which is null initially
         uniqueCells.add(null);
         uniqueCells.add(null);
@@ -86,33 +111,22 @@ class Grid {
     }
 
     /**
-     * Gets unique cells in the specified row or column depends on passed {@link GridOrder}.
+     * get row start offset or grid "zero row" position.
      *
-     * @param order the order which will be used to extract cells
-     * @param trackIndex the track index from which cells will be extracted
-     *
-     * @return collection of unique cells in a row or column
+     * @return row start offset if there are negative indexes, 0 otherwise
      */
-    Collection<GridCell> getUniqueCellsInTrack(GridOrder order, int trackIndex) {
-        List<GridCell> result = new ArrayList<>(order == GridOrder.ROW ? getNumberOfRows() : getNumberOfColumns());
-        GridCell previous = null;
-        if (GridOrder.COLUMN == order) {
-            for (GridCell[] row : rows) {
-                final GridCell current = row[trackIndex];
-                if (current != null && current != previous) {
-                    previous = current;
-                    result.add(current);
-                }
-            }
-        } else {
-            for (GridCell current : rows[trackIndex]) {
-                if (current != null && current != previous) {
-                    previous = current;
-                    result.add(current);
-                }
-            }
-        }
-        return result;
+    int getRowOffset() {
+        return rowOffset;
+    }
+
+
+    /**
+     * get column start offset or grid "zero column" position.
+     *
+     * @return column start offset if there are negative indexes, 0 otherwise
+     */
+    int getColumnOffset() {
+        return columnOffset;
     }
 
     /**
@@ -163,7 +177,7 @@ class Grid {
      * @param height new grid height
      * @param width new grid width
      */
-    void ensureGridSize(int height, int width) {
+    final void resize(int height, int width) {
         if (height <= getNumberOfRows() && width <= getNumberOfColumns()) {
             return;
         }
@@ -279,10 +293,10 @@ class Grid {
      * This class is used to properly initialize starting values for grid.
      */
     static final class Builder {
-        private int columnCount;
-        private int rowCount;
+        private int explicitColumnCount = 0;
+        private int explicitRowCount = 0;
         private GridFlow flow;
-        private List<GridCell> cells;
+        private List<IRenderer> values;
 
         private Builder() {
         }
@@ -295,7 +309,7 @@ class Grid {
          */
         static Builder forItems(List<IRenderer> values) {
             Builder builder = new Builder();
-            builder.cells = values.stream().map(val -> new GridCell(val)).collect(Collectors.toList());
+            builder.values = values;
             return builder;
         }
 
@@ -303,14 +317,11 @@ class Grid {
          * Set number of columns for a grid, the result will be either a provided one or if some elements
          * have a property defining more columns on a grid than provided value it will be set instead.
          *
-         * @param minColumnCount min column count of a grid
+         * @param explicitColumnCount explicit column count of a grid
          * @return current builder instance
          */
-        public Builder columns(int minColumnCount) {
-            columnCount = Math.max(
-                    minColumnCount,
-                    calculateInitialColumnsCount(cells)
-            );
+        public Builder columns(int explicitColumnCount) {
+            this.explicitColumnCount = explicitColumnCount;
             return this;
         }
 
@@ -318,14 +329,11 @@ class Grid {
          * Set number of rows for a grid, the result will be either a provided one or if some elements
          * have a property defining more rows on a grid than provided value it will be set instead.
          *
-         * @param minRowCount min height of a grid
+         * @param explicitRowCount explicit height of a grid
          * @return current builder instance
          */
-        public Builder rows(int minRowCount) {
-            rowCount = Math.max(
-                    minRowCount,
-                    calculateInitialRowsCount(cells)
-            );
+        public Builder rows(int explicitRowCount) {
+            this.explicitRowCount = explicitRowCount;
             return this;
         }
 
@@ -337,7 +345,6 @@ class Grid {
          */
         public Builder flow(GridFlow flow) {
             this.flow = flow;
-            Collections.sort(cells, getOrderingFunctionForFlow(flow));
             return this;
         }
 
@@ -347,7 +354,47 @@ class Grid {
          * @return new {@code Grid} instance.
          */
         public Grid build() {
-            final Grid grid = new Grid(rowCount, columnCount);
+            //Those values are atomic, because primitive values stored on stack and can't be passed inside lambda
+            //and wrapper types are immutable, so have to use mutable analogue.
+            //Using long for .NET porting compatibility
+            //Those offset values represent start (zero row/column) of the grid.
+            //They are needed to correctly apply template values for grid cell afterwards, so items which are placed
+            //outside the explicit grid are not affected by template values.
+            AtomicLong rowOffset = new AtomicLong();
+            AtomicLong columnOffset = new AtomicLong();
+            List<CssGridCell> cssCells = values
+                    .stream()
+                    .map((val) -> {
+                        CssGridCell cell = new CssGridCell(val, explicitColumnCount, explicitRowCount);
+                        rowOffset.set(Math.max(rowOffset.get(), cell.offsetY));
+                        columnOffset.set(Math.max(columnOffset.get(), cell.offsetX));
+                        return cell;
+                    }).collect(Collectors.toList());
+            List<GridCell> cells = cssCells.stream()
+                    .map((cssCell) -> {
+                        int startY = -1;
+                        if (cssCell.startY < 0) {
+                            startY = cssCell.startY + (int)rowOffset.get();
+                        } else if (cssCell.startY > 0) {
+                            startY = cssCell.startY + (int)rowOffset.get() - 1;
+                        }
+                        int startX = -1;
+                        if (cssCell.startX < 0) {
+                            startX = cssCell.startX + (int)columnOffset.get();
+                        } else if (cssCell.startX > 0) {
+                            startX = cssCell.startX + (int)columnOffset.get() - 1;
+                        }
+                        return new GridCell(cssCell.value,
+                                startX,
+                                startY,
+                                cssCell.spanX,
+                                cssCell.spanY);
+                    })
+                    .collect(Collectors.toList());
+            Collections.sort(cells, getOrderingFunctionForFlow(flow));
+            int columnCount = Math.max(explicitColumnCount + (int)columnOffset.get(), calculateInitialColumnsCount(cells));
+            int rowCount = Math.max(explicitRowCount + (int)rowOffset.get(), calculateInitialRowsCount(cells));
+            final Grid grid = new Grid(rowCount, columnCount, (int)columnOffset.get(), (int)rowOffset.get());
             CellPlacementHelper cellPlacementHelper = new CellPlacementHelper(grid, flow);
             for (GridCell cell : cells) {
                 cellPlacementHelper.fit(cell);
@@ -391,21 +438,17 @@ class Grid {
     private final static class RowCellComparator implements Comparator<GridCell> {
         @Override
         public int compare(GridCell lhs, GridCell rhs) {
-            int lhsModifiers = 0;
-            if (lhs.getColumnStart() != -1 && lhs.getRowStart() != -1) {
-                lhsModifiers = 2;
-            } else if (lhs.getRowStart() != -1) {
-                lhsModifiers = 1;
-            }
-
-            int rhsModifiers = 0;
-            if (rhs.getColumnStart() != -1 && rhs.getRowStart() != -1) {
-                rhsModifiers = 2;
-            } else if (rhs.getRowStart() != -1) {
-                rhsModifiers = 1;
-            }
             //passing parameters in reversed order so ones with properties would come first
-            return Integer.compare(rhsModifiers, lhsModifiers);
+            return Integer.compare(calculateModifiers(rhs), calculateModifiers(lhs));
+        }
+
+        private int calculateModifiers(GridCell value) {
+            if (value.getColumnStart() != -1 && value.getRowStart() != -1) {
+                return 2;
+            } else if (value.getRowStart() != -1) {
+                return 1;
+            }
+            return 0;
         }
     }
 
@@ -416,21 +459,114 @@ class Grid {
     private final static class ColumnCellComparator implements Comparator<GridCell> {
         @Override
         public int compare(GridCell lhs, GridCell rhs) {
-            int lhsModifiers = 0;
-            if (lhs.getColumnStart() != -1 && lhs.getRowStart() != -1) {
-                lhsModifiers = 2;
-            } else if (lhs.getColumnStart() != -1) {
-                lhsModifiers = 1;
+            //passing parameters in reversed order so ones with properties would come first
+            return Integer.compare(calculateModifiers(rhs), calculateModifiers(lhs));
+        }
+
+        private int calculateModifiers(GridCell value) {
+            if (value.getColumnStart() != -1 && value.getRowStart() != -1) {
+                return 2;
+            } else if (value.getColumnStart() != -1) {
+                return 1;
+            }
+            return 0;
+        }
+    }
+
+    private static class CssGridCell {
+        IRenderer value;
+        // Cell position on css grid starts from 1, not 0. An integer value of zero means value is not explicitly
+        // defined, since according to https://www.w3.org/TR/css-grid-1/#line-placement
+        // an <integer> value of zero makes the declaration invalid and leads to the same behaviour if it wasn't
+        // specified at all.
+        int startX;
+        int spanX;
+        int offsetX;
+        int startY;
+        int spanY;
+        int offsetY;
+
+        CssGridCell(IRenderer value, int templateSizeX, int templateSizeY) {
+            this.value = value;
+            final int[] rowPlacement = initAxisPlacement(
+                    value.<Integer>getProperty(Property.GRID_ROW_START),
+                    value.<Integer>getProperty(Property.GRID_ROW_END),
+                    value.<Integer>getProperty(Property.GRID_ROW_SPAN),
+                    templateSizeY);
+            startY = rowPlacement[0];
+            spanY = rowPlacement[1];
+            offsetY = rowPlacement[2];
+
+            final int[] columnPlacement = initAxisPlacement(
+                    value.<Integer>getProperty(Property.GRID_COLUMN_START),
+                    value.<Integer>getProperty(Property.GRID_COLUMN_END),
+                    value.<Integer>getProperty(Property.GRID_COLUMN_SPAN),
+                    templateSizeX);
+            startX = columnPlacement[0];
+            spanX = columnPlacement[1];
+            offsetX = columnPlacement[2];
+        }
+
+
+        /**
+         * Init axis placement values
+         * if start > end values are swapped
+         *
+         * @param startProperty x/y pos of cell on a grid
+         * @param endProperty x/y + width/height pos of cell on a grid
+         * @param spanProperty vertical or horizontal span of the cell on a grid
+         * @return array, where first value is column/row start, second is column/row span and third is an offset
+         *         to the opposite direction of current axis where cell should be placed.
+         */
+        private static int[] initAxisPlacement(Integer startProperty, Integer endProperty, Integer spanProperty, int templateSize) {
+            int start = startProperty == null ? 0 : (int)startProperty;
+            int end = endProperty == null ? 0 : (int)endProperty;
+            int span = spanProperty == null ? 1 : (int)spanProperty;
+            //result[0] - start
+            //result[1] - span
+            //result[2] - offset in the opposite direction from the start of the grid where this cell should be placed
+            int[] result = new int[] {0, span, 0};
+            if (start < 0) {
+                // Can't reach start == 0 after this block
+                if (Math.abs(start) <= templateSize + 1) {
+                    start++;
+                }
+                start = templateSize + start + 1;
+            }
+            if (end < 0) {
+                // Can't reach end == 0 after this block
+                if (Math.abs(end) <= templateSize + 1) {
+                    end++;
+                }
+                end = templateSize + end + 1;
+            }
+            if (start != 0 && end != 0) {
+                if (start < end) {
+                    result[0] = start;
+                    result[1] = end - start;
+                } else if (start == end) {
+                    result[0] = start;
+                } else {
+                    result[0] = end;
+                    result[1] = start - end;
+                }
+                if (start * end < 0) {
+                    result[1]--;
+                }
+            } else if (start != 0) {
+                result[0] = start;
+            } else if (end != 0) {
+                start = end - span;
+                if (start <= 0 && end > 0) {
+                    start--;
+                }
+                result[0] = start;
             }
 
-            int rhsModifiers = 0;
-            if (rhs.getColumnStart() != -1 && rhs.getRowStart() != -1) {
-                rhsModifiers = 2;
-            } else if (rhs.getColumnStart() != -1) {
-                rhsModifiers = 1;
+            if (start < 0 || end < 0) {
+                result[2] = Math.abs(Math.min(start, end));
             }
-            //passing parameters in reversed order so ones with properties would come first
-            return Integer.compare(rhsModifiers, lhsModifiers);
+            return result;
         }
     }
 
@@ -453,7 +589,7 @@ class Grid {
          */
         void fit(GridCell cell) {
             //resize the grid if needed to fit a cell into it
-            grid.ensureGridSize(cell.getRowEnd(), cell.getColumnEnd());
+            grid.resize(cell.getRowEnd(), cell.getColumnEnd());
             boolean result;
             //reset grid view to process new cell
             GridView.Pos pos = view.reset(cell.getRowStart(), cell.getColumnStart(),

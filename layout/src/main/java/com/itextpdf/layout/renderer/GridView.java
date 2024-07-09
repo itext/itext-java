@@ -85,6 +85,16 @@ class GridView {
     Pos reset(int y, int x, int rightMargin, int bottomMargin) {
         this.cursor.setY(y);
         this.cursor.setX(x);
+        if (x == -1 && y == -1) {
+            if (rightMargin > grid.getNumberOfColumns() - this.cursor.x
+                    + (Grid.GridOrder.COLUMN.equals(iterationOrder) ? 1 : 0)) {
+                this.cursor.setX(0);
+            }
+            if (bottomMargin > grid.getNumberOfRows() - this.cursor.y
+                    + (Grid.GridOrder.ROW.equals(iterationOrder) ? 1 : 0)) {
+                this.cursor.setY(0);
+            }
+        }
         this.rightMargin = rightMargin - 1;
         this.bottomMargin = bottomMargin - 1;
         this.restrictXGrow = x != -1;
@@ -143,13 +153,13 @@ class GridView {
 
     void increaseDefaultAxis() {
         if (restrictYGrow) {
-            grid.ensureGridSize(-1, grid.getRows()[0].length + 1);
+            grid.resize(-1, grid.getRows()[0].length + 1);
         } else if (restrictXGrow) {
-            grid.ensureGridSize(grid.getRows().length + 1, -1);
+            grid.resize(grid.getRows().length + 1, -1);
         } else if (Grid.GridOrder.ROW.equals(iterationOrder)) {
-            grid.ensureGridSize(grid.getRows().length + 1, -1);
+            grid.resize(grid.getRows().length + 1, -1);
         } else if (Grid.GridOrder.COLUMN.equals(iterationOrder)) {
-            grid.ensureGridSize(-1, grid.getRows()[0].length + 1);
+            grid.resize(-1, grid.getRows()[0].length + 1);
         }
         hasNext = true;
     }

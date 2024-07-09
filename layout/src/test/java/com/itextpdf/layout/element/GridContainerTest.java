@@ -88,6 +88,53 @@ public class GridContainerTest extends ExtendedITextTest {
     }
 
     @Test
+    public void basicTwoColumnsTest() throws IOException, InterruptedException {
+        String filename = DESTINATION_FOLDER + "basicTwoColumnsTest.pdf";
+        String cmpName = SOURCE_FOLDER + "cmp_basicTwoColumnsTest.pdf";
+
+        java.util.List<TemplateValue> templateColumns = new ArrayList<>();
+        templateColumns.add(new PointValue(150.0f));
+        templateColumns.add(new PointValue(150.0f));
+        SolidBorder border = new SolidBorder(ColorConstants.BLUE, 1);
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+            GridContainer grid = new GridContainer();
+            grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, templateColumns);
+            grid.add(new Paragraph("One").setBorder(border));
+            grid.add(new Paragraph("Two").setBorder(border));
+            Paragraph paragraph3 = new Paragraph("One").setBorder(border);
+            paragraph3.setProperty(Property.GRID_COLUMN_SPAN, 2);
+            grid.add(paragraph3);
+            document.add(grid);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void basicTwoRowsTest() throws IOException, InterruptedException {
+        String filename = DESTINATION_FOLDER + "basicTwoRowsTest.pdf";
+        String cmpName = SOURCE_FOLDER + "cmp_basicTwoRowsTest.pdf";
+
+        java.util.List<TemplateValue> templateRows = new ArrayList<>();
+        templateRows.add(new PointValue(150.0f));
+        templateRows.add(new PointValue(150.0f));
+        SolidBorder border = new SolidBorder(ColorConstants.BLUE, 1);
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+            GridContainer grid = new GridContainer();
+            grid.setProperty(Property.GRID_TEMPLATE_ROWS, templateRows);
+            grid.setProperty(Property.GRID_FLOW, GridFlow.COLUMN);
+            grid.add(new Paragraph("One").setBorder(border));
+            grid.add(new Paragraph("Two").setBorder(border));
+            Paragraph paragraph3 = new Paragraph("One").setBorder(border);
+            paragraph3.setProperty(Property.GRID_ROW_SPAN, 2);
+            grid.add(paragraph3);
+            document.add(grid);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
     public void basicAutoColumnsTest() throws IOException, InterruptedException {
         String filename = DESTINATION_FOLDER + "basicAutoColumnsTest.pdf";
         String cmpName = SOURCE_FOLDER + "cmp_basicAutoColumnsTest.pdf";
@@ -149,6 +196,68 @@ public class GridContainerTest extends ExtendedITextTest {
             paragraph3.setProperty(Property.GRID_COLUMN_END, 4);
             grid.add(paragraph3);
             grid.add(new Paragraph("Four").setBorder(border));
+            document.add(grid);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void basicThreeColumnsOutOfBoundsWithNoCellsTest() throws IOException, InterruptedException {
+        String filename = DESTINATION_FOLDER + "basicThreeColumnsOutOfBoundsWithNoCellsTest.pdf";
+        String cmpName = SOURCE_FOLDER + "cmp_basicThreeColumnsOutOfBoundsWithNoCellsTest.pdf";
+
+        java.util.List<TemplateValue> templateColumns = new ArrayList<>();
+        templateColumns.add(new PointValue(100.0f));
+        templateColumns.add(new PointValue(100.0f));
+        templateColumns.add(new PointValue(100.0f));
+        SolidBorder border = new SolidBorder(ColorConstants.BLUE, 1);
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+            GridContainer grid = new GridContainer();
+            grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, templateColumns);
+            Paragraph paragraph1 = new Paragraph("One").setBorder(border);
+            paragraph1.setProperty(Property.GRID_COLUMN_START, -2);
+            paragraph1.setProperty(Property.GRID_COLUMN_END, -1);
+            grid.add(paragraph1);
+            grid.add(new Paragraph("Two").setBorder(border));
+            Paragraph paragraph3 = new Paragraph("Three").setBorder(border);
+            paragraph3.setProperty(Property.GRID_COLUMN_START, -4);
+            paragraph3.setProperty(Property.GRID_COLUMN_END, 3);
+            grid.add(paragraph3);
+            grid.add(new Paragraph("Four").setBorder(border));
+            document.add(grid);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void basicThreeColumnsWithNegativeCustomColumnIndexesTest() throws IOException, InterruptedException {
+        String filename = DESTINATION_FOLDER + "basicThreeColumnsWithNegativeCustomColumnIndexesTest.pdf";
+        String cmpName = SOURCE_FOLDER + "cmp_basicThreeColumnsWithNegativeCustomColumnIndexesTest.pdf";
+
+        java.util.List<TemplateValue> templateColumns = new ArrayList<>();
+        templateColumns.add(new PointValue(100.0f));
+        templateColumns.add(new PointValue(100.0f));
+        templateColumns.add(new PointValue(100.0f));
+        SolidBorder border = new SolidBorder(ColorConstants.BLUE, 1);
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+            GridContainer grid = new GridContainer();
+            grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, templateColumns);
+            Paragraph paragraph1 = new Paragraph("One").setBorder(border);
+            paragraph1.setProperty(Property.GRID_COLUMN_START, -2);
+            paragraph1.setProperty(Property.GRID_COLUMN_END, -1);
+            grid.add(paragraph1);
+            grid.add(new Paragraph("Two").setBorder(border));
+            Paragraph paragraph3 = new Paragraph("Three").setBorder(border);
+            paragraph3.setProperty(Property.GRID_COLUMN_START, -7);
+            paragraph3.setProperty(Property.GRID_COLUMN_END, 3);
+            grid.add(paragraph3);
+            grid.add(new Paragraph("Four").setBorder(border));
+            grid.add(new Paragraph("Five").setBorder(border));
+            grid.add(new Paragraph("Six").setBorder(border));
+            grid.add(new Paragraph("Seven").setBorder(border));
+            grid.add(new Paragraph("Eight").setBorder(border));
             document.add(grid);
         }
         Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));

@@ -54,37 +54,6 @@ public class GridUnitTest extends ExtendedITextTest {
     }
 
     @Test
-    public void getUniqueCellsInColumnAndRowTest() {
-        IRenderer twoRenderer = new TextRenderer(new Text("Two"));
-        twoRenderer.setProperty(Property.GRID_ROW_START, 2);
-        twoRenderer.setProperty(Property.GRID_ROW_END, 4);
-        Grid grid = Grid.Builder.forItems(Arrays.asList(
-                new TextRenderer(new Text("One")),
-                twoRenderer,
-                new TextRenderer(new Text("Three")),
-                new TextRenderer(new Text("Four"))
-        )).columns(3).rows(3).flow(GridFlow.ROW).build();
-        Assert.assertEquals(1, grid.getUniqueCellsInTrack(GridOrder.COLUMN, 1).size());
-        Assert.assertEquals(3, grid.getUniqueCellsInTrack(GridOrder.ROW, 0).size());
-    }
-
-    @Test
-    public void invalidColumnForGetColCellsTest() {
-        Grid grid = new Grid(3, 3);
-        Assert.assertThrows(IndexOutOfBoundsException.class, () -> grid.getUniqueCellsInTrack(GridOrder.COLUMN, 4));
-        Assert.assertThrows(IndexOutOfBoundsException.class, () -> grid.getUniqueCellsInTrack(GridOrder.COLUMN, -1));
-        AssertUtil.doesNotThrow(() -> grid.getUniqueCellsInTrack(GridOrder.COLUMN, 2));
-    }
-
-    @Test
-    public void invalidRowForGetRowCellsTest() {
-        Grid grid = new Grid(3, 3);
-        Assert.assertThrows(IndexOutOfBoundsException.class, () -> grid.getUniqueCellsInTrack(GridOrder.ROW, 4));
-        Assert.assertThrows(IndexOutOfBoundsException.class, () -> grid.getUniqueCellsInTrack(GridOrder.ROW, -1));
-        AssertUtil.doesNotThrow(() -> grid.getUniqueCellsInTrack(GridOrder.ROW, 2));
-    }
-
-    @Test
     public void sparsePackingTest() {
         IRenderer cell1 = new TextRenderer(new Text("One"));
         IRenderer wideCell = new TextRenderer(new Text("Two"));

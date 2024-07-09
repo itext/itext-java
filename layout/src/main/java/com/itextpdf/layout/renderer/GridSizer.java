@@ -95,8 +95,10 @@ class GridSizer {
     private void resolveGridRows() {
         List<GridValue> rowsValues = new ArrayList<>();
         for (int i = 0; i < grid.getNumberOfRows(); i++) {
-            if (templateRows != null && i < templateRows.size()) {
-                rowsValues.add(templateRows.get(i));
+            if (templateRows != null
+                    && i - grid.getRowOffset() < templateRows.size()
+                    && i - grid.getRowOffset() >= 0) {
+                rowsValues.add(templateRows.get(i - grid.getRowOffset()));
             } else if (rowAutoHeight != null) {
                 rowsValues.add(rowAutoHeight);
             } else {
@@ -172,8 +174,10 @@ class GridSizer {
     private void resolveGridColumns() {
         List<GridValue> colsValues = new ArrayList<>();
         for (int i = 0; i < grid.getNumberOfColumns(); i++) {
-            if (templateColumns != null && i < templateColumns.size()) {
-                colsValues.add(templateColumns.get(i));
+            if (templateColumns != null
+                    && i - grid.getColumnOffset() < templateColumns.size()
+                    && i - grid.getColumnOffset() >= 0) {
+                colsValues.add(templateColumns.get(i - grid.getColumnOffset()));
             } else if (columnAutoWidth != null) {
                 colsValues.add(columnAutoWidth);
             } else {

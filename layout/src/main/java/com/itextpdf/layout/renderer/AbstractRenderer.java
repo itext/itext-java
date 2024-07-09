@@ -2621,6 +2621,7 @@ public abstract class AbstractRenderer implements IRenderer {
             }
 
             renderer.setProperty(Property.MIN_HEIGHT, UnitValue.createPointValue((float) resolvedMinHeight));
+            renderer.setProperty(Property.HEIGHT, UnitValue.createPointValue((float) resolvedMinHeight));
         }
     }
 
