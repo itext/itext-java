@@ -100,4 +100,56 @@ public class PdfExtGStateTest extends ExtendedITextTest{
         Assert.assertNull(new CompareTool().compareByContent(destinationDocument, sourceFolder + "cmp_egsTest1.pdf", destinationFolder, "diff_"));
     }
 
+    @Test
+    public void blackPointCompensationTest1() {
+        PdfExtGState pdfExtGState = new PdfExtGState();
+        pdfExtGState.setUseBlackPointCompensation(true);
+        Assert.assertTrue(pdfExtGState.isBlackPointCompensationUsed());
+    }
+
+    @Test
+    public void blackPointCompensationTest2() {
+        PdfExtGState pdfExtGState = new PdfExtGState();
+        pdfExtGState.setUseBlackPointCompensation(false);
+        Assert.assertFalse(pdfExtGState.isBlackPointCompensationUsed());
+    }
+
+    @Test
+    public void blackPointCompensationTest3() {
+        PdfExtGState pdfExtGState = new PdfExtGState();
+        PdfObject useBlackPoint = pdfExtGState.getPdfObject().getAsName(PdfName.UseBlackPtComp);
+        Assert.assertNull(useBlackPoint);
+    }
+
+    @Test
+    public void blackPointCompensationTest4() {
+        PdfExtGState pdfExtGState = new PdfExtGState();
+        PdfDictionary pdfExtGStateObj = pdfExtGState.getPdfObject();
+        pdfExtGStateObj.put(PdfName.UseBlackPtComp, PdfName.ON);
+        Assert.assertTrue(pdfExtGState.isBlackPointCompensationUsed());
+    }
+
+    @Test
+    public void blackPointCompensationTest5() {
+        PdfExtGState pdfExtGState = new PdfExtGState();
+        PdfDictionary pdfExtGStateObj = pdfExtGState.getPdfObject();
+        pdfExtGStateObj.put(PdfName.UseBlackPtComp, PdfName.OFF);
+        Assert.assertFalse(pdfExtGState.isBlackPointCompensationUsed());
+    }
+
+    @Test
+    public void blackPointCompensationTest6() {
+        PdfExtGState pdfExtGState = new PdfExtGState();
+        pdfExtGState.setUseBlackPointCompensation(true);
+        PdfName useBlackPtComp = pdfExtGState.getPdfObject().getAsName(PdfName.UseBlackPtComp);
+        Assert.assertEquals("PdfName is different from expected.", PdfName.ON, useBlackPtComp);
+    }
+
+    @Test
+    public void blackPointCompensationTest7() {
+        PdfExtGState pdfExtGState = new PdfExtGState();
+        pdfExtGState.setUseBlackPointCompensation(false);
+        PdfName useBlackPtComp = pdfExtGState.getPdfObject().getAsName(PdfName.UseBlackPtComp);
+        Assert.assertEquals("PdfName is different from expected.", PdfName.OFF, useBlackPtComp);
+    }
 }
