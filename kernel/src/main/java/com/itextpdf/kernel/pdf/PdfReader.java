@@ -756,9 +756,7 @@ public class PdfReader implements Closeable {
             throw ex;
         } catch (RuntimeException ex) {
             if (StrictnessLevel.CONSERVATIVE.isStricter(this.getStrictnessLevel())) {
-                Logger logger = LoggerFactory.getLogger(PdfReader.class);
-                logger.error(IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT, ex);
-
+                logXrefException(ex);
                 rebuildXref();
             } else {
                 throw ex;
@@ -865,8 +863,9 @@ public class PdfReader implements Closeable {
                                     tokens.getGenNr()));
                     return createPdfNullInstance(readAsDirect);
                 } else {
-                    throw new PdfException(KernelExceptionMessageConstant.INVALID_INDIRECT_REFERENCE,
-                            MessageFormatUtil.format("{0} {1} R", reference.getObjNumber(), reference.getGenNumber()));
+                    throw new PdfException(MessageFormatUtil.format(
+                            KernelExceptionMessageConstant.INVALID_INDIRECT_REFERENCE
+                            , reference.getObjNumber(), reference.getGenNumber()), reference);
                 }
             }
         } else {
@@ -1608,6 +1607,21 @@ public class PdfReader implements Closeable {
             xrefProcessor.processXref(xrefTable, tokens);
         } finally {
             tokens.seek(currentPosition);
+        }
+    }
+
+    private static void logXrefException(RuntimeException ex) {
+        Logger logger = LoggerFactory.getLogger(PdfReader.class);
+        if (ex.getCause() != null) {
+            logger.error(MessageFormatUtil.format(
+                    IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE
+                    , ex.getCause().getMessage()));
+        } else if (ex.getMessage() !=null) {
+            logger.error(MessageFormatUtil.format(
+                    IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE
+                    , ex.getMessage()));
+        } else {
+            logger.error(IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT);
         }
     }
 

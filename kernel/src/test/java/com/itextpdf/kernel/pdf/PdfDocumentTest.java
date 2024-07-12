@@ -587,7 +587,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate =
-            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT))
+            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE))
     public void rootCannotBeReferenceFromTrailerTest() throws IOException {
         String filename = SOURCE_FOLDER + "rootCannotBeReferenceFromTrailerTest.pdf";
         PdfReader corruptedReader = new PdfReader(filename);

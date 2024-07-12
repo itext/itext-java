@@ -60,7 +60,8 @@ public class PdfXrefTableTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT, logLevel = LogLevelConstants.ERROR)
+            @LogMessage(messageTemplate = IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE
+                    , logLevel = LogLevelConstants.ERROR)
     })
     public void openInvalidDocWithHugeRefTest() {
         String inputFile = SOURCE_FOLDER + "invalidDocWithHugeRef.pdf";
@@ -74,7 +75,8 @@ public class PdfXrefTableTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT, logLevel = LogLevelConstants.ERROR)
+            @LogMessage(messageTemplate = IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE
+                    , logLevel = LogLevelConstants.ERROR)
     })
     public void openInvalidDocWithHugeRefTestDefaultMemoryLimitAwareHandler() {
         String inputFile = SOURCE_FOLDER + "invalidDocWithHugeRef.pdf";
@@ -84,7 +86,8 @@ public class PdfXrefTableTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT, logLevel = LogLevelConstants.ERROR)
+            @LogMessage(messageTemplate = IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE
+                    , logLevel = LogLevelConstants.ERROR)
     })
     public void openWithWriterInvalidDocWithHugeRefTest() {
         String inputFile = SOURCE_FOLDER + "invalidDocWithHugeRef.pdf";

@@ -182,7 +182,7 @@ public class PdfObjectTest extends ExtendedITextTest {
     @LogMessages(messages = {
             @LogMessage(messageTemplate = IoLogMessageConstant.FLUSHED_OBJECT_CONTAINS_REFERENCE_WHICH_NOT_REFER_TO_ANY_OBJECT),
             @LogMessage(messageTemplate = IoLogMessageConstant.INDIRECT_REFERENCE_USED_IN_FLUSHED_OBJECT_MADE_FREE),
-            @LogMessage(messageTemplate = IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT)
+            @LogMessage(messageTemplate = IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE)
     })
         public void pdtIndirectReferenceLateInitializing2() throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

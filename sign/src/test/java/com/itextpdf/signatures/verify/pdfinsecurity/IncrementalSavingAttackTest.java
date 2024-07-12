@@ -55,7 +55,7 @@ public class IncrementalSavingAttackTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT))
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE))
     public void testISA03() throws IOException, GeneralSecurityException {
         String filePath = sourceFolder + "isa-3.pdf";
         String signatureName = "Signature1";

@@ -208,7 +208,7 @@ public final class KernelExceptionMessageConstant {
     public static final String INCORRECT_NUMBER_OF_COMPONENTS = "Incorrect number of components.";
     public static final String INVALID_CROSS_REFERENCE_ENTRY_IN_THIS_XREF_SUBSECTION = "Invalid cross reference entry "
             + "in this xref subsection.";
-    public static final String INVALID_INDIRECT_REFERENCE = "Invalid indirect reference {0}.";
+    public static final String INVALID_INDIRECT_REFERENCE = "Invalid indirect reference {0} {1} R.";
 
     public static final String INVALID_INPUT_FOR_TYPE_2_FUNCTION =
             "Invalid input value for PDF Type 2 Function, value should be a single number.";

@@ -804,8 +804,8 @@ public class PdfReaderTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate =
-            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT, count = 1))
+    @LogMessages(messages = @LogMessage(
+            messageTemplate = IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE, count = 1))
     public void correctSimpleDoc1() throws IOException {
         String filename = SOURCE_FOLDER + "correctSimpleDoc1.pdf";
 
@@ -841,7 +841,7 @@ public class PdfReaderTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate =
-            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT, count = 1))
+            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE, count = 1))
     public void correctSimpleDoc3() throws IOException {
         String filename = SOURCE_FOLDER + "correctSimpleDoc3.pdf";
 
@@ -860,7 +860,7 @@ public class PdfReaderTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT),
+            @LogMessage(messageTemplate = IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE),
             @LogMessage(messageTemplate = IoLogMessageConstant.INVALID_INDIRECT_REFERENCE),
     })
     public void correctSimpleDoc4() throws IOException {
@@ -881,7 +881,7 @@ public class PdfReaderTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate =
-            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT))
+            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE))
     public void fixPdfTest01() throws IOException {
         String filename = SOURCE_FOLDER + "OnlyTrailer.pdf";
 
@@ -961,7 +961,7 @@ public class PdfReaderTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate =
-            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT))
+            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE))
     public void fixPdfTest05() throws IOException {
         String filename = SOURCE_FOLDER + "CompressionWrongShift.pdf";
 
@@ -1016,7 +1016,7 @@ public class PdfReaderTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate =
-            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT))
+            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE))
     public void fixPdfTest08() throws IOException {
         String filename = SOURCE_FOLDER + "XRefSectionWithFreeReferences2.pdf";
 
@@ -1042,7 +1042,7 @@ public class PdfReaderTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate =
-            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT))
+            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE))
     public void fixPdfTest09() throws IOException {
         String filename = SOURCE_FOLDER + "XRefSectionWithFreeReferences3.pdf";
 
@@ -1095,7 +1095,7 @@ public class PdfReaderTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate =
-            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT))
+            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE))
     public void fixPdfTest11() throws IOException {
         String filename = SOURCE_FOLDER + "XRefSectionWithoutSize.pdf";
 
@@ -1117,7 +1117,7 @@ public class PdfReaderTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate =
-            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT))
+            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE))
     public void fixPdfTest12() throws IOException {
         String filename = SOURCE_FOLDER + "XRefWithBreaks.pdf";
 
@@ -1208,7 +1208,7 @@ public class PdfReaderTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate =
-            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT))
+            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE))
     public void fixPdfTest15() throws IOException {
         String filename = SOURCE_FOLDER + "XRefWithInvalidGenerations3.pdf";
 
@@ -1252,7 +1252,7 @@ public class PdfReaderTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate =
-            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT))
+            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE))
     public void fixPdfTest17() throws IOException {
         String filename = SOURCE_FOLDER + "XrefWithNullOffsets.pdf";
 
@@ -1274,7 +1274,7 @@ public class PdfReaderTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate =
-            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT))
+            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE))
     public void fixPdfTest18() throws IOException {
         String filename = SOURCE_FOLDER + "noXrefAndTrailerWithInfo.pdf";
 
@@ -1388,7 +1388,7 @@ public class PdfReaderTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate =
-            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT))
+            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE))
     public void appendModeWith10PagesFix1() throws IOException {
         String filename = SOURCE_FOLDER + "10PagesDocumentAppendedFix1.pdf";
 
@@ -1415,7 +1415,7 @@ public class PdfReaderTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate =
-            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT))
+            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE))
     public void appendModeWith10PagesFix2() throws IOException {
         String filename = SOURCE_FOLDER + "10PagesDocumentAppendedFix2.pdf";
 
@@ -1693,7 +1693,7 @@ public class PdfReaderTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.INVALID_INDIRECT_REFERENCE, count = 1),
-            @LogMessage(messageTemplate = IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT),
+            @LogMessage(messageTemplate = IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE),
             @LogMessage(messageTemplate = IoLogMessageConstant.ENCOUNTERED_INVALID_MCR)})
     public void wrongTagStructureFlushingTest() throws IOException {
         //wrong /Pg number
@@ -2165,7 +2165,7 @@ public class PdfReaderTest extends ExtendedITextTest {
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = KernelExceptionMessageConstant.UNEXPECTED_TOKEN),
-            @LogMessage(messageTemplate = IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT)
+            @LogMessage(messageTemplate = IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE)
     })
     public void nameInsteadOfArrayClosingBracketTest() throws IOException {
         String fileName = SOURCE_FOLDER + "invalidArrayNameToken.pdf";
@@ -2222,7 +2222,7 @@ public class PdfReaderTest extends ExtendedITextTest {
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = KernelExceptionMessageConstant.UNEXPECTED_TOKEN),
-            @LogMessage(messageTemplate = IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT)
+            @LogMessage(messageTemplate = IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE)
     })
     public void stringInsteadOfArrayClosingBracketTest() throws IOException {
         String fileName = SOURCE_FOLDER + "invalidArrayStringToken.pdf";
@@ -2354,7 +2354,7 @@ public class PdfReaderTest extends ExtendedITextTest {
     }
 
     @LogMessages(messages = @LogMessage(messageTemplate =
-            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT))
+            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE))
     @Test
     public void exactLimitOfObjectNrSizeTest() throws IOException {
         String fileName = SOURCE_FOLDER + "exactLimitOfObjectNr.pdf";
@@ -2369,7 +2369,7 @@ public class PdfReaderTest extends ExtendedITextTest {
     }
 
     @LogMessages(messages = @LogMessage(messageTemplate =
-            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT))
+            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE))
     @Test
     public void justBeforeLimitOfObjectNrSizeTest() throws IOException, InterruptedException {
         String inputFile = SOURCE_FOLDER + "justBeforeLimitOfObjectNr.pdf";
@@ -2412,7 +2412,7 @@ public class PdfReaderTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate =
-            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT, count = 1))
+            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE, count = 1))
     public void xrefTablesHaveCycledReferencesTest() throws IOException {
         String fileName = SOURCE_FOLDER + "cycledReferencesInXrefTables.pdf";
 
@@ -2426,7 +2426,7 @@ public class PdfReaderTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate =
-            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT, count = 1))
+            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE, count = 1))
     public void xrefTablePointsItselfTest() throws IOException {
         String fileName = SOURCE_FOLDER + "xrefTablePointsItself.pdf";
 
@@ -2718,7 +2718,7 @@ public class PdfReaderTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate =
-            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT, count = 1))
+            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE, count = 1))
     public void invalidXrefTableRebuildsCorrectlyWhenTrailerIsBeforeObjects() throws IOException {
         // when a pdf is Linearized the following can occur:
         // xref table
@@ -2861,6 +2861,42 @@ public class PdfReaderTest extends ExtendedITextTest {
                     final PdfDocument document = new PdfDocument(reader);) {
             }
         });
+    }
+
+    @LogMessages(messages = @LogMessage(messageTemplate =
+            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE))
+    @Test
+    public void incorrectFilePositionInSubsectionCauseTest() throws IOException {
+        PdfReader pdfReader = new PdfReader(SOURCE_FOLDER + "incorrectFilePositionInSubsection.pdf").setStrictnessLevel(StrictnessLevel.LENIENT);
+        new PdfDocument(pdfReader);
+        Assert.assertTrue("Need rebuildXref()", pdfReader.hasRebuiltXref());
+    }
+
+    @LogMessages(messages = @LogMessage(messageTemplate =
+            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE))
+    @Test
+    public void noSubsectionCauseTest() throws IOException {
+        PdfReader pdfReader = new PdfReader(SOURCE_FOLDER + "noSubsection.pdf").setStrictnessLevel(StrictnessLevel.LENIENT);
+        new PdfDocument(pdfReader);
+        Assert.assertTrue("Need rebuildXref()", pdfReader.hasRebuiltXref());
+    }
+
+    @LogMessages(messages = @LogMessage(messageTemplate =
+            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE))
+    @Test
+    public void invalidRefCauseXrefRebuildTest() throws IOException {
+        PdfReader pdfReader = new PdfReader(SOURCE_FOLDER + "invalidRefCauseXrefRebuild.pdf").setStrictnessLevel(StrictnessLevel.LENIENT);
+        new PdfDocument(pdfReader);
+        Assert.assertTrue("Need rebuildXref()", pdfReader.hasRebuiltXref());
+    }
+
+    @LogMessages(messages = @LogMessage(messageTemplate =
+            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE))
+    @Test
+    public void startxrefNotFoundCauseTest() throws IOException {
+        PdfReader pdfReader = new PdfReader(SOURCE_FOLDER + "startxrefNotFound.pdf").setStrictnessLevel(StrictnessLevel.LENIENT);
+        new PdfDocument(pdfReader);
+        Assert.assertTrue("Need rebuildXref()", pdfReader.hasRebuiltXref());
     }
 
     private static PdfDictionary getTestPdfDictionary() {

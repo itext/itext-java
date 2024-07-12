@@ -481,8 +481,11 @@ public final class IoLogMessageConstant {
     public static final String XOBJECT_HAS_NO_STRUCT_PARENTS = "XObject has no StructParents entry in its stream, no "
             + "entry in ParentTree will be created for the corresponding structure elements";
 
-    public static final String XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT =
-            "Error occurred while reading cross reference table. Cross reference table will be rebuilt.";
+    public static final String XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT = "Error occurred while " +
+            "reading cross reference table. Cross reference table will be rebuilt. No additional information available";
+
+    public static final String XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE = "Error occurred while " +
+            "reading cross reference table. Cross reference table will be rebuilt. Reason: {0}";
 
     private IoLogMessageConstant() {
         //Private constructor will prevent the instantiation of this class directly
