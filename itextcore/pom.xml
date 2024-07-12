@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.itextpdf</groupId>
   <artifactId>itext-core</artifactId>
-  <version>8.0.5-SNAPSHOT</version>
+  <version>8.0.6-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>iText Core</name>
   <description>A Free Java-PDF library</description>

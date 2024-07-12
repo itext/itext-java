@@ -30,7 +30,7 @@ import com.itextpdf.commons.actions.ProductNameConstant;
  */
 public final class ITextCoreProductData {
     private static final String CORE_PUBLIC_PRODUCT_NAME = "Core";
-    private static final String CORE_VERSION = "8.0.5-SNAPSHOT";
+    private static final String CORE_VERSION = "8.0.6-SNAPSHOT";
     private static final int CORE_COPYRIGHT_SINCE = 2000;
     private static final int CORE_COPYRIGHT_TO = 2024;
 
