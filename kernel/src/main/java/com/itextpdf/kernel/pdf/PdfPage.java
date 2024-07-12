@@ -1257,9 +1257,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
                 getDocument().getTagStructureContext().flushPageTags(this);
             }
             getDocument().getStructTreeRoot().savePageStructParentIndexIfNeeded(this);
-        } catch (Exception ex) {
+        } catch (Exception e) {
             throw new PdfException(
-                    KernelExceptionMessageConstant.TAG_STRUCTURE_FLUSHING_FAILED_IT_MIGHT_BE_CORRUPTED, ex);
+                    KernelExceptionMessageConstant.TAG_STRUCTURE_FLUSHING_FAILED_IT_MIGHT_BE_CORRUPTED, e);
         }
     }
 

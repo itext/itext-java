@@ -262,8 +262,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outPdf,
                 SOURCE_FOLDER + "cmp_01_005_TextGlyphLineContentIsArtifact.pdf",
                 DESTINATION_FOLDER, "diff_"));
-        Assert.assertNull(new VeraPdfValidator().validate(
-                outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
     @Test

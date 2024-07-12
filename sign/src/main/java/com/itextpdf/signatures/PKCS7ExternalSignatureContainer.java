@@ -37,6 +37,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Implementation class for {@link IExternalSignatureContainer}.
+ * This external signature container is implemented based on PCS7 standard and {@link PdfPKCS7} class.
+ */
 public class PKCS7ExternalSignatureContainer implements IExternalSignatureContainer {
 
     private final Certificate[] chain;
@@ -61,6 +65,15 @@ public class PKCS7ExternalSignatureContainer implements IExternalSignatureContai
         this.privateKey = privateKey;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param data {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     *
+     * @throws GeneralSecurityException {@inheritDoc}
+     */
     @Override
     public byte[] sign(InputStream data) throws GeneralSecurityException {
         PdfPKCS7 sgn = new PdfPKCS7((PrivateKey) null, chain, hashAlgorithm, null, new BouncyCastleDigest(), false);
@@ -106,6 +119,11 @@ public class PKCS7ExternalSignatureContainer implements IExternalSignatureContai
         return sgn.getEncodedPKCS7(hash, sigType, tsaClient, ocspList, crlBytes);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param signDic {@inheritDoc}
+     */
     @Override
     public void modifySigningDictionary(PdfDictionary signDic) {
         signDic.put(PdfName.Filter, PdfName.Adobe_PPKLite);
@@ -158,5 +176,4 @@ public class PKCS7ExternalSignatureContainer implements IExternalSignatureContai
     public void setSignatureType(PdfSigner.CryptoStandard sigType) {
         this.sigType = sigType;
     }
-
 }

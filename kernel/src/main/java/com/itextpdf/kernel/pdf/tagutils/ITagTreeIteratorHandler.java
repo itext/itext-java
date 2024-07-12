@@ -36,5 +36,4 @@ public interface ITagTreeIteratorHandler {
      * @param elem the next element
      */
     void nextElement(IStructureNode elem);
-
 }

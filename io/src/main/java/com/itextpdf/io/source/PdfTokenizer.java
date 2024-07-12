@@ -259,7 +259,9 @@ public class PdfTokenizer implements Closeable {
                 // 6 stands for '%%EOF' length + 1
                 return currentPosition + eofPosition + 6;
             }
-        } while (!str.isEmpty());
+            // Change current position to ensure '%%EOF' is not cut in half.
+            file.seek(file.getPosition() - 4);
+        } while (str.length() > 4);
         throw new IOException(IoExceptionMessageConstant.PDF_EOF_NOT_FOUND, this);
     }
 

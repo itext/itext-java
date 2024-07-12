@@ -22,6 +22,7 @@
  */
 package com.itextpdf.layout;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.UrlUtil;
@@ -39,8 +40,8 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import org.junit.Assert;
@@ -173,8 +174,8 @@ public class ListAlignmentDirectionTest extends ExtendedITextTest {
                 formatBaseDirection(itemBaseDirection),
                 formatTextAlignment(listTextAlignment, true),
                 formatBaseDirection(listBaseDirection));
-        try (FileOutputStream htmlFile =
-                new FileOutputStream(DESTINATION_FOLDER + fileName + ".html")) {
+        try (OutputStream htmlFile =
+                FileUtil.getFileOutputStream(DESTINATION_FOLDER + fileName + ".html")) {
             byte[] htmlBytes = htmlString.getBytes(StandardCharsets.UTF_8);
             htmlFile.write(htmlBytes, 0, htmlBytes.length);
         }

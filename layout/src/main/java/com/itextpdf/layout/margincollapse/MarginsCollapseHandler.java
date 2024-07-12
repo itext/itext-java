@@ -22,10 +22,11 @@
  */
 package com.itextpdf.layout.margincollapse;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.IPropertyContainer;
+import com.itextpdf.layout.properties.ContinuousContainer;
 import com.itextpdf.layout.properties.FloatPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
@@ -33,14 +34,15 @@ import com.itextpdf.layout.renderer.AbstractRenderer;
 import com.itextpdf.layout.renderer.BlockFormattingContextUtil;
 import com.itextpdf.layout.renderer.BlockRenderer;
 import com.itextpdf.layout.renderer.CellRenderer;
+import com.itextpdf.layout.renderer.GridContainerRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.LineRenderer;
 import com.itextpdf.layout.renderer.TableRenderer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Rules of the margins collapsing are taken from Mozilla Developer Network:
@@ -227,7 +229,9 @@ public class MarginsCollapseHandler {
         }
 
         MarginsCollapse ownCollapseAfter;
-        boolean lastChildMarginJoinedToParent = prevChildMarginInfo != null && prevChildMarginInfo.isIgnoreOwnMarginBottom() && !lastKidCollapsedAfterHasClearanceApplied;
+        final boolean lastChildMarginJoinedToParent = prevChildMarginInfo != null
+                && prevChildMarginInfo.isIgnoreOwnMarginBottom()
+                && !lastKidCollapsedAfterHasClearanceApplied;
         if (lastChildMarginJoinedToParent) {
             ownCollapseAfter = prevChildMarginInfo.getOwnCollapseAfter();
         } else {
@@ -486,7 +490,10 @@ public class MarginsCollapseHandler {
     }
 
     private static boolean isBlockElement(IRenderer renderer) {
-        return renderer instanceof BlockRenderer || renderer instanceof TableRenderer;
+        // GridContainerRenderer is inherited from BlockRenderer but only not to copy/paste some overloads.
+        // It doesn't use BlockRenderer#layout internally.
+        return (renderer instanceof BlockRenderer || renderer instanceof TableRenderer)
+                && !(renderer instanceof GridContainerRenderer);
     }
 
     private static boolean hasHeightProp(IRenderer renderer) {
@@ -569,6 +576,10 @@ public class MarginsCollapseHandler {
 
     private static void overrideModelBottomMargin(IRenderer renderer, float collapsedMargins) {
         MarginsCollapseHandler.overrideModelMargin(renderer, Property.MARGIN_BOTTOM, collapsedMargins);
+        if (renderer.hasProperty(Property.TREAT_AS_CONTINUOUS_CONTAINER_RESULT)) {
+            ContinuousContainer continuousContainer = renderer.<ContinuousContainer>getProperty(Property.TREAT_AS_CONTINUOUS_CONTAINER_RESULT);
+            continuousContainer.updateValueOfSavedProperty(Property.MARGIN_BOTTOM, UnitValue.createPointValue(collapsedMargins));
+        }
     }
 
     private static float defineMarginValueForCollapse(IRenderer renderer, int property) {

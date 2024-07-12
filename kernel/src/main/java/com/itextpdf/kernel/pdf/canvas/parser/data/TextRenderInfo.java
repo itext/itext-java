@@ -135,23 +135,23 @@ public class TextRenderInfo extends AbstractRenderInfo {
     }
 
     /**
-     * Checks if the text belongs to a marked content sequence
+     * Checks if this {@link TextRenderInfo} instance belongs to a marked content sequence
      * with a given mcid.
      *
      * @param mcid a marked content id
-     * @return true if the text is marked with this id
+     * @return {@code true} if this {@link TextRenderInfo} instance is marked with this id, {@code false} otherwise
      */
     public boolean hasMcid(int mcid) {
         return hasMcid(mcid, false);
     }
 
     /**
-     * Checks if the text belongs to a marked content sequence
+     * Checks if this {@link TextRenderInfo} instance belongs to a marked content sequence
      * with a given mcid.
      *
      * @param mcid                     a marked content id
      * @param checkTheTopmostLevelOnly indicates whether to check the topmost level of marked content stack only
-     * @return true if the text is marked with this id
+     * @return {@code true} if this {@link TextRenderInfo} instance is marked with this id, {@code false} otherwise
      */
     public boolean hasMcid(int mcid, boolean checkTheTopmostLevelOnly) {
         if (checkTheTopmostLevelOnly) {

@@ -27,6 +27,9 @@ import com.itextpdf.kernel.pdf.PdfName;
 import java.util.HashMap;
 import java.util.function.Supplier;
 
+/**
+ * Helper class to retrieve the annotation flatten worker for the specified annotation subtype.
+ */
 public class PdfAnnotationFlattenFactory {
     private static final HashMap<PdfName, Supplier<IAnnotationFlattener>> map;
     private static final PdfName UNKNOWN = new PdfName("Unknown");
@@ -62,7 +65,6 @@ public class PdfAnnotationFlattenFactory {
         // To allow for the unknown subtype
         map.put(UNKNOWN, () -> new NotSupportedFlattener());
     }
-
 
     /**
      * Creates a new {@link PdfAnnotationFlattenFactory} instance.

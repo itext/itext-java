@@ -22,13 +22,14 @@
  */
 package com.itextpdf.io.image;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -297,7 +298,7 @@ public class PngTest extends ExtendedITextTest {
 
     @Test
     public void sRGBImageTest() throws IOException {
-        try (FileInputStream fis = new FileInputStream(sourceFolder + "sRGBImage.png")) {
+        try (InputStream fis = FileUtil.getInputStreamForFile(sourceFolder + "sRGBImage.png")) {
             byte[] imageBytes = StreamUtil.inputStreamToArray(fis);
             // Test a more specific entry point
             ImageData img = ImageDataFactory.createPng(imageBytes);

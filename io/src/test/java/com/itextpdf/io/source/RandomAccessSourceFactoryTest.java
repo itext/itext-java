@@ -22,11 +22,11 @@
  */
 package com.itextpdf.io.source;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import org.junit.Assert;
@@ -41,7 +41,7 @@ public class RandomAccessSourceFactoryTest extends ExtendedITextTest {
     @Test
     public void readRASInputStreamClosedTest() throws IOException {
         String fileName = SOURCE_FILE;
-        try (InputStream pdfStream = new FileInputStream(fileName)) {
+        try (InputStream pdfStream = FileUtil.getInputStreamForFile(fileName)) {
 
             IRandomAccessSource randomAccessSource = new RandomAccessSourceFactory()
                     .extractOrCreateSource(pdfStream);
@@ -69,7 +69,7 @@ public class RandomAccessSourceFactoryTest extends ExtendedITextTest {
     @Test
     public void readRASInputStreamTest() throws IOException {
         String fileName = SOURCE_FILE;
-        try (InputStream pdfStream = new FileInputStream(fileName)) {
+        try (InputStream pdfStream = FileUtil.getInputStreamForFile(fileName)) {
             IRandomAccessSource randomAccessSource = new RandomAccessSourceFactory()
                     .extractOrCreateSource(pdfStream);
             RASInputStream rasInputStream = new RASInputStream(randomAccessSource);

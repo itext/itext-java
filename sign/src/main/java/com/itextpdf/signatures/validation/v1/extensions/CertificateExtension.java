@@ -40,7 +40,7 @@ public class CertificateExtension {
     /**
      * Create new instance of {@link CertificateExtension} using provided extension OID and value.
      *
-     * @param extensionOid {@link String}, which represents extension OID
+     * @param extensionOid   {@link String}, which represents extension OID
      * @param extensionValue {@link IASN1Primitive}, which represents extension value
      */
     public CertificateExtension(String extensionOid, IASN1Primitive extensionValue) {
@@ -80,7 +80,7 @@ public class CertificateExtension {
         IASN1Primitive providedExtensionValue;
         try {
             providedExtensionValue = CertificateUtil.getExtensionValue(certificate, extensionOid);
-        } catch (IOException e) {
+        } catch (IOException | RuntimeException e) {
             return false;
         }
         return Objects.equals(providedExtensionValue, extensionValue);
@@ -88,14 +88,18 @@ public class CertificateExtension {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         CertificateExtension that = (CertificateExtension) o;
         return Objects.equals(extensionOid, that.extensionOid) && Objects.equals(extensionValue, that.extensionValue);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash((Object)extensionOid, extensionValue);
+        return Objects.hash((Object) extensionOid, extensionValue);
     }
 }

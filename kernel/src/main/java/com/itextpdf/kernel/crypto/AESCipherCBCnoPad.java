@@ -27,13 +27,10 @@ import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import javax.crypto.Cipher;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.security.GeneralSecurityException;
 
 /**
  * Creates an AES Cipher with CBC and no padding.
@@ -44,21 +41,7 @@ public class AESCipherCBCnoPad {
 
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
-    private static Cipher cipher;
-    
-    static {
-        try {
-            if ("BC".equals(BOUNCY_CASTLE_FACTORY.getProviderName())) {
-                // Do not pass bc provider and use default one here not to require bc provider for this functionality
-                // Do not use bc provider in kernel
-                cipher = Cipher.getInstance(CIPHER_WITHOUT_PADDING);
-            } else {
-                cipher = Cipher.getInstance(CIPHER_WITHOUT_PADDING, BOUNCY_CASTLE_FACTORY.getProvider());
-            }
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
-            throw new PdfException(KernelExceptionMessageConstant.ERROR_WHILE_INITIALIZING_AES_CIPHER, e);
-        }
-    }
+    private final Cipher cipher;
 
     /**
      * Creates a new instance of AESCipher with CBC and no padding
@@ -81,10 +64,17 @@ public class AESCipherCBCnoPad {
      */
     public AESCipherCBCnoPad(boolean forEncryption, byte[] key, byte[] initVector) {
         try {
+            if ("BC".equals(BOUNCY_CASTLE_FACTORY.getProviderName())) {
+                // Do not pass bc provider and use default one here not to require bc provider for this functionality
+                // Do not use bc provider in kernel
+                cipher = Cipher.getInstance(CIPHER_WITHOUT_PADDING);
+            } else {
+                cipher = Cipher.getInstance(CIPHER_WITHOUT_PADDING, BOUNCY_CASTLE_FACTORY.getProvider());
+            }
             cipher.init(forEncryption ? Cipher.ENCRYPT_MODE : Cipher.DECRYPT_MODE,
                     new SecretKeySpec(key, "AES"),
                     new IvParameterSpec(initVector));
-        } catch (InvalidKeyException | InvalidAlgorithmParameterException e) {
+        } catch (GeneralSecurityException e) {
             throw new PdfException(KernelExceptionMessageConstant.ERROR_WHILE_INITIALIZING_AES_CIPHER, e);
         }
     }

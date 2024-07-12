@@ -50,7 +50,6 @@ import java.security.SecureRandom;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -105,8 +104,8 @@ final class EncryptionUtils {
         IX509CertificateHolder certHolder;
         try {
             certHolder = BOUNCY_CASTLE_FACTORY.createX509CertificateHolder(certificate.getEncoded());
-        } catch (Exception f) {
-            throw new PdfException(KernelExceptionMessageConstant.PDF_DECRYPTION, f);
+        } catch (Exception e) {
+            throw new PdfException(KernelExceptionMessageConstant.PDF_DECRYPTION, e);
         }
         if (externalDecryptionProcess == null) {
             for (int i = 0; i < recipients.size(); i++) {
@@ -114,23 +113,19 @@ final class EncryptionUtils {
                 ICMSEnvelopedData data;
                 try {
                     data = BOUNCY_CASTLE_FACTORY.createCMSEnvelopedData(recipient.getValueBytes());
-                    Iterator<IRecipientInformation> recipientCertificatesIt =
-                            data.getRecipientInfos().getRecipients().iterator();
-                    while (recipientCertificatesIt.hasNext()) {
-                        IRecipientInformation recipientInfo = recipientCertificatesIt.next();
-
+                    for (IRecipientInformation recipientInfo : data.getRecipientInfos().getRecipients()) {
                         if (recipientInfo.getRID().match(certHolder) && !foundRecipient) {
                             envelopedData = PdfEncryptor.getContent(recipientInfo, (PrivateKey) certificateKey,
                                     certificateKeyProvider);
                             foundRecipient = true;
                         }
                     }
-                } catch (Exception f) {
+                } catch (Exception e) {
                     // First check if the feature is supported, it will throw if not
                     // Exact algorithm doesn't matter currently
                     BouncyCastleFactoryCreator.getFactory().isEncryptionFeatureSupported(0, true);
                     // Throw the original exception if the feature is supported
-                    throw new PdfException(KernelExceptionMessageConstant.PDF_DECRYPTION, f);
+                    throw new PdfException(KernelExceptionMessageConstant.PDF_DECRYPTION, e);
                 }
             }
         } else {

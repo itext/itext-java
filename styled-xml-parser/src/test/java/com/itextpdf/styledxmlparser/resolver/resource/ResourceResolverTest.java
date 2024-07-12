@@ -22,6 +22,7 @@
  */
 package com.itextpdf.styledxmlparser.resolver.resource;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 import com.itextpdf.styledxmlparser.exceptions.ReadingByteLimitException;
 import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
@@ -135,7 +136,7 @@ public class ResourceResolverTest extends ExtendedITextTest {
     public void malformedResourceNameWithoutSharpSymbolTest07() throws IOException {
         String fileName = "%5B%5D@!$&'()+,;=._~-/styles09.css";
 
-        InputStream expected = new FileInputStream(baseUri + "[]@!$&'()+,;=._~-/styles09.css");
+        InputStream expected = FileUtil.getInputStreamForFile(baseUri + "[]@!$&'()+,;=._~-/styles09.css");
 
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
         InputStream stream = resourceResolver.retrieveResourceAsInputStream(fileName);
@@ -149,7 +150,7 @@ public class ResourceResolverTest extends ExtendedITextTest {
     public void malformedResourceNameTest07() throws IOException {
         String fileName = "%23%5B%5D@!$&'()+,;=._~-/styles09.css";
 
-        InputStream expected = new FileInputStream(baseUri + "#[]@!$&'()+,;=._~-/styles09.css");
+        InputStream expected = FileUtil.getInputStreamForFile(baseUri + "#[]@!$&'()+,;=._~-/styles09.css");
 
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
         InputStream stream = resourceResolver.retrieveResourceAsInputStream(fileName);
@@ -367,7 +368,7 @@ public class ResourceResolverTest extends ExtendedITextTest {
     @Test
     public void retrieveStyleSheetTest() throws IOException {
         String fileName = "retrieveStyleSheetTest.css";
-        InputStream expected = new FileInputStream(baseUri + fileName);
+        InputStream expected = FileUtil.getInputStreamForFile(baseUri + fileName);
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
         InputStream stream = resourceResolver.retrieveResourceAsInputStream(fileName);
         Assert.assertNotNull(stream);
@@ -377,7 +378,7 @@ public class ResourceResolverTest extends ExtendedITextTest {
     @Test
     public void retrieveResourceAsInputStreamStyleSheetTest() throws IOException {
         String fileName = "retrieveStyleSheetTest.css";
-        InputStream expected = new FileInputStream(baseUri + fileName);
+        InputStream expected = FileUtil.getInputStreamForFile(baseUri + fileName);
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
         InputStream stream = resourceResolver.retrieveResourceAsInputStream(fileName);
         Assert.assertNotNull(stream);
@@ -405,7 +406,7 @@ public class ResourceResolverTest extends ExtendedITextTest {
     public void retrieveInputStreamWithRetryRetrieverTest() throws IOException {
         String fileName = "!invalid! StyleSheetName.css";
         ResourceResolver resourceResolver = new ResourceResolver(baseUri, new RetryResourceRetriever(baseUri));
-        InputStream expected = new FileInputStream(baseUri + "retrieveStyleSheetTest.css");
+        InputStream expected = FileUtil.getInputStreamForFile(baseUri + "retrieveStyleSheetTest.css");
         InputStream stream = resourceResolver.retrieveResourceAsInputStream(fileName);
         Assert.assertNotNull(stream);
         Assert.assertEquals(expected.read(), stream.read());
@@ -443,7 +444,7 @@ public class ResourceResolverTest extends ExtendedITextTest {
 
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
         try (InputStream stream = resourceResolver.retrieveResourceAsInputStream(absolutePath);
-                InputStream expected = new FileInputStream(absolutePath);) {
+                InputStream expected = FileUtil.getInputStreamForFile(absolutePath);) {
             Assert.assertNotNull(stream);
             Assert.assertEquals(expected.read(), stream.read());
         }
@@ -456,7 +457,7 @@ public class ResourceResolverTest extends ExtendedITextTest {
 
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
         try (InputStream stream = resourceResolver.retrieveResourceAsInputStream(absolutePath);
-                InputStream expected = new FileInputStream(absolutePath);) {
+                InputStream expected = FileUtil.getInputStreamForFile(absolutePath);) {
             Assert.assertNotNull(stream);
             Assert.assertEquals(expected.read(), stream.read());
         }

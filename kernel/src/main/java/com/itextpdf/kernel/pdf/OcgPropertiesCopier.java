@@ -67,8 +67,8 @@ final class OcgPropertiesCopier {
 
             OcgPropertiesCopier.copyDDictionary(fromOcgsToCopy, fromOcProperties.getAsDictionary(PdfName.D),
                     toOcProperties, toDocument);
-        } catch (Exception ex) {
-            LOGGER.error(MessageFormatUtil.format(IoLogMessageConstant.OCG_COPYING_ERROR, ex.toString()));
+        } catch (Exception e) {
+            LOGGER.error(MessageFormatUtil.format(IoLogMessageConstant.OCG_COPYING_ERROR, e.toString()));
         }
     }
 

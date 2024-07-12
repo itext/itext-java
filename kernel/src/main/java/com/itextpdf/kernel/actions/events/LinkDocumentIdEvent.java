@@ -33,7 +33,7 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 
 /**
- * An event allows to associated some {@link SequenceId} with {@link PdfDocument}.
+ * An event allows to associate some {@link SequenceId} with {@link PdfDocument}.
  */
 public final class LinkDocumentIdEvent extends AbstractITextConfigurationEvent {
     private final WeakReference<PdfDocument> document;

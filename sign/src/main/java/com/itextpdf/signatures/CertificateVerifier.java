@@ -34,7 +34,11 @@ import java.util.List;
  * be used in a chain. It wraps another <code>CertificateVerifier</code>
  * that is the next element in the chain of which the <code>verify()</code>
  * method will be called.
+ *
+ * @deprecated starting from 8.0.5.
+ * {@link com.itextpdf.signatures.validation.v1.CertificateChainValidator} should be used instead.
  */
+@Deprecated
 public class CertificateVerifier {
 
     /** The previous CertificateVerifier in the chain of verifiers. */

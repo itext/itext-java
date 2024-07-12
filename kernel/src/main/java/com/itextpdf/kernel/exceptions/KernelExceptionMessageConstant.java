@@ -251,6 +251,8 @@ public final class KernelExceptionMessageConstant {
             "Invalid PDF Type 3 Function object, \"Functions\" array should exist and can't be empty.";
     public static final String INVALID_RANGE_ARRAY = "Invalid range array.";
     public static final String INVALID_OFFSET_FOR_THIS_OBJECT = "Invalid offset for object {0}.";
+    public static final String INVALID_OBJECT_REFERENCE_TYPE = "Object reference has unsupported type, " +
+            "supported types are dictionaries and streams";
     public static final String INVALID_XREF_STREAM = "Invalid xref stream.";
     public static final String INVALID_XREF_TABLE = "Invalid xref table.";
     public static final String IO_EXCEPTION = "I/O exception.";
@@ -321,8 +323,6 @@ public final class KernelExceptionMessageConstant {
     public static final String SHADING_TYPE_NOT_FOUND = "Shading type not found.";
     public static final String STDCF_NOT_FOUND_ENCRYPTION = "/StdCF not found (encryption)";
     public static final String STREAM_SHALL_END_WITH_ENDSTREAM = "Stream shall end with endstream keyword.";
-    @Deprecated
-    // Replaced with log message
     public static final String STRUCT_PARENT_INDEX_NOT_FOUND_IN_TAGGED_OBJECT = "StructParent index not found in "
             + "tagged object.";
     public static final String STRUCTURE_ELEMENT_IN_STRUCTURE_DESTINATION_SHALL_BE_AN_INDIRECT_OBJECT = "Structure "
@@ -387,6 +387,7 @@ public final class KernelExceptionMessageConstant {
     public static final String XREF_STRUCTURE_SIZE_EXCEEDED_THE_LIMIT = "Xref structure contains too many elements "
             + "and may cause OOM exception. You can increase number of elements by setting custom "
             + "MemoryLimitsAwareHandler.";
+    public static final String XOBJECT_STRUCT_PARENT_INDEX_MISSED = "XObject has no StructParents index in its stream.";
 
     public static final String TOTAL_XOBJECT_SIZE_ONE_PAGE_EXCEEDED_THE_LIMIT =
             "Pdf contains too many xObject elements on a page "
@@ -440,6 +441,10 @@ public final class KernelExceptionMessageConstant {
     public static final String XREF_HAS_AN_ENTRY_WITH_TOO_BIG_OFFSET = "Pdf document is to large to "
             + "use normal cross reference table. Use cross reference streams instead. To enable feature use com.itextpdf"
             + ".kernel.pdf.WriterProperties#setFullCompressionMode(true). ";
+    public static final String UNABLE_TO_READ_OBJECT_STREAM ="Unable to read object stream.";
+    public static final String UNABLE_TO_READ_STREAM_BYTES ="Unable to read stream bytes because stream is null.";
+    public static final String INVALID_OBJECT_STREAM_NUMBER = "Unable to read object {0} with object stream " +
+            "number {1} and index {2} from object stream.";
 
     private KernelExceptionMessageConstant() {
     }

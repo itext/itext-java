@@ -105,6 +105,11 @@ public class ReportItem {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
     @Override
     public String toString() {
         return "\nReportItem{" +

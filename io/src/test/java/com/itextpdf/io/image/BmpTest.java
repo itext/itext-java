@@ -22,13 +22,14 @@
  */
 package com.itextpdf.io.image;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -58,7 +59,7 @@ public class BmpTest extends ExtendedITextTest {
     @Test
     public void openBmp3() throws IOException {
         String imageFileName = sourceFolder + "WP_20140410_001_monochrome.bmp";
-        try (FileInputStream fis = new FileInputStream(imageFileName)) {
+        try (InputStream fis = FileUtil.getInputStreamForFile(imageFileName)) {
             byte[] imageBytes = StreamUtil.inputStreamToArray(fis);
             // Test this a more specific entry point
             ImageData img = ImageDataFactory.createBmp(imageBytes, false);

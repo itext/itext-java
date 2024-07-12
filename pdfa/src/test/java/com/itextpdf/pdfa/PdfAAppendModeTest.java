@@ -22,6 +22,7 @@
  */
 package com.itextpdf.pdfa;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
@@ -85,7 +86,7 @@ public class PdfAAppendModeTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(docName);
         PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1A,
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
-                        new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm")));
+                        FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm")));
         pdfDoc.setTagged();
         pdfDoc.getCatalog().setLang(new PdfString("en-US"));
         PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());

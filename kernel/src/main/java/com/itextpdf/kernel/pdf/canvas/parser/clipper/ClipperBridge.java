@@ -261,6 +261,26 @@ public final class ClipperBridge {
         return clipper.addPath(new Path(convertToLongPoints(new ArrayList<>(Arrays.asList(lineVertices)))), IClipper.PolyType.SUBJECT, false);
     }
 
+    /**
+     * Calculates the width of the rectangle represented by the {@link LongRect} object.
+     * @param rect the {@link LongRect} object representing the rectangle.
+     *
+     * @return the width of the rectangle.
+     */
+    public static float longRectCalculateWidth(LongRect rect) {
+        return (float) (Math.abs(rect.left - rect.right) / ClipperBridge.floatMultiplier);
+    }
+
+    /**
+     * Calculates the height of the rectangle represented by the {@link LongRect} object.
+     * @param rect the {@link LongRect} object representing the rectangle.
+     *
+     * @return the height of the rectangle.
+     */
+    public static float longRectCalculateHeight(LongRect rect) {
+        return (float) (Math.abs(rect.top - rect.bottom) / ClipperBridge.floatMultiplier);
+    }
+
     static void addContour(com.itextpdf.kernel.geom.Path path, List<Point.LongPoint> contour, boolean close) {
         List<com.itextpdf.kernel.geom.Point> floatContour = convertToFloatPoints(contour);
         com.itextpdf.kernel.geom.Point point = floatContour.get(0);

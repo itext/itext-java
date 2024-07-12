@@ -28,6 +28,7 @@ import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationExcept
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.Base64;
 import com.itextpdf.commons.utils.DateTimeUtil;
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -44,14 +45,8 @@ import com.itextpdf.signatures.testutils.client.TestOcspClient;
 import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
@@ -60,6 +55,11 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(BouncyCastleUnitTest.class)
 public class PKCS7ExternalSignatureContainerTest extends ExtendedITextTest {
@@ -106,7 +106,7 @@ public class PKCS7ExternalSignatureContainerTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "testTroughPdfSigner.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_testTroughPdfSigner.pdf";
         PdfSigner pdfSigner = new PdfSigner(new PdfReader(createSimpleDocument()),
-                new FileOutputStream(outFileName), new StampingProperties());
+                FileUtil.getFileOutputStream(outFileName), new StampingProperties());
         PKCS7ExternalSignatureContainer pkcs7ExternalSignatureContainer = new PKCS7ExternalSignatureContainer(
                 pk, chain, DigestAlgorithms.SHA256);
         pdfSigner.signExternalContainer(pkcs7ExternalSignatureContainer, 12000);
@@ -119,7 +119,7 @@ public class PKCS7ExternalSignatureContainerTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "testTroughPdfSignerWithCrlClient.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_testTroughPdfSignerWithCrlClient.pdf";
         PdfSigner pdfSigner = new PdfSigner(new PdfReader(createSimpleDocument()),
-                new FileOutputStream(outFileName), new StampingProperties());
+                FileUtil.getFileOutputStream(outFileName), new StampingProperties());
         PKCS7ExternalSignatureContainer pkcs7ExternalSignatureContainer = new PKCS7ExternalSignatureContainer(
                 pk, chain, DigestAlgorithms.SHA256);
 
@@ -139,7 +139,7 @@ public class PKCS7ExternalSignatureContainerTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "testTroughPdfSignerWithOcspClient.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_testTroughPdfSignerWithOcspClient.pdf";
         PdfSigner pdfSigner = new PdfSigner(new PdfReader(createSimpleDocument()),
-                new FileOutputStream(outFileName), new StampingProperties());
+                FileUtil.getFileOutputStream(outFileName), new StampingProperties());
         PKCS7ExternalSignatureContainer pkcs7ExternalSignatureContainer = new PKCS7ExternalSignatureContainer(
                 pk, chain, DigestAlgorithms.SHA256);
 
@@ -160,7 +160,7 @@ public class PKCS7ExternalSignatureContainerTest extends ExtendedITextTest {
             cmpFileName = cmpFileName.replace(".pdf", "_FIPS.pdf");
         }
         PdfSigner pdfSigner = new PdfSigner(new PdfReader(createSimpleDocument()),
-                new FileOutputStream(outFileName), new StampingProperties());
+                FileUtil.getFileOutputStream(outFileName), new StampingProperties());
         PKCS7ExternalSignatureContainer pkcs7ExternalSignatureContainer = new PKCS7ExternalSignatureContainer(
                 pk, chain, DigestAlgorithms.SHA256);
         String tsaCertP12FileName = CERTS_SRC + "tsCertRsa.pem";
@@ -177,7 +177,7 @@ public class PKCS7ExternalSignatureContainerTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "testTroughPdfSignerWithCadesType.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_testTroughPdfSignerWithCadesType.pdf";
         PdfSigner pdfSigner = new PdfSigner(new PdfReader(createSimpleDocument()),
-                new FileOutputStream(outFileName), new StampingProperties());
+                FileUtil.getFileOutputStream(outFileName), new StampingProperties());
         PKCS7ExternalSignatureContainer pkcs7ExternalSignatureContainer = new PKCS7ExternalSignatureContainer(
                 pk, chain, DigestAlgorithms.SHA256);
         pkcs7ExternalSignatureContainer.setSignatureType(PdfSigner.CryptoStandard.CADES);
@@ -191,7 +191,7 @@ public class PKCS7ExternalSignatureContainerTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "testTroughPdfSignerWithSignaturePolicy.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_testTroughPdfSignerWithSignaturePolicy.pdf";
         PdfSigner pdfSigner = new PdfSigner(new PdfReader(createSimpleDocument()),
-                new FileOutputStream(outFileName), new StampingProperties());
+                FileUtil.getFileOutputStream(outFileName), new StampingProperties());
         PKCS7ExternalSignatureContainer pkcs7ExternalSignatureContainer = new PKCS7ExternalSignatureContainer(
                 pk, chain, DigestAlgorithms.SHA256);
         SignaturePolicyInfo policy = new SignaturePolicyInfo(POLICY_IDENTIFIER, POLICY_HASH, POLICY_DIGEST_ALGORITHM, POLICY_URI);

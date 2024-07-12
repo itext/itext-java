@@ -187,6 +187,7 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
+    //TODO DEVSIX-2079: change compare file after fix
     public void fontWeightTest() throws com.itextpdf.io.exceptions.IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "fontWeightTest");
     }
@@ -247,5 +248,10 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
     // TODO DEVSIX-4140 font-relative values doesn't support
     public void relativeStyleInheritanceTest() throws IOException,InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "relativeStyleInheritanceTest");
+    }
+
+    @Test
+    public void textTagNoFontSizeTest() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "textTagNoFontSize");
     }
 }

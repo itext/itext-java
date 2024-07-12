@@ -35,6 +35,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.security.cert.X509Certificate;
+import java.util.List;
 
 @Category(BouncyCastleUnitTest.class)
 public class CertificateUtilTest extends ExtendedITextTest {
@@ -79,5 +80,14 @@ public class CertificateUtilTest extends ExtendedITextTest {
         CRL crl = CertificateUtil.getCRL(tsaCert);
         
         Assert.assertNull(crl);
+    }
+
+    @Test
+    public void getCRLsFromCertificateWithoutCRLTest() throws IOException, CertificateException, CRLException {
+        X509Certificate tsaCert =
+                (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "rootRsa.pem")[0];
+        List<CRL> crls = CertificateUtil.getCRLs(tsaCert);
+
+        Assert.assertTrue(crls.isEmpty());
     }
 }

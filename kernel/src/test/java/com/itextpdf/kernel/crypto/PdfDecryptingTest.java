@@ -24,6 +24,7 @@ package com.itextpdf.kernel.crypto;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.utils.Base64;
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -35,7 +36,6 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -278,7 +278,7 @@ public class PdfDecryptingTest extends ExtendedITextTest {
 
     private void decryptWithCertificate(String fileName, String certificateName, PrivateKey certificateKey)
             throws IOException, CertificateException {
-        Certificate certificate = CryptoUtil.readPublicCertificate(new FileInputStream(CERTS_SRC + certificateName));
+        Certificate certificate = CryptoUtil.readPublicCertificate(FileUtil.getInputStreamForFile(CERTS_SRC + certificateName));
         ReaderProperties readerProperties = new ReaderProperties().setPublicKeySecurityParams(
                 certificate, certificateKey, PROVIDER_NAME, null);
 
@@ -290,7 +290,7 @@ public class PdfDecryptingTest extends ExtendedITextTest {
 
     private PrivateKey readPrivateKey(String privateKeyName, String algorithm)
             throws GeneralSecurityException, IOException {
-        try (InputStream pemFile = new FileInputStream(CERTS_SRC + privateKeyName)) {
+        try (InputStream pemFile = FileUtil.getInputStreamForFile(CERTS_SRC + privateKeyName)) {
             String start = "-----BEGIN PRIVATE KEY-----";
             String end = "-----END PRIVATE KEY-----";
 

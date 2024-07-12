@@ -22,6 +22,7 @@
  */
 package com.itextpdf.pdfa;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -60,9 +61,9 @@ public class PdfA2AcroFormCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void acroFormCheck01() throws FileNotFoundException {
+    public void acroFormCheck01() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         PdfDictionary acroForm = new PdfDictionary();
@@ -81,7 +82,7 @@ public class PdfA2AcroFormCheckTest extends ExtendedITextTest {
         String outPdf = destinationFolder + "pdfA2b_acroFormCheck02.pdf";
         String cmpPdf = cmpFolder + "cmp_pdfA2b_acroFormCheck02.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         PdfDictionary acroForm = new PdfDictionary();
@@ -97,7 +98,7 @@ public class PdfA2AcroFormCheckTest extends ExtendedITextTest {
         String outPdf = destinationFolder + "pdfA2b_acroFormCheck03.pdf";
         String cmpPdf = cmpFolder + "cmp_pdfA2b_acroFormCheck03.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         PdfDictionary acroForm = new PdfDictionary();
@@ -108,9 +109,9 @@ public class PdfA2AcroFormCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void acroFormCheck04() throws FileNotFoundException {
+    public void acroFormCheck04() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         PdfDictionary acroForm = new PdfDictionary();

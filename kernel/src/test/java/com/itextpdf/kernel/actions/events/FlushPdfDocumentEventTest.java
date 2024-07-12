@@ -162,7 +162,7 @@ public class FlushPdfDocumentEventTest extends ExtendedITextTest {
         try (PdfDocument pdf = new PdfDocument(new PdfReader(new ByteArrayInputStream(baos.toByteArray())))) {
             String producerLine = pdf.getDocumentInfo().getProducer();
             String modifiedByItext = "modified using iText\u00ae Core";
-            Assert.assertNotEquals(producerLine.indexOf(modifiedByItext), producerLine.lastIndexOf(modifiedByItext));
+            Assert.assertEquals(producerLine.indexOf(modifiedByItext), producerLine.lastIndexOf(modifiedByItext));
         }
     }
 

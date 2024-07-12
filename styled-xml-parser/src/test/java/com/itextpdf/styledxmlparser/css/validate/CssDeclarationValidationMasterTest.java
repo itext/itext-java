@@ -28,6 +28,7 @@ import com.itextpdf.styledxmlparser.css.validate.impl.CssDefaultValidator;
 import com.itextpdf.styledxmlparser.css.validate.impl.CssDeviceCmykAwareValidator;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -409,6 +410,24 @@ public class CssDeclarationValidationMasterTest extends ExtendedITextTest {
                 new CssDeclaration(CommonCssConstants.COLUMN_GAP, "-5em")));
         Assert.assertFalse(CssDeclarationValidationMaster.checkDeclaration(
                 new CssDeclaration(CommonCssConstants.COLUMN_GAP, "10")));
+    }
+
+    @Test
+    public void gridRowColumnGapTest() {
+        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.GRID_ROW_GAP, "normal")));
+        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.GRID_COLUMN_GAP, "30px")));
+        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.GRID_ROW_GAP, "15%")));
+        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.GRID_ROW_GAP, "2em")));
+        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.GRID_COLUMN_GAP, "3rem")));
+        Assert.assertFalse(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.GRID_COLUMN_GAP, "-5em")));
+        Assert.assertFalse(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.GRID_ROW_GAP, "10")));
     }
 
     @Test

@@ -28,10 +28,9 @@ import com.itextpdf.signatures.IssuingCertificateRetriever;
 import java.security.cert.Certificate;
 import java.util.Collection;
 
-
 /**
- * A builder class to construct all necessary parts of a validation chain
- * The builder can be reused to create multiple instances of a validator
+ * A builder class to construct all necessary parts of a validation chain.
+ * The builder can be reused to create multiple instances of a validator.
  */
 public class ValidatorChainBuilder {
     private SignatureValidationProperties properties;
@@ -40,24 +39,35 @@ public class ValidatorChainBuilder {
     private RevocationDataValidator revocationDataValidator;
     private OCSPValidator ocspValidator;
     private CRLValidator crlValidator;
+    private DocumentRevisionsValidator documentRevisionsValidator;
 
     /**
      * Create a new {@link SignatureValidator} instance with the current configuration.
      * This method can be used to create multiple validators.
      *
-     * @param document The {@link PdfDocument} to create the signatureValidator for.
+     * @param document {@link PdfDocument} instance which will be validated
      *
-     * @return a new instance of a signature validator
+     * @return a new instance of a signature validator.
      */
-    SignatureValidator buildSignatureValidator(PdfDocument document) {
+    public SignatureValidator buildSignatureValidator(PdfDocument document) {
         return new SignatureValidator(document, this);
+    }
+
+    /**
+     * Create a bew {@link DocumentRevisionsValidator} instance with the current configuration.
+     * This method can be used to create multiple validators.
+     *
+     * @return a new instance of a document revisions validator.
+     */
+    public DocumentRevisionsValidator buildDocumentRevisionsValidator() {
+        return new DocumentRevisionsValidator(this);
     }
 
     /**
      * Create a new {@link CertificateChainValidator} instance.
      * This method can be used to create multiple validators.
      *
-     * @return a new instance of a CertificateChainValidator
+     * @return a new instance of a CertificateChainValidator.
      */
     public CertificateChainValidator buildCertificateChainValidator() {
         return new CertificateChainValidator(this);
@@ -67,7 +77,7 @@ public class ValidatorChainBuilder {
      * Create a new {@link RevocationDataValidator} instance
      * This method can be used to create multiple validators.
      *
-     * @return a new instance of a RevocationDataValidator
+     * @return a new instance of a RevocationDataValidator.
      */
     public RevocationDataValidator buildRevocationDataValidator() {
         return new RevocationDataValidator(this);
@@ -77,7 +87,7 @@ public class ValidatorChainBuilder {
      * Create a new {@link OCSPValidator} instance.
      * This method can be used to create multiple validators.
      *
-     * @return a new instance of a OCSPValidator
+     * @return a new instance of a OCSPValidator.
      */
     public OCSPValidator buildOCSPValidator() {
         return new OCSPValidator(this);
@@ -87,10 +97,22 @@ public class ValidatorChainBuilder {
      * Create a new {@link CRLValidator} instance.
      * This method can be used to create multiple validators.
      *
-     * @return a new instance of a CRLValidator
+     * @return a new instance of a CRLValidator.
      */
     public CRLValidator buildCRLValidator() {
         return new CRLValidator(this);
+    }
+
+    /**
+     * Use this instance of a {@link DocumentRevisionsValidator} in the validation chain.
+     *
+     * @param documentRevisionsValidator the document revisions validator instance to use
+     *
+     * @return the current ValidatorChainBuilder.
+     */
+    public ValidatorChainBuilder withDocumentRevisionsValidator(DocumentRevisionsValidator documentRevisionsValidator) {
+        this.documentRevisionsValidator = documentRevisionsValidator;
+        return this;
     }
 
     /**
@@ -98,7 +120,7 @@ public class ValidatorChainBuilder {
      *
      * @param crlValidator the CRLValidator instance to use
      *
-     * @return the current ValidatorChainBuilder
+     * @return the current ValidatorChainBuilder.
      */
     public ValidatorChainBuilder withCRLValidator(CRLValidator crlValidator) {
         this.crlValidator = crlValidator;
@@ -110,7 +132,7 @@ public class ValidatorChainBuilder {
      *
      * @param ocspValidator the OCSPValidator instance to use
      *
-     * @return the current ValidatorChainBuilder
+     * @return the current ValidatorChainBuilder.
      */
     public ValidatorChainBuilder withOCSPValidator(OCSPValidator ocspValidator) {
         this.ocspValidator = ocspValidator;
@@ -122,7 +144,7 @@ public class ValidatorChainBuilder {
      *
      * @param revocationDataValidator the RevocationDataValidator instance to use
      *
-     * @return the current ValidatorChainBuilder
+     * @return the current ValidatorChainBuilder.
      */
     public ValidatorChainBuilder withRevocationDataValidator(RevocationDataValidator revocationDataValidator) {
         this.revocationDataValidator = revocationDataValidator;
@@ -134,7 +156,7 @@ public class ValidatorChainBuilder {
      *
      * @param certificateChainValidator the CertificateChainValidator instance to use
      *
-     * @return the current ValidatorChainBuilder
+     * @return the current ValidatorChainBuilder.
      */
     public ValidatorChainBuilder withCertificateChainValidator(CertificateChainValidator certificateChainValidator) {
         this.certificateChainValidator = certificateChainValidator;
@@ -146,7 +168,7 @@ public class ValidatorChainBuilder {
      *
      * @param properties the SignatureValidationProperties instance to use
      *
-     * @return the current ValidatorChainBuilder
+     * @return the current ValidatorChainBuilder.
      */
     public ValidatorChainBuilder withSignatureValidationProperties(SignatureValidationProperties properties) {
         this.properties = properties;
@@ -158,7 +180,7 @@ public class ValidatorChainBuilder {
      *
      * @param certificateRetriever the IssuingCertificateRetriever instance to use
      *
-     * @return the current ValidatorChainBuilder
+     * @return the current ValidatorChainBuilder.
      */
     public ValidatorChainBuilder withIssuingCertificateRetriever(IssuingCertificateRetriever certificateRetriever) {
         this.certificateRetriever = certificateRetriever;
@@ -170,7 +192,7 @@ public class ValidatorChainBuilder {
      *
      * @param knownCertificates the list of known certificates to add
      *
-     * @return the current ValidatorChainBuilder
+     * @return the current ValidatorChainBuilder.
      */
     public ValidatorChainBuilder withKnownCertificates(Collection<Certificate> knownCertificates) {
         getCertificateRetriever().addKnownCertificates(knownCertificates);
@@ -182,7 +204,7 @@ public class ValidatorChainBuilder {
      *
      * @param trustedCertificates the list of trusted certificates to set
      *
-     * @return the current ValidatorChainBuilder
+     * @return the current ValidatorChainBuilder.
      */
     public ValidatorChainBuilder withTrustedCertificates(Collection<Certificate> trustedCertificates) {
         getCertificateRetriever().setTrustedCertificates(trustedCertificates);
@@ -190,9 +212,21 @@ public class ValidatorChainBuilder {
     }
 
     /**
+     * Retrieves the explicitly added or automatically created {@link DocumentRevisionsValidator} instance.
+     *
+     * @return the explicitly added or automatically created {@link DocumentRevisionsValidator} instance.
+     */
+    DocumentRevisionsValidator getDocumentRevisionsValidator() {
+        if (documentRevisionsValidator == null) {
+            documentRevisionsValidator = buildDocumentRevisionsValidator();
+        }
+        return documentRevisionsValidator;
+    }
+
+    /**
      * Retrieves the explicitly added or automatically created {@link CertificateChainValidator} instance.
      *
-     * @return the explicitly added or automatically created {@link CertificateChainValidator} instance
+     * @return the explicitly added or automatically created {@link CertificateChainValidator} instance.
      */
     CertificateChainValidator getCertificateChainValidator() {
         if (certificateChainValidator == null) {
@@ -204,7 +238,7 @@ public class ValidatorChainBuilder {
     /**
      * Retrieves the explicitly added or automatically created {@link RevocationDataValidator} instance.
      *
-     * @return the explicitly added or automatically created {@link RevocationDataValidator} instance
+     * @return the explicitly added or automatically created {@link RevocationDataValidator} instance.
      */
     RevocationDataValidator getRevocationDataValidator() {
         if (revocationDataValidator == null) {
@@ -216,7 +250,7 @@ public class ValidatorChainBuilder {
     /**
      * Retrieves the explicitly added or automatically created {@link CRLValidator} instance.
      *
-     * @return the explicitly added or automatically created {@link CRLValidator} instance
+     * @return the explicitly added or automatically created {@link CRLValidator} instance.
      */
     CRLValidator getCRLValidator() {
         if (crlValidator == null) {
@@ -228,7 +262,7 @@ public class ValidatorChainBuilder {
     /**
      * Retrieves the explicitly added or automatically created {@link OCSPValidator} instance.
      *
-     * @return the explicitly added or automatically created {@link OCSPValidator} instance
+     * @return the explicitly added or automatically created {@link OCSPValidator} instance.
      */
     OCSPValidator getOCSPValidator() {
         if (ocspValidator == null) {
@@ -240,7 +274,7 @@ public class ValidatorChainBuilder {
     /**
      * Retrieves the explicitly added or automatically created {@link IssuingCertificateRetriever} instance.
      *
-     * @return the explicitly added or automatically created {@link IssuingCertificateRetriever} instance
+     * @return the explicitly added or automatically created {@link IssuingCertificateRetriever} instance.
      */
     public IssuingCertificateRetriever getCertificateRetriever() {
         if (certificateRetriever == null) {
@@ -252,7 +286,7 @@ public class ValidatorChainBuilder {
     /**
      * Retrieves the explicitly added or automatically created {@link SignatureValidationProperties} instance.
      *
-     * @return the explicitly added or automatically created {@link SignatureValidationProperties} instance
+     * @return the explicitly added or automatically created {@link SignatureValidationProperties} instance.
      */
     public SignatureValidationProperties getProperties() {
         if (properties == null) {

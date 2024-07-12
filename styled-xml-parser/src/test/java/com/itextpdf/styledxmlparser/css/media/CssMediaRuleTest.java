@@ -22,6 +22,7 @@
  */
 package com.itextpdf.styledxmlparser.css.media;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.styledxmlparser.IXmlParser;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.CssRuleSet;
@@ -57,8 +58,8 @@ public class CssMediaRuleTest extends ExtendedITextTest {
         String htmlFileName = sourceFolder + "html01.html";
         String cssFileName = sourceFolder + "css01.css";
         IXmlParser htmlParser = new JsoupHtmlParser();
-        IDocumentNode document = htmlParser.parse(new FileInputStream(htmlFileName), "UTF-8");
-        CssStyleSheet css = CssStyleSheetParser.parse(new FileInputStream(cssFileName));
+        IDocumentNode document = htmlParser.parse(FileUtil.getInputStreamForFile(htmlFileName), "UTF-8");
+        CssStyleSheet css = CssStyleSheetParser.parse(FileUtil.getInputStreamForFile(cssFileName));
         MediaDeviceDescription deviceDescription = new MediaDeviceDescription(MediaType.PRINT);
         IElementNode element = new JsoupElementNode(((JsoupDocumentNode) document).getDocument().getElementsByTag("p").first());
         List<CssDeclaration> declarations = css.getCssDeclarations(element, deviceDescription);
@@ -73,8 +74,8 @@ public class CssMediaRuleTest extends ExtendedITextTest {
         String htmlFileName = sourceFolder + "html02.html";
         String cssFileName = sourceFolder + "css02.css";
         IXmlParser htmlParser = new JsoupHtmlParser();
-        IDocumentNode document = htmlParser.parse(new FileInputStream(htmlFileName), "UTF-8");
-        CssStyleSheet css = CssStyleSheetParser.parse(new FileInputStream(cssFileName));
+        IDocumentNode document = htmlParser.parse(FileUtil.getInputStreamForFile(htmlFileName), "UTF-8");
+        CssStyleSheet css = CssStyleSheetParser.parse(FileUtil.getInputStreamForFile(cssFileName));
         IElementNode element = new JsoupElementNode(((JsoupDocumentNode) document).getDocument().getElementsByTag("p").first());
 
         MediaDeviceDescription deviceDescription1 = new MediaDeviceDescription(MediaType.PRINT);
@@ -97,8 +98,8 @@ public class CssMediaRuleTest extends ExtendedITextTest {
         String htmlFileName = sourceFolder + "html03.html";
         String cssFileName = sourceFolder + "css03.css";
         IXmlParser htmlParser = new JsoupHtmlParser();
-        IDocumentNode document = htmlParser.parse(new FileInputStream(htmlFileName), "UTF-8");
-        CssStyleSheet css = CssStyleSheetParser.parse(new FileInputStream(cssFileName));
+        IDocumentNode document = htmlParser.parse(FileUtil.getInputStreamForFile(htmlFileName), "UTF-8");
+        CssStyleSheet css = CssStyleSheetParser.parse(FileUtil.getInputStreamForFile(cssFileName));
         MediaDeviceDescription deviceDescription = new MediaDeviceDescription(MediaType.PRINT);
         deviceDescription.setResolution(300);
         IElementNode element = new JsoupElementNode(((JsoupDocumentNode) document).getDocument().getElementsByTag("p").first());
@@ -112,8 +113,8 @@ public class CssMediaRuleTest extends ExtendedITextTest {
         String htmlFileName = sourceFolder + "html04.html";
         String cssFileName = sourceFolder + "css04.css";
         IXmlParser htmlParser = new JsoupHtmlParser();
-        IDocumentNode document = htmlParser.parse(new FileInputStream(htmlFileName), "UTF-8");
-        CssStyleSheet css = CssStyleSheetParser.parse(new FileInputStream(cssFileName));
+        IDocumentNode document = htmlParser.parse(FileUtil.getInputStreamForFile(htmlFileName), "UTF-8");
+        CssStyleSheet css = CssStyleSheetParser.parse(FileUtil.getInputStreamForFile(cssFileName));
 
         MediaDeviceDescription deviceDescription = new MediaDeviceDescription(MediaType.PRINT).setColorIndex(256);
 
@@ -129,8 +130,8 @@ public class CssMediaRuleTest extends ExtendedITextTest {
         String htmlFileName = sourceFolder + "html05.html";
         String cssFileName = sourceFolder + "css05.css";
         IXmlParser htmlParser = new JsoupHtmlParser();
-        IDocumentNode document = htmlParser.parse(new FileInputStream(htmlFileName), "UTF-8");
-        CssStyleSheet css = CssStyleSheetParser.parse(new FileInputStream(cssFileName));
+        IDocumentNode document = htmlParser.parse(FileUtil.getInputStreamForFile(htmlFileName), "UTF-8");
+        CssStyleSheet css = CssStyleSheetParser.parse(FileUtil.getInputStreamForFile(cssFileName));
         IElementNode element = new JsoupElementNode(((JsoupDocumentNode) document).getDocument().getElementsByTag("p").first());
 
         MediaDeviceDescription deviceDescription1 = new MediaDeviceDescription(MediaType.PRINT).
@@ -153,8 +154,8 @@ public class CssMediaRuleTest extends ExtendedITextTest {
         String htmlFileName = sourceFolder + "html06.html";
         String cssFileName = sourceFolder + "css06.css";
         IXmlParser htmlParser = new JsoupHtmlParser();
-        IDocumentNode document = htmlParser.parse(new FileInputStream(htmlFileName), "UTF-8");
-        CssStyleSheet css = CssStyleSheetParser.parse(new FileInputStream(cssFileName));
+        IDocumentNode document = htmlParser.parse(FileUtil.getInputStreamForFile(htmlFileName), "UTF-8");
+        CssStyleSheet css = CssStyleSheetParser.parse(FileUtil.getInputStreamForFile(cssFileName));
         IElementNode element = new JsoupElementNode(((JsoupDocumentNode) document).getDocument().getElementsByTag("p").first());
 
         MediaDeviceDescription deviceDescription1 = new MediaDeviceDescription(MediaType.PRINT).

@@ -28,7 +28,9 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * Helper class to merge a number of existing documents into one.
+ */
 public class PdfMerger {
 
     private PdfDocument pdfDocument;

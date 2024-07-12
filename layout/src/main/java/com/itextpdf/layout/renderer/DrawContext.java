@@ -25,34 +25,70 @@ package com.itextpdf.layout.renderer;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.PdfDocument;
 
+/**
+ * This class holds instances which required for drawing on pdf document.
+ */
 public class DrawContext {
 
     private PdfDocument document;
     private PdfCanvas canvas;
     private boolean taggingEnabled;
 
+    /**
+     * Create drawing context by setting document and pdf canvas on which drawing will be performed.
+     *
+     * @param document pdf document
+     * @param canvas canvas to draw on
+     */
     public DrawContext(PdfDocument document, PdfCanvas canvas) {
         this(document, canvas, false);
     }
 
+    /**
+     * Create drawing context by setting document and pdf canvas on which drawing will be performed.
+     *
+     * @param document pdf document
+     * @param canvas canvas to draw on
+     * @param enableTagging if true document drawing operations will be appropriately tagged
+     */
     public DrawContext(PdfDocument document, PdfCanvas canvas, boolean enableTagging) {
         this.document = document;
         this.canvas = canvas;
         this.taggingEnabled = enableTagging;
     }
 
+    /**
+     * Get pdf document.
+     *
+     * @return {@code PdfDocument} instance
+     */
     public PdfDocument getDocument() {
         return document;
     }
 
+    /**
+     * Get pdf canvas.
+     *
+     * @return {@code PdfCanvas} instance
+     */
     public PdfCanvas getCanvas() {
         return canvas;
     }
 
+    /**
+     * Get document tagging property.
+     *
+     * @return true if tagging is enabled, false otherwise
+     */
     public boolean isTaggingEnabled() {
         return taggingEnabled;
     }
 
+    /**
+     * Set document tagging property.
+     *
+     * @param taggingEnabled true if to enable tagging, false to disable it
+     */
     public void setTaggingEnabled(boolean taggingEnabled) {
         this.taggingEnabled = taggingEnabled;
     }

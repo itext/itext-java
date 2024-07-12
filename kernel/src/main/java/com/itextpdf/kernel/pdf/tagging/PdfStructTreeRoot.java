@@ -45,6 +45,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import com.itextpdf.kernel.pdf.tagutils.TagTreeIterator;
+import com.itextpdf.kernel.pdf.tagutils.TagTreeIteratorAvoidDuplicatesApprover;
+import com.itextpdf.kernel.pdf.tagutils.TagTreeIteratorFlusher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -351,7 +355,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
             getPdfObject().put(PdfName.IDTree, this.idTree.buildTree().makeIndirect(getDocument()));
         }
         if (!getDocument().isAppendMode()) {
-            flushAllKids(this);
+            PdfStructTreeRoot.flushAllKids(this);
         }
         super.flush();
     }
@@ -521,13 +525,11 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         return true;
     }
 
-    private void flushAllKids(IStructureNode elem) {
-        for (IStructureNode kid : elem.getKids()) {
-            if (kid instanceof PdfStructElem && !((PdfStructElem) kid).isFlushed()) {
-                flushAllKids(kid);
-                ((PdfStructElem) kid).flush();
-            }
-        }
+    private static void flushAllKids(PdfStructTreeRoot elem) {
+        TagTreeIterator iterator = new TagTreeIterator(
+                elem, new TagTreeIteratorAvoidDuplicatesApprover(), TagTreeIterator.TreeTraversalOrder.POST_ORDER);
+        iterator.addHandler(new TagTreeIteratorFlusher());
+        iterator.traverse();
     }
 
     private void ifKidIsStructElementAddToList(PdfObject kid, List<IStructureNode> kids) {

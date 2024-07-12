@@ -22,6 +22,7 @@
  */
 package com.itextpdf.layout;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -62,7 +63,7 @@ public class BackgroundColorTest extends ExtendedITextTest {
         outFileName = destinationFolder + fileName;
         cmpFileName = sourceFolder + cmpPrefix + fileName;
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)));
         pdfDocument.setTagged();
         Document doc = new Document(pdfDocument);
 

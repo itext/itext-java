@@ -29,6 +29,7 @@ import com.itextpdf.barcodes.BarcodeCodabar;
 import com.itextpdf.barcodes.BarcodeEAN;
 import com.itextpdf.barcodes.BarcodeInter25;
 import com.itextpdf.barcodes.BarcodeMSI;
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
@@ -221,7 +222,7 @@ public class PdfABarcodeTest extends ExtendedITextTest {
 
     private Document createPdfATaggedDocument(String outPdf) throws IOException {
         PdfWriter writer = new PdfWriter(outPdf);
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfDocument pdfDocument = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         Document doc = new Document(pdfDocument);
         pdfDocument.setTagged();

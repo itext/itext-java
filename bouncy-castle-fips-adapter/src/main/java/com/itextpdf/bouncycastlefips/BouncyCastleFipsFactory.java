@@ -1034,6 +1034,18 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
      * {@inheritDoc}
      */
     @Override
+    public IExtensions createExtensions(IExtension[] extensions) {
+        Extension[] exts = new Extension[extensions.length];
+        for (int i = 0; i < extensions.length; ++i) {
+            exts[i] = ((ExtensionBCFips) extensions[i]).getExtension();
+        }
+        return new ExtensionsBCFips(new Extensions(exts));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public IExtensions createNullExtensions() {
         return new ExtensionsBCFips((Extensions) null);
     }
@@ -1476,6 +1488,14 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
             return new ASN1GeneralizedTimeBCFips((ASN1GeneralizedTime) encodableBCFips.getEncodable());
         }
         return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IASN1GeneralizedTime createASN1GeneralizedTime(Date date) {
+        return new ASN1GeneralizedTimeBCFips(new ASN1GeneralizedTime(date));
     }
 
     /**

@@ -29,7 +29,6 @@ import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
@@ -37,8 +36,8 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import org.junit.AfterClass;
@@ -87,7 +86,7 @@ public class AddScreenAnnotationTest extends ExtendedITextTest {
         String filename = destinationFolder + "screenEmbeddedWavFromStreamTest.pdf";
         String cmp = sourceFolder + "cmp_" + "screenEmbeddedWavFromStreamTest.pdf";
 
-        try (FileInputStream is = new FileInputStream(sourceFolder + "sample.wav")) {
+        try (InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sample.wav")) {
             try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(filename))) {
 
                 PdfFileSpec spec = PdfFileSpec

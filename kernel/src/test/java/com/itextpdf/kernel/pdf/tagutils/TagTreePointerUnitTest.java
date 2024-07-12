@@ -32,10 +32,10 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.tagging.PdfMcrNumber;
-import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
-import com.itextpdf.kernel.pdf.tagging.PdfStructureAttributes;
+import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
+import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -148,6 +148,66 @@ public class TagTreePointerUnitTest extends ExtendedITextTest {
         Exception exception = Assert.assertThrows(PdfException.class,
                 () -> tagTreePointer.setPageForTagging(pdfPage));
         Assert.assertEquals(KernelExceptionMessageConstant.PAGE_ALREADY_FLUSHED, exception.getMessage());
+    }
+
+    @Test
+    public void cyclicReferencesWhileLookingForRoleTest() {
+        PdfDocument doc = createTestDocument();
+
+        PdfStructElem kid1 = new PdfStructElem(doc, PdfStructTreeRoot.convertRoleToPdfName(StandardRoles.P));
+        PdfStructElem kid2 = new PdfStructElem(doc, PdfStructTreeRoot.convertRoleToPdfName(StandardRoles.DIV));
+        doc.getStructTreeRoot().addKid(kid1);
+        doc.getStructTreeRoot().addKid(kid2);
+        kid1.addKid(kid2);
+        kid2.addKid(kid1);
+
+        TagTreePointer pointer = new TagTreePointer(doc);
+        Exception exception = Assert.assertThrows(PdfException.class,
+                () -> pointer.moveToKid(StandardRoles.FIGURE));
+        Assert.assertEquals(KernelExceptionMessageConstant.NO_KID_WITH_SUCH_ROLE,
+                exception.getMessage());
+    }
+
+    @Test
+    public void cyclicReferencesWhileFlushingTest() {
+        PdfDocument doc = createTestDocument();
+
+        PdfStructElem kid1 = new PdfStructElem(doc, PdfStructTreeRoot.convertRoleToPdfName(StandardRoles.P));
+        PdfStructElem kid2 = new PdfStructElem(doc, PdfStructTreeRoot.convertRoleToPdfName(StandardRoles.DIV));
+        doc.getStructTreeRoot().addKid(kid1);
+        doc.getStructTreeRoot().addKid(kid2);
+        kid1.addKid(kid2);
+        kid2.addKid(kid1);
+
+        TagTreePointer pointer = new TagTreePointer(doc);
+        pointer.moveToKid(StandardRoles.P);
+
+        AssertUtil.doesNotThrow(() -> pointer.flushTag());
+        Assert.assertTrue(kid1.isFlushed());
+        Assert.assertTrue(kid2.isFlushed());
+    }
+
+    @Test
+    public void cyclicReferencesWithWaitingObjectsWhileFlushingTest() {
+        PdfDocument doc = createTestDocument();
+
+        PdfStructElem kid1 = new PdfStructElem(doc, PdfStructTreeRoot.convertRoleToPdfName(StandardRoles.P));
+        PdfStructElem kid2 = new PdfStructElem(doc, PdfStructTreeRoot.convertRoleToPdfName(StandardRoles.DIV));
+        doc.getStructTreeRoot().addKid(kid1);
+        doc.getStructTreeRoot().addKid(kid2);
+        kid1.addKid(kid2);
+        kid2.addKid(kid1);
+
+        TagTreePointer pointer = new TagTreePointer(doc);
+        pointer.moveToKid(StandardRoles.P);
+        WaitingTagsManager waitingTagsManager = pointer.getContext().getWaitingTagsManager();
+        Object pWaitingTagObj = new Object();
+        waitingTagsManager.assignWaitingState(pointer, pWaitingTagObj);
+        pointer.moveToParent().moveToKid(StandardRoles.DIV);
+
+        AssertUtil.doesNotThrow(() -> pointer.flushTag());
+        Assert.assertFalse(kid1.isFlushed());
+        Assert.assertTrue(kid2.isFlushed());
     }
 
     private static PdfDocument createTestDocument() {

@@ -80,6 +80,16 @@ public class ObjectPath {
         indirects.push(new IndirectPathItem(baseCmpObject, baseOutObject));
     }
 
+    /**
+     * Creates CompareObjectPath with corresponding base objects in two documents.
+     *
+     * @param baseCmpObject base object in cmp document
+     * @param baseOutObject base object in out document
+     * @param path          local path that denotes sequence of the path items from base object
+     *                      to the comparing direct object
+     * @param indirects     indirect path which denotes sequence of the indirect references that
+     *                      were passed in comparing process to get to the current base objects
+     */
     public ObjectPath(PdfIndirectReference baseCmpObject, PdfIndirectReference baseOutObject,
                       Stack<LocalPathItem> path, Stack<IndirectPathItem> indirects) {
         this.baseCmpObject = baseCmpObject;

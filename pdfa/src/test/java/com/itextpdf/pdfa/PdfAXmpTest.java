@@ -22,6 +22,7 @@
  */
 package com.itextpdf.pdfa;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -42,13 +43,10 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -71,7 +69,7 @@ public class PdfAXmpTest extends ExtendedITextTest {
         String outFile = destinationFolder + "keywordsInfoTestPdfA1b.pdf";
         String cmpFile = cmpFolder + "cmp_keywordsInfoTestPdfA1b.pdf";
 
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
         PdfADocument doc = new PdfADocument(new PdfWriter(outFile), PdfAConformanceLevel.PDF_A_1B, outputIntent);
         doc.addNewPage();
@@ -91,7 +89,7 @@ public class PdfAXmpTest extends ExtendedITextTest {
         String outFile = destinationFolder + "keywordsInfoTestPdfA2b.pdf";
         String cmpFile = cmpFolder + "cmp_keywordsInfoTestPdfA2b.pdf";
 
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
         PdfADocument doc = new PdfADocument(new PdfWriter(outFile), PdfAConformanceLevel.PDF_A_2B, outputIntent);
         doc.addNewPage();
@@ -113,7 +111,7 @@ public class PdfAXmpTest extends ExtendedITextTest {
         PdfAConformanceLevel conformanceLevel = PdfAConformanceLevel.PDF_A_2B;
         PdfOutputIntent outputIntent;
 
-        try (InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm")) {
+        try (InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm")) {
             outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
         }
 
@@ -143,7 +141,7 @@ public class PdfAXmpTest extends ExtendedITextTest {
         String outFile = destinationFolder + "testPdfUAExtensionMetadata.pdf";
         String cmpFile = cmpFolder + "cmp_testPdfUAExtensionMetadata.pdf";
 
-        try (FileOutputStream fos = new FileOutputStream(outFile)) {
+        try (OutputStream fos = FileUtil.getFileOutputStream(outFile)) {
             generatePdfAWithUA(fos);
         }
 
@@ -171,7 +169,7 @@ public class PdfAXmpTest extends ExtendedITextTest {
         WriterProperties wp = new WriterProperties().addUAXmpMetadata();
         try (PdfWriter w = new PdfWriter(os, wp)) {
             PdfOutputIntent outputIntent;
-            try (InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm")) {
+            try (InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm")) {
                 outputIntent = new PdfOutputIntent(
                         "Custom", "",
                         "http://www.color.org",

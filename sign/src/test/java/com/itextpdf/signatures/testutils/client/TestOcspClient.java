@@ -62,9 +62,9 @@ public class TestOcspClient implements IOcspClient {
                 throw new IllegalArgumentException("This TestOcspClient instance is not capable of providing OCSP response for the given issuerCert:" + issuerCert.getSubjectDN().toString());
             }
             bytes = builder.makeOcspResponse(SignTestPortUtil.generateOcspRequestWithNonce(id).getEncoded());
-        } catch (Exception ignored) {
-            if (ignored instanceof RuntimeException) {
-                throw (RuntimeException) ignored;
+        } catch (Exception e) {
+            if (e instanceof RuntimeException) {
+                throw (RuntimeException) e;
             }
         }
 

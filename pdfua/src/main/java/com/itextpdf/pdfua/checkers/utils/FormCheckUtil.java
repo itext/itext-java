@@ -99,8 +99,8 @@ public class FormCheckUtil {
             PdfDictionary kids = object.getAsDictionary(PdfName.K);
             // It's a dictionary in this particular case
             if (kids != null && kids.get(PdfName.Obj) != null && PdfName.Widget.equals(
-                    kids.getAsDictionary(PdfName.Obj).getAsName(PdfName.Subtype))) {
-                return kids.getAsDictionary(PdfName.Obj);
+                    ((PdfDictionary) kids.get(PdfName.Obj)).getAsName(PdfName.Subtype))) {
+                return (PdfDictionary) kids.get(PdfName.Obj);
             }
 
             return null;

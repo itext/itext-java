@@ -22,10 +22,6 @@
  */
 package com.itextpdf.test;
 
-import org.junit.Assert;
-import org.junit.Assume;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -36,11 +32,11 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
 
-@RunWith(Parameterized.class)
 public abstract class WrappedSamplesRunner {
 
-    @Parameterized.Parameter
     public RunnerParams sampleClassParams;
 
     protected Class<?> sampleClass;
@@ -69,7 +65,7 @@ public abstract class WrappedSamplesRunner {
     }
 
     public void runSamples() throws Exception {
-        Assume.assumeTrue(sampleClassParams.ignoreMessage, sampleClassParams.ignoreMessage == null);
+        Assumptions.assumeTrue(sampleClassParams.ignoreMessage == null, sampleClassParams.ignoreMessage);
 
         initClass();
         System.out.println("Starting test " + sampleClassParams);
@@ -89,7 +85,7 @@ public abstract class WrappedSamplesRunner {
         comparePdf(outPath, dest, cmp);
 
         if (errorMessage != null)
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         System.out.println("Test complete.");
     }
 
@@ -262,7 +258,7 @@ public abstract class WrappedSamplesRunner {
         return null;
     }
 
-    private static class RunnerParams {
+    protected static class RunnerParams {
         String className;
         String ignoreMessage;
 

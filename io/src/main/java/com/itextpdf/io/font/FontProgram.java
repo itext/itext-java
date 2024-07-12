@@ -32,7 +32,6 @@ import java.util.Map;
 
 public abstract class FontProgram {
 
-
     public static final int HORIZONTAL_SCALING_FACTOR = 100;
     public static final int DEFAULT_WIDTH = 1000;
     public static final int UNITS_NORMALIZATION = 1000;

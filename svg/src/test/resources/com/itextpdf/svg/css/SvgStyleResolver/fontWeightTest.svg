@@ -9,8 +9,8 @@
     }
 
 </style >
-    <!--<text x="20" y="165" font-family="Droid Serif" font-size="20" font-weight="400">3. Droid Serif font-weight 400</text>-->
     <g transform="translate(20,265)">
+        <text y = "30" font-family="Droid Serif" font-size="20" font-weight="400">3. Droid Serif font-weight 400</text>
         <text font-family="Droid Serif" font-size="20" font-weight="700">3. Droid Serif font-weight 700</text>
     </g>
 </svg>

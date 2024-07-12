@@ -29,6 +29,8 @@ import com.itextpdf.test.annotations.type.UnitTest;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
@@ -107,6 +109,12 @@ public class UrlUtilTest extends ExtendedITextTest {
         String expected = "";
         File tempFile = null;
         Assert.assertEquals(expected, FileUtil.getParentDirectoryUri(tempFile));
+    }
+
+    @Test
+    public void toAbsoluteUriTest() throws IOException, URISyntaxException {
+        String expected = "http://itextpdf.com/";
+        Assert.assertEquals(expected, UrlUtil.toAbsoluteURI(new URI(expected)));
     }
 
     @Test

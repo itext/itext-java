@@ -22,6 +22,7 @@
  */
 package com.itextpdf.svg.renderers;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -61,7 +62,7 @@ public class SvgImageRendererTest extends SvgIntegrationTest {
         String outFileName = DESTINATION_FOLDER + "svgWithSvg.pdf";
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName, new WriterProperties().setCompressionLevel(0))))) {
-            INode parsedSvg = SvgConverter.parse(new FileInputStream(svgFileName));
+            INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(svgFileName));
             ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg, null);
             ISvgNodeRenderer topSvgRenderer = result.getRootRenderer();
             float[] wh = SvgConverter.extractWidthAndHeight(topSvgRenderer);
@@ -81,7 +82,7 @@ public class SvgImageRendererTest extends SvgIntegrationTest {
         String outFileName = DESTINATION_FOLDER + "svgImage.pdf";
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName, new WriterProperties().setCompressionLevel(0))))) {
-            INode parsedSvg = SvgConverter.parse(new FileInputStream(svgFileName));
+            INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(svgFileName));
             ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg, null);
             ISvgNodeRenderer topSvgRenderer = result.getRootRenderer();
             float[] wh = SvgConverter.extractWidthAndHeight(topSvgRenderer);

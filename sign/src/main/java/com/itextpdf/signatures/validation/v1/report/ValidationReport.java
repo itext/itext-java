@@ -105,11 +105,33 @@ public class ValidationReport {
         reportItems.add(item);
     }
 
+    /**
+     * {@inheritDoc}.
+     */
     @Override
     public String toString() {
-        return "ValidationReport{" +
-                "reportItems=" + reportItems +
-                '}';
+        StringBuilder sb = new StringBuilder("ValidationReport{validationResult=");
+        sb.append(getValidationResult())
+                .append("\nreportItems=");
+        for (ReportItem i : reportItems) {
+            sb.append(i).append(", ");
+        }
+        sb.append("}");
+        return sb.toString();
+    }
+
+    /**
+     * Merge all {@link ReportItem} objects from sub report into this one.
+     *
+     * @param subReport report from which items will be merged
+     *
+     * @return {@link ValidationReport} the same updated validation report instance.
+     */
+    public ValidationReport merge(ValidationReport subReport) {
+        for (ReportItem item : subReport.getLogs()) {
+            addReportItem(item);
+        }
+        return this;
     }
 
     /**

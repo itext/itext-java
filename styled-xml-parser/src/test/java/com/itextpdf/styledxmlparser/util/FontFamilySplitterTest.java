@@ -34,6 +34,7 @@ import java.util.List;
 @Category(UnitTest.class)
 public class FontFamilySplitterTest extends ExtendedITextTest {
     @Test
+    //TODO DEVSIX-1130: Adapt after fix
     public void fontFamilySplitter() {
         String fontFamilies =
                         "'Puritan'\n" +

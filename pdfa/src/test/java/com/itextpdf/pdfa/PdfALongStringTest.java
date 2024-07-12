@@ -22,6 +22,7 @@
  */
 package com.itextpdf.pdfa;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
@@ -35,9 +36,8 @@ import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -59,8 +59,8 @@ public class PdfALongStringTest extends ExtendedITextTest {
     public void runTest() throws Exception {
         String file = "pdfALongString.pdf";
         String filename = destinationFolder + file;
-        try (InputStream icm = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
-                FileOutputStream fos = new FileOutputStream(filename)) {
+        try (InputStream icm = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
+                OutputStream fos = FileUtil.getFileOutputStream(filename)) {
             Document document = new Document(new PdfADocument(new PdfWriter(fos), PdfAConformanceLevel.PDF_A_3U,
                     new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB ICC preference", icm))
             );

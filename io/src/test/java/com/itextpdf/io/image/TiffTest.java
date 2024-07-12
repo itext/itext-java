@@ -22,6 +22,7 @@
  */
 package com.itextpdf.io.image;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.codec.TIFFDirectory;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
@@ -32,7 +33,6 @@ import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
@@ -49,7 +49,7 @@ public class TiffTest extends ExtendedITextTest {
 
     @Test
     public void openTiff1() throws IOException {
-        byte[] imageBytes = StreamUtil.inputStreamToArray(new FileInputStream(SOURCE_FOLDER + "WP_20140410_001.tif"));
+        byte[] imageBytes = StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile(SOURCE_FOLDER + "WP_20140410_001.tif"));
         // Test a more specific entry point
         ImageData img = ImageDataFactory.createTiff(imageBytes, false, 1, false);
         Assert.assertEquals(2592, img.getWidth(), 0);

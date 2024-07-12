@@ -22,20 +22,20 @@
  */
 package com.itextpdf.styledxmlparser.css.resolve.shorthand;
 
-import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.GapShorthandResolver;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.util.Collections;
 import java.util.List;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
 public class GapShorthandResolverTest extends ExtendedITextTest {
@@ -135,6 +135,20 @@ public class GapShorthandResolverTest extends ExtendedITextTest {
     @Test
     public void gapWithTwoValidValuesTest() {
         IShorthandResolver resolver = new GapShorthandResolver();
+
+        String shorthand = "10px 15px";
+        List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
+
+        Assert.assertEquals(2, resolvedShorthand.size());
+        Assert.assertEquals(CommonCssConstants.ROW_GAP, resolvedShorthand.get(0).getProperty());
+        Assert.assertEquals("10px", resolvedShorthand.get(0).getExpression());
+        Assert.assertEquals(CommonCssConstants.COLUMN_GAP, resolvedShorthand.get(1).getProperty());
+        Assert.assertEquals("15px", resolvedShorthand.get(1).getExpression());
+    }
+
+    @Test
+    public void gridGapWithTwoValidValuesTest() {
+        IShorthandResolver resolver = new GapShorthandResolver(CommonCssConstants.GRID_GAP);
 
         String shorthand = "10px 15px";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);

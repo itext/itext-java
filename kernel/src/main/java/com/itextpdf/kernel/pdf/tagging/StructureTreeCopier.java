@@ -354,13 +354,14 @@ class StructureTreeCopier {
         } else {
             copied = source.copyTo(copyingParams.getToDocument(), ignoreKeysForCopy, true);
 
-            PdfDictionary obj = source.getAsDictionary(PdfName.Obj);
-            if (obj != null) {
+            PdfObject obj = source.get(PdfName.Obj);
+            if (obj instanceof PdfDictionary) {
+                PdfDictionary objDic = (PdfDictionary) obj;
                 // Link annotations could be not added to the toDocument, so we need to identify this case.
                 // When obj.copyTo is called, and annotation was already copied, we would get this already created copy.
                 // If it was already copied and added, /P key would be set. Otherwise /P won't be set.
-                obj = obj.copyTo(copyingParams.getToDocument(), Arrays.asList(PdfName.P), false);
-                copied.put(PdfName.Obj, obj);
+                objDic = objDic.copyTo(copyingParams.getToDocument(), Arrays.asList(PdfName.P), false);
+                copied.put(PdfName.Obj, objDic);
             }
 
             PdfDictionary nsDict = source.getAsDictionary(PdfName.NS);
@@ -456,7 +457,7 @@ class StructureTreeCopier {
                     PdfMcr mcr;
                     if (copiedKid.containsKey(PdfName.Obj)) {
                         mcr = new PdfObjRef(copiedKid, new PdfStructElem(copiedParent));
-                        PdfDictionary contentItemObject = copiedKid.getAsDictionary(PdfName.Obj);
+                        PdfDictionary contentItemObject = (PdfDictionary) copiedKid.get(PdfName.Obj);
                         if (PdfName.Link.equals(contentItemObject.getAsName(PdfName.Subtype))
                                 && !contentItemObject.containsKey(PdfName.P)) {
                             // Some link annotations may be not copied, because their destination page is not copied.

@@ -29,6 +29,7 @@ import com.itextpdf.kernel.utils.ICopyFilter;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -325,6 +326,15 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
         return list.subList(fromIndex, toIndex);
     }
 
+    /**
+     * Returns unmodifiable {@link List} representation of this PdfArray.
+     *
+     * @return unmodifiable {@link List} representation of this PdfArray
+     */
+    public List<PdfObject> toList() {
+        return Collections.unmodifiableList(list);
+    }
+
     @Override
     public byte getType() {
         return ARRAY;
@@ -351,7 +361,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
             return list.get(index);
         else {
             PdfObject obj = list.get(index);
-            if (obj.getType() == INDIRECT_REFERENCE)
+            if (obj != null && obj.getType() == INDIRECT_REFERENCE)
                 return ((PdfIndirectReference) obj).getRefersTo(true);
             else
                 return obj;

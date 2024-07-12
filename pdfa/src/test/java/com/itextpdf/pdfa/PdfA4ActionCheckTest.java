@@ -23,6 +23,7 @@
 package com.itextpdf.pdfa;
 
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.form.element.CheckBox;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -94,8 +95,8 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
             generatePdfADocument(PdfAConformanceLevel.PDF_A_4, null, (doc) -> {
                 InputStream is = null;
                 try {
-                    is = new FileInputStream(SOURCE_FOLDER + "sample.aif");
-                } catch (FileNotFoundException er) {
+                    is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sample.aif");
+                } catch (IOException er) {
                     Assert.fail(er.getMessage());
                 }
                 PdfStream sound1 = new PdfStream(doc, is);
@@ -454,7 +455,7 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
     }
 
     private void generatePdfADocument(PdfAConformanceLevel conformanceLevel, String outPdf,
-            Consumer<PdfDocument> consumer) throws FileNotFoundException {
+            Consumer<PdfDocument> consumer) throws IOException {
         String filename = DESTINATION_FOLDER + UUID.randomUUID().toString() + ".pdf";
         if (outPdf != null) {
             filename = outPdf;
@@ -462,7 +463,7 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(filename, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         PdfADocument doc = new PdfADocument(writer, conformanceLevel,
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
-                        new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm")));
+                        FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm")));
         doc.addNewPage();
         consumer.accept(doc);
         doc.close();
