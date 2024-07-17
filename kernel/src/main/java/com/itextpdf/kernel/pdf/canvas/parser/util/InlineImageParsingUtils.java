@@ -168,11 +168,22 @@ public final class InlineImageParsingUtils {
                     return getComponentsPerPixel(tempName, colorSpaceDic);
                 }
             } else {
-                if (PdfName.Indexed.equals(colorSpace.getAsName(0))) {
+                if (PdfName.Indexed.equals(colorSpace.getAsName(0))
+                 || PdfName.CalGray.equals(colorSpace.getAsName(0))
+                 || PdfName.Pattern.equals(colorSpace.getAsName(0))
+                 || PdfName.Separation.equals(colorSpace.getAsName(0))) {
                     return 1;
+                }
+                if (PdfName.CalRGB.equals(colorSpace.getAsName(0))
+                 || PdfName.Lab.equals(colorSpace.getAsName(0))) {
+                    return 3;
                 }
                 if (PdfName.ICCBased.equals(colorSpace.getAsName(0))) {
                     return colorSpace.getAsStream(1).getAsNumber(PdfName.N).intValue();
+                }
+                if (PdfName.DeviceN.equals(colorSpace.getAsName(0))) {
+                    //Checking colorants dict size
+                    return colorSpace.getAsDictionary(2).size();
                 }
             }
         }

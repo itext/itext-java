@@ -32,6 +32,7 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
 import com.itextpdf.kernel.pdf.canvas.parser.data.ImageRenderInfo;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
+import com.itextpdf.kernel.pdf.canvas.parser.listener.SimpleTextExtractionStrategy;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs.Indexed;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
@@ -118,6 +119,17 @@ public class InlineImageExtractionTest extends ExtendedITextTest {
 
         Assertions.assertArrayEquals(cmpImgBytes, data);
     }
+
+    @Test
+    public void test() throws IOException {
+        PdfDocument pdf = new PdfDocument(new PdfReader(sourceFolder + "calgray.pdf"));
+        for (int i = 1; i <= pdf.getNumberOfPages(); i++) {
+            PdfCanvasProcessor pdfCanvasProcessor = new PdfCanvasProcessor(new SimpleTextExtractionStrategy());
+            pdfCanvasProcessor.processPageContent(pdf.getPage(i));
+        }
+        pdf.close();
+    }
+
 
     private static class InlineImageEventListener implements IEventListener {
         private final List<PdfStream> inlineImages = new ArrayList<>();
