@@ -217,6 +217,21 @@ public class DocumentRevisionsValidator {
      * @return {@link ValidationReport} which contains detailed validation results.
      */
     public ValidationReport validateAllDocumentRevisions(ValidationContext context, PdfDocument document) {
+        return validateAllDocumentRevisions(context, document, null);
+    }
+
+    /**
+     * Validate all document revisions according to docMDP and fieldMDP transform methods and collect validation report
+     * related to the single signature field checks if specified.
+     *
+     * @param context       the validation context in which to validate document revisions
+     * @param document      the document to be validated
+     * @param signatureName signature field to collect validation result for. If null, all signatures will be checked
+     *
+     * @return {@link ValidationReport} which contains detailed validation results.
+     */
+    ValidationReport validateAllDocumentRevisions(ValidationContext context, PdfDocument document,
+                                                  String signatureName) {
         resetClassFields();
         ValidationContext localContext = context.setValidatorContext(ValidatorContext.DOCUMENT_REVISIONS_VALIDATOR);
         ValidationReport report = new ValidationReport();
@@ -241,44 +256,59 @@ public class DocumentRevisionsValidator {
             report.addReportItem(new ReportItem(DOC_MDP_CHECK, DOCUMENT_WITHOUT_SIGNATURES, ReportItemStatus.INFO));
             return report;
         }
-        boolean signatureFound = false;
+        boolean updateAccessPermissions = true;
+        boolean documentSigned = false;
         boolean certificationSignatureFound = false;
-        PdfSignature currentSignature = signatureUtil.getSignature(signatures.get(0));
+        boolean collectRevisionsValidationReport = signatureName == null;
+        String currentSignatureName = signatures.get(0);
+        PdfSignature currentSignature = signatureUtil.getSignature(currentSignatureName);
         for (int i = 0; i < documentRevisions.size(); i++) {
             if (currentSignature != null &&
-                    revisionContainsSignature(documentRevisions.get(i), signatures.get(0), document, report)) {
-                signatureFound = true;
+                    revisionContainsSignature(documentRevisions.get(i), currentSignatureName, document, report)) {
+                documentSigned = true;
                 if (isCertificationSignature(currentSignature)) {
                     if (certificationSignatureFound) {
                         report.addReportItem(new ReportItem(DOC_MDP_CHECK,
                                 TOO_MANY_CERTIFICATION_SIGNATURES, ReportItemStatus.INDETERMINATE));
                     } else {
                         certificationSignatureFound = true;
-                        updateCertificationSignatureAccessPermissions(currentSignature, report);
+                        if (updateAccessPermissions) {
+                            updateCertificationSignatureAccessPermissions(currentSignature, report);
+                        }
                     }
                 }
-                updateApprovalSignatureAccessPermissions(
-                        signatureUtil.getSignatureFormFieldDictionary(signatures.get(0)), report);
-                updateApprovalSignatureFieldLock(documentRevisions.get(i),
-                        signatureUtil.getSignatureFormFieldDictionary(signatures.get(0)), document, report);
+                if (updateAccessPermissions) {
+                    updateApprovalSignatureAccessPermissions(
+                            signatureUtil.getSignatureFormFieldDictionary(currentSignatureName), report);
+                    updateApprovalSignatureFieldLock(documentRevisions.get(i),
+                            signatureUtil.getSignatureFormFieldDictionary(currentSignatureName), document, report);
+                }
+                if (signatureName != null && signatureName.equals(currentSignatureName)) {
+                    updateAccessPermissions = false;
+                    collectRevisionsValidationReport = true;
+                }
                 signatures.remove(0);
                 if (signatures.isEmpty()) {
                     currentSignature = null;
                 } else {
-                    currentSignature = signatureUtil.getSignature(signatures.get(0));
+                    currentSignatureName = signatures.get(0);
+                    currentSignature = signatureUtil.getSignature(currentSignatureName);
                 }
             }
-            if (signatureFound && i < documentRevisions.size() - 1) {
-                validateRevision(documentRevisions.get(i), documentRevisions.get(i + 1),
-                        document, report, localContext);
+            if (documentSigned && i < documentRevisions.size() - 1) {
+                ValidationReport validationReport = new ValidationReport();
+                validateRevision(documentRevisions.get(i), documentRevisions.get(i + 1), document, validationReport,
+                        localContext);
+                if (collectRevisionsValidationReport) {
+                    report.merge(validationReport);
+                }
             }
             if (stopValidation(report, localContext)) {
                 break;
             }
         }
-        if (!signatureFound) {
-            report.addReportItem(
-                    new ReportItem(DOC_MDP_CHECK, SIGNATURE_REVISION_NOT_FOUND, ReportItemStatus.INVALID));
+        if (!documentSigned) {
+            report.addReportItem(new ReportItem(DOC_MDP_CHECK, SIGNATURE_REVISION_NOT_FOUND, ReportItemStatus.INVALID));
         }
         return report;
     }

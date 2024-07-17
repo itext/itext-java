@@ -106,7 +106,7 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
             addRevDataClients();
 
             SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
-            report = signatureValidator.validateLatestSignature(document);
+            report = signatureValidator.validateSignatures();
         }
 
         AssertValidationReport.assertThat(report, a -> a
@@ -137,7 +137,7 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
             SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
             report = signatureValidator.validateSignatures();
         }
-// ocsp validation date is wrong but why
+
         AssertValidationReport.assertThat(report, a -> a
                 .hasStatus(ValidationResult.VALID)
                 .hasLogItem(al -> al
@@ -235,6 +235,108 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
         ValidationOcspClient validationOcspClient = (ValidationOcspClient) ocspClients.get(0);
         Assert.assertEquals(2, validationCrlClient.getCrls().size());
         Assert.assertEquals(2, validationOcspClient.getResponses().size());
+    }
+
+    @Test
+    public void validateSingleSignatureTest1() throws Exception {
+        String rootCertName = CERTS_SRC + "root_cert.pem";
+        X509Certificate rootCert = (X509Certificate) PemFileHelper.readFirstChain(rootCertName)[0];
+
+        ValidationReport report1;
+        ValidationReport report2;
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "validateSingleSignature1.pdf"))) {
+            certificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
+            addRevDataClients();
+
+            SignatureValidator signatureValidator1 = builder.buildSignatureValidator(document);
+            report1 = signatureValidator1.validateSignature("Signature1");
+
+            SignatureValidator signatureValidator2 = builder.buildSignatureValidator(document);
+            report2 = signatureValidator2.validateSignature("Signature2");
+        }
+
+        // Signature1 set access permissions to level 3, Signature2 - to level 1, after that annotation was added.
+        AssertValidationReport.assertThat(report1, a -> a
+                .hasStatus(ValidationResult.VALID)
+                .hasNumberOfLogs(4).hasNumberOfFailures(0)
+                .hasLogItem(al -> al
+                        .withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                        .withMessage(DocumentRevisionsValidator.UNEXPECTED_ENTRY_IN_XREF, i -> 17)
+                        .withStatus(ReportItem.ReportItemStatus.INFO))
+                .hasLogItem(al -> al
+                        .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
+                        .withMessage(SignatureValidator.VALIDATING_SIGNATURE_NAME, p -> "Signature1"))
+                .hasLogItems(2, al -> al
+                        .withCertificate(rootCert)
+                        .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
+                        .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED,
+                                i -> rootCert.getSubjectX500Principal()))
+        );
+
+        AssertValidationReport.assertThat(report2, a -> a
+                .hasStatus(ValidationResult.INVALID)
+                .hasNumberOfLogs(4).hasNumberOfFailures(1)
+                .hasLogItem(al -> al
+                        .withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                        .withMessage(DocumentRevisionsValidator.PAGE_ANNOTATIONS_MODIFIED)
+                        .withStatus(ReportItem.ReportItemStatus.INVALID))
+                .hasLogItem(al -> al
+                        .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
+                        .withMessage(SignatureValidator.VALIDATING_SIGNATURE_NAME, p -> "Signature2"))
+                .hasLogItems(2, al -> al
+                        .withCertificate(rootCert)
+                        .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
+                        .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED,
+                                i -> rootCert.getSubjectX500Principal()))
+        );
+    }
+
+    @Test
+    public void validateSingleSignatureTest2() throws Exception {
+        String rootCertName = CERTS_SRC + "root_cert.pem";
+        X509Certificate rootCert = (X509Certificate) PemFileHelper.readFirstChain(rootCertName)[0];
+
+        ValidationReport report1;
+        ValidationReport report2;
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "validateSingleSignature2.pdf"))) {
+            certificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
+            addRevDataClients();
+
+            SignatureValidator signatureValidator1 = builder.buildSignatureValidator(document);
+            report1 = signatureValidator1.validateSignature("Signature1");
+
+            SignatureValidator signatureValidator2 = builder.buildSignatureValidator(document);
+            report2 = signatureValidator2.validateSignature("Signature2");
+        }
+
+        // Signature1 set access permissions to level 1, after that annotation was added and then Signature2 applied.
+        AssertValidationReport.assertThat(report1, a -> a
+                .hasStatus(ValidationResult.INVALID)
+                .hasNumberOfFailures(3)
+                .hasLogItem(al -> al
+                        .withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                        .withMessage(DocumentRevisionsValidator.PAGE_ANNOTATIONS_MODIFIED)
+                        .withStatus(ReportItem.ReportItemStatus.INVALID))
+                .hasLogItem(al -> al
+                        .withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                        .withMessage(DocumentRevisionsValidator.UNEXPECTED_FORM_FIELD, p -> "Signature2")
+                        .withStatus(ReportItem.ReportItemStatus.INVALID))
+                .hasLogItem(al -> al
+                        .withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                        .withMessage(DocumentRevisionsValidator.NOT_ALLOWED_ACROFORM_CHANGES)
+                        .withStatus(ReportItem.ReportItemStatus.INVALID))
+                .hasLogItem(al -> al
+                        .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
+                        .withMessage(SignatureValidator.VALIDATING_SIGNATURE_NAME, p -> "Signature1"))
+        );
+
+        AssertValidationReport.assertThat(report2, a -> a
+                .hasStatus(ValidationResult.VALID)
+                .hasNumberOfFailures(0)
+                .hasLogItem(al -> al
+                        .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
+                        .withMessage(SignatureValidator.VALIDATING_SIGNATURE_NAME, p -> "Signature2"))
+        );
     }
 
     @Test

@@ -30,6 +30,7 @@ import com.itextpdf.commons.bouncycastle.asn1.tsp.ITSTInfo;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.AbstractOCSPException;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.DocumentProperties;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -97,6 +98,10 @@ public class SignatureValidator {
     static final String REVISIONS_VALIDATION_FAILED = "Unexpected exception occurred during revisions validation.";
     static final String ADD_KNOWN_CERTIFICATES_FAILED =
             "Unexpected exception occurred adding known certificates to certificate retriever.";
+    static final String SIGNATURE_NOT_FOUND = "Document doesn't contain signature field {0}.";
+    static final String VALIDATION_PERFORMED = "Validation has already been performed. " +
+            "You should create new SignatureValidator instance for each validation call.";
+
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     private ValidationContext validationContext = new ValidationContext(ValidatorContext.SIGNATURE_VALIDATOR,
@@ -110,6 +115,8 @@ public class SignatureValidator {
     private final PdfDocument originalDocument;
     private ValidationOcspClient validationOcspClient;
     private ValidationCrlClient validationCrlClient;
+
+    private boolean validationPerformed = false;
 
     /**
      * Creates new instance of {@link SignatureValidator}.
@@ -144,6 +151,10 @@ public class SignatureValidator {
      * @return {@link ValidationReport} which contains detailed validation results
      */
     public ValidationReport validateSignatures() {
+        if (validationPerformed) {
+            throw new PdfException(VALIDATION_PERFORMED);
+        }
+        validationPerformed = true;
         ValidationReport report = new ValidationReport();
         onRuntimeExceptionLog(() -> {
             documentRevisionsValidator.setEventCountingMetaInfo(metaInfo);
@@ -157,24 +168,36 @@ public class SignatureValidator {
             return report;
         }
 
-        SignatureUtil util = new SignatureUtil(originalDocument);
-        List<String> signatureNames = util.getSignatureNames();
-        Collections.reverse(signatureNames);
+        return report.merge(validate(null));
+    }
 
-        for (String fieldName : signatureNames) {
-            try (PdfDocument doc = new PdfDocument(new PdfReader(util.extractRevision(fieldName)),
-                    new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
-                ValidationReport subReport = validateLatestSignature(doc);
-                report.merge(subReport);
-                if (stopValidation(report, validationContext)) {
-                    return report;
-                }
-            } catch (IOException | RuntimeException e) {
-                report.addReportItem(new ReportItem(SIGNATURE_VERIFICATION, REVISIONS_RETRIEVAL_FAILED,
-                        e, ReportItemStatus.INDETERMINATE));
-            }
+    /**
+     * Validate single signature in the document.
+     *
+     * @param signatureName name of the signature to validate
+     *
+     * @return {@link ValidationReport} which contains detailed validation results.
+     */
+    public ValidationReport validateSignature(String signatureName) {
+        if (validationPerformed) {
+            throw new PdfException(VALIDATION_PERFORMED);
         }
-        return report;
+        validationPerformed = true;
+        ValidationReport report = new ValidationReport();
+        onRuntimeExceptionLog(() -> {
+            documentRevisionsValidator.setEventCountingMetaInfo(metaInfo);
+            ValidationReport revisionsValidationReport =
+                    documentRevisionsValidator.validateAllDocumentRevisions(validationContext, originalDocument,
+                            signatureName);
+            report.merge(revisionsValidationReport);
+        }, report, e ->
+                new ReportItem(SIGNATURE_VERIFICATION, REVISIONS_VALIDATION_FAILED, e, ReportItemStatus.INDETERMINATE));
+
+        if (stopValidation(report, validationContext)) {
+            return report;
+        }
+
+        return report.merge(validate(signatureName));
     }
 
     ValidationReport validateLatestSignature(PdfDocument document) {
@@ -240,6 +263,40 @@ public class SignatureValidator {
             updateValidationClients(pkcs7, validationReport, validationContext, document);
         }
         return validationReport.merge(signatureReport);
+    }
+
+    private ValidationReport validate(String signatureName) {
+        ValidationReport validationReport = new ValidationReport();
+        boolean validateSingleSignature = signatureName != null;
+
+        SignatureUtil util = new SignatureUtil(originalDocument);
+        List<String> signatureNames = util.getSignatureNames();
+        Collections.reverse(signatureNames);
+
+        for (String fieldName : signatureNames) {
+            ValidationReport subReport = new ValidationReport();
+            try (PdfDocument doc = new PdfDocument(new PdfReader(util.extractRevision(fieldName)),
+                    new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
+                subReport.merge(validateLatestSignature(doc));
+            } catch (IOException | RuntimeException e) {
+                subReport.addReportItem(new ReportItem(SIGNATURE_VERIFICATION, REVISIONS_RETRIEVAL_FAILED,
+                        e, ReportItemStatus.INDETERMINATE));
+            }
+            if (!validateSingleSignature) {
+                validationReport.merge(subReport);
+                if (stopValidation(subReport, validationContext)) {
+                    return validationReport;
+                }
+            } else if (fieldName.equals(signatureName)) {
+                return subReport;
+            }
+        }
+        if (validateSingleSignature) {
+            validationReport.addReportItem(new ReportItem(SIGNATURE_VERIFICATION,
+                    MessageFormatUtil.format(SIGNATURE_NOT_FOUND, signatureName),
+                    ReportItemStatus.INDETERMINATE));
+        }
+        return validationReport;
     }
 
     private void findValidationClients() {

@@ -28,6 +28,7 @@ import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationExcept
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.signatures.testutils.PemFileHelper;
@@ -53,6 +54,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
 import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -184,7 +186,7 @@ public class SignatureValidatorTest extends ExtendedITextTest {
                 .hasLogItem(al -> al
                         .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
                         .withMessage(MessageFormatUtil.format(SignatureValidator.CANNOT_VERIFY_SIGNATURE,
-                                        "timestampSignature1"))
+                                "timestampSignature1"))
                         .withStatus(ReportItem.ReportItemStatus.INVALID))
         );
     }
@@ -213,7 +215,7 @@ public class SignatureValidatorTest extends ExtendedITextTest {
                             TimeBasedContexts.all(), SignatureValidationProperties.OnlineFetching.NEVER_FETCH)
                     .setFreshness(ValidatorContexts.all(), CertificateSources.all(), TimeBasedContexts.all(),
                             Duration.ofDays(-2))
-                    .setContinueAfterFailure(ValidatorContexts.all() , CertificateSources.all(), false);
+                    .setContinueAfterFailure(ValidatorContexts.all(), CertificateSources.all(), false);
 
             SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
             report = signatureValidator.validateLatestSignature(document);
@@ -462,7 +464,7 @@ public class SignatureValidatorTest extends ExtendedITextTest {
             }
             Assert.assertTrue(verificationCalls.stream().anyMatch(c ->
                     c.certificate.getSerialNumber().toString().equals("1491571297")
-                    && c.checkDate.equals(date3)));
+                            && c.checkDate.equals(date3)));
             Assert.assertTrue(verificationCalls.stream().anyMatch(c ->
                     c.certificate.getSerialNumber().toString().equals("1491571297")
                             && c.checkDate.equals(date2)));
@@ -486,32 +488,34 @@ public class SignatureValidatorTest extends ExtendedITextTest {
 
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "validDoc.pdf"))) {
             mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
-            mockCertificateChainValidator.onCallDo(c-> {throw new RuntimeException("Test chain validation failure");});
+            mockCertificateChainValidator.onCallDo(c -> {
+                throw new RuntimeException("Test chain validation failure");
+            });
 
             SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
             ValidationReport report = signatureValidator.validateLatestSignature(document);
-            AssertValidationReport.assertThat(report, r->
-                    r.hasLogItem(l-> l
+            AssertValidationReport.assertThat(report, r ->
+                    r.hasLogItem(l -> l
                             .withMessage(SignatureValidator.CHAIN_VALIDATION_FAILED)));
         }
     }
+
     @Test
     public void timeStampChainValidatorFailureTest() throws GeneralSecurityException, IOException {
         String chainName = CERTS_SRC + "validCertsChain.pem";
         Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
         X509Certificate rootCert = (X509Certificate) certificateChain[2];
-        X509Certificate intermediateCert = (X509Certificate) certificateChain[1];
-        X509Certificate signCert = (X509Certificate) certificateChain[0];
 
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "timestampSignatureDoc.pdf"))) {
             mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
-            mockCertificateChainValidator.onCallDo(c-> {throw new RuntimeException("Test chain validation failure");});
+            mockCertificateChainValidator.onCallDo(c -> {
+                throw new RuntimeException("Test chain validation failure");
+            });
 
             SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
             ValidationReport report = signatureValidator.validateLatestSignature(document);
-            AssertValidationReport.assertThat(report, r->
-                    r.hasLogItem(l-> l
-                            .withMessage(SignatureValidator.CHAIN_VALIDATION_FAILED)));
+            AssertValidationReport.assertThat(report, r -> r.hasLogItem(l -> l
+                    .withMessage(SignatureValidator.CHAIN_VALIDATION_FAILED)));
         }
     }
 
@@ -524,16 +528,18 @@ public class SignatureValidatorTest extends ExtendedITextTest {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "docWithDss.pdf"))) {
             mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
 
-            mockCertificateRetriever.onAddKnownCertificatesDo( c -> {
+            mockCertificateRetriever.onAddKnownCertificatesDo(c -> {
                 throw new RuntimeException("Test add know certificates failure");
             });
 
             SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
             ValidationReport report = signatureValidator.validateLatestSignature(document);
-            AssertValidationReport.assertThat(report, r-> r
-                    .hasLogItems(1,Integer.MAX_VALUE,l -> l.withMessage(SignatureValidator.ADD_KNOWN_CERTIFICATES_FAILED)));
+            AssertValidationReport.assertThat(report, r -> r
+                    .hasLogItems(1, Integer.MAX_VALUE, l ->
+                            l.withMessage(SignatureValidator.ADD_KNOWN_CERTIFICATES_FAILED)));
         }
     }
+
     @Test
     public void certificateRetrieverAddKnownCertificatesFromSignatureFailureTest() throws GeneralSecurityException, IOException {
         String chainName = CERTS_SRC + "validCertsChain.pem";
@@ -542,16 +548,18 @@ public class SignatureValidatorTest extends ExtendedITextTest {
 
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "validDoc.pdf"))) {
             mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
-            mockCertificateRetriever.onAddKnownCertificatesDo( c -> {
+            mockCertificateRetriever.onAddKnownCertificatesDo(c -> {
                 throw new RuntimeException("Test add know certificates failure");
             });
 
             SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
             ValidationReport report = signatureValidator.validateLatestSignature(document);
-            AssertValidationReport.assertThat(report, r-> r
-                    .hasLogItems(1,Integer.MAX_VALUE, l -> l.withMessage(SignatureValidator.ADD_KNOWN_CERTIFICATES_FAILED)));
+            AssertValidationReport.assertThat(report, r -> r
+                    .hasLogItems(1, Integer.MAX_VALUE, l ->
+                            l.withMessage(SignatureValidator.ADD_KNOWN_CERTIFICATES_FAILED)));
         }
     }
+
     @Test
     public void certificateRetrieverAddKnownCertificatesFromTimestampFailureTest() throws GeneralSecurityException, IOException {
         String chainName = CERTS_SRC + "validCertsChain.pem";
@@ -560,14 +568,15 @@ public class SignatureValidatorTest extends ExtendedITextTest {
 
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "timestampSignatureDoc.pdf"))) {
             mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
-            mockCertificateRetriever.onAddKnownCertificatesDo( c -> {
+            mockCertificateRetriever.onAddKnownCertificatesDo(c -> {
                 throw new RuntimeException("Test add know certificates failure");
             });
 
             SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
             ValidationReport report = signatureValidator.validateLatestSignature(document);
-            AssertValidationReport.assertThat(report, r-> r
-                    .hasLogItems(1,Integer.MAX_VALUE, l -> l.withMessage(SignatureValidator.ADD_KNOWN_CERTIFICATES_FAILED)));
+            AssertValidationReport.assertThat(report, r -> r
+                    .hasLogItems(1, Integer.MAX_VALUE, l ->
+                            l.withMessage(SignatureValidator.ADD_KNOWN_CERTIFICATES_FAILED)));
         }
     }
 
@@ -579,15 +588,45 @@ public class SignatureValidatorTest extends ExtendedITextTest {
 
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "validDoc.pdf"))) {
             mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
-            mockDocumentRevisionsValidator.onCallDo( c -> {
+            mockDocumentRevisionsValidator.onCallDo(c -> {
                 throw new RuntimeException("Test add know certificates failure");
             });
 
 
             SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
             ValidationReport report = signatureValidator.validateSignatures();
-            AssertValidationReport.assertThat(report, r-> r
+            AssertValidationReport.assertThat(report, r -> r
                     .hasLogItem(l -> l.withMessage(SignatureValidator.REVISIONS_VALIDATION_FAILED)));
         }
+    }
+
+    @Test
+    public void throwExceptionOnTheSecondValidationAttempt() throws IOException {
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "timestampSignatureDoc.pdf"))) {
+            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
+            signatureValidator.validateSignatures();
+            Exception exception = Assert.assertThrows(PdfException.class,
+                    () -> signatureValidator.validateSignatures());
+            Assert.assertEquals(SignatureValidator.VALIDATION_PERFORMED, exception.getMessage());
+            exception = Assert.assertThrows(PdfException.class,
+                    () -> signatureValidator.validateSignature("Signature1"));
+            Assert.assertEquals(SignatureValidator.VALIDATION_PERFORMED, exception.getMessage());
+        }
+    }
+
+    @Test
+    public void signatureWithSpecifiedNameNotFound() throws IOException {
+        ValidationReport report;
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "timestampSignatureDoc.pdf"))) {
+            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
+            report = signatureValidator.validateSignature("Invalid signature name");
+        }
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationResult.INDETERMINATE)
+                .hasNumberOfLogs(1).hasNumberOfFailures(1)
+                .hasLogItem(l -> l
+                        .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
+                        .withMessage(SignatureValidator.SIGNATURE_NOT_FOUND, p -> "Invalid signature name")
+                        .withStatus(ReportItemStatus.INDETERMINATE)));
     }
 }
