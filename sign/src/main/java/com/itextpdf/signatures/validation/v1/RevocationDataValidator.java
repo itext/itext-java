@@ -69,6 +69,10 @@ public class RevocationDataValidator {
     static final String TRUSTED_OCSP_RESPONDER = "Authorized OCSP Responder certificate has id-pkix-ocsp-nocheck " +
             "extension so it is trusted by the definition and no revocation checking is performed.";
     static final String VALIDITY_ASSURED = "Certificate is trusted due to validity assured - short term extension.";
+    static final String NO_REV_AVAILABLE = "noRevAvail extension from RFC 9608 is present on {0} certificate. "
+            + "Revocation data checks are not required.";
+    static final String NO_REV_AVAILABLE_CA = "noRevAvail extension from RFC 9608 is present on {0} certificate, "
+            + "however this certificate is a CA, which is not allowed.";
     static final String CANNOT_PARSE_OCSP =
             "OCSP response from \"{0}\" OCSP response cannot be parsed.";
     static final String CANNOT_PARSE_CRL =
@@ -149,6 +153,18 @@ public class RevocationDataValidator {
                 OID.X509Extensions.VALIDITY_ASSURED_SHORT_TERM) != null) {
             report.addReportItem(new CertificateReportItem(certificate, REVOCATION_DATA_CHECK, VALIDITY_ASSURED,
                     ReportItemStatus.INFO));
+            return;
+        }
+        if (CertificateUtil.getExtensionValueByOid(certificate, OID.X509Extensions.NO_REV_AVAILABLE) != null) {
+            if (certificate.getBasicConstraints() < 0) {
+                report.addReportItem(new CertificateReportItem(certificate, REVOCATION_DATA_CHECK,
+                        MessageFormatUtil.format(NO_REV_AVAILABLE, certificate.getSubjectX500Principal()),
+                        ReportItemStatus.INFO));
+            } else {
+                report.addReportItem(new CertificateReportItem(certificate, REVOCATION_DATA_CHECK,
+                        MessageFormatUtil.format(NO_REV_AVAILABLE_CA, certificate.getSubjectX500Principal()),
+                        ReportItemStatus.INDETERMINATE));
+            }
             return;
         }
         if (CertificateSource.OCSP_ISSUER == localContext.getCertificateSource()) {

@@ -140,6 +140,10 @@ public final class OID {
          */
         public static final String VALIDITY_ASSURED_SHORT_TERM = "0.4.0.194121.2.1";
 
+        /**
+         * Extension for certificates from RFC 9608 which indicates that no revocation information is available.
+         */
+        public static final String NO_REV_AVAILABLE = "2.5.29.56";
 
         /**
          * According to https://tools.ietf.org/html/rfc5280 4.2. "Certificate Extensions":

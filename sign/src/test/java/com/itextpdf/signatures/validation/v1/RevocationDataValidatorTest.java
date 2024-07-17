@@ -55,6 +55,7 @@ import com.itextpdf.signatures.validation.v1.mocks.MockOCSPValidator;
 import com.itextpdf.signatures.validation.v1.mocks.MockSignatureValidationProperties;
 import com.itextpdf.signatures.validation.v1.report.ReportItem;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport;
+import com.itextpdf.signatures.validation.v1.report.ValidationReport.ValidationResult;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
@@ -322,6 +323,46 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
                 .hasLogItem(la -> la
                         .withCheckName(RevocationDataValidator.REVOCATION_DATA_CHECK)
                         .withMessage(RevocationDataValidator.VALIDITY_ASSURED)
+                        .withCertificate(certificate)
+                ));
+    }
+
+    @Test
+    public void noRevAvailTest() throws CertificateException, IOException {
+        String checkCertFileName = SOURCE_FOLDER + "noRevAvailCertWithoutCA.pem";
+        X509Certificate certificate = (X509Certificate) PemFileHelper.readFirstChain(checkCertFileName)[0];
+        Date checkDate = TimeTestUtil.TEST_DATE_TIME;
+
+        ValidationReport report = new ValidationReport();
+        RevocationDataValidator validator = validatorChainBuilder.buildRevocationDataValidator();
+
+        validator.validate(report, baseContext, certificate, checkDate);
+
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationResult.VALID)
+                .hasLogItem(la -> la
+                        .withCheckName(RevocationDataValidator.REVOCATION_DATA_CHECK)
+                        .withMessage(RevocationDataValidator.NO_REV_AVAILABLE, m -> certificate.getSubjectX500Principal())
+                        .withCertificate(certificate)
+                ));
+    }
+
+    @Test
+    public void noRevAvailWithCATest() throws CertificateException, IOException {
+        String checkCertFileName = SOURCE_FOLDER + "noRevAvailCert.pem";
+        X509Certificate certificate = (X509Certificate) PemFileHelper.readFirstChain(checkCertFileName)[0];
+        Date checkDate = TimeTestUtil.TEST_DATE_TIME;
+
+        ValidationReport report = new ValidationReport();
+        RevocationDataValidator validator = validatorChainBuilder.buildRevocationDataValidator();
+
+        validator.validate(report, baseContext, certificate, checkDate);
+
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationResult.INDETERMINATE)
+                .hasLogItem(la -> la
+                        .withCheckName(RevocationDataValidator.REVOCATION_DATA_CHECK)
+                        .withMessage(RevocationDataValidator.NO_REV_AVAILABLE_CA, m -> certificate.getSubjectX500Principal())
                         .withCertificate(certificate)
                 ));
     }
