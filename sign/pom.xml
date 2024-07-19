@@ -67,7 +67,7 @@
       <dependencies>
         <dependency>
           <groupId>com.itextpdf</groupId>
-          <artifactId>bouncy-castle-fips-adapter</artifactId>
+          <artifactId>bouncy-castle-adapter</artifactId>
           <version>${project.version}</version>
           <scope>test</scope>
         </dependency>
