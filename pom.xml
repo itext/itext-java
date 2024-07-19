@@ -500,6 +500,7 @@
                   <exclude>com.itextpdf.pdfua.exceptions.PdfUAConformanceException</exclude>
                   <exclude>com.itextpdf.signatures.validation.v1.DocumentRevisionsValidator</exclude>
                   <exclude>com.itextpdf.signatures.validation.v1.SignatureValidator</exclude>
+                  <exclude>com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant</exclude>
                 </excludes>
                 <excludeModules>
                   <excludeModule>bouncy-castle-adapter</excludeModule>

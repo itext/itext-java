@@ -79,6 +79,8 @@ public final class KernelExceptionMessageConstant {
     public static final String CANNOT_RETRIEVE_MEDIA_BOX_ATTRIBUTE = "Invalid PDF. There is no media box attribute "
             + "for page or its parents.";
     public static final String CANNOT_FIND_IMAGE_DATA_OR_EI = "Cannot find image data or EI.";
+    public static final String UNSUPPORTED_ENCODING_FOR_INLINE_IMAGE
+            = "Cannot parse inline image: {0} encoding is unsupported.";
     public static final String CANNOT_FLUSH_DOCUMENT_ROOT_TAG_BEFORE_DOCUMENT_IS_CLOSED = "Cannot flush document root "
             + "tag before document is closed.";
     public static final String CANNOT_FLUSH_OBJECT = "Cannot flush object.";
@@ -359,8 +361,6 @@ public final class KernelExceptionMessageConstant {
             + "operators.";
     public static final String UNBALANCED_LAYER_OPERATORS = "Unbalanced layer operators.";
     public static final String UNBALANCED_SAVE_RESTORE_STATE_OPERATORS = "Unbalanced save restore state operators.";
-    public static final String UNEXPECTED_CHARACTER_FOUND_AFTER_ID_IN_INLINE_IMAGE = "Unexpected character {0} "
-            + "found after ID in inline image.";
     public static final String UNEXPECTED_COLOR_SPACE = "Unexpected ColorSpace: {0}.";
     public static final String UNEXPECTED_END_OF_FILE = "Unexpected end of file.";
     public static final String UNEXPECTED_TOKEN = "unexpected {0} was encountered.";

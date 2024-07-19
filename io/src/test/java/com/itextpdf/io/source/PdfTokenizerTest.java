@@ -69,6 +69,45 @@ public class PdfTokenizerTest extends ExtendedITextTest {
     }
 
     @Test
+    public void peekTest() throws IOException {
+        String data = "/Name1 70";
+
+        PdfTokenizer tokenizer = new PdfTokenizer(new RandomAccessFileOrArray(
+                new RandomAccessSourceFactory().createSource(data.getBytes(StandardCharsets.ISO_8859_1))));
+
+        tokenizer.seek(0);
+        int symbol = tokenizer.peek();
+        Assert.assertEquals((int)'/', symbol);
+        Assert.assertEquals(0, tokenizer.getPosition());
+
+        tokenizer.seek(7);
+        symbol = tokenizer.peek();
+        Assert.assertEquals((int)'7', symbol);
+        Assert.assertEquals(7, tokenizer.getPosition());
+
+        tokenizer.seek(9);
+        symbol = tokenizer.peek();
+        Assert.assertEquals(-1, symbol);
+        Assert.assertEquals(9, tokenizer.getPosition());
+
+        byte[] name = new byte[6];
+        tokenizer.seek(0);
+        int read = tokenizer.peek(name);
+        byte[] expected = "/Name1".getBytes();
+        Assert.assertArrayEquals(expected, name);
+        Assert.assertEquals(0, tokenizer.getPosition());
+        Assert.assertEquals(6, read);
+
+        byte[] bigBuffer = new byte[13];
+        read = tokenizer.peek(bigBuffer);
+        expected = new byte[] {(byte) 47, (byte) 78, (byte) 97, (byte) 109, (byte) 101, (byte) 49, (byte) 32,
+                               (byte) 55, (byte) 48, (byte) 0, (byte) 0, (byte) 0, (byte) 0};
+        Assert.assertArrayEquals(expected, bigBuffer);
+        Assert.assertEquals(0, tokenizer.getPosition());
+        Assert.assertEquals(9, read);
+    }
+
+    @Test
     public void getLongValueTest() throws IOException {
         String data = "21474836470";
 

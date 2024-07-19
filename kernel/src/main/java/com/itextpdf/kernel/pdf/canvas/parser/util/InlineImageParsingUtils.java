@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser.util;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
@@ -32,10 +33,11 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfStream;
-import com.itextpdf.kernel.pdf.filters.DoNothingFilter;
 import com.itextpdf.kernel.pdf.filters.FilterHandlers;
 import com.itextpdf.kernel.pdf.filters.IFilterHandler;
 import com.itextpdf.kernel.pdf.filters.FlateDecodeStrictFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -47,7 +49,7 @@ import java.util.Map;
  */
 public final class InlineImageParsingUtils {
 
-    private static final byte[] EI = new byte[]{(byte)'E', (byte)'I'};
+    private static final Logger LOGGER = LoggerFactory.getLogger(InlineImageParsingUtils.class);
 
     private InlineImageParsingUtils() {
     }
@@ -199,11 +201,11 @@ public final class InlineImageParsingUtils {
             dict.put(resolvedKey, getAlternateValue(resolvedKey, value));
         }
 
-        int ch = ps.getTokeniser().read();
-        if (!PdfTokenizer.isWhitespace(ch))
-            throw new InlineImageParseException(
-                    KernelExceptionMessageConstant.UNEXPECTED_CHARACTER_FOUND_AFTER_ID_IN_INLINE_IMAGE
-            ).setMessageParams(ch);
+        int ch = ps.getTokeniser().peek();
+        //ASCIIHexDecode and ASCII85Decode are not required to have a whitespace after ID operator
+        if (PdfTokenizer.isWhitespace(ch)) {
+            ps.getTokeniser().read();
+        }
 
         return dict;
     }
@@ -273,8 +275,9 @@ public final class InlineImageParsingUtils {
     private static byte[] parseUnfilteredSamples(PdfDictionary imageDictionary, PdfDictionary colorSpaceDic, PdfCanvasParser ps) throws IOException {
         // special case:  when no filter is specified, we just read the number of bits
         // per component, multiplied by the width and height.
-        if (imageDictionary.containsKey(PdfName.Filter))
+        if (imageDictionary.containsKey(PdfName.Filter)) {
             throw new IllegalArgumentException("Dictionary contains filters");
+        }
 
         PdfNumber h = imageDictionary.getAsNumber(PdfName.Height);
 
@@ -326,41 +329,103 @@ public final class InlineImageParsingUtils {
     private static byte[] parseSamples(PdfDictionary imageDictionary, PdfDictionary colorSpaceDic, PdfCanvasParser ps) throws IOException {
         // by the time we get to here, we have already parsed the ID operator
 
+        //If image is unfiltered then we can calculate exact number of bytes it occupies
         if (!imageDictionary.containsKey(PdfName.Filter) && imageColorSpaceIsKnown(imageDictionary, colorSpaceDic)) {
             return parseUnfilteredSamples(imageDictionary, colorSpaceDic, ps);
         }
 
-
-        // read all content until we reach an EI operator followed by whitespace.
-        // then decode the content stream to check that bytes that were parsed are really all image bytes
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        int ch;
-        int found = 0;
-        PdfTokenizer tokeniser = ps.getTokeniser();
-        while ((ch = tokeniser.read()) != -1) {
-            if (ch == 'E') {
-                // probably some bytes were preserved so write them
-                baos.write(EI, 0, found);
-                // just preserve 'E' and do not write it immediately
-                found = 1;
-            } else if (found == 1 && ch == 'I') {
-                // just preserve 'EI' and do not write it immediately
-                found = 2;
-            } else {
-                if (found == 2 && PdfTokenizer.isWhitespace(ch)) {
-                    byte[] tmp = baos.toByteArray();
-                    if (inlineImageStreamBytesAreComplete(tmp, imageDictionary)) {
-                        return tmp;
-                    }
+        PdfTokenizer tokenizer = ps.getTokeniser();
+        ByteArrayOutputStream imageStream = new ByteArrayOutputStream();
+        int lastByte = tokenizer.read();
+        int currentByte = tokenizer.read();
+        // PDF spec is unclear about how to parse inline images. Should a whitespace
+        // appear before EI or not, so reading until EI<whitespace> or EOF.
+        while(currentByte != -1) {
+            if (lastByte == 'E'
+             && currentByte == 'I'
+             && PdfTokenizer.isWhitespace(tokenizer.peek())
+             && !followedByBinaryData(tokenizer)) {
+                byte[] image = imageStream.toByteArray();
+                //Try to decode inline image as an additional safeguard and also to check for unsupported encodings
+                if (inlineImageStreamBytesAreComplete(image, imageDictionary)) {
+                    return image;
                 }
-                // probably some bytes were preserved so write them
-                baos.write(EI, 0, found);
-                baos.write(ch);
-                found = 0;
             }
 
+            imageStream.write(lastByte);
+            lastByte = currentByte;
+            currentByte = tokenizer.read();
         }
+        //If EOF was encountered than image was not parsed
         throw new InlineImageParseException(KernelExceptionMessageConstant.CANNOT_FIND_IMAGE_DATA_OR_EI);
+    }
+
+    /**
+     * Check whether next several bytes of tokenizer contain binary data.
+     * This method probes 10 bytes and tries to find pdf operator in them.
+     *
+     * @param tokenizer pdf tokenizer.
+     *
+     * @return true if next 10 bytes is binary data, false if they're most likely pdf operators.
+     *
+     * @throws IOException if any I/O error occurs
+     */
+    private static boolean followedByBinaryData(PdfTokenizer tokenizer) throws IOException {
+        byte[] testSequence = new byte[10];
+        tokenizer.peek(testSequence);
+        // We don't need to cleanup possible zeroes at the end, they aer whitespaces
+        // so can't break our logic in followedByBinaryData(byteArr)
+        boolean isBinaryData = false;
+        int operatorStart = -1;
+        int operatorEnd = -1;
+
+        for (int i = 0; i < testSequence.length; ++i) {
+            final byte b = testSequence[i];
+            //Checking for ASCII and Unicode common control characters except spaces:
+            //     0x00  0x10
+            //0x00	NUL	 DLE
+            //0x01	SOH	 DC1
+            //0x02	STX	 DC2
+            //0x03	ETX	 DC3
+            //0x04	EOT	 DC4
+            //0x05	ENQ	 NAK
+            //0x06	ACK	 SYN
+            //0x07	BEL	 ETB
+            //0x08	BS	 CAN
+            //0x09	HT	 EM
+            //0x0A	LF	 SUB
+            //0x0B	VT	 ESC
+            //0x0C	FF	 FS
+            //0x0D	CR	 GS
+            //0x0E	SO	 RS
+            //0x0F	SI	 US
+            //0x7F	DEL -> we have binary data
+            // Also if we have any byte > 0x7f (byte < 0) than we treat it also as binary data
+            // because pdf operators are in range 0x0 - 0x7f
+            if (b < 0x20 && !PdfTokenizer.isWhitespace(b)) {
+                isBinaryData = true;
+                break;
+            }
+            // try to find PDF operator start and end
+            if (operatorStart == -1 && !PdfTokenizer.isWhitespace(b)) {
+                operatorStart = i;
+            }
+            if (operatorStart != -1 && PdfTokenizer.isWhitespace(b)) {
+                operatorEnd = i;
+                break;
+            }
+        }
+        if (operatorEnd == -1 && operatorStart != -1) {
+            operatorEnd = testSequence.length;
+        }
+        //checking for any ASCII sequence here having less than 3 bytes length, because it most likely a pdf operator.
+        if (operatorEnd - operatorStart > 3) {
+            isBinaryData = true;
+        }
+        //if no operator start & end was found than it means only whitespaces were encountered or eof was reached
+        //earlier, so returning false in that case, it's highly unlikely inline image will have a lot of whitespaces in
+        //its data.
+        return isBinaryData;
     }
 
     private static boolean imageColorSpaceIsKnown(PdfDictionary imageDictionary, PdfDictionary colorSpaceDic) {
@@ -384,12 +449,29 @@ public final class InlineImageParsingUtils {
     private static boolean inlineImageStreamBytesAreComplete(byte[] samples, PdfDictionary imageDictionary) {
         try {
             Map<PdfName, IFilterHandler> filters = new HashMap<>(FilterHandlers.getDefaultFilterHandlers());
-            filters.put(PdfName.JBIG2Decode, new DoNothingFilter());
+            // According to pdf spec JPXDecode and JBIG2Decode are unsupported for inline images encoding
+            filters.put(PdfName.JPXDecode, new UnsupportedFilter(PdfName.JPXDecode.getValue()));
+            filters.put(PdfName.JBIG2Decode, new UnsupportedFilter(PdfName.JBIG2Decode.getValue()));
             filters.put(PdfName.FlateDecode, new FlateDecodeStrictFilter());
             PdfReader.decodeBytes(samples, imageDictionary, filters);
+            return true;
         } catch (Exception ex) {
             return false;
         }
-        return true;
+    }
+
+    private static class UnsupportedFilter implements IFilterHandler {
+        private final String name;
+
+        public UnsupportedFilter(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) {
+            LOGGER.error(MessageFormatUtil.format(
+                    KernelExceptionMessageConstant.UNSUPPORTED_ENCODING_FOR_INLINE_IMAGE, name));
+            throw new UnsupportedOperationException();
+        }
     }
 }

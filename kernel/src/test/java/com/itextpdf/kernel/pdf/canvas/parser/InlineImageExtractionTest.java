@@ -121,20 +121,18 @@ public class InlineImageExtractionTest extends ExtendedITextTest {
     }
 
     private static class InlineImageEventListener implements IEventListener {
-        private List<PdfStream> inlineImages = new ArrayList<>();
+        private final List<PdfStream> inlineImages = new ArrayList<>();
 
         public List<PdfStream> getInlineImages() {
             return inlineImages;
         }
 
         public void eventOccurred(IEventData data, EventType type) {
-            switch (type) {
-                case RENDER_IMAGE:
-                    ImageRenderInfo imageEventData = (ImageRenderInfo) data;
-                    if (((ImageRenderInfo) data).isInline()) {
-                        inlineImages.add(imageEventData.getImage().getPdfObject());
-                    }
-                    break;
+            if (type == EventType.RENDER_IMAGE) {
+                ImageRenderInfo imageEventData = (ImageRenderInfo) data;
+                if (((ImageRenderInfo) data).isInline()) {
+                    inlineImages.add(imageEventData.getImage().getPdfObject());
+                }
             }
         }
 

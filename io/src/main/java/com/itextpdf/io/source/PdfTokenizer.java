@@ -141,6 +141,27 @@ public class PdfTokenizer implements Closeable {
         return file.read();
     }
 
+    /**
+     * Gets the next byte of pdf source without moving source position.
+     *
+     * @return the byte, or -1 if EOF is reached
+     * @throws java.io.IOException in case of any reading error.
+     */
+    public int peek() throws java.io.IOException {
+        return file.peek();
+    }
+
+    /**
+     * Gets the next {@code buffer.length} bytes of pdf source without moving source position.
+     *
+     * @param buffer buffer to store read bytes
+     * @return the number of read bytes. If it is less than {@code buffer.length} it means EOF has been reached.
+     * @throws java.io.IOException in case of any reading error.
+     */
+    public int peek(byte[] buffer) throws java.io.IOException {
+        return file.peek(buffer);
+    }
+
     public String readString(int size) throws java.io.IOException {
         StringBuilder buf = new StringBuilder();
         int ch;

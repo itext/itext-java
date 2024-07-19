@@ -116,6 +116,44 @@ public class RandomAccessFileOrArray implements DataInput {
     }
 
     /**
+     * Gets the next byte without moving current position.
+     *
+     * @return the next byte, or -1 if EOF is reached
+     * @throws java.io.IOException in case of any reading error.
+     */
+    public int peek() throws java.io.IOException {
+        if (isBack) {
+            return back & 0xff;
+        }
+        return byteSource.get(byteSourcePosition);
+    }
+
+    /**
+     * Gets the next {@code buffer.length} bytes without moving current position.
+     *
+     * @param buffer buffer to store read bytes
+     * @return the number of read bytes. If it is less than {@code buffer.length} it means EOF has been reached.
+     * @throws java.io.IOException in case of any reading error.
+     */
+    public int peek(byte[] buffer) throws java.io.IOException {
+        int offset = 0;
+        int length = buffer.length;
+        int count = 0;
+        if (isBack && length > 0) {
+            buffer[offset++] = back;
+            --length;
+            ++count;
+        }
+        if (length > 0) {
+            int byteSourceCount = byteSource.get(byteSourcePosition, buffer, offset, length);
+            if (byteSourceCount > 0) {
+                count += byteSourceCount;
+            }
+        }
+        return count;
+    }
+
+    /**
      * Reads the specified amount of bytes to the buffer applying the offset.
      *
      * @param b   destination buffer
