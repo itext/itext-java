@@ -275,7 +275,8 @@ public class SignatureValidator {
 
         for (String fieldName : signatureNames) {
             ValidationReport subReport = new ValidationReport();
-            try (PdfDocument doc = new PdfDocument(new PdfReader(util.extractRevision(fieldName)),
+            try (PdfDocument doc = new PdfDocument(new PdfReader(util.extractRevision(fieldName))
+                    .setStrictnessLevel(PdfReader.StrictnessLevel.CONSERVATIVE),
                     new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
                 subReport.merge(validateLatestSignature(doc));
             } catch (IOException | RuntimeException e) {
