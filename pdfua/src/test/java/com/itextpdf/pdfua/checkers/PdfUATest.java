@@ -68,7 +68,6 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -162,7 +161,6 @@ public class PdfUATest extends ExtendedITextTest {
         }
         Assert.assertNull(new CompareTool().compareByContent(outPdf, SOURCE_FOLDER + "cmp_emptyPageDocument.pdf",
                 DESTINATION_FOLDER, "diff_"));
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
     @Test
@@ -238,7 +236,6 @@ public class PdfUATest extends ExtendedITextTest {
         pdfDoc.close();
         Assert.assertNull(new CompareTool().compareByContent(outPdf, SOURCE_FOLDER + "cmp_documentWithComplexLangEntryTest.pdf",
                 DESTINATION_FOLDER, "diff_"));
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
     @Test
@@ -458,7 +455,6 @@ public class PdfUATest extends ExtendedITextTest {
             pdfDocument.getDiContainer().register(ValidationContainer.class, validationContainer);
         }
         //Vera pdf doesn't complain on this document
-        Assert.assertNull(new VeraPdfValidator().validate(dest)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
     @Test
@@ -524,6 +520,5 @@ public class PdfUATest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(outPdf, SOURCE_FOLDER + "cmp_manualPdfUaCreation.pdf",
                 DESTINATION_FOLDER, "diff_"));
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 }

@@ -124,7 +124,7 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-8113 Fix signatures tests)
+    @org.junit.Ignore
     public void twoStepSigningBaselineBTest() throws Exception {
         String fileName = "twoStepSigningBaselineBTest" + comparisonPdfId + ".pdf";
         String outFileName = destinationFolder + fileName;
@@ -170,7 +170,7 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-8113 Fix signatures tests)
+    @org.junit.Ignore
     public void twoStepSigningBaselineTTest() throws Exception {
         String fileName = "twoStepSigningBaselineTTest" + comparisonPdfId + ".pdf";
         String outFileName = destinationFolder + fileName;
@@ -221,7 +221,7 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-8113 Fix signatures tests)
+    @org.junit.Ignore
     public void twoStepSigningBaselineLTTest() throws Exception {
         String fileName = "twoStepSigningBaselineLTTest" + comparisonPdfId + (FIPS_MODE && "RSASSA".equals(signAlgorithm) ? "_FIPS.pdf" : ".pdf");
         String outFileName = destinationFolder + fileName;
@@ -280,7 +280,7 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-8113 Fix signatures tests)
+    @org.junit.Ignore
     public void twoStepSigningBaselineLTATest() throws Exception {
         String fileName = "twoStepSigningBaselineLTATest" + comparisonPdfId + (FIPS_MODE && "RSASSA".equals(signAlgorithm) ? "_FIPS.pdf" : ".pdf");
         String outFileName = destinationFolder + fileName;

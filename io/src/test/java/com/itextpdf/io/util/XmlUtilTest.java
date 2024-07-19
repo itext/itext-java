@@ -24,9 +24,8 @@ package com.itextpdf.io.util;
 
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
-// Android-Conversion-Skip-Line (Directly use xerces library to unify behavior with vanilla java (where xerces is implemented into JRE))
-// Android-Conversion-Replace import org.apache.xerces.jaxp.DocumentBuilderFactoryImpl;
-// Android-Conversion-Replace import org.apache.xerces.jaxp.SAXParserFactoryImpl;
+import org.apache.xerces.jaxp.DocumentBuilderFactoryImpl;
+import org.apache.xerces.jaxp.SAXParserFactoryImpl;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -48,15 +47,13 @@ public class XmlUtilTest extends ExtendedITextTest {
     public void getDocumentBuilderFactoryTest() {
         DocumentBuilderFactory factory = XmlUtil.getDocumentBuilderFactory();
 
-        // Android-Conversion-Skip-Line (Directly use xerces library to unify behavior with vanilla java (where xerces is implemented into JRE))
-        Assert.assertEquals(DocumentBuilderFactory.newInstance().getClass(), factory.getClass()); // Android-Conversion-Replace Assert.assertEquals(DocumentBuilderFactoryImpl.class, factory.getClass());
+        Assert.assertEquals(DocumentBuilderFactoryImpl.class, factory.getClass());
     }
 
     @Test
     public void createSAXParserFactoryTest() {
         SAXParserFactory factory = XmlUtil.createSAXParserFactory();
 
-        // Android-Conversion-Skip-Line (Directly use xerces library to unify behavior with vanilla java (where xerces is implemented into JRE))
-        Assert.assertEquals(SAXParserFactory.newInstance().getClass(), factory.getClass()); // Android-Conversion-Replace Assert.assertEquals(SAXParserFactoryImpl.class, factory.getClass());
+        Assert.assertEquals(SAXParserFactoryImpl.class, factory.getClass());
     }
 }
