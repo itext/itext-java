@@ -44,7 +44,7 @@
     Cryptographic Service Provider (CSP). So add dependency to BouncyCastle provider. -->
     <dependency>
       <groupId>org.bouncycastle</groupId>
-      <artifactId>bcpkix-jdk18on</artifactId>
+      <artifactId>bcpkix-jdk15to18</artifactId>
       <version>${bouncycastle.version}</version>
       <optional>true</optional>
       <scope>test</scope>
