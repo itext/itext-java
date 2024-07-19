@@ -3,12 +3,12 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.itextpdf</groupId>
-    <artifactId>root</artifactId>
+    <groupId>com.itextpdf.android</groupId>
+    <artifactId>root-android</artifactId>
     <version>8.0.5</version>
   </parent>
 
-  <artifactId>styled-xml-parser</artifactId>
+  <artifactId>styled-xml-parser-android</artifactId>
 
   <name>iText - Styled XML Parser</name>
   <description>Styled XML parser is used by iText modules to parse HTML and XML</description>
@@ -16,23 +16,23 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>io</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>io-android</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>kernel</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>kernel-android</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>layout</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>layout-android</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>pdftest</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>pdftest-android</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>

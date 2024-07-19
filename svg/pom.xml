@@ -3,12 +3,12 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.itextpdf</groupId>
-    <artifactId>root</artifactId>
+    <groupId>com.itextpdf.android</groupId>
+    <artifactId>root-android</artifactId>
     <version>8.0.5</version>
   </parent>
 
-  <artifactId>svg</artifactId>
+  <artifactId>svg-android</artifactId>
 
   <name>iText - SVG</name>
   <description>svg is a module for iText that allows you to integrate SVG images in your PDF creation and manipulation process</description>
@@ -16,18 +16,18 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>layout</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>layout-android</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>styled-xml-parser</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>styled-xml-parser-android</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>pdftest</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>pdftest-android</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>

@@ -3,12 +3,12 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.itextpdf</groupId>
-    <artifactId>root</artifactId>
+    <groupId>com.itextpdf.android</groupId>
+    <artifactId>root-android</artifactId>
     <version>8.0.5</version>
   </parent>
 
-  <artifactId>bouncy-castle-adapter</artifactId>
+  <artifactId>bouncy-castle-adapter-android</artifactId>
 
   <name>iText - Bouncy Castle Adapter</name>
   <url>https://itextpdf.com/</url>
@@ -30,8 +30,8 @@
       <version>${bouncycastle.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>commons</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>commons-android</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>

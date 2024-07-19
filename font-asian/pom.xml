@@ -3,12 +3,12 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.itextpdf</groupId>
-    <artifactId>root</artifactId>
+    <groupId>com.itextpdf.android</groupId>
+    <artifactId>root-android</artifactId>
     <version>8.0.5</version>
   </parent>
 
-  <artifactId>font-asian</artifactId>
+  <artifactId>font-asian-android</artifactId>
 
   <name>iText - Asian fonts</name>
   <description>iText Asian fonts for use in conjunction with iText, a free Java-PDF library</description>

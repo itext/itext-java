@@ -3,12 +3,12 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.itextpdf</groupId>
-    <artifactId>root</artifactId>
+    <groupId>com.itextpdf.android</groupId>
+    <artifactId>root-android</artifactId>
     <version>8.0.5</version>
   </parent>
 
-  <artifactId>hyph</artifactId>
+  <artifactId>hyph-android</artifactId>
 
   <name>iText - hyph</name>
   <description>XML files that can be used for hyphenation</description>
