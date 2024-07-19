@@ -223,7 +223,7 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.TYPOGRAPHY_NOT_FOUND, count = 556)
+            @LogMessage(messageTemplate = IoLogMessageConstant.TYPOGRAPHY_NOT_FOUND, count = 553)
     })
     public void rowWrapRtlStartTest() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "rowWrapRtlStartTest.pdf";
@@ -245,7 +245,7 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.TYPOGRAPHY_NOT_FOUND, count = 556)
+            @LogMessage(messageTemplate = IoLogMessageConstant.TYPOGRAPHY_NOT_FOUND, count = 553)
     })
     public void reverseRowWrapRtlStartTest() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "reverseRowWrapRtlStartTest.pdf";
@@ -334,6 +334,32 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
             flexContainer.setProperty(Property.FLEX_WRAP, FlexWrapPropertyValue.WRAP);
             flexContainer.setProperty(Property.ALIGN_ITEMS, AlignmentPropertyValue.CENTER);
             flexContainer.setProperty(Property.JUSTIFY_CONTENT, JustifyContent.CENTER);
+            document.add(flexContainer);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void tableInFlexOnSplitTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "tableInFlexOnSplitTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + "tableInFlexOnSplitTest.pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName))) {
+            Document document = new Document(pdfDocument);
+            pdfDocument.setDefaultPageSize(PageSize.A5);
+
+            Div flexContainer = new FlexContainer();
+            flexContainer.setBackgroundColor(ColorConstants.LIGHT_GRAY);
+            flexContainer.setBorder(new SolidBorder(2));
+            Table table = new Table(UnitValue.createPercentArray(new float[] {10, 10, 10}));
+            for (int i = 1; i <= 3; i++) {
+                table.addHeaderCell("Header" + i);
+            }
+            for (int i = 1; i <= 150; i++) {
+                table.addCell("Cell" + i);
+            }
+
+            flexContainer.add(table);
             document.add(flexContainer);
         }
 
