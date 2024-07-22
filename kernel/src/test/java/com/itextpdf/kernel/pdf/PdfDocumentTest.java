@@ -23,6 +23,7 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.commons.utils.FileUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.DeflaterOutputStream;
@@ -614,6 +615,65 @@ public class PdfDocumentTest extends ExtendedITextTest {
         Assertions.assertNull(document.getConformanceLevel());
     }
 
+    //TODO DEVSIX-8490 remove this test when implemented
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate =
+            KernelLogMessageConstant.DUPLICATE_ENTRIES_IN_ORDER_ARRAY_REMOVED))
+    public void removeDuplicatesInOrderArrayTest() throws IOException, InterruptedException {
+        String inputPdf = "removeDuplicatesInOrderArray.pdf";
+        String outputPdf = "removedDuplicateInOrderArray.pdf";
+        PdfDocument doc = new PdfDocument(new PdfReader(SOURCE_FOLDER + inputPdf)
+                , CompareTool.createTestPdfWriter(DESTINATION_FOLDER + outputPdf));
+        //Need to update OCProperties
+        doc.getCatalog().getOCProperties(false);
+        doc.close();
+
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + outputPdf, SOURCE_FOLDER + "cmp_" + outputPdf,
+                DESTINATION_FOLDER));
+    }
+
+    //TODO DEVSIX-8490 remove this test when implemented
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate =
+            KernelLogMessageConstant.DUPLICATE_ENTRIES_IN_ORDER_ARRAY_REMOVED))
+    public void removeNestedDuplicatesInOrderArrayTest() throws IOException, InterruptedException {
+        String inputPdf = "removeNestedDuplicatesInOrderArray.pdf";
+        String outputPdf = "removedNestedDuplicatesInOrderArray.pdf";
+        PdfDocument doc = new PdfDocument(new PdfReader(SOURCE_FOLDER + inputPdf)
+                , new PdfWriter(DESTINATION_FOLDER + outputPdf));
+        //Need to update OCProperties
+        doc.getCatalog().getOCProperties(false);
+        doc.close();
+
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + outputPdf, SOURCE_FOLDER + "cmp_" + outputPdf,
+                DESTINATION_FOLDER));
+    }
+
+    //TODO DEVSIX-8490 remove this test when implemented
+    @Test
+    public void removeDuplicatesHasChildInOrderArrayTest() throws IOException, InterruptedException {
+        String inputPdf = "removeDuplicatesHasChildInOrderArray.pdf";
+        String outputPdf = "removedDuplicatesHasChildInOrderArray.pdf";
+        PdfDocument doc = new PdfDocument(new PdfReader(SOURCE_FOLDER + inputPdf)
+                , CompareTool.createTestPdfWriter(DESTINATION_FOLDER + outputPdf));
+        PdfCatalog catalog = doc.getCatalog();
+        Exception e = Assertions.assertThrows(PdfException.class, () -> catalog.getOCProperties(false));
+        Assertions.assertEquals(MessageFormatUtil.format(
+                KernelExceptionMessageConstant.UNABLE_TO_REMOVE_DUPLICATE_LAYER, "4 0 R"), e.getMessage());
+    }
+
+    //TODO DEVSIX-8490 remove this test when implemented
+    @Test
+    public void removeNestedDuplicatesHasChildInOrderArrayTest() throws IOException, InterruptedException {
+        String inputPdf = "removeNestedDuplicatesHasChildInOrderArray.pdf";
+        String outputPdf = "removedNestedDuplicatesHasChildInOrderArray.pdf";
+        PdfDocument doc = new PdfDocument(new PdfReader(SOURCE_FOLDER + inputPdf)
+                , CompareTool.createTestPdfWriter(DESTINATION_FOLDER + outputPdf));
+        PdfCatalog catalog = doc.getCatalog();
+        Exception e = Assertions.assertThrows(PdfException.class, () -> catalog.getOCProperties(false));
+        Assertions.assertEquals(MessageFormatUtil.format(
+                KernelExceptionMessageConstant.UNABLE_TO_REMOVE_DUPLICATE_LAYER, "27 0 R"), e.getMessage());
+    }
 
     private static class IgnoreTagStructurePdfDocument extends PdfDocument {
 

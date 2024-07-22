@@ -22,7 +22,11 @@
  */
 package com.itextpdf.kernel.pdf.layer;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -31,6 +35,7 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.PdfIndirectReference;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import java.io.IOException;
@@ -435,4 +440,22 @@ public class PdfLayerTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "output_layered.pdf", sourceFolder + "cmp_output_layered.pdf", destinationFolder, "diff"));
     }
 
+    //TODO DEVSIX-8490 remove this test when implemented
+    @Test
+    public void addSecondParentlayerTest() throws IOException {
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            try (PdfDocument doc = new PdfDocument(new PdfWriter(outputStream))) {
+                PdfLayer childLayer = new PdfLayer("childLayer", doc);
+                PdfLayer parentLayer1 = new PdfLayer("firstParentLayer", doc);
+                PdfLayer parentLayer2 = new PdfLayer("secondParentLayer", doc);
+
+                parentLayer1.addChild(childLayer);
+                PdfIndirectReference ref = childLayer.getIndirectReference();
+                Exception e = Assertions.assertThrows(PdfException.class, () -> parentLayer2.addChild(childLayer));
+                Assertions.assertEquals(MessageFormatUtil.format(
+                        KernelExceptionMessageConstant.UNABLE_TO_ADD_SECOND_PARENT_LAYER
+                        , ref.toString()), e.getMessage());
+            }
+        }
+    }
 }
