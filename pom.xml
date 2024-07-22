@@ -65,7 +65,6 @@
     <module>bouncy-castle-adapter</module>
     <module>bouncy-castle-connector</module>
     <module>pdfua</module>
-    <module>native-image-test</module>
   </modules>
 
   <scm>
@@ -346,10 +345,6 @@
             <group>
               <title>Layout</title>
               <packages>com.itextpdf.layout*</packages>
-            </group>
-            <group>
-              <title>Native Image Test</title>
-              <packages>com.itextpdf.nativeimage*</packages>
             </group>
             <group>
               <title>PDF/A</title>
