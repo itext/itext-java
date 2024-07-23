@@ -672,6 +672,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     /**
      * Gets document information dictionary.
      * {@link PdfDocument#info} is lazy initialized. It will be initialized during the first call of this method.
+     * The information dictionary values are synchronized with document XMP Metadata.
      *
      * @return document information dictionary.
      */
