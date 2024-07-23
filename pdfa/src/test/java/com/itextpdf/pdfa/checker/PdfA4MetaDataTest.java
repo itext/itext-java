@@ -22,6 +22,7 @@
  */
 package com.itextpdf.pdfa.checker;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
@@ -41,7 +42,6 @@ import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.kernel.xmp.options.SerializeOptions;
 import com.itextpdf.pdfa.PdfADocument;
-import com.itextpdf.pdfa.PdfAXMPUtil;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.AssertUtil;
@@ -50,8 +50,6 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -517,7 +515,7 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4,
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
-                        new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm")));
+                        FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm")));
         doc.addNewPage();
         byte[] bytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "xmp/xmpWithEmpty.xmp"));
         XMPMeta xmpMeta = XMPMetaFactory.parse(new ByteArrayInputStream(bytes));
@@ -539,7 +537,7 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4,
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
-                        new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm")));
+                        FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm")));
         doc.addNewPage();
         doc.getPage(1).setXmpMetadata(bytes);
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> {
@@ -551,14 +549,14 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
     }
 
     private void generatePdfADocument(PdfAConformanceLevel conformanceLevel, String outPdf,
-            Consumer<PdfDocument> consumer) throws FileNotFoundException {
+            Consumer<PdfDocument> consumer) throws IOException {
         if (outPdf == null) {
             Assert.fail();
         }
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         PdfADocument doc = new PdfADocument(writer, conformanceLevel,
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
-                        new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm")));
+                        FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm")));
         doc.addNewPage();
         consumer.accept(doc);
         doc.close();

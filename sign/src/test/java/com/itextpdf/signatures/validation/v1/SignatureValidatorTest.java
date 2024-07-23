@@ -30,39 +30,47 @@ import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.signatures.IssuingCertificateRetriever;
 import com.itextpdf.signatures.testutils.PemFileHelper;
+import com.itextpdf.signatures.testutils.TimeTestUtil;
 import com.itextpdf.signatures.testutils.builder.TestOcspResponseBuilder;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
-import com.itextpdf.signatures.validation.v1.SignatureValidationProperties.OnlineFetching;
+import com.itextpdf.signatures.validation.v1.context.CertificateSource;
 import com.itextpdf.signatures.validation.v1.context.CertificateSources;
+import com.itextpdf.signatures.validation.v1.context.TimeBasedContext;
 import com.itextpdf.signatures.validation.v1.context.TimeBasedContexts;
+import com.itextpdf.signatures.validation.v1.context.ValidatorContext;
 import com.itextpdf.signatures.validation.v1.context.ValidatorContexts;
+import com.itextpdf.signatures.validation.v1.mocks.MockChainValidator;
+import com.itextpdf.signatures.validation.v1.mocks.MockChainValidator.ValidationCallBack;
+import com.itextpdf.signatures.validation.v1.mocks.MockDocumentRevisionsValidator;
+import com.itextpdf.signatures.validation.v1.mocks.MockIssuingCertificateRetriever;
+import com.itextpdf.signatures.validation.v1.mocks.MockRevocationDataValidator;
+import com.itextpdf.signatures.validation.v1.report.ReportItem;
+import com.itextpdf.signatures.validation.v1.report.ReportItem.ReportItemStatus;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport.ValidationResult;
-import com.itextpdf.signatures.validation.v1.report.CertificateReportItem;
-import com.itextpdf.signatures.validation.v1.report.ReportItem;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
+import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.security.PrivateKey;
-import java.security.Security;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
-import java.time.Duration;
-import java.util.Collections;
-import java.util.Date;
-
+import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-@Category(BouncyCastleIntegrationTest.class)
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.security.PrivateKey;
+import java.security.Security;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
+import java.time.Duration;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+
+@Category(BouncyCastleUnitTest.class)
 public class SignatureValidatorTest extends ExtendedITextTest {
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/validation/v1/SignatureValidatorTest/certs/";
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/validation/v1/SignatureValidatorTest/";
@@ -70,8 +78,11 @@ public class SignatureValidatorTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
     private static final char[] PASSWORD = "testpassphrase".toCharArray();
     private SignatureValidationProperties parameters;
-    private IssuingCertificateRetriever certificateRetriever;
+    private MockIssuingCertificateRetriever mockCertificateRetriever;
+
     private ValidatorChainBuilder builder;
+    private MockChainValidator mockCertificateChainValidator;
+    private MockDocumentRevisionsValidator mockDocumentRevisionsValidator;
 
     @BeforeClass
     public static void before() {
@@ -80,38 +91,16 @@ public class SignatureValidatorTest extends ExtendedITextTest {
 
     @Before
     public void setUp() {
+        mockCertificateChainValidator = new MockChainValidator();
         parameters = new SignatureValidationProperties();
-        certificateRetriever = new IssuingCertificateRetriever();
+        mockCertificateRetriever = new MockIssuingCertificateRetriever();
+        mockDocumentRevisionsValidator = new MockDocumentRevisionsValidator();
         builder = new ValidatorChainBuilder()
-                .withIssuingCertificateRetriever(certificateRetriever)
-                .withSignatureValidationProperties(parameters);
-    }
-
-    @Test
-    public void validLatestSignatureTest() throws GeneralSecurityException, IOException,
-            AbstractOperatorCreationException, AbstractPKCSException {
-        String chainName = CERTS_SRC + "validCertsChain.pem";
-        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
-        X509Certificate rootCert = (X509Certificate) certificateChain[2];
-
-        ValidationReport report;
-        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "validDoc.pdf"))) {
-            certificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
-            addRevDataClients();
-
-            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
-            report = signatureValidator.validateLatestSignature();
-        }
-
-        for (int i = 0; i < 3; ++i) {
-            CertificateReportItem item = report.getCertificateLogs().get(i);
-            Assert.assertEquals(rootCert, item.getCertificate());
-            Assert.assertEquals(CertificateChainValidator.CERTIFICATE_CHECK, item.getCheckName());
-            Assert.assertEquals(MessageFormatUtil.format(CertificateChainValidator.CERTIFICATE_TRUSTED,
-                    rootCert.getSubjectX500Principal()), item.getMessage());
-        }
-        Assert.assertEquals(ValidationResult.VALID, report.getValidationResult());
-        Assert.assertEquals(3, report.getLogs().size());
+                .withIssuingCertificateRetriever(mockCertificateRetriever)
+                .withSignatureValidationProperties(parameters)
+                .withCertificateChainValidator(mockCertificateChainValidator)
+                .withRevocationDataValidator(new MockRevocationDataValidator())
+                .withDocumentRevisionsValidator(mockDocumentRevisionsValidator);
     }
 
     @Test
@@ -123,9 +112,12 @@ public class SignatureValidatorTest extends ExtendedITextTest {
         X509Certificate rootCert = (X509Certificate) certificateChain[2];
         PrivateKey rootPrivateKey = PemFileHelper.readFirstKey(privateKeyName, PASSWORD);
 
+        X509Certificate timeStampCert = (X509Certificate) PemFileHelper.readFirstChain(
+                CERTS_SRC + "timestamp.pem")[0];
+
         ValidationReport report;
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "timestampSignatureDoc.pdf"))) {
-            certificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
+            mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
 
             TestOcspResponseBuilder ocspBuilder = new TestOcspResponseBuilder(rootCert, rootPrivateKey);
             Date currentDate = DateTimeUtil.getCurrentTimeDate();
@@ -135,128 +127,157 @@ public class SignatureValidatorTest extends ExtendedITextTest {
             TestOcspClient ocspClient = new TestOcspClient().addBuilderForCertIssuer(rootCert, ocspBuilder);
             builder.getRevocationDataValidator().addOcspClient(ocspClient);
             parameters.setRevocationOnlineFetching(ValidatorContexts.all(), CertificateSources.all(),
-                        TimeBasedContexts.all(), SignatureValidationProperties.OnlineFetching.NEVER_FETCH)
-                .setFreshness(ValidatorContexts.all(), CertificateSources.all(),TimeBasedContexts.all(),
-                        Duration.ofDays(-2));
+                            TimeBasedContexts.all(), SignatureValidationProperties.OnlineFetching.NEVER_FETCH)
+                    .setFreshness(ValidatorContexts.all(), CertificateSources.all(), TimeBasedContexts.all(),
+                            Duration.ofDays(-2));
 
             SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
-            report = signatureValidator.validateLatestSignature();
+            report = signatureValidator.validateLatestSignature(document);
         }
 
-        new AssertValidationReport(report)
-                .hasNumberOfFailures(0)
-                .hasNumberOfLogs(2)
-                .hasLogItems(l -> l.getCheckName().equals(CertificateChainValidator.CERTIFICATE_CHECK)
-                && l.getMessage().equals(MessageFormatUtil.format(CertificateChainValidator.CERTIFICATE_TRUSTED,
-                        rootCert.getSubjectX500Principal()))
-                && ((CertificateReportItem)l).getCertificate().equals(rootCert), 2,
-                        CertificateChainValidator.CERTIFICATE_TRUSTED)
-                .doAssert();
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationResult.VALID)
+                .hasNumberOfLogs(1).hasNumberOfFailures(0));
+
+        Assert.assertEquals(1, mockCertificateChainValidator.verificationCalls.size());
+        MockChainValidator.ValidationCallBack call = mockCertificateChainValidator.verificationCalls.get(0);
+        Assert.assertEquals(CertificateSource.TIMESTAMP, call.context.getCertificateSource());
+        Assert.assertEquals(ValidatorContext.SIGNATURE_VALIDATOR, call.context.getValidatorContext());
+        Assert.assertEquals(timeStampCert.getSubjectX500Principal(), call.certificate.getSubjectX500Principal());
     }
 
     @Test
-    public void validLatestSignatureWithTimestampTest() throws GeneralSecurityException, IOException,
+    public void latestSignatureIsDocTimestampWithModifiedDateTest() throws GeneralSecurityException, IOException,
             AbstractOperatorCreationException, AbstractPKCSException {
         String chainName = CERTS_SRC + "validCertsChain.pem";
+        String privateKeyName = CERTS_SRC + "rootCertKey.pem";
         Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
         X509Certificate rootCert = (X509Certificate) certificateChain[2];
+        PrivateKey rootPrivateKey = PemFileHelper.readFirstKey(privateKeyName, PASSWORD);
 
         ValidationReport report;
-        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "validDocWithTimestamp.pdf"))) {
-            certificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
-            addRevDataClients();
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "modifiedDocTimestampDate.pdf"))) {
+            mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
+
+            TestOcspResponseBuilder ocspBuilder = new TestOcspResponseBuilder(rootCert, rootPrivateKey);
+            Date currentDate = DateTimeUtil.getCurrentTimeDate();
+            ocspBuilder.setProducedAt(currentDate);
+            ocspBuilder.setThisUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(currentDate, 3)));
+            ocspBuilder.setNextUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(currentDate, 30)));
+            TestOcspClient ocspClient = new TestOcspClient().addBuilderForCertIssuer(rootCert, ocspBuilder);
+            builder.getRevocationDataValidator().addOcspClient(ocspClient);
+            parameters.setRevocationOnlineFetching(ValidatorContexts.all(), CertificateSources.all(),
+                            TimeBasedContexts.all(), SignatureValidationProperties.OnlineFetching.NEVER_FETCH)
+                    .setFreshness(ValidatorContexts.all(), CertificateSources.all(), TimeBasedContexts.all(),
+                            Duration.ofDays(-2));
 
             SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
-            report = signatureValidator.validateLatestSignature();
+            report = signatureValidator.validateLatestSignature(document);
         }
 
-        for (int i = 0; i < 5; ++i) {
-            CertificateReportItem item1 = report.getCertificateLogs().get(i);
-            Assert.assertEquals(MessageFormatUtil.format(CertificateChainValidator.CERTIFICATE_TRUSTED,
-                    rootCert.getSubjectX500Principal()), item1.getMessage());
-            Assert.assertEquals(CertificateChainValidator.CERTIFICATE_CHECK, item1.getCheckName());
-            Assert.assertEquals(rootCert, item1.getCertificate());
-
-
-        }
-        Assert.assertEquals(ValidationResult.VALID, report.getValidationResult());
-        Assert.assertEquals(5, report.getLogs().size());
-
+        AssertValidationReport.assertThat(report, a -> a
+                .hasNumberOfLogs(2).hasNumberOfFailures(1)
+                .hasStatus(ValidationResult.INVALID)
+                .hasLogItem(l -> l
+                        .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
+                        .withMessage(SignatureValidator.VALIDATING_SIGNATURE_NAME, p -> "timestampSignature1"))
+                .hasLogItem(al -> al
+                        .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
+                        .withMessage(MessageFormatUtil.format(SignatureValidator.CANNOT_VERIFY_SIGNATURE,
+                                        "timestampSignature1"))
+                        .withStatus(ReportItem.ReportItemStatus.INVALID))
+        );
     }
 
     @Test
-    public void latestSignatureWithBrokenTimestampTest() throws GeneralSecurityException, IOException,
+    public void latestSignatureWithModifiedTimestampDateTest() throws GeneralSecurityException, IOException,
             AbstractOperatorCreationException, AbstractPKCSException {
+        String chainName = CERTS_SRC + "validCertsChain.pem";
+        String privateKeyName = CERTS_SRC + "rootCertKey.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+        X509Certificate rootCert = (X509Certificate) certificateChain[2];
+        PrivateKey rootPrivateKey = PemFileHelper.readFirstKey(privateKeyName, PASSWORD);
+
+        ValidationReport report;
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "signatureWithModifiedTimestampDate.pdf"))) {
+            mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
+
+            TestOcspResponseBuilder ocspBuilder = new TestOcspResponseBuilder(rootCert, rootPrivateKey);
+            Date currentDate = DateTimeUtil.getCurrentTimeDate();
+            ocspBuilder.setProducedAt(currentDate);
+            ocspBuilder.setThisUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(currentDate, 3)));
+            ocspBuilder.setNextUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(currentDate, 30)));
+            TestOcspClient ocspClient = new TestOcspClient().addBuilderForCertIssuer(rootCert, ocspBuilder);
+            builder.getRevocationDataValidator().addOcspClient(ocspClient);
+            parameters.setRevocationOnlineFetching(ValidatorContexts.all(), CertificateSources.all(),
+                            TimeBasedContexts.all(), SignatureValidationProperties.OnlineFetching.NEVER_FETCH)
+                    .setFreshness(ValidatorContexts.all(), CertificateSources.all(), TimeBasedContexts.all(),
+                            Duration.ofDays(-2))
+                    .setContinueAfterFailure(ValidatorContexts.all() , CertificateSources.all(), false);
+
+            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
+            report = signatureValidator.validateLatestSignature(document);
+        }
+
+        AssertValidationReport.assertThat(report, a -> a
+                .hasNumberOfLogs(2).hasNumberOfFailures(1)
+                .hasStatus(ValidationResult.INVALID)
+                .hasLogItem(l -> l
+                        .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
+                        .withMessage(SignatureValidator.VALIDATING_SIGNATURE_NAME, p -> "Signature1"))
+                .hasLogItem(al -> al
+                        .withCheckName(SignatureValidator.TIMESTAMP_VERIFICATION)
+                        .withMessage(SignatureValidator.CANNOT_VERIFY_TIMESTAMP)
+                        .withStatus(ReportItem.ReportItemStatus.INVALID))
+        );
+    }
+
+    @Test
+    public void latestSignatureWithBrokenTimestampTest() throws GeneralSecurityException, IOException {
         String chainName = CERTS_SRC + "validCertsChain.pem";
         Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
         X509Certificate rootCert = (X509Certificate) certificateChain[2];
 
         ValidationReport report;
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "docWithBrokenTimestamp.pdf"))) {
-            certificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
-            addRevDataClients();
+            mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
 
             SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
-            report = signatureValidator.validateLatestSignature();
+            report = signatureValidator.validateLatestSignature(document);
         }
 
-        Assert.assertEquals(report.getFailures().get(0), report.getLogs().get(0));
-
-        ReportItem failure = report.getFailures().get(0);
-        Assert.assertEquals(SignatureValidator.CANNOT_VERIFY_TIMESTAMP, failure.getMessage());
-        Assert.assertEquals(SignatureValidator.TIMESTAMP_VERIFICATION, failure.getCheckName());
-        Assert.assertEquals(ValidationResult.INVALID, report.getValidationResult());
-        Assert.assertEquals(1, report.getFailures().size());
-        Assert.assertEquals(6, report.getLogs().size());
-
-        for (int i = 0; i < 5; ++i) {
-            CertificateReportItem item1 = report.getCertificateLogs().get(i);
-            Assert.assertEquals(rootCert, item1.getCertificate());
-            Assert.assertEquals(CertificateChainValidator.CERTIFICATE_CHECK, item1.getCheckName());
-            Assert.assertEquals(MessageFormatUtil.format(CertificateChainValidator.CERTIFICATE_TRUSTED,
-                    rootCert.getSubjectX500Principal()), item1.getMessage());
-        }
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationResult.INVALID)
+                .hasLogItems(2, 2, al -> al
+                        .withCheckName(SignatureValidator.TIMESTAMP_VERIFICATION)
+                        .withMessage(SignatureValidator.CANNOT_VERIFY_TIMESTAMP)
+                        .withStatus(ReportItem.ReportItemStatus.INVALID))
+        );
     }
 
     @Test
-    public void documentModifiedLatestSignatureTest() throws GeneralSecurityException, IOException,
-            AbstractOperatorCreationException, AbstractPKCSException {
+    public void documentModifiedLatestSignatureTest() throws GeneralSecurityException, IOException {
         String chainName = CERTS_SRC + "validCertsChain.pem";
         Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
         X509Certificate rootCert = (X509Certificate) certificateChain[2];
 
         ValidationReport report;
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "modifiedDoc.pdf"))) {
-            certificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
-            addRevDataClients();
+            mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
 
             SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
-            report = signatureValidator.validateLatestSignature();
+            report = signatureValidator.validateLatestSignature(document);
         }
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationResult.INVALID)
+                .hasLogItem(al -> al
+                        .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
+                        .withMessage(SignatureValidator.DOCUMENT_IS_NOT_COVERED, i -> "Signature1"))
+                .hasLogItem(al -> al
+                        .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
+                        .withMessage(SignatureValidator.CANNOT_VERIFY_SIGNATURE, i -> "Signature1"))
 
-        Assert.assertEquals(ValidationResult.INVALID, report.getValidationResult());
-        Assert.assertEquals(2, report.getFailures().size());
-        Assert.assertEquals(5, report.getLogs().size());
-        Assert.assertEquals(report.getFailures().get(0), report.getLogs().get(0));
-        Assert.assertEquals(report.getFailures().get(1), report.getLogs().get(1));
-
-        ReportItem item1 = report.getFailures().get(0);
-        Assert.assertEquals(SignatureValidator.SIGNATURE_VERIFICATION, item1.getCheckName());
-        Assert.assertEquals(MessageFormatUtil.format(
-                SignatureValidator.DOCUMENT_IS_NOT_COVERED, "Signature1"), item1.getMessage());
-
-        ReportItem item2 = report.getFailures().get(1);
-        Assert.assertEquals(SignatureValidator.SIGNATURE_VERIFICATION, item2.getCheckName());
-        Assert.assertEquals(MessageFormatUtil.format(
-                SignatureValidator.CANNOT_VERIFY_SIGNATURE, "Signature1"), item2.getMessage());
-
-        for (int i = 0; i < 3; ++i) {
-            CertificateReportItem item = report.getCertificateLogs().get(i);
-            Assert.assertEquals(rootCert, item.getCertificate());
-            Assert.assertEquals(CertificateChainValidator.CERTIFICATE_CHECK, item.getCheckName());
-            Assert.assertEquals(MessageFormatUtil.format(CertificateChainValidator.CERTIFICATE_TRUSTED,
-                    rootCert.getSubjectX500Principal()), item.getMessage());
-        }
+        );
     }
 
     @Test
@@ -267,215 +288,306 @@ public class SignatureValidatorTest extends ExtendedITextTest {
 
         ValidationReport report;
 
-        parameters.setContinueAfterFailure(ValidatorContexts.all(), CertificateSources.all(),false);
+        parameters.setContinueAfterFailure(ValidatorContexts.all(), CertificateSources.all(), false);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "modifiedDoc.pdf"))) {
-            SignatureValidator signatureValidator =builder.buildSignatureValidator(document);
-            certificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
-
-            report = signatureValidator.validateLatestSignature();
-        }
-
-        Assert.assertEquals(ValidationResult.INVALID, report.getValidationResult());
-        Assert.assertEquals(2, report.getFailures().size());
-        Assert.assertEquals(2, report.getLogs().size());
-        Assert.assertEquals(report.getFailures().get(0), report.getLogs().get(0));
-        Assert.assertEquals(report.getFailures().get(1), report.getLogs().get(1));
-
-        ReportItem item1 = report.getFailures().get(0);
-        Assert.assertEquals(SignatureValidator.SIGNATURE_VERIFICATION, item1.getCheckName());
-        Assert.assertEquals(MessageFormatUtil.format(
-                SignatureValidator.DOCUMENT_IS_NOT_COVERED, "Signature1"), item1.getMessage());
-
-        ReportItem item2 = report.getFailures().get(1);
-        Assert.assertEquals(SignatureValidator.SIGNATURE_VERIFICATION, item2.getCheckName());
-        Assert.assertEquals(MessageFormatUtil.format(
-                SignatureValidator.CANNOT_VERIFY_SIGNATURE, "Signature1"), item2.getMessage());
-    }
-
-    @Test
-    public void certificatesNotInLatestSignatureTest() throws GeneralSecurityException, IOException {
-        String chainName = CERTS_SRC + "validCertsChain.pem";
-        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
-        X509Certificate signingCert = (X509Certificate) certificateChain[0];
-        X509Certificate rootCert = (X509Certificate) certificateChain[2];
-
-        ValidationReport report;
-        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "validDocWithoutChain.pdf"))) {
             SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
-            certificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
-            parameters.setRevocationOnlineFetching(ValidatorContexts.all(), CertificateSources.all(),
-                        TimeBasedContexts.all(), SignatureValidationProperties.OnlineFetching.NEVER_FETCH)
-                .setFreshness(ValidatorContexts.all(), CertificateSources.all(),TimeBasedContexts.all(),
-                        Duration.ofDays(-2));
+            mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
 
-            report = signatureValidator.validateLatestSignature();
+            report = signatureValidator.validateLatestSignature(document);
         }
 
-        Assert.assertEquals(ValidationResult.INDETERMINATE, report.getValidationResult());
-        Assert.assertEquals(2, report.getFailures().size());
-        Assert.assertEquals(2, report.getLogs().size());
-
-        CertificateReportItem item = report.getCertificateFailures().get(0);
-        Assert.assertEquals(signingCert, item.getCertificate());
-        Assert.assertEquals(RevocationDataValidator.REVOCATION_DATA_CHECK, item.getCheckName());
-        Assert.assertEquals(RevocationDataValidator.NO_REVOCATION_DATA, item.getMessage());
-        item = report.getCertificateFailures().get(1);
-        Assert.assertEquals(signingCert, item.getCertificate());
-        Assert.assertEquals(CertificateChainValidator.CERTIFICATE_CHECK, item.getCheckName());
-        Assert.assertEquals(MessageFormatUtil.format(CertificateChainValidator.ISSUER_MISSING,
-                signingCert.getSubjectX500Principal()), item.getMessage());
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationResult.INVALID)
+                .hasLogItem(al -> al
+                        .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
+                        .withMessage(SignatureValidator.DOCUMENT_IS_NOT_COVERED, i -> "Signature1")
+                        .withStatus(ReportItem.ReportItemStatus.INVALID))
+                .hasLogItem(al -> al
+                        .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
+                        .withMessage(SignatureValidator.CANNOT_VERIFY_SIGNATURE, i -> "Signature1")
+                        .withStatus(ReportItem.ReportItemStatus.INVALID))
+        );
+        // check that no requests are made after failure
+        Assert.assertEquals(0, mockCertificateChainValidator.verificationCalls.size());
     }
 
     @Test
-    public void certificatesNotInLatestSignatureButSetAsKnownTest() throws GeneralSecurityException, IOException,
-            AbstractOperatorCreationException, AbstractPKCSException {
+    public void certificatesNotInLatestSignatureButTakenFromDSSTest() throws GeneralSecurityException, IOException {
         String chainName = CERTS_SRC + "validCertsChain.pem";
         Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+        X509Certificate rootCert = (X509Certificate) certificateChain[2];
         X509Certificate intermediateCert = (X509Certificate) certificateChain[1];
-        X509Certificate rootCert = (X509Certificate) certificateChain[2];
+        X509Certificate signCert = (X509Certificate) certificateChain[0];
 
-        ValidationReport report;
-        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "validDocWithoutChain.pdf"))) {
-            certificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
-            certificateRetriever.addKnownCertificates(Collections.singletonList(intermediateCert));
-            addRevDataClients();
-
-            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
-            report = signatureValidator.validateLatestSignature();
-        }
-
-        for (int i = 0; i < 3; ++i) {
-            CertificateReportItem item = report.getCertificateLogs().get(i);
-            Assert.assertEquals(rootCert, item.getCertificate());
-            Assert.assertEquals(CertificateChainValidator.CERTIFICATE_CHECK, item.getCheckName());
-            Assert.assertEquals(MessageFormatUtil.format(CertificateChainValidator.CERTIFICATE_TRUSTED,
-                    rootCert.getSubjectX500Principal()), item.getMessage());
-        }
-        Assert.assertEquals(ValidationResult.VALID, report.getValidationResult());
-        Assert.assertEquals(3, report.getLogs().size());
-    }
-
-    @Test
-    public void certificatesNotInLatestSignatureButTakenFromDSSTest() throws GeneralSecurityException, IOException,
-            AbstractOperatorCreationException, AbstractPKCSException {
-        String chainName = CERTS_SRC + "validCertsChain.pem";
-        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
-        X509Certificate rootCert = (X509Certificate) certificateChain[2];
-
-        ValidationReport report;
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "docWithDss.pdf"))) {
-            certificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
-            addRevDataClients();
+            mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
+
 
             SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
-            report = signatureValidator.validateLatestSignature();
+            signatureValidator.validateLatestSignature(document);
         }
 
-        for (int i = 0; i < 3; ++i) {
-            CertificateReportItem item = report.getCertificateLogs().get(i);
-            Assert.assertEquals(rootCert, item.getCertificate());
-            Assert.assertEquals(CertificateChainValidator.CERTIFICATE_CHECK, item.getCheckName());
-            Assert.assertEquals(MessageFormatUtil.format(CertificateChainValidator.CERTIFICATE_TRUSTED,
-                    rootCert.getSubjectX500Principal()), item.getMessage());
-        }
-        Assert.assertEquals(ValidationResult.VALID, report.getValidationResult());
-        Assert.assertEquals(3, report.getLogs().size());
+        Assert.assertEquals(2, mockCertificateRetriever.addKnownCertificatesCalls.size());
+        Collection<Certificate> dssCall = mockCertificateRetriever.addKnownCertificatesCalls.get(0);
+        Assert.assertEquals(3, dssCall.size());
+        Assert.assertEquals(1, dssCall.stream().filter(c -> ((X509Certificate) c).equals(rootCert)).count());
+        Assert.assertEquals(1, dssCall.stream().filter(c -> ((X509Certificate) c).equals(intermediateCert)).count());
+        Assert.assertEquals(1, dssCall.stream().filter(c -> ((X509Certificate) c).equals(signCert)).count());
 
     }
 
     @Test
     public void certificatesNotInLatestSignatureButTakenFromDSSOneCertIsBrokenTest() throws GeneralSecurityException,
-            IOException, AbstractOperatorCreationException, AbstractPKCSException {
+            IOException {
         String chainName = CERTS_SRC + "validCertsChain.pem";
         Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
         X509Certificate rootCert = (X509Certificate) certificateChain[2];
 
         ValidationReport report;
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "docWithBrokenDss.pdf"))) {
-            certificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
-            addRevDataClients();
+            mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
 
             SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
-            report = signatureValidator.validateLatestSignature();
+            report = signatureValidator.validateLatestSignature(document);
         }
 
-        ReportItem reportItem = report.getLogs().get(0);
-        Assert.assertEquals(SignatureValidator.CERTS_FROM_DSS, reportItem.getCheckName());
-        Assert.assertTrue(reportItem.getExceptionCause() instanceof GeneralSecurityException);
-        Assert.assertEquals(ValidationResult.VALID, report.getValidationResult());
-        Assert.assertEquals(4, report.getLogs().size());
-
-        for (int i = 0; i < 3; ++i) {
-            CertificateReportItem item = report.getCertificateLogs().get(i);
-            Assert.assertEquals(rootCert, item.getCertificate());
-            Assert.assertEquals(CertificateChainValidator.CERTIFICATE_CHECK, item.getCheckName());
-            Assert.assertEquals(MessageFormatUtil.format(CertificateChainValidator.CERTIFICATE_TRUSTED,
-                    rootCert.getSubjectX500Principal()), item.getMessage());
-        }
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationResult.VALID)
+                .hasLogItem(al -> al
+                        .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
+                        .withExceptionCauseType(GeneralSecurityException.class))
+        );
     }
 
     @Test
-    public void rootIsNotTrustedInLatestSignatureTest() throws GeneralSecurityException, IOException {
-        String chainName = CERTS_SRC + "validCertsChain.pem";
-        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
-        X509Certificate rootCert = (X509Certificate) certificateChain[2];
+    public void indeterminateChainValidationLeadsToIndeterminateResultTest() throws IOException {
+        mockCertificateChainValidator.onCallDo(c -> c.report.addReportItem(
+                new ReportItem("test", "test", ReportItem.ReportItemStatus.INDETERMINATE)));
 
         ValidationReport report;
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "validDoc.pdf"))) {
             SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
-            parameters.setRevocationOnlineFetching(ValidatorContexts.all(), CertificateSources.all(),
-                        TimeBasedContexts.all(), SignatureValidationProperties.OnlineFetching.NEVER_FETCH)
-                .setFreshness(ValidatorContexts.all(), CertificateSources.all(),TimeBasedContexts.all(),
-                        Duration.ofDays(-2));
 
-            report = signatureValidator.validateLatestSignature();
+            report = signatureValidator.validateLatestSignature(document);
         }
 
-        Assert.assertEquals(ValidationResult.INDETERMINATE, report.getValidationResult());
-        Assert.assertEquals(3, report.getFailures().size());
-        Assert.assertEquals(4, report.getLogs().size());
-        Assert.assertEquals(report.getFailures().get(0), report.getLogs().get(0));
-        Assert.assertEquals(report.getFailures().get(1), report.getLogs().get(1));
-        Assert.assertEquals(report.getFailures().get(2), report.getLogs().get(3));
 
-        CertificateReportItem item = report.getCertificateFailures().get(0);
-        Assert.assertEquals(certificateChain[0], item.getCertificate());
-        Assert.assertEquals(RevocationDataValidator.REVOCATION_DATA_CHECK, item.getCheckName());
-        Assert.assertEquals(RevocationDataValidator.NO_REVOCATION_DATA, item.getMessage());
-        item = report.getCertificateFailures().get(1);
-        Assert.assertEquals(certificateChain[1], item.getCertificate());
-        Assert.assertEquals(RevocationDataValidator.REVOCATION_DATA_CHECK, item.getCheckName());
-        Assert.assertEquals(RevocationDataValidator.NO_REVOCATION_DATA, item.getMessage());
-
-        item = report.getCertificateFailures().get(2);
-        Assert.assertEquals(rootCert, item.getCertificate());
-        Assert.assertEquals(CertificateChainValidator.CERTIFICATE_CHECK, item.getCheckName());
-        Assert.assertEquals(MessageFormatUtil.format(CertificateChainValidator.ISSUER_MISSING,
-                rootCert.getSubjectX500Principal()), item.getMessage());
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationResult.INDETERMINATE)
+                .hasNumberOfFailures(1)
+                .hasLogItem(al -> al
+                        .withCheckName("test")
+                        .withMessage("test"))
+        );
     }
 
-    private void addRevDataClients()
-            throws AbstractOperatorCreationException, IOException, AbstractPKCSException, CertificateException {
-        String chainName = CERTS_SRC + "validCertsChain.pem";
-        String privateKeyName = CERTS_SRC + "rootCertKey.pem";
-        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
-        X509Certificate intermediateCert = (X509Certificate) certificateChain[1];
-        X509Certificate rootCert = (X509Certificate) certificateChain[2];
-        PrivateKey rootPrivateKey = PemFileHelper.readFirstKey(privateKeyName, PASSWORD);
+    @Test
+    public void invalidChainValidationLeadsToInvalidResultTest() throws IOException {
+        mockCertificateChainValidator.onCallDo(c -> c.report.addReportItem(
+                new ReportItem("test", "test", ReportItem.ReportItemStatus.INVALID)));
 
-        Date currentDate = DateTimeUtil.getCurrentTimeDate();
-        TestOcspResponseBuilder builder1 = new TestOcspResponseBuilder(rootCert, rootPrivateKey);
-        builder1.setProducedAt(currentDate);
-        builder1.setThisUpdate(DateTimeUtil.getCalendar(currentDate));
-        builder1.setNextUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(currentDate, 30)));
-        TestOcspResponseBuilder builder2 = new TestOcspResponseBuilder(rootCert, rootPrivateKey);
-        builder2.setProducedAt(currentDate);
-        builder2.setThisUpdate(DateTimeUtil.getCalendar(currentDate));
-        builder2.setNextUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(currentDate, 30)));
-        TestOcspClient ocspClient = new TestOcspClient().addBuilderForCertIssuer(rootCert, builder1)
-                .addBuilderForCertIssuer(intermediateCert, builder2);
-        builder.getRevocationDataValidator().addOcspClient(ocspClient);
-        parameters.setRevocationOnlineFetching(ValidatorContexts.all(), CertificateSources.all(),
-                TimeBasedContexts.all(),OnlineFetching.NEVER_FETCH);
+        ValidationReport report;
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "validDoc.pdf"))) {
+            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
+
+            report = signatureValidator.validateLatestSignature(document);
+        }
+
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationResult.INVALID)
+                .hasNumberOfFailures(1)
+                .hasLogItem(al -> al
+                        .withCheckName("test")
+                        .withMessage("test"))
+        );
+    }
+
+    @Test
+    public void invalidRevisionsValidationLeadsToInvalidResultTest() throws IOException {
+        mockDocumentRevisionsValidator.setReportItemStatus(ReportItemStatus.INVALID);
+
+        ValidationReport report;
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "validDoc.pdf"))) {
+            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
+
+            report = signatureValidator.validateSignatures();
+        }
+
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationResult.INVALID)
+                .hasNumberOfFailures(1)
+                .hasLogItem(al -> al
+                        .withCheckName("test")
+                        .withMessage("test"))
+        );
+    }
+
+    @Test
+    public void validateMultipleSignatures() throws IOException {
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "docWithMultipleSignaturesAndTimeStamp.pdf"))) {
+            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
+            ValidationReport report = signatureValidator.validateSignatures();
+
+            AssertValidationReport.assertThat(report, r -> r
+                    .hasStatus(ValidationResult.VALID)
+                    .hasNumberOfLogs(5).hasNumberOfFailures(0)
+                    .hasLogItem(l -> l
+                            .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
+                            .withMessage(SignatureValidator.VALIDATING_SIGNATURE_NAME, p -> "Signature1"))
+                    .hasLogItem(l -> l
+                            .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
+                            .withMessage(SignatureValidator.VALIDATING_SIGNATURE_NAME, p -> "Signature2"))
+                    .hasLogItem(l -> l
+                            .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
+                            .withMessage(SignatureValidator.VALIDATING_SIGNATURE_NAME, p -> "Signature3"))
+                    .hasLogItem(l -> l
+                            .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
+                            .withMessage(SignatureValidator.VALIDATING_SIGNATURE_NAME, p -> "signer1"))
+                    .hasLogItem(l -> l
+                            .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
+                            .withMessage(SignatureValidator.VALIDATING_SIGNATURE_NAME, p -> "signer2"))
+            );
+
+            Date date1 = DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, 1);
+            Date date2 = DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, 10);
+            Date date3 = DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, 20);
+
+            // 2 signatures with timestamp
+            // 3 document timestamps
+            List<ValidationCallBack> verificationCalls = mockCertificateChainValidator.verificationCalls;
+            Assert.assertEquals(7, verificationCalls.size());
+            Assert.assertEquals(TimeBasedContext.PRESENT, verificationCalls.get(0).context.getTimeBasedContext());
+            for (int i = 1; i < verificationCalls.size(); ++i) {
+                Assert.assertEquals(TimeBasedContext.HISTORICAL, verificationCalls.get(i).context.getTimeBasedContext());
+            }
+            Assert.assertTrue(verificationCalls.stream().anyMatch(c ->
+                    c.certificate.getSerialNumber().toString().equals("1491571297")
+                    && c.checkDate.equals(date3)));
+            Assert.assertTrue(verificationCalls.stream().anyMatch(c ->
+                    c.certificate.getSerialNumber().toString().equals("1491571297")
+                            && c.checkDate.equals(date2)));
+            Assert.assertTrue(verificationCalls.stream().anyMatch(c ->
+                    c.certificate.getSerialNumber().toString().equals("1491571297")
+                            && c.checkDate.equals(date1)));
+            Assert.assertTrue(verificationCalls.stream().anyMatch(c ->
+                    c.certificate.getSerialNumber().toString().equals("1550593058")
+                            && c.checkDate.equals(date2)));
+            Assert.assertTrue(verificationCalls.stream().anyMatch(c ->
+                    c.certificate.getSerialNumber().toString().equals("1701704311986")
+                            && c.checkDate.equals(date1)));
+        }
+    }
+
+    @Test
+    public void signatureChainValidatorFailureTest() throws GeneralSecurityException, IOException {
+        String chainName = CERTS_SRC + "validCertsChain.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+        X509Certificate rootCert = (X509Certificate) certificateChain[2];
+
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "validDoc.pdf"))) {
+            mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
+            mockCertificateChainValidator.onCallDo(c-> {throw new RuntimeException("Test chain validation failure");});
+
+            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
+            ValidationReport report = signatureValidator.validateLatestSignature(document);
+            AssertValidationReport.assertThat(report, r->
+                    r.hasLogItem(l-> l
+                            .withMessage(SignatureValidator.CHAIN_VALIDATION_FAILED)));
+        }
+    }
+    @Test
+    public void timeStampChainValidatorFailureTest() throws GeneralSecurityException, IOException {
+        String chainName = CERTS_SRC + "validCertsChain.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+        X509Certificate rootCert = (X509Certificate) certificateChain[2];
+        X509Certificate intermediateCert = (X509Certificate) certificateChain[1];
+        X509Certificate signCert = (X509Certificate) certificateChain[0];
+
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "timestampSignatureDoc.pdf"))) {
+            mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
+            mockCertificateChainValidator.onCallDo(c-> {throw new RuntimeException("Test chain validation failure");});
+
+            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
+            ValidationReport report = signatureValidator.validateLatestSignature(document);
+            AssertValidationReport.assertThat(report, r->
+                    r.hasLogItem(l-> l
+                            .withMessage(SignatureValidator.CHAIN_VALIDATION_FAILED)));
+        }
+    }
+
+    @Test
+    public void certificateRetrieverAddKnownCertificatesFromDSSFailureTest() throws GeneralSecurityException, IOException {
+        String chainName = CERTS_SRC + "validCertsChain.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+        X509Certificate rootCert = (X509Certificate) certificateChain[2];
+
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "docWithDss.pdf"))) {
+            mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
+
+            mockCertificateRetriever.onAddKnownCertificatesDo( c -> {
+                throw new RuntimeException("Test add know certificates failure");
+            });
+
+            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
+            ValidationReport report = signatureValidator.validateLatestSignature(document);
+            AssertValidationReport.assertThat(report, r-> r
+                    .hasLogItems(1,Integer.MAX_VALUE,l -> l.withMessage(SignatureValidator.ADD_KNOWN_CERTIFICATES_FAILED)));
+        }
+    }
+    @Test
+    public void certificateRetrieverAddKnownCertificatesFromSignatureFailureTest() throws GeneralSecurityException, IOException {
+        String chainName = CERTS_SRC + "validCertsChain.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+        X509Certificate rootCert = (X509Certificate) certificateChain[2];
+
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "validDoc.pdf"))) {
+            mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
+            mockCertificateRetriever.onAddKnownCertificatesDo( c -> {
+                throw new RuntimeException("Test add know certificates failure");
+            });
+
+            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
+            ValidationReport report = signatureValidator.validateLatestSignature(document);
+            AssertValidationReport.assertThat(report, r-> r
+                    .hasLogItems(1,Integer.MAX_VALUE, l -> l.withMessage(SignatureValidator.ADD_KNOWN_CERTIFICATES_FAILED)));
+        }
+    }
+    @Test
+    public void certificateRetrieverAddKnownCertificatesFromTimestampFailureTest() throws GeneralSecurityException, IOException {
+        String chainName = CERTS_SRC + "validCertsChain.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+        X509Certificate rootCert = (X509Certificate) certificateChain[2];
+
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "timestampSignatureDoc.pdf"))) {
+            mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
+            mockCertificateRetriever.onAddKnownCertificatesDo( c -> {
+                throw new RuntimeException("Test add know certificates failure");
+            });
+
+            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
+            ValidationReport report = signatureValidator.validateLatestSignature(document);
+            AssertValidationReport.assertThat(report, r-> r
+                    .hasLogItems(1,Integer.MAX_VALUE, l -> l.withMessage(SignatureValidator.ADD_KNOWN_CERTIFICATES_FAILED)));
+        }
+    }
+
+    @Test
+    public void documentRevisionValidatorFailureTest() throws GeneralSecurityException, IOException {
+        String chainName = CERTS_SRC + "validCertsChain.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+        X509Certificate rootCert = (X509Certificate) certificateChain[2];
+
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "validDoc.pdf"))) {
+            mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
+            mockDocumentRevisionsValidator.onCallDo( c -> {
+                throw new RuntimeException("Test add know certificates failure");
+            });
+
+
+            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
+            ValidationReport report = signatureValidator.validateSignatures();
+            AssertValidationReport.assertThat(report, r-> r
+                    .hasLogItem(l -> l.withMessage(SignatureValidator.REVISIONS_VALIDATION_FAILED)));
+        }
     }
 }

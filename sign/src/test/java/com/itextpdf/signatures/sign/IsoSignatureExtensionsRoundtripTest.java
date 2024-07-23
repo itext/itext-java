@@ -25,6 +25,7 @@ package com.itextpdf.signatures.sign;
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -50,8 +51,6 @@ import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -265,7 +264,7 @@ public class IsoSignatureExtensionsRoundtripTest extends ExtendedITextTest {
         Certificate[] signChain1 = new Certificate[] {signerCert1, root};
         Certificate[] signChain2 = new Certificate[] {signerCert2, root};
 
-        try(InputStream in1 = new FileInputStream(SOURCE_FILE)) {
+        try(InputStream in1 = FileUtil.getInputStreamForFile(SOURCE_FILE)) {
             PrivateKey signPrivateKey = readUnencryptedPrivateKey(sourceFolder.resolve(keySample1 + ".key.pem"));
             IExternalSignature pks = new PrivateKeySignature(
                     signPrivateKey, DigestAlgorithms.SHA3_256, BOUNCY_CASTLE_FACTORY.getProviderName()
@@ -307,7 +306,7 @@ public class IsoSignatureExtensionsRoundtripTest extends ExtendedITextTest {
     private void doSign(String keySampleName, String digestAlgo, String signatureAlgo, String outFile)
             throws IOException, GeneralSecurityException {
         // write to a file for easier inspection when debugging
-        try (FileOutputStream fos = new FileOutputStream(outFile)) {
+        try (OutputStream fos = FileUtil.getFileOutputStream(outFile)) {
             doSign(keySampleName, digestAlgo, signatureAlgo, fos);
         }
     }

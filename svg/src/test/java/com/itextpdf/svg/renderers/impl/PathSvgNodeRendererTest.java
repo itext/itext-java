@@ -22,6 +22,7 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -37,16 +38,14 @@ import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class PathSvgNodeRendererTest extends SvgIntegrationTest {
@@ -215,7 +214,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         doc.addNewPage();
 
         String svgFilename = "smoothCurveTest1.svg";
-        InputStream xmlStream = new FileInputStream(sourceFolder + svgFilename);
+        InputStream xmlStream = FileUtil.getInputStreamForFile(sourceFolder + svgFilename);
         IElementNode rootTag = new JsoupXmlParser().parse(xmlStream, "ISO-8859-1");
 
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
@@ -236,7 +235,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         doc.addNewPage();
 
         String svgFilename = "smoothCurveTest2.svg";
-        InputStream xmlStream = new FileInputStream(sourceFolder + svgFilename);
+        InputStream xmlStream = FileUtil.getInputStreamForFile(sourceFolder + svgFilename);
         IElementNode rootTag = new JsoupXmlParser().parse(xmlStream, "ISO-8859-1");
 
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
@@ -257,7 +256,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         doc.addNewPage();
 
         String svgFilename = "smoothCurveTest3.svg";
-        InputStream xmlStream = new FileInputStream(sourceFolder + svgFilename);
+        InputStream xmlStream = FileUtil.getInputStreamForFile(sourceFolder + svgFilename);
         IElementNode rootTag = new JsoupXmlParser().parse(xmlStream, "ISO-8859-1");
 
         DefaultSvgProcessor processor = new DefaultSvgProcessor();

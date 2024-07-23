@@ -56,7 +56,11 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Verifies the signatures in an LTV document.
+ *
+ * @deprecated starting from 8.0.5.
+ * {@link com.itextpdf.signatures.validation.v1.SignatureValidator} should be used instead.
  */
+@Deprecated
 public class LtvVerifier extends RootStoreVerifier {
 
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
@@ -102,6 +106,14 @@ public class LtvVerifier extends RootStoreVerifier {
         initLtvVerifier(document);
     }
 
+    /**
+     * Create {@link LtvVerifier} class instance from the {@link PdfDocument} and security provider code.
+     *
+     * @param document {@link PdfDocument} which will be verified
+     * @param securityProviderCode security provider code to read signatures
+     *
+     * @throws GeneralSecurityException if some problem with signature or security are occurred
+     */
     public LtvVerifier(PdfDocument document, String securityProviderCode) throws GeneralSecurityException {
         super(null);
         this.securityProviderCode = securityProviderCode;
@@ -370,6 +382,14 @@ public class LtvVerifier extends RootStoreVerifier {
         return ocsps;
     }
 
+    /**
+     * Initialize {@link LtvVerifier} object by using provided document.
+     * This method reads all the existing signatures and mathematically validates the last one.
+     *
+     * @param document {@link PdfDocument} instance to be verified
+     *
+     * @throws GeneralSecurityException if some problems with signature or security are occurred
+     */
     protected void initLtvVerifier(PdfDocument document) throws GeneralSecurityException {
         this.document = document;
         this.acroForm = PdfFormCreator.getAcroForm(document, true);

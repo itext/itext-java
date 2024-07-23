@@ -26,6 +26,7 @@ import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
@@ -41,7 +42,6 @@ import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
@@ -175,7 +175,7 @@ public class AnnotationsSigningTest extends ExtendedITextTest {
         if (isAppendMode) {
             properties.useAppendMode();
         }
-        PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), properties);
+        PdfSigner signer = new PdfSigner(reader, FileUtil.getFileOutputStream(dest), properties);
 
         signer.setCertificationLevel(certificationLevel);
         signer.setFieldName(name);

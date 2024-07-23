@@ -23,6 +23,7 @@
 package com.itextpdf.forms.fields;
 
 import com.itextpdf.commons.utils.Base64;
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -31,7 +32,6 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import org.slf4j.Logger;
@@ -209,7 +209,7 @@ public class PdfButtonFormField extends PdfFormField {
      * @throws IOException if provided path to the image is not correct
      */
     public PdfButtonFormField setImage(String image) throws IOException {
-        InputStream is = new FileInputStream(image);
+        InputStream is = FileUtil.getInputStreamForFile(image);
         String str = Base64.encodeBytes(StreamUtil.inputStreamToArray(is));
         return (PdfButtonFormField) setValue(str);
     }

@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms.form.element;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -72,7 +73,7 @@ public class ButtonColorTest extends ExtendedITextTest {
     }
 
     private static void drawButtons(String outPdf, String cmpPdf, Color color) throws IOException, InterruptedException {
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outPdf)));
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outPdf)));
              Document document = new Document(pdfDocument)) {
 
             Button button = new Button("button");

@@ -1,0 +1,6 @@
+[{
+  "condition": {
+    "typeReachable": "com.itextpdf.io.codec.brotli.dec.Dictionary"
+  },
+  "name":"com.itextpdf.io.codec.brotli.dec.DictionaryData"
+}]

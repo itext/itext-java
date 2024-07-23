@@ -14,7 +14,7 @@ Please notice that the following fonts are used with the mentioned below license
 * NotoSansCJKjp-Regular.otf - SIL Open Font License v1.1
 * NotoSansCherokee-Regular.ttf - SIL Open Font License v1.1
 * NotoKufiArabic-Regular.ttf - SIL Open Font License v1.1
-
+* SpaceMono-Regular - SIL Open Font License v1.1 - OFL.txt (29.04.2024)
 
 
 All the used bold Google Noto fonts have been taken from the https://github.com/googlefonts.

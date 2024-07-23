@@ -22,15 +22,16 @@
  */
 package com.itextpdf.io.image;
 
-import com.itextpdf.io.exceptions.IOException;
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
-import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
@@ -42,7 +43,7 @@ public class GifTest extends ExtendedITextTest {
 
     @Test
     public void gifImageTest() throws IOException, java.io.IOException {
-        try (FileInputStream file = new FileInputStream(sourceFolder + "WP_20140410_001.gif")) {
+        try (InputStream file = FileUtil.getInputStreamForFile(sourceFolder + "WP_20140410_001.gif")) {
             byte[] fileContent = StreamUtil.inputStreamToArray(file);
             ImageData img = ImageDataFactory.createGif(fileContent).getFrames().get(0);
             Assert.assertTrue(img.isRawImage());
@@ -60,7 +61,7 @@ public class GifTest extends ExtendedITextTest {
     @Test
     public void gifImageSpecificFrameTest() throws IOException, java.io.IOException {
         String imageFilePath = sourceFolder + "image-2frames.gif";
-        try (FileInputStream file = new FileInputStream(imageFilePath)) {
+        try (InputStream file = FileUtil.getInputStreamForFile(imageFilePath)) {
             byte[] fileContent = StreamUtil.inputStreamToArray(file);
             ImageData img = ImageDataFactory.createGifFrame(fileContent, 2);
             Assert.assertEquals(100, (int)img.getWidth());
@@ -74,7 +75,7 @@ public class GifTest extends ExtendedITextTest {
     @Test
     public void gifImageReadingAllFramesTest() throws IOException, java.io.IOException {
         String imageFilePath = sourceFolder + "image-2frames.gif";
-        try (FileInputStream file = new FileInputStream(imageFilePath)) {
+        try (InputStream file = FileUtil.getInputStreamForFile(imageFilePath)) {
             byte[] fileContent = StreamUtil.inputStreamToArray(file);
             List<ImageData> frames = ImageDataFactory.createGifFrames(fileContent);
             Assert.assertEquals(2, frames.size());

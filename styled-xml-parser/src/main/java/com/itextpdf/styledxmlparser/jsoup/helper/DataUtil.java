@@ -22,11 +22,11 @@
  */
 package com.itextpdf.styledxmlparser.jsoup.helper;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.styledxmlparser.jsoup.PortUtil;
 import com.itextpdf.styledxmlparser.jsoup.UncheckedIOException;
 import com.itextpdf.styledxmlparser.jsoup.internal.ConstrainableInputStream;
 import com.itextpdf.styledxmlparser.jsoup.internal.Normalizer;
-import com.itextpdf.styledxmlparser.jsoup.internal.StringUtil;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Comment;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Document;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
@@ -38,7 +38,6 @@ import com.itextpdf.styledxmlparser.jsoup.select.Elements;
 import java.io.BufferedReader;
 import java.io.CharArrayReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -47,7 +46,6 @@ import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.Locale;
-import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
@@ -81,13 +79,13 @@ public final class DataUtil {
      * @throws IOException on IO error
      */
     public static Document load(File in, String charsetName, String baseUri) throws IOException {
-        InputStream stream = new FileInputStream(in);
+        InputStream stream = FileUtil.getInputStreamForFile(in);
         String name = Normalizer.lowerCase(in.getName());
         if (name.endsWith(".gz") || name.endsWith(".z")) {
             // unfortunately file input streams don't support marks (why not?), so we will close and reopen after read
             boolean zipped = (stream.read() == 0x1f && stream.read() == 0x8b); // gzip magic bytes
             stream.close();
-            stream = zipped ? new GZIPInputStream(new FileInputStream(in)) : new FileInputStream(in);
+            stream = zipped ? new GZIPInputStream(FileUtil.getInputStreamForFile(in)) : FileUtil.getInputStreamForFile(in);
         }
         return parseInputStream(stream, charsetName, baseUri, Parser.htmlParser());
     }

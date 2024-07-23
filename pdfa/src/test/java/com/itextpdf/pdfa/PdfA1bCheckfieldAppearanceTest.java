@@ -22,6 +22,7 @@
  */
 package com.itextpdf.pdfa;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.CheckBoxFormFieldBuilder;
 import com.itextpdf.forms.fields.PdfFormCreator;
@@ -64,7 +65,7 @@ public class PdfA1bCheckfieldAppearanceTest extends ExtendedITextTest {
         String diff = "diff_" + name + "_";
 
         PdfWriter writer = new PdfWriter(outPath);
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
@@ -87,7 +88,7 @@ public class PdfA1bCheckfieldAppearanceTest extends ExtendedITextTest {
         String diff = "diff_" + name + "_";
 
         PdfWriter writer = new PdfWriter(outPath);
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);

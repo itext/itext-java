@@ -40,4 +40,11 @@ public class PageSizeUnitTest extends ExtendedITextTest {
         Assert.assertEquals(rectangle.width, pageSize.width, 1e-5);
         Assert.assertEquals(rectangle.height, pageSize.height, 1e-5);
     }
+
+    @Test
+    public void A9pageSizeTest() {
+        PageSize size = new PageSize(PageSize.A9);
+        Assert.assertEquals(148, size.height, 1e-5);
+        Assert.assertEquals(105, size.width, 1e-5);
+    }
 }

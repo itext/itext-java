@@ -24,6 +24,8 @@ package com.itextpdf.signatures;
 
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.signatures.logs.SignLogMessageConstant;
+import com.itextpdf.signatures.validation.v1.TrustedCertificatesStore;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +50,7 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
 
     private static final Logger LOGGER = LoggerFactory.getLogger(IssuingCertificateRetriever.class);
 
-    private final Map<String, Certificate> trustedCertificates = new HashMap<>();
+    private final TrustedCertificatesStore trustedCertificatesStore = new TrustedCertificatesStore();
     private final Map<String, Certificate> knownCertificates = new HashMap<>();
 
     /**
@@ -85,7 +87,8 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
                 Collection<Certificate> certificatesFromAIA = processCertificatesFromAIA(url);
                 if (certificatesFromAIA == null || certificatesFromAIA.isEmpty()) {
                     // Retrieve Issuer from the certificate store
-                    Certificate issuer = trustedCertificates.get(lastAddedCert.getIssuerX500Principal().getName());
+                    Certificate issuer = trustedCertificatesStore
+                            .getKnownCertificate(lastAddedCert.getIssuerX500Principal().getName());
                     if (issuer == null) {
                         issuer = knownCertificates.get(lastAddedCert.getIssuerX500Principal().getName());
                         if (issuer == null) {
@@ -150,7 +153,7 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
         // - a Trusted Responder whose public key is trusted by the requester;
         // - ..."
         try {
-            for (Certificate anchor : trustedCertificates.values()) {
+            for (Certificate anchor : trustedCertificatesStore.getAllTrustedCertificates()) {
                 if (CertificateUtil.isSignatureValid(ocspResp, anchor)) {
                     // Certificate from the root store is considered trusted and valid by this method.
                     return anchor;
@@ -182,7 +185,8 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
         List<Certificate> certificatesFromAIA = (List<Certificate>) processCertificatesFromAIA(url);
         if (certificatesFromAIA == null) {
             // Retrieve Issuer from the certificate store
-            Certificate issuer = trustedCertificates.get(((X509CRL) crl).getIssuerX500Principal().getName());
+            Certificate issuer = trustedCertificatesStore
+                    .getKnownCertificate(((X509CRL) crl).getIssuerX500Principal().getName());
             if (issuer == null) {
                 issuer = knownCertificates.get(((X509CRL) crl).getIssuerX500Principal().getName());
                 if (issuer == null) {
@@ -196,9 +200,11 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
     }
 
     /**
-     * {@inheritDoc}
+     * Sets trusted certificate list to be used as certificates trusted for any possible usage.
+     * In case more specific trusted is desired to be configured
+     * {@link IssuingCertificateRetriever#getTrustedCertificatesStore()} method is expected to be used.
      *
-     * @param certificates {@inheritDoc}
+     * @param certificates certificate list to be used as certificates trusted for any possible usage.
      */
     @Override
     public void setTrustedCertificates(Collection<Certificate> certificates) {
@@ -211,9 +217,7 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
      * @param certificates certificates {@link Collection} to be added
      */
     public void addTrustedCertificates(Collection<Certificate> certificates) {
-        for (Certificate certificate : certificates) {
-            trustedCertificates.put(((X509Certificate) certificate).getSubjectX500Principal().getName(), certificate);
-        }
+        trustedCertificatesStore.addGenerallyTrustedCertificates(certificates);
     }
 
     /**
@@ -228,6 +232,15 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
     }
 
     /**
+     * Gets {@link TrustedCertificatesStore} to be used to provide more complex trusted certificates configuration.
+     *
+     * @return {@link TrustedCertificatesStore} storage
+     */
+    public TrustedCertificatesStore getTrustedCertificatesStore() {
+        return trustedCertificatesStore;
+    }
+
+    /**
      * Check if provided certificate is present in trusted certificates storage.
      *
      * @param certificate {@link Certificate} to be checked
@@ -235,7 +248,7 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
      * @return {@code true} if certificate is present in trusted certificates storage, {@code false} otherwise
      */
     public boolean isCertificateTrusted(Certificate certificate) {
-        return trustedCertificates.containsKey(((X509Certificate) certificate).getSubjectX500Principal().getName());
+        return trustedCertificatesStore.isCertificateGenerallyTrusted(certificate);
     }
 
     /**

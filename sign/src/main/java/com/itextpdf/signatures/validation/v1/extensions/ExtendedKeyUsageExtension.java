@@ -69,10 +69,11 @@ public class ExtendedKeyUsageExtension extends CertificateExtension {
     public boolean existsInCertificate(X509Certificate certificate) {
         List<String> providedExtendedKeyUsage;
         try {
-            providedExtendedKeyUsage = (List<String>)certificate.getExtendedKeyUsage();
-        } catch (CertificateParsingException e) {
+            providedExtendedKeyUsage = (List<String>) certificate.getExtendedKeyUsage();
+        } catch (CertificateParsingException | RuntimeException e) {
             return false;
         }
+
         if (providedExtendedKeyUsage == null) {
             return false;
         }

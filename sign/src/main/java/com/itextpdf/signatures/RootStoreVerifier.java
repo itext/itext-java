@@ -32,7 +32,11 @@ import java.util.List;
 /**
  * Verifies a certificate against a <code>KeyStore</code>
  * containing trusted anchors.
+ *
+ * @deprecated starting from 8.0.5.
+ * {@link com.itextpdf.signatures.validation.v1.CertificateChainValidator} should be used instead.
  */
+@Deprecated
 public class RootStoreVerifier extends CertificateVerifier {
 
     /** A key store against which certificates can be verified. */

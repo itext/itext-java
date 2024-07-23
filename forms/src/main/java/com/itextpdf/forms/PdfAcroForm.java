@@ -332,7 +332,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      * @return a map of field names and their associated {@link PdfFormField form field} objects
      */
     public Map<String, PdfFormField> getAllFormFields() {
-        if (fields.size() == 0) {
+        if (fields.isEmpty()) {
             fields = populateFormFieldsMap();
         }
         final Map<String, PdfFormField> allFields = new LinkedHashMap<>(fields);

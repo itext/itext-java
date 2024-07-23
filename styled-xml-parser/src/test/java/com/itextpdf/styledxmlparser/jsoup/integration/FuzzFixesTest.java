@@ -22,6 +22,7 @@
  */
 package com.itextpdf.styledxmlparser.jsoup.integration;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.styledxmlparser.jsoup.Jsoup;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Document;
 import com.itextpdf.styledxmlparser.jsoup.parser.Parser;
@@ -64,7 +65,7 @@ public class FuzzFixesTest extends ExtendedITextTest {
         Document doc = Jsoup.parse(in, "UTF-8");
         Assert.assertNotNull(doc);
 
-        Document docXml = Jsoup.parse(new FileInputStream(in), "UTF-8", "https://example.com", Parser.xmlParser());
+        Document docXml = Jsoup.parse(FileUtil.getInputStreamForFile(in), "UTF-8", "https://example.com", Parser.xmlParser());
         Assert.assertNotNull(docXml);
     }
 
@@ -75,7 +76,7 @@ public class FuzzFixesTest extends ExtendedITextTest {
         Document doc = Jsoup.parse(in, "UTF-8");
         Assert.assertNotNull(doc);
 
-        Document docXml = Jsoup.parse(new FileInputStream(in), "UTF-8", "https://example.com", Parser.xmlParser());
+        Document docXml = Jsoup.parse(FileUtil.getInputStreamForFile(in), "UTF-8", "https://example.com", Parser.xmlParser());
         Assert.assertNotNull(docXml);
     }
 

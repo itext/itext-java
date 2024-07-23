@@ -24,15 +24,15 @@ package com.itextpdf.styledxmlparser.css.util;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.DeviceCmyk;
+import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.colors.WebColors;
 import com.itextpdf.layout.properties.TransparentColor;
 import com.itextpdf.layout.properties.UnitValue;
-import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
-import com.itextpdf.kernel.colors.DeviceRgb;
-import com.itextpdf.kernel.colors.Color;
-import com.itextpdf.kernel.colors.DeviceCmyk;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -294,6 +294,28 @@ public final class CssDimensionParsingUtils {
             return new UnitValue(UnitValue.POINT, parseRelativeValue(value, remValue));
         } else if (CssTypesValidationUtils.isRelativeValue(value)) {
             return new UnitValue(UnitValue.POINT, parseRelativeValue(value, emValue));
+        }
+        return null;
+    }
+
+    /**
+     * Parses a flex value "xfr" to x.
+     *
+     * @param value String containing the flex value to parse
+     *
+     * @return the flex value as a float
+     */
+    public static Float parseFlex(String value) {
+        if (value == null) {
+            return null;
+        }
+        value = value.trim();
+
+        if (value.endsWith(CommonCssConstants.FR)) {
+            value = value.substring(0, value.length() - CommonCssConstants.FR.length());
+            if (CssTypesValidationUtils.isNumber(value)) {
+                return Float.parseFloat(value);
+            }
         }
         return null;
     }

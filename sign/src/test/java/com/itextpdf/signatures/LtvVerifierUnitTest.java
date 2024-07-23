@@ -22,13 +22,13 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
@@ -44,8 +44,10 @@ public class LtvVerifierUnitTest extends ExtendedITextTest {
 
     @Test
     public void setVerifierTest() throws GeneralSecurityException, IOException {
-        LtvVerifier verifier1 = new LtvVerifier(new PdfDocument(new PdfReader(new FileInputStream(SOURCE_FOLDER + "ltvDoc.pdf"))));
-        LtvVerifier verifier2 = new LtvVerifier(new PdfDocument(new PdfReader(new FileInputStream(SOURCE_FOLDER + "ltvDoc.pdf"))));
+        LtvVerifier verifier1 = new LtvVerifier(new PdfDocument(new PdfReader(
+                FileUtil.getInputStreamForFile(SOURCE_FOLDER + "ltvDoc.pdf"))));
+        LtvVerifier verifier2 = new LtvVerifier(new PdfDocument(new PdfReader(
+                FileUtil.getInputStreamForFile(SOURCE_FOLDER + "ltvDoc.pdf"))));
 
         verifier1.setVerifier(verifier2);
         Assert.assertSame(verifier2, verifier1.verifier);
@@ -53,7 +55,7 @@ public class LtvVerifierUnitTest extends ExtendedITextTest {
 
     @Test
     public void setVerifyRootCertificateTest() throws GeneralSecurityException, IOException {
-        LtvVerifier verifier = new LtvVerifier(new PdfDocument(new PdfReader(new FileInputStream(SOURCE_FOLDER + "ltvDoc.pdf"))));
+        LtvVerifier verifier = new LtvVerifier(new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(SOURCE_FOLDER + "ltvDoc.pdf"))));
 
         verifier.setVerifyRootCertificate(true);
         Assert.assertTrue(verifier.verifyRootCertificate);
@@ -61,7 +63,7 @@ public class LtvVerifierUnitTest extends ExtendedITextTest {
 
     @Test
     public void verifyNotNullTest() throws GeneralSecurityException, IOException {
-        LtvVerifier verifier = new LtvVerifier(new PdfDocument(new PdfReader(new FileInputStream(SOURCE_FOLDER + "ltvDoc.pdf"))));
+        LtvVerifier verifier = new LtvVerifier(new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(SOURCE_FOLDER + "ltvDoc.pdf"))));
         verifier.pkcs7 = null;
 
         List<VerificationOK> list = Collections.<VerificationOK>emptyList();
@@ -70,7 +72,7 @@ public class LtvVerifierUnitTest extends ExtendedITextTest {
 
     @Test
     public void getCRLsFromDSSCRLsNullTest() throws GeneralSecurityException, IOException {
-        LtvVerifier verifier = new LtvVerifier(new PdfDocument(new PdfReader(new FileInputStream(SOURCE_FOLDER + "ltvDoc.pdf"))));
+        LtvVerifier verifier = new LtvVerifier(new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(SOURCE_FOLDER + "ltvDoc.pdf"))));
 
         verifier.dss = new PdfDictionary();
         Assert.assertEquals(new ArrayList<>(), verifier.getCRLsFromDSS());
@@ -78,7 +80,7 @@ public class LtvVerifierUnitTest extends ExtendedITextTest {
 
     @Test
     public void getOCSPResponsesFromDSSOCSPsNullTest() throws GeneralSecurityException, IOException {
-        LtvVerifier verifier = new LtvVerifier(new PdfDocument(new PdfReader(new FileInputStream(SOURCE_FOLDER + "ltvDoc.pdf"))));
+        LtvVerifier verifier = new LtvVerifier(new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(SOURCE_FOLDER + "ltvDoc.pdf"))));
 
         verifier.dss = new PdfDictionary();
         Assert.assertEquals(new ArrayList<>(), verifier.getOCSPResponsesFromDSS());

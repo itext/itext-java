@@ -22,6 +22,7 @@
  */
 package com.itextpdf.styledxmlparser.css.selector.item;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.styledxmlparser.IXmlParser;
 import com.itextpdf.styledxmlparser.css.CssStyleSheet;
 import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
@@ -53,7 +54,7 @@ public class CssPseudoClassDisabledSelectorItemTest extends ExtendedITextTest {
 
         CssPseudoClassDisabledSelectorItem item = CssPseudoClassDisabledSelectorItem.getInstance();
         IXmlParser htmlParser = new JsoupHtmlParser();
-        IDocumentNode documentNode = htmlParser.parse(new FileInputStream(filename), "UTF-8");
+        IDocumentNode documentNode = htmlParser.parse(FileUtil.getInputStreamForFile(filename), "UTF-8");
         IElementNode disabledInput = new JsoupElementNode(((JsoupDocumentNode)documentNode).getDocument().getElementsByTag("input").first());
         IElementNode enabledInput = new JsoupElementNode(((JsoupDocumentNode)documentNode).getDocument().getElementsByTag("input").get(1));
 

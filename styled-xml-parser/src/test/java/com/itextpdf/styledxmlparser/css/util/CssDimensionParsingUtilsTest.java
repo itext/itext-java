@@ -26,13 +26,14 @@ import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.colors.DeviceCmyk;
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.layout.properties.TransparentColor;
-import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -328,5 +329,16 @@ public class CssDimensionParsingUtilsTest extends ExtendedITextTest {
     public void parseLengthInvalidTest() {
         final float result = CssDimensionParsingUtils.parseLength("10cmm", 10, 2, 8, 9);
         Assert.assertEquals(2, result, 0.0001f);
+    }
+
+    @Test
+    public void parseFlexTest() {
+        Assert.assertEquals(13.3f, CssDimensionParsingUtils.parseFlex("13.3fr"), 0.0001);
+        Assert.assertEquals(13.3f, CssDimensionParsingUtils.parseFlex("13.3fr "), 0.0001);
+        Assert.assertEquals(13.3f, CssDimensionParsingUtils.parseFlex(" 13.3fr "), 0.0001);
+        Assert.assertNull(CssDimensionParsingUtils.parseFlex("13.3 fr"));
+        Assert.assertNull(CssDimensionParsingUtils.parseFlex("13.3f"));
+        Assert.assertNull(CssDimensionParsingUtils.parseFlex("13.3"));
+        Assert.assertNull(CssDimensionParsingUtils.parseFlex(null));
     }
 }

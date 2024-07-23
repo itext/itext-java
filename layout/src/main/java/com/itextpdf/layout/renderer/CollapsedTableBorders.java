@@ -513,7 +513,7 @@ class CollapsedTableBorders extends TableBorders {
 
     public static List<Border> getCollapsedList(List<Border> innerList, List<Border> outerList) {
         int size = Math.min(null == innerList ? 0 : innerList.size(), null == outerList ? 0 : outerList.size());
-        List<Border> collapsedList = new ArrayList<Border>();
+        List<Border> collapsedList = new ArrayList<Border>(size);
         for (int i = 0; i < size; i++) {
             collapsedList.add(getCollapsedBorder(innerList.get(i), outerList.get(i)));
         }

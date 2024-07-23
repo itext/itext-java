@@ -56,6 +56,11 @@ public class PdfSignature extends PdfObjectWrapper<PdfDictionary> {
         put(PdfName.SubFilter, subFilter);
     }
 
+    /**
+     * Creates new {@link PdfSignature} instance from the provided {@link PdfDictionary}.
+     *
+     * @param sigDictionary {@link PdfDictionary} to create new {@link PdfSignature} instance from
+     */
     public PdfSignature(PdfDictionary sigDictionary) {
         super(sigDictionary);
         PdfString contents = getPdfObject().getAsString(PdfName.Contents);
@@ -92,8 +97,8 @@ public class PdfSignature extends PdfObjectWrapper<PdfDictionary> {
      */
     public void setByteRange(int[] range) {
         PdfArray array = new PdfArray();
-        for (int k = 0; k < range.length; ++k) {
-            array.add(new PdfNumber(range[k]));
+        for (int i : range) {
+            array.add(new PdfNumber(i));
         }
         put(PdfName.ByteRange, array);
     }
@@ -231,6 +236,11 @@ public class PdfSignature extends PdfObjectWrapper<PdfDictionary> {
         put(PdfName.Reason, new PdfString(reason, PdfEncodings.UNICODE_BIG));
     }
 
+    /**
+     * Gets the /Reason value.
+     *
+     * @return reason for signing
+     */
     public String getReason() {
         PdfString reasonStr = getPdfObject().getAsString(PdfName.Reason);
         return reasonStr != null ? reasonStr.toUnicodeString() : null;
@@ -257,12 +267,25 @@ public class PdfSignature extends PdfObjectWrapper<PdfDictionary> {
         put(PdfName.ContactInfo, new PdfString(contactInfo, PdfEncodings.UNICODE_BIG));
     }
 
+    /**
+     * Add new key-value pair to the signature dictionary.
+     *
+     * @param key {@link PdfName} to be added as a key
+     * @param value {@link PdfObject} to be added as a value
+     *
+     * @return the same {@link PdfSignature} instance
+     */
     public PdfSignature put(PdfName key, PdfObject value) {
         getPdfObject().put(key, value);
         setModified();
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
     @Override
     protected boolean isWrappedObjectMustBeIndirect() {
         return true;

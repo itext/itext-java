@@ -85,4 +85,11 @@ public interface IExtension extends IASN1Encodable {
      * @return Extension.subjectKeyIdentifier wrapper.
      */
     IASN1ObjectIdentifier getSubjectKeyIdentifier();
+
+    /**
+     * Gets {@code expiredCertsOnCRL} constant for the wrapped Extension.
+     *
+     * @return Extension.expiredCertsOnCRL wrapper.
+     */
+    IASN1ObjectIdentifier getExpiredCertsOnCRL();
 }

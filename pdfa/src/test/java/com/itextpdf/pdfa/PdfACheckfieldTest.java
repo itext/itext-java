@@ -22,6 +22,7 @@
  */
 package com.itextpdf.pdfa;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.CheckBoxFormFieldBuilder;
 import com.itextpdf.forms.fields.PdfFormCreator;
@@ -36,14 +37,14 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class PdfACheckfieldTest extends ExtendedITextTest {
@@ -65,7 +66,7 @@ public class PdfACheckfieldTest extends ExtendedITextTest {
         String diff = "diff_" + name + "_";
 
         PdfWriter writer = new PdfWriter(outPath);
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1A, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.setTagged();
         doc.getCatalog().setLang(new PdfString("en-US"));
@@ -90,7 +91,7 @@ public class PdfACheckfieldTest extends ExtendedITextTest {
         String diff = "diff_" + name + "_";
 
         PdfWriter writer = new PdfWriter(outPath);
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1A, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.setTagged();
         doc.getCatalog().setLang(new PdfString("en-US"));
@@ -115,7 +116,7 @@ public class PdfACheckfieldTest extends ExtendedITextTest {
         String diff = "diff_" + name + "_";
 
         PdfWriter writer = new PdfWriter(outPath);
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
@@ -138,7 +139,7 @@ public class PdfACheckfieldTest extends ExtendedITextTest {
         String diff = "diff_" + name + "_";
 
         PdfWriter writer = new PdfWriter(outPath);
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
@@ -161,7 +162,7 @@ public class PdfACheckfieldTest extends ExtendedITextTest {
         String diff = "diff_" + name + "_";
 
         PdfWriter writer = new PdfWriter(outPath);
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2A, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.setTagged();
         doc.getCatalog().setLang(new PdfString("en-US"));
@@ -186,7 +187,7 @@ public class PdfACheckfieldTest extends ExtendedITextTest {
         String diff = "diff_" + name + "_";
 
         PdfWriter writer = new PdfWriter(outPath);
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2A, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.setTagged();
         doc.getCatalog().setLang(new PdfString("en-US"));
@@ -211,7 +212,7 @@ public class PdfACheckfieldTest extends ExtendedITextTest {
         String diff = "diff_" + name + "_";
 
         PdfWriter writer = new PdfWriter(outPath);
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
@@ -234,7 +235,7 @@ public class PdfACheckfieldTest extends ExtendedITextTest {
         String diff = "diff_" + name + "_";
 
         PdfWriter writer = new PdfWriter(outPath);
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
@@ -257,7 +258,7 @@ public class PdfACheckfieldTest extends ExtendedITextTest {
         String diff = "diff_" + name + "_";
 
         PdfWriter writer = new PdfWriter(outPath);
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2U, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
@@ -280,7 +281,7 @@ public class PdfACheckfieldTest extends ExtendedITextTest {
         String diff = "diff_" + name + "_";
 
         PdfWriter writer = new PdfWriter(outPath);
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2U, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
@@ -303,7 +304,7 @@ public class PdfACheckfieldTest extends ExtendedITextTest {
         String diff = "diff_" + name + "_";
 
         PdfWriter writer = new PdfWriter(outPath);
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_3A, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.setTagged();
         doc.getCatalog().setLang(new PdfString("en-US"));
@@ -328,7 +329,7 @@ public class PdfACheckfieldTest extends ExtendedITextTest {
         String diff = "diff_" + name + "_";
 
         PdfWriter writer = new PdfWriter(outPath);
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_3A, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.setTagged();
         doc.getCatalog().setLang(new PdfString("en-US"));
@@ -353,7 +354,7 @@ public class PdfACheckfieldTest extends ExtendedITextTest {
         String diff = "diff_" + name + "_";
 
         PdfWriter writer = new PdfWriter(outPath);
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_3B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
@@ -376,7 +377,7 @@ public class PdfACheckfieldTest extends ExtendedITextTest {
         String diff = "diff_" + name + "_";
 
         PdfWriter writer = new PdfWriter(outPath);
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_3B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
@@ -399,7 +400,7 @@ public class PdfACheckfieldTest extends ExtendedITextTest {
         String diff = "diff_" + name + "_";
 
         PdfWriter writer = new PdfWriter(outPath);
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_3U, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
@@ -422,7 +423,7 @@ public class PdfACheckfieldTest extends ExtendedITextTest {
         String diff = "diff_" + name + "_";
 
         PdfWriter writer = new PdfWriter(outPath);
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_3U, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);

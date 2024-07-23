@@ -26,6 +26,7 @@ import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.crypto.CryptoUtil;
 import com.itextpdf.kernel.crypto.securityhandler.StandardHandlerUsingAes256;
 import com.itextpdf.kernel.exceptions.BadPasswordException;
@@ -62,8 +63,8 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
@@ -71,7 +72,6 @@ import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
-
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Assume;
@@ -274,7 +274,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
                         .setPublicKeySecurityParams(
                                 getPublicCertificate(sourceFolder + "wrong.cer"),
                                 PemFileHelper.readPrivateKeyFromPemFile(
-                                        new FileInputStream(sourceFolder + "wrong.pem"), PRIVATE_KEY_PASS),
+                                        FileUtil.getInputStreamForFile(sourceFolder + "wrong.pem"), PRIVATE_KEY_PASS),
                                 FACTORY.getProviderName(),
                                 null))) {
 
@@ -629,14 +629,14 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     public Certificate getPublicCertificate(String path) throws IOException, CertificateException {
-        FileInputStream is = new FileInputStream(path);
+        InputStream is = FileUtil.getInputStreamForFile(path);
         return CryptoUtil.readPublicCertificate(is);
     }
 
     public PrivateKey getPrivateKey() throws IOException, AbstractPKCSException, AbstractOperatorCreationException {
         if (privateKey == null) {
             privateKey = PemFileHelper.readPrivateKeyFromPemFile(
-                    new FileInputStream(PRIVATE_KEY), PRIVATE_KEY_PASS);
+                    FileUtil.getInputStreamForFile(PRIVATE_KEY), PRIVATE_KEY_PASS);
         }
         return privateKey;
     }

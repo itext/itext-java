@@ -234,6 +234,24 @@ public class PdfTokenizerTest extends ExtendedITextTest {
     }
 
     @Test
+    public void getNextEofWhichIsCutTest() throws IOException {
+        StringBuilder stringBuilder = new StringBuilder();
+        // We append 'a' 124 times because buffer has 128 bytes length.
+        // This way '%%EOF' is cut and first string only contains '%%EO'
+        for (int i = 0; i < 124; ++i) {
+            stringBuilder.append("a");
+        }
+        stringBuilder.append("%%EOF");
+
+        RandomAccessSourceFactory factory = new RandomAccessSourceFactory();
+        try (PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(
+                factory.createSource(stringBuilder.toString().getBytes(StandardCharsets.ISO_8859_1))))) {
+            long eofPosition = tok.getNextEof();
+            Assert.assertEquals(124 + 6, eofPosition);
+        }
+    }
+
+    @Test
     public void getNextEofSeveralEofTest() throws IOException {
         String data = "some text %%EOFto test \nget%%EOFting end of\n fil%%EOFe logic%%EOF";
 
@@ -242,6 +260,17 @@ public class PdfTokenizerTest extends ExtendedITextTest {
                 factory.createSource(data.getBytes(StandardCharsets.ISO_8859_1))))) {
             long eofPosition = tok.getNextEof();
             Assert.assertEquals(data.indexOf("%%EOF") + 6, eofPosition);
+        }
+    }
+
+    @Test
+    public void getNextEofNoEofTest() throws IOException {
+        String data = "some text to test \ngetting end of\n file logic";
+
+        RandomAccessSourceFactory factory = new RandomAccessSourceFactory();
+        try (PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(
+                factory.createSource(data.getBytes(StandardCharsets.ISO_8859_1))))) {
+            Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class, () -> tok.getNextEof());
         }
     }
 

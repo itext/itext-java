@@ -135,7 +135,7 @@ public class ListTest extends ExtendedITextTest {
                 add("fourth string");
 
         Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
-        table.addCell(new Cell().add(list).setVerticalAlignment(VerticalAlignment.BOTTOM));
+        table.addCell(new Cell().add(list).setVerticalAlignment(VerticalAlignment.BOTTOM).setFontSize(10));
 
         document.add(table);
         document.close();

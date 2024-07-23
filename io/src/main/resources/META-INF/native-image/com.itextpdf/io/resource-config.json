@@ -1,0 +1,475 @@
+{
+  "resources":{
+  "includes":[{
+    "condition": {
+      "typeReachable": "com.itextpdf.io.font.AdobeGlyphList"
+    },
+    "pattern":"\\Qcom/itextpdf/io/font/AdobeGlyphList.txt\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.io.font.Type1Font"
+    },
+    "pattern":"\\Qcom/itextpdf/io/font/afm/Courier.afm\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.io.font.Type1Font"
+    },
+    "pattern":"\\Qcom/itextpdf/io/font/afm/Courier-Bold.afm\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.io.font.Type1Font"
+    },
+    "pattern":"\\Qcom/itextpdf/io/font/afm/Courier-BoldOblique.afm\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.io.font.Type1Font"
+    },
+    "pattern":"\\Qcom/itextpdf/io/font/afm/Courier-Oblique.afm\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.io.font.Type1Font"
+    },
+    "pattern":"\\Qcom/itextpdf/io/font/afm/Helvetica.afm\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.io.font.Type1Font"
+    },
+    "pattern":"\\Qcom/itextpdf/io/font/afm/Helvetica-Bold.afm\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.io.font.Type1Font"
+    },
+    "pattern":"\\Qcom/itextpdf/io/font/afm/Helvetica-BoldOblique.afm\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.io.font.Type1Font"
+    },
+    "pattern":"\\Qcom/itextpdf/io/font/afm/Helvetica-Oblique.afm\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.io.font.Type1Font"
+    },
+    "pattern":"\\Qcom/itextpdf/io/font/afm/Symbol.afm\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.io.font.Type1Font"
+    },
+    "pattern":"\\Qcom/itextpdf/io/font/afm/Times-Bold.afm\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.io.font.Type1Font"
+    },
+    "pattern":"\\Qcom/itextpdf/io/font/afm/Times-BoldItalic.afm\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.io.font.Type1Font"
+    },
+    "pattern":"\\Qcom/itextpdf/io/font/afm/Times-Italic.afm\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.io.font.Type1Font"
+    },
+    "pattern":"\\Qcom/itextpdf/io/font/afm/Times-Roman.afm\\E"
+  }, {
+    "condition": {
+      "typeReachable": "com.itextpdf.io.font.Type1Font"
+    },
+    "pattern":"\\Qcom/itextpdf/io/font/afm/ZapfDingbats.afm\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/78-EUC-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/78-EUC-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/78-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/78-RKSJ-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/78-RKSJ-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/78-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/78ms-RKSJ-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/78ms-RKSJ-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/83pv-RKSJ-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/90ms-RKSJ-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/90ms-RKSJ-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/90msp-RKSJ-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/90msp-RKSJ-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/90pv-RKSJ-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/90pv-RKSJ-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Add-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Add-RKSJ-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Add-RKSJ-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Add-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Adobe-CNS1-0\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Adobe-CNS1-1\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Adobe-CNS1-2\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Adobe-CNS1-3\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Adobe-CNS1-4\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Adobe-CNS1-5\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Adobe-CNS1-6\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Adobe-CNS1-7\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Adobe-GB1-0\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Adobe-GB1-1\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Adobe-GB1-2\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Adobe-GB1-3\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Adobe-GB1-4\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Adobe-GB1-5\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Adobe-Japan1-0\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Adobe-Japan1-1\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Adobe-Japan1-2\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Adobe-Japan1-3\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Adobe-Japan1-4\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Adobe-Japan1-5\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Adobe-Japan1-6\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Adobe-Japan1-7\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Adobe-Korea1-0\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Adobe-Korea1-1\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Adobe-Korea1-2\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Adobe-KR-0\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Adobe-KR-1\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Adobe-KR-2\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Adobe-KR-3\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Adobe-KR-4\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Adobe-KR-5\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Adobe-KR-6\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Adobe-KR-7\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Adobe-KR-8\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Adobe-KR-9\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/B5-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/B5-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/B5pc-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/B5pc-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/CNS1-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/CNS1-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/CNS2-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/CNS2-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/CNS-EUC-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/CNS-EUC-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/ETen-B5-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/ETen-B5-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/ETenms-B5-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/ETenms-B5-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/ETHK-B5-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/ETHK-B5-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/EUC-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/EUC-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Ext-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Ext-RKSJ-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Ext-RKSJ-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Ext-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/GB-EUC-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/GB-EUC-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/GB-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/GB-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/GBK2K-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/GBK2K-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/GBK-EUC-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/GBK-EUC-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/GBKp-EUC-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/GBKp-EUC-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/GBpc-EUC-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/GBpc-EUC-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/GBT-EUC-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/GBT-EUC-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/GBT-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/GBT-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/GBTpc-EUC-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/GBTpc-EUC-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Hankaku\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Hiragana\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/HKdla-B5-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/HKdla-B5-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/HKdlb-B5-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/HKdlb-B5-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/HKgccs-B5-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/HKgccs-B5-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/HKm314-B5-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/HKm314-B5-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/HKm471-B5-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/HKm471-B5-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/HKscs-B5-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/HKscs-B5-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Identity-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Identity-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Katakana\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/KSC-EUC-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/KSC-EUC-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/KSC-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/KSC-Johab-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/KSC-Johab-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/KSC-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/KSCms-UHC-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/KSCms-UHC-HW-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/KSCms-UHC-HW-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/KSCms-UHC-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/KSCpc-EUC-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/KSCpc-EUC-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/NWP-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/NWP-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/RKSJ-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/RKSJ-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/Roman\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniAKR-UTF8-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniAKR-UTF16-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniAKR-UTF32-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniCNS-UCS2-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniCNS-UCS2-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniCNS-UTF8-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniCNS-UTF8-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniCNS-UTF16-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniCNS-UTF16-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniCNS-UTF32-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniCNS-UTF32-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniGB-UCS2-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniGB-UCS2-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniGB-UTF8-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniGB-UTF8-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniGB-UTF16-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniGB-UTF16-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniGB-UTF32-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniGB-UTF32-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniJIS2004-UTF8-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniJIS2004-UTF8-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniJIS2004-UTF16-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniJIS2004-UTF16-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniJIS2004-UTF32-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniJIS2004-UTF32-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniJIS-UCS2-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniJIS-UCS2-HW-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniJIS-UCS2-HW-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniJIS-UCS2-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniJIS-UTF8-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniJIS-UTF8-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniJIS-UTF16-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniJIS-UTF16-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniJIS-UTF32-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniJIS-UTF32-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniJISPro-UCS2-HW-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniJISPro-UCS2-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniJISPro-UTF8-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniJISX0213-UTF32-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniJISX0213-UTF32-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniJISX02132004-UTF32-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniJISX02132004-UTF32-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniKS-UCS2-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniKS-UCS2-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniKS-UTF8-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniKS-UTF8-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniKS-UTF16-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniKS-UTF16-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniKS-UTF32-H\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/UniKS-UTF32-V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/V\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/WP-Symbol\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/toUnicode/Adobe-CNS1-UCS2\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/toUnicode/Adobe-GB1-UCS2\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/toUnicode/Adobe-Japan1-UCS2\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/toUnicode/Adobe-Korea1-UCS2\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/toUnicode/Adobe-KR-UCS2\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/cjk_registry.properties\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/HeiseiKakuGo-W5.properties\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/HeiseiMin-W3.properties\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/HYGoThic-Medium.properties\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/HYSMyeongJo-Medium.properties\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/HYSMyeongJoStd-Medium.properties\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/KozMinPro-Regular.properties\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/MHei-Medium.properties\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/MSung-Light.properties\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/MSungStd-Light.properties\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/STSong-Light.properties\\E"
+  }, {
+    "pattern":"\\Qcom/itextpdf/io/font/cmap/STSongStd-Light.properties\\E"
+  }]}
+}

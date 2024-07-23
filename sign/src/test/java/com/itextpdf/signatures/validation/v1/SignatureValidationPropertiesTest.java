@@ -34,9 +34,7 @@ import com.itextpdf.signatures.validation.v1.extensions.CertificateExtension;
 import com.itextpdf.signatures.validation.v1.extensions.KeyUsageExtension;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
-
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -46,9 +44,6 @@ import java.util.function.Consumer;
 
 @Category(UnitTest.class)
 public class SignatureValidationPropertiesTest extends ExtendedITextTest {
-    @Before
-    public void setUp() {
-    }
 
     @Test
     public void getParametersValueForSpecificTest() {
@@ -58,7 +53,7 @@ public class SignatureValidationPropertiesTest extends ExtendedITextTest {
                         ValidatorContext.SIGNATURE_VALIDATOR).getSet(),
                 CertificateSources.of(CertificateSource.CRL_ISSUER, CertificateSource.SIGNER_CERT,
                         CertificateSource.TIMESTAMP).getSet(), TimeBasedContexts.of(TimeBasedContext.HISTORICAL).getSet(),
-                new IncrementralFreshnessValueSetter(10, 1).getAction());
+                new IncrementalFreshnessValueSetter(10, 1).getAction());
 
         // test the last value added
         Assert.assertEquals(Duration.ofDays(18),
@@ -89,7 +84,7 @@ public class SignatureValidationPropertiesTest extends ExtendedITextTest {
                 CertificateSources.of(CertificateSource.CRL_ISSUER, CertificateSource.SIGNER_CERT,
                         CertificateSource.TIMESTAMP).getSet(),
                 TimeBasedContexts.of(TimeBasedContext.HISTORICAL).getSet(),
-                new IncrementralFreshnessValueSetter(10, 1).getAction());
+                new IncrementalFreshnessValueSetter(10, 1).getAction());
 
         // test the general default
         Assert.assertEquals(SignatureValidationProperties.DEFAULT_FRESHNESS_PRESENT_OCSP,
@@ -142,9 +137,9 @@ public class SignatureValidationPropertiesTest extends ExtendedITextTest {
     public void setAndGetContinueAfterFailure() {
         SignatureValidationProperties sut = new SignatureValidationProperties();
         sut.setContinueAfterFailure(ValidatorContexts.of(ValidatorContext.SIGNATURE_VALIDATOR),
-               CertificateSources.of(CertificateSource.CERT_ISSUER), true);
+                CertificateSources.of(CertificateSource.CERT_ISSUER), true);
         sut.setContinueAfterFailure(ValidatorContexts.of(ValidatorContext.SIGNATURE_VALIDATOR),
-               CertificateSources.of(CertificateSource.OCSP_ISSUER), false);
+                CertificateSources.of(CertificateSource.OCSP_ISSUER), false);
 
         Assert.assertEquals(Boolean.TRUE, sut.getContinueAfterFailure(
                 new ValidationContext(ValidatorContext.SIGNATURE_VALIDATOR, CertificateSource.CERT_ISSUER,
@@ -175,11 +170,11 @@ public class SignatureValidationPropertiesTest extends ExtendedITextTest {
     public void setRequiredExtensionsTest() {
         SignatureValidationProperties sut = new SignatureValidationProperties();
         sut.setRequiredExtensions(CertificateSources.all(),
-                Collections.<CertificateExtension> singletonList(new KeyUsageExtension(1)));
+                Collections.<CertificateExtension>singletonList(new KeyUsageExtension(1)));
         sut.setRequiredExtensions(CertificateSources.of(CertificateSource.CERT_ISSUER),
-                Collections.<CertificateExtension> singletonList(new KeyUsageExtension(2)));
+                Collections.<CertificateExtension>singletonList(new KeyUsageExtension(2)));
         sut.setRequiredExtensions(CertificateSources.of(CertificateSource.OCSP_ISSUER),
-                Collections.<CertificateExtension> singletonList(new KeyUsageExtension(3)));
+                Collections.<CertificateExtension>singletonList(new KeyUsageExtension(3)));
 
         Assert.assertEquals(Collections.singletonList(new KeyUsageExtension(1)),
                 sut.getRequiredExtensions(new ValidationContext(ValidatorContext.CERTIFICATE_CHAIN_VALIDATOR,
@@ -192,11 +187,11 @@ public class SignatureValidationPropertiesTest extends ExtendedITextTest {
                         CertificateSource.OCSP_ISSUER, TimeBasedContext.HISTORICAL)));
     }
 
-    private static class IncrementralFreshnessValueSetter {
-        private int value;
+    private static class IncrementalFreshnessValueSetter {
         private final int increment;
+        private int value;
 
-        public IncrementralFreshnessValueSetter(int initialValue, int increment) {
+        public IncrementalFreshnessValueSetter(int initialValue, int increment) {
             this.value = initialValue;
             this.increment = increment;
         }

@@ -119,6 +119,17 @@ public final class Property {
     public static final int FONT_SIZE = 24;
     public static final int FORCED_PLACEMENT = 26;
     public static final int FULL = 25;
+    public static final int GRID_COLUMN_END = 147;
+    public static final int GRID_COLUMN_START = 148;
+    public static final int GRID_COLUMN_SPAN = 155;
+    public static final int GRID_ROW_END = 149;
+    public static final int GRID_ROW_START = 150;
+    public static final int GRID_ROW_SPAN = 156;
+    public static final int GRID_TEMPLATE_COLUMNS = 145;
+    public static final int GRID_TEMPLATE_ROWS = 146;
+    public static final int GRID_AUTO_ROWS = 151;
+    public static final int GRID_AUTO_COLUMNS = 152;
+    public static final int GRID_FLOW = 154;
     public static final int HEIGHT = 27;
     public static final int HORIZONTAL_ALIGNMENT = 28;
     public static final int HORIZONTAL_BORDER_SPACING = 115;
@@ -181,6 +192,7 @@ public final class Property {
     public static final int ROTATION_POINT_X = 58;
     public static final int ROTATION_POINT_Y = 59;
     public static final int ROWSPAN = 60;
+    public static final int ROW_GAP = 153;
     public static final int SPACING_RATIO = 61;
     public static final int SPLIT_CHARACTERS = 62;
     public static final int STROKE_COLOR = 63;
@@ -224,7 +236,7 @@ public final class Property {
      * related to textual operations. Indicates whether or not this type of property is inheritable.
      */
     private static final boolean[] INHERITED_PROPERTIES;
-    private static final int MAX_INHERITED_PROPERTY_ID = 144;
+    private static final int MAX_INHERITED_PROPERTY_ID = 156;
 
     static {
         INHERITED_PROPERTIES = new boolean[MAX_INHERITED_PROPERTY_ID + 1];

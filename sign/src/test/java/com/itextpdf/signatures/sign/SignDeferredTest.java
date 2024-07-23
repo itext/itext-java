@@ -26,6 +26,7 @@ import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -55,9 +56,9 @@ import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.Security;
@@ -96,7 +97,7 @@ public class SignDeferredTest extends ExtendedITextTest {
         int estimatedSize = 8192;
 
         PdfReader reader = new PdfReader(input);
-        PdfSigner signer = new PdfSigner(reader, new FileOutputStream(output), new StampingProperties());
+        PdfSigner signer = new PdfSigner(reader, FileUtil.getFileOutputStream(output), new StampingProperties());
         PdfSignatureAppearance appearance = signer.getSignatureAppearance();
         appearance
                 .setLayer2Text("Signature field which signing is deferred.")
@@ -175,7 +176,7 @@ public class SignDeferredTest extends ExtendedITextTest {
 
         String sigFieldName = "DeferredSignature1";
         PdfDocument docToSign = new PdfDocument(new PdfReader(srcFileName));
-        FileOutputStream outStream = new FileOutputStream(outFileName);
+        OutputStream outStream = FileUtil.getFileOutputStream(outFileName);
         PdfSigner.signDeferred(docToSign, sigFieldName, outStream, extSigContainer);
         docToSign.close();
         outStream.close();
@@ -227,7 +228,7 @@ public class SignDeferredTest extends ExtendedITextTest {
         ReadySignatureSigner extSigContainer = new ReadySignatureSigner(cmsSignature);
 
         PdfDocument docToSign = new PdfDocument(new PdfReader(new ByteArrayInputStream(preSignedBytes)));
-        FileOutputStream outStream = new FileOutputStream(outFileName);
+        OutputStream outStream = FileUtil.getFileOutputStream(outFileName);
         PdfSigner.signDeferred(docToSign, sigFieldName, outStream, extSigContainer);
         docToSign.close();
         outStream.close();

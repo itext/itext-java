@@ -22,13 +22,14 @@
  */
 package com.itextpdf.io.image;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -40,7 +41,7 @@ public class Jbig2Test extends ExtendedITextTest {
 
     @Test
     public void testReadingJbigFromBytes() throws IOException {
-        try (FileInputStream is = new FileInputStream(SOURCE_FOLDER + "image.jb2")) {
+        try (InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "image.jb2")) {
             byte[] inputImage = StreamUtil.inputStreamToArray(is);
             ImageData imageData = ImageDataFactory.createJbig2(inputImage, 1);
             Assert.assertEquals(100, (int)imageData.getHeight());
@@ -66,7 +67,7 @@ public class Jbig2Test extends ExtendedITextTest {
     public void testCreatingJbigFromCommonMethodByUrlAndBytesProducesSameResult() throws IOException {
         String imageFilePath = SOURCE_FOLDER + "image.jb2";
         ImageData imageDataFromUrl = ImageDataFactory.create(UrlUtil.toURL(imageFilePath));
-        try (FileInputStream fis = new FileInputStream(imageFilePath)) {
+        try (InputStream fis = FileUtil.getInputStreamForFile(imageFilePath)) {
             byte[] imageBytes = StreamUtil.inputStreamToArray(fis);
             ImageData imageDataFromBytes = ImageDataFactory.create(imageBytes);
             Assert.assertArrayEquals(imageDataFromBytes.getData(), imageDataFromUrl.getData());

@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.crypto;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.kernel.font.PdfFont;
@@ -43,6 +44,7 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
+import java.io.OutputStream;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -125,7 +127,7 @@ public class UnencryptedWrapperTest extends ExtendedITextTest {
         PdfDocument document = new PdfDocument(new PdfReader(inPath));
         PdfEncryptedPayloadDocument encryptedDocument = document.getEncryptedPayloadDocument();
         byte[] encryptedDocumentBytes = encryptedDocument.getDocumentBytes();
-        FileOutputStream fos = new FileOutputStream(outPath);
+        OutputStream fos = FileUtil.getFileOutputStream(outPath);
         fos.write(encryptedDocumentBytes);
         fos.close();
         document.close();

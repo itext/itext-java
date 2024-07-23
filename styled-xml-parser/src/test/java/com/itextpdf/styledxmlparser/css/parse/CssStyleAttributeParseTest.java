@@ -22,6 +22,7 @@
  */
 package com.itextpdf.styledxmlparser.css.parse;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.styledxmlparser.IXmlParser;
 import com.itextpdf.styledxmlparser.node.IAttributes;
 import com.itextpdf.styledxmlparser.node.IDocumentNode;
@@ -48,7 +49,7 @@ public class CssStyleAttributeParseTest extends ExtendedITextTest {
         String fileName = SOURCE_FOLDER + "cssStyleAttributeParse.html";
 
         IXmlParser parser = new JsoupHtmlParser();
-        IDocumentNode document = parser.parse(new FileInputStream(fileName), "UTF-8");
+        IDocumentNode document = parser.parse(FileUtil.getInputStreamForFile(fileName), "UTF-8");
 
         List<String> styleDeclarations = new ArrayList<>();
 

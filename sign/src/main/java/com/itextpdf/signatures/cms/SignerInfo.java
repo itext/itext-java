@@ -211,6 +211,15 @@ public class SignerInfo {
     }
 
     /**
+     * Gets the signature data.
+     *
+     * @return the signature data.
+     */
+    public byte[] getSignatureData() {
+        return signatureData;
+    }
+
+    /**
      * Sets the certificate that is used to sign a document and adds it to the signed attributes.
      *
      * @param certificate        the certificate that is used to sign

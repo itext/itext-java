@@ -1060,6 +1060,34 @@ public class OcgPropertiesCopierTest extends ExtendedITextTest {
         OcgPropertiesCopierTest.copyPagesAndAssertLayersName(names, fromDocBytes);
     }
 
+    @Test
+    public void copyEmptyOcgTest() throws IOException {
+        byte[] fromDocBytes;
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            try (PdfDocument fromDocument = new PdfDocument(new PdfWriter(outputStream))) {
+                PdfDictionary DDic = new PdfDictionary();
+                DDic.put(PdfName.ON, new PdfArray());
+                DDic.put(PdfName.Order, new PdfArray());
+                DDic.put(PdfName.RBGroups, new PdfArray());
+
+                PdfDictionary OcDic = new PdfDictionary();
+                OcDic.put(PdfName.D, DDic);
+                OcDic.put(PdfName.OCGs, new PdfArray());
+
+                fromDocument.getCatalog().put(PdfName.OCProperties,OcDic);
+            }
+            fromDocBytes = outputStream.toByteArray();
+        }
+
+        try (PdfDocument toDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            try (PdfDocument fromDocument = new PdfDocument(new PdfReader(new ByteArrayInputStream(fromDocBytes)))) {
+                fromDocument.copyPagesTo(1, 1, toDocument);
+
+                Assert.assertNull(toDocument.getCatalog().getOCProperties(false));
+            }
+        }
+    }
+
     private static byte[] getDocumentWithAllDFields() throws IOException {
         byte[] fromDocBytes;
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {

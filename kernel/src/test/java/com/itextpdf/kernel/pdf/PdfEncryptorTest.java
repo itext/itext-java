@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -30,6 +31,7 @@ import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -59,7 +61,7 @@ public class PdfEncryptorTest extends ExtendedITextTest {
         encryptor.setEncryptionProperties(encryptionProperties);
 
         try (PdfReader initialFile = new PdfReader(initialFileName);
-                FileOutputStream outputStream = new FileOutputStream(outFileName)) {
+                OutputStream outputStream = FileUtil.getFileOutputStream(outFileName)) {
             encryptor.encrypt(initialFile, outputStream);
         }
 

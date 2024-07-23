@@ -76,6 +76,16 @@ public final class UrlUtil {
         return file.toURI().normalize();
     }
 
+    /**
+     * Get the entire URI string which is properly encoded.
+     *
+     * @param uri URI which convert to string
+     * @return URI string representation
+     */
+    public static String toAbsoluteURI(URI uri) {
+        return uri.toString();
+    }
+
     public static InputStream openStream(URL url) throws IOException {
         return url.openStream();
     }

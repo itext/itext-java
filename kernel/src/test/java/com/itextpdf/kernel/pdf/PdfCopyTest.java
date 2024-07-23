@@ -384,6 +384,23 @@ public class PdfCopyTest extends ExtendedITextTest {
     }
 
     @Test
+    public void objRefAsStreamCopyTest() throws IOException, InterruptedException {
+        String pdf = sourceFolder + "objRefAsStream.pdf";
+        String outPdf = destinationFolder + "objRefAsStreamCopy.pdf";
+        String cmpPdf = sourceFolder + "cmp_objRefAsStreamCopy.pdf";
+
+        PdfDocument pdfFile = new PdfDocument(new PdfReader(pdf));
+        PdfDocument copiedFile = new PdfDocument(CompareTool.createTestPdfWriter(outPdf));
+        copiedFile.setTagged();
+        pdfFile.copyPagesTo(1, 1, copiedFile);
+
+        pdfFile.close();
+        copiedFile.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
+    }
+
+    @Test
     public void copyDocWithFullDDictionary() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "copyDocWithDDictionary.pdf";
         String cmpFileName = sourceFolder + "cmp_copyDocWithDDictionary.pdf";

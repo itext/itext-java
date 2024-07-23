@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.DeflaterOutputStream;
@@ -48,8 +49,6 @@ import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import org.junit.AfterClass;
@@ -517,7 +516,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
         String destination = DESTINATION_FOLDER + "invalid_outline.pdf";
         String cmp = SOURCE_FOLDER + "cmp_invalid_outline.pdf";
 
-        PdfDocument document = new PdfDocument(new PdfReader(new FileInputStream(source)),
+        PdfDocument document = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(source)),
                 CompareTool.createTestPdfWriter(destination));
 
         document.removePage(4);

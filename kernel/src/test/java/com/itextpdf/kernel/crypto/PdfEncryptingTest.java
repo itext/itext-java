@@ -25,6 +25,7 @@ package com.itextpdf.kernel.crypto;
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.crypto.fips.AbstractFipsUnapprovedOperationError;
 import com.itextpdf.commons.utils.Base64;
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.util.StreamUtil;
@@ -44,7 +45,6 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -168,7 +168,7 @@ public class PdfEncryptingTest extends ExtendedITextTest {
 
     private void encryptWithCertificate(String fileName, String certificatePath)
             throws IOException, GeneralSecurityException, InterruptedException {
-        Certificate certificate = CryptoUtil.readPublicCertificate(new FileInputStream(CERTS_SRC + certificatePath));
+        Certificate certificate = CryptoUtil.readPublicCertificate(FileUtil.getInputStreamForFile(CERTS_SRC + certificatePath));
         WriterProperties writerProperties = new WriterProperties().setPublicKeyEncryption(
                 new Certificate[] {certificate}, new int[] {-1}, EncryptionConstants.ENCRYPTION_AES_256);
         try (PdfWriter writer = CompareTool.createTestPdfWriter(DESTINATION_FOLDER + fileName, writerProperties.addXmpMetadata());
@@ -197,7 +197,7 @@ public class PdfEncryptingTest extends ExtendedITextTest {
 
     private PrivateKey readPrivateKey(String privateKeyName, String algorithm)
             throws GeneralSecurityException, IOException {
-        try (InputStream pemFile = new FileInputStream(CERTS_SRC + privateKeyName)) {
+        try (InputStream pemFile = FileUtil.getInputStreamForFile(CERTS_SRC + privateKeyName)) {
             String start = "-----BEGIN PRIVATE KEY-----";
             String end = "-----END PRIVATE KEY-----";
 

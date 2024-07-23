@@ -141,6 +141,14 @@ public class CssDeclarationValueTokenizer {
                     stringQuote = curChar;
                     inString = true;
                     return new Token(buff.toString(), TokenType.FUNCTION);
+                } else if (curChar == '[') {
+                    stringQuote = 0;
+                    inString = true;
+                    buff.append(curChar);
+                } else if (curChar == ']') {
+                    inString = false;
+                    buff.append(curChar);
+                    return new Token(buff.toString(), TokenType.STRING);
                 } else if (curChar == ',' && !inString && functionDepth == 0) {
                     if (buff.length() == 0) {
                         return new Token(",", TokenType.COMMA);
@@ -149,10 +157,12 @@ public class CssDeclarationValueTokenizer {
                         return new Token(buff.toString(), TokenType.UNKNOWN);
                     }
                 } else if (Character.isWhitespace(curChar)) {
-                    if (functionDepth > 0) {
+                    if (functionDepth > 0 || inString) {
                         buff.append(curChar);
                     }
-                    return new Token(buff.toString(), functionDepth > 0 ? TokenType.FUNCTION : TokenType.UNKNOWN);
+                    if (!inString) {
+                        return new Token(buff.toString(), functionDepth > 0 ? TokenType.FUNCTION : TokenType.UNKNOWN);
+                    }
                 } else {
                     buff.append(curChar);
                 }
@@ -179,9 +189,13 @@ public class CssDeclarationValueTokenizer {
      */
     private void processFunctionToken(Token token, StringBuilder functionBuffer) {
         if (token.isString()) {
-            functionBuffer.append(stringQuote);
+            if (stringQuote != 0) {
+                functionBuffer.append(stringQuote);
+            }
             functionBuffer.append(token.getValue());
-            functionBuffer.append(stringQuote);
+            if (stringQuote != 0) {
+                functionBuffer.append(stringQuote);
+            }
         } else {
             functionBuffer.append(token.getValue());
         }

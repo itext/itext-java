@@ -27,6 +27,7 @@ import com.itextpdf.commons.bouncycastle.asn1.IASN1OctetString;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Primitive;
 import com.itextpdf.commons.bouncycastle.asn1.tsp.ITSTInfo;
 import com.itextpdf.commons.utils.DateTimeUtil;
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
@@ -39,7 +40,6 @@ import com.itextpdf.signatures.testutils.TimeTestUtil;
 import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -340,7 +340,7 @@ public class PdfPKCS7Test extends PdfPKCS7BasicTest {
             NoSuchProviderException, IOException, CertificateException, CRLException {
         String hashAlgorithm = DigestAlgorithms.SHA256;
         PdfPKCS7 pkcs7 = new PdfPKCS7(pk, chain, hashAlgorithm, null, new BouncyCastleDigest(), true);
-        pkcs7.getSignedDataCRLs().add(SignTestPortUtil.parseCrlFromStream(new FileInputStream(SOURCE_FOLDER + "firstCrl.bin")));
+        pkcs7.getSignedDataCRLs().add(SignTestPortUtil.parseCrlFromStream(FileUtil.getInputStreamForFile(SOURCE_FOLDER + "firstCrl.bin")));
         pkcs7.getSignedDataOcsps().add(BOUNCY_CASTLE_FACTORY.createBasicOCSPResponse(BOUNCY_CASTLE_FACTORY.createASN1InputStream(
                         Files.readAllBytes(Paths.get(SOURCE_FOLDER, "simpleOCSPResponse.bin"))).readObject()));
         byte[] bytes = pkcs7.getEncodedPKCS7();

@@ -41,6 +41,10 @@ import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.FlexFlowShorthand
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.FlexShorthandResolver;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.FontShorthandResolver;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.GapShorthandResolver;
+import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.GridColumnShorthandResolver;
+import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.GridRowShorthandResolver;
+import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.GridShorthandResolver;
+import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.GridTemplateShorthandResolver;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.ListStyleShorthandResolver;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.MarginShorthandResolver;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.OutlineShorthandResolver;
@@ -79,10 +83,15 @@ public class ShorthandResolverFactory {
         shorthandResolvers.put(CommonCssConstants.TEXT_DECORATION, new TextDecorationShorthandResolver());
         shorthandResolvers.put(CommonCssConstants.FLEX, new FlexShorthandResolver());
         shorthandResolvers.put(CommonCssConstants.FLEX_FLOW, new FlexFlowShorthandResolver());
-        shorthandResolvers.put(CommonCssConstants.GAP, new GapShorthandResolver());
+        shorthandResolvers.put(CommonCssConstants.GAP, new GapShorthandResolver(CommonCssConstants.GAP));
+        shorthandResolvers.put(CommonCssConstants.GRID_GAP, new GapShorthandResolver(CommonCssConstants.GRID_GAP));
         shorthandResolvers.put(CommonCssConstants.PLACE_ITEMS, new PlaceItemsShorthandResolver());
         shorthandResolvers.put(CommonCssConstants.COLUMNS, new ColumnsShorthandResolver());
         shorthandResolvers.put(CommonCssConstants.COLUMN_RULE, new ColumnRuleShortHandResolver());
+        shorthandResolvers.put(CommonCssConstants.GRID_ROW, new GridRowShorthandResolver());
+        shorthandResolvers.put(CommonCssConstants.GRID_COLUMN, new GridColumnShorthandResolver());
+        shorthandResolvers.put(CommonCssConstants.GRID_TEMPLATE, new GridTemplateShorthandResolver());
+        shorthandResolvers.put(CommonCssConstants.GRID, new GridShorthandResolver());
     }
 
     /**

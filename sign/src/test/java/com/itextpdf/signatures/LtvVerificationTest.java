@@ -570,7 +570,7 @@ public class LtvVerificationTest extends ExtendedITextTest {
     private static void validateOptionLevelInclusion(String crlUrl, CertificateOption certificateOption, Level level,
             CertificateInclusion inclusion, boolean expectedResult) throws IOException, GeneralSecurityException {
 
-        IOcspClient ocsp = new OcspClientBouncyCastle(null);
+        IOcspClient ocsp = new OcspClientBouncyCastle();
         ICrlClient crl = null;
         if (null == crlUrl) {
             crl = new CrlClientOnline();

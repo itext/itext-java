@@ -35,7 +35,6 @@ import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.properties.ContinuousContainer;
 import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
-import com.itextpdf.layout.properties.UnitValue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +53,7 @@ public class MulticolRenderer extends AbstractRenderer {
     private float approximateHeight;
     private Float heightFromProperties;
     private float columnGap;
+    private float containerWidth;
 
     private boolean isFirstLayout = true;
 
@@ -85,13 +85,15 @@ public class MulticolRenderer extends AbstractRenderer {
         setOverflowForAllChildren(this);
         Rectangle actualBBox = layoutContext.getArea().getBBox().clone();
         float originalWidth = actualBBox.getWidth();
-        applyWidth(actualBBox, originalWidth);
 
         ContinuousContainer.setupContinuousContainerIfNeeded(this);
         applyPaddings(actualBBox, false);
         applyBorderBox(actualBBox, false);
         applyMargins(actualBBox, false);
-        calculateColumnCountAndWidth(actualBBox.getWidth());
+        applyWidth(actualBBox, originalWidth);
+        containerWidth = actualBBox.getWidth();
+
+        calculateColumnCountAndWidth(containerWidth);
 
         heightFromProperties = determineHeight(actualBBox);
         if (this.elementRenderer == null) {
@@ -137,7 +139,6 @@ public class MulticolRenderer extends AbstractRenderer {
         return new MulticolRenderer((MulticolContainer) modelElement);
     }
 
-
     /**
      * Performs the drawing operation for the border of this renderer, if
      * defined by any of the {@link Property#BORDER} values in either the layout
@@ -170,10 +171,16 @@ public class MulticolRenderer extends AbstractRenderer {
                 drawContext.getCanvas().restoreState();
             }
         });
-
-
     }
 
+    /**
+     * Layouts multicol in the passed area.
+     *
+     * @param layoutContext the layout context
+     * @param actualBBox the area to layout multicol on
+     *
+     * @return the {@link MulticolLayoutResult} instance
+     */
     protected MulticolLayoutResult layoutInColumns(LayoutContext layoutContext, Rectangle actualBBox) {
         LayoutResult inifiniteHeighOneColumnLayoutResult = elementRenderer.layout(
                 new LayoutContext(new LayoutArea(1, new Rectangle(columnWidth, INF))));
@@ -193,17 +200,11 @@ public class MulticolRenderer extends AbstractRenderer {
      * @param children children of the split renderer
      *
      * @return a new {@link AbstractRenderer} instance
+     * @deprecated use {@link GridMulticolUtil#createSplitRenderer(List, AbstractRenderer)}
      */
+    @Deprecated
     protected AbstractRenderer createSplitRenderer(List<IRenderer> children) {
-        AbstractRenderer splitRenderer = (AbstractRenderer) getNextRenderer();
-        splitRenderer.parent = parent;
-        splitRenderer.modelElement = modelElement;
-        splitRenderer.occupiedArea = occupiedArea;
-        splitRenderer.isLastRendererForModelElement = false;
-        splitRenderer.setChildRenderers(children);
-        splitRenderer.addAllProperties(getOwnProperties());
-        ContinuousContainer.setupContinuousContainerIfNeeded(splitRenderer);
-        return splitRenderer;
+        return GridMulticolUtil.createSplitRenderer(children, this);
     }
 
     /**
@@ -271,30 +272,6 @@ public class MulticolRenderer extends AbstractRenderer {
             height = maxHeight;
         }
         return height;
-    }
-
-
-    private void recalculateHeightWidthAfterLayouting(Rectangle parentBBox, boolean isFull) {
-        Float height = determineHeight(parentBBox);
-        if (height != null) {
-            height = updateOccupiedHeight((float) height, isFull);
-            float heightDelta = parentBBox.getHeight() - (float) height;
-            parentBBox.moveUp(heightDelta);
-            parentBBox.setHeight((float) height);
-        }
-        applyWidth(parentBBox, parentBBox.getWidth());
-    }
-
-
-    private float safelyRetrieveFloatProperty(int property) {
-        final Object value = this.<Object>getProperty(property);
-        if (value instanceof UnitValue) {
-            return ((UnitValue) value).getValue();
-        }
-        if (value instanceof Border) {
-            return ((Border) value).getWidth();
-        }
-        return 0F;
     }
 
     private MulticolLayoutResult balanceContentAndLayoutColumns(LayoutContext prelayoutContext,
@@ -379,41 +356,25 @@ public class MulticolRenderer extends AbstractRenderer {
 
     private LayoutArea calculateContainerOccupiedArea(LayoutContext layoutContext, boolean isFull) {
         LayoutArea area = layoutContext.getArea().clone();
+        final Rectangle areaBBox = area.getBBox();
 
-        final float totalHeight = updateOccupiedHeight(approximateHeight, isFull);
-
-        area.getBBox().setHeight(totalHeight);
-        final Rectangle initialBBox = layoutContext.getArea().getBBox();
-        area.getBBox().setY(initialBBox.getY() + initialBBox.getHeight() - area.getBBox().getHeight());
-        recalculateHeightWidthAfterLayouting(area.getBBox(), isFull);
-        return area;
-    }
-
-    private float updateOccupiedHeight(float initialHeight, boolean isFull) {
-        if (isFull) {
-            initialHeight += safelyRetrieveFloatProperty(Property.PADDING_BOTTOM);
-            initialHeight += safelyRetrieveFloatProperty(Property.MARGIN_BOTTOM);
-            if (!this.hasOwnProperty(Property.BORDER) || this.<Border>getProperty(Property.BORDER) == null) {
-                initialHeight += safelyRetrieveFloatProperty(Property.BORDER_BOTTOM);
+        final float totalContainerHeight = GridMulticolUtil.updateOccupiedHeight(approximateHeight, isFull, isFirstLayout, this);
+        if (totalContainerHeight < areaBBox.getHeight() || isFull) {
+            areaBBox.setHeight(totalContainerHeight);
+            Float height = determineHeight(areaBBox);
+            if (height != null) {
+                height = GridMulticolUtil.updateOccupiedHeight((float) height, isFull, isFirstLayout, this);
+                areaBBox.setHeight((float) height);
             }
         }
-        initialHeight += safelyRetrieveFloatProperty(Property.PADDING_TOP);
 
-        initialHeight += safelyRetrieveFloatProperty(Property.MARGIN_TOP);
+        final Rectangle initialBBox = layoutContext.getArea().getBBox();
+        areaBBox.setY(initialBBox.getY() + initialBBox.getHeight() - areaBBox.getHeight());
 
-        if (!this.hasOwnProperty(Property.BORDER) || this.<Border>getProperty(Property.BORDER) == null) {
-            initialHeight += safelyRetrieveFloatProperty(Property.BORDER_TOP);
-        }
+        final float totalContainerWidth = GridMulticolUtil.updateOccupiedWidth(containerWidth, this);
+        areaBBox.setWidth(totalContainerWidth);
 
-        // isFirstLayout is necessary to handle the case when multicol container layouted in more
-        // than 2 pages, and on the last page layout result is full, but there is no bottom border
-        float TOP_AND_BOTTOM = isFull && isFirstLayout ? 2 : 1;
-        // Multicol container layouted in more than 3 pages, and there is a page where there are no bottom and top borders
-        if (!isFull && !isFirstLayout) {
-            TOP_AND_BOTTOM = 0;
-        }
-        initialHeight += safelyRetrieveFloatProperty(Property.BORDER) * TOP_AND_BOTTOM;
-        return initialHeight;
+        return area;
     }
 
     private BlockRenderer getElementsRenderer() {

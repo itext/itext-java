@@ -201,7 +201,7 @@ public final class StandardNamespaces {
         if (role.startsWith("H") && role.length() > 1 && role.charAt(1) != '0') {
             try {
                 return Integer.parseInt(role.substring(1, role.length())) > 0;
-            } catch (Exception ex) {
+            } catch (Exception e) {
                 // ignored
             }
         }

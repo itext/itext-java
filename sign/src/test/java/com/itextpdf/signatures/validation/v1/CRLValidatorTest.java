@@ -26,7 +26,6 @@ import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.commons.utils.FileUtil;
-import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.signatures.CertificateUtil;
 import com.itextpdf.signatures.IssuingCertificateRetriever;
 import com.itextpdf.signatures.TimestampConstants;
@@ -38,7 +37,8 @@ import com.itextpdf.signatures.validation.v1.context.CertificateSource;
 import com.itextpdf.signatures.validation.v1.context.TimeBasedContext;
 import com.itextpdf.signatures.validation.v1.context.ValidationContext;
 import com.itextpdf.signatures.validation.v1.context.ValidatorContext;
-import com.itextpdf.signatures.validation.v1.report.CertificateReportItem;
+import com.itextpdf.signatures.validation.v1.mocks.MockChainValidator;
+import com.itextpdf.signatures.validation.v1.mocks.MockIssuingCertificateRetriever;
 import com.itextpdf.signatures.validation.v1.report.ReportItem;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport;
 import com.itextpdf.test.ExtendedITextTest;
@@ -66,13 +66,14 @@ public class CRLValidatorTest extends ExtendedITextTest {
 
     private static final char[] KEY_PASSWORD = "testpassphrase".toCharArray();
 
-    private CRLValidator validator;
     private MockChainValidator mockChainValidator;
+
     private X509Certificate crlIssuerCert;
     private X509Certificate signCert;
     private PrivateKey crlIssuerKey;
     private PrivateKey intermediateKey;
     private IssuingCertificateRetriever certificateRetriever;
+    private ValidatorChainBuilder validatorChainBuilder;
 
     @BeforeClass
     public static void setUpOnce() {
@@ -84,11 +85,10 @@ public class CRLValidatorTest extends ExtendedITextTest {
         certificateRetriever = new IssuingCertificateRetriever();
         SignatureValidationProperties parameters = new SignatureValidationProperties();
         mockChainValidator = new MockChainValidator();
-        ValidatorChainBuilder builder = new ValidatorChainBuilder()
+        validatorChainBuilder = new ValidatorChainBuilder()
                 .withIssuingCertificateRetriever(certificateRetriever)
                 .withSignatureValidationProperties(parameters)
                 .withCertificateChainValidator(mockChainValidator);
-        validator = new CRLValidator(builder);
     }
 
     @Test
@@ -100,9 +100,10 @@ public class CRLValidatorTest extends ExtendedITextTest {
                 DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, -5),
                 DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, +5)
         );
+
         ValidationReport report = performValidation("happyPath", TimeTestUtil.TEST_DATE_TIME, crl);
-        Assert.assertEquals(ValidationReport.ValidationResult.VALID, report.getValidationResult());
-        Assert.assertTrue(report.getFailures().isEmpty());
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationReport.ValidationResult.VALID));
     }
 
     @Test
@@ -116,10 +117,11 @@ public class CRLValidatorTest extends ExtendedITextTest {
                 nextUpdate
         );
         ValidationReport report = performValidation("happyPath", TimeTestUtil.TEST_DATE_TIME, crl);
-        Assert.assertEquals(ValidationReport.ValidationResult.INDETERMINATE, report.getValidationResult());
-        Assert.assertEquals(1, report.getFailures().size());
-        Assert.assertEquals(MessageFormatUtil.format(CRLValidator.UPDATE_DATE_BEFORE_CHECK_DATE,
-                nextUpdate, TimeTestUtil.TEST_DATE_TIME), report.getFailures().get(0).getMessage());
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationReport.ValidationResult.INDETERMINATE)
+                .hasLogItem(la -> la
+                        .withMessage(CRLValidator.UPDATE_DATE_BEFORE_CHECK_DATE, l -> nextUpdate, l -> TimeTestUtil.TEST_DATE_TIME)
+                ));
     }
 
     @Test
@@ -132,13 +134,16 @@ public class CRLValidatorTest extends ExtendedITextTest {
                 DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, +5)
         );
         ValidationReport report = performValidation("happyPath", TimeTestUtil.TEST_DATE_TIME, crl);
+
         Assert.assertEquals(ValidationReport.ValidationResult.VALID, report.getValidationResult());
-        Assert.assertTrue(report.getFailures().isEmpty());
 
         Assert.assertEquals(1, mockChainValidator.verificationCalls.size());
         Assert.assertEquals(crlIssuerCert, mockChainValidator.verificationCalls.get(0).certificate);
+        Assert.assertEquals(CertificateSource.CRL_ISSUER,
+                mockChainValidator.verificationCalls.get(0).context.getCertificateSource());
+        Assert.assertEquals(ValidatorContext.CRL_VALIDATOR,
+                mockChainValidator.verificationCalls.get(0).context.getValidatorContext());
     }
-
 
     @Test
     public void issuerCertificateIsNotFoundTest() throws Exception {
@@ -150,8 +155,11 @@ public class CRLValidatorTest extends ExtendedITextTest {
                 DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, +5)
         );
         ValidationReport report = performValidation("missingIssuer", TimeTestUtil.TEST_DATE_TIME, crl);
-        Assert.assertEquals(ValidationReport.ValidationResult.INDETERMINATE, report.getValidationResult());
-        Assert.assertEquals(CRLValidator.CRL_ISSUER_NOT_FOUND, report.getFailures().get(0).getMessage());
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationReport.ValidationResult.INDETERMINATE)
+                .hasLogItem(la -> la
+                        .withMessage(CRLValidator.CRL_ISSUER_NOT_FOUND))
+        );
     }
 
     @Test
@@ -165,8 +173,11 @@ public class CRLValidatorTest extends ExtendedITextTest {
         );
         ValidationReport report = performValidation("crlIssuerAndSignCertHaveNoSharedRoot",
                 TimeTestUtil.TEST_DATE_TIME, crl);
-        Assert.assertEquals(ValidationReport.ValidationResult.INDETERMINATE, report.getValidationResult());
-        Assert.assertEquals(CRLValidator.CRL_ISSUER_NO_COMMON_ROOT, report.getFailures().get(0).getMessage());
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationReport.ValidationResult.INDETERMINATE)
+                .hasLogItem(la -> la
+                        .withMessage(CRLValidator.CRL_ISSUER_NO_COMMON_ROOT))
+        );
     }
 
     @Test
@@ -184,13 +195,14 @@ public class CRLValidatorTest extends ExtendedITextTest {
         );
         ValidationReport report = performValidation("crlIssuerRevokedBeforeSigningDate",
                 TimeTestUtil.TEST_DATE_TIME, crl);
-        Assert.assertEquals(ValidationReport.ValidationResult.INVALID, report.getValidationResult());
-        Assert.assertEquals(1, report.getFailures().size());
-        Assert.assertEquals(MessageFormatUtil.format(CRLValidator.CERTIFICATE_REVOKED,
-                        crlIssuerCert.getSubjectX500Principal(), revocationDate),
-                report.getFailures().get(0).getMessage());
-    }
+        AssertValidationReport.assertThat(report, a -> a
+                .hasLogItem(al -> al
+                        .withStatus(ReportItem.ReportItemStatus.INVALID)
+                        .withMessage(CRLValidator.CERTIFICATE_REVOKED, i -> crlIssuerCert.getSubjectX500Principal(),
+                                i -> revocationDate))
+        );
 
+    }
 
     @Test
     // CRL has the certificate revoked after signing date
@@ -207,11 +219,12 @@ public class CRLValidatorTest extends ExtendedITextTest {
         );
         ValidationReport report = performValidation("happyPath",
                 TimeTestUtil.TEST_DATE_TIME, crl);
-        Assert.assertEquals(ValidationReport.ValidationResult.VALID, report.getValidationResult());
-        Assert.assertEquals(2, report.getLogs().size());
-        Assert.assertEquals(
-                MessageFormatUtil.format(SignLogMessageConstant.VALID_CERTIFICATE_IS_REVOKED, revocationDate),
-                report.getLogs().get(1).getMessage());
+        AssertValidationReport.assertThat(report, a -> a
+                .hasLogItem(la -> la
+                        .withMessage(SignLogMessageConstant.VALID_CERTIFICATE_IS_REVOKED, i -> revocationDate)
+                        .withStatus(ReportItem.ReportItemStatus.INFO)
+                        .withCertificate(signCert)
+                ));
     }
 
     @Test
@@ -228,18 +241,20 @@ public class CRLValidatorTest extends ExtendedITextTest {
         );
         ValidationReport report = performValidation("happyPath",
                 TimeTestUtil.TEST_DATE_TIME, crl);
-        Assert.assertEquals(ValidationReport.ValidationResult.INDETERMINATE, report.getValidationResult());
-        Assert.assertEquals(1, report.getFailures().size());
-        Assert.assertEquals(CRLValidator.CRL_INVALID, report.getFailures().get(0).getMessage());
+        AssertValidationReport.assertThat(report, a -> a
+                .hasLogItem(la -> la
+                        .withMessage(CRLValidator.CRL_INVALID)
+                        .withStatus(ReportItem.ReportItemStatus.INDETERMINATE)));
     }
 
     @Test
     public void crlContainsOnlyCACertsTest() throws Exception {
         String crlPath = SOURCE_FOLDER + "issuingDistributionPointTest/onlyCA.crl";
         ValidationReport report = checkCrlScope(crlPath);
-        Assert.assertEquals(ValidationReport.ValidationResult.INDETERMINATE, report.getValidationResult());
-        Assert.assertEquals(1, report.getFailures().size());
-        Assert.assertEquals(CRLValidator.CERTIFICATE_IS_NOT_IN_THE_CRL_SCOPE, report.getFailures().get(0).getMessage());
+        AssertValidationReport.assertThat(report, a -> a
+                .hasLogItem(la -> la
+                        .withMessage(CRLValidator.CERTIFICATE_IS_NOT_IN_THE_CRL_SCOPE)
+                        .withStatus(ReportItem.ReportItemStatus.INDETERMINATE)));
     }
 
     @Test
@@ -247,16 +262,16 @@ public class CRLValidatorTest extends ExtendedITextTest {
         String crlPath = SOURCE_FOLDER + "issuingDistributionPointTest/onlyUser.crl";
         ValidationReport report = checkCrlScope(crlPath);
         Assert.assertEquals(ValidationReport.ValidationResult.VALID, report.getValidationResult());
-        Assert.assertEquals(0, report.getFailures().size());
     }
 
     @Test
     public void crlContainsOnlyAttributeCertsTest() throws Exception {
         String crlPath = SOURCE_FOLDER + "issuingDistributionPointTest/onlyAttr.crl";
         ValidationReport report = checkCrlScope(crlPath);
-        Assert.assertEquals(ValidationReport.ValidationResult.INDETERMINATE, report.getValidationResult());
-        Assert.assertEquals(1, report.getFailures().size());
-        Assert.assertEquals(CRLValidator.ATTRIBUTE_CERTS_ASSERTED, report.getFailures().get(0).getMessage());
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationReport.ValidationResult.INDETERMINATE)
+                .hasLogItem(la -> la
+                        .withMessage(CRLValidator.ATTRIBUTE_CERTS_ASSERTED)));
     }
 
     @Test
@@ -273,16 +288,19 @@ public class CRLValidatorTest extends ExtendedITextTest {
         certificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
         ValidationReport report = new ValidationReport();
         ValidationContext context = new ValidationContext(
-                ValidatorContext.REVOCATION_DATA_VALIDATOR,  CertificateSource.SIGNER_CERT,
+                ValidatorContext.REVOCATION_DATA_VALIDATOR, CertificateSource.SIGNER_CERT,
                 TimeBasedContext.PRESENT);
+        CRLValidator validator = validatorChainBuilder.getCRLValidator();
         validator.validate(report, context, signCert,
                 (X509CRL) CertificateUtil.parseCrlFromStream(new ByteArrayInputStream(builder.makeCrl())),
                 TimeTestUtil.TEST_DATE_TIME);
-        Assert.assertEquals(ValidationReport.ValidationResult.INDETERMINATE, report.getValidationResult());
-        Assert.assertEquals(1, report.getFailures().size());
-        CertificateReportItem reportItem = (CertificateReportItem) report.getFailures().get(0);
-        Assert.assertEquals(signCert, reportItem.getCertificate());
-        Assert.assertEquals(CRLValidator.ONLY_SOME_REASONS_CHECKED, reportItem.getMessage());
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationReport.ValidationResult.INDETERMINATE)
+                .hasLogItem(al -> al
+                        .withMessage(CRLValidator.ONLY_SOME_REASONS_CHECKED)
+                        .withCertificate(signCert)
+                )
+        );
     }
 
     @Test
@@ -300,21 +318,19 @@ public class CRLValidatorTest extends ExtendedITextTest {
         certificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
         ValidationReport report = new ValidationReport();
         ValidationContext context = new ValidationContext(
-                ValidatorContext.REVOCATION_DATA_VALIDATOR,  CertificateSource.SIGNER_CERT,
+                ValidatorContext.REVOCATION_DATA_VALIDATOR, CertificateSource.SIGNER_CERT,
                 TimeBasedContext.PRESENT);
         // Validate full CRL.
-        validator.validate(report, context, signCert,
+        validatorChainBuilder.getCRLValidator().validate(report, context, signCert,
                 (X509CRL) CertificateUtil.parseCrlFromStream(FileUtil.getInputStreamForFile(fullCrlPath)),
                 TimeTestUtil.TEST_DATE_TIME);
         // Validate CRL with onlySomeReasons.
-        validator.validate(report, context, signCert,
+        validatorChainBuilder.getCRLValidator().validate(report, context, signCert,
                 (X509CRL) CertificateUtil.parseCrlFromStream(new ByteArrayInputStream(builder.makeCrl())),
                 TimeTestUtil.TEST_DATE_TIME);
-        Assert.assertEquals(ValidationReport.ValidationResult.VALID, report.getValidationResult());
-        Assert.assertEquals(0, report.getFailures().size());
-        CertificateReportItem reportItem = (CertificateReportItem) report.getLogs().get(1);
-        Assert.assertEquals(signCert, reportItem.getCertificate());
-        Assert.assertEquals(CRLValidator.SAME_REASONS_CHECK, reportItem.getMessage());
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationReport.ValidationResult.VALID)
+        );
     }
 
     @Test
@@ -330,16 +346,18 @@ public class CRLValidatorTest extends ExtendedITextTest {
         certificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
         ValidationReport report = new ValidationReport();
         ValidationContext context = new ValidationContext(
-                ValidatorContext.REVOCATION_DATA_VALIDATOR,  CertificateSource.SIGNER_CERT,
+                ValidatorContext.REVOCATION_DATA_VALIDATOR, CertificateSource.SIGNER_CERT,
                 TimeBasedContext.PRESENT);
-        validator.validate(report, context, signCert,
+        validatorChainBuilder.getCRLValidator().validate(report, context, signCert,
                 (X509CRL) CertificateUtil.parseCrlFromStream(new ByteArrayInputStream(builder.makeCrl())),
                 TimeTestUtil.TEST_DATE_TIME);
-        Assert.assertEquals(ValidationReport.ValidationResult.VALID, report.getValidationResult());
-        Assert.assertEquals(0, report.getFailures().size());
-        CertificateReportItem reportItem = (CertificateReportItem) report.getLogs().get(1);
-        Assert.assertEquals(signCert, reportItem.getCertificate());
-        Assert.assertEquals(CRLValidator.CERTIFICATE_IS_UNREVOKED, reportItem.getMessage());
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationReport.ValidationResult.VALID)
+                .hasLogItem(la -> la
+                        .withCertificate(signCert)
+                        .withCheckName(CRLValidator.CRL_CHECK)
+                        .withMessage(CRLValidator.CERTIFICATE_IS_UNREVOKED))
+        );
     }
 
     @Test
@@ -361,17 +379,128 @@ public class CRLValidatorTest extends ExtendedITextTest {
         certificateRetriever.setTrustedCertificates(Collections.singletonList(caCert));
         ValidationReport report = new ValidationReport();
         ValidationContext context = new ValidationContext(
-                ValidatorContext.REVOCATION_DATA_VALIDATOR,  CertificateSource.SIGNER_CERT,
+                ValidatorContext.REVOCATION_DATA_VALIDATOR, CertificateSource.SIGNER_CERT,
                 TimeBasedContext.PRESENT);
-        validator.validate(report, context, cert,
+        validatorChainBuilder.getCRLValidator().validate(report, context, cert,
                 (X509CRL) CertificateUtil.parseCrlFromStream(new ByteArrayInputStream(builder.makeCrl())), checkDate);
 
-        Assert.assertEquals(ValidationReport.ValidationResult.INDETERMINATE, report.getValidationResult());
-        Assert.assertEquals(1, report.getFailures().size());
-        CertificateReportItem reportItem = (CertificateReportItem) report.getLogs().get(1);
-        Assert.assertEquals(ReportItem.ReportItemStatus.INDETERMINATE, reportItem.getStatus());
-        Assert.assertEquals(cert, reportItem.getCertificate());
-        Assert.assertEquals(CRLValidator.ONLY_SOME_REASONS_CHECKED, reportItem.getMessage());
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationReport.ValidationResult.INDETERMINATE)
+                .hasLogItem(la -> la
+                        .withStatus(ReportItem.ReportItemStatus.INDETERMINATE)
+                        .withCertificate(cert)
+                        .withMessage(CRLValidator.ONLY_SOME_REASONS_CHECKED))
+        );
+    }
+
+    @Test
+    public void noExpiredCertOnCrlExtensionTest() throws Exception {
+        // Certificate is expired on 01/01/2400.
+        retrieveTestResources("happyPath");
+        TestCrlBuilder builder = new TestCrlBuilder(crlIssuerCert, crlIssuerKey,
+                DateTimeUtil.addYearsToDate(TimeTestUtil.TEST_DATE_TIME, 401));
+        byte[] crl = builder.makeCrl();
+        ValidationReport report = performValidation("happyPath", TimeTestUtil.TEST_DATE_TIME, crl);
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationReport.ValidationResult.INDETERMINATE)
+                .hasNumberOfFailures(1)
+                .hasNumberOfLogs(1)
+                .hasLogItem(l -> l.withCheckName(CRLValidator.CRL_CHECK)
+                        .withMessage(CRLValidator.CERTIFICATE_IS_EXPIRED, i -> signCert.getNotAfter())
+                        .withCertificate(signCert))
+        );
+    }
+
+    @Test
+    public void certExpiredBeforeDateFromExpiredCertOnCrlTest() throws Exception {
+        // Certificate is expired on 01/01/2400.
+        retrieveTestResources("happyPath");
+        TestCrlBuilder builder = new TestCrlBuilder(crlIssuerCert, crlIssuerKey,
+                DateTimeUtil.addYearsToDate(TimeTestUtil.TEST_DATE_TIME, 401));
+        builder.addExtension(FACTORY.createExtension().getExpiredCertsOnCRL(), false,
+                FACTORY.createASN1GeneralizedTime(DateTimeUtil.addYearsToDate(TimeTestUtil.TEST_DATE_TIME, 400)));
+        byte[] crl = builder.makeCrl();
+        ValidationReport report = performValidation("happyPath", TimeTestUtil.TEST_DATE_TIME, crl);
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationReport.ValidationResult.INDETERMINATE)
+                .hasNumberOfFailures(1)
+                .hasNumberOfLogs(1)
+                .hasLogItem(l -> l
+                        .withCheckName(CRLValidator.CRL_CHECK)
+                        .withMessage(CRLValidator.CERTIFICATE_IS_EXPIRED, i -> signCert.getNotAfter())
+                        .withCertificate(signCert))
+        );
+    }
+
+    @Test
+    public void certExpiredAfterDateFromExpiredCertOnCrlExtensionTest() throws Exception {
+        // Certificate is expired on 01/01/2400.
+        retrieveTestResources("happyPath");
+        TestCrlBuilder builder = new TestCrlBuilder(crlIssuerCert, crlIssuerKey,
+                DateTimeUtil.addYearsToDate(TimeTestUtil.TEST_DATE_TIME, 401));
+        builder.addExtension(FACTORY.createExtension().getExpiredCertsOnCRL(), false,
+                FACTORY.createASN1GeneralizedTime(DateTimeUtil.addYearsToDate(TimeTestUtil.TEST_DATE_TIME, 399)));
+        byte[] crl = builder.makeCrl();
+        ValidationReport report = performValidation("happyPath", TimeTestUtil.TEST_DATE_TIME, crl);
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationReport.ValidationResult.VALID)
+                .hasNumberOfFailures(0));
+    }
+
+    @Test
+    public void certificateRetrieverFailureTest() throws Exception {
+        retrieveTestResources("happyPath");
+        byte[] crl = createCrl(
+                crlIssuerCert,
+                crlIssuerKey,
+                DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, -5),
+                DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, +5)
+        );
+        MockIssuingCertificateRetriever mockCertificateRetriever = new MockIssuingCertificateRetriever();
+        mockCertificateRetriever.ongetCrlIssuerCertificatesDo(c -> {throw new RuntimeException("just testing");});
+        validatorChainBuilder.withIssuingCertificateRetriever(mockCertificateRetriever);
+        validatorChainBuilder.withCRLValidator(new CRLValidator(validatorChainBuilder));
+
+        ValidationReport report = performValidation("happyPath", TimeTestUtil.TEST_DATE_TIME, crl);
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationReport.ValidationResult.INDETERMINATE)
+                .hasLogItem(l -> l.withMessage(CRLValidator.CRL_ISSUER_REQUEST_FAILED)));
+
+    }
+
+
+    @Test
+    public void chainValidatorFailureTest() throws Exception {
+        retrieveTestResources("happyPath");
+        byte[] crl = createCrl(
+                crlIssuerCert,
+                crlIssuerKey,
+                DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, -5),
+                DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, +5)
+        );
+        mockChainValidator.onCallDo(c -> {throw new RuntimeException("Just testing");});
+
+        ValidationReport report = performValidation("happyPath", TimeTestUtil.TEST_DATE_TIME, crl);
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationReport.ValidationResult.INDETERMINATE)
+                .hasLogItem(l -> l.withMessage(CRLValidator.CRL_ISSUER_CHAIN_FAILED)));
+    }
+
+
+    @Test
+    public void providedTimeIsUsedForResponderValidation() throws Exception {
+        retrieveTestResources("happyPath");
+        byte[] crl = createCrl(
+                crlIssuerCert,
+                crlIssuerKey,
+                DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, -5),
+                DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, +5)
+        );
+        mockChainValidator.onCallDo(c -> Assert.assertEquals(TimeTestUtil.TEST_DATE_TIME, c.checkDate));
+
+        ValidationReport report = performValidation("happyPath", TimeTestUtil.TEST_DATE_TIME, crl);
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationReport.ValidationResult.VALID));
     }
 
     private ValidationReport checkCrlScope(String crlPath) throws Exception {
@@ -382,9 +511,9 @@ public class CRLValidatorTest extends ExtendedITextTest {
         certificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
         ValidationReport report = new ValidationReport();
         ValidationContext context = new ValidationContext(
-                ValidatorContext.REVOCATION_DATA_VALIDATOR,  CertificateSource.SIGNER_CERT,
+                ValidatorContext.REVOCATION_DATA_VALIDATOR, CertificateSource.SIGNER_CERT,
                 TimeBasedContext.PRESENT);
-        validator.validate(report, context, signCert,
+        validatorChainBuilder.getCRLValidator().validate(report, context, signCert,
                 (X509CRL) CertificateUtil.parseCrlFromStream(FileUtil.getInputStreamForFile(crlPath)),
                 TimeTestUtil.TEST_DATE_TIME);
         return report;
@@ -408,7 +537,7 @@ public class CRLValidatorTest extends ExtendedITextTest {
     private byte[] createCrl(X509Certificate issuerCert, PrivateKey issuerKey, Date issueDate, Date nextUpdate,
                              X509Certificate revokedCert, Date revocationDate, int reason)
             throws Exception {
-        TestCrlBuilder builder = new TestCrlBuilder(issuerCert, issuerKey);
+        TestCrlBuilder builder = new TestCrlBuilder(issuerCert, issuerKey, issueDate);
         if (nextUpdate != null) {
             builder.setNextUpdate(nextUpdate);
         }
@@ -431,10 +560,10 @@ public class CRLValidatorTest extends ExtendedITextTest {
                 (X509Certificate) PemFileHelper.readFirstChain(resourcePath + "sign.cert.pem")[0];
         ValidationReport result = new ValidationReport();
         ValidationContext context = new ValidationContext(
-                ValidatorContext.REVOCATION_DATA_VALIDATOR,  CertificateSource.SIGNER_CERT,
+                ValidatorContext.REVOCATION_DATA_VALIDATOR, CertificateSource.SIGNER_CERT,
                 TimeBasedContext.PRESENT);
-        validator.validate(result, context, certificateUnderTest, (X509CRL) CertificateUtil.parseCrlFromStream(
-                new ByteArrayInputStream(encodedCrl)), testDate);
+        validatorChainBuilder.getCRLValidator().validate(result, context, certificateUnderTest,
+                (X509CRL) CertificateUtil.parseCrlFromStream(new ByteArrayInputStream(encodedCrl)), testDate, testDate);
         return result;
     }
 }

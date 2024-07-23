@@ -85,13 +85,14 @@ public final class ProducerBuilder extends AbstractITextConfigurationEvent {
      * Modifies an old producer line according to events registered for the document.
      * Events can be either wrapped with {@link ConfirmedEventWrapper} or not.
      * Format of the new producer line will be defined by the first event in the list.
-     * Placeholder will be replaced and merged all together
+     * Placeholder will be replaced and merged all together.
      *
      * @param events      list of events registered for the document
      * @param oldProducer old producer line. If <code>null</code> or empty, will be replaced
      *                    with a new one. Otherwise new line will be attached with
      *                    <code>modified using</code> prefix. If old producer line already contains
-     *                    <code>modified using</code> substring, it will be overriden with a new one
+     *                    <code>modified using itext</code> substring with the current version of itext at the end,
+     *                    no changes will be made
      * @return modified producer line
      */
     public static String modifyProducer(List<? extends AbstractProductProcessITextEvent> events, String oldProducer) {
@@ -111,7 +112,14 @@ public final class ProducerBuilder extends AbstractITextConfigurationEvent {
         if (oldProducer == null || oldProducer.isEmpty()) {
             return newProducer;
         } else {
-            return oldProducer + MODIFIED_USING + newProducer;
+            //if the last time document was modified or created with the itext of the same version,
+            //then no changes occur.
+            if (oldProducer.equals(newProducer)
+                    || oldProducer.endsWith(MODIFIED_USING + newProducer)) {
+                return oldProducer;
+            } else {
+                return oldProducer + MODIFIED_USING + newProducer;
+            }
         }
     }
 

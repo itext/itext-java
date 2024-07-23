@@ -37,11 +37,9 @@ import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
+import java.io.File;
+import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -276,7 +274,8 @@ public class FontFaceTest extends SvgIntegrationTest {
         WriterProperties writerprops = new WriterProperties().setCompressionLevel(0);
         String baseUri = FileUtil.getParentDirectoryUri(new File(sourceFolder + svgFile + ".svg"));
         ISvgConverterProperties properties = new SvgConverterProperties().setBaseUri(baseUri).setFontProvider(new BasicFontProvider()).setMediaDeviceDescription(new MediaDeviceDescription(MediaType.ALL));
-        convertToSinglePage(new FileInputStream(sourceFolder + svgFile + ".svg"), new FileOutputStream(destinationFolder + fileName + ".pdf"), properties, writerprops);
+        convertToSinglePage(FileUtil.getInputStreamForFile(sourceFolder + svgFile + ".svg"),
+                FileUtil.getFileOutputStream(destinationFolder + fileName + ".pdf"), properties, writerprops);
         compare(fileName, sourceFolder, destinationFolder);
     }
 

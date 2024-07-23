@@ -28,16 +28,12 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfStream;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -148,7 +144,7 @@ public class AddSoundAnnotationTest extends ExtendedITextTest {
         String cmpPdf = sourceFolder + "cmp_soundAnnotation04.pdf";
 
 
-        try (InputStream is = new FileInputStream(audioFile)) {
+        try (InputStream is = FileUtil.getInputStreamForFile(audioFile)) {
             try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(filename))) {
                 Rectangle rect = new Rectangle(100, 100, 100, 100);
                 PdfSoundAnnotation sound = new PdfSoundAnnotation(pdfDoc, rect, is, 44100, PdfName.Signed, 2, 16);
@@ -169,7 +165,7 @@ public class AddSoundAnnotationTest extends ExtendedITextTest {
         String audioFile = sourceFolder + "sample.wav";
         String cmpPdf = sourceFolder + "cmp_soundAnnotation01.pdf";
 
-        try (InputStream is = new FileInputStream(audioFile)) {
+        try (InputStream is = FileUtil.getInputStreamForFile(audioFile)) {
             try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(filename))) {
                 Rectangle rect = new Rectangle(100, 100, 100, 100);
                 PdfSoundAnnotation sound = new PdfSoundAnnotation(pdfDoc, rect, is, 48000, PdfName.Signed, 2, 16);

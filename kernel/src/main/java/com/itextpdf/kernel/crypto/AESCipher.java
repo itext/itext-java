@@ -27,45 +27,28 @@ import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.security.GeneralSecurityException;
 
 /**
  * Creates an AES Cipher with CBC and padding PKCS5/7.
  */
 public class AESCipher {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(AESCipher.class);
 
     private static final String CIPHER_WITH_PKCS5_PADDING = "AES/CBC/PKCS5Padding";
 
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
-    private static Cipher cipher;
-    
-    static {
-        try {
-            if ("BC".equals(BOUNCY_CASTLE_FACTORY.getProviderName())) {
-                // Do not pass bc provider and use default one here not to require bc provider for this functionality
-                // Do not use bc provider in kernel
-                cipher = Cipher.getInstance(CIPHER_WITH_PKCS5_PADDING);
-            } else {
-                cipher = Cipher.getInstance(CIPHER_WITH_PKCS5_PADDING, BOUNCY_CASTLE_FACTORY.getProvider());
-            }
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
-            throw new PdfException(KernelExceptionMessageConstant.ERROR_WHILE_INITIALIZING_AES_CIPHER, e);
-        }
-    }
+    private final Cipher cipher;
 
     /**
      * Creates a new instance of AESCipher
@@ -77,10 +60,17 @@ public class AESCipher {
      */
     public AESCipher(boolean forEncryption, byte[] key, byte[] iv) {
         try {
+            if ("BC".equals(BOUNCY_CASTLE_FACTORY.getProviderName())) {
+                // Do not pass bc provider and use default one here not to require bc provider for this functionality
+                // Do not use bc provider in kernel
+                cipher = Cipher.getInstance(CIPHER_WITH_PKCS5_PADDING);
+            } else {
+                cipher = Cipher.getInstance(CIPHER_WITH_PKCS5_PADDING, BOUNCY_CASTLE_FACTORY.getProvider());
+            }
             cipher.init(forEncryption ? Cipher.ENCRYPT_MODE : Cipher.DECRYPT_MODE,
                     new SecretKeySpec(key, "AES"),
                     new IvParameterSpec(iv));
-        } catch (InvalidKeyException | InvalidAlgorithmParameterException e) {
+        } catch (GeneralSecurityException e) {
             throw new PdfException(KernelExceptionMessageConstant.ERROR_WHILE_INITIALIZING_AES_CIPHER, e);
         }
     }

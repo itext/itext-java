@@ -22,18 +22,17 @@
  */
 package com.itextpdf.styledxmlparser.css;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.font.CssFontFace;
 import com.itextpdf.styledxmlparser.css.parse.CssStyleSheetParser;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
 
-import java.io.FileInputStream;
 import java.util.regex.Matcher;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -52,7 +51,7 @@ public class CssFontFaceSrcTest extends ExtendedITextTest {
 
         final String fontSrc = "web-fonts/droid-serif-invalid.";
 
-        CssStyleSheet styleSheet = CssStyleSheetParser.parse(new FileInputStream(sourceFolder + "srcs.css"));
+        CssStyleSheet styleSheet = CssStyleSheetParser.parse(FileUtil.getInputStreamForFile(sourceFolder + "srcs.css"));
         CssFontFaceRule fontFaceRule = (CssFontFaceRule)styleSheet.getStatements().get(0);
         CssDeclaration src = fontFaceRule.getProperties().get(0);
 
@@ -107,7 +106,7 @@ public class CssFontFaceSrcTest extends ExtendedITextTest {
     @Test
     @LogMessages(messages = {@LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.QUOTE_IS_NOT_CLOSED_IN_CSS_EXPRESSION)})
     public void parseBase64SrcTest() throws Exception {
-        CssStyleSheet styleSheet = CssStyleSheetParser.parse(new FileInputStream(sourceFolder + "srcs2.css"));
+        CssStyleSheet styleSheet = CssStyleSheetParser.parse(FileUtil.getInputStreamForFile(sourceFolder + "srcs2.css"));
         CssFontFaceRule fontFaceRule = (CssFontFaceRule)styleSheet.getStatements().get(0);
         CssDeclaration src = fontFaceRule.getProperties().get(0);
 

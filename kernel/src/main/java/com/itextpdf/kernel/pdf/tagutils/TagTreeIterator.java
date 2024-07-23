@@ -28,44 +28,74 @@ import com.itextpdf.kernel.pdf.tagging.IStructureNode;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 /**
  * This class is used to traverse the tag tree.
  * <p>
  *
- * There is a possibility to add a handler that will be called for specific events during the traversal.
+ * There is a possibility to add a handler that will be called for the elements during the traversal.
  */
 public class TagTreeIterator {
-
 
     private final IStructureNode pointer;
 
     private final Set<ITagTreeIteratorHandler> handlerList;
 
+    private final TagTreeIteratorElementApprover approver;
+
+    private final TreeTraversalOrder traversalOrder;
+
     /**
-     * Creates a new instance of {@link TagTreeIterator}.
+     * Creates a new instance of {@link TagTreeIterator}. It will use {@link TagTreeIteratorElementApprover} to filter
+     * elements and TreeTraversalOrder.PRE_ORDER for tree traversal.
      *
      * @param tagTreePointer the tag tree pointer.
      */
     public TagTreeIterator(IStructureNode tagTreePointer) {
+        this(tagTreePointer, new TagTreeIteratorElementApprover(), TreeTraversalOrder.PRE_ORDER);
+    }
+
+    /**
+     * Creates a new instance of {@link TagTreeIterator}.
+     *
+     * @param tagTreePointer the tag tree pointer.
+     * @param approver a filter that will be called to let iterator know whether some particular element
+     *                should be traversed or not.
+     * @param traversalOrder an order in which the tree will be traversed.
+     */
+    public TagTreeIterator(IStructureNode tagTreePointer, TagTreeIteratorElementApprover approver,
+                           TreeTraversalOrder traversalOrder) {
         if (tagTreePointer == null) {
             throw new IllegalArgumentException(
                     MessageFormatUtil.format(KernelExceptionMessageConstant.ARG_SHOULD_NOT_BE_NULL, "tagTreepointer"));
         }
+        if (approver == null) {
+            throw new IllegalArgumentException(
+                    MessageFormatUtil.format(KernelExceptionMessageConstant.ARG_SHOULD_NOT_BE_NULL, "approver"));
+        }
+        if (traversalOrder == null) {
+            throw new IllegalArgumentException(
+                    MessageFormatUtil.format(KernelExceptionMessageConstant.ARG_SHOULD_NOT_BE_NULL, "traversalOrder"));
+        }
         this.pointer = tagTreePointer;
+        this.traversalOrder = traversalOrder;
         handlerList = new HashSet<>();
+        this.approver = approver;
     }
 
     /**
-     * Adds a handler that will be called for specific events during the traversal.
+     * Adds a handler that will be called for the elements during the traversal.
      *
      * @param handler the handler.
      *
      * @return this {@link TagTreeIterator} instance.
      */
     public TagTreeIterator addHandler(ITagTreeIteratorHandler handler) {
+        if (handler == null) {
+            throw new IllegalArgumentException(
+                    MessageFormatUtil.format(KernelExceptionMessageConstant.ARG_SHOULD_NOT_BE_NULL, "handler"));
+        }
         this.handlerList.add(handler);
         return this;
     }
@@ -77,22 +107,45 @@ public class TagTreeIterator {
      * Make sure the correct handlers are added before calling this method.
      */
     public void traverse() {
-        traverse(this.pointer, this.handlerList);
+        traverse(this.pointer);
     }
 
-    private static void traverse(IStructureNode elem, Set<ITagTreeIteratorHandler> handlerList) {
-        if (elem == null) {
+    private void traverse(IStructureNode elem) {
+        if (!approver.approve(elem)) {
             return;
         }
-        for (ITagTreeIteratorHandler handler : handlerList) {
-            handler.nextElement(elem);
+
+        if (traversalOrder == TreeTraversalOrder.PRE_ORDER) {
+            for (ITagTreeIteratorHandler handler : handlerList) {
+                handler.nextElement(elem);
+            }
         }
+
         List<IStructureNode> kids = elem.getKids();
         if (kids != null) {
             for (IStructureNode kid : kids) {
-                traverse(kid, handlerList);
+                traverse(kid);
+            }
+        }
+
+        if (traversalOrder == TreeTraversalOrder.POST_ORDER) {
+            for (ITagTreeIteratorHandler handler : handlerList) {
+                handler.nextElement(elem);
             }
         }
     }
 
+    /**
+     * Tree traversal order enum.
+     */
+    public enum TreeTraversalOrder {
+        /**
+         * Preorder traversal.
+         */
+        PRE_ORDER,
+        /**
+         * Postorder traversal.
+         */
+        POST_ORDER
+    }
 }

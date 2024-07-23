@@ -66,9 +66,7 @@ import com.itextpdf.kernel.xmp.options.SerializeOptions;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -147,6 +145,9 @@ public class CompareTool {
     private String gsExec;
     private String compareExec;
 
+    /**
+     * Create new {@link CompareTool} instance.
+     */
     public CompareTool() {
     }
 
@@ -799,7 +800,7 @@ public class CompareTool {
             if (!compareXmls(cmpBytes, outBytes)) {
                 return "The XMP packages different!";
             }
-        } catch (Exception ex) {
+        } catch (Exception e) {
             return "XMP parsing failure!";
         }
         return null;
@@ -964,13 +965,13 @@ public class CompareTool {
         try (PdfReader readerOut = CompareTool.createOutputReader(outPdf);
                 PdfDocument docOut = new PdfDocument(readerOut,
                         new DocumentProperties().setEventCountingMetaInfo(metaInfo));
-                FileOutputStream xmlOut = new FileOutputStream(outXmlPath)) {
+                OutputStream xmlOut = FileUtil.getFileOutputStream(outXmlPath)) {
             new TaggedPdfReaderTool(docOut).setRootTag("root").convertToXml(xmlOut);
         }
         try (PdfReader readerCmp = CompareTool.createOutputReader(cmpPdf);
                 PdfDocument docCmp = new PdfDocument(readerCmp,
                         new DocumentProperties().setEventCountingMetaInfo(metaInfo));
-                FileOutputStream xmlCmp = new FileOutputStream(cmpXmlPath)) {
+                OutputStream xmlCmp = FileUtil.getFileOutputStream(cmpXmlPath)) {
             new TaggedPdfReaderTool(docCmp).setRootTag("root").convertToXml(xmlCmp);
         }
 
@@ -1117,8 +1118,8 @@ public class CompareTool {
                 continue;
             System.out.println("Comparing page " + Integer.toString(i + 1) + ": " + UrlUtil.getNormalizedFileUriString(imageFiles[i].getName()) + " ...");
             System.out.println("Comparing page " + Integer.toString(i + 1) + ": " + UrlUtil.getNormalizedFileUriString(imageFiles[i].getName()) + " ...");
-            FileInputStream is1 = new FileInputStream(imageFiles[i].getAbsolutePath());
-            FileInputStream is2 = new FileInputStream(cmpImageFiles[i].getAbsolutePath());
+            InputStream is1 = FileUtil.getInputStreamForFile(imageFiles[i].getAbsolutePath());
+            InputStream is2 = FileUtil.getInputStreamForFile(cmpImageFiles[i].getAbsolutePath());
             boolean cmpResult = compareStreams(is1, is2);
             is1.close();
             is2.close();
@@ -1272,7 +1273,7 @@ public class CompareTool {
             }
             if (generateCompareByContentXmlReport) {
                 String outPdfName = new File(outPdf).getName();
-                FileOutputStream xml = new FileOutputStream(outPath + "/" + outPdfName.substring(0, outPdfName.length() - 3) + "report.xml");
+                OutputStream xml = FileUtil.getFileOutputStream(outPath + "/" + outPdfName.substring(0, outPdfName.length() - 3) + "report.xml");
                 try {
                     compareResult.writeReportToXml(xml);
                 } catch (Exception e) {
@@ -1520,6 +1521,16 @@ public class CompareTool {
         return null;
     }
 
+    /**
+     * Compare PDF objects.
+     *
+     * @param outObj        out object corresponding to the output file, which is to be compared with cmp object
+     * @param cmpObj        cmp object corresponding to the cmp-file, which is to be compared with out object
+     * @param currentPath   current objects {@link ObjectPath} path
+     * @param compareResult {@link CompareResult} for the results of the comparison of the two documents
+     *
+     * @return true if objects are equal, false otherwise.
+     */
     protected boolean compareObjects(PdfObject outObj, PdfObject cmpObj, ObjectPath currentPath, CompareResult compareResult) {
         PdfObject outDirectObj = null;
         PdfObject cmpDirectObj = null;
@@ -2048,10 +2059,21 @@ public class CompareTool {
             XmlUtils.writeXmlDocToStream(xmlReport, stream);
         }
 
+        /**
+         * Checks whether maximum number of difference messages to be handled by this CompareResult is reached.
+         *
+         * @return true if limit of difference messages is reached, false otherwise.
+         */
         protected boolean isMessageLimitReached() {
             return differences.size() >= messageLimit;
         }
 
+        /**
+         * Adds an error message for the {@link ObjectPath}.
+         *
+         * @param path    {@link ObjectPath} for the two corresponding objects in the compared documents
+         * @param message an error message
+         */
         protected void addError(ObjectPath path, String message) {
             if (differences.size() < messageLimit) {
                 differences.put(new ObjectPath(path), message);

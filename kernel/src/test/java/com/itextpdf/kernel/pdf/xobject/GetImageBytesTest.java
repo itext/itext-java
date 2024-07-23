@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf.xobject;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.codec.TIFFConstants;
 import com.itextpdf.io.codec.TIFFDirectory;
@@ -44,9 +45,10 @@ import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -236,14 +238,14 @@ public class GetImageBytesTest extends ExtendedITextTest {
         java.util.List<byte[]> images = listener.getImages();
         Assert.assertEquals(1, images.size());
 
-        try (FileOutputStream fos = new FileOutputStream(outImageFileName)) {
+        try (OutputStream fos = FileUtil.getFileOutputStream(outImageFileName)) {
             fos.write(images.get(0), 0, images.size());
         }
 
         // expected and actual are swapped here for simplicity
         int expectedLen = images.get(0).length;
         byte[] buf = new byte[expectedLen];
-        try (FileInputStream is = new FileInputStream(cmpImageFileName)) {
+        try (InputStream is = FileUtil.getInputStreamForFile(cmpImageFileName)) {
             int read = is.read(buf, 0, buf.length);
             Assert.assertEquals(expectedLen, read);
             read = is.read(buf, 0, buf.length);

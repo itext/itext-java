@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms.xfdf;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.pdf.PdfDocument;
 
 import java.io.FileOutputStream;
@@ -182,7 +183,7 @@ public class XfdfObject {
      * @throws ParserConfigurationException if there is an error while writing info into xnl format.
      */
     public void writeToFile(String filename) throws IOException, TransformerException, ParserConfigurationException {
-        try (OutputStream os = new FileOutputStream(filename)) {
+        try (OutputStream os = FileUtil.getFileOutputStream(filename)) {
             writeToFile(os);
         }
     }

@@ -35,6 +35,7 @@ import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationExcept
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.StreamUtil;
+import com.itextpdf.signatures.validation.v1.OCSPValidator;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -66,10 +67,19 @@ public class OcspClientBouncyCastle implements IOcspClient {
      *
      * @param verifier will be used for response verification.
      *
-     * @see OCSPVerifier
+     * @deprecated starting from 8.0.5. {@link OcspClientBouncyCastle#OcspClientBouncyCastle()} should be used instead.
+     * If required, {@link IBasicOCSPResp} can be checked using {@link OCSPValidator} class.
      */
+    @Deprecated
     public OcspClientBouncyCastle(OCSPVerifier verifier) {
         this.verifier = verifier;
+    }
+
+    /**
+     * Creates new {@link OcspClientBouncyCastle} instance.
+     */
+    public OcspClientBouncyCastle() {
+        this.verifier = null;
     }
 
     /**

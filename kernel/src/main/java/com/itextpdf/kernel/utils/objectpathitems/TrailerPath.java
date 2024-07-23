@@ -29,18 +29,33 @@ import org.w3c.dom.Node;
 
 import java.util.Stack;
 
+/**
+ * Direct path item (see {@link ObjectPath}), which describes transition to the
+ * trailer entry which value is now a currently comparing direct object.
+ */
 public final class TrailerPath extends ObjectPath {
     private final PdfDocument outDocument;
     private final PdfDocument cmpDocument;
 
     private static final String INITIAL_LINE = "Base cmp object: trailer. Base out object: trailer";
 
+    /**
+     * Creates new {@link TrailerPath} instance with corresponding base objects in two documents.
+     *
+     * @param cmpDoc base object in the cmp document
+     * @param outDoc base object in the out document
+     */
     public TrailerPath(PdfDocument cmpDoc, PdfDocument outDoc) {
         super();
         outDocument = outDoc;
         cmpDocument = cmpDoc;
     }
 
+    /**
+     * Creates new {@link TrailerPath} instance from another {@link TrailerPath} object, passed as argument.
+     *
+     * @param trailerPath {@link TrailerPath} to create new instance from
+     */
     public TrailerPath(TrailerPath trailerPath) {
         super();
         outDocument = trailerPath.getOutDocument();
@@ -48,7 +63,14 @@ public final class TrailerPath extends ObjectPath {
         path = trailerPath.getLocalPath();
     }
 
-
+    /**
+     * Creates new {@link TrailerPath} instance with corresponding base objects in two documents.
+     *
+     * @param cmpDoc base object in the cmp document
+     * @param outDoc base object in the out document
+     * @param path   local path that denotes sequence of the path items
+     *               from base object to the comparing direct object
+     */
     public TrailerPath(PdfDocument cmpDoc, PdfDocument outDoc, Stack<LocalPathItem> path) {
         super();
         this.outDocument = outDoc;
@@ -75,10 +97,10 @@ public final class TrailerPath extends ObjectPath {
     }
 
     /**
-     * Creates an xml node that describes this {@link TrailerPath} instance.
+     * Creates xml node that describes this {@link TrailerPath} instance.
      *
      * @param document xml document, to which this xml node will be added.
-     * @return an xml node describing this {@link TrailerPath} instance.
+     * @return xml node describing this {@link TrailerPath} instance.
      */
     @Override
     public Node toXmlNode(Document document) {

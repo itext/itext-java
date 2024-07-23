@@ -526,22 +526,22 @@ public class TagTreePointer {
         if (MCR_MARKER.equals(role)) {
             throw new PdfException(KernelExceptionMessageConstant.CANNOT_MOVE_TO_MARKED_CONTENT_REFERENCE);
         }
-        List<IStructureNode> descendants = new ArrayList<>(getCurrentStructElem().getKids());
-        int k = 0;
-        for (int i = 0; i < descendants.size(); ++i) {
-            if (descendants.get(i) == null || descendants.get(i) instanceof PdfMcr) {
-                continue;
-            }
-            String descendantRole = descendants.get(i).getRole().getValue();
-            if (descendantRole.equals(role) && k++ == n) {
-                setCurrentStructElem((PdfStructElem) descendants.get(i));
-                return this;
-            } else {
-                descendants.addAll(descendants.get(i).getKids());
-            }
+
+        RoleFinderHandler handler = new RoleFinderHandler(n, role);
+        TagTreeIteratorApproverWithStop approver = new TagTreeIteratorApproverWithStop(handler);
+        TagTreeIterator iterator = new TagTreeIterator(getCurrentStructElem(), approver,
+                TagTreeIterator.TreeTraversalOrder.PRE_ORDER);
+
+        iterator.addHandler(handler);
+        iterator.traverse();
+
+        PdfStructElem elem = handler.getFoundElement();
+        if (elem == null) {
+            throw new PdfException(KernelExceptionMessageConstant.NO_KID_WITH_SUCH_ROLE);
         }
 
-        throw new PdfException(KernelExceptionMessageConstant.NO_KID_WITH_SUCH_ROLE);
+        setCurrentStructElem(elem);
+        return this;
     }
 
     /**
@@ -834,6 +834,52 @@ public class TagTreePointer {
     private void throwExceptionIfCurrentPageIsNotInited() {
         if (currentPage == null) {
             throw new PdfException(KernelExceptionMessageConstant.PAGE_IS_NOT_SET_FOR_THE_PDF_TAG_STRUCTURE);
+        }
+    }
+
+    private static class RoleFinderHandler implements ITagTreeIteratorHandler {
+        private final int n;
+        private final String role;
+        private int foundIdx = 0;
+        private PdfStructElem foundElem;
+
+        RoleFinderHandler(int n, String role) {
+            this.n = n;
+            this.role = role;
+        }
+
+        @Override
+        public void nextElement(IStructureNode elem) {
+            if (foundElem != null) {
+                return;
+            }
+
+            String descendantRole = elem.getRole().getValue();
+            if (descendantRole.equals(role) && foundIdx++ == n) {
+                foundElem = (PdfStructElem) elem;
+            }
+        }
+
+        public PdfStructElem getFoundElement() {
+            return foundElem;
+        }
+    }
+
+    /**
+     * @deprecated change ITagTreeIteratorHandler#nextElement to return boolean
+     * showing whether the iteration should be continued. It will allow to get rid of this ugly workaround.
+     */
+    @Deprecated
+    private static class TagTreeIteratorApproverWithStop extends TagTreeIteratorAvoidDuplicatesApprover {
+        private final RoleFinderHandler handler;
+        public TagTreeIteratorApproverWithStop(RoleFinderHandler handler) {
+            super();
+            this.handler = handler;
+        }
+
+        @Override
+        public boolean approve(IStructureNode elem) {
+            return super.approve(elem) && handler.getFoundElement() == null;
         }
     }
 }

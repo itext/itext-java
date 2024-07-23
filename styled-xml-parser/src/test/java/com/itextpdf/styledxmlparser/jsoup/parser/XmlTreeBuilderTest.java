@@ -22,6 +22,7 @@
  */
 package com.itextpdf.styledxmlparser.jsoup.parser;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.styledxmlparser.jsoup.Jsoup;
 import com.itextpdf.styledxmlparser.jsoup.TextUtil;
 import com.itextpdf.styledxmlparser.jsoup.integration.ParseTest;
@@ -35,17 +36,16 @@ import com.itextpdf.styledxmlparser.jsoup.nodes.XmlDeclaration;
 import com.itextpdf.styledxmlparser.jsoup.select.Elements;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 /**
  * Tests XmlTreeBuilder.
@@ -92,7 +92,7 @@ public class XmlTreeBuilderTest extends ExtendedITextTest {
     @Test
     public void testSupplyParserToDataStream() throws IOException {
         File xmlFile = ParseTest.getFile("/htmltests/xml-test.xml");
-        InputStream inStream = new FileInputStream(xmlFile);
+        InputStream inStream = FileUtil.getInputStreamForFile(xmlFile);
         Document doc = Jsoup.parse(inStream, null, "http://foo.com", Parser.xmlParser());
         Assert.assertEquals("<doc><val>One<val>Two</val>Three</val></doc>",
                 TextUtil.stripNewlines(doc.html()));
@@ -141,7 +141,7 @@ public class XmlTreeBuilderTest extends ExtendedITextTest {
     @Test
     public void testDetectCharsetEncodingDeclaration() throws IOException, URISyntaxException {
         File xmlFile = ParseTest.getFile("/htmltests/xml-charset.xml");
-        InputStream inStream = new FileInputStream(xmlFile);
+        InputStream inStream = FileUtil.getInputStreamForFile(xmlFile);
         Document doc = Jsoup.parse(inStream, null, "http://example.com/", Parser.xmlParser());
         Assert.assertEquals("ISO-8859-1", doc.charset().name());
         Assert.assertEquals("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><data>äöåéü</data>",

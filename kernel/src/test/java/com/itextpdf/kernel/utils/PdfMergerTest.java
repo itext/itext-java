@@ -862,6 +862,35 @@ public class PdfMergerTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
     }
 
+    @Test
+    public void copyEmptyOcPropertiesTest() throws IOException, InterruptedException {
+        String filename = sourceFolder + "emptyOcPropertiesDoc.pdf";
+        String resultFile = destinationFolder + "mergedEmptyOcPropertiesDoc.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(filename));
+        PdfDocument result = new PdfDocument(CompareTool.createTestPdfWriter(resultFile));
+
+        PdfMerger merger = new PdfMerger(result).setCloseSourceDocuments(true);
+
+        merger.merge(pdfDoc, 1, 1).close();
+
+        Assert.assertNull(new CompareTool().compareByContent(resultFile, sourceFolder + "cmp_mergedEmptyOcPropertiesDoc.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void copyOnlyEmptyOcPropertiesTest() throws IOException, InterruptedException {
+        String filename = sourceFolder + "ocPropertiesDoc.pdf";
+        String resultFile = destinationFolder + "mergedOcPropertiesDoc.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(filename));
+        PdfDocument result = new PdfDocument(CompareTool.createTestPdfWriter(resultFile));
+
+        PdfMerger merger = new PdfMerger(result).setCloseSourceDocuments(true);
+
+        merger.merge(pdfDoc, 1, 1).close();
+
+        Assert.assertNull(new CompareTool().compareByContent(resultFile, sourceFolder + "cmp_mergedOcPropertiesDoc.pdf", destinationFolder, "diff_"));
+    }
 
     private PdfDictionary mergeSinglePdfAndGetResultingStructTreeRoot(String pathToMerge)
             throws IOException {

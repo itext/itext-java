@@ -26,6 +26,7 @@ import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -48,7 +49,6 @@ import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
@@ -103,7 +103,7 @@ public class LtvSigTest extends ExtendedITextTest {
         ltvVerification.merge();
         document.close();
 
-        PdfSigner signer = new PdfSigner(new PdfReader(ltvFileName), new FileOutputStream(ltvTsFileName),
+        PdfSigner signer = new PdfSigner(new PdfReader(ltvFileName), FileUtil.getFileOutputStream(ltvTsFileName),
                 new StampingProperties().useAppendMode());
         signer.timestamp(testTsa, "timestampSig1");
 
@@ -134,7 +134,7 @@ public class LtvSigTest extends ExtendedITextTest {
             }
         });
 
-        PdfSigner signer = new PdfSigner(new PdfReader(srcFileName), new FileOutputStream(ltvFileName),
+        PdfSigner signer = new PdfSigner(new PdfReader(srcFileName), FileUtil.getFileOutputStream(ltvFileName),
                 new StampingProperties());
         signer.setFieldName("Signature1");
 
@@ -160,7 +160,7 @@ public class LtvSigTest extends ExtendedITextTest {
         TestTsaClient testTsa = prepareTsaClient(tsaCertP12FileName);
         TestCrlClient testCrlClient = prepareCrlClientForIssuer(caCertP12FileName, intermediateCertP12FileName);
 
-        PdfSigner signer = new PdfSigner(new PdfReader(srcFileName), new FileOutputStream(ltvFileName),
+        PdfSigner signer = new PdfSigner(new PdfReader(srcFileName), FileUtil.getFileOutputStream(ltvFileName),
                 new StampingProperties());
         signer.setFieldName("Signature1");
         signer.signDetached(new BouncyCastleDigest(), pks, signChain, Collections.<ICrlClient>singletonList(testCrlClient), null,
@@ -192,7 +192,7 @@ public class LtvSigTest extends ExtendedITextTest {
         ltvVerification.merge();
         document.close();
 
-        PdfSigner signer = new PdfSigner(new PdfReader(ltvFileName), new FileOutputStream(ltvTsFileName),
+        PdfSigner signer = new PdfSigner(new PdfReader(ltvFileName), FileUtil.getFileOutputStream(ltvTsFileName),
                 new StampingProperties().useAppendMode());
         signer.timestamp(testTsa, "timestampSig2");
 

@@ -22,6 +22,7 @@
  */
 package com.itextpdf.pdfa;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -55,7 +56,6 @@ import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.junit.Assert;
@@ -75,7 +75,7 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void pdfA4ForbiddenAnnotations1Test() throws FileNotFoundException {
+    public void pdfA4ForbiddenAnnotations1Test() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, createOutputIntent());
         PdfPage page = doc.addNewPage();
@@ -89,7 +89,7 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void pdfA4ForbiddenAnnotations2Test() throws FileNotFoundException {
+    public void pdfA4ForbiddenAnnotations2Test() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, createOutputIntent());
         PdfPage page = doc.addNewPage();
@@ -103,7 +103,7 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void pdfA4ForbiddenAnnotations3Test() throws FileNotFoundException {
+    public void pdfA4ForbiddenAnnotations3Test() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, createOutputIntent());
         PdfPage page = doc.addNewPage();
@@ -134,7 +134,7 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void pdfA4eForbiddenAnnotations1Test() throws FileNotFoundException {
+    public void pdfA4eForbiddenAnnotations1Test() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4E, createOutputIntent());
         PdfPage page = doc.addNewPage();
@@ -148,7 +148,7 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void pdfA4eForbiddenAnnotations2Test() throws FileNotFoundException {
+    public void pdfA4eForbiddenAnnotations2Test() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4E, createOutputIntent());
         PdfPage page = doc.addNewPage();
@@ -187,7 +187,7 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
         try (PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4E, createOutputIntent())) {
             PdfPage page = doc.addNewPage();
 
-            PdfStream stream3D = new PdfStream(doc, new FileInputStream(CMP_FOLDER + "teapot.u3d"));
+            PdfStream stream3D = new PdfStream(doc, FileUtil.getInputStreamForFile(CMP_FOLDER + "teapot.u3d"));
             stream3D.put(PdfName.Type, PdfName._3D);
             stream3D.put(PdfName.Subtype, new PdfName("U3D"));
             stream3D.setCompressionLevel(CompressionConstants.UNDEFINED_COMPRESSION);
@@ -213,7 +213,7 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void pdfA4fForbiddenAnnotations1Test() throws FileNotFoundException {
+    public void pdfA4fForbiddenAnnotations1Test() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4F, createOutputIntent());
         PdfPage page = doc.addNewPage();
@@ -229,7 +229,7 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void pdfA4fForbiddenAnnotations2Test() throws FileNotFoundException {
+    public void pdfA4fForbiddenAnnotations2Test() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4F, createOutputIntent());
         PdfPage page = doc.addNewPage();
@@ -245,7 +245,7 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void pdfA4fForbiddenAnnotations3Test() throws FileNotFoundException {
+    public void pdfA4fForbiddenAnnotations3Test() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4F, createOutputIntent());
         PdfPage page = doc.addNewPage();
@@ -261,7 +261,7 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void pdfA4fForbiddenAnnotations4Test() throws FileNotFoundException {
+    public void pdfA4fForbiddenAnnotations4Test() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4F, createOutputIntent());
         PdfPage page = doc.addNewPage();
@@ -334,7 +334,7 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void pdfA4ForbiddenAKeyWidgetAnnotationTest() throws FileNotFoundException {
+    public void pdfA4ForbiddenAKeyWidgetAnnotationTest() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4F, createOutputIntent());
         PdfPage page = doc.addNewPage();
@@ -370,7 +370,7 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void pdfA4BtnAppearanceContainsNStreamWidgetAnnotationTest() throws FileNotFoundException {
+    public void pdfA4BtnAppearanceContainsNStreamWidgetAnnotationTest() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4F, createOutputIntent());
         PdfPage page = doc.addNewPage();
@@ -389,7 +389,7 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void pdfA4AppearanceContainsNDictWidgetAnnotationTest() throws FileNotFoundException {
+    public void pdfA4AppearanceContainsNDictWidgetAnnotationTest() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4F, createOutputIntent());
         PdfPage page = doc.addNewPage();
@@ -408,7 +408,7 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void pdfA4AppearanceContainsOtherKeyWidgetAnnotationTest() throws FileNotFoundException {
+    public void pdfA4AppearanceContainsOtherKeyWidgetAnnotationTest() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4F, createOutputIntent());
         PdfPage page = doc.addNewPage();
@@ -458,9 +458,9 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
         doc.addFileAttachment("file.txt", fs);
     }
 
-    private PdfOutputIntent createOutputIntent() throws FileNotFoundException {
+    private PdfOutputIntent createOutputIntent() throws IOException {
         return new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
-                new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm"));
+                FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm"));
     }
 
     private static final class PdfProjectionAnnotation extends PdfAnnotation {

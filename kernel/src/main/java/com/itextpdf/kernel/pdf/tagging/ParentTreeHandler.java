@@ -36,6 +36,7 @@ import com.itextpdf.kernel.pdf.PdfNumTree;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfStream;
 
 import java.util.ArrayList;
@@ -185,29 +186,38 @@ class ParentTreeHandler {
                 if (registeringOnInit) {
                     xObjectStream.release();
                 }
-            } else {
+            } else if (isModificationAllowed()) {
                 maxStructParentIndex++;
                 xObjectToStructParentsInd.put(stmIndRef, maxStructParentIndex);
                 xObjectStream.put(PdfName.StructParents, new PdfNumber(maxStructParentIndex));
                 structTreeRoot.getPdfObject().put(PdfName.ParentTreeNextKey, new PdfNumber(maxStructParentIndex + 1));
                 LOGGER.warn(KernelLogMessageConstant.XOBJECT_STRUCT_PARENT_INDEX_MISSED_AND_RECREATED);
+            } else {
+                throw new PdfException(KernelExceptionMessageConstant.XOBJECT_STRUCT_PARENT_INDEX_MISSED);
             }
             pageMcrs.putXObjectMcr(stmIndRef, mcr);
         } else if (mcr instanceof PdfObjRef) {
-            PdfDictionary obj = ((PdfDictionary) mcr.getPdfObject()).getAsDictionary(PdfName.Obj);
-            if (obj == null || obj.isFlushed()) {
+            PdfObject mcrObj = ((PdfDictionary) mcr.getPdfObject()).get(PdfName.Obj);
+            if (!(mcrObj instanceof PdfDictionary)) {
+                throw new PdfException(KernelExceptionMessageConstant.INVALID_OBJECT_REFERENCE_TYPE);
+            }
+
+            PdfDictionary obj = (PdfDictionary) mcrObj;
+            if (obj.isFlushed()) {
                 throw new PdfException(
                         KernelExceptionMessageConstant.WHEN_ADDING_OBJECT_REFERENCE_TO_THE_TAG_TREE_IT_MUST_BE_CONNECTED_TO_NOT_FLUSHED_OBJECT);
             }
             PdfNumber n = obj.getAsNumber(PdfName.StructParent);
             if (n != null) {
                 pageMcrs.putObjectReferenceMcr(n.intValue(), mcr);
-            } else {
+            } else if (isModificationAllowed()) {
                 maxStructParentIndex++;
                 pageMcrs.putObjectReferenceMcr(maxStructParentIndex, mcr);
                 obj.put(PdfName.StructParent, new PdfNumber(maxStructParentIndex));
                 structTreeRoot.getPdfObject().put(PdfName.ParentTreeNextKey, new PdfNumber(maxStructParentIndex + 1));
                 LOGGER.warn(KernelLogMessageConstant.STRUCT_PARENT_INDEX_MISSED_AND_RECREATED);
+            } else {
+                throw new PdfException(KernelExceptionMessageConstant.STRUCT_PARENT_INDEX_NOT_FOUND_IN_TAGGED_OBJECT);
             }
         } else {
             pageMcrs.putPageContentStreamMcr(mcr.getMcid(), mcr);
@@ -242,15 +252,6 @@ class ParentTreeHandler {
                 }
                 structTreeRoot.setModified();
             } else if (mcrToUnregister instanceof PdfObjRef) {
-                PdfDictionary obj = ((PdfDictionary) mcrToUnregister.getPdfObject()).getAsDictionary(PdfName.Obj);
-                if (obj != null && !obj.isFlushed()) {
-                    PdfNumber n = obj.getAsNumber(PdfName.StructParent);
-                    if (n != null) {
-                        pageMcrs.getObjRefs().remove(n.intValue());
-                        structTreeRoot.setModified();
-                        return;
-                    }
-                }
                 for (Map.Entry<Integer, PdfMcr> entry : pageMcrs.getObjRefs().entrySet()) {
                     if (entry.getValue().getPdfObject() == mcrToUnregister.getPdfObject()) {
                         pageMcrs.getObjRefs().remove(entry.getKey());
@@ -262,6 +263,15 @@ class ParentTreeHandler {
                 pageMcrs.getPageContentStreamsMcrs().remove(mcrToUnregister.getMcid());
                 structTreeRoot.setModified();
             }
+        }
+    }
+
+    private boolean isModificationAllowed() {
+        PdfReader reader = this.structTreeRoot.getDocument().getReader();
+        if (reader != null){
+            return PdfReader.StrictnessLevel.CONSERVATIVE.isStricter(reader.getStrictnessLevel());
+        } else {
+            return true;
         }
     }
 

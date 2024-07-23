@@ -25,12 +25,16 @@ package com.itextpdf.test;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * This class is used for testing when logger output should be tested as well.
  * By default any logger output that is not expected, i.e. marked with {@link com.itextpdf.test.annotations.LogMessage},
  * will result in crash.
  */
+@ExtendWith(LogListener.class)
 public abstract class ExtendedITextTest extends ITextTest {
 
     @Rule
@@ -39,6 +43,7 @@ public abstract class ExtendedITextTest extends ITextTest {
     /**
      * This method is called before each test method is executed
      */
+    @BeforeEach
     @Before
     public void beforeTestMethodAction(){
     }
@@ -46,6 +51,7 @@ public abstract class ExtendedITextTest extends ITextTest {
     /**
      * This method is called after each test method is executed
      */
+    @AfterEach
     @After
     public void afterTestMethodAction(){
     }

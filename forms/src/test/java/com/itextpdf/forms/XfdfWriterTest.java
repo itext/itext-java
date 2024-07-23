@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.forms.exceptions.XfdfException;
 import com.itextpdf.forms.xfdf.AnnotObject;
 import com.itextpdf.forms.xfdf.AnnotsObject;
@@ -40,7 +41,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.xml.sax.SAXException;
@@ -60,7 +60,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     public void simpleFormWithOneFieldTest()
             throws IOException, TransformerException, ParserConfigurationException, SAXException {
         String pdfDocumentName = "simpleFormWithOneField.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + pdfDocumentName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + pdfDocumentName)));
         String xfdfFilename = destinationFolder + "simpleFormWithOneField.xfdf";
 
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -78,7 +78,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     public void simpleFormWithMultipleFieldsTest()
             throws IOException, TransformerException, ParserConfigurationException, SAXException {
         String pdfDocumentName = "simpleFormWithMultipleFields.pdf";
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + pdfDocumentName)));
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + pdfDocumentName)));
         String xfdfFilename = destinationFolder + "simpleFormWithMultipleFields.xfdf";
 
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -98,7 +98,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     public void xfdfValueRichText()
             throws IOException, ParserConfigurationException, SAXException, TransformerException {
         String pdfDocumentName = "xfdfValueRichText.pdf";
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + pdfDocumentName)));
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + pdfDocumentName)));
         String xfdfFilename = destinationFolder + "xfdfValueRichText.xfdf";
 
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -117,7 +117,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     public void xfdfHierarchyFields()
             throws IOException, ParserConfigurationException, SAXException, TransformerException {
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(new FileInputStream(sourceFolder + "xfdfHierarchyFields.pdf")));
+                new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfHierarchyFields.pdf")));
         String xfdfFilename = destinationFolder + "xfdfHierarchyFields.xfdf";
         String pdfDocumentName = "xfdfHierarchyFields.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -134,7 +134,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     @Test
     public void xfdfFreeText() throws IOException, ParserConfigurationException, SAXException, TransformerException {
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(new FileInputStream(sourceFolder + "xfdfFreeText.pdf")));
+                new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfFreeText.pdf")));
         String xfdfFilename = destinationFolder + "xfdfFreeText.xfdf";
         String pdfDocumentName = "xfdfFreeText.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -152,7 +152,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     public void xfdfHighlightedText()
             throws IOException, ParserConfigurationException, SAXException, TransformerException {
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(new FileInputStream(sourceFolder + "xfdfHighlightedText.pdf")));
+                new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfHighlightedText.pdf")));
         String xfdfFilename = destinationFolder + "xfdfHighlightedText.xfdf";
         String pdfDocumentName = "xfdfHighlightedText.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -170,7 +170,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     public void xfdfUnderlineText()
             throws IOException, ParserConfigurationException, SAXException, TransformerException {
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(new FileInputStream(sourceFolder + "xfdfUnderlineText.pdf")));
+                new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfUnderlineText.pdf")));
         String xfdfFilename = destinationFolder + "xfdfUnderlineText.xfdf";
         String pdfDocumentName = "xfdfUnderlineText.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -188,7 +188,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     public void xfdfPopupNewFlags()
             throws IOException, ParserConfigurationException, SAXException, TransformerException {
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(new FileInputStream(sourceFolder + "xfdfPopupNewFlags.pdf")));
+                new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfPopupNewFlags.pdf")));
         String xfdfFilename = destinationFolder + "xfdfPopupNewFlags.xfdf";
         String pdfDocumentName = "xfdfPopupNewFlags.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -205,7 +205,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     @Test
     public void xfdfStrikeout() throws IOException, ParserConfigurationException, SAXException, TransformerException {
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(new FileInputStream(sourceFolder + "xfdfStrikeout.pdf")));
+                new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfStrikeout.pdf")));
         String xfdfFilename = destinationFolder + "xfdfStrikeout.xfdf";
         String pdfDocumentName = "xfdfStrikeout.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -223,7 +223,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     public void xfdfSquigglyText()
             throws IOException, ParserConfigurationException, SAXException, TransformerException {
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(new FileInputStream(sourceFolder + "xfdfSquigglyText.pdf")));
+                new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfSquigglyText.pdf")));
         String xfdfFilename = destinationFolder + "xfdfSquigglyText.xfdf";
         String pdfDocumentName = "xfdfSquigglyText.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -239,7 +239,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
     @Test
     public void xfdfLine() throws IOException, ParserConfigurationException, SAXException, TransformerException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfLine.pdf")));
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfLine.pdf")));
         String xfdfFilename = destinationFolder + "xfdfLine.xfdf";
         String pdfDocumentName = "xfdfLine.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -255,7 +255,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
     @Test
     public void xfdfCircle() throws IOException, ParserConfigurationException, SAXException, TransformerException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfCircle.pdf")));
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfCircle.pdf")));
         String xfdfFilename = destinationFolder + "xfdfCircle.xfdf";
         String pdfDocumentName = "xfdfCircle.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -271,7 +271,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
     @Test
     public void xfdfSquare() throws IOException, ParserConfigurationException, SAXException, TransformerException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfSquare.pdf")));
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfSquare.pdf")));
         String xfdfFilename = destinationFolder + "xfdfSquare.xfdf";
         String pdfDocumentName = "xfdfSquare.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -289,7 +289,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     public void xfdfSquareAndCircleInteriorColor()
             throws IOException, ParserConfigurationException, SAXException, TransformerException {
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(new FileInputStream(sourceFolder + "xfdfSquareAndCircleInteriorColor.pdf")));
+                new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfSquareAndCircleInteriorColor.pdf")));
         String xfdfFilename = destinationFolder + "xfdfSquareAndCircleInteriorColor.xfdf";
         String pdfDocumentName = "xfdfSquareAndCircleInteriorColor.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -306,7 +306,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     @Test
     //TODO DEVSIX-3215
     public void xfdfCaret() throws IOException, ParserConfigurationException, SAXException, TransformerException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfCaret.pdf")));
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfCaret.pdf")));
         String xfdfFilename = destinationFolder + "xfdfCaret.xfdf";
         String pdfDocumentName = "xfdfCaret.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -323,7 +323,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     @Test
     //TODO DEVSIX-3215 Support annots
     public void xfdfPolygon() throws IOException, ParserConfigurationException, SAXException, TransformerException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfPolygon.pdf")));
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfPolygon.pdf")));
         String xfdfFilename = destinationFolder + "xfdfPolygon.xfdf";
         String pdfDocumentName = "xfdfPolygon.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -341,7 +341,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     //TODO DEVSIX-3215 Support annots
     public void xfdfPolyline() throws IOException, ParserConfigurationException, SAXException, TransformerException {
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(new FileInputStream(sourceFolder + "xfdfPolyline.pdf")));
+                new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfPolyline.pdf")));
         String xfdfFilename = destinationFolder + "xfdfPolyline.xfdf";
         String pdfDocumentName = "xfdfPolyline.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -357,7 +357,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
     @Test
     public void xfdfStamp() throws IOException, ParserConfigurationException, SAXException, TransformerException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfStamp.pdf")));
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfStamp.pdf")));
         String xfdfFilename = destinationFolder + "xfdfStamp.xfdf";
         String pdfDocumentName = "xfdfStamp.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -375,7 +375,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     public void xfdfStampWithAppearance()
             throws IOException, ParserConfigurationException, SAXException, TransformerException {
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(new FileInputStream(sourceFolder + "xfdfStampWithAppearance.pdf")));
+                new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfStampWithAppearance.pdf")));
         String xfdfFilename = destinationFolder + "xfdfStampWithAppearance.xfdf";
         String pdfDocumentName = "xfdfStampWithAppearance.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -392,7 +392,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     @Test
     //TODO DEVSIX-3215 Support annots
     public void xfdfInk() throws IOException, ParserConfigurationException, SAXException, TransformerException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfInk.pdf")));
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfInk.pdf")));
         String xfdfFilename = destinationFolder + "xfdfInk.xfdf";
         String pdfDocumentName = "xfdfInk.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -411,7 +411,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     public void xfdfFileAttachment()
             throws IOException, ParserConfigurationException, SAXException, TransformerException {
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(new FileInputStream(sourceFolder + "xfdfFileAttachment.pdf")));
+                new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfFileAttachment.pdf")));
         String xfdfFilename = destinationFolder + "xfdfFileAttachment.xfdf";
         String pdfDocumentName = "xfdfFileAttachment.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -428,7 +428,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     @Test
     //TODO DEVSIX-3215
     public void xfdfSound() throws IOException, ParserConfigurationException, SAXException, TransformerException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfSound.pdf")));
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfSound.pdf")));
         String xfdfFilename = destinationFolder + "xfdfSound.xfdf";
         String pdfDocumentName = "xfdfSound.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -444,7 +444,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
     @Test
     public void xfdfLink() throws IOException, ParserConfigurationException, SAXException, TransformerException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfLink.pdf")));
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfLink.pdf")));
         String xfdfFilename = destinationFolder + "xfdfLink.xfdf";
         String pdfDocumentName = "xfdfLink.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -462,7 +462,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     public void xfdfLinkBorderStyle()
             throws IOException, ParserConfigurationException, SAXException, TransformerException {
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(new FileInputStream(sourceFolder + "xfdfLinkBorderStyle.pdf")));
+                new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfLinkBorderStyle.pdf")));
         String xfdfFilename = destinationFolder + "xfdfLinkBorderStyle.xfdf";
         String pdfDocumentName = "xfdfLinkBorderStyle.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -479,7 +479,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     @Test
     public void xfdfLinkDest() throws IOException, ParserConfigurationException, SAXException, TransformerException {
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(new FileInputStream(sourceFolder + "xfdfLinkDest.pdf")));
+                new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfLinkDest.pdf")));
         String xfdfFilename = destinationFolder + "xfdfLinkDest.xfdf";
         String pdfDocumentName = "xfdfLinkDest.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -496,7 +496,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     @Test
     public void xfdfLinkDestFit() throws IOException, ParserConfigurationException, SAXException, TransformerException {
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(new FileInputStream(sourceFolder + "xfdfLinkDestFit.pdf")));
+                new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfLinkDestFit.pdf")));
         String xfdfFilename = destinationFolder + "xfdfLinkDestFit.xfdf";
         String pdfDocumentName = "xfdfLinkDestFit.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -514,7 +514,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     public void xfdfLinkDestFitB()
             throws IOException, ParserConfigurationException, SAXException, TransformerException {
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(new FileInputStream(sourceFolder + "xfdfLinkDestFitB.pdf")));
+                new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfLinkDestFitB.pdf")));
         String xfdfFilename = destinationFolder + "xfdfLinkDestFitB.xfdf";
         String pdfDocumentName = "xfdfLinkDestFitB.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -532,7 +532,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     public void xfdfLinkDestFitR()
             throws IOException, ParserConfigurationException, SAXException, TransformerException {
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(new FileInputStream(sourceFolder + "xfdfLinkDestFitR.pdf")));
+                new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfLinkDestFitR.pdf")));
         String xfdfFilename = destinationFolder + "xfdfLinkDestFitR.xfdf";
         String pdfDocumentName = "xfdfLinkDestFitR.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -550,7 +550,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     public void xfdfLinkDestFitH()
             throws IOException, ParserConfigurationException, SAXException, TransformerException {
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(new FileInputStream(sourceFolder + "xfdfLinkDestFitH.pdf")));
+                new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfLinkDestFitH.pdf")));
         String xfdfFilename = destinationFolder + "xfdfLinkDestFitH.xfdf";
         String pdfDocumentName = "xfdfLinkDestFitH.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -568,7 +568,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     public void xfdfLinkDestFitBH()
             throws IOException, ParserConfigurationException, SAXException, TransformerException {
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(new FileInputStream(sourceFolder + "xfdfLinkDestFitBH.pdf")));
+                new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfLinkDestFitBH.pdf")));
         String xfdfFilename = destinationFolder + "xfdfLinkDestFitBH.xfdf";
         String pdfDocumentName = "xfdfLinkDestFitBH.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -586,7 +586,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     public void xfdfLinkDestFitBV()
             throws IOException, ParserConfigurationException, SAXException, TransformerException {
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(new FileInputStream(sourceFolder + "xfdfLinkDestFitBV.pdf")));
+                new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfLinkDestFitBV.pdf")));
         String xfdfFilename = destinationFolder + "xfdfLinkDestFitBV.xfdf";
         String pdfDocumentName = "xfdfLinkDestFitBV.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -604,7 +604,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     public void xfdfLinkDestFitV()
             throws IOException, ParserConfigurationException, SAXException, TransformerException {
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(new FileInputStream(sourceFolder + "xfdfLinkDestFitV.pdf")));
+                new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfLinkDestFitV.pdf")));
         String xfdfFilename = destinationFolder + "xfdfLinkDestFitV.xfdf";
         String pdfDocumentName = "xfdfLinkDestFitV.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -621,7 +621,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     @Test
     //TODO DEVSIX-3215
     public void xfdfRedact() throws IOException, ParserConfigurationException, SAXException, TransformerException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfRedact.pdf")));
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfRedact.pdf")));
         String xfdfFilename = destinationFolder + "xfdfRedact.xfdf";
         String pdfDocumentName = "xfdfRedact.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -639,7 +639,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     //TODO DEVSIX-3215
     public void xfdfProjection() throws IOException, ParserConfigurationException, SAXException, TransformerException {
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(new FileInputStream(sourceFolder + "xfdfProjection.pdf")));
+                new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfProjection.pdf")));
         String xfdfFilename = destinationFolder + "xfdfProjection.xfdf";
         String pdfDocumentName = "xfdfProjection.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -657,7 +657,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     public void xfdfLinkAllParams()
             throws IOException, ParserConfigurationException, SAXException, TransformerException {
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(new FileInputStream(sourceFolder + "xfdfLinkAllParams.pdf")));
+                new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfLinkAllParams.pdf")));
         String xfdfFilename = destinationFolder + "xfdfLinkAllParams.xfdf";
         String pdfDocumentName = "xfdfLinkAllParams.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -675,7 +675,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     //TODO DEVSIX-3215 Support caret annontation
     public void xfdfReplaceText() throws IOException, ParserConfigurationException, SAXException, TransformerException {
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(new FileInputStream(sourceFolder + "xfdfReplaceText.pdf")));
+                new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfReplaceText.pdf")));
         String xfdfFilename = destinationFolder + "xfdfReplaceText.xfdf";
         String pdfDocumentName = "xfdfReplaceText.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -692,7 +692,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     @Test
     //TODO DEVSIX-3215
     public void xfdfArrow() throws IOException, ParserConfigurationException, SAXException, TransformerException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfArrow.pdf")));
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfArrow.pdf")));
         String xfdfFilename = destinationFolder + "xfdfArrow.xfdf";
         String pdfDocumentName = "xfdfArrow.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -709,7 +709,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     @Test
     //TODO DEVSIX-3215
     public void xfdfCallout() throws IOException, ParserConfigurationException, SAXException, TransformerException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfCallout.pdf")));
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfCallout.pdf")));
         String xfdfFilename = destinationFolder + "xfdfCallout.xfdf";
         String pdfDocumentName = "xfdfCallout.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -726,7 +726,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     @Test
     //TODO DEVSIX-3215 Support annots
     public void xfdfCloud() throws IOException, ParserConfigurationException, SAXException, TransformerException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfCloud.pdf")));
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfCloud.pdf")));
         String xfdfFilename = destinationFolder + "xfdfCloud.xfdf";
         String pdfDocumentName = "xfdfCloud.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -744,7 +744,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     //TODO DEVSIX-3215 Support annots
     public void xfdfCloudNested() throws IOException, ParserConfigurationException, SAXException, TransformerException {
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(new FileInputStream(sourceFolder + "xfdfCloudNested.pdf")));
+                new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfCloudNested.pdf")));
         String xfdfFilename = destinationFolder + "xfdfCloudNested.xfdf";
         String pdfDocumentName = "xfdfCloudNested.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -763,7 +763,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     public void xfdfTextBoxAllParams()
             throws IOException, ParserConfigurationException, SAXException, TransformerException {
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(new FileInputStream(sourceFolder + "xfdfTextBoxAllParams.pdf")));
+                new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfTextBoxAllParams.pdf")));
         String xfdfFilename = destinationFolder + "xfdfTextBoxAllParams.xfdf";
         String pdfDocumentName = "xfdfTextBoxAllParams.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -782,7 +782,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     public void xfdfJavaScriptForms()
             throws IOException, ParserConfigurationException, SAXException, TransformerException {
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(new FileInputStream(sourceFolder + "xfdfJavaScriptForms.pdf")));
+                new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfJavaScriptForms.pdf")));
         String xfdfFilename = destinationFolder + "xfdfJavaScriptForms.xfdf";
         String pdfDocumentName = "xfdfJavaScriptForms.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -800,7 +800,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     //TODO DEVSIX-3215
     public void xfdfAttrColor() throws IOException, ParserConfigurationException, SAXException, TransformerException {
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(new FileInputStream(sourceFolder + "xfdfAttrColor.pdf")));
+                new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfAttrColor.pdf")));
         String xfdfFilename = destinationFolder + "xfdfAttrColor.xfdf";
         String pdfDocumentName = "xfdfAttrColor.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -819,7 +819,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     public void xfdfAttrFlagsOpacity()
             throws IOException, ParserConfigurationException, SAXException, TransformerException {
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(new FileInputStream(sourceFolder + "xfdfAttrFlagsOpacity.pdf")));
+                new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfAttrFlagsOpacity.pdf")));
         String xfdfFilename = destinationFolder + "xfdfAttrFlagsOpacity.xfdf";
         String pdfDocumentName = "xfdfAttrFlagsOpacity.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -837,7 +837,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     //TODO DEVSIX-3215
     public void xfdfAttrTitle() throws IOException, ParserConfigurationException, SAXException, TransformerException {
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(new FileInputStream(sourceFolder + "xfdfAttrTitle.pdf")));
+                new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfAttrTitle.pdf")));
         String xfdfFilename = destinationFolder + "xfdfAttrTitle.xfdf";
         String pdfDocumentName = "xfdfAttrTitle.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -856,7 +856,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     public void xfdfReferenceFor3DMeasurement()
             throws IOException, ParserConfigurationException, SAXException, TransformerException {
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(new FileInputStream(sourceFolder + "xfdfReferenceFor3DMeasurement.pdf")));
+                new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfReferenceFor3DMeasurement.pdf")));
         String xfdfFilename = destinationFolder + "xfdfReferenceFor3DMeasurement.xfdf";
         String pdfDocumentName = "xfdfReferenceFor3DMeasurement.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -873,7 +873,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     public void xfdfReferenceFor3DAngular()
             throws IOException, ParserConfigurationException, SAXException, TransformerException {
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(new FileInputStream(sourceFolder + "xfdfReferenceFor3DAngular.pdf")));
+                new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfReferenceFor3DAngular.pdf")));
         String xfdfFilename = destinationFolder + "xfdfReferenceFor3DAngular.xfdf";
         String pdfDocumentName = "xfdfReferenceFor3DAngular.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -892,7 +892,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     public void xfdfReferenceFor3DRadial()
             throws IOException, ParserConfigurationException, SAXException, TransformerException {
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(new FileInputStream(sourceFolder + "xfdfReferenceFor3DRadial.pdf")));
+                new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfReferenceFor3DRadial.pdf")));
         String xfdfFilename = destinationFolder + "xfdfReferenceFor3DRadial.xfdf";
         String pdfDocumentName = "xfdfReferenceFor3DRadial.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -911,7 +911,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     public void xfdfSubelementContents()
             throws IOException, ParserConfigurationException, SAXException, TransformerException {
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(new FileInputStream(sourceFolder + "xfdfSubelementContents.pdf")));
+                new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfSubelementContents.pdf")));
         String xfdfFilename = destinationFolder + "xfdfSubelementContents.xfdf";
         String pdfDocumentName = "xfdfSubelementContents.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -931,7 +931,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     public void xfdfSubelementOverlayAppearance()
             throws IOException, ParserConfigurationException, SAXException, TransformerException {
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(new FileInputStream(sourceFolder + "xfdfSubelementOverlayAppearance.pdf")));
+                new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfSubelementOverlayAppearance.pdf")));
         String xfdfFilename = destinationFolder + "xfdfSubelementOverlayAppearance.xfdf";
         String pdfDocumentName = "xfdfSubelementOverlayAppearance.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -949,7 +949,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     //Widget annotation is not supported in xfdf 2014 spec version
     //TODO  DEVSIX-3215
     public void xfdfButton() throws IOException, ParserConfigurationException, SAXException, TransformerException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfButton.pdf")));
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfButton.pdf")));
 
         String xfdfFilename = destinationFolder + "xfdfButton.xfdf";
         String pdfDocumentName = "xfdfButton.pdf";
@@ -969,7 +969,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     //TODO DEVSIX-3215
     public void xfdfCheckBox() throws IOException, ParserConfigurationException, SAXException, TransformerException {
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(new FileInputStream(sourceFolder + "xfdfCheckBox.pdf")));
+                new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfCheckBox.pdf")));
         String xfdfFilename = destinationFolder + "xfdfCheckBox.xfdf";
         String pdfDocumentName = "xfdfCheckBox.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -985,7 +985,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
     @Test
     public void xfdfList() throws IOException, ParserConfigurationException, SAXException, TransformerException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfList.pdf")));
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfList.pdf")));
         String xfdfFilename = destinationFolder + "xfdfList.xfdf";
         String pdfDocumentName = "xfdfList.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -1004,7 +1004,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     //TODO DEVSIX-3215
     public void xfdfDropDown() throws IOException, ParserConfigurationException, SAXException, TransformerException {
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(new FileInputStream(sourceFolder + "xfdfDropDown.pdf")));
+                new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfDropDown.pdf")));
         String xfdfFilename = destinationFolder + "xfdfDropDown.xfdf";
         String pdfDocumentName = "xfdfDropDown.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -1049,7 +1049,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
             TransformerException {
         String pdfDocumentName = "xfdfAnnotationAttributes.pdf";
         try (PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(new FileInputStream(sourceFolder + pdfDocumentName)))) {
+                new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + pdfDocumentName)))) {
             String xfdfFilename = destinationFolder + "xfdfAnnotationAttributes.xfdf";
             XfdfObjectFactory factory = new XfdfObjectFactory();
             XfdfObject xfdfObject = factory.createXfdfObject(pdfDocument, pdfDocumentName);
@@ -1066,7 +1066,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
             TransformerException {
         String pdfDocumentName = "xfdfOnlyRequiredAnnotationAttributes.pdf";
         try (PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(new FileInputStream(sourceFolder + pdfDocumentName)))) {
+                new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + pdfDocumentName)))) {
             String xfdfFilename = destinationFolder + "xfdfOnlyRequiredAnnotationAttributes.xfdf";
             XfdfObjectFactory factory = new XfdfObjectFactory();
             XfdfObject xfdfObject = factory.createXfdfObject(pdfDocument, pdfDocumentName);

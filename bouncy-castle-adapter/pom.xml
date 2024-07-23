@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.itextpdf.android</groupId>
     <artifactId>root-android</artifactId>
-    <version>8.0.4</version>
+    <version>8.0.5</version>
   </parent>
 
   <artifactId>bouncy-castle-adapter-android</artifactId>
@@ -21,12 +21,12 @@
   <dependencies>
     <dependency>
       <groupId>org.bouncycastle</groupId>
-      <artifactId>bcpkix-jdk15to18<!--Different version is needed because of METAF-INF collisions in bc--></artifactId>
+      <artifactId>bcpkix-jdk15to18</artifactId>
       <version>${bouncycastle.version}</version>
     </dependency>
     <dependency>
       <groupId>org.bouncycastle</groupId>
-      <artifactId>bcprov-jdk15to18<!--Different version is needed because of METAF-INF collisions in bc--></artifactId>
+      <artifactId>bcprov-jdk15to18</artifactId>
       <version>${bouncycastle.version}</version>
     </dependency>
     <dependency>

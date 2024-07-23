@@ -49,4 +49,11 @@ public interface IOCSPObjectIdentifiers {
      * @return OCSPObjectIdentifiers.id_pkix_ocsp_nocheck wrapper.
      */
     IASN1ObjectIdentifier getIdPkixOcspNoCheck();
+
+    /**
+     * Gets {@code id_pkix_ocsp_archive_cutoff} constant for the wrapped OCSPObjectIdentifiers.
+     *
+     * @return OCSPObjectIdentifiers.id_pkix_ocsp_archive_cutoff wrapper.
+     */
+    IASN1ObjectIdentifier getIdPkixOcspArchiveCutoff();
 }

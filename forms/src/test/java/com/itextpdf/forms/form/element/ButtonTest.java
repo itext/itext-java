@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms.form.element;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfButtonFormField;
 import com.itextpdf.forms.fields.PdfFormAnnotation;
@@ -56,7 +57,6 @@ import com.itextpdf.layout.properties.VerticalAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -221,7 +221,7 @@ public class ButtonTest extends ExtendedITextTest {
             formButton.setProperty(Property.WIDTH, UnitValue.createPointValue(100));
             formButton.setProperty(Property.HEIGHT, UnitValue.createPointValue(100));
             formButton.add(new Image(new PdfImageXObject(ImageDataFactory.create(
-                    StreamUtil.inputStreamToArray(new FileInputStream(imagePath)))))
+                    StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile(imagePath)))))
                     .setWidth(98).setHeight(98));
             formButton.setFontColor(ColorConstants.BLUE);
             formButton.setBackgroundColor(ColorConstants.YELLOW);

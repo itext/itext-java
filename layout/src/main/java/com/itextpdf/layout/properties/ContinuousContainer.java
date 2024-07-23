@@ -115,4 +115,14 @@ public final class ContinuousContainer {
             blockRenderer.setProperty(Property.BORDER_BOTTOM, allBorders);
         }
     }
+
+    /**
+     * Updates values of the saved property.
+     *
+     * @param property the property to be updated
+     * @param value the new value
+     */
+    public void updateValueOfSavedProperty(int property, Object value) {
+        properties.put(property, value);
+    }
 }

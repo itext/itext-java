@@ -520,6 +520,11 @@ class BouncyCastleDefaultFactory implements IBouncyCastleFactory {
     }
 
     @Override
+    public IExtensions createExtensions(IExtension[] extension) {
+        throw new UnsupportedOperationException(BouncyCastleLogMessageConstant.BOUNCY_CASTLE_DEPENDENCY_MUST_PRESENT);
+    }
+
+    @Override
     public IExtensions createNullExtensions() {
         throw new UnsupportedOperationException(BouncyCastleLogMessageConstant.BOUNCY_CASTLE_DEPENDENCY_MUST_PRESENT);
     }
@@ -770,6 +775,11 @@ class BouncyCastleDefaultFactory implements IBouncyCastleFactory {
 
     @Override
     public IASN1GeneralizedTime createASN1GeneralizedTime(IASN1Encodable encodable) {
+        throw new UnsupportedOperationException(BouncyCastleLogMessageConstant.BOUNCY_CASTLE_DEPENDENCY_MUST_PRESENT);
+    }
+
+    @Override
+    public IASN1GeneralizedTime createASN1GeneralizedTime(Date date) {
         throw new UnsupportedOperationException(BouncyCastleLogMessageConstant.BOUNCY_CASTLE_DEPENDENCY_MUST_PRESENT);
     }
 

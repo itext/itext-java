@@ -22,17 +22,22 @@
  */
 package com.itextpdf.kernel.utils;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
+import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -60,7 +65,7 @@ public class TaggedPdfReaderToolTest extends ExtendedITextTest {
 
         PdfReader reader = new PdfReader(SOURCE_FOLDER + filename);
 
-        try (FileOutputStream outXml = new FileOutputStream(outXmlPath);
+        try (OutputStream outXml = FileUtil.getFileOutputStream(outXmlPath);
              PdfDocument document = new PdfDocument(reader)) {
 
             TaggedPdfReaderTool tool = new TaggedPdfReaderTool(document);
@@ -81,7 +86,7 @@ public class TaggedPdfReaderToolTest extends ExtendedITextTest {
         try {
             PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
             TaggedPdfReaderTool tool = new TaggedPdfReaderTool(pdfDocument);
-            try (FileOutputStream outXml = new FileOutputStream(outXmlPath)) {
+            try (OutputStream outXml = FileUtil.getFileOutputStream(outXmlPath)) {
                 Exception exception = Assert.assertThrows(PdfException.class,
                         () -> tool.convertToXml(outXml, "UTF-8"));
                 Assert.assertEquals(KernelExceptionMessageConstant.DOCUMENT_DOES_NOT_CONTAIN_STRUCT_TREE_ROOT,
@@ -89,6 +94,31 @@ public class TaggedPdfReaderToolTest extends ExtendedITextTest {
             }
         } catch (IOException e) {
             Assert.fail("IOException is not expected to be triggered");
+        }
+    }
+
+    @Test
+    public void cyclicReferencesTest() throws IOException, ParserConfigurationException, SAXException {
+        String outXmlPath = DESTINATION_FOLDER + "cyclicReferences.xml";
+        String cmpXmlPath = SOURCE_FOLDER + "cmp_cyclicReferences.xml";
+
+        PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        doc.setTagged();
+        PdfStructElem kid1 = new PdfStructElem(doc, PdfStructTreeRoot.convertRoleToPdfName(StandardRoles.P));
+        PdfStructElem kid2 = new PdfStructElem(doc, PdfStructTreeRoot.convertRoleToPdfName(StandardRoles.DIV));
+        doc.getStructTreeRoot().addKid(kid1);
+        doc.getStructTreeRoot().addKid(kid2);
+        kid1.addKid(kid2);
+        kid2.addKid(kid1);
+
+        TaggedPdfReaderTool tool = new TaggedPdfReaderTool(doc);
+        try (OutputStream outXml = FileUtil.getFileOutputStream(outXmlPath)) {
+            tool.convertToXml(outXml, "UTF-8");
+        }
+
+        CompareTool compareTool = new CompareTool();
+        if (!compareTool.compareXmls(outXmlPath, cmpXmlPath)) {
+            Assert.fail("Resultant xml is different.");
         }
     }
 }

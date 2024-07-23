@@ -22,22 +22,19 @@
  */
 package com.itextpdf.io.font.otf;
 
-import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
-import java.io.FileNotFoundException;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
 public class GlyphLineTest extends ExtendedITextTest {
@@ -70,7 +67,7 @@ public class GlyphLineTest extends ExtendedITextTest {
 
     @Test
     public void testOtherLinesAddition() throws IOException {
-        byte[] ttf = StreamUtil.inputStreamToArray(new FileInputStream("./src/test/resources/com/itextpdf/io/font/otf/FreeSans.ttf"));
+        byte[] ttf = StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile("./src/test/resources/com/itextpdf/io/font/otf/FreeSans.ttf"));
         TrueTypeFont font = new TrueTypeFont(ttf);
 
         GlyphLine containerLine = new GlyphLine(constructGlyphListFromString("Viva France!", font));
@@ -94,7 +91,7 @@ public class GlyphLineTest extends ExtendedITextTest {
 
     @Test
     public void testAdditionWithActualText() throws IOException {
-        byte[] ttf = StreamUtil.inputStreamToArray(new FileInputStream("./src/test/resources/com/itextpdf/io/font/otf/FreeSans.ttf"));
+        byte[] ttf = StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile("./src/test/resources/com/itextpdf/io/font/otf/FreeSans.ttf"));
         TrueTypeFont font = new TrueTypeFont(ttf);
 
         List<Glyph> glyphs = constructGlyphListFromString("Viva France!", font);
@@ -116,7 +113,7 @@ public class GlyphLineTest extends ExtendedITextTest {
 
     @Test
     public void testOtherLinesWithActualTextAddition() throws IOException {
-        byte[] ttf = StreamUtil.inputStreamToArray(new FileInputStream("./src/test/resources/com/itextpdf/io/font/otf/FreeSans.ttf"));
+        byte[] ttf = StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile("./src/test/resources/com/itextpdf/io/font/otf/FreeSans.ttf"));
         TrueTypeFont font = new TrueTypeFont(ttf);
 
         GlyphLine containerLine = new GlyphLine(constructGlyphListFromString("France", font));
@@ -137,7 +134,7 @@ public class GlyphLineTest extends ExtendedITextTest {
 
     @Test
     public void testOtherLinesWithActualTextAddition02() throws IOException {
-        byte[] ttf = StreamUtil.inputStreamToArray(new FileInputStream("./src/test/resources/com/itextpdf/io/font/otf/FreeSans.ttf"));
+        byte[] ttf = StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile("./src/test/resources/com/itextpdf/io/font/otf/FreeSans.ttf"));
         TrueTypeFont font = new TrueTypeFont(ttf);
 
         GlyphLine containerLine = new GlyphLine(constructGlyphListFromString("France", font));
@@ -163,7 +160,7 @@ public class GlyphLineTest extends ExtendedITextTest {
 
     @Test
     public void testContentReplacingWithNullActualText() throws IOException {
-        byte[] ttf = StreamUtil.inputStreamToArray(new FileInputStream("./src/test/resources/com/itextpdf/io/font/otf/FreeSans.ttf"));
+        byte[] ttf = StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile("./src/test/resources/com/itextpdf/io/font/otf/FreeSans.ttf"));
         TrueTypeFont font = new TrueTypeFont(ttf);
 
         GlyphLine lineToBeReplaced = new GlyphLine(constructGlyphListFromString("Byelorussia", font));
@@ -181,7 +178,7 @@ public class GlyphLineTest extends ExtendedITextTest {
         String expectedActualTextForFirstGlyph = "0";
         String expectedActualTextForSecondGlyph = "A";
 
-        byte[] ttf = StreamUtil.inputStreamToArray(new FileInputStream("./src/test/resources/com/itextpdf/io/font/otf/FreeSans.ttf"));
+        byte[] ttf = StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile("./src/test/resources/com/itextpdf/io/font/otf/FreeSans.ttf"));
         TrueTypeFont font = new TrueTypeFont(ttf);
 
         // no actual text for the second glyph is set - it should be created during substitution
@@ -203,7 +200,7 @@ public class GlyphLineTest extends ExtendedITextTest {
     public void testActualTextForSubstitutedGlyphProcessingInSubstituteOneToMany02() throws IOException {
         String expectedActualTextForFirstGlyph = "A";
 
-        byte[] ttf = StreamUtil.inputStreamToArray(new FileInputStream("./src/test/resources/com/itextpdf/io/font/otf/FreeSans.ttf"));
+        byte[] ttf = StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile("./src/test/resources/com/itextpdf/io/font/otf/FreeSans.ttf"));
         TrueTypeFont font = new TrueTypeFont(ttf);
 
         GlyphLine line = new GlyphLine(constructGlyphListFromString("A", font));
@@ -219,7 +216,7 @@ public class GlyphLineTest extends ExtendedITextTest {
 
     @Test
     public void testActualTextForSubstitutedGlyphProcessingInSubstituteOneToMany03() throws IOException {
-        byte[] ttf = StreamUtil.inputStreamToArray(new FileInputStream("./src/test/resources/com/itextpdf/io/font/otf/FreeSans.ttf"));
+        byte[] ttf = StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile("./src/test/resources/com/itextpdf/io/font/otf/FreeSans.ttf"));
         TrueTypeFont font = new TrueTypeFont(ttf);
 
         // no actual text is set

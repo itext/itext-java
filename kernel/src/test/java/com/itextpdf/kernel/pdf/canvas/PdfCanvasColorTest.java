@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf.canvas;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.colors.CalGray;
 import com.itextpdf.kernel.colors.CalRgb;
@@ -56,8 +57,8 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import org.junit.AfterClass;
@@ -179,9 +180,9 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
         PdfDocument document = new PdfDocument(writer);
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
-        FileInputStream streamGray = new FileInputStream(SOURCE_FOLDER + "BlackWhite.icc");
-        FileInputStream streamRgb = new FileInputStream(SOURCE_FOLDER + "CIERGB.icc");
-        FileInputStream streamCmyk = new FileInputStream(SOURCE_FOLDER + "USWebUncoated.icc");
+        InputStream streamGray = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "BlackWhite.icc");
+        InputStream streamRgb = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "CIERGB.icc");
+        InputStream streamCmyk = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "USWebUncoated.icc");
         IccBased gray = new IccBased(streamGray, new float[]{0.5f});
         IccBased rgb = new IccBased(streamRgb, new float[]{1.0f, 0.5f, 0f});
         IccBased cmyk = new IccBased(streamCmyk, new float[]{1.0f, 0.5f, 0f, 0f});
@@ -210,9 +211,9 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
     public void colorTest05() throws Exception {
         PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_FOLDER + "colorTest05.pdf"));
         PdfPage page = document.addNewPage();
-        FileInputStream streamGray = new FileInputStream(SOURCE_FOLDER + "BlackWhite.icc");
-        FileInputStream streamRgb = new FileInputStream(SOURCE_FOLDER + "CIERGB.icc");
-        FileInputStream streamCmyk = new FileInputStream(SOURCE_FOLDER + "USWebUncoated.icc");
+        InputStream streamGray = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "BlackWhite.icc");
+        InputStream streamRgb = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "CIERGB.icc");
+        InputStream streamCmyk = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "USWebUncoated.icc");
         PdfCieBasedCs.IccBased gray = (PdfCieBasedCs.IccBased) new IccBased(streamGray).getColorSpace();
         PdfCieBasedCs.IccBased rgb = (PdfCieBasedCs.IccBased) new IccBased(streamRgb).getColorSpace();
         PdfCieBasedCs.IccBased cmyk = (PdfCieBasedCs.IccBased) new IccBased(streamCmyk).getColorSpace();

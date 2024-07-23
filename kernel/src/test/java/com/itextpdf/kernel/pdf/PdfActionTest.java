@@ -22,6 +22,8 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.commons.utils.FileUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.action.PdfActionOcgState;
@@ -32,11 +34,9 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import com.itextpdf.commons.utils.MessageFormatUtil;
-
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.AfterClass;
@@ -84,11 +84,24 @@ public class PdfActionTest extends ExtendedITextTest {
     }
 
     @Test
+    public void actionTest03() throws Exception {
+        PdfDocument document = createDocument(CompareTool.createTestPdfWriter(destinationFolder + "actionTest03.pdf"), true);
+        String uri = "http://itextpdf.com/";
+
+        document.getCatalog().setOpenAction(PdfAction.createURI(new URI(uri)));
+        Assert.assertEquals(new PdfString(uri),
+                document.getCatalog().getPdfObject().getAsDictionary(PdfName.OpenAction).get(PdfName.URI));
+        document.close();
+
+        System.out.println(MessageFormatUtil.format("Please open document {0} and make sure that you're automatically redirected to {1} site.", destinationFolder + "actionTest01.pdf", "http://itextpdf.com"));
+    }
+
+    @Test
     public void soundActionTest() throws Exception {
         String fileName = "soundActionTest.pdf";
         PdfDocument document = createDocument(CompareTool.createTestPdfWriter(destinationFolder + fileName), false);
 
-        InputStream is = new FileInputStream(sourceFolder + "sample.aif");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sample.aif");
         PdfStream sound1 = new PdfStream(document, is);
         sound1.put(PdfName.R, new PdfNumber(32117));
         sound1.put(PdfName.E, PdfName.Signed);
@@ -107,7 +120,7 @@ public class PdfActionTest extends ExtendedITextTest {
         String fileName = "soundActionWithRepeatFlagTest.pdf";
         PdfDocument document = createDocument(CompareTool.createTestPdfWriter(destinationFolder + fileName), false);
 
-        InputStream is = new FileInputStream(sourceFolder + "sample.aif");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sample.aif");
         PdfStream sound1 = new PdfStream(document, is);
         sound1.put(PdfName.R, new PdfNumber(32117));
         sound1.put(PdfName.E, PdfName.Signed);
@@ -126,7 +139,7 @@ public class PdfActionTest extends ExtendedITextTest {
     public void soundActionWithToBigVolumeTest() throws Exception {
         PdfDocument document = createDocument(new PdfWriter(new ByteArrayOutputStream()), false);
 
-        InputStream is = new FileInputStream(sourceFolder + "sample.aif");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sample.aif");
         PdfStream sound1 = new PdfStream(document, is);
         sound1.put(PdfName.R, new PdfNumber(32117));
         sound1.put(PdfName.E, PdfName.Signed);
@@ -147,7 +160,7 @@ public class PdfActionTest extends ExtendedITextTest {
     public void soundActionWithToLowVolumeTest() throws Exception {
         PdfDocument document = createDocument(new PdfWriter(new ByteArrayOutputStream()), false);
 
-        InputStream is = new FileInputStream(sourceFolder + "sample.aif");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sample.aif");
         PdfStream sound1 = new PdfStream(document, is);
         sound1.put(PdfName.R, new PdfNumber(32117));
         sound1.put(PdfName.E, PdfName.Signed);
@@ -301,7 +314,7 @@ public class PdfActionTest extends ExtendedITextTest {
         String fileName = "soundAndNextJavaScriptActionTest.pdf";
         PdfDocument document = createDocument(CompareTool.createTestPdfWriter(destinationFolder + fileName), false);
 
-        InputStream is = new FileInputStream(sourceFolder + "sample.aif");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sample.aif");
         PdfStream sound1 = new PdfStream(document, is);
         sound1.put(PdfName.R, new PdfNumber(32117));
         sound1.put(PdfName.E, PdfName.Signed);
@@ -322,7 +335,7 @@ public class PdfActionTest extends ExtendedITextTest {
         String fileName = "soundAndTwoNextJavaScriptActionTest.pdf";
         PdfDocument document = createDocument(CompareTool.createTestPdfWriter(destinationFolder + fileName), false);
 
-        InputStream is = new FileInputStream(sourceFolder + "sample.aif");
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sample.aif");
         PdfStream sound1 = new PdfStream(document, is);
         sound1.put(PdfName.R, new PdfNumber(32117));
         sound1.put(PdfName.E, PdfName.Signed);

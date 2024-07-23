@@ -1,0 +1,7 @@
+[{
+    "condition": {
+        "typeReachable": "com.itextpdf.kernel.pdf.PdfName"
+    },
+    "name": "com.itextpdf.kernel.pdf.PdfName",
+    "allDeclaredFields":true
+}]

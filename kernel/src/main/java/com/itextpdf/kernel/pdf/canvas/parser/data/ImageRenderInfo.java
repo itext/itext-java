@@ -90,7 +90,6 @@ public class ImageRenderInfo extends AbstractRenderInfo {
      * <li>get image bytes with {@link PdfImageXObject#getImageBytes(boolean)}, these image bytes
      * represent native image, i.e you can write these bytes to disk and get just an usual image;
      * <li>obtain PdfStream object which contains image dictionary with {@link PdfImageXObject#getPdfObject()} method;
-     * <li>convert image to {@link java.awt.image.BufferedImage} with {@link PdfImageXObject#getBufferedImage()};
      * </ul>
      *
      * @return the {@link PdfImageXObject image}
@@ -165,7 +164,7 @@ public class ImageRenderInfo extends AbstractRenderInfo {
     }
 
     /**
-     * Gets the marked-content identifier associated with this {@link ImageRenderInfo} instance
+     * Gets the marked-content identifier associated with this {@link ImageRenderInfo} instance.
      *
      * @return associated marked-content identifier or -1 in case content is unmarked
      */
@@ -179,23 +178,23 @@ public class ImageRenderInfo extends AbstractRenderInfo {
     }
 
     /**
-     * Checks if the text belongs to a marked content sequence
+     * Checks if this {@link ImageRenderInfo} instance is associated with a marked content sequence
      * with a given mcid.
      *
      * @param mcid a marked content id
-     * @return true if the text is marked with this id
+     * @return {@code true} if the image is marked with this id, {@code false} otherwise
      */
     public boolean hasMcid(int mcid) {
         return hasMcid(mcid, false);
     }
 
     /**
-     * Checks if the text belongs to a marked content sequence
+     * Checks if this {@link ImageRenderInfo} instance is associated with a marked content sequence
      * with a given mcid.
      *
      * @param mcid                     a marked content id
      * @param checkTheTopmostLevelOnly indicates whether to check the topmost level of marked content stack only
-     * @return true if the text is marked with this id
+     * @return {@code true} if this {@link ImageRenderInfo} instance is marked with this id, {@code false} otherwise
      */
     public boolean hasMcid(int mcid, boolean checkTheTopmostLevelOnly) {
         if (checkTheTopmostLevelOnly) {

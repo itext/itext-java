@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms.xfa;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -32,7 +33,6 @@ import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -86,7 +86,7 @@ public class XFAFormTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_createXFAFormTest.pdf";
 
         PdfDocument doc = new PdfDocument(new PdfWriter(outFileName));
-        XfaForm xfa = new XfaForm(new FileInputStream(XML));
+        XfaForm xfa = new XfaForm(FileUtil.getInputStreamForFile(XML));
         xfa.write(doc);
         doc.addNewPage();
         doc.close();

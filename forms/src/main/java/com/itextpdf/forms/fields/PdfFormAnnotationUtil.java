@@ -126,6 +126,7 @@ public final class PdfFormAnnotationUtil {
                 kidDict.remove(PdfName.Parent);
                 field.getPdfObject().mergeDifferent(kidDict);
                 field.removeChildren();
+                kidDict.getIndirectReference().setFree();
                 field.setChildField(PdfFormAnnotation.makeFormAnnotation(field.getPdfObject(), field.getDocument()));
 
                 replaceAnnotationOnPage(kidDict, field.getPdfObject());

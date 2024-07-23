@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf.annot;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
@@ -64,7 +65,6 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 import org.junit.AfterClass;
@@ -750,7 +750,7 @@ public class AddMiscTypesAnnotationsTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_FOLDER + "add3DAnnotation01.pdf"));
         Rectangle rect = new Rectangle(100, 400, 400, 400);
 
-        PdfStream stream3D = new PdfStream(pdfDoc, new FileInputStream(SOURCE_FOLDER + "teapot.u3d"));
+        PdfStream stream3D = new PdfStream(pdfDoc, FileUtil.getInputStreamForFile(SOURCE_FOLDER + "teapot.u3d"));
         stream3D.put(PdfName.Type, new PdfName("3D"));
         stream3D.put(PdfName.Subtype, new PdfName("U3D"));
         stream3D.setCompressionLevel(CompressionConstants.UNDEFINED_COMPRESSION);

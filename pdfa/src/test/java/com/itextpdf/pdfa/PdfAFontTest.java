@@ -22,10 +22,11 @@
  */
 package com.itextpdf.pdfa;
 
+import com.itextpdf.commons.utils.FileUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
@@ -34,7 +35,19 @@ import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.font.PdfType1Font;
 import com.itextpdf.kernel.font.PdfType3Font;
 import com.itextpdf.kernel.font.Type3Glyph;
-import com.itextpdf.kernel.pdf.*;
+import com.itextpdf.kernel.pdf.CompressionConstants;
+import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfOutputIntent;
+import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.PdfVersion;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
@@ -44,16 +57,13 @@ import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
 import static org.junit.Assert.fail;
 
 @Category(IntegrationTest.class)
@@ -72,7 +82,7 @@ public class PdfAFontTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "pdfA1b_fontCheckPdfA1_01.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp/PdfAFontTest/cmp_pdfA1b_fontCheckPdfA1_01.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
-        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfPage page = doc.addNewPage();
         PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
@@ -93,7 +103,7 @@ public class PdfAFontTest extends ExtendedITextTest {
     @Test
     public void fontCheckPdfA1_02() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
-        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfPage page = doc.addNewPage();
         PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf", PdfEncodings.WINANSI,
@@ -118,7 +128,7 @@ public class PdfAFontTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "pdfA1b_fontCheckPdfA1_03.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp/PdfAFontTest/cmp_pdfA1b_fontCheckPdfA1_03.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
-        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfPage page = doc.addNewPage();
         // Identity-H must be embedded
@@ -140,7 +150,7 @@ public class PdfAFontTest extends ExtendedITextTest {
     @Test
     public void fontCheckPdfA1_04() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
-        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfPage page = doc.addNewPage();
         PdfFont font = PdfFontFactory.createFont("Helvetica",
@@ -165,7 +175,7 @@ public class PdfAFontTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "pdfA1b_fontCheckPdfA1_05.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp/PdfAFontTest/cmp_pdfA1b_fontCheckPdfA1_05.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
-        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfPage page = doc.addNewPage();
         // Identity-H must be embedded
@@ -189,7 +199,7 @@ public class PdfAFontTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "pdfA2b_fontCheckPdfA2_01.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp/PdfAFontTest/cmp_pdfA2b_fontCheckPdfA2_01.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
-        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfPage page = doc.addNewPage();
         // Identity-H must be embedded
@@ -214,7 +224,7 @@ public class PdfAFontTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "pdfA3b_fontCheckPdfA3_01.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp/PdfAFontTest/cmp_pdfA3b_fontCheckPdfA3_01.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
-        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_3B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfPage page = doc.addNewPage();
         // Identity-H must be embedded
@@ -336,7 +346,7 @@ public class PdfAFontTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "notdefInTrueTypeFont.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4,
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
@@ -360,7 +370,7 @@ public class PdfAFontTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "notdefFontTest2.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4,
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "NotoSans-Regular.ttf",
@@ -383,7 +393,7 @@ public class PdfAFontTest extends ExtendedITextTest {
     public void glyphLineWithUndefinedGlyphsTest() throws Exception {
         String outPdf = DESTINATION_FOLDER + "glyphLineWithUndefinedGlyphs.pdf";
 
-        InputStream icm = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        InputStream icm = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         Document document = new Document(new PdfADocument(
                 new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)),
                 PdfAConformanceLevel.PDF_A_4,
@@ -404,7 +414,7 @@ public class PdfAFontTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "pdfArrayWithUndefinedGlyphs.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4,
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "NotoSans-Regular.ttf",
@@ -434,7 +444,7 @@ public class PdfAFontTest extends ExtendedITextTest {
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
-        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfDocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4,
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
 
@@ -453,8 +463,8 @@ public class PdfAFontTest extends ExtendedITextTest {
                 .restoreState()
                 .rectangle(100, 500, 100, 100).fill();
 
-        byte[] afm = StreamUtil.inputStreamToArray(new FileInputStream(SOURCE_FOLDER + "cmr10.afm"));
-        byte[] pfb = StreamUtil.inputStreamToArray(new FileInputStream(SOURCE_FOLDER + "cmr10.pfb"));
+        byte[] afm = StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile(SOURCE_FOLDER + "cmr10.afm"));
+        byte[] pfb = StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile(SOURCE_FOLDER + "cmr10.pfb"));
         pdfType1Font = PdfFontFactory.createFont(FontProgramFactory.createType1Font(afm, pfb),
                 FontEncoding.FONT_SPECIFIC, EmbeddingStrategy.PREFER_EMBEDDED);
         Assert.assertTrue("PdfType1Font expected", pdfType1Font instanceof PdfType1Font);
@@ -481,7 +491,7 @@ public class PdfAFontTest extends ExtendedITextTest {
         WriterProperties writerProperties = new WriterProperties();
         writerProperties.setPdfVersion(PdfVersion.PDF_2_0);
         PdfWriter writer = new PdfWriter(outPdf, writerProperties);
-        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfPage page = doc.addNewPage();
         PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
@@ -504,7 +514,7 @@ public class PdfAFontTest extends ExtendedITextTest {
         WriterProperties writerProperties = new WriterProperties();
         writerProperties.setPdfVersion(PdfVersion.PDF_2_0);
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(), writerProperties);
-        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfPage page = doc.addNewPage();
         PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf", PdfEncodings.WINANSI,
@@ -531,7 +541,7 @@ public class PdfAFontTest extends ExtendedITextTest {
         WriterProperties writerProperties = new WriterProperties();
         writerProperties.setPdfVersion(PdfVersion.PDF_2_0);
         PdfWriter writer = new PdfWriter(outPdf, writerProperties);
-        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfPage page = doc.addNewPage();
 
@@ -557,7 +567,7 @@ public class PdfAFontTest extends ExtendedITextTest {
         WriterProperties writerProperties = new WriterProperties();
         writerProperties.setPdfVersion(PdfVersion.PDF_2_0);
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(), writerProperties);
-        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfPage page = doc.addNewPage();
         PdfFont font = PdfFontFactory.createFont("Helvetica",
@@ -584,7 +594,7 @@ public class PdfAFontTest extends ExtendedITextTest {
         WriterProperties writerProperties = new WriterProperties();
         writerProperties.setPdfVersion(PdfVersion.PDF_2_0);
         PdfWriter writer = new PdfWriter(outPdf, writerProperties);
-        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfPage page = doc.addNewPage();
         // Identity-H must be embedded
@@ -612,7 +622,7 @@ public class PdfAFontTest extends ExtendedITextTest {
         WriterProperties writerProperties = new WriterProperties();
         writerProperties.setPdfVersion(PdfVersion.PDF_2_0);
         PdfWriter writer = new PdfWriter(outPdf, writerProperties);
-        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfPage page = doc.addNewPage();
         // Identity-H must be embedded
@@ -639,7 +649,7 @@ public class PdfAFontTest extends ExtendedITextTest {
         WriterProperties writerProperties = new WriterProperties();
         writerProperties.setPdfVersion(PdfVersion.PDF_2_0);
         PdfWriter writer = new PdfWriter(outPdf, writerProperties);
-        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
 
         // A A A A E E E ~ é
@@ -706,7 +716,7 @@ public class PdfAFontTest extends ExtendedITextTest {
         WriterProperties writerProperties = new WriterProperties();
         writerProperties.setPdfVersion(PdfVersion.PDF_2_0);
         PdfWriter writer = new PdfWriter(outPdf, writerProperties);
-        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfPage page = doc.addNewPage();
         PdfFont font = PdfFontFactory.createTtcFont(SOURCE_FOLDER + "uming.ttc", 0, "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED, false);
@@ -732,7 +742,7 @@ public class PdfAFontTest extends ExtendedITextTest {
         WriterProperties writerProperties = new WriterProperties();
         writerProperties.setPdfVersion(PdfVersion.PDF_2_0);
         PdfWriter writer = new PdfWriter(outPdf, writerProperties);
-        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfPage page = doc.addNewPage();
         PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "SourceSerif4-Black.woff", "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED);
@@ -758,7 +768,7 @@ public class PdfAFontTest extends ExtendedITextTest {
         WriterProperties writerProperties = new WriterProperties();
         writerProperties.setPdfVersion(PdfVersion.PDF_2_0);
         PdfWriter writer = new PdfWriter(outPdf, writerProperties);
-        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfPage page = doc.addNewPage();
         PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "NotoEmoji-Regular.ttf", "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED);
@@ -781,7 +791,7 @@ public class PdfAFontTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + outFileName;
         String cmpPdf = SOURCE_FOLDER + "cmp/PdfAFontTest/cmp_" + outFileName;
         PdfWriter writer = new PdfWriter(outPdf);
-        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfDocument doc = new PdfADocument(writer, conformanceLevel, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfPage page = doc.addNewPage();
 
@@ -812,7 +822,7 @@ public class PdfAFontTest extends ExtendedITextTest {
 
     private void generatePdfA2WithCidFont(String fontFile, String outPdf) throws IOException {
         try (PdfWriter writer = new PdfWriter(outPdf);
-                InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+                InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
                 PdfDocument doc = new PdfADocument(
                         writer,
                         PdfAConformanceLevel.PDF_A_2B,

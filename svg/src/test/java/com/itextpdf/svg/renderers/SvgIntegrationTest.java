@@ -22,6 +22,7 @@
  */
 package com.itextpdf.svg.renderers;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -30,15 +31,13 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.svg.converter.SvgConverter;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.experimental.categories.Category;
 
@@ -62,7 +61,7 @@ public class SvgIntegrationTest extends ExtendedITextTest {
         try (PdfDocument doc = new PdfDocument(new PdfWriter(output, new WriterProperties().setCompressionLevel(0)))) {
             doc.addNewPage(size);
             ISvgConverterProperties properties = new SvgConverterProperties().setBaseUri(svg);
-            SvgConverter.drawOnDocument(new FileInputStream(svg), doc, 1, properties);
+            SvgConverter.drawOnDocument(FileUtil.getInputStreamForFile(svg), doc, 1, properties);
         }
     }
 
@@ -70,7 +69,7 @@ public class SvgIntegrationTest extends ExtendedITextTest {
         PdfDocument doc = new PdfDocument(new PdfWriter(output, new WriterProperties().setCompressionLevel(0)));
         doc.addNewPage();
         ISvgConverterProperties properties = new SvgConverterProperties().setBaseUri(svg);
-        SvgConverter.drawOnDocument(new FileInputStream(svg), doc, 1, properties);
+        SvgConverter.drawOnDocument(FileUtil.getInputStreamForFile(svg), doc, 1, properties);
         return doc;
     }
 
@@ -113,12 +112,14 @@ public class SvgIntegrationTest extends ExtendedITextTest {
     }
 
     public void convertAndCompareSinglePage(String src, String dest, String fileName) throws IOException, InterruptedException {
-        convertToSinglePage(new FileInputStream(src + fileName + ".svg"), new FileOutputStream(dest + fileName + ".pdf"));
+        convertToSinglePage(FileUtil.getInputStreamForFile(src + fileName + ".svg"),
+                FileUtil.getFileOutputStream(dest + fileName + ".pdf"));
         compare(fileName, src, dest);
     }
 
     public void convertAndCompareSinglePage(String src, String dest, String fileName, ISvgConverterProperties properties) throws IOException, InterruptedException {
-        convertToSinglePage(new FileInputStream(src + fileName + ".svg"), new FileOutputStream(dest + fileName + ".pdf"), properties);
+        convertToSinglePage(FileUtil.getInputStreamForFile(src + fileName + ".svg"),
+                FileUtil.getFileOutputStream(dest + fileName + ".pdf"), properties);
         compare(fileName, src, dest);
     }
 

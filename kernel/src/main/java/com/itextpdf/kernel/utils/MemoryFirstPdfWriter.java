@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.utils;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
 
@@ -29,6 +30,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -79,7 +81,7 @@ class MemoryFirstPdfWriter extends PdfWriter {
     }
 
     void dump() throws IOException {
-        FileOutputStream fos = new FileOutputStream(filePath);
+        OutputStream fos = FileUtil.getFileOutputStream(filePath);
         outStream.writeTo(fos);
         fos.close();
     }

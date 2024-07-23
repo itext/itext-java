@@ -22,6 +22,7 @@
  */
 package com.itextpdf.layout;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.constants.StandardFontFamilies;
 import com.itextpdf.io.font.constants.StandardFonts;
@@ -95,7 +96,8 @@ public class FontProviderTest extends ExtendedITextTest {
         PdfFontProvider sel = new PdfFontProvider();
         sel.addStandardPdfFonts();
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(new FileInputStream(srcFileName)), new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(srcFileName)),
+                new PdfWriter(FileUtil.getFileOutputStream(outFileName)));
         PdfType3Font pdfType3Font = (PdfType3Font) PdfFontFactory.createFont((PdfDictionary) pdfDoc.getPdfObject(5));
         sel.addPdfFont(pdfType3Font, "CustomFont");
 
@@ -130,7 +132,7 @@ public class FontProviderTest extends ExtendedITextTest {
         // TODO DEVSIX-2119 Update if necessary
         fontProvider.getFontSet().addFont(StandardFonts.TIMES_ROMAN, null, "times");
         fontProvider.getFontSet().addFont(StandardFonts.HELVETICA);
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)));
         Document doc = new Document(pdfDoc);
         doc.setFontProvider(fontProvider);
 
@@ -162,7 +164,7 @@ public class FontProviderTest extends ExtendedITextTest {
 
         // TODO DEVSIX-2119 Update if necessary
         fontProvider.getFontSet().addFont(StandardFonts.TIMES_ROMAN, null, "times");
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)));
         Document doc = new Document(pdfDoc);
         doc.setFontProvider(fontProvider);
 
@@ -180,7 +182,7 @@ public class FontProviderTest extends ExtendedITextTest {
         String fileName = "fontProviderNotSetExceptionTest.pdf";
         String outFileName = destinationFolder + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)))) {
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)))) {
             Document doc = new Document(pdfDoc);
 
             Paragraph paragraph = new Paragraph("Hello world!")

@@ -23,12 +23,12 @@
 package com.itextpdf.styledxmlparser.css.resolve.shorthand.impl;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.IShorthandResolver;
 import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 import com.itextpdf.styledxmlparser.css.validate.CssDeclarationValidationMaster;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -36,7 +36,28 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Shorthand resolver for gap shorthand properties, can be used for
+ * different gap properties like {@code gap} or {@code grid-gap}.
+ */
 public class GapShorthandResolver implements IShorthandResolver {
+    private final String gapShorthandProperty;
+
+    /**
+     * Instantiates default {@link GapShorthandResolver} for {@code gap} shorthand.
+     */
+    public GapShorthandResolver() {
+        this(CommonCssConstants.GAP);
+    }
+
+    /**
+     * Instantiates default {@link GapShorthandResolver} for passed gap shorthand.
+     *
+     * @param gapShorthandProperty the name of the gap shorthand property
+     */
+    public GapShorthandResolver(String gapShorthandProperty) {
+        this.gapShorthandProperty = gapShorthandProperty;
+    }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GapShorthandResolver.class);
 
@@ -53,12 +74,12 @@ public class GapShorthandResolver implements IShorthandResolver {
             );
         }
         if (CssTypesValidationUtils.containsInitialOrInheritOrUnset(shorthandExpression)) {
-            return handleExpressionError(StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, CommonCssConstants.GAP,
-                    shorthandExpression);
+            return handleExpressionError(StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION,
+                    gapShorthandProperty, shorthandExpression);
         }
         if (shorthandExpression.isEmpty()) {
-            return handleExpressionError(StyledXmlParserLogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY, CommonCssConstants.GAP,
-                    shorthandExpression);
+            return handleExpressionError(StyledXmlParserLogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY,
+                    gapShorthandProperty, shorthandExpression);
         }
 
         final String[] gapProps = shorthandExpression.split(" ");
@@ -68,8 +89,8 @@ public class GapShorthandResolver implements IShorthandResolver {
         } else if (gapProps.length == 2) {
             return resolveGapWithTwoProperties(gapProps[0], gapProps[1]);
         } else {
-            return handleExpressionError(StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, CommonCssConstants.GAP,
-                    shorthandExpression);
+            return handleExpressionError(StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION,
+                    gapShorthandProperty, shorthandExpression);
 
         }
     }

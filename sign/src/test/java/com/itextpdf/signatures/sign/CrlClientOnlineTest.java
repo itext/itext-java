@@ -22,9 +22,11 @@
  */
 package com.itextpdf.signatures.sign;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.crypto.CryptoUtil;
 import com.itextpdf.signatures.CrlClientOnline;
+import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.X509MockCertificate;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
@@ -32,9 +34,9 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.cert.Certificate;
@@ -52,6 +54,7 @@ public class CrlClientOnlineTest extends ExtendedITextTest {
     private static final String certSrc = "./src/test/resources/com/itextpdf/signatures/sign/CrlClientOnlineTest/";
     private static final String certWithMalformedUrl = certSrc + "certWithMalformedUrl.crt";
     private static final String certWithCorrectUrl = certSrc + "certWithCorrectUrl.crt";
+    private static final String chainWithSeveralUrls = certSrc + "chainWithSeveralUrls.pem";
     private static final String destinationFolder = "./target/test/com/itextpdf/signatures/sign/";
 
     @Test
@@ -101,8 +104,8 @@ public class CrlClientOnlineTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = "Skipped CRL url (malformed): test",
                     logLevel = LogLevelConstants.INFO)
     })
-    public void checkCrlCertWithMalformedUrlTest() throws CertificateException, FileNotFoundException {
-        Certificate chain = CryptoUtil.readPublicCertificate(new FileInputStream(certWithMalformedUrl));
+    public void checkCrlCertWithMalformedUrlTest() throws CertificateException, IOException {
+        Certificate chain = CryptoUtil.readPublicCertificate(FileUtil.getInputStreamForFile(certWithMalformedUrl));
         CrlClientOnline crlClientOnline = new CrlClientOnline(new Certificate[] {chain});
         Assert.assertEquals(0, crlClientOnline.getUrlsSize());
     }
@@ -113,17 +116,48 @@ public class CrlClientOnlineTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = "Added CRL url: http://www.example.com/crl/test.crl",
                     logLevel = LogLevelConstants.INFO)
     })
-    public void checkCrlCertWithCorrectUrlTest() throws CertificateException, FileNotFoundException {
-        Certificate chain = CryptoUtil.readPublicCertificate(new FileInputStream(certWithCorrectUrl));
+    public void checkCrlCertWithCorrectUrlTest() throws CertificateException, IOException {
+        Certificate chain = CryptoUtil.readPublicCertificate(FileUtil.getInputStreamForFile(certWithCorrectUrl));
         CrlClientOnline crlClientOnline = new CrlClientOnline(new Certificate[] {chain});
         Assert.assertEquals(1, crlClientOnline.getUrlsSize());
     }
 
     @Test
-    public void cannotGetEncodedWhenCertIsNullTest() throws CertificateEncodingException, IOException {
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = "Checking certificate: ", logLevel = LogLevelConstants.INFO, count = 2),
+            @LogMessage(messageTemplate = "Added CRL url: ", logLevel = LogLevelConstants.INFO, count = 4)
+    })
+    public void checkCrlCertWithSeveralUrlsTest() throws CertificateException, IOException {
+        // Root certificate with 1 CRL and leaf certificate with 3 CRLs in 3 Distribution Points.
+        Certificate[] chain = PemFileHelper.readFirstChain(chainWithSeveralUrls);
+        CrlClientOnline crlClientOnline = new CrlClientOnline(chain);
+        Assert.assertEquals(4, crlClientOnline.getUrlsSize());
+    }
+
+    @Test
+    public void cannotGetEncodedWhenCertIsNullTest() throws CertificateEncodingException {
         CrlClientOnline crlClientOnline = new CrlClientOnline();
         Assert.assertNull(crlClientOnline.getEncoded(null, ""));
         Assert.assertEquals(0, crlClientOnline.getUrlsSize());
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = "Looking for CRL for certificate ", logLevel = LogLevelConstants.INFO),
+            @LogMessage(messageTemplate = "Found CRL url: ", logLevel = LogLevelConstants.INFO, count = 3),
+            @LogMessage(messageTemplate = "Checking CRL: ", logLevel = LogLevelConstants.INFO, count = 3),
+            @LogMessage(messageTemplate = "Added CRL found at: ", logLevel = LogLevelConstants.INFO, count = 3)
+    })
+    public void unreachableSeveralCrlDistributionPointsFromTheCertChainTest() throws CertificateException, IOException {
+        CrlClientOnline crlClientOnline = new CrlClientOnline() {
+            @Override
+            protected InputStream getCrlResponse(X509Certificate cert, URL url) {
+                return new ByteArrayInputStream(new byte[0]);
+            }
+        };
+        X509Certificate checkCert = (X509Certificate) PemFileHelper.readFirstChain(chainWithSeveralUrls)[1];
+        Collection<byte[]> bytes = crlClientOnline.getEncoded(checkCert, null);
+        Assert.assertEquals(3, bytes.size());
     }
 
     @Test
@@ -135,7 +169,7 @@ public class CrlClientOnlineTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = IoLogMessageConstant.INVALID_DISTRIBUTION_POINT, logLevel =
                     LogLevelConstants.INFO)
     })
-    public void unreachableCrlDistributionPointTest() throws CertificateEncodingException, IOException {
+    public void unreachableCrlDistributionPointTest() throws CertificateEncodingException {
         CrlClientOnline crlClientOnline = new CrlClientOnline("http://www.example.com/crl/test.crl");
         X509Certificate checkCert = new X509MockCertificate();
         Collection<byte[]> bytes = crlClientOnline.getEncoded(checkCert, "http://www.example.com/crl/test.crl");
@@ -153,7 +187,7 @@ public class CrlClientOnlineTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = IoLogMessageConstant.INVALID_DISTRIBUTION_POINT, logLevel =
                     LogLevelConstants.INFO)
     })
-    public void unreachableCrlDistributionPointFromCertChainTest() throws CertificateEncodingException, IOException {
+    public void unreachableCrlDistributionPointFromCertChainTest() throws CertificateEncodingException {
         CrlClientOnline crlClientOnline = new CrlClientOnline();
         X509Certificate checkCert = new X509MockCertificate();
         Collection<byte[]> bytes = crlClientOnline.getEncoded(checkCert, "http://www.example.com/crl/test.crl");

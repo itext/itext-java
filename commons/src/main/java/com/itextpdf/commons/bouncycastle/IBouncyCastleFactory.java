@@ -807,6 +807,15 @@ public interface IBouncyCastleFactory {
     IExtensions createExtensions(IExtension extension);
 
     /**
+     * Create extensions wrapper from extension wrapper.
+     *
+     * @param extensions array of the extension wrappers to create extensions wrapper from
+     *
+     * @return created extensions wrapper
+     */
+    IExtensions createExtensions(IExtension[] extensions);
+
+    /**
      * Create extensions wrapper for {@code null} value.
      *
      * @return created extensions wrapper
@@ -1267,6 +1276,15 @@ public interface IBouncyCastleFactory {
      * @return casted ASN1 Generalized time wrapper
      */
     IASN1GeneralizedTime createASN1GeneralizedTime(IASN1Encodable encodable);
+
+    /**
+     * Cast {@link Date} to ASN1 Generalized time wrapper.
+     *
+     * @param date {@link Date} to be cast
+     *
+     * @return ASN1 Generalized time wrapper
+     */
+    IASN1GeneralizedTime createASN1GeneralizedTime(Date date);
 
     /**
      * Cast ASN1 Encodable wrapper to ASN1 UTC Time wrapper.

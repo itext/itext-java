@@ -23,6 +23,7 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.commons.datastructures.Tuple2;
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -149,7 +150,7 @@ public class LinkTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "borderedLinkTest.pdf";
         String cmpFileName = sourceFolder + "cmp_borderedLinkTest.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)));
         Document doc = new Document(pdfDoc);
 
         Link link = new Link("Link with orange border", PdfAction.createURI("http://itextpdf.com"));

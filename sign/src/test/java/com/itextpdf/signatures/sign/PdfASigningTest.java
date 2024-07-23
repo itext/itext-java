@@ -22,11 +22,12 @@
  */
 package com.itextpdf.signatures.sign;
 
-import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
+import com.itextpdf.commons.utils.FileUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.PdfSigFieldLock;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -48,8 +49,6 @@ import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
@@ -119,8 +118,8 @@ public class PdfASigningTest extends ExtendedITextTest {
         String src = sourceFolder + "simplePdfA2Document.pdf";
         String out = destinationFolder + "signedPdfA2Document.pdf";
 
-        PdfReader reader = new PdfReader(new FileInputStream(src));
-        PdfSigner signer = new PdfSigner(reader, new FileOutputStream(out), new StampingProperties());
+        PdfReader reader = new PdfReader(FileUtil.getInputStreamForFile(src));
+        PdfSigner signer = new PdfSigner(reader, FileUtil.getFileOutputStream(out), new StampingProperties());
         signer.setFieldLockDict(new PdfSigFieldLock());
         signer.setCertificationLevel(PdfSigner.CERTIFIED_NO_CHANGES_ALLOWED);
 
@@ -169,8 +168,8 @@ public class PdfASigningTest extends ExtendedITextTest {
         String src = sourceFolder + "simplePdfADocument.pdf";
         String out = destinationFolder + "signedPdfADocument2.pdf";
 
-        PdfReader reader = new PdfReader(new FileInputStream(src));
-        PdfSigner signer = new PdfSigner(reader, new FileOutputStream(out), new StampingProperties());
+        PdfReader reader = new PdfReader(FileUtil.getInputStreamForFile(src));
+        PdfSigner signer = new PdfSigner(reader, FileUtil.getFileOutputStream(out), new StampingProperties());
         signer.setFieldLockDict(new PdfSigFieldLock());
         signer.setCertificationLevel(PdfSigner.NOT_CERTIFIED);
 
@@ -216,7 +215,7 @@ public class PdfASigningTest extends ExtendedITextTest {
         if (isAppendMode) {
             properties.useAppendMode();
         }
-        PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), properties);
+        PdfSigner signer = new PdfSigner(reader, FileUtil.getFileOutputStream(dest), properties);
 
         signer.setCertificationLevel(certificationLevel);
 

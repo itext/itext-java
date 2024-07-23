@@ -88,27 +88,27 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
     @Test
     public void getOcspResponseWhenCheckCertIsNullTest()
             throws GeneralSecurityException, IOException, AbstractOperatorCreationException, AbstractOCSPException {
-        OcspClientBouncyCastle castle = new OcspClientBouncyCastle(null);
+        OcspClientBouncyCastle castle = new OcspClientBouncyCastle();
         Assert.assertNull(castle.getOcspResponse(null, rootCert, ocspServiceUrl));
     }
 
     @Test
     public void getOcspResponseWhenRootCertIsNullTest()
             throws GeneralSecurityException, IOException, AbstractOperatorCreationException, AbstractOCSPException {
-        OcspClientBouncyCastle castle = new OcspClientBouncyCastle(null);
+        OcspClientBouncyCastle castle = new OcspClientBouncyCastle();
         Assert.assertNull(castle.getOcspResponse(checkCert, null, ocspServiceUrl));
     }
 
     @Test
     public void getOcspResponseWhenRootAndCheckCertIsNullTest()
             throws GeneralSecurityException, IOException, AbstractOperatorCreationException, AbstractOCSPException {
-        OcspClientBouncyCastle castle = new OcspClientBouncyCastle(null);
+        OcspClientBouncyCastle castle = new OcspClientBouncyCastle();
         Assert.assertNull(castle.getOcspResponse(null, null, ocspServiceUrl));
     }
 
     @Test
     public void getOcspResponseWhenUrlCertIsNullTest() {
-        OcspClientBouncyCastle castle = new OcspClientBouncyCastle(null);
+        OcspClientBouncyCastle castle = new OcspClientBouncyCastle();
         Assert.assertThrows(ConnectException.class,
                 () -> castle.getOcspResponse(checkCert, rootCert, null));
     }
@@ -118,7 +118,7 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = "Getting OCSP from http://asd", logLevel = LogLevelConstants.INFO),
     })
     public void incorrectUrlTest() {
-        OcspClientBouncyCastle castle = new OcspClientBouncyCastle(null);
+        OcspClientBouncyCastle castle = new OcspClientBouncyCastle();
         Assert.assertThrows(UnknownHostException.class,
                 () -> castle.getOcspResponse(checkCert, rootCert, "http://asd"));
     }
@@ -128,7 +128,7 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = "Getting OCSP from", logLevel = LogLevelConstants.INFO),
     })
     public void malformedUrlTest() {
-        OcspClientBouncyCastle castle = new OcspClientBouncyCastle(null);
+        OcspClientBouncyCastle castle = new OcspClientBouncyCastle();
         Assert.assertThrows(MalformedURLException.class,
                 () -> castle.getOcspResponse(checkCert, rootCert, ""));
     }
@@ -139,7 +139,7 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
                     = LogLevelConstants.INFO),
     })
     public void connectionRefusedTest() {
-        OcspClientBouncyCastle castle = new OcspClientBouncyCastle(null);
+        OcspClientBouncyCastle castle = new OcspClientBouncyCastle();
         Assert.assertThrows(ConnectException.class,
                 () -> castle.getOcspResponse(checkCert, rootCert, ocspServiceUrl));
     }
@@ -156,7 +156,7 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
 
     @Test
     public void getBasicOcspRespNullTest() {
-        OcspClientBouncyCastle ocspClientBouncyCastle = new OcspClientBouncyCastle(null);
+        OcspClientBouncyCastle ocspClientBouncyCastle = new OcspClientBouncyCastle();
 
         IBasicOCSPResp basicOCSPResp = ocspClientBouncyCastle
                 .getBasicOCSPResp(checkCert, null, ocspServiceUrl);
