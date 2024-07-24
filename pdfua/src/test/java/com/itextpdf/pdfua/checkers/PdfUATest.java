@@ -26,6 +26,7 @@ import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
@@ -46,18 +47,22 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfScreenAnnotation;
+import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
+import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.utils.ValidationContainer;
 import com.itextpdf.layout.Document;
+import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.pdfua.PdfUATestPdfDocument;
 import com.itextpdf.pdfua.UaValidationTestFramework;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
@@ -69,16 +74,10 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Tag;
+
+import org.junit.jupiter.api.*;
 
 @Tag("IntegrationTest")
 public class PdfUATest extends ExtendedITextTest {
@@ -120,11 +119,9 @@ public class PdfUATest extends ExtendedITextTest {
 
     }
 
-
     @Test
     public void checkPoint01_007_suspectsHasEntryTrue() {
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(new ByteArrayOutputStream()));
+        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         PdfDictionary markInfo = (PdfDictionary) pdfDoc.getCatalog().getPdfObject().get(PdfName.MarkInfo);
         Assertions.assertNotNull(markInfo);
         markInfo.put(PdfName.Suspects, new PdfBoolean(true));
@@ -136,8 +133,7 @@ public class PdfUATest extends ExtendedITextTest {
 
     @Test
     public void checkPoint01_007_suspectsHasEntryFalse() {
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(new ByteArrayOutputStream()));
+        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         PdfDictionary markInfo = (PdfDictionary) pdfDoc.getCatalog().getPdfObject().get(PdfName.MarkInfo);
         markInfo.put(PdfName.Suspects, new PdfBoolean(false));
         AssertUtil.doesNotThrow(() -> pdfDoc.close());
@@ -146,8 +142,7 @@ public class PdfUATest extends ExtendedITextTest {
     @Test
     public void checkPoint01_007_suspectsHasNoEntry() {
         // suspects entry is optional so it is ok to not have it according to the spec
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(new ByteArrayOutputStream()));
+        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         AssertUtil.doesNotThrow(() -> pdfDoc.close());
     }
 
@@ -155,8 +150,7 @@ public class PdfUATest extends ExtendedITextTest {
     @Test
     public void emptyPageDocument() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "emptyPageDocument.pdf";
-        try (PdfDocument pdfDocument = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf))) {
+        try (PdfDocument pdfDocument = new PdfUATestPdfDocument(new PdfWriter(outPdf))) {
             pdfDocument.addNewPage();
         }
         Assertions.assertNull(new CompareTool().compareByContent(outPdf, SOURCE_FOLDER + "cmp_emptyPageDocument.pdf",
@@ -172,8 +166,7 @@ public class PdfUATest extends ExtendedITextTest {
         PdfPage page = pdfDocument.addNewPage();
         PdfFileSpec spec = PdfFileSpec.createExternalFileSpec(pdfDocument, "sample.wav");
         PdfScreenAnnotation screen = new PdfScreenAnnotation(new Rectangle(100, 100));
-        PdfAction action = PdfAction.createRendition("sample.wav",
-                spec, "audio/x-wav", screen);
+        PdfAction action = PdfAction.createRendition("sample.wav", spec, "audio/x-wav", screen);
         screen.setAction(action);
         screen.setContents("screen annotation");
         page.addAnnotation(screen);
@@ -187,8 +180,7 @@ public class PdfUATest extends ExtendedITextTest {
     @Test
     public void documentWithNoLangEntryTest() throws IOException {
         final String outPdf = DESTINATION_FOLDER + "documentWithNoLangEntryTest.pdf";
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf,
-                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf, new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
         pdfDoc.setTagged();
         ValidationContainer validationContainer = new ValidationContainer();
         validationContainer.addChecker(new PdfUA1Checker(pdfDoc));
@@ -206,8 +198,7 @@ public class PdfUATest extends ExtendedITextTest {
     @Test
     public void documentWithEmptyStringLangEntryTest() throws IOException {
         final String outPdf = DESTINATION_FOLDER + "documentWithEmptyStringLangEntryTest.pdf";
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf,
-                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf, new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
         pdfDoc.setTagged();
         ValidationContainer validationContainer = new ValidationContainer();
         validationContainer.addChecker(new PdfUA1Checker(pdfDoc));
@@ -224,8 +215,7 @@ public class PdfUATest extends ExtendedITextTest {
     @Test
     public void documentWithComplexLangEntryTest() throws IOException, InterruptedException {
         final String outPdf = DESTINATION_FOLDER + "documentWithComplexLangEntryTest.pdf";
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf,
-                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf, new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
         pdfDoc.setTagged();
         ValidationContainer validationContainer = new ValidationContainer();
         validationContainer.addChecker(new PdfUA1Checker(pdfDoc));
@@ -243,8 +233,7 @@ public class PdfUATest extends ExtendedITextTest {
     @Test
     public void documentWithoutViewerPreferencesTest() throws IOException {
         final String outPdf = DESTINATION_FOLDER + "documentWithoutViewerPreferencesTest.pdf";
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf,
-                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf, new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
         pdfDoc.setTagged();
         ValidationContainer validationContainer = new ValidationContainer();
         validationContainer.addChecker(new PdfUA1Checker(pdfDoc));
@@ -262,8 +251,7 @@ public class PdfUATest extends ExtendedITextTest {
     @Test
     public void documentWithEmptyViewerPreferencesTest() throws IOException {
         final String outPdf = DESTINATION_FOLDER + "documentWithEmptyViewerPreferencesTest.pdf";
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf,
-                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf, new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
         pdfDoc.setTagged();
         ValidationContainer validationContainer = new ValidationContainer();
         validationContainer.addChecker(new PdfUA1Checker(pdfDoc));
@@ -282,8 +270,7 @@ public class PdfUATest extends ExtendedITextTest {
     @Test
     public void documentWithInvalidViewerPreferencesTest() throws IOException {
         final String outPdf = DESTINATION_FOLDER + "documentWithEmptyViewerPreferencesTest.pdf";
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf,
-                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf, new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
         pdfDoc.setTagged();
         ValidationContainer validationContainer = new ValidationContainer();
         validationContainer.addChecker(new PdfUA1Checker(pdfDoc));
@@ -313,8 +300,7 @@ public class PdfUATest extends ExtendedITextTest {
             ocProperties.put(PdfName.Configs, configs);
             pdfDocument.getCatalog().put(PdfName.OCProperties, ocProperties);
         });
-        framework.assertBothFail("pdfuaOCGPropertiesCheck01",
-                PdfUAExceptionMessageConstants.NAME_ENTRY_IS_MISSING_OR_EMPTY_IN_OCG);
+        framework.assertBothFail("pdfuaOCGPropertiesCheck01", PdfUAExceptionMessageConstants.NAME_ENTRY_IS_MISSING_OR_EMPTY_IN_OCG);
     }
 
     @Test
@@ -330,8 +316,7 @@ public class PdfUATest extends ExtendedITextTest {
             ocProperties.put(PdfName.Configs, configs);
             pdfDocument.getCatalog().put(PdfName.OCProperties, ocProperties);
         });
-        framework.assertBothFail("pdfuaOCGPropertiesCheck02",
-                PdfUAExceptionMessageConstants.OCG_SHALL_NOT_CONTAIN_AS_ENTRY);
+        framework.assertBothFail("pdfuaOCGPropertiesCheck02", PdfUAExceptionMessageConstants.OCG_SHALL_NOT_CONTAIN_AS_ENTRY);
     }
 
     @Test
@@ -349,8 +334,7 @@ public class PdfUATest extends ExtendedITextTest {
 
             pdfDocument.getCatalog().put(PdfName.OCProperties, ocProperties);
         });
-        framework.assertBothFail("pdfuaOCGPropertiesCheck03",
-                PdfUAExceptionMessageConstants.NAME_ENTRY_IS_MISSING_OR_EMPTY_IN_OCG);
+        framework.assertBothFail("pdfuaOCGPropertiesCheck03", PdfUAExceptionMessageConstants.NAME_ENTRY_IS_MISSING_OR_EMPTY_IN_OCG);
     }
 
     @Test
@@ -365,8 +349,7 @@ public class PdfUATest extends ExtendedITextTest {
 
             pdfDocument.getCatalog().put(PdfName.OCProperties, ocProperties);
         });
-        framework.assertBothFail("pdfuaOCGPropertiesCheck04",
-                PdfUAExceptionMessageConstants.OCG_PROPERTIES_CONFIG_SHALL_BE_AN_ARRAY);
+        framework.assertBothFail("pdfuaOCGPropertiesCheck04", PdfUAExceptionMessageConstants.OCG_PROPERTIES_CONFIG_SHALL_BE_AN_ARRAY);
     }
 
     @Test
@@ -424,25 +407,20 @@ public class PdfUATest extends ExtendedITextTest {
         PdfCanvas canvas = new PdfCanvas(page1);
 
         PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.PREFER_EMBEDDED);
-        canvas.beginText()
-                .setFontAndSize(font, 12)
-                .setTextMatrix(1, 0, 0, 1, 32, 512);
+        canvas.beginText().setFontAndSize(font, 12).setTextMatrix(1, 0, 0, 1, 32, 512);
 
-        DefaultAccessibilityProperties paraProps
-                = new DefaultAccessibilityProperties(StandardRoles.P);
+        DefaultAccessibilityProperties paraProps = new DefaultAccessibilityProperties(StandardRoles.P);
         tagPointer.addTag(paraProps).addTag(StandardRoles.SPAN);
 
         tagPointer.getProperties().setStructureElementIdString("hello-element");
-        canvas.openTag(tagPointer.getTagReference())
-                .showText("Hello ")
-                .closeTag();
+        canvas.openTag(tagPointer.getTagReference()).showText("Hello ").closeTag();
         tagPointer.moveToParent().addTag(StandardRoles.SPAN);
 
         tagPointer.getProperties().setStructureElementIdString("world-element");
 
         Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> tagPointer.getProperties().setStructureElementIdString("hello-element"));
         Assertions.assertEquals(MessageFormatUtil.format(
-                PdfUAExceptionMessageConstants.NON_UNIQUE_ID_ENTRY_IN_STRUCT_TREE_ROOT, "hello-element"),
+                        PdfUAExceptionMessageConstants.NON_UNIQUE_ID_ENTRY_IN_STRUCT_TREE_ROOT, "hello-element"),
                 e.getMessage());
     }
 
@@ -464,8 +442,7 @@ public class PdfUATest extends ExtendedITextTest {
     public void manualPdfUaCreation() throws IOException, InterruptedException {
 
         final String outPdf = DESTINATION_FOLDER + "manualPdfUaCreation.pdf";
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf,
-                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf, new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
         Document document = new Document(pdfDoc, PageSize.A4.rotate());
 
         //TAGGED PDF
@@ -525,4 +502,284 @@ public class PdfUATest extends ExtendedITextTest {
                 DESTINATION_FOLDER, "diff_"));
         Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
+
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)})
+    public void copyPageAsFormXobjectWithTaggedPdf() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "xobjectTesting.pdf";
+        String inputPdf = SOURCE_FOLDER + "cmp_manualPdfUaCreation.pdf";
+        String cmpFIle = SOURCE_FOLDER + "cmp_xobjectTesting.pdf";
+        PdfUATestPdfDocument doc = new PdfUATestPdfDocument(new PdfWriter(outPdf));
+
+        PdfDocument inputDoc = new PdfDocument(new PdfReader(inputPdf));
+        PdfFormXObject xObject = inputDoc.getFirstPage().copyAsFormXObject(doc);
+
+        Document document = new Document(doc);
+
+        Image img = new Image(xObject);
+        img.getAccessibilityProperties().setAlternateDescription("Some description");
+        document.add(img);
+
+        document.close();
+        doc.close();
+
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpFIle, DESTINATION_FOLDER, "diff_"));
+        VeraPdfValidator validator = new VeraPdfValidator();
+        // We expect verapdf to fail because we are embedding tagged content which contains artifacts
+        Assertions.assertNotNull("We expect vera pdf to fail, because we are embedding tagged" + " content which contains artifacts into a tagged item", validator.validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)})
+    public void copyPageAsFormXobjectWithUnTaggedContentButInvalidBecauseOfFont() throws IOException, InterruptedException {
+        //itext should thrown an exception here but it does not.
+        // because even if it's not tagged the inner content stream is not compliant as the font is not embeded
+        String outputPdf = DESTINATION_FOLDER + "copyPageAsFormXobjectWithUnTaggedPdf.pdf";
+        String cmpFile = SOURCE_FOLDER + "cmp_copyPageAsFormXobjectWithUnTaggedPdf.pdf";
+
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PdfDocument dummyDoc = new PdfDocument(new PdfWriter(os));
+        Document document = new Document(dummyDoc);
+        document.add(new Paragraph("Hello World!"));
+        document.close();
+
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(outputPdf));
+
+        PdfFormXObject xObject = new PdfDocument(new PdfReader(new ByteArrayInputStream(os.toByteArray()))).getFirstPage().copyAsFormXObject(pdfDoc);
+
+        Image img = new Image(xObject);
+        img.getAccessibilityProperties().setAlternateDescription("Some description");
+        Document doc = new Document(pdfDoc);
+        doc.add(img);
+        doc.close();
+        pdfDoc.close();
+
+        Assertions.assertNull(new CompareTool().compareByContent(outputPdf, cmpFile, DESTINATION_FOLDER, "diff_"));
+        VeraPdfValidator validator = new VeraPdfValidator();
+        Assertions.assertNotNull("Fails are expected because the content inside the xobject isn't valid because " +
+                "of not embedded font, and iText doesn't parse the content streams", validator.validate(outputPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+
+    }
+
+
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)})
+    @Test
+    public void copyPageAsFormWithUntaggedContentAndCorrectFont() throws IOException, InterruptedException {
+        String outputPdf = DESTINATION_FOLDER + "copyPageAsFormWithCorrectFontXobjectWithUnTaggedPdf.pdf";
+        String cmpFile = SOURCE_FOLDER + "cmp_copyPageAsFormWithCorrectFontXobjectWithUnTaggedPdf.pdf";
+
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PdfDocument dummyDoc = new PdfDocument(new PdfWriter(os));
+        Document document = new Document(dummyDoc);
+
+        PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.PREFER_EMBEDDED);
+        document.add(new Paragraph("Hello World!").setFont(font));
+        document.close();
+
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(outputPdf));
+
+        PdfFormXObject xObject = new PdfDocument(new PdfReader(new ByteArrayInputStream(os.toByteArray()))).getFirstPage().copyAsFormXObject(pdfDoc);
+
+        Image img = new Image(xObject);
+        img.getAccessibilityProperties().setAlternateDescription("Some description");
+        Document doc = new Document(pdfDoc);
+        doc.add(img);
+        doc.close();
+        pdfDoc.close();
+
+        Assertions.assertNull(new CompareTool().compareByContent(outputPdf, cmpFile, DESTINATION_FOLDER, "diff_"));
+        VeraPdfValidator validator = new VeraPdfValidator();
+        Assertions.assertNull(validator.validate(outputPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+
+    }
+
+    @Test
+    public void manuallyAddToCanvasWithUnTaggedContentButBadFont() throws IOException, InterruptedException {
+        String outputPdf = DESTINATION_FOLDER + "manuallyAddToCanvasWithUnTaggedPdf.pdf";
+        String cmpFile = SOURCE_FOLDER + "cmp_manuallyAddToCanvasWithUnTaggedPdf.pdf";
+
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PdfDocument dummyDoc = new PdfDocument(new PdfWriter(os));
+        Document document = new Document(dummyDoc);
+        document.add(new Paragraph("Hello World!"));
+        document.close();
+
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(outputPdf));
+
+        PdfFormXObject xObject = new PdfDocument(new PdfReader(new ByteArrayInputStream(os.toByteArray()))).getFirstPage().copyAsFormXObject(pdfDoc);
+
+
+        PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+        canvas.beginMarkedContent(PdfName.Artifact);
+        canvas.addXObject(xObject);
+        canvas.endMarkedContent();
+        pdfDoc.close();
+
+        Assertions.assertNull(new CompareTool().compareByContent(outputPdf, cmpFile, DESTINATION_FOLDER, "diff_"));
+        VeraPdfValidator validator = new VeraPdfValidator();
+        Assertions.assertNotNull("Content of the xobject is not valid causing it to be" +
+                " an non compliant", validator.validate(outputPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+
+    }
+
+    @Test
+    public void manuallyAddToCanvasCorrectFontAndUnTaggedContent() throws IOException, InterruptedException {
+        String outputPdf = DESTINATION_FOLDER + "manuallyAddToCanvasWithUnAndCorrectFontUnTaggedPdf.pdf";
+        String cmpFile = SOURCE_FOLDER + "cmp_manuallyAddToCanvasWithUnAndCorrectFontUnTaggedPdf.pdf";
+
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PdfDocument dummyDoc = new PdfDocument(new PdfWriter(os));
+        Document document = new Document(dummyDoc);
+        PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
+        document.add(new Paragraph("Hello World!").setFont(font));
+        document.close();
+
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(outputPdf));
+
+        PdfFormXObject xObject = new PdfDocument(new PdfReader(new ByteArrayInputStream(os.toByteArray()))).getFirstPage().copyAsFormXObject(pdfDoc);
+
+
+        PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+        TagTreePointer tagPointer = pdfDoc.getTagStructureContext().getAutoTaggingPointer().addTag(StandardRoles.DIV);
+        tagPointer.setPageForTagging(pdfDoc.getPage(1));
+        canvas.openTag(tagPointer.getTagReference());
+        canvas.addXObject(xObject);
+        canvas.closeTag();
+        pdfDoc.close();
+
+        Assertions.assertNull(new CompareTool().compareByContent(outputPdf, cmpFile, DESTINATION_FOLDER, "diff_"));
+        VeraPdfValidator validator = new VeraPdfValidator();
+        Assertions.assertNull(validator.validate(outputPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+
+    }
+
+    @Test
+    public void manuallyAddToCanvasAndCorrectFontAndArtifactUnTaggedContent() throws IOException, InterruptedException {
+        //Now we are again adding untagged content with some artifacts and embedded font's so we should also be fine
+        String outputPdf = DESTINATION_FOLDER + "manuallyAddToCanvasWithUnAndCorrectFontAndArtifactUnTaggedPdf.pdf";
+        String cmpFile = SOURCE_FOLDER + "cmp_manuallyAddToCanvasWithUnAndCorrectFontUnAndArtifactTaggedPdf.pdf";
+
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PdfDocument dummyDoc = new PdfDocument(new PdfWriter(os));
+        Document document = new Document(dummyDoc);
+        PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
+        document.add(new Paragraph("Hello World!").setFont(font).setBorder(new SolidBorder(ColorConstants.CYAN, 2)));
+        document.close();
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(outputPdf));
+
+        PdfFormXObject xObject = new PdfDocument(new PdfReader(new ByteArrayInputStream(os.toByteArray()))).getFirstPage().copyAsFormXObject(pdfDoc);
+
+
+        PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+        TagTreePointer tagPointer = pdfDoc.getTagStructureContext().getAutoTaggingPointer().addTag(StandardRoles.DIV);
+        tagPointer.setPageForTagging(pdfDoc.getPage(1));
+        canvas.openTag(tagPointer.getTagReference());
+        canvas.addXObject(xObject);
+        canvas.closeTag();
+        pdfDoc.close();
+
+        Assertions.assertNull(new CompareTool().compareByContent(outputPdf, cmpFile, DESTINATION_FOLDER, "diff_"));
+        VeraPdfValidator validator = new VeraPdfValidator();
+        Assertions.assertNull(validator.validate(outputPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+
+    }
+
+    @Test
+    public void manuallyAddToCanvasAndCorrectFontAndArtifactTaggedContent() throws IOException, InterruptedException {
+        String outputPdf = DESTINATION_FOLDER + "manuallyAddToCanvasWithUnAndCorrectFontAndArtifactUnPdf.pdf";
+        String cmpFile = SOURCE_FOLDER + "cmp_manuallyAddToCanvasWithUnAndCorrectFontUnAndArtifactPdf.pdf";
+
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PdfDocument dummyDoc = new PdfDocument(new PdfWriter(os));
+        dummyDoc.setTagged();
+        Document document = new Document(dummyDoc);
+        PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
+        document.add(new Paragraph("Hello World!").setFont(font).setBorder(new SolidBorder(ColorConstants.CYAN, 2)));
+        document.close();
+
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(outputPdf));
+
+        PdfFormXObject xObject = new PdfDocument(new PdfReader(new ByteArrayInputStream(os.toByteArray()))).getFirstPage().copyAsFormXObject(pdfDoc);
+
+
+        PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+        TagTreePointer tagPointer = pdfDoc.getTagStructureContext().getAutoTaggingPointer().addTag(StandardRoles.DIV);
+        tagPointer.setPageForTagging(pdfDoc.getPage(1));
+
+        canvas.openTag(tagPointer.getTagReference());
+        canvas.addXObject(xObject);
+        canvas.closeTag();
+        pdfDoc.close();
+
+        Assertions.assertNull(new CompareTool().compareByContent(outputPdf, cmpFile, DESTINATION_FOLDER, "diff_"));
+        VeraPdfValidator validator = new VeraPdfValidator();
+        Assertions.assertNotNull("The content is non compliant because it contains both artifacts," +
+                " and real content", validator.validate(outputPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+
+    }
+
+    @Test
+    public void manuallyAddToCanvasAndCorrectFontAndArtifactTaggedContentInsideArtifact() throws IOException, InterruptedException {
+        // We are adding tagged content to an artifact. Looks like Verapdf doesn't check xobject stream at all because
+        // page content is marked as artifact. We think it's wrong though.
+        String outputPdf = DESTINATION_FOLDER + "manuallyAddToCanvasWithUnAndCorrectFontAndArtifactInsideArtPdf.pdf";
+        String cmpFile = SOURCE_FOLDER + "cmp_manuallyAddToCanvasWithUnAndCorrectFontUnAndArtifacInsideArttPdf.pdf";
+
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PdfDocument dummyDoc = new PdfDocument(new PdfWriter(os));
+        dummyDoc.setTagged();
+        Document document = new Document(dummyDoc);
+        PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
+        document.add(new Paragraph("Hello World!").setFont(font).setBorder(new SolidBorder(ColorConstants.CYAN, 2)));
+        document.close();
+
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(outputPdf));
+
+        PdfFormXObject xObject = new PdfDocument(new PdfReader(new ByteArrayInputStream(os.toByteArray()))).getFirstPage().copyAsFormXObject(pdfDoc);
+
+
+        PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+        canvas.openTag(new CanvasArtifact());
+        canvas.addXObject(xObject);
+        canvas.closeTag();
+        pdfDoc.close();
+
+        Assertions.assertNull(new CompareTool().compareByContent(outputPdf, cmpFile, DESTINATION_FOLDER, "diff_"));
+        VeraPdfValidator validator = new VeraPdfValidator();
+        Assertions.assertNull(validator.validate(outputPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+
+    }
+
+    @Test
+    @Disabled("DEVSIX-8509")
+    public void manuallyAddToCanvasAndCorrectFontAndArtifactTaggedContentInsideUntaggedPageContent() throws IOException, InterruptedException {
+        //We are adding untagged content we should throw an exception
+        String outputPdf = DESTINATION_FOLDER + "manuallyAddToCanvasWithAndCorrectFontTaggedAndArtifactInsidedUntaggedContent.pdf";
+        String cmpFile = SOURCE_FOLDER + "cmp_manuallyAddToCanvasWithAndCorrectFontTaggedAndArtifactInsidedUntaggedContent.pdf";
+
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PdfDocument dummyDoc = new PdfDocument(new PdfWriter(os));
+        dummyDoc.setTagged();
+        Document document = new Document(dummyDoc);
+        PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
+        document.add(new Paragraph("Hello World!").setFont(font).setBorder(new SolidBorder(ColorConstants.CYAN, 2)));
+        document.close();
+
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(outputPdf));
+
+        PdfFormXObject xObject = new PdfDocument(new PdfReader(new ByteArrayInputStream(os.toByteArray()))).getFirstPage().copyAsFormXObject(pdfDoc);
+
+
+        PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+        canvas.addXObject(xObject);
+        pdfDoc.close();
+
+        Assertions.assertNull(new CompareTool().compareByContent(outputPdf, cmpFile, DESTINATION_FOLDER, "diff_"));
+        VeraPdfValidator validator = new VeraPdfValidator();
+        Assertions.assertNull(validator.validate(outputPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+
+    }
+
 }

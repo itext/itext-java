@@ -37,6 +37,7 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.canvas.CanvasTag;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagging.PdfMcr;
@@ -56,6 +57,7 @@ import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -239,6 +241,46 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     }
 
     @Test
+    public void checkPoint_01_005_TextGlyphLineInBadStructure() throws IOException {
+        String outPdf = DESTINATION_FOLDER + "checkPoint_01_005_TextGlyphLineInBadStructure.pdf";
+        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
+                new PdfWriter(outPdf));
+        PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
+        PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage()) {
+
+            @Override
+            public PdfCanvas openTag(CanvasTag tag) {
+                // disable the checkIsoConformance call check by simulating  generating not tagged content
+                // same as in annotations of formfields.
+                setDrawingOnPage(false);
+                super.openTag(tag);
+                setDrawingOnPage(true);
+                return this;
+            }
+        };
+
+        GlyphLine glyphLine = font.createGlyphLine("Hello World!");
+
+        TagTreePointer pointer = pdfDoc.getTagStructureContext().getAutoTaggingPointer();
+        pointer.addTag(StandardRoles.DIV);
+        pointer.setPageForTagging(pdfDoc.getFirstPage());
+        canvas.saveState();
+        canvas.openTag(pointer.getTagReference());
+        canvas.openTag(new CanvasArtifact());
+        pointer.addTag(StandardRoles.P);
+        canvas.openTag(pointer.getTagReference());
+        canvas.setFontAndSize(font, 12);
+        canvas.beginText();
+        canvas.moveText(200, 200);
+        canvas.setColor(ColorConstants.RED, true);
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> {
+            canvas.showText(glyphLine);
+        });
+        Assertions.assertEquals(PdfUAExceptionMessageConstants.REAL_CONTENT_INSIDE_ARTIFACT_OR_VICE_VERSA,
+                e.getMessage());
+    }
+
+    @Test
     public void checkPoint_01_005_TextGlyphLineContentIsArtifact() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "01_005_TextGlyphLineContentIsArtifact.pdf";
         PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
@@ -360,7 +402,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas.setColor(ColorConstants.RED, true)
                     .setLineWidth(2);
-                canvas.lineTo(200, 200).fill();
+            canvas.lineTo(200, 200).fill();
         });
         framework.assertBothFail("checkPoint_01_005_LineContentThatIsContentIsNotTagged",
                 PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false);
@@ -386,7 +428,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
             canvas.openTag(new CanvasTag(PdfName.P))
                     .setColor(ColorConstants.RED, true)
                     .setLineWidth(2);
-                canvas.lineTo(200, 200).fill();
+            canvas.lineTo(200, 200).fill();
         });
 
         framework.assertBothFail("checkPoint_01_005_LineContentThatIsContentIsTaggedButIsNotAnArtifact",
@@ -574,7 +616,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                     .saveState()
                     .openTag(new CanvasTag(PdfName.P))
                     .setFillColor(ColorConstants.RED);
-                canvas.rectangle(new Rectangle(200, 200, 100, 100)).fill();
+            canvas.rectangle(new Rectangle(200, 200, 100, 100)).fill();
         });
 
         framework.assertBothFail("checkPoint_01_005_RectangleMarkedContentWithoutMcid",
@@ -793,7 +835,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         pdfDoc.close();
 
         Assertions.assertNull(new CompareTool().compareByContent(outPdf,
-                        SOURCE_FOLDER + "cmp_validRoleAddedInsideMarkedContent.pdf",
+                SOURCE_FOLDER + "cmp_validRoleAddedInsideMarkedContent.pdf",
                 DESTINATION_FOLDER, "diff_")
         );
         Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
