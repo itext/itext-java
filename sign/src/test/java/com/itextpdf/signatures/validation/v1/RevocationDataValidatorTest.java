@@ -131,10 +131,10 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
         mockOCSPValidator = new MockOCSPValidator();
         mockParameters = new MockSignatureValidationProperties(parameters);
         validatorChainBuilder = new ValidatorChainBuilder()
-                .withIssuingCertificateRetriever(certificateRetriever)
+                .withIssuingCertificateRetrieverFactory(() -> certificateRetriever)
                 .withSignatureValidationProperties(mockParameters)
-                .withCRLValidator(mockCrlValidator)
-                .withOCSPValidator(mockOCSPValidator);
+                .withCRLValidatorFactory(() -> mockCrlValidator)
+                .withOCSPValidatorFactory(() -> mockOCSPValidator);
     }
 
     @Test
@@ -868,7 +868,7 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
                 new MockIssuingCertificateRetriever(certificateRetriever).onRetrieveIssuerCertificateDo(c -> {
                     throw new RuntimeException("Test retrieveIssuerCertificate failure");
                 });
-        validatorChainBuilder.withIssuingCertificateRetriever(mockCertificateRetreiver);
+        validatorChainBuilder.withIssuingCertificateRetrieverFactory(()-> mockCertificateRetreiver);
         RevocationDataValidator validator = validatorChainBuilder.buildRevocationDataValidator();
 
         validator.addOcspClient(ocspClient);

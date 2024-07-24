@@ -102,7 +102,7 @@ public class OCSPValidatorIntegrationTest extends ExtendedITextTest {
         parameters = new SignatureValidationProperties();
         validatorChainBuilder = new ValidatorChainBuilder()
                 .withSignatureValidationProperties(parameters)
-                .withIssuingCertificateRetriever(certificateRetriever);
+                .withIssuingCertificateRetrieverFactory(() -> certificateRetriever);
     }
 
     @Test
@@ -294,10 +294,13 @@ public class OCSPValidatorIntegrationTest extends ExtendedITextTest {
         if (revokedOcsp) {
             parameters.setContinueAfterFailure(ValidatorContexts.all(), CertificateSources.all(), false);
         }
-        validatorChainBuilder.getRevocationDataValidator().addOcspClient(ocspClient);
-        validatorChainBuilder.getRevocationDataValidator().addOcspClient(ocspClient2);
+        RevocationDataValidator revocationDataValidator = validatorChainBuilder.getRevocationDataValidator();
+        revocationDataValidator.addOcspClient(ocspClient);
+        revocationDataValidator.addOcspClient(ocspClient2);
+        validatorChainBuilder.withRevocationDataValidatorFactory(() -> revocationDataValidator);
         OCSPValidator validator = validatorChainBuilder.buildOCSPValidator();
-        validator.validate(report, baseContext, checkCert, basicOCSPResp.getResponses()[0], basicOCSPResp, checkDate, checkDate);
+        validator.validate(report, baseContext, checkCert, basicOCSPResp.getResponses()[0],
+                basicOCSPResp, checkDate, checkDate);
         return report;
     }
 }

@@ -85,9 +85,9 @@ public class CRLValidatorTest extends ExtendedITextTest {
         SignatureValidationProperties parameters = new SignatureValidationProperties();
         mockChainValidator = new MockChainValidator();
         validatorChainBuilder = new ValidatorChainBuilder()
-                .withIssuingCertificateRetriever(certificateRetriever)
+                .withIssuingCertificateRetrieverFactory(()-> certificateRetriever)
                 .withSignatureValidationProperties(parameters)
-                .withCertificateChainValidator(mockChainValidator);
+                .withCertificateChainValidatorFactory(()-> mockChainValidator);
     }
 
     @Test
@@ -319,12 +319,13 @@ public class CRLValidatorTest extends ExtendedITextTest {
         ValidationContext context = new ValidationContext(
                 ValidatorContext.REVOCATION_DATA_VALIDATOR, CertificateSource.SIGNER_CERT,
                 TimeBasedContext.PRESENT);
+        CRLValidator validator = validatorChainBuilder.getCRLValidator();
         // Validate full CRL.
-        validatorChainBuilder.getCRLValidator().validate(report, context, signCert,
+        validator.validate(report, context, signCert,
                 (X509CRL) CertificateUtil.parseCrlFromStream(FileUtil.getInputStreamForFile(fullCrlPath)),
                 TimeTestUtil.TEST_DATE_TIME);
         // Validate CRL with onlySomeReasons.
-        validatorChainBuilder.getCRLValidator().validate(report, context, signCert,
+        validator.validate(report, context, signCert,
                 (X509CRL) CertificateUtil.parseCrlFromStream(new ByteArrayInputStream(builder.makeCrl())),
                 TimeTestUtil.TEST_DATE_TIME);
         AssertValidationReport.assertThat(report, a -> a
@@ -457,8 +458,8 @@ public class CRLValidatorTest extends ExtendedITextTest {
         );
         MockIssuingCertificateRetriever mockCertificateRetriever = new MockIssuingCertificateRetriever();
         mockCertificateRetriever.ongetCrlIssuerCertificatesDo(c -> {throw new RuntimeException("just testing");});
-        validatorChainBuilder.withIssuingCertificateRetriever(mockCertificateRetriever);
-        validatorChainBuilder.withCRLValidator(new CRLValidator(validatorChainBuilder));
+        validatorChainBuilder.withIssuingCertificateRetrieverFactory(() -> mockCertificateRetriever);
+        validatorChainBuilder.withCRLValidatorFactory(() -> new CRLValidator(validatorChainBuilder));
 
         ValidationReport report = performValidation("happyPath", TimeTestUtil.TEST_DATE_TIME, crl);
         AssertValidationReport.assertThat(report, a -> a

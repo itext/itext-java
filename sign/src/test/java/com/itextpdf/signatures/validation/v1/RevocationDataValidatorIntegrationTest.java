@@ -96,7 +96,7 @@ public class RevocationDataValidatorIntegrationTest extends ExtendedITextTest {
         certificateRetriever = new IssuingCertificateRetriever();
         parameters = new SignatureValidationProperties();
         validatorChainBuilder = new ValidatorChainBuilder()
-                .withIssuingCertificateRetriever(certificateRetriever)
+                .withIssuingCertificateRetrieverFactory(() -> certificateRetriever)
                 .withSignatureValidationProperties(parameters);
     }
 

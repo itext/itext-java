@@ -78,9 +78,9 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         properties = new SignatureValidationProperties();
         certificateRetriever = new IssuingCertificateRetriever();
         validatorChainBuilder = new ValidatorChainBuilder()
-                .withIssuingCertificateRetriever(certificateRetriever)
+                .withIssuingCertificateRetrieverFactory(()-> certificateRetriever)
                 .withSignatureValidationProperties(properties)
-                .withRevocationDataValidator(mockRevocationDataValidator);
+                .withRevocationDataValidatorFactory(()-> mockRevocationDataValidator);
     }
 
     @Test
@@ -769,7 +769,7 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
                             throw new RuntimeException("Test trust store failure");
                         });
 
-        validatorChainBuilder.withIssuingCertificateRetriever(mockCertificateRetriever);
+        validatorChainBuilder.withIssuingCertificateRetrieverFactory(()-> mockCertificateRetriever);
 
         CertificateChainValidator validator = validatorChainBuilder.buildCertificateChainValidator();
         certificateRetriever.addKnownCertificates(Collections.<Certificate>singletonList(intermediateCert));
@@ -800,7 +800,7 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
                             throw new RuntimeException("Test issuer retrieval failure");
                         });
 
-        validatorChainBuilder.withIssuingCertificateRetriever(mockCertificateRetriever);
+        validatorChainBuilder.withIssuingCertificateRetrieverFactory(()-> mockCertificateRetriever);
 
         CertificateChainValidator validator = validatorChainBuilder.buildCertificateChainValidator();
         certificateRetriever.addKnownCertificates(Collections.<Certificate>singletonList(intermediateCert));
@@ -873,7 +873,7 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         properties.setContinueAfterFailure(ValidatorContexts.all(), CertificateSources.all(), false);
         MockIssuingCertificateRetriever mockCertificateRetriever =
                 new MockIssuingCertificateRetriever(certificateRetriever);
-        validatorChainBuilder.withIssuingCertificateRetriever(mockCertificateRetriever);
+        validatorChainBuilder.withIssuingCertificateRetrieverFactory(()-> mockCertificateRetriever);
 
         CertificateChainValidator validator = validatorChainBuilder.buildCertificateChainValidator();
         certificateRetriever.addKnownCertificates(Collections.<Certificate>singletonList(intermediateCert));

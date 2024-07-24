@@ -97,11 +97,11 @@ public class SignatureValidatorTest extends ExtendedITextTest {
         mockCertificateRetriever = new MockIssuingCertificateRetriever();
         mockDocumentRevisionsValidator = new MockDocumentRevisionsValidator();
         builder = new ValidatorChainBuilder()
-                .withIssuingCertificateRetriever(mockCertificateRetriever)
+                .withIssuingCertificateRetrieverFactory(() -> mockCertificateRetriever)
                 .withSignatureValidationProperties(parameters)
-                .withCertificateChainValidator(mockCertificateChainValidator)
-                .withRevocationDataValidator(new MockRevocationDataValidator())
-                .withDocumentRevisionsValidator(mockDocumentRevisionsValidator);
+                .withCertificateChainValidatorFactory(() -> mockCertificateChainValidator)
+                .withRevocationDataValidatorFactory(() -> new MockRevocationDataValidator())
+                .withDocumentRevisionsValidatorFactory(() -> mockDocumentRevisionsValidator);
     }
 
     @Test

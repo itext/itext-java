@@ -108,8 +108,8 @@ public class OCSPValidatorTest extends ExtendedITextTest {
         mockCertificateChainValidator = new MockChainValidator();
         validatorChainBuilder = new ValidatorChainBuilder()
                 .withSignatureValidationProperties(parameters)
-                .withIssuingCertificateRetriever(certificateRetriever)
-                .withCertificateChainValidator(mockCertificateChainValidator);
+                .withIssuingCertificateRetrieverFactory(()-> certificateRetriever)
+                .withCertificateChainValidatorFactory(()-> mockCertificateChainValidator);
     }
 
     @Test
@@ -212,8 +212,9 @@ public class OCSPValidatorTest extends ExtendedITextTest {
                 FACTORY.createASN1Primitive(ocspClient.getEncoded(checkCert, caCert, null))));
 
         ValidationReport report = new ValidationReport();
-        validatorChainBuilder.withIssuingCertificateRetriever(
-                new TestIssuingCertificateRetriever(wrongRootCertFileName));
+        TestIssuingCertificateRetriever wrongRootCertificateRetriever = new TestIssuingCertificateRetriever(
+                wrongRootCertFileName);
+        validatorChainBuilder.withIssuingCertificateRetrieverFactory(()-> wrongRootCertificateRetriever);
         OCSPValidator validator = validatorChainBuilder.buildOCSPValidator();
 
         validator.validate(report, baseContext, checkCert, basicOCSPResp.getResponses()[0], basicOCSPResp,
@@ -505,7 +506,7 @@ public class OCSPValidatorTest extends ExtendedITextTest {
     public void certificateRetrieverRetrieveIssuerCertificateFailureTest() throws GeneralSecurityException, IOException {
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
         MockIssuingCertificateRetriever mockCertificateRetriever = new MockIssuingCertificateRetriever();
-        validatorChainBuilder.withIssuingCertificateRetriever(mockCertificateRetriever);
+        validatorChainBuilder.withIssuingCertificateRetrieverFactory(() -> mockCertificateRetriever);
         mockCertificateRetriever.onRetrieveIssuerCertificateDo(c -> {
             throw new RuntimeException("Test retrieveMissingCertificates failure");
         });
@@ -523,7 +524,7 @@ public class OCSPValidatorTest extends ExtendedITextTest {
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
         MockIssuingCertificateRetriever mockCertificateRetriever =
                 new MockIssuingCertificateRetriever(certificateRetriever);
-        validatorChainBuilder.withIssuingCertificateRetriever(mockCertificateRetriever);
+        validatorChainBuilder.withIssuingCertificateRetrieverFactory(() -> mockCertificateRetriever);
         mockCertificateRetriever.onRetrieveOCSPResponderCertificateDo(c -> {
             throw new RuntimeException("Test retrieveMissingCertificates failure");
         });
@@ -541,7 +542,7 @@ public class OCSPValidatorTest extends ExtendedITextTest {
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
         MockIssuingCertificateRetriever mockCertificateRetriever =
                 new MockIssuingCertificateRetriever(certificateRetriever);
-        validatorChainBuilder.withIssuingCertificateRetriever(mockCertificateRetriever);
+        validatorChainBuilder.withIssuingCertificateRetrieverFactory(() -> mockCertificateRetriever);
         mockCertificateRetriever.onIsCertificateTrustedDo(c -> {
             throw new RuntimeException("Test isCertificateTrusted failure");
         });
@@ -558,7 +559,7 @@ public class OCSPValidatorTest extends ExtendedITextTest {
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
         MockIssuingCertificateRetriever mockCertificateRetriever =
                 new MockIssuingCertificateRetriever(certificateRetriever);
-        validatorChainBuilder.withIssuingCertificateRetriever(mockCertificateRetriever);
+        validatorChainBuilder.withIssuingCertificateRetrieverFactory(() -> mockCertificateRetriever);
         mockCertificateRetriever.onIsCertificateTrustedDo(c -> false);
         MockTrustedCertificatesStore mockTrustedStore =
                 new MockTrustedCertificatesStore(certificateRetriever.getTrustedCertificatesStore());
