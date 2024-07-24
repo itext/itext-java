@@ -39,7 +39,7 @@ import java.util.List;
  * one or more Certificate Revocation Lists.
  *
  * @deprecated starting from 8.0.5.
- * {@link com.itextpdf.signatures.validation.v1.CRLValidator} should be used instead.
+ * {@link com.itextpdf.signatures.validation.CRLValidator} should be used instead.
  */
 @Deprecated
 public class CRLVerifier extends RootStoreVerifier {

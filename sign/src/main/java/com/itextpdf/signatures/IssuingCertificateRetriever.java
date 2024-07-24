@@ -24,7 +24,7 @@ package com.itextpdf.signatures;
 
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.signatures.logs.SignLogMessageConstant;
-import com.itextpdf.signatures.validation.v1.TrustedCertificatesStore;
+import com.itextpdf.signatures.validation.TrustedCertificatesStore;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

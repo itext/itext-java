@@ -477,7 +477,7 @@
                 <file path="com/itextpdf/signatures/sign/TwoPhaseSigningTest.java"/>
             </fileset>
             <fileset reason="KeyPurposeId creation logic is different in java and .NET">
-                <file path="com/itextpdf/signatures/validation/v1/extensions/ExtendedKeyUsageExtension.java" />
+                <file path="com/itextpdf/signatures/validation/extensions/ExtendedKeyUsageExtension.java" />
             </fileset>
             <fileset reason="Date and DateTime UTC time constructors difference in Java and .NET">
                 <file path="com/itextpdf/signatures/testutils/TimeTestUtil.java"/>
@@ -515,10 +515,10 @@
                 <file path="com/itextpdf/signatures/testutils/PemFileHelper.java"/>
             </fileset>
             <fileset reason="EnumSet generics mapping problems">
-                <file path="com/itextpdf/signatures/validation/v1/context/ValidatorContexts.java" />
-                <file path="com/itextpdf/signatures/validation/v1/context/TimeBasedContexts.java" />
-                <file path="com/itextpdf/signatures/validation/v1/context/CertificateSources.java" />
-                <file path="com/itextpdf/signatures/validation/v1/SignatureValidationProperties.java" />
+                <file path="com/itextpdf/signatures/validation/context/ValidatorContexts.java" />
+                <file path="com/itextpdf/signatures/validation/context/TimeBasedContexts.java" />
+                <file path="com/itextpdf/signatures/validation/context/CertificateSources.java" />
+                <file path="com/itextpdf/signatures/validation/SignatureValidationProperties.java" />
             </fileset>
             <!-- jsoup -->
             <file path="com/itextpdf/styledxmlparser/jsoup/PortUtil.java" />

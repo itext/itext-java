@@ -34,7 +34,7 @@ import java.util.List;
  * containing trusted anchors.
  *
  * @deprecated starting from 8.0.5.
- * {@link com.itextpdf.signatures.validation.v1.CertificateChainValidator} should be used instead.
+ * {@link com.itextpdf.signatures.validation.CertificateChainValidator} should be used instead.
  */
 @Deprecated
 public class RootStoreVerifier extends CertificateVerifier {

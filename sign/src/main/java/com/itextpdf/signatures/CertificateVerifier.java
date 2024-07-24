@@ -36,7 +36,7 @@ import java.util.List;
  * method will be called.
  *
  * @deprecated starting from 8.0.5.
- * {@link com.itextpdf.signatures.validation.v1.CertificateChainValidator} should be used instead.
+ * {@link com.itextpdf.signatures.validation.CertificateChainValidator} should be used instead.
  */
 @Deprecated
 public class CertificateVerifier {

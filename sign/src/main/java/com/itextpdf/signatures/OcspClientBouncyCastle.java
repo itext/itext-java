@@ -35,7 +35,7 @@ import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationExcept
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.StreamUtil;
-import com.itextpdf.signatures.validation.v1.OCSPValidator;
+import com.itextpdf.signatures.validation.OCSPValidator;
 
 import java.io.IOException;
 import java.io.InputStream;
