@@ -32,7 +32,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -44,25 +43,51 @@ public class RegexBasedLocationExtractionStrategyTest extends ExtendedITextTest 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/parser/RegexBasedLocationExtractionStrategyTest/";
 
     @Test
-    public void test01() throws IOException {
-        System.out.println(new File(sourceFolder).getAbsolutePath());
-
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "in01.pdf"));
-
-        // build strategy
-        RegexBasedLocationExtractionStrategy extractionStrategy = new RegexBasedLocationExtractionStrategy(Pattern.compile("\\{\\{Signature\\}\\}"));
-
+    public void test00() throws IOException {
+        PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + "in00.pdf"));
         // get locations
         List<IPdfTextLocation> locationList = new ArrayList<>();
-        for (int x = 1; x <= pdfDocument.getNumberOfPages(); x++) {
-            new PdfCanvasProcessor(extractionStrategy).processPageContent(pdfDocument.getPage(x));
-            for(IPdfTextLocation location : extractionStrategy.getResultantLocations()) {
-                if(location != null) {
-                    locationList.add(location);
-                }
+        for (int i = 1; i <= document.getNumberOfPages(); ++i) {
+            RegexBasedLocationExtractionStrategy extractionStrategy = new RegexBasedLocationExtractionStrategy("cillum");
+            PdfCanvasProcessor processor = new PdfCanvasProcessor(extractionStrategy);
+            processor.processPageContent(document.getPage(i));
+            for (IPdfTextLocation location : extractionStrategy.getResultantLocations()) {
+                locationList.add(location);
             }
         }
+        // compare
+        Assertions.assertEquals(2, locationList.size());
 
+        IPdfTextLocation loc = locationList.get(0);
+
+        Assertions.assertEquals("cillum", loc.getText());
+        Assertions.assertEquals(64, (int) loc.getRectangle().getX());
+        Assertions.assertEquals(732, (int) loc.getRectangle().getY());
+        Assertions.assertEquals(30, (int) loc.getRectangle().getWidth());
+        Assertions.assertEquals(11, (int) loc.getRectangle().getHeight());
+
+        IPdfTextLocation loc2 = locationList.get(1);
+        Assertions.assertEquals(64, (int) loc2.getRectangle().getX());
+        Assertions.assertEquals(732, (int) loc2.getRectangle().getY());
+        Assertions.assertEquals(30, (int) loc2.getRectangle().getWidth());
+        Assertions.assertEquals(11, (int) loc2.getRectangle().getHeight());
+
+        document.close();
+    }
+
+    @Test
+    public void test02() throws IOException {
+        PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + "in01.pdf"));
+        // get locations
+        List<IPdfTextLocation> locationList = new ArrayList<>();
+        for (int i = 1; i <= document.getNumberOfPages(); ++i) {
+            RegexBasedLocationExtractionStrategy extractionStrategy = new RegexBasedLocationExtractionStrategy("\\{\\{Signature\\}\\}");
+            PdfCanvasProcessor processor = new PdfCanvasProcessor(extractionStrategy);
+            processor.processPageContent(document.getPage(i));
+            for (IPdfTextLocation location : extractionStrategy.getResultantLocations()) {
+                locationList.add(location);
+            }
+        }
         // compare
         Assertions.assertEquals(1, locationList.size());
 
@@ -74,8 +99,7 @@ public class RegexBasedLocationExtractionStrategyTest extends ExtendedITextTest 
         Assertions.assertEquals(55, (int) loc.getRectangle().getWidth());
         Assertions.assertEquals(11, (int) loc.getRectangle().getHeight());
 
-        // close
-        pdfDocument.close();
+        document.close();
     }
 
 
@@ -88,12 +112,11 @@ public class RegexBasedLocationExtractionStrategyTest extends ExtendedITextTest 
 
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "ligature.pdf"));
 
-        // build strategy
-        RegexBasedLocationExtractionStrategy extractionStrategy = new RegexBasedLocationExtractionStrategy("ca");
-
         // get locations
         List<IPdfTextLocation> locationList = new ArrayList<>();
         for (int x = 1; x <= pdfDocument.getNumberOfPages(); x++) {
+            // build strategy
+            RegexBasedLocationExtractionStrategy extractionStrategy = new RegexBasedLocationExtractionStrategy("ca");
             new PdfCanvasProcessor(extractionStrategy).processPageContent(pdfDocument.getPage(x));
             for(IPdfTextLocation location : extractionStrategy.getResultantLocations()) {
                 if(location != null) {
@@ -123,12 +146,11 @@ public class RegexBasedLocationExtractionStrategyTest extends ExtendedITextTest 
 
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "ligature.pdf"));
 
-        // build strategy
-        RegexBasedLocationExtractionStrategy extractionStrategy = new RegexBasedLocationExtractionStrategy("al");
-
         // get locations
         List<IPdfTextLocation> locationList = new ArrayList<>();
         for (int x = 1; x <= pdfDocument.getNumberOfPages(); x++) {
+            // build strategy
+            RegexBasedLocationExtractionStrategy extractionStrategy = new RegexBasedLocationExtractionStrategy("al");
             new PdfCanvasProcessor(extractionStrategy).processPageContent(pdfDocument.getPage(x));
             for(IPdfTextLocation location : extractionStrategy.getResultantLocations()) {
                 if(location != null) {
@@ -158,12 +180,11 @@ public class RegexBasedLocationExtractionStrategyTest extends ExtendedITextTest 
 
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "ligature.pdf"));
 
-        // build strategy
-        RegexBasedLocationExtractionStrategy extractionStrategy = new RegexBasedLocationExtractionStrategy("l");
-
         // get locations
         List<IPdfTextLocation> locationList = new ArrayList<>();
         for (int x = 1; x <= pdfDocument.getNumberOfPages(); x++) {
+            // build strategy
+            RegexBasedLocationExtractionStrategy extractionStrategy = new RegexBasedLocationExtractionStrategy("l");
             new PdfCanvasProcessor(extractionStrategy).processPageContent(pdfDocument.getPage(x));
             for(IPdfTextLocation location : extractionStrategy.getResultantLocations()) {
                 if(location != null) {
@@ -191,12 +212,11 @@ public class RegexBasedLocationExtractionStrategyTest extends ExtendedITextTest 
     public void testRotatedText() throws IOException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "rotatedText.pdf"));
 
-        // build strategy
-        RegexBasedLocationExtractionStrategy extractionStrategy = new RegexBasedLocationExtractionStrategy("abc");
-
         // get locations
         List<IPdfTextLocation> locationList = new ArrayList<>();
         for (int x = 1; x <= pdfDocument.getNumberOfPages(); x++) {
+            // build strategy
+            RegexBasedLocationExtractionStrategy extractionStrategy = new RegexBasedLocationExtractionStrategy("abc");
             new PdfCanvasProcessor(extractionStrategy).processPageContent(pdfDocument.getPage(x));
             for(IPdfTextLocation location : extractionStrategy.getResultantLocations()) {
                 if(location != null) {

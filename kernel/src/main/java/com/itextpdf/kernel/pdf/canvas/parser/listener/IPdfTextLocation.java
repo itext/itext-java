@@ -39,12 +39,4 @@ public interface IPdfTextLocation {
      * @return the text
      */
     String getText();
-
-    /**
-     * Get the page number of the page on which the text is located
-     *
-     * @return the page number, or 0 if no page number was set
-     */
-    int getPageNumber();
-
 }
