@@ -74,6 +74,33 @@ public class SignatureUtilTest extends ExtendedITextTest {
     }
 
     @Test
+    public void eolNotIncludedIntoByteRangeTest1() throws IOException {
+        String inPdf = sourceFolder + "eolNotIncludedIntoByteRange1.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
+        SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
+
+        Assertions.assertFalse(signatureUtil.signatureCoversWholeDocument("Signature1"));
+    }
+
+    @Test
+    public void eolNotIncludedIntoByteRangeTest2() throws IOException {
+        String inPdf = sourceFolder + "eolNotIncludedIntoByteRange2.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
+        SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
+
+        Assertions.assertTrue(signatureUtil.signatureCoversWholeDocument("Signature1"));
+    }
+
+    @Test
+    public void eolNotIncludedIntoByteRangeTest3() throws IOException {
+        String inPdf = sourceFolder + "eolNotIncludedIntoByteRange3.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
+        SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
+
+        Assertions.assertFalse(signatureUtil.signatureCoversWholeDocument("Signature1"));
+    }
+
+    @Test
     public void firstBytesNotCoveredTest01() throws IOException {
         String inPdf = sourceFolder + "firstBytesNotCoveredTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));

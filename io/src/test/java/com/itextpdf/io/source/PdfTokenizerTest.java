@@ -250,7 +250,7 @@ public class PdfTokenizerTest extends ExtendedITextTest {
         try (PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(
                 factory.createSource(data.getBytes(StandardCharsets.ISO_8859_1))))) {
             long eofPosition = tok.getNextEof();
-            Assertions.assertEquals(data.length() + 1, eofPosition);
+            Assertions.assertEquals(data.length(), eofPosition);
         }
     }
 
@@ -267,7 +267,7 @@ public class PdfTokenizerTest extends ExtendedITextTest {
         try (PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(
                 factory.createSource(stringBuilder.toString().getBytes(StandardCharsets.ISO_8859_1))))) {
             long eofPosition = tok.getNextEof();
-            Assertions.assertEquals(data.length() * 20 + 6, eofPosition);
+            Assertions.assertEquals(data.length() * 20 + 5, eofPosition);
         }
     }
 
@@ -285,7 +285,7 @@ public class PdfTokenizerTest extends ExtendedITextTest {
         try (PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(
                 factory.createSource(stringBuilder.toString().getBytes(StandardCharsets.ISO_8859_1))))) {
             long eofPosition = tok.getNextEof();
-            Assertions.assertEquals(124 + 6, eofPosition);
+            Assertions.assertEquals(124 + 5, eofPosition);
         }
     }
 
@@ -297,7 +297,19 @@ public class PdfTokenizerTest extends ExtendedITextTest {
         try (PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(
                 factory.createSource(data.getBytes(StandardCharsets.ISO_8859_1))))) {
             long eofPosition = tok.getNextEof();
-            Assertions.assertEquals(data.indexOf("%%EOF") + 6, eofPosition);
+            Assertions.assertEquals(data.indexOf("%%EOF") + 5, eofPosition);
+        }
+    }
+
+    @Test
+    public void getNextEofFollowedByEOLTest() throws IOException {
+        String data = "some text to test \ngetting end of\n file logic%%EOF\n\r\r\n\r\r\n";
+
+        RandomAccessSourceFactory factory = new RandomAccessSourceFactory();
+        try (PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(
+                factory.createSource(data.getBytes(StandardCharsets.ISO_8859_1))))) {
+            long eofPosition = tok.getNextEof();
+            Assertions.assertEquals(data.indexOf("%%EOF") + 4 + 5, eofPosition);
         }
     }
 

@@ -78,11 +78,11 @@ public class PdfRevisionsReaderTest extends ExtendedITextTest {
 
             DocumentRevision firstRevision = documentRevisions.get(0);
             assertResultingRevision(firstRevision, 1, 2, 3, 4, 5, 6);
-            Assertions.assertEquals(929, firstRevision.getEofOffset());
+            Assertions.assertEquals(930, firstRevision.getEofOffset());
 
             DocumentRevision secondRevision = documentRevisions.get(1);
             assertResultingRevision(secondRevision, 1, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15);
-            Assertions.assertEquals(28119, secondRevision.getEofOffset());
+            Assertions.assertEquals(28120, secondRevision.getEofOffset());
 
             DocumentRevision thirdRevision = documentRevisions.get(2);
             assertResultingRevision(thirdRevision, 1, 3, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28);
@@ -102,19 +102,19 @@ public class PdfRevisionsReaderTest extends ExtendedITextTest {
 
             DocumentRevision firstRevision = documentRevisions.get(0);
             assertResultingRevision(firstRevision, 1, 2, 3, 4, 5, 6);
-            Assertions.assertEquals(929, firstRevision.getEofOffset());
+            Assertions.assertEquals(930, firstRevision.getEofOffset());
 
             DocumentRevision secondRevision = documentRevisions.get(1);
             assertResultingRevision(secondRevision, 1, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15);
-            Assertions.assertEquals(28119, secondRevision.getEofOffset());
+            Assertions.assertEquals(28120, secondRevision.getEofOffset());
 
             DocumentRevision thirdRevision = documentRevisions.get(2);
             assertResultingRevision(thirdRevision, 1, 3, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28);
-            Assertions.assertEquals(36207, thirdRevision.getEofOffset());
+            Assertions.assertEquals(36208, thirdRevision.getEofOffset());
 
             DocumentRevision fourthRevision = documentRevisions.get(3);
             assertResultingRevision(fourthRevision, new int[] {1, 3, 23, 24}, new int[] {0, 0, 1, 1});
-            Assertions.assertEquals(37006, fourthRevision.getEofOffset());
+            Assertions.assertEquals(37007, fourthRevision.getEofOffset());
 
             DocumentRevision fifthRevision = documentRevisions.get(4);
             assertResultingRevision(fifthRevision, new int[] {1, 3, 19, 20, 21, 22, 23, 25},
@@ -135,11 +135,11 @@ public class PdfRevisionsReaderTest extends ExtendedITextTest {
 
             DocumentRevision firstRevision = documentRevisions.get(0);
             assertResultingRevision(firstRevision, 1, 2, 3, 4, 5, 6, 7, 8);
-            Assertions.assertEquals(1085, firstRevision.getEofOffset());
+            Assertions.assertEquals(1086, firstRevision.getEofOffset());
 
             DocumentRevision secondRevision = documentRevisions.get(1);
             assertResultingRevision(secondRevision, 1, 3, 4, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19);
-            Assertions.assertEquals(28137, secondRevision.getEofOffset());
+            Assertions.assertEquals(28138, secondRevision.getEofOffset());
 
             DocumentRevision thirdRevision = documentRevisions.get(2);
             assertResultingRevision(thirdRevision, 1, 3, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34);
@@ -159,19 +159,19 @@ public class PdfRevisionsReaderTest extends ExtendedITextTest {
 
             DocumentRevision firstRevision = documentRevisions.get(0);
             assertResultingRevision(firstRevision, 1, 2, 3, 4, 5, 6, 7, 8);
-            Assertions.assertEquals(1085, firstRevision.getEofOffset());
+            Assertions.assertEquals(1086, firstRevision.getEofOffset());
 
             DocumentRevision secondRevision = documentRevisions.get(1);
             assertResultingRevision(secondRevision, 1, 3, 4, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19);
-            Assertions.assertEquals(28137, secondRevision.getEofOffset());
+            Assertions.assertEquals(28138, secondRevision.getEofOffset());
 
             DocumentRevision thirdRevision = documentRevisions.get(2);
             assertResultingRevision(thirdRevision, 1, 3, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34);
-            Assertions.assertEquals(36059, thirdRevision.getEofOffset());
+            Assertions.assertEquals(36060, thirdRevision.getEofOffset());
 
             DocumentRevision fourthRevision = documentRevisions.get(3);
             assertResultingRevision(fourthRevision, new int[] {1, 3, 27, 28, 35}, new int[] {0, 0, 1, 1, 0});
-            Assertions.assertEquals(36975, fourthRevision.getEofOffset());
+            Assertions.assertEquals(36976, fourthRevision.getEofOffset());
 
             DocumentRevision fifthRevision = documentRevisions.get(4);
             assertResultingRevision(fifthRevision, new int[] {1, 3, 23, 24, 25, 26, 27, 29, 36},

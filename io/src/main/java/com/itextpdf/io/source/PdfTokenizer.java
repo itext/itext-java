@@ -28,6 +28,7 @@ import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 
 import java.io.Closeable;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -275,10 +276,22 @@ public class PdfTokenizer implements Closeable {
         do {
             long currentPosition = file.getPosition();
             str = readString(arrLength);
-            long eofPosition = str.indexOf("%%EOF");
+            int eofPosition = str.indexOf("%%EOF");
             if (eofPosition >= 0) {
-                // 6 stands for '%%EOF' length + 1
-                return currentPosition + eofPosition + 6;
+                // Now we want to also include following EOL bytes.
+                file.seek(currentPosition + eofPosition + 5);
+                // We only allow 4 next bytes to be EOL markers.
+                String remainingBytes = readString(4);
+                int eolCount = 0;
+                for (byte b : remainingBytes.getBytes(StandardCharsets.UTF_8)) {
+                    if (b == '\n' || b == '\r') {
+                        eolCount++;
+                    } else {
+                        return currentPosition + eofPosition + eolCount + 5;
+                    }
+                }
+                // 5 stands for '%%EOF' length
+                return currentPosition + eofPosition + eolCount + 5;
             }
             // Change current position to ensure '%%EOF' is not cut in half.
             file.seek(file.getPosition() - 4);
