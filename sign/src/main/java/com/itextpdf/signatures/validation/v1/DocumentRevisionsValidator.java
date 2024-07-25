@@ -112,6 +112,8 @@ public class DocumentRevisionsValidator {
             "DSS dictionary and DTS addition (docMDP level >= 1), " +
             "form fill-in and digital signatures (docMDP level >= 2), " +
             "adding or editing annotations (docMDP level 3).";
+    static final String NOT_ALLOWED_CERTIFICATION_SIGNATURE = "Certification signature is applied after " +
+            "the approval signature which is not allowed.";
     static final String OBJECT_REMOVED =
             "Object \"{0}\", which is not allowed to be removed, was removed from the document through XREF table.";
     static final String OUTLINES_MODIFIED = "Outlines entry in catalog dictionary was modified. "
@@ -265,11 +267,13 @@ public class DocumentRevisionsValidator {
         for (int i = 0; i < documentRevisions.size(); i++) {
             if (currentSignature != null &&
                     revisionContainsSignature(documentRevisions.get(i), currentSignatureName, document, report)) {
-                documentSigned = true;
                 if (isCertificationSignature(currentSignature)) {
                     if (certificationSignatureFound) {
                         report.addReportItem(new ReportItem(DOC_MDP_CHECK,
                                 TOO_MANY_CERTIFICATION_SIGNATURES, ReportItemStatus.INDETERMINATE));
+                    } else if (documentSigned) {
+                        report.addReportItem(new ReportItem(DOC_MDP_CHECK,
+                                NOT_ALLOWED_CERTIFICATION_SIGNATURE, ReportItemStatus.INDETERMINATE));
                     } else {
                         certificationSignatureFound = true;
                         if (updateAccessPermissions) {
@@ -277,6 +281,7 @@ public class DocumentRevisionsValidator {
                         }
                     }
                 }
+                documentSigned = true;
                 if (updateAccessPermissions) {
                     updateApprovalSignatureAccessPermissions(
                             signatureUtil.getSignatureFormFieldDictionary(currentSignatureName), report);

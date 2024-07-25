@@ -39,17 +39,15 @@ import com.itextpdf.signatures.validation.v1.report.ReportItem.ReportItemStatus;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport.ValidationResult;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
-
-import java.io.IOException;
-import java.security.Security;
-
-import java.util.Arrays;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+
+import java.io.IOException;
+import java.security.Security;
+import java.util.Arrays;
 
 @Tag("BouncyCastleIntegrationTest")
 public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest {
@@ -71,7 +69,7 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     }
 
     public static Iterable<Object[]> CreateParameters() {
-        return Arrays.asList(new Object[] {false}, new Object[] {true});
+        return Arrays.asList(new Object[]{false}, new Object[]{true});
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
@@ -232,12 +230,17 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
             DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
             ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
 
-            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID));
+            AssertValidationReport.assertThat(report, a -> a
+                    .hasStatus(ValidationResult.INDETERMINATE)
+                    .hasNumberOfFailures(1)
+                    .hasLogItem(l -> l
+                            .withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                            .withMessage(DocumentRevisionsValidator.NOT_ALLOWED_CERTIFICATION_SIGNATURE)
+                            .withStatus(ReportItemStatus.INDETERMINATE)));
 
             Assertions.assertEquals(AccessPermissions.FORM_FIELDS_MODIFICATION, validator.getAccessPermissions());
         }
     }
-
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
     @MethodSource("CreateParameters")
