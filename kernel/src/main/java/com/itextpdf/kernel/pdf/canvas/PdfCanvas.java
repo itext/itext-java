@@ -1920,6 +1920,7 @@ public class PdfCanvas {
      * @see #concatMatrix(double, double, double, double, double, double)
      */
     public PdfXObject addImageWithTransformationMatrix(ImageData image, float a, float b, float c, float d, float e, float f) {
+        checkIsoConformanceWritingOnContent();
         return addImageWithTransformationMatrix(image, a, b, c, d, e, f, false);
     }
 
@@ -1941,6 +1942,7 @@ public class PdfCanvas {
      * @see #concatMatrix(double, double, double, double, double, double)
      */
     public PdfXObject addImageWithTransformationMatrix(ImageData image, float a, float b, float c, float d, float e, float f, boolean asInline) {
+        checkIsoConformanceWritingOnContent();
         if (image.getOriginalType() == ImageType.WMF) {
             WmfImageHelper wmf = new WmfImageHelper(image);
             PdfXObject xObject = wmf.createFormXObject(document);
@@ -1975,6 +1977,7 @@ public class PdfCanvas {
      * @see PdfXObject#calculateProportionallyFitRectangleWithHeight(PdfXObject, float, float, float)
      */
     public PdfXObject addImageFittedIntoRectangle(ImageData image, Rectangle rect, boolean asInline) {
+        checkIsoConformanceWritingOnContent();
         return addImageWithTransformationMatrix(image, rect.getWidth(), 0, 0, rect.getHeight(),
                 rect.getX(), rect.getY(), asInline);
     }
@@ -1989,6 +1992,7 @@ public class PdfCanvas {
      * @return the created imageXObject or null in case of in-line image (asInline = true)
      */
     public PdfXObject addImageAt(ImageData image, float x, float y, boolean asInline) {
+        checkIsoConformanceWritingOnContent();
         if (image.getOriginalType() == ImageType.WMF) {
             WmfImageHelper wmf = new WmfImageHelper(image);
             PdfXObject xObject = wmf.createFormXObject(document);
@@ -2024,6 +2028,7 @@ public class PdfCanvas {
      * @see #concatMatrix(double, double, double, double, double, double)
      */
     public PdfCanvas addXObjectWithTransformationMatrix(PdfXObject xObject, float a, float b, float c, float d, float e, float f) {
+        checkIsoConformanceWritingOnContent();
         if (xObject instanceof PdfFormXObject) {
             return addFormWithTransformationMatrix((PdfFormXObject) xObject, a, b, c, d, e, f, true);
         } else if (xObject instanceof PdfImageXObject) {
@@ -2042,6 +2047,7 @@ public class PdfCanvas {
      * @return the current canvas
      */
     public PdfCanvas addXObjectAt(PdfXObject xObject, float x, float y) {
+        checkIsoConformanceWritingOnContent();
         if (xObject instanceof PdfFormXObject) {
             return addFormAt((PdfFormXObject) xObject, x, y);
         } else if (xObject instanceof PdfImageXObject) {
@@ -2061,6 +2067,7 @@ public class PdfCanvas {
      * @see PdfXObject#calculateProportionallyFitRectangleWithHeight(PdfXObject, float, float, float)
      */
     public PdfCanvas addXObjectFittedIntoRectangle(PdfXObject xObject, Rectangle rect) {
+        checkIsoConformanceWritingOnContent();
         if (xObject instanceof PdfFormXObject) {
             return addFormFittedIntoRectangle((PdfFormXObject) xObject, rect);
         } else if (xObject instanceof PdfImageXObject) {
@@ -2081,6 +2088,7 @@ public class PdfCanvas {
      * @return the current canvas
      */
     public PdfCanvas addXObject(PdfXObject xObject) {
+        checkIsoConformanceWritingOnContent();
         if (xObject instanceof PdfFormXObject) {
             return addFormWithTransformationMatrix((PdfFormXObject) xObject, 1, 0, 0, 1, 0, 0, false);
         } else if (xObject instanceof PdfImageXObject) {
@@ -2261,6 +2269,7 @@ public class PdfCanvas {
      */
     protected void addInlineImage(PdfImageXObject imageXObject, float a, float b, float c, float d, float e, float f) {
         document.checkIsoConformance(imageXObject.getPdfObject(), IsoKey.INLINE_IMAGE, resources, contentStream);
+        checkIsoConformanceWritingOnContent();
         saveState();
         concatMatrix(a, b, c, d, e, f);
         PdfOutputStream os = contentStream.getOutputStream();
