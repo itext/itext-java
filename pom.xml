@@ -490,17 +490,8 @@
                 <onlyBinaryIncompatible>true</onlyBinaryIncompatible>
                 <ignoreMissingClasses>true</ignoreMissingClasses>
                 <excludes>
+                  <!-- Contains interfaces for bouncycastle wrappers which can be changes in any time -->
                   <exclude>com.itextpdf.commons.bouncycastle</exclude>
-                  <exclude>com.itextpdf.pdfua.exceptions.PdfUAConformanceException</exclude>
-                  <exclude>com.itextpdf.signatures.validation.v1.DocumentRevisionsValidator</exclude>
-                  <exclude>com.itextpdf.signatures.validation.v1.SignatureValidator</exclude>
-                  <exclude>com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant</exclude>
-                  // TODO DEVSIX-8439 remove pdftest classes after 8.0.6 release
-                  <exclude>com.itextpdf.test.ExtendedITextTest</exclude>
-                  <exclude>com.itextpdf.test.ITextTest</exclude>
-                  <exclude>com.itextpdf.test.LogListener</exclude>
-                  <exclude>com.itextpdf.test.runners.RetryOnFailure</exclude>
-                  <exclude>com.itextpdf.test.runners.RetryRunner</exclude>
                 </excludes>
                 <excludeModules>
                   <excludeModule>bouncy-castle-adapter</excludeModule>
@@ -508,6 +499,8 @@
                   <excludeModule>bouncy-castle-fips-adapter</excludeModule>
                 </excludeModules>
               </parameter>
+              <!-- TODO DEVSIX-8520 Enable japicmp after 9.0.0 release -->
+              <skip>true</skip>
             </configuration>
           </plugin>
           <plugin>
