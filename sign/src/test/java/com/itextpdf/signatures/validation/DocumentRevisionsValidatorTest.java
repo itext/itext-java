@@ -70,12 +70,12 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
         builder.getProperties().setContinueAfterFailure(ValidatorContexts.all(), CertificateSources.all(), continueValidationAfterFail);
     }
 
-    public static Iterable<Object[]> CreateParameters() {
+    public static Iterable<Object[]> createParameters() {
         return Arrays.asList(new Object[] {false}, new Object[] {true});
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void multipleRevisionsDocumentLevel1Test(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "multipleRevisionsDocument.pdf"))) {
@@ -104,7 +104,7 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void hugeDocumentTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "hugeDocument.pdf"))) {
@@ -121,7 +121,7 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void extensionsModificationsTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "extensionsModifications.pdf"))) {
@@ -175,7 +175,7 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void completelyInvalidDocumentTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "completelyInvalidDocument.pdf"))) {
@@ -196,7 +196,7 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void makeFontDirectAndIndirectTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "makeFontDirectAndIndirect.pdf"))) {
@@ -234,7 +234,7 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void randomEntryAddedTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "randomEntryAdded.pdf"))) {
@@ -256,7 +256,7 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void randomEntryWithoutUsageTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "randomEntryWithoutUsage.pdf"))) {
@@ -279,7 +279,7 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void changeExistingFontTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "changeExistingFont.pdf"))) {
@@ -300,7 +300,7 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void changeExistingFontAndAddAsDssTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "changeExistingFontAndAddAsDss.pdf"))) {
@@ -322,7 +322,7 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void fillInFieldAtLevel1Test(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "fillInField.pdf"))) {
@@ -347,7 +347,7 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void multipleRevisionsDocumentLevel2Test(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "multipleRevisionsDocument2.pdf"))) {
@@ -380,7 +380,7 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void removePermissionsTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "removePermissions.pdf"))) {
@@ -403,7 +403,7 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void removeDSSTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "removeDSS.pdf"))) {
@@ -426,7 +426,7 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void removeAcroformTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "removeAcroform.pdf"))) {
@@ -449,7 +449,7 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void removeFieldTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "removeField.pdf"))) {
@@ -472,7 +472,7 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void renameFieldTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "renameField.pdf"))) {
@@ -498,7 +498,7 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void addTextFieldTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "addTextField.pdf"))) {
@@ -524,7 +524,7 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void addUnsignedSignatureFieldTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "addUnsignedSignatureField.pdf"))) {
@@ -550,7 +550,7 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void brokenSignatureFieldDictionaryTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "brokenSignatureFieldDictionary.pdf"))) {
@@ -579,7 +579,7 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void modifyPageAnnotsTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "modifyPageAnnots.pdf"))) {
@@ -602,7 +602,7 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void multipleRevisionsDocumentLevel3Test(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "multipleRevisionsDocument3.pdf"))) {

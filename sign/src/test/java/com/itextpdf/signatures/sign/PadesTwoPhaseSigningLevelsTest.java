@@ -99,7 +99,7 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
         }
     }
 
-    public static Iterable<Object[]> CreateParameters() {
+    public static Iterable<Object[]> createParameters() {
         return Arrays.asList(new Object[] {true, DigestAlgorithms.SHA256, "RSA", 1},
                 new Object[] {false, DigestAlgorithms.SHA256, "RSASSA", 2},
                 new Object[] {false, DigestAlgorithms.SHAKE256, "ED448", 3},
@@ -107,7 +107,7 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "{3}: folder path: {0}; digest algorithm: {1}; signature algorithm: {2}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     // Android-Conversion-Ignore-Test (TODO DEVSIX-8113 Fix signatures tests)
     public void twoStepSigningBaselineBTest(Boolean useTempFolder, String digestAlgorithm, String signAlgorithm,
             Integer comparisonPdfId) throws Exception {
@@ -156,7 +156,7 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "{3}: folder path: {0}; digest algorithm: {1}; signature algorithm: {2}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     // Android-Conversion-Ignore-Test (TODO DEVSIX-8113 Fix signatures tests)
     public void twoStepSigningBaselineTTest(Boolean useTempFolder, String digestAlgorithm, String signAlgorithm,
             Integer comparisonPdfId) throws Exception {
@@ -210,7 +210,7 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "{3}: folder path: {0}; digest algorithm: {1}; signature algorithm: {2}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     // Android-Conversion-Ignore-Test (TODO DEVSIX-8113 Fix signatures tests)
     public void twoStepSigningBaselineLTTest(Boolean useTempFolder, String digestAlgorithm, String signAlgorithm,
             Integer comparisonPdfId) throws Exception {
@@ -272,7 +272,7 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "{3}: folder path: {0}; digest algorithm: {1}; signature algorithm: {2}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     // Android-Conversion-Ignore-Test (TODO DEVSIX-8113 Fix signatures tests)
     public void twoStepSigningBaselineLTATest(Boolean useTempFolder, String digestAlgorithm, String signAlgorithm,
             Integer comparisonPdfId) throws Exception {

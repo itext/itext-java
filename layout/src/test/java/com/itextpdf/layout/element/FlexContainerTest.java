@@ -55,7 +55,7 @@ public class FlexContainerTest extends ExtendedITextTest {
         createDestinationFolder(destinationFolder);
     }
 
-    public static Iterable<Object[]> AlignItemsAndJustifyContentProperties() {
+    public static Iterable<Object[]> alignItemsAndJustifyContentProperties() {
         return Arrays.asList(new Object[][]{
                 {AlignmentPropertyValue.FLEX_START, JustifyContent.FLEX_START, FlexWrapPropertyValue.NOWRAP,
                         FlexDirectionPropertyValue.ROW, 1},
@@ -85,7 +85,7 @@ public class FlexContainerTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
-    @MethodSource("AlignItemsAndJustifyContentProperties")
+    @MethodSource("alignItemsAndJustifyContentProperties")
     public void defaultFlexContainerTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId)
             throws IOException, InterruptedException {
@@ -114,7 +114,7 @@ public class FlexContainerTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
-    @MethodSource("AlignItemsAndJustifyContentProperties")
+    @MethodSource("alignItemsAndJustifyContentProperties")
     public void flexContainerFixedHeightWidthTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId)
             throws IOException, InterruptedException {
@@ -145,7 +145,7 @@ public class FlexContainerTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
-    @MethodSource("AlignItemsAndJustifyContentProperties")
+    @MethodSource("alignItemsAndJustifyContentProperties")
     public void flexContainerDifferentChildrenTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId)
             throws IOException, InterruptedException {
@@ -182,7 +182,7 @@ public class FlexContainerTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
-    @MethodSource("AlignItemsAndJustifyContentProperties")
+    @MethodSource("alignItemsAndJustifyContentProperties")
     // If height is clipped the behavior strongly depends on the child renderers
     // and the results are not expected sometimes
     public void flexContainerHeightClippedTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
@@ -222,7 +222,7 @@ public class FlexContainerTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
-    @MethodSource("AlignItemsAndJustifyContentProperties")
+    @MethodSource("alignItemsAndJustifyContentProperties")
     @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA), ignore = true)
     // TODO DEVSIX-5042 HEIGHT property is ignored when FORCED_PLACEMENT is true
     public void flexContainerDifferentChildrenDontFitHorizontallyTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
@@ -260,7 +260,7 @@ public class FlexContainerTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
-    @MethodSource("AlignItemsAndJustifyContentProperties")
+    @MethodSource("alignItemsAndJustifyContentProperties")
     // TODO DEVSIX-5042 HEIGHT property is ignored when FORCED_PLACEMENT is true
     public void flexContainerDifferentChildrenDontFitHorizontallyForcedPlacementTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
@@ -297,7 +297,7 @@ public class FlexContainerTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
-    @MethodSource("AlignItemsAndJustifyContentProperties")
+    @MethodSource("alignItemsAndJustifyContentProperties")
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT), ignore = true)
     public void flexContainerDifferentChildrenDontFitVerticallyTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
@@ -337,7 +337,7 @@ public class FlexContainerTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
-    @MethodSource("AlignItemsAndJustifyContentProperties")
+    @MethodSource("alignItemsAndJustifyContentProperties")
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT), ignore = true)
     public void flexContainerDifferentChildrenFitContainerDoesNotFitVerticallyTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
@@ -378,7 +378,7 @@ public class FlexContainerTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
-    @MethodSource("AlignItemsAndJustifyContentProperties")
+    @MethodSource("alignItemsAndJustifyContentProperties")
     public void flexContainerDifferentChildrenWithGrowTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId)
             throws IOException, InterruptedException {
@@ -421,7 +421,7 @@ public class FlexContainerTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
-    @MethodSource("AlignItemsAndJustifyContentProperties")
+    @MethodSource("alignItemsAndJustifyContentProperties")
     public void flexContainerDifferentChildrenWithFlexBasisTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = destinationFolder + "flexContainerDifferentChildrenWithFlexBasisTest" + comparisonPdfId + ".pdf";
@@ -458,7 +458,7 @@ public class FlexContainerTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
-    @MethodSource("AlignItemsAndJustifyContentProperties")
+    @MethodSource("alignItemsAndJustifyContentProperties")
     public void flexContainerDifferentChildrenWithFlexShrinkTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = destinationFolder + "flexContainerDifferentChildrenWithFlexShrinkTest" + comparisonPdfId + ".pdf";
@@ -498,7 +498,7 @@ public class FlexContainerTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
-    @MethodSource("AlignItemsAndJustifyContentProperties")
+    @MethodSource("alignItemsAndJustifyContentProperties")
     public void flexContainerInsideFlexContainerTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = destinationFolder + "flexContainerInsideFlexContainerTest" + comparisonPdfId + ".pdf";
@@ -528,7 +528,7 @@ public class FlexContainerTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
-    @MethodSource("AlignItemsAndJustifyContentProperties")
+    @MethodSource("alignItemsAndJustifyContentProperties")
     public void flexContainerInsideFlexContainerWithHugeBordersTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = destinationFolder + "flexContainerInsideFlexContainerWithHugeBordersTest" + comparisonPdfId + ".pdf";
@@ -560,7 +560,7 @@ public class FlexContainerTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
-    @MethodSource("AlignItemsAndJustifyContentProperties")
+    @MethodSource("alignItemsAndJustifyContentProperties")
     public void multipleFlexContainersInsideFlexContainerTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = destinationFolder + "multipleFlexContainersInsideFlexContainerTest" + comparisonPdfId + ".pdf";
@@ -598,7 +598,7 @@ public class FlexContainerTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
-    @MethodSource("AlignItemsAndJustifyContentProperties")
+    @MethodSource("alignItemsAndJustifyContentProperties")
     public void multipleFlexContainersWithPredefinedPointWidthsInsideFlexContainerTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = destinationFolder + "multipleFlexContainersWithPredefinedPointWidthsInsideFlexContainerTest" + comparisonPdfId + ".pdf";
@@ -638,7 +638,7 @@ public class FlexContainerTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
-    @MethodSource("AlignItemsAndJustifyContentProperties")
+    @MethodSource("alignItemsAndJustifyContentProperties")
     public void multipleFlexContainersWithPredefinedPercentWidthsInsideFlexContainerTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = destinationFolder + "multipleFlexContainersWithPredefinedPercentWidthsInsideFlexContainerTest" + comparisonPdfId + ".pdf";
@@ -678,7 +678,7 @@ public class FlexContainerTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
-    @MethodSource("AlignItemsAndJustifyContentProperties")
+    @MethodSource("alignItemsAndJustifyContentProperties")
     // TODO DEVSIX-5087 Content should not overflow container by default
     public void multipleFlexContainersWithPredefinedMinWidthsInsideFlexContainerTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
@@ -719,7 +719,7 @@ public class FlexContainerTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
-    @MethodSource("AlignItemsAndJustifyContentProperties")
+    @MethodSource("alignItemsAndJustifyContentProperties")
     public void multipleFlexContainersWithPredefinedMaxWidthsInsideFlexContainerTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = destinationFolder + "multipleFlexContainersWithPredefinedMaxWidthsInsideFlexContainerTest" + comparisonPdfId + ".pdf";
@@ -759,7 +759,7 @@ public class FlexContainerTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
-    @MethodSource("AlignItemsAndJustifyContentProperties")
+    @MethodSource("alignItemsAndJustifyContentProperties")
     public void flexContainerFillAvailableAreaTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = destinationFolder + "flexContainerFillAvailableAreaTest" + comparisonPdfId + ".pdf";
@@ -796,7 +796,7 @@ public class FlexContainerTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
-    @MethodSource("AlignItemsAndJustifyContentProperties")
+    @MethodSource("alignItemsAndJustifyContentProperties")
     public void flexContainerRotationAngleTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = destinationFolder + "flexContainerRotationAngleTest" + comparisonPdfId + ".pdf";
@@ -829,7 +829,7 @@ public class FlexContainerTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
-    @MethodSource("AlignItemsAndJustifyContentProperties")
+    @MethodSource("alignItemsAndJustifyContentProperties")
     // TODO DEVSIX-5174 content should overflow bottom
     public void respectFlexContainersHeightTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
@@ -866,7 +866,7 @@ public class FlexContainerTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
-    @MethodSource("AlignItemsAndJustifyContentProperties")
+    @MethodSource("alignItemsAndJustifyContentProperties")
     public void respectFlexContainersWidthTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = destinationFolder + "respectFlexContainersWidthTest" + comparisonPdfId + ".pdf";
@@ -907,7 +907,7 @@ public class FlexContainerTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
-    @MethodSource("AlignItemsAndJustifyContentProperties")
+    @MethodSource("alignItemsAndJustifyContentProperties")
     public void flexItemsMinHeightShouldBeOverriddenTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = destinationFolder + "flexItemsMinHeightShouldBeOverriddenTest" + comparisonPdfId + ".pdf";
@@ -928,7 +928,7 @@ public class FlexContainerTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
-    @MethodSource("AlignItemsAndJustifyContentProperties")
+    @MethodSource("alignItemsAndJustifyContentProperties")
     public void linesMinHeightShouldBeRespectedTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = destinationFolder + "linesMinHeightShouldBeRespectedTest" + comparisonPdfId + ".pdf";
@@ -952,7 +952,7 @@ public class FlexContainerTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
-    @MethodSource("AlignItemsAndJustifyContentProperties")
+    @MethodSource("alignItemsAndJustifyContentProperties")
     public void linesMaxHeightShouldBeRespectedTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = destinationFolder + "linesMaxHeightShouldBeRespectedTest" + comparisonPdfId + ".pdf";
@@ -976,7 +976,7 @@ public class FlexContainerTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
-    @MethodSource("AlignItemsAndJustifyContentProperties")
+    @MethodSource("alignItemsAndJustifyContentProperties")
     public void collapsingMarginsFlexContainerTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = destinationFolder + "collapsingMarginsFlexContainerTest" + comparisonPdfId + ".pdf";
@@ -1012,7 +1012,7 @@ public class FlexContainerTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
-    @MethodSource("AlignItemsAndJustifyContentProperties")
+    @MethodSource("alignItemsAndJustifyContentProperties")
     public void flexItemBoxSizingTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = destinationFolder + "flexItemBoxSizingTest" + comparisonPdfId + ".pdf";
@@ -1064,7 +1064,7 @@ public class FlexContainerTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
-    @MethodSource("AlignItemsAndJustifyContentProperties")
+    @MethodSource("alignItemsAndJustifyContentProperties")
     public void flexContainerBoxSizingTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = destinationFolder + "flexContainerBoxSizingTest" + comparisonPdfId + ".pdf";

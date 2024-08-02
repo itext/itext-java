@@ -84,7 +84,7 @@ public class PdfPadesAdvancedTest extends ExtendedITextTest {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
-    public static Iterable<Object[]> CreateParameters() {
+    public static Iterable<Object[]> createParameters() {
         List<Object[]> parameters = new ArrayList<>();
         parameters.addAll(createParametersUsingRootName("rootCertNoCrlNoOcsp", 0, 0));
         parameters.addAll(createParametersUsingRootName("rootCertCrlOcsp", 0, 1));
@@ -111,7 +111,7 @@ public class PdfPadesAdvancedTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "{3}: signing cert: {0}; root cert: {1}; revoked: {2}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void signWithAdvancedClientsTest(String signingCertName, String rootCertName, Boolean isOcspRevoked,
             String cmpFilePostfix, Integer amountOfCrlsForSign, Integer amountOfOcspsForSign,
             Integer amountOfCrlsForRoot, Integer amountOfOcspsForRoot)

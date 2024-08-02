@@ -38,7 +38,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 @Tag("UnitTest")
 public class PdfShadingParameterizedTest extends ExtendedITextTest {
 
-    public static Iterable<Object[]> Parameters() {
+    public static Iterable<Object[]> parameters() {
         return Arrays.asList(new Object[][] {
                 {"FreeFormGouraudShadedTriangleMesh", 4},
                 {"LatticeFormGouraudShadedTriangleMesh", 5},
@@ -49,7 +49,7 @@ public class PdfShadingParameterizedTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "{0}")
-    @MethodSource("Parameters")
+    @MethodSource("parameters")
     public void AllAboveType3FromDictionaryShouldFailTest(String shadingName, int shadingType) {
         PdfDictionary dict = new PdfDictionary();
         dict.put(PdfName.ShadingType, new PdfNumber(shadingType));

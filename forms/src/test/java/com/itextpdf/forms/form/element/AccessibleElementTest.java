@@ -48,7 +48,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 @Tag("IntegrationTest")
 public class AccessibleElementTest extends ExtendedITextTest {
-    public static Collection<Object[]> GetDataTestFixtureData() {
+    public static Collection<Object[]> getDataTestFixtureData() {
         int amountOfEntries = 8;
         List<Object[]> data = new ArrayList<>();
         for (int i = 0; i < amountOfEntries; i++) {
@@ -87,7 +87,7 @@ public class AccessibleElementTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "{0}")
-    @MethodSource("GetDataTestFixtureData")
+    @MethodSource("getDataTestFixtureData")
     public void testInteractive(TestContainer testContainer) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(baos));
@@ -114,7 +114,7 @@ public class AccessibleElementTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "{0}")
-    @MethodSource("GetDataTestFixtureData")
+    @MethodSource("getDataTestFixtureData")
     public void testNonInteractive(TestContainer testContainer) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(baos));
@@ -140,7 +140,7 @@ public class AccessibleElementTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "{0}")
-    @MethodSource("GetDataTestFixtureData")
+    @MethodSource("getDataTestFixtureData")
     public void testInteractiveProperty(TestContainer testContainer) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(baos));

@@ -52,7 +52,7 @@ public class FieldsRotationTest extends ExtendedITextTest {
         createDestinationFolder(DESTINATION_FOLDER);
     }
 
-    public static Iterable<Object[]> RotationRelatedProperties() {
+    public static Iterable<Object[]> rotationRelatedProperties() {
         return Arrays.asList(new Object[][]{
                 {new int[]{360, 90, 180, 270}, new int[]{0, 0, 0, 0}, true, "fieldsOnRotatedPagesDefault"},
                 {new int[]{360, 90, 180, 270}, new int[]{0, 0, 0, 0}, false, "fieldsOnRotatedPages"},
@@ -65,7 +65,7 @@ public class FieldsRotationTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "{3}; ignore page rotation: {2}")
-    @MethodSource("RotationRelatedProperties")
+    @MethodSource("rotationRelatedProperties")
     public void fieldRotationTest(int[] pageRotation, int[] fieldRotation, boolean ignorePageRotation, String testName)
             throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + testName + ".pdf";

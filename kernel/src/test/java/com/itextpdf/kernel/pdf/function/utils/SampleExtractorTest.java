@@ -39,7 +39,7 @@ public class SampleExtractorTest extends ExtendedITextTest {
     private static final byte[] SAMPLES = {0x01, 0x23, 0x45, 0x67,
             (byte) 0x89, (byte) 0xab, (byte) 0xcd, (byte) 0xef};
 
-    public static Collection<Object[]> SamplesInfo() {
+    public static Collection<Object[]> samplesInfo() {
         return Arrays.asList(new Object[][] {
                 {1, new long[] {
                         0, 0, 0, 0, 0, 0, 0, 1,
@@ -89,7 +89,7 @@ public class SampleExtractorTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = PARAMETERS_NAME_PATTERN)
-    @MethodSource("SamplesInfo")
+    @MethodSource("samplesInfo")
     public void testSamplesExtraction(int bitsPerSample, long[] expected) {
         long[] actual = new long[(SAMPLES.length << 3) / bitsPerSample];
         Assertions.assertEquals(expected.length, actual.length);

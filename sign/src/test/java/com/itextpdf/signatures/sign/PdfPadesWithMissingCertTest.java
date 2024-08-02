@@ -74,7 +74,7 @@ public class PdfPadesWithMissingCertTest extends ExtendedITextTest {
         createOrClearDestinationFolder(destinationFolder);
     }
 
-    public static Iterable<Object[]> CreateParameters() {
+    public static Iterable<Object[]> createParameters() {
         return Arrays.asList(new Object[] {"missing_cert1.cer", "missing_cert2.cer"},
                 new Object[] {"missing_cert1.crt", "missing_cert2.crt"},
                 new Object[] {null, "missing_certs.p7b"},
@@ -83,7 +83,7 @@ public class PdfPadesWithMissingCertTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "first missing cert: {0}; second missing cert: {1};")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     @LogMessages(messages = @LogMessage(messageTemplate = SignLogMessageConstant.UNABLE_TO_PARSE_AIA_CERT), ignore = true)
     public void missingCertTest(String missingCertName1, String missingCertName2)
             throws GeneralSecurityException, IOException, AbstractOperatorCreationException, AbstractPKCSException {

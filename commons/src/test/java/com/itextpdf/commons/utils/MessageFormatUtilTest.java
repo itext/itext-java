@@ -34,7 +34,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 @Tag("UnitTest")
 public class MessageFormatUtilTest extends ExtendedITextTest {
 
-    public static Iterable<Object[]> DataSource() {
+    public static Iterable<Object[]> dataSource() {
         return Arrays.asList(new Object[][]{
                 {"Plain message with params 1 test", "Plain message with params {0} {1}", new Object[]{1, "test"}, "test with simple params"},
                 {"Message with 'single quotes'", "Message with 'single quotes'", new Object[0], "test with single quotes"},
@@ -50,7 +50,7 @@ public class MessageFormatUtilTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "{index}: {3} format: {1}; {0}")
-    @MethodSource("DataSource")
+    @MethodSource("dataSource")
     public void testFormatting(String expectedResult, String pattern, Object[] arguments, String name) {
         Assertions.assertEquals(expectedResult, MessageFormatUtil.format(pattern, arguments));
     }

@@ -26,7 +26,6 @@ import com.itextpdf.styledxmlparser.jsoup.nodes.Attributes;
 import com.itextpdf.test.ExtendedITextTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -40,7 +39,7 @@ public class MultiLocaleTest extends ExtendedITextTest {
 
     private final Locale defaultLocale = Locale.getDefault();
 
-    public static Collection<Locale> Locales() {
+    public static Collection<Locale> locales() {
         return Arrays.asList(Locale.ENGLISH, new Locale("tr"));
     }
 
@@ -50,7 +49,7 @@ public class MultiLocaleTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest
-    @MethodSource("Locales")
+    @MethodSource("locales")
     public void caseSupport(Locale locale) {
         Locale.setDefault(locale);
 
@@ -73,7 +72,7 @@ public class MultiLocaleTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest
-    @MethodSource("Locales")
+    @MethodSource("locales")
     public void attributeCaseNormalization(Locale locale) {
         Locale.setDefault(locale);
 
@@ -84,7 +83,7 @@ public class MultiLocaleTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest
-    @MethodSource("Locales")
+    @MethodSource("locales")
     public void attributesCaseNormalization(Locale locale) {
         Locale.setDefault(locale);
 
@@ -98,7 +97,7 @@ public class MultiLocaleTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest
-    @MethodSource("Locales")
+    @MethodSource("locales")
     public void canBeInsensitive(Locale locale) {
         Locale.setDefault(locale);
 

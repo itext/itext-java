@@ -46,7 +46,7 @@ public class FlatteningRotatedTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/FlatteningRotatedTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/forms/FlatteningRotatedTest/";
 
-    public static Collection<Object[]> InputFileNames() {
+    public static Collection<Object[]> inputFileNames() {
         List<Object[]> inputFileNames = new ArrayList<Object[]>();
         for (int pageRot = 0; pageRot < 360; pageRot += 90) {
             for (int fieldRot = 0; fieldRot < 360; fieldRot += 90) {
@@ -62,7 +62,7 @@ public class FlatteningRotatedTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = "{0}")
-    @MethodSource("InputFileNames")
+    @MethodSource("inputFileNames")
     public void formFlatteningTest_DefaultAppearanceGeneration_Rot(String inputPdfFileName) throws IOException, InterruptedException {
         String src = sourceFolder + inputPdfFileName + ".pdf";
         String dest = destinationFolder + inputPdfFileName + ".pdf";

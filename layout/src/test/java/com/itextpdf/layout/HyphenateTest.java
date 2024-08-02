@@ -40,7 +40,7 @@ public class HyphenateTest extends ExtendedITextTest {
 
 	private List<String> errors = new ArrayList<>();
 
-	public static Iterable<Object[]> HyphenationProperties() {
+	public static Iterable<Object[]> hyphenationProperties() {
 		return Arrays.asList(new Object[][]{
 				{"African", "af", "country"},
 				{"Assamese", "as", "\u09A8\u09AE\u09B8\u09CD\u0995\u09BE\u09F0"},
@@ -116,7 +116,7 @@ public class HyphenateTest extends ExtendedITextTest {
 	}
 
 	@ParameterizedTest(name = "{0}")
-	@MethodSource("HyphenationProperties")
+	@MethodSource("hyphenationProperties")
 	public void runTest(String name, String lang, String testWord) {
 		errors.clear();
 		tryHyphenate(lang, testWord);

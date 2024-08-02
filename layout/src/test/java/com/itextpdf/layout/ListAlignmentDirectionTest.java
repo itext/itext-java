@@ -70,7 +70,7 @@ public class ListAlignmentDirectionTest extends ExtendedITextTest {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
-    public static Iterable<Object[]> AlignItemsAndJustifyContentProperties() {
+    public static Iterable<Object[]> alignItemsAndJustifyContentProperties() {
         TextAlignment[] alignmentTestValues = new TextAlignment[] {TextAlignment.LEFT, TextAlignment.CENTER,
                 TextAlignment.RIGHT, TextAlignment.JUSTIFIED, TextAlignment.JUSTIFIED_ALL};
         BaseDirection[] directionTestValues = new BaseDirection[] {BaseDirection.LEFT_TO_RIGHT,
@@ -89,7 +89,7 @@ public class ListAlignmentDirectionTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest(name = PARAMETERS_NAME_PATTERN)
-    @MethodSource("AlignItemsAndJustifyContentProperties")
+    @MethodSource("alignItemsAndJustifyContentProperties")
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.TYPOGRAPHY_NOT_FOUND, count = 8))
     // TODO DEVSIX-5727 direction of the first list-item should define the symbol indent's side. Once the issue
     // is fixed, the corresponding cmps should be updated.

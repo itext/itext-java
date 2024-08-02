@@ -40,7 +40,7 @@ public class MultiLocaleTest extends ExtendedITextTest {
 
     private final Locale defaultLocale = Locale.getDefault();
 
-    public static Collection<Locale> Locales() {
+    public static Collection<Locale> locales() {
         return Arrays.asList(Locale.ENGLISH, new Locale("tr"));
     }
 
@@ -50,7 +50,7 @@ public class MultiLocaleTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest
-    @MethodSource("Locales")
+    @MethodSource("locales")
     public void safeListedProtocolShouldBeRetained(Locale locale) {
         Locale.setDefault(locale);
 
@@ -65,7 +65,7 @@ public class MultiLocaleTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest
-    @MethodSource("Locales")
+    @MethodSource("locales")
     public void cleanerSafeListedProtocolShouldBeRetained(Locale locale) {
         Locale.setDefault(locale);
 
@@ -80,7 +80,7 @@ public class MultiLocaleTest extends ExtendedITextTest {
     }
 
     @ParameterizedTest
-    @MethodSource("Locales")
+    @MethodSource("locales")
     public void compatibilitySafeListedProtocolShouldBeRetained(Locale locale) {
         Locale.setDefault(locale);
 

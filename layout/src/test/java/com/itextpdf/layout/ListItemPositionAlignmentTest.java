@@ -73,7 +73,7 @@ public class ListItemPositionAlignmentTest extends ExtendedITextTest {
 		createOrClearDestinationFolder(DESTINATION_FOLDER);
 	}
 
-	public static Iterable<Object[]> BaseDirectionAndSymbolAlignmentProperties() {
+	public static Iterable<Object[]> baseDirectionAndSymbolAlignmentProperties() {
 		BaseDirection[] directionTestValues = new BaseDirection[]{BaseDirection.LEFT_TO_RIGHT,
 		                                                          BaseDirection.RIGHT_TO_LEFT};
 		ListSymbolAlignment[] listSymbolAlignmentTestValues = new ListSymbolAlignment[]{ListSymbolAlignment.LEFT,
@@ -96,7 +96,7 @@ public class ListItemPositionAlignmentTest extends ExtendedITextTest {
 	}
 
 	@ParameterizedTest(name = PARAMETERS_NAME_PATTERN)
-	@MethodSource("BaseDirectionAndSymbolAlignmentProperties")
+	@MethodSource("baseDirectionAndSymbolAlignmentProperties")
 	@LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.TYPOGRAPHY_NOT_FOUND, count = 8)})
 	public void defaultListIemPositionAlignmentTest(BaseDirection listBaseDirection, BaseDirection listItemBaseDirection,
 			ListSymbolAlignment listSymbolAlignment, ListSymbolPosition listSymbolPosition, Integer comparisonPdfId)
