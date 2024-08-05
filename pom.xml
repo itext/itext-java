@@ -92,10 +92,10 @@
     <integrationtests>com.itextpdf.test.annotations.type.IntegrationTest</integrationtests>
     <jacoco.version>0.8.4</jacoco.version>
     <java.version>1.8</java.version>
-    <javadoc-additionalOptions />
+    <javadoc-additionalOptions/>
     <javadoc-link>https://docs.oracle.com/javase/8/docs/api/</javadoc-link>
     <javadoc.version>3.7.0</javadoc.version>
-    <junit.jupiter.version>5.10.2</junit.jupiter.version>
+    <junit.jupiter.version>5.10.3</junit.jupiter.version>
     <junitparams.version>1.0.4</junitparams.version>
     <logback.version>1.2.13</logback.version>
     <maven.compiler.source>1.8</maven.compiler.source>
@@ -509,7 +509,7 @@
             <executions>
               <execution>
                 <id>bundle-manifest</id>
-                <phase />
+                <phase/>
               </execution>
             </executions>
           </plugin>
@@ -525,11 +525,11 @@
             <executions>
               <execution>
                 <id>default-resources</id>
-                <phase />
+                <phase/>
               </execution>
               <execution>
                 <id>default-testResources</id>
-                <phase />
+                <phase/>
               </execution>
             </executions>
           </plugin>
@@ -559,10 +559,10 @@
             </dependencies>
             <configuration>
               <autoUpdate>false</autoUpdate>
-              <connectionString />
+              <connectionString/>
               <databaseDriverName>com.mysql.cj.jdbc.Driver</databaseDriverName>
-              <databasePassword />
-              <databaseUser />
+              <databasePassword/>
+              <databaseUser/>
               <format>ALL</format>
             </configuration>
             <executions>
