@@ -10,3 +10,4 @@ This software uses the following test resources under the following licenses:
 | cmr10.pfb | SIL OFL-1.1  | LICENSE-SIL-1.1.txt | https://www.ams.org/arc/resources/amsfonts-about.html (13.09.2023)
 | cmr10.pfm | SIL OFL-1.1  | LICENSE-SIL-1.1.txt | https://www.ams.org/arc/resources/amsfonts-about.html (13.09.2023)
 | SourceHanSansHW-Regular.otf | LICENCE-SIL-1.1.txt |  https://github.com/adobe-fonts/source-han-sans/releases/tag/2.004R (File: Static Language Specific OTFs, path in zip folder:OTF/japanesHW) (07.09.2023)
+| glyphs.ttf, glyphs-fmt-6.ttf | MIT | Derived from https://github.com/RazrFalcon/ttf-parser/tree/337e7d1c08b06478a84c4345f4f289fc2cb9210c/tests/fonts-src

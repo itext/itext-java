@@ -29,9 +29,6 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.stream.Collectors;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -138,6 +135,58 @@ public class PdfType0FontIntegrationTest extends ExtendedITextTest {
                     .moveText(0, -16);
         }
         canvas.endText()
+                .restoreState();
+        canvas.rectangle(100, 500, 100, 100).fill();
+        canvas.release();
+
+        pdfDoc.close();
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void cmapPlatform0PlatEnc3Format4FontTest() throws IOException, InterruptedException {
+        String filename = DESTINATION_FOLDER + "cmapPlatform0PlatEnc3Format4FontTest.pdf";
+        String cmpFilename = SOURCE_FOLDER + "cmp_cmapPlatform0PlatEnc3Format4FontTest.pdf";
+
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+
+        PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "glyphs.ttf");
+
+        PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+        canvas.saveState()
+                .beginText()
+                .setFontAndSize(font, 20)
+                .moveText(36, 700)
+                .showText("===fff===iii===ﬁ")
+                .endText()
+                .restoreState();
+        canvas.rectangle(100, 500, 100, 100).fill();
+        canvas.release();
+
+        pdfDoc.close();
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void cmapPlatform0PlatEnc3Format6FontTest() throws IOException, InterruptedException {
+        String filename = DESTINATION_FOLDER + "cmapPlatform0PlatEnc3Format6FontTest.pdf";
+        String cmpFilename = SOURCE_FOLDER + "cmp_cmapPlatform0PlatEnc3Format6FontTest.pdf";
+
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+
+        PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "glyphs-fmt-6.ttf");
+
+        PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+        canvas.saveState()
+                .beginText()
+                .setFontAndSize(font, 20)
+                .moveText(36, 700)
+                .showText("===fff===iii===")
+                .endText()
                 .restoreState();
         canvas.rectangle(100, 500, 100, 100).fill();
         canvas.release();

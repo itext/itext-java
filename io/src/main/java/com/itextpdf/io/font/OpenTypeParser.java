@@ -859,7 +859,9 @@ class OpenTypeParser implements Closeable {
             int format = raf.readUnsignedShort();
 
             // We treat this table as equivalent to (platformId = 3, encodingId = 1)
-            // for downstream processing, since both are intended to address the Unicode BMP
+            // for downstream processing, since both are intended to address the Unicode BMP.
+            // Note that only one of these encoding subtables is used at a time. If multiple encoding subtables
+            // are found, the ‘cmap’ parsing software determines which one to use.
             switch (format) {
                 case 4:
                     cmaps.cmap31 = readFormat4(false);
