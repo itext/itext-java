@@ -603,6 +603,68 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
     @MethodSource("createParameters")
+    public void gotoReferencesModifiedStructTreeElemTest(boolean continueValidationAfterFail) throws IOException {
+        setUp(continueValidationAfterFail);
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "gotoReferencesModifiedStructTreeElem.pdf"))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            validator.setAccessPermissions(AccessPermissions.FORM_FIELDS_MODIFICATION);
+            PdfRevisionsReader revisionsReader = new PdfRevisionsReader(document.getReader());
+            List<DocumentRevision> documentRevisions = revisionsReader.getAllRevisions();
+
+            ValidationReport validationReport = new ValidationReport();
+            validator.validateRevision(documentRevisions.get(documentRevisions.size() - 2),
+                    documentRevisions.get(documentRevisions.size() - 1), document, validationReport, validationContext);
+
+            AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.VALID));
+        }
+    }
+
+    @ParameterizedTest(name = "Continue validation after failure: {0}")
+    @MethodSource("createParameters")
+    public void catalogReferenceInRandomPlaceTest(boolean continueValidationAfterFail) throws IOException {
+        setUp(continueValidationAfterFail);
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "catalogReferenceInRandomPlace.pdf"))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            validator.setAccessPermissions(AccessPermissions.FORM_FIELDS_MODIFICATION);
+            PdfRevisionsReader revisionsReader = new PdfRevisionsReader(document.getReader());
+            List<DocumentRevision> documentRevisions = revisionsReader.getAllRevisions();
+
+            ValidationReport validationReport = new ValidationReport();
+            validator.validateRevision(documentRevisions.get(documentRevisions.size() - 2),
+                    documentRevisions.get(documentRevisions.size() - 1), document, validationReport, validationContext);
+
+            AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.VALID));
+
+            validator.validateRevision(documentRevisions.get(documentRevisions.size() - 3),
+                    documentRevisions.get(documentRevisions.size() - 2), document, validationReport, validationContext);
+            AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.VALID));
+        }
+    }
+
+    @ParameterizedTest(name = "Continue validation after failure: {0}")
+    @MethodSource("createParameters")
+    public void catalogReferenceInRandomPlaceModifiedTest(boolean continueValidationAfterFail) throws IOException {
+        setUp(continueValidationAfterFail);
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "catalogReferenceInRandomPlaceModified.pdf"))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            validator.setAccessPermissions(AccessPermissions.FORM_FIELDS_MODIFICATION);
+            PdfRevisionsReader revisionsReader = new PdfRevisionsReader(document.getReader());
+            List<DocumentRevision> documentRevisions = revisionsReader.getAllRevisions();
+
+            ValidationReport validationReport = new ValidationReport();
+            validator.validateRevision(documentRevisions.get(documentRevisions.size() - 2),
+                    documentRevisions.get(documentRevisions.size() - 1), document, validationReport, validationContext);
+
+            AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.INVALID)
+                    .hasNumberOfFailures(1).hasNumberOfLogs(1)
+                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                            .withMessage(DocumentRevisionsValidator.PAGE_MODIFIED)
+                            .withStatus(ReportItemStatus.INVALID)));
+        }
+    }
+
+    @ParameterizedTest(name = "Continue validation after failure: {0}")
+    @MethodSource("createParameters")
     public void multipleRevisionsDocumentLevel3Test(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "multipleRevisionsDocument3.pdf"))) {

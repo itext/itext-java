@@ -555,6 +555,34 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
     @MethodSource("createParameters")
+    public void outlinesNotModifiedTest(boolean continueValidationAfterFail) throws IOException {
+        setUp(continueValidationAfterFail);
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "outlinesNotModified.pdf"))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
+
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID));
+        }
+    }
+
+    @ParameterizedTest(name = "Continue validation after failure: {0}")
+    @MethodSource("createParameters")
+    public void outlinesModifiedTest(boolean continueValidationAfterFail) throws IOException {
+        setUp(continueValidationAfterFail);
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "outlinesModified.pdf"))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
+
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
+                    .hasNumberOfFailures(1)
+                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                            .withMessage(DocumentRevisionsValidator.NOT_ALLOWED_CATALOG_CHANGES)
+                            .withStatus(ReportItemStatus.INVALID)));
+        }
+    }
+
+    @ParameterizedTest(name = "Continue validation after failure: {0}")
+    @MethodSource("createParameters")
     public void taggedDocRemoveStructTreeAnnotationTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "taggedDocRemoveStructTreeAnnotation.pdf"))) {
