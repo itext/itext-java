@@ -58,5 +58,12 @@ public class FingerPrintTest extends ExtendedITextTest {
         fingerPrint.registerProduct(productData);
         Assertions.assertFalse(fingerPrint.registerProduct(duplicateProductData));
     }
+
+    @Test
+    public void disableFingerPrintTest() {
+        FingerPrint fingerPrint = new FingerPrint();
+        fingerPrint.disableFingerPrint();
+        Assertions.assertFalse(fingerPrint.isFingerPrintEnabled());
+    }
 }
 

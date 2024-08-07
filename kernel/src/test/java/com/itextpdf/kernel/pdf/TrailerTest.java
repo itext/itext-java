@@ -27,18 +27,20 @@ import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.actions.data.ITextCoreProductData;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.HashMap;
 import java.util.Map.Entry;
+
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -170,6 +172,46 @@ public class TrailerTest extends ExtendedITextTest {
         }
     }
 
+    @Test
+    public void enableFingerprintInAGPLModeTest() throws IOException {
+        PdfDocument pdf = new PdfDocument(new PdfWriter(
+                destinationFolder + "enableFingerprintInAGPLMode.pdf"));
+        pdf.registerProduct(this.productData);
+        PdfPage page = pdf.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.beginText()
+                .setFontAndSize(PdfFontFactory.createFont(), 12f)
+                .showText("Hello World")
+                .endText();
+        pdf.close();
+
+        Assertions.assertTrue(doesTrailerContainFingerprint(new File(
+                destinationFolder + "enableFingerprintInAGPLMode.pdf"), MessageFormatUtil.format(
+                        "%iText-{0}-{1}\n", productData.getProductName(), productData.getVersion())));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate =
+            KernelLogMessageConstant.FINGERPRINT_DISABLED_BUT_NO_REQUIRED_LICENCE))
+    public void tryDisablingFingerprintInAGPLModeTest() throws IOException {
+        PdfDocument pdf = new PdfDocument(new PdfWriter(
+                destinationFolder + "tryDisablingFingerprintInAGPLMode.pdf"));
+        pdf.registerProduct(this.productData);
+        PdfPage page = pdf.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.beginText()
+                .setFontAndSize(PdfFontFactory.createFont(), 12f)
+                .showText("Hello World")
+                .endText();
+        pdf.getFingerPrint().disableFingerPrint();
+        pdf.close();
+
+
+        Assertions.assertTrue(doesTrailerContainFingerprint(new File(
+                destinationFolder + "tryDisablingFingerprintInAGPLMode.pdf"), MessageFormatUtil.format(
+                "%iText-{0}-{1}\n", productData.getProductName(), productData.getVersion())));
+    }
+
     private boolean doesTrailerContainFingerprint(File file, String fingerPrint) throws IOException {
         try (RandomAccessFile raf = FileUtil.getRandomAccessFile(file)) {
 
@@ -181,6 +223,10 @@ public class TrailerTest extends ExtendedITextTest {
             String templine = "";
 
             while (!templine.contains(coreProductData)) {
+                if (raf.getFilePointer() <= 2) {
+                    return false;
+                }
+
                 templine = (char) raf.read() + templine;
                 raf.seek(raf.getFilePointer() - 2);
             }
@@ -190,6 +236,10 @@ public class TrailerTest extends ExtendedITextTest {
             templine = "";
 
             while (read != '%') {
+                if (raf.getFilePointer() <= 2) {
+                    return false;
+                }
+
                 read = (char) raf.read();
                 templine = read + templine;
                 raf.seek(raf.getFilePointer() - 2);

@@ -22,11 +22,10 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.commons.actions.data.ProductData;
-import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.commons.actions.EventManager;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteUtils;
-import com.itextpdf.kernel.actions.data.ITextCoreProductData;
+import com.itextpdf.kernel.actions.events.AddFingerPrintEvent;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 
@@ -183,28 +182,6 @@ public class PdfXrefTable {
             return null;
         }
         return xref[index];
-    }
-
-    /**
-     * Convenience method to write the fingerprint preceding the trailer.
-     * The fingerprint contains information on iText products used in the generation or manipulation
-     * of an outputted PDF file.
-     *
-     * @param document pdfDocument to write the fingerprint to
-     */
-    protected static void writeKeyInfo(PdfDocument document) {
-        PdfWriter writer = document.getWriter();
-
-        final Collection<ProductData> products = document.getFingerPrint().getProducts();
-        if (products.isEmpty()) {
-            writer.writeString(MessageFormatUtil
-                    .format("%iText-{0}-no-registered-products\n", ITextCoreProductData.getInstance().getVersion()));
-        } else {
-            for (ProductData productData : products) {
-                writer.writeString(MessageFormatUtil
-                        .format("%iText-{0}-{1}\n", productData.getPublicProductName(), productData.getVersion()));
-            }
-        }
     }
 
     /**
@@ -412,7 +389,7 @@ public class PdfXrefTable {
             writer.write(document.getTrailer());
             writer.write('\n');
         }
-        writeKeyInfo(document);
+        EventManager.getInstance().onEvent(new AddFingerPrintEvent(document));
         writer.writeString("startxref\n").
                 writeLong(startxref).
                 writeString("\n%%EOF\n");
