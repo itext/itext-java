@@ -473,7 +473,6 @@
             </fileset>
             <fileset reason="Java.Security does not exist in .net">
                 <file path="com/itextpdf/signatures/RSASSAPSSMechanismParams.java"/>
-                <file path="com/itextpdf/signatures/sign/RSASSAPSSTest.java"/>
                 <file path="com/itextpdf/signatures/sign/TwoPhaseSigningTest.java"/>
             </fileset>
             <fileset reason="KeyPurposeId creation logic is different in java and .NET">
