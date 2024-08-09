@@ -85,6 +85,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Adobe_PubSec = createDirectName("Adobe.PubSec");
     public static final PdfName AESV2 = createDirectName("AESV2");
     public static final PdfName AESV3 = createDirectName("AESV3");
+    public static final PdfName AESV4 = createDirectName("AESV4");
     public static final PdfName AF = createDirectName("AF");
     public static final PdfName AFRelationship = createDirectName("AFRelationship");
     public static final PdfName After = createDirectName("After");

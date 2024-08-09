@@ -114,6 +114,7 @@ import com.itextpdf.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilderBC;
 import com.itextpdf.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilderBC;
 import com.itextpdf.bouncycastle.cms.jcajce.JceKeyAgreeEnvelopedRecipientBC;
 import com.itextpdf.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipientBC;
+import com.itextpdf.bouncycastle.crypto.modes.GCMBlockCipherBC;
 import com.itextpdf.bouncycastle.openssl.PEMParserBC;
 import com.itextpdf.bouncycastle.openssl.jcajce.JcaPEMKeyConverterBC;
 import com.itextpdf.bouncycastle.openssl.jcajce.JceOpenSSLPKCS8DecryptorProviderBuilderBC;
@@ -221,6 +222,7 @@ import com.itextpdf.commons.bouncycastle.cms.jcajce.IJcaSignerInfoGeneratorBuild
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJcaSimpleSignerInfoVerifierBuilder;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJceKeyAgreeEnvelopedRecipient;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJceKeyTransEnvelopedRecipient;
+import com.itextpdf.commons.bouncycastle.crypto.modes.IGCMBlockCipher;
 import com.itextpdf.commons.bouncycastle.openssl.IPEMParser;
 import com.itextpdf.commons.bouncycastle.openssl.jcajce.IJcaPEMKeyConverter;
 import com.itextpdf.commons.bouncycastle.openssl.jcajce.IJceOpenSSLPKCS8DecryptorProviderBuilder;
@@ -320,6 +322,8 @@ import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
 import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.generators.HKDFBytesGenerator;
 import org.bouncycastle.crypto.params.HKDFParameters;
+import org.bouncycastle.crypto.engines.AESEngine;
+import org.bouncycastle.crypto.modes.GCMBlockCipher;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
@@ -1892,5 +1896,14 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
         Cipher cipher = Cipher.getInstance("AESWrap", this.getProvider());
         cipher.init(Cipher.WRAP_MODE, new SecretKeySpec(kek, "AESWrap"));
         return cipher.wrap(new SecretKeySpec(key, "AESWrap"));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IGCMBlockCipher createGCMBlockCipher() {
+        GCMBlockCipher cipher = (GCMBlockCipher) GCMBlockCipher.newInstance(AESEngine.newInstance());
+        return new GCMBlockCipherBC(cipher);
     }
 }

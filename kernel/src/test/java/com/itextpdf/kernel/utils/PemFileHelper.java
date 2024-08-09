@@ -24,6 +24,8 @@ package com.itextpdf.kernel.utils;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
+import com.itextpdf.commons.bouncycastle.cert.jcajce.IJcaX509CertificateConverter;
 import com.itextpdf.commons.bouncycastle.openssl.IPEMParser;
 import com.itextpdf.commons.bouncycastle.openssl.jcajce.IJcaPEMKeyConverter;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
@@ -31,10 +33,15 @@ import com.itextpdf.commons.bouncycastle.operator.IInputDecryptorProvider;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.bouncycastle.pkcs.IPKCS8EncryptedPrivateKeyInfo;
 
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.security.PrivateKey;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.util.ArrayList;
+import java.util.List;
 
 public final class PemFileHelper {
 
@@ -55,6 +62,31 @@ public final class PemFileHelper {
             return keyConverter.getPrivateKey(key.decryptPrivateKeyInfo(decProv));
         }
         return null;
+    }
+
+    public static Certificate[] readFirstChain(String pemFileName) throws IOException, CertificateException {
+        List<IX509CertificateHolder> certificatesHolders = readCertificates(pemFileName);
+        IJcaX509CertificateConverter converter =
+                BOUNCY_CASTLE_FACTORY.createJcaX509CertificateConverter().setProvider(BOUNCY_CASTLE_FACTORY.getProvider());
+        Certificate[] certificates = new Certificate[certificatesHolders.size()];
+        for (int i = 0; i < certificatesHolders.size(); i++) {
+            certificates[i] = converter.getCertificate(certificatesHolders.get(i));
+        }
+        return certificates;
+    }
+
+    private static List<IX509CertificateHolder> readCertificates(String pemFileName) throws IOException {
+        try (IPEMParser parser = BOUNCY_CASTLE_FACTORY.createPEMParser(new FileReader(pemFileName))) {
+            Object readObject = parser.readObject();
+            List<IX509CertificateHolder> certificateHolders = new ArrayList<>();
+            while (readObject != null) {
+                if (readObject instanceof IX509CertificateHolder) {
+                    certificateHolders.add((IX509CertificateHolder) readObject);
+                }
+                readObject = parser.readObject();
+            }
+            return certificateHolders;
+        }
     }
 
     private static IPKCS8EncryptedPrivateKeyInfo readPrivateKey(InputStream pemFile) throws IOException {

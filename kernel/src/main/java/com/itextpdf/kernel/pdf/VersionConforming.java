@@ -34,6 +34,8 @@ public class VersionConforming {
     public static final String DEPRECATED_ENCRYPTION_ALGORITHMS = "Encryption algorithms STANDARD_ENCRYPTION_40, STANDARD_ENCRYPTION_128 and ENCRYPTION_AES_128 (see com.itextpdf.kernel.pdf.EncryptionConstants) are deprecated in PDF 2.0. It is highly recommended not to use it.";
     public static final String DEPRECATED_NEED_APPEARANCES_IN_ACROFORM = "NeedAppearances has been deprecated in PDF 2.0. Appearance streams are required in PDF 2.0.";
     public static final String DEPRECATED_XFA_FORMS = "XFA is deprecated in PDF 2.0. The XFA form will not be written to the document";
+    public static final String NOT_SUPPORTED_AES_GCM = "Advanced Encryption Standard-Galois/Counter Mode " +
+            "(AES-GCM) encryption algorithm is supported starting from PDF 2.0.";
 
     private static final Logger logger = LoggerFactory.getLogger(VersionConforming.class);
 
@@ -66,6 +68,23 @@ public class VersionConforming {
         }
     }
 
-
+    /**
+     * Logs error message in case provided PDF document version is earlier than specified expected starting version.
+     *
+     * @param document PDF document to check version for
+     * @param expectedStartVersion starting version since which new feature is supported
+     * @param notSupportedFeatureLogMessage error message to log
+     *
+     * @return boolean value specifying whether validation passed ({@code true}) or failed ({@code false})
+     */
+    public static boolean validatePdfVersionForNotSupportedFeatureLogError(PdfDocument document,
+                                                                           PdfVersion expectedStartVersion,
+                                                                           String notSupportedFeatureLogMessage) {
+        if (document.getPdfVersion().compareTo(expectedStartVersion) >= 0) {
+            return true;
+        }
+        logger.error(notSupportedFeatureLogMessage);
+        return false;
+    }
 
 }

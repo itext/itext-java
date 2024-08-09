@@ -117,6 +117,7 @@ import com.itextpdf.commons.bouncycastle.cms.jcajce.IJcaSignerInfoGeneratorBuild
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJcaSimpleSignerInfoVerifierBuilder;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJceKeyAgreeEnvelopedRecipient;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJceKeyTransEnvelopedRecipient;
+import com.itextpdf.commons.bouncycastle.crypto.modes.IGCMBlockCipher;
 import com.itextpdf.commons.bouncycastle.openssl.IPEMParser;
 import com.itextpdf.commons.bouncycastle.openssl.jcajce.IJcaPEMKeyConverter;
 import com.itextpdf.commons.bouncycastle.openssl.jcajce.IJceOpenSSLPKCS8DecryptorProviderBuilder;
@@ -1005,6 +1006,11 @@ class BouncyCastleDefaultFactory implements IBouncyCastleFactory {
 
     @Override
     public byte[] generateEncryptedKeyWithAES256NoPad(byte[] key, byte[] kek) {
+        throw new UnsupportedOperationException(BouncyCastleLogMessageConstant.BOUNCY_CASTLE_DEPENDENCY_MUST_PRESENT);
+    }
+
+    @Override
+    public IGCMBlockCipher createGCMBlockCipher() {
         throw new UnsupportedOperationException(BouncyCastleLogMessageConstant.BOUNCY_CASTLE_DEPENDENCY_MUST_PRESENT);
     }
 }

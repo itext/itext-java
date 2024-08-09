@@ -167,7 +167,7 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
         }
     }
 
-    private void setAES256DicEntries(PdfDictionary encryptionDictionary, byte[] oeKey, byte[] ueKey, byte[] aes256Perms,
+    protected void setAES256DicEntries(PdfDictionary encryptionDictionary, byte[] oeKey, byte[] ueKey, byte[] aes256Perms,
                                      boolean encryptMetadata, boolean embeddedFilesOnly) {
         int vAes256 = 5;
         int rAes256 = 5;
@@ -206,7 +206,8 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
                 password = Arrays.copyOf(password, 127);
             }
 
-            isPdf2 = encryptionDictionary.getAsNumber(PdfName.R).getValue() == 6;
+            isPdf2 = encryptionDictionary.getAsNumber(PdfName.R).getValue() == 6
+                    || encryptionDictionary.getAsNumber(PdfName.R).getValue() == 7;
 
             //truncate user and owner passwords to 48 bytes where the first 32 bytes
             //are a hash value, next 8 bytes are validation salt and final 8 bytes are the key salt
@@ -222,7 +223,7 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
             byte[] hash;
 
             hash = computeHash(password, oValue, VALIDATION_SALT_OFFSET, SALT_LENGTH, uValue);
-            usedOwnerPassword = compareArray(hash, oValue, 32);
+            usedOwnerPassword = equalsArray(hash, oValue, 32);
 
             if (usedOwnerPassword) {
                 hash = computeHash(password, oValue, KEY_SALT_OFFSET, SALT_LENGTH, uValue);
@@ -230,7 +231,7 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
                 nextObjectKey = ac.processBlock(oeValue, 0, oeValue.length);
             } else {
                 hash = computeHash(password, uValue, VALIDATION_SALT_OFFSET, SALT_LENGTH);
-                if (!compareArray(hash, uValue, 32)) {
+                if (!equalsArray(hash, uValue, 32)) {
                     throw new BadPasswordException(KernelExceptionMessageConstant.BAD_USER_PASSWORD);
                 }
                 hash = computeHash(password, uValue, KEY_SALT_OFFSET, SALT_LENGTH);
@@ -241,8 +242,9 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
 
             AESCipherCBCnoPad ac = new AESCipherCBCnoPad(false, nextObjectKey);
             byte[] decPerms = ac.processBlock(perms, 0, perms.length);
-            if (decPerms[9] != (byte) 'a' || decPerms[10] != (byte) 'd' || decPerms[11] != (byte) 'b')
+            if (decPerms[9] != (byte) 'a' || decPerms[10] != (byte) 'd' || decPerms[11] != (byte) 'b') {
                 throw new BadPasswordException(KernelExceptionMessageConstant.BAD_USER_PASSWORD);
+            }
             int permissionsDecoded = (decPerms[0] & 0xff) | ((decPerms[1] & 0xff) << 8)
                     | ((decPerms[2] & 0xff) << 16) | ((decPerms[3] & 0xff) << 24);
             boolean encryptMetadata = decPerms[8] == (byte) 'T';
@@ -338,15 +340,6 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
         }
 
         return k;
-    }
-
-    private static boolean compareArray(byte[] a, byte[] b, int len) {
-        for (int k = 0; k < len; ++k) {
-            if (a[k] != b[k]) {
-                return false;
-            }
-        }
-        return true;
     }
 
     private byte[] truncateArray(byte[] array) {

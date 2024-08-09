@@ -115,6 +115,7 @@ import com.itextpdf.commons.bouncycastle.cms.jcajce.IJcaSignerInfoGeneratorBuild
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJcaSimpleSignerInfoVerifierBuilder;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJceKeyAgreeEnvelopedRecipient;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJceKeyTransEnvelopedRecipient;
+import com.itextpdf.commons.bouncycastle.crypto.modes.IGCMBlockCipher;
 import com.itextpdf.commons.bouncycastle.openssl.IPEMParser;
 import com.itextpdf.commons.bouncycastle.openssl.jcajce.IJcaPEMKeyConverter;
 import com.itextpdf.commons.bouncycastle.openssl.jcajce.IJceOpenSSLPKCS8DecryptorProviderBuilder;
@@ -1715,4 +1716,11 @@ public interface IBouncyCastleFactory {
      * @throws GeneralSecurityException in case of encryption related exceptions.
      */
     byte[] generateEncryptedKeyWithAES256NoPad(byte[] key, byte[] kek) throws GeneralSecurityException;
+
+    /**
+     * Returns a Block Cipher object that implements the aes-gcm transformation.
+     *
+     * @return {@code IGCMBlockCipher} instance with provider specific implementation
+     */
+    IGCMBlockCipher createGCMBlockCipher();
 }

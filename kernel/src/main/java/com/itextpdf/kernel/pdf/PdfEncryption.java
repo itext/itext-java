@@ -29,11 +29,13 @@ import com.itextpdf.kernel.crypto.OutputStreamEncryption;
 import com.itextpdf.kernel.crypto.securityhandler.PubKeySecurityHandler;
 import com.itextpdf.kernel.crypto.securityhandler.PubSecHandlerUsingAes128;
 import com.itextpdf.kernel.crypto.securityhandler.PubSecHandlerUsingAes256;
+import com.itextpdf.kernel.crypto.securityhandler.PubSecHandlerUsingAesGcm;
 import com.itextpdf.kernel.crypto.securityhandler.PubSecHandlerUsingStandard128;
 import com.itextpdf.kernel.crypto.securityhandler.PubSecHandlerUsingStandard40;
 import com.itextpdf.kernel.crypto.securityhandler.SecurityHandler;
 import com.itextpdf.kernel.crypto.securityhandler.StandardHandlerUsingAes128;
 import com.itextpdf.kernel.crypto.securityhandler.StandardHandlerUsingAes256;
+import com.itextpdf.kernel.crypto.securityhandler.StandardHandlerUsingAesGcm;
 import com.itextpdf.kernel.crypto.securityhandler.StandardHandlerUsingStandard128;
 import com.itextpdf.kernel.crypto.securityhandler.StandardHandlerUsingStandard40;
 import com.itextpdf.kernel.crypto.securityhandler.StandardSecurityHandler;
@@ -59,6 +61,7 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
     private static final int STANDARD_ENCRYPTION_128 = 3;
     private static final int AES_128 = 4;
     private static final int AES_256 = 5;
+    private static final int AES_GCM = 6;
     private static final int DEFAULT_KEY_LENGTH = 40;
 
     private static long seq = SystemUtil.getTimeBasedSeed();
@@ -185,6 +188,12 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
                 this.permissions = handlerAes256.getPermissions();
                 securityHandler = handlerAes256;
                 break;
+            case AES_GCM:
+                StandardHandlerUsingAesGcm handlerAesGcm = new StandardHandlerUsingAesGcm(this.getPdfObject(), userPassword, ownerPassword,
+                        permissions, encryptMetadata, embeddedFilesOnly);
+                this.permissions = handlerAesGcm.getPermissions();
+                securityHandler = handlerAesGcm;
+                break;
         }
     }
 
@@ -293,6 +302,9 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
                 securityHandler = new PubSecHandlerUsingAes256(this.getPdfObject(), certs, permissions,
                         encryptMetadata, embeddedFilesOnly);
                 break;
+            case AES_GCM:
+                securityHandler = new PubSecHandlerUsingAesGcm(this.getPdfObject(), certs, permissions, encryptMetadata, embeddedFilesOnly);
+                break;
         }
     }
 
@@ -328,6 +340,12 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
                 encryptMetadata = aes256Handler.isEncryptMetadata();
                 securityHandler = aes256Handler;
                 break;
+            case AES_GCM:
+                StandardHandlerUsingAesGcm aesGcmHandler = new StandardHandlerUsingAesGcm(this.getPdfObject(), password);
+                permissions = aesGcmHandler.getPermissions();
+                encryptMetadata = aesGcmHandler.isEncryptMetadata();
+                securityHandler = aesGcmHandler;
+                break;
         }
     }
 
@@ -351,6 +369,10 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
                 break;
             case AES_256:
                 securityHandler = new PubSecHandlerUsingAes256(this.getPdfObject(), certificateKey, certificate,
+                        certificateKeyProvider, externalDecryptionProcess, encryptMetadata);
+                break;
+            case AES_GCM:
+                securityHandler = new PubSecHandlerUsingAesGcm(this.getPdfObject(), certificateKey, certificate,
                         certificateKeyProvider, externalDecryptionProcess, encryptMetadata);
                 break;
         }
@@ -582,6 +604,10 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
                 setKeyLength(256);
                 revision = AES_256;
                 break;
+            case EncryptionConstants.ENCRYPTION_AES_GCM:
+                setKeyLength(256);
+                revision = AES_GCM;
+                break;
             default:
                 throw new PdfException(KernelExceptionMessageConstant.NO_VALID_ENCRYPTION_MODE);
         }
@@ -635,6 +661,16 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
                 cryptoMode = EncryptionConstants.ENCRYPTION_AES_256;
                 PdfBoolean em5 = encDict.getAsBoolean(PdfName.EncryptMetadata);
                 if (em5 != null && !em5.getValue()) {
+                    cryptoMode |= EncryptionConstants.DO_NOT_ENCRYPT_METADATA;
+                }
+                if (embeddedFilesOnlyMode) {
+                    cryptoMode |= EncryptionConstants.EMBEDDED_FILES_ONLY;
+                }
+                break;
+            case 7:
+                cryptoMode = EncryptionConstants.ENCRYPTION_AES_GCM;
+                PdfBoolean em7 = encDict.getAsBoolean(PdfName.EncryptMetadata);
+                if (em7 != null && !em7.getValue()) {
                     cryptoMode |= EncryptionConstants.DO_NOT_ENCRYPT_METADATA;
                 }
                 if (embeddedFilesOnlyMode) {
@@ -699,6 +735,32 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
                     cryptoMode |= EncryptionConstants.EMBEDDED_FILES_ONLY;
                 }
                 break;
+            case 6:
+                // (ISO/TS 32003) The security handler defines the use of encryption
+                // and decryption in the same way as when the value of V is 5, and declares at least
+                // one crypt filter using the AESV4 method.
+                PdfDictionary cfDic = encDict.getAsDictionary(PdfName.CF);
+                if (cfDic == null) {
+                    throw new PdfException(KernelExceptionMessageConstant.CF_NOT_FOUND_ENCRYPTION);
+                }
+                cfDic = (PdfDictionary) cfDic.get(PdfName.DefaultCryptFilter);
+                if (cfDic == null) {
+                    throw new PdfException(KernelExceptionMessageConstant.DEFAULT_CRYPT_FILTER_NOT_FOUND_ENCRYPTION);
+                }
+                if (PdfName.AESV4.equals(cfDic.get(PdfName.CFM))) {
+                    cryptoMode = EncryptionConstants.ENCRYPTION_AES_GCM;
+                    length = 256;
+                } else {
+                    throw new PdfException(KernelExceptionMessageConstant.NO_COMPATIBLE_ENCRYPTION_FOUND);
+                }
+                PdfBoolean encrM = cfDic.getAsBoolean(PdfName.EncryptMetadata);
+                if (encrM != null && !encrM.getValue()) {
+                    cryptoMode |= EncryptionConstants.DO_NOT_ENCRYPT_METADATA;
+                }
+                if (embeddedFilesOnlyMode) {
+                    cryptoMode |= EncryptionConstants.EMBEDDED_FILES_ONLY;
+                }
+                break;
             default:
                 throw new PdfException(KernelExceptionMessageConstant.UNKNOWN_ENCRYPTION_TYPE_V, vValue);
         }
@@ -755,6 +817,10 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
                 VersionConforming.validatePdfVersionForDeprecatedFeatureLogWarn(document, PdfVersion.PDF_2_0,
                         VersionConforming.DEPRECATED_AES256_REVISION);
             }
+        } else if (getCryptoMode() == EncryptionConstants.ENCRYPTION_AES_GCM) {
+            VersionConforming.validatePdfVersionForNotSupportedFeatureLogError(document, PdfVersion.PDF_2_0,
+                    VersionConforming.NOT_SUPPORTED_AES_GCM);
+            document.getCatalog().addDeveloperExtension(PdfDeveloperExtension.ISO_32003);
         }
     }
 
