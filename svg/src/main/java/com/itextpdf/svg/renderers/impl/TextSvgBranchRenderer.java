@@ -190,6 +190,7 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
             PdfCanvas currentCanvas = context.getCurrentCanvas();
             context.resetTextMove();
             context.setLastTextTransform(null);
+            context.setRootTransform(null);
             if (this.attributesAndStyles != null) {
                 for (ISvgTextNodeRenderer c : children) {
                     currentCanvas.saveState();
@@ -215,6 +216,9 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
                     } else if (c instanceof TextLeafSvgNodeRenderer &&
                             !context.getLastTextTransform().isIdentity()) {
                         currentCanvas.setTextMatrix(context.getLastTextTransform());
+                    } else {
+                        // If we don't update the matrix, we should set root matrix as the last text matrix
+                        context.setLastTextTransform(context.getRootTransform());
                     }
 
                     // Handle Text-Anchor declarations
@@ -249,6 +253,7 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
         } else {
             rootTf = new AffineTransform(TEXTFLIP);
         }
+        context.setRootTransform(rootTf);
         currentCanvas.setTextMatrix(rootTf);
         // Apply relative move
         if (this.containsRelativeMove()) {
@@ -362,11 +367,12 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
         AffineTransform tf = new AffineTransform();
         // If x is not specified, but y is, we need to correct for preceding text.
         if (absolutePositions[0] == null && absolutePositions[1] != null) {
-            absolutePositions[0] = new float[]{context.getTextMove()[0]};
+            absolutePositions[0] =
+                    new float[]{context.getTextMove()[0] + (float)context.getLastTextTransform().getTranslateX()};
         }
-        // If y is not present, we can replace it with a neutral transformation (0.0f)
+        // If y is not present, we should take the last text y
         if (absolutePositions[1] == null) {
-            absolutePositions[1] = new float[]{0.0f};
+            absolutePositions[1] = new float[]{(float)context.getLastTextTransform().getTranslateY()};
         }
         tf.concatenate(TEXTFLIP);
         tf.concatenate(AffineTransform.getTranslateInstance(absolutePositions[0][0], -absolutePositions[1][0]));

@@ -22,6 +22,7 @@
  */
 package com.itextpdf.svg.renderers;
 
+import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -208,5 +209,15 @@ public class SvgDrawContextTest extends ExtendedITextTest {
         Object actual = context.getNamedObject(dummyName);
         Assertions.assertEquals(expectedOne,actual);
 
+    }
+
+    @Test
+    public void rootTransformText(){
+        AffineTransform at = new AffineTransform();
+        Assertions.assertEquals(at, context.getRootTransform());
+
+        at.setToRotation(Math.toRadians(45));
+        context.setRootTransform(at);
+        Assertions.assertEquals(at, context.getRootTransform());
     }
 }

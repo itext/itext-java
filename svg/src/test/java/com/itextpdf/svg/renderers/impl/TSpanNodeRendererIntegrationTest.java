@@ -223,4 +223,19 @@ public class TSpanNodeRendererIntegrationTest extends SvgIntegrationTest {
     public void simpleNestedTspanTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "simpleNestedTspan");
     }
+
+    @Test
+    public void xWithoutYTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "xWithoutY");
+    }
+
+    @Test
+    public void noXNoYTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "noXNoY");
+    }
+
+    @Test
+    public void yWithoutXTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "yWithoutX");
+    }
 }
