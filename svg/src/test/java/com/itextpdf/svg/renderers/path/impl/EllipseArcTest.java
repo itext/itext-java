@@ -24,10 +24,10 @@ package com.itextpdf.svg.renderers.path.impl;
 
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.test.ExtendedITextTest;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Tag;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import static com.itextpdf.svg.renderers.path.impl.EllipticalCurveTo.EllipseArc;
 
 @Tag("UnitTest")
@@ -36,8 +36,8 @@ public class EllipseArcTest extends ExtendedITextTest {
     private static final double DELTA = 0.00001;
 
     private void assertPointEqual(Point expected, Point actual) {
-        Assertions.assertEquals(expected.x, actual.x, DELTA);
-        Assertions.assertEquals(expected.y, actual.y, DELTA);
+        Assertions.assertEquals(expected.getX(), actual.getX(), DELTA);
+        Assertions.assertEquals(expected.getY(), actual.getY(), DELTA);
     }
 
     @Test

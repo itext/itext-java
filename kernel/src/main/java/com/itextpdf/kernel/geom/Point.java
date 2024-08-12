@@ -26,26 +26,109 @@ package com.itextpdf.kernel.geom;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.util.HashCode;
 
+/**
+ * Class that represent point object with x and y coordinates.
+ */
 public class Point implements Cloneable {
+    private double x;
+    private double y;
 
-
-    public double x;
-    public double y;
-
+    /**
+     * Instantiates a new {@link Point} instance with 0 x and y.
+     */
     public Point() {
         setLocation(0, 0);
     }
 
-    public Point(int x, int y) {
-        setLocation(x, y);
-    }
-
+    /**
+     * Instantiates a new {@link Point} instance based on passed x and y.
+     *
+     * @param x the x coordinates of the point
+     * @param y the y coordinates of the point
+     */
     public Point(double x, double y) {
         setLocation(x, y);
     }
 
+    /**
+     * Instantiates a new {@link Point} instance based on another point.
+     *
+     * @param p the point which will be copied
+     */
     public Point(Point p) {
         setLocation(p.x, p.y);
+    }
+
+    /**
+     * Gets x coordinate of the point.
+     *
+     * @return the x coordinate
+     */
+    public double getX() {
+        return x;
+    }
+
+    /**
+     * Gets y coordinate of the point.
+     *
+     * @return the y coordinate
+     */
+    public double getY() {
+        return y;
+    }
+
+    /**
+     * Gets location of point by creating a new copy.
+     *
+     * @return the copy of this point
+     */
+    public Point getLocation() {
+        return new Point(x, y);
+    }
+
+    /**
+     * Sets x and y double coordinates of the point.
+     *
+     * @param x the x coordinate
+     * @param y the y coordinate
+     */
+    public void setLocation(double x, double y) {
+    	this.x = x;
+    	this.y = y;
+    }
+
+    /**
+     * Moves the point by the specified offset.
+     *
+     * @param dx the x-axis offset
+     * @param dy the y-axis offset
+     */
+    public void move(double dx, double dy) {
+        x += dx;
+        y += dy;
+    }
+
+    /**
+     * The distance between this point and the second point which is defined by passed x and y coordinates.
+     *
+     * @param px the x coordinate of the second point
+     * @param py the y coordinate of the second point
+     *
+     * @return the distance between points
+     */
+    public double distance(double px, double py) {
+        return Math.sqrt(distanceSq(getX(), getY(), px, py));
+    }
+
+    /**
+     * The distance between this point and the second point.
+     *
+     * @param p the second point to calculate distance
+     *
+     * @return the distance between points
+     */
+    public double distance(Point p) {
+        return distance(p.getX(), p.getY());
     }
 
     @Override
@@ -62,44 +145,8 @@ public class Point implements Cloneable {
 
     @Override
     public String toString() {
-        //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         return MessageFormatUtil.format("Point: [x={0},y={1}]", x, y);
     }
-
-    public double getX() {
-        return x;
-    }
-
-    public double getY() {
-        return y;
-    }
-
-    public Point getLocation() {
-        return new Point(x, y);
-    }
-
-    public void setLocation(Point p) {
-        setLocation(p.x, p.y);
-    }
-
-    public void setLocation(int x, int y) {
-        setLocation((double)x, (double)y);
-    }
-
-    public void setLocation(double x, double y) {
-    	this.x = x;
-    	this.y = y;
-    }
-
-    public void move(double x, double y) {
-        setLocation(x, y);
-    }
-
-    public void translate(double dx, double dy) {
-        x += dx;
-        y += dy;
-    }
-
 
     @Override
     public int hashCode() {
@@ -109,36 +156,16 @@ public class Point implements Cloneable {
         return hash.hashCode();
     }
 
-    public static double distanceSq(double x1, double y1, double x2, double y2) {
-        x2 -= x1;
-        y2 -= y1;
-        return x2 * x2 + y2 * y2;
-    }
-
-    public double distanceSq(double px, double py) {
-        return distanceSq(getX(), getY(), px, py);
-    }
-
-    public double distanceSq(Point p) {
-        return distanceSq(getX(), getY(), p.getX(), p.getY());
-    }
-
-    public static double distance(double x1, double y1, double x2, double y2) {
-        return Math.sqrt(distanceSq(x1, y1, x2, y2));
-    }
-
-    public double distance(double px, double py) {
-        return Math.sqrt(distanceSq(px, py));
-    }
-
-    public double distance(Point p) {
-        return Math.sqrt(distanceSq(p));
-    }
-
     @SuppressWarnings("CloneDoesntCallSuperClone")
     @Override
     public Object clone() {
         return new Point(x, y);
+    }
+
+    private static double distanceSq(double x1, double y1, double x2, double y2) {
+        x2 -= x1;
+        y2 -= y1;
+        return x2 * x2 + y2 * y2;
     }
 }
 

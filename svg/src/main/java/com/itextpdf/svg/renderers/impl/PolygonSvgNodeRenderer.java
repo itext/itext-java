@@ -51,8 +51,8 @@ public class PolygonSvgNodeRenderer extends PolylineSvgNodeRenderer implements I
 
         Point start = points.get(0);
         Point end = points.get(points.size() - 1);
-        if (Double.compare(start.x, end.x) != 0 || Double.compare(start.y, end.y) != 0) {
-            points.add(new Point(start.x, start.y));
+        if (Double.compare(start.getX(), end.getX()) != 0 || Double.compare(start.getY(), end.getY()) != 0) {
+            points.add(new Point(start.getX(), start.getY()));
         }
     }
 

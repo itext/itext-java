@@ -268,8 +268,8 @@ public abstract class AbstractLinearGradientBuilder {
                 baseVector[0].getLocation(),
                 baseVector[1].getLocation()
         };
-        targetCoords[0].translate(xDiff * newDomain[0], yDiff * newDomain[0]);
-        targetCoords[1].translate(xDiff * (newDomain[1] - 1), yDiff * (newDomain[1] - 1));
+        targetCoords[0].move(xDiff * newDomain[0], yDiff * newDomain[0]);
+        targetCoords[1].move(xDiff * (newDomain[1] - 1), yDiff * (newDomain[1] - 1));
         return targetCoords;
     }
 

@@ -25,8 +25,8 @@ package com.itextpdf.kernel.geom;
 import com.itextpdf.test.ExtendedITextTest;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class PointTest extends ExtendedITextTest {
@@ -35,8 +35,8 @@ public class PointTest extends ExtendedITextTest {
     @Test
     public void defaultConstructorTest() {
         Point first = new Point();
-        Assertions.assertEquals(0, first.x, EPSILON_COMPARISON);
-        Assertions.assertEquals(0, first.y, EPSILON_COMPARISON);
+        Assertions.assertEquals(0, first.getX(), EPSILON_COMPARISON);
+        Assertions.assertEquals(0, first.getY(), EPSILON_COMPARISON);
     }
 
     @Test
@@ -49,15 +49,8 @@ public class PointTest extends ExtendedITextTest {
     @Test
     public void intParamConstructorTest() {
         Point first = new Point(2, 3);
-        Assertions.assertEquals(2, first.x, EPSILON_COMPARISON);
-        Assertions.assertEquals(3, first.y, EPSILON_COMPARISON);
-    }
-
-    @Test
-    public void copyConstructorTest() {
-        Point second = new Point(new Point(0.13, 1.1));
-        Assertions.assertEquals(0.13, second.getX(), EPSILON_COMPARISON);
-        Assertions.assertEquals(1.1, second.getY(), EPSILON_COMPARISON);
+        Assertions.assertEquals(2, first.getX(), EPSILON_COMPARISON);
+        Assertions.assertEquals(3, first.getY(), EPSILON_COMPARISON);
     }
 
     @Test
@@ -95,54 +88,12 @@ public class PointTest extends ExtendedITextTest {
     }
 
     @Test
-    public void distanceSquareBetweenCoordinatesTest() {
-        Point first = new Point(1, 1);
-        Point second = new Point(1.1, 1.1);
-
-        double expected = 0.02;
-        Assertions.assertEquals(expected, Point.distanceSq(first.x, first.y, second.x, second.y), EPSILON_COMPARISON);
-    }
-
-    @Test
-    public void distanceSquareByCoordinatesTest() {
-        Point first = new Point(1, 1);
-        Point second = new Point(1.1, 1.1);
-
-        double expected = 0.02;
-        Assertions.assertEquals(expected, first.distanceSq(second.x, second.y), EPSILON_COMPARISON);
-    }
-
-    @Test
-    public void distanceSquareByPointTest() {
-        Point first = new Point(1, 1);
-        Point second = new Point(1.1, 1.1);
-
-        double expected = 0.02;
-        Assertions.assertEquals(expected, first.distanceSq(second), EPSILON_COMPARISON);
-    }
-
-    @Test
-    public void distanceItselfSquareTest() {
-        Point first = new Point(1, 1);
-        Assertions.assertEquals(0, first.distanceSq(first), EPSILON_COMPARISON);
-    }
-
-    @Test
-    public void distanceBetweenCoordinatesTest() {
-        Point first = new Point(1, 1);
-        Point second = new Point(1.1, 1.1);
-
-        double expected = Math.sqrt(0.02);
-        Assertions.assertEquals(expected, Point.distance(first.x, first.y, second.x, second.y), EPSILON_COMPARISON);
-    }
-
-    @Test
     public void distanceByCoordinatesTest() {
         Point first = new Point(1, 1);
         Point second = new Point(1.1, 1.1);
 
         double expected = Math.sqrt(0.02);
-        Assertions.assertEquals(expected, first.distance(second.x, second.y), EPSILON_COMPARISON);
+        Assertions.assertEquals(expected, first.distance(second.getX(), second.getY()), EPSILON_COMPARISON);
     }
 
     @Test
@@ -175,7 +126,7 @@ public class PointTest extends ExtendedITextTest {
     }
 
     @Test
-    public void translateTest() {
+    public void moveTest() {
         float w = 3.73f;
         float h = 5.23f;
         Rectangle rectangle = new Rectangle(0, 0, w, h);
@@ -183,13 +134,13 @@ public class PointTest extends ExtendedITextTest {
 
         Point point = new Point(0, 0);
 
-        point.translate(w, 0);
+        point.move(w, 0);
         Assertions.assertEquals(expectedPoints[1], point);
-        point.translate(0, h);
+        point.move(0, h);
         Assertions.assertEquals(expectedPoints[2], point);
-        point.translate(-w, 0);
+        point.move(-w, 0);
         Assertions.assertEquals(expectedPoints[3], point);
-        point.translate(0, -h);
+        point.move(0, -h);
         Assertions.assertEquals(expectedPoints[0], point);
     }
 
@@ -202,13 +153,10 @@ public class PointTest extends ExtendedITextTest {
     }
 
     @Test
-    public void setLocationByPointTest() {
-        Point first = new Point(1.23, 1.1);
-        Point second = new Point(3.59, 0.87);
-
-        Assertions.assertNotEquals(first, second);
-        first.setLocation(second);
-        Assertions.assertEquals(first, second);
+    public void copyConstructorTest() {
+        Point second = new Point(new Point(0.13, 1.1));
+        Assertions.assertEquals(0.13, second.getX(), EPSILON_COMPARISON);
+        Assertions.assertEquals(1.1, second.getY(), EPSILON_COMPARISON);
     }
 
     @Test
@@ -217,27 +165,7 @@ public class PointTest extends ExtendedITextTest {
         Point second = new Point(3.59, 0.87);
 
         Assertions.assertNotEquals(first, second);
-        first.setLocation(second.x, second.y);
-        Assertions.assertEquals(first, second);
-    }
-
-    @Test
-    public void setLocationByIntParamTest() {
-        Point first = new Point(1.23, 1.1);
-        Point second = new Point(3.59, 0.87);
-
-        Assertions.assertNotEquals(first, second);
-        first.setLocation((int) second.x, (int) second.y);
-        Assertions.assertEquals(first, new Point(3, 0));
-    }
-
-    @Test
-    public void movePointTest() {
-        Point first = new Point(1.23, 1.1);
-        Point second = new Point(3.59, 0.87);
-
-        Assertions.assertNotEquals(first, second);
-        first.move(second.x, second.y);
+        first.setLocation(second.getX(), second.getY());
         Assertions.assertEquals(first, second);
     }
 }

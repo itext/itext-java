@@ -26,8 +26,8 @@ import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.test.ExtendedITextTest;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class EllipticalPathOperatorTest extends ExtendedITextTest {
@@ -108,8 +108,8 @@ public class EllipticalPathOperatorTest extends ExtendedITextTest {
     private void assertPointArrayEquals(Point[] expected, Point[] actual) {
         Assertions.assertEquals(expected.length, actual.length);
         for (int i = 0; i < expected.length; i++) {
-            Assertions.assertEquals(expected[i].x, actual[i].x, 0.00001);
-            Assertions.assertEquals(expected[i].y, actual[i].y, 0.00001);
+            Assertions.assertEquals(expected[i].getX(), actual[i].getX(), 0.00001);
+            Assertions.assertEquals(expected[i].getY(), actual[i].getY(), 0.00001);
         }
     }
 

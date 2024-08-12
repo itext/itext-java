@@ -89,7 +89,7 @@ public class EllipticalCurveTo extends AbstractPathShape {
 
     @Override
     public void draw(PdfCanvas canvas) {
-        Point start = new Point(startPoint.x * .75, startPoint.y * .75); // pixels to points
+        Point start = new Point(startPoint.getX() * .75, startPoint.getY() * .75); // pixels to points
         double rx = Math.abs(CssDimensionParsingUtils.parseAbsoluteLength(coordinates[0]));
         double ry = Math.abs(CssDimensionParsingUtils.parseAbsoluteLength(coordinates[1]));
 
@@ -104,7 +104,7 @@ public class EllipticalCurveTo extends AbstractPathShape {
 
         Point end = new Point(CssDimensionParsingUtils.parseAbsoluteLength(coordinates[5]), CssDimensionParsingUtils.parseAbsoluteLength(coordinates[6]));
 
-        if (CssUtils.compareFloats(start.x, end.x) && CssUtils.compareFloats(start.y, end.y)) {
+        if (CssUtils.compareFloats(start.getX(), end.getX()) && CssUtils.compareFloats(start.getY(), end.getY())) {
             /* edge case: If the endpoints (x1, y1) and (x2, y2) are identical,
              * then this is equivalent to omitting the elliptical arc segment entirely.
              */
@@ -114,7 +114,7 @@ public class EllipticalCurveTo extends AbstractPathShape {
             /* edge case: If rx = 0 or ry = 0 then this arc is treated as a straight line segment (a "lineto")
              * joining the endpoints.
              */
-            canvas.lineTo(end.x, end.y);
+            canvas.lineTo(end.getX(), end.getY());
         } else {
             /* This is the first step of calculating a rotated elliptical path.
             We must simulate a transformation on the end-point in order to calculate appropriate EllipseArc angles;
@@ -126,12 +126,12 @@ public class EllipticalCurveTo extends AbstractPathShape {
                 arc = EllipseArc.getEllipse(start, end, rx, ry, sweep, largeArc);
             } else {
                 AffineTransform normalizer = AffineTransform.getRotateInstance(-rotation);
-                normalizer.translate(-start.x, -start.y);
+                normalizer.translate(-start.getX(), -start.getY());
                 Point newArcEnd = normalizer.transform(end, null);
-                newArcEnd.translate(start.x, start.y);
+                newArcEnd.move(start.getX(), start.getY());
                 arc = EllipseArc.getEllipse(start, newArcEnd, rx, ry, sweep, largeArc);
             }
-            Point[][] points = makePoints(PdfCanvas.bezierArc(arc.ll.x, arc.ll.y, arc.ur.x, arc.ur.y, arc.startAng, arc.extent));
+            Point[][] points = makePoints(PdfCanvas.bezierArc(arc.ll.getX(), arc.ll.getY(), arc.ur.getX(), arc.ur.getY(), arc.startAng, arc.extent));
             /** This is the second step of calculating a rotated elliptical path.
              We must rotate all points returned by {@link PdfCanvas#bezierArc} around the starting point of the arc.
              An added bit of complexity is that {@link PdfCanvas#bezierArc} will force a clockwise order of the
@@ -165,7 +165,7 @@ public class EllipticalCurveTo extends AbstractPathShape {
     static Point[][] rotate(Point[][] list, double rotation, Point rotator) {
         if (!CssUtils.compareFloats(rotation, 0)) {
             Point[][] result = new Point[list.length][];
-            AffineTransform transRotTrans = AffineTransform.getRotateInstance(rotation, rotator.x, rotator.y);
+            AffineTransform transRotTrans = AffineTransform.getRotateInstance(rotation, rotator.getX(), rotator.getY());
 
             for (int i = 0; i < list.length; i++) {
                 Point[] input = list[i];
@@ -186,7 +186,7 @@ public class EllipticalCurveTo extends AbstractPathShape {
     }
 
     private static void drawCurve(PdfCanvas canvas, Point cp1, Point cp2, Point end) {
-        canvas.curveTo(cp1.x, cp1.y, cp2.x, cp2.y, end.x, end.y);
+        canvas.curveTo(cp1.getX(), cp1.getY(), cp2.getX(), cp2.getY(), end.getX(), end.getY());
     }
 
     private Point[][] makePoints(List<double[]> input) {
@@ -214,15 +214,15 @@ public class EllipticalCurveTo extends AbstractPathShape {
         final double startAng, extent;
 
         EllipseArc(Point center, final double a, final double b, final double startAng, final double extent) {
-            ll = new Point(center.x - a, center.y - b);
-            ur = new Point(center.x + a, center.y + b);
+            ll = new Point(center.getX() - a, center.getY() - b);
+            ur = new Point(center.getX() + a, center.getY() + b);
             this.startAng = startAng;
             this.extent = extent;
         }
 
         static EllipseArc getEllipse(Point start, Point end, double a, double b, boolean sweep, boolean largeArc) {
-            double r1 = (start.x - end.x) / (-2.0 * a);
-            double r2 = (start.y - end.y) / (2.0 * b);
+            double r1 = (start.getX() - end.getX()) / (-2.0 * a);
+            double r2 = (start.getY() - end.getY()) / (2.0 * b);
 
             double factor = Math.sqrt(r1 * r1 + r2 * r2);
             if (factor > 1) {
@@ -257,11 +257,11 @@ public class EllipticalCurveTo extends AbstractPathShape {
 
         static EllipseArc calculatePossibleMiddle(Point start, Point end, double a, double b, double startToCenterAngle, boolean sweep, boolean largeArc) {
 
-            double x0 = start.x - a * Math.cos(startToCenterAngle);
-            double y0 = start.y - b * Math.sin(startToCenterAngle);
+            double x0 = start.getX() - a * Math.cos(startToCenterAngle);
+            double y0 = start.getY() - b * Math.sin(startToCenterAngle);
             Point center = new Point(x0, y0);
 
-            double check = Math.pow(((end.x - center.x) / a), 2) + Math.pow(((end.y - center.y) / b), 2);
+            double check = Math.pow(((end.getX() - center.getX()) / a), 2) + Math.pow(((end.getY() - center.getY()) / b), 2);
 
             /* If center is an actual candidate for a middle point, then the value of check will be very close to 1.0.
              * Otherwise it is always larger than 1.
@@ -329,10 +329,10 @@ public class EllipticalCurveTo extends AbstractPathShape {
         }
 
         static double calculateAngle(Point pt, Point center, double a, double b) {
-            double result = Math.pow(((pt.x - center.x) / a), 2.0) + Math.pow(((pt.y - center.y) / b), 2.0);
+            double result = Math.pow(((pt.getX() - center.getX()) / a), 2.0) + Math.pow(((pt.getY() - center.getY()) / b), 2.0);
 
-            double cos = (pt.x - center.x) / a;
-            double sin = (pt.y - center.y) / b;
+            double cos = (pt.getX() - center.getX()) / a;
+            double sin = (pt.getY() - center.getY()) / b;
             // catch very small floating point errors and keep cos between [-1, 1], so we can calculate the arc cosine
             cos = Math.max(Math.min(cos, 1.0), -1.0);
 

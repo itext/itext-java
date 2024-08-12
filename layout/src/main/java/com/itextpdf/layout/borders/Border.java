@@ -22,14 +22,15 @@
  */
 package com.itextpdf.layout.borders;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.properties.TransparentColor;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -524,11 +525,18 @@ public abstract class Border {
 
                 clipPoint1 = getIntersectionPoint(new Point(x1 - borderWidthBefore, y1 + width), new Point(x1, y1), new Point(x0, y0), new Point(x0 + 10, y0));
                 clipPoint2 = getIntersectionPoint(new Point(x2 + borderWidthAfter, y2 + width), new Point(x2, y2), new Point(x3, y3), new Point(x3 - 10, y3));
-                if (clipPoint1.x > clipPoint2.x) {
+                if (clipPoint1.getX() > clipPoint2.getX()) {
                     clipPoint = getIntersectionPoint(new Point(x1 - borderWidthBefore, y1 + width), clipPoint1, clipPoint2, new Point(x2 + borderWidthAfter, y2 + width));
-                    canvas.moveTo(x1 - borderWidthBefore, y1 + width).lineTo(clipPoint.x, clipPoint.y).lineTo(x2 + borderWidthAfter, y2 + width).lineTo(x1 - borderWidthBefore, y1 + width);
+                    canvas.moveTo(x1 - borderWidthBefore, y1 + width)
+                            .lineTo(clipPoint.getX(), clipPoint.getY())
+                            .lineTo(x2 + borderWidthAfter, y2 + width)
+                            .lineTo(x1 - borderWidthBefore, y1 + width);
                 } else {
-                    canvas.moveTo(x1 - borderWidthBefore, y1 + width).lineTo(clipPoint1.x, clipPoint1.y).lineTo(clipPoint2.x, clipPoint2.y).lineTo(x2 + borderWidthAfter, y2 + width).lineTo(x1 - borderWidthBefore, y1 + width);
+                    canvas.moveTo(x1 - borderWidthBefore, y1 + width)
+                            .lineTo(clipPoint1.getX(), clipPoint1.getY())
+                            .lineTo(clipPoint2.getX(), clipPoint2.getY())
+                            .lineTo(x2 + borderWidthAfter, y2 + width)
+                            .lineTo(x1 - borderWidthBefore, y1 + width);
                 }
                 canvas.clip().endPath();
 
@@ -560,11 +568,22 @@ public abstract class Border {
 
                 clipPoint1 = getIntersectionPoint(new Point(x1 + width, y1 + borderWidthBefore), new Point(x1, y1), new Point(x0, y0), new Point(x0, y0 - 10));
                 clipPoint2 = getIntersectionPoint(new Point(x2 + width, y2 - borderWidthAfter), new Point(x2, y2), new Point(x3, y3), new Point(x3, y3 - 10));
-                if (clipPoint1.y < clipPoint2.y) {
+                if (clipPoint1.getY() < clipPoint2.getY()) {
                     clipPoint = getIntersectionPoint(new Point(x1 + width, y1 + borderWidthBefore), clipPoint1, clipPoint2, new Point(x2 + width, y2 - borderWidthAfter));
-                    canvas.moveTo(x1 + width, y1 + borderWidthBefore).lineTo(clipPoint.x, clipPoint.y).lineTo(x2 + width, y2 - borderWidthAfter).lineTo(x1 + width, y1 + borderWidthBefore).clip().endPath();
+                    canvas.moveTo(x1 + width, y1 + borderWidthBefore)
+                            .lineTo(clipPoint.getX(), clipPoint.getY())
+                            .lineTo(x2 + width, y2 - borderWidthAfter)
+                            .lineTo(x1 + width, y1 + borderWidthBefore)
+                            .clip()
+                            .endPath();
                 } else {
-                    canvas.moveTo(x1 + width, y1 + borderWidthBefore).lineTo(clipPoint1.x, clipPoint1.y).lineTo(clipPoint2.x, clipPoint2.y).lineTo(x2 + width, y2 - borderWidthAfter).lineTo(x1 + width, y1 + borderWidthBefore).clip().endPath();
+                    canvas.moveTo(x1 + width, y1 + borderWidthBefore)
+                            .lineTo(clipPoint1.getX(), clipPoint1.getY())
+                            .lineTo(clipPoint2.getX(), clipPoint2.getY())
+                            .lineTo(x2 + width, y2 - borderWidthAfter)
+                            .lineTo(x1 + width, y1 + borderWidthBefore)
+                            .clip()
+                            .endPath();
                 }
                 canvas.clip().endPath();
 
@@ -596,11 +615,18 @@ public abstract class Border {
 
                 clipPoint1 = getIntersectionPoint(new Point(x1 + borderWidthBefore, y1 - width), new Point(x1, y1), new Point(x0, y0), new Point(x0 - 10, y0));
                 clipPoint2 = getIntersectionPoint(new Point(x2 - borderWidthAfter, y2 - width), new Point(x2, y2), new Point(x3, y3), new Point(x3 + 10, y3));
-                if (clipPoint1.x < clipPoint2.x) {
+                if (clipPoint1.getX() < clipPoint2.getX()) {
                     clipPoint = getIntersectionPoint(new Point(x1 + borderWidthBefore, y1 - width), clipPoint1, clipPoint2, new Point(x2 - borderWidthAfter, y2 - width));
-                    canvas.moveTo(x1 + borderWidthBefore, y1 - width).lineTo(clipPoint.x, clipPoint.y).lineTo(x2 - borderWidthAfter, y2 - width).lineTo(x1 + borderWidthBefore, y1 - width);
+                    canvas.moveTo(x1 + borderWidthBefore, y1 - width)
+                            .lineTo(clipPoint.getX(), clipPoint.getY())
+                            .lineTo(x2 - borderWidthAfter, y2 - width)
+                            .lineTo(x1 + borderWidthBefore, y1 - width);
                 } else {
-                    canvas.moveTo(x1 + borderWidthBefore, y1 - width).lineTo(clipPoint1.x, clipPoint1.y).lineTo(clipPoint2.x, clipPoint2.y).lineTo(x2 - borderWidthAfter, y2 - width).lineTo(x1 + borderWidthBefore, y1 - width);
+                    canvas.moveTo(x1 + borderWidthBefore, y1 - width)
+                            .lineTo(clipPoint1.getX(), clipPoint1.getY())
+                            .lineTo(clipPoint2.getX(), clipPoint2.getY())
+                            .lineTo(x2 - borderWidthAfter, y2 - width)
+                            .lineTo(x1 + borderWidthBefore, y1 - width);
                 }
                 canvas.clip().endPath();
 
@@ -632,11 +658,18 @@ public abstract class Border {
 
                 clipPoint1 = getIntersectionPoint(new Point(x1 - width, y1 - borderWidthBefore), new Point(x1, y1), new Point(x0, y0), new Point(x0, y0 + 10));
                 clipPoint2 = getIntersectionPoint(new Point(x2 - width, y2 + borderWidthAfter), new Point(x2, y2), new Point(x3, y3), new Point(x3, y3 + 10));
-                if (clipPoint1.y > clipPoint2.y) {
+                if (clipPoint1.getY() > clipPoint2.getY()) {
                     clipPoint = getIntersectionPoint(new Point(x1 - width, y1 - borderWidthBefore), clipPoint1, clipPoint2, new Point(x2 - width, y2 + borderWidthAfter));
-                    canvas.moveTo(x1 - width, y1 - borderWidthBefore).lineTo(clipPoint.x, clipPoint.y).lineTo(x2 - width, y2 + borderWidthAfter).lineTo(x1 - width, y1 - borderWidthBefore);
+                    canvas.moveTo(x1 - width, y1 - borderWidthBefore)
+                            .lineTo(clipPoint.getX(), clipPoint.getY())
+                            .lineTo(x2 - width, y2 + borderWidthAfter)
+                            .lineTo(x1 - width, y1 - borderWidthBefore);
                 } else {
-                    canvas.moveTo(x1 - width, y1 - borderWidthBefore).lineTo(clipPoint1.x, clipPoint1.y).lineTo(clipPoint2.x, clipPoint2.y).lineTo(x2 - width, y2 + borderWidthAfter).lineTo(x1 - width, y1 - borderWidthBefore);
+                    canvas.moveTo(x1 - width, y1 - borderWidthBefore)
+                            .lineTo(clipPoint1.getX(), clipPoint1.getY())
+                            .lineTo(clipPoint2.getX(), clipPoint2.getY())
+                            .lineTo(x2 - width, y2 + borderWidthAfter)
+                            .lineTo(x1 - width, y1 - borderWidthBefore);
                 }
                 canvas.clip().endPath();
 

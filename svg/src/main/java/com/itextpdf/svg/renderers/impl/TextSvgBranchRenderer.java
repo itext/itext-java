@@ -45,7 +45,6 @@ import com.itextpdf.svg.utils.SvgTextUtil;
 import com.itextpdf.svg.utils.TextRectangle;
 
 import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -154,7 +153,7 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
                 y = basePoint.getY();
             }
             basePoint = new Point(x, y);
-            basePoint.translate(getRelativeTranslation()[0], getRelativeTranslation()[1]);
+            basePoint.move(getRelativeTranslation()[0], getRelativeTranslation()[1]);
             Rectangle commonRect = null;
             for (ISvgTextNodeRenderer child : getChildren()) {
                 if (child != null) {
