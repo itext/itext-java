@@ -35,9 +35,11 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.ReaderProperties;
 import com.itextpdf.kernel.pdf.VersionConforming;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.utils.CompareTool;
@@ -49,7 +51,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import java.io.*;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.Security;
 import java.util.HashMap;
@@ -115,7 +117,7 @@ public class StandardHandlerUsingAesGcmTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
             ignore = true))
     @Test
-    public void testMacTampered() {
+    public void testMacTampered() throws IOException {
         String srcFile = SRC + "encryptedDocumentTamperedMac.pdf";
         assertTampered(srcFile);
     }
@@ -123,7 +125,7 @@ public class StandardHandlerUsingAesGcmTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
             ignore = true))
     @Test
-    public void testIVTampered() {
+    public void testIVTampered() throws IOException {
         String srcFile = SRC + "encryptedDocumentTamperedIv.pdf";
         assertTampered(srcFile);
     }
@@ -131,7 +133,7 @@ public class StandardHandlerUsingAesGcmTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
             ignore = true))
     @Test
-    public void testCiphertextTampered() {
+    public void testCiphertextTampered() throws IOException {
         String srcFile = SRC + "encryptedDocumentTamperedCiphertext.pdf";
         assertTampered(srcFile);
     }
@@ -214,8 +216,14 @@ public class StandardHandlerUsingAesGcmTest extends ExtendedITextTest {
                 .compareByContent(outPdf, cmpPdf, DEST, "diff", "secret".getBytes(StandardCharsets.UTF_8), null);
     }
 
-    private void assertTampered(String outFile) {
-        String cmpFile = SRC + "cmp_simpleDocument.pdf";
-        Assertions.assertThrows(Exception.class, () -> tryCompare(outFile, cmpFile));
+    private void assertTampered(String outFile) throws IOException {
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(outFile,
+                new ReaderProperties().setPassword("secret".getBytes(StandardCharsets.UTF_8))));
+
+        PdfObject obj = pdfDoc.getPdfObject(14);
+        if (obj != null && obj.isStream()) {
+            // Get decoded stream bytes.
+            Assertions.assertThrows(Exception.class, () -> ((PdfStream) obj).getBytes());
+        }
     }
 }
