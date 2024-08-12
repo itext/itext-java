@@ -164,7 +164,6 @@ public class PdfCanvasInlineImagesTest extends ExtendedITextTest {
     }
 
     @Test
-    //TODO update cmp-files after DEVSIX-3564 will be fixed
     public void inlineImagesPngTest() throws IOException, InterruptedException {
         String filename = "inlineImagePng.pdf";
         PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + filename));
@@ -180,7 +179,6 @@ public class PdfCanvasInlineImagesTest extends ExtendedITextTest {
     }
 
     @Test
-    //TODO update cmp-files after DEVSIX-3564 will be fixed
     public void inlineImagesPngErrorWhileOpenTest() throws IOException, InterruptedException {
         String filename = "inlineImagePngErrorWhileOpen.pdf";
         PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + filename));

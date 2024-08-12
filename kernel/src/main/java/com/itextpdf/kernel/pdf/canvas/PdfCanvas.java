@@ -2275,6 +2275,7 @@ public class PdfCanvas {
         PdfOutputStream os = contentStream.getOutputStream();
         os.writeBytes(BI);
         byte[] imageBytes = imageXObject.getPdfObject().getBytes(false);
+        saveColorSpaceToPageResourcesIfNeeded(imageXObject.getPdfObject());
         for (Map.Entry<PdfName, PdfObject> entry : imageXObject.getPdfObject().entrySet()) {
             PdfName key = entry.getKey();
             if (!PdfName.Type.equals(key) && !PdfName.Subtype.equals(key) && !PdfName.Length.equals(key)) {
@@ -2289,6 +2290,24 @@ public class PdfCanvas {
         os.writeBytes(ID);
         os.writeBytes(imageBytes).writeNewLine().writeBytes(EI).writeNewLine();
         restoreState();
+    }
+
+    private void saveColorSpaceToPageResourcesIfNeeded(PdfStream image) {
+        PdfObject colorSpace = image.get(PdfName.ColorSpace);
+        //The colour space specified by the ColorSpace (or CS) entry shall be one of the standard device colour spaces
+        //(DeviceGray, DeviceRGB, or DeviceCMYK).
+        if (colorSpace == null
+         || colorSpace.equals(PdfName.DeviceGray)
+         || colorSpace.equals(PdfName.DeviceRGB)
+         || colorSpace.equals(PdfName.DeviceCMYK)) {
+            return;
+        }
+        //PDF 1.2: the value of the ColorSpace entry may also be the name of a colour space in the ColorSpace
+        //subdictionary of the current resource dictionary. In this case, the name may designate any colour space
+        //that can be used with an image XObject.
+        PdfName name = resources.addColorSpace(colorSpace);
+        image.remove(PdfName.ColorSpace);
+        image.put(PdfName.ColorSpace, name);
     }
 
     /**
