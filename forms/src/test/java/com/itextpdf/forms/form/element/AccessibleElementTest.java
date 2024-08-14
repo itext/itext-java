@@ -149,9 +149,10 @@ public class AccessibleElementTest extends ExtendedITextTest {
 
         IFormField element = getDataToTest(testContainer.index).get();
 
-        element.setProperty(FormProperty.FORM_ACCESSIBILITY_LANGUAGE, "en");
         IFormField formField = (IFormField) element;
         formField.setInteractive(true);
+        IAccessibleElement accessibleElement = (IAccessibleElement) formField;
+        accessibleElement.getAccessibilityProperties().setLanguage("en");
 
         document.add((IBlockElement) element);
 

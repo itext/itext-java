@@ -36,6 +36,7 @@ import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.RenderingMode;
 import com.itextpdf.layout.properties.UnitValue;
+import com.itextpdf.layout.tagging.IAccessibleElement;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -319,8 +320,7 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
             flattenComboBoxField.addOption(new SelectFieldItem("option 2"));
             flattenComboBoxField.setSelected("option 1");
 
-            //TODO DEVSIX-8205 Use setLanguage method from AccessibilityProperties
-            flattenComboBoxField.setProperty(FormProperty.FORM_ACCESSIBILITY_LANGUAGE, "random_lang");
+            ((IAccessibleElement) flattenComboBoxField).getAccessibilityProperties().setLanguage("random_lang");
             document.add(flattenComboBoxField);
         }
 

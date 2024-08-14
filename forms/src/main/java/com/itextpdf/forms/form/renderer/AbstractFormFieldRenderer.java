@@ -285,19 +285,14 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
     }
 
     /**
-     * Gets the accessibility language.
+     * Gets the accessibility language using {@link IAccessibleElement#getAccessibilityProperties()}.
      *
      * @return the accessibility language.
-     * @deprecated use {@link IAccessibleElement#getAccessibilityProperties()} instead
      */
-    @Deprecated()
     protected String getLang() {
         String language = null;
         if (this.getModelElement() instanceof IAccessibleElement) {
             language = ((IAccessibleElement) this.getModelElement()).getAccessibilityProperties().getLanguage();
-        }
-        if (language == null) {
-            language = this.<String>getProperty(FormProperty.FORM_ACCESSIBILITY_LANGUAGE);
         }
         return language;
     }

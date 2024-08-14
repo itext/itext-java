@@ -48,6 +48,7 @@ import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
+import com.itextpdf.layout.tagging.IAccessibleElement;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -331,7 +332,7 @@ public class ListBoxFieldTest extends ExtendedITextTest {
             listBoxField.setBackgroundColor(ColorConstants.RED);
             listBoxField.addOption("option 1");
             listBoxField.addOption("option 2");
-            listBoxField.setProperty(FormProperty.FORM_ACCESSIBILITY_LANGUAGE, "random_lang");
+            ((IAccessibleElement) listBoxField).getAccessibilityProperties().setLanguage("random_lang");
             document.add(listBoxField);
 
             document.add(new Paragraph("Line break"));
