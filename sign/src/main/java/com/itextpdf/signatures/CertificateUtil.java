@@ -80,24 +80,6 @@ public class CertificateUtil {
     // Certificate Revocation Lists
 
     /**
-     * Gets a CRL from an X509 certificate.
-     *
-     * @param certificate the X509Certificate to extract the CRL from
-     *
-     * @return CRL or null if there's no CRL available
-     *
-     * @throws IOException          thrown when the URL couldn't be opened properly.
-     * @throws CertificateException thrown if there's no X509 implementation in the provider.
-     * @throws CRLException         thrown when encountering errors when parsing the CRL.
-     *
-     * @deprecated use {@link #getCRLs(X509Certificate)}.
-     */
-    @Deprecated
-    public static CRL getCRL(X509Certificate certificate) throws CertificateException, CRLException, IOException {
-        return CertificateUtil.getCRL(CertificateUtil.getCRLURL(certificate));
-    }
-
-    /**
      * Gets a CRLs from the X509 certificate.
      *
      * @param certificate the X509Certificate to extract the CRLs from
@@ -115,21 +97,6 @@ public class CertificateUtil {
             crls.add(CertificateUtil.getCRL(crlUrl));
         }
         return crls;
-    }
-
-    /**
-     * Gets the URL of the Certificate Revocation List for a Certificate
-     *
-     * @param certificate the Certificate
-     *
-     * @return the String where you can check if the certificate was revoked.
-     *
-     * @deprecated use {@link #getCRLURLs(X509Certificate)}.
-     */
-    @Deprecated
-    public static String getCRLURL(X509Certificate certificate) {
-        List<String> urls = getCRLURLs(certificate);
-        return urls.isEmpty() ? null : urls.get(0);
     }
 
     /**

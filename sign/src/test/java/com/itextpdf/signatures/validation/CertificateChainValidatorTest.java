@@ -28,8 +28,6 @@ import com.itextpdf.signatures.IssuingCertificateRetriever;
 import com.itextpdf.signatures.OID.X509Extensions;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.TimeTestUtil;
-import com.itextpdf.signatures.testutils.client.TestCrlClient;
-import com.itextpdf.signatures.testutils.client.TestOcspClient;
 import com.itextpdf.signatures.validation.context.CertificateSource;
 import com.itextpdf.signatures.validation.context.CertificateSources;
 import com.itextpdf.signatures.validation.context.TimeBasedContext;
@@ -841,20 +839,6 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
                 .hasLogItems(1,10, la -> la
                         .withMessage(CertificateChainValidator.REVOCATION_VALIDATION_FAILED)
                 ));
-    }
-
-    @Test
-    public void addCrlClientPasstroughTest() {
-        CertificateChainValidator validator = validatorChainBuilder.buildCertificateChainValidator();
-        validator.addCrlClient(new TestCrlClient());
-        Assertions.assertEquals(1, mockRevocationDataValidator.crlClientsAdded.size());
-    }
-
-    @Test
-    public void addOcdpClientPasstroughTest() {
-        CertificateChainValidator validator = validatorChainBuilder.buildCertificateChainValidator();
-        validator.addOcspClient(new TestOcspClient());
-        Assertions.assertEquals(1, mockRevocationDataValidator.ocspClientsAdded.size());
     }
 
     @Test

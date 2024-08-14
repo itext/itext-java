@@ -131,7 +131,7 @@ public class PdfPadesAdvancedTest extends ExtendedITextTest {
 
         TestTsaClient testTsa = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
 
-        AdvancedTestOcspClient testOcspClient = new AdvancedTestOcspClient(null);
+        AdvancedTestOcspClient testOcspClient = new AdvancedTestOcspClient();
         TestOcspResponseBuilder ocspBuilderMainCert = new TestOcspResponseBuilder(rootCert, rootPrivateKey);
         if ((boolean) isOcspRevoked) {
             ocspBuilderMainCert.setCertificateStatus(FACTORY.createRevokedStatus(TimeTestUtil.TEST_DATE_TIME,

@@ -51,7 +51,7 @@ public class CertificateSupportedCriticalExtensionsTest extends ExtendedITextTes
                 .setCriticalExtensionOIDs(OID.X509Extensions.KEY_USAGE, OID.X509Extensions.BASIC_CONSTRAINTS)
                 .setKeyUsage(true, true);
 
-        Assertions.assertFalse(SignUtils.hasUnsupportedCriticalExtension(cert));
+        Assertions.assertFalse(CertificateVerification.hasUnsupportedCriticalExtension(cert));
     }
 
     @Test
@@ -62,7 +62,7 @@ public class CertificateSupportedCriticalExtensionsTest extends ExtendedITextTes
                 .setCriticalExtensionOIDs(OID.X509Extensions.BASIC_CONSTRAINTS)
                 .setKeyUsage(true, true);
 
-        Assertions.assertFalse(SignUtils.hasUnsupportedCriticalExtension(cert));
+        Assertions.assertFalse(CertificateVerification.hasUnsupportedCriticalExtension(cert));
     }
 
     @Test
@@ -74,7 +74,7 @@ public class CertificateSupportedCriticalExtensionsTest extends ExtendedITextTes
                 .setExtendedKeyUsage(OID.X509Extensions.ID_KP_TIMESTAMPING)
                 .setKeyUsage(true, true);
 
-        Assertions.assertTrue(SignUtils.hasUnsupportedCriticalExtension(cert));
+        Assertions.assertTrue(CertificateVerification.hasUnsupportedCriticalExtension(cert));
     }
 
     @Test
@@ -86,7 +86,7 @@ public class CertificateSupportedCriticalExtensionsTest extends ExtendedITextTes
                 .setExtendedKeyUsage("Not ID KP TIMESTAMPING.")
                 .setKeyUsage(true, true);
 
-        Assertions.assertFalse(SignUtils.hasUnsupportedCriticalExtension(cert));
+        Assertions.assertFalse(CertificateVerification.hasUnsupportedCriticalExtension(cert));
     }
 
     @Test
@@ -97,7 +97,7 @@ public class CertificateSupportedCriticalExtensionsTest extends ExtendedITextTes
                 .setCriticalExtensionOIDs(OID.X509Extensions.ID_KP_TIMESTAMPING)
                 .setKeyUsage(true, true);
 
-        Assertions.assertTrue(SignUtils.hasUnsupportedCriticalExtension(cert));
+        Assertions.assertTrue(CertificateVerification.hasUnsupportedCriticalExtension(cert));
     }
 
     @Test
@@ -108,7 +108,7 @@ public class CertificateSupportedCriticalExtensionsTest extends ExtendedITextTes
                 .setCriticalExtensionOIDs("Totally not supported OID")
                 .setKeyUsage(true, true);
 
-        Assertions.assertTrue(SignUtils.hasUnsupportedCriticalExtension(cert));
+        Assertions.assertTrue(CertificateVerification.hasUnsupportedCriticalExtension(cert));
     }
 
     @Test
@@ -117,13 +117,13 @@ public class CertificateSupportedCriticalExtensionsTest extends ExtendedITextTes
 
         cert.setHasUnsupportedCriticalExtension(false);
 
-        Assertions.assertFalse(SignUtils.hasUnsupportedCriticalExtension(cert));
+        Assertions.assertFalse(CertificateVerification.hasUnsupportedCriticalExtension(cert));
     }
 
     @Test
     public void certificateIsNullTest() {
         Exception e = Assertions.assertThrows(IllegalArgumentException.class,
-                () -> SignUtils.hasUnsupportedCriticalExtension(null)
+                () -> CertificateVerification.hasUnsupportedCriticalExtension(null)
         );
         Assertions.assertEquals("X509Certificate can't be null.", e.getMessage());
     }

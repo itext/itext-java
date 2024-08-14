@@ -99,24 +99,6 @@ public class OCSPValidator {
     /**
      * Validates a certificate against single OCSP Response.
      *
-     * @param report         to store all the chain verification results
-     * @param context        the context in which to perform the validation
-     * @param certificate    the certificate to check for
-     * @param singleResp     single response to check
-     * @param ocspResp       basic OCSP response which contains single response to check
-     * @param validationDate validation date to check for
-     *
-     * @deprecated starting from 8.0.5. TODO DEVSIX-8398 To be removed.
-     */
-    @Deprecated
-    public void validate(ValidationReport report, ValidationContext context, X509Certificate certificate,
-            ISingleResp singleResp, IBasicOCSPResp ocspResp, Date validationDate) {
-        validate(report, context, certificate, singleResp, ocspResp, validationDate, DateTimeUtil.getCurrentTimeDate());
-    }
-
-    /**
-     * Validates a certificate against single OCSP Response.
-     *
      * @param report                 to store all the chain verification results
      * @param context                the context in which to perform the validation
      * @param certificate            the certificate to check for

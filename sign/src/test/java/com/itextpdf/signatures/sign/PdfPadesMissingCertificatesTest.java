@@ -126,7 +126,7 @@ public class PdfPadesMissingCertificatesTest extends ExtendedITextTest {
         X509Certificate tsaIntermediateCert = (X509Certificate) PemFileHelper.readFirstChain(intermediateTsaFileName)[0];
         X509Certificate intermediateCert = (X509Certificate) PemFileHelper.readFirstChain(intermediateCertFileName)[0];
 
-        AdvancedTestOcspClient ocspClient = new AdvancedTestOcspClient(null);
+        AdvancedTestOcspClient ocspClient = new AdvancedTestOcspClient();
         ocspClient.addBuilderForCertIssuer(signCert, ocspCert, ocspPrivateKey);
         ocspClient.addBuilderForCertIssuer(ocspIntermediateCert, ocspCert, ocspPrivateKey);
         ocspClient.addBuilderForCertIssuer(crlIntermediateCert, ocspCert, ocspPrivateKey);

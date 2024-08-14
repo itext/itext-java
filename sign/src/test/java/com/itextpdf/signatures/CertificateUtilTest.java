@@ -73,15 +73,6 @@ public class CertificateUtilTest extends ExtendedITextTest {
     }
 
     @Test
-    public void getCRLFromCertificateWithoutCRLTest() throws IOException, CertificateException, CRLException {
-        X509Certificate tsaCert =
-                (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "rootRsa.pem")[0];
-        CRL crl = CertificateUtil.getCRL(tsaCert);
-        
-        Assertions.assertNull(crl);
-    }
-
-    @Test
     public void getCRLsFromCertificateWithoutCRLTest() throws IOException, CertificateException, CRLException {
         X509Certificate tsaCert =
                 (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "rootRsa.pem")[0];

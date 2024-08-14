@@ -92,38 +92,6 @@ public class CertificateChainValidator {
     }
 
     /**
-     * Add {@link ICrlClient} to be used for CRL responses receiving.
-     *
-     * @param crlClient {@link ICrlClient} to be used for CRL responses receiving
-     *
-     * @return same instance of {@link CertificateChainValidator}.
-     *
-     * @deprecated in favour of either {@link SignatureValidationProperties#addCrlClient}
-     * or {@link RevocationDataValidator#addCrlClient}. TODO DEVSIX-8398 To be removed.
-     */
-    @Deprecated
-    public CertificateChainValidator addCrlClient(ICrlClient crlClient) {
-        revocationDataValidator.addCrlClient(crlClient);
-        return this;
-    }
-
-    /**
-     * Add {@link IOcspClient} to be used for OCSP responses receiving.
-     *
-     * @param ocpsClient {@link IOcspClient} to be used for OCSP responses receiving
-     *
-     * @return same instance of {@link CertificateChainValidator}.
-     *
-     * @deprecated in favour of either {@link SignatureValidationProperties#addOcspClient}
-     * or {@link RevocationDataValidator#addOcspClient}. TODO DEVSIX-8398 To be removed.
-     */
-    @Deprecated
-    public CertificateChainValidator addOcspClient(IOcspClient ocpsClient) {
-        revocationDataValidator.addOcspClient(ocpsClient);
-        return this;
-    }
-
-    /**
      * Validate given certificate using provided validation date and required extensions.
      *
      * @param context        the validation context in which to validate the certificate chain

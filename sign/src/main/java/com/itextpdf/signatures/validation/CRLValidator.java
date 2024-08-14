@@ -110,23 +110,6 @@ public class CRLValidator {
     /**
      * Validates a certificate against Certificate Revocation List (CRL) Responses.
      *
-     * @param report         to store all the chain verification results
-     * @param context        the context in which to perform the validation
-     * @param certificate    the certificate to check against CRL response
-     * @param crl            the crl response to be validated
-     * @param validationDate validation date to check for
-     *
-     * @deprecated starting from 8.0.5. TODO DEVSIX-8398 To be removed.
-     */
-    @Deprecated
-    public void validate(ValidationReport report, ValidationContext context, X509Certificate certificate, X509CRL crl,
-            Date validationDate) {
-        validate(report, context, certificate, crl, validationDate, DateTimeUtil.getCurrentTimeDate());
-    }
-
-    /**
-     * Validates a certificate against Certificate Revocation List (CRL) Responses.
-     *
      * @param report                 to store all the chain verification results
      * @param context                the context in which to perform the validation
      * @param certificate            the certificate to check against CRL response

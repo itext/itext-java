@@ -164,16 +164,6 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages =
-    @LogMessage(messageTemplate = "OCSP response could not be verified"))
-    public void getBasicOCSPRespLogMessageTest() {
-        OcspClientBouncyCastle ocspClientBouncyCastle = createOcspClient();
-
-        IBasicOCSPResp basicOCSPResp = ocspClientBouncyCastle.getBasicOCSPResp(null, null, null);
-        Assertions.assertNull(basicOCSPResp);
-    }
-
-    @Test
     public void getEncodedTest() {
         OcspClientBouncyCastle ocspClientBouncyCastle = createOcspClient();
 
@@ -220,8 +210,7 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
     }
 
     private static OcspClientBouncyCastle createOcspClient(TestOcspResponseBuilder builder) {
-        OCSPVerifier ocspVerifier = new OCSPVerifier(null, null);
-        return new TestOcspClientBouncyCastle(ocspVerifier, builder);
+        return new TestOcspClientBouncyCastle(builder);
     }
 
     private static OcspClientBouncyCastle createTestOcspClient(TestOcspResponseBuilder responseBuilder) {
@@ -238,8 +227,8 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
     private static final class TestOcspClientBouncyCastle extends OcspClientBouncyCastle {
         private static TestOcspResponseBuilder testOcspBuilder;
 
-        public TestOcspClientBouncyCastle(OCSPVerifier verifier, TestOcspResponseBuilder testBuilder) {
-            super(verifier);
+        public TestOcspClientBouncyCastle(TestOcspResponseBuilder testBuilder) {
+            super();
             testOcspBuilder = testBuilder;
         }
 

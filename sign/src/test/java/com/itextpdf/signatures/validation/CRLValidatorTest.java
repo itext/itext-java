@@ -292,7 +292,7 @@ public class CRLValidatorTest extends ExtendedITextTest {
         CRLValidator validator = validatorChainBuilder.getCRLValidator();
         validator.validate(report, context, signCert,
                 (X509CRL) CertificateUtil.parseCrlFromStream(new ByteArrayInputStream(builder.makeCrl())),
-                TimeTestUtil.TEST_DATE_TIME);
+                TimeTestUtil.TEST_DATE_TIME, TimeTestUtil.TEST_DATE_TIME);
         AssertValidationReport.assertThat(report, a -> a
                 .hasStatus(ValidationReport.ValidationResult.INDETERMINATE)
                 .hasLogItem(al -> al
@@ -323,11 +323,11 @@ public class CRLValidatorTest extends ExtendedITextTest {
         // Validate full CRL.
         validator.validate(report, context, signCert,
                 (X509CRL) CertificateUtil.parseCrlFromStream(FileUtil.getInputStreamForFile(fullCrlPath)),
-                TimeTestUtil.TEST_DATE_TIME);
+                TimeTestUtil.TEST_DATE_TIME, TimeTestUtil.TEST_DATE_TIME);
         // Validate CRL with onlySomeReasons.
         validator.validate(report, context, signCert,
                 (X509CRL) CertificateUtil.parseCrlFromStream(new ByteArrayInputStream(builder.makeCrl())),
-                TimeTestUtil.TEST_DATE_TIME);
+                TimeTestUtil.TEST_DATE_TIME, TimeTestUtil.TEST_DATE_TIME);
         AssertValidationReport.assertThat(report, a -> a
                 .hasStatus(ValidationReport.ValidationResult.VALID)
         );
@@ -350,7 +350,7 @@ public class CRLValidatorTest extends ExtendedITextTest {
                 TimeBasedContext.PRESENT);
         validatorChainBuilder.getCRLValidator().validate(report, context, signCert,
                 (X509CRL) CertificateUtil.parseCrlFromStream(new ByteArrayInputStream(builder.makeCrl())),
-                TimeTestUtil.TEST_DATE_TIME);
+                TimeTestUtil.TEST_DATE_TIME, TimeTestUtil.TEST_DATE_TIME);
         AssertValidationReport.assertThat(report, a -> a
                 .hasStatus(ValidationReport.ValidationResult.VALID)
                 .hasLogItem(la -> la
@@ -382,7 +382,8 @@ public class CRLValidatorTest extends ExtendedITextTest {
                 ValidatorContext.REVOCATION_DATA_VALIDATOR, CertificateSource.SIGNER_CERT,
                 TimeBasedContext.PRESENT);
         validatorChainBuilder.getCRLValidator().validate(report, context, cert,
-                (X509CRL) CertificateUtil.parseCrlFromStream(new ByteArrayInputStream(builder.makeCrl())), checkDate);
+                (X509CRL) CertificateUtil.parseCrlFromStream(new ByteArrayInputStream(builder.makeCrl())), checkDate,
+                checkDate);
 
         AssertValidationReport.assertThat(report, a -> a
                 .hasStatus(ValidationReport.ValidationResult.INDETERMINATE)
@@ -515,7 +516,7 @@ public class CRLValidatorTest extends ExtendedITextTest {
                 TimeBasedContext.PRESENT);
         validatorChainBuilder.getCRLValidator().validate(report, context, signCert,
                 (X509CRL) CertificateUtil.parseCrlFromStream(FileUtil.getInputStreamForFile(crlPath)),
-                TimeTestUtil.TEST_DATE_TIME);
+                TimeTestUtil.TEST_DATE_TIME, TimeTestUtil.TEST_DATE_TIME);
         return report;
     }
 

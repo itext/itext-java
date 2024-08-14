@@ -141,12 +141,12 @@ public class CRLVerifier extends RootStoreVerifier {
     public X509CRL getCRL(X509Certificate signCert, X509Certificate issuerCert) {
         try {
             // gets the URL from the certificate
-            String crlurl = CertificateUtil.getCRLURL(signCert);
-            if (crlurl == null) {
+            List<String> crlurl = CertificateUtil.getCRLURLs(signCert);
+            if (crlurl.isEmpty()) {
                 return null;
             }
-            LOGGER.info("Getting CRL from " + crlurl);
-            return (X509CRL) SignUtils.parseCrlFromStream(new URL(crlurl).openStream());
+            LOGGER.info("Getting CRL from " + crlurl.get(0));
+            return (X509CRL) SignUtils.parseCrlFromStream(new URL(crlurl.get(0)).openStream());
         } catch (IOException | GeneralSecurityException e) {
             return null;
         }

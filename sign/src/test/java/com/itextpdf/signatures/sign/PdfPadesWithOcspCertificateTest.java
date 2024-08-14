@@ -94,7 +94,7 @@ public class PdfPadesWithOcspCertificateTest extends ExtendedITextTest {
 
         SignerProperties signerProperties = createSignerProperties();
         TestTsaClient testTsa = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
-        AdvancedTestOcspClient ocspClient = new AdvancedTestOcspClient(null);
+        AdvancedTestOcspClient ocspClient = new AdvancedTestOcspClient();
         ocspClient.addBuilderForCertIssuer(signRsaCert, ocspCert, ocspPrivateKey);
         ocspClient.addBuilderForCertIssuer(ocspCert, ocspCert, ocspPrivateKey);
 
@@ -139,7 +139,7 @@ public class PdfPadesWithOcspCertificateTest extends ExtendedITextTest {
 
         SignerProperties signerProperties = createSignerProperties();
         TestTsaClient testTsa = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
-        AdvancedTestOcspClient ocspClient = new AdvancedTestOcspClient(null);
+        AdvancedTestOcspClient ocspClient = new AdvancedTestOcspClient();
         ocspClient.addBuilderForCertIssuer((X509Certificate) signRsaCert, (X509Certificate) ocspCert, ocspPrivateKey);
         ocspClient.addBuilderForCertIssuer((X509Certificate) ocspCert, (X509Certificate) ocspCert, ocspPrivateKey);
 
@@ -169,7 +169,7 @@ public class PdfPadesWithOcspCertificateTest extends ExtendedITextTest {
 
         SignerProperties signerProperties = createSignerProperties();
         TestTsaClient testTsa = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
-        AdvancedTestOcspClient ocspClient = new AdvancedTestOcspClient(null);
+        AdvancedTestOcspClient ocspClient = new AdvancedTestOcspClient();
         ocspClient.addBuilderForCertIssuer(signRsaCert, signRsaCert, signRsaPrivateKey);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

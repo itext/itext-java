@@ -96,7 +96,7 @@ public class PdfPadesWithTimestampCertificateTest extends ExtendedITextTest {
 
         TestTsaClient testTsa = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
         
-        AdvancedTestOcspClient ocspClient = new AdvancedTestOcspClient(null);
+        AdvancedTestOcspClient ocspClient = new AdvancedTestOcspClient();
         ocspClient.addBuilderForCertIssuer((X509Certificate) tsaChain[0], caCert, caPrivateKey);
         ocspClient.addBuilderForCertIssuer((X509Certificate) tsaChain[1], caCert, caPrivateKey);
         padesSigner.setOcspClient(ocspClient);

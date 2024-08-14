@@ -306,38 +306,6 @@ final class SignUtils {
         return response;
     }
 
-    /**
-     * Check if the provided certificate has a critical extension that iText doesn't support.
-     *
-     * @param cert X509Certificate instance to check
-     * @return true if there are unsupported critical extensions, false if there are none
-     * @deprecated this behavior is different in Java and .NET, because in Java we use this
-     * two-step check: first via #hasUnsupportedCriticalExtension method, and then additionally allowing
-     * standard critical extensions; in .NET there's only second step. However, removing
-     * first step in Java can be a breaking change for some users and moreover we don't
-     * have any means of providing customization for unsupported extensions check as of right now.
-     * <p>
-     * During major release I'd suggest changing java unsupported extensions check logic to the same as in .NET,
-     * but only if it is possible to customize this logic.
-     */
-    // TODO DEVSIX-2634
-    @Deprecated
-    static boolean hasUnsupportedCriticalExtension(X509Certificate cert) {
-        if (cert == null) {
-            throw new IllegalArgumentException("X509Certificate can't be null.");
-        }
-        if (cert.hasUnsupportedCriticalExtension()) {
-            for (String oid : cert.getCriticalExtensionOIDs()) {
-                if (OID.X509Extensions.SUPPORTED_CRITICAL_EXTENSIONS.contains(oid)) {
-                    continue;
-                }
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     static Calendar getTimeStampDate(ITSTInfo timeStampTokenInfo) {
         GregorianCalendar calendar = new GregorianCalendar();
         try {

@@ -32,7 +32,6 @@ import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateStatus;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPReq;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.ISingleResp;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
-import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.signatures.validation.OCSPValidator;
@@ -60,30 +59,18 @@ public class OcspClientBouncyCastle implements IOcspClient {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(OcspClientBouncyCastle.class);
 
-    private final OCSPVerifier verifier;
-
-    /**
-     * Creates {@code OcspClient}.
-     *
-     * @param verifier will be used for response verification.
-     *
-     * @deprecated starting from 8.0.5. {@link OcspClientBouncyCastle#OcspClientBouncyCastle()} should be used instead.
-     * If required, {@link IBasicOCSPResp} can be checked using {@link OCSPValidator} class.
-     */
-    @Deprecated
-    public OcspClientBouncyCastle(OCSPVerifier verifier) {
-        this.verifier = verifier;
-    }
-
     /**
      * Creates new {@link OcspClientBouncyCastle} instance.
      */
     public OcspClientBouncyCastle() {
-        this.verifier = null;
+        // Empty constructor in order for default one to not be removed if another one is added.
     }
 
     /**
-     * Gets OCSP response. If {@link OCSPVerifier} was set, the response will be checked.
+     * Gets OCSP response.
+     *
+     * <p>
+     * If required, {@link IBasicOCSPResp} can be checked using {@link OCSPValidator} class.
      *
      * @param checkCert the certificate to check
      * @param rootCert  parent certificate
@@ -100,11 +87,7 @@ public class OcspClientBouncyCastle implements IOcspClient {
             if (ocspResponse.getStatus() != BOUNCY_CASTLE_FACTORY.createOCSPResponseStatus().getSuccessful()) {
                 return null;
             }
-            IBasicOCSPResp basicResponse = BOUNCY_CASTLE_FACTORY.createBasicOCSPResp(ocspResponse.getResponseObject());
-            if (verifier != null) {
-                verifier.isValidResponse(basicResponse, rootCert, DateTimeUtil.getCurrentTimeDate());
-            }
-            return basicResponse;
+            return BOUNCY_CASTLE_FACTORY.createBasicOCSPResp(ocspResponse.getResponseObject());
         } catch (Exception ex) {
             LOGGER.error(ex.getMessage());
         }
