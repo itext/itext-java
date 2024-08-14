@@ -29,6 +29,7 @@ import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.AbstractSelectField;
 import com.itextpdf.forms.form.element.ListBoxField;
+import com.itextpdf.forms.form.element.SelectFieldItem;
 import com.itextpdf.forms.util.BorderStyleUtil;
 import com.itextpdf.forms.util.FormFieldRendererUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
@@ -40,7 +41,6 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.layout.element.Div;
-import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.layout.LayoutContext;
@@ -125,11 +125,11 @@ public class SelectFieldListBoxRenderer extends AbstractSelectFieldRenderer {
     @Override
     protected IRenderer createFlatRenderer() {
         AbstractSelectField selectField = (AbstractSelectField) modelElement;
-        List<IBlockElement> options = selectField.getOptions();
+        List<SelectFieldItem> options = selectField.getOptions();
 
         Div optionsContainer = new Div();
-        for (IBlockElement option : options) {
-            optionsContainer.add(option);
+        for (SelectFieldItem option : options) {
+            optionsContainer.add(option.getElement());
         }
         String lang = getLang();
         if (lang != null) {

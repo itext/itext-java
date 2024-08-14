@@ -30,7 +30,6 @@ import com.itextpdf.forms.form.element.IFormField;
 import com.itextpdf.forms.form.element.SelectFieldItem;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.IConformanceLevel;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
@@ -237,7 +236,7 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
      * @param field   {@link AbstractSelectField} to retrieve the options from
      */
     protected void setupBuilderValues(ChoiceFormFieldBuilder builder, AbstractSelectField field) {
-        List<SelectFieldItem> options = field.getItems();
+        List<SelectFieldItem> options = field.getOptions();
         if (options.isEmpty()) {
             builder.setOptions(new String[0]);
             return;

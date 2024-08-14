@@ -36,7 +36,6 @@ import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.RenderingMode;
 import com.itextpdf.layout.properties.UnitValue;
-import com.itextpdf.layout.tagging.IAccessibleElement;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -320,7 +319,7 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
             flattenComboBoxField.addOption(new SelectFieldItem("option 2"));
             flattenComboBoxField.setSelected("option 1");
 
-            ((IAccessibleElement) flattenComboBoxField).getAccessibilityProperties().setLanguage("random_lang");
+            flattenComboBoxField.getAccessibilityProperties().setLanguage("random_lang");
             document.add(flattenComboBoxField);
         }
 
@@ -525,7 +524,7 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
         ComboBoxField comboBoxField = new ComboBoxField("test");
         comboBoxField.addOption(new SelectFieldItem("option 1", "1"));
         comboBoxField.addOption(new SelectFieldItem("option 1", "2"));
-        Assertions.assertEquals(2, comboBoxField.getItems().size());
+        Assertions.assertEquals(2, comboBoxField.getOptions().size());
     }
 
 
@@ -534,7 +533,7 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
         ComboBoxField comboBoxField = new ComboBoxField("test");
         comboBoxField.addOption(new SelectFieldItem("option 1", "1"));
         comboBoxField.addOption(new SelectFieldItem("option 2", "1"));
-        Assertions.assertEquals(2, comboBoxField.getItems().size());
+        Assertions.assertEquals(2, comboBoxField.getOptions().size());
     }
 
     @Test

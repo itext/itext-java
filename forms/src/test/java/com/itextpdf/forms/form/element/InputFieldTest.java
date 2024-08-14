@@ -44,7 +44,6 @@ import com.itextpdf.layout.properties.BoxSizingPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
-import com.itextpdf.layout.tagging.IAccessibleElement;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.IOException;
@@ -134,7 +133,7 @@ public class InputFieldTest extends ExtendedITextTest {
             flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             flattenInputField.setProperty(FormProperty.FORM_FIELD_VALUE, "input field with lang");
 
-            ((IAccessibleElement) flattenInputField).getAccessibilityProperties().setLanguage("random_lang");
+            flattenInputField.getAccessibilityProperties().setLanguage("random_lang");
             flattenInputField.setProperty(Property.BORDER, new SolidBorder(2f));
             document.add(flattenInputField);
         }
@@ -153,7 +152,7 @@ public class InputFieldTest extends ExtendedITextTest {
             flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             flattenInputField.setProperty(FormProperty.FORM_FIELD_VALUE, "input field with null lang");
 
-            ((IAccessibleElement) flattenInputField).getAccessibilityProperties().setLanguage(null);
+            flattenInputField.getAccessibilityProperties().setLanguage(null);
             flattenInputField.setProperty(Property.BORDER, new SolidBorder(2f));
             document.add(flattenInputField);
         }

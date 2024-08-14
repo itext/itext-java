@@ -30,7 +30,6 @@ import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -48,7 +47,6 @@ import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
-import com.itextpdf.layout.tagging.IAccessibleElement;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -115,7 +113,7 @@ public class ListBoxFieldTest extends ExtendedITextTest {
             flattenListBoxFieldWithMultipleSelection.setInteractive(false);
             flattenListBoxFieldWithMultipleSelection.addOption("option 1", false);
             flattenListBoxFieldWithMultipleSelection.addOption("option 2", true);
-            flattenListBoxFieldWithMultipleSelection.addOption(option3);
+            flattenListBoxFieldWithMultipleSelection.addOption(new SelectFieldItem("option 3", option3));
             document.add(flattenListBoxFieldWithMultipleSelection);
         }
 
@@ -184,8 +182,8 @@ public class ListBoxFieldTest extends ExtendedITextTest {
             ListBoxField listBoxField = new ListBoxField("list box field with margins", 1, false);
             listBoxField.setInteractive(false);
             listBoxField.setBackgroundColor(ColorConstants.RED);
-            listBoxField.addOption(option1);
-            listBoxField.addOption(option2);
+            listBoxField.addOption(new SelectFieldItem("option 1", option1));
+            listBoxField.addOption(new SelectFieldItem("option 2", option2));
             document.add(listBoxField);
 
             document.add(new Paragraph("line break"));
@@ -308,8 +306,8 @@ public class ListBoxFieldTest extends ExtendedITextTest {
             listBoxField.setBackgroundColor(ColorConstants.RED);
             listBoxField.setProperty(Property.WIDTH, UnitValue.createPointValue(600));
             listBoxField.setBorder(new SolidBorder(20));
-            listBoxField.addOption(option1);
-            listBoxField.addOption(option2);
+            listBoxField.addOption(new SelectFieldItem("option 1", option1));
+            listBoxField.addOption(new SelectFieldItem("option 2", option2));
             document.add(listBoxField);
 
             document.add(new Paragraph("Line break"));
@@ -332,7 +330,7 @@ public class ListBoxFieldTest extends ExtendedITextTest {
             listBoxField.setBackgroundColor(ColorConstants.RED);
             listBoxField.addOption("option 1");
             listBoxField.addOption("option 2");
-            ((IAccessibleElement) listBoxField).getAccessibilityProperties().setLanguage("random_lang");
+            listBoxField.getAccessibilityProperties().setLanguage("random_lang");
             document.add(listBoxField);
 
             document.add(new Paragraph("Line break"));

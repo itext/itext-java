@@ -178,7 +178,7 @@ public class SelectFieldComboBoxRenderer extends AbstractSelectFieldRenderer {
 
     private IRenderer createFlatRenderer(boolean addAllOptionsToChildren) {
         AbstractSelectField selectField = (AbstractSelectField) modelElement;
-        List<SelectFieldItem> options = selectField.getItems();
+        List<SelectFieldItem> options = selectField.getOptions();
 
         Div pseudoContainer = new Div();
         for (SelectFieldItem option : options) {
@@ -281,7 +281,7 @@ public class SelectFieldComboBoxRenderer extends AbstractSelectFieldRenderer {
         IPropertyContainer propertyContainer = originalOptionRenderer.getModelElement();
         if (propertyContainer instanceof IAccessibleElement) {
             String lang = ((IAccessibleElement) propertyContainer).getAccessibilityProperties().getLanguage();
-            AccessibilityProperties properties = ((IAccessibleElement) optionFlatElement).getAccessibilityProperties();
+            AccessibilityProperties properties = optionFlatElement.getAccessibilityProperties();
             if (properties.getLanguage() == null) {
                 properties.setLanguage(lang);
             }
