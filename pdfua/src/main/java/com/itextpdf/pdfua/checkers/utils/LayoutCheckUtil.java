@@ -45,16 +45,6 @@ public final class LayoutCheckUtil {
     }
 
     /**
-     * WARNING! This method is an artifact and currently does nothing.
-     * It is kept to ensure backward binary compatibility
-     *
-     * @param rendererObj layout element to check
-     */
-    @Deprecated
-    public static void checkLayoutElements(Object rendererObj) {
-    }
-
-    /**
      * Checks renderer for PDF UA compliance.
      *
      * @param rendererObj The renderer to check.

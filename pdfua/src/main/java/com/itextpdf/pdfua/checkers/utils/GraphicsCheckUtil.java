@@ -29,11 +29,9 @@ import com.itextpdf.kernel.pdf.tagging.IStructureNode;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
-import com.itextpdf.kernel.pdf.tagutils.ITagTreeIteratorHandler;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
-
 
 /**
  * Class that provides methods for checking PDF/UA compliance of graphics elements.
@@ -49,32 +47,6 @@ public final class GraphicsCheckUtil {
      */
     public GraphicsCheckUtil(PdfUAValidationContext context) {
         this.context = context;
-    }
-
-    /**
-     * WARNING! This method is an artifact and currently does nothing.
-     * It is kept to ensure backward binary compatibility
-     *
-     * @param image image to check
-     *
-     * @throws PdfUAConformanceException if image doesn't have alternative description or actual text
-     * @deprecated This method is an artifact and will be removed.
-     */
-    @Deprecated
-    public static void checkLayoutImage(Image image) {
-        //No impl
-    }
-
-    /**
-     * WARNING! This method is an artifact and currently does nothing.
-     * It is kept to ensure backward binary compatibility
-     *
-     * @return {@link ITagTreeIteratorHandler} always null
-     * @deprecated This method is an artifact and will be removed.
-     */
-    @Deprecated
-    public static ITagTreeIteratorHandler createFigureTagHandler() {
-        return null;
     }
 
     /**
