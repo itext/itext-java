@@ -45,27 +45,18 @@ public class FormFieldBuilderTest extends ExtendedITextTest {
         Assertions.assertSame(DUMMY_NAME, builder.getFormFieldName());
     }
 
-
     @Test
     public void getSetConformanceLevelTest() {
-        TestBuilder builder = new TestBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
-        builder.setGenericConformanceLevel(PdfAConformanceLevel.PDF_A_1A);
-        Assertions.assertSame(PdfAConformanceLevel.PDF_A_1A, builder.getGenericConformanceLevel());
-    }
-
-    @Test
-    public void getSetConformanceLevelDepreceatedTest() {
         TestBuilder builder = new TestBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
         builder.setConformanceLevel(PdfAConformanceLevel.PDF_A_1A);
         Assertions.assertSame(PdfAConformanceLevel.PDF_A_1A, builder.getConformanceLevel());
     }
 
-
     @Test
-    public void getSetConformanceLevelDifferentTest() {
+    public void getSetConformanceLevelPdfUATest() {
         TestBuilder builder = new TestBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
-        builder.setGenericConformanceLevel(PdfUAConformanceLevel.PDFUA_1);
-        Assertions.assertNull(builder.getConformanceLevel());
+        builder.setConformanceLevel(PdfUAConformanceLevel.PDFUA_1);
+        Assertions.assertSame(PdfUAConformanceLevel.PDFUA_1, builder.getConformanceLevel());
     }
 
     private static class TestBuilder extends FormFieldBuilder<TestBuilder> {

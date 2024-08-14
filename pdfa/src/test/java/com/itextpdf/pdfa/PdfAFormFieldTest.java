@@ -126,7 +126,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
                 SOURCE_FOLDER + "FreeSans.ttf", EmbeddingStrategy.PREFER_EMBEDDED);
 
         PdfButtonFormField group = new RadioFormFieldBuilder(pdf, "group")
-                .setGenericConformanceLevel(PdfAConformanceLevel.PDF_A_1B).createRadioGroup();
+                .setConformanceLevel(PdfAConformanceLevel.PDF_A_1B).createRadioGroup();
         group.setValue("");
         group.setReadOnly(true);
 
@@ -182,9 +182,9 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
 
         PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         PdfFormField emptyField = new NonTerminalFormFieldBuilder(pdfDoc, "empty")
-                .setGenericConformanceLevel(conformanceLevel).createNonTerminalFormField();
+                .setConformanceLevel(conformanceLevel).createNonTerminalFormField();
         emptyField.addKid(new PushButtonFormFieldBuilder(pdfDoc, "button")
-                .setWidgetRectangle(new Rectangle(36, 756, 20, 20)).setGenericConformanceLevel(conformanceLevel)
+                .setWidgetRectangle(new Rectangle(36, 756, 20, 20)).setConformanceLevel(conformanceLevel)
                 .createPushButton().setFieldFlags(PdfAnnotation.PRINT)
                 .setFieldName("button").setValue("hello"));
         form.addField(emptyField);
@@ -209,7 +209,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
 
         PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         form.addField(new CheckBoxFormFieldBuilder(pdfDoc, "checkBox").setWidgetRectangle(new Rectangle(36, 726, 20, 20))
-                .setCheckType(CheckBoxType.STAR).setGenericConformanceLevel(conformanceLevel)
+                .setCheckType(CheckBoxType.STAR).setConformanceLevel(conformanceLevel)
                 .createCheckBox().setValue("1"));
         pdfDoc.close();
 
@@ -236,7 +236,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         options.add(new PdfString("Name"));
         options.add(new PdfString("Surname"));
         PdfFormField choiceFormField = new ChoiceFormFieldBuilder(pdfDoc, "choice").setWidgetRectangle(new Rectangle(36, 696, 100, 70))
-                .setOptions(options).setGenericConformanceLevel(conformanceLevel)
+                .setOptions(options).setConformanceLevel(conformanceLevel)
                 .createList().setValue("1", true);
         choiceFormField.setFont(fontFreeSans);
         form.addField(choiceFormField);
@@ -266,7 +266,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         PdfFormField choiceFormField = new ChoiceFormFieldBuilder(pdfDoc, "combo")
                 .setWidgetRectangle(new Rectangle(156, 616, 70, 70)).setOptions(new String[]{"用", "规", "表"})
-                .setGenericConformanceLevel(conformanceLevel).createComboBox()
+                .setConformanceLevel(conformanceLevel).createComboBox()
                 .setValue("用");
         choiceFormField.setFont(fontCJK);
         form.addField(choiceFormField);
@@ -296,7 +296,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
 
         PdfChoiceFormField f = new ChoiceFormFieldBuilder(pdfDoc, "list")
                 .setWidgetRectangle(new Rectangle(86, 556, 50, 200)).setOptions(new String[]{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"})
-                .setGenericConformanceLevel(conformanceLevel).createList();
+                .setConformanceLevel(conformanceLevel).createList();
         f.setValue("9").setFont(fontFreeSans);
         f.setValue("4");
         f.setTopIndex(2);
@@ -326,7 +326,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
 
         PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         PdfFormField pushButtonFormField = new PushButtonFormFieldBuilder(pdfDoc, "push button").setWidgetRectangle(new Rectangle(36, 526, 100, 20))
-                .setCaption("Push").setGenericConformanceLevel(conformanceLevel)
+                .setCaption("Push").setConformanceLevel(conformanceLevel)
                 .createPushButton();
         pushButtonFormField.setFont(fontFreeSans).setFontSize(12);
         form.addField(pushButtonFormField);
@@ -352,8 +352,8 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
         String pdfFormFieldName = "radio group";
-        RadioFormFieldBuilder builder = new RadioFormFieldBuilder(pdfDoc, pdfFormFieldName).setGenericConformanceLevel(conformanceLevel);
-        PdfButtonFormField radioGroup = builder.setGenericConformanceLevel(conformanceLevel)
+        RadioFormFieldBuilder builder = new RadioFormFieldBuilder(pdfDoc, pdfFormFieldName).setConformanceLevel(conformanceLevel);
+        PdfButtonFormField radioGroup = builder.setConformanceLevel(conformanceLevel)
                 .createRadioGroup();
         radioGroup.setValue("");
         PdfFormAnnotation radio1 = builder
@@ -393,7 +393,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
 
         PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         PdfFormField textFormField = new TextFormFieldBuilder(pdfDoc, "text").setWidgetRectangle(new Rectangle(36, 466, 90, 20))
-                .setGenericConformanceLevel(conformanceLevel).createText().setValue("textField").setValue("iText");
+                .setConformanceLevel(conformanceLevel).createText().setValue("textField").setValue("iText");
         textFormField.setFont(fontFreeSans).setFontSize(12);
         form.addField(textFormField);
         pdfDoc.close();
@@ -420,7 +420,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
 
         PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         PdfFormField signFormField = new SignatureFormFieldBuilder(pdfDoc, "signature")
-                .setGenericConformanceLevel(conformanceLevel).createSignature();
+                .setConformanceLevel(conformanceLevel).createSignature();
         signFormField.setFont(fontFreeSans).setFontSize(20);
         form.addField(signFormField);
 
@@ -447,7 +447,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
 
             PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
             PdfFormField field = new TextFormFieldBuilder(pdfDoc, "text").setWidgetRectangle(new Rectangle(150, 100, 100, 20))
-                    .setGenericConformanceLevel(PdfAConformanceLevel.PDF_A_1B).createText()
+                    .setConformanceLevel(PdfAConformanceLevel.PDF_A_1B).createText()
                     .setValue("textField").setFieldName("text");
             field.setFont(font).setFontSize(10);
             field.getFirstFormAnnotation().setPage(1);
@@ -527,7 +527,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
             CheckBox checkBox = new CheckBox("CheckBox");
             checkBox.setChecked(true);
             checkBox.setInteractive(true);
-            checkBox.setPdfAConformanceLevel(PdfAConformanceLevel.PDF_A_1A);
+            checkBox.setPdfConformanceLevel(PdfAConformanceLevel.PDF_A_1A);
             doc.add(checkBox);
         });
     }
@@ -694,7 +694,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
             PdfSignatureFormField signatureFormField = signatureFormFieldBuilder.setWidgetRectangle(
                             new Rectangle(200, 200, 40, 40))
                     .setFont(fontFreeSans)
-                    .setGenericConformanceLevel(PdfAConformanceLevel.PDF_A_4)
+                    .setConformanceLevel(PdfAConformanceLevel.PDF_A_4)
                     .createSignature();
             signatureFormField.getFirstFormAnnotation().setFormFieldElement(signatureFieldAppearance2);
             form.addField(signatureFormField);
@@ -728,13 +728,13 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         inputs.add(() -> {
                     CheckBox checkBox = new CheckBox("CheckBox");
                     checkBox.setChecked(true);
-                    checkBox.setPdfAConformanceLevel(PdfAConformanceLevel.PDF_A_4);
+                    checkBox.setPdfConformanceLevel(PdfAConformanceLevel.PDF_A_4);
                     return checkBox;
         });
         inputs.add(() -> {
                     CheckBox checkBox = new CheckBox("CheckBox1");
                     checkBox.setChecked(false);
-                    checkBox.setPdfAConformanceLevel(PdfAConformanceLevel.PDF_A_4);
+                    checkBox.setPdfConformanceLevel(PdfAConformanceLevel.PDF_A_4);
                     return checkBox;
         });
         inputs.add(() -> {
@@ -812,7 +812,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
             PdfDocument pdf = context.getDocument();
             PdfAcroForm form = PdfFormCreator.getAcroForm(pdf, true);
             PdfFormAnnotation chk = new RadioFormFieldBuilder(pdf, "")
-                    .setGenericConformanceLevel(PdfAConformanceLevel.PDF_A_1B).createRadioButton(_value, bbox);
+                    .setConformanceLevel(PdfAConformanceLevel.PDF_A_1B).createRadioButton(_value, bbox);
             _group.addKid(chk);
             chk.setPage(pageNumber);
 

@@ -22,7 +22,6 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.xmp.XMPConst;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
@@ -57,32 +56,5 @@ public class PdfAConformanceLevelTest extends ExtendedITextTest {
         meta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.CONFORMANCE, "B");
         PdfAConformanceLevel level = PdfAConformanceLevel.getConformanceLevel(meta);
         Assertions.assertEquals(PdfAConformanceLevel.PDF_A_2B, level);
-    }
-
-    @Test
-    public void getPdfAConformanceLevel01Test() {
-        Assertions.assertNull(PdfAConformanceLevel.getPDFAConformance(null, null));
-    }
-
-    @Test
-    public void getPdfAConformanceLevel02Test() {
-        Assertions.assertEquals(PdfAConformanceLevel.PDF_A_1A,
-                PdfAConformanceLevel.getPDFAConformance(PdfAConformanceLevel.PDF_A_1A, null));
-    }
-
-
-    @Test
-    public void getPdfAConformanceLevel03Test() {
-        try(PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))){
-            Assertions.assertEquals(PdfAConformanceLevel.PDF_A_1A,
-                    PdfAConformanceLevel.getPDFAConformance(PdfAConformanceLevel.PDF_A_1A, pdfDocument));
-        }
-    }
-
-    @Test
-    public void getPdfAConformanceLevel04Test() {
-        try(PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))){
-            Assertions.assertNull(PdfAConformanceLevel.getPDFAConformance(null, pdfDocument));
-        }
     }
 }

@@ -143,7 +143,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             PdfAcroForm acroForm = PdfFormCreator.getAcroForm(pdfDoc, true);
             PdfButtonFormField checkBox = new CheckBoxFormFieldBuilder(pdfDoc, "checkbox")
                     .setWidgetRectangle(new Rectangle(10, 650, 40, 20))
-                    .setGenericConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
+                    .setConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
                     .createCheckBox();
 
             checkBox.setAlternativeName("widget");
@@ -405,7 +405,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             // The rest of the tests for widgets can be found in com.itextpdf.pdfua.checkers.PdfUAFormFieldsTest
             PdfFormField button = new PushButtonFormFieldBuilder(pdfDoc, "push button")
                     .setWidgetRectangle(new Rectangle(10, 650, 40, 20))
-                    .setGenericConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
+                    .setConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
                     .setFont(loadFont())
                     .createPushButton();
 

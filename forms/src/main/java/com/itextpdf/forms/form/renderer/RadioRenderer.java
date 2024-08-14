@@ -185,7 +185,7 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
         PdfButtonFormField radioGroup = (PdfButtonFormField) form.getField(groupName);
         if (null == radioGroup) {
             radioGroup = new RadioFormFieldBuilder(doc, groupName)
-                    .setGenericConformanceLevel(getGenericConformanceLevel(doc))
+                    .setConformanceLevel(getConformanceLevel(doc))
                     .createRadioGroup();
             radioGroup.disableFieldRegeneration();
             radioGroup.setValue(PdfFormAnnotation.OFF_STATE_VALUE);
@@ -197,7 +197,7 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
         }
 
         PdfFormAnnotation radio = new RadioFormFieldBuilder(doc, null)
-                .setGenericConformanceLevel(getGenericConformanceLevel(doc))
+                .setConformanceLevel(getConformanceLevel(doc))
                 .createRadioButton(getModelId(), area);
         radio.disableFieldRegeneration();
 

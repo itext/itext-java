@@ -174,7 +174,7 @@ public class RadioFormFieldBuilderTest extends ExtendedITextTest {
         RadioFormFieldBuilder builder = new RadioFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
         PdfButtonFormField radioGroup = builder.createRadioGroup();
         PdfFormAnnotation radioAnnotation = builder
-                .setGenericConformanceLevel(PdfAConformanceLevel.PDF_A_1A)
+                .setConformanceLevel(PdfAConformanceLevel.PDF_A_1A)
                 .createRadioButton(DUMMY_APPEARANCE_NAME, DUMMY_RECTANGLE);
         compareRadioButtons(radioAnnotation, radioGroup, false);
     }
@@ -185,7 +185,7 @@ public class RadioFormFieldBuilderTest extends ExtendedITextTest {
         RadioFormFieldBuilder builder = new RadioFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
         PdfButtonFormField radioGroup = builder.createRadioGroup();
         PdfFormAnnotation radioAnnotation = builder
-                .setGenericConformanceLevel(PdfAConformanceLevel.PDF_A_1A)
+                .setConformanceLevel(PdfAConformanceLevel.PDF_A_1A)
                 .createRadioButton(DUMMY_APPEARANCE_NAME, DUMMY_RECTANGLE);
         radioGroup.addKid(radioAnnotation);
         compareRadioButtons(radioAnnotation, radioGroup, true);

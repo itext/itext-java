@@ -1680,7 +1680,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             PdfTextFormField field = new TextFormFieldBuilder(pdfDoc,"hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setGenericConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
+                    .setConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
                     .createText();
             field.setValue("Some value");
             field.setAlternativeName("Some tu entry value");
@@ -1696,7 +1696,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             PdfTextFormField field = new TextFormFieldBuilder(pdfDoc,"hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setGenericConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
+                    .setConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
                     .createText();
             field.setValue("Some value");
             form.addField(field);
@@ -1711,7 +1711,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             PdfChoiceFormField field = new ChoiceFormFieldBuilder(pdfDoc,"hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setGenericConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
+                    .setConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
                     .createComboBox();
             field.setAlternativeName("Some tu entry value");
             form.addField(field);
@@ -1726,7 +1726,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             PdfChoiceFormField field = new ChoiceFormFieldBuilder(pdfDoc,"hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setGenericConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
+                    .setConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
                     .createComboBox();
             form.addField(field);
         });
@@ -1740,7 +1740,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             PdfButtonFormField field = new PushButtonFormFieldBuilder(pdfDoc,"hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setGenericConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
+                    .setConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
                     .createPushButton();
             field.setAlternativeName("Some tu entry value");
             form.addField(field);
@@ -1755,7 +1755,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             PdfButtonFormField field = new PushButtonFormFieldBuilder(pdfDoc,"hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setGenericConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
+                    .setConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
                     .createPushButton();
             form.addField(field);
         });
@@ -1769,7 +1769,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             PdfButtonFormField field = new PushButtonFormFieldBuilder(pdfDoc,"hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setGenericConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
+                    .setConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
                     .createPushButton();
             List<PdfFormAnnotation> annList = field.getChildFormAnnotations();
             annList.get(0).setVisibility(PdfFormAnnotation.HIDDEN);
@@ -1827,7 +1827,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             PdfSignatureFormField field = new SignatureFormFieldBuilder(pdfDoc,"hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setGenericConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
+                    .setConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
                     .createSignature();
             field.setValue("some value");
             field.setAlternativeName("Some tu entry value");
@@ -1843,7 +1843,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             PdfSignatureFormField field = new SignatureFormFieldBuilder(pdfDoc,"hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setGenericConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
+                    .setConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
                     .createSignature();
             field.setValue("some value");
             form.addField(field);
@@ -1858,7 +1858,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             PdfTextFormField field = new TextFormFieldBuilder(pdfDoc,"hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setGenericConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
+                    .setConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
                     .createText();
             field.setValue("Some value");
             pdfDoc.getTagStructureContext().getAutoTaggingPointer().addTag(

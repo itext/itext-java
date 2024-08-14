@@ -203,7 +203,7 @@ public class TextAreaRenderer extends AbstractTextFieldRenderer {
         // That's why we got rid of several properties we set by default during TextArea instance creation.
         modelElement.setProperty(Property.BOX_SIZING, BoxSizingPropertyValue.BORDER_BOX);
         final PdfFormField inputField = new TextFormFieldBuilder(doc, name).setWidgetRectangle(area)
-                .setGenericConformanceLevel(getGenericConformanceLevel(doc))
+                .setConformanceLevel(getConformanceLevel(doc))
                 .setFont(font)
                 .createMultilineText();
         inputField.disableFieldRegeneration();

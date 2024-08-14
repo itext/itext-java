@@ -82,7 +82,7 @@ public class CheckBoxFormFieldBuilderTest extends ExtendedITextTest {
     @Test
     public void createCheckBoxWithConformanceLevelTest() {
         PdfButtonFormField checkBoxFormField = new CheckBoxFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME)
-                .setWidgetRectangle(DUMMY_RECTANGLE).setGenericConformanceLevel(PdfAConformanceLevel.PDF_A_1A)
+                .setWidgetRectangle(DUMMY_RECTANGLE).setConformanceLevel(PdfAConformanceLevel.PDF_A_1A)
                 .createCheckBox();
 
         compareCheckBoxes(checkBoxFormField, true);

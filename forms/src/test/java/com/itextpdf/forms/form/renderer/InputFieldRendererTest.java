@@ -100,14 +100,14 @@ public class InputFieldRendererTest extends ExtendedITextTest {
     @Test
     public void pdfAConformanceLevelTest() {
         InputFieldRenderer inputFieldRenderer = new InputFieldRenderer(new InputField(""));
-        Assertions.assertNull(inputFieldRenderer.getGenericConformanceLevel(null));
+        Assertions.assertNull(inputFieldRenderer.getConformanceLevel(null));
     }
 
     @Test
     public void pdfAConformanceLevelWithDocumentTest() {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         InputFieldRenderer inputFieldRenderer = new InputFieldRenderer(new InputField(""));
-        Assertions.assertNull(inputFieldRenderer.getGenericConformanceLevel(pdfDocument));
+        Assertions.assertNull(inputFieldRenderer.getConformanceLevel(pdfDocument));
     }
 
     @Test
@@ -115,7 +115,7 @@ public class InputFieldRendererTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         InputFieldRenderer inputFieldRenderer = new InputFieldRenderer(new InputField(""));
         inputFieldRenderer.setProperty(FormProperty.FORM_CONFORMANCE_LEVEL, PdfAConformanceLevel.PDF_A_1B);
-        Assertions.assertEquals(PdfAConformanceLevel.PDF_A_1B, inputFieldRenderer.getGenericConformanceLevel(pdfDocument));
+        Assertions.assertEquals(PdfAConformanceLevel.PDF_A_1B, inputFieldRenderer.getConformanceLevel(pdfDocument));
     }
 
     @Test

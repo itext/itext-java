@@ -74,7 +74,7 @@ public class SignatureFormFieldBuilderTest extends ExtendedITextTest {
     @Test
     public void createSignatureWithConformanceLevelTest() {
         PdfSignatureFormField signatureFormField = new SignatureFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME)
-                .setWidgetRectangle(DUMMY_RECTANGLE).setGenericConformanceLevel(PdfAConformanceLevel.PDF_A_1A)
+                .setWidgetRectangle(DUMMY_RECTANGLE).setConformanceLevel(PdfAConformanceLevel.PDF_A_1A)
                 .createSignature();
 
         compareSignatures(signatureFormField, true);

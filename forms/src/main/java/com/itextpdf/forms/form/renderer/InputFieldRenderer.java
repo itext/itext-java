@@ -178,7 +178,7 @@ public class InputFieldRenderer extends AbstractOneLineTextFieldRenderer {
         modelElement.setProperty(Property.BOX_SIZING, BoxSizingPropertyValue.BORDER_BOX);
         final PdfFormField inputField = new TextFormFieldBuilder(doc, name).setWidgetRectangle(area)
                 .setFont(font)
-                .setGenericConformanceLevel(getGenericConformanceLevel(doc))
+                .setConformanceLevel(getConformanceLevel(doc))
                 .createText();
         inputField.disableFieldRegeneration();
         inputField.setValue(value);

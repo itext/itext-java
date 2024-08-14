@@ -84,7 +84,7 @@ public class PushButtonFormFieldBuilderTest extends ExtendedITextTest {
     @Test
     public void createPushButtonWithConformanceLevelTest() {
         PdfButtonFormField pushButtonFormField = new PushButtonFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME)
-                .setWidgetRectangle(DUMMY_RECTANGLE).setGenericConformanceLevel(PdfAConformanceLevel.PDF_A_1A)
+                .setWidgetRectangle(DUMMY_RECTANGLE).setConformanceLevel(PdfAConformanceLevel.PDF_A_1A)
                 .createPushButton();
 
         comparePushButtons(pushButtonFormField, true);

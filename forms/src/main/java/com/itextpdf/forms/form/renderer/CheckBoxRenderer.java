@@ -104,19 +104,6 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
     }
 
     /**
-     * Returns whether or not the checkbox is in PDF/A mode.
-     *
-     * @return true if the checkbox is in PDF/A mode, false otherwise
-     *
-     * @deprecated since 8.0.4 will be removed
-     */
-    @Deprecated
-    public boolean isPdfA() {
-        IConformanceLevel conformanceLevel = this.<IConformanceLevel>getProperty(FormProperty.FORM_CONFORMANCE_LEVEL);
-        return conformanceLevel instanceof PdfAConformanceLevel;
-    }
-
-    /**
      * Gets the checkBoxType.
      *
      * @return the checkBoxType
@@ -127,7 +114,6 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
         }
         return CheckBoxType.CROSS;
     }
-
 
     /**
      * creates a ICheckBoxRenderingStrategy based on the current settings.
@@ -264,7 +250,7 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
         final Map<Integer, Object> properties = FormFieldRendererUtil.removeProperties(this.modelElement);
         final PdfPage page = doc.getPage(occupiedArea.getPageNumber());
         final CheckBoxFormFieldBuilder builder = new CheckBoxFormFieldBuilder(doc, name).setWidgetRectangle(area)
-                .setGenericConformanceLevel(this.<IConformanceLevel>getProperty(FormProperty.FORM_CONFORMANCE_LEVEL));
+                .setConformanceLevel(this.<IConformanceLevel>getProperty(FormProperty.FORM_CONFORMANCE_LEVEL));
 
         if (this.hasProperty(FormProperty.FORM_CHECKBOX_TYPE)) {
             builder.setCheckType((CheckBoxType) this.<CheckBoxType>getProperty(FormProperty.FORM_CHECKBOX_TYPE));

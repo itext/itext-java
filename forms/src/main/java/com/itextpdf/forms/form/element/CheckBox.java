@@ -59,7 +59,6 @@ public class CheckBox extends FormField<CheckBox> {
         setChecked(false);
     }
 
-
     /**
      * Sets the checked state of the checkbox.
      *
@@ -73,31 +72,16 @@ public class CheckBox extends FormField<CheckBox> {
     }
 
     /**
-     * Sets the PDF/A conformance level for the checkbox.
-     * This method is deprecated use setPdfConformanceLevel.
-     * @param conformanceLevel The PDF/A conformance level to set.
-     *
-     * @return This checkbox instance.
-     */
-    @Deprecated()
-    public CheckBox setPdfAConformanceLevel(PdfAConformanceLevel conformanceLevel) {
-        setProperty(FormProperty.FORM_CONFORMANCE_LEVEL, conformanceLevel);
-        return this;
-    }
-
-    /**
      * Sets the conformance level for the checkbox.
      *
      * @param conformanceLevel The PDF/A conformance level to set.
      *
-     * @return tThis checkbox instance.
+     * @return this checkbox instance
      */
     public CheckBox setPdfConformanceLevel(IConformanceLevel conformanceLevel) {
         setProperty(FormProperty.FORM_CONFORMANCE_LEVEL, conformanceLevel);
         return this;
     }
-
-
 
     /**
      * Sets the icon of the checkbox.

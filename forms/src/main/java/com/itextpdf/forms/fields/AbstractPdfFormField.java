@@ -84,12 +84,6 @@ public abstract class AbstractPdfFormField extends PdfObjectWrapper<PdfDictionar
     protected float fontSize = -1;
     protected Color color;
 
-    /**
-     * @deprecated since 8.0.4, this is not used anymore! Use pdfConformanceLevel instead
-     */
-    @Deprecated()
-    protected PdfAConformanceLevel pdfAConformanceLevel;
-
     protected IConformanceLevel pdfConformanceLevel;
 
     /**
@@ -228,23 +222,6 @@ public abstract class AbstractPdfFormField extends PdfObjectWrapper<PdfDictionar
      */
     public Color getColor() {
         return color == null && parent != null ? parent.getColor() : color;
-    }
-
-    /**
-     * Gets the declared conformance level.
-     * Deprecated  use {@link AbstractPdfFormField} getPdfConformanceLevel
-     *
-     * @return the {@link PdfAConformanceLevel}
-     */
-    @Deprecated()
-    public PdfAConformanceLevel getPdfAConformanceLevel() {
-        if (pdfConformanceLevel == null && parent != null) {
-            return parent.getPdfAConformanceLevel();
-        }
-        if (pdfConformanceLevel instanceof PdfAConformanceLevel){
-            return (PdfAConformanceLevel) pdfConformanceLevel;
-        }
-        return null;
     }
 
     /**

@@ -52,7 +52,7 @@ public class SignatureFormFieldBuilder extends TerminalFormFieldBuilder<Signatur
             signatureFormField = PdfFormCreator.createSignatureFormField(getDocument());
         } else {
             PdfWidgetAnnotation annotation = new PdfWidgetAnnotation(getWidgetRectangle());
-            if (getGenericConformanceLevel() != null) {
+            if (getConformanceLevel() != null) {
                 annotation.setFlag(PdfAnnotation.PRINT);
             }
             signatureFormField = PdfFormCreator.createSignatureFormField(annotation, getDocument());
@@ -63,7 +63,7 @@ public class SignatureFormFieldBuilder extends TerminalFormFieldBuilder<Signatur
         if (getFont() != null) {
             signatureFormField.font = getFont();
         }
-        signatureFormField.pdfConformanceLevel = getGenericConformanceLevel();
+        signatureFormField.pdfConformanceLevel = getConformanceLevel();
         signatureFormField.setFieldName(getFormFieldName());
         return signatureFormField;
     }

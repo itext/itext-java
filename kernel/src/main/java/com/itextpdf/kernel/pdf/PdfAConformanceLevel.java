@@ -27,7 +27,6 @@ import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.kernel.xmp.properties.XMPProperty;
 
-
 /**
  * Enumeration of all the PDF/A conformance levels.
  */
@@ -117,27 +116,5 @@ public class PdfAConformanceLevel implements IConformanceLevel {
             return getConformanceLevel(partXmpProperty.getValue(),
                     conformanceXmpProperty == null ? null : conformanceXmpProperty.getValue());
         }
-    }
-
-    /**
-     * Gets the PdfA conformance level.
-     * @param possibleConformance the possible candidate for {@link PdfAConformanceLevel}
-     * @param document the document
-     * @return the conformance level or null if it's not PDFA
-     *
-     * @deprecated since 8.0.4 Will be removed in next major release
-     */
-    @Deprecated
-    public static PdfAConformanceLevel getPDFAConformance(IConformanceLevel possibleConformance, PdfDocument document){
-        if (possibleConformance instanceof PdfAConformanceLevel) {
-            return (PdfAConformanceLevel) possibleConformance;
-        }
-        if (document == null) {
-            return null;
-        }
-        if (document.getConformanceLevel() instanceof PdfAConformanceLevel) {
-            return (PdfAConformanceLevel) document.getConformanceLevel();
-        }
-        return null;
     }
 }

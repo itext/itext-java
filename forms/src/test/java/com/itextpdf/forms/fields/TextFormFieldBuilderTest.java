@@ -79,7 +79,7 @@ public class TextFormFieldBuilderTest extends ExtendedITextTest {
     @Test
     public void createTextWithConformanceLevelTest() {
         PdfTextFormField textFormField = new TextFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME)
-                .setWidgetRectangle(DUMMY_RECTANGLE).setGenericConformanceLevel(PdfAConformanceLevel.PDF_A_1A).createText();
+                .setWidgetRectangle(DUMMY_RECTANGLE).setConformanceLevel(PdfAConformanceLevel.PDF_A_1A).createText();
 
         PdfDictionary expectedDictionary = new PdfDictionary();
         expectedDictionary.put(PdfName.Ff, new PdfNumber(0));
@@ -111,7 +111,7 @@ public class TextFormFieldBuilderTest extends ExtendedITextTest {
     @Test
     public void createMultilineTextWithConformanceLevelTest() {
         PdfTextFormField textFormField = new TextFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME)
-                .setWidgetRectangle(DUMMY_RECTANGLE).setGenericConformanceLevel(PdfAConformanceLevel.PDF_A_1A)
+                .setWidgetRectangle(DUMMY_RECTANGLE).setConformanceLevel(PdfAConformanceLevel.PDF_A_1A)
                 .createMultilineText();
 
         PdfDictionary expectedDictionary = new PdfDictionary();

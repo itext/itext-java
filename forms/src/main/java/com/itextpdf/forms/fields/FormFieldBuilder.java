@@ -81,52 +81,20 @@ public abstract class FormFieldBuilder<T extends FormFieldBuilder<T>> {
     /**
      * Gets conformance level for form field creation.
      *
-     * @return instance of {@link PdfAConformanceLevel} to be used for form field creation
-     * @deprecated since 8.0.4 will return {@link IConformanceLevel} in next major release
-     */
-    @Deprecated
-    public PdfAConformanceLevel getConformanceLevel() {
-        if (conformanceLevel instanceof PdfAConformanceLevel){
-            return (PdfAConformanceLevel) conformanceLevel;
-        }
-        return  null;
-    }
-
-    /**
-     * Gets conformance level for form field creation.
-     *
      * @return instance of {@link IConformanceLevel} to be used for form field creation
-     *
-     * @deprecated since 8.0.4 will be renamed to getConformanceLevel()
      */
-    @Deprecated
-    public IConformanceLevel getGenericConformanceLevel() {
+    public IConformanceLevel getConformanceLevel() {
         return conformanceLevel;
     }
 
     /**
      * Sets conformance level for form field creation.
      *
-     * @param conformanceLevel instance of {@link PdfAConformanceLevel} to be used for form field creation
-     * @return this builder
-     *
-     * @deprecated since 8.0.4 conformance level param will change to {@link IConformanceLevel}
-     */
-    @Deprecated
-    public T setConformanceLevel(PdfAConformanceLevel conformanceLevel) {
-        this.conformanceLevel = conformanceLevel;
-        return getThis();
-    }
-
-    /**
-     * Sets conformance level for form field creation.
-     *
      * @param conformanceLevel Instance of {@link IConformanceLevel} to be used for form field creation.
-     * @return This builder.
-     * @deprecated since 8.0.4 will be renamed to setConformanceLevel
+     *
+     * @return this builder
      */
-    @Deprecated
-    public T setGenericConformanceLevel(IConformanceLevel conformanceLevel) {
+    public T setConformanceLevel(IConformanceLevel conformanceLevel) {
         this.conformanceLevel = conformanceLevel;
         return getThis();
     }

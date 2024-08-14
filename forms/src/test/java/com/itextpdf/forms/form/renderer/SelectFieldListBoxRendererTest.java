@@ -59,14 +59,14 @@ public class SelectFieldListBoxRendererTest extends ExtendedITextTest {
     @Test
     public void pdfAConformanceLevelTest() {
         SelectFieldListBoxRenderer renderer = new SelectFieldListBoxRenderer(new ListBoxField("", 1, false));
-        Assertions.assertNull(renderer.getGenericConformanceLevel(null));
+        Assertions.assertNull(renderer.getConformanceLevel(null));
     }
 
     @Test
     public void pdfAConformanceLevelWithDocumentTest() {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         SelectFieldListBoxRenderer renderer = new SelectFieldListBoxRenderer(new ListBoxField("", 1, false));
-        Assertions.assertNull(renderer.getGenericConformanceLevel(pdfDocument));
+        Assertions.assertNull(renderer.getConformanceLevel(pdfDocument));
     }
 
     @Test
@@ -74,7 +74,7 @@ public class SelectFieldListBoxRendererTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         SelectFieldListBoxRenderer renderer = new SelectFieldListBoxRenderer(new ListBoxField("", 1, false));
         renderer.setProperty(FormProperty.FORM_CONFORMANCE_LEVEL, PdfAConformanceLevel.PDF_A_1B);
-        Assertions.assertEquals(PdfAConformanceLevel.PDF_A_1B, renderer.getGenericConformanceLevel(pdfDocument));
+        Assertions.assertEquals(PdfAConformanceLevel.PDF_A_1B, renderer.getConformanceLevel(pdfDocument));
     }
     
     private static class CustomSelectFieldListBoxRenderer extends SelectFieldListBoxRenderer {
