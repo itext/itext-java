@@ -125,7 +125,7 @@ public class MulticolRenderer extends AbstractRenderer {
         } else {
             this.occupiedArea = calculateContainerOccupiedArea(layoutContext, false);
             return new LayoutResult(LayoutResult.PARTIAL, this.occupiedArea,
-                    createSplitRenderer(layoutResult.getSplitRenderers()),
+                    GridMulticolUtil.createSplitRenderer(layoutResult.getSplitRenderers(), this),
                     createOverflowRenderer(layoutResult.getOverflowRenderer()));
         }
     }
@@ -192,19 +192,6 @@ public class MulticolRenderer extends AbstractRenderer {
 
         approximateHeight = inifiniteHeighOneColumnLayoutResult.getOccupiedArea().getBBox().getHeight() / columnCount;
         return balanceContentAndLayoutColumns(layoutContext, actualBBox);
-    }
-
-    /**
-     * Creates a split renderer.
-     *
-     * @param children children of the split renderer
-     *
-     * @return a new {@link AbstractRenderer} instance
-     * @deprecated use {@link GridMulticolUtil#createSplitRenderer(List, AbstractRenderer)}
-     */
-    @Deprecated
-    protected AbstractRenderer createSplitRenderer(List<IRenderer> children) {
-        return GridMulticolUtil.createSplitRenderer(children, this);
     }
 
     /**

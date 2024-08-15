@@ -155,11 +155,7 @@ abstract class TableBorders {
     protected abstract float getCellVerticalAddition(float[] indents);
     // endregion
 
-    /**
-     * @deprecated Remove rowspansToDeduct parameter which is not used anymore.
-     */
-    @Deprecated
-    protected abstract void buildBordersArrays(CellRenderer cell, int row, int col, int[] rowspansToDeduct);
+    protected abstract void buildBordersArrays(CellRenderer cell, int row, int col);
 
     protected abstract TableBorders updateBordersOnNewPage(boolean isOriginalNonSplitRenderer, boolean isFooterOrHeader, TableRenderer currentRenderer, TableRenderer headerRenderer, TableRenderer footerRenderer);
     // endregion
@@ -183,7 +179,7 @@ abstract class TableBorders {
                             numOfRowsToRemove = 0;
                         }
 
-                        buildBordersArrays(currentRow[col], row, col, null);
+                        buildBordersArrays(currentRow[col], row, col);
                         hasCells = true;
                         int colspan = (int) currentRow[col].getPropertyAsInteger(Property.COLSPAN);
                         col += colspan - 1;

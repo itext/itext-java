@@ -357,60 +357,6 @@ public class FontProvider {
     }
 
     /**
-     * Gets the {@link FontSelectorStrategy} to split specified text into sequences of glyphs, already tied
-     * to the fonts which contain them. The fonts can be taken from the added fonts to the font provider and
-     * are chosen based on font-families list and desired font characteristics.
-     *
-     * @param text for splitting into sequences of glyphs.
-     * @param fontFamilies target font families to create {@link FontSelector} for sequences of glyphs.
-     * @param fc instance of {@link FontCharacteristics} to create {@link FontSelector} for sequences of glyphs.
-     * @param additionalFonts set which provides fonts additionally to the fonts added to font provider.
-     *                        Combined set of font provider fonts and additional fonts is used when choosing
-     *                        a single font for a sequence of glyphs. Additional fonts will only be used for the given
-     *                        font selector strategy instance and will not be otherwise preserved in font provider.
-     *
-     * @return {@link FontSelectorStrategy} instance.
-     * @deprecated use {@link #createFontSelectorStrategy(List, FontCharacteristics, FontSet)}
-     */
-    @Deprecated
-    public FontSelectorStrategy getStrategy(String text, List<String> fontFamilies, FontCharacteristics fc, FontSet additionalFonts) {
-        return new ComplexFontSelectorStrategy(text, getFontSelector(fontFamilies, fc, additionalFonts), this, additionalFonts);
-    }
-
-    /**
-     * Gets the {@link FontSelectorStrategy} to split specified text into sequences of glyphs, already tied
-     * to the fonts which contain them. The fonts can be taken from the added fonts to the font provider and
-     * are chosen based on font-families list and desired font characteristics.
-     *
-     * @param text for splitting into sequences of glyphs.
-     * @param fontFamilies target font families to create {@link FontSelector} for sequences of glyphs.
-     * @param fc instance of {@link FontCharacteristics} to create {@link FontSelector} for sequences of glyphs.
-     *
-     * @return {@link FontSelectorStrategy} instance.
-     * @deprecated use {@link #createFontSelectorStrategy(List, FontCharacteristics, FontSet)}
-     */
-    @Deprecated
-    public FontSelectorStrategy getStrategy(String text, List<String> fontFamilies, FontCharacteristics fc) {
-        return getStrategy(text, fontFamilies, fc, null);
-    }
-
-    /**
-     * Gets the {@link FontSelectorStrategy} to split specified text into sequences of glyphs, already tied
-     * to the fonts which contain them. The fonts can be taken from the added fonts to the font provider and
-     * are chosen based on font-families list and desired font characteristics.
-     *
-     * @param text for splitting into sequences of glyphs.
-     * @param fontFamilies target font families to create {@link FontSelector} for sequences of glyphs.
-     *
-     * @return {@link FontSelectorStrategy} instance.
-     * @deprecated use {@link #createFontSelectorStrategy(List, FontCharacteristics, FontSet)}
-     */
-    @Deprecated
-    public FontSelectorStrategy getStrategy(String text, List<String> fontFamilies) {
-        return getStrategy(text, fontFamilies, null);
-    }
-
-    /**
      * Sets factory which will be used in {@link #createFontSelectorStrategy(List, FontCharacteristics, FontSet)}
      * method.
      *
