@@ -114,13 +114,6 @@ public abstract class PdfAChecker implements IValidationChecker {
 
     protected int gsStackDepth = 0;
 
-    @Deprecated
-    protected boolean rgbIsUsed = false;
-    @Deprecated
-    protected boolean cmykIsUsed = false;
-    @Deprecated
-    protected boolean grayIsUsed = false;
-
     protected Set<PdfObject> rgbUsedObjects = new HashSet<>();
     protected Set<PdfObject> cmykUsedObjects = new HashSet<>();
     protected Set<PdfObject> grayUsedObjects = new HashSet<>();
@@ -172,7 +165,6 @@ public abstract class PdfAChecker implements IValidationChecker {
         }
         checkPages(catalog.getDocument());
         checkOpenAction(catalogDict.get(PdfName.OpenAction));
-        checkColorsUsages();
     }
 
 
@@ -355,16 +347,11 @@ public abstract class PdfAChecker implements IValidationChecker {
     }
 
     /**
-     * This method checks compliance of the signature type
+     * This method checks compliance of the signature type.
      *
-     * @param isCAdES true is CAdES sig type is used, false otherwise.
-     *
-     * @deprecated Will become abstract in the next major release.
+     * @param isCAdES {@code true} if CAdES signature type is used, {@code false} otherwise
      */
-    @Deprecated
-    public void checkSignatureType(boolean isCAdES) {
-
-    }
+    public abstract void checkSignatureType(boolean isCAdES);
 
     /**
      * This method checks compliance with the graphics state architectural
@@ -386,35 +373,15 @@ public abstract class PdfAChecker implements IValidationChecker {
     /**
      * This method checks compliance with the color restrictions imposed by the
      * available color spaces in the document.
-     * This method will be abstract in update 7.2
-     *
-     * @param color the color to check
-     * @param currentColorSpaces a {@link PdfDictionary} containing the color spaces used in the document
-     * @param fill whether the color is used for fill or stroke operations
-     * @param contentStream current content stream
-     *
-     * @deprecated in favor of {@code checkColor(CanvasGraphicsState gState, Color color,
-     *                                      PdfDictionary currentColorSpaces, Boolean fill, PdfStream contentStream)}
-     */
-    @Deprecated
-    public abstract void checkColor(Color color, PdfDictionary currentColorSpaces, Boolean fill,
-                                    PdfStream contentStream);
-
-    /**
-     * This method checks compliance with the color restrictions imposed by the
-     * available color spaces in the document.
      *
      * @param gState canvas graphics state
      * @param color the color to check
      * @param currentColorSpaces a {@link PdfDictionary} containing the color spaces used in the document
      * @param fill whether the color is used for fill or stroke operations
      * @param contentStream current content stream
-     *
-     * @deprecated This method will be abstract in next major release
      */
-    @Deprecated
-    public void checkColor(CanvasGraphicsState gState, Color color, PdfDictionary currentColorSpaces,
-                                    Boolean fill, PdfStream contentStream) {}
+    public abstract void checkColor(CanvasGraphicsState gState, Color color, PdfDictionary currentColorSpaces,
+                                    Boolean fill, PdfStream contentStream);
 
     /**
      * This method performs a range of checks on the given color space, depending
@@ -425,31 +392,9 @@ public abstract class PdfAChecker implements IValidationChecker {
      * @param currentColorSpaces a {@link PdfDictionary} containing the color spaces used in the document
      * @param checkAlternate whether or not to also check the parent color space
      * @param fill whether the color space is used for fill or stroke operations
-     *
-     * @deprecated Will become abstract in the next major release.
      */
-    @Deprecated
-    public void checkColorSpace(PdfColorSpace colorSpace, PdfObject pdfObject, PdfDictionary currentColorSpaces,
-            boolean checkAlternate, Boolean fill) {
-    }
-
-    /**
-     * This method performs a range of checks on the given color space, depending
-     * on the type and properties of that color space.
-     *
-     * @param colorSpace the color space to check
-     * @param currentColorSpaces a {@link PdfDictionary} containing the color spaces used in the document
-     * @param checkAlternate whether or not to also check the parent color space
-     * @param fill whether the color space is used for fill or stroke operations
-     *
-     * @deprecated in favor of {@code checkColorSpace(PdfColorSpace colorSpace, PdfObject object, PdfDictionary
-     * currentColorSpaces, boolean checkAlternate, Boolean fill)}
-     */
-    @Deprecated
-    public void checkColorSpace(PdfColorSpace colorSpace, PdfDictionary currentColorSpaces,
-            boolean checkAlternate, Boolean fill) {
-        checkColorSpace(colorSpace, null, currentColorSpaces, checkAlternate, fill);
-    }
+    public abstract void checkColorSpace(PdfColorSpace colorSpace, PdfObject pdfObject, PdfDictionary currentColorSpaces,
+            boolean checkAlternate, Boolean fill);
 
     /**
      * Set Pdf A output intent color space.
@@ -514,25 +459,17 @@ public abstract class PdfAChecker implements IValidationChecker {
     /**
      * Verify the conformity of encryption usage.
      *
-     * @param crypto Encryption object to verify.
-     *
-     * @deprecated Will become abstract in the next major release.
+     * @param crypto encryption object to verify
      */
-    @Deprecated
-    public void checkCrypto(PdfObject crypto) {
-    }
+    public abstract void checkCrypto(PdfObject crypto);
 
     /**
      * Verify the conformity of the text written by the specified font.
      *
-     * @param text Text to verify.
-     * @param font Font to verify the text against.
-     *
-     * @deprecated Will become abstract in the next major release.
+     * @param text text to verify
+     * @param font font to verify the text against
      */
-    @Deprecated
-    public void checkText(String text, PdfFont font) {
-    }
+    public abstract void checkText(String text, PdfFont font);
 
     /**
      * Attest content stream conformance with appropriate specification.
@@ -624,24 +561,12 @@ public abstract class PdfAChecker implements IValidationChecker {
     protected abstract void checkCatalogValidEntries(PdfDictionary catalogDict);
 
     /**
-     * Verify the conformity of used color spaces.
-     *
-     * @deprecated in favor of {@code checkPageColorsUsages(PdfDictionary pageDict, PdfDictionary pageResources)}
-     */
-    @Deprecated
-    protected abstract void checkColorsUsages();
-
-    /**
      * Verify the conformity of used color spaces on the page.
      *
-     * @param pageDict the {@link PdfDictionary} contains contents for colors to be checked.
-     * @param pageResources the {@link PdfDictionary} contains resources for colors to be checked.
-     *
-     * @deprecated Will become abstract in the next major release.
+     * @param pageDict the {@link PdfDictionary} contains contents for colors to be checked
+     * @param pageResources the {@link PdfDictionary} contains resources for colors to be checked
      */
-    @Deprecated
-    protected void checkPageColorsUsages(PdfDictionary pageDict, PdfDictionary pageResources) {
-    }
+    protected abstract void checkPageColorsUsages(PdfDictionary pageDict, PdfDictionary pageResources);
 
     /**
      * Verify the conformity of the given image.
@@ -774,14 +699,9 @@ public abstract class PdfAChecker implements IValidationChecker {
     /**
      * Verify the conformity of the pdf catalog.
      *
-     * @param catalog the {@link PdfCatalog} of trailer to check.
-     *
-     * @deprecated Will become abstract in the next major release.
+     * @param catalog the {@link PdfCatalog} of trailer to check
      */
-    @Deprecated
-    protected void checkCatalog(PdfCatalog catalog) {
-
-    }
+    protected abstract void checkCatalog(PdfCatalog catalog);
 
     /**
      * Verify the conformity of the page transparency.
@@ -790,18 +710,6 @@ public abstract class PdfAChecker implements IValidationChecker {
      * @param pageResources the {@link PdfDictionary} contains resources for transparency to be checked
      */
     protected abstract void checkPageTransparency(PdfDictionary pageDict, PdfDictionary pageResources);
-
-    /**
-     * Verify the conformity of the resources dictionary.
-     *
-     * @param resources the {@link PdfDictionary} to be checked
-     *
-     * @deprecated in favor of {@code checkResources(PdfDictionary resources, PdfObject pdfObject)}
-     */
-    @Deprecated
-    protected void checkResources(PdfDictionary resources) {
-        checkResources(resources, null);
-    }
 
     /**
      * Verify the conformity of the resources dictionary.

@@ -530,7 +530,7 @@ public class PdfAFontTest extends ExtendedITextTest {
                 .restoreState();
 
         Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assertions.assertEquals(MessageFormatUtil.format(PdfAConformanceException.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "FreeSans"),
+        Assertions.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "FreeSans"),
                 e.getMessage());
     }
 
@@ -583,7 +583,7 @@ public class PdfAFontTest extends ExtendedITextTest {
                 .restoreState();
 
         Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assertions.assertEquals(MessageFormatUtil.format(PdfAConformanceException.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "Helvetica"),
+        Assertions.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "Helvetica"),
                 e.getMessage());
     }
 

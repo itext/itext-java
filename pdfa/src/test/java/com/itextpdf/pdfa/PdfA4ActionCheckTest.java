@@ -261,7 +261,7 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
                 doc.addNewPage().addAnnotation(constructAnnotationWithAction(PdfName.SetOCGState));
             });
         });
-        String messageFormat = MessageFormatUtil.format(PdfAConformanceException._0_ACTIONS_ARE_NOT_ALLOWED,
+        String messageFormat = MessageFormatUtil.format(PdfaExceptionMessageConstant._0_ACTIONS_ARE_NOT_ALLOWED,
                 PdfName.SetOCGState.getValue());
         Assertions.assertEquals(messageFormat, pdfa4Exception.getMessage());
     }
@@ -285,7 +285,7 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
                 doc.addNewPage().addAnnotation(constructAnnotationWithAction(PdfName.GoTo3DView));
             });
         });
-        String messageFormat = MessageFormatUtil.format(PdfAConformanceException._0_ACTIONS_ARE_NOT_ALLOWED,
+        String messageFormat = MessageFormatUtil.format(PdfaExceptionMessageConstant._0_ACTIONS_ARE_NOT_ALLOWED,
                 PdfName.GoTo3DView.getValue());
         Assertions.assertEquals(messageFormat, pdfa4Exception.getMessage());
     }

@@ -91,8 +91,8 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
         catalog.put(PdfName.OCProperties, ocProperties);
 
         Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> pdfA2Checker.checkCatalogValidEntries(catalog));
-        Assertions.assertEquals(PdfAConformanceException.THE_AS_KEY_SHALL_NOT_APPEAR_IN_ANY_OPTIONAL_CONTENT_CONFIGURATION_DICTIONARY,
-                e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.
+                        THE_AS_KEY_SHALL_NOT_APPEAR_IN_ANY_OPTIONAL_CONTENT_CONFIGURATION_DICTIONARY, e.getMessage());
     }
 
     @Test
@@ -402,7 +402,7 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
         Color color = new PatternColor(pattern);
 
         AssertUtil.doesNotThrow(() -> {
-            pdfA2Checker.checkColor(color, new PdfDictionary(), true, null);
+            pdfA2Checker.checkColor(null, color, new PdfDictionary(), true, null);
         });
     }
 
@@ -774,7 +774,8 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
 
 
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
-                () -> pdfA2Checker.checkColorSpace(new PdfSpecialCs.DeviceN(deviceNAsArray), currentColorSpaces, true, false)
+                () -> pdfA2Checker.checkColorSpace(new PdfSpecialCs.DeviceN(deviceNAsArray), null,
+                        currentColorSpaces, true, false)
         );
         Assertions.assertEquals(PdfaExceptionMessageConstant.COLORANTS_DICTIONARY_SHALL_NOT_BE_EMPTY_IN_DEVICE_N_COLORSPACE, e.getMessage());
     }
@@ -802,7 +803,8 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
 
 
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
-                () -> pdfA2Checker.checkColorSpace(new PdfSpecialCs.DeviceN(deviceNAsArray), currentColorSpaces, true, false)
+                () -> pdfA2Checker.checkColorSpace(new PdfSpecialCs.DeviceN(deviceNAsArray), null,
+                        currentColorSpaces, true, false)
         );
         Assertions.assertEquals(PdfaExceptionMessageConstant.COLORANTS_DICTIONARY_SHALL_NOT_BE_EMPTY_IN_DEVICE_N_COLORSPACE, e.getMessage());
     }

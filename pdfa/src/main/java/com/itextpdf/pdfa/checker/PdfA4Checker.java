@@ -291,7 +291,7 @@ public class PdfA4Checker extends PdfA3Checker {
         }
         if (!fileSpec.containsKey(PdfName.F) || !fileSpec.containsKey(PdfName.UF)) {
             throw new PdfAConformanceException(
-                    PdfAConformanceException.FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_F_KEY_AND_UF_KEY);
+                    PdfaExceptionMessageConstant.FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_F_KEY_AND_UF_KEY);
         }
         if (!fileSpec.containsKey(PdfName.Desc)) {
             LOGGER.warn(PdfAConformanceLogMessageConstant.FILE_SPECIFICATION_DICTIONARY_SHOULD_CONTAIN_DESC_KEY);
@@ -590,7 +590,7 @@ public class PdfA4Checker extends PdfA3Checker {
     protected void checkBlendMode(PdfName blendMode) {
         if (!allowedBlendModes4.contains(blendMode)) {
             throw new PdfAConformanceException(
-                    PdfAConformanceException.ONLY_STANDARD_BLEND_MODES_SHALL_BE_USED_FOR_THE_VALUE_OF_THE_BM_KEY_IN_AN_EXTENDED_GRAPHIC_STATE_DICTIONARY);
+                    PdfaExceptionMessageConstant.ONLY_STANDARD_BLEND_MODES_SHALL_BE_USED_FOR_THE_VALUE_OF_THE_BM_KEY_IN_AN_EXTENDED_GRAPHIC_STATE_DICTIONARY);
         }
     }
 

@@ -116,6 +116,11 @@ public class PdfACheckerTest extends ExtendedITextTest {
         }
 
         @Override
+        public void checkSignatureType(boolean isCAdES) {
+
+        }
+
+        @Override
         public void checkCanvasStack(char stackOperation) {
 
         }
@@ -126,7 +131,7 @@ public class PdfACheckerTest extends ExtendedITextTest {
         }
 
         @Override
-        public void checkColor(Color color, PdfDictionary currentColorSpaces, Boolean fill, PdfStream contentStream) {
+        public void checkColor(CanvasGraphicsState gState, Color color, PdfDictionary currentColorSpaces, Boolean fill, PdfStream contentStream) {
 
         }
 
@@ -158,6 +163,16 @@ public class PdfACheckerTest extends ExtendedITextTest {
 
         @Override
         public void checkXrefTable(PdfXrefTable xrefTable) {
+
+        }
+
+        @Override
+        public void checkCrypto(PdfObject crypto) {
+
+        }
+
+        @Override
+        public void checkText(String text, PdfFont font) {
 
         }
 
@@ -202,7 +217,7 @@ public class PdfACheckerTest extends ExtendedITextTest {
         }
 
         @Override
-        protected void checkColorsUsages() {
+        protected void checkPageColorsUsages(PdfDictionary pageDict, PdfDictionary pageResources) {
 
         }
 

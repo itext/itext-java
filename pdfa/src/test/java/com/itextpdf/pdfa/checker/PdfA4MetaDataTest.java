@@ -79,7 +79,7 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
         Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> {
             new PdfA4Checker(PdfAConformanceLevel.PDF_A_4).checkMetaData(dictionary);
         });
-        Assertions.assertEquals(e.getMessage(), PdfAConformanceException.A_CATALOG_DICTIONARY_SHALL_CONTAIN_METADATA_ENTRY);
+        Assertions.assertEquals(e.getMessage(), PdfaExceptionMessageConstant.A_CATALOG_DICTIONARY_SHALL_CONTAIN_METADATA_ENTRY);
     }
 
 

@@ -210,7 +210,7 @@ public class PdfA4TransparencyCheckTest extends ExtendedITextTest {
                     () -> canvas.setExtGState(new PdfExtGState().setBlendMode(PdfName.Compatible))
             );
             Assertions.assertEquals(
-                    PdfAConformanceException.ONLY_STANDARD_BLEND_MODES_SHALL_BE_USED_FOR_THE_VALUE_OF_THE_BM_KEY_IN_AN_EXTENDED_GRAPHIC_STATE_DICTIONARY,
+                    PdfaExceptionMessageConstant.ONLY_STANDARD_BLEND_MODES_SHALL_BE_USED_FOR_THE_VALUE_OF_THE_BM_KEY_IN_AN_EXTENDED_GRAPHIC_STATE_DICTIONARY,
                     e.getMessage());
         }
 

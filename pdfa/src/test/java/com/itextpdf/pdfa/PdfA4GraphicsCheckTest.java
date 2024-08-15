@@ -282,7 +282,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
             Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                     () -> canvas.setFillColor(new DeviceCmyk(0.1f, 0.1f, 0.1f, 0.1f))
             );
-            Assertions.assertEquals(MessageFormatUtil.format(PdfAConformanceException.COLOR_SPACE_0_SHALL_HAVE_1_COMPONENTS,
+            Assertions.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.COLOR_SPACE_0_SHALL_HAVE_1_COMPONENTS,
                     PdfName.DefaultCMYK.getValue(), 4), e.getMessage());
         }
     }

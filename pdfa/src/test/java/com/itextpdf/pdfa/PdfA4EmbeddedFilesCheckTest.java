@@ -83,7 +83,7 @@ public class PdfA4EmbeddedFilesCheckTest extends ExtendedITextTest {
         doc.addFileAttachment("file.txt", fs);
 
         Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assertions.assertEquals(PdfAConformanceException.FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_F_KEY_AND_UF_KEY, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_F_KEY_AND_UF_KEY, e.getMessage());
     }
 
     @Test
@@ -101,7 +101,7 @@ public class PdfA4EmbeddedFilesCheckTest extends ExtendedITextTest {
         doc.addFileAttachment("file.txt", fs);
 
         Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assertions.assertEquals(PdfAConformanceException.FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_F_KEY_AND_UF_KEY, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_F_KEY_AND_UF_KEY, e.getMessage());
     }
 
     @Test
@@ -137,7 +137,7 @@ public class PdfA4EmbeddedFilesCheckTest extends ExtendedITextTest {
         doc.addFileAttachment("file.txt", fs);
 
         Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assertions.assertEquals(PdfAConformanceException.FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_F_KEY_AND_UF_KEY, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_F_KEY_AND_UF_KEY, e.getMessage());
     }
 
     @Test

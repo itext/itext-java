@@ -30,7 +30,6 @@ import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
@@ -112,7 +111,7 @@ public class PdfA1CheckerTest extends ExtendedITextTest {
         Color color = new PatternColor(pattern);
 
         AssertUtil.doesNotThrow(() -> {
-            pdfA1Checker.checkColor(color, new PdfDictionary(), true, null);
+            pdfA1Checker.checkColor(null, color, new PdfDictionary(), true, null);
         });
     }
 
