@@ -72,12 +72,13 @@ public final class TableCheckUtil {
          * {@inheritDoc}
          */
         @Override
-        public void nextElement(IStructureNode elem) {
+        public boolean nextElement(IStructureNode elem) {
             PdfStructElem table = context.getElementIfRoleMatches(PdfName.Table, elem);
             if (table == null) {
-                return;
+                return true;
             }
             new StructTreeResultMatrix((PdfStructElem) elem, context).checkValidTableTagging();
+            return true;
         }
     }
 

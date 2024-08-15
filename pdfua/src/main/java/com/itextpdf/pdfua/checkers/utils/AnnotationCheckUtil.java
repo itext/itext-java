@@ -93,14 +93,14 @@ public final class AnnotationCheckUtil {
          * {@inheritDoc}
          */
         @Override
-        public void nextElement(IStructureNode elem) {
+        public boolean nextElement(IStructureNode elem) {
             if (!(elem instanceof PdfObjRef)) {
-                return;
+                return true;
             }
             PdfObjRef objRef = (PdfObjRef) elem;
             PdfDictionary annotObj = objRef.getReferencedObject();
             if (annotObj == null) {
-                return;
+                return true;
             }
 
             if (annotObj.getAsDictionary(PdfName.P) != null) {
@@ -113,7 +113,7 @@ public final class AnnotationCheckUtil {
             PdfName subtype = annotObj.getAsName(PdfName.Subtype);
 
             if (!isAnnotationVisible(annotObj) || PdfName.Popup.equals(subtype)) {
-                return;
+                return true;
             }
 
             if (PdfName.PrinterMark.equals(subtype)) {
@@ -147,6 +147,7 @@ public final class AnnotationCheckUtil {
                 ActionCheckUtil.checkAction(action);
                 checkAAEntry(additionalActions);
             }
+            return true;
         }
 
         private static void checkAAEntry(PdfDictionary additionalActions) {

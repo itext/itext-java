@@ -50,15 +50,16 @@ public class NoteCheckUtil {
          * {@inheritDoc}
          */
         @Override
-        public void nextElement(IStructureNode elem) {
+        public boolean nextElement(IStructureNode elem) {
             final PdfStructElem structElem = context.getElementIfRoleMatches(PdfName.Note, elem);
             if (structElem == null) {
-                return;
+                return true;
             }
             final PdfDictionary pdfObject = structElem.getPdfObject();
             if (pdfObject.get(PdfName.ID) == null) {
                 throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.NOTE_TAG_SHALL_HAVE_ID_ENTRY);
             }
+            return true;
         }
     }
 }

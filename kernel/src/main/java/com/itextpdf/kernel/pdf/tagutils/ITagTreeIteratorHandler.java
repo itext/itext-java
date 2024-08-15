@@ -34,6 +34,9 @@ public interface ITagTreeIteratorHandler {
      * Called when the next element is reached during the traversal.
      *
      * @param elem the next element
+     *
+     * @return {@code true} if the iteration should be continued, {@code false} otherwise. Note that this value
+     * is relevant only in case {@link TagTreeIterator.TreeTraversalOrder#PRE_ORDER} is used for the traversal
      */
-    void nextElement(IStructureNode elem);
+    boolean nextElement(IStructureNode elem);
 }

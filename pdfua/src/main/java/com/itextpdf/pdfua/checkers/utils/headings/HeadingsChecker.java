@@ -186,8 +186,9 @@ public final class HeadingsChecker {
          * {@inheritDoc}
          */
         @Override
-        public void nextElement(IStructureNode elem) {
+        public boolean nextElement(IStructureNode elem) {
             checker.checkStructElement(elem);
+            return true;
         }
     }
 }

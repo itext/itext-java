@@ -41,9 +41,10 @@ public class TagTreeIteratorFlusher implements ITagTreeIteratorHandler {
      * {@inheritDoc}
      */
     @Override
-    public void nextElement(IStructureNode elem) {
+    public boolean nextElement(IStructureNode elem) {
         if (elem instanceof PdfStructElem && !((PdfStructElem) elem).isFlushed()) {
             ((PdfStructElem) elem).flush();
         }
+        return true;
     }
 }

@@ -528,8 +528,8 @@ public class TagTreePointer {
         }
 
         RoleFinderHandler handler = new RoleFinderHandler(n, role);
-        TagTreeIteratorApproverWithStop approver = new TagTreeIteratorApproverWithStop(handler);
-        TagTreeIterator iterator = new TagTreeIterator(getCurrentStructElem(), approver,
+        TagTreeIterator iterator = new TagTreeIterator(getCurrentStructElem(),
+                new TagTreeIteratorAvoidDuplicatesApprover(),
                 TagTreeIterator.TreeTraversalOrder.PRE_ORDER);
 
         iterator.addHandler(handler);
@@ -849,37 +849,20 @@ public class TagTreePointer {
         }
 
         @Override
-        public void nextElement(IStructureNode elem) {
+        public boolean nextElement(IStructureNode elem) {
             if (foundElem != null) {
-                return;
+                return false;
             }
 
             String descendantRole = elem.getRole().getValue();
             if (descendantRole.equals(role) && foundIdx++ == n) {
                 foundElem = (PdfStructElem) elem;
             }
+            return true;
         }
 
         public PdfStructElem getFoundElement() {
             return foundElem;
-        }
-    }
-
-    /**
-     * @deprecated change ITagTreeIteratorHandler#nextElement to return boolean
-     * showing whether the iteration should be continued. It will allow to get rid of this ugly workaround.
-     */
-    @Deprecated
-    private static class TagTreeIteratorApproverWithStop extends TagTreeIteratorAvoidDuplicatesApprover {
-        private final RoleFinderHandler handler;
-        public TagTreeIteratorApproverWithStop(RoleFinderHandler handler) {
-            super();
-            this.handler = handler;
-        }
-
-        @Override
-        public boolean approve(IStructureNode elem) {
-            return super.approve(elem) && handler.getFoundElement() == null;
         }
     }
 }

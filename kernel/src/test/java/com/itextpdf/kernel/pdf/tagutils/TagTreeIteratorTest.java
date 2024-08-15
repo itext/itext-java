@@ -176,8 +176,9 @@ public class TagTreeIteratorTest extends ExtendedITextTest {
         final List<IStructureNode> nodes = new ArrayList<>();
 
         @Override
-        public void nextElement(IStructureNode elem) {
+        public boolean nextElement(IStructureNode elem) {
             nodes.add(elem);
+            return true;
         }
     }
 }

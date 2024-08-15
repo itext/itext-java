@@ -78,10 +78,11 @@ public final class McrCheckUtil {
          * {@inheritDoc}
          */
         @Override
-        public void nextElement(IStructureNode elem) {
+        public boolean nextElement(IStructureNode elem) {
             if ((elem instanceof PdfMcr)) {
                 haveMcr = true;
             }
+            return true;
         }
     }
 }

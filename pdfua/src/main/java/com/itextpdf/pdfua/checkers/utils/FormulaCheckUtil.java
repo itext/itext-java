@@ -71,15 +71,16 @@ public final class FormulaCheckUtil {
          * {@inheritDoc}
          */
         @Override
-        public void nextElement(IStructureNode elem) {
+        public boolean nextElement(IStructureNode elem) {
             final PdfStructElem structElem = context.getElementIfRoleMatches(PdfName.Formula, elem);
             if (structElem == null) {
-                return;
+                return true;
             }
             final PdfDictionary pdfObject = structElem.getPdfObject();
             if (hasInvalidValues(pdfObject.getAsString(PdfName.Alt), pdfObject.getAsString(PdfName.ActualText))) {
                 throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.FORMULA_SHALL_HAVE_ALT);
             }
+            return true;
         }
     }
 

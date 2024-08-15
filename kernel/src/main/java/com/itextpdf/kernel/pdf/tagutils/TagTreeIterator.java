@@ -117,7 +117,9 @@ public class TagTreeIterator {
 
         if (traversalOrder == TreeTraversalOrder.PRE_ORDER) {
             for (ITagTreeIteratorHandler handler : handlerList) {
-                handler.nextElement(elem);
+                if (!handler.nextElement(elem)) {
+                    return;
+                }
             }
         }
 

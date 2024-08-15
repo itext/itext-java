@@ -59,20 +59,20 @@ public class FormCheckUtil {
          * {@inheritDoc}
          */
         @Override
-        public void nextElement(IStructureNode elem) {
+        public boolean nextElement(IStructureNode elem) {
             PdfStructElem form = context.getElementIfRoleMatches(PdfName.Form, elem);
-            if (form == null){
-                return;
+            if (form == null) {
+                return true;
             }
 
             PdfDictionary formField = getInteractiveKidForm(form);
-            if (formField == null){
-                return;
+            if (formField == null) {
+                return true;
             }
 
             // Check is not applicable for hidden annotations
-            if (!AnnotationCheckUtil.isAnnotationVisible(formField)){
-                return;
+            if (!AnnotationCheckUtil.isAnnotationVisible(formField)) {
+                return true;
             }
 
             // Parent check is required for the case when form field and widget annotation are split up.
@@ -86,6 +86,7 @@ public class FormCheckUtil {
                 throw new PdfUAConformanceException(
                         PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION);
             }
+            return true;
         }
 
         /**
