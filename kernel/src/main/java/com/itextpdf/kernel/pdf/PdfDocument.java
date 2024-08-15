@@ -858,6 +858,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                         ITextCoreProductData.getInstance()));
                 // The event will prepare document for flushing, i.e. will set an appropriate producer line
                 manager.onEvent(new FlushPdfDocumentEvent(this));
+                dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.START_DOCUMENT_CLOSING, this));
 
                 updateXmpMetadata();
                 // In PDF 2.0, all the values except CreationDate and ModDate are deprecated. Remove them now
@@ -2211,16 +2212,8 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                     if (!embeddedStreamsSavedOnReading && writer.crypto.isEmbeddedFilesOnly()) {
                         encryptedEmbeddedStreamsHandler.storeAllEmbeddedStreams();
                     }
-                    if (writer.crypto.getCryptoMode() < EncryptionConstants.ENCRYPTION_AES_256) {
-                        VersionConforming.validatePdfVersionForDeprecatedFeatureLogWarn(this, PdfVersion.PDF_2_0,
-                                VersionConforming.DEPRECATED_ENCRYPTION_ALGORITHMS);
-                    } else if (writer.crypto.getCryptoMode() == EncryptionConstants.ENCRYPTION_AES_256) {
-                        PdfNumber r = writer.crypto.getPdfObject().getAsNumber(PdfName.R);
-                        if (r != null && r.intValue() == 5) {
-                            VersionConforming.validatePdfVersionForDeprecatedFeatureLogWarn(this, PdfVersion.PDF_2_0,
-                                    VersionConforming.DEPRECATED_AES256_REVISION);
-                        }
-                    }
+                    writer.crypto.checkEncryptionRequirements(this);
+                    writer.crypto.configureEncryptionParameters(this);
                 }
             }
             if (EventConfirmationType.ON_DEMAND == event.getConfirmationType()) {

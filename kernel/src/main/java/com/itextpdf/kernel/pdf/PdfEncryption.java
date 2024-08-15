@@ -40,6 +40,7 @@ import com.itextpdf.kernel.crypto.securityhandler.StandardSecurityHandler;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.security.IExternalDecryptionProcess;
+import com.itextpdf.kernel.mac.MacIntegrityProtector;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -50,6 +51,10 @@ import java.security.MessageDigest;
 import java.security.cert.Certificate;
 
 public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
+    private static final String MAC_FOR_PDF_2 = "MAC integrity protection is only supported for PDF 2.0 or higher.";
+    private static final String MAC_FOR_ENCRYPTION_5 =
+            "MAC integrity protection is only supported for encryption algorithms of version 5 or higher.";
+
     private static final int STANDARD_ENCRYPTION_40 = 2;
     private static final int STANDARD_ENCRYPTION_128 = 3;
     private static final int AES_128 = 4;
@@ -63,10 +68,9 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
     private Long permissions;
     private boolean encryptMetadata;
     private boolean embeddedFilesOnly;
-
     private byte[] documentId;
-
     private SecurityHandler securityHandler;
+    private MacIntegrityProtector mac;
 
     /**
      * Creates the encryption.
@@ -103,35 +107,81 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
      * @param documentId     document id which will be used for encryption
      * @param version        the {@link PdfVersion} of the target document for encryption
      */
-    public PdfEncryption(byte[] userPassword, byte[] ownerPassword, int permissions, int encryptionType, byte[] documentId, PdfVersion version) {
+    public PdfEncryption(byte[] userPassword, byte[] ownerPassword, int permissions, int encryptionType,
+            byte[] documentId, PdfVersion version) {
+        this(userPassword, ownerPassword, permissions, encryptionType, documentId, version, null);
+    }
+
+    /**
+     * Creates the encryption.
+     *
+     * @param userPassword   the user password. Can be null or of zero length, which is equal to
+     *                       omitting the user password
+     * @param ownerPassword  the owner password. If it's null or empty, iText will generate
+     *                       a random string to be used as the owner password
+     * @param permissions    the user permissions
+     *                       The open permissions for the document can be
+     *                       {@link EncryptionConstants#ALLOW_PRINTING},
+     *                       {@link EncryptionConstants#ALLOW_MODIFY_CONTENTS},
+     *                       {@link EncryptionConstants#ALLOW_COPY},
+     *                       {@link EncryptionConstants#ALLOW_MODIFY_ANNOTATIONS},
+     *                       {@link EncryptionConstants#ALLOW_FILL_IN},
+     *                       {@link EncryptionConstants#ALLOW_SCREENREADERS},
+     *                       {@link EncryptionConstants#ALLOW_ASSEMBLY} and
+     *                       {@link EncryptionConstants#ALLOW_DEGRADED_PRINTING}.
+     *                       The permissions can be combined by ORing them
+     * @param encryptionType the type of encryption. It can be one of
+     *                       {@link EncryptionConstants#STANDARD_ENCRYPTION_40},
+     *                       {@link EncryptionConstants#STANDARD_ENCRYPTION_128},
+     *                       {@link EncryptionConstants#ENCRYPTION_AES_128}
+     *                       or {@link EncryptionConstants#ENCRYPTION_AES_256}.
+     *                       Optionally {@link EncryptionConstants#DO_NOT_ENCRYPT_METADATA} can be
+     *                       ORed to output the metadata in cleartext.
+     *                       {@link EncryptionConstants#EMBEDDED_FILES_ONLY} can be ORed as well.
+     *                       Please be aware that the passed encryption types may override permissions:
+     *                       {@link EncryptionConstants#STANDARD_ENCRYPTION_40} implicitly sets
+     *                       {@link EncryptionConstants#DO_NOT_ENCRYPT_METADATA} and
+     *                       {@link EncryptionConstants#EMBEDDED_FILES_ONLY} as false;
+     *                       {@link EncryptionConstants#STANDARD_ENCRYPTION_128} implicitly sets
+     *                       {@link EncryptionConstants#EMBEDDED_FILES_ONLY} as false;
+     * @param documentId     document id which will be used for encryption
+     * @param version        the {@link PdfVersion} of the target document for encryption
+     * @param mac            {@link MacIntegrityProtector} class for MAC integrity protection
+     */
+    public PdfEncryption(byte[] userPassword, byte[] ownerPassword, int permissions, int encryptionType,
+            byte[] documentId, PdfVersion version, MacIntegrityProtector mac) {
         super(new PdfDictionary());
+        this.mac = mac;
         this.documentId = documentId;
         if (version != null && version.compareTo(PdfVersion.PDF_2_0) >= 0) {
             permissions = fixAccessibilityPermissionPdf20(permissions);
+            if (mac != null) {
+                permissions = configureAccessibilityPermissionsForMac(permissions);
+            }
         }
         int revision = setCryptoMode(encryptionType);
         switch (revision) {
             case STANDARD_ENCRYPTION_40:
-                StandardHandlerUsingStandard40 handlerStd40 = new StandardHandlerUsingStandard40(this.getPdfObject(), userPassword, ownerPassword,
-                        permissions, encryptMetadata, embeddedFilesOnly, documentId);
+                StandardHandlerUsingStandard40 handlerStd40 = new StandardHandlerUsingStandard40(this.getPdfObject(),
+                        userPassword, ownerPassword, permissions, encryptMetadata, embeddedFilesOnly, documentId);
                 this.permissions = handlerStd40.getPermissions();
                 securityHandler = handlerStd40;
                 break;
             case STANDARD_ENCRYPTION_128:
-                StandardHandlerUsingStandard128 handlerStd128 = new StandardHandlerUsingStandard128(this.getPdfObject(), userPassword, ownerPassword,
-                        permissions, encryptMetadata, embeddedFilesOnly, documentId);
+                StandardHandlerUsingStandard128 handlerStd128 = new StandardHandlerUsingStandard128(this.getPdfObject(),
+                        userPassword, ownerPassword, permissions, encryptMetadata, embeddedFilesOnly, documentId);
                 this.permissions = handlerStd128.getPermissions();
                 securityHandler = handlerStd128;
                 break;
             case AES_128:
-                StandardHandlerUsingAes128 handlerAes128 = new StandardHandlerUsingAes128(this.getPdfObject(), userPassword, ownerPassword,
-                        permissions, encryptMetadata, embeddedFilesOnly, documentId);
+                StandardHandlerUsingAes128 handlerAes128 = new StandardHandlerUsingAes128(this.getPdfObject(),
+                        userPassword, ownerPassword, permissions, encryptMetadata, embeddedFilesOnly, documentId);
                 this.permissions = handlerAes128.getPermissions();
                 securityHandler = handlerAes128;
                 break;
             case AES_256:
-                StandardHandlerUsingAes256 handlerAes256 = new StandardHandlerUsingAes256(this.getPdfObject(), userPassword, ownerPassword,
-                        permissions, encryptMetadata, embeddedFilesOnly, version);
+                StandardHandlerUsingAes256 handlerAes256 = new StandardHandlerUsingAes256(this.getPdfObject(),
+                        userPassword, ownerPassword, permissions, encryptMetadata, embeddedFilesOnly, version);
                 this.permissions = handlerAes256.getPermissions();
                 securityHandler = handlerAes256;
                 break;
@@ -174,25 +224,74 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
      * @param version        the {@link PdfVersion} of the target document for encryption
      */
     public PdfEncryption(Certificate[] certs, int[] permissions, int encryptionType, PdfVersion version) {
+        this(certs, permissions, encryptionType, version, null);
+    }
+
+    /**
+     * Creates the certificate encryption.
+     * <p>
+     * An array of one or more public certificates must be provided together with
+     * an array of the same size for the permissions for each certificate.
+     *
+     * @param certs          the public certificates to be used for the encryption
+     * @param permissions    the user permissions for each of the certificates
+     *                       The open permissions for the document can be
+     *                       {@link EncryptionConstants#ALLOW_PRINTING},
+     *                       {@link EncryptionConstants#ALLOW_MODIFY_CONTENTS},
+     *                       {@link EncryptionConstants#ALLOW_COPY},
+     *                       {@link EncryptionConstants#ALLOW_MODIFY_ANNOTATIONS},
+     *                       {@link EncryptionConstants#ALLOW_FILL_IN},
+     *                       {@link EncryptionConstants#ALLOW_SCREENREADERS},
+     *                       {@link EncryptionConstants#ALLOW_ASSEMBLY} and
+     *                       {@link EncryptionConstants#ALLOW_DEGRADED_PRINTING}.
+     *                       The permissions can be combined by ORing them
+     * @param encryptionType the type of encryption. It can be one of
+     *                       {@link EncryptionConstants#STANDARD_ENCRYPTION_40},
+     *                       {@link EncryptionConstants#STANDARD_ENCRYPTION_128},
+     *                       {@link EncryptionConstants#ENCRYPTION_AES_128}
+     *                       or {@link EncryptionConstants#ENCRYPTION_AES_256}.
+     *                       Optionally {@link EncryptionConstants#DO_NOT_ENCRYPT_METADATA} can be ORed
+     *                       to output the metadata in cleartext.
+     *                       {@link EncryptionConstants#EMBEDDED_FILES_ONLY} can be ORed as well.
+     *                       Please be aware that the passed encryption types may override permissions:
+     *                       {@link EncryptionConstants#STANDARD_ENCRYPTION_40} implicitly sets
+     *                       {@link EncryptionConstants#DO_NOT_ENCRYPT_METADATA} and
+     *                       {@link EncryptionConstants#EMBEDDED_FILES_ONLY} as false;
+     *                       {@link EncryptionConstants#STANDARD_ENCRYPTION_128} implicitly sets
+     *                       {@link EncryptionConstants#EMBEDDED_FILES_ONLY} as false;
+     *
+     * @param version        the {@link PdfVersion} of the target document for encryption
+     * @param mac            {@link MacIntegrityProtector} class for MAC integrity protection
+     */
+    public PdfEncryption(Certificate[] certs, int[] permissions, int encryptionType, PdfVersion version,
+            MacIntegrityProtector mac) {
         super(new PdfDictionary());
+        this.mac = mac;
         if (version != null && version.compareTo(PdfVersion.PDF_2_0) >= 0) {
             for (int i = 0; i < permissions.length; i++) {
                 permissions[i] = fixAccessibilityPermissionPdf20(permissions[i]);
+                if (mac != null) {
+                    permissions[i] = configureAccessibilityPermissionsForMac(permissions[i]);
+                }
             }
         }
         int revision = setCryptoMode(encryptionType);
         switch (revision) {
             case STANDARD_ENCRYPTION_40:
-                securityHandler = new PubSecHandlerUsingStandard40(this.getPdfObject(), certs, permissions, encryptMetadata, embeddedFilesOnly);
+                securityHandler = new PubSecHandlerUsingStandard40(this.getPdfObject(), certs, permissions,
+                        encryptMetadata, embeddedFilesOnly);
                 break;
             case STANDARD_ENCRYPTION_128:
-                securityHandler = new PubSecHandlerUsingStandard128(this.getPdfObject(), certs, permissions, encryptMetadata, embeddedFilesOnly);
+                securityHandler = new PubSecHandlerUsingStandard128(this.getPdfObject(), certs, permissions,
+                        encryptMetadata, embeddedFilesOnly);
                 break;
             case AES_128:
-                securityHandler = new PubSecHandlerUsingAes128(this.getPdfObject(), certs, permissions, encryptMetadata, embeddedFilesOnly);
+                securityHandler = new PubSecHandlerUsingAes128(this.getPdfObject(), certs, permissions,
+                        encryptMetadata, embeddedFilesOnly);
                 break;
             case AES_256:
-                securityHandler = new PubSecHandlerUsingAes256(this.getPdfObject(), certs, permissions, encryptMetadata, embeddedFilesOnly);
+                securityHandler = new PubSecHandlerUsingAes256(this.getPdfObject(), certs, permissions,
+                        encryptMetadata, embeddedFilesOnly);
                 break;
         }
     }
@@ -205,22 +304,26 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
         int revision = readAndSetCryptoModeForStdHandler(pdfDict);
         switch (revision) {
             case STANDARD_ENCRYPTION_40:
-                StandardHandlerUsingStandard40 handlerStd40 = new StandardHandlerUsingStandard40(this.getPdfObject(), password, documentId, encryptMetadata);
+                StandardHandlerUsingStandard40 handlerStd40 = new StandardHandlerUsingStandard40(this.getPdfObject(),
+                        password, documentId, encryptMetadata);
                 permissions = handlerStd40.getPermissions();
                 securityHandler = handlerStd40;
                 break;
             case STANDARD_ENCRYPTION_128:
-                StandardHandlerUsingStandard128 handlerStd128 = new StandardHandlerUsingStandard128(this.getPdfObject(), password, documentId, encryptMetadata);
+                StandardHandlerUsingStandard128 handlerStd128 = new StandardHandlerUsingStandard128(this.getPdfObject(),
+                        password, documentId, encryptMetadata);
                 permissions = handlerStd128.getPermissions();
                 securityHandler = handlerStd128;
                 break;
             case AES_128:
-                StandardHandlerUsingAes128 handlerAes128 = new StandardHandlerUsingAes128(this.getPdfObject(), password, documentId, encryptMetadata);
+                StandardHandlerUsingAes128 handlerAes128 = new StandardHandlerUsingAes128(this.getPdfObject(), password,
+                        documentId, encryptMetadata);
                 permissions = handlerAes128.getPermissions();
                 securityHandler = handlerAes128;
                 break;
             case AES_256:
-                StandardHandlerUsingAes256 aes256Handler =  new StandardHandlerUsingAes256(this.getPdfObject(), password);
+                StandardHandlerUsingAes256 aes256Handler =  new StandardHandlerUsingAes256(this.getPdfObject(),
+                        password);
                 permissions = aes256Handler.getPermissions();
                 encryptMetadata = aes256Handler.isEncryptMetadata();
                 securityHandler = aes256Handler;
@@ -452,7 +555,8 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
     private int setCryptoMode(int mode, int length) {
         int revision;
         cryptoMode = mode;
-        encryptMetadata = (mode & EncryptionConstants.DO_NOT_ENCRYPT_METADATA) != EncryptionConstants.DO_NOT_ENCRYPT_METADATA;
+        encryptMetadata =
+                (mode & EncryptionConstants.DO_NOT_ENCRYPT_METADATA) != EncryptionConstants.DO_NOT_ENCRYPT_METADATA;
         embeddedFilesOnly = (mode & EncryptionConstants.EMBEDDED_FILES_ONLY) == EncryptionConstants.EMBEDDED_FILES_ONLY;
         mode &= EncryptionConstants.ENCRYPTION_MASK;
         switch (mode) {
@@ -618,7 +722,12 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
         return false;
     }
 
-    private int fixAccessibilityPermissionPdf20(int permissions) {
+    private static int configureAccessibilityPermissionsForMac(int permissions) {
+        // 13 bit but pdf writers start counting from 1
+        return permissions & ~(1 << 12);
+    }
+
+    private static int fixAccessibilityPermissionPdf20(int permissions) {
         // This bit was previously used to determine whether
         // content could be extracted for the purposes of accessibility,
         // however, that restriction has been deprecated in PDF 2.0. PDF
@@ -628,4 +737,33 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
         return permissions | EncryptionConstants.ALLOW_SCREENREADERS;
     }
 
+    void checkEncryptionRequirements(PdfDocument document) {
+        if (mac != null) {
+            if (document.getPdfVersion() == null || document.getPdfVersion().compareTo(PdfVersion.PDF_2_0) < 0) {
+                throw new PdfException(MAC_FOR_PDF_2);
+            }
+            if (this.getPdfObject().getAsNumber(PdfName.V).intValue() < 5) {
+                throw new PdfException(MAC_FOR_ENCRYPTION_5);
+            }
+        }
+        if (getCryptoMode() < EncryptionConstants.ENCRYPTION_AES_256) {
+            VersionConforming.validatePdfVersionForDeprecatedFeatureLogWarn(document, PdfVersion.PDF_2_0,
+                    VersionConforming.DEPRECATED_ENCRYPTION_ALGORITHMS);
+        } else if (getCryptoMode() == EncryptionConstants.ENCRYPTION_AES_256) {
+            PdfNumber r = getPdfObject().getAsNumber(PdfName.R);
+            if (r != null && r.intValue() == 5) {
+                VersionConforming.validatePdfVersionForDeprecatedFeatureLogWarn(document, PdfVersion.PDF_2_0,
+                        VersionConforming.DEPRECATED_AES256_REVISION);
+            }
+        }
+    }
+
+    void configureEncryptionParameters(PdfDocument document) {
+        if (mac != null) {
+            document.getCatalog().addDeveloperExtension(PdfDeveloperExtension.ISO_32004);
+            mac.setFileEncryptionKey(securityHandler.getMkey().length == 0 ?
+                    securityHandler.getNextObjectKey() : securityHandler.getMkey());
+            getPdfObject().put(PdfName.KDFSalt, new PdfString(mac.getKdfSalt()).setHexWriting(true));
+        }
+    }
 }

@@ -992,4 +992,19 @@ class BouncyCastleDefaultFactory implements IBouncyCastleFactory {
     public void isEncryptionFeatureSupported(int encryptionType, boolean withCertificate) {
         throw new UnsupportedOperationException(BouncyCastleLogMessageConstant.BOUNCY_CASTLE_DEPENDENCY_MUST_PRESENT);
     }
+
+    @Override
+    public byte[] generateHKDF(byte[] inputKey, byte[] salt, byte[] info) {
+        throw new UnsupportedOperationException(BouncyCastleLogMessageConstant.BOUNCY_CASTLE_DEPENDENCY_MUST_PRESENT);
+    }
+
+    @Override
+    public byte[] generateHMACSHA256Token(byte[] key, byte[] data) {
+        throw new UnsupportedOperationException(BouncyCastleLogMessageConstant.BOUNCY_CASTLE_DEPENDENCY_MUST_PRESENT);
+    }
+
+    @Override
+    public byte[] generateEncryptedKeyWithAES256NoPad(byte[] key, byte[] kek) {
+        throw new UnsupportedOperationException(BouncyCastleLogMessageConstant.BOUNCY_CASTLE_DEPENDENCY_MUST_PRESENT);
+    }
 }

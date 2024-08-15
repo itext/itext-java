@@ -137,6 +137,8 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.PublicKey;
@@ -1677,4 +1679,40 @@ public interface IBouncyCastleFactory {
      * @param withCertificate true when used with a certificate, false otherwise
      */
     void isEncryptionFeatureSupported(int encryptionAlgorithm, boolean withCertificate);
+
+    /**
+     * Generates byte array based on extract-and-expand key derivation function, using provided parameters.
+     *
+     * @param inputKey {@code byte[]} input key material
+     * @param salt {@code byte[]} salt
+     * @param info {@code byte[]} info
+     *
+     * @return {@code byte[]} key derivation function result.
+     */
+    byte[] generateHKDF(byte[] inputKey, byte[] salt, byte[] info);
+
+    /**
+     * Generates byte array based MAC token according to HMACSHA256 algorithm.
+     *
+     * @param key {@code byte[]} MAC key
+     * @param data {@code byte[]} data to be encrypted
+     *
+     * @return byte array based MAC token.
+     *
+     * @throws NoSuchAlgorithmException if there is no such algorithm.
+     * @throws InvalidKeyException if key is invalid.
+     */
+    byte[] generateHMACSHA256Token(byte[] key, byte[] data) throws NoSuchAlgorithmException, InvalidKeyException;
+
+    /**
+     * Generates encrypted key based on AES256 without padding wrapping algorithm.
+     *
+     * @param key key to be encrypted
+     * @param kek key encryption key to be used
+     *
+     * @return encrypted key.
+     *
+     * @throws GeneralSecurityException in case of encryption related exceptions.
+     */
+    byte[] generateEncryptedKeyWithAES256NoPad(byte[] key, byte[] kek) throws GeneralSecurityException;
 }

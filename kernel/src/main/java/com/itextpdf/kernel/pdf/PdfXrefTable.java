@@ -379,8 +379,10 @@ public class PdfXrefTable {
             if (xRefStmPos != -1) {
                 trailer.put(PdfName.XRefStm, new PdfNumber(xRefStmPos));
             }
-            if (crypto != null)
+            if (crypto != null) {
                 trailer.put(PdfName.Encrypt, crypto);
+            }
+
             writer.writeString("trailer\n");
             if (document.properties.appendMode) {
                 PdfNumber lastXref = new PdfNumber(document.reader.getLastXref());

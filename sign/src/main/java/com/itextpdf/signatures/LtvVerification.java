@@ -258,7 +258,7 @@ public class LtvVerification {
             }
         }
         
-        if (validationData.crls.size() == 0 && validationData.ocsps.size() == 0) {
+        if (validationData.crls.isEmpty() && validationData.ocsps.isEmpty()) {
             return false;
         }
         validated.put(getSignatureHashKey(signatureName), validationData);
@@ -304,7 +304,7 @@ public class LtvVerification {
      * Merges the validation with any validation already in the document or creates a new one.
      */
     public void merge() {
-        if (used || validated.size() == 0) {
+        if (used || validated.isEmpty()) {
             return;
         }
         used = true;
@@ -409,6 +409,7 @@ public class LtvVerification {
             Collection<byte[]> cims = crl.getEncoded(cert, null);
             if (cims != null) {
                 for (byte[] cim : cims) {
+                    revocationDataAdded = true;
                     boolean dup = false;
                     for (byte[] b : validationData.crls) {
                         if (Arrays.equals(b, cim)) {
@@ -418,7 +419,6 @@ public class LtvVerification {
                     }
                     if (!dup) {
                         validationData.crls.add(cim);
-                        revocationDataAdded = true;
                         LOGGER.info("CRL added");
                         if (certOption == CertificateOption.ALL_CERTIFICATES) {
                             Certificate[] certsList = issuingCertificateRetriever.getCrlIssuerCertificates(
@@ -591,15 +591,15 @@ public class LtvVerification {
                 certs.add(ps);
                 certs.setModified();
             }
-            if (ocsp.size() > 0) {
+            if (!ocsp.isEmpty()) {
                 ocsp.makeIndirect(document);
                 vri.put(PdfName.OCSP, ocsp);
             }
-            if (crl.size() > 0) {
+            if (!crl.isEmpty()) {
                 crl.makeIndirect(document);
                 vri.put(PdfName.CRL, crl);
             }
-            if (cert.size() > 0) {
+            if (!cert.isEmpty()) {
                 cert.makeIndirect(document);
                 vri.put(PdfName.Cert, cert);
             }
@@ -609,15 +609,15 @@ public class LtvVerification {
         vrim.makeIndirect(document);
         vrim.setModified();
         dss.put(PdfName.VRI, vrim);
-        if (ocsps.size() > 0) {
+        if (!ocsps.isEmpty()) {
             ocsps.makeIndirect(document);
             dss.put(PdfName.OCSPs, ocsps);
         }
-        if (crls.size() > 0) {
+        if (!crls.isEmpty()) {
             crls.makeIndirect(document);
             dss.put(PdfName.CRLs, crls);
         }
-        if (certs.size() > 0) {
+        if (!certs.isEmpty()) {
             certs.makeIndirect(document);
             dss.put(PdfName.Certs, certs);
         }

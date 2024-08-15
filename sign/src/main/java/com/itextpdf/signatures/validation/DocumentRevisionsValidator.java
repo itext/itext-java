@@ -116,8 +116,6 @@ public class DocumentRevisionsValidator {
             "the approval signature which is not allowed.";
     static final String OBJECT_REMOVED =
             "Object \"{0}\", which is not allowed to be removed, was removed from the document through XREF table.";
-    static final String OUTLINES_MODIFIED = "Outlines entry in catalog dictionary was modified. "
-            + "iText currently cannot identify if these modifications are allowed.";
     static final String PAGES_MODIFIED = "Pages structure was unexpectedly modified.";
     static final String PAGE_ANNOTATIONS_MODIFIED = "Page annotations were unexpectedly modified.";
     static final String PAGE_MODIFIED = "Page was unexpectedly modified.";
@@ -1679,7 +1677,8 @@ public class DocumentRevisionsValidator {
         }
         if (catalog.get(PdfName.StructTreeRoot) != null) {
             usuallyModifiedObjectsSet.add(catalog.get(PdfName.StructTreeRoot).getIndirectReference());
-            if (catalog.getAsDictionary(PdfName.StructTreeRoot) != null) {
+            if (catalog.getAsDictionary(PdfName.StructTreeRoot) != null &&
+                    catalog.getAsDictionary(PdfName.StructTreeRoot).get(PdfName.K) != null) {
                 addStructTreeElementsToSet(catalog.getAsDictionary(PdfName.StructTreeRoot).get(PdfName.K),
                         usuallyModifiedObjectsSet);
             }

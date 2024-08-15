@@ -23,7 +23,6 @@
 package com.itextpdf.signatures;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

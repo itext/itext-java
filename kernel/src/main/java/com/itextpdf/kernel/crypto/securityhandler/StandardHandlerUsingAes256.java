@@ -49,7 +49,6 @@ import org.slf4j.LoggerFactory;
 
 public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
 
-
     private static final int VALIDATION_SALT_OFFSET = 32;
     private static final int KEY_SALT_OFFSET = 40;
     private static final int SALT_LENGTH = 8;
@@ -59,9 +58,10 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
 
 
     public StandardHandlerUsingAes256(PdfDictionary encryptionDictionary, byte[] userPassword, byte[] ownerPassword,
-                                      int permissions, boolean encryptMetadata, boolean embeddedFilesOnly, PdfVersion version) {
+            int permissions, boolean encryptMetadata, boolean embeddedFilesOnly, PdfVersion version) {
         isPdf2 = version != null && version.compareTo(PdfVersion.PDF_2_0) >= 0;
-        initKeyAndFillDictionary(encryptionDictionary, userPassword, ownerPassword, permissions, encryptMetadata, embeddedFilesOnly);
+        initKeyAndFillDictionary(encryptionDictionary, userPassword, ownerPassword, permissions, encryptMetadata,
+                embeddedFilesOnly);
     }
 
     public StandardHandlerUsingAes256(PdfDictionary encryptionDictionary, byte[] password) {
@@ -88,7 +88,7 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
     }
 
     private void initKeyAndFillDictionary(PdfDictionary encryptionDictionary, byte[] userPassword, byte[] ownerPassword,
-                                          int permissions, boolean encryptMetadata, boolean embeddedFilesOnly) {
+            int permissions, boolean encryptMetadata, boolean embeddedFilesOnly) {
         ownerPassword = generateOwnerPasswordIfNullOrEmpty(ownerPassword);
         permissions |= PERMS_MASK_1_FOR_REVISION_3_OR_GREATER;
         permissions &= PERMS_MASK_2;

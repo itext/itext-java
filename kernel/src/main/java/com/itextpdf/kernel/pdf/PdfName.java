@@ -124,6 +124,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Aside = createDirectName("Aside");
     public static final PdfName AsIs = createDirectName("AsIs");
     public static final PdfName AuthEvent = createDirectName("AuthEvent");
+    public static final PdfName AuthCode = createDirectName("AuthCode");
     public static final PdfName Author = createDirectName("Author");
     public static final PdfName B = createDirectName("B");
     public static final PdfName BackgroundColor = createDirectName("BackgroundColor");
@@ -465,6 +466,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName JS = createDirectName("JS");
     public static final PdfName Justify = createDirectName("Justify");
     public static final PdfName K = createDirectName("K");
+    public static final PdfName KDFSalt = createDirectName("KDFSalt");
     public static final PdfName Keywords = createDirectName("Keywords");
     public static final PdfName Kids = createDirectName("Kids");
     public static final PdfName L2R = createDirectName("L2R");

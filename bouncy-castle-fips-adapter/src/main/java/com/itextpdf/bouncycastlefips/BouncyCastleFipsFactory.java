@@ -245,6 +245,7 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Provider;
@@ -258,6 +259,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import javax.crypto.Cipher;
+import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import org.bouncycastle.asn1.ASN1BitString;
 import org.bouncycastle.asn1.ASN1Enumerated;
@@ -1861,8 +1863,39 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
         return cipher.wrap(new SecretKeySpec(abyte0, "AES"));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void isEncryptionFeatureSupported(int encryptionType, boolean withCertificate) {
         //All features supported
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] generateHKDF(byte[] inputKey, byte[] salt, byte[] info) {
+        throw new UnsupportedOperationException("HKDF algorithm is not supported in bouncy-castle FIPS mode.");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] generateHMACSHA256Token(byte[] key, byte[] data) throws NoSuchAlgorithmException, InvalidKeyException {
+        Mac mac = Mac.getInstance("HMacSHA256", this.getProvider());
+        mac.init(new SecretKeySpec(key, "RawBytes"));
+        return mac.doFinal(data);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] generateEncryptedKeyWithAES256NoPad(byte[] key, byte[] kek) throws GeneralSecurityException {
+        Cipher cipher = Cipher.getInstance("AESWrap", this.getProvider());
+        cipher.init(Cipher.WRAP_MODE, new SecretKeySpec(kek, "AESWrap"));
+        return cipher.wrap(new SecretKeySpec(key, "AESWrap"));
     }
 }

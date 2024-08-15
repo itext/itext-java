@@ -66,6 +66,15 @@ public class PdfDeveloperExtension {
             ":2022",
             true);
 
+    /** An instance of this class for ISO/TS 32004. */
+    public static final PdfDeveloperExtension ISO_32004 = new PdfDeveloperExtension(
+            PdfName.ISO_,
+            PdfName.Pdf_Version_2_0,
+            32004,
+            "https://www.iso.org/standard/45877.html",
+            ":2024",
+            true);
+
     /** The prefix used in the Extensions dictionary added to the Catalog. */
     protected PdfName prefix;
 

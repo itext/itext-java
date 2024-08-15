@@ -24,11 +24,16 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
+import com.itextpdf.kernel.events.PdfDocumentEvent;
+import com.itextpdf.kernel.mac.MacIntegrityProtector;
 import com.itextpdf.kernel.utils.ICopyFilter;
 import com.itextpdf.kernel.utils.NullCopyFilter;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -38,8 +43,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PdfWriter extends PdfOutputStream {
-    private static final byte[] obj = ByteUtils.getIsoBytes(" obj\n");
-    private static final byte[] endobj = ByteUtils.getIsoBytes("\nendobj\n");
+    private static final byte[] OBJ = ByteUtils.getIsoBytes(" obj\n");
+    private static final byte[] ENDOBJ = ByteUtils.getIsoBytes("\nendobj\n");
 
     protected WriterProperties properties;
     //forewarned is forearmed
@@ -54,11 +59,12 @@ public class PdfWriter extends PdfOutputStream {
      * It stores hashes of the indirect reference from the source document and the corresponding
      * indirect references of the copied objects from the new document.
      */
-    private Map<PdfIndirectReference, PdfIndirectReference> copiedObjects = new LinkedHashMap<>();
+    private final Map<PdfIndirectReference, PdfIndirectReference> copiedObjects = new LinkedHashMap<>();
     /**
      * Is used in smart mode to serialize and store serialized objects content.
      */
-    private SmartModePdfObjectsSerializer smartModeSerializer = new SmartModePdfObjectsSerializer();
+    private final SmartModePdfObjectsSerializer smartModeSerializer = new SmartModePdfObjectsSerializer();
+    private OutputStream originalOutputStream;
 
     /**
      * Create a PdfWriter writing to the passed File and with default writer properties.
@@ -83,7 +89,11 @@ public class PdfWriter extends PdfOutputStream {
     }
 
     public PdfWriter(java.io.OutputStream os, WriterProperties properties) {
-        super(new CountOutputStream(FileUtil.wrapWithBufferedOutputStream(os)));
+        super(isByteArrayWritingMode(properties) ? (OutputStream) new ByteArrayOutputStream() :
+                new CountOutputStream(FileUtil.wrapWithBufferedOutputStream(os)));
+        if (isByteArrayWritingMode(properties)) {
+            this.originalOutputStream = os;
+        }
         this.properties = properties;
     }
 
@@ -112,6 +122,20 @@ public class PdfWriter extends PdfOutputStream {
      */
     public PdfWriter(String filename, WriterProperties properties) throws FileNotFoundException {
         this(FileUtil.getBufferedOutputStream(filename), properties);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void flush() throws IOException {
+        super.flush();
+        if (document != null) {
+            document.dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.END_WRITER_FLUSH, document));
+        }
+        if (isByteArrayWritingMode(properties)) {
+            completeByteArrayWritingMode();
+        }
     }
 
     /**
@@ -173,16 +197,24 @@ public class PdfWriter extends PdfOutputStream {
         return this;
     }
 
+    /**
+     * Initializes {@link PdfEncryption} object if any encryption is specified in {@link WriterProperties}.
+     *
+     * @param version {@link PdfVersion} version of the document in question
+     */
     protected void initCryptoIfSpecified(PdfVersion version) {
         EncryptionProperties encryptProps = properties.encryptionProperties;
+        MacIntegrityProtector mac = encryptProps.macProperties == null ?
+                null : new MacIntegrityProtector(document, encryptProps.macProperties);
         if (properties.isStandardEncryptionUsed()) {
             crypto = new PdfEncryption(encryptProps.userPassword, encryptProps.ownerPassword,
                     encryptProps.standardEncryptPermissions,
                     encryptProps.encryptionAlgorithm,
-                    ByteUtils.getIsoBytes(this.document.getOriginalDocumentId().getValue()), version);
+                    ByteUtils.getIsoBytes(this.document.getOriginalDocumentId().getValue()),
+                    version, mac);
         } else if (properties.isPublicKeyEncryptionUsed()) {
-            crypto = new PdfEncryption(encryptProps.publicCertificates,
-                    encryptProps.publicKeyEncryptPermissions, encryptProps.encryptionAlgorithm, version);
+            crypto = new PdfEncryption(encryptProps.publicCertificates, encryptProps.publicKeyEncryptPermissions,
+                    encryptProps.encryptionAlgorithm, version, mac);
         }
     }
 
@@ -310,9 +342,9 @@ public class PdfWriter extends PdfOutputStream {
         }
         writeInteger(pdfObj.getIndirectReference().getObjNumber()).
                 writeSpace().
-                writeInteger(pdfObj.getIndirectReference().getGenNumber()).writeBytes(obj);
+                writeInteger(pdfObj.getIndirectReference().getGenNumber()).writeBytes(OBJ);
         write(pdfObj);
-        writeBytes(endobj);
+        writeBytes(ENDOBJ);
     }
 
     /**
@@ -422,6 +454,12 @@ public class PdfWriter extends PdfOutputStream {
         }
     }
 
+    private void completeByteArrayWritingMode() throws IOException {
+        byte[] baos = ((ByteArrayOutputStream) getOutputStream()).toByteArray();
+        originalOutputStream.write(baos, 0, baos.length);
+        originalOutputStream.close();
+    }
+
     private void markArrayContentToFlush(PdfArray array) {
         for (int i = 0; i < array.size(); i++) {
             markObjectToFlush(array.get(i, false));
@@ -453,6 +491,10 @@ public class PdfWriter extends PdfOutputStream {
                 }
             }
         }
+    }
+
+    private static boolean isByteArrayWritingMode(WriterProperties properties) {
+        return properties.encryptionProperties.macProperties != null;
     }
 
     private static boolean checkTypeOfPdfDictionary(PdfObject dictionary, PdfName expectedType) {

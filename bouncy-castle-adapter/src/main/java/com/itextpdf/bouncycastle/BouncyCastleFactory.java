@@ -245,6 +245,7 @@ import java.io.Reader;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.PublicKey;
@@ -257,6 +258,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import javax.crypto.Cipher;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import org.bouncycastle.asn1.ASN1BitString;
 import org.bouncycastle.asn1.ASN1Enumerated;
 import org.bouncycastle.asn1.ASN1GeneralizedTime;
@@ -314,6 +317,9 @@ import org.bouncycastle.cms.CMSTypedData;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.cms.jcajce.JceKeyAgreeEnvelopedRecipient;
 import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
+import org.bouncycastle.crypto.digests.SHA256Digest;
+import org.bouncycastle.crypto.generators.HKDFBytesGenerator;
+import org.bouncycastle.crypto.params.HKDFParameters;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
@@ -1846,8 +1852,45 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
         return cipher.doFinal(abyte0);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void isEncryptionFeatureSupported(int encryptionType, boolean withCertificate) {
         //All features supported
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] generateHKDF(byte[] inputKey, byte[] salt, byte[] info) {
+        HKDFBytesGenerator hkdfBytesGenerator = new HKDFBytesGenerator(new SHA256Digest());
+        HKDFParameters hkdfParameters = new HKDFParameters(inputKey, salt, info);
+        hkdfBytesGenerator.init(hkdfParameters);
+        byte[] hkdf = new byte[32];
+        hkdfBytesGenerator.generateBytes(hkdf, 0, 32);
+
+        return hkdf;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] generateHMACSHA256Token(byte[] key, byte[] data) throws NoSuchAlgorithmException, InvalidKeyException {
+        Mac mac = Mac.getInstance("HMacSHA256", this.getProvider());
+        mac.init(new SecretKeySpec(key, "RawBytes"));
+        return mac.doFinal(data);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] generateEncryptedKeyWithAES256NoPad(byte[] key, byte[] kek) throws GeneralSecurityException {
+        Cipher cipher = Cipher.getInstance("AESWrap", this.getProvider());
+        cipher.init(Cipher.WRAP_MODE, new SecretKeySpec(kek, "AESWrap"));
+        return cipher.wrap(new SecretKeySpec(key, "AESWrap"));
     }
 }
