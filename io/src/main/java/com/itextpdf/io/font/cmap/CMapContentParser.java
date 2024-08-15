@@ -182,18 +182,6 @@ public class CMapContentParser {
         return false;
     }
 
-    /**
-     * Use {@link PdfNameUtil#decodeName(byte[])} instead.
-     *
-     * @param content to decode
-     * @return decoded content
-     * @deprecated
-     */
-    @Deprecated
-    protected static String decodeName(byte[] content) {
-        return PdfNameUtil.decodeName(content);
-    }
-
     private static String toHex4(int n) {
         String s = "0000" + Integer.toHexString(n);
         return s.substring(s.length() - 4);
