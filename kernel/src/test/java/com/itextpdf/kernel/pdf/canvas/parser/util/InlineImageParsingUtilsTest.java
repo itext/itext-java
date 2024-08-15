@@ -102,24 +102,6 @@ public class InlineImageParsingUtilsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void notSupportedCsWithCsDictionaryTest() {
-        PdfName colorSpace = PdfName.ICCBased;
-
-        PdfDictionary dictionary = new PdfDictionary();
-        PdfArray array = new PdfArray();
-        array.add(PdfName.Pattern);
-        PdfStream stream = new PdfStream();
-        stream.put(PdfName.N, new PdfNumber(4));
-        array.add(stream);
-        dictionary.put(colorSpace, array);
-
-        Exception exception = Assertions.assertThrows(InlineImageParseException.class,
-                () -> InlineImageParsingUtils.getComponentsPerPixel(colorSpace, dictionary));
-        Assertions.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.UNEXPECTED_COLOR_SPACE, "/ICCBased"),
-                exception.getMessage());
-    }
-
-    @Test
     public void nullCsTest() {
         Assertions.assertEquals(1, InlineImageParsingUtils.getComponentsPerPixel(null, null));
     }

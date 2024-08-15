@@ -183,7 +183,7 @@ public final class InlineImageParsingUtils {
                 }
                 if (PdfName.DeviceN.equals(colorSpace.getAsName(0))) {
                     //Checking colorants dict size
-                    return colorSpace.getAsDictionary(2).size();
+                    return colorSpace.getAsArray(1).size();
                 }
             }
         }
