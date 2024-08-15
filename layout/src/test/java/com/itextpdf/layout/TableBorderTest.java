@@ -50,8 +50,8 @@ import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class TableBorderTest extends AbstractTableTest {
@@ -1867,7 +1867,7 @@ public class TableBorderTest extends AbstractTableTest {
                 .setBorderTop(new SolidBorder(2))
                 .setBorderBottom(new SolidBorder(1));
         table.getFooter()
-                .setBold()
+                .simulateBold()
                 .setBorderTop(new SolidBorder(10))
                 .setBorderBottom(new SolidBorder(1))
                 .setBackgroundColor(ColorConstants.LIGHT_GRAY);

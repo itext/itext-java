@@ -153,13 +153,6 @@ public class PointTest extends ExtendedITextTest {
     }
 
     @Test
-    public void copyConstructorTest() {
-        Point second = new Point(new Point(0.13, 1.1));
-        Assertions.assertEquals(0.13, second.getX(), EPSILON_COMPARISON);
-        Assertions.assertEquals(1.1, second.getY(), EPSILON_COMPARISON);
-    }
-
-    @Test
     public void setLocationByDoubleParamTest() {
         Point first = new Point(1.23, 1.1);
         Point second = new Point(3.59, 0.87);

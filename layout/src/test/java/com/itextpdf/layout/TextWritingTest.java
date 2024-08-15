@@ -40,12 +40,11 @@ import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.test.ExtendedITextTest;
 
+import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
-
-import java.io.IOException;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class TextWritingTest extends ExtendedITextTest {
@@ -265,11 +264,11 @@ public class TextWritingTest extends ExtendedITextTest {
 
         document.add(new Paragraph("I'm underlined").setUnderline());
         document.add(new Paragraph("I'm strikethrough").setLineThrough());
-        document.add(new Paragraph(new Text("I'm a bold simulation font").setBackgroundColor(ColorConstants.GREEN)).setBold());
-        document.add(new Paragraph(new Text("I'm an italic simulation font").setBackgroundColor(ColorConstants.GREEN)).setItalic());
+        document.add(new Paragraph(new Text("I'm a bold simulation font").setBackgroundColor(ColorConstants.GREEN)).simulateBold());
+        document.add(new Paragraph(new Text("I'm an italic simulation font").setBackgroundColor(ColorConstants.GREEN)).simulateItalic());
         document.add(new Paragraph(new Text("I'm a super bold italic underlined linethrough piece of text and no one can be better than me, even if " +
                 "such a long description will cause me to occupy two lines").setBackgroundColor(ColorConstants.GREEN))
-                .setItalic().setBold().setUnderline().setLineThrough());
+                .simulateItalic().simulateBold().setUnderline().setLineThrough());
 
         document.close();
 

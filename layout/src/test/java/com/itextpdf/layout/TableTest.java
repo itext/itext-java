@@ -66,8 +66,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class TableTest extends AbstractTableTest {
@@ -2250,13 +2250,13 @@ public class TableTest extends AbstractTableTest {
         doc.add(new Paragraph("A cell with bold text:"));
 
         table = new Table(new float[1]);
-        table.addCell("A cell").setBold();
+        table.addCell("A cell").simulateBold();
         doc.add(table);
 
         doc.add(new Paragraph("A cell with italic text:"));
 
         table = new Table(new float[1]);
-        table.addCell("A cell").setItalic();
+        table.addCell("A cell").simulateItalic();
         doc.add(table);
 
 
@@ -3260,7 +3260,7 @@ public class TableTest extends AbstractTableTest {
 
         // If this property is not inherited while calculating min/max widths,
         // then while layouting header will request more space than the layout box's width
-        table.getHeader().setBold();
+        table.getHeader().simulateBold();
         document.add(table);
 
         document.close();
@@ -3494,7 +3494,7 @@ public class TableTest extends AbstractTableTest {
             table.setFixedLayout();
 
             for (int i = 0; i < numberOfColumns; i++) {
-                table.addCell(new Cell().add(new Paragraph("Description").setBold()));
+                table.addCell(new Cell().add(new Paragraph("Description").simulateBold()));
             }
 
             doc.add(table);

@@ -80,8 +80,8 @@ import java.nio.charset.StandardCharsets;
 import javax.xml.parsers.ParserConfigurationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 
 
@@ -1290,7 +1290,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
             Div div = new Div();
             div.getAccessibilityProperties().setRole(StandardRoles.TABLE);
             Paragraph p = new Paragraph("Caption").setNeutralRole();
-            p.setTextAlignment(TextAlignment.CENTER).setBold();
+            p.setTextAlignment(TextAlignment.CENTER).simulateBold();
             Div caption = new Div().add(p);
             caption.getAccessibilityProperties().setRole(StandardRoles.CAPTION);
             div.add(caption);

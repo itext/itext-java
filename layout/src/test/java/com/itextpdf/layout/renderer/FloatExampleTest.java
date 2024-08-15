@@ -43,13 +43,13 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class FloatExampleTest extends ExtendedITextTest {
@@ -227,7 +227,7 @@ public class FloatExampleTest extends ExtendedITextTest {
                     image.setProperty(imageWidthProperty, imageWidth);
                 div.add(image);
                 div.add(new Paragraph("Figure for Div" + i + ": This is longer text that wraps This is longer text that wraps")
-                        .setTextAlignment(TextAlignment.CENTER)).setBold();
+                        .setTextAlignment(TextAlignment.CENTER)).simulateBold();
                 document.add(div);
             } else {
                 image.setMargins(BORDER_MARGIN, 0, BORDER_MARGIN, BORDER_MARGIN);

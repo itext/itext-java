@@ -59,8 +59,8 @@ import java.text.MessageFormat;
 import javax.xml.parsers.ParserConfigurationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 
 @Tag("IntegrationTest")
@@ -749,7 +749,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
         if (defaultNamespace == null) {
             Text i = new Text("italic text");
             i.getAccessibilityProperties().setRole("I");
-            Paragraph pi = new Paragraph(i.setItalic());
+            Paragraph pi = new Paragraph(i.simulateItalic());
             document.add(pi);
         }
     }

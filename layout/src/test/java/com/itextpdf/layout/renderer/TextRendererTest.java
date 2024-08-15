@@ -22,9 +22,9 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -41,23 +41,21 @@ import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.TextLayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
+import com.itextpdf.layout.properties.FloatPropertyValue;
 import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.OverflowWrapPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.RenderingMode;
 import com.itextpdf.layout.properties.UnitValue;
-import com.itextpdf.layout.properties.FloatPropertyValue;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-
 import java.util.Arrays;
-
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class TextRendererTest extends RendererUnitTest {
@@ -306,7 +304,6 @@ public class TextRendererTest extends RendererUnitTest {
     @Test
     public void overflowWrapAnywhereBoldSimulationMaxWidth() {
         Text text = new Text("wow");
-        text.setBold();
 
         TextRenderer textRenderer = (TextRenderer) text.getRenderer();
         textRenderer.setParent(createDummyDocument().getRenderer());
@@ -322,7 +319,7 @@ public class TextRendererTest extends RendererUnitTest {
     @Test
     public void overflowWrapAnywhereItalicSimulationMaxWidth() {
         Text text = new Text("wow");
-        text.setItalic();
+        text.simulateItalic();
 
         TextRenderer textRenderer = (TextRenderer) text.getRenderer();
         textRenderer.setParent(createDummyDocument().getRenderer());
@@ -345,7 +342,7 @@ public class TextRendererTest extends RendererUnitTest {
 
         float minWidthNoBoldSimulation = textRenderer.getMinMaxWidth().getMinWidth();
 
-        text.setBold();
+        text.simulateBold();
         float minWidthAndBoldSimulation = textRenderer.getMinMaxWidth().getMinWidth();
 
         Assertions.assertTrue(minWidthAndBoldSimulation > minWidthNoBoldSimulation);
@@ -361,7 +358,7 @@ public class TextRendererTest extends RendererUnitTest {
 
         float minWidthNoItalicSimulation = textRenderer.getMinMaxWidth().getMinWidth();
 
-        text.setItalic();
+        text.simulateItalic();
         float minWidthAndItalicSimulation = textRenderer.getMinMaxWidth().getMinWidth();
 
         Assertions.assertTrue(minWidthAndItalicSimulation > minWidthNoItalicSimulation);

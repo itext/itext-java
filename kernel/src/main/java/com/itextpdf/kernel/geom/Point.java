@@ -51,15 +51,6 @@ public class Point implements Cloneable {
     }
 
     /**
-     * Instantiates a new {@link Point} instance based on another point.
-     *
-     * @param p the point which will be copied
-     */
-    public Point(Point p) {
-        setLocation(p.x, p.y);
-    }
-
-    /**
      * Gets x coordinate of the point.
      *
      * @return the x coordinate
