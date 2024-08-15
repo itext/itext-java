@@ -502,7 +502,7 @@ public class PdfMergerTest extends ExtendedITextTest {
         PdfDocument outputDoc = new PdfDocument(CompareTool.createTestPdfWriter(
                 destinationFolder + "infiniteLoopInOutlineStructure.pdf"));
 
-        PdfMerger merger = new PdfMerger(outputDoc, false, true);
+        PdfMerger merger = new PdfMerger(outputDoc, new PdfMergerProperties().setMergeTags(false).setMergeOutlines(true));
         System.out.println("Doing merge");
         merger.merge(inputDoc, 1, 2);
         merger.close();
@@ -543,7 +543,7 @@ public class PdfMergerTest extends ExtendedITextTest {
         try (PdfDocument merged = new PdfDocument(CompareTool.createTestPdfWriter(mergedPdf));
                 PdfDocument fileA = new PdfDocument(new PdfReader(firstDocument));
                 PdfDocument fileB = new PdfDocument(new PdfReader(secondDocument))) {
-            PdfMerger merger = new PdfMerger(merged, false, true);
+            PdfMerger merger = new PdfMerger(merged, new PdfMergerProperties().setMergeTags(false).setMergeOutlines(true));
 
             merger.merge(fileA, 1, fileA.getNumberOfPages());
             merger.merge(fileB, 1, fileB.getNumberOfPages());
@@ -564,7 +564,7 @@ public class PdfMergerTest extends ExtendedITextTest {
         try (PdfDocument documentA = new PdfDocument(new PdfReader(firstDocument));
                 PdfDocument documentB = new PdfDocument(new PdfReader(secondDocument));
                 PdfDocument merged = new PdfDocument(CompareTool.createTestPdfWriter(mergedPdf))) {
-            PdfMerger merger = new PdfMerger(merged, false, true);
+            PdfMerger merger = new PdfMerger(merged, new PdfMergerProperties().setMergeTags(false).setMergeOutlines(true));
 
             merger.merge(documentA, 1, documentA.getNumberOfPages());
             merger.merge(documentB, 1, documentB.getNumberOfPages());
@@ -584,7 +584,7 @@ public class PdfMergerTest extends ExtendedITextTest {
         try (PdfDocument documentA = new PdfDocument(new PdfReader(firstPdfDocument));
                 PdfDocument documentB = new PdfDocument(new PdfReader(secondPdfDocument));
                 PdfDocument mergedPdf = new PdfDocument(CompareTool.createTestPdfWriter(mergedDocument))) {
-            PdfMerger merger = new PdfMerger(mergedPdf, false, true);
+            PdfMerger merger = new PdfMerger(mergedPdf, new PdfMergerProperties().setMergeTags(false).setMergeOutlines(true));
             merger.merge(documentA, 1, documentA.getNumberOfPages());
             merger.merge(documentB, 1, documentB.getNumberOfPages());
 
