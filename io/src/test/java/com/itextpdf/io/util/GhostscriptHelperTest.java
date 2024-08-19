@@ -60,10 +60,6 @@ public class GhostscriptHelperTest extends ExtendedITextTest {
     @Test
     public void ghostScriptEnvVarIsExplicitlySpecified() {
         String gsExec = SystemUtil.getPropertyOrEnvironmentVariable(GhostscriptHelper.GHOSTSCRIPT_ENVIRONMENT_VARIABLE);
-        if (gsExec == null) {
-            gsExec = SystemUtil
-                    .getPropertyOrEnvironmentVariable(GhostscriptHelper.GHOSTSCRIPT_ENVIRONMENT_VARIABLE_LEGACY);
-        }
 
         GhostscriptHelper ghostscriptHelper = new GhostscriptHelper(gsExec);
 

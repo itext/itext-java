@@ -63,10 +63,6 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
     public void imageMagickEnvVarIsExplicitlySpecified() {
         String compareExec = SystemUtil
                 .getPropertyOrEnvironmentVariable(ImageMagickHelper.MAGICK_COMPARE_ENVIRONMENT_VARIABLE);
-        if (compareExec == null) {
-            compareExec = SystemUtil
-                    .getPropertyOrEnvironmentVariable(ImageMagickHelper.MAGICK_COMPARE_ENVIRONMENT_VARIABLE_LEGACY);
-        }
 
         ImageMagickHelper imageMagickHelper = new ImageMagickHelper(compareExec);
 

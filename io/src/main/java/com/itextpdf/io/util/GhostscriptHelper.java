@@ -47,9 +47,6 @@ public class GhostscriptHelper {
      */
     public static final String GHOSTSCRIPT_ENVIRONMENT_VARIABLE = "ITEXT_GS_EXEC";
 
-    @Deprecated
-    static final String GHOSTSCRIPT_ENVIRONMENT_VARIABLE_LEGACY = "gsExec";
-
     static final String GHOSTSCRIPT_KEYWORD = "GPL Ghostscript";
     private static final String TEMP_FILE_PREFIX = "itext_gs_io_temp";
 
@@ -79,10 +76,6 @@ public class GhostscriptHelper {
         gsExec = newGsExec;
         if (gsExec == null) {
             gsExec = SystemUtil.getPropertyOrEnvironmentVariable(GHOSTSCRIPT_ENVIRONMENT_VARIABLE);
-
-            if (gsExec == null) {
-                gsExec = SystemUtil.getPropertyOrEnvironmentVariable(GHOSTSCRIPT_ENVIRONMENT_VARIABLE_LEGACY);
-            }
         }
 
         if (!CliCommandUtil.isVersionCommandExecutable(gsExec, GHOSTSCRIPT_KEYWORD)) {
