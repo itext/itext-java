@@ -35,6 +35,7 @@ import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfSignatureFormField;
 import com.itextpdf.forms.fields.SignatureFormFieldBuilder;
+import com.itextpdf.forms.form.element.SignatureFieldAppearance;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -72,6 +73,7 @@ import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.Calendar;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -256,6 +258,36 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
         PdfDictionary formFieldDictionary = formField.getPdfObject();
         Assertions.assertNotNull(formFieldDictionary);
         Assertions.assertTrue(formFieldDictionary.containsKey(PdfName.AP));
+    }
+
+    @Test
+    public void setAlternativeName() throws IOException, GeneralSecurityException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PdfDocument document = new PdfDocument(new PdfWriter(outputStream, new WriterProperties()));
+        document.setTagged();
+        document.addNewPage();
+        document.close();
+
+        ByteArrayOutputStream signedOutputStream = new ByteArrayOutputStream();
+        PdfSigner signer = new PdfSigner(
+                new PdfReader(new ByteArrayInputStream(outputStream.toByteArray())), signedOutputStream,
+                new StampingProperties());
+        signer.setFieldName("Signature1");
+        signer.setPageNumber(1).setPageRect(new Rectangle(100, 100, 10, 10));
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(signer.getFieldName());
+        appearance.setContent("Some text");
+        appearance.getAccessibilityProperties().setAlternateDescription("Alternate description");
+        signer.setSignatureAppearance(appearance);
+
+        IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, FACTORY.getProviderName());
+        signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
+
+        signer.document.close();
+
+        PdfDocument signedDocument = new PdfDocument(new PdfReader(new ByteArrayInputStream(signedOutputStream.toByteArray())), new PdfWriter(new ByteArrayOutputStream()));
+        PdfAcroForm acroForm = PdfFormCreator.getAcroForm(signedDocument, true);
+        PdfFormField formField = acroForm.getField(signer.getFieldName());
+        Assertions.assertEquals("Alternate description", formField.getPdfObject().get(PdfName.TU).toString());
     }
 
     @Test

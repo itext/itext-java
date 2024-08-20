@@ -152,6 +152,8 @@
             </fileset>
             <!-- barcodes -->
             <file path="com/itextpdf/barcodes/BarcodeMultiThreadingTest.java"/>
+
+            <file path="com/itextpdf/pdfua/PemFileHelper.java"/>
             <!-- bouncy-castle -->
             <fileset reason="Logic of some methods in BC and BCFips differs at Java and .NET.">
                 <file path="com/itextpdf/bouncycastleconnector/BouncyCastleDefaultFactory.java"/>

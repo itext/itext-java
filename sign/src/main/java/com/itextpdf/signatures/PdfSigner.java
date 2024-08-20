@@ -63,11 +63,13 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
+import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.layout.properties.Background;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.TransparentColor;
 import com.itextpdf.layout.properties.UnitValue;
+import com.itextpdf.layout.tagging.IAccessibleElement;
 import com.itextpdf.pdfa.PdfAAgnosticPdfDocument;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 
@@ -237,12 +239,12 @@ public class PdfSigner {
     /**
      * Creates a PdfSigner instance. Uses a {@link java.io.ByteArrayOutputStream} instead of a temporary file.
      *
-     * @param reader       PdfReader that reads the PDF file
-     * @param outputStream OutputStream to write the signed PDF file
-     * @param path         File to which the output is temporarily written
-     * @param stampingProperties   {@link StampingProperties} for the signing document. Note that encryption will be
-     *                     preserved regardless of what is set in properties.
-     * @param signerProperties {@link SignerProperties} bundled properties to be used in signing operations.
+     * @param reader             PdfReader that reads the PDF file
+     * @param outputStream       OutputStream to write the signed PDF file
+     * @param path               File to which the output is temporarily written
+     * @param stampingProperties {@link StampingProperties} for the signing document. Note that encryption will be
+     *                           preserved regardless of what is set in properties.
+     * @param signerProperties   {@link SignerProperties} bundled properties to be used in signing operations.
      * @throws IOException if some I/O problem occurs
      */
     public PdfSigner(PdfReader reader, OutputStream outputStream, String path, StampingProperties stampingProperties,
@@ -252,7 +254,7 @@ public class PdfSigner {
         updateFieldName(signerProperties.getFieldName());
         // We need to update field name because the setter could change it and the user can rely on this field
         signerProperties.setFieldName(fieldName);
-        certificationLevel =signerProperties.getCertificationLevel();
+        certificationLevel = signerProperties.getCertificationLevel();
         appearance.setPageRect(signerProperties.getPageRect());
         appearance.setPageNumber(signerProperties.getPageNumber());
         appearance.setSignDate(signerProperties.getSignDate());
@@ -308,10 +310,9 @@ public class PdfSigner {
     /**
      * Initialize new {@link PdfDocument} instance by using provided parameters.
      *
-     * @param reader {@link PdfReader} to be used as a reader in the new document
-     * @param writer {@link PdfWriter} to be used as a writer in the new document
+     * @param reader     {@link PdfReader} to be used as a reader in the new document
+     * @param writer     {@link PdfWriter} to be used as a writer in the new document
      * @param properties {@link StampingProperties} to be provided in the new document
-     *
      * @return new {@link PdfDocument} instance
      */
     protected PdfDocument initDocument(PdfReader reader, PdfWriter writer, StampingProperties properties) {
@@ -508,7 +509,6 @@ public class PdfSigner {
      *
      * @param pageNumber The page number of the signature field which
      *                   this signature appearance is associated with.
-     *
      * @return this instance to support fluent interface.
      */
     public PdfSigner setPageNumber(int pageNumber) {
@@ -533,7 +533,6 @@ public class PdfSigner {
      *
      * @param pageRect The rectangle that represents the position and
      *                 dimension of the signature field in the page.
-     *
      * @return this instance to support fluent interface.
      */
     public PdfSigner setPageRect(Rectangle pageRect) {
@@ -584,7 +583,6 @@ public class PdfSigner {
      * Sets the name of the application used to create the signature.
      *
      * @param signatureCreator A new name of the application signing a document.
-     *
      * @return this instance to support fluent interface.
      */
     public PdfSigner setSignatureCreator(String signatureCreator) {
@@ -605,7 +603,6 @@ public class PdfSigner {
      * Sets the signing contact.
      *
      * @param contact A new signing contact.
-     *
      * @return this instance to support fluent interface.
      */
     public PdfSigner setContact(String contact) {
@@ -626,7 +623,6 @@ public class PdfSigner {
      * Sets the signing reason.
      *
      * @param reason A new signing reason.
-     *
      * @return this instance to support fluent interface.
      */
     public PdfSigner setReason(String reason) {
@@ -647,7 +643,6 @@ public class PdfSigner {
      * Sets the signing location.
      *
      * @param location A new signing location.
-     *
      * @return this instance to support fluent interface.
      */
     public PdfSigner setLocation(String location) {
@@ -698,8 +693,8 @@ public class PdfSigner {
      * @throws GeneralSecurityException if some problem during apply security algorithms occurs
      */
     public void signDetached(IExternalDigest externalDigest, IExternalSignature externalSignature, Certificate[] chain,
-            Collection<ICrlClient> crlList, IOcspClient ocspClient, ITSAClient tsaClient, int estimatedSize,
-            CryptoStandard sigtype) throws IOException, GeneralSecurityException {
+                             Collection<ICrlClient> crlList, IOcspClient ocspClient, ITSAClient tsaClient, int estimatedSize,
+                             CryptoStandard sigtype) throws IOException, GeneralSecurityException {
         signDetached(externalDigest, externalSignature, chain, crlList, ocspClient, tsaClient, estimatedSize, sigtype,
                 (ISignaturePolicyIdentifier) null);
     }
@@ -746,8 +741,8 @@ public class PdfSigner {
      * @throws GeneralSecurityException if some problem during apply security algorithms occurs
      */
     public void signDetached(IExternalDigest externalDigest, IExternalSignature externalSignature, Certificate[] chain,
-            Collection<ICrlClient> crlList, IOcspClient ocspClient, ITSAClient tsaClient, int estimatedSize,
-            CryptoStandard sigtype, SignaturePolicyInfo signaturePolicy) throws IOException, GeneralSecurityException {
+                             Collection<ICrlClient> crlList, IOcspClient ocspClient, ITSAClient tsaClient, int estimatedSize,
+                             CryptoStandard sigtype, SignaturePolicyInfo signaturePolicy) throws IOException, GeneralSecurityException {
         signDetached(externalDigest, externalSignature, chain, crlList, ocspClient, tsaClient, estimatedSize, sigtype,
                 signaturePolicy.toSignaturePolicyIdentifier());
     }
@@ -820,8 +815,8 @@ public class PdfSigner {
      * @throws GeneralSecurityException if some problem during apply security algorithms occurs
      */
     public void signDetached(IExternalDigest externalDigest, IExternalSignature externalSignature, Certificate[] chain,
-            Collection<ICrlClient> crlList, IOcspClient ocspClient, ITSAClient tsaClient, int estimatedSize,
-            CryptoStandard sigtype, ISignaturePolicyIdentifier signaturePolicy)
+                             Collection<ICrlClient> crlList, IOcspClient ocspClient, ITSAClient tsaClient, int estimatedSize,
+                             CryptoStandard sigtype, ISignaturePolicyIdentifier signaturePolicy)
             throws IOException, GeneralSecurityException {
         if (closed) {
             throw new PdfException(SignExceptionMessageConstant.THIS_INSTANCE_OF_PDF_SIGNER_ALREADY_CLOSED);
@@ -866,7 +861,7 @@ public class PdfSigner {
             // the curve is on the ISO/TS 32002 allowed curves list. That responsibility is delegated to the user.
         }
         String hashAlgorithm = externalSignature.getDigestAlgorithmName();
-        if(hashAlgorithm.startsWith("SHA3-") || hashAlgorithm.equals(DigestAlgorithms.SHAKE256)) {
+        if (hashAlgorithm.startsWith("SHA3-") || hashAlgorithm.equals(DigestAlgorithms.SHAKE256)) {
             addDeveloperExtension(PdfDeveloperExtension.ISO_32001);
         }
         PdfSignature dic = new PdfSignature(PdfName.Adobe_PPKLite, sigtype == CryptoStandard.CADES
@@ -1570,8 +1565,23 @@ public class PdfSigner {
         return dic;
     }
 
+
+    protected void applyAccessibilityProperties(PdfFormField formField, IAccessibleElement modelElement,
+                                                PdfDocument pdfDocument) {
+        if (!pdfDocument.isTagged()) {
+            return;
+        }
+        final AccessibilityProperties properties = modelElement.getAccessibilityProperties();
+        final String alternativeDescription = properties.getAlternateDescription();
+        if (alternativeDescription != null && !alternativeDescription.isEmpty()) {
+            formField.setAlternativeName(alternativeDescription);
+        }
+    }
+
     private void applyDefaultPropertiesForTheNewField(PdfSignatureFormField sigField) {
         SignatureFieldAppearance formFieldElement = appearance.getSignatureAppearance();
+
+
         PdfFormAnnotation annotation = sigField.getFirstFormAnnotation();
         annotation.setFormFieldElement(formFieldElement);
         // Apply default field properties:
@@ -1591,6 +1601,7 @@ public class PdfSigner {
         }
         BorderStyleUtil.applyBorderProperty(formFieldElement, annotation);
         Background background = formFieldElement.<Background>getProperty(Property.BACKGROUND);
+        applyAccessibilityProperties(sigField, formFieldElement, document);
         if (background != null) {
             sigField.getFirstFormAnnotation().setBackgroundColor(background.getColor());
         }
@@ -1632,7 +1643,7 @@ public class PdfSigner {
             }
             if (!signatureUtil.signatureCoversWholeDocument(fieldName)) {
                 throw new PdfException(
-                  SignExceptionMessageConstant.SIGNATURE_WITH_THIS_NAME_IS_NOT_THE_LAST_IT_DOES_NOT_COVER_WHOLE_DOCUMENT
+                        SignExceptionMessageConstant.SIGNATURE_WITH_THIS_NAME_IS_NOT_THE_LAST_IT_DOES_NOT_COVER_WHOLE_DOCUMENT
                 ).setMessageParams(fieldName);
             }
 

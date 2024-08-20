@@ -21,6 +21,11 @@
     </dependency>
     <dependency>
       <groupId>com.itextpdf</groupId>
+      <artifactId>commons</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.itextpdf</groupId>
       <artifactId>layout</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -44,6 +49,13 @@
     <dependency>
       <groupId>com.itextpdf</groupId>
       <artifactId>font-asian</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.itextpdf</groupId>
+      <artifactId>sign</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
