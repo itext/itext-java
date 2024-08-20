@@ -27,6 +27,7 @@ import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.FileUtil;
+import com.itextpdf.forms.form.element.SignatureFieldAppearance;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -94,12 +95,12 @@ public class PadesSignatureLevelTest extends ExtendedITextTest {
 
         PdfSigner signer = new PdfSigner(new PdfReader(srcFileName), FileUtil.getFileOutputStream(outFileName), new StampingProperties());
         signer.setFieldName("Signature1");
-        signer.getSignatureAppearance()
-                .setPageRect(new Rectangle(50, 650, 200, 100))
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(signer.getFieldName())
+                .setContent("Approval test signature.\nCreated by iText.");
+        signer.setPageRect(new Rectangle(50, 650, 200, 100))
                 .setReason("Test")
                 .setLocation("TestCity")
-                .setLayer2Text("Approval test signature.\nCreated by iText.");
-
+                .setSignatureAppearance(appearance);
 
         TestTsaClient testTsa = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
 

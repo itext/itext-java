@@ -32,6 +32,7 @@ import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfSignatureFormField;
 import com.itextpdf.forms.fields.SignatureFormFieldBuilder;
+import com.itextpdf.forms.fields.properties.SignedAppearanceText;
 import com.itextpdf.forms.form.element.SignatureFieldAppearance;
 import com.itextpdf.forms.util.BorderStyleUtil;
 import com.itextpdf.io.source.ByteBuffer;
@@ -204,9 +205,44 @@ public class PdfSigner {
     protected PdfSigFieldLock fieldLock;
 
     /**
+     * The page where the signature will appear.
+     */
+    private int page = 1;
+
+    /**
+     * Rectangle that represent the position and dimension of the signature in the page.
+     */
+    private Rectangle pageRect = new Rectangle(0, 0);
+
+    /**
+     * The reason for signing.
+     */
+    private String reason = "";
+
+    /**
+     * Holds value of property location.
+     */
+    private String location = "";
+
+    /**
+     * Holds value of the application that creates the signature.
+     */
+    private String signatureCreator = "";
+
+    /**
+     * The contact name of the signer.
+     */
+    private String contact = "";
+
+    /**
+     * The name of the signer extracted from the signing certificate.
+     */
+    private String signerName = "";
+
+    /**
      * The signature appearance.
      */
-    protected PdfSignatureAppearance appearance;
+    protected SignatureFieldAppearance signatureAppearance;
 
     /**
      * Holds value of property signDate.
@@ -230,6 +266,7 @@ public class PdfSigner {
      * @param outputStream OutputStream to write the signed PDF file
      * @param properties   {@link StampingProperties} for the signing document. Note that encryption will be
      *                     preserved regardless of what is set in properties.
+     *
      * @throws IOException if some I/O problem occurs
      */
     public PdfSigner(PdfReader reader, OutputStream outputStream, StampingProperties properties) throws IOException {
@@ -245,6 +282,7 @@ public class PdfSigner {
      * @param stampingProperties {@link StampingProperties} for the signing document. Note that encryption will be
      *                           preserved regardless of what is set in properties.
      * @param signerProperties   {@link SignerProperties} bundled properties to be used in signing operations.
+     *
      * @throws IOException if some I/O problem occurs
      */
     public PdfSigner(PdfReader reader, OutputStream outputStream, String path, StampingProperties stampingProperties,
@@ -255,14 +293,14 @@ public class PdfSigner {
         // We need to update field name because the setter could change it and the user can rely on this field
         signerProperties.setFieldName(fieldName);
         certificationLevel = signerProperties.getCertificationLevel();
-        appearance.setPageRect(signerProperties.getPageRect());
-        appearance.setPageNumber(signerProperties.getPageNumber());
-        appearance.setSignDate(signerProperties.getSignDate());
-        appearance.setSignatureCreator(signerProperties.getSignatureCreator());
-        appearance.setContact(signerProperties.getContact());
-        appearance.setReason(signerProperties.getReason());
-        appearance.setLocation(signerProperties.getLocation());
-        this.appearance.setSignatureAppearance(signerProperties.getSignatureAppearance());
+        setPageRect(signerProperties.getPageRect());
+        setPageNumber(signerProperties.getPageNumber());
+        setSignDate(signerProperties.getSignDate());
+        setSignatureCreator(signerProperties.getSignatureCreator());
+        setContact(signerProperties.getContact());
+        setReason(signerProperties.getReason());
+        setLocation(signerProperties.getLocation());
+        setSignatureAppearance(signerProperties.getSignatureAppearance());
     }
 
     /**
@@ -273,6 +311,7 @@ public class PdfSigner {
      * @param path         File to which the output is temporarily written
      * @param properties   {@link StampingProperties} for the signing document. Note that encryption will be
      *                     preserved regardless of what is set in properties.
+     *
      * @throws IOException if some I/O problem occurs
      */
     public PdfSigner(PdfReader reader, OutputStream outputStream, String path, StampingProperties properties)
@@ -289,8 +328,6 @@ public class PdfSigner {
 
         originalOS = outputStream;
         fieldName = getNewSigFieldName();
-        appearance = new PdfSignatureAppearance(document, new Rectangle(0, 0), 1);
-        appearance.setSignDate(signDate);
     }
 
     PdfSigner(PdfDocument document, OutputStream outputStream, ByteArrayOutputStream temporaryOS, File tempFile) {
@@ -303,8 +340,6 @@ public class PdfSigner {
         this.acroForm = PdfFormCreator.getAcroForm(document, true);
         this.originalOS = outputStream;
         this.fieldName = getNewSigFieldName();
-        this.appearance = new PdfSignatureAppearance(document, new Rectangle(0, 0), 1);
-        this.appearance.setSignDate(this.signDate);
     }
 
     /**
@@ -313,6 +348,7 @@ public class PdfSigner {
      * @param reader     {@link PdfReader} to be used as a reader in the new document
      * @param writer     {@link PdfWriter} to be used as a writer in the new document
      * @param properties {@link StampingProperties} to be provided in the new document
+     *
      * @return new {@link PdfDocument} instance
      */
     protected PdfDocument initDocument(PdfReader reader, PdfWriter writer, StampingProperties properties) {
@@ -335,40 +371,36 @@ public class PdfSigner {
      */
     public void setSignDate(java.util.Calendar signDate) {
         this.signDate = signDate;
-        this.appearance.setSignDate(signDate);
     }
 
     /**
-     * Provides access to a signature appearance object. Use it to
-     * customize the appearance of the signature.
-     * <p>
-     * Be aware:
-     * <ul>
-     * <li>If you create new signature field (either use {@link #setFieldName} with
-     * the name that doesn't exist in the document or don't specify it at all) then
-     * the signature is invisible by default.
-     * <li>If you sign already existing field, then the signature appearance object
-     * is modified to have all the properties (page num., rect etc.) consistent with
-     * the state of the field (<strong>if you customized the appearance object
-     * before the {@link #setFieldName} call you'll have to do it again</strong>)
-     * </ul>
-     * <p>
+     * Sets the signature field layout element to customize the appearance of the signature.
      *
-     * @return {@link PdfSignatureAppearance} object.
-     */
-    @Deprecated
-    public PdfSignatureAppearance getSignatureAppearance() {
-        return appearance;
-    }
-
-    /**
-     * Sets the signature field layout element to customize the appearance of the signature. Signer's sign date will
-     * be set.
+     * <p>
+     * Note that if {@link SignedAppearanceText} was set as the content (or part of the content)
+     * for {@link SignatureFieldAppearance} object, {@link PdfSigner} properties such as signing date, reason, location
+     * and signer name could be set automatically.
      *
-     * @param appearance the {@link SignatureFieldAppearance} layout element.
+     * <p>
+     * In case you create new signature field (either using {@link #setFieldName} with the name
+     * that doesn't exist in the document or do not specifying it at all) then the signature is invisible by default.
+     * Use {@link #setPageRect(Rectangle)} and {@link #setPageNumber(int)} or
+     * {@link SignerProperties#setPageRect(Rectangle)} and {@link SignerProperties#setPageNumber(int)} to provide
+     * the rectangle that represent the position and dimension of the signature field in the specified page.
+     *
+     * <p>
+     * It is possible to set other appearance related properties such as
+     * {@link PdfSignatureFormField#setReuseAppearance}, {@link PdfSignatureFormField#setBackgroundLayer} (n0 layer) and
+     * {@link PdfSignatureFormField#setSignatureAppearanceLayer} (n2 layer) for the signature field using
+     * {@link #getSignatureField()}. Page, rectangle and other properties could be set up via {@link SignerProperties}.
+     *
+     * @param appearance the {@link SignatureFieldAppearance} layout element representing signature appearance
+     *
+     * @return this instance to support fluent interface
      */
-    public void setSignatureAppearance(SignatureFieldAppearance appearance) {
-        this.appearance.setSignatureAppearance(appearance);
+    public PdfSigner setSignatureAppearance(SignatureFieldAppearance appearance) {
+        this.signatureAppearance = appearance;
+        return this;
     }
 
     /**
@@ -499,7 +531,7 @@ public class PdfSigner {
      * appearance is associated with.
      */
     public int getPageNumber() {
-        return appearance.getPageNumber();
+        return page;
     }
 
     /**
@@ -508,11 +540,12 @@ public class PdfSigner {
      * which considers page number to process the rectangle correctly.
      *
      * @param pageNumber The page number of the signature field which
-     *                   this signature appearance is associated with.
-     * @return this instance to support fluent interface.
+     *                   this signature appearance is associated with
+     *
+     * @return this instance to support fluent interface
      */
     public PdfSigner setPageNumber(int pageNumber) {
-        appearance.setPageNumber(pageNumber);
+        this.page = pageNumber;
         return this;
     }
 
@@ -524,7 +557,7 @@ public class PdfSigner {
      * of the signature field in the page
      */
     public Rectangle getPageRect() {
-        return appearance.getPageRect();
+        return pageRect;
     }
 
     /**
@@ -532,11 +565,12 @@ public class PdfSigner {
      * the signature field in the page.
      *
      * @param pageRect The rectangle that represents the position and
-     *                 dimension of the signature field in the page.
-     * @return this instance to support fluent interface.
+     *                 dimension of the signature field in the page
+     *
+     * @return this instance to support fluent interface
      */
     public PdfSigner setPageRect(Rectangle pageRect) {
-        appearance.setPageRect(pageRect);
+        this.pageRect = pageRect;
         return this;
     }
 
@@ -573,80 +607,84 @@ public class PdfSigner {
     /**
      * Returns the signature creator.
      *
-     * @return The signature creator.
+     * @return the signature creator
      */
     public String getSignatureCreator() {
-        return appearance.getSignatureCreator();
+        return signatureCreator;
     }
 
     /**
      * Sets the name of the application used to create the signature.
      *
-     * @param signatureCreator A new name of the application signing a document.
-     * @return this instance to support fluent interface.
+     * @param signatureCreator A new name of the application signing a document
+     *
+     * @return this instance to support fluent interface
      */
     public PdfSigner setSignatureCreator(String signatureCreator) {
-        appearance.setSignatureCreator(signatureCreator);
+        this.signatureCreator = signatureCreator;
         return this;
     }
 
     /**
      * Returns the signing contact.
      *
-     * @return The signing contact.
+     * @return the signing contact
      */
     public String getContact() {
-        return appearance.getContact();
+        return contact;
     }
 
     /**
      * Sets the signing contact.
      *
-     * @param contact A new signing contact.
-     * @return this instance to support fluent interface.
+     * @param contact A new signing contact
+     *
+     * @return this instance to support fluent interface
      */
     public PdfSigner setContact(String contact) {
-        appearance.setContact(contact);
+        this.contact = contact;
         return this;
     }
 
     /**
      * Returns the signing reason.
      *
-     * @return The signing reason.
+     * @return the signing reason
      */
     public String getReason() {
-        return appearance.getReason();
+        return reason;
     }
 
     /**
      * Sets the signing reason.
      *
-     * @param reason A new signing reason.
-     * @return this instance to support fluent interface.
+     * @param reason a new signing reason
+     *
+     * @return this instance to support fluent interface
      */
     public PdfSigner setReason(String reason) {
-        appearance.setReason(reason);
+        this.reason = reason;
         return this;
     }
 
     /**
      * Returns the signing location.
      *
-     * @return The signing location.
+     * @return the signing location
      */
     public String getLocation() {
-        return appearance.getLocation();
+        return location;
     }
 
     /**
      * Sets the signing location.
      *
-     * @param location A new signing location.
-     * @return this instance to support fluent interface.
+     * @param location a new signing location
+     *
+     * @return this instance to support fluent interface
      */
     public PdfSigner setLocation(String location) {
-        appearance.setLocation(location);
+        this.location = location;
         return this;
     }
 
@@ -659,14 +697,26 @@ public class PdfSigner {
      * {@link PdfSignatureFormField#setReuseAppearance}, {@link PdfSignatureFormField#setBackgroundLayer} and
      * {@link PdfSignatureFormField#setSignatureAppearanceLayer}.
      *
-     * @return the {@link PdfSignatureFormField} instance.
+     * <p>
+     * Note that for the new signature field {@link #setPageRect(Rectangle)} and {@link #setPageNumber(int)}
+     * should be called before this method.
+     *
+     * @return the {@link PdfSignatureFormField} instance
      */
     public PdfSignatureFormField getSignatureField() {
         PdfFormField field = acroForm.getField(fieldName);
         if (field == null) {
             PdfSignatureFormField sigField = new SignatureFormFieldBuilder(document, fieldName)
-                    .setWidgetRectangle(getPageRect()).createSignature();
+                    .setWidgetRectangle(getPageRect()).setPage(getPageNumber()).createSignature();
             acroForm.addField(sigField);
+
+            if (acroForm.getPdfObject().isIndirect()) {
+                acroForm.setModified();
+            } else {
+                // Acroform dictionary is a Direct dictionary,
+                // for proper flushing, catalog needs to be marked as modified
+                document.getCatalog().setModified();
+            }
             return sigField;
         }
         if (field instanceof PdfSignatureFormField) {
@@ -689,6 +739,7 @@ public class PdfSigner {
      * @param externalDigest    an implementation that provides the digest
      * @param estimatedSize     the reserved size for the signature. It will be estimated if 0
      * @param sigtype           Either Signature.CMS or Signature.CADES
+     *
      * @throws IOException              if some I/O problem occurs
      * @throws GeneralSecurityException if some problem during apply security algorithms occurs
      */
@@ -712,6 +763,7 @@ public class PdfSigner {
      * @param tsaClient         the Timestamp client
      * @param estimatedSize     the reserved size for the signature. It will be estimated if 0
      * @param sigtype           Either Signature.CMS or Signature.CADES
+     *
      * @throws IOException              if some I/O problem occurs
      * @throws GeneralSecurityException if some problem during apply security algorithms occurs
      */
@@ -737,6 +789,7 @@ public class PdfSigner {
      * @param estimatedSize     the reserved size for the signature. It will be estimated if 0
      * @param sigtype           Either Signature.CMS or Signature.CADES
      * @param signaturePolicy   the signature policy (for EPES signatures)
+     *
      * @throws IOException              if some I/O problem occurs
      * @throws GeneralSecurityException if some problem during apply security algorithms occurs
      */
@@ -761,6 +814,7 @@ public class PdfSigner {
      * @param estimatedSize     the reserved size for the signature. It will be estimated if 0
      * @param sigtype           Either Signature.CMS or Signature.CADES
      * @param signaturePolicy   the signature policy (for EPES signatures)
+     *
      * @throws IOException              if some I/O problem occurs
      * @throws GeneralSecurityException if some problem during apply security algorithms occurs
      */
@@ -785,6 +839,7 @@ public class PdfSigner {
      * @param estimatedSize     the reserved size for the signature. It will be estimated if 0
      * @param sigtype           Either Signature.CMS or Signature.CADES
      * @param signaturePolicy   the signature policy (for EPES signatures)
+     *
      * @throws IOException              if some I/O problem occurs
      * @throws GeneralSecurityException if some problem during apply security algorithms occurs
      */
@@ -811,6 +866,7 @@ public class PdfSigner {
      * @param estimatedSize     the reserved size for the signature. It will be estimated if 0
      * @param sigtype           Either Signature.CMS or Signature.CADES
      * @param signaturePolicy   the signature policy (for EPES signatures)
+     *
      * @throws IOException              if some I/O problem occurs
      * @throws GeneralSecurityException if some problem during apply security algorithms occurs
      */
@@ -850,7 +906,7 @@ public class PdfSigner {
                 estimatedSize += tsaClient.getTokenSizeEstimate() + 96;
             }
         }
-        appearance.setCertificate(chain[0]);
+        this.signerName = PdfSigner.getSignerName((X509Certificate) chain[0]);
         if (sigtype == CryptoStandard.CADES && !isDocumentPdf2()) {
             addDeveloperExtension(PdfDeveloperExtension.ESIC_1_7_EXTENSIONLEVEL2);
         }
@@ -928,6 +984,7 @@ public class PdfSigner {
      *
      * @param externalSignatureContainer the interface providing the actual signing
      * @param estimatedSize              the reserved size for the signature
+     *
      * @throws GeneralSecurityException if some problem during apply security algorithms occurs
      * @throws IOException              if some I/O problem occurs
      */
@@ -970,6 +1027,7 @@ public class PdfSigner {
      * @param tsa           the timestamp generator
      * @param signatureName the signature name or null to have a name generated
      *                      automatically
+     *
      * @throws IOException              if some I/O problem occurs or estimation for timestamp signature,
      *                                  provided with {@link ITSAClient#getTokenSizeEstimate()}, is not big enough
      * @throws GeneralSecurityException if some problem during apply security algorithms occurs
@@ -1034,6 +1092,7 @@ public class PdfSigner {
      * @param outs                       the output PDF
      * @param externalSignatureContainer the signature container doing the actual signing. Only the
      *                                   method ExternalSignatureContainer.sign is used
+     *
      * @throws IOException              if some I/O problem occurs
      * @throws GeneralSecurityException if some problem during apply security algorithms occurs
      */
@@ -1049,7 +1108,9 @@ public class PdfSigner {
      *
      * @param cert    a Certificate if one of the CrlList implementations needs to retrieve the CRL URL from it.
      * @param crlList a list of CrlClient implementations
+     *
      * @return a collection of CRL bytes that can be embedded in a PDF
+     *
      * @throws CertificateEncodingException if an encoding error occurs in {@link Certificate}.
      */
     protected Collection<byte[]> processCrl(Certificate cert, Collection<ICrlClient> crlList)
@@ -1068,7 +1129,7 @@ public class PdfSigner {
             }
             crlBytes.addAll(b);
         }
-        return crlBytes.size() == 0 ? null : crlBytes;
+        return crlBytes.isEmpty() ? null : crlBytes;
     }
 
     /**
@@ -1100,6 +1161,7 @@ public class PdfSigner {
      * @param exclusionSizes Map with names and sizes to be excluded in the signature
      *                       calculation. The key is a PdfName and the value an Integer.
      *                       At least the /Contents must be present
+     *
      * @throws IOException on error
      */
     protected void preClose(Map<PdfName, Integer> exclusionSizes) throws IOException {
@@ -1176,8 +1238,8 @@ public class PdfSigner {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             PdfOutputStream os = new PdfOutputStream(bos);
             os.write('[');
-            for (int k = 0; k < range.length; ++k) {
-                os.writeLong(range[k]).write(' ');
+            for (long l : range) {
+                os.writeLong(l).write(' ');
             }
             os.write(']');
             System.arraycopy(bos.toByteArray(), 0, bout, (int) byteRangePosition, (int) bos.size());
@@ -1189,8 +1251,8 @@ public class PdfSigner {
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 PdfOutputStream os = new PdfOutputStream(bos);
                 os.write('[');
-                for (int k = 0; k < range.length; ++k) {
-                    os.writeLong(range[k]).write(' ');
+                for (long l : range) {
+                    os.writeLong(l).write(' ');
                 }
                 os.write(']');
                 raf.seek(byteRangePosition);
@@ -1210,14 +1272,45 @@ public class PdfSigner {
     }
 
     /**
+     * Returns final signature appearance object set by {@link #setSignatureAppearance(SignatureFieldAppearance)} and
+     * customized using {@link PdfSigner} properties such as signing date, reason, location and signer name
+     * in case they weren't specified by the user, or, if none was set, returns a new one with default appearance.
+     *
+     * <p>
+     * To customize the appearance of the signature, create new {@link SignatureFieldAppearance} object and set it
+     * using {@link #setSignatureAppearance(SignatureFieldAppearance)}.
+     *
+     * <p>
+     * Note that in case you create new signature field (either use {@link #setFieldName} with the name
+     * that doesn't exist in the document or don't specify it at all) then the signature is invisible by default.
+     *
+     * <p>
+     * It is possible to set other appearance related properties such as
+     * {@link PdfSignatureFormField#setReuseAppearance}, {@link PdfSignatureFormField#setBackgroundLayer} (n0 layer) and
+     * {@link PdfSignatureFormField#setSignatureAppearanceLayer} (n2 layer) for the signature field using
+     * {@link #getSignatureField()}. Page, rectangle and other properties could be set up via {@link SignerProperties}.
+     *
+     * @return {@link SignatureFieldAppearance} object representing signature appearance.
+     */
+    protected SignatureFieldAppearance getSignatureAppearance() {
+        if (signatureAppearance == null) {
+            signatureAppearance = new SignatureFieldAppearance(fieldName);
+            setContent();
+        } else {
+            populateExistingModelElement();
+        }
+        return signatureAppearance;
+    }
+
+    /**
      * Populates already existing signature form field in the acroForm object.
      * This method is called during the {@link PdfSigner#preClose(Map)} method if the signature field already exists.
      *
      * @param acroForm {@link PdfAcroForm} object in which the signature field will be populated
+     *
      * @return signature field lock dictionary
-     * @throws IOException if font for the appearance dictionary cannot be created
      */
-    protected PdfSigFieldLock populateExistingSignatureFormField(PdfAcroForm acroForm) throws IOException {
+    protected PdfSigFieldLock populateExistingSignatureFormField(PdfAcroForm acroForm) {
         PdfSignatureFormField sigField = (PdfSignatureFormField) acroForm.getField(fieldName);
 
         PdfSigFieldLock sigFieldLock = sigField.getSigFieldLockDictionary();
@@ -1240,18 +1333,8 @@ public class PdfSigner {
         flags |= PdfAnnotation.LOCKED;
         sigField.put(PdfName.F, new PdfNumber(flags));
 
-        sigField.disableFieldRegeneration();
-        if (appearance.isReuseAppearanceSet()) {
-            sigField.setReuseAppearance(appearance.isReuseAppearance());
-        }
-        if (appearance.getSignatureAppearanceLayer() != null) {
-            sigField.setSignatureAppearanceLayer(appearance.getSignatureAppearanceLayer());
-        }
-        if (appearance.getBackgroundLayer() != null) {
-            sigField.setBackgroundLayer(appearance.getBackgroundLayer());
-        }
-        sigField.getFirstFormAnnotation().setFormFieldElement(appearance.getSignatureAppearance());
-        sigField.enableFieldRegeneration();
+        sigField.getFirstFormAnnotation().setFormFieldElement(getSignatureAppearance());
+        sigField.regenerateField();
 
         sigField.setModified();
 
@@ -1264,10 +1347,10 @@ public class PdfSigner {
      *
      * @param acroForm {@link PdfAcroForm} object in which new signature field will be added
      * @param name     the name of the field
+     *
      * @return signature field lock dictionary
-     * @throws IOException if font for the appearance dictionary cannot be created
      */
-    protected PdfSigFieldLock createNewSignatureFormField(PdfAcroForm acroForm, String name) throws IOException {
+    protected PdfSigFieldLock createNewSignatureFormField(PdfAcroForm acroForm, String name) {
         PdfWidgetAnnotation widget = new PdfWidgetAnnotation(getPageRect());
         widget.setFlags(PdfAnnotation.PRINT | PdfAnnotation.LOCKED);
 
@@ -1287,9 +1370,6 @@ public class PdfSigner {
         widget.setPage(document.getPage(pagen));
 
         sigField.disableFieldRegeneration();
-        sigField.setReuseAppearance(appearance.isReuseAppearance())
-                .setSignatureAppearanceLayer(appearance.getSignatureAppearanceLayer())
-                .setBackgroundLayer(appearance.getBackgroundLayer());
         applyDefaultPropertiesForTheNewField(sigField);
         sigField.enableFieldRegeneration();
         acroForm.addField(sigField, document.getPage(pagen));
@@ -1310,7 +1390,8 @@ public class PdfSigner {
      * The general sequence is:
      * {@link #preClose(Map)}, {@link #getRangeStream()} and {@link #close(PdfDictionary)}.
      *
-     * @return The {@link InputStream} of bytes to be signed.
+     * @return the {@link InputStream} of bytes to be signed
+     *
      * @throws IOException if some I/O problem occurs
      */
     protected InputStream getRangeStream() throws IOException {
@@ -1328,6 +1409,7 @@ public class PdfSigner {
      *
      * @param update a PdfDictionary with the key/value that will fill the holes defined
      *               in {@link #preClose(Map)}
+     *
      * @throws IOException on error
      */
     protected void close(PdfDictionary update) throws IOException {
@@ -1394,6 +1476,7 @@ public class PdfSigner {
      * Returns the underlying source.
      *
      * @return the underlying source
+     *
      * @throws IOException if some I/O problem occurs
      */
     protected IRandomAccessSource getUnderlyingSource() throws IOException {
@@ -1486,6 +1569,7 @@ public class PdfSigner {
      * Get the rectangle associated to the provided widget.
      *
      * @param widget PdfWidgetAnnotation to extract the rectangle from
+     *
      * @return Rectangle
      */
     protected Rectangle getWidgetRectangle(PdfWidgetAnnotation widget) {
@@ -1496,6 +1580,7 @@ public class PdfSigner {
      * Get the page number associated to the provided widget.
      *
      * @param widget PdfWidgetAnnotation from which to extract the page number
+     *
      * @return page number
      */
     protected int getWidgetPageNumber(PdfWidgetAnnotation widget) {
@@ -1515,6 +1600,18 @@ public class PdfSigner {
             }
         }
         return pageNumber;
+    }
+
+    private static String getSignerName(X509Certificate certificate) {
+        String name = null;
+        CertificateInfo.X500Name x500name = CertificateInfo.getSubjectFields(certificate);
+        if (x500name != null) {
+            name = x500name.getField("CN");
+            if (name == null) {
+                name = x500name.getField("E");
+            }
+        }
+        return name == null? "" : name;
     }
 
     private void updateFieldName(String fieldName) {
@@ -1543,7 +1640,6 @@ public class PdfSigner {
                     throw new IllegalArgumentException(SignExceptionMessageConstant.FIELD_NAMES_CANNOT_CONTAIN_A_DOT);
                 }
             }
-            this.appearance.setFieldName(fieldName);
             this.fieldName = fieldName;
         }
     }
@@ -1579,9 +1675,7 @@ public class PdfSigner {
     }
 
     private void applyDefaultPropertiesForTheNewField(PdfSignatureFormField sigField) {
-        SignatureFieldAppearance formFieldElement = appearance.getSignatureAppearance();
-
-
+        SignatureFieldAppearance formFieldElement = getSignatureAppearance();
         PdfFormAnnotation annotation = sigField.getFirstFormAnnotation();
         annotation.setFormFieldElement(formFieldElement);
         // Apply default field properties:
@@ -1604,6 +1698,35 @@ public class PdfSigner {
         applyAccessibilityProperties(sigField, formFieldElement, document);
         if (background != null) {
             sigField.getFirstFormAnnotation().setBackgroundColor(background.getColor());
+        }
+    }
+
+    private void setContent() {
+        if (pageRect == null || pageRect.getWidth() == 0 || pageRect.getHeight() == 0) {
+            return;
+        }
+        signatureAppearance.setContent(generateSignatureText());
+    }
+
+    private SignedAppearanceText generateSignatureText() {
+        return new SignedAppearanceText()
+                .setSignedBy(signerName)
+                .setSignDate(signDate)
+                .setReasonLine("Reason: " + reason)
+                .setLocationLine("Location: " + location);
+    }
+
+    private void populateExistingModelElement() {
+        signatureAppearance.setSignerName(signerName);
+        SignedAppearanceText signedAppearanceText = signatureAppearance.getSignedAppearanceText();
+        if (signedAppearanceText != null) {
+            signedAppearanceText.setSignedBy(signerName).setSignDate(signDate);
+            if (signedAppearanceText.getReasonLine().isEmpty()) {
+                signedAppearanceText.setReasonLine("Reason: " + reason);
+            }
+            if (signedAppearanceText.getLocationLine().isEmpty()) {
+                signedAppearanceText.setLocationLine("Location: " + location);
+            }
         }
     }
 

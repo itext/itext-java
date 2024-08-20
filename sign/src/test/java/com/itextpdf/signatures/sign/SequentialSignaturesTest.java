@@ -27,6 +27,7 @@ import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.FileUtil;
+import com.itextpdf.forms.form.element.SignatureFieldAppearance;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.CompressionConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -36,7 +37,6 @@ import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.signatures.BouncyCastleDigest;
 import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.IExternalSignature;
-import com.itextpdf.signatures.PdfSignatureAppearance;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PdfSigner.CryptoStandard;
 import com.itextpdf.signatures.PrivateKeySignature;
@@ -88,11 +88,13 @@ public class SequentialSignaturesTest extends ExtendedITextTest {
         String signatureName = "Signature2";
         PdfSigner signer = new PdfSigner(new PdfReader(srcFileName), FileUtil.getFileOutputStream(outFileName), new StampingProperties().useAppendMode());
         signer.setFieldName(signatureName);
-        signer.getSignatureAppearance()
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(signatureName)
+                .setContent("Approval test signature.\nCreated by iText.");
+        signer
                 .setPageRect(new Rectangle(50, 350, 200, 100))
                 .setReason("Test")
                 .setLocation("TestCity")
-                .setLayer2Text("Approval test signature.\nCreated by iText.");
+                .setSignatureAppearance(appearance);
 
         signer.signDetached(new BouncyCastleDigest(), pks, signChain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
 
@@ -123,13 +125,13 @@ public class SequentialSignaturesTest extends ExtendedITextTest {
         document.getWriter().setCompressionLevel(CompressionConstants.NO_COMPRESSION);
 
         signer.setFieldName(signatureName);
-        PdfSignatureAppearance appearance = signer.getSignatureAppearance();
-        appearance.setPageNumber(1);
-        signer.getSignatureAppearance()
-                .setPageRect(new Rectangle(50, 550, 200, 100))
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(signatureName)
+                .setContent("Approval test signature #2.\nCreated by iText.");
+        signer.setPageNumber(1);
+        signer.setPageRect(new Rectangle(50, 550, 200, 100))
                 .setReason("Test2")
                 .setLocation("TestCity2")
-                .setLayer2Text("Approval test signature #2.\nCreated by iText.");
+                .setSignatureAppearance(appearance);
 
         signer.signDetached(new BouncyCastleDigest(), pks, signChain, null, null,
                 null, 0, CryptoStandard.CADES);

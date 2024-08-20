@@ -27,6 +27,9 @@ import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.FileUtil;
+import com.itextpdf.forms.fields.properties.SignedAppearanceText;
+import com.itextpdf.forms.form.element.SignatureFieldAppearance;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -39,7 +42,6 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.signatures.BouncyCastleDigest;
 import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.IExternalSignature;
-import com.itextpdf.signatures.PdfSignatureAppearance;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
@@ -58,6 +60,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -109,6 +114,9 @@ public class Pdf20SigningTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.EXISTING_TAG_STRUCTURE_ROOT_IS_NOT_STANDARD)
+    })
     public void signPdf2CertificationAfterApprovalTest() {
         String srcFile = SOURCE_FOLDER + "approvalSignedDocPdf2.pdf";
         String outPdf = DESTINATION_FOLDER + "signedPdf2CertificationAfterApproval.pdf";
@@ -231,17 +239,18 @@ public class Pdf20SigningTest extends ExtendedITextTest {
         signer.setFieldName(name);
 
         // Creating the appearance
-        PdfSignatureAppearance appearance = signer.getSignatureAppearance()
-                .setReason(reason)
-                .setLocation(location)
-                .setReuseAppearance(setReuseAppearance);
-
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(name)
+                .setContent(new SignedAppearanceText());
         if (rectangleForNewField != null) {
             signer.setPageRect(rectangleForNewField);
         }
         if (fontSize != null) {
-            appearance.setLayer2FontSize((float) fontSize);
+            appearance.setFontSize((float) fontSize);
         }
+        signer
+                .setReason(reason)
+                .setLocation(location)
+                .getSignatureField().setReuseAppearance(setReuseAppearance);
         // Creating the signature
         IExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, FACTORY.getProviderName());
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, subfilter);

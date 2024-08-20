@@ -27,6 +27,8 @@ import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.FileUtil;
+import com.itextpdf.forms.fields.properties.SignedAppearanceText;
+import com.itextpdf.forms.form.element.SignatureFieldAppearance;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -35,7 +37,6 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.signatures.BouncyCastleDigest;
 import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.IExternalSignature;
-import com.itextpdf.signatures.PdfSignatureAppearance;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
 import com.itextpdf.signatures.testutils.PemFileHelper;
@@ -154,7 +155,7 @@ public class SimpleSigningTest extends ExtendedITextTest {
         signer.setFieldName("Signature1");
 
         // Creating the appearance
-        createAppearance(signer, "Test 1", "TestCity", false, rect, 12f);
+        createAppearance(signer, "Signature1", "Test 1", "TestCity", false, rect, 12f);
 
         // Creating the signature
         IExternalSignature pks =
@@ -184,7 +185,7 @@ public class SimpleSigningTest extends ExtendedITextTest {
         signer.setFieldName(name);
 
         // Creating the appearance
-        createAppearance(signer, reason, location, setReuseAppearance, rectangleForNewField, fontSize);
+        createAppearance(signer, name, reason, location, setReuseAppearance, rectangleForNewField, fontSize);
 
         // Creating the signature
         IExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, FACTORY.getProviderName());
@@ -197,18 +198,20 @@ public class SimpleSigningTest extends ExtendedITextTest {
         return result;
     }
 
-    private static void createAppearance(PdfSigner signer, String reason, String location, boolean setReuseAppearance,
-            Rectangle rectangleForNewField, Float fontSize) {
-        PdfSignatureAppearance appearance = signer.getSignatureAppearance()
+    private static void createAppearance(PdfSigner signer, String signatureName, String reason, String location,
+                                         boolean setReuseAppearance, Rectangle rectangleForNewField, Float fontSize) {
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(signatureName)
+                .setContent(new SignedAppearanceText());
+        signer
                 .setReason(reason)
                 .setLocation(location)
-                .setReuseAppearance(setReuseAppearance);
-
+                .setSignatureAppearance(appearance);
         if (rectangleForNewField != null) {
             signer.setPageRect(rectangleForNewField);
         }
         if (fontSize != null) {
-            appearance.setLayer2FontSize((float) fontSize);
+            appearance.setFontSize((float) fontSize);
         }
+        signer.getSignatureField().setReuseAppearance(setReuseAppearance);
     }
 }

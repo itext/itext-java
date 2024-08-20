@@ -28,6 +28,7 @@ import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationExcept
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.forms.fields.PdfFormCreator;
+import com.itextpdf.forms.form.element.SignatureFieldAppearance;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -43,7 +44,6 @@ import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.ExternalBlankSignatureContainer;
 import com.itextpdf.signatures.IExternalSignatureContainer;
 import com.itextpdf.signatures.PdfPKCS7;
-import com.itextpdf.signatures.PdfSignatureAppearance;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
 import com.itextpdf.signatures.TestSignUtils;
@@ -97,12 +97,14 @@ public class SignDeferredTest extends ExtendedITextTest {
 
         PdfReader reader = new PdfReader(input);
         PdfSigner signer = new PdfSigner(reader, FileUtil.getFileOutputStream(output), new StampingProperties());
-        PdfSignatureAppearance appearance = signer.getSignatureAppearance();
-        appearance
-                .setLayer2Text("Signature field which signing is deferred.")
-                .setPageRect(new Rectangle(36, 600, 200, 100))
-                .setPageNumber(1);
         signer.setFieldName(sigFieldName);
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(sigFieldName)
+                .setContent("Signature field which signing is deferred.");
+        signer
+                .setPageRect(new Rectangle(36, 600, 200, 100))
+                .setPageNumber(1)
+                .setSignatureAppearance(appearance);
+
         IExternalSignatureContainer external = new ExternalBlankSignatureContainer(filter, subFilter);
         signer.signExternalContainer(external, estimatedSize);
 
@@ -120,12 +122,13 @@ public class SignDeferredTest extends ExtendedITextTest {
 
         PdfReader reader = new PdfReader(input);
         PdfSigner signer = new PdfSigner(reader, new ByteArrayOutputStream(), new StampingProperties());
-        PdfSignatureAppearance appearance = signer.getSignatureAppearance();
-        appearance
-                .setLayer2Text("Signature field which signing is deferred.")
-                .setPageRect(new Rectangle(36, 600, 200, 100))
-                .setPageNumber(1);
         signer.setFieldName(sigFieldName);
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(sigFieldName)
+                .setContent("Signature field which signing is deferred.");
+        signer
+                .setPageRect(new Rectangle(36, 600, 200, 100))
+                .setPageNumber(1)
+                .setSignatureAppearance(appearance);
         IExternalSignatureContainer external = new ExternalBlankSignatureContainer(filter, subFilter);
 
         // This size is definitely not enough
@@ -145,12 +148,13 @@ public class SignDeferredTest extends ExtendedITextTest {
 
         PdfReader reader = new PdfReader(input);
         PdfSigner signer = new PdfSigner(reader, new ByteArrayOutputStream(), new StampingProperties());
-        PdfSignatureAppearance appearance = signer.getSignatureAppearance();
-        appearance
-                .setLayer2Text("Signature field which signing is deferred.")
-                .setPageRect(new Rectangle(36, 600, 200, 100))
-                .setPageNumber(1);
         signer.setFieldName(sigFieldName);
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(sigFieldName)
+                .setContent("Signature field which signing is deferred.");
+        signer
+                .setPageRect(new Rectangle(36, 600, 200, 100))
+                .setPageNumber(1)
+                .setSignatureAppearance(appearance);
         IExternalSignatureContainer external = new ExternalBlankSignatureContainer(filter, subFilter);
 
         // This size is definitely not enough, however, the size check will pass.
@@ -204,24 +208,23 @@ public class SignDeferredTest extends ExtendedITextTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PdfSigner signer = new PdfSigner(reader, baos, new StampingProperties());
         signer.setCertificationLevel(PdfSigner.CERTIFIED_NO_CHANGES_ALLOWED);
-        PdfSignatureAppearance appearance = signer.getSignatureAppearance();
-        appearance
-                .setLayer2Text("Signature field which signing is deferred.")
-                .setPageRect(new Rectangle(36, 600, 200, 100))
-                .setPageNumber(1);
         signer.setFieldName(sigFieldName);
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(sigFieldName)
+                .setContent("Signature field which signing is deferred.");
+        signer
+                .setPageRect(new Rectangle(36, 600, 200, 100))
+                .setPageNumber(1)
+                .setSignatureAppearance(appearance);
         DigestCalcBlankSigner external = new DigestCalcBlankSigner(filter, subFilter);
         signer.signExternalContainer(external, estimatedSize);
         byte[] docBytesHash = external.getDocBytesHash();
         byte[] preSignedBytes = baos.toByteArray();
-
 
         // sign the hash
         String signCertFileName = certsSrc + "signCertRsa01.pem";
         Certificate[] signChain = PemFileHelper.readFirstChain(signCertFileName);
         PrivateKey signPrivateKey = PemFileHelper.readFirstKey(signCertFileName, password);
         byte[] cmsSignature = signDocBytesHash(docBytesHash, signPrivateKey, signChain);
-
 
         // fill the signature to the presigned document
         ReadySignatureSigner extSigContainer = new ReadySignatureSigner(cmsSignature);
