@@ -26,7 +26,6 @@ import com.itextpdf.commons.datastructures.Tuple2;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.pdf.EncryptionConstants;
-import com.itextpdf.kernel.pdf.IsoKey;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfCatalog;
@@ -35,7 +34,6 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
-import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfVersion;
@@ -46,13 +44,21 @@ import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.IRoleMappingResolver;
 import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
 import com.itextpdf.kernel.pdf.tagutils.TagTreeIterator;
-import com.itextpdf.kernel.utils.IValidationChecker;
-import com.itextpdf.kernel.utils.ValidationContext;
 import com.itextpdf.kernel.utils.checkers.FontCheckUtil;
+import com.itextpdf.kernel.validation.IValidationChecker;
+import com.itextpdf.kernel.validation.context.CanvasBmcValidationContext;
+import com.itextpdf.kernel.validation.context.CanvasWritingContentValidationContext;
+import com.itextpdf.kernel.validation.context.CryptoValidationContext;
+import com.itextpdf.kernel.validation.context.DuplicateIdEntryValidationContext;
+import com.itextpdf.kernel.validation.context.FontValidationContext;
+import com.itextpdf.kernel.validation.IValidationContext;
+import com.itextpdf.kernel.validation.context.PdfDocumentValidationContext;
+import com.itextpdf.kernel.validation.context.PdfObjectValidationContext;
 import com.itextpdf.kernel.xmp.XMPConst;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
+import com.itextpdf.layout.validation.context.LayoutValidationContext;
 import com.itextpdf.pdfua.checkers.utils.AnnotationCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.BCP47Validator;
 import com.itextpdf.pdfua.checkers.utils.FormCheckUtil;
@@ -100,45 +106,45 @@ public class PdfUA1Checker implements IValidationChecker {
         this.headingsChecker = new HeadingsChecker(context);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public void validateDocument(ValidationContext validationContext) {
-        checkCatalog(validationContext.getPdfDocument().getCatalog());
-        checkStructureTreeRoot(validationContext.getPdfDocument().getStructTreeRoot());
-        checkFonts(validationContext.getFonts());
-        XfaCheckUtil.check(validationContext.getPdfDocument());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void validateObject(Object obj, IsoKey key, PdfResources resources, PdfStream contentStream, Object extra) {
-        switch (key) {
-            case LAYOUT:
-                new LayoutCheckUtil(context).checkRenderer(obj);
-                headingsChecker.checkLayoutElement(obj);
+    public void validate(IValidationContext context) {
+        switch (context.getType()) {
+            case PDF_DOCUMENT:
+                PdfDocumentValidationContext pdfDocContext = (PdfDocumentValidationContext) context;
+                checkCatalog(pdfDocContext.getPdfDocument().getCatalog());
+                checkStructureTreeRoot(pdfDocContext.getPdfDocument().getStructTreeRoot());
+                checkFonts(pdfDocContext.getDocumentFonts());
+                XfaCheckUtil.check(pdfDocContext.getPdfDocument());
                 break;
-            case CANVAS_WRITING_CONTENT:
-                checkOnWritingCanvasToContent(obj);
-                break;
-            case CANVAS_BEGIN_MARKED_CONTENT:
-                checkOnOpeningBeginMarkedContent(obj, extra);
-                break;
-            case FONT:
-                checkText((String) obj, (PdfFont) extra);
-                break;
-            case DUPLICATE_ID_ENTRY:
-                throw new PdfUAConformanceException(MessageFormatUtil.format(
-                        PdfUAExceptionMessageConstants.NON_UNIQUE_ID_ENTRY_IN_STRUCT_TREE_ROOT, obj));
             case PDF_OBJECT:
-                checkPdfObject((PdfObject) obj);
+                PdfObjectValidationContext objContext = (PdfObjectValidationContext) context;
+                checkPdfObject(objContext.getObject());
                 break;
             case CRYPTO:
-                checkCrypto((PdfDictionary) obj);
+                CryptoValidationContext cryptoContext = (CryptoValidationContext) context;
+                checkCrypto((PdfDictionary) cryptoContext.getCrypto());
                 break;
+            case FONT:
+                FontValidationContext fontContext = (FontValidationContext) context;
+                checkText(fontContext.getText(), fontContext.getFont());
+                break;
+            case CANVAS_BEGIN_MARKED_CONTENT:
+                CanvasBmcValidationContext bmcContext = (CanvasBmcValidationContext) context;
+                checkOnOpeningBeginMarkedContent(bmcContext.getTagStructureStack(), bmcContext.getCurrentBmc());
+                break;
+            case CANVAS_WRITING_CONTENT:
+                CanvasWritingContentValidationContext writingContext = (CanvasWritingContentValidationContext) context;
+                checkOnWritingCanvasToContent(writingContext.getTagStructureStack());
+                break;
+            case LAYOUT:
+                LayoutValidationContext layoutContext = (LayoutValidationContext) context;
+                new LayoutCheckUtil(this.context).checkRenderer(layoutContext.getRenderer());
+                headingsChecker.checkLayoutElement(layoutContext.getRenderer());
+                break;
+            case DUPLICATE_ID_ENTRY:
+                DuplicateIdEntryValidationContext idContext = (DuplicateIdEntryValidationContext) context;
+                throw new PdfUAConformanceException(MessageFormatUtil.format(
+                        PdfUAExceptionMessageConstants.NON_UNIQUE_ID_ENTRY_IN_STRUCT_TREE_ROOT, idContext.getId()));
         }
     }
 
@@ -205,8 +211,7 @@ public class PdfUA1Checker implements IValidationChecker {
 
     }
 
-    private void checkOnWritingCanvasToContent(Object data) {
-        Stack<Tuple2<PdfName, PdfDictionary>> tagStack = getTagStack(data);
+    private void checkOnWritingCanvasToContent(Stack<Tuple2<PdfName, PdfDictionary>> tagStack) {
         if (tagStack.isEmpty()) {
             throw new PdfUAConformanceException(
                     PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING);
@@ -223,15 +228,11 @@ public class PdfUA1Checker implements IValidationChecker {
         }
     }
 
-    private Stack<Tuple2<PdfName, PdfDictionary>> getTagStack(Object data) {
-        return (Stack<Tuple2<PdfName, PdfDictionary>>) data;
-    }
+    private void checkOnOpeningBeginMarkedContent(Stack<Tuple2<PdfName, PdfDictionary>> stack,
+            Tuple2<PdfName, PdfDictionary> currentBmc) {
 
-    private void checkOnOpeningBeginMarkedContent(Object obj, Object extra) {
-        Tuple2<PdfName, PdfDictionary> currentBmc = (Tuple2<PdfName, PdfDictionary>) extra;
         checkStandardRoleMapping(currentBmc);
 
-        Stack<Tuple2<PdfName, PdfDictionary>> stack = getTagStack(obj);
         if (stack.isEmpty()) {
             return;
         }

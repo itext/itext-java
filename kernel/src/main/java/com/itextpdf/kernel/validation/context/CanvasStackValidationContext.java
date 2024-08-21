@@ -20,36 +20,37 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.pdfua;
+package com.itextpdf.kernel.validation.context;
 
-import com.itextpdf.kernel.pdf.DocumentProperties;
-import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfUAConformanceLevel;
-import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.pdf.StampingProperties;
+import com.itextpdf.kernel.validation.IValidationContext;
+import com.itextpdf.kernel.validation.ValidationType;
 
 /**
- * PdfDocument extension for testing purposes.
+ * Class for canvas stack validation.
  */
-public class PdfUATestPdfDocument extends PdfUADocument {
+public class CanvasStackValidationContext implements IValidationContext {
+    private final char operator;
 
-    public PdfUATestPdfDocument(PdfWriter writer) {
-        super(writer, createConfig());
+    /**
+     * Instantiates a new {@link CanvasStackValidationContext} based on operator.
+     *
+     * @param operator the operator
+     */
+    public CanvasStackValidationContext(char operator) {
+        this.operator = operator;
     }
 
-    public PdfUATestPdfDocument(PdfWriter writer, DocumentProperties properties) {
-        super(writer, properties, createConfig());
+    /**
+     * Gets the operator.
+     *
+     * @return the operator
+     */
+    public char getOperator() {
+        return operator;
     }
 
-    public PdfUATestPdfDocument(PdfReader reader, PdfWriter writer) {
-        super(reader, writer, createConfig());
-    }
-
-    public PdfUATestPdfDocument(PdfReader reader, PdfWriter writer, StampingProperties properties) {
-        super(reader, writer, properties, createConfig());
-    }
-
-    private static PdfUAConfig createConfig() {
-        return new PdfUAConfig(PdfUAConformanceLevel.PDFUA_1, "English pangram", "en-US");
+    @Override
+    public ValidationType getType() {
+        return ValidationType.CANVAS_STACK;
     }
 }

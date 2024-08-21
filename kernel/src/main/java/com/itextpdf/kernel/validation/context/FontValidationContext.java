@@ -20,36 +20,50 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.pdfua;
+package com.itextpdf.kernel.validation.context;
 
-import com.itextpdf.kernel.pdf.DocumentProperties;
-import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfUAConformanceLevel;
-import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.pdf.StampingProperties;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.validation.IValidationContext;
+import com.itextpdf.kernel.validation.ValidationType;
 
 /**
- * PdfDocument extension for testing purposes.
+ * Class for font validation context.
  */
-public class PdfUATestPdfDocument extends PdfUADocument {
+public class FontValidationContext implements IValidationContext {
+    private final String text;
+    private final PdfFont font;
 
-    public PdfUATestPdfDocument(PdfWriter writer) {
-        super(writer, createConfig());
+    /**
+     * Instantiates a new {@link FontValidationContext} based on text and font.
+     *
+     * @param text the text
+     * @param font the font
+     */
+    public FontValidationContext(String text, PdfFont font) {
+        this.text = text;
+        this.font = font;
     }
 
-    public PdfUATestPdfDocument(PdfWriter writer, DocumentProperties properties) {
-        super(writer, properties, createConfig());
+    /**
+     * Gets the text.
+     *
+     * @return the text
+     */
+    public String getText() {
+        return text;
     }
 
-    public PdfUATestPdfDocument(PdfReader reader, PdfWriter writer) {
-        super(reader, writer, createConfig());
+    /**
+     * Gets the font.
+     *
+     * @return the font
+     */
+    public PdfFont getFont() {
+        return font;
     }
 
-    public PdfUATestPdfDocument(PdfReader reader, PdfWriter writer, StampingProperties properties) {
-        super(reader, writer, properties, createConfig());
-    }
-
-    private static PdfUAConfig createConfig() {
-        return new PdfUAConfig(PdfUAConformanceLevel.PDFUA_1, "English pangram", "en-US");
+    @Override
+    public ValidationType getType() {
+        return ValidationType.FONT;
     }
 }

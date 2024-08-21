@@ -33,9 +33,11 @@ import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.layer.PdfLayer;
 import com.itextpdf.kernel.pdf.layer.PdfOCProperties;
-import com.itextpdf.kernel.utils.IValidationChecker;
-import com.itextpdf.kernel.utils.ValidationContainer;
-import com.itextpdf.kernel.utils.ValidationContext;
+import com.itextpdf.kernel.validation.IValidationChecker;
+import com.itextpdf.kernel.validation.ValidationContainer;
+import com.itextpdf.kernel.validation.ValidationType;
+import com.itextpdf.kernel.validation.IValidationContext;
+import com.itextpdf.kernel.validation.context.PdfDocumentValidationContext;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
@@ -47,8 +49,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("BouncyCastleUnitTest")
 public class PdfDocumentUnitTest extends ExtendedITextTest {
@@ -457,7 +459,8 @@ public class PdfDocumentUnitTest extends ExtendedITextTest {
     @Test
     public void checkEmptyIsoConformanceTest() {
         try (PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
-            AssertUtil.doesNotThrow(() -> doc.checkIsoConformance());
+            IValidationContext validationContext = new PdfDocumentValidationContext(doc, doc.getDocumentFonts());
+            AssertUtil.doesNotThrow(() -> doc.checkIsoConformance(validationContext));
         }
     }
 
@@ -469,24 +472,20 @@ public class PdfDocumentUnitTest extends ExtendedITextTest {
             container.addChecker(checker);
             doc.getDiContainer().register(ValidationContainer.class, container);
             Assertions.assertFalse(checker.documentValidationPerformed);
-            doc.checkIsoConformance();
+            IValidationContext validationContext = new PdfDocumentValidationContext(doc, doc.getDocumentFonts());
+            doc.checkIsoConformance(validationContext);
             Assertions.assertTrue(checker.documentValidationPerformed);
         }
     }
 
     private static class CustomValidationChecker implements IValidationChecker {
         public boolean documentValidationPerformed = false;
-        public boolean objectValidationPerformed = false;
 
         @Override
-        public void validateDocument(ValidationContext validationContext) {
-            documentValidationPerformed = true;
-        }
-
-        @Override
-        public void validateObject(Object obj, IsoKey key, PdfResources resources, PdfStream contentStream,
-                Object extra) {
-            objectValidationPerformed = true;
+        public void validate(IValidationContext validationContext) {
+            if (validationContext.getType() == ValidationType.PDF_DOCUMENT) {
+                documentValidationPerformed = true;
+            }
         }
     }
 }

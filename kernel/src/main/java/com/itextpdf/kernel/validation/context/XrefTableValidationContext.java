@@ -20,36 +20,38 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.pdfua;
+package com.itextpdf.kernel.validation.context;
 
-import com.itextpdf.kernel.pdf.DocumentProperties;
-import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfUAConformanceLevel;
-import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.pdf.StampingProperties;
+import com.itextpdf.kernel.pdf.PdfXrefTable;
+import com.itextpdf.kernel.validation.IValidationContext;
+import com.itextpdf.kernel.validation.ValidationType;
 
 /**
- * PdfDocument extension for testing purposes.
+ * Class for {@link PdfXrefTable} validation context.
  */
-public class PdfUATestPdfDocument extends PdfUADocument {
+public class XrefTableValidationContext implements IValidationContext {
+    private final PdfXrefTable xrefTable;
 
-    public PdfUATestPdfDocument(PdfWriter writer) {
-        super(writer, createConfig());
+    /**
+     * Instantiates a new {@link XrefTableValidationContext} based on pdf xref table.
+     *
+     * @param xrefTable the pdf xref table
+     */
+    public XrefTableValidationContext(PdfXrefTable xrefTable) {
+        this.xrefTable = xrefTable;
     }
 
-    public PdfUATestPdfDocument(PdfWriter writer, DocumentProperties properties) {
-        super(writer, properties, createConfig());
+    /**
+     * Gets the pdf xref table.
+     *
+     * @return the pdf xref table
+     */
+    public PdfXrefTable getXrefTable() {
+        return xrefTable;
     }
 
-    public PdfUATestPdfDocument(PdfReader reader, PdfWriter writer) {
-        super(reader, writer, createConfig());
-    }
-
-    public PdfUATestPdfDocument(PdfReader reader, PdfWriter writer, StampingProperties properties) {
-        super(reader, writer, properties, createConfig());
-    }
-
-    private static PdfUAConfig createConfig() {
-        return new PdfUAConfig(PdfUAConformanceLevel.PDFUA_1, "English pangram", "en-US");
+    @Override
+    public ValidationType getType() {
+        return ValidationType.XREF_TABLE;
     }
 }

@@ -24,6 +24,8 @@ package com.itextpdf.signatures;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISignaturePolicyIdentifier;
+import com.itextpdf.commons.utils.DateTimeUtil;
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.PdfSigFieldLock;
@@ -39,13 +41,10 @@ import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.IRandomAccessSource;
 import com.itextpdf.io.source.RASInputStream;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
-import com.itextpdf.commons.utils.DateTimeUtil;
-import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.IsoKey;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDate;
 import com.itextpdf.kernel.pdf.PdfDeveloperExtension;
@@ -65,6 +64,8 @@ import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
+import com.itextpdf.kernel.validation.context.SignTypeValidationContext;
+import com.itextpdf.kernel.validation.context.SignatureValidationContext;
 import com.itextpdf.layout.properties.Background;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.TextAlignment;
@@ -885,7 +886,7 @@ public class PdfSigner {
             }
         }
 
-        document.checkIsoConformance(sigtype == CryptoStandard.CADES, IsoKey.SIGNATURE_TYPE);
+        document.checkIsoConformance(new SignTypeValidationContext(sigtype == CryptoStandard.CADES));
 
         Collection<byte[]> crlBytes = null;
         int i = 0;
@@ -1215,7 +1216,7 @@ public class PdfSigner {
             document.getCatalog().put(PdfName.Perms, docmdp);
             document.getCatalog().setModified();
         }
-        document.checkIsoConformance(cryptoDictionary.getPdfObject(), IsoKey.SIGNATURE);
+        document.checkIsoConformance(new SignatureValidationContext(cryptoDictionary.getPdfObject()));
         cryptoDictionary.getPdfObject().flush(false);
         document.close();
 

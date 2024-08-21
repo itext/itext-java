@@ -20,11 +20,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.kernel.utils;
-
-import com.itextpdf.kernel.pdf.IsoKey;
-import com.itextpdf.kernel.pdf.PdfResources;
-import com.itextpdf.kernel.pdf.PdfStream;
+package com.itextpdf.kernel.validation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,31 +46,13 @@ public class ValidationContainer {
     }
 
     /**
-     * Validate the provided {@link ValidationContext} with all the {@link IValidationChecker} implementations.
-     * <p>
+     * Validate the provided {@link IValidationContext} with all the {@link IValidationChecker} implementations.
      *
-     * @param context the {@link ValidationContext} to validate
+     * @param context the {@link IValidationContext} to validate
      */
-    public void validate(ValidationContext context) {
+    public void validate(IValidationContext context) {
         for (IValidationChecker checker : validationCheckers) {
-            checker.validateDocument(context);
-        }
-    }
-
-    /**
-     * Check the provided object for conformance with all the {@link IValidationChecker} implementations.
-     * <p>
-     *
-     * @param obj           the object to check
-     * @param key           the {@link IsoKey} of the object
-     * @param resources     the {@link PdfResources} of the object
-     * @param contentStream the {@link PdfStream} of the object
-     * @param extra         additional information
-     */
-    public void validate(Object obj, IsoKey key, PdfResources resources, PdfStream contentStream,
-            Object extra) {
-        for (IValidationChecker checker : validationCheckers) {
-            checker.validateObject(obj, key, resources, contentStream, extra);
+            checker.validate(context);
         }
     }
 

@@ -28,6 +28,7 @@ import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.utils.ICopyFilter;
 import com.itextpdf.kernel.utils.NullCopyFilter;
+import com.itextpdf.kernel.validation.context.PdfObjectValidationContext;
 
 import java.io.IOException;
 import org.slf4j.Logger;
@@ -162,7 +163,7 @@ public abstract class PdfObject {
                     logger.info(IoLogMessageConstant.PDF_OBJECT_FLUSHING_NOT_PERFORMED);
                     return;
                 }
-                document.checkIsoConformance(this, IsoKey.PDF_OBJECT);
+                document.checkIsoConformance(new PdfObjectValidationContext(this));
                 document.flushObject(this, canBeInObjStm && getType() != STREAM
                         && getType() != INDIRECT_REFERENCE && getIndirectReference().getGenNumber() == 0);
             }

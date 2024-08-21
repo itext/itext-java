@@ -52,7 +52,6 @@ import com.itextpdf.kernel.numbering.RomanNumbering;
 import com.itextpdf.kernel.pdf.PdfReader.StrictnessLevel;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
-import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.collection.PdfCollection;
 import com.itextpdf.kernel.pdf.filespec.PdfEncryptedPayloadFileSpecFactory;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
@@ -61,8 +60,10 @@ import com.itextpdf.kernel.pdf.statistics.NumberOfPagesStatisticsEvent;
 import com.itextpdf.kernel.pdf.statistics.SizeOfPdfStatisticsEvent;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
-import com.itextpdf.kernel.utils.ValidationContainer;
-import com.itextpdf.kernel.utils.ValidationContext;
+import com.itextpdf.kernel.validation.ValidationContainer;
+import com.itextpdf.kernel.validation.context.CryptoValidationContext;
+import com.itextpdf.kernel.validation.IValidationContext;
+import com.itextpdf.kernel.validation.context.PdfDocumentValidationContext;
 import com.itextpdf.kernel.xmp.PdfConst;
 import com.itextpdf.kernel.xmp.XMPConst;
 import com.itextpdf.kernel.xmp.XMPException;
@@ -893,7 +894,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                     catalog.getPdfObject().put(PdfName.OCProperties, catalog.getOCProperties(false).getPdfObject());
                 }
 
-                checkIsoConformance();
+                checkIsoConformance(new PdfDocumentValidationContext(this, getDocumentFonts()));
 
                 if (getNumberOfPages() == 0) {
                     // Add new page here, not in PdfPagesTree#generateTree method, so that any page
@@ -1005,7 +1006,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                 // To avoid encryption of XrefStream and Encryption dictionary remove crypto.
                 // NOTE. No need in reverting, because it is the last operation with the document.
                 writer.crypto = null;
-                checkIsoConformance(crypto, IsoKey.CRYPTO);
+                checkIsoConformance(new CryptoValidationContext(crypto));
 
                 if (!properties.appendMode && crypto != null) {
                     // no need to flush crypto in append mode, it shall not have changed in this case
@@ -1579,39 +1580,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         outputIntents.add(outputIntent.getPdfObject());
     }
 
-    /**
-     * Checks whether PDF document conforms a specific standard.
-     *
-     * @param obj An object to conform.
-     * @param key type of object to conform.
-     */
-    public void checkIsoConformance(Object obj, IsoKey key) {
-        checkIsoConformance(obj, key, null, null);
-    }
-
-    /**
-     * Checks whether PDF document conforms a specific standard.
-     *
-     * @param obj           an object to conform.
-     * @param key           type of object to conform.
-     * @param resources     {@link PdfResources} associated with an object to check.
-     * @param contentStream current content stream
-     */
-    public void checkIsoConformance(Object obj, IsoKey key, PdfResources resources, PdfStream contentStream) {
-        checkIsoConformance(obj, key, resources, contentStream, null);
-    }
-
-    /**
-     * Checks whether PDF document conforms a specific standard.
-     *
-     * @param obj           an object to conform.
-     * @param key           type of object to conform.
-     * @param resources     {@link PdfResources} associated with an object to check.
-     * @param contentStream current content stream.
-     * @param extra         extra data required for the check.
-     */
-    public void checkIsoConformance(Object obj, IsoKey key, PdfResources resources, PdfStream contentStream,
-            Object extra) {
+    public void checkIsoConformance(IValidationContext validationContext) {
         if (!this.getDiContainer().isRegistered(ValidationContainer.class)) {
             return;
         }
@@ -1619,17 +1588,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         if (container == null) {
             return;
         }
-        container.validate(obj, key, resources, contentStream, extra);
-    }
-
-    /**
-     * Checks whether PDF document conforms a specific standard.
-     * Shall be overridden.
-     *
-     * @param gState    a {@link CanvasGraphicsState} object to conform.
-     * @param resources {@link PdfResources} associated with an object to check.
-     */
-    public void checkShowTextIsoConformance(CanvasGraphicsState gState, PdfResources resources) {
+        container.validate(validationContext);
     }
 
     /**
@@ -1994,23 +1953,6 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     protected void storeDestinationToReaddress(PdfDestination destination,
             Consumer<PdfDestination> onPageAvailable, Consumer<PdfDestination> onPageNotAvailable) {
         pendingDestinationMutations.add(new DestinationMutationInfo(destination, onPageAvailable, onPageNotAvailable));
-    }
-
-    /**
-     * Checks whether PDF document conforms to a specific standard.
-     */
-    protected void checkIsoConformance() {
-        if (!this.getDiContainer().isRegistered(ValidationContainer.class)) {
-            return;
-        }
-        ValidationContainer container = this.getDiContainer().getInstance(ValidationContainer.class);
-        if (container == null) {
-            return;
-        }
-        ValidationContext context = new ValidationContext()
-                .withPdfDocument(this)
-                .withFonts(getDocumentFonts());
-        container.validate(context);
     }
 
     /**

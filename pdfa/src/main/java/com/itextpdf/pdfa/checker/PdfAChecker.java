@@ -26,7 +26,6 @@ import com.itextpdf.io.colors.IccProfile;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfTrueTypeFont;
-import com.itextpdf.kernel.pdf.IsoKey;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfCatalog;
@@ -37,14 +36,29 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfOutline;
 import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfXrefTable;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
-import com.itextpdf.kernel.utils.IValidationChecker;
-import com.itextpdf.kernel.utils.ValidationContext;
+import com.itextpdf.kernel.validation.IValidationChecker;
+import com.itextpdf.kernel.validation.ValidationType;
+import com.itextpdf.kernel.validation.context.AbstractColorValidationContext;
+import com.itextpdf.kernel.validation.context.CanvasStackValidationContext;
+import com.itextpdf.kernel.validation.context.CryptoValidationContext;
+import com.itextpdf.kernel.validation.context.FontValidationContext;
+import com.itextpdf.kernel.validation.context.IContentStreamValidationParameter;
+import com.itextpdf.kernel.validation.context.IGraphicStateValidationParameter;
+import com.itextpdf.kernel.validation.IValidationContext;
+import com.itextpdf.kernel.validation.context.InlineImageValidationContext;
+import com.itextpdf.kernel.validation.context.PdfDocumentValidationContext;
+import com.itextpdf.kernel.validation.context.PdfObjectValidationContext;
+import com.itextpdf.kernel.validation.context.PdfPageValidationContext;
+import com.itextpdf.kernel.validation.context.RenderingIntentValidationContext;
+import com.itextpdf.kernel.validation.context.SignTypeValidationContext;
+import com.itextpdf.kernel.validation.context.SignatureValidationContext;
+import com.itextpdf.kernel.validation.context.TagStructElementValidationContext;
+import com.itextpdf.kernel.validation.context.XrefTableValidationContext;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -167,71 +181,80 @@ public abstract class PdfAChecker implements IValidationChecker {
         checkOpenAction(catalogDict.get(PdfName.OpenAction));
     }
 
-
-    public void validateDocument(ValidationContext validationContext) {
-        for (PdfFont pdfFont : validationContext.getFonts()) {
-            checkFont(pdfFont);
+    @Override
+    public void validate(IValidationContext context) {
+        CanvasGraphicsState gState = null;
+        if (context instanceof IGraphicStateValidationParameter) {
+            gState = ((IGraphicStateValidationParameter) context).getGraphicsState();
         }
-        PdfCatalog catalog = validationContext.getPdfDocument().getCatalog();
-        checkDocument(catalog);
-    }
-
-    public void validateObject(Object obj, IsoKey key, PdfResources resources, PdfStream contentStream,
-            Object extra) {
-
-        CanvasGraphicsState gState;
-        PdfDictionary currentColorSpaces = null;
-        if (resources != null) {
-            currentColorSpaces = resources.getPdfObject().getAsDictionary(PdfName.ColorSpace);
+        PdfStream contentStream = null;
+        if (context instanceof IContentStreamValidationParameter) {
+            contentStream = ((IContentStreamValidationParameter) context).getContentStream();
         }
-        switch (key) {
+
+        switch (context.getType()) {
+            case PDF_DOCUMENT:
+                PdfDocumentValidationContext pdfDocContext = (PdfDocumentValidationContext) context;
+                for (PdfFont pdfFont : pdfDocContext.getDocumentFonts()) {
+                    checkFont(pdfFont);
+                }
+                checkDocument(pdfDocContext.getPdfDocument().getCatalog());
+                break;
             case CANVAS_STACK:
-                checkCanvasStack((char) obj);
-                break;
-            case PDF_OBJECT:
-                checkPdfObject((PdfObject) obj);
-                break;
-            case RENDERING_INTENT:
-                checkRenderingIntent((PdfName) obj);
-                break;
-            case INLINE_IMAGE:
-                checkInlineImage((PdfStream) obj, currentColorSpaces);
-                break;
-            case EXTENDED_GRAPHICS_STATE:
-                gState = (CanvasGraphicsState) obj;
-                checkExtGState(gState, contentStream);
+                checkCanvasStack(((CanvasStackValidationContext) context).getOperator());
                 break;
             case FILL_COLOR:
-                gState = (CanvasGraphicsState) obj;
-                checkColor(gState, gState.getFillColor(), currentColorSpaces, true, contentStream);
-                break;
-            case PAGE:
-                checkSinglePage((PdfPage) obj);
-                break;
             case STROKE_COLOR:
-                gState = (CanvasGraphicsState) obj;
-                checkColor(gState, gState.getStrokeColor(), currentColorSpaces, false, contentStream);
+                boolean isFill = ValidationType.FILL_COLOR == context.getType();
+                final Color color = isFill ? gState.getFillColor() : gState.getStrokeColor();
+                AbstractColorValidationContext colorContext = (AbstractColorValidationContext) context;
+                checkColor(gState, color, colorContext.getCurrentColorSpaces(), isFill, contentStream);
+                break;
+            case EXTENDED_GRAPHICS_STATE:
+                checkExtGState(gState, contentStream);
+                break;
+            case INLINE_IMAGE:
+                InlineImageValidationContext imageContext = (InlineImageValidationContext) context;
+                checkInlineImage(imageContext.getImage(), imageContext.getCurrentColorSpaces());
+                break;
+            case PDF_PAGE:
+                PdfPageValidationContext pageContext = (PdfPageValidationContext) context;
+                checkSinglePage(pageContext.getPage());
+                break;
+            case PDF_OBJECT:
+                PdfObjectValidationContext objContext = (PdfObjectValidationContext) context;
+                checkPdfObject(objContext.getObject());
+                break;
+            case RENDERING_INTENT:
+                RenderingIntentValidationContext intentContext = (RenderingIntentValidationContext) context;
+                checkRenderingIntent(intentContext.getIntent());
                 break;
             case TAG_STRUCTURE_ELEMENT:
-                checkTagStructureElement((PdfObject) obj);
+                TagStructElementValidationContext tagContext = (TagStructElementValidationContext) context;
+                checkTagStructureElement(tagContext.getObject());
                 break;
             case FONT_GLYPHS:
-                checkFontGlyphs(((CanvasGraphicsState) obj).getFont(), contentStream);
+                checkFontGlyphs(gState.getFont(), contentStream);
                 break;
             case XREF_TABLE:
-                checkXrefTable((PdfXrefTable) obj);
+                XrefTableValidationContext xrefContext = (XrefTableValidationContext) context;
+                checkXrefTable(xrefContext.getXrefTable());
                 break;
             case SIGNATURE:
-                checkSignature((PdfDictionary) obj);
+                SignatureValidationContext signContext = (SignatureValidationContext) context;
+                checkSignature(signContext.getSignature());
                 break;
             case SIGNATURE_TYPE:
-                checkSignatureType(((Boolean) obj).booleanValue());
+                SignTypeValidationContext signTypeContext = (SignTypeValidationContext) context;
+                checkSignatureType(signTypeContext.isCAdES());
                 break;
             case CRYPTO:
-                checkCrypto((PdfObject) obj);
+                CryptoValidationContext cryptoContext = (CryptoValidationContext) context;
+                checkCrypto(cryptoContext.getCrypto());
                 break;
             case FONT:
-                checkText((String) obj, (PdfFont) extra);
+                FontValidationContext fontContext = (FontValidationContext) context;
+                checkText(fontContext.getText(), fontContext.getFont());
                 break;
         }
     }

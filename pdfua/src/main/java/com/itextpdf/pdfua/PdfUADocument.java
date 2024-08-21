@@ -32,7 +32,7 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfViewerPreferences;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
-import com.itextpdf.kernel.utils.ValidationContainer;
+import com.itextpdf.kernel.validation.ValidationContainer;
 import com.itextpdf.pdfua.checkers.PdfUA1Checker;
 import com.itextpdf.pdfua.exceptions.PdfUALogMessageConstants;
 

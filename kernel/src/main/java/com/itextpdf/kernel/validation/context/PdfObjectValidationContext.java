@@ -20,36 +20,38 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.pdfua;
+package com.itextpdf.kernel.validation.context;
 
-import com.itextpdf.kernel.pdf.DocumentProperties;
-import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfUAConformanceLevel;
-import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.pdf.StampingProperties;
+import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.validation.IValidationContext;
+import com.itextpdf.kernel.validation.ValidationType;
 
 /**
- * PdfDocument extension for testing purposes.
+ * Class for {@link PdfObject} validation context.
  */
-public class PdfUATestPdfDocument extends PdfUADocument {
+public class PdfObjectValidationContext implements IValidationContext {
+    private final PdfObject object;
 
-    public PdfUATestPdfDocument(PdfWriter writer) {
-        super(writer, createConfig());
+    /**
+     * Instantiates a new {@link PdfObjectValidationContext} based on pdf object.
+     *
+     * @param object the pdf object
+     */
+    public PdfObjectValidationContext(PdfObject object) {
+        this.object = object;
     }
 
-    public PdfUATestPdfDocument(PdfWriter writer, DocumentProperties properties) {
-        super(writer, properties, createConfig());
+    /**
+     * Gets the pdf object.
+     *
+     * @return the pdf object
+     */
+    public PdfObject getObject() {
+        return object;
     }
 
-    public PdfUATestPdfDocument(PdfReader reader, PdfWriter writer) {
-        super(reader, writer, createConfig());
-    }
-
-    public PdfUATestPdfDocument(PdfReader reader, PdfWriter writer, StampingProperties properties) {
-        super(reader, writer, properties, createConfig());
-    }
-
-    private static PdfUAConfig createConfig() {
-        return new PdfUAConfig(PdfUAConformanceLevel.PDFUA_1, "English pangram", "en-US");
+    @Override
+    public ValidationType getType() {
+        return ValidationType.PDF_OBJECT;
     }
 }

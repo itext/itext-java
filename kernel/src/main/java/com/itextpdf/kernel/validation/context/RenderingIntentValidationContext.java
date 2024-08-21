@@ -20,36 +20,38 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.pdfua;
+package com.itextpdf.kernel.validation.context;
 
-import com.itextpdf.kernel.pdf.DocumentProperties;
-import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfUAConformanceLevel;
-import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.pdf.StampingProperties;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.validation.IValidationContext;
+import com.itextpdf.kernel.validation.ValidationType;
 
 /**
- * PdfDocument extension for testing purposes.
+ * Class for rendering intent validation context.
  */
-public class PdfUATestPdfDocument extends PdfUADocument {
+public class RenderingIntentValidationContext implements IValidationContext {
+    private final PdfName intent;
 
-    public PdfUATestPdfDocument(PdfWriter writer) {
-        super(writer, createConfig());
+    /**
+     * Instantiates a new {@link RenderingIntentValidationContext} based on pdf name.
+     *
+     * @param intent the intent pdf name
+     */
+    public RenderingIntentValidationContext(PdfName intent) {
+        this.intent = intent;
     }
 
-    public PdfUATestPdfDocument(PdfWriter writer, DocumentProperties properties) {
-        super(writer, properties, createConfig());
+    /**
+     * Gets the intent pdf name.
+     *
+     * @return the intent pdf name
+     */
+    public PdfName getIntent() {
+        return intent;
     }
 
-    public PdfUATestPdfDocument(PdfReader reader, PdfWriter writer) {
-        super(reader, writer, createConfig());
-    }
-
-    public PdfUATestPdfDocument(PdfReader reader, PdfWriter writer, StampingProperties properties) {
-        super(reader, writer, properties, createConfig());
-    }
-
-    private static PdfUAConfig createConfig() {
-        return new PdfUAConfig(PdfUAConformanceLevel.PDFUA_1, "English pangram", "en-US");
+    @Override
+    public ValidationType getType() {
+        return ValidationType.RENDERING_INTENT;
     }
 }

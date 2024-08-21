@@ -29,6 +29,8 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
+import com.itextpdf.kernel.validation.IValidationContext;
+import com.itextpdf.kernel.validation.context.PdfDocumentValidationContext;
 import com.itextpdf.kernel.xmp.XMPConst;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
@@ -39,10 +41,11 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class PdfAAgnosticPdfDocumentUnitTest extends ExtendedITextTest {
@@ -62,7 +65,8 @@ public class PdfAAgnosticPdfDocumentUnitTest extends ExtendedITextTest {
         pdfDoc.flushObjectPublic(pdfDoc.getPage(1).getPdfObject(), true);
         Assertions.assertTrue(pdfDoc.getPage(1).getPdfObject().isFlushed());
 
-        pdfDoc.checkIsoConformancePublic(); // Does nothing for PdfDocument
+        IValidationContext validationContext = new PdfDocumentValidationContext(pdfDoc, new ArrayList<>());
+        pdfDoc.checkIsoConformance(validationContext); // Does nothing for PdfDocument
         Assertions.assertFalse(pdfDoc.getPageFactoryPublic() instanceof PdfAPageFactory);
         Assertions.assertNull(pdfDoc.getConformanceLevel());
 
@@ -91,7 +95,8 @@ public class PdfAAgnosticPdfDocumentUnitTest extends ExtendedITextTest {
         pdfADoc.flushObjectPublic(pdfADoc.getPage(1).getPdfObject(), true);
         Assertions.assertFalse(pdfADoc.getPage(1).getPdfObject().isFlushed());
 
-        pdfADoc.checkIsoConformancePublic();
+        IValidationContext validationContext = new PdfDocumentValidationContext(pdfADoc, new ArrayList<>());
+        pdfADoc.checkIsoConformance(validationContext);
         Assertions.assertEquals(PdfAConformanceLevel.PDF_A_2B, pdfADoc.getConformanceLevel());
         Assertions.assertTrue(pdfADoc.getPageFactoryPublic() instanceof PdfAPageFactory);
 
@@ -115,10 +120,6 @@ public class PdfAAgnosticPdfDocumentUnitTest extends ExtendedITextTest {
 
         public TestAgnosticPdfDocument(PdfReader reader, PdfWriter writer, StampingProperties properties) {
             super(reader, writer, properties);
-        }
-
-        public void checkIsoConformancePublic() {
-            super.checkIsoConformance();
         }
 
         public IPdfPageFactory getPageFactoryPublic() {

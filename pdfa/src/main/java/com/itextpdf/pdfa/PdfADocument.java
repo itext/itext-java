@@ -27,20 +27,18 @@ import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.pdf.DocumentProperties;
 import com.itextpdf.kernel.pdf.IConformanceLevel;
 import com.itextpdf.kernel.pdf.IPdfPageFactory;
-import com.itextpdf.kernel.pdf.IsoKey;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfResources;
-import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
-import com.itextpdf.kernel.utils.ValidationContainer;
+import com.itextpdf.kernel.validation.ValidationContainer;
+import com.itextpdf.kernel.validation.IValidationContext;
 import com.itextpdf.kernel.xmp.XMPConst;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
@@ -241,23 +239,9 @@ public class PdfADocument extends PdfDocument {
     }
 
     @Override
-    protected void checkIsoConformance() {
+    public void checkIsoConformance(IValidationContext validationContext) {
         setCheckerIfChanged();
-        super.checkIsoConformance();
-    }
-
-    /**
-     * @param obj           an object to conform.
-     * @param key           type of object to conform.
-     * @param resources     {@link PdfResources} associated with an object to check.
-     * @param contentStream current content stream.
-     * @param extra         extra data required for the check.
-     */
-    @Override
-    public void checkIsoConformance(Object obj, IsoKey key, PdfResources resources, PdfStream contentStream,
-            Object extra) {
-        setCheckerIfChanged();
-        super.checkIsoConformance(obj, key, resources, contentStream, extra);
+        super.checkIsoConformance(validationContext);
     }
 
     @Override

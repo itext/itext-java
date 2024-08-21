@@ -20,31 +20,38 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.kernel.pdf;
+package com.itextpdf.kernel.validation.context;
+
+import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.validation.IValidationContext;
+import com.itextpdf.kernel.validation.ValidationType;
 
 /**
- * Type of object to conform.
+ * Class for crypto validation.
  */
-public enum IsoKey {
-    // PDF/A Enums
-    CANVAS_STACK,
-    FILL_COLOR,
-    EXTENDED_GRAPHICS_STATE,
-    INLINE_IMAGE,
-    PAGE,
-    PDF_OBJECT,
-    RENDERING_INTENT,
-    STROKE_COLOR,
-    TAG_STRUCTURE_ELEMENT,
-    FONT_GLYPHS,
-    XREF_TABLE,
-    SIGNATURE,
-    SIGNATURE_TYPE,
-    CRYPTO,
-    FONT,
-    // PDF/UA Enums
-    CANVAS_BEGIN_MARKED_CONTENT,
-    CANVAS_WRITING_CONTENT,
-    LAYOUT,
-    DUPLICATE_ID_ENTRY
+public class CryptoValidationContext implements IValidationContext {
+    private final PdfObject crypto;
+
+    /**
+     * Instantiates a new {@link CryptoValidationContext} based on crypto object.
+     *
+     * @param crypto the crypto object
+     */
+    public CryptoValidationContext(PdfObject crypto) {
+        this.crypto = crypto;
+    }
+
+    /**
+     * Gets the crypto object.
+     *
+     * @return the crypto object
+     */
+    public PdfObject getCrypto() {
+        return crypto;
+    }
+
+    @Override
+    public ValidationType getType() {
+        return ValidationType.CRYPTO;
+    }
 }

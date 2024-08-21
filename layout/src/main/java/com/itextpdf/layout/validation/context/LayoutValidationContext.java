@@ -20,36 +20,38 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.pdfua;
+package com.itextpdf.layout.validation.context;
 
-import com.itextpdf.kernel.pdf.DocumentProperties;
-import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfUAConformanceLevel;
-import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.pdf.StampingProperties;
+import com.itextpdf.kernel.validation.ValidationType;
+import com.itextpdf.kernel.validation.IValidationContext;
+import com.itextpdf.layout.renderer.IRenderer;
 
 /**
- * PdfDocument extension for testing purposes.
+ * Class for {@link IRenderer} validation context.
  */
-public class PdfUATestPdfDocument extends PdfUADocument {
+public class LayoutValidationContext implements IValidationContext {
+    private final IRenderer renderer;
 
-    public PdfUATestPdfDocument(PdfWriter writer) {
-        super(writer, createConfig());
+    /**
+     * Instantiates a new {@link LayoutValidationContext} based on renderer.
+     *
+     * @param renderer the renderer
+     */
+    public LayoutValidationContext(IRenderer renderer) {
+        this.renderer = renderer;
     }
 
-    public PdfUATestPdfDocument(PdfWriter writer, DocumentProperties properties) {
-        super(writer, properties, createConfig());
+    /**
+     * Gets the renderer.
+     *
+     * @return the renderer
+     */
+    public IRenderer getRenderer() {
+        return renderer;
     }
 
-    public PdfUATestPdfDocument(PdfReader reader, PdfWriter writer) {
-        super(reader, writer, createConfig());
-    }
-
-    public PdfUATestPdfDocument(PdfReader reader, PdfWriter writer, StampingProperties properties) {
-        super(reader, writer, properties, createConfig());
-    }
-
-    private static PdfUAConfig createConfig() {
-        return new PdfUAConfig(PdfUAConformanceLevel.PDFUA_1, "English pangram", "en-US");
+    @Override
+    public ValidationType getType() {
+        return ValidationType.LAYOUT;
     }
 }

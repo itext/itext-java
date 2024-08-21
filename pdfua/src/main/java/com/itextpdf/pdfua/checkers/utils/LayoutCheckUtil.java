@@ -47,13 +47,13 @@ public final class LayoutCheckUtil {
     /**
      * Checks renderer for PDF UA compliance.
      *
-     * @param rendererObj The renderer to check.
+     * @param renderer The renderer to check.
      */
-    public void checkRenderer(Object rendererObj) {
-        if (rendererObj == null) {
+    public void checkRenderer(IRenderer renderer) {
+        if (renderer == null) {
             return;
         }
-        IPropertyContainer layoutElement = ((IRenderer) rendererObj).getModelElement();
+        IPropertyContainer layoutElement = renderer.getModelElement();
         if (layoutElement instanceof Image) {
             new GraphicsCheckUtil(context).checkLayoutElement((Image) layoutElement);
         } else if (layoutElement instanceof Table) {

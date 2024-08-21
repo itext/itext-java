@@ -22,9 +22,9 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.image.ImageDataFactory;
-import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -39,17 +39,21 @@ import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.kernel.validation.IValidationChecker;
+import com.itextpdf.kernel.validation.ValidationContainer;
+import com.itextpdf.kernel.validation.ValidationType;
+import com.itextpdf.kernel.validation.IValidationContext;
+import com.itextpdf.kernel.validation.context.PdfPageValidationContext;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Map;
-
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PageFlushingTest extends ExtendedITextTest {
@@ -424,6 +428,31 @@ public class PageFlushingTest extends ExtendedITextTest {
         Assertions.assertNotEquals(page15Res, page34Res);
 
         result.close();
+    }
+
+    @Test
+    public void pageValidationTest() {
+        try (PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            ValidationContainer container = new ValidationContainer();
+            CustomValidationChecker checker = new CustomValidationChecker();
+            container.addChecker(checker);
+            doc.getDiContainer().register(ValidationContainer.class, container);
+            Assertions.assertNull(checker.page);
+            final PdfPage pdfPage = doc.addNewPage();
+            pdfPage.flush(true);
+            Assertions.assertSame(pdfPage, checker.page);
+        }
+    }
+
+    private static class CustomValidationChecker implements IValidationChecker {
+        public PdfPage page;
+
+        @Override
+        public void validate(IValidationContext validationContext) {
+            if (validationContext.getType() == ValidationType.PDF_PAGE) {
+                page = ((PdfPageValidationContext) validationContext).getPage();
+            }
+        }
     }
 
     private static void test(String filename, DocMode docMode, FlushMode flushMode, PagesOp pagesOp,

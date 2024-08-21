@@ -44,6 +44,7 @@ import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.ICopyFilter;
 import com.itextpdf.kernel.utils.NullCopyFilter;
+import com.itextpdf.kernel.validation.context.PdfPageValidationContext;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
@@ -512,7 +513,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             put(PdfName.Resources, resources.getPdfObject());
         }
         if (flushResourcesContentStreams) {
-            getDocument().checkIsoConformance(this, IsoKey.PAGE);
+            getDocument().checkIsoConformance(new PdfPageValidationContext(this));
             flushResourcesContentStreams();
         }
 
