@@ -35,7 +35,7 @@ import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
-import com.itextpdf.layout.font.selectorstrategy.FirstMatchFontSelectorStrategy.FirstMathFontSelectorStrategyFactory;
+import com.itextpdf.layout.font.selectorstrategy.BestMatchFontSelectorStrategy.BestMatchFontSelectorStrategyFactory;
 import com.itextpdf.layout.font.selectorstrategy.IFontSelectorStrategy;
 import com.itextpdf.layout.font.selectorstrategy.IFontSelectorStrategyFactory;
 
@@ -110,7 +110,7 @@ public class FontProvider {
         pdfFonts = new HashMap<>();
         fontSelectorCache = new FontSelectorCache(this.fontSet);
         this.defaultFontFamily = defaultFontFamily;
-        this.fontSelectorStrategyFactory = new FirstMathFontSelectorStrategyFactory();
+        this.fontSelectorStrategyFactory = new BestMatchFontSelectorStrategyFactory();
     }
 
     /**
