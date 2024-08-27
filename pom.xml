@@ -85,11 +85,8 @@
   <properties>
     <argLine>-Xmx1024m</argLine>
     <bouncycastle.version>1.78</bouncycastle.version>
-    <bouncycastleintegrationtests>com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest</bouncycastleintegrationtests>
-    <bouncycastleunittests>com.itextpdf.test.annotations.type.BouncyCastleUnitTest</bouncycastleunittests>
     <dependencyCheck.version>7.0.0</dependencyCheck.version>
     <failsafe.version>3.0.0-M3</failsafe.version>
-    <integrationtests>com.itextpdf.test.annotations.type.IntegrationTest</integrationtests>
     <jacoco.version>0.8.4</jacoco.version>
     <java.version>1.8</java.version>
     <javadoc-additionalOptions />
@@ -102,17 +99,13 @@
     <maven.compiler.target>1.8</maven.compiler.target>
     <maven.jar.version>3.1.0</maven.jar.version>
     <maven.source.version>3.0.1</maven.source.version>
-    <performancetests>com.itextpdf.test.annotations.type.PerformanceTest</performancetests>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <sampletests>com.itextpdf.test.annotations.type.SampleTest</sampletests>
     <skipTests>true</skipTests>
     <slf4j.version>2.0.16</slf4j.version>
-    <slowtests>com.itextpdf.test.annotations.type.SlowTest</slowtests>
     <sonar.dependencyCheck.htmlReportPath>target/dependency-check-report.html</sonar.dependencyCheck.htmlReportPath>
     <sonar.dependencyCheck.reportPath>target/dependency-check-report.xml</sonar.dependencyCheck.reportPath>
     <surefire.version>3.0.0-M3</surefire.version>
-    <unittests>com.itextpdf.test.annotations.type.UnitTest</unittests>
   </properties>
 
   <dependencies>

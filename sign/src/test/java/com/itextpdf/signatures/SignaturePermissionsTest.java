@@ -29,7 +29,6 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.signatures.SignaturePermissions.FieldLock;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.ArrayList;
 import org.junit.jupiter.api.Assertions;

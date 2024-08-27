@@ -32,7 +32,6 @@ import com.itextpdf.signatures.PdfSignature;
 import com.itextpdf.signatures.PdfSignatureApp;
 import com.itextpdf.signatures.SignatureUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
