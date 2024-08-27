@@ -454,6 +454,9 @@ public final class KernelExceptionMessageConstant {
     public static final String UNABLE_TO_REMOVE_DUPLICATE_LAYER = "Unable to remove duplicated layer {0} " +
             "because it has child layers.";
 
+    public static final String TYPE_SHOULD_NOT_BE_NULL = "ClassArgument type should not be null";
+    public static final String INSTANCE_SHOULD_NOT_BE_NULL = "Instance should not be null";
+
     private KernelExceptionMessageConstant() {
     }
 }

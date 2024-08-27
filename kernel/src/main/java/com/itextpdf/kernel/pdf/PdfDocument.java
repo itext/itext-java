@@ -209,9 +209,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         }
         documentId = new SequenceId();
         this.reader = reader;
-        // default values of the StampingProperties doesn't affect anything
-        this.properties = new StampingProperties();
-        this.properties.setEventCountingMetaInfo(properties.metaInfo);
+        this.properties = new StampingProperties(properties);
         open(null);
     }
 
@@ -238,9 +236,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         }
         documentId = new SequenceId();
         this.writer = writer;
-        // default values of the StampingProperties doesn't affect anything
-        this.properties = new StampingProperties();
-        this.properties.setEventCountingMetaInfo(properties.metaInfo);
+        this.properties = new StampingProperties(properties);
         open(writer.properties.pdfVersion);
     }
 
@@ -1986,6 +1982,11 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      *                      or {@code null} otherwise
      */
     protected void open(PdfVersion newPdfVersion) {
+        if (properties != null){
+            for (Class<?> aClass : properties.dependencies.keySet()) {
+                diContainer.register(aClass, properties.dependencies.get(aClass));
+            }
+        }
         this.fingerPrint = new FingerPrint();
         this.encryptedEmbeddedStreamsHandler = new EncryptedEmbeddedStreamsHandler(this);
 

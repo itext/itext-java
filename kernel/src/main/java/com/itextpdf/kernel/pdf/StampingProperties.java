@@ -38,6 +38,11 @@ public class StampingProperties extends DocumentProperties {
         this.preserveEncryption = other.preserveEncryption;
     }
 
+    StampingProperties(DocumentProperties documentProperties) {
+        super(documentProperties);
+        this.dependencies = documentProperties.dependencies;
+    }
+
     /**
      * Defines if the document will be edited in append mode.
      * @return this {@link StampingProperties} instance

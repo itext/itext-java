@@ -68,6 +68,11 @@
     </dependency>
     <dependency>
       <groupId>com.itextpdf</groupId>
+      <artifactId>commons</artifactId>
+      <version>${itext.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.itextpdf</groupId>
       <artifactId>svg</artifactId>
       <version>${itext.version}</version>
     </dependency>
