@@ -24,7 +24,6 @@ package com.itextpdf.signatures;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISignaturePolicyIdentifier;
-import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.PdfAcroForm;
@@ -90,7 +89,6 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -114,36 +112,6 @@ public class PdfSigner {
          */
         CADES
     }
-
-    /**
-     * Approval signature.
-     */
-    public static final int NOT_CERTIFIED = 0;
-
-    /**
-     * Author signature, no changes allowed.
-     */
-    public static final int CERTIFIED_NO_CHANGES_ALLOWED = 1;
-
-    /**
-     * Author signature, form filling allowed.
-     */
-    public static final int CERTIFIED_FORM_FILLING = 2;
-
-    /**
-     * Author signature, form filling and annotations allowed.
-     */
-    public static final int CERTIFIED_FORM_FILLING_AND_ANNOTATIONS = 3;
-
-    /**
-     * The certification level.
-     */
-    protected int certificationLevel = NOT_CERTIFIED;
-
-    /**
-     * The name of the field.
-     */
-    protected String fieldName;
 
     /**
      * The file right before the signature is added (can be null).
@@ -201,56 +169,6 @@ public class PdfSigner {
     protected boolean preClosed = false;
 
     /**
-     * Signature field lock dictionary.
-     */
-    protected PdfSigFieldLock fieldLock;
-
-    /**
-     * The page where the signature will appear.
-     */
-    private int page = 1;
-
-    /**
-     * Rectangle that represent the position and dimension of the signature in the page.
-     */
-    private Rectangle pageRect = new Rectangle(0, 0);
-
-    /**
-     * The reason for signing.
-     */
-    private String reason = "";
-
-    /**
-     * Holds value of property location.
-     */
-    private String location = "";
-
-    /**
-     * Holds value of the application that creates the signature.
-     */
-    private String signatureCreator = "";
-
-    /**
-     * The contact name of the signer.
-     */
-    private String contact = "";
-
-    /**
-     * The name of the signer extracted from the signing certificate.
-     */
-    private String signerName = "";
-
-    /**
-     * The signature appearance.
-     */
-    protected SignatureFieldAppearance signatureAppearance;
-
-    /**
-     * Holds value of property signDate.
-     */
-    protected Calendar signDate = DateTimeUtil.getCurrentTimeCalendar();
-
-    /**
      * Boolean to check if this PdfSigner instance has been closed already or not.
      */
     protected boolean closed = false;
@@ -259,6 +177,16 @@ public class PdfSigner {
      * AcroForm for the PdfDocument.
      */
     private final PdfAcroForm acroForm;
+
+    /**
+     * The name of the signer extracted from the signing certificate.
+     */
+    private String signerName = "";
+
+    /**
+     * Properties to be used in signing operations.
+     */
+    private SignerProperties signerProperties = new SignerProperties();
 
     /**
      * Creates a PdfSigner instance. Uses a {@link java.io.ByteArrayOutputStream} instead of a temporary file.
@@ -289,19 +217,8 @@ public class PdfSigner {
     public PdfSigner(PdfReader reader, OutputStream outputStream, String path, StampingProperties stampingProperties,
                      SignerProperties signerProperties) throws IOException {
         this(reader, outputStream, path, stampingProperties);
-        this.fieldLock = signerProperties.getFieldLockDict();
-        updateFieldName(signerProperties.getFieldName());
-        // We need to update field name because the setter could change it and the user can rely on this field
-        signerProperties.setFieldName(fieldName);
-        certificationLevel = signerProperties.getCertificationLevel();
-        setPageRect(signerProperties.getPageRect());
-        setPageNumber(signerProperties.getPageNumber());
-        setSignDate(signerProperties.getSignDate());
-        setSignatureCreator(signerProperties.getSignatureCreator());
-        setContact(signerProperties.getContact());
-        setReason(signerProperties.getReason());
-        setLocation(signerProperties.getLocation());
-        setSignatureAppearance(signerProperties.getSignatureAppearance());
+        this.signerProperties = signerProperties;
+        updateFieldName();
     }
 
     /**
@@ -319,16 +236,16 @@ public class PdfSigner {
             throws IOException {
         StampingProperties localProps = new StampingProperties(properties).preserveEncryption();
         if (path == null) {
-            temporaryOS = new ByteArrayOutputStream();
-            document = initDocument(reader, new PdfWriter(temporaryOS), localProps);
+            this.temporaryOS = new ByteArrayOutputStream();
+            this.document = initDocument(reader, new PdfWriter(temporaryOS), localProps);
         } else {
             this.tempFile = FileUtil.createTempFile(path);
-            document = initDocument(reader, new PdfWriter(FileUtil.getFileOutputStream(tempFile)), localProps);
+            this.document = initDocument(reader, new PdfWriter(FileUtil.getFileOutputStream(tempFile)), localProps);
         }
-        acroForm = PdfFormCreator.getAcroForm(document, true);
+        this.acroForm = PdfFormCreator.getAcroForm(document, true);
 
-        originalOS = outputStream;
-        fieldName = getNewSigFieldName();
+        this.originalOS = outputStream;
+        this.signerProperties.setFieldName(getNewSigFieldName());
     }
 
     PdfSigner(PdfDocument document, OutputStream outputStream, ByteArrayOutputStream temporaryOS, File tempFile) {
@@ -340,7 +257,7 @@ public class PdfSigner {
         this.document = document;
         this.acroForm = PdfFormCreator.getAcroForm(document, true);
         this.originalOS = outputStream;
-        this.fieldName = getNewSigFieldName();
+        this.signerProperties.setFieldName(getNewSigFieldName());
     }
 
     /**
@@ -357,103 +274,32 @@ public class PdfSigner {
     }
 
     /**
-     * Gets the signature date.
+     * Sets the properties to be used in signing operations.
      *
-     * @return Calendar set to the signature date
-     */
-    public java.util.Calendar getSignDate() {
-        return signDate;
-    }
-
-    /**
-     * Sets the signature date.
-     *
-     * @param signDate the signature date
-     */
-    public void setSignDate(java.util.Calendar signDate) {
-        this.signDate = signDate;
-    }
-
-    /**
-     * Sets the signature field layout element to customize the appearance of the signature.
-     *
-     * <p>
-     * Note that if {@link SignedAppearanceText} was set as the content (or part of the content)
-     * for {@link SignatureFieldAppearance} object, {@link PdfSigner} properties such as signing date, reason, location
-     * and signer name could be set automatically.
-     *
-     * <p>
-     * In case you create new signature field (either using {@link #setFieldName} with the name
-     * that doesn't exist in the document or do not specifying it at all) then the signature is invisible by default.
-     * Use {@link #setPageRect(Rectangle)} and {@link #setPageNumber(int)} or
-     * {@link SignerProperties#setPageRect(Rectangle)} and {@link SignerProperties#setPageNumber(int)} to provide
-     * the rectangle that represent the position and dimension of the signature field in the specified page.
-     *
-     * <p>
-     * It is possible to set other appearance related properties such as
-     * {@link PdfSignatureFormField#setReuseAppearance}, {@link PdfSignatureFormField#setBackgroundLayer} (n0 layer) and
-     * {@link PdfSignatureFormField#setSignatureAppearanceLayer} (n2 layer) for the signature field using
-     * {@link #getSignatureField()}. Page, rectangle and other properties could be set up via {@link SignerProperties}.
-     *
-     * @param appearance the {@link SignatureFieldAppearance} layout element representing signature appearance
+     * @param properties the signer properties
      *
      * @return this instance to support fluent interface
      */
-    public PdfSigner setSignatureAppearance(SignatureFieldAppearance appearance) {
-        this.signatureAppearance = appearance;
+    public PdfSigner setSignerProperties(SignerProperties properties) {
+        this.signerProperties = properties;
+        updateFieldName();
         return this;
     }
 
     /**
-     * Returns the document's certification level.
-     * For possible values see {@link #setCertificationLevel(int)}.
+     * Gets the properties to be used in signing operations.
      *
-     * @return The certified status.
+     * @return the signer properties
      */
-    public int getCertificationLevel() {
-        return this.certificationLevel;
-    }
-
-    /**
-     * Sets the document's certification level.
-     * This method overrides the value set by {@link #setCertificationLevel(AccessPermissions)}.
-     *
-     * @param certificationLevel a new certification level for a document.
-     *                           Possible values are: <ul>
-     *                           <li>{@link #NOT_CERTIFIED}
-     *                           <li>{@link #CERTIFIED_NO_CHANGES_ALLOWED}
-     *                           <li>{@link #CERTIFIED_FORM_FILLING}
-     *                           <li>{@link #CERTIFIED_FORM_FILLING_AND_ANNOTATIONS}
-     *                           </ul>
-     */
-    public void setCertificationLevel(int certificationLevel) {
-        this.certificationLevel = certificationLevel;
-    }
-
-    /**
-     * Sets the document's certification level.
-     * This method overrides the value set by {@link #setCertificationLevel(int)}.
-     *
-     * @param accessPermissions {@link AccessPermissions} enum which specifies which certification level shall be used
-     */
-    public void setCertificationLevel(AccessPermissions accessPermissions) {
-        this.certificationLevel = accessPermissions.ordinal();
-    }
-
-    /**
-     * Gets the field name.
-     *
-     * @return the field name
-     */
-    public String getFieldName() {
-        return fieldName;
+    public SignerProperties getSignerProperties() {
+        return this.signerProperties;
     }
 
     /**
      * Returns the user made signature dictionary. This is the dictionary at the /V key
      * of the signature field.
      *
-     * @return The user made signature dictionary.
+     * @return the user made signature dictionary
      */
     public PdfSignature getSignatureDictionary() {
         return cryptoDictionary;
@@ -462,7 +308,7 @@ public class PdfSigner {
     /**
      * Getter for property signatureEvent.
      *
-     * @return Value of property signatureEvent.
+     * @return value of property signatureEvent
      */
     public ISignatureEvent getSignatureEvent() {
         return this.signatureEvent;
@@ -494,16 +340,6 @@ public class PdfSigner {
     }
 
     /**
-     * Sets the name indicating the field to be signed. The field can already be presented in the
-     * document but shall not be signed. If the field is not presented in the document, it will be created.
-     *
-     * @param fieldName The name indicating the field to be signed.
-     */
-    public void setFieldName(String fieldName) {
-        updateFieldName(fieldName);
-    }
-
-    /**
      * Gets the PdfDocument associated with this instance.
      *
      * @return the PdfDocument associated with this instance
@@ -525,168 +361,12 @@ public class PdfSigner {
     }
 
     /**
-     * Provides the page number of the signature field which this signature
-     * appearance is associated with.
-     *
-     * @return The page number of the signature field which this signature
-     * appearance is associated with.
-     */
-    public int getPageNumber() {
-        return page;
-    }
-
-    /**
-     * Sets the page number of the signature field which this signature
-     * appearance is associated with. Implicitly calls {@link PdfSigner#setPageRect}
-     * which considers page number to process the rectangle correctly.
-     *
-     * @param pageNumber The page number of the signature field which
-     *                   this signature appearance is associated with
-     *
-     * @return this instance to support fluent interface
-     */
-    public PdfSigner setPageNumber(int pageNumber) {
-        this.page = pageNumber;
-        return this;
-    }
-
-    /**
-     * Provides the rectangle that represent the position and dimension
-     * of the signature field in the page.
-     *
-     * @return the rectangle that represent the position and dimension
-     * of the signature field in the page
-     */
-    public Rectangle getPageRect() {
-        return pageRect;
-    }
-
-    /**
-     * Sets the rectangle that represent the position and dimension of
-     * the signature field in the page.
-     *
-     * @param pageRect The rectangle that represents the position and
-     *                 dimension of the signature field in the page
-     *
-     * @return this instance to support fluent interface
-     */
-    public PdfSigner setPageRect(Rectangle pageRect) {
-        this.pageRect = pageRect;
-        return this;
-    }
-
-    /**
      * Setter for the OutputStream.
      *
      * @param originalOS OutputStream for the bytes of the document
      */
     public void setOriginalOutputStream(OutputStream originalOS) {
         this.originalOS = originalOS;
-    }
-
-    /**
-     * Getter for the field lock dictionary.
-     *
-     * @return Field lock dictionary.
-     */
-    public PdfSigFieldLock getFieldLockDict() {
-        return fieldLock;
-    }
-
-    /**
-     * Setter for the field lock dictionary.
-     * <p>
-     * <strong>Be aware:</strong> if a signature is created on an existing signature field,
-     * then its /Lock dictionary takes the precedence (if it exists).
-     *
-     * @param fieldLock Field lock dictionary
-     */
-    public void setFieldLockDict(PdfSigFieldLock fieldLock) {
-        this.fieldLock = fieldLock;
-    }
-
-    /**
-     * Returns the signature creator.
-     *
-     * @return the signature creator
-     */
-    public String getSignatureCreator() {
-        return signatureCreator;
-    }
-
-    /**
-     * Sets the name of the application used to create the signature.
-     *
-     * @param signatureCreator A new name of the application signing a document
-     *
-     * @return this instance to support fluent interface
-     */
-    public PdfSigner setSignatureCreator(String signatureCreator) {
-        this.signatureCreator = signatureCreator;
-        return this;
-    }
-
-    /**
-     * Returns the signing contact.
-     *
-     * @return the signing contact
-     */
-    public String getContact() {
-        return contact;
-    }
-
-    /**
-     * Sets the signing contact.
-     *
-     * @param contact A new signing contact
-     *
-     * @return this instance to support fluent interface
-     */
-    public PdfSigner setContact(String contact) {
-        this.contact = contact;
-        return this;
-    }
-
-    /**
-     * Returns the signing reason.
-     *
-     * @return the signing reason
-     */
-    public String getReason() {
-        return reason;
-    }
-
-    /**
-     * Sets the signing reason.
-     *
-     * @param reason a new signing reason
-     *
-     * @return this instance to support fluent interface
-     */
-    public PdfSigner setReason(String reason) {
-        this.reason = reason;
-        return this;
-    }
-
-    /**
-     * Returns the signing location.
-     *
-     * @return the signing location
-     */
-    public String getLocation() {
-        return location;
-    }
-
-    /**
-     * Sets the signing location.
-     *
-     * @param location a new signing location
-     *
-     * @return this instance to support fluent interface
-     */
-    public PdfSigner setLocation(String location) {
-        this.location = location;
-        return this;
     }
 
     /**
@@ -699,16 +379,19 @@ public class PdfSigner {
      * {@link PdfSignatureFormField#setSignatureAppearanceLayer}.
      *
      * <p>
-     * Note that for the new signature field {@link #setPageRect(Rectangle)} and {@link #setPageNumber(int)}
-     * should be called before this method.
+     * Note that for the new signature field {@link SignerProperties#setPageRect(Rectangle)} and
+     * {@link SignerProperties#setPageNumber(int)} should be called before this method.
      *
      * @return the {@link PdfSignatureFormField} instance
      */
     public PdfSignatureFormField getSignatureField() {
-        PdfFormField field = acroForm.getField(fieldName);
+        PdfFormField field = acroForm.getField(getFieldName());
         if (field == null) {
-            PdfSignatureFormField sigField = new SignatureFormFieldBuilder(document, fieldName)
-                    .setWidgetRectangle(getPageRect()).setPage(getPageNumber()).createSignature();
+            PdfSignatureFormField sigField =
+                    new SignatureFormFieldBuilder(document, this.signerProperties.getFieldName())
+                    .setWidgetRectangle(this.signerProperties.getPageRect())
+                    .setPage(this.signerProperties.getPageNumber())
+                    .createSignature();
             acroForm.addField(sigField);
 
             if (acroForm.getPdfObject().isIndirect()) {
@@ -879,7 +562,7 @@ public class PdfSigner {
             throw new PdfException(SignExceptionMessageConstant.THIS_INSTANCE_OF_PDF_SIGNER_ALREADY_CLOSED);
         }
 
-        if (certificationLevel > 0 && isDocumentPdf2()) {
+        if (this.signerProperties.getCertificationLevel().ordinal() > 0 && isDocumentPdf2()) {
             if (documentContainsCertificationOrApprovalSignatures()) {
                 throw new PdfException(
                         SignExceptionMessageConstant.CERTIFICATION_SIGNATURE_CREATION_FAILED_DOC_SHALL_NOT_CONTAIN_SIGS);
@@ -924,11 +607,11 @@ public class PdfSigner {
         PdfSignature dic = new PdfSignature(PdfName.Adobe_PPKLite, sigtype == CryptoStandard.CADES
                 ? PdfName.ETSI_CAdES_DETACHED
                 : PdfName.Adbe_pkcs7_detached);
-        dic.setReason(getReason());
-        dic.setLocation(getLocation());
-        dic.setSignatureCreator(getSignatureCreator());
-        dic.setContact(getContact());
-        dic.setDate(new PdfDate(getSignDate())); // time-stamp will over-rule this
+        dic.setReason(this.signerProperties.getReason());
+        dic.setLocation(this.signerProperties.getLocation());
+        dic.setSignatureCreator(this.signerProperties.getSignatureCreator());
+        dic.setContact(this.signerProperties.getContact());
+        dic.setDate(new PdfDate(this.signerProperties.getClaimedSignDate())); // time-stamp will over-rule this
         cryptoDictionary = dic;
 
         Map<PdfName, Integer> exc = new HashMap<>();
@@ -1045,7 +728,7 @@ public class PdfSigner {
         if (!isDocumentPdf2()) {
             addDeveloperExtension(PdfDeveloperExtension.ESIC_1_7_EXTENSIONLEVEL5);
         }
-        setFieldName(signatureName);
+        this.signerProperties.setFieldName(signatureName);
 
         PdfSignature dic = new PdfSignature(PdfName.Adobe_PPKLite, PdfName.ETSI_RFC3161);
         dic.put(PdfName.Type, PdfName.DocTimeStamp);
@@ -1199,7 +882,7 @@ public class PdfSigner {
             exclusionLocations.put(key, lit);
             cryptoDictionary.put(key, lit);
         }
-        if (certificationLevel > 0) {
+        if (this.signerProperties.getCertificationLevel().ordinal() > 0) {
             addDocMDP(cryptoDictionary);
         }
         if (fieldLock != null) {
@@ -1209,7 +892,7 @@ public class PdfSigner {
             signatureEvent.getSignatureDictionary(cryptoDictionary);
         }
 
-        if (certificationLevel > 0) {
+        if (this.signerProperties.getCertificationLevel().ordinal() > 0) {
             // add DocMDP entry to root
             PdfDictionary docmdp = new PdfDictionary();
             docmdp.put(PdfName.DocMDP, cryptoDictionary.getPdfObject());
@@ -1273,16 +956,17 @@ public class PdfSigner {
     }
 
     /**
-     * Returns final signature appearance object set by {@link #setSignatureAppearance(SignatureFieldAppearance)} and
+     * Returns final signature appearance object set by
+     * {@link SignerProperties#setSignatureAppearance(SignatureFieldAppearance)} and
      * customized using {@link PdfSigner} properties such as signing date, reason, location and signer name
      * in case they weren't specified by the user, or, if none was set, returns a new one with default appearance.
      *
      * <p>
      * To customize the appearance of the signature, create new {@link SignatureFieldAppearance} object and set it
-     * using {@link #setSignatureAppearance(SignatureFieldAppearance)}.
+     * using {@link SignerProperties#setSignatureAppearance(SignatureFieldAppearance)}.
      *
      * <p>
-     * Note that in case you create new signature field (either use {@link #setFieldName} with the name
+     * Note that in case you create new signature field (either use {@link SignerProperties#setFieldName} with the name
      * that doesn't exist in the document or don't specify it at all) then the signature is invisible by default.
      *
      * <p>
@@ -1291,16 +975,17 @@ public class PdfSigner {
      * {@link PdfSignatureFormField#setSignatureAppearanceLayer} (n2 layer) for the signature field using
      * {@link #getSignatureField()}. Page, rectangle and other properties could be set up via {@link SignerProperties}.
      *
-     * @return {@link SignatureFieldAppearance} object representing signature appearance.
+     * @return {@link SignatureFieldAppearance} object representing signature appearance
      */
     protected SignatureFieldAppearance getSignatureAppearance() {
-        if (signatureAppearance == null) {
-            signatureAppearance = new SignatureFieldAppearance(fieldName);
+        if (this.signerProperties.getSignatureAppearance() == null) {
+            this.signerProperties.setSignatureAppearance(
+                    new SignatureFieldAppearance(this.signerProperties.getFieldName()));
             setContent();
         } else {
             populateExistingModelElement();
         }
-        return signatureAppearance;
+        return this.signerProperties.getSignatureAppearance();
     }
 
     /**
@@ -1312,17 +997,17 @@ public class PdfSigner {
      * @return signature field lock dictionary
      */
     protected PdfSigFieldLock populateExistingSignatureFormField(PdfAcroForm acroForm) {
-        PdfSignatureFormField sigField = (PdfSignatureFormField) acroForm.getField(fieldName);
+        PdfSignatureFormField sigField = (PdfSignatureFormField) acroForm.getField(this.signerProperties.getFieldName());
 
         PdfSigFieldLock sigFieldLock = sigField.getSigFieldLockDictionary();
 
-        if (sigFieldLock == null && this.fieldLock != null) {
-            this.fieldLock.getPdfObject().makeIndirect(document);
-            sigField.put(PdfName.Lock, this.fieldLock.getPdfObject());
-            sigFieldLock = this.fieldLock;
+        if (sigFieldLock == null && this.signerProperties.getFieldLockDict() != null) {
+            this.signerProperties.getFieldLockDict().getPdfObject().makeIndirect(document);
+            sigField.put(PdfName.Lock, this.signerProperties.getFieldLockDict().getPdfObject());
+            sigFieldLock = this.signerProperties.getFieldLockDict();
         }
 
-        sigField.put(PdfName.P, document.getPage(getPageNumber()).getPdfObject());
+        sigField.put(PdfName.P, document.getPage(this.signerProperties.getPageNumber()).getPdfObject());
         sigField.put(PdfName.V, cryptoDictionary.getPdfObject());
         PdfObject obj = sigField.getPdfObject().get(PdfName.F);
         int flags = 0;
@@ -1352,7 +1037,7 @@ public class PdfSigner {
      * @return signature field lock dictionary
      */
     protected PdfSigFieldLock createNewSignatureFormField(PdfAcroForm acroForm, String name) {
-        PdfWidgetAnnotation widget = new PdfWidgetAnnotation(getPageRect());
+        PdfWidgetAnnotation widget = new PdfWidgetAnnotation(this.signerProperties.getPageRect());
         widget.setFlags(PdfAnnotation.PRINT | PdfAnnotation.LOCKED);
 
         PdfSignatureFormField sigField = new SignatureFormFieldBuilder(document, name).createSignature();
@@ -1361,13 +1046,13 @@ public class PdfSigner {
 
         PdfSigFieldLock sigFieldLock = sigField.getSigFieldLockDictionary();
 
-        if (this.fieldLock != null) {
-            this.fieldLock.getPdfObject().makeIndirect(document);
-            sigField.put(PdfName.Lock, this.fieldLock.getPdfObject());
-            sigFieldLock = this.fieldLock;
+        if (this.signerProperties.getFieldLockDict() != null) {
+            this.signerProperties.getFieldLockDict().getPdfObject().makeIndirect(document);
+            sigField.put(PdfName.Lock, this.signerProperties.getFieldLockDict().getPdfObject());
+            sigFieldLock = this.signerProperties.getFieldLockDict();
         }
 
-        int pagen = getPageNumber();
+        int pagen = this.signerProperties.getPageNumber();
         widget.setPage(document.getPage(pagen));
 
         sigField.disableFieldRegeneration();
@@ -1494,7 +1179,7 @@ public class PdfSigner {
     protected void addDocMDP(PdfSignature crypto) {
         PdfDictionary reference = new PdfDictionary();
         PdfDictionary transformParams = new PdfDictionary();
-        transformParams.put(PdfName.P, new PdfNumber(certificationLevel));
+        transformParams.put(PdfName.P, new PdfNumber(this.signerProperties.getCertificationLevel().ordinal()));
         transformParams.put(PdfName.V, new PdfName("1.2"));
         transformParams.put(PdfName.Type, PdfName.TransformParams);
         reference.put(PdfName.TransformMethod, PdfName.DocMDP);
@@ -1615,9 +1300,9 @@ public class PdfSigner {
         return name == null? "" : name;
     }
 
-    private void updateFieldName(String fieldName) {
-        if (fieldName != null) {
-            PdfFormField field = acroForm.getField(fieldName);
+    private void updateFieldName() {
+        if (signerProperties.getFieldName() != null) {
+            PdfFormField field = acroForm.getField(signerProperties.getFieldName());
             if (field != null) {
                 if (!PdfName.Sig.equals(field.getFormType())) {
                     throw new IllegalArgumentException(
@@ -1631,20 +1316,20 @@ public class PdfSigner {
                 List<PdfWidgetAnnotation> widgets = field.getWidgets();
                 if (!widgets.isEmpty()) {
                     PdfWidgetAnnotation widget = widgets.get(0);
-                    setPageRect(getWidgetRectangle(widget));
-                    setPageNumber(getWidgetPageNumber(widget));
+                    this.signerProperties.setPageRect(getWidgetRectangle(widget));
+                    this.signerProperties.setPageNumber(getWidgetPageNumber(widget));
                 }
             } else {
                 // Do not allow dots for new fields
                 // For existing fields dots are allowed because there it might be fully qualified name
-                if (fieldName.indexOf('.') >= 0) {
+                if (signerProperties.getFieldName().indexOf('.') >= 0) {
                     throw new IllegalArgumentException(SignExceptionMessageConstant.FIELD_NAMES_CANNOT_CONTAIN_A_DOT);
                 }
             }
-            this.fieldName = fieldName;
+        } else {
+            this.signerProperties.setFieldName(getNewSigFieldName());
         }
     }
-
 
     private boolean isDocumentPdf2() {
         return document.getPdfVersion().compareTo(PdfVersion.PDF_2_0) >= 0;
@@ -1652,12 +1337,12 @@ public class PdfSigner {
 
     PdfSignature createSignatureDictionary(boolean includeDate) {
         PdfSignature dic = new PdfSignature();
-        dic.setReason(getReason());
-        dic.setLocation(getLocation());
-        dic.setSignatureCreator(getSignatureCreator());
-        dic.setContact(getContact());
+        dic.setReason(this.signerProperties.getReason());
+        dic.setLocation(this.signerProperties.getLocation());
+        dic.setSignatureCreator(this.signerProperties.getSignatureCreator());
+        dic.setContact(this.signerProperties.getContact());
         if (includeDate) {
-            dic.setDate(new PdfDate(getSignDate())); // time-stamp will over-rule this
+            dic.setDate(new PdfDate(this.signerProperties.getClaimedSignDate())); // time-stamp will over-rule this
         }
         return dic;
     }
@@ -1703,32 +1388,39 @@ public class PdfSigner {
     }
 
     private void setContent() {
-        if (pageRect == null || pageRect.getWidth() == 0 || pageRect.getHeight() == 0) {
+        if (this.signerProperties.getPageRect() == null || this.signerProperties.getPageRect().getWidth() == 0 ||
+                this.signerProperties.getPageRect().getHeight() == 0) {
             return;
         }
-        signatureAppearance.setContent(generateSignatureText());
+        this.signerProperties.getSignatureAppearance().setContent(generateSignatureText());
     }
 
     private SignedAppearanceText generateSignatureText() {
         return new SignedAppearanceText()
                 .setSignedBy(signerName)
-                .setSignDate(signDate)
-                .setReasonLine("Reason: " + reason)
-                .setLocationLine("Location: " + location);
+                .setSignDate(this.signerProperties.getClaimedSignDate())
+                .setReasonLine("Reason: " + this.signerProperties.getReason())
+                .setLocationLine("Location: " + this.signerProperties.getLocation());
     }
 
     private void populateExistingModelElement() {
-        signatureAppearance.setSignerName(signerName);
-        SignedAppearanceText signedAppearanceText = signatureAppearance.getSignedAppearanceText();
+        this.signerProperties.getSignatureAppearance().setSignerName(signerName);
+        SignedAppearanceText signedAppearanceText =
+                this.signerProperties.getSignatureAppearance().getSignedAppearanceText();
         if (signedAppearanceText != null) {
-            signedAppearanceText.setSignedBy(signerName).setSignDate(signDate);
+            signedAppearanceText.setSignedBy(signerName).setSignDate(this.signerProperties.getClaimedSignDate());
             if (signedAppearanceText.getReasonLine().isEmpty()) {
-                signedAppearanceText.setReasonLine("Reason: " + reason);
+                signedAppearanceText.setReasonLine("Reason: " + this.signerProperties.getReason());
             }
             if (signedAppearanceText.getLocationLine().isEmpty()) {
-                signedAppearanceText.setLocationLine("Location: " + location);
+                signedAppearanceText.setLocationLine("Location: " + this.signerProperties.getLocation());
             }
         }
+    }
+
+    private String getFieldName() {
+        updateFieldName();
+        return signerProperties.getFieldName();
     }
 
     /**

@@ -43,6 +43,7 @@ import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
 import com.itextpdf.signatures.SecurityIDs;
 import com.itextpdf.signatures.SignatureUtil;
+import com.itextpdf.signatures.SignerProperties;
 import com.itextpdf.signatures.logs.SignLogMessageConstant;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.test.ExtendedITextTest;
@@ -271,7 +272,8 @@ public class IsoSignatureExtensionsRoundtripTest extends ExtendedITextTest {
             );
 
             PdfSigner signer = new PdfSigner(new PdfReader(in1), baos1, new StampingProperties());
-            signer.setFieldName("Signature1");
+            SignerProperties signerProperties = new SignerProperties().setFieldName("Signature1");
+            signer.setSignerProperties(signerProperties);
             signer.signDetached(
                     new BouncyCastleDigest(), pks, signChain1, null, null, null, 0,
                     PdfSigner.CryptoStandard.CMS);
@@ -284,7 +286,8 @@ public class IsoSignatureExtensionsRoundtripTest extends ExtendedITextTest {
             );
 
             PdfSigner signer = new PdfSigner(new PdfReader(in2), baos2, new StampingProperties());
-            signer.setFieldName("Signature2");
+            SignerProperties signerProperties = new SignerProperties().setFieldName("Signature2");
+            signer.setSignerProperties(signerProperties);
             signer.signDetached(
                     new BouncyCastleDigest(), pks, signChain2, null, null, null, 0,
                     PdfSigner.CryptoStandard.CMS);
@@ -322,14 +325,15 @@ public class IsoSignatureExtensionsRoundtripTest extends ExtendedITextTest {
         IExternalSignature pks = new PrivateKeySignature(signPrivateKey, digestAlgo, signatureAlgo, BOUNCY_CASTLE_FACTORY.getProviderName(), null);
 
         PdfSigner signer = new PdfSigner(new PdfReader(SOURCE_FILE), os, new StampingProperties());
-        signer.setFieldName(SIGNATURE_FIELD);
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance(signer.getFieldName())
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(SIGNATURE_FIELD)
                 .setContent("Approval test signature.\nCreated by iText.");
-        signer
+        SignerProperties signerProperties = new SignerProperties()
+                .setFieldName(SIGNATURE_FIELD)
                 .setPageRect(new Rectangle(50, 650, 200, 100))
                 .setReason("Test")
                 .setLocation("TestCity")
                 .setSignatureAppearance(appearance);
+        signer.setSignerProperties(signerProperties);
 
         signer.signDetached(
                 new BouncyCastleDigest(), pks, signChain, null, null, null, 0,

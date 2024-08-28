@@ -33,11 +33,13 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.signatures.AccessPermissions;
 import com.itextpdf.signatures.BouncyCastleDigest;
 import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.SignerProperties;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
@@ -96,7 +98,7 @@ public class AnnotationsSigningTest extends ExtendedITextTest {
 
         String fieldName = "Signature1";
         sign(srcFile, fieldName, outPdf, chain, pk, DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CADES, "Test 1",
-                "TestCity", rect, false, true, PdfSigner.NOT_CERTIFIED, 12f);
+                "TestCity", rect, false, true, AccessPermissions.UNSPECIFIED, 12f);
 
         Assertions.assertNull(new CompareTool().compareVisually(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_",
                 getTestMap(rect)));
@@ -114,7 +116,7 @@ public class AnnotationsSigningTest extends ExtendedITextTest {
 
         String fieldName = "Signature1";
         sign(srcFile, fieldName, outPdf, chain, pk, DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CADES, "Test 1",
-                "TestCity", null, false, false, PdfSigner.NOT_CERTIFIED, 12f);
+                "TestCity", null, false, false, AccessPermissions.UNSPECIFIED, 12f);
 
         Assertions.assertNull(new CompareTool().compareVisually(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_",
                 getTestMap(new Rectangle(41, 693, 237, 781))));
@@ -132,7 +134,7 @@ public class AnnotationsSigningTest extends ExtendedITextTest {
 
         String fieldName = "Signature1";
         sign(srcFile, fieldName, outPdf, chain, pk, DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CADES, "Test 1",
-                "TestCity", null, false, false, PdfSigner.NOT_CERTIFIED, 12f);
+                "TestCity", null, false, false, AccessPermissions.UNSPECIFIED, 12f);
 
         Assertions.assertNull(new CompareTool().compareVisually(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_",
                 getTestMap(new Rectangle(41, 693, 237, 781))));
@@ -160,14 +162,14 @@ public class AnnotationsSigningTest extends ExtendedITextTest {
             String reason, String location, Rectangle rectangleForNewField, boolean setReuseAppearance,
             boolean isAppendMode) throws GeneralSecurityException, IOException {
         sign(src, name, dest, chain, pk, digestAlgorithm, subfilter, reason, location, rectangleForNewField,
-                setReuseAppearance, isAppendMode, PdfSigner.NOT_CERTIFIED, null);
+                setReuseAppearance, isAppendMode, AccessPermissions.UNSPECIFIED, null);
     }
 
     protected void sign(String src, String name, String dest,
             Certificate[] chain, PrivateKey pk,
             String digestAlgorithm, PdfSigner.CryptoStandard subfilter,
             String reason, String location, Rectangle rectangleForNewField, boolean setReuseAppearance,
-            boolean isAppendMode, int certificationLevel, Float fontSize)
+            boolean isAppendMode, AccessPermissions certificationLevel, Float fontSize)
             throws GeneralSecurityException, IOException {
 
         PdfReader reader = new PdfReader(src);
@@ -177,22 +179,24 @@ public class AnnotationsSigningTest extends ExtendedITextTest {
         }
         PdfSigner signer = new PdfSigner(reader, FileUtil.getFileOutputStream(dest), properties);
 
-        signer.setCertificationLevel(certificationLevel);
-        signer.setFieldName(name);
+        SignerProperties signerProperties = new SignerProperties()
+                .setCertificationLevel(certificationLevel)
+                .setFieldName(name);
 
         // Creating the appearance
         SignatureFieldAppearance appearance = new SignatureFieldAppearance(name)
                 .setContent(new SignedAppearanceText());
-        signer
+        signerProperties
                 .setReason(reason)
                 .setLocation(location)
                 .setSignatureAppearance(appearance);
         if (rectangleForNewField != null) {
-            signer.setPageRect(rectangleForNewField);
+            signerProperties.setPageRect(rectangleForNewField);
         }
         if (fontSize != null) {
             appearance.setFontSize((float) fontSize);
         }
+        signer.setSignerProperties(signerProperties);
         signer.getSignatureField().setReuseAppearance(setReuseAppearance);
 
         // Creating the signature

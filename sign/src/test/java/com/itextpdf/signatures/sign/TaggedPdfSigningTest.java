@@ -33,11 +33,13 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.signatures.AccessPermissions;
 import com.itextpdf.signatures.BouncyCastleDigest;
 import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.SignerProperties;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
@@ -135,14 +137,14 @@ public class TaggedPdfSigningTest extends ExtendedITextTest {
             String reason, String location, Rectangle rectangleForNewField, boolean setReuseAppearance,
             boolean isAppendMode) throws GeneralSecurityException, IOException {
         sign(src, name, dest, chain, pk, digestAlgorithm, subfilter, reason, location, rectangleForNewField,
-                setReuseAppearance, isAppendMode, PdfSigner.NOT_CERTIFIED, null);
+                setReuseAppearance, isAppendMode, AccessPermissions.UNSPECIFIED, null);
     }
 
     protected void sign(String src, String name, String dest,
             Certificate[] chain, PrivateKey pk,
             String digestAlgorithm, PdfSigner.CryptoStandard subfilter,
             String reason, String location, Rectangle rectangleForNewField, boolean setReuseAppearance,
-            boolean isAppendMode, int certificationLevel, Float fontSize)
+            boolean isAppendMode, AccessPermissions certificationLevel, Float fontSize)
             throws GeneralSecurityException, IOException {
 
         PdfReader reader = new PdfReader(src);
@@ -152,19 +154,21 @@ public class TaggedPdfSigningTest extends ExtendedITextTest {
         }
         PdfSigner signer = new PdfSigner(reader, FileUtil.getFileOutputStream(dest), properties);
 
-        signer.setCertificationLevel(certificationLevel);
-        signer.setFieldName(name);
+        SignerProperties signerProperties = new SignerProperties()
+                .setCertificationLevel(certificationLevel)
+                .setFieldName(name);
+        signer.setSignerProperties(signerProperties);
 
         // Creating the appearance
         SignatureFieldAppearance appearance = new SignatureFieldAppearance(name)
                 .setContent(new SignedAppearanceText());
         if (rectangleForNewField != null) {
-            signer.setPageRect(rectangleForNewField);
+            signerProperties.setPageRect(rectangleForNewField);
         }
         if (fontSize != null) {
             appearance.setFontSize((float) fontSize);
         }
-        signer
+        signerProperties
                 .setReason(reason)
                 .setLocation(location)
                 .setSignatureAppearance(appearance);

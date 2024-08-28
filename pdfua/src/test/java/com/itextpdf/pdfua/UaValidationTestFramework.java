@@ -30,7 +30,7 @@ import com.itextpdf.kernel.validation.ValidationContainer;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
-import com.itextpdf.test.pdfa.VeraPdfValidator;
+import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;

@@ -41,6 +41,7 @@ import com.itextpdf.signatures.PrivateKeySignature;
 import com.itextpdf.signatures.RSASSAPSSMechanismParams;
 import com.itextpdf.signatures.SecurityIDs;
 import com.itextpdf.signatures.SignatureUtil;
+import com.itextpdf.signatures.SignerProperties;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
@@ -185,7 +186,7 @@ public class RSASSAPSSTest extends ExtendedITextTest {
             IExternalSignature pks = new PrivateKeySignature(signPrivateKey, digestAlgo, signatureAlgo, FACTORY.getProviderName(), params);
 
             PdfSigner signer = new PdfSigner(new PdfReader(SOURCE_FILE), fos, new StampingProperties());
-            signer.setFieldName(SIGNATURE_FIELD);
+            signer.setSignerProperties(new SignerProperties().setFieldName(SIGNATURE_FIELD));
             signer.signDetached(
                     new BouncyCastleDigest(), pks, signChain, null, null, null, 0,
                     PdfSigner.CryptoStandard.CMS);

@@ -24,6 +24,8 @@ package com.itextpdf.signatures;
 
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.forms.PdfSigFieldLock;
+import com.itextpdf.forms.fields.PdfSignatureFormField;
+import com.itextpdf.forms.fields.properties.SignedAppearanceText;
 import com.itextpdf.forms.form.element.SignatureFieldAppearance;
 import com.itextpdf.kernel.geom.Rectangle;
 
@@ -37,7 +39,7 @@ public class SignerProperties {
     private PdfSigFieldLock fieldLock;
     private SignatureFieldAppearance appearance;
     private Calendar signDate = DateTimeUtil.getCurrentTimeCalendar();
-    private int certificationLevel = PdfSigner.NOT_CERTIFIED;
+    private AccessPermissions certificationLevel = AccessPermissions.UNSPECIFIED;
     private String fieldName;
     private int pageNumber = 1;
     private Rectangle pageRect = new Rectangle(0, 0);
@@ -56,31 +58,48 @@ public class SignerProperties {
     /**
      * Gets the signature date.
      *
-     * @return Calendar set to the signature date.
+     * @return calendar set to the signature date
      */
-    public java.util.Calendar getSignDate() {
+    public java.util.Calendar getClaimedSignDate() {
         return signDate;
     }
 
     /**
      * Sets the signature date.
      *
-     * @param signDate the signature date.
+     * @param signDate the signature date
      *
-     * @return this instance to support fluent interface.
+     * @return this instance to support fluent interface
      */
-    public SignerProperties setSignDate(java.util.Calendar signDate) {
+    public SignerProperties setClaimedSignDate(java.util.Calendar signDate) {
         this.signDate = signDate;
         return this;
     }
 
     /**
-     * Sets the signature field layout element to customize the appearance of the signature. Signer's sign date will
-     * be set.
+     * Sets the signature field layout element to customize the appearance of the signature.
      *
-     * @param appearance the {@link SignatureFieldAppearance} layout element.
+     * <p>
+     * Note that if {@link SignedAppearanceText} was set as the content (or part of the content)
+     * for {@link SignatureFieldAppearance} object, {@link PdfSigner} properties such as signing date, reason, location
+     * and signer name could be set automatically.
      *
-     * @return this instance to support fluent interface.
+     * <p>
+     * In case you create new signature field (either using {@link SignerProperties#setFieldName} with the name
+     * that doesn't exist in the document or do not specifying it at all) then the signature is invisible by default.
+     * Use {@link SignerProperties#setPageRect(Rectangle)} and {@link SignerProperties#setPageNumber(int)} to provide
+     * the rectangle that represent the position and dimension of the signature field in the specified page.
+     *
+     * <p>
+     * It is possible to set other appearance related properties such as
+     * {@link PdfSignatureFormField#setReuseAppearance}, {@link PdfSignatureFormField#setBackgroundLayer} (n0 layer) and
+     * {@link PdfSignatureFormField#setSignatureAppearanceLayer} (n2 layer) for the signature field using
+     * {@link PdfSigner#getSignatureField()}. Page, rectangle and other properties could be also set up via
+     * {@link SignerProperties}.
+     *
+     * @param appearance the {@link SignatureFieldAppearance} layout element representing signature appearance
+     *
+     * @return this instance to support fluent interface
      */
     public SignerProperties setSignatureAppearance(SignatureFieldAppearance appearance) {
         this.appearance = appearance;
@@ -88,9 +107,13 @@ public class SignerProperties {
     }
 
     /**
-     * Gets signature field layout element, which customizes the appearance of a signature.
+     * Gets signature field appearance object representing the appearance of the signature.
      *
-     * @return {@link SignatureFieldAppearance} layout element.
+     * <p>
+     * To customize the signature appearance, create new {@link SignatureFieldAppearance} object and set it
+     * using {@link SignerProperties#setSignatureAppearance(SignatureFieldAppearance)}.
+     *
+     * @return {@link SignatureFieldAppearance} object representing signature appearance
      */
     public SignatureFieldAppearance getSignatureAppearance() {
         return this.appearance;
@@ -98,36 +121,30 @@ public class SignerProperties {
 
     /**
      * Returns the document's certification level.
-     * For possible values see {@link #setCertificationLevel(int)}.
+     * For possible values see {@link AccessPermissions}.
      *
-     * @return The certified status.
+     * @return {@link AccessPermissions} enum which specifies which certification level shall be used
      */
-    public int getCertificationLevel() {
+    public AccessPermissions getCertificationLevel() {
         return this.certificationLevel;
     }
 
     /**
      * Sets the document's certification level.
      *
-     * @param certificationLevel a new certification level for a document.
-     *                           Possible values are: <ul>
-     *                           <li>{@link PdfSigner#NOT_CERTIFIED}
-     *                           <li>{@link PdfSigner#CERTIFIED_NO_CHANGES_ALLOWED}
-     *                           <li>{@link PdfSigner#CERTIFIED_FORM_FILLING}
-     *                           <li>{@link PdfSigner#CERTIFIED_FORM_FILLING_AND_ANNOTATIONS}
-     *                           </ul>
+     * @param accessPermissions {@link AccessPermissions} enum which specifies which certification level shall be used
      *
-     * @return this instance to support fluent interface.
+     * @return this instance to support fluent interface
      */
-    public SignerProperties setCertificationLevel(int certificationLevel) {
-        this.certificationLevel = certificationLevel;
+    public SignerProperties setCertificationLevel(AccessPermissions accessPermissions) {
+        this.certificationLevel = accessPermissions;
         return this;
     }
 
     /**
      * Gets the field name.
      *
-     * @return the field name.
+     * @return the field name
      */
     public String getFieldName() {
         return fieldName;
@@ -137,35 +154,32 @@ public class SignerProperties {
      * Sets the name indicating the field to be signed. The field can already be presented in the
      * document but shall not be signed. If the field is not presented in the document, it will be created.
      *
-     * @param fieldName The name indicating the field to be signed.
+     * @param fieldName the name indicating the field to be signed
      *
-     * @return this instance to support fluent interface.
+     * @return this instance to support fluent interface
      */
     public SignerProperties setFieldName(String fieldName) {
-        this.fieldName = fieldName;
+        if (fieldName != null) {
+            this.fieldName = fieldName;
+        }
         return this;
     }
 
     /**
-     * Provides the page number of the signature field which this signature
-     * appearance is associated with.
+     * Provides the page number of the signature field which this signature appearance is associated with.
      *
-     * @return The page number of the signature field which this signature
-     * appearance is associated with.
+     * @return the page number of the signature field which this signature appearance is associated with
      */
     public int getPageNumber() {
         return this.pageNumber;
     }
 
     /**
-     * Sets the page number of the signature field which this signature
-     * appearance is associated with. Implicitly calls {@link PdfSigner#setPageRect}
-     * which considers page number to process the rectangle correctly.
+     * Sets the page number of the signature field which this signature appearance is associated with.
      *
-     * @param pageNumber The page number of the signature field which
-     *                   this signature appearance is associated with.
+     * @param pageNumber the page number of the signature field which this signature appearance is associated with
      *
-     * @return this instance to support fluent interface.
+     * @return this instance to support fluent interface
      */
     public SignerProperties setPageNumber(int pageNumber) {
         this.pageNumber = pageNumber;
@@ -173,24 +187,20 @@ public class SignerProperties {
     }
 
     /**
-     * Provides the rectangle that represent the position and dimension
-     * of the signature field in the page.
+     * Provides the rectangle that represent the position and dimension of the signature field in the page.
      *
-     * @return the rectangle that represent the position and dimension
-     * of the signature field in the page
+     * @return the rectangle that represent the position and dimension of the signature field in the page
      */
     public Rectangle getPageRect() {
         return this.pageRect;
     }
 
     /**
-     * Sets the rectangle that represent the position and dimension of
-     * the signature field in the page.
+     * Sets the rectangle that represent the position and dimension of the signature field in the page.
      *
-     * @param pageRect The rectangle that represents the position and
-     *                 dimension of the signature field in the page.
+     * @param pageRect the rectangle that represents the position and dimension of the signature field in the page
      *
-     * @return this instance to support fluent interface.
+     * @return this instance to support fluent interface
      */
     public SignerProperties setPageRect(Rectangle pageRect) {
         this.pageRect = pageRect;
@@ -200,7 +210,7 @@ public class SignerProperties {
     /**
      * Getter for the field lock dictionary.
      *
-     * @return Field lock dictionary.
+     * @return field lock dictionary
      */
     public PdfSigFieldLock getFieldLockDict() {
         return fieldLock;
@@ -212,9 +222,9 @@ public class SignerProperties {
      * <strong>Be aware:</strong> if a signature is created on an existing signature field,
      * then its /Lock dictionary takes the precedence (if it exists).
      *
-     * @param fieldLock Field lock dictionary.
+     * @param fieldLock field lock dictionary
      *
-     * @return this instance to support fluent interface.
+     * @return this instance to support fluent interface
      */
     public SignerProperties setFieldLockDict(PdfSigFieldLock fieldLock) {
         this.fieldLock = fieldLock;
@@ -224,7 +234,7 @@ public class SignerProperties {
     /**
      * Returns the signature creator.
      *
-     * @return The signature creator.
+     * @return the signature creator
      */
     public String getSignatureCreator() {
         return this.signatureCreator;
@@ -245,7 +255,7 @@ public class SignerProperties {
     /**
      * Returns the signing contact.
      *
-     * @return The signing contact.
+     * @return the signing contact
      */
     public String getContact() {
         return this.contact;
@@ -254,9 +264,9 @@ public class SignerProperties {
     /**
      * Sets the signing contact.
      *
-     * @param contact A new signing contact.
+     * @param contact a new signing contact
      *
-     * @return this instance to support fluent interface.
+     * @return this instance to support fluent interface
      */
     public SignerProperties setContact(String contact) {
         this.contact = contact;
@@ -266,7 +276,7 @@ public class SignerProperties {
     /**
      * Returns the signing reason.
      *
-     * @return The signing reason.
+     * @return the signing reason
      */
     public String getReason() {
         return this.reason;
@@ -275,9 +285,9 @@ public class SignerProperties {
     /**
      * Sets the signing reason.
      *
-     * @param reason A new signing reason.
+     * @param reason a new signing reason
      *
-     * @return this instance to support fluent interface.
+     * @return this instance to support fluent interface
      */
     public SignerProperties setReason(String reason) {
         this.reason = reason;
@@ -287,7 +297,7 @@ public class SignerProperties {
     /**
      * Returns the signing location.
      *
-     * @return The signing location.
+     * @return the signing location
      */
     public String getLocation() {
         return this.location;
@@ -296,9 +306,9 @@ public class SignerProperties {
     /**
      * Sets the signing location.
      *
-     * @param location A new signing location.
+     * @param location a new signing location
      *
-     * @return this instance to support fluent interface.
+     * @return this instance to support fluent interface
      */
     public SignerProperties setLocation(String location) {
         this.location = location;

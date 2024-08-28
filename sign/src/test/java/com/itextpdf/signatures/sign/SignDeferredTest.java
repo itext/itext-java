@@ -39,6 +39,7 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.signatures.AccessPermissions;
 import com.itextpdf.signatures.BouncyCastleDigest;
 import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.ExternalBlankSignatureContainer;
@@ -46,6 +47,7 @@ import com.itextpdf.signatures.IExternalSignatureContainer;
 import com.itextpdf.signatures.PdfPKCS7;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.SignerProperties;
 import com.itextpdf.signatures.TestSignUtils;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.testutils.PemFileHelper;
@@ -97,10 +99,11 @@ public class SignDeferredTest extends ExtendedITextTest {
 
         PdfReader reader = new PdfReader(input);
         PdfSigner signer = new PdfSigner(reader, FileUtil.getFileOutputStream(output), new StampingProperties());
-        signer.setFieldName(sigFieldName);
+        SignerProperties signerProperties = new SignerProperties().setFieldName(sigFieldName);
+        signer.setSignerProperties(signerProperties);
         SignatureFieldAppearance appearance = new SignatureFieldAppearance(sigFieldName)
                 .setContent("Signature field which signing is deferred.");
-        signer
+        signerProperties
                 .setPageRect(new Rectangle(36, 600, 200, 100))
                 .setPageNumber(1)
                 .setSignatureAppearance(appearance);
@@ -122,10 +125,11 @@ public class SignDeferredTest extends ExtendedITextTest {
 
         PdfReader reader = new PdfReader(input);
         PdfSigner signer = new PdfSigner(reader, new ByteArrayOutputStream(), new StampingProperties());
-        signer.setFieldName(sigFieldName);
+        SignerProperties signerProperties = new SignerProperties().setFieldName(sigFieldName);
+        signer.setSignerProperties(signerProperties);
         SignatureFieldAppearance appearance = new SignatureFieldAppearance(sigFieldName)
                 .setContent("Signature field which signing is deferred.");
-        signer
+        signerProperties
                 .setPageRect(new Rectangle(36, 600, 200, 100))
                 .setPageNumber(1)
                 .setSignatureAppearance(appearance);
@@ -148,10 +152,11 @@ public class SignDeferredTest extends ExtendedITextTest {
 
         PdfReader reader = new PdfReader(input);
         PdfSigner signer = new PdfSigner(reader, new ByteArrayOutputStream(), new StampingProperties());
-        signer.setFieldName(sigFieldName);
+        SignerProperties signerProperties = new SignerProperties().setFieldName(sigFieldName);
+        signer.setSignerProperties(signerProperties);
         SignatureFieldAppearance appearance = new SignatureFieldAppearance(sigFieldName)
                 .setContent("Signature field which signing is deferred.");
-        signer
+        signerProperties
                 .setPageRect(new Rectangle(36, 600, 200, 100))
                 .setPageNumber(1)
                 .setSignatureAppearance(appearance);
@@ -207,11 +212,13 @@ public class SignDeferredTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(input);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PdfSigner signer = new PdfSigner(reader, baos, new StampingProperties());
-        signer.setCertificationLevel(PdfSigner.CERTIFIED_NO_CHANGES_ALLOWED);
-        signer.setFieldName(sigFieldName);
+        SignerProperties signerProperties = new SignerProperties()
+                .setCertificationLevel(AccessPermissions.NO_CHANGES_PERMITTED)
+                .setFieldName(sigFieldName);
+        signer.setSignerProperties(signerProperties);
         SignatureFieldAppearance appearance = new SignatureFieldAppearance(sigFieldName)
                 .setContent("Signature field which signing is deferred.");
-        signer
+        signerProperties
                 .setPageRect(new Rectangle(36, 600, 200, 100))
                 .setPageNumber(1)
                 .setSignatureAppearance(appearance);

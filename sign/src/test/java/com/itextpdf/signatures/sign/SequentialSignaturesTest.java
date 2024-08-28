@@ -40,6 +40,7 @@ import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PdfSigner.CryptoStandard;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.SignerProperties;
 import com.itextpdf.signatures.TestSignUtils;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
@@ -87,14 +88,15 @@ public class SequentialSignaturesTest extends ExtendedITextTest {
 
         String signatureName = "Signature2";
         PdfSigner signer = new PdfSigner(new PdfReader(srcFileName), FileUtil.getFileOutputStream(outFileName), new StampingProperties().useAppendMode());
-        signer.setFieldName(signatureName);
         SignatureFieldAppearance appearance = new SignatureFieldAppearance(signatureName)
                 .setContent("Approval test signature.\nCreated by iText.");
-        signer
+        SignerProperties signerProperties = new SignerProperties()
+                .setFieldName(signatureName)
                 .setPageRect(new Rectangle(50, 350, 200, 100))
                 .setReason("Test")
                 .setLocation("TestCity")
                 .setSignatureAppearance(appearance);
+        signer.setSignerProperties(signerProperties);
 
         signer.signDetached(new BouncyCastleDigest(), pks, signChain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
 
@@ -124,14 +126,16 @@ public class SequentialSignaturesTest extends ExtendedITextTest {
         PdfDocument document = signer.getDocument();
         document.getWriter().setCompressionLevel(CompressionConstants.NO_COMPRESSION);
 
-        signer.setFieldName(signatureName);
         SignatureFieldAppearance appearance = new SignatureFieldAppearance(signatureName)
                 .setContent("Approval test signature #2.\nCreated by iText.");
-        signer.setPageNumber(1);
-        signer.setPageRect(new Rectangle(50, 550, 200, 100))
+        SignerProperties signerProperties = new SignerProperties()
+                .setFieldName(signatureName)
+                .setPageNumber(1)
+                .setPageRect(new Rectangle(50, 550, 200, 100))
                 .setReason("Test2")
                 .setLocation("TestCity2")
                 .setSignatureAppearance(appearance);
+        signer.setSignerProperties(signerProperties);
 
         signer.signDetached(new BouncyCastleDigest(), pks, signChain, null, null,
                 null, 0, CryptoStandard.CADES);

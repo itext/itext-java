@@ -40,6 +40,7 @@ import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.LtvVerification;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.SignerProperties;
 import com.itextpdf.signatures.TestSignUtils;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
@@ -135,7 +136,7 @@ public class LtvSigTest extends ExtendedITextTest {
 
         PdfSigner signer = new PdfSigner(new PdfReader(srcFileName), FileUtil.getFileOutputStream(ltvFileName),
                 new StampingProperties());
-        signer.setFieldName("Signature1");
+        signer.setSignerProperties(new SignerProperties().setFieldName("Signature1"));
 
         signer.signDetached(new BouncyCastleDigest(), pks, signChain, crlNotAvailableList, testOcspClient, testTsa, 0,
                 PdfSigner.CryptoStandard.CADES);
@@ -161,7 +162,7 @@ public class LtvSigTest extends ExtendedITextTest {
 
         PdfSigner signer = new PdfSigner(new PdfReader(srcFileName), FileUtil.getFileOutputStream(ltvFileName),
                 new StampingProperties());
-        signer.setFieldName("Signature1");
+        signer.setSignerProperties(new SignerProperties().setFieldName("Signature1"));
         signer.signDetached(new BouncyCastleDigest(), pks, signChain, Collections.<ICrlClient>singletonList(testCrlClient), null,
                 testTsa, 0, PdfSigner.CryptoStandard.CADES);
 

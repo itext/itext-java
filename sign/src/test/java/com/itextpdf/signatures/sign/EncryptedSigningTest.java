@@ -36,6 +36,7 @@ import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.SignerProperties;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
@@ -96,7 +97,8 @@ public class EncryptedSigningTest extends ExtendedITextTest {
         PdfSigner signer = new PdfSigner(reader, FileUtil.getFileOutputStream(outPdf),
                 new StampingProperties().useAppendMode());
 
-        signer.setFieldName(fieldName);
+        SignerProperties signerProperties = new SignerProperties().setFieldName(fieldName);
+        signer.setSignerProperties(signerProperties);
         // Creating the signature
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256,
                 FACTORY.getProviderName());

@@ -54,11 +54,13 @@ import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
 import com.itextpdf.pdfa.PdfADocument;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
+import com.itextpdf.signatures.AccessPermissions;
 import com.itextpdf.signatures.BouncyCastleDigest;
 import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.SignerProperties;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
@@ -335,12 +337,16 @@ public class SignedAppearanceTextTest extends ExtendedITextTest {
         StampingProperties properties = new StampingProperties();
         PdfSigner signer = new PdfSigner(reader, FileUtil.getFileOutputStream(dest), properties);
 
-        signer.setCertificationLevel(PdfSigner.NOT_CERTIFIED);
-        signer.setFieldName(name);
-        signer.setReason(reason).setLocation(location).setSignatureAppearance(appearance);
+        SignerProperties signerProperties = new SignerProperties()
+                .setCertificationLevel(AccessPermissions.UNSPECIFIED)
+                .setFieldName(name)
+                .setReason(reason)
+                .setLocation(location)
+                .setSignatureAppearance(appearance);
         if (rectangleForNewField != null) {
-            signer.setPageRect(rectangleForNewField);
+            signerProperties.setPageRect(rectangleForNewField);
         }
+        signer.setSignerProperties(signerProperties);
 
         // Creating the signature
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, FACTORY.getProviderName());

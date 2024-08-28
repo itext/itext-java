@@ -39,11 +39,13 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.signatures.AccessPermissions;
 import com.itextpdf.signatures.BouncyCastleDigest;
 import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.SignerProperties;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
@@ -104,7 +106,7 @@ public class Pdf20SigningTest extends ExtendedITextTest {
         String fieldName = "Signature1";
 
         sign(srcFile, fieldName, outPdf, chain, pk, DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CADES,
-                PdfSigner.NOT_CERTIFIED);
+                AccessPermissions.UNSPECIFIED);
 
         PdfDocument doc = new PdfDocument(new PdfReader(outPdf));
         PdfNumber sigFlag = doc.getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm)
@@ -128,7 +130,7 @@ public class Pdf20SigningTest extends ExtendedITextTest {
         Exception e = Assertions.assertThrows(PdfException.class,
                 () -> sign(srcFile, fieldName, outPdf, chain, pk, DigestAlgorithms.RIPEMD160,
                         PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, true,
-                        PdfSigner.CERTIFIED_NO_CHANGES_ALLOWED, null));
+                        AccessPermissions.NO_CHANGES_PERMITTED, null));
         Assertions.assertEquals(
                 SignExceptionMessageConstant.CERTIFICATION_SIGNATURE_CREATION_FAILED_DOC_SHALL_NOT_CONTAIN_SIGS,
                 e.getMessage());
@@ -176,7 +178,7 @@ public class Pdf20SigningTest extends ExtendedITextTest {
 
         String fieldName = "Signature1";
         sign(srcFile, fieldName, outPdf, chain, pk, DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CMS, "Test 1",
-                "TestCity", rect, false, true, PdfSigner.NOT_CERTIFIED, 12f);
+                "TestCity", rect, false, true, AccessPermissions.UNSPECIFIED, 12f);
 
         Assertions.assertNull(new CompareTool().compareVisually(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_",
                 getTestMap(rect)));
@@ -193,8 +195,8 @@ public class Pdf20SigningTest extends ExtendedITextTest {
         Rectangle rect = new Rectangle(30, 200, 200, 100);
 
         String fieldName = "Signature1";
-        sign(srcFile, fieldName, outPdf, chain, pk, DigestAlgorithms.SHA256,
-                PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, true, PdfSigner.NOT_CERTIFIED, 12f);
+        sign(srcFile, fieldName, outPdf, chain, pk, DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CADES,
+                "Test 1", "TestCity", rect, false, true, AccessPermissions.UNSPECIFIED, 12f);
 
         Assertions.assertNull(new CompareTool().compareVisually(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_",
                 getTestMap(rect)));
@@ -203,7 +205,7 @@ public class Pdf20SigningTest extends ExtendedITextTest {
     }
 
     protected void sign(String src, String name, String dest, Certificate[] chain, PrivateKey pk,
-            String digestAlgorithm, PdfSigner.CryptoStandard subfilter, int certificationLevel)
+            String digestAlgorithm, PdfSigner.CryptoStandard subfilter, AccessPermissions certificationLevel)
             throws GeneralSecurityException, IOException {
 
         PdfReader reader = new PdfReader(src);
@@ -212,9 +214,10 @@ public class Pdf20SigningTest extends ExtendedITextTest {
         properties.useAppendMode();
 
         PdfSigner signer = new PdfSigner(reader, FileUtil.getFileOutputStream(dest), properties);
-        signer.setCertificationLevel(certificationLevel);
-
-        signer.setFieldName(name);
+        SignerProperties signerProperties = new SignerProperties()
+                .setCertificationLevel(certificationLevel)
+                .setFieldName(name);
+        signer.setSignerProperties(signerProperties);
         // Creating the signature
         IExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, FACTORY.getProviderName());
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null,
@@ -225,7 +228,7 @@ public class Pdf20SigningTest extends ExtendedITextTest {
             Certificate[] chain, PrivateKey pk,
             String digestAlgorithm, PdfSigner.CryptoStandard subfilter,
             String reason, String location, Rectangle rectangleForNewField, boolean setReuseAppearance,
-            boolean isAppendMode, int certificationLevel, Float fontSize)
+            boolean isAppendMode, AccessPermissions certificationLevel, Float fontSize)
             throws GeneralSecurityException, IOException {
 
         PdfReader reader = new PdfReader(src);
@@ -235,22 +238,23 @@ public class Pdf20SigningTest extends ExtendedITextTest {
         }
         PdfSigner signer = new PdfSigner(reader, FileUtil.getFileOutputStream(dest), properties);
 
-        signer.setCertificationLevel(certificationLevel);
-        signer.setFieldName(name);
+        SignerProperties signerProperties = new SignerProperties()
+                .setCertificationLevel(certificationLevel)
+                .setFieldName(name)
+                .setReason(reason)
+                .setLocation(location);
 
         // Creating the appearance
         SignatureFieldAppearance appearance = new SignatureFieldAppearance(name)
                 .setContent(new SignedAppearanceText());
         if (rectangleForNewField != null) {
-            signer.setPageRect(rectangleForNewField);
+            signerProperties.setPageRect(rectangleForNewField);
         }
         if (fontSize != null) {
             appearance.setFontSize((float) fontSize);
         }
-        signer
-                .setReason(reason)
-                .setLocation(location)
-                .getSignatureField().setReuseAppearance(setReuseAppearance);
+        signer.setSignerProperties(signerProperties);
+        signer.getSignatureField().setReuseAppearance(setReuseAppearance);
         // Creating the signature
         IExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, FACTORY.getProviderName());
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, subfilter);
@@ -262,7 +266,7 @@ public class Pdf20SigningTest extends ExtendedITextTest {
             String reason, String location, Rectangle rectangleForNewField, boolean setReuseAppearance,
             boolean isAppendMode) throws GeneralSecurityException, IOException {
         sign(src, name, dest, chain, pk, digestAlgorithm, subfilter, reason, location, rectangleForNewField,
-                setReuseAppearance, isAppendMode, PdfSigner.NOT_CERTIFIED, null);
+                setReuseAppearance, isAppendMode, AccessPermissions.UNSPECIFIED, null);
     }
 
     private static Map<Integer, List<Rectangle>> getTestMap(Rectangle ignoredArea) {

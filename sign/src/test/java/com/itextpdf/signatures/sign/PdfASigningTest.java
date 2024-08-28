@@ -40,11 +40,13 @@ import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
+import com.itextpdf.signatures.AccessPermissions;
 import com.itextpdf.signatures.BouncyCastleDigest;
 import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.SignerProperties;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
@@ -107,7 +109,8 @@ public class PdfASigningTest extends ExtendedITextTest {
 
         String fieldName = "Signature1";
         sign(src, fieldName, dest, chain, pk,
-                DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, false, PdfSigner.NOT_CERTIFIED, 12f);
+                DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, false,
+                AccessPermissions.UNSPECIFIED, 12f);
 
         Assertions.assertNull(new VeraPdfValidator().validate(dest)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
         Assertions.assertNull(SignaturesCompareTool.compareSignatures(dest, sourceFolder + "cmp_" + fileName));
@@ -122,8 +125,10 @@ public class PdfASigningTest extends ExtendedITextTest {
 
         PdfReader reader = new PdfReader(FileUtil.getInputStreamForFile(src));
         PdfSigner signer = new PdfSigner(reader, FileUtil.getFileOutputStream(out), new StampingProperties());
-        signer.setFieldLockDict(new PdfSigFieldLock());
-        signer.setCertificationLevel(PdfSigner.CERTIFIED_NO_CHANGES_ALLOWED);
+        SignerProperties signerProperties = new SignerProperties()
+                .setFieldLockDict(new PdfSigFieldLock())
+                .setCertificationLevel(AccessPermissions.NO_CHANGES_PERMITTED);
+        signer.setSignerProperties(signerProperties);
 
         IExternalSignature pks =
                 new PrivateKeySignature(pk, DigestAlgorithms.SHA256, FACTORY.getProviderName());
@@ -144,7 +149,7 @@ public class PdfASigningTest extends ExtendedITextTest {
 
         Exception e = Assertions.assertThrows(PdfAConformanceException.class, () ->
                 sign(srcFile, fieldName, outPdf, chain, pk, DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CMS, "Test 1",
-                        "TestCity", rect, false, true, PdfSigner.NOT_CERTIFIED, 12f));
+                        "TestCity", rect, false, true, AccessPermissions.UNSPECIFIED, 12f));
         Assertions.assertEquals(PdfaExceptionMessageConstant.SIGNATURE_SHALL_CONFORM_TO_ONE_OF_THE_PADES_PROFILE, e.getMessage());
     }
 
@@ -157,8 +162,8 @@ public class PdfASigningTest extends ExtendedITextTest {
         Rectangle rect = new Rectangle(30, 200, 200, 100);
 
         String fieldName = "Signature1";
-        sign(srcFile, fieldName, outPdf, chain, pk, DigestAlgorithms.SHA256,
-                PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, true, PdfSigner.NOT_CERTIFIED, 12f);
+        sign(srcFile, fieldName, outPdf, chain, pk, DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CADES,
+                "Test 1", "TestCity", rect, false, true, AccessPermissions.UNSPECIFIED, 12f);
 
         Assertions.assertNull(new CompareTool().compareVisually(outPdf, cmpPdf, destinationFolder, "diff_",
                 getTestMap(rect)));
@@ -174,8 +179,10 @@ public class PdfASigningTest extends ExtendedITextTest {
 
         PdfReader reader = new PdfReader(FileUtil.getInputStreamForFile(src));
         PdfSigner signer = new PdfSigner(reader, FileUtil.getFileOutputStream(out), new StampingProperties());
-        signer.setFieldLockDict(new PdfSigFieldLock());
-        signer.setCertificationLevel(PdfSigner.NOT_CERTIFIED);
+        SignerProperties signerProperties = new SignerProperties()
+                .setFieldLockDict(new PdfSigFieldLock())
+                .setCertificationLevel(AccessPermissions.UNSPECIFIED);
+        signer.setSignerProperties(signerProperties);
 
         int x = 36;
         int y = 548;
@@ -185,10 +192,11 @@ public class PdfASigningTest extends ExtendedITextTest {
         PdfFont font = PdfFontFactory.createFont("Helvetica","WinAnsi",
                 EmbeddingStrategy.PREFER_EMBEDDED);
 
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance(signer.getFieldName())
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(signer.getSignerProperties().getFieldName())
                 .setContent(new SignedAppearanceText())
                 .setFont(font);
-        signer.setPageRect(rect)
+        signerProperties
+                .setPageRect(rect)
                 .setReason("pdfA test")
                 .setLocation("TestCity")
                 .setSignatureAppearance(appearance);
@@ -204,17 +212,19 @@ public class PdfASigningTest extends ExtendedITextTest {
                         "Helvetica"), e.getMessage());
     }
 
-    protected void sign(String src, String name, String dest,
-                        Certificate[] chain, PrivateKey pk,
-                        String digestAlgorithm, PdfSigner.CryptoStandard subfilter,
-                        String reason, String location, Rectangle rectangleForNewField, boolean setReuseAppearance, boolean isAppendMode) throws GeneralSecurityException, IOException {
-        sign(src, name, dest, chain, pk, digestAlgorithm, subfilter, reason, location, rectangleForNewField, setReuseAppearance, isAppendMode, PdfSigner.NOT_CERTIFIED, null);
+    protected void sign(String src, String name, String dest, Certificate[] chain, PrivateKey pk,
+                        String digestAlgorithm, PdfSigner.CryptoStandard subfilter, String reason, String location,
+                        Rectangle rectangleForNewField, boolean setReuseAppearance, boolean isAppendMode)
+            throws GeneralSecurityException, IOException {
+        sign(src, name, dest, chain, pk, digestAlgorithm, subfilter, reason, location, rectangleForNewField,
+                setReuseAppearance, isAppendMode, AccessPermissions.UNSPECIFIED, null);
     }
 
     protected void sign(String src, String name, String dest,
                         Certificate[] chain, PrivateKey pk,
                         String digestAlgorithm, PdfSigner.CryptoStandard subfilter,
-                        String reason, String location, Rectangle rectangleForNewField, boolean setReuseAppearance, boolean isAppendMode, int certificationLevel, Float fontSize)
+                        String reason, String location, Rectangle rectangleForNewField, boolean setReuseAppearance,
+                        boolean isAppendMode, AccessPermissions certificationLevel, Float fontSize)
             throws GeneralSecurityException, IOException {
 
         PdfReader reader = new PdfReader(src);
@@ -223,22 +233,23 @@ public class PdfASigningTest extends ExtendedITextTest {
             properties.useAppendMode();
         }
         PdfSigner signer = new PdfSigner(reader, FileUtil.getFileOutputStream(dest), properties);
-
-        signer.setCertificationLevel(certificationLevel);
+        SignerProperties signerProperties = new SignerProperties()
+                .setCertificationLevel(certificationLevel)
+                .setFieldName(name);
+        signer.setSignerProperties(signerProperties);
 
         PdfFont font = PdfFontFactory.createFont(FONT, "WinAnsi", EmbeddingStrategy.PREFER_EMBEDDED);
-        signer.setFieldName(name);
 
         // Creating the appearance
         SignatureFieldAppearance appearance = new SignatureFieldAppearance(name)
                 .setContent(new SignedAppearanceText());
         appearance.setFont(font);
-        signer
+        signerProperties
                 .setReason(reason)
                 .setLocation(location)
                 .setSignatureAppearance(appearance);
         if (rectangleForNewField != null) {
-            signer.setPageRect(rectangleForNewField);
+            signerProperties.setPageRect(rectangleForNewField);
         }
         if (fontSize != null) {
             appearance.setFontSize((float) fontSize);

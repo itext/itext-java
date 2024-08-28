@@ -40,6 +40,7 @@ import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.LtvVerification;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.SignerProperties;
 import com.itextpdf.signatures.TestSignUtils;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
@@ -94,13 +95,15 @@ public class PadesSignatureLevelTest extends ExtendedITextTest {
         PrivateKey tsaPrivateKey = PemFileHelper.readFirstKey(tsaCertFileName, password);
 
         PdfSigner signer = new PdfSigner(new PdfReader(srcFileName), FileUtil.getFileOutputStream(outFileName), new StampingProperties());
-        signer.setFieldName("Signature1");
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance(signer.getFieldName())
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance("Signature1")
                 .setContent("Approval test signature.\nCreated by iText.");
-        signer.setPageRect(new Rectangle(50, 650, 200, 100))
+        SignerProperties signerProperties = new SignerProperties()
+                .setFieldName("Signature1")
+                .setPageRect(new Rectangle(50, 650, 200, 100))
                 .setReason("Test")
                 .setLocation("TestCity")
                 .setSignatureAppearance(appearance);
+        signer.setSignerProperties(signerProperties);
 
         TestTsaClient testTsa = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
 
