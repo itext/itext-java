@@ -88,42 +88,14 @@ public class PdfTwoPhaseSigner {
     public byte[] prepareDocumentForSignature(SignerProperties signerProperties, String digestAlgorithm,
                                               PdfName filter, PdfName subFilter, int estimatedSize, boolean includeDate)
             throws IOException, GeneralSecurityException {
-        if (closed) {
-            throw new PdfException(SignExceptionMessageConstant.THIS_INSTANCE_OF_PDF_SIGNER_ALREADY_CLOSED);
-        }
-        PdfSigner pdfSigner = createPdfSigner(signerProperties);
-
-        PdfDocument document = pdfSigner.getDocument();
-        if (document.getPdfVersion().compareTo(PdfVersion.PDF_2_0) < 0) {
-            document.getCatalog().addDeveloperExtension(PdfDeveloperExtension.ESIC_1_7_EXTENSIONLEVEL2);
-        }
-        document.getCatalog().addDeveloperExtension(PdfDeveloperExtension.ISO_32002);
-        document.getCatalog().addDeveloperExtension(PdfDeveloperExtension.ISO_32001);
-
-        PdfSignature cryptoDictionary = pdfSigner.createSignatureDictionary(includeDate);
-        cryptoDictionary.put(PdfName.Filter, filter);
-        cryptoDictionary.put(PdfName.SubFilter, subFilter);
-        pdfSigner.cryptoDictionary = cryptoDictionary;
-
-        Map<PdfName, Integer> exc = new HashMap<>();
-        exc.put(PdfName.Contents, estimatedSize * 2 + 2);
-        pdfSigner.preClose(exc);
-
-        InputStream data = pdfSigner.getRangeStream();
-        byte[] digest;
+        MessageDigest digest;
         if (externalDigest != null) {
-            digest = DigestAlgorithms.digest(data, digestAlgorithm, externalDigest);
+            digest = externalDigest.getMessageDigest(digestAlgorithm);
         } else {
-            digest = DigestAlgorithms.digest(data, SignUtils.getMessageDigest(digestAlgorithm));
+            digest = SignUtils.getMessageDigest(digestAlgorithm);
         }
-        byte[] paddedSig = new byte[estimatedSize];
-
-        PdfDictionary dic2 = new PdfDictionary();
-        dic2.put(PdfName.Contents, new PdfString(paddedSig).setHexWriting(true));
-        pdfSigner.close(dic2);
-        pdfSigner.closed = true;
-        closed = true;
-        return digest;
+        return prepareDocumentForSignature(signerProperties, digest, filter, subFilter,
+                estimatedSize, includeDate);
     }
 
     /**
@@ -189,6 +161,46 @@ public class PdfTwoPhaseSigner {
 
     PdfSigner createPdfSigner(SignerProperties signerProperties) throws IOException {
         return new PdfSigner(reader, outputStream, null, stampingProperties, signerProperties);
+    }
+
+    private byte[] prepareDocumentForSignature(SignerProperties signerProperties, MessageDigest messageDigest,
+                                               PdfName filter, PdfName subFilter, int estimatedSize,
+                                               boolean includeDate)
+            throws IOException {
+        if (closed) {
+            throw new PdfException(SignExceptionMessageConstant.THIS_INSTANCE_OF_PDF_SIGNER_ALREADY_CLOSED);
+        }
+        PdfSigner pdfSigner = createPdfSigner(signerProperties);
+
+
+        PdfDocument document = pdfSigner.getDocument();
+        if (document.getPdfVersion().compareTo(PdfVersion.PDF_2_0) < 0) {
+            document.getCatalog().addDeveloperExtension(PdfDeveloperExtension.ESIC_1_7_EXTENSIONLEVEL2);
+        }
+        document.getCatalog().addDeveloperExtension(PdfDeveloperExtension.ISO_32002);
+        document.getCatalog().addDeveloperExtension(PdfDeveloperExtension.ISO_32001);
+
+
+
+        PdfSignature cryptoDictionary = pdfSigner.createSignatureDictionary(includeDate);
+        cryptoDictionary.put(PdfName.Filter, filter);
+        cryptoDictionary.put(PdfName.SubFilter, subFilter);
+        pdfSigner.cryptoDictionary = cryptoDictionary;
+
+        Map<PdfName, Integer> exc = new HashMap<>();
+        exc.put(PdfName.Contents, estimatedSize * 2 + 2);
+        pdfSigner.preClose(exc);
+
+        InputStream data = pdfSigner.getRangeStream();
+        byte[] digest = DigestAlgorithms.digest(data, messageDigest);
+        byte[] paddedSig = new byte[estimatedSize];
+
+        PdfDictionary dic2 = new PdfDictionary();
+        dic2.put(PdfName.Contents, new PdfString(paddedSig).setHexWriting(true));
+        pdfSigner.close(dic2);
+        pdfSigner.closed = true;
+        closed = true;
+        return digest;
     }
 
 }

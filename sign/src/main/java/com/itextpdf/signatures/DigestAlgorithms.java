@@ -280,29 +280,6 @@ public class DigestAlgorithms {
     }
 
     /**
-     * Create a digest based on the inputstream.
-     *
-     * @param data           data to be digested
-     * @param hashAlgorithm  algorithm to be used
-     * @param externalDigest external digest to be used
-     *
-     * @return digest of the data.
-     *
-     * @throws IOException              signals that an I/O exception has occurred.
-     * @throws GeneralSecurityException when something goes wrong in calculating the digest.
-     */
-    public static byte[] digest(InputStream data, String hashAlgorithm, IExternalDigest externalDigest)
-            throws IOException, GeneralSecurityException {
-        byte[] buf = new byte[8192];
-        int n;
-        MessageDigest messageDigest = SignUtils.getMessageDigest(hashAlgorithm, externalDigest);
-        while ((n = data.read(buf)) > 0) {
-            messageDigest.update(buf, 0, n);
-        }
-        return messageDigest.digest();
-    }
-
-    /**
      * Gets the digest name for a certain id.
      *
      * @param oid an id (for instance "1.2.840.113549.2.5")

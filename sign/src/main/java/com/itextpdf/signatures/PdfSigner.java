@@ -623,7 +623,7 @@ public class PdfSigner {
             sgn.setSignaturePolicy(signaturePolicy);
         }
         InputStream data = getRangeStream();
-        byte[] hash = DigestAlgorithms.digest(data, hashAlgorithm, externalDigest);
+        byte[] hash = DigestAlgorithms.digest(data, SignUtils.getMessageDigest(hashAlgorithm, externalDigest));
         List<byte[]> ocspList = new ArrayList<>();
         if (chain.length > 1 && ocspClient != null) {
             for (int j = 0; j < chain.length - 1; ++j) {

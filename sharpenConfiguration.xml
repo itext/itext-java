@@ -353,10 +353,6 @@
             <!-- kernel -->
             <file path="com/itextpdf/kernel/pdf/CountOutputStream.java"/>
             <file path="com/itextpdf/kernel/crypto/securityhandler/EncryptionUtils.java"/>
-            <!-- TODO DEVSIX-8106 Remove that file exclusion in order to replace IDigest with IMessageDigest in .NET-->
-            <fileset reason="That class uses IDigest instead of IMessageDigest to avoid breaking changes">
-                <file path="com/itextpdf/kernel/crypto/securityhandler/SecurityHandler.java"/>
-            </fileset>
             <file path="com/itextpdf/kernel/crypto/AESCipher.java"/>
             <file path="com/itextpdf/kernel/crypto/AESCipherCBCnoPad.java"/>
             <file path="com/itextpdf/kernel/crypto/OutputStreamEncryption.java"/>
@@ -467,13 +463,6 @@
             <file path="com/itextpdf/signatures/SignUtils.java"/>
             <fileset reason="Logic of some methods in SignUtils differs at Java and .NET. See SignUtils#getCertificates.">
                 <file path="com/itextpdf/signatures/SignUtilsManualTest.java"/>
-            </fileset>
-            <!-- TODO DEVSIX-8106 Remove that files exclusion in order to replace IDigest with IMessageDigest in .NET-->
-            <fileset reason="Those classes use IDigest instead of IMessageDigest to avoid breaking changes">
-                <file path="com/itextpdf/signatures/ITSAClient.java"/>
-                <file path="com/itextpdf/signatures/TSAClientBouncyCastle.java"/>
-                <file path="com/itextpdf/signatures/testutils/client/TestTsaClient.java"/>
-                <file path="com/itextpdf/signatures/DigestAlgorithms.java"/>
             </fileset>
             <fileset reason="Java.Security does not exist in .net">
                 <file path="com/itextpdf/signatures/RSASSAPSSMechanismParams.java"/>
