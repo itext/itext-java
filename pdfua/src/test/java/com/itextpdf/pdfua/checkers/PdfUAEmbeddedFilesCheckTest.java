@@ -63,7 +63,7 @@ public class PdfUAEmbeddedFilesCheckTest  extends ExtendedITextTest {
     }
 
     @Test
-    public void pdfuaWithEmbeddedFilesWithoutFTest() throws FileNotFoundException {
+    public void pdfuaWithEmbeddedFilesWithoutFTest() throws IOException {
         framework.addBeforeGenerationHook((pdfDocument) -> {
             PdfFileSpec fs = PdfFileSpec.createEmbeddedFileSpec(
                     pdfDocument, "file".getBytes(), "description", "file.txt", null, null, null);
@@ -76,7 +76,7 @@ public class PdfUAEmbeddedFilesCheckTest  extends ExtendedITextTest {
     }
 
     @Test
-    public void pdfuaWithEmbeddedFilesWithoutUFTest() throws FileNotFoundException {
+    public void pdfuaWithEmbeddedFilesWithoutUFTest() throws IOException {
         framework.addBeforeGenerationHook((pdfDocument) -> {
             pdfDocument.addNewPage();
             PdfFileSpec fs = PdfFileSpec.createEmbeddedFileSpec(
@@ -90,7 +90,7 @@ public class PdfUAEmbeddedFilesCheckTest  extends ExtendedITextTest {
     }
 
     @Test
-    public void pdfuaWithValidEmbeddedFileTest() throws FileNotFoundException {
+    public void pdfuaWithValidEmbeddedFileTest() throws IOException {
         framework.addBeforeGenerationHook((pdfDocument -> {
             PdfFont font;
             try {

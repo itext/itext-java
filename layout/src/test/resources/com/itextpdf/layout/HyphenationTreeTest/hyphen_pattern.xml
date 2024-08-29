@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<hyphenation-info>
+<hyphen-char value="-"/> 
+<hyphen-min before="3" after="2"/>
+<patterns>
+.ab4i
+.ac4i
+.ad4i
+</patterns>
+</hyphenation-info>

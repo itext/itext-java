@@ -288,7 +288,7 @@ public class PdfUATest extends ExtendedITextTest {
     }
 
     @Test
-    public void checkNameEntryShouldPresentInAllOCGDictionariesTest() throws FileNotFoundException {
+    public void checkNameEntryShouldPresentInAllOCGDictionariesTest() throws IOException {
         framework.addBeforeGenerationHook((pdfDocument) -> {
             pdfDocument.addNewPage();
             PdfDictionary ocProperties = new PdfDictionary();
@@ -305,7 +305,7 @@ public class PdfUATest extends ExtendedITextTest {
     }
 
     @Test
-    public void checkAsKeyInContentConfigDictTest() throws FileNotFoundException {
+    public void checkAsKeyInContentConfigDictTest() throws IOException {
         framework.addBeforeGenerationHook((pdfDocument) -> {
             pdfDocument.addNewPage();
             PdfDictionary ocProperties = new PdfDictionary();
@@ -321,7 +321,7 @@ public class PdfUATest extends ExtendedITextTest {
     }
 
     @Test
-    public void nameEntryisEmptyTest() throws FileNotFoundException {
+    public void nameEntryisEmptyTest() throws IOException {
         framework.addBeforeGenerationHook((pdfDocument) -> {
             PdfDictionary ocProperties = new PdfDictionary();
             PdfDictionary d = new PdfDictionary();
@@ -339,7 +339,7 @@ public class PdfUATest extends ExtendedITextTest {
     }
 
     @Test
-    public void configsEntryisNotAnArrayTest() throws FileNotFoundException {
+    public void configsEntryisNotAnArrayTest() throws IOException {
         framework.addBeforeGenerationHook((pdfDocument) -> {
             PdfDictionary ocProperties = new PdfDictionary();
             PdfDictionary d = new PdfDictionary();

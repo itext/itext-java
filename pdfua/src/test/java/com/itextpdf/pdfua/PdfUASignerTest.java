@@ -24,6 +24,7 @@ package com.itextpdf.pdfua;
 
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.forms.fields.properties.SignedAppearanceText;
 import com.itextpdf.forms.form.element.SignatureFieldAppearance;
 import com.itextpdf.io.util.UrlUtil;
@@ -282,7 +283,7 @@ public class PdfUASignerTest extends ExtendedITextTest {
         Certificate[] signChain = PemFileHelper.readFirstChain(certFileName);
 
         String outPdf = DESTINATION_FOLDER + name + ".pdf";
-        PdfSigner signer = new PdfUaSigner(new PdfReader(inPdf), new FileOutputStream(outPdf), new StampingProperties());
+        PdfSigner signer = new PdfUaSigner(new PdfReader(inPdf), FileUtil.getFileOutputStream(outPdf), new StampingProperties());
 
 
         signingAction.accept(signer);
@@ -301,7 +302,7 @@ public class PdfUASignerTest extends ExtendedITextTest {
         Certificate[] signChain = PemFileHelper.readFirstChain(certFileName);
 
         String outPdf = DESTINATION_FOLDER + name + ".pdf";
-        PdfSigner signer = new PdfSigner(new PdfReader(inPdf), new FileOutputStream(outPdf), new StampingProperties());
+        PdfSigner signer = new PdfSigner(new PdfReader(inPdf), FileUtil.getFileOutputStream(outPdf), new StampingProperties());
 
         signingAction.accept(signer);
         signer.signDetached(new BouncyCastleDigest(), pks, signChain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);

@@ -25,6 +25,8 @@ package com.itextpdf.test.pdfa;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.logging.Level;
@@ -79,7 +81,7 @@ public class VeraPdfValidator {
 
             BatchSummary summary = processor.process(Collections.singletonList(new File(filePath)),
                     ProcessorFactory.getHandler(FormatOption.XML, true,
-                            new FileOutputStream(String.valueOf(xmlReport)), false));
+                            Files.newOutputStream(Paths.get(String.valueOf(xmlReport))), false));
 
             LogsSummary logsSummary = LogsSummaryImpl.getSummary();
             String xmlReportPath = "file://" + xmlReport.toURI().normalize().getPath();

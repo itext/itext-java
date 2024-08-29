@@ -17,8 +17,11 @@
 
 package com.itextpdf.layout.hyphenation;
 
+import com.itextpdf.commons.utils.FileUtil;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -125,8 +128,8 @@ public class HyphenationTree extends TernaryTree implements IPatternConsumer {
      * @throws HyphenationException In case the parsing fails
      * @throws FileNotFoundException When the specified file is not found
      */
-    public void loadPatterns(String filename) throws HyphenationException, FileNotFoundException {
-        loadPatterns(new FileInputStream(filename), filename);
+    public void loadPatterns(String filename) throws HyphenationException, IOException {
+        loadPatterns(FileUtil.getInputStreamForFile(filename), filename);
     }
 
     /**

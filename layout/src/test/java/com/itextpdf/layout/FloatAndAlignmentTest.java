@@ -263,7 +263,8 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff05_"));
     }
 
-    private void createDocumentWithBlocks(String outFileName, HorizontalAlignment horizontalAlignment) throws FileNotFoundException {
+    private void createDocumentWithBlocks(String outFileName, HorizontalAlignment horizontalAlignment)
+            throws IOException {
         PdfDocument pdfDocument = new PdfDocument( new PdfWriter( outFileName ) );
         pdfDocument.setTagged();
         Document document = new Document( pdfDocument );

@@ -364,7 +364,7 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void directWritingToCanvasTest() throws FileNotFoundException {
+    public void directWritingToCanvasTest() throws IOException {
         String outPdf = DESTINATION_FOLDER + "directWritingToCanvasTest.pdf";
 
         PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(

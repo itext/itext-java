@@ -53,6 +53,7 @@ import com.itextpdf.layout.renderer.DocumentRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.MalformedURLException;
 
 public class OrphansWidowsTestUtil {
@@ -73,7 +74,7 @@ public class OrphansWidowsTestUtil {
     public static final float LINES_SPACE_EPS = 5;
 
     public static void produceOrphansWidowsTestCase(String outPdf, int linesLeft, boolean orphans, Paragraph testPara,
-            boolean applyMarginsOnTestPara) throws FileNotFoundException {
+            boolean applyMarginsOnTestPara) throws IOException {
         PageSize pageSize = new PageSize(PageSize.A4.getWidth(), PageSize.A5.getHeight());
         Document doc = new Document(new PdfDocument(new PdfWriter(outPdf)), pageSize);
 
@@ -122,7 +123,7 @@ public class OrphansWidowsTestUtil {
     }
 
     public static void produceOrphansWidowsAndMaxHeightLimitTestCase(String outPdf, boolean orphans)
-            throws FileNotFoundException {
+            throws IOException {
         Document document = new Document(new PdfDocument(new PdfWriter(outPdf)));
         singleMaxHeightCase(document, orphans, false);
         document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
@@ -131,7 +132,7 @@ public class OrphansWidowsTestUtil {
     }
 
     public static void produceOrphansWidowsOnCanvasOfLimitedSizeTestCase(String outPdf, boolean orphans)
-            throws FileNotFoundException {
+            throws IOException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outPdf));
         Document document = new Document(pdfDocument);
         String orphansOrWidows = orphans ? "orphans" : "widows";
@@ -161,7 +162,7 @@ public class OrphansWidowsTestUtil {
     }
 
     public static void produceOrphansWidowsWithinDivOfLimitedSizeTestCase(String outPdf, boolean orphans)
-            throws FileNotFoundException {
+            throws IOException {
         Document document = new Document(new PdfDocument(new PdfWriter(outPdf)));
         String orphansOrWidows = orphans ? "orphans" : "widows";
         Paragraph testDescription = new Paragraph().setBorder(new SolidBorder(ColorConstants.RED, 1));
@@ -188,7 +189,7 @@ public class OrphansWidowsTestUtil {
     }
 
     public static void produceOrphansWidowsKeepTogetherTestCase(String outPdf, boolean orphans, boolean large)
-            throws FileNotFoundException {
+            throws IOException {
         Document document = new Document(new PdfDocument(new PdfWriter(outPdf)));
         Paragraph paragraph = new Paragraph(PARA_TEXT).setMargin(0).setBackgroundColor(new DeviceRgb(232, 232, 232));
         if (large) {
@@ -244,7 +245,7 @@ public class OrphansWidowsTestUtil {
     }
 
     public static void produceOrphansWidowsInlineImageTestCase(String outPdf, String imagePath, boolean orphans)
-            throws FileNotFoundException, MalformedURLException {
+            throws IOException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outPdf));
         Document document = new Document(pdfDocument);
         Image img = new Image(ImageDataFactory.create(imagePath));
@@ -255,7 +256,7 @@ public class OrphansWidowsTestUtil {
     }
 
     public static void produceOrphansWidowsHugeInlineImageTestCase(String outPdf, String imagePath, boolean orphans)
-            throws FileNotFoundException, MalformedURLException {
+            throws IOException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outPdf));
         Document document = new Document(pdfDocument);
         Image img = new Image(ImageDataFactory.create(imagePath));
@@ -299,7 +300,7 @@ public class OrphansWidowsTestUtil {
     }
 
     public static void produceOrphansWidowsInlineBlockTestCase(String outPdf, boolean orphans)
-            throws FileNotFoundException {
+            throws IOException {
         Document document = new Document(new PdfDocument(new PdfWriter(outPdf)));
 
         Paragraph inlineBlockParagraph = setParagraphStylingProperties(new Paragraph(OrphansWidowsTestUtil.PARA_TEXT),
@@ -338,7 +339,7 @@ public class OrphansWidowsTestUtil {
     }
 
     public static void produceOrphansWidowsInlineFloatTestCase(String outPdf, boolean orphans)
-            throws FileNotFoundException {
+            throws IOException {
         Document document = new Document(new PdfDocument(new PdfWriter(outPdf)));
 
         Paragraph inlineFloatParagraph = setParagraphStylingProperties(new Paragraph(OrphansWidowsTestUtil.PARA_TEXT),
@@ -385,7 +386,7 @@ public class OrphansWidowsTestUtil {
     }
 
     public static void produceOrphansWidowsFloatingDivTestCase(String outPdf, boolean orphans)
-            throws FileNotFoundException {
+            throws IOException {
         Document document = new Document(new PdfDocument(new PdfWriter(outPdf)));
 
         Paragraph paraInFloatingDiv = setParagraphStylingProperties(new Paragraph(OrphansWidowsTestUtil.PARA_TEXT),
@@ -435,7 +436,7 @@ public class OrphansWidowsTestUtil {
     }
 
     public static void produceOrphansWidowsBiggerThanLinesCountTestCase(String outPdf, boolean orphans,
-            boolean singleLine) throws FileNotFoundException {
+            boolean singleLine) throws IOException {
         Document document = new Document(new PdfDocument(new PdfWriter(outPdf)));
 
         Paragraph smallParagraph = setParagraphStylingProperties(new Paragraph(), false);
@@ -466,7 +467,7 @@ public class OrphansWidowsTestUtil {
     }
 
     public static void produceOrphansWidowsUnexpectedWidthOfNextAreaTestCase(String outPdf, boolean widerNextPage)
-            throws FileNotFoundException {
+            throws IOException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outPdf));
         Document document = new Document(pdfDocument);
         pdfDocument.addNewPage();
@@ -512,7 +513,7 @@ public class OrphansWidowsTestUtil {
     }
 
     public static void produceOrphansOrWidowsTestCase(String outPdf, int linesLeft, boolean orphans,
-            Paragraph testPara) throws FileNotFoundException {
+            Paragraph testPara) throws IOException {
         Document doc = new Document(new PdfDocument(new PdfWriter(outPdf)));
 
         PageSize pageSize = new PageSize(PageSize.A4.getWidth(), PageSize.A5.getHeight());
@@ -558,7 +559,7 @@ public class OrphansWidowsTestUtil {
         doc.close();
     }
 
-    public static void produceOrphansAndWidowsTestCase(String outPdf, Paragraph testPara) throws FileNotFoundException {
+    public static void produceOrphansAndWidowsTestCase(String outPdf, Paragraph testPara) throws IOException {
         Document doc = new Document(new PdfDocument(new PdfWriter(outPdf)));
 
         PageSize pageSize = new PageSize(PageSize.A4.getWidth(), PageSize.A5.getHeight());

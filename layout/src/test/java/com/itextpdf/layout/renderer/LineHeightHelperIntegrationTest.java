@@ -85,7 +85,7 @@ public class LineHeightHelperIntegrationTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION));
     }
 
-    private void testFont(PdfFont font, String outPdf) throws FileNotFoundException {
+    private void testFont(PdfFont font, String outPdf) throws IOException {
         Document document = new Document(new PdfDocument(new PdfWriter(outPdf)));
         document.setFont(font);
         Paragraph paragraph = new Paragraph(TEXT_SAMPLE);

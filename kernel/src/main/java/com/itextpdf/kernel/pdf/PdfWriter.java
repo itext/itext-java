@@ -75,7 +75,7 @@ public class PdfWriter extends PdfOutputStream {
      *                               rather than a regular file, does not exist but cannot
      *                               be created, or cannot be opened for any other reason
      */
-    public PdfWriter(java.io.File file) throws FileNotFoundException {
+    public PdfWriter(java.io.File file) throws IOException {
         this(file.getAbsolutePath());
     }
 
@@ -106,7 +106,7 @@ public class PdfWriter extends PdfOutputStream {
      *                               rather than a regular file, does not exist but cannot
      *                               be created, or cannot be opened for any other reason
      */
-    public PdfWriter(String filename) throws FileNotFoundException {
+    public PdfWriter(String filename) throws IOException {
         this(filename, new WriterProperties());
     }
 
@@ -120,7 +120,7 @@ public class PdfWriter extends PdfOutputStream {
      *                               rather than a regular file, does not exist but cannot
      *                               be created, or cannot be opened for any other reason
      */
-    public PdfWriter(String filename, WriterProperties properties) throws FileNotFoundException {
+    public PdfWriter(String filename, WriterProperties properties) throws IOException {
         this(FileUtil.getBufferedOutputStream(filename), properties);
     }
 

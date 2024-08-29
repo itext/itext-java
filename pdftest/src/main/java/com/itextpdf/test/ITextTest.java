@@ -24,11 +24,13 @@ package com.itextpdf.test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -139,7 +141,7 @@ public abstract class ITextTest {
     }
 
     protected byte[] readFile(String filename) throws IOException {
-        FileInputStream input = new FileInputStream(filename);
+        InputStream input = Files.newInputStream(Paths.get(filename));
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         byte[] buffer = new byte[8192];
         int read;

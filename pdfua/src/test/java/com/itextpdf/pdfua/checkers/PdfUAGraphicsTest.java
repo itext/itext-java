@@ -118,7 +118,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void imageCustomRole_Ok() throws FileNotFoundException {
+    public void imageCustomRole_Ok() throws IOException {
         framework.addBeforeGenerationHook((pdfDocument) -> {
             PdfStructTreeRoot root = pdfDocument.getStructTreeRoot();
             root.addRoleMapping("CustomImage", StandardRoles.FIGURE);
@@ -141,7 +141,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void imageCustomDoubleMapping_Ok() throws FileNotFoundException {
+    public void imageCustomDoubleMapping_Ok() throws IOException {
         framework.addBeforeGenerationHook((pdfDocument) -> {
             PdfStructTreeRoot root = pdfDocument.getStructTreeRoot();
             root.addRoleMapping("CustomImage", StandardRoles.FIGURE);
@@ -165,7 +165,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void imageCustomRoleNoAlternateDescription_Throws() throws FileNotFoundException {
+    public void imageCustomRoleNoAlternateDescription_Throws() throws IOException {
         framework.addBeforeGenerationHook((pdfDocument) -> {
             PdfStructTreeRoot root = pdfDocument.getStructTreeRoot();
             root.addRoleMapping("CustomImage", StandardRoles.FIGURE);
@@ -187,7 +187,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void imageCustomDoubleMapping_Throws() throws FileNotFoundException {
+    public void imageCustomDoubleMapping_Throws() throws IOException {
         framework.addBeforeGenerationHook((pdfDocument) -> {
             PdfStructTreeRoot root = pdfDocument.getStructTreeRoot();
             root.addRoleMapping("CustomImage", StandardRoles.FIGURE);

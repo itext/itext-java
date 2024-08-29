@@ -346,7 +346,7 @@ public class BorderTest extends ExtendedITextTest {
         closeDocumentAndCompareOutputs(doc);
     }
 
-    private Document createDocument() throws FileNotFoundException {
+    private Document createDocument() throws IOException {
         outFileName = destinationFolder + fileName;
         cmpFileName = sourceFolder + cmpPrefix + fileName;
 

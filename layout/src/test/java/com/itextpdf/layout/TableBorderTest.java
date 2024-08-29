@@ -2413,7 +2413,7 @@ public class TableBorderTest extends AbstractTableTest {
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
-    private Document createDocument() throws FileNotFoundException {
+    private Document createDocument() throws IOException {
         outFileName = destinationFolder + fileName;
         cmpFileName = sourceFolder + cmpPrefix + fileName;
 

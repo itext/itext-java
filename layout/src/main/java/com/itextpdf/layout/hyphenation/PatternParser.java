@@ -17,6 +17,7 @@
 
 package com.itextpdf.layout.hyphenation;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.util.ResourceUtil;
 import com.itextpdf.kernel.utils.XmlProcessorCreator;
 
@@ -82,8 +83,8 @@ public class PatternParser extends DefaultHandler {
      * @throws HyphenationException In case of an exception while parsing
      * @throws FileNotFoundException If the specified file is not found
      */
-    public void parse(String filename) throws HyphenationException, FileNotFoundException {
-        parse(new FileInputStream(filename), filename);
+    public void parse(String filename) throws HyphenationException, IOException {
+        parse(FileUtil.getInputStreamForFile(filename), filename);
     }
 
     /**

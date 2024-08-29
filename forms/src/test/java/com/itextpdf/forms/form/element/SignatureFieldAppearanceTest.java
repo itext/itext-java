@@ -407,7 +407,7 @@ public class SignatureFieldAppearanceTest extends ExtendedITextTest {
     }
 
     @Test
-    public void fontNullCustomCheck() throws FileNotFoundException {
+    public void fontNullCustomCheck() throws IOException {
         String outPdf = DESTINATION_FOLDER + "fontNullCustomCheck.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf)) {
             @Override

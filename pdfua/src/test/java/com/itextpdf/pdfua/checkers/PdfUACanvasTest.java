@@ -396,7 +396,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     }
 
     @Test
-    public void checkPoint_01_005_LineContentThatIsContentIsNotTagged() throws FileNotFoundException {
+    public void checkPoint_01_005_LineContentThatIsContentIsNotTagged() throws IOException {
 
         framework.addBeforeGenerationHook((pdfDoc) -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
@@ -409,7 +409,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     }
 
     @Test
-    public void checkPoint_01_005_LineContentThatIsContentIsNotTagged_noContent() throws FileNotFoundException {
+    public void checkPoint_01_005_LineContentThatIsContentIsNotTagged_noContent() throws IOException {
 
         framework.addBeforeGenerationHook((pdfDoc) -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
@@ -421,7 +421,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     }
 
     @Test
-    public void checkPoint_01_005_LineContentThatIsContentIsTaggedButIsNotAnArtifact() throws FileNotFoundException {
+    public void checkPoint_01_005_LineContentThatIsContentIsTaggedButIsNotAnArtifact() throws IOException {
 
         framework.addBeforeGenerationHook((pdfDocument) -> {
             PdfCanvas canvas = new PdfCanvas(pdfDocument.addNewPage());
@@ -437,7 +437,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
 
 
     @Test
-    public void checkPoint_01_005_LineContentThatIsContentIsTaggedButIsNotAnArtifact_no_drawing() throws FileNotFoundException {
+    public void checkPoint_01_005_LineContentThatIsContentIsTaggedButIsNotAnArtifact_no_drawing() throws IOException {
 
         framework.addBeforeGenerationHook((pdfDocument) -> {
             PdfCanvas canvas = new PdfCanvas(pdfDocument.addNewPage());
@@ -480,7 +480,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     }
 
     @Test
-    public void checkPoint_01_005_RectangleNotMarked() throws FileNotFoundException {
+    public void checkPoint_01_005_RectangleNotMarked() throws IOException {
 
         framework.addBeforeGenerationHook((pdfDoc) -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
@@ -495,7 +495,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
 
 
     @Test
-    public void checkPoint_01_005_RectangleNoContent() throws FileNotFoundException {
+    public void checkPoint_01_005_RectangleNoContent() throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas.setColor(ColorConstants.RED, true)
@@ -507,7 +507,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
 
 
     @Test
-    public void checkPoint_01_005_RectangleClip() throws FileNotFoundException {
+    public void checkPoint_01_005_RectangleClip() throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas.setColor(ColorConstants.RED, true)
@@ -519,7 +519,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     }
 
     @Test
-    public void checkPoint_01_005_RectangleClosePathStroke() throws FileNotFoundException {
+    public void checkPoint_01_005_RectangleClosePathStroke() throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas.setColor(ColorConstants.RED, true)
@@ -533,7 +533,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     }
 
     @Test
-    public void checkPoint_01_005_Rectangle_EOFIllStroke() throws FileNotFoundException {
+    public void checkPoint_01_005_Rectangle_EOFIllStroke() throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas.setColor(ColorConstants.RED, true)
@@ -546,7 +546,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     }
 
     @Test
-    public void checkPoint_01_005_Rectangle_FillStroke() throws FileNotFoundException {
+    public void checkPoint_01_005_Rectangle_FillStroke() throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas.setColor(ColorConstants.RED, true)
@@ -559,7 +559,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     }
 
     @Test
-    public void checkPoint_01_005_Rectangle_eoFill() throws FileNotFoundException {
+    public void checkPoint_01_005_Rectangle_eoFill() throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas.setColor(ColorConstants.RED, true)
@@ -572,7 +572,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     }
 
     @Test
-    public void checkPoint_01_005_Rectangle_eoFillStroke() throws FileNotFoundException {
+    public void checkPoint_01_005_Rectangle_eoFillStroke() throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas.setColor(ColorConstants.RED, true)

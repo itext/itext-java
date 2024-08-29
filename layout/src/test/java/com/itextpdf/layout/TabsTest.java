@@ -577,11 +577,11 @@ public class TabsTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
-    private Document initDocument(String outFileName) throws FileNotFoundException {
+    private Document initDocument(String outFileName) throws IOException {
         return initDocument(outFileName, false);
     }
 
-    private Document initDocument(String outFileName, boolean tagged) throws FileNotFoundException {
+    private Document initDocument(String outFileName, boolean tagged) throws IOException {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         if (tagged) {
             pdfDoc.setTagged();

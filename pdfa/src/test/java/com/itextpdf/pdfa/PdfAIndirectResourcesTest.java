@@ -33,7 +33,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Set;
 
@@ -69,7 +68,7 @@ public class PdfAIndirectResourcesTest extends ExtendedITextTest {
     private static class CustomPdfWriter extends PdfWriter {
         private int objectToFlushNumber;
 
-        public CustomPdfWriter(String filename, int objectToFlushNumber) throws FileNotFoundException {
+        public CustomPdfWriter(String filename, int objectToFlushNumber) throws IOException {
             super(filename);
             this.objectToFlushNumber = objectToFlushNumber;
         }

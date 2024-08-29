@@ -46,8 +46,6 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.utils.PemFileHelper;
 import com.itextpdf.test.ExtendedITextTest;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -84,8 +82,8 @@ public class PublicHandlerUsingAesGcmTest extends ExtendedITextTest {
     @Test
     public void testSimpleEncryptDecryptTest() throws Exception {
         String outFile = DESTINATION_FOLDER + "test-output.pdf";
-        InputStream fin = new FileInputStream(TEST_INPUT);
-        OutputStream fout = new FileOutputStream(outFile);
+        InputStream fin = FileUtil.getInputStreamForFile(TEST_INPUT);
+        OutputStream fout = FileUtil.getFileOutputStream(outFile);
 
         if (FACTORY.isInApprovedOnlyMode()) {
             // RSA PKCS1.5 encryption disallowed

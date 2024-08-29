@@ -33,6 +33,7 @@ import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -65,19 +66,19 @@ public class UaValidationTestFramework {
         Collections.addAll(elementProducers, suppliers);
     }
 
-    public void assertBothFail(String filename) throws FileNotFoundException {
+    public void assertBothFail(String filename) throws IOException {
         assertBothFail(filename, null);
     }
 
-    public void assertBothFail(String filename, boolean checkDocClosing) throws FileNotFoundException {
+    public void assertBothFail(String filename, boolean checkDocClosing) throws IOException {
         assertBothFail(filename, null, checkDocClosing);
     }
 
-    public void assertBothFail(String filename, String expectedMsg) throws FileNotFoundException {
+    public void assertBothFail(String filename, String expectedMsg) throws IOException {
         assertBothFail(filename, expectedMsg, defaultCheckDocClosingByReopening);
     }
 
-    public void assertBothFail(String filename, String expectedMsg, boolean checkDocClosing) throws FileNotFoundException {
+    public void assertBothFail(String filename, String expectedMsg, boolean checkDocClosing) throws IOException {
         checkError(checkErrorLayout("layout_" + filename + ".pdf"), expectedMsg);
 
         final String createdFileName = "vera_" + filename + ".pdf";
@@ -91,7 +92,7 @@ public class UaValidationTestFramework {
         }
     }
 
-    public void assertBothValid(String fileName) throws FileNotFoundException {
+    public void assertBothValid(String fileName) throws IOException {
         Exception e = checkErrorLayout("layout_" + fileName + ".pdf");
         String veraPdf = verAPdfResult("vera_" + fileName + ".pdf");
         Exception eClosing =  checkErrorOnClosing("vera_" + fileName + ".pdf");
@@ -123,7 +124,7 @@ public class UaValidationTestFramework {
         Assertions.fail(sb.toString());
     }
 
-    public String verAPdfResult(String filename) throws FileNotFoundException {
+    public String verAPdfResult(String filename) throws IOException {
         String outfile = UrlUtil.getNormalizedFileUriString(destinationFolder + filename);
         System.out.println(outfile);
         PdfDocument pdfDoc = new PdfUATestPdfDocument(

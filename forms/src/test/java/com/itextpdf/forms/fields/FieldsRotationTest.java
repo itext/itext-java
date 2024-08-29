@@ -76,7 +76,8 @@ public class FieldsRotationTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
-    private void fillForm(int[] pageRotation, int[] fieldRotation, boolean ignorePageRotation, String outPdf) throws FileNotFoundException {
+    private void fillForm(int[] pageRotation, int[] fieldRotation, boolean ignorePageRotation, String outPdf)
+            throws IOException {
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             PdfAcroForm form = PdfFormCreator.getAcroForm(document.getPdfDocument(), true);
 
