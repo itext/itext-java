@@ -35,12 +35,14 @@ import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
 import com.itextpdf.layout.properties.FloatPropertyValue;
 import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.IOException;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -352,12 +354,18 @@ public class TextWritingTest extends ExtendedITextTest {
         Text textDown = new Text("textRise-10f_with_lineThrough");
         textDown.setTextRise(-10f);
         textDown.setLineThrough();
-        Paragraph n= new Paragraph("baseline");
+        Paragraph n = new Paragraph("baseline");
         n.add(textUp).add(textDown);
         document.add(n);
         document.close();
 
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void textInitializationWithNullValueThrowsException() {
+        Exception e = Assertions.assertThrows(IllegalArgumentException.class, () -> new Text(null));
+        Assertions.assertEquals(LayoutExceptionMessageConstant.TEXT_CONTENT_CANNOT_BE_NULL, e.getMessage());
     }
 
     @Test
