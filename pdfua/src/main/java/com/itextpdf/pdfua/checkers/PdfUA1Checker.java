@@ -34,6 +34,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfVersion;
@@ -285,13 +286,24 @@ public class PdfUA1Checker implements IValidationChecker {
         if (properties == null || !properties.containsKey(PdfName.MCID)) {
             return false;
         }
-        PdfMcr mcr = this.pdfDocument.getStructTreeRoot()
-                .findMcrByMcid(pdfDocument, (int) properties.getAsInt(PdfName.MCID));
+        PdfMcr mcr = mcrExists(pdfDocument, (int) properties.getAsInt(PdfName.MCID));
         if (mcr == null) {
             throw new PdfUAConformanceException(
                     PdfUAExceptionMessageConstants.CONTENT_WITH_MCID_BUT_MCID_NOT_FOUND_IN_STRUCT_TREE_ROOT);
         }
         return true;
+    }
+
+    private PdfMcr mcrExists(PdfDocument document, int mcid) {
+        int amountOfPages = document.getNumberOfPages();
+        for (int i = 1; i <= amountOfPages; ++i) {
+            PdfPage page = document.getPage(i);
+            PdfMcr mcr = document.getStructTreeRoot().findMcrByMcid(page.getPdfObject(), mcid);
+            if (mcr != null) {
+                return mcr;
+            }
+        }
+        return null;
     }
 
     private void checkCatalog(PdfCatalog catalog) {

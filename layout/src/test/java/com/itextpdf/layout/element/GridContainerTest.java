@@ -87,9 +87,29 @@ public class GridContainerTest extends ExtendedITextTest {
     }
 
     @Test
+    public void borderBoxWithNoBordersTest() throws IOException, InterruptedException {
+        String filename = DESTINATION_FOLDER + "borderBoxWithNoBordersTest.pdf";
+        String cmpName = SOURCE_FOLDER + "cmp_borderBoxWithNoBordersTest.pdf";
+
+        java.util.List<TemplateValue> templateColumns = new ArrayList<>();
+        templateColumns.add(new PointValue(150.0f));
+        templateColumns.add(new PointValue(150.0f));
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+            GridContainer grid = new GridContainer();
+            grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, templateColumns);
+            Paragraph child = new Paragraph("First");
+            child.setProperty(Property.BOX_SIZING, BoxSizingPropertyValue.BORDER_BOX);
+            grid.add(child);
+            document.add(grid);
+        }
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
     public void basicTwoColumnsTest() throws IOException, InterruptedException {
-        String filename = DESTINATION_FOLDER + "basicTwoColumnsTest.pdf";
-        String cmpName = SOURCE_FOLDER + "cmp_basicTwoColumnsTest.pdf";
+        String filename = DESTINATION_FOLDER + "borderBoxChild.pdf";
+        String cmpName = SOURCE_FOLDER + "cmp_borderBoxChild.pdf";
 
         java.util.List<TemplateValue> templateColumns = new ArrayList<>();
         templateColumns.add(new PointValue(150.0f));

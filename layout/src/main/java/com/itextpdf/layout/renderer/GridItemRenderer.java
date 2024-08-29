@@ -166,7 +166,9 @@ class GridItemRenderer extends BlockRenderer {
                 rectangle.decreaseHeight(paddingBottom.getValue());
             }
             Border borderBottom = renderer.getBorders()[AbstractRenderer.BOTTOM_SIDE];
-            rectangle.decreaseHeight(borderBottom.getWidth());
+            if (borderBottom != null) {
+                rectangle.decreaseHeight(borderBottom.getWidth());
+            }
         } else {
             renderer.applyMarginsBordersPaddings(rectangle, false);
         }

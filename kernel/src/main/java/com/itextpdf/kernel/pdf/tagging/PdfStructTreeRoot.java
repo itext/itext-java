@@ -322,19 +322,6 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         return getParentTreeHandler().findMcrByMcid(pageDict, mcid);
     }
 
-
-    public PdfMcr findMcrByMcid(PdfDocument document, int mcid) {
-        int amountOfPages = document.getNumberOfPages();
-        for (int i = 1; i <= amountOfPages; ++i) {
-            PdfPage page = document.getPage(i);
-            PdfMcr mcr = findMcrByMcid(page.getPdfObject(), mcid);
-            if (mcr != null) {
-                return mcr;
-            }
-        }
-        return null;
-    }
-
     public PdfObjRef findObjRefByStructParentIndex(PdfDictionary pageDict, int structParentIndex) {
         return getParentTreeHandler().findObjRefByStructParentIndex(pageDict, structParentIndex);
     }

@@ -891,6 +891,34 @@ public class PdfMergerTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool().compareByContent(resultFile, sourceFolder + "cmp_mergedOcPropertiesDoc.pdf", destinationFolder, "diff_"));
     }
 
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
+    })
+    @Test
+    public void combineTagRootKidsTest() throws IOException, InterruptedException {
+        String filename1 = sourceFolder + "tagRootKidsDoc1.pdf";
+        String filename2 = sourceFolder + "tagRootKidsDoc2.pdf";
+        String resultFile = destinationFolder + "mergedTags.pdf";
+
+        PdfDocument result = new PdfDocument(CompareTool.createTestPdfWriter(resultFile));
+
+        PdfMerger merger = new PdfMerger(result, new PdfMergerProperties().setMergeTags(true).setMergeOutlines(true))
+                .setCloseSourceDocuments(true);
+
+        PdfDocument input1 = new PdfDocument(new PdfReader(filename1));
+        merger.merge(input1, 1, 1);
+        input1.close();
+
+        PdfDocument input2 = new PdfDocument(new PdfReader(filename2));
+        merger.merge(input2, 1, 1);
+        input2.close();
+
+        merger.close();
+
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(resultFile, sourceFolder + "cmp_mergedTags.pdf", destinationFolder, "diff_"));
+    }
+
     private PdfDictionary mergeSinglePdfAndGetResultingStructTreeRoot(String pathToMerge)
             throws IOException {
         List<File> sources = new ArrayList<File>();
