@@ -51,6 +51,7 @@ import java.security.cert.X509CRL;
 import java.security.cert.X509CRLEntry;
 import java.security.cert.X509Certificate;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -85,6 +86,8 @@ public class CRLValidator {
             "not all reason codes are covered by the current CRL.";
     static final String SAME_REASONS_CHECK = "CRLs that cover the same reason codes were already verified.";
     static final String UPDATE_DATE_BEFORE_CHECK_DATE = "nextUpdate: {0} of CRLResponse is before validation date {1}.";
+    static final String CERTIFICATE_IN_ISSUER_CHAIN = "Unable to validate CRL response: validated certificate is"
+            + " part of issuer certificate chain.";
 
     // All reasons without unspecified.
     static final int ALL_REASONS = 32895;
@@ -120,6 +123,7 @@ public class CRLValidator {
     public void validate(ValidationReport report, ValidationContext context, X509Certificate certificate, X509CRL crl,
             Date validationDate, Date responseGenerationDate) {
         ValidationContext localContext = context.setValidatorContext(ValidatorContext.CRL_VALIDATOR);
+
         if (CertificateUtil.isSelfSigned(certificate)) {
             report.addReportItem(new CertificateReportItem(certificate, CRL_CHECK,
                     RevocationDataValidator.SELF_SIGNED_CERTIFICATE, ReportItemStatus.INFO));
@@ -281,13 +285,17 @@ public class CRLValidator {
                     ReportItemStatus.INDETERMINATE));
             return;
         }
-
         if (certs == null || certs.length == 0) {
             report.addReportItem(new CertificateReportItem(certificate, CRL_CHECK, CRL_ISSUER_NOT_FOUND,
                     ReportItemStatus.INDETERMINATE));
             return;
         }
 
+        if (Arrays.stream(certs).anyMatch(c -> c.equals(certificate))) {
+            report.addReportItem(new CertificateReportItem(certificate, CRL_CHECK, CERTIFICATE_IN_ISSUER_CHAIN,
+                    ReportItemStatus.INDETERMINATE));
+            return;
+        }
         Certificate crlIssuer = certs[0];
         Certificate crlIssuerRoot = getRoot(crlIssuer);
         Certificate subjectRoot = getRoot(certificate);

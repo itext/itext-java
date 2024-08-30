@@ -27,6 +27,7 @@ import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.DateTimeUtil;
+import com.itextpdf.signatures.CertificateUtil;
 import com.itextpdf.signatures.IssuingCertificateRetriever;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.TimeTestUtil;
@@ -34,6 +35,7 @@ import com.itextpdf.signatures.testutils.builder.TestCrlBuilder;
 import com.itextpdf.signatures.testutils.builder.TestOcspResponseBuilder;
 import com.itextpdf.signatures.testutils.client.TestCrlClient;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
+import com.itextpdf.signatures.validation.SignatureValidationProperties.OnlineFetching;
 import com.itextpdf.signatures.validation.context.CertificateSource;
 import com.itextpdf.signatures.validation.context.CertificateSources;
 import com.itextpdf.signatures.validation.context.TimeBasedContext;
@@ -44,6 +46,10 @@ import com.itextpdf.signatures.validation.context.ValidatorContexts;
 import com.itextpdf.signatures.validation.report.ReportItem;
 import com.itextpdf.signatures.validation.report.ValidationReport;
 import com.itextpdf.test.ExtendedITextTest;
+
+import java.security.cert.X509CRL;
+import java.time.Duration;
+import java.util.Date;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -61,6 +67,10 @@ public class RevocationDataValidatorIntegrationTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
     private static final String SOURCE_FOLDER =
             "./src/test/resources/com/itextpdf/signatures/validation/RevocationDataValidatorTest/";
+
+    private static final String CRL_TEST_SOURCE_FOLDER =
+            "./src/test/resources/com/itextpdf/signatures/validation/CRLValidatorTest/";
+
     private static final char[] PASSWORD = "testpassphrase".toCharArray();
 
 
@@ -140,4 +150,101 @@ public class RevocationDataValidatorIntegrationTest extends ExtendedITextTest {
                 ));
 
     }
+
+    @Test
+    public void crlSignerIsValidatedCertificate() throws Exception {
+
+        String rootCertFileName = CRL_TEST_SOURCE_FOLDER + "happyPath/ca.cert.pem";
+        String crlSignerKeyFileName = CRL_TEST_SOURCE_FOLDER + "keys/crl-key.pem";
+        String crlSignerFileName = CRL_TEST_SOURCE_FOLDER + "happyPath/crl-issuer.cert.pem";
+        String checkCertFileName = CRL_TEST_SOURCE_FOLDER + "happyPath/sign.cert.pem";
+
+        X509Certificate caCert = (X509Certificate) PemFileHelper.readFirstChain(rootCertFileName)[0];
+        X509Certificate crlSigner = (X509Certificate) PemFileHelper.readFirstChain(crlSignerFileName)[0];
+        PrivateKey crlPrivateKey = PemFileHelper.readFirstKey(crlSignerKeyFileName, PASSWORD);
+        X509Certificate checkCert = (X509Certificate) PemFileHelper.readFirstChain(checkCertFileName)[0];
+
+
+        certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
+        certificateRetriever.addKnownCertificates(Collections.singletonList(crlSigner));
+
+        Date checkDate = TimeTestUtil.TEST_DATE_TIME;
+        Date revocationDate = DateTimeUtil.addDaysToDate(checkDate, -1);
+        TestCrlBuilder builder = new TestCrlBuilder(crlSigner, crlPrivateKey, checkDate);
+        builder.setNextUpdate(DateTimeUtil.addDaysToDate(checkDate, 10));
+        //builder.addCrlEntry(caCert, revocationDate, FACTORY.createCRLReason().getKeyCompromise());
+        //TestCrlClientWrapper crlClient = new TestCrlClientWrapper(new TestCrlClient().addBuilderForCertIssuer(builder));
+
+        ValidationCrlClient crlClient = (ValidationCrlClient) parameters.getCrlClients().get(0);
+        crlClient.addCrl((X509CRL) CertificateUtil.parseCrlFromBytes(builder.makeCrl()), checkDate, TimeBasedContext.HISTORICAL );
+
+        ValidationReport report = new ValidationReport();
+        certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
+
+        parameters.setRevocationOnlineFetching(ValidatorContexts.all(), CertificateSources.all(), TimeBasedContexts.all(), OnlineFetching.FETCH_IF_NO_OTHER_DATA_AVAILABLE);
+        parameters.setFreshness(ValidatorContexts.all(), CertificateSources.all(), TimeBasedContexts.all(),Duration.ofDays(0));
+
+
+        RevocationDataValidator validator = validatorChainBuilder.buildRevocationDataValidator();
+        validatorChainBuilder.withRevocationDataValidatorFactory(()->validator);
+
+        validator.validate(report, baseContext, crlSigner, checkDate);
+
+        AssertValidationReport.assertThat(report, a -> a
+                .hasNumberOfFailures(1)
+                        .hasLogItem(l-> l.withMessage(CRLValidator.CERTIFICATE_IN_ISSUER_CHAIN))
+                );
+    }
+
+    @Test
+    public void crlSignerIssuerIsValidatedCertificate() throws Exception {
+
+        String rootCertFileName = CRL_TEST_SOURCE_FOLDER + "crlSignerInValidatedChain/ca.cert.pem";
+        String intermediateFileName = CRL_TEST_SOURCE_FOLDER + "crlSignerInValidatedChain/intermediate.cert.pem";
+        String intermediate2FileName = CRL_TEST_SOURCE_FOLDER + "crlSignerInValidatedChain/intermediate2.cert.pem";
+        String crlSignerKeyFileName = CRL_TEST_SOURCE_FOLDER + "keys/crl-key.pem";
+        String crlSignerFileName = CRL_TEST_SOURCE_FOLDER + "crlSignerInValidatedChain/crl-issuer.cert.pem";
+        String checkCertFileName = CRL_TEST_SOURCE_FOLDER + "crlSignerInValidatedChain/sign.cert.pem";
+
+        X509Certificate caCert = (X509Certificate) PemFileHelper.readFirstChain(rootCertFileName)[0];
+        X509Certificate intermediateCert = (X509Certificate) PemFileHelper.readFirstChain(intermediateFileName)[0];
+        X509Certificate intermediate2Cert = (X509Certificate) PemFileHelper.readFirstChain(intermediate2FileName)[0];
+        X509Certificate crlSigner = (X509Certificate) PemFileHelper.readFirstChain(crlSignerFileName)[0];
+        PrivateKey crlPrivateKey = PemFileHelper.readFirstKey(crlSignerKeyFileName, PASSWORD);
+        X509Certificate checkCert = (X509Certificate) PemFileHelper.readFirstChain(checkCertFileName)[0];
+
+
+        certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
+        certificateRetriever.addKnownCertificates(Collections.singletonList(crlSigner));
+        certificateRetriever.addKnownCertificates(Collections.singletonList(intermediateCert));
+        certificateRetriever.addKnownCertificates(Collections.singletonList(intermediate2Cert));
+
+        Date checkDate = TimeTestUtil.TEST_DATE_TIME;
+        Date revocationDate = DateTimeUtil.addDaysToDate(checkDate, -1);
+        TestCrlBuilder builder = new TestCrlBuilder(crlSigner, crlPrivateKey, checkDate);
+        builder.setNextUpdate(DateTimeUtil.addDaysToDate(checkDate, 10));
+        //builder.addCrlEntry(caCert, revocationDate, FACTORY.createCRLReason().getKeyCompromise());
+        //TestCrlClientWrapper crlClient = new TestCrlClientWrapper(new TestCrlClient().addBuilderForCertIssuer(builder));
+
+        ValidationCrlClient crlClient = (ValidationCrlClient) parameters.getCrlClients().get(0);
+        crlClient.addCrl((X509CRL) CertificateUtil.parseCrlFromBytes(builder.makeCrl()), checkDate, TimeBasedContext.HISTORICAL );
+
+        ValidationReport report = new ValidationReport();
+        //certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
+
+        parameters.setRevocationOnlineFetching(ValidatorContexts.all(), CertificateSources.all(), TimeBasedContexts.all(), OnlineFetching.FETCH_IF_NO_OTHER_DATA_AVAILABLE);
+        parameters.setFreshness(ValidatorContexts.all(), CertificateSources.all(), TimeBasedContexts.all(),Duration.ofDays(0));
+
+
+        RevocationDataValidator validator = validatorChainBuilder.buildRevocationDataValidator();
+        validatorChainBuilder.withRevocationDataValidatorFactory(()->validator);
+
+        validator.validate(report, baseContext, intermediateCert, checkDate);
+
+        AssertValidationReport.assertThat(report, a -> a
+                .hasNumberOfFailures(1)
+                .hasLogItem(l-> l.withMessage(CRLValidator.CERTIFICATE_IN_ISSUER_CHAIN))
+        );
+    }
 }
+

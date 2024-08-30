@@ -1,15 +1,17 @@
 REM create the test keys
 IF [%1] == [] goto continue
 md keys
-openssl genrsa -out keys/root_key.pem -passout pass:testpassphrase 2048
-openssl genrsa -out keys/im_key.pem -passout pass:testpassphrase 2048
-openssl genrsa -out keys/sign-key.pem -passout pass:testpassphrase 2048
-openssl genrsa -out keys/crl-key.pem -passout pass:testpassphrase 2048
+openssl genrsa -out keys/root_key.pem -aes256 -passout pass:testpassphrase 2048
+openssl genrsa -out keys/im_key.pem -aes256 -passout pass:testpassphrase 2048
+openssl genrsa -out keys/im2_key.pem -aes256 -passout pass:testpassphrase 2048
+openssl genrsa -out keys/sign-key.pem -aes256 -passout pass:testpassphrase 2048
+openssl genrsa -out keys/crl-key.pem -aes256 -passout pass:testpassphrase 2048
 :continue
 
 call :runTestCase happyPath
 call :runTestCase crlIssuerRevokedBeforeSigningDate
 call :runTestCase crlIssuerAndSignCertHaveNoSharedRoot
+call :runTestCase crlSignerInValidatedChain
 EXIT
 
 :runTestCase
