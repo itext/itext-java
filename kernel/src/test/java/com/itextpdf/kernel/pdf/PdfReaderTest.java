@@ -68,8 +68,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
 @Tag("IntegrationTest")
@@ -2648,33 +2648,33 @@ public class PdfReaderTest extends ExtendedITextTest {
     }
 
     @Test
-    public void streamWithoutEndstreamKeywordTest() throws IOException, XMPException {
+    public void streamWithoutEndstreamKeywordTest() throws IOException {
         final String fileName = SOURCE_FOLDER + "NoEndstreamKeyword.pdf";
         try (PdfReader reader = new PdfReader(fileName)) {
             reader.setStrictnessLevel(StrictnessLevel.LENIENT);
             try (PdfDocument document = new PdfDocument(reader)) {
-                final PdfCatalog catalog = new PdfCatalog((PdfDictionary) reader.trailer
-                        .get(PdfName.Root, true));
+                // Initialize xmp metadata, because we in reader mode in which xmp will be initialized only during closing
+                byte[] metadataBytes = document.getXmpMetadataBytes();
+                final PdfCatalog catalog = new PdfCatalog((PdfDictionary) reader.trailer.get(PdfName.Root, true));
                 final PdfStream xmpMetadataStream = catalog.getPdfObject().getAsStream(PdfName.Metadata);
                 final int xmpMetadataStreamLength = ((PdfNumber) xmpMetadataStream.get(PdfName.Length)).intValue();
 
-                // 27600 is actual invalid length of stream. In reader StrictnessLevel#LENIENT we expect, that this
-                // length will be fixed.
-                Assertions.assertNotEquals(27600, xmpMetadataStreamLength);
-
-                // 3090 is expected length of the stream after fix.
+                // Initial length was 27600. 3090 is expected length of the stream after the fix
                 Assertions.assertEquals(3090, xmpMetadataStreamLength);
+                Assertions.assertEquals(3090, metadataBytes.length);
             }
         }
     }
 
     @Test
-    public void streamWithoutEndstreamKeywordConservativeModeTest() throws IOException, XMPException {
+    public void streamWithoutEndstreamKeywordConservativeModeTest() throws IOException {
         final String fileName = SOURCE_FOLDER + "NoEndstreamKeyword.pdf";
         try (PdfReader reader = new PdfReader(fileName)) {
             reader.setStrictnessLevel(StrictnessLevel.CONSERVATIVE);
 
-            Exception exception = Assertions.assertThrows(PdfException.class, () -> new PdfDocument(reader));
+            final PdfDocument pdfDocument = new PdfDocument(reader);
+            // Initialize xmp metadata, because we in reader mode in which xmp will be initialized only during closing
+            Exception exception = Assertions.assertThrows(PdfException.class, () -> pdfDocument.getXmpMetadata());
             Assertions.assertEquals(KernelExceptionMessageConstant.STREAM_SHALL_END_WITH_ENDSTREAM, exception.getMessage());
 
             PdfCatalog catalog = new PdfCatalog((PdfDictionary) reader.trailer.get(PdfName.Root, true));
@@ -2683,6 +2683,18 @@ public class PdfReaderTest extends ExtendedITextTest {
             // 27600 is actual invalid length of stream. In reader StrictnessLevel#CONSERVATIVE we expect, that
             // exception would be thrown and length wouldn't be fixed.
             Assertions.assertEquals(27600, ((PdfNumber) xmpMetadataStream.get(PdfName.Length)).intValue());
+        }
+    }
+
+    @Test
+    public void streamWithoutEndKeyConservativeModeWithWriterTest() throws IOException {
+        final String fileName = SOURCE_FOLDER + "NoEndstreamKeyword.pdf";
+        try (PdfReader reader = new PdfReader(fileName)) {
+            reader.setStrictnessLevel(StrictnessLevel.CONSERVATIVE);
+
+            Exception exception = Assertions.assertThrows(PdfException.class, () ->
+                    new PdfDocument(reader, new PdfWriter(new ByteArrayOutputStream())));
+            Assertions.assertEquals(KernelExceptionMessageConstant.STREAM_SHALL_END_WITH_ENDSTREAM, exception.getMessage());
         }
     }
 
@@ -2723,7 +2735,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         for (int i = 0; i < 1000; ++i) {
             pdfTestDoc.getReader().getPdfAConformanceLevel();
         }
-        Assertions.assertEquals(2, pdfTestDoc.getCounter());
+        Assertions.assertEquals(1, pdfTestDoc.getCounter());
     }
 
     @Test
@@ -2932,9 +2944,9 @@ public class PdfReaderTest extends ExtendedITextTest {
         }
 
         @Override
-        public byte[] getXmpMetadata(boolean createNew) {
+        public byte[] getXmpMetadataBytes(boolean createdNew) {
             ++getXmpMetadataCounter;
-            return super.getXmpMetadata(createNew);
+            return super.getXmpMetadataBytes(createdNew);
         }
 
         public int getCounter() {

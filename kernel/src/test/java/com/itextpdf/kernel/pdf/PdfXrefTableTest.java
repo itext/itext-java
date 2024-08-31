@@ -27,6 +27,7 @@ import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.MemoryLimitsAwareException;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
@@ -38,8 +39,8 @@ import java.io.IOException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PdfXrefTableTest extends ExtendedITextTest {
@@ -98,7 +99,7 @@ public class PdfXrefTableTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testCreateAndUpdateXMP() throws IOException {
+    public void testCreateAndUpdateXMP() throws IOException, XMPException {
         String created = DESTINATION_FOLDER + "testCreateAndUpdateXMP_create.pdf";
         String updated = DESTINATION_FOLDER + "testCreateAndUpdateXMP_update.pdf";
         PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(created));
@@ -139,7 +140,7 @@ public class PdfXrefTableTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testCreateAndUpdateTwiceXMP() throws IOException {
+    public void testCreateAndUpdateTwiceXMP() throws IOException, XMPException {
         String created = DESTINATION_FOLDER + "testCreateAndUpdateTwiceXMP_create.pdf";
         String updated = DESTINATION_FOLDER + "testCreateAndUpdateTwiceXMP_update.pdf";
         String updatedAgain = DESTINATION_FOLDER + "testCreateAndUpdateTwiceXMP_updatedAgain.pdf";

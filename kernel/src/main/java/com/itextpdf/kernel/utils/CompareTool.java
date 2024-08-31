@@ -165,7 +165,7 @@ public class CompareTool {
      *                               rather than a regular file, does not exist but cannot
      *                               be created, or cannot be opened for any other reason.
      */
-    public static PdfWriter createTestPdfWriter(String filename) throws FileNotFoundException {
+    public static PdfWriter createTestPdfWriter(String filename) throws IOException {
         return createTestPdfWriter(filename, new WriterProperties());
     }
 
@@ -179,7 +179,7 @@ public class CompareTool {
      *                               rather than a regular file, does not exist but cannot
      *                               be created, or cannot be opened for any other reason.
      */
-    public static PdfWriter createTestPdfWriter(String filename, WriterProperties properties) throws FileNotFoundException {
+    public static PdfWriter createTestPdfWriter(String filename, WriterProperties properties) throws IOException {
         return new MemoryFirstPdfWriter(filename, properties); // Android-Conversion-Replace return new PdfWriter(filename, properties);
     }
 
@@ -777,7 +777,8 @@ public class CompareTool {
                 PdfReader readerOut = CompareTool.createOutputReader(this.outPdf);
                 PdfDocument outDocument = new PdfDocument(readerOut,
                         new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
-            byte[] cmpBytes = cmpDocument.getXmpMetadata(), outBytes = outDocument.getXmpMetadata();
+            byte[] cmpBytes = cmpDocument.getXmpMetadataBytes();
+            byte[] outBytes = outDocument.getXmpMetadataBytes();
             if (ignoreDateAndProducerProperties) {
                 XMPMeta xmpMeta = XMPMetaFactory.parseFromBuffer(cmpBytes, new ParseOptions().setOmitNormalization(true));
 

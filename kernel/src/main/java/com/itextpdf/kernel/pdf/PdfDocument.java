@@ -60,9 +60,9 @@ import com.itextpdf.kernel.pdf.statistics.NumberOfPagesStatisticsEvent;
 import com.itextpdf.kernel.pdf.statistics.SizeOfPdfStatisticsEvent;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
+import com.itextpdf.kernel.validation.IValidationContext;
 import com.itextpdf.kernel.validation.ValidationContainer;
 import com.itextpdf.kernel.validation.context.CryptoValidationContext;
-import com.itextpdf.kernel.validation.IValidationContext;
 import com.itextpdf.kernel.validation.context.PdfDocumentValidationContext;
 import com.itextpdf.kernel.xmp.PdfConst;
 import com.itextpdf.kernel.xmp.XMPConst;
@@ -75,6 +75,7 @@ import com.itextpdf.kernel.xmp.options.SerializeOptions;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -91,7 +92,6 @@ import org.slf4j.LoggerFactory;
  * Main enter point to work with PDF document.
  */
 public class PdfDocument implements IEventDispatcher, Closeable {
-    //
     private static final PdfName[] PDF_NAMES_TO_REMOVE_FROM_ORIGINAL_TRAILER = new PdfName[] {
         PdfName.Encrypt,
         PdfName.Size,
@@ -130,10 +130,6 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      */
     protected PdfReader reader = null;
     /**
-     * XMP Metadata for the document.
-     */
-    protected byte[] xmpMetadata = null;
-    /**
      * Document catalog.
      */
     protected PdfCatalog catalog = null;
@@ -141,10 +137,6 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      * Document trailed.
      */
     protected PdfDictionary trailer = null;
-    /**
-     * Document info.
-     */
-    protected PdfDocumentInfo info = null;
     /**
      * Document version.
      */
@@ -185,6 +177,19 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     private PdfString modifiedDocumentId;
     private PdfFont defaultFont = null;
     private EncryptedEmbeddedStreamsHandler encryptedEmbeddedStreamsHandler;
+    /**
+     * Document info.
+     */
+    private PdfDocumentInfo info = null;
+    /**
+     * XMP Metadata bytes for the document.
+     */
+    private byte[] xmpMetadataBytes = null;
+    /**
+     * XMP Metadata which is used to prevent bytes deserialization for a few times on the same bytes.
+     */
+    private XMPMeta xmpMetadata = null;
+
 
     private final DIContainer diContainer = new DIContainer();
 
@@ -285,56 +290,123 @@ public class PdfDocument implements IEventDispatcher, Closeable {
 
     /**
      * Sets the XMP Metadata.
+     * <p>
+     * The XMP Metadata values are synchronized with information dictionary.
      *
-     * @param xmpMeta          the xmpMetadata to set
+     * @param xmpMeta the xmpMetadata to set
      * @param serializeOptions serialization options
      *
      * @throws XMPException on serialization errors
      */
     public void setXmpMetadata(XMPMeta xmpMeta, SerializeOptions serializeOptions) throws XMPException {
         this.serializeOptions = serializeOptions;
-        setXmpMetadata(XMPMetaFactory.serializeToBuffer(xmpMeta, serializeOptions));
-    }
-
-    /**
-     * Use this method to set the XMP Metadata.
-     *
-     * @param xmpMetadata The xmpMetadata to set.
-     */
-    protected void setXmpMetadata(byte[] xmpMetadata) {
-        this.xmpMetadata = xmpMetadata;
+        this.xmpMetadataBytes = XMPMetaFactory.serializeToBuffer(xmpMeta, serializeOptions);
+        this.xmpMetadata = xmpMeta;
     }
 
     /**
      * Sets the XMP Metadata.
+     * <p>
+     * The XMP Metadata values are synchronized with information dictionary.
+     * <p>
+     * {@link PdfDocument#serializeOptions} will be used for serialization, they
+     * can be changed by {@link PdfDocument#setSerializeOptions(SerializeOptions)}.
      *
      * @param xmpMeta the xmpMetadata to set
      *
      * @throws XMPException on serialization errors
      */
     public void setXmpMetadata(XMPMeta xmpMeta) throws XMPException {
-        serializeOptions.setPadding(2000);
         setXmpMetadata(xmpMeta, serializeOptions);
     }
 
     /**
-     * Gets XMPMetadata.
+     * Sets the XMP Metadata.
+     * <p>
+     * The XMP Metadata values are synchronized with information dictionary.
      *
-     * @return the XMPMetadata
+     * @param xmpMetadata the xmpMetadata bytes to set
      */
-    public byte[] getXmpMetadata() {
+    protected void setXmpMetadata(byte[] xmpMetadata) {
+        this.xmpMetadataBytes = xmpMetadata;
+        this.xmpMetadata = null;
+        try {
+            getXmpMetadata();
+        } catch (XMPException e) {
+            Logger logger = LoggerFactory.getLogger(PdfDocument.class);
+            logger.error(IoLogMessageConstant.EXCEPTION_WHILE_UPDATING_XMPMETADATA, e);
+        }
+    }
+
+    /**
+     * Gets XMP Metadata.
+     * <p>
+     * XMP Metadata is lazy initialized. It will be initialized during the first call of this method.
+     * <p>
+     * To update XMP Metadata of the document, use {@link PdfDocument#setXmpMetadata(XMPMeta)} method.
+     *
+     * @return existed XMP Metadata
+     *
+     * @throws XMPException on serialization errors
+     */
+    public XMPMeta getXmpMetadata() throws XMPException {
         return getXmpMetadata(false);
     }
 
     /**
-     * Gets XMPMetadata or create a new one.
+     * Gets XMP Metadata or create a new one.
+     * <p>
+     * XMP Metadata is lazy initialized. It will be initialized during the first call of this method.
+     * <p>
+     * To update XMP Metadata of the document, use {@link PdfDocument#setXmpMetadata(XMPMeta)} method.
      *
-     * @param createNew if true, create a new empty XMPMetadata if it did not present.
+     * @param createNew if true, create a new empty XMP Metadata if it did not present
      *
-     * @return existed or newly created XMPMetadata byte array.
+     * @return existed or newly created XMP Metadata
+     *
+     * @throws XMPException on serialization errors
      */
-    public byte[] getXmpMetadata(boolean createNew) {
-        if (xmpMetadata == null && createNew) {
+    public XMPMeta getXmpMetadata(boolean createNew) throws XMPException {
+        if (xmpMetadata == null) {
+            final byte[] bytes = getXmpMetadataBytes(createNew);
+            xmpMetadata = bytes == null ? null : XMPMetaFactory.parseFromBuffer(bytes);
+        }
+        return xmpMetadata;
+    }
+
+    /**
+     * Gets XMP Metadata.
+     * <p>
+     * XMP Metadata is lazy initialized. It will be initialized during the first call of this method.
+     * <p>
+     * To update XMP Metadata of the document, use {@link PdfDocument#setXmpMetadata(XMPMeta)} method.
+     *
+     * @return existed XMP Metadata bytes
+     */
+    public byte[] getXmpMetadataBytes() {
+        return getXmpMetadataBytes(false);
+    }
+
+    /**
+     * Gets XMP Metadata or create a new one.
+     * <p>
+     * XMP Metadata is lazy initialized. It will be initialized during the first call of this method.
+     * <p>
+     * To update XMP Metadata of the document, use {@link PdfDocument#setXmpMetadata(XMPMeta)} method.
+     *
+     * @param createNew if true, create a new empty XMP Metadata if it did not present
+     *
+     * @return existed or newly created XMP Metadata byte array
+     */
+    public byte[] getXmpMetadataBytes(boolean createNew) {
+        checkClosingStatus();
+        if (xmpMetadataBytes == null) {
+            PdfStream xmpMetadataStream = catalog.getPdfObject().getAsStream(PdfName.Metadata);
+            if (xmpMetadataStream != null) {
+                xmpMetadataBytes = xmpMetadataStream.getBytes();
+            }
+        }
+        if (createNew && xmpMetadataBytes == null) {
             XMPMeta xmpMeta = XMPMetaFactory.create();
             xmpMeta.setObjectName(XMPConst.TAG_XMPMETA);
             xmpMeta.setObjectName("");
@@ -345,7 +417,10 @@ public class PdfDocument implements IEventDispatcher, Closeable {
             } catch (XMPException ignored) {
             }
         }
-        return xmpMetadata;
+        if (xmpMetadataBytes == null) {
+            return null;
+        }
+        return Arrays.copyOf(xmpMetadataBytes, xmpMetadataBytes.length);
     }
 
     /**
@@ -668,7 +743,9 @@ public class PdfDocument implements IEventDispatcher, Closeable {
 
     /**
      * Gets document information dictionary.
+     * <p>
      * {@link PdfDocument#info} is lazy initialized. It will be initialized during the first call of this method.
+     * <p>
      * The information dictionary values are synchronized with document XMP Metadata.
      *
      * @return document information dictionary.
@@ -676,10 +753,12 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     public PdfDocumentInfo getDocumentInfo() {
         checkClosingStatus();
         if (info == null) {
-            PdfObject infoDict = trailer.get(PdfName.Info);
-            info = new PdfDocumentInfo(
-                    infoDict instanceof PdfDictionary ? (PdfDictionary) infoDict : new PdfDictionary(), this);
-            XmpMetaInfoConverter.appendMetadataToInfo(xmpMetadata, info);
+            PdfDictionary infoDict = trailer == null ? null : trailer.getAsDictionary(PdfName.Info);
+            info = new PdfDocumentInfo(infoDict == null ? new PdfDictionary() : infoDict, this);
+            try {
+                XmpMetaInfoConverter.appendMetadataToInfo(getXmpMetadata(), info);
+            } catch (XMPException ignored) {
+            }
         }
         return info;
     }
@@ -689,7 +768,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      * <p>
      * In order to set originalDocumentId  {@link WriterProperties#setInitialDocumentId} should be used
      *
-     * @return original dccument id
+     * @return original document id
      */
     public PdfString getOriginalDocumentId() {
         return originalDocumentId;
@@ -864,16 +943,16 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                         getDocumentInfo().getPdfObject().remove(deprecatedKey);
                     }
                 }
-                if (getXmpMetadata() != null) {
+                if (getXmpMetadataBytes() != null) {
                     PdfStream xmp = catalog.getPdfObject().getAsStream(PdfName.Metadata);
                     if (isAppendMode() && xmp != null && !xmp.isFlushed() && xmp.getIndirectReference() != null) {
                         // Use existing object for append mode
-                        xmp.setData(xmpMetadata);
+                        xmp.setData(getXmpMetadataBytes());
                         xmp.setModified();
                     } else {
                         // Create new object
                         xmp = (PdfStream) new PdfStream().makeIndirect(this);
-                        xmp.getOutputStream().write(xmpMetadata);
+                        xmp.getOutputStream().write(getXmpMetadataBytes());
                         catalog.getPdfObject().put(PdfName.Metadata, xmp);
                         catalog.setModified();
                     }
@@ -2022,16 +2101,6 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                 }
                 catalog = new PdfCatalog(catalogDictionary);
                 updatePdfVersionFromCatalog();
-                PdfStream xmpMetadataStream = catalog.getPdfObject().getAsStream(PdfName.Metadata);
-                if (xmpMetadataStream != null) {
-                    xmpMetadata = xmpMetadataStream.getBytes();
-                    if (!this.getClass().equals(PdfDocument.class)) {
-                        // TODO DEVSIX-5292 If somebody extends PdfDocument we have to initialize document info
-                        //  and conformance level to provide compatibility. This code block shall be removed
-                        reader.getPdfAConformanceLevel();
-                        getDocumentInfo();
-                    }
-                }
 
                 PdfDictionary str = catalog.getPdfObject().getAsDictionary(PdfName.StructTreeRoot);
                 if (str != null) {
@@ -2056,7 +2125,8 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                 writer.document = this;
                 if (reader == null) {
                     catalog = new PdfCatalog(this);
-                    info = new PdfDocumentInfo(this).addCreationDate();
+                    // initialize document info
+                    getDocumentInfo().addCreationDate();
                 }
                 getDocumentInfo().addModDate();
 
@@ -2201,7 +2271,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         try {
             // We add PDF producer info in any case, and the valid way to do it for PDF 2.0 in only in metadata, not
             // in the info dictionary.
-            if (xmpMetadata != null || writer.properties.addXmpMetadata
+            if (getXmpMetadataBytes() != null || writer.properties.addXmpMetadata
                     || pdfVersion.compareTo(PdfVersion.PDF_2_0) >= 0) {
                 setXmpMetadata(updateDefaultXmpMetadata());
             }
@@ -2219,7 +2289,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      * @throws XMPException if the file is not well-formed XML or if parsing fails.
      */
     protected XMPMeta updateDefaultXmpMetadata() throws XMPException {
-        XMPMeta xmpMeta = XMPMetaFactory.parseFromBuffer(getXmpMetadata(true));
+        XMPMeta xmpMeta = getXmpMetadata(true);
         XmpMetaInfoConverter.appendDocumentInfoToMetadata(getDocumentInfo(), xmpMeta);
 
         if (isTagged() && writer.properties.addUAXmpMetadata && !isXmpMetaHasProperty(xmpMeta, XMPConst.NS_PDFUA_ID,

@@ -34,7 +34,6 @@ import com.itextpdf.kernel.validation.context.PdfDocumentValidationContext;
 import com.itextpdf.kernel.xmp.XMPConst;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
-import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.pdfa.logs.PdfALogMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -71,7 +70,7 @@ public class PdfAAgnosticPdfDocumentUnitTest extends ExtendedITextTest {
         Assertions.assertNull(pdfDoc.getConformanceLevel());
 
         pdfDoc.updateXmpMetadataPublic();
-        XMPMeta xmpMeta = XMPMetaFactory.parseFromBuffer(pdfDoc.getXmpMetadata(true));
+        XMPMeta xmpMeta = pdfDoc.getXmpMetadata(true);
         Assertions.assertNull(xmpMeta.getProperty(XMPConst.NS_PDFA_ID, XMPConst.PART));
         Assertions.assertNull(xmpMeta.getProperty(XMPConst.NS_PDFA_ID, XMPConst.CONFORMANCE));
 
@@ -101,7 +100,7 @@ public class PdfAAgnosticPdfDocumentUnitTest extends ExtendedITextTest {
         Assertions.assertTrue(pdfADoc.getPageFactoryPublic() instanceof PdfAPageFactory);
 
         pdfADoc.updateXmpMetadataPublic();
-        XMPMeta xmpMeta = XMPMetaFactory.parseFromBuffer(pdfADoc.getXmpMetadata(true));
+        XMPMeta xmpMeta = pdfADoc.getXmpMetadata();
         Assertions.assertNotNull(xmpMeta.getProperty(XMPConst.NS_PDFA_ID, XMPConst.PART));
         Assertions.assertNotNull(xmpMeta.getProperty(XMPConst.NS_PDFA_ID, XMPConst.CONFORMANCE));
 

@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.ByteUtils;
@@ -31,18 +32,16 @@ import com.itextpdf.io.source.RASInputStream;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.io.source.WindowRandomAccessSource;
-import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.crypto.securityhandler.UnsupportedSecurityHandlerException;
 import com.itextpdf.kernel.exceptions.InvalidXRefPrevException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.MemoryLimitsAwareException;
 import com.itextpdf.kernel.exceptions.PdfException;
-import com.itextpdf.kernel.crypto.securityhandler.UnsupportedSecurityHandlerException;
-import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.XrefCycledReferencesException;
 import com.itextpdf.kernel.pdf.filters.FilterHandlers;
 import com.itextpdf.kernel.pdf.filters.IFilterHandler;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
-import com.itextpdf.kernel.xmp.XMPMetaFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.Closeable;
@@ -50,8 +49,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashSet;
 import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import org.slf4j.Logger;
@@ -85,8 +84,6 @@ public class PdfReader implements Closeable {
     //indicate nearest first Indirect reference object which includes current reading the object, using for PdfString decrypt
     private PdfIndirectReference currentIndirectReference;
 
-    private XMPMeta xmpMeta;
-
     private XrefProcessor xrefProcessor = new XrefProcessor();
 
     protected PdfTokenizer tokens;
@@ -99,7 +96,6 @@ public class PdfReader implements Closeable {
     protected long eofPos;
     protected PdfDictionary trailer;
     protected PdfDocument pdfDocument;
-    protected PdfAConformanceLevel pdfAConformanceLevel;
 
     protected ReaderProperties properties;
 
@@ -108,6 +104,10 @@ public class PdfReader implements Closeable {
     protected boolean hybridXref = false;
     protected boolean fixedXref = false;
     protected boolean xrefStm = false;
+
+    private XMPMeta xmpMeta;
+    private PdfAConformanceLevel pdfAConformanceLevel;
+
     /**
      * Constructs a new PdfReader.
      *
@@ -643,7 +643,7 @@ public class PdfReader implements Closeable {
 
             try {
                 if (xmpMeta == null && pdfDocument.getXmpMetadata() != null) {
-                    xmpMeta = XMPMetaFactory.parseFromBuffer(pdfDocument.getXmpMetadata());
+                    xmpMeta = pdfDocument.getXmpMetadata();
                 }
                 if (xmpMeta != null) {
                     pdfAConformanceLevel = PdfAConformanceLevel.getConformanceLevel(xmpMeta);

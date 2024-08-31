@@ -359,7 +359,7 @@ public class CompareToolTest extends ExtendedITextTest {
     }
 
     @Test
-    public void cleanupTest() throws FileNotFoundException {
+    public void cleanupTest() throws IOException {
         CompareTool.createTestPdfWriter(destinationFolder + "cleanupTest/cleanupTest.pdf");
         Assertions.assertNotNull(MemoryFirstPdfWriter.get(destinationFolder + "cleanupTest/cleanupTest.pdf"));
 

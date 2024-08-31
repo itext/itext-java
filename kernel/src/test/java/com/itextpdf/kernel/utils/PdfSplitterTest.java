@@ -75,7 +75,7 @@ public class PdfSplitterTest extends ExtendedITextTest{
             protected PdfWriter getNextPdfWriter(PageRange documentPageRange) {
                 try {
                     return CompareTool.createTestPdfWriter(destinationFolder + "splitDocument1_" + String.valueOf(partNumber++) + ".pdf");
-                } catch (FileNotFoundException e) {
+                } catch (IOException e) {
                     throw new RuntimeException();
                 }
             }
@@ -106,7 +106,7 @@ public class PdfSplitterTest extends ExtendedITextTest{
                 try {
                     PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + "splitDocument2_" + String.valueOf(partNumber++) + ".pdf");
                     return writer;
-                } catch (FileNotFoundException e) {
+                } catch (IOException e) {
                     throw new RuntimeException();
                 }
             }
@@ -146,7 +146,7 @@ public class PdfSplitterTest extends ExtendedITextTest{
             protected PdfWriter getNextPdfWriter(PageRange documentPageRange) {
                 try {
                     return CompareTool.createTestPdfWriter(destinationFolder + "splitDocument3_" + String.valueOf(partNumber++) + ".pdf");
-                } catch (FileNotFoundException e) {
+                } catch (IOException e) {
                     throw new RuntimeException();
                 }
             }
@@ -180,7 +180,7 @@ public class PdfSplitterTest extends ExtendedITextTest{
             protected PdfWriter getNextPdfWriter(PageRange documentPageRange) {
                 try {
                     return CompareTool.createTestPdfWriter(destinationFolder + "splitDocument4_" + String.valueOf(partNumber++) + ".pdf");
-                } catch (FileNotFoundException e) {
+                } catch (IOException e) {
                     throw new RuntimeException();
                 }
             }
@@ -227,7 +227,7 @@ public class PdfSplitterTest extends ExtendedITextTest{
             protected PdfWriter getNextPdfWriter(PageRange documentPageRange) {
                 try {
                     return CompareTool.createTestPdfWriter(destinationFolder + "splitBySize_part" + String.valueOf(partNumber++) + ".pdf");
-                } catch (FileNotFoundException e) {
+                } catch (IOException e) {
                     throw new RuntimeException();
                 }
             }

@@ -35,7 +35,6 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.tagging.PdfMcr;
@@ -47,18 +46,17 @@ import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
 import com.itextpdf.kernel.pdf.tagutils.TagTreeIterator;
 import com.itextpdf.kernel.utils.checkers.FontCheckUtil;
 import com.itextpdf.kernel.validation.IValidationChecker;
+import com.itextpdf.kernel.validation.IValidationContext;
 import com.itextpdf.kernel.validation.context.CanvasBmcValidationContext;
 import com.itextpdf.kernel.validation.context.CanvasWritingContentValidationContext;
 import com.itextpdf.kernel.validation.context.CryptoValidationContext;
 import com.itextpdf.kernel.validation.context.DuplicateIdEntryValidationContext;
 import com.itextpdf.kernel.validation.context.FontValidationContext;
-import com.itextpdf.kernel.validation.IValidationContext;
 import com.itextpdf.kernel.validation.context.PdfDocumentValidationContext;
 import com.itextpdf.kernel.validation.context.PdfObjectValidationContext;
 import com.itextpdf.kernel.xmp.XMPConst;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
-import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.layout.validation.context.LayoutValidationContext;
 import com.itextpdf.pdfua.checkers.utils.AnnotationCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.BCP47Validator;
@@ -177,14 +175,12 @@ public class PdfUA1Checker implements IValidationChecker {
             throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.INVALID_PDF_VERSION);
         }
 
-        PdfObject pdfMetadata = catalog.getPdfObject().get(PdfName.Metadata);
-        if (pdfMetadata == null || !pdfMetadata.isStream()) {
-            throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.DOCUMENT_SHALL_CONTAIN_XMP_METADATA_STREAM);
-        }
-        byte[] metaBytes = ((PdfStream) pdfMetadata).getBytes();
-
         try {
-            XMPMeta metadata = XMPMetaFactory.parseFromBuffer(metaBytes);
+            XMPMeta metadata = catalog.getDocument().getXmpMetadata();
+            if (metadata == null) {
+                throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.DOCUMENT_SHALL_CONTAIN_XMP_METADATA_STREAM);
+            }
+
             Integer part = metadata.getPropertyInteger(XMPConst.NS_PDFUA_ID, XMPConst.PART);
             if (!Integer.valueOf(1).equals(part)) {
                 throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.METADATA_SHALL_CONTAIN_UA_VERSION_IDENTIFIER);

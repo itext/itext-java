@@ -828,7 +828,7 @@ public class PdfFontCacheTest extends ExtendedITextTest {
         return fonts.size();
     }
 
-    private PdfDocument createDocument(String filename) throws FileNotFoundException {
+    private PdfDocument createDocument(String filename) throws IOException {
         PdfWriter writer = CompareTool.createTestPdfWriter(filename).setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         return new PdfDocument(writer);
     }

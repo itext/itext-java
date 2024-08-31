@@ -81,8 +81,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @Tag("IntegrationTest")
@@ -110,7 +110,7 @@ public class PdfUA2Test extends ExtendedITextTest {
                     "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
 
             Paragraph paragraph = new Paragraph("Hello PdfUA2").setFont(font);
-            byte[] byteMetaData = pdfDocument.getXmpMetadata();
+            byte[] byteMetaData = pdfDocument.getXmpMetadataBytes();
             documentMetaData = new String(byteMetaData);
             document.add(paragraph);
         }

@@ -56,8 +56,8 @@ import java.nio.file.Paths;
 import java.util.function.Consumer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PdfA4MetaDataTest extends ExtendedITextTest {
@@ -563,7 +563,7 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
 
     private static PdfDictionary generateCustomXmpCatalog(PdfADocument pdfADocument, Consumer<XMPMeta> action)
             throws XMPException {
-        XMPMeta xmpMeta = XMPMetaFactory.parse(new ByteArrayInputStream(pdfADocument.getXmpMetadata()));
+        XMPMeta xmpMeta = pdfADocument.getXmpMetadata();
         PdfDictionary catalog = pdfADocument.getCatalog().getPdfObject();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         action.accept(xmpMeta);

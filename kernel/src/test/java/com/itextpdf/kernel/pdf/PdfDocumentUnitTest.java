@@ -34,9 +34,9 @@ import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.layer.PdfLayer;
 import com.itextpdf.kernel.pdf.layer.PdfOCProperties;
 import com.itextpdf.kernel.validation.IValidationChecker;
+import com.itextpdf.kernel.validation.IValidationContext;
 import com.itextpdf.kernel.validation.ValidationContainer;
 import com.itextpdf.kernel.validation.ValidationType;
-import com.itextpdf.kernel.validation.IValidationContext;
 import com.itextpdf.kernel.validation.context.PdfDocumentValidationContext;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
@@ -221,66 +221,6 @@ public class PdfDocumentUnitTest extends ExtendedITextTest {
     }
 
     @Test
-    public void pdfDocumentInstanceNoWriterInfoAndConformanceLevelInitialization() throws IOException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + "pdfWithMetadata.pdf"));
-
-        Assertions.assertNull(pdfDocument.info);
-        Assertions.assertNull(pdfDocument.reader.pdfAConformanceLevel);
-
-        pdfDocument.close();
-
-        Assertions.assertNull(pdfDocument.info);
-        Assertions.assertNull(pdfDocument.reader.pdfAConformanceLevel);
-    }
-
-    @Test
-    public void pdfDocumentInstanceWriterInfoAndConformanceLevelInitialization() throws IOException {
-        PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(SOURCE_FOLDER + "pdfWithMetadata.pdf"), new PdfWriter(new ByteArrayOutputStream()));
-
-        Assertions.assertNotNull(pdfDocument.info);
-        Assertions.assertNull(pdfDocument.reader.pdfAConformanceLevel);
-
-        pdfDocument.close();
-
-        Assertions.assertNotNull(pdfDocument.info);
-        Assertions.assertNull(pdfDocument.reader.pdfAConformanceLevel);
-    }
-
-    @Test
-    public void extendedPdfDocumentNoWriterInfoAndConformanceLevelInitialization() throws IOException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + "pdfWithMetadata.pdf")) {
-            // This class instance extends pdfDocument
-        };
-
-        // TODO DEVSIX-5292 These fields shouldn't be initialized during the document's opening
-        Assertions.assertNotNull(pdfDocument.info);
-        Assertions.assertNotNull(pdfDocument.reader.pdfAConformanceLevel);
-
-        pdfDocument.close();
-
-        Assertions.assertNotNull(pdfDocument.info);
-        Assertions.assertNotNull(pdfDocument.reader.pdfAConformanceLevel);
-    }
-
-    @Test
-    public void extendedPdfDocumentWriterInfoAndConformanceLevelInitialization() throws IOException {
-        PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(SOURCE_FOLDER + "pdfWithMetadata.pdf"), new PdfWriter(new ByteArrayOutputStream())) {
-            // This class instance extends pdfDocument
-        };
-
-        Assertions.assertNotNull(pdfDocument.info);
-        // TODO DEVSIX-5292 pdfAConformanceLevel shouldn't be initialized during the document's opening
-        Assertions.assertNotNull(pdfDocument.reader.pdfAConformanceLevel);
-
-        pdfDocument.close();
-
-        Assertions.assertNotNull(pdfDocument.info);
-        Assertions.assertNotNull(pdfDocument.reader.pdfAConformanceLevel);
-    }
-
-    @Test
     public void getDocumentInfoAlreadyClosedTest() throws IOException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + "pdfWithMetadata.pdf"));
         pdfDocument.close();
@@ -289,22 +229,16 @@ public class PdfDocumentUnitTest extends ExtendedITextTest {
     }
 
     @Test
-    public void getDocumentInfoNotInitializedTest() throws IOException {
+    public void getDocumentInfoInitializationTest() throws IOException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + "pdfWithMetadata.pdf"));
-
-        Assertions.assertNull(pdfDocument.info);
         Assertions.assertNotNull(pdfDocument.getDocumentInfo());
-
         pdfDocument.close();
     }
 
     @Test
-    public void getPdfAConformanceLevelNotInitializedTest() throws IOException {
+    public void getPdfAConformanceLevelInitializationTest() throws IOException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + "pdfWithMetadata.pdf"));
-
-        Assertions.assertNull(pdfDocument.reader.pdfAConformanceLevel);
         Assertions.assertNotNull(pdfDocument.reader.getPdfAConformanceLevel());
-
         pdfDocument.close();
     }
 

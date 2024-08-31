@@ -48,8 +48,8 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PdfAXmpTest extends ExtendedITextTest {
@@ -126,8 +126,8 @@ public class PdfAXmpTest extends ExtendedITextTest {
         // Closing document and reopening it to flush it XMP metadata ModifyDate
         try (PdfDocument doc = new PdfDocument(new PdfReader(outFile));
              PdfDocument cmpDoc = new PdfDocument(new PdfReader(cmpFile))) {
-            byte[] rdf = doc.getXmpMetadata();
-            byte[] expectedRdf = cmpDoc.getXmpMetadata();
+            byte[] rdf = doc.getXmpMetadataBytes();
+            byte[] expectedRdf = cmpDoc.getXmpMetadataBytes();
             // Comparing angle brackets, since it's the main difference between canonical and compact format.
             Assertions.assertEquals(count(expectedRdf, (byte)'<'), count(rdf, (byte)'<'));
             Assertions.assertNull(new CompareTool().compareXmp(cmpFile, outFile, true));
@@ -156,7 +156,7 @@ public class PdfAXmpTest extends ExtendedITextTest {
 
         // check whether the pdfuaid NS URI was properly encoded as a URI with rdf:resource
         PdfDocument readDoc = new PdfDocument(new PdfReader(new ByteArrayInputStream(baos.toByteArray())));
-        String xmpString = new String(readDoc.getXmpMetadata(), StandardCharsets.UTF_8);
+        String xmpString = new String(readDoc.getXmpMetadataBytes(), StandardCharsets.UTF_8);
         Assertions.assertTrue(
                 xmpString.contains("<pdfaSchema:namespaceURI rdf:resource=\"http://www.aiim.org/pdfua/ns/id/\"/>"),
                 "Did not find expected namespaceURI definition");

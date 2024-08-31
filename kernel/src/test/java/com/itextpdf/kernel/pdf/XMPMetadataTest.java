@@ -43,29 +43,29 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class XMPMetadataTest extends ExtendedITextTest{
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/XmpWriterTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/XmpWriterTest/";
+    public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/XmpWriterTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/XmpWriterTest/";
 
     @BeforeAll
     public static void beforeClass() {
-        createOrClearDestinationFolder(destinationFolder);
+        createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
     @AfterAll
     public static void afterClass() {
-        CompareTool.cleanup(destinationFolder);
+        CompareTool.cleanup(DESTINATION_FOLDER);
     }
     
     @Test
     public void createEmptyDocumentWithXmp() throws Exception {
         String filename = "emptyDocumentWithXmp.pdf";
-        PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + filename,  new WriterProperties().addXmpMetadata());
+        PdfWriter writer = CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename,  new WriterProperties().addXmpMetadata());
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor("Alexander Chingarev").
                 setCreator("iText").
@@ -75,13 +75,13 @@ public class XMPMetadataTest extends ExtendedITextTest{
         PdfPage page = pdfDoc.addNewPage();
         page.flush();
         pdfDoc.close();
-        PdfReader reader = CompareTool.createOutputReader(destinationFolder + filename);
+        PdfReader reader = CompareTool.createOutputReader(DESTINATION_FOLDER + filename);
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assertions.assertEquals(false, reader.hasRebuiltXref(), "Rebuilt");
-        byte[] outBytes = pdfDocument.getXmpMetadata();
+        byte[] outBytes = pdfDocument.getXmpMetadataBytes();
         pdfDocument.close();
 
-        byte[] cmpBytes = readFile(sourceFolder + "emptyDocumentWithXmp.xml");
+        byte[] cmpBytes = readFile(SOURCE_FOLDER + "emptyDocumentWithXmp.xml");
 
         cmpBytes = removeAlwaysDifferentEntries(cmpBytes);
         outBytes = removeAlwaysDifferentEntries(outBytes);
@@ -91,9 +91,9 @@ public class XMPMetadataTest extends ExtendedITextTest{
 
     @Test
     public void emptyDocumentWithXmpAppendMode01() throws Exception {
-        String created = destinationFolder + "emptyDocumentWithXmpAppendMode01.pdf";
-        String updated = destinationFolder + "emptyDocumentWithXmpAppendMode01_updated.pdf";
-        String updatedAgain = destinationFolder + "emptyDocumentWithXmpAppendMode01_updatedAgain.pdf";
+        String created = DESTINATION_FOLDER + "emptyDocumentWithXmpAppendMode01.pdf";
+        String updated = DESTINATION_FOLDER + "emptyDocumentWithXmpAppendMode01_updated.pdf";
+        String updatedAgain = DESTINATION_FOLDER + "emptyDocumentWithXmpAppendMode01_updatedAgain.pdf";
         PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(created));
         pdfDocument.addNewPage();
 
@@ -117,10 +117,10 @@ public class XMPMetadataTest extends ExtendedITextTest{
         Assertions.assertEquals(6, metadataRef.getObjNumber());
         Assertions.assertEquals(0, metadataRef.getGenNumber());
 
-        byte[] outBytes = pdfDocument.getXmpMetadata();
+        byte[] outBytes = pdfDocument.getXmpMetadataBytes();
         pdfDocument.close();
 
-        byte[] cmpBytes = readFile(sourceFolder + "emptyDocumentWithXmpAppendMode01.xml");
+        byte[] cmpBytes = readFile(SOURCE_FOLDER + "emptyDocumentWithXmpAppendMode01.xml");
 
         cmpBytes = removeAlwaysDifferentEntries(cmpBytes);
         outBytes = removeAlwaysDifferentEntries(outBytes);
@@ -130,9 +130,9 @@ public class XMPMetadataTest extends ExtendedITextTest{
 
     @Test
     public void emptyDocumentWithXmpAppendMode02() throws Exception {
-        String created = destinationFolder + "emptyDocumentWithXmpAppendMode02.pdf";
-        String updated = destinationFolder + "emptyDocumentWithXmpAppendMode02_updated.pdf";
-        String updatedAgain = destinationFolder + "emptyDocumentWithXmpAppendMode02_updatedAgain.pdf";
+        String created = DESTINATION_FOLDER + "emptyDocumentWithXmpAppendMode02.pdf";
+        String updated = DESTINATION_FOLDER + "emptyDocumentWithXmpAppendMode02_updated.pdf";
+        String updatedAgain = DESTINATION_FOLDER + "emptyDocumentWithXmpAppendMode02_updatedAgain.pdf";
         PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(created));
         pdfDocument.addNewPage();
         pdfDocument.close();
@@ -156,10 +156,10 @@ public class XMPMetadataTest extends ExtendedITextTest{
         Assertions.assertEquals(6, metadataRef.getObjNumber());
         Assertions.assertEquals(0, metadataRef.getGenNumber());
 
-        byte[] outBytes = pdfDocument.getXmpMetadata();
+        byte[] outBytes = pdfDocument.getXmpMetadataBytes();
         pdfDocument.close();
 
-        byte[] cmpBytes = readFile(sourceFolder + "emptyDocumentWithXmpAppendMode02.xml");
+        byte[] cmpBytes = readFile(SOURCE_FOLDER + "emptyDocumentWithXmpAppendMode02.xml");
 
         cmpBytes = removeAlwaysDifferentEntries(cmpBytes);
         outBytes = removeAlwaysDifferentEntries(outBytes);
@@ -170,7 +170,7 @@ public class XMPMetadataTest extends ExtendedITextTest{
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.EXCEPTION_WHILE_UPDATING_XMPMETADATA)
+            @LogMessage(messageTemplate = IoLogMessageConstant.EXCEPTION_WHILE_UPDATING_XMPMETADATA, count = 2)
     })
     public void createEmptyDocumentWithAbcXmp() throws IOException {
         ByteArrayOutputStream fos = new ByteArrayOutputStream();
@@ -188,15 +188,15 @@ public class XMPMetadataTest extends ExtendedITextTest{
 
         PdfReader reader = new PdfReader(new ByteArrayInputStream(fos.toByteArray()));
         PdfDocument pdfDocument = new PdfDocument(reader);
-        Assertions.assertEquals(false, reader.hasRebuiltXref(), "Rebuilt");
-        Assertions.assertArrayEquals("abc".getBytes(StandardCharsets.ISO_8859_1), pdfDocument.getXmpMetadata());
+        Assertions.assertFalse(reader.hasRebuiltXref(), "Rebuilt");
+        Assertions.assertArrayEquals("abc".getBytes(StandardCharsets.ISO_8859_1), pdfDocument.getXmpMetadataBytes());
         Assertions.assertNotNull(pdfDocument.getPage(1));
         reader.close();
     }
 
     @Test
     @Disabled("DEVSIX-1899: fails in .NET passes in Java")
-    public void customXmpTest() throws IOException, InterruptedException {
+    public void customXmpTest() throws IOException, InterruptedException, XMPException {
         runCustomXmpTest("customXmp",
                 "<?xpacket begin='' id='W5M0MpCehiHzreSzNTczkc9d' bytes='770'?>\n" +
                 "\n" +
@@ -224,7 +224,7 @@ public class XMPMetadataTest extends ExtendedITextTest{
 
     @Test
     @Disabled("DEVSIX-1899: fails in .NET passes in Java")
-    public void customXmpTest02() throws IOException, InterruptedException {
+    public void customXmpTest02() throws IOException, InterruptedException, XMPException {
         runCustomXmpTest("customXmp02",
                 "<?xpacket begin='' id='W5M0MpCehiHzreSzNTczkc9d' bytes='1026'?><rdf:RDF xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#' xmlns:iX='http://ns.adobe.com/iX/1.0/'><rdf:Description about='' xmlns='http://ns.adobe.com/pdf/1.3/' xmlns:pdf='http://ns.adobe.com/pdf/1.3/' pdf:CreationDate='2016-01-27T13:07:23Z' pdf:ModDate='2016-01-27T13:07:23Z' pdf:Producer='Acrobat Distiller 5.0.5 (Windows)' pdf:Author='Koeck' pdf:Creator='PScript5.dll Version 5.2.2' pdf:Title='Rasant_ACE.indd'/>\n" +
                 "<rdf:Description about='' xmlns='http://ns.adobe.com/xap/1.0/' xmlns:xap='http://ns.adobe.com/xap/1.0/' xap:CreateDate='2016-01-27T13:07:23Z' xap:ModifyDate='2016-01-27T13:07:23Z' xap:Author='Koeck' xap:MetadataDate='2016-01-27T13:07:23Z'><xap:Title><rdf:Alt><rdf:li xml:lang='x-default'>Rasant_ACE.indd</rdf:li></rdf:Alt></xap:Title></rdf:Description>\n" +
@@ -233,8 +233,8 @@ public class XMPMetadataTest extends ExtendedITextTest{
     }
 
     private void runCustomXmpTest(String name, String xmp) throws IOException, InterruptedException {
-        String outPath = destinationFolder + name + ".pdf";
-        String cmpPath = sourceFolder + "cmp_" + name + ".pdf";
+        String outPath = DESTINATION_FOLDER + name + ".pdf";
+        String cmpPath = SOURCE_FOLDER + "cmp_" + name + ".pdf";
 
         PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outPath));
         PdfPage page = pdfDoc.addNewPage();
@@ -243,7 +243,7 @@ public class XMPMetadataTest extends ExtendedITextTest{
         pdfDoc.close();
 
         CompareTool compareTool = new CompareTool();
-        Assertions.assertNull(compareTool.compareByContent(outPath, cmpPath, destinationFolder, "diff_" + name + "_"));
+        Assertions.assertNull(compareTool.compareByContent(outPath, cmpPath, DESTINATION_FOLDER, "diff_" + name + "_"));
         Assertions.assertNull(compareTool.compareDocumentInfo(outPath, cmpPath));
     }
 

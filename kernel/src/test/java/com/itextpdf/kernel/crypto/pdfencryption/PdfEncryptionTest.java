@@ -55,7 +55,6 @@ import com.itextpdf.kernel.utils.PemFileHelper;
 import com.itextpdf.kernel.xmp.XMPConst;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
-import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.kernel.xmp.properties.XMPProperty;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.ITextTest;
@@ -75,8 +74,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 
 
@@ -291,7 +290,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(sourceFolder + "encryptedWithPlainMetadata.pdf",
                 new ReaderProperties().setPassword(PdfEncryptionTestUtils.OWNER));
         PdfDocument doc = new PdfDocument(reader);
-        XMPMeta xmpMeta = XMPMetaFactory.parseFromBuffer(doc.getXmpMetadata());
+        XMPMeta xmpMeta = doc.getXmpMetadata();
         XMPProperty creatorToolXmp = xmpMeta.getProperty(XMPConst.NS_XMP, "CreatorTool");
         doc.close();
         Assertions.assertNotNull(creatorToolXmp);

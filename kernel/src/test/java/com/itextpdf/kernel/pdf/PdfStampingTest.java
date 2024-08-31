@@ -36,7 +36,6 @@ import com.itextpdf.kernel.pdf.canvas.parser.PdfCanvasProcessor;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStrategy;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.xmp.XMPException;
-import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -48,8 +47,8 @@ import java.util.Calendar;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -755,7 +754,7 @@ public class PdfStampingTest extends ExtendedITextTest {
         for (int i = 0; i < pdfDoc3.getNumberOfPages(); i++) {
             pdfDoc3.getPage(i + 1);
         }
-        assertNotNull(XMPMetaFactory.parseFromBuffer(pdfDoc3.getXmpMetadata()), "XmpMetadata not found");
+        assertNotNull(pdfDoc3.getXmpMetadata(), "XmpMetadata not found");
         assertEquals(pageCount, pdfDoc3.getNumberOfPages(), "Number of pages");
         assertFalse(reader3.hasRebuiltXref(), "Rebuilt");
         assertFalse(reader3.hasFixedXref(), "Fixed");
@@ -799,7 +798,7 @@ public class PdfStampingTest extends ExtendedITextTest {
         for (int i = 0; i < pdfDoc3.getNumberOfPages(); i++) {
             pdfDoc3.getPage(i + 1);
         }
-        assertNotNull(XMPMetaFactory.parseFromBuffer(pdfDoc3.getXmpMetadata()), "XmpMetadata not found");
+        assertNotNull(pdfDoc3.getXmpMetadata(), "XmpMetadata not found");
         assertEquals(pageCount, pdfDoc3.getNumberOfPages(), "Number of pages");
         assertFalse(reader3.hasRebuiltXref(), "Rebuilt");
         assertFalse(reader3.hasFixedXref(), "Fixed");
