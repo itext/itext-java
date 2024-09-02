@@ -104,7 +104,6 @@ public class PubSecHandlerUsingAesGcm extends PubSecHandlerUsingAes256 {
     @Override
     protected void setPubSecSpecificHandlerDicEntries(PdfDictionary encryptionDictionary, boolean encryptMetadata, boolean embeddedFilesOnly) {
         super.setPubSecSpecificHandlerDicEntries(encryptionDictionary, encryptMetadata, embeddedFilesOnly);
-        encryptionDictionary.put(PdfName.R, new PdfNumber(6));
         encryptionDictionary.put(PdfName.V, new PdfNumber(7));
     }
 }

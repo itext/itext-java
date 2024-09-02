@@ -34,8 +34,8 @@ class MacPdfObject extends PdfObjectWrapper<PdfDictionary> {
         PdfLiteral macPlaceholder = new PdfLiteral(macContainerSize);
         PdfLiteral byteRangePlaceholder = new PdfLiteral(80);
 
-        getPdfObject().put(new PdfName("MACLocation"), new PdfName("Standalone"));
-        getPdfObject().put(new PdfName("MAC"), macPlaceholder);
+        getPdfObject().put(PdfName.MACLocation, PdfName.Standalone);
+        getPdfObject().put(PdfName.MAC, macPlaceholder);
         getPdfObject().put(PdfName.ByteRange, byteRangePlaceholder);
     }
 
@@ -52,7 +52,7 @@ class MacPdfObject extends PdfObjectWrapper<PdfDictionary> {
     }
 
     private PdfLiteral getMacPlaceholder() {
-        PdfObject mac = getPdfObject().get(new PdfName("MAC"));
+        PdfObject mac = getPdfObject().get(PdfName.MAC);
         return (PdfLiteral) mac;
     }
 

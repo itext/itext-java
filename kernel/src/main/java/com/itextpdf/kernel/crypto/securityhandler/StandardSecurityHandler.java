@@ -33,9 +33,9 @@ import com.itextpdf.kernel.pdf.PdfString;
 
 public abstract class StandardSecurityHandler extends SecurityHandler {
 
-    protected static final int PERMS_MASK_1_FOR_REVISION_2 = 0xffffffc0;
-    protected static final int PERMS_MASK_1_FOR_REVISION_3_OR_GREATER = 0xfffff0c0;
-    protected static final int PERMS_MASK_2 = 0xfffffffc;
+    protected static final int PERMS_MASK_1_FOR_REVISION_2 = -64;
+    protected static final int PERMS_MASK_1_FOR_REVISION_3_OR_GREATER = -8000;
+    protected static final int PERMS_MASK_2 = -4;
 
     protected long permissions;
     protected boolean usedOwnerPassword = true;

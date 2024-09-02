@@ -93,13 +93,14 @@ import org.slf4j.LoggerFactory;
  */
 public class PdfDocument implements IEventDispatcher, Closeable {
     private static final PdfName[] PDF_NAMES_TO_REMOVE_FROM_ORIGINAL_TRAILER = new PdfName[] {
-        PdfName.Encrypt,
-        PdfName.Size,
-        PdfName.Prev,
-        PdfName.Root,
-        PdfName.Info,
-        PdfName.ID,
-        PdfName.XRefStm,
+            PdfName.Encrypt,
+            PdfName.Size,
+            PdfName.Prev,
+            PdfName.Root,
+            PdfName.Info,
+            PdfName.ID,
+            PdfName.XRefStm,
+            PdfName.AuthCode
     };
 
     private static final IPdfPageFactory pdfPageFactory = new PdfPageFactory();
@@ -2113,6 +2114,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
             }
             xref.initFreeReferencesList(this);
             if (writer != null) {
+                enableByteArrayWritingMode();
                 if (reader != null && reader.hasXrefStm() && writer.properties.isFullCompression == null) {
                     writer.properties.isFullCompression = Boolean.TRUE;
                 }
@@ -2135,7 +2137,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                 }
                 // We keep the original trailer of the document to preserve the original document keys,
                 // but we have to remove all standard keys that can occur in the trailer to avoid invalid pdfs
-                if (trailer.size() > 0) {
+                if (!trailer.isEmpty()) {
                     for (final PdfName key : PdfDocument.PDF_NAMES_TO_REMOVE_FROM_ORIGINAL_TRAILER) {
                         trailer.remove(key);
                     }
@@ -2191,6 +2193,10 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                 overrideFullCompressionInWriterProperties(writer.properties, reader.hasXrefStm());
 
                 writer.crypto = reader.decrypt;
+                if (writer.crypto != null) {
+                    writer.crypto.checkEncryptionRequirements(this);
+                    writer.crypto.configureEncryptionParameters(this, true);
+                }
 
                 if (newPdfVersion != null) {
                     // In PDF 1.4, a PDF version can also be specified in the Version entry of the document catalog,
@@ -2226,7 +2232,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                         encryptedEmbeddedStreamsHandler.storeAllEmbeddedStreams();
                     }
                     writer.crypto.checkEncryptionRequirements(this);
-                    writer.crypto.configureEncryptionParameters(this);
+                    writer.crypto.configureEncryptionParameters(this, true);
                 }
             }
             if (EventConfirmationType.ON_DEMAND == event.getConfirmationType()) {
@@ -2422,6 +2428,17 @@ public class PdfDocument implements IEventDispatcher, Closeable {
 
     boolean hasAcroForm() {
         return getCatalog().getPdfObject().containsKey(PdfName.AcroForm);
+    }
+
+    private void enableByteArrayWritingMode() {
+        if (properties.appendMode || properties.preserveEncryption) {
+            if (reader.decrypt != null && reader.decrypt.getMacContainer() != null) {
+                writer.enableByteArrayWritingMode();
+            }
+        } else if (writer.properties.encryptionProperties != null &&
+                writer.properties.encryptionProperties.macProperties != null) {
+            writer.enableByteArrayWritingMode();
+        }
     }
 
     private void tryFlushTagStructure(boolean isAppendMode) {

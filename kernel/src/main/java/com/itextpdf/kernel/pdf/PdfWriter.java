@@ -27,6 +27,7 @@ import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.kernel.events.PdfDocumentEvent;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.mac.MacIntegrityProtector;
 import com.itextpdf.kernel.utils.ICopyFilter;
 import com.itextpdf.kernel.utils.NullCopyFilter;
@@ -88,12 +89,15 @@ public class PdfWriter extends PdfOutputStream {
         this(os, new WriterProperties());
     }
 
+    /**
+     * Creates {@link PdfWriter} instance, which writes to the passed {@link OutputStream},
+     * using provided {@link WriterProperties}.
+     *
+     * @param os {@link OutputStream} in which writing should happen
+     * @param properties {@link WriterProperties} to be used during the writing
+     */
     public PdfWriter(java.io.OutputStream os, WriterProperties properties) {
-        super(isByteArrayWritingMode(properties) ? (OutputStream) new ByteArrayOutputStream() :
-                new CountOutputStream(FileUtil.wrapWithBufferedOutputStream(os)));
-        if (isByteArrayWritingMode(properties)) {
-            this.originalOutputStream = os;
-        }
+        super(new CountOutputStream(FileUtil.wrapWithBufferedOutputStream(os)));
         this.properties = properties;
     }
 
@@ -133,7 +137,7 @@ public class PdfWriter extends PdfOutputStream {
         if (document != null) {
             document.dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.END_WRITER_FLUSH, document));
         }
-        if (isByteArrayWritingMode(properties)) {
+        if (isByteArrayWritingMode()) {
             completeByteArrayWritingMode();
         }
     }
@@ -454,10 +458,23 @@ public class PdfWriter extends PdfOutputStream {
         }
     }
 
+    void enableByteArrayWritingMode() {
+        if (isByteArrayWritingMode()) {
+            throw new PdfException("Byte array writing mode is already enabled");
+        } else {
+            this.originalOutputStream = this.outputStream;
+            this.outputStream = new ByteArrayOutputStream();
+        }
+    }
+
     private void completeByteArrayWritingMode() throws IOException {
         byte[] baos = ((ByteArrayOutputStream) getOutputStream()).toByteArray();
         originalOutputStream.write(baos, 0, baos.length);
         originalOutputStream.close();
+    }
+
+    private boolean isByteArrayWritingMode() {
+        return originalOutputStream != null;
     }
 
     private void markArrayContentToFlush(PdfArray array) {
@@ -491,10 +508,6 @@ public class PdfWriter extends PdfOutputStream {
                 }
             }
         }
-    }
-
-    private static boolean isByteArrayWritingMode(WriterProperties properties) {
-        return properties.encryptionProperties.macProperties != null;
     }
 
     private static boolean checkTypeOfPdfDictionary(PdfObject dictionary, PdfName expectedType) {

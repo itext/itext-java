@@ -126,6 +126,10 @@ public final class KernelExceptionMessageConstant {
                     + "method.";
     public static final String CF_NOT_FOUND_ENCRYPTION = "/CF not found (encryption)";
     public static final String COLOR_SPACE_NOT_FOUND = "ColorSpace not found.";
+    public static final String CONTAINER_EMBEDDING_EXCEPTION =
+            "IOException occurred while trying to embed MAC container into document output stream.";
+    public static final String CONTAINER_GENERATION_EXCEPTION = "Exception occurred during MAC container generation.";
+    public static final String CONTAINER_PARSING_EXCEPTION = "Exception occurred during MAC container parsing.";
     public static final String CONTENT_STREAM_MUST_NOT_INVOKE_OPERATORS_THAT_SPECIFY_COLORS_OR_OTHER_COLOR_RELATED_PARAMETERS =
             "Content stream must not invoke operators that specify colors or other color related parameters in "
                     + "the graphics state.";
@@ -142,6 +146,8 @@ public final class KernelExceptionMessageConstant {
     public static final String DEFAULT_CRYPT_FILTER_NOT_FOUND_ENCRYPTION = "/DefaultCryptFilter not found "
             + "(encryption).";
     public static final String THIS_DICTIONARY_KEY_IS_NOT_A_NAME = "Dictionary key {0} is not a name.";
+    public static final String DIGEST_NOT_SUPPORTED =
+            "This digest algorithm is not supported for MAC integrity protection.";
     public static final String DICTIONARY_DOES_NOT_HAVE_SUPPORTED_FONT_DATA = "Dictionary doesn't have supported font "
             + "data.";
     public static final String DOCUMENT_CLOSED_IT_IS_IMPOSSIBLE_TO_EXECUTE_ACTION = "Document was closed. It is "
@@ -261,6 +267,14 @@ public final class KernelExceptionMessageConstant {
     public static final String IO_EXCEPTION_WHILE_CREATING_FONT = "I/O exception while creating Font";
     public static final String LZW_DECODER_EXCEPTION = "LZW decoder exception.";
     public static final String LZW_FLAVOUR_NOT_SUPPORTED = "LZW flavour not supported.";
+    public static final String MAC_ALGORITHM_NOT_SUPPORTED = "This MAC algorithm is not supported.";
+    public static final String MAC_FOR_ENCRYPTION_5 =
+            "MAC integrity protection is only supported for encryption algorithms of version 5 or higher.";
+    public static final String MAC_FOR_PDF_2 = "MAC integrity protection is only supported for PDF 2.0 or higher.";
+    public static final String MAC_PERMS_WITHOUT_MAC = "Permissions bit 13 is set to zero, "
+            + "which indicates that MAC integrity protection is enabled. However MAC container wasn't found.";
+    public static final String MAC_VALIDATION_FAILED =
+            "MAC integrity protection was compromised. Document content was modified.";
     public static final String MISSING_REQUIRED_FIELD_IN_FONT_DICTIONARY
             = "Missing required field {0} in font dictionary.";
     public static final String MUST_BE_A_TAGGED_DOCUMENT = "Must be a tagged document.";
@@ -373,10 +387,12 @@ public final class KernelExceptionMessageConstant {
             "Unknown ASN1-encoding {0}. Only DER and BER encodings are supported!";
     public static final String UNSUPPORTED_FONT_EMBEDDING_STRATEGY = "Unsupported font embedding strategy.";
     public static final String UNSUPPORTED_XOBJECT_TYPE = "Unsupported XObject type.";
+    public static final String VALIDATION_EXCEPTION = "Unexpected exception occurred during MAC token validation.";
     public static final String WHEN_ADDING_OBJECT_REFERENCE_TO_THE_TAG_TREE_IT_MUST_BE_CONNECTED_TO_NOT_FLUSHED_OBJECT =
             "When adding object reference to the tag tree, it must be connected to not flushed object.";
     public static final String WHITE_POINT_IS_INCORRECTLY_SPECIFIED = "White point is incorrectly specified.";
     public static final String WMF_IMAGE_EXCEPTION = "WMF image exception.";
+    public static final String WRAP_ALGORITHM_NOT_SUPPORTED = "This wrapping algorithm is not supported.";
     public static final String WRONG_MEDIA_BOX_SIZE_TOO_FEW_ARGUMENTS = "Wrong media box size: {0}. Need at least 4 "
             + "arguments";
     public static final String XREF_PREV_SHALL_BE_DIRECT_NUMBER_OBJECT = "Prev pointer in xref structure shall be "

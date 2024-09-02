@@ -1718,9 +1718,21 @@ public interface IBouncyCastleFactory {
     byte[] generateEncryptedKeyWithAES256NoPad(byte[] key, byte[] kek) throws GeneralSecurityException;
 
     /**
+     * Generates decrypted key based on AES256 without padding unwrapping algorithm.
+     *
+     * @param key key to be decrypted
+     * @param kek key encryption key to be used
+     *
+     * @return decrypted key.
+     *
+     * @throws GeneralSecurityException in case of encryption related exceptions.
+     */
+    byte[] generateDecryptedKeyWithAES256NoPad(byte[] key, byte[] kek) throws GeneralSecurityException;
+
+    /**
      * Returns a Block Cipher object that implements the aes-gcm transformation.
      *
-     * @return {@code IGCMBlockCipher} instance with provider specific implementation
+     * @return {@link IGCMBlockCipher} instance with provider specific implementation
      */
     IGCMBlockCipher createGCMBlockCipher();
 }

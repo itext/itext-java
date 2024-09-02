@@ -513,6 +513,8 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName LW = createDirectName("LW");
     public static final PdfName LZWDecode = createDirectName("LZWDecode");
     public static final PdfName M = createDirectName("M");
+    public static final PdfName MAC = createDirectName("MAC");
+    public static final PdfName MACLocation = createDirectName("MACLocation");
     public static final PdfName MacExpertEncoding = createDirectName("MacExpertEncoding");
     public static final PdfName MacRomanEncoding = createDirectName("MacRomanEncoding");
     public static final PdfName Marked = createDirectName("Marked");
@@ -770,6 +772,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName SpaceAfter = createDirectName("SpaceAfter");
     public static final PdfName Square = createDirectName("Square");
     public static final PdfName Squiggly = createDirectName("Squiggly");
+    public static final PdfName Standalone = createDirectName("Standalone");
     public static final PdfName St = createDirectName("St");
     public static final PdfName Stamp = createDirectName("Stamp");
     public static final PdfName StampImage = createDirectName("StampImage");

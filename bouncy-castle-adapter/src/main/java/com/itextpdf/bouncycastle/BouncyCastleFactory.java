@@ -1902,6 +1902,16 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
      * {@inheritDoc}
      */
     @Override
+    public byte[] generateDecryptedKeyWithAES256NoPad(byte[] key, byte[] kek) throws GeneralSecurityException {
+        Cipher cipher = Cipher.getInstance("AESWrap", this.getProvider());
+        cipher.init(Cipher.UNWRAP_MODE, new SecretKeySpec(kek, "AESWrap"));
+        return cipher.unwrap(key, "AESWrap", Cipher.SECRET_KEY).getEncoded();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public IGCMBlockCipher createGCMBlockCipher() {
         GCMBlockCipher cipher = (GCMBlockCipher) GCMBlockCipher.newInstance(AESEngine.newInstance());
         return new GCMBlockCipherBC(cipher);

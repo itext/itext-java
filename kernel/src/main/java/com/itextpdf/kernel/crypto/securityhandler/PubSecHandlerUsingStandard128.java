@@ -49,12 +49,10 @@ public class PubSecHandlerUsingStandard128 extends PubSecHandlerUsingStandard40 
         encryptionDictionary.put(PdfName.Filter, PdfName.Adobe_PubSec);
         PdfArray recipients = createRecipientsArray();
         if (encryptMetadata) {
-            encryptionDictionary.put(PdfName.R, new PdfNumber(3));
             encryptionDictionary.put(PdfName.V, new PdfNumber(2));
             encryptionDictionary.put(PdfName.SubFilter, PdfName.Adbe_pkcs7_s4);
             encryptionDictionary.put(PdfName.Recipients, recipients);
         } else {
-            encryptionDictionary.put(PdfName.R, new PdfNumber(4));
             encryptionDictionary.put(PdfName.V, new PdfNumber(4));
             encryptionDictionary.put(PdfName.SubFilter, PdfName.Adbe_pkcs7_s5);
 

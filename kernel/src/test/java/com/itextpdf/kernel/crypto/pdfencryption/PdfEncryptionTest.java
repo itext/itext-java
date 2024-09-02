@@ -457,7 +457,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT, ignore = true),
-            @LogMessage(messageTemplate = VersionConforming.DEPRECATED_ENCRYPTION_ALGORITHMS)})
+            @LogMessage(messageTemplate = VersionConforming.DEPRECATED_ENCRYPTION_ALGORITHMS, count = 2)})
     public void encryptWithPasswordAes128Pdf2() throws InterruptedException, IOException {
         String filename = "encryptWithPasswordAes128Pdf2.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_128;
