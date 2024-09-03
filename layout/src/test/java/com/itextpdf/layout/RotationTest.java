@@ -22,13 +22,20 @@
  */
 package com.itextpdf.layout;
 
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.AreaBreak;
@@ -46,6 +53,7 @@ import com.itextpdf.layout.properties.HorizontalAlignment;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
+import com.itextpdf.layout.properties.VerticalAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -58,8 +66,8 @@ import java.io.IOException;
 
 @Tag("IntegrationTest")
 public class RotationTest extends ExtendedITextTest {
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/RotationTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/layout/RotationTest/";
+    public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/RotationTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/RotationTest/";
     public static final String cmpPrefix = "cmp_";
 
     private static final String para1Text = "The first published account of what would evolve into the Mafia in the United States came in the spring of 1869. " +
@@ -76,13 +84,13 @@ public class RotationTest extends ExtendedITextTest {
 
     @BeforeAll
     public static void beforeClass() {
-        createOrClearDestinationFolder(destinationFolder);
+        createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     public void fixedTextRotationTest01() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "fixedTextRotationTest01.pdf";
-        String cmpFileName = sourceFolder + cmpPrefix + "fixedTextRotationTest01.pdf";
+        String outFileName = DESTINATION_FOLDER + "fixedTextRotationTest01.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "fixedTextRotationTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -106,13 +114,13 @@ public class RotationTest extends ExtendedITextTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
     public void fixedTextRotationTest02() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "fixedTextRotationTest02.pdf";
-        String cmpFileName = sourceFolder + cmpPrefix + "fixedTextRotationTest02.pdf";
+        String outFileName = DESTINATION_FOLDER + "fixedTextRotationTest02.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "fixedTextRotationTest02.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -124,13 +132,13 @@ public class RotationTest extends ExtendedITextTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
     public void fixedTextRotationTest03() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "fixedTextRotationTest03.pdf";
-        String cmpFileName = sourceFolder + cmpPrefix + "fixedTextRotationTest03.pdf";
+        String outFileName = DESTINATION_FOLDER + "fixedTextRotationTest03.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "fixedTextRotationTest03.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -147,13 +155,13 @@ public class RotationTest extends ExtendedITextTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
     public void fixedTextRotationTest04() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "fixedTextRotationTest04.pdf";
-        String cmpFileName = sourceFolder + cmpPrefix + "fixedTextRotationTest04.pdf";
+        String outFileName = DESTINATION_FOLDER + "fixedTextRotationTest04.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "fixedTextRotationTest04.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -169,7 +177,7 @@ public class RotationTest extends ExtendedITextTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @LogMessages(messages = {
@@ -177,8 +185,8 @@ public class RotationTest extends ExtendedITextTest {
     })
     @Test
     public void staticTextRotationTest01() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "staticTextRotationTest01.pdf";
-        String cmpFileName = sourceFolder + cmpPrefix + "staticTextRotationTest01.pdf";
+        String outFileName = DESTINATION_FOLDER + "staticTextRotationTest01.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "staticTextRotationTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -191,7 +199,7 @@ public class RotationTest extends ExtendedITextTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @LogMessages(messages = {
@@ -199,8 +207,8 @@ public class RotationTest extends ExtendedITextTest {
     })
     @Test
     public void staticTextRotationTest02() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "staticTextRotationTest02.pdf";
-        String cmpFileName = sourceFolder + cmpPrefix + "staticTextRotationTest02.pdf";
+        String outFileName = DESTINATION_FOLDER + "staticTextRotationTest02.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "staticTextRotationTest02.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -213,7 +221,7 @@ public class RotationTest extends ExtendedITextTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @LogMessages(messages = {
@@ -221,8 +229,8 @@ public class RotationTest extends ExtendedITextTest {
     })
     @Test
     public void staticTextRotationTest03() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "staticTextRotationTest03.pdf";
-        String cmpFileName = sourceFolder + cmpPrefix + "staticTextRotationTest03.pdf";
+        String outFileName = DESTINATION_FOLDER + "staticTextRotationTest03.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "staticTextRotationTest03.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -234,13 +242,13 @@ public class RotationTest extends ExtendedITextTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
     public void staticTextRotationTest04() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "staticTextRotationTest04.pdf";
-        String cmpFileName = sourceFolder + cmpPrefix + "staticTextRotationTest04.pdf";
+        String outFileName = DESTINATION_FOLDER + "staticTextRotationTest04.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "staticTextRotationTest04.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -251,13 +259,13 @@ public class RotationTest extends ExtendedITextTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
     public void splitTextRotationTest01() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "splitTextRotationTest01.pdf";
-        String cmpFileName = sourceFolder + cmpPrefix + "splitTextRotationTest01.pdf";
+        String outFileName = DESTINATION_FOLDER + "splitTextRotationTest01.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "splitTextRotationTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -270,7 +278,7 @@ public class RotationTest extends ExtendedITextTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @LogMessages(messages = {
@@ -278,8 +286,8 @@ public class RotationTest extends ExtendedITextTest {
     })
     @Test
     public void splitTextRotationTest02() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "splitTextRotationTest02.pdf";
-        String cmpFileName = sourceFolder + cmpPrefix + "splitTextRotationTest02.pdf";
+        String outFileName = DESTINATION_FOLDER + "splitTextRotationTest02.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "splitTextRotationTest02.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -298,14 +306,14 @@ public class RotationTest extends ExtendedITextTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
     public void rotationInfiniteLoopTest01() throws IOException, InterruptedException {
         String fileName = "rotationInfiniteLoopTest01.pdf";
-        String outFileName = destinationFolder + fileName;
-        String cmpFileName = sourceFolder + cmpPrefix + fileName;
+        String outFileName = DESTINATION_FOLDER + fileName;
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + fileName;
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
         pdfDocument.setDefaultPageSize(PageSize.A5.rotate());
 
@@ -315,7 +323,7 @@ public class RotationTest extends ExtendedITextTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @LogMessages(messages = {
@@ -324,8 +332,8 @@ public class RotationTest extends ExtendedITextTest {
     @Test
     public void rotationInfiniteLoopTest02() throws IOException, InterruptedException {
         String fileName = "rotationInfiniteLoopTest02.pdf";
-        String outFileName = destinationFolder + fileName;
-        String cmpFileName = sourceFolder + cmpPrefix + fileName;
+        String outFileName = DESTINATION_FOLDER + fileName;
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + fileName;
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
         pdfDocument.setDefaultPageSize(PageSize.A5.rotate());
 
@@ -335,7 +343,7 @@ public class RotationTest extends ExtendedITextTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @LogMessages(messages = {
@@ -343,8 +351,8 @@ public class RotationTest extends ExtendedITextTest {
     })
     @Test
     public void tableRotationTest02() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "tableRotationTest02.pdf";
-        String cmpFileName = sourceFolder + cmpPrefix + "tableRotationTest02.pdf";
+        String outFileName = DESTINATION_FOLDER + "tableRotationTest02.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "tableRotationTest02.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -359,7 +367,7 @@ public class RotationTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @LogMessages(messages = {
@@ -367,8 +375,8 @@ public class RotationTest extends ExtendedITextTest {
     })
     @Test
     public void tableRotationTest03() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "tableRotationTest03.pdf";
-        String cmpFileName = sourceFolder + cmpPrefix + "tableRotationTest03.pdf";
+        String outFileName = DESTINATION_FOLDER + "tableRotationTest03.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "tableRotationTest03.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -385,13 +393,13 @@ public class RotationTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
     public void cellRotationTest01() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "cellRotationTest01.pdf";
-        String cmpFileName = sourceFolder + cmpPrefix + "cellRotationTest01.pdf";
+        String outFileName = DESTINATION_FOLDER + "cellRotationTest01.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "cellRotationTest01.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -406,13 +414,13 @@ public class RotationTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
     public void cellRotationTest02() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "cellRotationTest02.pdf";
-        String cmpFileName = sourceFolder + cmpPrefix + "cellRotationTest02.pdf";
+        String outFileName = DESTINATION_FOLDER + "cellRotationTest02.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "cellRotationTest02.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -426,13 +434,13 @@ public class RotationTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
     public void cellRotationTest03() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "cellRotationTest03.pdf";
-        String cmpFileName = sourceFolder + cmpPrefix + "cellRotationTest03.pdf";
+        String outFileName = DESTINATION_FOLDER + "cellRotationTest03.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "cellRotationTest03.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -446,13 +454,13 @@ public class RotationTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
     public void cellRotationDependsOnNeighbourCell() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "cellRotationDependsOnNeighbourCell.pdf";
-        String cmpFileName = sourceFolder + cmpPrefix + "cellRotationDependsOnNeighbourCell.pdf";
+        String outFileName = DESTINATION_FOLDER + "cellRotationDependsOnNeighbourCell.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "cellRotationDependsOnNeighbourCell.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, new PageSize(300, 180));
@@ -466,15 +474,15 @@ public class RotationTest extends ExtendedITextTest {
         doc.add(createTable(100));
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
     // TODO DEVSIX-5029 Content of the first cell is missing
     public void cellRotationParagraphIsGone() throws IOException, InterruptedException {
         String testName = "cellRotationParagraphIsGone.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + cmpPrefix + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + testName;
 
         PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdf);
@@ -494,7 +502,7 @@ public class RotationTest extends ExtendedITextTest {
 
         doc.add(table);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
 
     }
 
@@ -515,8 +523,8 @@ public class RotationTest extends ExtendedITextTest {
 
     @Test
     public void divRotationTest01() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "divRotationTest01.pdf";
-        String cmpFileName = sourceFolder + cmpPrefix + "divRotationTest01.pdf";
+        String outFileName = DESTINATION_FOLDER + "divRotationTest01.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "divRotationTest01.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -531,7 +539,7 @@ public class RotationTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @LogMessages(messages = {
@@ -539,8 +547,8 @@ public class RotationTest extends ExtendedITextTest {
     })
     @Test
     public void divRotationTest02() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "divRotationTest02.pdf";
-        String cmpFileName = sourceFolder + cmpPrefix + "divRotationTest02.pdf";
+        String outFileName = DESTINATION_FOLDER + "divRotationTest02.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "divRotationTest02.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -558,13 +566,13 @@ public class RotationTest extends ExtendedITextTest {
         doc.add(new Div().add(new Paragraph(extremelyLongText)).setRotationAngle(Math.PI / 4));
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
     public void listRotationTest01() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "listRotationTest01.pdf";
-        String cmpFileName = sourceFolder + cmpPrefix + "listRotationTest01.pdf";
+        String outFileName = DESTINATION_FOLDER + "listRotationTest01.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "listRotationTest01.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -581,7 +589,7 @@ public class RotationTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
 
@@ -590,8 +598,8 @@ public class RotationTest extends ExtendedITextTest {
     })
     @Test
     public void listRotationTest02() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "listRotationTest02.pdf";
-        String cmpFileName = sourceFolder + cmpPrefix + "listRotationTest02.pdf";
+        String outFileName = DESTINATION_FOLDER + "listRotationTest02.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "listRotationTest02.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -611,13 +619,13 @@ public class RotationTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
     public void alignedTextRotationTest01() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "alignedTextRotationTest01.pdf";
-        String cmpFileName = sourceFolder + cmpPrefix + "alignedTextRotationTest01.pdf";
+        String outFileName = DESTINATION_FOLDER + "alignedTextRotationTest01.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "alignedTextRotationTest01.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -633,13 +641,13 @@ public class RotationTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
     public void innerRotationTest01() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "innerRotationTest01.pdf";
-        String cmpFileName = sourceFolder + cmpPrefix + "innerRotationTest01.pdf";
+        String outFileName = DESTINATION_FOLDER + "innerRotationTest01.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "innerRotationTest01.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -657,7 +665,7 @@ public class RotationTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @LogMessages(messages = {
@@ -665,8 +673,8 @@ public class RotationTest extends ExtendedITextTest {
     })
     @Test
     public void innerRotationTest02() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "innerRotationTest02.pdf";
-        String cmpFileName = sourceFolder + cmpPrefix + "innerRotationTest02.pdf";
+        String outFileName = DESTINATION_FOLDER + "innerRotationTest02.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "innerRotationTest02.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, new PageSize(6400, 6400));
@@ -688,13 +696,13 @@ public class RotationTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
     public void fixedWidthRotationTest01() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "fixedWidthRotationTest01.pdf";
-        String cmpFileName = sourceFolder + cmpPrefix + "fixedWidthRotationTest01.pdf";
+        String outFileName = DESTINATION_FOLDER + "fixedWidthRotationTest01.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "fixedWidthRotationTest01.pdf";
 
         Document doc = new Document(new PdfDocument(new PdfWriter(outFileName)));
         Text text = new Text("Hello. I am a fairly long paragraph. I really want you to process me correctly. You heard that? Correctly!!! Even if you will have to wrap me.");
@@ -709,13 +717,13 @@ public class RotationTest extends ExtendedITextTest {
         doc.add(d.add(p));
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
     public void fixedWidthRotationTest02() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "fixedWidthRotationTest02.pdf";
-        String cmpFileName = sourceFolder + cmpPrefix + "fixedWidthRotationTest02.pdf";
+        String outFileName = DESTINATION_FOLDER + "fixedWidthRotationTest02.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "fixedWidthRotationTest02.pdf";
 
         Document doc = new Document(new PdfDocument(new PdfWriter(outFileName)));
         Text text = new Text("Hello. I am a fairly long paragraph. I really want you to process me correctly. You heard that? Correctly!!! Even if you will have to wrap me.");
@@ -730,13 +738,13 @@ public class RotationTest extends ExtendedITextTest {
         doc.add(d.add(p));
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
     public void fixedWidthRotationTest03() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "fixedWidthRotationTest03.pdf";
-        String cmpFileName = sourceFolder + cmpPrefix + "fixedWidthRotationTest03.pdf";
+        String outFileName = DESTINATION_FOLDER + "fixedWidthRotationTest03.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "fixedWidthRotationTest03.pdf";
 
         Document doc = new Document(new PdfDocument(new PdfWriter(outFileName)));
         Text text = new Text("Hello. I am a fairly long paragraph. I really want you to process me correctly. You heard that? Correctly!!! Even if you will have to wrap me.");
@@ -751,17 +759,17 @@ public class RotationTest extends ExtendedITextTest {
         doc.add(d.add(d1));
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
-    public void ImageInRotatedBlockTest01() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "imageInRotatedBlockTest01.pdf";
-        String cmpFileName = sourceFolder + "cmp_imageInRotatedBlockTest01.pdf";
+    public void imageInRotatedBlockTest01() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "imageInRotatedBlockTest01.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_imageInRotatedBlockTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
-        Image image = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
+        Image image = new Image(ImageDataFactory.create(SOURCE_FOLDER + "Desert.jpg"));
         image.setWidth(200);
 
         Div div = new Div();
@@ -773,7 +781,7 @@ public class RotationTest extends ExtendedITextTest {
         doc.add(new Paragraph("Hello!!!").setBackgroundColor(ColorConstants.RED));
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -781,13 +789,13 @@ public class RotationTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT),
             @LogMessage(messageTemplate = IoLogMessageConstant.ROTATION_WAS_NOT_CORRECTLY_PROCESSED_FOR_RENDERER, count = 2)
     })
-    public void ImageInRotatedBlockTest02() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "imageInRotatedBlockTest02.pdf";
-        String cmpFileName = sourceFolder + "cmp_imageInRotatedBlockTest02.pdf";
+    public void imageInRotatedBlockTest02() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "imageInRotatedBlockTest02.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_imageInRotatedBlockTest02.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
-        Image image = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
+        Image image = new Image(ImageDataFactory.create(SOURCE_FOLDER + "Desert.jpg"));
         image.setWidth(200);
 
         Div div = new Div();
@@ -800,13 +808,13 @@ public class RotationTest extends ExtendedITextTest {
         doc.add(new Paragraph("Hello!!!").setBackgroundColor(ColorConstants.RED));
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
     public void blockWithBorderBoxSizingTest01() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "blockWithBorderBoxSizingTest01.pdf";
-        String cmpFileName = sourceFolder + "cmp_blockWithBorderBoxSizingTest01.pdf";
+        String outFileName = DESTINATION_FOLDER + "blockWithBorderBoxSizingTest01.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_blockWithBorderBoxSizingTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
@@ -822,14 +830,14 @@ public class RotationTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
     //TODO: currently is incorrect. See DEVSIX-989
     public void marginsRotatedTest01() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "marginsRotatedTest01.pdf";
-        String cmpFileName = sourceFolder + cmpPrefix + "marginsRotatedTest01.pdf";
+        String outFileName = DESTINATION_FOLDER + "marginsRotatedTest01.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "marginsRotatedTest01.pdf";
 
         Document doc = new Document(new PdfDocument(new PdfWriter(outFileName)));
         Text text = new Text("Hello. I am a fairly long paragraph. I really want you to process me correctly. You heard that? Correctly!!! Even if you will have to wrap me.");
@@ -844,14 +852,14 @@ public class RotationTest extends ExtendedITextTest {
         doc.add(d.add(d1));
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
     //TODO: currently is incorrect. See DEVSIX-989
     public void marginsRotatedTest02() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "marginsRotatedTest02.pdf";
-        String cmpFileName = sourceFolder + cmpPrefix + "marginsRotatedTest02.pdf";
+        String outFileName = DESTINATION_FOLDER + "marginsRotatedTest02.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "marginsRotatedTest02.pdf";
 
         Document doc = new Document(new PdfDocument(new PdfWriter(outFileName)));
         doc.setProperty(Property.COLLAPSING_MARGINS, true);
@@ -867,14 +875,14 @@ public class RotationTest extends ExtendedITextTest {
         doc.add(d.add(d1).add(new Paragraph("Hello").setMargin(50).setBorder(new SolidBorder(ColorConstants.GREEN, 5))));
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
     //TODO: update cmp file after fixing DEVSIX-4458
     public void zeroDegreeRotatedWithAlignmentParagraphInDivTest() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "zeroDegreeRotatedWithAlignmentParagraphInDiv.pdf";
-        String cmpFileName = sourceFolder + "cmp_zeroDegreeRotatedWithAlignmentParagraphInDiv.pdf";
+        String outFileName = DESTINATION_FOLDER + "zeroDegreeRotatedWithAlignmentParagraphInDiv.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_zeroDegreeRotatedWithAlignmentParagraphInDiv.pdf";
 
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
@@ -896,14 +904,14 @@ public class RotationTest extends ExtendedITextTest {
         doc.add(div);
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER));
     }
 
     @Test
     //TODO: update cmp file after fixing DEVSIX-4458
     public void rotated180DegreesWithAlignmentParagraphInDivTest() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "rotated180DegreesWithAlignmentParagraphInDiv.pdf";
-        String cmpFileName = sourceFolder + "cmp_rotated180DegreesWithAlignmentParagraphInDiv.pdf";
+        String outFileName = DESTINATION_FOLDER + "rotated180DegreesWithAlignmentParagraphInDiv.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_rotated180DegreesWithAlignmentParagraphInDiv.pdf";
 
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
@@ -925,14 +933,14 @@ public class RotationTest extends ExtendedITextTest {
         doc.add(div);
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER));
     }
 
     @Test
     //TODO: update cmp file after fixing DEVSIX-4458
     public void rotated90DegreesWithAlignmentParagraphInDivTest() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "rotated90DegreesWithAlignmentParagraphInDiv.pdf";
-        String cmpFileName = sourceFolder + "cmp_rotated90DegreesWithAlignmentParagraphInDiv.pdf";
+        String outFileName = DESTINATION_FOLDER + "rotated90DegreesWithAlignmentParagraphInDiv.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_rotated90DegreesWithAlignmentParagraphInDiv.pdf";
 
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
@@ -954,14 +962,14 @@ public class RotationTest extends ExtendedITextTest {
         doc.add(div);
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER));
     }
 
     @Test
     //TODO: update cmp file after fixing DEVSIX-4458
     public void rotatedWithAlignmentCellInTableTest() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "rotatedWithAlignmentCellInTable.pdf";
-        String cmpFileName = sourceFolder + "cmp_rotatedWithAlignmentCellInTable.pdf";
+        String outFileName = DESTINATION_FOLDER + "rotatedWithAlignmentCellInTable.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_rotatedWithAlignmentCellInTable.pdf";
 
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
@@ -983,7 +991,44 @@ public class RotationTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void ignorePageRotationForContentTest() throws IOException, InterruptedException {
+        String inputFile = SOURCE_FOLDER + "rotated.pdf";
+        String compareFile = SOURCE_FOLDER + "cmp_ignorePageRotationForContent.pdf";
+        String outputFile = DESTINATION_FOLDER + "ignorePageRotationForContent.pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(inputFile), new PdfWriter(outputFile));
+             Document doc = new Document(pdfDoc)) {
+
+            PdfExtGState gs1 = new PdfExtGState().setFillOpacity(0.5f);
+            PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA);
+            Paragraph paragraph = new Paragraph("My watermark (text)")
+                    .setFont(font)
+                    .setFontSize(30);
+
+            PdfPage pdfPage = pdfDoc.getPage(1);
+            Rectangle pageSize = pdfPage.getPageSizeWithRotation();
+
+            // When "true": in case the page has a rotation, then new content will be automatically rotated in the
+            // opposite direction. On the rotated page this would look as if new content ignores page rotation.
+            pdfPage.setIgnorePageRotationForContent(true);
+
+            float x = (pageSize.getLeft() + pageSize.getRight()) / 2;
+            float y = (pageSize.getTop() + pageSize.getBottom()) / 2;
+            PdfCanvas over = new PdfCanvas(pdfPage);
+            over.saveState();
+            over.setExtGState(gs1);
+            // Each showTextAligned call creates new PdfCanvas instance for the same page.
+            doc.showTextAligned(paragraph, x, y + 100, 1, TextAlignment.CENTER, VerticalAlignment.TOP, 0);
+            doc.showTextAligned(paragraph, x, y, 1, TextAlignment.CENTER, VerticalAlignment.TOP, 0);
+            doc.showTextAligned(paragraph, x, y - 100, 1, TextAlignment.CENTER, VerticalAlignment.TOP, 0);
+            over.restoreState();
+        }
+        Assertions.assertNull(new CompareTool().compareByContent(outputFile, compareFile, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareVisually(outputFile, compareFile, DESTINATION_FOLDER, "diff_"));
     }
 
     private void drawCross(PdfCanvas canvas, float x, float y) {

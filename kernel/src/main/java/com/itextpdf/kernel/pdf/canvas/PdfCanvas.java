@@ -43,6 +43,7 @@ import com.itextpdf.kernel.font.PdfType0Font;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.geom.Vector;
+import com.itextpdf.kernel.pdf.PageContentRotationHelper;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -243,9 +244,9 @@ public class PdfCanvas {
             contentStream.getOutputStream().writeBytes(ByteUtils.getIsoBytes("Q\n"));
         }
         if (page.getRotation() != 0 && page.isIgnorePageRotationForContent()
-                && (wrapOldContent || !page.isPageRotationInverseMatrixWritten())) {
+                && (wrapOldContent || !PageContentRotationHelper.isPageRotationInverseMatrixWritten(page))) {
             applyRotation(page);
-            page.setPageRotationInverseMatrixWritten();
+            PageContentRotationHelper.setPageRotationInverseMatrixWritten(page);
         }
         this.drawingOnPage = true;
     }

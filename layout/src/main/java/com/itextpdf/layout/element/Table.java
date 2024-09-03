@@ -746,10 +746,6 @@ public class Table extends BlockElement<Table> implements ILargeElement {
         }
     }
 
-    /**
-     * Flushes the content which has just been added to the document.
-     * This is a method for internal usage and is called automatically by the document.
-     */
     @Override
     public void flushContent() {
         if (lastAddedRowGroups == null || lastAddedRowGroups.isEmpty())

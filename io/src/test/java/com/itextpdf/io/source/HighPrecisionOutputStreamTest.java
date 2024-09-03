@@ -29,6 +29,7 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import org.junit.jupiter.api.Assertions;
@@ -38,7 +39,7 @@ import org.junit.jupiter.api.Tag;
 import java.io.IOException;
 
 @Tag("UnitTest")
-public class OutputStreamTest extends ExtendedITextTest {
+public class HighPrecisionOutputStreamTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/source/OSTEST.txt";
     private static java.io.OutputStream IO_EXCEPTION_OUTPUT_STREAM;
@@ -57,8 +58,8 @@ public class OutputStreamTest extends ExtendedITextTest {
         //the data is random
         double expected = 0.100001d;
         try (ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                OutputStream<ByteArrayOutputStream> stream
-                        = new OutputStream<>(bytes, false)) {
+                HighPrecisionOutputStream<ByteArrayOutputStream> stream
+                        = new HighPrecisionOutputStream<>(bytes, false)) {
             stream.setLocalHighPrecision(true);
             stream.writeDouble(expected);
             stream.flush();
@@ -71,8 +72,8 @@ public class OutputStreamTest extends ExtendedITextTest {
         //the data is random
         double expected = 0.000002d;
         try (ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                OutputStream<ByteArrayOutputStream> stream
-                        = new OutputStream<>(bytes, false)) {
+                HighPrecisionOutputStream<ByteArrayOutputStream> stream
+                        = new HighPrecisionOutputStream<>(bytes, false)) {
             stream.setLocalHighPrecision(false);
             stream.writeDouble(expected);
             stream.flush();
@@ -88,8 +89,8 @@ public class OutputStreamTest extends ExtendedITextTest {
         //the data is random
         String expected = "0";
         try (ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                OutputStream<ByteArrayOutputStream> stream
-                        = new OutputStream<>(bytes)) {
+                HighPrecisionOutputStream<ByteArrayOutputStream> stream
+                        = new HighPrecisionOutputStream<>(bytes)) {
             stream.writeDouble(Double.NaN);
             stream.flush();
             Assertions.assertEquals(expected, new String(bytes.toByteArray(), StandardCharsets.UTF_8));
@@ -101,8 +102,8 @@ public class OutputStreamTest extends ExtendedITextTest {
         //the data is random
         byte[] expected = new byte[] {(byte) 68, (byte) 14, (byte) 173, (byte) 105};
         try (ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                OutputStream<ByteArrayOutputStream> stream
-                        = new OutputStream<>(bytes)) {
+                HighPrecisionOutputStream<ByteArrayOutputStream> stream
+                        = new HighPrecisionOutputStream<>(bytes)) {
             stream.write(expected);
             stream.flush();
             Assertions.assertArrayEquals(expected, bytes.toByteArray());
@@ -114,8 +115,8 @@ public class OutputStreamTest extends ExtendedITextTest {
         //the data is random
         byte[] expected = new byte[] {(byte) 15, (byte) 233, (byte) 58, (byte) 97};
         try (ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                OutputStream<ByteArrayOutputStream> stream
-                        = new OutputStream<>(bytes)) {
+                HighPrecisionOutputStream<ByteArrayOutputStream> stream
+                        = new HighPrecisionOutputStream<>(bytes)) {
             stream.writeBytes(expected);
             stream.flush();
             Assertions.assertArrayEquals(expected, bytes.toByteArray());
@@ -127,8 +128,8 @@ public class OutputStreamTest extends ExtendedITextTest {
         //the data is random
         byte expected = (byte) 193;
         try (ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                OutputStream<ByteArrayOutputStream> stream
-                        = new OutputStream<>(bytes)) {
+                HighPrecisionOutputStream<ByteArrayOutputStream> stream
+                        = new HighPrecisionOutputStream<>(bytes)) {
             stream.writeByte(expected);
             stream.flush();
             Assertions.assertArrayEquals(new byte[] {expected}, bytes.toByteArray());
@@ -140,8 +141,8 @@ public class OutputStreamTest extends ExtendedITextTest {
         //the data is random
         int expected = 1695609641;
         try (ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                OutputStream<ByteArrayOutputStream> stream
-                        = new OutputStream<>(bytes)) {
+                HighPrecisionOutputStream<ByteArrayOutputStream> stream
+                        = new HighPrecisionOutputStream<>(bytes)) {
             stream.writeInteger(expected);
             stream.flush();
             Assertions.assertEquals(Objects.toString(expected), new String(bytes.toByteArray(), StandardCharsets.UTF_8));
@@ -153,8 +154,8 @@ public class OutputStreamTest extends ExtendedITextTest {
         //the data is random
         long expected = 1695609641552L;
         try (ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                OutputStream<ByteArrayOutputStream> stream
-                        = new OutputStream<>(bytes)) {
+                HighPrecisionOutputStream<ByteArrayOutputStream> stream
+                        = new HighPrecisionOutputStream<>(bytes)) {
             stream.writeLong(expected);
             stream.flush();
             Assertions.assertEquals(Objects.toString(expected), new String(bytes.toByteArray(), StandardCharsets.UTF_8));
@@ -166,8 +167,8 @@ public class OutputStreamTest extends ExtendedITextTest {
         //the data is random
         float[] expected = new float[] {12.05f, 0.001f};
         try (ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                OutputStream<ByteArrayOutputStream> stream
-                        = new OutputStream<>(bytes)) {
+                HighPrecisionOutputStream<ByteArrayOutputStream> stream
+                        = new HighPrecisionOutputStream<>(bytes)) {
             stream.writeFloats(expected);
             stream.flush();
             Assertions.assertEquals(expected[0] + " " + expected[1], new String(bytes.toByteArray(), StandardCharsets.UTF_8));
@@ -179,8 +180,8 @@ public class OutputStreamTest extends ExtendedITextTest {
         //the data is random
         byte[] expected = new byte[] {(byte) 233, (byte) 58};
         try (ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                OutputStream<ByteArrayOutputStream> stream
-                        = new OutputStream<>(bytes)) {
+                HighPrecisionOutputStream<ByteArrayOutputStream> stream
+                        = new HighPrecisionOutputStream<>(bytes)) {
             stream.writeBytes(new byte[] {(byte) 15, (byte) 233, (byte) 58, (byte) 97}, 1, 2);
             stream.flush();
             Assertions.assertArrayEquals(expected, bytes.toByteArray());
@@ -193,8 +194,8 @@ public class OutputStreamTest extends ExtendedITextTest {
         Assertions.assertThrows(Exception.class,() -> {
             byte[] bytesToWrite = new byte[] {(byte) 71};
             try (java.io.OutputStream bytes = IO_EXCEPTION_OUTPUT_STREAM;
-                    OutputStream<ByteArrayOutputStream> stream
-                            = new OutputStream<>(bytes)) {
+                    HighPrecisionOutputStream<ByteArrayOutputStream> stream
+                            = new HighPrecisionOutputStream<>(bytes)) {
                 stream.writeBytes(bytesToWrite);
             }
         });
@@ -206,8 +207,8 @@ public class OutputStreamTest extends ExtendedITextTest {
         Assertions.assertThrows(Exception.class,() -> {
             byte byteToWrite = (byte) 71;
             try (java.io.OutputStream bytes = IO_EXCEPTION_OUTPUT_STREAM;
-                    OutputStream<ByteArrayOutputStream> stream
-                            = new OutputStream<>(bytes)) {
+                    HighPrecisionOutputStream<ByteArrayOutputStream> stream
+                            = new HighPrecisionOutputStream<>(bytes)) {
                 stream.writeByte(byteToWrite);
             }
         });
@@ -220,8 +221,8 @@ public class OutputStreamTest extends ExtendedITextTest {
             //the data is random
             int byteToWrite = 71;
             try (java.io.OutputStream bytes = IO_EXCEPTION_OUTPUT_STREAM;
-                    OutputStream<ByteArrayOutputStream> stream
-                            = new OutputStream<>(bytes)) {
+                    HighPrecisionOutputStream<ByteArrayOutputStream> stream
+                            = new HighPrecisionOutputStream<>(bytes)) {
                 stream.writeByte(byteToWrite);
             }
         });
@@ -234,8 +235,8 @@ public class OutputStreamTest extends ExtendedITextTest {
             //the data is random
             double num = 55.55d;
             try (java.io.OutputStream bytes = IO_EXCEPTION_OUTPUT_STREAM;
-                    OutputStream<ByteArrayOutputStream> stream
-                            = new OutputStream<>(bytes)) {
+                    HighPrecisionOutputStream<ByteArrayOutputStream> stream
+                            = new HighPrecisionOutputStream<>(bytes)) {
                 stream.writeDouble(num);
             }
         });
@@ -248,8 +249,8 @@ public class OutputStreamTest extends ExtendedITextTest {
             //the data is random
             long num = 55L;
             try (java.io.OutputStream bytes = IO_EXCEPTION_OUTPUT_STREAM;
-                    OutputStream<ByteArrayOutputStream> stream
-                            = new OutputStream<>(bytes)) {
+                    HighPrecisionOutputStream<ByteArrayOutputStream> stream
+                            = new HighPrecisionOutputStream<>(bytes)) {
                 stream.writeLong(num);
             }
         });
@@ -259,8 +260,8 @@ public class OutputStreamTest extends ExtendedITextTest {
     public void writeValidStringTest() throws IOException {
         String expected = "Test string to write";
         try (ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                OutputStream<ByteArrayOutputStream> stream
-                        = new OutputStream<>(bytes)) {
+                HighPrecisionOutputStream<ByteArrayOutputStream> stream
+                        = new HighPrecisionOutputStream<>(bytes)) {
             stream.writeString(expected);
             stream.writeNewLine();
             stream.flush();
@@ -272,8 +273,8 @@ public class OutputStreamTest extends ExtendedITextTest {
     public void gettersAndSettersTest() throws IOException {
         AssertUtil.doesNotThrow(() -> {
             //testing that stream is not closed, if setCloseStream is false
-            OutputStream<java.io.OutputStream> stream
-                    = new OutputStream<>(null);
+            HighPrecisionOutputStream<OutputStream> stream
+                    = new HighPrecisionOutputStream<>(null);
             stream.setCloseStream(false);
             stream.close();
         });
@@ -284,8 +285,8 @@ public class OutputStreamTest extends ExtendedITextTest {
         //the data is random
         byte[] expected = new byte[] {(byte) 15, (byte) 233, (byte) 58, (byte) 97};
         try (ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                OutputStream<ByteArrayOutputStream> stream
-                        = new OutputStream<>(bytes)) {
+                HighPrecisionOutputStream<ByteArrayOutputStream> stream
+                        = new HighPrecisionOutputStream<>(bytes)) {
             stream.assignBytes(expected, 4);
             Assertions.assertArrayEquals(expected, bytes.toByteArray());
         }
@@ -298,8 +299,8 @@ public class OutputStreamTest extends ExtendedITextTest {
             //the data is random
             byte[] bytes = new byte[] {(byte) 15, (byte) 233, (byte) 58, (byte) 97};
             try (java.io.OutputStream outputStream = IO_EXCEPTION_OUTPUT_STREAM;
-                    OutputStream<ByteArrayOutputStream> stream
-                            = new OutputStream<>(outputStream)) {
+                    HighPrecisionOutputStream<ByteArrayOutputStream> stream
+                            = new HighPrecisionOutputStream<>(outputStream)) {
                 stream.assignBytes(bytes, 4);
             }
         });
@@ -309,8 +310,8 @@ public class OutputStreamTest extends ExtendedITextTest {
     public void resetTestNoException() throws IOException {
             AssertUtil.doesNotThrow(() -> {
                 try (ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                        OutputStream<ByteArrayOutputStream> stream
-                                = new OutputStream<>(bytes)) {
+                        HighPrecisionOutputStream<ByteArrayOutputStream> stream
+                                = new HighPrecisionOutputStream<>(bytes)) {
                     stream.writeBytes(new byte[] {(byte) 15, (byte) 233, (byte) 58, (byte) 97});
                     stream.flush();
                     stream.reset();
@@ -323,8 +324,8 @@ public class OutputStreamTest extends ExtendedITextTest {
         //Testing that the exception is thrown, not using specific one because of .NET compatability
         Assertions.assertThrows(Exception.class,() -> {
             try (java.io.OutputStream bytes = IO_EXCEPTION_OUTPUT_STREAM;
-                    OutputStream<ByteArrayOutputStream> stream
-                            = new OutputStream<>(bytes)) {
+                    HighPrecisionOutputStream<ByteArrayOutputStream> stream
+                            = new HighPrecisionOutputStream<>(bytes)) {
                 stream.reset();
             }
         });
@@ -333,20 +334,20 @@ public class OutputStreamTest extends ExtendedITextTest {
     @Test
     public void localHighPrecisionOverridesGlobalTest() throws IOException {
 
-        boolean highPrecision = OutputStream.getHighPrecision();
+        boolean highPrecision = HighPrecisionOutputStream.getHighPrecision();
 
         //the data is random
         double numberToWrite = 2.000002d;
         try (ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                OutputStream<ByteArrayOutputStream> stream
-                        = new OutputStream<>(bytes, false)) {
-            OutputStream.setHighPrecision(true);
+                HighPrecisionOutputStream<ByteArrayOutputStream> stream
+                        = new HighPrecisionOutputStream<>(bytes, false)) {
+            HighPrecisionOutputStream.setHighPrecision(true);
             stream.setLocalHighPrecision(false);
             stream.writeDouble(numberToWrite);
             stream.flush();
             Assertions.assertEquals("2", new String(bytes.toByteArray(), StandardCharsets.UTF_8));
         } finally {
-            OutputStream.setHighPrecision(highPrecision);
+            HighPrecisionOutputStream.setHighPrecision(highPrecision);
         }
     }
 }

@@ -70,10 +70,10 @@
                 <file path="com/itextpdf/io/util/DecimalFormatUtil.java"/>
             </fileset>
             <fileset reason="Dispose method without parameters cannot be overriden, instead override base.Dispose method with boolean paramter.
-        '(T) this' expression should be ported into 'this as T'. Poblem with porting nullable types (unable to bool? to bool and vice versa.
-        Write method cannot be overriden as the base class doesn't contain such method (keyword virtual should be used instead).
+        '(T) this' expression should be ported into 'this as T'. Problem with porting nullable types (unable to bool? to bool and vice versa.
+        Write method cannot be overridden as the base class doesn't contain such method (keyword virtual should be used instead).
         There are additional inherited abstract methods that should be implemented (but in java version there is no such implementations)">
-                <file path="com/itextpdf/io/source/OutputStream.java"/>
+                <file path="com/itextpdf/io/source/HighPrecisionOutputStream.java"/>
             </fileset>
             <fileset reason="java.io.ByteArrayOutputStream cannot be trivially ported into MemoryStream">
                 <file path="com/itextpdf/io/source/ByteArrayOutputStream.java"/>
@@ -147,8 +147,8 @@
             <file path="com/itextpdf/io/codec/brotli/dec/files"/>
             <file path="com/itextpdf/io/codec/brotli/dec/SynthTest.java"/>
             <file path="com/itextpdf/io/codec/brotli/dec/TransformTest.java"/>
-            <fileset reason="OutputStream is a manual class, and some tests for this class cannot be ported automatically">
-                <file path="com/itextpdf/io/source/OutputStreamTest.java"/>
+            <fileset reason="HighPrecisionOutputStream is a manual class, and some tests for this class cannot be ported automatically">
+                <file path="com/itextpdf/io/source/HighPrecisionOutputStreamTest.java"/>
             </fileset>
             <!-- barcodes -->
             <file path="com/itextpdf/barcodes/BarcodeMultiThreadingTest.java"/>

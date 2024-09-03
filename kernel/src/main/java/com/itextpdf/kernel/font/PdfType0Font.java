@@ -41,7 +41,7 @@ import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteBuffer;
-import com.itextpdf.io.source.OutputStream;
+import com.itextpdf.io.source.HighPrecisionOutputStream;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
@@ -912,7 +912,7 @@ public class PdfType0Font extends PdfFont {
 
     private PdfObject generateWidthsArray() {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        OutputStream<ByteArrayOutputStream> stream = new OutputStream<>(bytes);
+        HighPrecisionOutputStream<ByteArrayOutputStream> stream = new HighPrecisionOutputStream<>(bytes);
         stream.writeByte('[');
         int lastNumber = -10;
         boolean firstTime = true;
@@ -947,7 +947,8 @@ public class PdfType0Font extends PdfFont {
      * @return the stream representing this CMap or <CODE>null</CODE>
      */
     public PdfStream getToUnicode() {
-        OutputStream<ByteArrayOutputStream> stream = new OutputStream<>(new ByteArrayOutputStream());
+        HighPrecisionOutputStream<ByteArrayOutputStream> stream =
+                new HighPrecisionOutputStream<>(new ByteArrayOutputStream());
         stream.writeString("/CIDInit /ProcSet findresource begin\n" +
                 "12 dict begin\n" +
                 "begincmap\n" +
@@ -987,7 +988,7 @@ public class PdfType0Font extends PdfFont {
         return new PdfStream(((ByteArrayOutputStream)stream.getOutputStream()).toByteArray());
     }
 
-    private int writeBfrange(OutputStream<ByteArrayOutputStream> stream, List<Glyph> range) {
+    private static int writeBfrange(HighPrecisionOutputStream<ByteArrayOutputStream> stream, List<Glyph> range) {
         if (range.isEmpty()) return 0;
         stream.writeInteger(range.size());
         stream.writeString(" beginbfrange\n");

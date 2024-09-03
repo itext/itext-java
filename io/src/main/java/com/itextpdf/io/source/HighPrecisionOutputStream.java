@@ -25,11 +25,15 @@ package com.itextpdf.io.source;
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 
+/**
+ * Output stream based on {@link java.io.OutputStream} for which it is possible to set high precision in order to write
+ * all floats and doubles with high precision.
+ *
+ * @param <T> {@link java.io.OutputStream}
+ */
+public class HighPrecisionOutputStream<T extends java.io.OutputStream> extends java.io.OutputStream {
 
-public class OutputStream<T extends java.io.OutputStream> extends java.io.OutputStream {
-
-
-    //long=19 + max frac=6 => 26 => round to 32.
+    // long=19 + max frac=6 => 26 => round to 32.
     private final ByteBuffer numBuffer = new ByteBuffer(32);
     private Boolean localHighPrecision;
     protected java.io.OutputStream outputStream = null;
@@ -46,10 +50,10 @@ public class OutputStream<T extends java.io.OutputStream> extends java.io.Output
     }
 
     /**
-     * Sets global high precision setting for all {@link OutputStream} instances.
+     * Sets global high precision setting for all {@link HighPrecisionOutputStream} instances.
      *
      * @param value if true, all floats and double will be written with high precision
-     *              in all {@link OutputStream} instances.
+     *              in all {@link HighPrecisionOutputStream} instances.
      */
     public static void setHighPrecision(boolean value) {
         ByteUtils.HighPrecision = value;
@@ -65,36 +69,29 @@ public class OutputStream<T extends java.io.OutputStream> extends java.io.Output
     }
 
     /**
-     * Sets local high precision setting for the {@link OutputStream}.
+     * Sets local high precision setting for the {@link HighPrecisionOutputStream}.
      * Global {@link ByteUtils#HighPrecision} setting will be overridden by this one.
      *
      * @param value if true, all floats and double will be written with high precision
-     *              in the underlying {@link OutputStream}.
+     *              in the underlying {@link HighPrecisionOutputStream}.
      */
     public void setLocalHighPrecision(boolean value) {
         this.localHighPrecision = value;
     }
 
     /**
-     * Creates a new {@link OutputStream} instance
+     * Creates a new {@link HighPrecisionOutputStream} instance
      * based on {@link java.io.OutputStream} instance.
      *
-     * @param outputStream the {@link OutputStream} instance.
+     * @param outputStream the {@link HighPrecisionOutputStream} instance.
      */
-    public OutputStream(java.io.OutputStream outputStream) {
+    public HighPrecisionOutputStream(java.io.OutputStream outputStream) {
         super();
         this.outputStream = outputStream;
     }
 
     /**
-     * Do not use this constructor. This is only for internal usage.
-     */
-    protected OutputStream() {
-        super();
-    }
-
-    /**
-     * Creates a new {@link OutputStream} instance
+     * Creates a new {@link HighPrecisionOutputStream} instance
      * based on {@link java.io.OutputStream} instance and precision setting value.
      *
      * @param outputStream       the {@link java.io.OutputStream} instance.
@@ -103,7 +100,7 @@ public class OutputStream<T extends java.io.OutputStream> extends java.io.Output
      *                           Global {@link ByteUtils#HighPrecision} setting
      *                           will be overridden by this one.
      */
-    public OutputStream(java.io.OutputStream outputStream, boolean localHighPrecision) {
+    public HighPrecisionOutputStream(java.io.OutputStream outputStream, boolean localHighPrecision) {
         super();
         this.outputStream = outputStream;
         this.localHighPrecision = localHighPrecision;
@@ -303,7 +300,7 @@ public class OutputStream<T extends java.io.OutputStream> extends java.io.Output
     }
 
     /**
-     * See {@link OutputStream#write(byte[])}.
+     * See {@link HighPrecisionOutputStream#write(byte[])}.
      *
      * @param b byte array to write.
      *
@@ -321,7 +318,7 @@ public class OutputStream<T extends java.io.OutputStream> extends java.io.Output
     }
 
     /**
-     * See {@link OutputStream#write(byte[], int, int)}.
+     * See {@link HighPrecisionOutputStream#write(byte[], int, int)}.
      *
      * @param      b     the data to write.
      * @param      off   the start offset in the data.
@@ -369,7 +366,7 @@ public class OutputStream<T extends java.io.OutputStream> extends java.io.Output
     }
 
     /**
-     * Sets internal {@link java.io.OutputStream} to be closed after {@link OutputStream#close()}.
+     * Sets internal {@link java.io.OutputStream} to be closed after {@link HighPrecisionOutputStream#close()}.
      *
      * @param closeStream true if stream needs to be closed, false if it's done manually.
      */
@@ -395,8 +392,8 @@ public class OutputStream<T extends java.io.OutputStream> extends java.io.Output
     /**
      * See {@link ByteArrayOutputStream#reset()}.
      *
-     * @throws com.itextpdf.io.exceptions.IOException if internal {@link OutputStream}.
-     *                                     is not a {@link ByteArrayOutputStream} instance.
+     * @throws com.itextpdf.io.exceptions.IOException if internal {@link HighPrecisionOutputStream} is not
+     * a {@link ByteArrayOutputStream} instance.
      */
     public void reset() {
         if (outputStream instanceof ByteArrayOutputStream) {

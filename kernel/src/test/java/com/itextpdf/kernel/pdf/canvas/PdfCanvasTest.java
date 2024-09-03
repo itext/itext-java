@@ -43,7 +43,6 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -1729,6 +1728,44 @@ public class PdfCanvasTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
     }
 
+    @Test
+    public void ignorePageRotationForContentTest() throws IOException, InterruptedException {
+        final String outPdf = DESTINATION_FOLDER + "ignorePageRotationForContent.pdf";
+        final String cmpPdf = SOURCE_FOLDER + "cmp_ignorePageRotationForContent.pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outPdf))) {
+            pdfDoc.getDocumentInfo().setAuthor(AUTHOR).setCreator(CREATOR).setTitle(TITLE);
+
+            PdfPage page = pdfDoc.addNewPage().setRotation(270);
+
+            // When "true": in case the page has a rotation, then new content will be automatically rotated in the
+            // opposite direction. On the rotated page this would look as if new content ignores page rotation.
+            page.setIgnorePageRotationForContent(true);
+
+            PdfCanvas canvas = new PdfCanvas(page, false);
+            canvas
+                    .saveState()
+                    .beginText()
+                    .moveText(180, 350)
+                    .setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 30)
+                    .showText("Page rotation is set to 270 degrees,")
+                    .endText()
+                    .restoreState();
+            PdfCanvas canvas2 = new PdfCanvas(page, false);
+            canvas2
+                    .saveState()
+                    .beginText()
+                    .moveText(180, 250)
+                    .setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 30)
+                    .showText("but new content ignores page rotation")
+                    .endText()
+                    .restoreState();
+            page.flush();
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+    }
+
     private void createStandardDocument(PdfWriter writer, int pageCount, ContentProvider contentProvider) throws IOException {
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(AUTHOR).
@@ -1749,7 +1786,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
     private void assertStandardDocument(String filename, int pageCount) throws IOException {
         PdfReader reader = CompareTool.createOutputReader(filename);
         PdfDocument pdfDocument = new PdfDocument(reader);
-        Assertions.assertEquals(false, reader.hasRebuiltXref(), "Rebuilt");
+        Assertions.assertFalse(reader.hasRebuiltXref(), "Rebuilt");
         PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
         Assertions.assertEquals(AUTHOR, info.get(PdfName.Author).toString(), "Author");
         Assertions.assertEquals(CREATOR, info.get(PdfName.Creator).toString(), "Creator");

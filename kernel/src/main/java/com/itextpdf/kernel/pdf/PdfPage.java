@@ -84,6 +84,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * Automatically rotate new content if the page has a rotation ( is disabled by default )
      */
     private boolean ignorePageRotationForContent = false;
+
     /**
      * See {@link #isPageRotationInverseMatrixWritten()}.
      */
@@ -241,7 +242,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Creates new {@link PdfStream} object and puts it at the end of Contents array
+     * Creates new {@link PdfStream} object and puts it at the end of {@code Contents} array
      * (if Contents object is {@link PdfStream} it will be replaced with one-element array).
      *
      * @return Created {@link PdfStream} object.
@@ -1167,32 +1168,6 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * This flag is meaningful for the case, when page rotation is applied and ignorePageRotationForContent
-     * is set to true. NOTE: It is needed for the internal usage.
-     * <br><br>
-     * This flag defines if inverse matrix (which rotates content into the opposite direction from page rotation
-     * direction in order to give the impression of the not rotated text) is already applied to the page content stream.
-     * See {@link #setIgnorePageRotationForContent(boolean)}
-     *
-     * @return true, if inverse matrix is already applied, false otherwise.
-     */
-    public boolean isPageRotationInverseMatrixWritten() {
-        return pageRotationInverseMatrixWritten;
-    }
-
-    /**
-     * NOTE: For internal usage! Use this method only if you know what you are doing.
-     * <br><br>
-     * This method is called when inverse matrix (which rotates content into the opposite direction from page rotation
-     * direction in order to give the impression of the not rotated text) is applied to the page content stream.
-     * See {@link #setIgnorePageRotationForContent(boolean)}
-     */
-    public void setPageRotationInverseMatrixWritten() {
-        // this method specifically return void to discourage it's unintended usage
-        pageRotationInverseMatrixWritten = true;
-    }
-
-    /**
      * Adds file associated with PDF page and identifies the relationship between them.
      * <p>
      * Associated files may be used in Pdf/A-3 and Pdf 2.0 documents.
@@ -1267,6 +1242,26 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     void releaseInstanceFields() {
         resources = null;
         parentPages = null;
+    }
+
+    /**
+     * Checks if page rotation inverse matrix (which rotates content into the opposite direction from page rotation
+     * direction in order to give the impression of the not rotated text) is already applied to the page content stream.
+     * See {@link #setIgnorePageRotationForContent(boolean)} and {@link PageContentRotationHelper}.
+     *
+     * @return {@code true} if inverse matrix is already applied, {@code false} otherwise
+     */
+    boolean isPageRotationInverseMatrixWritten() {
+        return pageRotationInverseMatrixWritten;
+    }
+
+    /**
+     * Specifies that page rotation inverse matrix (which rotates content into the opposite direction from page rotation
+     * direction in order to give the impression of the not rotated text) is applied to the page content stream.
+     * See {@link #setIgnorePageRotationForContent(boolean)} and {@link PageContentRotationHelper}.
+     */
+    void setPageRotationInverseMatrixWritten() {
+        pageRotationInverseMatrixWritten = true;
     }
 
     @Override

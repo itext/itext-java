@@ -76,9 +76,9 @@ public abstract class PdfObject {
     protected static final short ORIGINAL_OBJECT_STREAM = 1 << 4;
 
     /**
-     * For internal usage only. Marks objects that shall be written to the output document.
-     * Option is needed to build the correct PDF objects tree when closing the document.
-     * As a result it avoids writing unused (removed) objects.
+     * Marks objects that shall be written to the output document. Shouldn't be used on purpose
+     * since this flag is handled internally: option is needed to build the correct PDF objects
+     * tree when closing the document. As a result it avoids writing unused (removed) objects.
      */
     protected static final short MUST_BE_FLUSHED = 1 << 5;
 
