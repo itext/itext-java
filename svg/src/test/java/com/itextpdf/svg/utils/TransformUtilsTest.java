@@ -136,6 +136,14 @@ public class TransformUtilsTest extends ExtendedITextTest {
     }
 
     @Test
+    public void combinedReverseTransformWithCommaTest() {
+        AffineTransform actual = TransformUtils.parseTransform("scale(3),translate(40,20)");
+        AffineTransform expected = new AffineTransform(3d,0d,0d,3d,90d,45d);
+
+        Assertions.assertEquals(actual, expected);
+    }
+
+    @Test
     public void doubleTransformationTest() {
         AffineTransform expected = new AffineTransform(9d, 0d, 0d, 9d, 0d, 0d);
         AffineTransform actual = TransformUtils.parseTransform("scale(3) scale(3)");
