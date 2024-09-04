@@ -54,7 +54,7 @@ public final class PdfFormFieldMergeUtil {
             return;
         }
         PdfArray kids = parent.getAsArray(PdfName.Kids);
-        if (kids == null || kids.size() == 0) {
+        if (kids == null || kids.isEmpty()) {
             return;
         }
         Map<String, AbstractPdfFormField> addedKids = new LinkedHashMap<>();
@@ -91,6 +91,10 @@ public final class PdfFormFieldMergeUtil {
      */
     public static boolean mergeTwoFieldsWithTheSameNames(PdfFormField firstField, PdfFormField secondField,
             boolean throwExceptionOnError) {
+        if (firstField.getPdfObject() == secondField.getPdfObject()) {
+            // We don't need to perform any strategy on duplicated references, we can just always remove them.
+            return true;
+        }
         final OnDuplicateFormFieldNameStrategy onDuplicateFormFieldNameStrategy = firstField.getDocument()
                 .getDiContainer()
                 .getInstance(OnDuplicateFormFieldNameStrategy.class);

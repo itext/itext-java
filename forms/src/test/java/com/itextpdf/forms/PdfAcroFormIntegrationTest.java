@@ -63,6 +63,22 @@ public class PdfAcroFormIntegrationTest extends ExtendedITextTest {
     }
 
     @Test
+    public void formWithSameFieldReferencesTest() throws IOException, InterruptedException {
+        String srcFileName = SOURCE_FOLDER + "formWithSameFieldReferences.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_formWithSameFieldReferences.pdf";
+        String outFileName = DESTINATION_FOLDER + "formWithSameFieldReferences.pdf";
+
+        try (PdfDocument sourceDoc = new PdfDocument(new PdfReader(srcFileName), new PdfWriter(outFileName))) {
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(sourceDoc, true);
+
+            Assertions.assertEquals(1, acroForm.getFields().size());
+            Assertions.assertNull(acroForm.getField("Field").getKids());
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
     public void mergeMergedFieldsWithTheSameNamesTest() throws IOException, InterruptedException {
         String srcFileName = SOURCE_FOLDER + "fieldMergedWithWidget.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_mergeMergedFieldsWithTheSameNames.pdf";

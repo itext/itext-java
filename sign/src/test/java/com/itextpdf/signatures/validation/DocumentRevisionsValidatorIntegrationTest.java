@@ -725,4 +725,16 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
                     .hasNumberOfFailures(0).hasNumberOfLogs(0));
         }
     }
+
+    @ParameterizedTest(name = "Continue validation after failure: {0}")
+    @MethodSource("createParameters")
+    public void pdfVersionAddedTest(boolean continueValidationAfterFail) throws IOException {
+        setUp(continueValidationAfterFail);
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "pdfVersionAdded.pdf"))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
+
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID));
+        }
+    }
 }

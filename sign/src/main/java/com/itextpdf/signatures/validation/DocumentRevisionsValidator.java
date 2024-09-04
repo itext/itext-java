@@ -1494,6 +1494,7 @@ public class DocumentRevisionsValidator {
         catalogCopy.remove(PdfName.AcroForm);
         catalogCopy.remove(PdfName.Pages);
         catalogCopy.remove(PdfName.StructTreeRoot);
+        catalogCopy.remove(PdfName.Version);
         return catalogCopy;
     }
 
