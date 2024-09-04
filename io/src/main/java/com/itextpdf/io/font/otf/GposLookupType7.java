@@ -53,9 +53,9 @@ public class GposLookupType7 extends OpenTableLookup {
     @Override
     public boolean transformOne(GlyphLine line) {
         boolean changed = false;
-        int oldLineStart = line.start;
-        int oldLineEnd = line.end;
-        int initialLineIndex = line.idx;
+        int oldLineStart = line.getStart();
+        int oldLineEnd = line.getEnd();
+        int initialLineIndex = line.getIdx();
 
         for (ContextualTable<ContextualPositionRule> subTable : subTables) {
             ContextualPositionRule contextRule = subTable.getMatchingContextRule(line);
@@ -63,31 +63,31 @@ public class GposLookupType7 extends OpenTableLookup {
                 continue;
             }
 
-            int lineEndBeforeTransformations = line.end;
+            int lineEndBeforeTransformations = line.getEnd();
             PosLookupRecord[] posLookupRecords = contextRule.getPosLookupRecords();
             GlyphIndexer gidx = new GlyphIndexer();
-            gidx.line = line;
+            gidx.setLine(line);
             for (PosLookupRecord posRecord : posLookupRecords) {
                 // There could be some skipped glyphs inside the context sequence, therefore currently GlyphIndexer and
                 // nextGlyph method are used to get to the glyph at "substRecord.sequenceIndex" index
-                gidx.idx = initialLineIndex;
+                gidx.setIdx(initialLineIndex);
                 for (int i = 0; i < posRecord.sequenceIndex; ++i) {
                     gidx.nextGlyph(openReader, lookupFlag);
                 }
 
-                line.idx = gidx.idx;
+                line.setIdx(gidx.getIdx());
                 OpenTableLookup lookupTable = openReader.getLookupTable(posRecord.lookupListIndex);
                 changed = lookupTable.transformOne(line) || changed;
             }
 
-            line.idx = line.end;
-            line.start = oldLineStart;
-            int lenDelta = lineEndBeforeTransformations - line.end;
-            line.end = oldLineEnd - lenDelta;
+            line.setIdx(line.getEnd());
+            line.setStart(oldLineStart);
+            int lenDelta = lineEndBeforeTransformations - line.getEnd();
+            line.setEnd(oldLineEnd - lenDelta);
             return changed;
         }
 
-        line.idx++;
+        line.setIdx(line.getIdx()+1);
         return changed;
     }
 

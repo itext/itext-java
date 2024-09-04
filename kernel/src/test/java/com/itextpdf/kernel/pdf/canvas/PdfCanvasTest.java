@@ -24,7 +24,11 @@ package com.itextpdf.kernel.pdf.canvas;
 
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.io.font.otf.ActualTextIterator;
+import com.itextpdf.io.font.otf.Glyph;
+import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.source.ByteArrayOutputStream;
@@ -34,6 +38,7 @@ import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.MemoryLimitsAwareException;
 import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.*;
@@ -45,7 +50,9 @@ import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import org.junit.jupiter.api.AfterAll;
@@ -68,6 +75,9 @@ public class PdfCanvasTest extends ExtendedITextTest {
     };
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/canvas/PdfCanvasTest/";
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/canvas/PdfCanvasTest/";
+
+    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/fonts/";
+
 
     private static final String AUTHOR = "iText Software";
     private static final String CREATOR = "iText";
@@ -1764,6 +1774,88 @@ public class PdfCanvasTest extends ExtendedITextTest {
         }
 
         Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void getResourcesTest() throws IOException {
+        final String outPdf = DESTINATION_FOLDER + "getResourcesDoc.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outPdf));
+        PdfPage page1 = pdfDoc.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page1);
+
+        canvas.saveState()
+                .beginText()
+                .moveText(150, 400)
+                .setFontAndSize(PdfFontFactory.createFont(), 8)
+                .showText("test text")
+                .endText()
+                .restoreState();
+
+        PdfResources resources = canvas.getResources();
+
+        pdfDoc.close();
+
+        Assertions.assertEquals(1, resources.getResourceNames().size());
+    }
+
+    @Test
+    public void attachContentStreamTest() throws IOException {
+        final String outPdf = DESTINATION_FOLDER + "attachContentStreamDoc.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outPdf));
+        PdfPage page1 = pdfDoc.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page1);
+
+        canvas.attachContentStream(new PdfStream("test".getBytes(StandardCharsets.UTF_8)));
+        String contentFromStream = new String(canvas.getContentStream().getBytes(), StandardCharsets.UTF_8);
+        pdfDoc.close();
+
+        Assertions.assertEquals("test", contentFromStream);
+    }
+
+    @Test
+    public void graphicStateFontNullTest() throws IOException {
+        final String outPdf = DESTINATION_FOLDER + "showTextDoc.pdf";
+
+        try(PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outPdf))) {
+            PdfPage page1 = pdfDoc.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page1);
+            GlyphLine glyphLine = new GlyphLine();
+            canvas.getGraphicsState().setFont(null);
+            ActualTextIterator actualTextIterator = new ActualTextIterator(glyphLine);
+            Assertions.assertThrows(PdfException.class, () ->
+                    canvas.showText(glyphLine, actualTextIterator));
+        }
+    }
+
+
+
+    @Test
+    public void glyphlineActualTextTest() throws IOException {
+        String outFileName = DESTINATION_FOLDER + "glyphlineActualText.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
+            PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "NotoSansCJKjp-Bold.otf",
+                    PdfEncodings.IDENTITY_H);
+
+            List<Glyph> glyphs = Collections.singletonList(font.getGlyph((int) '\u65E0'));
+            GlyphLine glyphLine = new GlyphLine(glyphs);
+            glyphLine.setActualText(0, 1, "TEST");
+            PdfCanvas canvas = new PdfCanvas(pdfDocument.addNewPage());
+            canvas
+                    .saveState()
+                    .beginText()
+                    .setFontAndSize(font, 7)
+                    .showText(glyphLine)
+                    .endText()
+                    .restoreState();
+
+            String contentstream = new String(canvas.getContentStream().getBytes(), StandardCharsets.UTF_8);
+            canvas.release();
+
+            Assertions.assertTrue(contentstream.contains("/ActualText"));
+        }
     }
 
     private void createStandardDocument(PdfWriter writer, int pageCount, ContentProvider contentProvider) throws IOException {

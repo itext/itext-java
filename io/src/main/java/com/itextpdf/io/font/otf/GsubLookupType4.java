@@ -45,21 +45,21 @@ public class GsubLookupType4 extends OpenTableLookup {
     
     @Override
     public boolean transformOne(GlyphLine line) {
-        if (line.idx >= line.end)
+        if (line.getIdx() >= line.getEnd())
             return false;
         boolean changed = false;
-        Glyph g = line.get(line.idx);
+        Glyph g = line.get(line.getIdx());
         boolean match = false;
         if (ligatures.containsKey(g.getCode()) && !openReader.isSkip(g.getCode(), lookupFlag)) {
             GlyphIndexer gidx = new GlyphIndexer();
-            gidx.line = line;
+            gidx.setLine(line);
             List<int[]> ligs = ligatures.get(g.getCode());
             for (int[] lig : ligs) {
                 match = true;
-                gidx.idx = line.idx;
+                gidx.setIdx(line.getIdx());
                 for (int j = 1; j < lig.length; ++j) {
                     gidx.nextGlyph(openReader, lookupFlag);
-                    if (gidx.glyph == null || gidx.glyph.getCode() != lig[j]) {
+                    if (gidx.getGlyph() == null || gidx.getGlyph().getCode() != lig[j]) {
                         match = false;
                         break;
                     }
@@ -73,7 +73,7 @@ public class GsubLookupType4 extends OpenTableLookup {
         if (match) {
             changed = true;
         }
-        line.idx++;
+        line.setIdx(line.getIdx()+1);
         return changed;
     }
 

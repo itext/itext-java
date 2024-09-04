@@ -29,9 +29,9 @@ import java.util.Iterator;
 import java.util.List;
 
 public class GlyphLine {
-    public int start;
-    public int end;
-    public int idx;
+    private int start;
+    private int end;
+    private int idx;
     protected List<Glyph> glyphs;
     protected List<ActualText> actualText;
 
@@ -107,6 +107,60 @@ public class GlyphLine {
     }
 
     /**
+     * Retrieves the start of the glyph line.
+     *
+     * @return start of glyph line
+     */
+    public int getStart() {
+        return start;
+    }
+
+    /**
+     * Sets the start of the glyph line.
+     *
+     * @param start start of glyph line
+     */
+    public void setStart(int start) {
+        this.start = start;
+    }
+
+    /**
+     * Retrieves the end of the glyph line.
+     *
+     * @return end of glyph line
+     */
+    public int getEnd() {
+        return end;
+    }
+
+    /**
+     * Sets the end of the glyph line.
+     *
+     * @param end end of glyph line
+     */
+    public void setEnd(int end) {
+        this.end = end;
+    }
+
+    /**
+     * Retrieves the idx of the glyph line.
+     *
+     * @return idx of glyph line
+     */
+    public int getIdx() {
+        return idx;
+    }
+
+    /**
+     * Sets the idx of the glyph line.
+     *
+     * @param idx idx of glyph line
+     */
+    public void setIdx(int idx) {
+        this.idx = idx;
+    }
+
+    /**
      * Get the unicode string representation of the GlyphLine slice.
      *
      * @param start starting index of the slice
@@ -118,10 +172,10 @@ public class GlyphLine {
         StringBuilder str = new StringBuilder();
         while (iter.hasNext()) {
             GlyphLinePart part = iter.next();
-            if (part.actualText != null) {
-                str.append(part.actualText);
+            if (part.getActualText() != null) {
+                str.append(part.getActualText());
             } else {
-                for (int i = part.start; i < part.end; i++) {
+                for (int i = part.getStart(); i < part.getEnd(); i++) {
                     str.append(glyphs.get(i).getUnicodeChars());
                 }
             }
@@ -143,9 +197,9 @@ public class GlyphLine {
      */
     public GlyphLine copy(int left, int right) {
         GlyphLine glyphLine = new GlyphLine();
-        glyphLine.start = 0;
-        glyphLine.end = right - left;
-        glyphLine.glyphs = new ArrayList<>(glyphs.subList(left, right));
+        glyphLine.setStart(0);
+        glyphLine.setEnd(right - left);
+        glyphLine.setGlyphs(new ArrayList<>(glyphs.subList(left, right)));
         glyphLine.actualText = actualText == null ? null : new ArrayList<>(actualText.subList(left, right));
         return glyphLine;
     }
@@ -194,9 +248,9 @@ public class GlyphLine {
                     actualText.add(null);
                 }
             }
-            actualText.addAll(other.actualText.subList(other.start, other.end));
+            actualText.addAll(other.actualText.subList(other.getStart(), other.getEnd()));
         }
-        glyphs.addAll(other.glyphs.subList(other.start, other.end));
+        glyphs.addAll(other.glyphs.subList(other.getStart(), other.getEnd()));
         if (null != actualText) {
             while (actualText.size() < glyphs.size()) {
                 actualText.add(null);
@@ -222,8 +276,8 @@ public class GlyphLine {
         } else {
             actualText = null;
         }
-        start = other.start;
-        end = other.end;
+        start = other.getStart();
+        end = other.getEnd();
     }
 
     public int size() {
@@ -232,8 +286,8 @@ public class GlyphLine {
 
     public void substituteManyToOne(OpenTypeFontTableReader tableReader, int lookupFlag, int rightPartLen, int substitutionGlyphIndex) {
         OpenTableLookup.GlyphIndexer gidx = new OpenTableLookup.GlyphIndexer();
-        gidx.line = this;
-        gidx.idx = idx;
+        gidx.setLine(this);
+        gidx.setIdx(idx);
 
         StringBuilder chars = new StringBuilder();
         Glyph currentGlyph = glyphs.get(idx);
@@ -245,13 +299,14 @@ public class GlyphLine {
 
         for (int j = 0; j < rightPartLen; ++j) {
             gidx.nextGlyph(tableReader, lookupFlag);
-            currentGlyph = glyphs.get(gidx.idx);
+            currentGlyph = glyphs.get(gidx.getIdx());
             if (currentGlyph.getChars() != null) {
                 chars.append(currentGlyph.getChars());
             } else if (currentGlyph.hasValidUnicode()) {
                 chars.append(TextUtil.convertFromUtf32(currentGlyph.getUnicode()));
             }
-            removeGlyph(gidx.idx--);
+            removeGlyph(gidx.getIdx());
+            gidx.setIdx(gidx.getIdx() - 1);
         }
         char[] newChars = new char[chars.length()];
         chars.getChars(0, chars.length(), newChars, 0);
@@ -410,22 +465,115 @@ public class GlyphLine {
     }
 
     public static class GlyphLinePart {
-        public int start;
-        public int end;
+        private int start;
+        private int end;
         // Might be null if it's not necessary
-        public String actualText;
-        public boolean reversed;
+        private String actualText;
+        private boolean reversed;
 
+        /**
+         * Creates a glyph line part object with given start and end values.
+         * Actual text is set to null.
+         *
+         * @param start start value of the glyph line part
+         * @param end end value of the glyph line part
+         */
         public GlyphLinePart(int start, int end) {
             this(start, end, null);
         }
 
+        /**
+         * Creates a glyph line part object with given start, end and actual text values.
+         *
+         * @param start start value of the glyph line part
+         * @param end end value of the glyph line part
+         * @param actualText actual text
+         */
         public GlyphLinePart(int start, int end, String actualText) {
             this.start = start;
             this.end = end;
             this.actualText = actualText;
         }
 
+        /**
+         * Retrieves the start of the glyph line part.
+         *
+         * @return start value of glyph line part
+         */
+        public int getStart() {
+            return start;
+        }
+
+        /**
+         * Sets the start of the glyph line part.
+         *
+         * @param start start of the glyph line part
+         *
+         * @return Altered glyph line part object
+         */
+        public GlyphLinePart setStart(int start) {
+            this.start = start;
+            return this;
+        }
+
+        /**
+         * Retrieves the end of the glyph line part.
+         *
+         * @return end value of glyph line part
+         */
+        public int getEnd() {
+            return end;
+        }
+
+        /**
+         * Sets the end of the glyph line part.
+         *
+         * @param end end value of glyph line part
+         *
+         * @return Altered glyph line part object
+         */
+        public GlyphLinePart setEnd(int end) {
+            this.end = end;
+            return this;
+        }
+
+        /**
+         * Retrieves the actual text of the glyph line part.
+         *
+         * @return Actual text of glyph line part
+         */
+        public String getActualText() {
+            return actualText;
+        }
+
+        /**
+         * Sets the actual text of the glyph line part.
+         *
+         * @param actualText Actual text of glyph line part
+         *
+         * @return Altered Glyph line part object
+         */
+        public GlyphLinePart setActualText(String actualText) {
+            this.actualText = actualText;
+            return this;
+        }
+
+        /**
+         * Retrieves whether the glyph line part is reversed.
+         *
+         * @return True if it is reversed, false otherwise.
+         */
+        public boolean isReversed() {
+            return reversed;
+        }
+
+        /**
+         * Sets whether the glyph line part is reversed.
+         *
+         * @param reversed true if it should be reversed, false otherwise
+         *
+         * @return Altered glyph line part object
+         */
         public GlyphLinePart setReversed(boolean reversed) {
             this.reversed = reversed;
             return this;
@@ -433,10 +581,19 @@ public class GlyphLine {
     }
 
     protected static class ActualText {
-        public String value;
+        private final String value;
 
         public ActualText(String value) {
             this.value = value;
+        }
+
+        /**
+         * Retrieves the value of the actual text.
+         *
+         * @return actual text value
+         */
+        public String getValue() {
+            return value;
         }
 
         @Override
@@ -448,7 +605,7 @@ public class GlyphLine {
                 return false;
             }
             ActualText other = (ActualText) obj;
-            return value == null && other.value == null || value.equals(other.value);
+            return value == null && other.getValue() == null || value.equals(other.getValue());
         }
 
         @Override

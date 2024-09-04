@@ -137,7 +137,7 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         TextRenderer textRendererFirst = new TextRenderer(new Text(""));
         textRendererFirst.setProperty(Property.FONT, pdfFont);
         textRendererFirst.setText(thai.substring(0, 8));
-        textRendererFirst.text.start = 3;
+        textRendererFirst.text.setStart(3);
         textRendererFirst.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>(Arrays.asList(3, 8)));
         textRendererFirst.setParent(document.getRenderer());
         float longestWordLength = textRendererFirst.getMinMaxWidth().getMaxWidth();

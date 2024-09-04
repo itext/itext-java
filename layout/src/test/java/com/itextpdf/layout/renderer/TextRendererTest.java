@@ -52,6 +52,7 @@ import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
@@ -143,8 +144,8 @@ public class TextRendererTest extends RendererUnitTest {
         }
 
         renderer.setText(new GlyphLine(), pdfFont);
-        glyphLine.start = 1;
-        glyphLine.end = 2;
+        glyphLine.setStart(1);
+        glyphLine.setEnd(2);
         renderer.setText(glyphLine, pdfFont);
         GlyphLine actualLine = renderer.getText();
 
@@ -154,8 +155,8 @@ public class TextRendererTest extends RendererUnitTest {
         // Check that the glyph line has been processed using the replaceSpecialWhitespaceGlyphs method
         Assertions.assertEquals(space.getCode(), glyph.getCode());
         Assertions.assertEquals(space.getWidth(), glyph.getWidth());
-        Assertions.assertEquals(1, actualLine.start);
-        Assertions.assertEquals(2, actualLine.end);
+        Assertions.assertEquals(1, actualLine.getStart());
+        Assertions.assertEquals(2, actualLine.getEnd());
     }
 
     /**

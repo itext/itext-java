@@ -254,11 +254,13 @@ public class LtvVerification {
         }
         if (certInclude == CertificateInclusion.YES) {
             for (X509Certificate processedCert : processedCerts) {
-                validationData.certs.add(processedCert.getEncoded());
+                List<byte[]> certs = validationData.getCerts();
+                certs.add(processedCert.getEncoded());
+                validationData.setCerts(certs);
             }
         }
         
-        if (validationData.crls.isEmpty() && validationData.ocsps.isEmpty()) {
+        if (validationData.getCrls().isEmpty() && validationData.getOcsps().isEmpty()) {
             return false;
         }
         validated.put(getSignatureHashKey(signatureName), validationData);
@@ -287,14 +289,20 @@ public class LtvVerification {
         ValidationData vd = new ValidationData();
         if (ocsps != null) {
             for (byte[] ocsp : ocsps) {
-                vd.ocsps.add(LtvVerification.buildOCSPResponse(ocsp));
+                List<byte[]> ocspsArr = vd.getOcsps();
+                ocspsArr.add(LtvVerification.buildOCSPResponse(ocsp));
+                vd.setOcsps(ocspsArr);
             }
         }
         if (crls != null) {
-            vd.crls.addAll(crls);
+            List<byte[]> crlsArr = vd.getCrls();
+            crlsArr.addAll(crls);
+            vd.setCrls(crlsArr);
         }
         if (certs != null) {
-            vd.certs.addAll(certs);
+            List<byte[]> certsArr = vd.getCerts();
+            certsArr.addAll(certs);
+            vd.setCerts(certsArr);
         }
         validated.put(getSignatureHashKey(signatureName), vd);
         return true;
@@ -392,7 +400,9 @@ public class LtvVerification {
             ocspEnc = ocsp.getEncoded(cert, getParent(cert, certificateChain), null);
             if (ocspEnc != null && BOUNCY_CASTLE_FACTORY.createCertificateStatus().getGood().equals(
                     OcspClientBouncyCastle.getCertificateStatus(ocspEnc))) {
-                validationData.ocsps.add(LtvVerification.buildOCSPResponse(ocspEnc));
+                List<byte[]> ocsps = validationData.getOcsps();
+                ocsps.add(LtvVerification.buildOCSPResponse(ocspEnc));
+                validationData.setOcsps(ocsps);
                 revocationDataAdded = true;
                 LOGGER.info("OCSP added");
                 if (certOption == CertificateOption.ALL_CERTIFICATES) {
@@ -411,14 +421,16 @@ public class LtvVerification {
                 for (byte[] cim : cims) {
                     revocationDataAdded = true;
                     boolean dup = false;
-                    for (byte[] b : validationData.crls) {
+                    for (byte[] b : validationData.getCrls()) {
                         if (Arrays.equals(b, cim)) {
                             dup = true;
                             break;
                         }
                     }
                     if (!dup) {
-                        validationData.crls.add(cim);
+                        List<byte[]> crls = validationData.getCrls();
+                        crls.add(cim);
+                        validationData.setCrls(crls);
                         LOGGER.info("CRL added");
                         if (certOption == CertificateOption.ALL_CERTIFICATES) {
                             Certificate[] certsList = issuingCertificateRetriever.getCrlIssuerCertificates(
@@ -568,7 +580,7 @@ public class LtvVerification {
             PdfArray crl = new PdfArray();
             PdfArray cert = new PdfArray();
             PdfDictionary vri = new PdfDictionary();
-            for (byte[] b : validated.get(vkey).crls) {
+            for (byte[] b : validated.get(vkey).getCrls()) {
                 PdfStream ps = new PdfStream(b);
                 ps.setCompressionLevel(CompressionConstants.DEFAULT_COMPRESSION);
                 ps.makeIndirect(document);
@@ -576,14 +588,14 @@ public class LtvVerification {
                 crls.add(ps);
                 crls.setModified();
             }
-            for (byte[] b : validated.get(vkey).ocsps) {
+            for (byte[] b : validated.get(vkey).getOcsps()) {
                 PdfStream ps = new PdfStream(b);
                 ps.setCompressionLevel(CompressionConstants.DEFAULT_COMPRESSION);
                 ocsp.add(ps);
                 ocsps.add(ps);
                 ocsps.setModified();
             }
-            for (byte[] b : validated.get(vkey).certs) {
+            for (byte[] b : validated.get(vkey).getCerts()) {
                 PdfStream ps = new PdfStream(b);
                 ps.setCompressionLevel(CompressionConstants.DEFAULT_COMPRESSION);
                 ps.makeIndirect(document);
@@ -628,9 +640,63 @@ public class LtvVerification {
     }
 
     private static class ValidationData {
-        public List<byte[]> crls = new ArrayList<>();
-        public List<byte[]> ocsps = new ArrayList<>();
-        public List<byte[]> certs = new ArrayList<>();
+        private List<byte[]> crls = new ArrayList<>();
+        private List<byte[]> ocsps = new ArrayList<>();
+        private List<byte[]> certs = new ArrayList<>();
+
+        /**
+         * Sets the crls byte array.
+         *
+         * @param crls crls
+         */
+        public void setCrls(List<byte[]> crls) {
+            this.crls = crls;
+        }
+
+        /**
+         * Retrieves Crls byte array.
+         *
+         * @return crls
+         */
+        public List<byte[]> getCrls() {
+            return crls;
+        }
+
+        /**
+         * Sets the ocsps array.
+         *
+         * @param ocsps ocsps
+         */
+        public void setOcsps(List<byte[]> ocsps) {
+            this.ocsps = ocsps;
+        }
+
+        /**
+         * Retrieves ocsps byte array.
+         *
+         * @return ocsps
+         */
+        public List<byte[]> getOcsps() {
+            return ocsps;
+        }
+
+        /**
+         * Sets the certs byte array.
+         *
+         * @param certs certs
+         */
+        public void setCerts(List<byte[]> certs) {
+            this.certs = certs;
+        }
+
+        /**
+         * Retrieves cert byte array.
+         *
+         * @return cert
+         */
+        public List<byte[]> getCerts() {
+            return certs;
+        }
     }
 
     private Certificate[] retrieveMissingCertificates(Certificate[] certChain) {
@@ -644,5 +710,6 @@ public class LtvVerification {
         }
         return restoredChain.values().toArray(new Certificate[0]);
     }
+
 
 }

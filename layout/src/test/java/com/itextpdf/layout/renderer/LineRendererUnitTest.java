@@ -37,11 +37,13 @@ import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.properties.FloatPropertyValue;
+import com.itextpdf.layout.properties.Leading;
 import com.itextpdf.layout.properties.LineHeight;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.RenderingMode;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.LineRenderer.LineSplitIntoGlyphsData;
+import com.itextpdf.layout.renderer.LineRenderer.RendererGlyph;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -437,5 +439,58 @@ public class LineRendererUnitTest extends RendererUnitTest {
         Assertions.assertNull(thirdReverseRanges);
         Assertions.assertSame(dummyImage4, childRenderers.get(6));
         Assertions.assertSame(dummyImage5, childRenderers.get(7));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, count = 2)})
+    public void percentFontSizeNotSupportedTest() {
+        LineRenderer lineRenderer = new LineRenderer();
+        Leading leading = new Leading(Leading.MULTIPLIED, 1);
+        lineRenderer.setProperty(Property.FONT_SIZE, UnitValue.createPercentValue(35));
+        float topLeadingIndent = lineRenderer.getTopLeadingIndent(leading);
+        float bottomLeadingIndent = lineRenderer.getBottomLeadingIndent(leading);
+        Assertions.assertEquals(0.0, topLeadingIndent);
+        Assertions.assertEquals(7.0, bottomLeadingIndent);
+    }
+
+    @Test
+    public void leadingTypeUnsupportedTest() {
+        LineRenderer lineRenderer = new LineRenderer();
+        Leading leading = new Leading(new Leading(3, 3).getType(), 1);
+        Assertions.assertThrows(IllegalStateException.class, () -> lineRenderer.getTopLeadingIndent(leading));
+        Assertions.assertThrows(IllegalStateException.class, () -> lineRenderer.getBottomLeadingIndent(leading));
+    }
+
+    @Test
+    public void getGlyphTest() {
+        Document dummyDocument = createDummyDocument();
+        TextRenderer textRenderer = createLayoutedTextRenderer("hello", dummyDocument);
+        RendererGlyph rendererGlyph = new RendererGlyph(null, textRenderer);
+
+        rendererGlyph.setGlyph(new Glyph('\n', 0, '\n'));
+        Glyph glyph = rendererGlyph.getGlyph();
+
+        Assertions.assertEquals(1, glyph.getChars().length);
+        Assertions.assertEquals(0, glyph.getWidth());
+        Assertions.assertEquals(10, glyph.getUnicode());
+        Assertions.assertEquals(10, glyph.getCode());
+        Assertions.assertFalse(glyph.isMark());
+    }
+
+    @Test
+    public void getRendererTest() {
+        Document dummyDocument = createDummyDocument();
+        RendererGlyph rendererGlyph = new RendererGlyph(new Glyph('\n', 0, '\n'), null);
+
+        TextRenderer textRenderer = createLayoutedTextRenderer("hello", dummyDocument);
+        rendererGlyph.setRenderer(textRenderer);
+
+        TextRenderer renderer = rendererGlyph.getRenderer();
+
+        Assertions.assertEquals("hello", renderer.getText().toString());
+        Assertions.assertEquals(0, renderer.getText().getStart());
+        Assertions.assertEquals(5, renderer.getText().getEnd());
+        Assertions.assertEquals(0, renderer.getText().getIdx());
     }
 }

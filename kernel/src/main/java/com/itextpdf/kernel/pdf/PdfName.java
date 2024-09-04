@@ -943,7 +943,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     /**
      * map strings to all known static names
      */
-    public static Map<String, PdfName> staticNames;
+    public static final Map<String, PdfName> staticNames;
 
     /**
      * Use reflection to cache all the public static final names so

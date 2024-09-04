@@ -367,20 +367,20 @@ public class PdfType0Font extends PdfFont {
         CMapCharsetEncoder encoder = StandardCMapCharsets.getEncoder(cmapEncoding.getCmapName());
         if (encoder == null) {
             int totalByteCount = 0;
-            for (int i = glyphLine.start; i < glyphLine.end; i++) {
+            for (int i = glyphLine.getStart(); i < glyphLine.getEnd(); i++) {
                 totalByteCount += cmapEncoding.getCmapBytesLength(glyphLine.get(i).getCode());
             }
             // perform actual conversion
             byte[] bytes = new byte[totalByteCount];
             int offset = 0;
-            for (int i = glyphLine.start; i < glyphLine.end; i++) {
+            for (int i = glyphLine.getStart(); i < glyphLine.getEnd(); i++) {
                 usedGlyphs.add(glyphLine.get(i).getCode());
                 offset = cmapEncoding.fillCmapBytes(glyphLine.get(i).getCode(), bytes, offset);
             }
             return bytes;
         } else {
             java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
-            for (int i = glyphLine.start; i < glyphLine.end; i++) {
+            for (int i = glyphLine.getStart(); i < glyphLine.getEnd(); i++) {
                 Glyph g = glyphLine.get(i);
                 usedGlyphs.add(g.getCode());
                 byte[] encodedBit = encoder.encodeUnicodeCodePoint(g.getUnicode());
@@ -676,7 +676,7 @@ public class PdfType0Font extends PdfFont {
     public float getContentWidth(PdfString content) {
         float width = 0;
         GlyphLine glyphLine = decodeIntoGlyphLine(content);
-        for (int i = glyphLine.start; i < glyphLine.end; i++) {
+        for (int i = glyphLine.getStart(); i < glyphLine.getEnd(); i++) {
             width += glyphLine.get(i).getWidth();
         }
         return width;

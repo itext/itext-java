@@ -30,30 +30,43 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
-public class GposLookupType4Test extends ExtendedITextTest {
+public class GposLookupType6Test extends ExtendedITextTest {
 
-    private static final String RESOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/font/otf/GposLookupType4Test/";
+    private static final String RESOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/font/otf/";
+
+    private static final String FREE_SANS_FONT_PATH = RESOURCE_FOLDER + "FreeSans.ttf";
 
     @Test
-    public void verifyMarkToBaseAttachment() throws IOException {
-        TrueTypeFont fontProgram = (TrueTypeFont)FontProgramFactory.createFont(RESOURCE_FOLDER + "Padauk-Regular.ttf");
+    public void idxEqualToEndLineGpos6Test() throws IOException {
+        TrueTypeFont fontProgram = (TrueTypeFont) FontProgramFactory.createFont(FREE_SANS_FONT_PATH);
         GlyphPositioningTableReader gposTableReader = fontProgram.getGposTable();
-        GposLookupType4 lookup = (GposLookupType4) gposTableReader.getLookupTable(192);
-        List<Glyph> glyphs = Arrays.asList(new Glyph(fontProgram.getGlyphByCode(163)), new Glyph(fontProgram.getGlyphByCode(207)),
-                new Glyph(fontProgram.getGlyphByCode(213)));
+        GposLookupType6 lookup = new GposLookupType6(gposTableReader, 0, new int[0]);
+        List<Glyph> glyphs = Arrays.asList(new Glyph(fontProgram.getGlyphByCode(445)),
+                new Glyph(fontProgram.getGlyphByCode(394)));
         GlyphLine gl = new GlyphLine(glyphs);
         gl.setIdx(2);
+        boolean transform = lookup.transformOne(gl);
+        Assertions.assertFalse(transform);
+    }
 
-        Assertions.assertEquals(0, gl.get(2).getXPlacement());
-        Assertions.assertEquals(0, gl.get(2).getAnchorDelta());
+    @Test
+    public void idxSmallerThanEndLineGpos6Test() throws IOException {
+        TrueTypeFont font = new TrueTypeFont(FREE_SANS_FONT_PATH);
 
-        lookup.transformOne(gl);
+        GlyphPositioningTableReader gposTableReader = font.getGposTable();
+        GposLookupType6 lookup = new GposLookupType6(gposTableReader, 0, new int[0]);
 
-        Assertions.assertEquals(364, gl.get(2).getXPlacement());
-        Assertions.assertEquals(-2, gl.get(2).getAnchorDelta());
+
+        List<Glyph> glyphs = Arrays.asList(new Glyph(font.getGlyphByCode(174)),
+                new Glyph(font.getGlyphByCode(5)));
+        GlyphLine gl = new GlyphLine(glyphs);
+        gl.setIdx(0);
+
+        boolean transform = lookup.transformOne(gl);
+        Assertions.assertFalse(transform);
     }
 }

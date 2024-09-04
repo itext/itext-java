@@ -32,11 +32,11 @@ public abstract class ChainingContextualTable<T extends ContextualRule> extends 
 
     @Override
     public T getMatchingContextRule(GlyphLine line) {
-        if (line.idx >= line.end) {
+        if (line.getIdx() >= line.getEnd()) {
             return null;
         }
 
-        Glyph g = line.get(line.idx);
+        Glyph g = line.get(line.getIdx());
         List<T> rules = getSetOfRulesForStartGlyph(g.getCode());
         for (T rule : rules) {
             int lastGlyphIndex = checkIfContextMatch(line, rule);
@@ -45,8 +45,8 @@ public abstract class ChainingContextualTable<T extends ContextualRule> extends 
                     && checkIfLookaheadContextMatch(line, rule, lastGlyphIndex)
                     && checkIfBacktrackContextMatch(line, rule)) {
 
-                line.start = line.idx;
-                line.end = lastGlyphIndex + 1;
+                line.setStart(line.getIdx());
+                line.setEnd(lastGlyphIndex + 1);
                 return rule;
             }
         }
@@ -65,11 +65,11 @@ public abstract class ChainingContextualTable<T extends ContextualRule> extends 
      */
     protected boolean checkIfLookaheadContextMatch(GlyphLine line, T rule, int startIdx) {
         OpenTableLookup.GlyphIndexer gidx = new OpenTableLookup.GlyphIndexer();
-        gidx.line = line;
-        gidx.idx = startIdx;
+        gidx.setLine(line);
+        gidx.setIdx(startIdx);
         for (int j = 0; j < rule.getLookaheadContextLength(); ++j) {
             gidx.nextGlyph(openReader, lookupFlag);
-            if (gidx.glyph == null || !rule.isGlyphMatchesLookahead(gidx.glyph.getCode(), j)) {
+            if (gidx.getGlyph() == null || !rule.isGlyphMatchesLookahead(gidx.getGlyph().getCode(), j)) {
                 return false;
             }
         }
@@ -85,11 +85,11 @@ public abstract class ChainingContextualTable<T extends ContextualRule> extends 
      */
     protected boolean checkIfBacktrackContextMatch(GlyphLine line, T rule) {
         OpenTableLookup.GlyphIndexer gidx = new OpenTableLookup.GlyphIndexer();
-        gidx.line = line;
-        gidx.idx = line.idx;
+        gidx.setLine(line);
+        gidx.setIdx(line.getIdx());
         for (int j = 0; j < rule.getBacktrackContextLength(); ++j) {
             gidx.previousGlyph(openReader, lookupFlag);
-            if (gidx.glyph == null || !rule.isGlyphMatchesBacktrack(gidx.glyph.getCode(), j)) {
+            if (gidx.getGlyph() == null || !rule.isGlyphMatchesBacktrack(gidx.getGlyph().getCode(), j)) {
                 return false;
             }
         }

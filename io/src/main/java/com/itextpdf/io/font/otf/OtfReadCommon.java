@@ -94,20 +94,20 @@ public class OtfReadCommon {
             throws java.io.IOException {
         GposValueRecord vr = new GposValueRecord();
         if ((mask & 0x0001) != 0) {
-            vr.XPlacement =
-                    FontProgram.convertGlyphSpaceToTextSpace(tableReader.rf.readShort()) / tableReader.getUnitsPerEm();
+            vr.setXPlacement(
+                    FontProgram.convertGlyphSpaceToTextSpace(tableReader.rf.readShort()) / tableReader.getUnitsPerEm());
         }
         if ((mask & 0x0002) != 0) {
-            vr.YPlacement =
-                    FontProgram.convertGlyphSpaceToTextSpace(tableReader.rf.readShort()) / tableReader.getUnitsPerEm();
+            vr.setYPlacement(
+                    FontProgram.convertGlyphSpaceToTextSpace(tableReader.rf.readShort()) / tableReader.getUnitsPerEm());
         }
         if ((mask & 0x0004) != 0) {
-            vr.XAdvance =
-                    FontProgram.convertGlyphSpaceToTextSpace(tableReader.rf.readShort()) / tableReader.getUnitsPerEm();
+            vr.setXAdvance(
+                    FontProgram.convertGlyphSpaceToTextSpace(tableReader.rf.readShort()) / tableReader.getUnitsPerEm());
         }
         if ((mask & 0x0008) != 0) {
-            vr.YAdvance =
-                    FontProgram.convertGlyphSpaceToTextSpace(tableReader.rf.readShort()) / tableReader.getUnitsPerEm();
+            vr.setYAdvance(
+                    FontProgram.convertGlyphSpaceToTextSpace(tableReader.rf.readShort()) / tableReader.getUnitsPerEm());
         }
         if ((mask & 0x0010) != 0) {
             tableReader.rf.skip(2);
@@ -136,10 +136,10 @@ public class OtfReadCommon {
         switch (format) {
             default:
                 t = new GposAnchor();
-                t.XCoordinate = FontProgram.convertGlyphSpaceToTextSpace(tableReader.rf.readShort())
-                        / tableReader.getUnitsPerEm();
-                t.YCoordinate = FontProgram.convertGlyphSpaceToTextSpace(tableReader.rf.readShort())
-                        / tableReader.getUnitsPerEm();
+                t.setXCoordinate(FontProgram.convertGlyphSpaceToTextSpace(tableReader.rf.readShort())
+                        / tableReader.getUnitsPerEm());
+                t.setYCoordinate(FontProgram.convertGlyphSpaceToTextSpace(tableReader.rf.readShort())
+                        / tableReader.getUnitsPerEm());
                 break;
         }
 
@@ -160,8 +160,8 @@ public class OtfReadCommon {
         List<OtfMarkRecord> marks = new ArrayList<OtfMarkRecord>();
         for (int k = 0; k < markCount; ++k) {
             OtfMarkRecord rec = new OtfMarkRecord();
-            rec.markClass = classes[k];
-            rec.anchor = readGposAnchor(tableReader, locations[k]);
+            rec.setMarkClass(classes[k]);
+            rec.setAnchor(readGposAnchor(tableReader, locations[k]));
             marks.add(rec);
         }
         return marks;

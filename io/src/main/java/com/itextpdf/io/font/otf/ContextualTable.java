@@ -45,17 +45,17 @@ public abstract class ContextualTable<T extends ContextualRule> {
      * @return matching context rule or null, if none was found.
      */
     public T getMatchingContextRule(GlyphLine line) {
-        if (line.idx >= line.end) {
+        if (line.getIdx() >= line.getEnd()) {
             return null;
         }
 
-        Glyph g = line.get(line.idx);
+        Glyph g = line.get(line.getIdx());
         List<T> rules = getSetOfRulesForStartGlyph(g.getCode());
         for (T rule : rules) {
             int lastGlyphIndex = checkIfContextMatch(line, rule);
             if (lastGlyphIndex != -1) {
-                line.start = line.idx;
-                line.end = lastGlyphIndex + 1;
+                line.setStart(line.getIdx());
+                line.setEnd(lastGlyphIndex + 1);
                 return rule;
             }
         }
@@ -83,20 +83,20 @@ public abstract class ContextualTable<T extends ContextualRule> {
     protected int checkIfContextMatch(GlyphLine line, T rule) {
         int j;
         OpenTableLookup.GlyphIndexer gidx = new OpenTableLookup.GlyphIndexer();
-        gidx.line = line;
-        gidx.idx = line.idx;
+        gidx.setLine(line);
+        gidx.setIdx(line.getIdx());
 
         //Note, that starting index shall be 1
         for (j = 1; j < rule.getContextLength(); ++j) {
             gidx.nextGlyph(openReader, lookupFlag);
-            if (gidx.glyph == null || !rule.isGlyphMatchesInput(gidx.glyph.getCode(), j)) {
+            if (gidx.getGlyph() == null || !rule.isGlyphMatchesInput(gidx.getGlyph().getCode(), j)) {
                 break;
             }
         }
 
         boolean isMatch = j == rule.getContextLength();
         if (isMatch) {
-            return gidx.idx;
+            return gidx.getIdx();
         } else {
             return -1;
         }

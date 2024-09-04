@@ -1267,7 +1267,7 @@ public class BarcodePDF417 extends Barcode2D {
     protected boolean checkSegmentType(Segment segment, char type) {
         if (segment == null)
             return false;
-        return segment.type == type;
+        return segment.getType() == type;
     }
 
     /**
@@ -1280,7 +1280,7 @@ public class BarcodePDF417 extends Barcode2D {
     protected int getSegmentLength(Segment segment) {
         if (segment == null)
             return 0;
-        return segment.end - segment.start;
+        return segment.getEnd() - segment.getStart();
     }
 
 
@@ -1332,19 +1332,19 @@ public class BarcodePDF417 extends Barcode2D {
         cwPtr = 1;
         for (k = 0; k < segmentList.size(); ++k) {
             Segment v = segmentList.get(k);
-            switch (v.type) {
+            switch (v.getType()) {
                 case 'T':
                     if (k != 0)
                         codewords[cwPtr++] = TEXT_MODE;
-                    textCompaction(v.start, getSegmentLength(v));
+                    textCompaction(v.getStart(), getSegmentLength(v));
                     break;
                 case 'N':
                     codewords[cwPtr++] = NUMERIC_MODE;
-                    numberCompaction(v.start, getSegmentLength(v));
+                    numberCompaction(v.getStart(), getSegmentLength(v));
                     break;
                 case 'B':
                     codewords[cwPtr++] = getSegmentLength(v) % 6 != 0 ? BYTE_MODE : BYTE_MODE_6;
-                    byteCompaction(v.start, getSegmentLength(v));
+                    byteCompaction(v.getStart(), getSegmentLength(v));
                     break;
             }
         }
@@ -1384,12 +1384,12 @@ public class BarcodePDF417 extends Barcode2D {
             int len = getSegmentLength(v);
             char[] c = new char[len];
             for (int j = 0; j < len; ++j) {
-                c[j] = (char) (code[v.start + j] & 0xff);
+                c[j] = (char) (code[v.getStart() + j] & 0xff);
                 if (c[j] == '\r')
                     c[j] = '\n';
             }
             StringBuffer sb = new StringBuffer();
-            sb.append(v.type);
+            sb.append(v.getType());
             sb.append(c);
             System.out.println(sb.toString());
         }
@@ -1501,7 +1501,7 @@ public class BarcodePDF417 extends Barcode2D {
             if (checkSegmentType(v, 'B') && getSegmentLength(v) == 1) {
                 if (checkSegmentType(vp, 'T') && checkSegmentType(vn, 'T')
                         && getSegmentLength(vp) + getSegmentLength(vn) >= 3) {
-                    vp.end = vn.end;
+                    vp.setEnd(vn.getEnd());
                     segmentList.remove(k);
                     segmentList.remove(k);
                     k = -1;
@@ -1518,13 +1518,13 @@ public class BarcodePDF417 extends Barcode2D {
                 boolean redo = false;
                 if (checkSegmentType(vp, 'B') && getSegmentLength(vp) == 1 || checkSegmentType(vp, 'T')) {
                     redo = true;
-                    v.start = vp.start;
+                    v.setStart(vp.getStart());
                     segmentList.remove(k - 1);
                     --k;
                 }
                 if (checkSegmentType(vn, 'B') && getSegmentLength(vn) == 1 || checkSegmentType(vn, 'T')) {
                     redo = true;
-                    v.end = vn.end;
+                    v.setEnd(vn.getEnd());
                     segmentList.remove(k + 1);
                 }
                 if (redo) {
@@ -1542,13 +1542,13 @@ public class BarcodePDF417 extends Barcode2D {
                 boolean redo = false;
                 if (checkSegmentType(vp, 'T') && getSegmentLength(vp) < 5 || checkSegmentType(vp, 'B')) {
                     redo = true;
-                    v.start = vp.start;
+                    v.setStart(vp.getStart());
                     segmentList.remove(k - 1);
                     --k;
                 }
                 if (checkSegmentType(vn, 'T') && getSegmentLength(vn) < 5 || checkSegmentType(vn, 'B')) {
                     redo = true;
-                    v.end = vn.end;
+                    v.setEnd(vn.getEnd());
                     segmentList.remove(k + 1);
                 }
                 if (redo) {
@@ -1558,14 +1558,14 @@ public class BarcodePDF417 extends Barcode2D {
             }
         }
         // check if all numbers
-        if (segmentList.size() == 1 && (v = segmentList.get(0)).type == 'T' && getSegmentLength(v) >= 8) {
-            for (k = v.start; k < v.end; ++k) {
+        if (segmentList.size() == 1 && (v = segmentList.get(0)).getType() == 'T' && getSegmentLength(v) >= 8) {
+            for (k = v.getStart(); k < v.getEnd(); ++k) {
                 c = (char) (code[k] & 0xff);
                 if (c < '0' || c > '9')
                     break;
             }
-            if (k == v.end)
-                v.type = 'N';
+            if (k == v.getEnd())
+                v.setType('N');
         }
     }
 
@@ -1789,9 +1789,9 @@ public class BarcodePDF417 extends Barcode2D {
      * A container that encapsulates all data needed for a segment.
      */
     protected static class Segment {
-        public char type;
-        public int start;
-        public int end;
+        private char type;
+        private int start;
+        private int end;
 
         /**
          * Creates a new {@link Segment} instance.
@@ -1803,6 +1803,60 @@ public class BarcodePDF417 extends Barcode2D {
         public Segment(char type, int start, int end) {
             this.type = type;
             this.start = start;
+            this.end = end;
+        }
+
+        /**
+         * Retrieves the type of the segment.
+         *
+         * @return segment type
+         */
+        public char getType() {
+            return type;
+        }
+
+        /**
+         * Sets the type of the segment.
+         *
+         * @param type segment type
+         */
+        public void setType(char type) {
+            this.type = type;
+        }
+
+        /**
+         * Retrieves the start of the segment.
+         *
+         * @return segment start
+         */
+        public int getStart() {
+            return start;
+        }
+
+        /**
+         * Sets the start of the segment.
+         *
+         * @param start segment start
+         */
+        public void setStart(int start) {
+            this.start = start;
+        }
+
+        /**
+         * Retrieves the end of the segment.
+         *
+         * @return segment end
+         */
+        public int getEnd() {
+            return end;
+        }
+
+        /**
+         * Sets the end of the segment.
+         *
+         * @param end segment end
+         */
+        public void setEnd(int end) {
             this.end = end;
         }
     }

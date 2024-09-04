@@ -22,6 +22,7 @@
  */
 package com.itextpdf.pdfa.checker;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.PatternColor;
@@ -29,21 +30,27 @@ import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.pdf.function.PdfType4Function;
+import com.itextpdf.layout.Canvas;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -807,6 +814,59 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
                         currentColorSpaces, true, false)
         );
         Assertions.assertEquals(PdfaExceptionMessageConstant.COLORANTS_DICTIONARY_SHALL_NOT_BE_EMPTY_IN_DEVICE_N_COLORSPACE, e.getMessage());
+    }
+
+    @Test
+    public void checkColorSpaceWithIndexedTest() {
+        PdfDictionary currentColorSpaces = new PdfDictionary();
+        PdfSpecialCs.Indexed indexed = new PdfSpecialCs.Indexed(PdfName.Indexed, 255, new PdfString(new String("".getBytes(StandardCharsets.UTF_8),
+                StandardCharsets.UTF_8)));
+        pdfA2Checker.checkColorSpace(indexed, null,
+                currentColorSpaces, Boolean.TRUE, Boolean.FALSE);
+        //Nothing to check, no error should be thrown.
+    }
+
+    @Test
+    public void checkColorSpaceWithUnColoredTilingTest() {
+        PdfDictionary currentColorSpaces = new PdfDictionary();
+        PdfSpecialCs.UncoloredTilingPattern uncoloredTilingCmykCs = new PdfSpecialCs.UncoloredTilingPattern(new PdfDeviceCs.Cmyk());
+        pdfA2Checker.checkColorSpace(uncoloredTilingCmykCs, null,
+                currentColorSpaces, Boolean.TRUE, Boolean.FALSE);
+        //Nothing to check, no error should be thrown.
+    }
+
+    @Test
+    public void checkExtGateTest() {
+        PdfExtGState egs = new PdfExtGState();
+        egs.setOverprintMode(1);
+        egs.setFillOverPrintFlag(true);
+        egs.setSoftMask(new PdfDictionary());
+        egs.setStrokeOpacity(0.3f);
+        PdfDocument dummyDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        PdfCanvas canvas = new PdfCanvas(dummyDoc.addNewPage());
+        canvas.setExtGState(egs);
+        CanvasGraphicsState canvasGraphicsState = new CanvasGraphicsState(canvas.getGraphicsState());
+        pdfA2Checker.checkExtGState(canvasGraphicsState, null);
+
+
+        Assertions.assertEquals(0.3f, canvasGraphicsState.getStrokeOpacity(), 0.00001);
+        Assertions.assertNotNull(canvasGraphicsState.getSoftMask());
+        Assertions.assertTrue(canvasGraphicsState.getSoftMask().isDictionary());
+        Assertions.assertTrue(canvasGraphicsState.getFillOverprint());
+        Assertions.assertEquals(1, canvasGraphicsState.getOverprintMode());
+    }
+
+    @Test
+    public void checkExtGateOverprintModeTest() {
+        PdfExtGState egs = new PdfExtGState();
+        egs.setSoftMask(new PdfDictionary());
+        egs.setStrokeOpacity(0.3f);
+        PdfDocument dummyDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        PdfCanvas canvas = new PdfCanvas(dummyDoc.addNewPage());
+        canvas.setExtGState(egs);
+        CanvasGraphicsState canvasGraphicsState = new CanvasGraphicsState(canvas.getGraphicsState());
+        pdfA2Checker.checkExtGState(canvasGraphicsState, null);
+        //Nothing to check, no error should be thrown.
     }
 
     private static PdfDictionary createSignatureDict() {

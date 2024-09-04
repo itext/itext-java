@@ -31,14 +31,6 @@ import java.io.EOFException;
  */
 public class RandomAccessFileOrArray implements DataInput {
 
-
-
-    /**
-     * When true the file access is not done through a memory mapped file. Use it if the file
-     * is too big to be mapped in your address space.
-     */
-    public static boolean plainRandomAccess = false;
-
     /**
      * The source that backs this object
      */

@@ -46,7 +46,7 @@ public class GposLookupType1Test extends ExtendedITextTest {
                 new Glyph(fontProgram.getGlyphByCode(5)));
 
         GlyphLine gl = new GlyphLine(glyphs);
-        gl.idx = 0;
+        gl.setIdx(0);
 
         Assertions.assertEquals(0, gl.get(0).getXAdvance());
 
@@ -64,7 +64,7 @@ public class GposLookupType1Test extends ExtendedITextTest {
                 new Glyph(fontProgram.getGlyphByCode(174)));
 
         GlyphLine gl = new GlyphLine(glyphs);
-        gl.idx = 0;
+        gl.setIdx(0);
 
         Assertions.assertEquals(0, gl.get(0).getXAdvance());
 

@@ -78,7 +78,7 @@ public abstract class OpenTypeFontTableReader {
             return null;
         }
         List<FeatureRecord> ret = new ArrayList<FeatureRecord>();
-        for (int f : rec.features) {
+        for (int f : rec.getFeatures()) {
             ret.add(featuresType.getRecord(f));
         }
         return ret;
@@ -95,7 +95,7 @@ public abstract class OpenTypeFontTableReader {
         }
         List<FeatureRecord> recs = new ArrayList<FeatureRecord>();
         for (FeatureRecord rec : features) {
-            if (hs.contains(rec.tag)) {
+            if (hs.contains(rec.getTag())) {
                 recs.add(rec);
             }
         }
@@ -106,13 +106,13 @@ public abstract class OpenTypeFontTableReader {
         LanguageRecord rec = scriptsType.getLanguageRecord(scripts, language);
         if (rec == null)
             return null;
-        return featuresType.getRecord(rec.featureRequired);
+        return featuresType.getRecord(rec.getFeatureRequired());
     }
 
     public List<OpenTableLookup> getLookups(FeatureRecord[] features) {
         IntHashtable hash = new IntHashtable();
         for (FeatureRecord rec : features) {
-            for (int idx : rec.lookups) {
+            for (int idx : rec.getLookups()) {
                 hash.put(idx, 1);
             }
         }
@@ -124,8 +124,8 @@ public abstract class OpenTypeFontTableReader {
     }
 
     public List<OpenTableLookup> getLookups(FeatureRecord feature) {
-        List<OpenTableLookup> ret = new ArrayList<>(feature.lookups.length);
-        for (int idx : feature.lookups) {
+        List<OpenTableLookup> ret = new ArrayList<>(feature.getLookups().length);
+        for (int idx : feature.getLookups()) {
             ret.add(lookupList.get(idx));
         }
         return ret;
@@ -152,14 +152,14 @@ public abstract class OpenTypeFontTableReader {
             return null;
         }
         for (final ScriptRecord record : getScriptRecords()) {
-            if (!otfScriptTag.equals(record.tag)) {
+            if (!otfScriptTag.equals(record.getTag())) {
                 continue;
             }
             if (langTag == null) {
-                return record.defaultLanguage;
+                return record.getDefaultLanguage();
             }
-            for (final LanguageRecord lang : record.languages) {
-                if (langTag.equals(lang.tag)) {
+            for (final LanguageRecord lang : record.getLanguages()) {
+                if (langTag.equals(lang.getTag())) {
                     return lang;
                 }
             }
@@ -204,8 +204,8 @@ public abstract class OpenTypeFontTableReader {
         TagAndLocation[] tagslLocs = new TagAndLocation[count];
         for (int k = 0; k < count; ++k) {
             TagAndLocation tl = new TagAndLocation();
-            tl.tag = rf.readString(4, "utf-8");
-            tl.location = rf.readUnsignedShort() + baseLocation;
+            tl.setTag(rf.readString(4, "utf-8"));
+            tl.setLocation(rf.readUnsignedShort() + baseLocation);
             tagslLocs[k] = tl;
         }
         return tagslLocs;

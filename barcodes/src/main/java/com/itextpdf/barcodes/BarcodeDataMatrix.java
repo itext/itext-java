@@ -373,28 +373,30 @@ public class BarcodeDataMatrix extends Barcode2D {
         switchMode = new int[6][textSize - extOut];
         if (height == 0 || width == 0) {
             last = dmSizes[dmSizes.length - 1];
-            e = getEncodation(text, textOffset + extOut, textSize - extOut, data, extCount, last.dataSize - extCount, options, false);
+            e = getEncodation(text, textOffset + extOut, textSize - extOut, data,
+                    extCount, last.getDataSize() - extCount, options, false);
             if (e < 0) {
                 return DM_ERROR_TEXT_TOO_BIG;
             }
             e += extCount;
             for (k = 0; k < dmSizes.length; ++k) {
-                if (dmSizes[k].dataSize >= e)
+                if (dmSizes[k].getDataSize() >= e)
                     break;
             }
             dm = dmSizes[k];
-            height = dm.height;
-            width = dm.width;
+            height = dm.getHeight();
+            width = dm.getWidth();
         } else {
             for (k = 0; k < dmSizes.length; ++k) {
-                if (height == dmSizes[k].height && width == dmSizes[k].width)
+                if (height == dmSizes[k].getHeight() && width == dmSizes[k].getWidth())
                     break;
             }
             if (k == dmSizes.length) {
                 return DM_ERROR_INVALID_SQUARE;
             }
             dm = dmSizes[k];
-            e = getEncodation(text, textOffset + extOut, textSize - extOut, data, extCount, dm.dataSize - extCount, options, true);
+            e = getEncodation(text, textOffset + extOut, textSize - extOut, data,
+                    extCount, dm.getDataSize() - extCount, options, true);
             if (e < 0) {
                 return DM_ERROR_TEXT_TOO_BIG;
             }
@@ -403,11 +405,12 @@ public class BarcodeDataMatrix extends Barcode2D {
         if ((options & DM_TEST) != 0) {
             return DM_NO_ERROR;
         }
-        image = new byte[(dm.width + 2 * ws + 7) / 8 * (dm.height + 2 * ws)];
-        makePadding(data, e, dm.dataSize - e);
-        place = Placement.doPlacement(dm.height - dm.height / dm.heightSection * 2, dm.width - dm.width / dm.widthSection * 2);
-        full = dm.dataSize + (dm.dataSize + 2) / dm.dataBlock * dm.errorBlock;
-        ReedSolomon.generateECC(data, dm.dataSize, dm.dataBlock, dm.errorBlock);
+        image = new byte[(dm.getWidth() + 2 * ws + 7) / 8 * (dm.getHeight() + 2 * ws)];
+        makePadding(data, e, dm.getDataSize() - e);
+        place = Placement.doPlacement(dm.getHeight() - dm.getHeight() /
+                dm.getHeightSection() * 2, dm.getWidth() - dm.getWidth() / dm.getWidthSection() * 2);
+        full = dm.getDataSize() + (dm.getDataSize() + 2) / dm.getDataBlock() * dm.getErrorBlock();
+        ReedSolomon.generateECC(data, dm.getDataSize(), dm.getDataBlock(), dm.getErrorBlock());
         draw(data, full, dm);
         return DM_NO_ERROR;
     }
@@ -849,8 +852,8 @@ public class BarcodeDataMatrix extends Barcode2D {
             if (!sizeFixed && (symbolIndex == text.length - 1 || symbolIndex < 0) && textLength % 4 < 3) {
                 dataSize = Integer.MAX_VALUE;
                 for (int i = 0; i < dmSizes.length; ++i) {
-                    if (dmSizes[i].dataSize >= dataRequired + textLength % 4) {
-                        dataSize = dmSizes[i].dataSize;
+                    if (dmSizes[i].getDataSize() >= dataRequired + textLength % 4) {
+                        dataSize = dmSizes[i].getDataSize();
                         break;
                     }
                 }
@@ -990,8 +993,8 @@ public class BarcodeDataMatrix extends Barcode2D {
         if (!sizeFixed && (symbolIndex == text.length - 1 || symbolIndex < 0)) {
             dataSize = Integer.MAX_VALUE;
             for (int i = 0; i < dmSizes.length; ++i) {
-                if (dmSizes[i].dataSize >= dataOffset + ptrOut + (3 - pedi / 6)) {
-                    dataSize = dmSizes[i].dataSize;
+                if (dmSizes[i].getDataSize() >= dataOffset + ptrOut + (3 - pedi / 6)) {
+                    dataSize = dmSizes[i].getDataSize();
                     break;
                 }
             }
@@ -1183,38 +1186,38 @@ public class BarcodeDataMatrix extends Barcode2D {
 
     private void draw(byte[] data, int dataSize, DmParams dm) {
         int i, j, p, x, y, xs, ys, z;
-        int xByte = (dm.width + ws * 2 + 7) / 8;
+        int xByte = (dm.getWidth() + ws * 2 + 7) / 8;
         Arrays.fill(image, (byte) 0);
         //alignment patterns
         //dotted horizontal line
-        for (i = ws; i < dm.height + ws; i += dm.heightSection) {
-            for (j = ws; j < dm.width + ws; j += 2) {
+        for (i = ws; i < dm.getHeight() + ws; i += dm.getHeightSection()) {
+            for (j = ws; j < dm.getWidth() + ws; j += 2) {
                 setBit(j, i, xByte);
             }
         }
         //solid horizontal line
-        for (i = dm.heightSection - 1 + ws; i < dm.height + ws; i += dm.heightSection) {
-            for (j = ws; j < dm.width + ws; ++j) {
+        for (i = dm.getHeightSection() - 1 + ws; i < dm.getHeight() + ws; i += dm.getHeightSection()) {
+            for (j = ws; j < dm.getWidth() + ws; ++j) {
                 setBit(j, i, xByte);
             }
         }
         //solid vertical line
-        for (i = ws; i < dm.width + ws; i += dm.widthSection) {
-            for (j = ws; j < dm.height + ws; ++j) {
+        for (i = ws; i < dm.getWidth() + ws; i += dm.getWidthSection()) {
+            for (j = ws; j < dm.getHeight() + ws; ++j) {
                 setBit(i, j, xByte);
             }
         }
         //dotted vertical line
-        for (i = dm.widthSection - 1 + ws; i < dm.width + ws; i += dm.widthSection) {
-            for (j = 1 + ws; j < dm.height + ws; j += 2) {
+        for (i = dm.getWidthSection() - 1 + ws; i < dm.getWidth() + ws; i += dm.getWidthSection()) {
+            for (j = 1 + ws; j < dm.getHeight() + ws; j += 2) {
                 setBit(i, j, xByte);
             }
         }
         p = 0;
-        for (ys = 0; ys < dm.height; ys += dm.heightSection) {
-            for (y = 1; y < dm.heightSection - 1; ++y) {
-                for (xs = 0; xs < dm.width; xs += dm.widthSection) {
-                    for (x = 1; x < dm.widthSection - 1; ++x) {
+        for (ys = 0; ys < dm.getHeight(); ys += dm.getHeightSection()) {
+            for (y = 1; y < dm.getHeightSection() - 1; ++y) {
+                for (xs = 0; xs < dm.getWidth(); xs += dm.getWidthSection()) {
+                    for (x = 1; x < dm.getWidthSection() - 1; ++x) {
                         z = place[p++];
                         if (z == 1 || z > 1 && (data[z / 8 - 1] & 0xff & 128 >> z % 8) != 0)
                             setBit(x + xs + ws, y + ys + ws, xByte);

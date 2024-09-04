@@ -22,43 +22,26 @@
  */
 package com.itextpdf.io.font.otf;
 
-public class FeatureRecord {
-    private String tag;
-    private int[] lookups;
+import com.itextpdf.io.font.otf.GlyphLine.GlyphLinePart;
+import com.itextpdf.test.ExtendedITextTest;
 
-    /**
-     * Retrieves the tag of the feature record.
-     *
-     * @return tag
-     */
-    public String getTag() {
-        return tag;
-    }
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-    /**
-     * Sets the tag of the feature record.
-     *
-     * @param tag tag
-     */
-    public void setTag(String tag) {
-        this.tag = tag;
-    }
+@Tag("UnitTest")
+public class GlyphLinePartTest extends ExtendedITextTest {
 
-    /**
-     * Retrieves the lookups of the feature record.
-     *
-     * @return lookups
-     */
-    public int[] getLookups() {
-        return lookups;
-    }
+    @Test
+    public void customGlyphLinePartTest() {
+        GlyphLine.GlyphLinePart part = new GlyphLinePart(0, 4);
+        part.setStart(1);
+        part.setEnd(5);
+        part.setReversed(false);
 
-    /**
-     * Sets the lookups of the feature record.
-     *
-     * @param lookups lookups
-     */
-    public void setLookups(int[] lookups) {
-        this.lookups = lookups;
+        Assertions.assertEquals(1, part.getStart());
+        Assertions.assertEquals(5, part.getEnd());
+        Assertions.assertFalse(part.isReversed());
     }
 }
+

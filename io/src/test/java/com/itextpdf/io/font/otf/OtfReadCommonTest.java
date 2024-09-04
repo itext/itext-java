@@ -81,10 +81,10 @@ public class OtfReadCommonTest extends ExtendedITextTest {
                 null, null, 1);
         // at 15 we fill up all values
         GposValueRecord valueRecord = OtfReadCommon.readGposValueRecord(gposTableReader, 15);
-        Assertions.assertEquals(2000,valueRecord.XAdvance);
-        Assertions.assertEquals(2000,valueRecord.XPlacement);
-        Assertions.assertEquals(2000,valueRecord.YAdvance);
-        Assertions.assertEquals(2000,valueRecord.YPlacement);
+        Assertions.assertEquals(2000,valueRecord.getXAdvance());
+        Assertions.assertEquals(2000,valueRecord.getXPlacement());
+        Assertions.assertEquals(2000,valueRecord.getYAdvance());
+        Assertions.assertEquals(2000,valueRecord.getYPlacement());
     }
 
     class OpenTypeFontTableReaderTest extends OpenTypeFontTableReader {

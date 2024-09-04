@@ -749,15 +749,16 @@ public class PdfCanvas {
         List<GlyphLine.GlyphLinePart> glyphLineParts = iteratorToList(iterator);
         for (int partIndex = 0; partIndex < glyphLineParts.size(); ++partIndex) {
             GlyphLine.GlyphLinePart glyphLinePart = glyphLineParts.get(partIndex);
-            if (glyphLinePart.actualText != null) {
+            if (glyphLinePart.getActualText() != null) {
                 PdfDictionary properties = new PdfDictionary();
-                properties.put(PdfName.ActualText, new PdfString(glyphLinePart.actualText, PdfEncodings.UNICODE_BIG).setHexWriting(true));
+                properties.put(PdfName.ActualText, new PdfString(glyphLinePart.getActualText(),
+                        PdfEncodings.UNICODE_BIG).setHexWriting(true));
                 beginMarkedContent(PdfName.Span, properties);
-            } else if (glyphLinePart.reversed) {
+            } else if (glyphLinePart.isReversed()) {
                 beginMarkedContent(PdfName.ReversedChars);
             }
-            int sub = glyphLinePart.start;
-            for (int i = glyphLinePart.start; i < glyphLinePart.end; i++) {
+            int sub = glyphLinePart.getStart();
+            for (int i = glyphLinePart.getStart(); i < glyphLinePart.getEnd(); i++) {
                 Glyph glyph = text.get(i);
                 if (glyph.hasOffsets()) {
                     if (i - 1 - sub >= 0) {
@@ -837,18 +838,18 @@ public class PdfCanvas {
                     sub = i + 1;
                 }
             }
-            if (glyphLinePart.end - sub > 0) {
-                font.writeText(text, sub, glyphLinePart.end - 1, contentStream.getOutputStream());
+            if (glyphLinePart.getEnd() - sub > 0) {
+                font.writeText(text, sub, glyphLinePart.getEnd() - 1, contentStream.getOutputStream());
                 contentStream.getOutputStream().writeBytes(Tj);
             }
-            if (glyphLinePart.actualText != null) {
+            if (glyphLinePart.getActualText() != null) {
                 endMarkedContent();
-            } else if (glyphLinePart.reversed) {
+            } else if (glyphLinePart.isReversed()) {
                 endMarkedContent();
             }
-            if (glyphLinePart.end > sub && partIndex + 1 < glyphLineParts.size()) {
+            if (glyphLinePart.getEnd() > sub && partIndex + 1 < glyphLineParts.size()) {
                 contentStream.getOutputStream()
-                        .writeFloat(getSubrangeWidth(text, sub, glyphLinePart.end - 1), true)
+                        .writeFloat(getSubrangeWidth(text, sub, glyphLinePart.getEnd() - 1), true)
                         .writeSpace()
                         .writeFloat(0)
                         .writeSpace()

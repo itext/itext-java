@@ -28,6 +28,7 @@ import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -45,7 +46,7 @@ public class GposLookupType5Test extends ExtendedITextTest {
         GposLookupType5 lookup = (GposLookupType5) gposTableReader.getLookupTable(0);
         List<Glyph> glyphs = Arrays.asList(new Glyph(fontProgram.getGlyphByCode(445)), new Glyph(fontProgram.getGlyphByCode(394)));
         GlyphLine gl = new GlyphLine(glyphs);
-        gl.idx = 1;
+        gl.setIdx(1);
         lookup.transformOne(gl);
 
         Assertions.assertEquals(2, gl.size());
@@ -65,7 +66,7 @@ public class GposLookupType5Test extends ExtendedITextTest {
         GlyphPositioningTableReader gposTableReader = fontProgram.getGposTable();
         GposLookupType5 lookup = (GposLookupType5) gposTableReader.getLookupTable(3);
 
-        glyphLine.idx = 1;
+        glyphLine.setIdx(1);
         lookup.transformOne(glyphLine);
 
         Assertions.assertEquals(2, glyphLine.size());
@@ -82,7 +83,7 @@ public class GposLookupType5Test extends ExtendedITextTest {
         GlyphPositioningTableReader gposTableReader = fontProgram.getGposTable();
         GposLookupType5 lookup = (GposLookupType5) gposTableReader.getLookupTable(3);
 
-        glyphLine.idx = 1;
+        glyphLine.setIdx(1);
         lookup.transformOne(glyphLine);
 
         Assertions.assertEquals(2, glyphLine.size());
@@ -92,4 +93,15 @@ public class GposLookupType5Test extends ExtendedITextTest {
         Assertions.assertEquals(0, glyphLine.get(1).getXPlacement());
     }
 
+    @Test
+    public void idxBiggerThanLineEndTest() throws IOException {
+        TrueTypeFont fontProgram = (TrueTypeFont)FontProgramFactory.createFont(RESOURCE_FOLDER + "NotoNaskhArabic-Regular.ttf");
+        GlyphLine glyphLine = new GlyphLine(Collections.singletonList(fontProgram.getGlyph(203)));
+        GlyphPositioningTableReader gposTableReader = fontProgram.getGposTable();
+        GposLookupType5 lookup = (GposLookupType5) gposTableReader.getLookupTable(3);
+
+        glyphLine.setIdx(10);
+
+        Assertions.assertFalse(lookup.transformOne(glyphLine));
+    }
 }

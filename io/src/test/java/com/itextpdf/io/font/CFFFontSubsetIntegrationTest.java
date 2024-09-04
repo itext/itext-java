@@ -119,7 +119,7 @@ public class CFFFontSubsetIntegrationTest extends ExtendedITextTest {
         CFFFont result = new CFFFont(cffSubsetBytes);
         int expectedCharsetLength = 255;
         // skip over the format ID (1 byte) and the first SID (2 bytes)
-        result.seek(result.fonts[0].charsetOffset + 3);
+        result.seek(result.fonts[0].getCharsetOffset() + 3);
         Assertions.assertEquals(expectedCharsetLength - 2, result.getCard16());
     }
 

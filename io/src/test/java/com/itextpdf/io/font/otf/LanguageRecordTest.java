@@ -22,43 +22,38 @@
  */
 package com.itextpdf.io.font.otf;
 
-public class FeatureRecord {
-    private String tag;
-    private int[] lookups;
+import com.itextpdf.test.ExtendedITextTest;
 
-    /**
-     * Retrieves the tag of the feature record.
-     *
-     * @return tag
-     */
-    public String getTag() {
-        return tag;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+
+@Tag("UnitTest")
+public class LanguageRecordTest extends ExtendedITextTest {
+
+    @Test
+    public void featuresRequiredTest() {
+        LanguageRecord languageRecord = new LanguageRecord();
+        languageRecord.setFeatureRequired(1);
+
+        Assertions.assertEquals(1, languageRecord.getFeatureRequired());
     }
 
-    /**
-     * Sets the tag of the feature record.
-     *
-     * @param tag tag
-     */
-    public void setTag(String tag) {
-        this.tag = tag;
+    @Test
+    public void taggingTest() {
+        LanguageRecord languageRecord = new LanguageRecord();
+        languageRecord.setTag("tagname");
+
+        Assertions.assertEquals("tagname", languageRecord.getTag());
     }
 
-    /**
-     * Retrieves the lookups of the feature record.
-     *
-     * @return lookups
-     */
-    public int[] getLookups() {
-        return lookups;
-    }
+    @Test
+    public void featuresTest() {
+        LanguageRecord languageRecord = new LanguageRecord();
+        int[] features = new int[2];
+        languageRecord.setFeatures(features);
 
-    /**
-     * Sets the lookups of the feature record.
-     *
-     * @param lookups lookups
-     */
-    public void setLookups(int[] lookups) {
-        this.lookups = lookups;
+        Assertions.assertEquals(2, languageRecord.getFeatures().length);
     }
 }
+

@@ -20,45 +20,21 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.io.font.otf;
+package com.itextpdf.io.font.cmap;
 
-public class FeatureRecord {
-    private String tag;
-    private int[] lookups;
+import com.itextpdf.test.ExtendedITextTest;
 
-    /**
-     * Retrieves the tag of the feature record.
-     *
-     * @return tag
-     */
-    public String getTag() {
-        return tag;
-    }
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import static com.itextpdf.io.font.cmap.CMapToUnicode.EMPTY_CMAP;
 
-    /**
-     * Sets the tag of the feature record.
-     *
-     * @param tag tag
-     */
-    public void setTag(String tag) {
-        this.tag = tag;
-    }
+@Tag("UnitTest")
+public class CMapToUnicodeTest extends ExtendedITextTest {
 
-    /**
-     * Retrieves the lookups of the feature record.
-     *
-     * @return lookups
-     */
-    public int[] getLookups() {
-        return lookups;
-    }
-
-    /**
-     * Sets the lookups of the feature record.
-     *
-     * @param lookups lookups
-     */
-    public void setLookups(int[] lookups) {
-        this.lookups = lookups;
+    @Test
+    public void emptyCmapVarTest() {
+        Assertions.assertNotNull(EMPTY_CMAP);
+        Assertions.assertFalse(EMPTY_CMAP.hasByteMappings(), "Cmap has no two byte mappings");
     }
 }

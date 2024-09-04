@@ -43,68 +43,68 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Standard separable blend mode. See ISO-320001, table 136
      */
-    public static PdfName BM_NORMAL = PdfName.Normal;
+    public static final PdfName BM_NORMAL = PdfName.Normal;
     /**
      * Standard separable blend mode. See ISO-320001, table 136
      */
-    public static PdfName BM_MULTIPLY = PdfName.Multiply;
+    public static final PdfName BM_MULTIPLY = PdfName.Multiply;
     /**
      * Standard separable blend mode. See ISO-320001, table 136
      */
-    public static PdfName BM_SCREEN = PdfName.Screen;
+    public static final PdfName BM_SCREEN = PdfName.Screen;
     /**
      * Standard separable blend mode. See ISO-320001, table 136
      */
-    public static PdfName BM_OVERLAY = PdfName.Overlay;
+    public static final PdfName BM_OVERLAY = PdfName.Overlay;
     /**
      * Standard separable blend mode. See ISO-320001, table 136
      */
-    public static PdfName BM_DARKEN = PdfName.Darken;
+    public static final PdfName BM_DARKEN = PdfName.Darken;
     /**
      * Standard separable blend mode. See ISO-320001, table 136
      */
-    public static PdfName BM_LIGHTEN = PdfName.Lighten;
+    public static final PdfName BM_LIGHTEN = PdfName.Lighten;
     /**
      * Standard separable blend mode. See ISO-320001, table 136
      */
-    public static PdfName BM_COLOR_DODGE = PdfName.ColorDodge;
+    public static final PdfName BM_COLOR_DODGE = PdfName.ColorDodge;
     /**
      * Standard separable blend mode. See ISO-320001, table 136
      */
-    public static PdfName BM_COLOR_BURN = PdfName.ColorBurn;
+    public static final PdfName BM_COLOR_BURN = PdfName.ColorBurn;
     /**
      * Standard separable blend mode. See ISO-320001, table 136
      */
-    public static PdfName BM_HARD_LIGHT = PdfName.HardLight;
+    public static final PdfName BM_HARD_LIGHT = PdfName.HardLight;
     /**
      * Standard separable blend mode. See ISO-320001, table 136
      */
-    public static PdfName BM_SOFT_LIGHT = PdfName.SoftLight;
+    public static final PdfName BM_SOFT_LIGHT = PdfName.SoftLight;
     /**
      * Standard separable blend mode. See ISO-320001, table 136
      */
-    public static PdfName BM_DIFFERENCE = PdfName.Difference;
+    public static final PdfName BM_DIFFERENCE = PdfName.Difference;
     /**
      * Standard separable blend mode. See ISO-320001, table 136
      */
-    public static PdfName BM_EXCLUSION = PdfName.Exclusion;
+    public static final PdfName BM_EXCLUSION = PdfName.Exclusion;
 
     /**
      * Standard nonseparable blend mode. See ISO-320001, table 137
      */
-    public static PdfName BM_HUE = PdfName.Hue;
+    public static final PdfName BM_HUE = PdfName.Hue;
     /**
      * Standard nonseparable blend mode. See ISO-320001, table 137
      */
-    public static PdfName BM_SATURATION = PdfName.Saturation;
+    public static final PdfName BM_SATURATION = PdfName.Saturation;
     /**
      * Standard nonseparable blend mode. See ISO-320001, table 137
      */
-    public static PdfName BM_COLOR = PdfName.Color;
+    public static final PdfName BM_COLOR = PdfName.Color;
     /**
      * Standard nonseparable blend mode. See ISO-320001, table 137
      */
-    public static PdfName BM_LUMINOSITY = PdfName.Luminosity;
+    public static final PdfName BM_LUMINOSITY = PdfName.Luminosity;
 
     /**
      * Create instance of graphics state parameter dictionary wrapper

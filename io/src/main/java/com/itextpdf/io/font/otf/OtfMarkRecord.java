@@ -23,6 +23,42 @@
 package com.itextpdf.io.font.otf;
 
 public class OtfMarkRecord {
-    public int markClass;
-    public GposAnchor anchor;
+    private int markClass;
+    private GposAnchor anchor;
+
+    /**
+     * Retrieves the mark class of the OtfMarkRecord.
+     *
+     * @return mark class
+     */
+    public int getMarkClass() {
+        return markClass;
+    }
+
+    /**
+     * Sets the mark class of the OtfMarkRecord.
+     *
+     * @param markClass mark class
+     */
+    public void setMarkClass(int markClass) {
+        this.markClass = markClass;
+    }
+
+    /**
+     * Retrieves the anchor of the OtfMarkRecord.
+     *
+     * @return anchor
+     */
+    public GposAnchor getAnchor() {
+        return anchor;
+    }
+
+    /**
+     * Sets the anchor of the OtfMarkRecord.
+     *
+     * @param anchor anchor
+     */
+    public void setAnchor(GposAnchor anchor) {
+        this.anchor = anchor;
+    }
 }

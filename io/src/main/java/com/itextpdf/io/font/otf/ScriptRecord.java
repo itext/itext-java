@@ -23,7 +23,61 @@
 package com.itextpdf.io.font.otf;
 
 public class ScriptRecord {
-    public String tag;
-    public LanguageRecord defaultLanguage;
-    public LanguageRecord[] languages;
+    private String tag;
+    private LanguageRecord defaultLanguage;
+    private LanguageRecord[] languages;
+
+    /**
+     * Retrieves the tag of the Script Record.
+     *
+     * @return tag of record
+     */
+    public String getTag() {
+        return tag;
+    }
+
+    /**
+     * Sets the tag of the Script Record.
+     *
+     * @param tag tag of record
+     */
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
+    /**
+     * Retrieves the default language of the Script Record.
+     *
+     * @return default language
+     */
+    public LanguageRecord getDefaultLanguage() {
+        return defaultLanguage;
+    }
+
+    /**
+     * Sets the default language of the Script Record.
+     *
+     * @param defaultLanguage default language
+     */
+    public void setDefaultLanguage(LanguageRecord defaultLanguage) {
+        this.defaultLanguage = defaultLanguage;
+    }
+
+    /**
+     * Retrieves the languages of the Script Record.
+     *
+     * @return languages
+     */
+    public LanguageRecord[] getLanguages() {
+        return languages;
+    }
+
+    /**
+     * Sets the languages of the Script Record.
+     *
+     * @param languages languages
+     */
+    public void setLanguages(LanguageRecord[] languages) {
+        this.languages = languages;
+    }
 }

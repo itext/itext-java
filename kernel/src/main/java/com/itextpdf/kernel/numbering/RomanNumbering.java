@@ -103,9 +103,9 @@ public class RomanNumbering {
             // loop over the array with values for m-d-c-l-x-v-i
             RomanDigit dig = ROMAN_DIGITS[pos];
             // adding as many digits as we can
-            while (index >= dig.value) {
-                buf.append(dig.digit);
-                index -= dig.value;
+            while (index >= dig.getValue()) {
+                buf.append(dig.getDigit());
+                index -= dig.getValue();
             }
             // we have the complete number
             if (index <= 0) {
@@ -113,12 +113,12 @@ public class RomanNumbering {
             }
             // look for the next digit that can be used in a special way
             int j = pos;
-            while (!ROMAN_DIGITS[++j].pre) ;
+            while (!ROMAN_DIGITS[++j].isPre()) ;
 
             // does the special notation apply?
-            if (index + ROMAN_DIGITS[j].value >= dig.value) {
-                buf.append(ROMAN_DIGITS[j].digit).append(dig.digit);
-                index -= dig.value - ROMAN_DIGITS[j].value;
+            if (index + ROMAN_DIGITS[j].getValue() >= dig.getValue()) {
+                buf.append(ROMAN_DIGITS[j].getDigit()).append(dig.getDigit());
+                index -= dig.getValue() - ROMAN_DIGITS[j].getValue();
             }
             pos++;
         }
@@ -133,17 +133,17 @@ public class RomanNumbering {
         /**
          * part of a roman number
          */
-        public char digit;
+        private final char digit;
 
         /**
          * value of the roman digit
          */
-        public int value;
+        private final int value;
 
         /**
          * can the digit be used as a prefix
          */
-        public boolean pre;
+        private final boolean pre;
 
         /**
          * Constructs a roman digit
@@ -156,6 +156,33 @@ public class RomanNumbering {
             this.digit = digit;
             this.value = value;
             this.pre = pre;
+        }
+
+        /**
+         * Retrieves the roman digit.
+         *
+         * @return roman digit
+         */
+        public char getDigit() {
+            return digit;
+        }
+
+        /**
+         * Retrieves the value of the roman digit.
+         *
+         * @return value
+         */
+        public int getValue() {
+            return value;
+        }
+
+        /**
+         * Retrieves whether the roman digit can be used as prefix.
+         *
+         * @return true if it can, false otherwise
+         */
+        public boolean isPre() {
+            return pre;
         }
     }
 }

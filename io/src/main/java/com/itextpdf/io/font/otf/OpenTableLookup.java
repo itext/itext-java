@@ -43,8 +43,8 @@ public abstract class OpenTableLookup {
     
     public boolean transformLine(GlyphLine line) {
         boolean changed = false;
-        line.idx = line.start;
-        while (line.idx < line.end && line.idx >= line.start) {
+        line.setIdx(line.getStart());
+        while (line.getIdx() < line.getEnd() && line.getIdx() >= line.getStart()) {
             changed = transformOne(line) || changed;
         }
         return changed;
@@ -63,13 +63,67 @@ public abstract class OpenTableLookup {
     protected abstract void readSubTable(int subTableLocation) throws java.io.IOException;
 
     public static class GlyphIndexer {
-        public GlyphLine line;
-        public Glyph glyph;
-        public int idx;
+        private GlyphLine line;
+        private Glyph glyph;
+        private int idx;
+
+        /**
+         * Retrieves the glyph line of the object.
+         *
+         * @return glyph line
+         */
+        public GlyphLine getLine() {
+            return line;
+        }
+
+        /**
+         * Sets the glyph line of the object.
+         *
+         * @param line glyph line
+         */
+        public void setLine(GlyphLine line) {
+            this.line = line;
+        }
+
+        /**
+         * Retrieves the glyph of the object.
+         *
+         * @return glyph
+         */
+        public Glyph getGlyph() {
+            return glyph;
+        }
+
+        /**
+         * Sets the glyph of the object.
+         *
+         * @param glyph glyph
+         */
+        public void setGlyph(Glyph glyph) {
+            this.glyph = glyph;
+        }
+
+        /**
+         * Retrieves the idx of the glyph indexer.
+         *
+         * @return idx
+         */
+        public int getIdx() {
+            return idx;
+        }
+
+        /**
+         * Sets the idx of the glyph indexer.
+         *
+         * @param idx idx
+         */
+        public void setIdx(int idx) {
+            this.idx = idx;
+        }
 
         public void nextGlyph(OpenTypeFontTableReader openReader, int lookupFlag) {
             glyph = null;
-            while (++idx < line.end) {
+            while (++idx < line.getEnd()) {
                 Glyph g = line.get(idx);
                 if (!openReader.isSkip(g.getCode(), lookupFlag)) {
                     glyph = g;
@@ -80,7 +134,7 @@ public abstract class OpenTableLookup {
 
         public void previousGlyph(OpenTypeFontTableReader openReader, int lookupFlag) {
             glyph = null;
-            while (--idx >= line.start) {
+            while (--idx >= line.getStart()) {
                 Glyph g = line.get(idx);
                 if (!openReader.isSkip(g.getCode(), lookupFlag)) {
                     glyph = g;

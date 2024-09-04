@@ -52,7 +52,32 @@ public class PdfTokenizer implements Closeable {
         EndOfFile
     }
 
-    public static final boolean[] delims = {
+    public static final byte[] Obj = ByteUtils.getIsoBytes("obj");
+    public static final byte[] R = ByteUtils.getIsoBytes("R");
+    public static final byte[] Xref = ByteUtils.getIsoBytes("xref");
+    public static final byte[] Startxref = ByteUtils.getIsoBytes("startxref");
+    public static final byte[] Stream = ByteUtils.getIsoBytes("stream");
+    public static final byte[] Trailer = ByteUtils.getIsoBytes("trailer");
+    public static final byte[] N = ByteUtils.getIsoBytes("n");
+    public static final byte[] F = ByteUtils.getIsoBytes("f");
+    public static final byte[] Null = ByteUtils.getIsoBytes("null");
+    public static final byte[] True = ByteUtils.getIsoBytes("true");
+    public static final byte[] False = ByteUtils.getIsoBytes("false");
+
+    protected TokenType type;
+    protected int reference;
+    protected int generation;
+    protected boolean hexString;
+    protected ByteBuffer outBuf;
+
+    private final RandomAccessFileOrArray file;
+    /**
+     * Streams are closed automatically.
+     */
+    private boolean closeStream = true;
+
+
+    private static final boolean[] delims = {
             true, true, false, false, false, false, false, false, false, false,
             true, true, false, true, true, false, false, false, false, false,
             false, false, false, false, false, false, false, false, false, false,
@@ -79,31 +104,6 @@ public class PdfTokenizer implements Closeable {
             false, false, false, false, false, false, false, false, false, false,
             false, false, false, false, false, false, false, false, false, false,
             false, false, false, false, false, false, false};
-
-
-    public static final byte[] Obj = ByteUtils.getIsoBytes("obj");
-    public static final byte[] R = ByteUtils.getIsoBytes("R");
-    public static final byte[] Xref = ByteUtils.getIsoBytes("xref");
-    public static final byte[] Startxref = ByteUtils.getIsoBytes("startxref");
-    public static final byte[] Stream = ByteUtils.getIsoBytes("stream");
-    public static final byte[] Trailer = ByteUtils.getIsoBytes("trailer");
-    public static final byte[] N = ByteUtils.getIsoBytes("n");
-    public static final byte[] F = ByteUtils.getIsoBytes("f");
-    public static final byte[] Null = ByteUtils.getIsoBytes("null");
-    public static final byte[] True = ByteUtils.getIsoBytes("true");
-    public static final byte[] False = ByteUtils.getIsoBytes("false");
-
-    protected TokenType type;
-    protected int reference;
-    protected int generation;
-    protected boolean hexString;
-    protected ByteBuffer outBuf;
-
-    private final RandomAccessFileOrArray file;
-    /**
-     * Streams are closed automatically.
-     */
-    private boolean closeStream = true;
 
     /**
      * Creates a PdfTokenizer for the specified {@link RandomAccessFileOrArray}.

@@ -902,17 +902,17 @@ public class PdfA2Checker extends PdfA1Checker {
              *
              * But, all the test files used in iText5 failed on this check, so may be my assumption is wrong.
              */
-            if (!params.isJp2 /*|| !params.isJpxBaseline*/) {
+            if (!params.isJp2() /*|| !params.isJpxBaseline*/) {
                 throw new PdfAConformanceException(PdfaExceptionMessageConstant.ONLY_JPX_BASELINE_SET_OF_FEATURES_SHALL_BE_USED);
             }
 
-            if (params.numOfComps != 1 && params.numOfComps != 3 && params.numOfComps != 4) {
+            if (params.getNumOfComps() != 1 && params.getNumOfComps() != 3 && params.getNumOfComps() != 4) {
                 throw new PdfAConformanceException(PdfaExceptionMessageConstant.THE_NUMBER_OF_COLOUR_CHANNELS_IN_THE_JPEG2000_DATA_SHALL_BE_1_3_OR_4);
             }
 
-            if (params.colorSpecBoxes != null && params.colorSpecBoxes.size() > 1) {
+            if (params.getColorSpecBoxes() != null && params.getColorSpecBoxes().size() > 1) {
                 int numOfApprox0x01 = 0;
-                for (Jpeg2000ImageData.ColorSpecBox colorSpecBox : params.colorSpecBoxes) {
+                for (Jpeg2000ImageData.ColorSpecBox colorSpecBox : params.getColorSpecBoxes()) {
                     if (colorSpecBox.getApprox() == 1) {
                         ++numOfApprox0x01;
                         if (numOfApprox0x01 == 1 &&
@@ -956,7 +956,7 @@ public class PdfA2Checker extends PdfA1Checker {
             // The Bits Per Component box specifies the bit depth of each component.
             // If the bit depth of all components in the codestream is the same (in both sign and precision),
             // then this box shall not be found. Otherwise, this box specifies the bit depth of each individual component.
-            if (params.bpcBoxData != null) {
+            if (params.getBpcBoxData() != null) {
                 throw new PdfAConformanceException(PdfaExceptionMessageConstant.ALL_COLOUR_CHANNELS_IN_THE_JPEG2000_DATA_SHALL_HAVE_THE_SAME_BIT_DEPTH);
             }
         }

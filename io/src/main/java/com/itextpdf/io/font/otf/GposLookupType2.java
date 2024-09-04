@@ -45,17 +45,17 @@ public class GposLookupType2 extends OpenTableLookup {
 
     @Override
     public boolean transformOne(GlyphLine line) {
-        if (line.idx >= line.end)
+        if (line.getIdx() >= line.getEnd())
             return false;
-        if (openReader.isSkip(line.get(line.idx).getCode(), lookupFlag)) {
-            line.idx++;
+        if (openReader.isSkip(line.get(line.getIdx()).getCode(), lookupFlag)) {
+            line.setIdx(line.getIdx()+1);
             return false;
         }
         for (OpenTableLookup lookup : listRules) {
             if (lookup.transformOne(line))
                 return true;
         }
-        ++line.idx;
+        line.setIdx(line.getIdx()+1);
         return false;
     }
 
@@ -88,23 +88,25 @@ public class GposLookupType2 extends OpenTableLookup {
         }
 
         public boolean transformOne(GlyphLine line) {
-            if (line.idx >= line.end || line.idx < line.start)
+            if (line.getIdx() >= line.getEnd() || line.getIdx() < line.getStart())
                 return false;
             boolean changed = false;
-            Glyph g1 = line.get(line.idx);
+            Glyph g1 = line.get(line.getIdx());
             Map<Integer,PairValueFormat> m = gposMap.get(g1.getCode());
             if (m != null) {
                 GlyphIndexer gi = new GlyphIndexer();
-                gi.line = line;
-                gi.idx = line.idx;
+                gi.setLine(line);
+                gi.setIdx(line.getIdx());
                 gi.nextGlyph(openReader, lookupFlag);
-                if (gi.glyph != null) {
-                    PairValueFormat pv = m.get(gi.glyph.getCode());
+                if (gi.getGlyph() != null) {
+                    PairValueFormat pv = m.get(gi.getGlyph().getCode());
                     if (pv != null) {
-                        Glyph g2 = gi.glyph;
-                        line.set(line.idx, new Glyph(g1, 0, 0, pv.first.XAdvance, pv.first.YAdvance, 0));
-                        line.set(gi.idx, new Glyph(g2, 0, 0, pv.second.XAdvance, pv.second.YAdvance, 0));
-                        line.idx = gi.idx;
+                        Glyph g2 = gi.getGlyph();
+                        line.set(line.getIdx(), new Glyph(g1, 0, 0, pv.getFirst().getXAdvance(),
+                                pv.getFirst().getYAdvance(), 0));
+                        line.set(gi.getIdx(), new Glyph(g2, 0, 0, pv.getSecond().getXAdvance(),
+                                pv.getSecond().getYAdvance(), 0));
+                        line.setIdx(gi.getIdx());
                         changed = true;
                     }
                 }
@@ -127,8 +129,8 @@ public class GposLookupType2 extends OpenTableLookup {
                 for (int j = 0; j < pairValueCount; ++j) {
                     int glyph2 = openReader.rf.readUnsignedShort();
                     PairValueFormat pair = new PairValueFormat();
-                    pair.first = OtfReadCommon.readGposValueRecord(openReader, valueFormat1);
-                    pair.second = OtfReadCommon.readGposValueRecord(openReader, valueFormat2);
+                    pair.setFirst(OtfReadCommon.readGposValueRecord(openReader, valueFormat1));
+                    pair.setSecond(OtfReadCommon.readGposValueRecord(openReader, valueFormat2));
                     pairs.put(glyph2, pair);
                 }
             }
@@ -152,9 +154,9 @@ public class GposLookupType2 extends OpenTableLookup {
         }
 
         public boolean transformOne(GlyphLine line) {
-            if (line.idx >= line.end || line.idx < line.start)
+            if (line.getIdx() >= line.getEnd() || line.getIdx() < line.getStart())
                 return false;
-            Glyph g1 = line.get(line.idx);
+            Glyph g1 = line.get(line.getIdx());
             if (!coverageSet.contains(g1.getCode()))
                 return false;
             int c1 = classDef1.getOtfClass(g1.getCode());
@@ -162,19 +164,19 @@ public class GposLookupType2 extends OpenTableLookup {
             if (pvs == null)
                 return false;
             GlyphIndexer gi = new GlyphIndexer();
-            gi.line = line;
-            gi.idx = line.idx;
+            gi.setLine(line);
+            gi.setIdx(line.getIdx());
             gi.nextGlyph(openReader, lookupFlag);
-            if (gi.glyph == null)
+            if (gi.getGlyph() == null)
                 return false;
-            Glyph g2 = gi.glyph;
+            Glyph g2 = gi.getGlyph();
             int c2 = classDef2.getOtfClass(g2.getCode());
             if (c2 >= pvs.length)
                 return false;
             PairValueFormat pv = pvs[c2];
-            line.set(line.idx, new Glyph(g1, 0, 0, pv.first.XAdvance, pv.first.YAdvance, 0));
-            line.set(gi.idx, new Glyph(g2, 0, 0, pv.second.XAdvance, pv.second.YAdvance, 0));
-            line.idx = gi.idx;
+            line.set(line.getIdx(), new Glyph(g1, 0, 0, pv.getFirst().getXAdvance(), pv.getFirst().getYAdvance(), 0));
+            line.set(gi.getIdx(), new Glyph(g2, 0, 0, pv.getSecond().getXAdvance(), pv.getSecond().getYAdvance(), 0));
+            line.setIdx(gi.getIdx());
             return true;
         }
 
@@ -192,8 +194,8 @@ public class GposLookupType2 extends OpenTableLookup {
                 posSubs.put(k, pairs);
                 for (int j = 0; j < class2Count; ++j) {
                     PairValueFormat pair = new PairValueFormat();
-                    pair.first = OtfReadCommon.readGposValueRecord(openReader, valueFormat1);
-                    pair.second = OtfReadCommon.readGposValueRecord(openReader, valueFormat2);
+                    pair.setFirst(OtfReadCommon.readGposValueRecord(openReader, valueFormat1));
+                    pair.setSecond(OtfReadCommon.readGposValueRecord(openReader, valueFormat2));
                     pairs[j] = pair;
                 }
             }
@@ -210,7 +212,43 @@ public class GposLookupType2 extends OpenTableLookup {
     }
 
     private static class PairValueFormat {
-        public GposValueRecord first;
-        public GposValueRecord second;
+        private GposValueRecord first;
+        private GposValueRecord second;
+
+        /**
+         * Retrieves the first object of the pair.
+         *
+         * @return first object
+         */
+        public GposValueRecord getFirst() {
+            return first;
+        }
+
+        /**
+         * Sets the first object of the pair.
+         *
+         * @param first first object
+         */
+        public void setFirst(GposValueRecord first) {
+            this.first = first;
+        }
+
+        /**
+         * Retrieves the second object of the pair.
+         *
+         * @return second object
+         */
+        public GposValueRecord getSecond() {
+            return second;
+        }
+
+        /**
+         * Sets the second object of the pair.
+         *
+         * @param second second object
+         */
+        public void setSecond(GposValueRecord second) {
+            this.second = second;
+        }
     }
 }

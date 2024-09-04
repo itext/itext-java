@@ -102,18 +102,18 @@ public class Jbig2SegmentReader {
      */
     public static class Jbig2Segment implements Comparable<Jbig2Segment> {
 
-        public final int segmentNumber;
-        public long dataLength = -1;
-        public int page = -1;
-        public int[] referredToSegmentNumbers = null;
-        public boolean[] segmentRetentionFlags = null;
-        public int type = -1;
-        public boolean deferredNonRetain = false;
-        public int countOfReferredToSegments = -1;
-        public byte[] data = null;
-        public byte[] headerData = null;
-        public boolean page_association_size = false;
-        public int page_association_offset = -1;
+        private final int segmentNumber;
+        private long dataLength = -1;
+        private int page = -1;
+        private int[] referredToSegmentNumbers = null;
+        private boolean[] segmentRetentionFlags = null;
+        private int type = -1;
+        private boolean deferredNonRetain = false;
+        private int countOfReferredToSegments = -1;
+        private byte[] data = null;
+        private byte[] headerData = null;
+        private boolean pageAssociationSize = false;
+        private int pageAssociationOffset = -1;
 
         public Jbig2Segment(int segment_number) {
             this.segmentNumber = segment_number;
@@ -123,22 +123,272 @@ public class Jbig2SegmentReader {
             return this.segmentNumber - s.segmentNumber;
         }
 
+        /**
+         * Retrieves the data length of a JBig2Segment object.
+         *
+         * @return data length value
+         */
+        public long getDataLength() {
+            return dataLength;
+        }
 
+        /**
+         * Sets the data length of a JBig2Segment object.
+         *
+         * @param dataLength data length value
+         */
+        public void setDataLength(long dataLength) {
+            this.dataLength = dataLength;
+        }
+
+        /**
+         * Retrieves the page number of a JBig2Segment object.
+         *
+         * @return page number
+         */
+        public int getPage() {
+            return page;
+        }
+
+        /**
+         * Sets the page number of a JBig2Segment object.
+         *
+         * @param page page number
+         */
+        public void setPage(int page) {
+            this.page = page;
+        }
+
+        /**
+         * Retrieves the referred-to segment numbers of a JBig2Segment object.
+         *
+         * @return Every referred-to segment number
+         */
+        public int[] getReferredToSegmentNumbers() {
+            return referredToSegmentNumbers;
+        }
+
+        /**
+         * Sets the referred-to segment numbers of a JBig2Segment object.
+         *
+         * @param referredToSegmentNumbers Referred-to segment numbers
+         */
+        public void setReferredToSegmentNumbers(int[] referredToSegmentNumbers) {
+            this.referredToSegmentNumbers = referredToSegmentNumbers;
+        }
+
+        /**
+         * Retrieves segment retention flags of a JBig2Segment object.
+         *
+         * @return Every segment retention flag value
+         */
+        public boolean[] getSegmentRetentionFlags() {
+            return segmentRetentionFlags;
+        }
+
+        /**
+         * Sets segment retention flags of a JBig2Segment object.
+         *
+         * @param segmentRetentionFlags Segment retention flag values
+         */
+        public void setSegmentRetentionFlags(boolean[] segmentRetentionFlags) {
+            this.segmentRetentionFlags = segmentRetentionFlags;
+        }
+
+        /**
+         * Retrieves type of the JBig2Segment object.
+         *
+         * @return Type value
+         */
+        public int getType() {
+            return type;
+        }
+
+        /**
+         * Sets type of the JBig2Segment object.
+         * @param type Type value
+         */
+        public void setType(int type) {
+            this.type = type;
+        }
+
+        /**
+         * Retrieves whether the object is deferred without retention.
+         * Default value is false.
+         *
+         * @return true if deferred without retention, false otherwise
+         */
+        public boolean isDeferredNonRetain() {
+            return deferredNonRetain;
+        }
+
+        /**
+         * Sets whether the JBig2Segments object is deferred without retention.
+         *
+         * @param deferredNonRetain true for deferred without retention, false otherwise
+         */
+        public void setDeferredNonRetain(boolean deferredNonRetain) {
+            this.deferredNonRetain = deferredNonRetain;
+        }
+
+        /**
+         * Retrieves the count of the referred-to segments.
+         *
+         * @return count of referred-to segments
+         */
+        public int getCountOfReferredToSegments() {
+            return countOfReferredToSegments;
+        }
+
+        /**
+         * Sets the count of referred-to segments of the JBig2Segment object.
+         *
+         * @param countOfReferredToSegments count of referred segments
+         */
+        public void setCountOfReferredToSegments(int countOfReferredToSegments) {
+            this.countOfReferredToSegments = countOfReferredToSegments;
+        }
+
+        /**
+         * Retrieves data of the JBig2Segment object.
+         *
+         * @return data bytes
+         */
+        public byte[] getData() {
+            return data;
+        }
+
+        /**
+         * Sets data of the JBig2Segment object.
+         *
+         * @param data data bytes
+         */
+        public void setData(byte[] data) {
+            this.data = data;
+        }
+
+        /**
+         * Retrieves header data of the JBig2Segment object.
+         *
+         * @return header data bytes
+         */
+        public byte[] getHeaderData() {
+            return headerData;
+        }
+
+        /**
+         * Sets header data of the JBig2Segment object.
+         *
+         * @param headerData header date bytes
+         */
+        public void setHeaderData(byte[] headerData) {
+            this.headerData = headerData;
+        }
+
+        /**
+         * Retrieves page association size of the JBig2Segment object.
+         *
+         * @return page association size value
+         */
+        public boolean isPageAssociationSize() {
+            return pageAssociationSize;
+        }
+
+        /**
+         * Sets page association size of the JBig2Segment object.
+         *
+         * @param pageAssociationSize page association size
+         */
+        public void setPageAssociationSize(boolean pageAssociationSize) {
+            this.pageAssociationSize = pageAssociationSize;
+        }
+
+        /**
+         * Retrieves the page association offset of the JBig2Segment object.
+         *
+         * @return page association offset value
+         */
+        public int getPageAssociationOffset() {
+            return pageAssociationOffset;
+        }
+
+        /**
+         * Sets page association offset of the JBig2Segment object.
+         *
+         * @param pageAssociationOffset page association offset
+         */
+        public void setPageAssociationOffset(int pageAssociationOffset) {
+            this.pageAssociationOffset = pageAssociationOffset;
+        }
+
+        /**
+         * Retrieves the segment number of the JBig2Segment object.
+         *
+         * @return segment number
+         */
+        public int getSegmentNumber() {
+            return segmentNumber;
+        }
     }
 
     /**
      * Inner class that holds information about a JBIG2 page.
      */
     public static class Jbig2Page {
-        public final int page;
+        private final int page;
         private final Jbig2SegmentReader sr;
         private final Map<Integer, Jbig2Segment> segs = new TreeMap<>();
-        public int pageBitmapWidth = -1;
-        public int pageBitmapHeight = -1;
+        private int pageBitmapWidth = -1;
+        private int pageBitmapHeight = -1;
 
         public Jbig2Page(int page, Jbig2SegmentReader sr) {
             this.page = page;
             this.sr = sr;
+        }
+
+        /**
+         * Retrieves the page number of the Jbig2Page object.
+         *
+         * @return page number
+         */
+        public int getPage() {
+            return page;
+        }
+
+        /**
+         * Retrieves page bitmap width of the Jbig2Page object.
+         *
+         * @return width of page bitmap
+         */
+        public int getPageBitmapWidth() {
+            return pageBitmapWidth;
+        }
+
+        /**
+         * Sets page bitmap width of the JBig2Page object.
+         *
+         * @param pageBitmapWidth page bitmap width
+         */
+        public void setPageBitmapWidth(int pageBitmapWidth) {
+            this.pageBitmapWidth = pageBitmapWidth;
+        }
+
+        /**
+         * Retrieves page bitmap height of the JBig2Page object.
+         *
+         * @return height of the page bitmap
+         */
+        public int getPageBitmapHeight() {
+            return pageBitmapHeight;
+        }
+
+        /**
+         * Sets the height of the page bitmap of a Jbig2Page object.
+         *
+         * @param pageBitmapHeight height of the page bitmap
+         */
+        public void setPageBitmapHeight(int pageBitmapHeight) {
+            this.pageBitmapHeight = pageBitmapHeight;
         }
 
         /**
@@ -158,33 +408,33 @@ public class Jbig2SegmentReader {
                 // pdf reference 1.4, section 3.3.6 Jbig2Decode Filter
                 // D.3 Embedded organisation
                 if (for_embedding &&
-                        (s.type == END_OF_FILE || s.type == END_OF_PAGE)) {
+                        (s.getType() == END_OF_FILE || s.getType() == END_OF_PAGE)) {
                     continue;
                 }
 
                 if (for_embedding) {
                     // change the page association to page 1
-                    byte[] headerData_emb = copyByteArray(s.headerData);
-                    if (s.page_association_size) {
-                        headerData_emb[s.page_association_offset] = 0x0;
-                        headerData_emb[s.page_association_offset + 1] = 0x0;
-                        headerData_emb[s.page_association_offset + 2] = 0x0;
-                        headerData_emb[s.page_association_offset + 3] = 0x1;
+                    byte[] headerDataEmb = copyByteArray(s.getHeaderData());
+                    if (s.isPageAssociationSize()) {
+                        headerDataEmb[s.getPageAssociationOffset()] = 0x0;
+                        headerDataEmb[s.getPageAssociationOffset() + 1] = 0x0;
+                        headerDataEmb[s.getPageAssociationOffset() + 2] = 0x0;
+                        headerDataEmb[s.getPageAssociationOffset() + 3] = 0x1;
                     } else {
-                        headerData_emb[s.page_association_offset] = 0x1;
+                        headerDataEmb[s.getPageAssociationOffset()] = 0x1;
                     }
-                    os.write(headerData_emb);
+                    os.write(headerDataEmb);
                 } else {
-                    os.write(s.headerData);
+                    os.write(s.getHeaderData());
                 }
-                os.write(s.data);
+                os.write(s.getData());
             }
             os.close();
             return os.toByteArray();
         }
 
         public void addSegment(Jbig2Segment s) {
-            segs.put(s.segmentNumber, s);
+            segs.put(s.getSegmentNumber(), s);
         }
 
     }
@@ -212,15 +462,15 @@ public class Jbig2SegmentReader {
             do {
                 Jbig2Segment tmp = readHeader();
                 readSegment(tmp);
-                segments.put(tmp.segmentNumber, tmp);
+                segments.put(tmp.getSegmentNumber(), tmp);
             } while (this.ra.getPosition() < this.ra.length());
         } else {
             // D.2
             Jbig2Segment tmp;
             do {
                 tmp = readHeader();
-                segments.put(tmp.segmentNumber, tmp);
-            } while (tmp.type != END_OF_FILE);
+                segments.put(tmp.getSegmentNumber(), tmp);
+            } while (tmp.getType() != END_OF_FILE);
             for (int integer : segments.keySet()) {
                 readSegment(segments.get(integer));
             }
@@ -231,27 +481,28 @@ public class Jbig2SegmentReader {
         int ptr = (int) ra.getPosition();
 
         //TODO DEVSIX-6406 7.2.7 not supported
-        if (s.dataLength == 0xffffffffl) {
+        if (s.getDataLength() == 0xffffffffl) {
             return;
         }
 
-        byte[] data = new byte[(int) s.dataLength];
+        byte[] data = new byte[(int) s.getDataLength()];
         ra.read(data);
-        s.data = data;
+        s.setData(data);
 
-        if (s.type == PAGE_INFORMATION) {
+        if (s.getType() == PAGE_INFORMATION) {
             int last = (int) ra.getPosition();
             ra.seek(ptr);
             int page_bitmap_width = ra.readInt();
             int page_bitmap_height = ra.readInt();
             ra.seek(last);
-            Jbig2Page p = pages.get(s.page);
+            Jbig2Page p = pages.get(s.getPage());
             if (p == null) {
-                throw new IOException("Referring to widht or height of a page we haven't seen yet: {0}").setMessageParams(s.page);
+                throw new IOException("Referring to widht or height of a page we haven't seen yet: {0}")
+                        .setMessageParams(s.getPage());
             }
 
-            p.pageBitmapWidth = page_bitmap_width;
-            p.pageBitmapHeight = page_bitmap_height;
+            p.setPageBitmapWidth(page_bitmap_width);
+            p.setPageBitmapHeight(page_bitmap_height);
         }
     }
 
@@ -264,10 +515,10 @@ public class Jbig2SegmentReader {
         // 7.2.3
         int segment_header_flags = ra.read();
         boolean deferred_non_retain = (segment_header_flags & 0x80) == 0x80;
-        s.deferredNonRetain = deferred_non_retain;
+        s.setDeferredNonRetain(deferred_non_retain);
         boolean page_association_size = (segment_header_flags & 0x40) == 0x40;
         int segment_type = segment_header_flags & 0x3f;
-        s.type = segment_type;
+        s.setType(segment_type);
 
         //7.2.4
         int referred_to_byte0 = ra.read();
@@ -304,8 +555,8 @@ public class Jbig2SegmentReader {
                     .setMessageParams(segment_number, ptr);
 
         }
-        s.segmentRetentionFlags = segment_retention_flags;
-        s.countOfReferredToSegments = count_of_referred_to_segments;
+        s.setSegmentRetentionFlags(segment_retention_flags);
+        s.setCountOfReferredToSegments(count_of_referred_to_segments);
 
         // 7.2.5
         referred_to_segment_numbers = new int[count_of_referred_to_segments + 1];
@@ -318,7 +569,7 @@ public class Jbig2SegmentReader {
                 referred_to_segment_numbers[i] = (int) ra.readUnsignedInt();
             }
         }
-        s.referredToSegmentNumbers = referred_to_segment_numbers;
+        s.setReferredToSegmentNumbers(referred_to_segment_numbers);
 
         // 7.2.6
         int segment_page_association;
@@ -332,10 +583,10 @@ public class Jbig2SegmentReader {
             throw new IOException("Page {0} is invalid for segment {1} starting at {2}")
                     .setMessageParams(segment_page_association, segment_number, ptr);
         }
-        s.page = segment_page_association;
+        s.setPage(segment_page_association);
         // so we can change the page association at embedding time.
-        s.page_association_size = page_association_size;
-        s.page_association_offset = page_association_offset;
+        s.setPageAssociationSize(page_association_size);
+        s.setPageAssociationOffset(page_association_offset);
 
         if (segment_page_association > 0 && !pages.containsKey(segment_page_association)) {
             pages.put(segment_page_association, new Jbig2Page(segment_page_association, this));
@@ -349,13 +600,13 @@ public class Jbig2SegmentReader {
         // 7.2.7
         long segment_data_length = ra.readUnsignedInt();
         //TODO DEVSIX-6406 the 0xffffffff value that might be here, and how to understand those afflicted segments
-        s.dataLength = segment_data_length;
+        s.setDataLength(segment_data_length);
 
         int end_ptr = (int) ra.getPosition();
         ra.seek(ptr);
         byte[] header_data = new byte[end_ptr - ptr];
         ra.read(header_data);
-        s.headerData = header_data;
+        s.setHeaderData(header_data);
 
         return s;
     }
@@ -392,11 +643,11 @@ public class Jbig2SegmentReader {
     }
 
     public int getPageHeight(int i) {
-        return pages.get(i).pageBitmapHeight;
+        return pages.get(i).getPageBitmapHeight();
     }
 
     public int getPageWidth(int i) {
-        return pages.get(i).pageBitmapWidth;
+        return pages.get(i).getPageBitmapWidth();
     }
 
     public Jbig2Page getPage(int page) {
@@ -410,11 +661,11 @@ public class Jbig2SegmentReader {
             for (Object element : globals) {
                 Jbig2Segment s = (Jbig2Segment) element;
                 if (for_embedding &&
-                        (s.type == END_OF_FILE || s.type == END_OF_PAGE)) {
+                        (s.getType() == END_OF_FILE || s.getType() == END_OF_PAGE)) {
                     continue;
                 }
-                os.write(s.headerData);
-                os.write(s.data);
+                os.write(s.getHeaderData());
+                os.write(s.getData());
             }
 
             if (os.size() > 0) {

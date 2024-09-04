@@ -484,16 +484,16 @@ public class TableRenderer extends AbstractRenderer {
             // if cell is in the last row on the page, its borders shouldn't collapse with the next row borders
             while (cellProcessingQueue.size() > 0) {
                 CellRendererInfo currentCellInfo = cellProcessingQueue.pop();
-                col = currentCellInfo.column;
-                CellRenderer cell = currentCellInfo.cellRenderer;
+                col = currentCellInfo.getColumn();
+                CellRenderer cell = currentCellInfo.getCellRenderer();
                 int colspan = (int) cell.getPropertyAsInteger(Property.COLSPAN);
                 int rowspan = (int) cell.getPropertyAsInteger(Property.ROWSPAN);
                 if (1 != rowspan) {
                     cellWithBigRowspanAdded = true;
                 }
-                targetOverflowRowIndex[col] = currentCellInfo.finishRowInd;
+                targetOverflowRowIndex[col] = currentCellInfo.getFinishRowInd();
                 // This cell came from the future (split occurred and we need to place cell with big rowpsan into the current area)
-                boolean currentCellHasBigRowspan = (row != currentCellInfo.finishRowInd);
+                boolean currentCellHasBigRowspan = (row != currentCellInfo.getFinishRowInd());
                 if (cell.hasOwnOrModelProperty(Property.HEIGHT)) {
                     rowHasCellWithSetHeight = true;
                 }
@@ -505,7 +505,7 @@ public class TableRenderer extends AbstractRenderer {
                     colOffset += countedColumnWidth[l];
                 }
                 float rowspanOffset = 0;
-                for (int m = row - 1; m > currentCellInfo.finishRowInd - rowspan && m >= 0; m--) {
+                for (int m = row - 1; m > currentCellInfo.getFinishRowInd() - rowspan && m >= 0; m--) {
                     rowspanOffset += (float) heights.get(m);
                 }
                 float cellLayoutBoxHeight = rowspanOffset + (!currentCellHasBigRowspan || hasContent ? layoutBox.getHeight() : 0);
@@ -519,7 +519,7 @@ public class TableRenderer extends AbstractRenderer {
                     cell.setProperty(Property.WIDTH, UnitValue.createPointValue(cellWidth));
                 }
                 // Apply cell borders
-                float[] cellIndents = bordersHandler.getCellBorderIndents(currentCellInfo.finishRowInd, col,
+                float[] cellIndents = bordersHandler.getCellBorderIndents(currentCellInfo.getFinishRowInd(), col,
                         rowspan, colspan);
                 if (!(bordersHandler instanceof SeparatedTableBorders)) {
                     // Bottom indent to be applied consists of two parts which should be summed up:
@@ -595,9 +595,9 @@ public class TableRenderer extends AbstractRenderer {
                     if (cellResult.getStatus() == LayoutResult.PARTIAL) {
                         currentRow[col] = (CellRenderer) cellResult.getSplitRenderer();
                     } else {
-                        rows.get(currentCellInfo.finishRowInd)[col] = null;
+                        rows.get(currentCellInfo.getFinishRowInd())[col] = null;
                         currentRow[col] = cell;
-                        rowMoves.put(col, currentCellInfo.finishRowInd);
+                        rowMoves.put(col, currentCellInfo.getFinishRowInd());
                     }
                 } else {
                     if (cellResult.getStatus() != LayoutResult.FULL) {
@@ -1863,9 +1863,9 @@ public class TableRenderer extends AbstractRenderer {
      * This are a structs used for convenience in layout.
      */
     private static class CellRendererInfo {
-        public CellRenderer cellRenderer;
-        public int column;
-        public int finishRowInd;
+        private final CellRenderer cellRenderer;
+        private final int column;
+        private final int finishRowInd;
 
         public CellRendererInfo(CellRenderer cellRenderer, int column, int finishRow) {
             this.cellRenderer = cellRenderer;
@@ -1873,6 +1873,33 @@ public class TableRenderer extends AbstractRenderer {
             // When a cell has a rowspan, this is the index of the finish row of the cell.
             // Otherwise, this is simply the index of the row of the cell in the {@link #rows} array.
             this.finishRowInd = finishRow;
+        }
+
+        /**
+         * Retrieves the cell renderer.
+         *
+         * @return cell renderer
+         */
+        public CellRenderer getCellRenderer() {
+            return cellRenderer;
+        }
+
+        /**
+         * Retrieves the column.
+         *
+         * @return column
+         */
+        public int getColumn() {
+            return column;
+        }
+
+        /**
+         * Retrieves the finish row index.
+         *
+         * @return finish row index
+         */
+        public int getFinishRowInd() {
+            return finishRowInd;
         }
     }
 
