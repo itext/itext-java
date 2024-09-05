@@ -42,37 +42,27 @@ public class TagTreeIterator {
 
     private final Set<ITagTreeIteratorHandler> handlerList;
 
-    private final TagTreeIteratorElementApprover approver;
-
     private final TreeTraversalOrder traversalOrder;
 
     /**
-     * Creates a new instance of {@link TagTreeIterator}. It will use {@link TagTreeIteratorElementApprover} to filter
-     * elements and TreeTraversalOrder.PRE_ORDER for tree traversal.
+     * Creates a new instance of {@link TagTreeIterator}. It will use TreeTraversalOrder.PRE_ORDER for tree traversal.
      *
      * @param tagTreePointer the tag tree pointer.
      */
     public TagTreeIterator(IStructureNode tagTreePointer) {
-        this(tagTreePointer, new TagTreeIteratorElementApprover(), TreeTraversalOrder.PRE_ORDER);
+        this(tagTreePointer, TreeTraversalOrder.PRE_ORDER);
     }
 
     /**
      * Creates a new instance of {@link TagTreeIterator}.
      *
-     * @param tagTreePointer the tag tree pointer.
-     * @param approver a filter that will be called to let iterator know whether some particular element
-     *                should be traversed or not.
+     * @param tagTreePointer the tag tree pointer
      * @param traversalOrder an order in which the tree will be traversed.
      */
-    public TagTreeIterator(IStructureNode tagTreePointer, TagTreeIteratorElementApprover approver,
-                           TreeTraversalOrder traversalOrder) {
+    public TagTreeIterator(IStructureNode tagTreePointer, TreeTraversalOrder traversalOrder) {
         if (tagTreePointer == null) {
             throw new IllegalArgumentException(
                     MessageFormatUtil.format(KernelExceptionMessageConstant.ARG_SHOULD_NOT_BE_NULL, "tagTreepointer"));
-        }
-        if (approver == null) {
-            throw new IllegalArgumentException(
-                    MessageFormatUtil.format(KernelExceptionMessageConstant.ARG_SHOULD_NOT_BE_NULL, "approver"));
         }
         if (traversalOrder == null) {
             throw new IllegalArgumentException(
@@ -81,7 +71,6 @@ public class TagTreeIterator {
         this.pointer = tagTreePointer;
         this.traversalOrder = traversalOrder;
         handlerList = new HashSet<>();
-        this.approver = approver;
     }
 
     /**
@@ -111,15 +100,15 @@ public class TagTreeIterator {
     }
 
     private void traverse(IStructureNode elem) {
-        if (!approver.approve(elem)) {
-            return;
+        for (ITagTreeIteratorHandler handler : handlerList) {
+            if (!handler.accept(elem)) {
+                return;
+            }
         }
 
         if (traversalOrder == TreeTraversalOrder.PRE_ORDER) {
             for (ITagTreeIteratorHandler handler : handlerList) {
-                if (!handler.nextElement(elem)) {
-                    return;
-                }
+                handler.processElement(elem);
             }
         }
 
@@ -132,7 +121,7 @@ public class TagTreeIterator {
 
         if (traversalOrder == TreeTraversalOrder.POST_ORDER) {
             for (ITagTreeIteratorHandler handler : handlerList) {
-                handler.nextElement(elem);
+                handler.processElement(elem);
             }
         }
     }

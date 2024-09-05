@@ -46,20 +46,21 @@ public class NoteCheckUtil {
             super(context);
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
-        public boolean nextElement(IStructureNode elem) {
+        public boolean accept(IStructureNode node) {
+            return node != null;
+        }
+
+        @Override
+        public void processElement(IStructureNode elem) {
             final PdfStructElem structElem = context.getElementIfRoleMatches(PdfName.Note, elem);
             if (structElem == null) {
-                return true;
+                return;
             }
             final PdfDictionary pdfObject = structElem.getPdfObject();
             if (pdfObject.get(PdfName.ID) == null) {
                 throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.NOTE_TAG_SHALL_HAVE_ID_ENTRY);
             }
-            return true;
         }
     }
 }

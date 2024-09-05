@@ -74,15 +74,16 @@ public final class McrCheckUtil {
             //empty constructor
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
-        public boolean nextElement(IStructureNode elem) {
+        public boolean accept(IStructureNode node) {
+            return node != null;
+        }
+
+        @Override
+        public void processElement(IStructureNode elem) {
             if ((elem instanceof PdfMcr)) {
                 haveMcr = true;
             }
-            return true;
         }
     }
 }

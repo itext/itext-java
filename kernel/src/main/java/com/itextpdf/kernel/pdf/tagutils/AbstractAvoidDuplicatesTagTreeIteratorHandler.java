@@ -31,40 +31,28 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Element checker for {@link TagTreeIterator}.
+ * Handler for {@link TagTreeIterator}.
  * It is used to check whether specific element should be traversed.
- * It doesn't approve elements which have been traversed before.
+ * It doesn't accept elements which have been traversed before.
  */
-public class TagTreeIteratorAvoidDuplicatesApprover extends TagTreeIteratorElementApprover {
+public abstract class AbstractAvoidDuplicatesTagTreeIteratorHandler implements ITagTreeIteratorHandler {
     private final Set<PdfObject> processedObjects = new HashSet<>();
 
-    /**
-     * Creates a new instance of {@link TagTreeIteratorAvoidDuplicatesApprover}
-     */
-    public TagTreeIteratorAvoidDuplicatesApprover() {
-        super();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public boolean approve(IStructureNode elem) {
-        if (elem instanceof PdfStructTreeRoot) {
+    public boolean accept(IStructureNode node) {
+        if (node instanceof PdfStructTreeRoot) {
             return true;
-        }
-
-        if (!super.approve(elem) || !(elem instanceof PdfStructElem)) {
-            return false;
-        }
-
-        PdfObject obj = ((PdfStructElem) elem).getPdfObject();
-        final boolean isProcessed = processedObjects.contains(obj);
-        if (isProcessed) {
+        } else if (!(node instanceof PdfStructElem)) {
             return false;
         } else {
-            processedObjects.add(obj);
-            return true;
+            PdfObject obj = ((PdfStructElem) node).getPdfObject();
+            final boolean isProcessed = processedObjects.contains(obj);
+            if (isProcessed) {
+                return false;
+            } else {
+                processedObjects.add(obj);
+                return true;
+            }
         }
     }
 }

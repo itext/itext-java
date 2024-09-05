@@ -28,7 +28,6 @@ import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * This class is used to manage waiting tags state.
@@ -42,8 +41,8 @@ import java.util.Set;
  */
 public class WaitingTagsManager {
 
-    private Map<Object, PdfStructElem> associatedObjToWaitingTag;
-    private Map<PdfDictionary, Object> waitingTagToAssociatedObj;
+    private final Map<Object, PdfStructElem> associatedObjToWaitingTag;
+    private final Map<PdfDictionary, Object> waitingTagToAssociatedObj;
 
     WaitingTagsManager() {
         associatedObjToWaitingTag = new HashMap<>();
@@ -170,10 +169,8 @@ public class WaitingTagsManager {
             return;
         }
 
-        TagTreeIterator iterator = new TagTreeIterator(elem,
-                new WaitingTagsApprover(waitingTagToAssociatedObj.keySet()),
-                TagTreeIterator.TreeTraversalOrder.POST_ORDER);
-        iterator.addHandler(new TagTreeIteratorFlusher());
+        TagTreeIterator iterator = new TagTreeIterator(elem, TagTreeIterator.TreeTraversalOrder.POST_ORDER);
+        iterator.addHandler(new TagTreeIteratorFlusher().setWaitingTags(waitingTagToAssociatedObj.keySet()));
         iterator.traverse();
     }
 
@@ -184,20 +181,6 @@ public class WaitingTagsManager {
             if (parent instanceof PdfStructElem && ((PdfStructElem) parent).isFlushed()) {
                 flushStructElementAndItKids(structElem);
             }
-        }
-    }
-
-    private static class WaitingTagsApprover extends TagTreeIteratorAvoidDuplicatesApprover {
-        private final Set<PdfDictionary> waitingTags;
-        public WaitingTagsApprover(Set<PdfDictionary> waitingTags) {
-            super();
-            this.waitingTags = waitingTags;
-        }
-
-        @Override
-        public boolean approve(IStructureNode elem) {
-            return super.approve(elem) && elem instanceof PdfStructElem &&
-                    (waitingTags == null || !waitingTags.contains(((PdfStructElem) elem).getPdfObject()));
         }
     }
 }

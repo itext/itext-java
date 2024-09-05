@@ -27,6 +27,7 @@ import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.tagging.IStructureNode;
@@ -36,7 +37,10 @@ import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
@@ -44,23 +48,11 @@ import org.junit.jupiter.api.Tag;
 @Tag("UnitTest")
 public class TagTreeIteratorTest extends ExtendedITextTest {
 
-
     @Test
     public void tagTreeIteratorTagPointerNull() {
         String errorMessage =
                 MessageFormatUtil.format(KernelExceptionMessageConstant.ARG_SHOULD_NOT_BE_NULL, "tagTreepointer");
         Exception e = Assertions.assertThrows(IllegalArgumentException.class, () -> new TagTreeIterator(null));
-        Assertions.assertEquals(e.getMessage(), errorMessage);
-    }
-
-    @Test
-    public void tagTreeIteratorApproverNull() {
-        String errorMessage =
-                MessageFormatUtil.format(KernelExceptionMessageConstant.ARG_SHOULD_NOT_BE_NULL, "approver");
-        PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(), new WriterProperties()));
-        doc.setTagged();
-        Exception e = Assertions.assertThrows(IllegalArgumentException.class,
-                () -> new TagTreeIterator(doc.getStructTreeRoot(), null, TagTreeIterator.TreeTraversalOrder.PRE_ORDER));
         Assertions.assertEquals(e.getMessage(), errorMessage);
     }
 
@@ -128,7 +120,7 @@ public class TagTreeIteratorTest extends ExtendedITextTest {
         tp.addTag(StandardRoles.DIV);
         tp.addTag(StandardRoles.CODE);
 
-        TagTreeIterator iterator = new TagTreeIterator(doc.getStructTreeRoot(), new TagTreeIteratorElementApprover(),
+        TagTreeIterator iterator = new TagTreeIterator(doc.getStructTreeRoot(),
                 TagTreeIterator.TreeTraversalOrder.POST_ORDER);
         TestHandler handler = new TestHandler();
 
@@ -157,9 +149,8 @@ public class TagTreeIteratorTest extends ExtendedITextTest {
         kid2.addKid(kid1);
 
         TagTreeIterator iterator = new TagTreeIterator(doc.getStructTreeRoot(),
-                new TagTreeIteratorAvoidDuplicatesApprover(),
                 TagTreeIterator.TreeTraversalOrder.POST_ORDER);
-        TestHandler handler = new TestHandler();
+        TestHandlerAvoidDuplicates handler = new TestHandlerAvoidDuplicates();
 
         iterator.addHandler(handler);
         iterator.traverse();
@@ -172,13 +163,25 @@ public class TagTreeIteratorTest extends ExtendedITextTest {
     }
 
     static class TestHandler implements ITagTreeIteratorHandler {
-
         final List<IStructureNode> nodes = new ArrayList<>();
 
         @Override
-        public boolean nextElement(IStructureNode elem) {
+        public boolean accept(IStructureNode node) {
+            return node != null;
+        }
+
+        @Override
+        public void processElement(IStructureNode elem) {
             nodes.add(elem);
-            return true;
+        }
+    }
+
+    static class TestHandlerAvoidDuplicates extends AbstractAvoidDuplicatesTagTreeIteratorHandler {
+        final List<IStructureNode> nodes = new ArrayList<>();
+
+        @Override
+        public void processElement(IStructureNode elem) {
+            nodes.add(elem);
         }
     }
 }

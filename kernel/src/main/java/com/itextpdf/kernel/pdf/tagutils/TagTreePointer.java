@@ -529,7 +529,6 @@ public class TagTreePointer {
 
         RoleFinderHandler handler = new RoleFinderHandler(n, role);
         TagTreeIterator iterator = new TagTreeIterator(getCurrentStructElem(),
-                new TagTreeIteratorAvoidDuplicatesApprover(),
                 TagTreeIterator.TreeTraversalOrder.PRE_ORDER);
 
         iterator.addHandler(handler);
@@ -837,7 +836,7 @@ public class TagTreePointer {
         }
     }
 
-    private static class RoleFinderHandler implements ITagTreeIteratorHandler {
+    private static class RoleFinderHandler extends AbstractAvoidDuplicatesTagTreeIteratorHandler {
         private final int n;
         private final String role;
         private int foundIdx = 0;
@@ -848,21 +847,25 @@ public class TagTreePointer {
             this.role = role;
         }
 
+        public PdfStructElem getFoundElement() {
+            return foundElem;
+        }
+
         @Override
-        public boolean nextElement(IStructureNode elem) {
+        public boolean accept(IStructureNode node) {
+            return getFoundElement() == null && super.accept(node);
+        }
+
+        @Override
+        public void processElement(IStructureNode elem) {
             if (foundElem != null) {
-                return false;
+                return;
             }
 
             String descendantRole = elem.getRole().getValue();
             if (descendantRole.equals(role) && foundIdx++ == n) {
                 foundElem = (PdfStructElem) elem;
             }
-            return true;
-        }
-
-        public PdfStructElem getFoundElement() {
-            return foundElem;
         }
     }
 }

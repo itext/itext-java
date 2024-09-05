@@ -22,29 +22,53 @@
  */
 package com.itextpdf.kernel.pdf.tagutils;
 
+import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.tagging.IStructureNode;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
+
+import java.util.Set;
 
 /**
  * Class that flushes struct elements while iterating over struct tree root with {@link TagTreeIterator}.
  */
-public class TagTreeIteratorFlusher implements ITagTreeIteratorHandler {
+public class TagTreeIteratorFlusher extends AbstractAvoidDuplicatesTagTreeIteratorHandler {
+
+    private Set<PdfDictionary> waitingTags;
+    private boolean waitingTagsUsed = false;
 
     /**
-     * Creates a new instance of {@link TagTreeIteratorFlusher}
+     * Creates a new instance of {@link TagTreeIteratorFlusher}.
      */
     public TagTreeIteratorFlusher() {
         // Empty constructor
     }
 
     /**
-     * {@inheritDoc}
+     * Sets waiting tags for {@link TagTreeIteratorFlusher}.
+     *
+     * @param waitingTags waiting tags to set
+     *
+     * @return this same {@link TagTreeIteratorFlusher} instance
      */
+    public ITagTreeIteratorHandler setWaitingTags(Set<PdfDictionary> waitingTags) {
+        this.waitingTags = waitingTags;
+        this.waitingTagsUsed = true;
+        return this;
+    }
+
     @Override
-    public boolean nextElement(IStructureNode elem) {
+    public boolean accept(IStructureNode node) {
+        if (waitingTagsUsed) {
+            return super.accept(node) && node instanceof PdfStructElem &&
+                    (waitingTags == null || !waitingTags.contains(((PdfStructElem) node).getPdfObject()));
+        }
+        return super.accept(node);
+    }
+
+    @Override
+    public void processElement(IStructureNode elem) {
         if (elem instanceof PdfStructElem && !((PdfStructElem) elem).isFlushed()) {
             ((PdfStructElem) elem).flush();
         }
-        return true;
     }
 }

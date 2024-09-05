@@ -47,7 +47,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.itextpdf.kernel.pdf.tagutils.TagTreeIterator;
-import com.itextpdf.kernel.pdf.tagutils.TagTreeIteratorAvoidDuplicatesApprover;
 import com.itextpdf.kernel.pdf.tagutils.TagTreeIteratorFlusher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -513,8 +512,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
     }
 
     private static void flushAllKids(PdfStructTreeRoot elem) {
-        TagTreeIterator iterator = new TagTreeIterator(
-                elem, new TagTreeIteratorAvoidDuplicatesApprover(), TagTreeIterator.TreeTraversalOrder.POST_ORDER);
+        TagTreeIterator iterator = new TagTreeIterator(elem, TagTreeIterator.TreeTraversalOrder.POST_ORDER);
         iterator.addHandler(new TagTreeIteratorFlusher());
         iterator.traverse();
     }

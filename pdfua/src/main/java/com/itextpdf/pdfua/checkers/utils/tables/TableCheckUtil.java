@@ -68,17 +68,18 @@ public final class TableCheckUtil {
             super(context);
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
-        public boolean nextElement(IStructureNode elem) {
+        public boolean accept(IStructureNode node) {
+            return node != null;
+        }
+
+        @Override
+        public void processElement(IStructureNode elem) {
             PdfStructElem table = context.getElementIfRoleMatches(PdfName.Table, elem);
             if (table == null) {
-                return true;
+                return;
             }
             new StructTreeResultMatrix((PdfStructElem) elem, context).checkValidTableTagging();
-            return true;
         }
     }
 

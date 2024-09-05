@@ -67,20 +67,21 @@ public final class FormulaCheckUtil {
             super(context);
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
-        public boolean nextElement(IStructureNode elem) {
+        public boolean accept(IStructureNode node) {
+            return node != null;
+        }
+
+        @Override
+        public void processElement(IStructureNode elem) {
             final PdfStructElem structElem = context.getElementIfRoleMatches(PdfName.Formula, elem);
             if (structElem == null) {
-                return true;
+                return;
             }
             final PdfDictionary pdfObject = structElem.getPdfObject();
             if (hasInvalidValues(pdfObject.getAsString(PdfName.Alt), pdfObject.getAsString(PdfName.ActualText))) {
                 throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.FORMULA_SHALL_HAVE_ALT);
             }
-            return true;
         }
     }
 
