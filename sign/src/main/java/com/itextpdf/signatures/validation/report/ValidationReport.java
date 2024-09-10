@@ -39,7 +39,7 @@ public class ValidationReport {
      * Create new instance of {@link ValidationReport}.
      */
     public ValidationReport() {
-        // Empty constructor.
+        // Declaring default constructor explicitly to avoid removing it unintentionally.
     }
 
     /**

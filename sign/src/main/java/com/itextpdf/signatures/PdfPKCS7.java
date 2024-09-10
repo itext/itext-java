@@ -1430,6 +1430,9 @@ public class PdfPKCS7 {
      * @return {@link Certificate[]} array
      */
     public Certificate[] getTimestampCertificates() {
+        if (timestampCerts == null) {
+            return new Certificate[0];
+        }
         return timestampCerts.toArray(new Certificate[0]);
     }
 

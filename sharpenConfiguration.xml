@@ -516,6 +516,11 @@
                 <file path="com/itextpdf/signatures/validation/context/CertificateSources.java" />
                 <file path="com/itextpdf/signatures/validation/SignatureValidationProperties.java" />
             </fileset>
+            <fileset reason="Xml tooling is not translatable">
+                <file path="com/itextpdf/signatures/validation/report/xml/XmlReportGenerator.java"/>
+                <file path="com/itextpdf/signatures/testutils/report/xml/ReportNamespaceContext.java"/>
+                <file path="com/itextpdf/signatures/testutils/report/xml/XmlReportTestTool.java"/>
+            </fileset>
             <!-- jsoup -->
             <file path="com/itextpdf/styledxmlparser/jsoup/PortUtil.java" />
             <file path="com/itextpdf/styledxmlparser/jsoup/helper/DataUtil.java" />

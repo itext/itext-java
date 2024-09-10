@@ -1,0 +1,457 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--                  ****** NOTICE ******
+This document is part of ETSI TS 119 612. In the event that any
+part of this document is in conflict with the text of TS 119 612 
+then that text shall prevail as the authoritative source
+
+This is a review done in January 2016 adding the possibility to specify the Service Supply Points by a type 
+
+-->
+<xsd:schema targetNamespace="http://uri.etsi.org/02231/v2#" xmlns:tsl="http://uri.etsi.org/02231/v2#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!-- Imports -->
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="xml.xsd"/>
+	<xsd:import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="xmldsig-core-schema.xsd"/>
+	<!-- -->
+	<!-- Begin auxiliary types -->
+	<!-- -->
+	<!--InternationalNamesType-->
+	<xsd:annotation><xsd:documentation>Specified in TS 119 612 v2.1.1 clause 5.1.4 Language support</xsd:documentation></xsd:annotation>	   	   
+	<xsd:complexType name="InternationalNamesType">
+		<xsd:sequence>
+			<xsd:element name="Name" type="tsl:MultiLangNormStringType" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="MultiLangNormStringType">
+		<xsd:simpleContent>
+			<xsd:extension base="tsl:NonEmptyNormalizedString">
+				<xsd:attribute ref="xml:lang" use="required"/>
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+
+	<xsd:annotation><xsd:documentation>Specified in TS 119 612 v2.1.1 clause 5.1.4 Language support</xsd:documentation></xsd:annotation>	   	   
+	<xsd:complexType name="MultiLangStringType">
+		<xsd:simpleContent>
+			<xsd:extension base="tsl:NonEmptyString">
+				<xsd:attribute ref="xml:lang" use="required"/>
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	<xsd:simpleType name="NonEmptyString">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="NonEmptyNormalizedString">
+		<xsd:restriction base="xsd:normalizedString">
+			<xsd:minLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- -->
+	<!-- AddressType -->
+	<!-- -->
+	<xsd:annotation><xsd:documentation>Specified in TS 119 612 v2.1.1 clause 5.3.5 Scheme operator address</xsd:documentation></xsd:annotation>
+	<xsd:complexType name="AddressType">
+		<xsd:sequence>
+			<!--Specified in TS 119 612 v2.1.1 clause 5.3.5.1 Scheme operator postal address-->
+			<xsd:element ref="tsl:PostalAddresses"/>
+		  	<!--Specified in TS 119 612 v2.1.1 clause 5.3.5.2 Scheme operator electronic address-->
+			<xsd:element ref="tsl:ElectronicAddress"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!--PostalAddressList Type-->
+	<xsd:annotation><xsd:documentation>Specified in TS 119 612 v2.1.1 clause 5.3.5.1 Scheme operator postal address</xsd:documentation></xsd:annotation>
+	<xsd:element name="PostalAddresses" type="tsl:PostalAddressListType"/>
+	<xsd:complexType name="PostalAddressListType">
+		<xsd:sequence>
+			<xsd:element ref="tsl:PostalAddress" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!--PostalAddress Type-->
+	<xsd:element name="PostalAddress" type="tsl:PostalAddressType"/>
+	<xsd:complexType name="PostalAddressType">
+		<xsd:sequence>
+			<xsd:element name="StreetAddress" type="tsl:NonEmptyString"/>
+			<xsd:element name="Locality" type="tsl:NonEmptyString"/>
+			<xsd:element name="StateOrProvince" type="tsl:NonEmptyString" minOccurs="0"/>
+			<xsd:element name="PostalCode" type="tsl:NonEmptyString" minOccurs="0"/>
+			<xsd:element name="CountryName" type="tsl:NonEmptyString"/>
+		</xsd:sequence>
+		<xsd:attribute ref="xml:lang" use="required"/>
+	</xsd:complexType>
+	<!--ElectronicAddressType-->
+	<!-- 2013-10. XML Schema CHANGE-->
+	<!-- ElectronicAddress changed to include MultilLan URIs for e-mails and web sites URIs as specified in TS 119 612-->
+   <xsd:annotation><xsd:documentation>Specified in TS 119 612 v2.1.1 clause 5.3.5.2 Scheme operator electronic address</xsd:documentation></xsd:annotation>
+	<xsd:element name="ElectronicAddress" type="tsl:ElectronicAddressType"/>
+	<xsd:complexType name="ElectronicAddressType">
+		<xsd:sequence>
+			<xsd:element name="URI" type="tsl:NonEmptyMultiLangURIType" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- -->
+	<!-- Types for extensions in TSL -->
+	<!-- -->
+	<xsd:complexType name="AnyType" mixed="true">
+		<xsd:sequence minOccurs="0" maxOccurs="unbounded">
+			<xsd:any processContents="lax"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:annotation><xsd:documentation>Specified in TS 119 612 v2.1.1 clause 5.3.17 Scheme extensions</xsd:documentation></xsd:annotation>
+	<xsd:element name="Extension" type="tsl:ExtensionType"/>
+	<xsd:complexType name="ExtensionType">
+		<xsd:complexContent>
+			<xsd:extension base="tsl:AnyType">
+				<xsd:attribute name="Critical" type="xsd:boolean" use="required"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="ExtensionsListType">
+		<xsd:sequence>
+			<xsd:element ref="tsl:Extension" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!--NonEmptyURIType-->
+	<xsd:simpleType name="NonEmptyURIType">
+		<xsd:restriction base="xsd:anyURI">
+			<xsd:minLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- AttributedNonEmptyURIType--> 
+	<!-- 2016-01. XML Schema CHANGE-->
+	<!-- AttributedNonEmptyURIType was included to allow to specify the type of the service/information found under the given URI -->
+    <xsd:complexType name="AttributedNonEmptyURIType"> 
+        <xsd:simpleContent> 
+            <xsd:extension base="tsl:NonEmptyURIType"> 
+                <xsd:attribute name="type" type="xsd:anyURI" use="optional"/> 
+            </xsd:extension> 
+        </xsd:simpleContent> 
+    </xsd:complexType> 
+
+	
+	<!-- -->
+	<!--NonEmptyURIType with language indication-->
+	<!-- -->
+   <xsd:annotation><xsd:documentation> Specified in TS 119 612 v2.1.1 clause 5.1.4 Language support</xsd:documentation></xsd:annotation>	   
+	<xsd:complexType name="NonEmptyMultiLangURIType">
+		<xsd:simpleContent>
+			<xsd:extension base="tsl:NonEmptyURIType">
+				<xsd:attribute ref="xml:lang" use="required"/>
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	<!--List of NonEmptyURIType with language indication-->
+	<xsd:complexType name="NonEmptyMultiLangURIListType">
+		<xsd:sequence>
+			<xsd:element name="URI" type="tsl:NonEmptyMultiLangURIType" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!--List of NonEmptyURIType-->
+	<xsd:complexType name="NonEmptyURIListType">
+		<xsd:sequence>
+			<xsd:element name="URI" type="tsl:NonEmptyURIType" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- -->
+	<!-- End auxiliary types -->
+	<!-- -->
+	<!-- ROOT Element -->
+	<xsd:element name="TrustServiceStatusList" type="tsl:TrustStatusListType"/>
+	<!-- Trust Status List Type Definition -->
+	<!-- 2013-10. XML Schema CHANGE-->
+	<!-- Attribute TSLTag declared as xsd:anyURI -->
+	<xsd:complexType name="TrustStatusListType">
+		<xsd:sequence>
+		   <!--Specified in TS 119 612 v2.1.1 clause 5.3 Scheme information-->
+			<xsd:element ref="tsl:SchemeInformation"/>
+		   <!--Specified in TS 119 612 v2.1.1 clause 5.3.18 Trust Service Provider List-->
+			<xsd:element ref="tsl:TrustServiceProviderList" minOccurs="0"/>
+		   <!--Specified in TS 119 612 v2.1.1 clause 5.7 Digital signature-->
+			<xsd:element ref="ds:Signature" minOccurs="0"/>
+		</xsd:sequence>
+		<!--Specified in TS 119 612 v2.1.1 clause 5.2 Trusted List Tag-->
+		<xsd:attribute name="TSLTag" type="xsd:anyURI" use="required"/>
+		<xsd:attribute name="Id" type="xsd:ID" use="optional"/>
+	</xsd:complexType>
+	<!-- 2013-10. XML Schema CHANGE-->
+	<!-- Supressed the type TSLTagType that served to restrict the value of TSLTag by XML Schema-->
+	<!-- In this way, the XML Schema is independent of the TSLTag value and this may change from version to version-->
+	<!-- TrustServiceProviderListType-->
+   <xsd:annotation><xsd:documentation>Specified in TS 119 612 v2.1.1 clause 5.3.18 Trust Service Provider List</xsd:documentation></xsd:annotation>
+	<xsd:element name="TrustServiceProviderList" type="tsl:TrustServiceProviderListType"/>
+	<xsd:complexType name="TrustServiceProviderListType">
+		<xsd:sequence>
+ 		  <!--Specified in TS 119 612 v2.1.1 clause 5.3.18 Trust Service Provider List-->
+			<xsd:element ref="tsl:TrustServiceProvider" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- TSL Scheme Information -->
+	<xsd:annotation><xsd:documentation>Specified in TS 119 612 v2.1.1 clause 5.3 Scheme information</xsd:documentation></xsd:annotation>
+	<xsd:element name="SchemeInformation" type="tsl:TSLSchemeInformationType"/>
+	<xsd:complexType name="TSLSchemeInformationType">
+		<xsd:sequence>
+		   <!--Specified in TS 119 612 v2.1.1 clause 5.3.1 TSL version identifier-->
+			<xsd:element name="TSLVersionIdentifier" type="xsd:integer"/>
+		   <!--Specified in TS 119 612 v2.1.1 clause 5.3.2 TSL sequence number-->
+			<xsd:element name="TSLSequenceNumber" type="xsd:positiveInteger"/>
+		   <!--Specified in TS 119 612 v2.1.1 clause 5.3.3 TSL type-->
+			<xsd:element ref="tsl:TSLType"/>
+		   <!--Specified in TS 119 612 v2.1.1 clause 5.3.4 Scheme operator name-->
+			<xsd:element ref="tsl:SchemeOperatorName"/>
+		   <!--Specified in TS 119 612 v2.1.1 clause 5.3.5 Scheme operator address-->
+			<xsd:element name="SchemeOperatorAddress" type="tsl:AddressType"/>
+		   <!--Specified in TS 119 612 v2.1.1 clause 5.3.6 Scheme name-->
+			<xsd:element ref="tsl:SchemeName"/>
+		   <!--Specified in TS 119 612 v2.1.1 clause 5.3.7 Scheme information URI-->
+			<xsd:element ref="tsl:SchemeInformationURI"/>
+		   <!--Specified in TS 119 612 v2.1.1 clause 5.3.8 Status determination approach-->
+			<xsd:element name="StatusDeterminationApproach" type="tsl:NonEmptyURIType"/>
+		   <!--Specified in TS 119 612 v2.1.1 clause 5.3.9 Scheme type/community/rules-->
+			<xsd:element ref="tsl:SchemeTypeCommunityRules" minOccurs="0"/>
+		   <!--Specified in TS 119 612 v2.1.1 clause 5.3.10 Scheme territory-->
+			<xsd:element ref="tsl:SchemeTerritory" minOccurs="0"/>
+		   <!--Specified in TS 119 612 v2.1.1 clause 5.3.11 TSL policy/legal notice-->
+			<xsd:element ref="tsl:PolicyOrLegalNotice" minOccurs="0"/>
+		   <!--Specified in TS 119 612 v2.1.1 clause 5.3.12 Historical information period-->
+			<xsd:element name="HistoricalInformationPeriod" type="xsd:nonNegativeInteger"/>
+		   <!--Specified in TS 119 612 v2.1.1 clause 5.3.13 Pointers to other TSLs-->
+			<xsd:element ref="tsl:PointersToOtherTSL" minOccurs="0"/>
+		   <!--Specified in TS 119 612 v2.1.1 clause 5.3.14 List issue date and time-->
+			<xsd:element name="ListIssueDateTime" type="xsd:dateTime"/>
+		   <!--Specified in TS 119 612 v2.1.1 clause 5.3.15 Next update-->
+			<xsd:element ref="tsl:NextUpdate"/>
+		   <!--Specified in TS 119 612 v2.1.1 clause 5.3.16 Distribution points-->
+			<xsd:element ref="tsl:DistributionPoints" minOccurs="0"/>
+		   <!--Specified in TS 119 612 v2.1.1 clause 5.3.17 Scheme extensions-->
+			<xsd:element name="SchemeExtensions" type="tsl:ExtensionsListType" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+   <xsd:annotation><xsd:documentation>Specified in TS 119 612 v2.1.1 clause 5.3.3 TSL type</xsd:documentation></xsd:annotation>
+	<xsd:element name="TSLType" type="tsl:NonEmptyURIType"/>
+	<xsd:annotation><xsd:documentation>Specified in TS 119 612 v2.1.1 clause 5.3.4 Scheme operator name</xsd:documentation></xsd:annotation>
+	<xsd:element name="SchemeOperatorName" type="tsl:InternationalNamesType"/>
+   <xsd:annotation><xsd:documentation>Specified in TS 119 612 v2.1.1 clause 5.3.6 Scheme name</xsd:documentation></xsd:annotation>
+	<xsd:element name="SchemeName" type="tsl:InternationalNamesType"/>
+   <xsd:annotation><xsd:documentation>Specified in TS 119 612 v2.1.1 clause 5.3.7 Scheme information URI</xsd:documentation></xsd:annotation>
+	<xsd:element name="SchemeInformationURI" type="tsl:NonEmptyMultiLangURIListType"/>
+	<!-- 2013-10. XML Schema CHANGE-->
+	<!-- SchemeTypeCommunityRules changed to include MultilLang URIs for e-mails and web sites URIs as specified in TS 119 612-->
+   <xsd:annotation><xsd:documentation>Specified in TS 119 612 v2.1.1 clause 5.3.9 Scheme type/community/rules</xsd:documentation></xsd:annotation>
+	<xsd:element name="SchemeTypeCommunityRules" type="tsl:NonEmptyMultiLangURIListType"/>
+	<!-- SchemeTerritory -->
+	<!-- 2014-04. XML Schema CHANGE-->
+	<!-- element SchemeTerritory is now of type xsd:string. Suppressed the restriction of having only 2 characters,
+	as this element may contain other values than the country codes-->
+   <xsd:annotation><xsd:documentation>Specified in TS 119 612 v2.1.1 clause 5.3.10 Scheme territory</xsd:documentation></xsd:annotation>
+	<xsd:element name="SchemeTerritory" type="xsd:string"/>	
+	<!-- Policy or Legal Notice -->
+   <xsd:annotation><xsd:documentation>Specified in TS 119 612 v2.1.1 clause 5.3.11 TSL policy/legal notice</xsd:documentation></xsd:annotation>
+	<xsd:element name="PolicyOrLegalNotice" type="tsl:PolicyOrLegalnoticeType"/>
+	<xsd:complexType name="PolicyOrLegalnoticeType">
+		<xsd:choice>
+			<xsd:element name="TSLPolicy" type="tsl:NonEmptyMultiLangURIType" maxOccurs="unbounded"/>
+			<xsd:element name="TSLLegalNotice" type="tsl:MultiLangStringType" maxOccurs="unbounded"/>
+		</xsd:choice>
+	</xsd:complexType>
+   <xsd:annotation><xsd:documentation>Specified in TS 119 612 v2.1.1 clause 5.3.15 Next update</xsd:documentation></xsd:annotation>
+	<xsd:element name="NextUpdate" type="tsl:NextUpdateType"/>
+	<xsd:complexType name="NextUpdateType">
+		<xsd:sequence>
+			<xsd:element name="dateTime" type="xsd:dateTime" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!--OtherTSLPointersType-->
+   <xsd:annotation><xsd:documentation>Specified in TS 119 612 v2.1.1 clause 5.3.13 Pointers to other TSLs</xsd:documentation></xsd:annotation>
+	<xsd:element name="PointersToOtherTSL" type="tsl:OtherTSLPointersType"/>
+	<xsd:complexType name="OtherTSLPointersType">
+		<xsd:sequence>
+			<xsd:element ref="tsl:OtherTSLPointer" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="OtherTSLPointer" type="tsl:OtherTSLPointerType"/>
+	<xsd:complexType name="OtherTSLPointerType">
+		<xsd:sequence>
+		   <!--Specified in TS 119 612 v2.1.1 clause 5.3.13 Pointers to other TSLs item b) from Format-->
+			<xsd:element ref="tsl:ServiceDigitalIdentities" minOccurs="0"/>
+		   <!--Specified in TS 119 612 v2.1.1 clause 5.3.13 Pointers to other TSLs item a) from Format-->
+			<xsd:element name="TSLLocation" type="tsl:NonEmptyURIType"/>
+		   <!--Specified in TS 119 612 v2.1.1 clause 5.3.13 Pointers to other TSLs item c) from Format-->
+			<xsd:element ref="tsl:AdditionalInformation" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+   <xsd:annotation><xsd:documentation>pecified in TS 119 612 v2.1.1 clause 5.3.13 Pointers to other TSLs item b) from Format</xsd:documentation></xsd:annotation>
+	<xsd:element name="ServiceDigitalIdentities" type="tsl:ServiceDigitalIdentityListType"/>
+	<xsd:complexType name="ServiceDigitalIdentityListType">
+		<xsd:sequence>
+		   <!--Specified in TS 119 612 v2.1.1 clause 5.5.3 Service digital identity-->
+			<xsd:element ref="tsl:ServiceDigitalIdentity" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+   <xsd:annotation><xsd:documentation>Specified in TS 119 612 v2.1.1 clause 5.3.13 Pointers to other TSLs item c) from Format</xsd:documentation></xsd:annotation>
+	<xsd:element name="AdditionalInformation" type="tsl:AdditionalInformationType"/>
+	<xsd:complexType name="AdditionalInformationType">
+		<xsd:choice maxOccurs="unbounded">
+			<xsd:element name="TextualInformation" type="tsl:MultiLangStringType"/>
+			<xsd:element name="OtherInformation" type="tsl:AnyType"/>
+		</xsd:choice>
+	</xsd:complexType>
+	<!--DistributionPoints element-->
+	<!-- 2013-10. XML Schema CHANGE-->
+	<!-- DistributionPointschanged from ElectronicAddress to nonEmptyURIListType as ElectronicAddress does
+	now contain a list of multilang URIs, which is not required for distribution points-->
+   <xsd:annotation><xsd:documentation>Specified in TS 119 612 v2.1.1 clause 5.3.16 Distribution points</xsd:documentation></xsd:annotation>
+	<xsd:element name="DistributionPoints" type="tsl:NonEmptyURIListType"/>
+	<!-- TSPType -->
+   <xsd:annotation><xsd:documentation>Specified in TS 119 612 v2.1.1 clause 5.3.18 Trust Service Provider List</xsd:documentation></xsd:annotation>
+	<xsd:element name="TrustServiceProvider" type="tsl:TSPType"/>
+	<xsd:complexType name="TSPType">
+		<xsd:sequence>
+		   <!--Specified in TS 119 612 v2.1.1 clause 5.4 TSP information-->
+			<xsd:element ref="tsl:TSPInformation"/>
+		   <!--Specified in TS 119 612 v2.1.1 clause 5.4.6 TSP Services (list of services)-->
+			<xsd:element ref="tsl:TSPServices"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- TSPInformationType -->
+	<xsd:annotation><xsd:documentation>Specified in TS 119 612 v2.1.1 clause 5.4 TSP information</xsd:documentation></xsd:annotation>
+	<xsd:element name="TSPInformation" type="tsl:TSPInformationType"/>
+	<xsd:complexType name="TSPInformationType">
+		<xsd:sequence>
+			<!--Specified in TS 119 612 v2.1.1 clause 5.4.1 TSP name-->
+			<xsd:element name="TSPName" type="tsl:InternationalNamesType"/>
+			<!--Specified in TS 119 612 v2.1.1 clause 5.4.2 TSP trade name-->
+			<xsd:element name="TSPTradeName" type="tsl:InternationalNamesType" minOccurs="0"/>
+				<!--Specified in TS 119 612 v2.1.1 clause 5.4.3 TSP address.
+			   	postal address and electronic addresses have the formats specified in 5.3.5.1 and 5.3.5.2 respectively.
+			   	Their semantics are specified in 5.4.3.1 and 5.4.3.2 respectively
+			   -->
+			<xsd:element name="TSPAddress" type="tsl:AddressType"/>
+			<!--Specified in TS 119 612 v2.1.1 clause 5.4.4 TSP information URI-->
+			<xsd:element name="TSPInformationURI" type="tsl:NonEmptyMultiLangURIListType"/>
+			<!--Specified in TS 119 612 v2.1.1 clause 5.4.5 TSP information extensions-->
+			<xsd:element name="TSPInformationExtensions" type="tsl:ExtensionsListType" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- TSP Services-->
+   <xsd:annotation><xsd:documentation>Specified in TS 119 612 v2.1.1 clause 5.4.6 TSP Services (list of services)</xsd:documentation></xsd:annotation>
+	<xsd:element name="TSPServices" type="tsl:TSPServicesListType"/>
+	<xsd:complexType name="TSPServicesListType">
+		<xsd:sequence>
+			<xsd:element ref="tsl:TSPService" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="TSPService" type="tsl:TSPServiceType"/>
+	<xsd:complexType name="TSPServiceType">
+		<xsd:sequence>
+			<!--Specified in TS 119 612 v2.1.1 clause 5.5 Service information-->
+			<xsd:element ref="tsl:ServiceInformation"/>
+			<!--Specified in TS 119 612 v2.1.1 clause 5.5.10 Service history-->
+			<xsd:element ref="tsl:ServiceHistory" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- TSPServiceInformationType -->
+	<xsd:annotation><xsd:documentation>Specified in TS 119 612 v2.1.1 clause 5.5 Service information</xsd:documentation></xsd:annotation>
+	<xsd:element name="ServiceInformation" type="tsl:TSPServiceInformationType"/>
+	<xsd:complexType name="TSPServiceInformationType">
+		<xsd:sequence>
+			<!--Specified in TS 119 612 v2.1.1 clause 5.5.1 Service type identifier-->
+			<xsd:element ref="tsl:ServiceTypeIdentifier"/>
+			<!--Specified in TS 119 612 v2.1.1 clause 5.5.2 Service name-->
+			<xsd:element name="ServiceName" type="tsl:InternationalNamesType"/>
+			<!--Specified in TS 119 612 v2.1.1 clause 5.5.3 Service digital identity-->
+			<xsd:element ref="tsl:ServiceDigitalIdentity"/>
+			<!--Specified in TS 119 612 v2.1.1 clause 5.5.4 Service current status-->
+			<xsd:element ref="tsl:ServiceStatus"/>
+			<!--Specified in TS 119 612 v2.1.1 clause 5.5.5 Service status starting date and time-->
+			<xsd:element name="StatusStartingTime" type="xsd:dateTime"/>
+			<!--Specified in TS 119 612 v2.1.1 clause 5.5.6 Scheme service definition URI-->
+			<xsd:element name="SchemeServiceDefinitionURI" type="tsl:NonEmptyMultiLangURIListType" minOccurs="0"/>
+			<!--Specified in TS 119 612 v2.1.1 clause 5.5.7 Service supply points-->
+			<xsd:element ref="tsl:ServiceSupplyPoints" minOccurs="0"/>
+			<!--Specified in TS 119 612 v2.1.1 clause 5.5.8 TSP service definition URI-->
+			<xsd:element name="TSPServiceDefinitionURI" type="tsl:NonEmptyMultiLangURIListType" minOccurs="0"/>
+			<!--Specified in TS 119 612 v2.1.1 clause 5.5.9 Service information extensions-->
+			<xsd:element name="ServiceInformationExtensions" type="tsl:ExtensionsListType" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- Service status -->
+	<xsd:annotation><xsd:documentation>Specified in TS 119 612 v2.1.1 clause 5.5.4 Service current status</xsd:documentation></xsd:annotation>
+	<xsd:element name="ServiceStatus" type="tsl:NonEmptyURIType"/>
+	<!-- Type for Service Supply Points -->
+		<!-- 2016-01. XML Schema CHANGE-->
+	<!-- ServiceSupplyPointsType changed to use AttributedNonEmptyURIType. The optional type attribute of AttributedNonEmptyURIType allows for each URI to specify the service/information to be found under this URI. 
+For example a ServiceSupplyPoints field associated to a service of a type "http://uri.etsi.org/TrstSvc/Svctype/CA/QC" could include: 
+-	a URI pointing towards a descriptive text where users could be given information on (local) registration authorities and procedures to follow for being issued qualified certificates; 
+-	a URI providing a CRL distribution point giving certificate status information for qualified certificates issued by or under the and further specified by the type attibute value "http://uri.etsi.org/TrstSvc/Svctype/Certstatus/CRL/QC". Such URI can for example provide access to a last and final CRL in case of service unexpected termination and/or impossibility to provide such a final CRL at the CRL distribution point available from issued certificate's extensions; and/or
+-	a URI providing one access location of an OCSP responder authorized to provide certificate status information for qualified certificates issued by or under the service, and further specified by the type attibute value "http://uri.etsi.org/TrstSvc/Svctype/Certstatus/OCSP/QC".
+-->
+	<xsd:annotation><xsd:documentation>Specified in TS 119 612 v2.1.1 clause 5.5.7 Service supply points</xsd:documentation></xsd:annotation>
+	<xsd:element name="ServiceSupplyPoints" type="tsl:ServiceSupplyPointsType"/>
+	<xsd:complexType name="ServiceSupplyPointsType">
+		<xsd:sequence maxOccurs="unbounded">
+			<xsd:element name="ServiceSupplyPoint" type="tsl:AttributedNonEmptyURIType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- TSPServiceIdentifier -->
+	<xsd:annotation><xsd:documentation>Specified in TS 119 612 v2.1.1 clause 5.5.1 Service type identifier</xsd:documentation></xsd:annotation>
+	<xsd:element name="ServiceTypeIdentifier" type="tsl:NonEmptyURIType"/>
+	<!-- DigitalIdentityType  -->
+	<xsd:annotation><xsd:documentation>Specified in TS 119 612 v2.1.1 clause 5.5.3 Service digital identity</xsd:documentation></xsd:annotation>
+	<xsd:element name="ServiceDigitalIdentity" type="tsl:DigitalIdentityListType"/>
+	<xsd:complexType name="DigitalIdentityListType">
+		<xsd:sequence>
+			<xsd:element name="DigitalId" type="tsl:DigitalIdentityType" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="DigitalIdentityType">
+		<xsd:choice>
+			<xsd:element name="X509Certificate" type="xsd:base64Binary"/>
+			<xsd:element name="X509SubjectName" type="xsd:string"/>
+			<xsd:element ref="ds:KeyValue"/>
+			<xsd:element name="X509SKI" type="xsd:base64Binary"/>
+			<xsd:element name="Other" type="tsl:AnyType" minOccurs="0"/>
+		</xsd:choice>
+	</xsd:complexType>
+	<!-- ServiceHistory element-->
+	<xsd:annotation><xsd:documentation>Specified in TS 119 612 v2.1.1 clause 5.5.10 Service history</xsd:documentation></xsd:annotation>
+	<xsd:element name="ServiceHistory" type="tsl:ServiceHistoryType"/>
+	<xsd:complexType name="ServiceHistoryType">
+		<xsd:sequence>
+			<!--Specified in TS 119 612 v2.1.1 clause 5.6 Service history instance-->
+			<xsd:element ref="tsl:ServiceHistoryInstance" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:annotation><xsd:documentation>Specified in TS 119 612 v2.1.1 clause 5.6 Service history instance</xsd:documentation></xsd:annotation>
+	<xsd:element name="ServiceHistoryInstance" type="tsl:ServiceHistoryInstanceType"/>
+	<xsd:complexType name="ServiceHistoryInstanceType">
+		<xsd:sequence>
+			<!--Specified in TS 119 612 v2.1.1 clause 5.6.1 Service type identifier-->
+			<xsd:element ref="tsl:ServiceTypeIdentifier"/>
+			<!--Specified in TS 119 612 v2.1.1 clause 5.6.2 Service name-->
+			<xsd:element name="ServiceName" type="tsl:InternationalNamesType"/>
+			<!--Specified in TS 119 612 v2.1.1 clause 5.6.3 Service digital identity-->
+			<xsd:element ref="tsl:ServiceDigitalIdentity"/>
+			<!--Specified in TS 119 612 v2.1.1 clause 5.6.4 Service previous status-->
+			<xsd:element ref="tsl:ServiceStatus"/>
+			<!--Specified in TS 119 612 v2.1.1 clause 5.6.5 Previous status starting date and time-->
+			<xsd:element name="StatusStartingTime" type="xsd:dateTime"/>
+			<!--Specified in TS 119 612 v2.1.1 clause 5.6.6 Service information extensions-->
+			<xsd:element name="ServiceInformationExtensions" type="tsl:ExtensionsListType" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- Elements and types for Extensions -->
+	<!-- Extensions children of tsl:VaExtension-->
+	<!-- Element ExpiredCertsRevocationInfo -->
+	<xsd:annotation><xsd:documentation>Specified in TS 119 612 v2.1.1 clause 5.5.9.4 expiredCertsRevocationInfo Extension</xsd:documentation></xsd:annotation>
+	<xsd:element name="ExpiredCertsRevocationInfo" type="xsd:dateTime"/>
+	<!-- Element additionalServiceInformation -->
+	<xsd:annotation><xsd:documentation>Specified in TS 119 612 v2.1.1 clause 5.5.9.1 additionalServiceInformation Extension</xsd:documentation></xsd:annotation>
+	<xsd:element name="AdditionalServiceInformation" type="tsl:AdditionalServiceInformationType"/>
+	<xsd:complexType name="AdditionalServiceInformationType">
+		<xsd:sequence>
+			<xsd:element name="URI" type="tsl:NonEmptyMultiLangURIType"/>
+			<xsd:element name="InformationValue" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="OtherInformation" type="tsl:AnyType" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

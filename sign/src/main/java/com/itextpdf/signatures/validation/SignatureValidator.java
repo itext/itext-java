@@ -103,6 +103,7 @@ public class SignatureValidator {
             "You should create new SignatureValidator instance for each validation call.";
 
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
+    private final ValidatorChainBuilder builder;
 
     private ValidationContext validationContext = new ValidationContext(ValidatorContext.SIGNATURE_VALIDATOR,
             CertificateSource.SIGNER_CERT, TimeBasedContext.PRESENT);
@@ -126,6 +127,7 @@ public class SignatureValidator {
      */
     protected SignatureValidator(PdfDocument originalDocument, ValidatorChainBuilder builder) {
         this.originalDocument = originalDocument;
+        this.builder = builder;
         this.certificateRetriever = builder.getCertificateRetriever();
         this.properties = builder.getProperties();
         this.certificateChainValidator = builder.getCertificateChainValidator();
@@ -207,6 +209,7 @@ public class SignatureValidator {
         // We only retrieve not signed revocation data at the very beginning of signature processing.
         retrieveNotSignedRevocationInfoFromSignatureContainer(pkcs7, validationContext);
         if (stopValidation(validationReport, validationContext)) {
+            reportResult(validationReport);
             return validationReport;
         }
 
@@ -220,6 +223,7 @@ public class SignatureValidator {
             if (updateLastKnownPoE(validationReport, pkcs7.getTimeStampTokenInfo())) {
                 updateValidationClients(pkcs7, validationReport, validationContext, document);
             }
+            reportResult(validationReport);
             return validationReport;
         }
 
@@ -236,6 +240,7 @@ public class SignatureValidator {
             }
             validationReport.merge(tsValidationReport);
             if (stopValidation(tsValidationReport, validationContext)) {
+                reportResult(validationReport);
                 return validationReport;
             }
         }
@@ -262,7 +267,22 @@ public class SignatureValidator {
             retrieveSignedRevocationInfoFromSignatureContainer(timestampSignatureContainer, validationContext);
             updateValidationClients(pkcs7, validationReport, validationContext, document);
         }
+        reportResult(validationReport);
         return validationReport.merge(signatureReport);
+    }
+
+    private void reportResult(ValidationReport validationReport) {
+        if (validationReport.getValidationResult() == ValidationResult.VALID) {
+            builder.getAdESReportAggregator().reportSignatureValidationSuccess();
+            return;
+        }
+        StringBuilder reason = new StringBuilder("[");
+        for (ReportItem reportItem : validationReport.getFailures()) {
+            reason.append(reportItem).append("\n");
+        }
+        reason.append("]");
+        builder.getAdESReportAggregator().reportSignatureValidationFailure(
+                validationReport.getValidationResult() == ValidationResult.INDETERMINATE, reason.toString());
     }
 
     private ValidationReport validate(String signatureName) {
@@ -323,7 +343,14 @@ public class SignatureValidator {
         PdfPKCS7 pkcs7 = signatureUtil.readSignatureData(latestSignatureName);
         validationReport.addReportItem(new ReportItem(SIGNATURE_VERIFICATION,
                 MessageFormatUtil.format(VALIDATING_SIGNATURE_NAME, latestSignatureName), ReportItemStatus.INFO));
-
+        if (pkcs7.isTsp()) {
+            builder.getAdESReportAggregator().proofOfExistenceFound(
+                    signatureUtil.getSignature(latestSignatureName).getContents().getValueBytes(), true);
+        } else {
+            builder.getAdESReportAggregator().startSignatureValidation(
+                    signatureUtil.getSignature(latestSignatureName).getContents().getValueBytes(), latestSignatureName,
+                    lastKnownPoE);
+        }
         if (!signatureUtil.signatureCoversWholeDocument(latestSignatureName)) {
             validationReport.addReportItem(new ReportItem(SIGNATURE_VERIFICATION,
                     MessageFormatUtil.format(DOCUMENT_IS_NOT_COVERED, latestSignatureName), ReportItemStatus.INVALID));
@@ -383,7 +410,7 @@ public class SignatureValidator {
     }
 
     private void validateTimestampChain(ValidationReport validationReport, Certificate[] knownCerts,
-            X509Certificate signingCert) {
+                                        X509Certificate signingCert) {
         onExceptionLog(() ->
                 certificateRetriever.addKnownCertificates(Arrays.asList(knownCerts)), validationReport, e ->
                 new ReportItem(SIGNATURE_VERIFICATION, ADD_KNOWN_CERTIFICATES_FAILED, e,
@@ -416,14 +443,14 @@ public class SignatureValidator {
     }
 
     private void updateValidationClients(PdfPKCS7 pkcs7, ValidationReport validationReport,
-            ValidationContext validationContext, PdfDocument document) {
+                                         ValidationContext validationContext, PdfDocument document) {
         retrieveOcspResponsesFromDss(validationReport, validationContext, document);
         retrieveCrlResponsesFromDss(validationReport, validationContext, document);
         retrieveSignedRevocationInfoFromSignatureContainer(pkcs7, validationContext);
     }
 
     private void retrieveSignedRevocationInfoFromSignatureContainer(PdfPKCS7 pkcs7,
-            ValidationContext validationContext) {
+                                                                    ValidationContext validationContext) {
         if (pkcs7.getCRLs() != null) {
             for (CRL crl : pkcs7.getCRLs()) {
                 validationCrlClient.addCrl((X509CRL) crl, lastKnownPoE, validationContext.getTimeBasedContext());
@@ -436,7 +463,7 @@ public class SignatureValidator {
     }
 
     private void retrieveNotSignedRevocationInfoFromSignatureContainer(PdfPKCS7 pkcs7,
-            ValidationContext validationContext) {
+                                                                       ValidationContext validationContext) {
         for (CRL crl : pkcs7.getSignedDataCRLs()) {
             validationCrlClient.addCrl((X509CRL) crl, lastKnownPoE, validationContext.getTimeBasedContext());
         }
@@ -447,7 +474,7 @@ public class SignatureValidator {
     }
 
     private void retrieveOcspResponsesFromDss(ValidationReport validationReport, ValidationContext context,
-            PdfDocument document) {
+                                              PdfDocument document) {
         PdfDictionary dss = document.getCatalog().getPdfObject().getAsDictionary(PdfName.DSS);
         if (dss != null) {
             PdfArray ocsps = dss.getAsArray(PdfName.OCSPs);
@@ -458,7 +485,7 @@ public class SignatureValidator {
                         validationOcspClient.addResponse(BOUNCY_CASTLE_FACTORY.createBasicOCSPResp(
                                         BOUNCY_CASTLE_FACTORY.createOCSPResp(ocspStream.getBytes()).getResponseObject()),
                                 lastKnownPoE, context.getTimeBasedContext());
-                    } catch (IOException | AbstractOCSPException | RuntimeException e ) {
+                    } catch (IOException | AbstractOCSPException | RuntimeException e) {
                         validationReport.addReportItem(new ReportItem(SIGNATURE_VERIFICATION, MessageFormatUtil.format(
                                 CANNOT_PARSE_OCSP_FROM_DSS, ocspStream), e, ReportItemStatus.INFO));
                     }
@@ -468,7 +495,7 @@ public class SignatureValidator {
     }
 
     private void retrieveCrlResponsesFromDss(ValidationReport validationReport, ValidationContext context,
-            PdfDocument document) {
+                                             PdfDocument document) {
         PdfDictionary dss = document.getCatalog().getPdfObject().getAsDictionary(PdfName.DSS);
         if (dss != null) {
             PdfArray crls = dss.getAsArray(PdfName.CRLs);

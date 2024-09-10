@@ -24,7 +24,11 @@ package com.itextpdf.signatures.validation;
 
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.signatures.IssuingCertificateRetriever;
+import com.itextpdf.signatures.validation.report.xml.AdESReportAggregator;
+import com.itextpdf.signatures.validation.report.xml.NullAdESReportAggregator;
+import com.itextpdf.signatures.validation.report.xml.PadesValidationReport;
 
+import java.io.Writer;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,6 +48,7 @@ public class ValidatorChainBuilder {
     private Supplier<DocumentRevisionsValidator> documentRevisionsValidatorFactory;
     private Collection<Certificate> trustedCertificates;
     private Collection<Certificate> knownCertificates;
+    private AdESReportAggregator adESReportAggregator = new NullAdESReportAggregator();
 
     /**
      * Create a new {@link SignatureValidator} instance with the current configuration.
@@ -217,7 +222,23 @@ public class ValidatorChainBuilder {
      * @return the current ValidatorChainBuilder.
      */
     public ValidatorChainBuilder withTrustedCertificates(Collection<Certificate> trustedCertificates) {
-        this.trustedCertificates =  new ArrayList<>(trustedCertificates);
+        this.trustedCertificates = new ArrayList<>(trustedCertificates);
+        return this;
+    }
+
+    /**
+     * Use this AdES report aggregator to enable AdES compliant report generation.
+     *
+     * <p>
+     * Generated {@link PadesValidationReport} report could be provided to
+     * {@link com.itextpdf.signatures.validation.report.xml.XmlReportGenerator#generate(PadesValidationReport, Writer)}.
+     *
+     * @param adESReportAggregator the report aggregator to use
+     * 
+     * @return the current ValidatorChainBuilder
+     */
+    public ValidatorChainBuilder withAdESReportAggregator(AdESReportAggregator adESReportAggregator) {
+        this.adESReportAggregator = adESReportAggregator;
         return this;
     }
 
@@ -243,6 +264,16 @@ public class ValidatorChainBuilder {
             properties = new SignatureValidationProperties();
         }
         return properties;
+    }
+
+    /**
+     * Retrieves the explicitly added or automatically created {@link AdESReportAggregator} instance.
+     * Default is the {@link NullAdESReportAggregator}.
+     *
+     * @return the explicitly added or automatically created {@link AdESReportAggregator} instance.
+     */
+    public AdESReportAggregator getAdESReportAggregator() {
+        return adESReportAggregator;
     }
 
     /**
