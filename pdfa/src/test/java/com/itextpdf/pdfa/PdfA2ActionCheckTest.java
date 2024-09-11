@@ -25,7 +25,7 @@ package com.itextpdf.pdfa;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfOutline;
@@ -38,8 +38,6 @@ import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import org.junit.jupiter.api.Assertions;
@@ -62,7 +60,7 @@ public class PdfA2ActionCheckTest extends ExtendedITextTest {
     public void actionCheck01() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         PdfDictionary openActions = new PdfDictionary();
         openActions.put(PdfName.S, PdfName.Launch);
@@ -77,7 +75,7 @@ public class PdfA2ActionCheckTest extends ExtendedITextTest {
     public void actionCheck02() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         PdfDictionary openActions = new PdfDictionary();
         openActions.put(PdfName.S, PdfName.Hide);
@@ -92,7 +90,7 @@ public class PdfA2ActionCheckTest extends ExtendedITextTest {
     public void actionCheck03() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         PdfDictionary openActions = new PdfDictionary();
         openActions.put(PdfName.S, PdfName.Sound);
@@ -107,7 +105,7 @@ public class PdfA2ActionCheckTest extends ExtendedITextTest {
     public void actionCheck04() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         PdfDictionary openActions = new PdfDictionary();
         openActions.put(PdfName.S, PdfName.Movie);
@@ -122,7 +120,7 @@ public class PdfA2ActionCheckTest extends ExtendedITextTest {
     public void actionCheck05() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         PdfDictionary openActions = new PdfDictionary();
         openActions.put(PdfName.S, PdfName.ResetForm);
@@ -137,7 +135,7 @@ public class PdfA2ActionCheckTest extends ExtendedITextTest {
     public void actionCheck06() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         PdfDictionary openActions = new PdfDictionary();
         openActions.put(PdfName.S, PdfName.ImportData);
@@ -152,7 +150,7 @@ public class PdfA2ActionCheckTest extends ExtendedITextTest {
     public void actionCheck07() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         PdfDictionary openActions = new PdfDictionary();
         openActions.put(PdfName.S, PdfName.JavaScript);
@@ -166,7 +164,7 @@ public class PdfA2ActionCheckTest extends ExtendedITextTest {
     public void actionCheck08() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         PdfDictionary openActions = new PdfDictionary();
         openActions.put(PdfName.S, PdfName.Named);
@@ -182,7 +180,7 @@ public class PdfA2ActionCheckTest extends ExtendedITextTest {
     public void actionCheck09() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         PdfDictionary openActions = new PdfDictionary();
         openActions.put(PdfName.S, PdfName.SetOCGState);
@@ -197,7 +195,7 @@ public class PdfA2ActionCheckTest extends ExtendedITextTest {
     public void actionCheck10() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         PdfDictionary openActions = new PdfDictionary();
         openActions.put(PdfName.S, PdfName.Rendition);
@@ -214,7 +212,7 @@ public class PdfA2ActionCheckTest extends ExtendedITextTest {
     public void actionCheck11() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         PdfDictionary openActions = new PdfDictionary();
         openActions.put(PdfName.S, PdfName.Trans);
@@ -228,7 +226,7 @@ public class PdfA2ActionCheckTest extends ExtendedITextTest {
     public void actionCheck12() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         PdfDictionary openActions = new PdfDictionary();
         openActions.put(PdfName.S, PdfName.GoTo3DView);
@@ -243,7 +241,7 @@ public class PdfA2ActionCheckTest extends ExtendedITextTest {
     public void actionCheck13() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfPage page = doc.addNewPage();
         page.setAdditionalAction(PdfName.C, PdfAction.createJavaScript("js"));
 
@@ -255,7 +253,7 @@ public class PdfA2ActionCheckTest extends ExtendedITextTest {
     public void actionCheck14() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         doc.getCatalog().setAdditionalAction(PdfName.C, PdfAction.createJavaScript("js"));
 
@@ -270,7 +268,7 @@ public class PdfA2ActionCheckTest extends ExtendedITextTest {
 
         PdfWriter writer = new PdfWriter(outPdf);
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.getOutlines(true);
         PdfOutline out = doc.getOutlines(false);
         out.addOutline("New").addAction(PdfAction.createGoTo("TestDest"));

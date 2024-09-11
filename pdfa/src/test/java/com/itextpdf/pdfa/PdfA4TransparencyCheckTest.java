@@ -29,7 +29,7 @@ import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -80,7 +80,7 @@ public class PdfA4TransparencyCheckTest extends ExtendedITextTest {
         String cmpPdf = CMP_FOLDER + "cmp_textTransparencyPageOutputIntent.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        PdfDocument pdfDocument = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, null);
+        PdfDocument pdfDocument = new PdfADocument(writer, PdfAConformance.PDF_A_4, null);
 
         PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
                 "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED);
@@ -113,7 +113,7 @@ public class PdfA4TransparencyCheckTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "textTransparencyPageWrongOutputIntent.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        PdfDocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, null);
+        PdfDocument pdfDoc = new PdfADocument(writer, PdfAConformance.PDF_A_4, null);
 
         PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
                 "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED);
@@ -148,7 +148,7 @@ public class PdfA4TransparencyCheckTest extends ExtendedITextTest {
 
         PdfDocument pdfDocument = new PdfADocument(
                 new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)),
-                PdfAConformanceLevel.PDF_A_4, null);
+                PdfAConformance.PDF_A_4, null);
         PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
                 "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED);
 
@@ -194,7 +194,7 @@ public class PdfA4TransparencyCheckTest extends ExtendedITextTest {
     @Test
     public void blendModeTest() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        try (PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, createOutputIntent())) {
+        try (PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4, createOutputIntent())) {
             PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
 
             canvas.saveState();
@@ -219,7 +219,7 @@ public class PdfA4TransparencyCheckTest extends ExtendedITextTest {
     @Test
     public void blendModeAnnotationTest() {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, null);
+        PdfDocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4, null);
 
         PdfFormXObject formXObject = new PdfFormXObject(new Rectangle(100f, 100f));
         Canvas canvas = new Canvas(formXObject, doc);
@@ -245,7 +245,7 @@ public class PdfA4TransparencyCheckTest extends ExtendedITextTest {
         String cmpPdf = CMP_FOLDER + "cmp_blendModeAnnotationOutputIntent.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        try (PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, null)) {
+        try (PdfDocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4, null)) {
             PdfFormXObject formXObject = new PdfFormXObject(new Rectangle(100f, 100f));
             Canvas canvas = new Canvas(formXObject, doc);
             canvas.getPdfCanvas().circle(50f, 50f, 40f);
@@ -268,7 +268,7 @@ public class PdfA4TransparencyCheckTest extends ExtendedITextTest {
     public void forbiddenBlendModeAnnotationTest() throws IOException {
         PdfWriter writer = new PdfWriter(new com.itextpdf.io.source.ByteArrayOutputStream(),
                 new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, createOutputIntent());
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4, createOutputIntent());
 
         PdfFormXObject formXObject = new PdfFormXObject(new Rectangle(0f, 0f));
         PdfAnnotation annotation = new PdfPopupAnnotation(new Rectangle(0f, 0f));

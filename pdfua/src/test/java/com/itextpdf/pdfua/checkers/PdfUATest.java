@@ -62,7 +62,7 @@ import com.itextpdf.pdfua.PdfUATestPdfDocument;
 import com.itextpdf.pdfua.UaValidationTestFramework;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
-import com.itextpdf.pdfua.exceptions.PdfUALogMessageConstants;
+import com.itextpdf.pdfua.logs.PdfUALogMessageConstants;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -71,7 +71,6 @@ import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line 
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import org.junit.jupiter.api.Assertions;

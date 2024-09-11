@@ -22,7 +22,7 @@
  */
 package com.itextpdf.pdfa.checker;
 
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -45,7 +45,7 @@ import java.util.List;
 
 @Tag("UnitTest")
 public class PdfA4ImplementationLimitsTest extends ExtendedITextTest {
-    private PdfA4Checker pdfA4Checker = new PdfA4Checker(PdfAConformanceLevel.PDF_A_4);
+    private PdfA4Checker pdfA4Checker = new PdfA4Checker(PdfAConformance.PDF_A_4);
 
     @BeforeEach
     public void before() {
@@ -54,7 +54,7 @@ public class PdfA4ImplementationLimitsTest extends ExtendedITextTest {
 
     @Test
     public void independentLongStringTest() {
-        final int maxAllowedLength = new PdfA2Checker(PdfAConformanceLevel.PDF_A_2B).getMaxStringLength();
+        final int maxAllowedLength = new PdfA2Checker(PdfAConformance.PDF_A_2B).getMaxStringLength();
         final int testLength = maxAllowedLength + 1;
 
         PdfString longString = PdfACheckerTestUtils.getLongString(testLength);
@@ -66,7 +66,7 @@ public class PdfA4ImplementationLimitsTest extends ExtendedITextTest {
 
     @Test
     public void longStringInContentStreamTest() {
-        final int maxAllowedLength = new PdfA2Checker(PdfAConformanceLevel.PDF_A_2B).getMaxStringLength();
+        final int maxAllowedLength = new PdfA2Checker(PdfAConformance.PDF_A_2B).getMaxStringLength();
         final int testLength = maxAllowedLength + 1;
 
         PdfString longString = PdfACheckerTestUtils.getLongString(testLength);
@@ -80,7 +80,7 @@ public class PdfA4ImplementationLimitsTest extends ExtendedITextTest {
 
     @Test
     public void independentLargeRealTest() {
-        PdfNumber largeNumber = new PdfNumber(new PdfA2Checker(PdfAConformanceLevel.PDF_A_2B).getMaxRealValue());
+        PdfNumber largeNumber = new PdfNumber(new PdfA2Checker(PdfAConformance.PDF_A_2B).getMaxRealValue());
         // An exception shall not be thrown pdf/a-4 has no number limits
         pdfA4Checker.checkPdfObject(largeNumber);
         Assertions.assertEquals(Float.MAX_VALUE, largeNumber.floatValue(), 0.001f);

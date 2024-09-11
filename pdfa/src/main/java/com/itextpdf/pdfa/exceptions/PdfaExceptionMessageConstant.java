@@ -177,7 +177,7 @@ public final class PdfaExceptionMessageConstant {
 
     public static final String XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_CONFORMANCE =
             "XMP metadata header shall"
-                    + " contain version identifier pdfaid:rev F or E or absent if no conformance level is specified";
+                    + " contain version identifier pdfaid:rev F or E or absent if no conformance is specified";
     public static final String XMP_METADATA_HISTORY_ENTRY_SHALL_CONTAIN_KEY = "XMP metadata history entry shall"
             + " contain key {0}";
 

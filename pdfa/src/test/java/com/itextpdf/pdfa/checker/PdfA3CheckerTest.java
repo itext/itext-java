@@ -22,7 +22,7 @@
  */
 package com.itextpdf.pdfa.checker;
 
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfStream;
@@ -36,7 +36,7 @@ import org.junit.jupiter.api.Tag;
 
 @Tag("UnitTest")
 public class PdfA3CheckerTest extends ExtendedITextTest {
-    private PdfA1Checker pdfA3Checker = new PdfA3Checker(PdfAConformanceLevel.PDF_A_3B);
+    private PdfA1Checker pdfA3Checker = new PdfA3Checker(PdfAConformance.PDF_A_3B);
 
     @BeforeEach
     public void before() {

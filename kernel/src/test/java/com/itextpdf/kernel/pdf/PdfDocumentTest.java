@@ -54,8 +54,8 @@ import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("BouncyCastleIntegrationTest")
 public class PdfDocumentTest extends ExtendedITextTest {
@@ -612,7 +612,8 @@ public class PdfDocumentTest extends ExtendedITextTest {
     @Test
     public void getDefaultConformanceLevelTest() {
         PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-        Assertions.assertNull(document.getConformanceLevel());
+        Assertions.assertNotNull(document.getConformance());
+        Assertions.assertFalse(document.getConformance().isPdfAOrUa());
     }
 
     //TODO DEVSIX-8490 remove this test when implemented

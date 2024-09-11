@@ -257,7 +257,7 @@ public class SignatureAppearanceRenderer extends AbstractTextFieldRenderer {
         modelElement.setProperty(Property.FONT_PROVIDER, this.<FontProvider>getProperty(Property.FONT_PROVIDER));
         modelElement.setProperty(Property.RENDERING_MODE, this.<RenderingMode>getProperty(Property.RENDERING_MODE));
         final PdfSignatureFormField sigField = new SignatureFormFieldBuilder(doc, name).setWidgetRectangle(area)
-                .setConformanceLevel(getConformanceLevel(doc))
+                .setConformance(getConformance(doc))
                 .setFont(font)
                 .createSignature();
         sigField.disableFieldRegeneration();

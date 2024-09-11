@@ -24,7 +24,7 @@ package com.itextpdf.pdfa;
 
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.pdf.IPdfPageFactory;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -67,7 +67,8 @@ public class PdfAAgnosticPdfDocumentUnitTest extends ExtendedITextTest {
         IValidationContext validationContext = new PdfDocumentValidationContext(pdfDoc, new ArrayList<>());
         pdfDoc.checkIsoConformance(validationContext); // Does nothing for PdfDocument
         Assertions.assertFalse(pdfDoc.getPageFactoryPublic() instanceof PdfAPageFactory);
-        Assertions.assertNull(pdfDoc.getConformanceLevel());
+        Assertions.assertNotNull(pdfDoc.getConformance());
+        Assertions.assertFalse(pdfDoc.getConformance().isPdfAOrUa());
 
         pdfDoc.updateXmpMetadataPublic();
         XMPMeta xmpMeta = pdfDoc.getXmpMetadata(true);
@@ -96,7 +97,7 @@ public class PdfAAgnosticPdfDocumentUnitTest extends ExtendedITextTest {
 
         IValidationContext validationContext = new PdfDocumentValidationContext(pdfADoc, new ArrayList<>());
         pdfADoc.checkIsoConformance(validationContext);
-        Assertions.assertEquals(PdfAConformanceLevel.PDF_A_2B, pdfADoc.getConformanceLevel());
+        Assertions.assertEquals(PdfAConformance.PDF_A_2B, pdfADoc.getConformance().getAConformance());
         Assertions.assertTrue(pdfADoc.getPageFactoryPublic() instanceof PdfAPageFactory);
 
         pdfADoc.updateXmpMetadataPublic();

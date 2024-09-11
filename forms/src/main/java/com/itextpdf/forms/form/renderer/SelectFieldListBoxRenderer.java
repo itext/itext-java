@@ -206,7 +206,7 @@ public class SelectFieldListBoxRenderer extends AbstractSelectFieldRenderer {
         ListBoxField lbModelElement = (ListBoxField) modelElement;
         List<String> selectedOptions = lbModelElement.getSelectedStrings();
         ChoiceFormFieldBuilder builder = new ChoiceFormFieldBuilder(doc, getModelId())
-                .setConformanceLevel(getConformanceLevel(doc))
+                .setConformance(getConformance(doc))
                 .setFont(font)
                 .setWidgetRectangle(area);
         setupBuilderValues(builder, lbModelElement);

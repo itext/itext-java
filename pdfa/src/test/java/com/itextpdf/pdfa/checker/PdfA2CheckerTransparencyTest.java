@@ -23,7 +23,7 @@
 package com.itextpdf.pdfa.checker;
 
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -53,7 +53,7 @@ public class PdfA2CheckerTransparencyTest extends ExtendedITextTest {
 
     @BeforeEach
     public void before() {
-        pdfA2Checker = new PdfA2Checker(PdfAConformanceLevel.PDF_A_2B);
+        pdfA2Checker = new PdfA2Checker(PdfAConformance.PDF_A_2B);
         pdfA2Checker.setFullCheckMode(true);
     }
 

@@ -39,19 +39,16 @@ import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.CompressionConstants;
 import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
-import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
-import com.itextpdf.kernel.pdf.PdfUAConformanceLevel;
-import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.action.PdfMediaClipData;
 import com.itextpdf.kernel.pdf.action.PdfRendition;
@@ -78,7 +75,6 @@ import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.Link;
@@ -96,8 +92,8 @@ import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PdfUAAnnotationsTest extends ExtendedITextTest {
@@ -143,7 +139,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             PdfAcroForm acroForm = PdfFormCreator.getAcroForm(pdfDoc, true);
             PdfButtonFormField checkBox = new CheckBoxFormFieldBuilder(pdfDoc, "checkbox")
                     .setWidgetRectangle(new Rectangle(10, 650, 40, 20))
-                    .setConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
+                    .setConformance(PdfConformance.PDF_UA_1)
                     .createCheckBox();
 
             checkBox.setAlternativeName("widget");
@@ -405,7 +401,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             // The rest of the tests for widgets can be found in com.itextpdf.pdfua.checkers.PdfUAFormFieldsTest
             PdfFormField button = new PushButtonFormFieldBuilder(pdfDoc, "push button")
                     .setWidgetRectangle(new Rectangle(10, 650, 40, 20))
-                    .setConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
+                    .setConformance(PdfConformance.PDF_UA_1)
                     .setFont(loadFont())
                     .createPushButton();
 

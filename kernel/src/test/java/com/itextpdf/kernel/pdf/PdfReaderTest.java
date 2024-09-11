@@ -2321,17 +2321,17 @@ public class PdfReaderTest extends ExtendedITextTest {
     }
 
     @Test
-    public void getPdfAConformanceLevelPdfDocumentNotReadTest() throws IOException {
+    public void getPdfAConformancePdfDocumentNotReadTest() throws IOException {
         PdfReader getModifiedFileIdReader = pdfDocumentNotReadTestInit();
 
-        Exception e = Assertions.assertThrows(PdfException.class, () -> getModifiedFileIdReader.getPdfAConformanceLevel());
+        Exception e = Assertions.assertThrows(PdfException.class, () -> getModifiedFileIdReader.getPdfConformance());
         Assertions.assertEquals(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
     }
 
     @Test
-    public void getPdfAConformanceLevelNoMetadataTest() throws IOException {
+    public void getPdfConformanceNoMetadataTest() throws IOException {
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(new ByteArrayInputStream(createPdfDocumentForTest())));
-        Assertions.assertNull(pdfDoc.getReader().getPdfAConformanceLevel());
+        Assertions.assertFalse(pdfDoc.getReader().getPdfConformance().isPdfAOrUa());
     }
 
     @Test
@@ -2719,7 +2719,7 @@ public class PdfReaderTest extends ExtendedITextTest {
     }
 
     @Test
-    public void conformanceLevelCacheTest() throws IOException, XMPException {
+    public void conformanceCacheTest() throws IOException, XMPException {
         String filename = DESTINATION_FOLDER + "simpleDoc.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(filename));
@@ -2733,7 +2733,7 @@ public class PdfReaderTest extends ExtendedITextTest {
 
         TestPdfDocumentCache pdfTestDoc = new TestPdfDocumentCache(CompareTool.createOutputReader(filename));
         for (int i = 0; i < 1000; ++i) {
-            pdfTestDoc.getReader().getPdfAConformanceLevel();
+            pdfTestDoc.getReader().getPdfConformance();
         }
         Assertions.assertEquals(1, pdfTestDoc.getCounter());
     }
@@ -2919,6 +2919,14 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfReader pdfReader = new PdfReader(SOURCE_FOLDER + "startxrefNotFound.pdf").setStrictnessLevel(StrictnessLevel.LENIENT);
         new PdfDocument(pdfReader);
         Assertions.assertTrue(pdfReader.hasRebuiltXref(), "Need rebuildXref()");
+    }
+
+    @Test
+    public void readAandUaDocumentTest() throws IOException {
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "bothAandUa.pdf"))) {
+            Assertions.assertEquals(PdfAConformance.PDF_A_2B, pdfDoc.getConformance().getAConformance());
+            Assertions.assertEquals(PdfUAConformance.PDF_UA_1, pdfDoc.getConformance().getUAConformance());
+        }
     }
 
     private static PdfDictionary getTestPdfDictionary() {

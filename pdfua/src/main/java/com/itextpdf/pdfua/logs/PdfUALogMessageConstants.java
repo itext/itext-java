@@ -20,16 +20,18 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.kernel.pdf;
-
+package com.itextpdf.pdfua.logs;
 
 /**
- * Interface for PDF conformance level.
- * <p>
- *
- * Conformance levels are extended PDF specifications that define subsets of PDF
- * functionality. An example of a conformance level is PDF/A, which is used for long-term archiving
- * and PDF/UA, which is used for accessible documents.
+ * Class containing the log message constants.
  */
-public interface IConformanceLevel {
+public final class PdfUALogMessageConstants {
+
+    public static final String PAGE_FLUSHING_DISABLED = "Page flushing is disabled in PDF/UA mode to allow UA checks "
+            + "to be applied. Page will only be flushed on closing.";
+    public static final String PDF_TO_PDF_UA_CONVERSION_IS_NOT_SUPPORTED = "PDF to PDF/UA conversion is not supported.";
+
+    private PdfUALogMessageConstants() {
+        // empty constructor
+    }
 }

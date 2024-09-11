@@ -25,7 +25,7 @@ package com.itextpdf.pdfa;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -37,7 +37,6 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -83,7 +82,7 @@ public class PdfAAppendModeTest extends ExtendedITextTest {
 
     private static void createInputPdfADocument(String docName) throws IOException {
         PdfWriter writer = new PdfWriter(docName);
-        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1A,
+        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformance.PDF_A_1A,
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
                         FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm")));
         pdfDoc.setTagged();

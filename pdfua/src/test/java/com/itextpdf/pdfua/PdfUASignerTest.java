@@ -33,7 +33,7 @@ import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfUAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
@@ -46,18 +46,9 @@ import com.itextpdf.signatures.PrivateKeySignature;
 import com.itextpdf.signatures.SignerProperties;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.GeneralSecurityException;
@@ -65,6 +56,13 @@ import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.util.function.Consumer;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Tag("IntegrationTest")
 public class PdfUASignerTest extends ExtendedITextTest {
@@ -188,7 +186,7 @@ public class PdfUASignerTest extends ExtendedITextTest {
     }
 
     @Test
-    @Disabled("DEVSIX-8571")
+    // TODO DEVSIX-8623 Spike: Get rid of PdfADocument, PdfUADocument, PdfAAgnosticDocument in favour of one PdfDocument
     public void normalPdfSignerVisibleSignatureWithoutFont() throws GeneralSecurityException, IOException, AbstractOperatorCreationException, AbstractPKCSException {
         //This test should fail with the appropriate exception
         ByteArrayInputStream inPdf = generateSimplePdfUA1Document();
@@ -225,7 +223,7 @@ public class PdfUASignerTest extends ExtendedITextTest {
     }
 
     @Test
-    @Disabled("DEVSIX-8571")
+    // TODO DEVSIX-8623 Spike: Get rid of PdfADocument, PdfUADocument, PdfAAgnosticDocument in favour of one PdfDocument
     public void normalPdfSignerVisibleSignatureWithFontEmptyTU() throws GeneralSecurityException, IOException, AbstractOperatorCreationException, AbstractPKCSException {
         //Should throw the correct exception if the font is not set
         ByteArrayInputStream inPdf = generateSimplePdfUA1Document();
@@ -267,7 +265,7 @@ public class PdfUASignerTest extends ExtendedITextTest {
 
     private ByteArrayInputStream generateSimplePdfUA1Document() {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        PdfUADocument pdfUADocument = new PdfUADocument(new PdfWriter(out), new PdfUAConfig(PdfUAConformanceLevel.PDFUA_1, "Title", "en-US"));
+        PdfUADocument pdfUADocument = new PdfUADocument(new PdfWriter(out), new PdfUAConfig(PdfUAConformance.PDF_UA_1, "Title", "en-US"));
         pdfUADocument.addNewPage();
         pdfUADocument.close();
         return new ByteArrayInputStream(out.toByteArray());
@@ -328,7 +326,7 @@ public class PdfUASignerTest extends ExtendedITextTest {
 
         @Override
         protected PdfDocument initDocument(PdfReader reader, PdfWriter writer, StampingProperties properties) {
-            return new PdfUADocument(reader, writer, new PdfUAConfig(PdfUAConformanceLevel.PDFUA_1, "Title", "en-US"));
+            return new PdfUADocument(reader, writer, new PdfUAConfig(PdfUAConformance.PDF_UA_1, "Title", "en-US"));
         }
     }
 

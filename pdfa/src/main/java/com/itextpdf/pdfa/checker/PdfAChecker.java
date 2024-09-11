@@ -26,7 +26,7 @@ import com.itextpdf.io.colors.IccProfile;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfTrueTypeFont;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfCatalog;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -42,6 +42,7 @@ import com.itextpdf.kernel.pdf.PdfXrefTable;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.validation.IValidationChecker;
+import com.itextpdf.kernel.validation.IValidationContext;
 import com.itextpdf.kernel.validation.ValidationType;
 import com.itextpdf.kernel.validation.context.AbstractColorValidationContext;
 import com.itextpdf.kernel.validation.context.CanvasStackValidationContext;
@@ -49,7 +50,6 @@ import com.itextpdf.kernel.validation.context.CryptoValidationContext;
 import com.itextpdf.kernel.validation.context.FontValidationContext;
 import com.itextpdf.kernel.validation.context.IContentStreamValidationParameter;
 import com.itextpdf.kernel.validation.context.IGraphicStateValidationParameter;
-import com.itextpdf.kernel.validation.IValidationContext;
 import com.itextpdf.kernel.validation.context.InlineImageValidationContext;
 import com.itextpdf.kernel.validation.context.PdfDocumentValidationContext;
 import com.itextpdf.kernel.validation.context.PdfObjectValidationContext;
@@ -122,7 +122,7 @@ public abstract class PdfAChecker implements IValidationChecker {
      */
     public static final int maxGsStackDepth = 28;
 
-    protected PdfAConformanceLevel conformanceLevel;
+    protected PdfAConformance conformance;
     protected PdfStream pdfAOutputIntentDestProfile;
     protected String pdfAOutputIntentColorSpace;
 
@@ -147,12 +147,12 @@ public abstract class PdfAChecker implements IValidationChecker {
     private boolean fullCheckMode = false;
 
     /**
-     * Creates a PdfAChecker with the required conformance level.
+     * Creates a PdfAChecker with the required conformance.
      *
-     * @param conformanceLevel the required conformance level
+     * @param aConformance the required conformance
      */
-    protected PdfAChecker(PdfAConformanceLevel conformanceLevel) {
-        this.conformanceLevel = conformanceLevel;
+    protected PdfAChecker(PdfAConformance aConformance) {
+        this.conformance = aConformance;
     }
 
     /**
@@ -307,12 +307,12 @@ public abstract class PdfAChecker implements IValidationChecker {
     }
 
     /**
-     * Gets the {@link PdfAConformanceLevel} for this file.
+     * Gets the {@link PdfAConformance} for this file.
      *
-     * @return the defined conformance level for this document.
+     * @return the defined conformance for this document.
      */
-    public PdfAConformanceLevel getConformanceLevel() {
-        return conformanceLevel;
+    public PdfAConformance getAConformance() {
+        return conformance;
     }
 
     /**
@@ -800,15 +800,15 @@ public abstract class PdfAChecker implements IValidationChecker {
     }
 
     /**
-     * Checks conformance level of PDF/A standard.
+     * Checks conformance of PDF/A standard.
      *
-     * @param conformanceLevel the {@link PdfAConformanceLevel} to be checked
-     * @return true if the specified conformanceLevel is <code>a</code> for PDF/A-1, PDF/A-2 or PDF/A-3
+     * @param aConformance the {@link PdfAConformance} to be checked
+     * @return true if the specified aConformance is <code>a</code> for PDF/A-1, PDF/A-2 or PDF/A-3
      */
-    protected static boolean checkStructure(PdfAConformanceLevel conformanceLevel) {
-        return conformanceLevel == PdfAConformanceLevel.PDF_A_1A
-                || conformanceLevel == PdfAConformanceLevel.PDF_A_2A
-                || conformanceLevel == PdfAConformanceLevel.PDF_A_3A;
+    protected static boolean checkStructure(PdfAConformance aConformance) {
+        return aConformance == PdfAConformance.PDF_A_1A
+                || aConformance == PdfAConformance.PDF_A_2A
+                || aConformance == PdfAConformance.PDF_A_3A;
     }
 
     /**

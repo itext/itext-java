@@ -28,9 +28,7 @@ import com.itextpdf.forms.fields.properties.CheckBoxType;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.renderer.CheckBoxRenderer;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
-import com.itextpdf.kernel.pdf.IConformanceLevel;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
-import com.itextpdf.kernel.pdf.tagging.PdfStructureAttributes;
+import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.layout.properties.BoxSizingPropertyValue;
 import com.itextpdf.layout.properties.Property;
@@ -72,14 +70,14 @@ public class CheckBox extends FormField<CheckBox> {
     }
 
     /**
-     * Sets the conformance level for the checkbox.
+     * Sets the conformance for the checkbox.
      *
-     * @param conformanceLevel The PDF/A conformance level to set.
+     * @param conformance The PDF conformance to set.
      *
      * @return this checkbox instance
      */
-    public CheckBox setPdfConformanceLevel(IConformanceLevel conformanceLevel) {
-        setProperty(FormProperty.FORM_CONFORMANCE_LEVEL, conformanceLevel);
+    public CheckBox setPdfConformance(PdfConformance conformance) {
+        setProperty(FormProperty.FORM_CONFORMANCE_LEVEL, conformance);
         return this;
     }
 

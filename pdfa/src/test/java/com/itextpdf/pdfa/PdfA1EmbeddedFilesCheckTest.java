@@ -23,7 +23,7 @@
 package com.itextpdf.pdfa;
 
 import com.itextpdf.commons.utils.FileUtil;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -41,7 +41,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -54,7 +53,7 @@ public class PdfA1EmbeddedFilesCheckTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
-        PdfADocument pdfDocument = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, outputIntent);
+        PdfADocument pdfDocument = new PdfADocument(writer, PdfAConformance.PDF_A_1B, outputIntent);
 
         PdfDictionary fileNames = new PdfDictionary();
         pdfDocument.getCatalog().put(PdfName.Names, fileNames);
@@ -80,7 +79,7 @@ public class PdfA1EmbeddedFilesCheckTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
-        PdfADocument pdfDocument = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, outputIntent);
+        PdfADocument pdfDocument = new PdfADocument(writer, PdfAConformance.PDF_A_1B, outputIntent);
 
         PdfStream stream = new PdfStream();
         pdfDocument.getCatalog().put(new PdfName("testStream"), stream);
@@ -100,7 +99,7 @@ public class PdfA1EmbeddedFilesCheckTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
-        PdfADocument pdfDocument = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, outputIntent);
+        PdfADocument pdfDocument = new PdfADocument(writer, PdfAConformance.PDF_A_1B, outputIntent);
 
         PdfStream stream = new PdfStream();
         pdfDocument.getCatalog().put(new PdfName("testStream"), stream);

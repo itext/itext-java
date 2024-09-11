@@ -23,7 +23,7 @@
 package com.itextpdf.pdfa;
 
 import com.itextpdf.commons.utils.FileUtil;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -36,8 +36,6 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -61,7 +59,7 @@ public class PdfA4MiscCheckTest extends ExtendedITextTest {
         String cmpPdf = CMP_FOLDER + "cmp_pdfA4CheckThatAsKeyIsAllowedTest.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        try (PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, createOutputIntent())) {
+        try (PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4, createOutputIntent())) {
             doc.addNewPage();
 
             PdfArray configs = new PdfArray();

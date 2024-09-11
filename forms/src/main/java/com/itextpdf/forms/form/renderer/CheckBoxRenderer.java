@@ -36,8 +36,7 @@ import com.itextpdf.forms.form.renderer.checkboximpl.PdfCheckBoxRenderingStrateg
 import com.itextpdf.forms.util.BorderStyleUtil;
 import com.itextpdf.forms.util.FormFieldRendererUtil;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.IConformanceLevel;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -123,8 +122,8 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
     public ICheckBoxRenderingStrategy createCheckBoxRenderStrategy() {
         // html rendering is PDFA compliant this means we don't have to check if its PDFA.
         ICheckBoxRenderingStrategy renderingStrategy;
-        boolean isConformantPdfDocument =
-                this.<IConformanceLevel>getProperty(FormProperty.FORM_CONFORMANCE_LEVEL) != null;
+        final PdfConformance conformance = this.<PdfConformance>getProperty(FormProperty.FORM_CONFORMANCE_LEVEL);
+        boolean isConformantPdfDocument = conformance != null && conformance.isPdfAOrUa();
         if (getRenderingMode() == RenderingMode.HTML_MODE) {
             renderingStrategy = new HtmlCheckBoxRenderingStrategy();
         } else if (getRenderingMode() == RenderingMode.DEFAULT_LAYOUT_MODE && isConformantPdfDocument) {
@@ -253,7 +252,7 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
         final Map<Integer, Object> properties = FormFieldRendererUtil.removeProperties(this.modelElement);
         final PdfPage page = doc.getPage(occupiedArea.getPageNumber());
         final CheckBoxFormFieldBuilder builder = new CheckBoxFormFieldBuilder(doc, name).setWidgetRectangle(area)
-                .setConformanceLevel(this.<IConformanceLevel>getProperty(FormProperty.FORM_CONFORMANCE_LEVEL));
+                .setConformance(this.<PdfConformance>getProperty(FormProperty.FORM_CONFORMANCE_LEVEL));
 
         if (this.hasProperty(FormProperty.FORM_CHECKBOX_TYPE)) {
             builder.setCheckType((CheckBoxType) this.<CheckBoxType>getProperty(FormProperty.FORM_CHECKBOX_TYPE));

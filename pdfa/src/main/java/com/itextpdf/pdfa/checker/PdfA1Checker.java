@@ -34,7 +34,7 @@ import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfTrueTypeFont;
 import com.itextpdf.kernel.font.PdfType3Font;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfCatalog;
@@ -116,13 +116,13 @@ public class PdfA1Checker extends PdfAChecker {
     private static final Logger logger = LoggerFactory.getLogger(PdfAChecker.class);
 
     /**
-     * Creates a PdfA1Checker with the required conformance level
+     * Creates a PdfA1Checker with the required conformance
      *
-     * @param conformanceLevel the required conformance level, <code>a</code> or
+     * @param aConformance the required conformance, <code>a</code> or
      *                         <code>b</code>
      */
-    public PdfA1Checker(PdfAConformanceLevel conformanceLevel) {
-        super(conformanceLevel);
+    public PdfA1Checker(PdfAConformance aConformance) {
+        super(aConformance);
     }
 
     @Override
@@ -459,7 +459,7 @@ public class PdfA1Checker extends PdfAChecker {
 
     @Override
     protected void checkLogicalStructure(PdfDictionary catalog) {
-        if (checkStructure(conformanceLevel)) {
+        if (checkStructure(conformance)) {
             PdfDictionary markInfo = catalog.getAsDictionary(PdfName.MarkInfo);
             if (markInfo == null || markInfo.getAsBoolean(PdfName.Marked) == null || !markInfo.getAsBoolean(PdfName.Marked).getValue()) {
                 throw new PdfAConformanceException(PdfaExceptionMessageConstant.A_CATALOG_SHALL_INCLUDE_MARK_INFO_DICTIONARY_WITH_MARKED_TRUE_VALUE);
@@ -673,7 +673,7 @@ public class PdfA1Checker extends PdfAChecker {
             throw new PdfAConformanceException(PdfaExceptionMessageConstant.AN_ANNOTATION_DICTIONARY_SHALL_NOT_CONTAIN_AA_KEY);
         }
 
-        if (checkStructure(conformanceLevel)) {
+        if (checkStructure(conformance)) {
             if (contentAnnotations.contains(subtype) && !annotDic.containsKey(PdfName.Contents)) {
                 logger.warn(MessageFormatUtil.format(
                         PdfAConformanceLogMessageConstant.ANNOTATION_OF_TYPE_0_SHOULD_HAVE_CONTENTS_KEY, subtype.getValue()));

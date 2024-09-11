@@ -23,7 +23,7 @@
 package com.itextpdf.pdfa;
 
 import com.itextpdf.commons.utils.FileUtil;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
@@ -35,8 +35,6 @@ import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -61,7 +59,7 @@ public class PdfA4EmbeddedFilesCheckTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "pdfA4fWithoutEmbeddedFilesTest.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4F, createOutputIntent());
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4F, createOutputIntent());
         doc.addNewPage();
 
         Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> doc.close());
@@ -73,7 +71,7 @@ public class PdfA4EmbeddedFilesCheckTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "pdfA4fWithEmbeddedFilesWithoutFTest.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4F, createOutputIntent());
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4F, createOutputIntent());
         doc.addNewPage();
 
         PdfFileSpec fs = PdfFileSpec.createEmbeddedFileSpec(
@@ -91,7 +89,7 @@ public class PdfA4EmbeddedFilesCheckTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "pdfA4fWithEmbeddedFilesWithoutUFTest.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4F, createOutputIntent());
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4F, createOutputIntent());
         doc.addNewPage();
 
         PdfFileSpec fs = PdfFileSpec.createEmbeddedFileSpec(
@@ -109,7 +107,7 @@ public class PdfA4EmbeddedFilesCheckTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "pdfA4fWithEmbeddedFilesWithoutAFRTest.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4F, createOutputIntent());
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4F, createOutputIntent());
         doc.addNewPage();
 
         PdfFileSpec fs = PdfFileSpec.createEmbeddedFileSpec(
@@ -127,7 +125,7 @@ public class PdfA4EmbeddedFilesCheckTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "pdfA4eWithEmbeddedFilesWithoutFTest.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4E, createOutputIntent());
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4E, createOutputIntent());
         doc.addNewPage();
 
         PdfFileSpec fs = PdfFileSpec.createEmbeddedFileSpec(
@@ -145,7 +143,7 @@ public class PdfA4EmbeddedFilesCheckTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "pdfA4WithEmbeddedFilesWithoutAFRTest.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, createOutputIntent());
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4, createOutputIntent());
         doc.addNewPage();
 
         PdfFileSpec fs = PdfFileSpec.createEmbeddedFileSpec(

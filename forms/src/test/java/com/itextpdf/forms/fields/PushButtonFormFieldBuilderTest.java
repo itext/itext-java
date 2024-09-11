@@ -23,8 +23,8 @@
 package com.itextpdf.forms.fields;
 
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -39,8 +39,8 @@ import com.itextpdf.test.ExtendedITextTest;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class PushButtonFormFieldBuilderTest extends ExtendedITextTest {
@@ -84,7 +84,7 @@ public class PushButtonFormFieldBuilderTest extends ExtendedITextTest {
     @Test
     public void createPushButtonWithConformanceLevelTest() {
         PdfButtonFormField pushButtonFormField = new PushButtonFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME)
-                .setWidgetRectangle(DUMMY_RECTANGLE).setConformanceLevel(PdfAConformanceLevel.PDF_A_1A)
+                .setWidgetRectangle(DUMMY_RECTANGLE).setConformance(PdfConformance.PDF_A_1A)
                 .createPushButton();
 
         comparePushButtons(pushButtonFormField, true);

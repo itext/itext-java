@@ -27,7 +27,7 @@ import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.form.element.CheckBox;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -51,7 +51,6 @@ import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -62,8 +61,8 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PdfA4ActionCheckTest extends ExtendedITextTest {
@@ -80,7 +79,7 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
     @Test
     public void pdfA4ForbiddenActions_LAUNCH_ActionToPage_Test() {
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
-                () -> generatePdfADocument(PdfAConformanceLevel.PDF_A_4, null, (doc) -> {
+                () -> generatePdfADocument(PdfAConformance.PDF_A_4, null, (doc) -> {
                     doc.getFirstPage()
                             .setAdditionalAction(PdfName.O, PdfAction.createLaunch(new PdfStringFS("launch.sh")));
                 }));
@@ -91,7 +90,7 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
     @Test
     public void pdfA4ForbiddenActions_SOUND_ActionToPage_Test() {
         Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> {
-            generatePdfADocument(PdfAConformanceLevel.PDF_A_4, null, (doc) -> {
+            generatePdfADocument(PdfAConformance.PDF_A_4, null, (doc) -> {
                 InputStream is = null;
                 try {
                     is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sample.aif");
@@ -114,7 +113,7 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
     @Test
     public void pdfA4ForbiddenActions_MOVIE_ActionToPage_Test() throws FileNotFoundException {
         Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> {
-            generatePdfADocument(PdfAConformanceLevel.PDF_A_4, null, (doc) -> {
+            generatePdfADocument(PdfAConformance.PDF_A_4, null, (doc) -> {
                 doc.addNewPage()
                         .setAdditionalAction(PdfName.O, PdfAction.createMovie(null, "Some movie", PdfName.Play));
             });
@@ -126,7 +125,7 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
     @Test
     public void pdfA4ForbiddenActions_RESETFORM_ActionToPage_Test() throws FileNotFoundException {
         Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> {
-            generatePdfADocument(PdfAConformanceLevel.PDF_A_4, null, (doc) -> {
+            generatePdfADocument(PdfAConformance.PDF_A_4, null, (doc) -> {
                 CheckBox checkBox = new CheckBox("test");
                 checkBox.setChecked(true);
                 Document document = new Document(doc);
@@ -141,7 +140,7 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
     @Test
     public void pdfA4ForbiddenActions_IMPORTDATA_ActionToPage_Test() {
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
-                () -> generatePdfADocument(PdfAConformanceLevel.PDF_A_4, null, (doc) -> {
+                () -> generatePdfADocument(PdfAConformance.PDF_A_4, null, (doc) -> {
                     doc.addNewPage();
                     PdfDictionary openActions = new PdfDictionary();
                     openActions.put(PdfName.S, PdfName.ImportData);
@@ -154,7 +153,7 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
     @Test
     public void pdfA4ForbiddenActions_HIDE_ActionToPage_Test() throws FileNotFoundException {
         Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> {
-            generatePdfADocument(PdfAConformanceLevel.PDF_A_4, null, (doc) -> {
+            generatePdfADocument(PdfAConformance.PDF_A_4, null, (doc) -> {
                 PdfAnnotation[] annotations = new PdfAnnotation[] {
                         new PdfLineAnnotation(new Rectangle(10, 10, 200, 200), new float[] {50, 750, 50, 750}),
                         new PdfLineAnnotation(new Rectangle(200, 200, 200, 200), new float[] {50, 750, 50, 750})};
@@ -168,7 +167,7 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
     @Test
     public void pdfA4ForbiddenActions_RENDITION_ActionToPage_Test() throws FileNotFoundException {
         Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> {
-            generatePdfADocument(PdfAConformanceLevel.PDF_A_4, null, doc -> {
+            generatePdfADocument(PdfAConformance.PDF_A_4, null, doc -> {
                 doc.addNewPage().setAdditionalAction(PdfName.O, PdfAction.createRendition("empty",
                         PdfFileSpec.createEmbeddedFileSpec(doc, null, "bing", "bing", new PdfDictionary(),
                                 PdfName.AllOn), "something", new PdfCircleAnnotation(new Rectangle(10, 10, 200, 200))));
@@ -182,7 +181,7 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
     @Test
     public void pdfA4ForbiddenActions_TRANS_ActionToPage_Test() throws FileNotFoundException {
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
-                () -> generatePdfADocument(PdfAConformanceLevel.PDF_A_4, null, doc -> {
+                () -> generatePdfADocument(PdfAConformance.PDF_A_4, null, doc -> {
                     PdfDictionary openActions = new PdfDictionary();
                     openActions.put(PdfName.S, PdfName.Trans);
                     doc.addNewPage().setAdditionalAction(PdfName.O, new PdfAction(openActions));
@@ -195,7 +194,7 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
     @Test
     public void pdfA4ForbiddenActions_SETSTATE_ActionToPage_Test() throws FileNotFoundException {
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
-                () -> generatePdfADocument(PdfAConformanceLevel.PDF_A_4, null, doc -> {
+                () -> generatePdfADocument(PdfAConformance.PDF_A_4, null, doc -> {
                     PdfDictionary action = new PdfDictionary();
                     action.put(PdfName.S, PdfName.SetState);
 
@@ -209,7 +208,7 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
     @Test
     public void pdfA4ForbiddenActions_NOOP_ActionToPage_Test() {
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
-                () -> generatePdfADocument(PdfAConformanceLevel.PDF_A_4, null, doc -> {
+                () -> generatePdfADocument(PdfAConformance.PDF_A_4, null, doc -> {
                     PdfDictionary action = new PdfDictionary();
                     action.put(PdfName.S, PdfName.NoOp);
                     doc.addNewPage().setAdditionalAction(PdfName.O, new PdfAction(action));
@@ -221,7 +220,7 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
     @Test
     public void pdfA4ForbiddenActions_SETOCGSTATE_ActionToPage_Test() {
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
-                () -> generatePdfADocument(PdfAConformanceLevel.PDF_A_4, null, doc -> {
+                () -> generatePdfADocument(PdfAConformance.PDF_A_4, null, doc -> {
                     doc.addNewPage().setAdditionalAction(PdfName.O, PdfAction.createSetOcgState(new ArrayList<>()));
                 }));
         Assertions.assertEquals(PdfaExceptionMessageConstant.PAGE_AA_DICTIONARY_SHALL_CONTAIN_ONLY_ALLOWED_KEYS,
@@ -231,7 +230,7 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
     @Test
     public void pdfA4ForbiddenActions_GOTO3DVIEW_ActionToPage_Test() throws FileNotFoundException {
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
-                () -> generatePdfADocument(PdfAConformanceLevel.PDF_A_4, null, doc -> {
+                () -> generatePdfADocument(PdfAConformance.PDF_A_4, null, doc -> {
                     PdfDictionary action = new PdfDictionary();
                     action.put(PdfName.S, PdfName.GoTo3DView);
                     doc.addNewPage().setAdditionalAction(PdfName.O, new PdfAction(action));
@@ -244,7 +243,7 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
     @Test
     public void pdfA4_SETOCGSTATE_InCatalog_Test() {
         Exception pdfa4Exception = Assertions.assertThrows(PdfAConformanceException.class, () -> {
-            generatePdfADocument(PdfAConformanceLevel.PDF_A_4, null, doc -> {
+            generatePdfADocument(PdfAConformance.PDF_A_4, null, doc -> {
                 doc.getCatalog().setAdditionalAction(PdfName.O, PdfAction.createSetOcgState(new ArrayList<>()));
             });
         });
@@ -257,7 +256,7 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
     @Test
     public void pdfA4_SETOCGSTATE_Annotation_Test() {
         Exception pdfa4Exception = Assertions.assertThrows(PdfAConformanceException.class, () -> {
-            generatePdfADocument(PdfAConformanceLevel.PDF_A_4, null, doc -> {
+            generatePdfADocument(PdfAConformance.PDF_A_4, null, doc -> {
                 doc.addNewPage().addAnnotation(constructAnnotationWithAction(PdfName.SetOCGState));
             });
         });
@@ -271,7 +270,7 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
     public void pdfA4E_SETOCGSTATE_Annotation_Test() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "pdfA4ESetOCGStateAnnotation.pdf";
         String cmpPdf = CMP_FOLDER + "cmp_pdfA4ESetOCGStateAnnotation.pdf";
-        generatePdfADocument(PdfAConformanceLevel.PDF_A_4E, outPdf, doc -> {
+        generatePdfADocument(PdfAConformance.PDF_A_4E, outPdf, doc -> {
             doc.addNewPage().addAnnotation(constructAnnotationWithAction(PdfName.SetOCGState));
         });
         compareResult(outPdf, cmpPdf);
@@ -281,7 +280,7 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
     @Test
     public void pdfA4_SETGOTO3DVIEW_Annotation_Test() {
         Exception pdfa4Exception = Assertions.assertThrows(PdfAConformanceException.class, () -> {
-            generatePdfADocument(PdfAConformanceLevel.PDF_A_4, null, doc -> {
+            generatePdfADocument(PdfAConformance.PDF_A_4, null, doc -> {
                 doc.addNewPage().addAnnotation(constructAnnotationWithAction(PdfName.GoTo3DView));
             });
         });
@@ -294,7 +293,7 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
     public void pdfA4E_GOTO3DVIEW_Annotation_Test() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "pdfA4ESetGoto3DViewAnnotation.pdf";
         String cmpPdf = CMP_FOLDER + "cmp_pdfA4EGoto3DViewAnnotation.pdf";
-        generatePdfADocument(PdfAConformanceLevel.PDF_A_4E, outPdf, doc -> {
+        generatePdfADocument(PdfAConformance.PDF_A_4E, outPdf, doc -> {
             doc.addNewPage().addAnnotation(constructAnnotationWithAction(PdfName.GoTo3DView));
         });
         compareResult(outPdf, cmpPdf);
@@ -306,7 +305,7 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "pdfA4AllowedNamedActions.pdf";
         String cmpPdf = CMP_FOLDER + "cmp_pdfA4AllowedNamedActions.pdf";
         List<PdfName> annots = Arrays.asList(PdfName.NextPage, PdfName.PrevPage, PdfName.FirstPage, PdfName.LastPage);
-        generatePdfADocument(PdfAConformanceLevel.PDF_A_4, outPdf, doc -> {
+        generatePdfADocument(PdfAConformance.PDF_A_4, outPdf, doc -> {
             PdfPage page = doc.getFirstPage();
             for (PdfName annot : annots) {
                 PdfAnnotation annotation = constructAnnotationWithAction(new PdfName(""));
@@ -322,7 +321,7 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "pdfA4SpecialAllowedAction.pdf";
         String cmpPdf = CMP_FOLDER + "cmp_pdfA4SpecialAllowedAction.pdf";
         List<PdfName> annots = Arrays.asList(PdfName.GoToR, PdfName.GoToE, PdfName.URI, PdfName.SubmitForm);
-        generatePdfADocument(PdfAConformanceLevel.PDF_A_4, outPdf, doc -> {
+        generatePdfADocument(PdfAConformance.PDF_A_4, outPdf, doc -> {
             PdfPage page = doc.getFirstPage();
             for (PdfName annot : annots) {
                 PdfAnnotation annotation = constructAnnotationWithAction(annot);
@@ -335,7 +334,7 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
     @Test
     public void pdfA4F_SETOCGSTATE_InCatalog_Test() {
         Exception pdfa4Exception = Assertions.assertThrows(PdfAConformanceException.class, () -> {
-            generatePdfADocument(PdfAConformanceLevel.PDF_A_4F, null, doc -> {
+            generatePdfADocument(PdfAConformance.PDF_A_4F, null, doc -> {
                 doc.getCatalog().setAdditionalAction(PdfName.O, PdfAction.createSetOcgState(new ArrayList<>()));
             });
         });
@@ -348,7 +347,7 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
     @Test
     public void pdfA4E_SETOCGSTATE_InCatalog_Test() {
         Exception pdfa4Exception = Assertions.assertThrows(PdfAConformanceException.class, () -> {
-            generatePdfADocument(PdfAConformanceLevel.PDF_A_4E, null, doc -> {
+            generatePdfADocument(PdfAConformance.PDF_A_4E, null, doc -> {
                 doc.getCatalog().setAdditionalAction(PdfName.O, PdfAction.createSetOcgState(new ArrayList<>()));
             });
         });
@@ -361,7 +360,7 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
     @Test
     public void pdfA4_GOTO3DVIEW_InCatalog_Test() {
         Exception pdfa4Exception = Assertions.assertThrows(PdfAConformanceException.class, () -> {
-            generatePdfADocument(PdfAConformanceLevel.PDF_A_4, null, doc -> {
+            generatePdfADocument(PdfAConformance.PDF_A_4, null, doc -> {
                 PdfDictionary action = new PdfDictionary();
                 action.put(PdfName.S, PdfName.GoTo3DView);
                 doc.getCatalog().setAdditionalAction(PdfName.O, new PdfAction(action));
@@ -377,7 +376,7 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
     @Test
     public void pdfA4F_GOTO3DView_InCatalog_Test() {
         Exception pdfa4Exception = Assertions.assertThrows(PdfAConformanceException.class, () -> {
-            generatePdfADocument(PdfAConformanceLevel.PDF_A_4F, null, doc -> {
+            generatePdfADocument(PdfAConformance.PDF_A_4F, null, doc -> {
                 PdfDictionary action = new PdfDictionary();
                 action.put(PdfName.S, PdfName.GoTo3DView);
                 doc.getCatalog().setAdditionalAction(PdfName.O, new PdfAction(action));
@@ -390,7 +389,7 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
     @Test
     public void pdfA4E_GOTO3DView_InCatalog_Test() {
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
-                () -> generatePdfADocument(PdfAConformanceLevel.PDF_A_4E, null, doc -> {
+                () -> generatePdfADocument(PdfAConformance.PDF_A_4E, null, doc -> {
                     PdfDictionary action = new PdfDictionary();
                     action.put(PdfName.S, PdfName.GoTo3DView);
                     doc.getCatalog().setAdditionalAction(PdfName.O, new PdfAction(action));
@@ -403,7 +402,7 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
     public void pdfA4AAEntriesAllowedInAADocumentCatalog_Test() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "pdfA4AAEntriesAllowedInAADocumentCatalog.pdf";
         String cmpPdf = CMP_FOLDER + "cmp_pdfA4AAEntriesAllowedInAADocumentCatalog.pdf";
-        generatePdfADocument(PdfAConformanceLevel.PDF_A_4, outPdf, doc -> {
+        generatePdfADocument(PdfAConformance.PDF_A_4, outPdf, doc -> {
             PdfDictionary allowedAA = new PdfDictionary();
             allowedAA.put(PdfName.E, new PdfName("HELLO"));
             allowedAA.put(PdfName.X, new PdfName("HELLO"));
@@ -420,7 +419,7 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
     public void pdfA4AAEntriesAllowedInAAPage_Test() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "pdfA4AAEntriesAllowedInAAPage.pdf";
         String cmpPdf = CMP_FOLDER + "cmp_pdfA4AAEntriesAllowedInAAPage.pdf";
-        generatePdfADocument(PdfAConformanceLevel.PDF_A_4, outPdf, doc -> {
+        generatePdfADocument(PdfAConformance.PDF_A_4, outPdf, doc -> {
             PdfDictionary allowedAA = new PdfDictionary();
             allowedAA.put(PdfName.E, new PdfName("HELLO"));
             allowedAA.put(PdfName.X, new PdfName("HELLO"));
@@ -453,14 +452,14 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
         }
     }
 
-    private void generatePdfADocument(PdfAConformanceLevel conformanceLevel, String outPdf,
+    private void generatePdfADocument(PdfAConformance conformance, String outPdf,
             Consumer<PdfDocument> consumer) throws IOException {
         String filename = DESTINATION_FOLDER + UUID.randomUUID().toString() + ".pdf";
         if (outPdf != null) {
             filename = outPdf;
         }
         PdfWriter writer = new PdfWriter(filename, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        PdfADocument doc = new PdfADocument(writer, conformanceLevel,
+        PdfADocument doc = new PdfADocument(writer, conformance,
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
                         FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm")));
         doc.addNewPage();

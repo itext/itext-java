@@ -26,7 +26,7 @@ import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfTrueTypeFont;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfCatalog;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -101,7 +101,7 @@ public class PdfACheckerTest extends ExtendedITextTest {
     @Test()
     //TODO adapt after DEVSIX-5759 is fixed
     public void checkContentStreamPdfAText() throws IOException {
-        PdfA1Checker testChecker = new PdfA1Checker(PdfAConformanceLevel.PDF_A_1B);
+        PdfA1Checker testChecker = new PdfA1Checker(PdfAConformance.PDF_A_1B);
         PdfADocument pdfa = new PdfADocument(new PdfReader(new File(SOURCE_FOLDER + "InlineImagesPdfA.pdf")), new PdfWriter(new ByteArrayOutputStream()).setSmartMode(true));
         PdfStream firstContentStream = pdfa.getPage(1).getFirstContentStream();
         testChecker.setFullCheckMode(true);

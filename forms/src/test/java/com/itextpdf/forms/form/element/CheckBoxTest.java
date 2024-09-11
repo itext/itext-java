@@ -36,7 +36,7 @@ import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.io.util.EnumUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -66,8 +66,8 @@ import java.util.function.Consumer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class CheckBoxTest extends ExtendedITextTest {
@@ -137,7 +137,7 @@ public class CheckBoxTest extends ExtendedITextTest {
     @Test
     public void createCheckBoxFactoryPdfATest() {
         CheckBox checkBox = new CheckBox("test");
-        checkBox.setPdfConformanceLevel(PdfAConformanceLevel.PDF_A_1B);
+        checkBox.setPdfConformance(PdfConformance.PDF_A_1B);
         CheckBoxRenderer renderer = (CheckBoxRenderer) checkBox.getRenderer();
         ICheckBoxRenderingStrategy strategy = renderer.createCheckBoxRenderStrategy();
         Assertions.assertTrue(strategy instanceof PdfACheckBoxRenderingStrategy);
@@ -156,7 +156,7 @@ public class CheckBoxTest extends ExtendedITextTest {
     public void createCheckBoxFactoryHtmlWithPdfATest() {
         CheckBox checkBox = new CheckBox("test");
         checkBox.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
-        checkBox.setPdfConformanceLevel(PdfAConformanceLevel.PDF_A_1B);
+        checkBox.setPdfConformance(PdfConformance.PDF_A_1B);
         CheckBoxRenderer renderer = (CheckBoxRenderer) checkBox.getRenderer();
         ICheckBoxRenderingStrategy strategy = renderer.createCheckBoxRenderStrategy();
         Assertions.assertTrue(strategy instanceof HtmlCheckBoxRenderingStrategy);
@@ -248,20 +248,20 @@ public class CheckBoxTest extends ExtendedITextTest {
         String cmpPdf = SOURCE_FOLDER + "cmp_basicCheckBoxPdfA.pdf";
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             //should be invisble because there is no default border
-            CheckBox checkBoxUnset = new CheckBox("test").setPdfConformanceLevel(PdfAConformanceLevel.PDF_A_1B);
+            CheckBox checkBoxUnset = new CheckBox("test").setPdfConformance(PdfConformance.PDF_A_1B);
             document.add(checkBoxUnset);
 
-            CheckBox checkBoxset = new CheckBox("test").setPdfConformanceLevel(PdfAConformanceLevel.PDF_A_1B);
+            CheckBox checkBoxset = new CheckBox("test").setPdfConformance(PdfConformance.PDF_A_1B);
             checkBoxset.setChecked(true);
             document.add(checkBoxset);
 
-            CheckBox checkBoxUnsetInteractive = new CheckBox("test1").setPdfConformanceLevel(
-                    PdfAConformanceLevel.PDF_A_1B);
+            CheckBox checkBoxUnsetInteractive = new CheckBox("test1").setPdfConformance(
+                    PdfConformance.PDF_A_1B);
             checkBoxUnsetInteractive.setInteractive(true);
             document.add(checkBoxUnsetInteractive);
 
-            CheckBox checkBoxsetInteractive = new CheckBox("test2").setPdfConformanceLevel(
-                    PdfAConformanceLevel.PDF_A_1B);
+            CheckBox checkBoxsetInteractive = new CheckBox("test2").setPdfConformance(
+                    PdfConformance.PDF_A_1B);
             checkBoxsetInteractive.setInteractive(true);
             checkBoxsetInteractive.setChecked(true);
             document.add(checkBoxsetInteractive);
@@ -372,7 +372,7 @@ public class CheckBoxTest extends ExtendedITextTest {
                     checkBox.setCheckBoxType(enumConstant);
                 });
                 generateCheckBoxes(document, checkBox -> {
-                    checkBox.setPdfConformanceLevel(PdfAConformanceLevel.PDF_A_1B);
+                    checkBox.setPdfConformance(PdfConformance.PDF_A_1B);
                     checkBox.setCheckBoxType(enumConstant);
                 });
             }
@@ -390,7 +390,7 @@ public class CheckBoxTest extends ExtendedITextTest {
             for (CheckBoxType enumConstant : EnumUtil.getAllValuesOfEnum(CheckBoxType.class)) {
                 generateCheckBoxes(document, checkBox -> {
                     checkBox.setSize(20);
-                    checkBox.setPdfConformanceLevel(PdfAConformanceLevel.PDF_A_3B);
+                    checkBox.setPdfConformance(PdfConformance.PDF_A_3B);
                     checkBox.setCheckBoxType(enumConstant);
                 });
             }
@@ -556,7 +556,7 @@ public class CheckBoxTest extends ExtendedITextTest {
         document.add(new Paragraph("Pdfa rendering mode"));
         generateCheckBoxes(document, (checkBox) -> {
             checkBox.setProperty(Property.RENDERING_MODE, RenderingMode.DEFAULT_LAYOUT_MODE);
-            checkBox.setPdfConformanceLevel(PdfAConformanceLevel.PDF_A_1B);
+            checkBox.setPdfConformance(PdfConformance.PDF_A_1B);
             alterFunction.accept(checkBox);
         });
 

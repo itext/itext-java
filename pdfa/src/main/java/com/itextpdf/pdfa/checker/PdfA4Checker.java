@@ -25,7 +25,7 @@ package com.itextpdf.pdfa.checker;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.colors.IccProfile;
 import com.itextpdf.kernel.exceptions.PdfException;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfCatalog;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -148,12 +148,12 @@ public class PdfA4Checker extends PdfA3Checker {
     // Map pdfObject using CMYK - list of CMYK icc profile streams
     private Map<PdfObject, List<PdfStream>> iccBasedCmykObjects = new HashMap<>();
     /**
-     * Creates a PdfA4Checker with the required conformance level
+     * Creates a PdfA4Checker with the required conformance
      *
-     * @param conformanceLevel the required conformance level
+     * @param aConformance the required conformance
      */
-    public PdfA4Checker(PdfAConformanceLevel conformanceLevel) {
-        super(conformanceLevel);
+    public PdfA4Checker(PdfAConformance aConformance) {
+        super(aConformance);
     }
 
     /**
@@ -245,7 +245,7 @@ public class PdfA4Checker extends PdfA3Checker {
             }
         }
 
-        if ("F".equals(conformanceLevel.getConformance())) {
+        if ("F".equals(conformance.getLevel())) {
             if (!catalog.nameTreeContainsKey(PdfName.EmbeddedFiles)) {
                 throw new PdfAConformanceException(
                         PdfaExceptionMessageConstant.NAME_DICTIONARY_SHALL_CONTAIN_EMBEDDED_FILES_KEY);
@@ -464,9 +464,9 @@ public class PdfA4Checker extends PdfA3Checker {
      */
     @Override
     protected Set<PdfName> getForbiddenAnnotations() {
-        if ("E".equals(conformanceLevel.getConformance())) {
+        if ("E".equals(conformance.getLevel())) {
             return forbiddenAnnotations4E;
-        } else if ("F".equals(conformanceLevel.getConformance())) {
+        } else if ("F".equals(conformance.getLevel())) {
             return forbiddenAnnotations4F;
         }
         return forbiddenAnnotations4;
@@ -561,7 +561,7 @@ public class PdfA4Checker extends PdfA3Checker {
      */
     @Override
     protected Set<PdfName> getForbiddenActions() {
-        if ("E".equals(conformanceLevel.getConformance())) {
+        if ("E".equals(conformance.getLevel())) {
             return forbiddenActionsE;
         }
         return super.getForbiddenActions();
@@ -679,15 +679,15 @@ public class PdfA4Checker extends PdfA3Checker {
     private void checkVersionIdentification(XMPMeta meta) {
         try {
             XMPProperty prop = meta.getProperty(XMPConst.NS_PDFA_ID, XMPConst.PART);
-            if (prop == null || !getConformanceLevel().getPart().equals(prop.getValue())) {
+            if (prop == null || !getAConformance().getPart().equals(prop.getValue())) {
                 throw new PdfAConformanceException(MessageFormatUtil.format(
                         PdfaExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_PART,
-                        getConformanceLevel().getPart()));
+                        getAConformance().getPart()));
             }
         } catch (XMPException e) {
             throw new PdfAConformanceException(MessageFormatUtil.format(
                     PdfaExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_PART,
-                    getConformanceLevel().getPart()));
+                    getAConformance().getPart()));
         }
 
         try {

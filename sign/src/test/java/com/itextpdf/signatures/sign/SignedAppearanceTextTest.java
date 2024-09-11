@@ -39,7 +39,7 @@ import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -253,7 +253,7 @@ public class SignedAppearanceTextTest extends ExtendedITextTest {
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "",
                 "http://www.color.org", "sRGB IEC61966-2.1", FileUtil.getInputStreamForFile(icmProfile));
         PdfDocument document = new PdfADocument(new PdfWriter(filename, writerProperties),
-                PdfAConformanceLevel.PDF_A_4,
+                PdfAConformance.PDF_A_4,
                 outputIntent);
         Document doc = new Document(document);
         PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "FreeSans.ttf", EmbeddingStrategy.FORCE_EMBEDDED);

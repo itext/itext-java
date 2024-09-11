@@ -29,24 +29,25 @@ import com.itextpdf.kernel.xmp.impl.XMPMetaImpl;
 import com.itextpdf.test.ExtendedITextTest;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
-public class PdfAConformanceLevelTest extends ExtendedITextTest {
+public class PdfAConformanceTest extends ExtendedITextTest {
     @Test
     public void getConformanceTest() {
-        Assertions.assertEquals(PdfAConformanceLevel.PDF_A_4, PdfAConformanceLevel.getConformanceLevel("4", null));
-        Assertions.assertEquals(PdfAConformanceLevel.PDF_A_4E, PdfAConformanceLevel.getConformanceLevel("4", "E"));
-        Assertions.assertEquals(PdfAConformanceLevel.PDF_A_4F, PdfAConformanceLevel.getConformanceLevel("4", "F"));
+        Assertions.assertEquals(PdfAConformance.PDF_A_4, PdfConformance.getAConformance("4", null));
+        Assertions.assertEquals(PdfAConformance.PDF_A_4E, PdfConformance.getAConformance("4", "E"));
+        Assertions.assertEquals(PdfAConformance.PDF_A_4F, PdfConformance.getAConformance("4", "F"));
     }
 
     @Test
     public void getXmpConformanceNullTest() throws XMPException {
         XMPMeta meta = new XMPMetaImpl();
         meta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, "4");
-        PdfAConformanceLevel level = PdfAConformanceLevel.getConformanceLevel(meta);
-        Assertions.assertEquals(PdfAConformanceLevel.PDF_A_4, level);
+        PdfConformance level = PdfConformance.getConformance(meta);
+        Assertions.assertEquals(PdfAConformance.PDF_A_4, level.getAConformance());
+        Assertions.assertEquals(PdfConformance.PDF_A_4, level);
     }
 
     @Test
@@ -54,7 +55,8 @@ public class PdfAConformanceLevelTest extends ExtendedITextTest {
         XMPMeta meta = new XMPMetaImpl();
         meta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, "2");
         meta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.CONFORMANCE, "B");
-        PdfAConformanceLevel level = PdfAConformanceLevel.getConformanceLevel(meta);
-        Assertions.assertEquals(PdfAConformanceLevel.PDF_A_2B, level);
+        PdfConformance level = PdfConformance.getConformance(meta);
+        Assertions.assertEquals(PdfAConformance.PDF_A_2B, level.getAConformance());
+        Assertions.assertEquals(PdfConformance.PDF_A_2B, level);
     }
 }

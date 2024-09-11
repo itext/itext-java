@@ -1235,12 +1235,12 @@ public class PdfDocument implements IEventDispatcher, Closeable {
 
 
     /**
-     * Get the {@link IConformanceLevel}
+     * Get the {@link PdfConformance}
      *
-     * @return the {@link IConformanceLevel}  will be null if the document does not have a conformance level specified
+     * @return the document conformance
      */
-    public IConformanceLevel getConformanceLevel() {
-        return null;
+    public PdfConformance getConformance() {
+        return reader == null ? PdfConformance.PDF_NONE_CONFORMANCE : reader.getPdfConformance();
     }
 
     /**
@@ -2298,8 +2298,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         XMPMeta xmpMeta = getXmpMetadata(true);
         XmpMetaInfoConverter.appendDocumentInfoToMetadata(getDocumentInfo(), xmpMeta);
 
-        if (isTagged() && writer.properties.addUAXmpMetadata && !isXmpMetaHasProperty(xmpMeta, XMPConst.NS_PDFUA_ID,
-                XMPConst.PART)) {
+        if (isTagged() && writer.properties.addUAXmpMetadata && xmpMeta.getProperty(XMPConst.NS_PDFUA_ID, XMPConst.PART) == null) {
             xmpMeta.setPropertyInteger(XMPConst.NS_PDFUA_ID, XMPConst.PART, 1,
                     new PropertyOptions(PropertyOptions.SEPARATE_NODE));
         }
@@ -2647,10 +2646,6 @@ public class PdfDocument implements IEventDispatcher, Closeable {
             logger.warn(KernelLogMessageConstant.FULL_COMPRESSION_APPEND_MODE_XREF_STREAM_INCONSISTENCY);
         }
         properties.isFullCompression = readerHasXrefStream;
-    }
-
-    private static boolean isXmpMetaHasProperty(XMPMeta xmpMeta, String schemaNS, String propName) throws XMPException {
-        return xmpMeta.getProperty(schemaNS, propName) != null;
     }
 
     private static class DestinationMutationInfo {

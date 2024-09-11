@@ -238,7 +238,7 @@ public class PdfDocumentUnitTest extends ExtendedITextTest {
     @Test
     public void getPdfAConformanceLevelInitializationTest() throws IOException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + "pdfWithMetadata.pdf"));
-        Assertions.assertNotNull(pdfDocument.reader.getPdfAConformanceLevel());
+        Assertions.assertTrue(pdfDocument.reader.getPdfConformance().isPdfAOrUa());
         pdfDocument.close();
     }
 

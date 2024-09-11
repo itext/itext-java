@@ -54,7 +54,7 @@ public class RadioFormFieldBuilder extends TerminalFormFieldBuilder<RadioFormFie
     public PdfButtonFormField createRadioGroup() {
         PdfButtonFormField radioGroup = PdfFormCreator.createButtonFormField(getDocument());
         radioGroup.disableFieldRegeneration();
-        radioGroup.pdfConformanceLevel = getConformanceLevel();
+        radioGroup.pdfConformance = getConformance();
         radioGroup.setFieldName(getFormFieldName());
         radioGroup.setFieldFlags(PdfButtonFormField.FF_RADIO);
         radioGroup.enableFieldRegeneration();
@@ -84,12 +84,12 @@ public class RadioFormFieldBuilder extends TerminalFormFieldBuilder<RadioFormFie
         final PdfName appearancePdfName = new PdfName(appearanceName);
         final PdfWidgetAnnotation annotation = new PdfWidgetAnnotation(widgetRectangle);
         annotation.setAppearanceState(appearancePdfName);
-        if (getConformanceLevel() != null) {
+        if (getConformance() != null && getConformance().isPdfAOrUa()) {
             annotation.setFlag(PdfAnnotation.PRINT);
         }
         PdfFormAnnotation radio = PdfFormCreator.createFormAnnotation(annotation, getDocument());
         setPageToField(radio);
-        radio.pdfConformanceLevel = getConformanceLevel();
+        radio.pdfConformance = getConformance();
         return radio;
     }
 

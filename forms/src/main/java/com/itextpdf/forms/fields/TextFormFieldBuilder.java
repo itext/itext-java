@@ -58,7 +58,7 @@ public class TextFormFieldBuilder extends TerminalFormFieldBuilder<TextFormField
             field = PdfFormCreator.createTextFormField(getDocument());
         } else {
             PdfWidgetAnnotation annotation = new PdfWidgetAnnotation(getWidgetRectangle());
-            if (null != getConformanceLevel()) {
+            if (null != getConformance() && getConformance().isPdfAOrUa()) {
                 annotation.setFlag(PdfAnnotation.PRINT);
             }
             field = PdfFormCreator.createTextFormField(annotation, getDocument());
@@ -68,7 +68,7 @@ public class TextFormFieldBuilder extends TerminalFormFieldBuilder<TextFormField
             field.setFont(getFont());
         }
         field.disableFieldRegeneration();
-        field.pdfConformanceLevel = getConformanceLevel();
+        field.pdfConformance = getConformance();
         field.setMultiline(multiline);
         field.setFieldName(getFormFieldName());
         field.setValue(TEXT_FORM_FIELD_DEFAULT_VALUE);

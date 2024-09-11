@@ -24,7 +24,7 @@ package com.itextpdf.pdfa;
 
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -34,7 +34,6 @@ import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import org.junit.jupiter.api.Assertions;
@@ -59,7 +58,7 @@ public class PdfA2CanvasCheckTest extends ExtendedITextTest {
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
 
-        try (PdfADocument pdfDocument = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, outputIntent)) {
+        try (PdfADocument pdfDocument = new PdfADocument(writer, PdfAConformance.PDF_A_2B, outputIntent)) {
             pdfDocument.addNewPage();
             PdfCanvas canvas = new PdfCanvas(pdfDocument.getLastPage());
 
@@ -83,7 +82,7 @@ public class PdfA2CanvasCheckTest extends ExtendedITextTest {
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
 
-        try (PdfADocument pdfDocument = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, outputIntent)) {
+        try (PdfADocument pdfDocument = new PdfADocument(writer, PdfAConformance.PDF_A_2B, outputIntent)) {
 
             pdfDocument.addNewPage();
             PdfCanvas canvas = new PdfCanvas(pdfDocument.getLastPage());
@@ -109,7 +108,7 @@ public class PdfA2CanvasCheckTest extends ExtendedITextTest {
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
 
-        try (PdfADocument pdfDocument = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, outputIntent)) {
+        try (PdfADocument pdfDocument = new PdfADocument(writer, PdfAConformance.PDF_A_2B, outputIntent)) {
             pdfDocument.addNewPage();
             PdfCanvas canvas = new PdfCanvas(pdfDocument.getLastPage());
 

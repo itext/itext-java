@@ -27,7 +27,7 @@ import com.itextpdf.kernel.events.Event;
 import com.itextpdf.kernel.events.IEventHandler;
 import com.itextpdf.kernel.events.PdfDocumentEvent;
 import com.itextpdf.kernel.geom.PageSize;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfString;
@@ -45,7 +45,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 
 @Tag("IntegrationTest")
@@ -64,7 +63,7 @@ public class PdfAPageTest extends ExtendedITextTest {
         // Expected log message that page flushing was not performed
         String outPdf = destinationFolder + "checkThatFlushingPreventedWhenAddingElementToDocument.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
-        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1A,
+        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformance.PDF_A_1A,
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
                         FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm")));
         pdfDoc.setTagged();
@@ -98,7 +97,7 @@ public class PdfAPageTest extends ExtendedITextTest {
         // Expected log message that page flushing was not performed
         String outPdf = destinationFolder + "checkThatFlushingPreventedWithFalseFlushResourcesContentStreams.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
-        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1A,
+        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformance.PDF_A_1A,
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
                         FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm")));
         pdfDoc.setTagged();
@@ -126,7 +125,7 @@ public class PdfAPageTest extends ExtendedITextTest {
     public void checkFlushingWhenPdfDocumentIsClosing() throws IOException {
         String outPdf = destinationFolder + "checkFlushingWhenPdfDocumentIsClosing.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
-        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1A,
+        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformance.PDF_A_1A,
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
                         FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm")));
         pdfDoc.setTagged();
@@ -154,7 +153,7 @@ public class PdfAPageTest extends ExtendedITextTest {
     public void checkFlushingWithTrueFlushResourcesContentStreams() throws IOException {
         String outPdf = destinationFolder + "checkFlushingWithTrueFlushResourcesContentStreams.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
-        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1A,
+        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformance.PDF_A_1A,
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
                         FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm")));
         pdfDoc.setTagged();
@@ -182,7 +181,7 @@ public class PdfAPageTest extends ExtendedITextTest {
     public void checkFlushingOfCheckedPage() throws IOException {
         String outPdf = destinationFolder + "checkFlushingOfCheckedPage.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
-        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1A,
+        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformance.PDF_A_1A,
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
                         FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm")));
         pdfDoc.setTagged();

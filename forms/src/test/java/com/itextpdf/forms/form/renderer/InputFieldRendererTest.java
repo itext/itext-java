@@ -25,7 +25,8 @@ package com.itextpdf.forms.form.renderer;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.InputField;
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
+import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.element.Paragraph;
@@ -37,8 +38,8 @@ import com.itextpdf.layout.renderer.ParagraphRenderer;
 import com.itextpdf.test.ExtendedITextTest;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class InputFieldRendererTest extends ExtendedITextTest {
@@ -100,22 +101,23 @@ public class InputFieldRendererTest extends ExtendedITextTest {
     @Test
     public void pdfAConformanceLevelTest() {
         InputFieldRenderer inputFieldRenderer = new InputFieldRenderer(new InputField(""));
-        Assertions.assertNull(inputFieldRenderer.getConformanceLevel(null));
+        Assertions.assertNull(inputFieldRenderer.getConformance(null));
     }
 
     @Test
     public void pdfAConformanceLevelWithDocumentTest() {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         InputFieldRenderer inputFieldRenderer = new InputFieldRenderer(new InputField(""));
-        Assertions.assertNull(inputFieldRenderer.getConformanceLevel(pdfDocument));
+        Assertions.assertNotNull(inputFieldRenderer.getConformance(pdfDocument));
+        Assertions.assertFalse(inputFieldRenderer.getConformance(pdfDocument).isPdfAOrUa());
     }
 
     @Test
     public void pdfAConformanceLevelWithConformanceLevelTest() {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         InputFieldRenderer inputFieldRenderer = new InputFieldRenderer(new InputField(""));
-        inputFieldRenderer.setProperty(FormProperty.FORM_CONFORMANCE_LEVEL, PdfAConformanceLevel.PDF_A_1B);
-        Assertions.assertEquals(PdfAConformanceLevel.PDF_A_1B, inputFieldRenderer.getConformanceLevel(pdfDocument));
+        inputFieldRenderer.setProperty(FormProperty.FORM_CONFORMANCE_LEVEL, PdfConformance.PDF_A_1B);
+        Assertions.assertEquals(PdfAConformance.PDF_A_1B, inputFieldRenderer.getConformance(pdfDocument).getAConformance());
     }
 
     @Test

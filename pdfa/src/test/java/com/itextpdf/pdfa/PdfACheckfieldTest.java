@@ -30,20 +30,20 @@ import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.properties.CheckBoxType;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
+import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PdfACheckfieldTest extends ExtendedITextTest {
@@ -66,13 +66,13 @@ public class PdfACheckfieldTest extends ExtendedITextTest {
 
         PdfWriter writer = new PdfWriter(outPath);
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1A, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_1A, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.setTagged();
         doc.getCatalog().setLang(new PdfString("en-US"));
         doc.addNewPage();
         PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
         PdfFormField chk = new CheckBoxFormFieldBuilder(doc, "name").setWidgetRectangle(new Rectangle(100, 500, 50, 50))
-                .setCheckType(CheckBoxType.CHECK).setConformanceLevel(PdfAConformanceLevel.PDF_A_1A)
+                .setCheckType(CheckBoxType.CHECK).setConformance(PdfConformance.PDF_A_1A)
                 .createCheckBox().setValue("Off");
         chk.getFirstFormAnnotation().setBorderColor(ColorConstants.BLACK);
         chk.getFirstFormAnnotation().setBorderWidth(1);
@@ -91,13 +91,13 @@ public class PdfACheckfieldTest extends ExtendedITextTest {
 
         PdfWriter writer = new PdfWriter(outPath);
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1A, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_1A, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.setTagged();
         doc.getCatalog().setLang(new PdfString("en-US"));
         doc.addNewPage();
         PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
         PdfFormField chk = new CheckBoxFormFieldBuilder(doc, "name").setWidgetRectangle(new Rectangle(100, 500, 50, 50))
-                .setCheckType(CheckBoxType.CHECK).setConformanceLevel(PdfAConformanceLevel.PDF_A_1A)
+                .setCheckType(CheckBoxType.CHECK).setConformance(PdfConformance.PDF_A_1A)
                 .createCheckBox().setValue("On");
         chk.getFirstFormAnnotation().setBorderColor(ColorConstants.BLACK);
         chk.getFirstFormAnnotation().setBorderWidth(1);
@@ -116,11 +116,11 @@ public class PdfACheckfieldTest extends ExtendedITextTest {
 
         PdfWriter writer = new PdfWriter(outPath);
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
         PdfFormField chk = new CheckBoxFormFieldBuilder(doc, "name").setWidgetRectangle(new Rectangle(100, 500, 50, 50))
-                .setCheckType(CheckBoxType.CHECK).setConformanceLevel(PdfAConformanceLevel.PDF_A_1B)
+                .setCheckType(CheckBoxType.CHECK).setConformance(PdfConformance.PDF_A_1B)
                 .createCheckBox().setValue("Off");
         chk.getFirstFormAnnotation().setBorderColor(ColorConstants.BLACK);
         chk.getFirstFormAnnotation().setBorderWidth(1);
@@ -139,11 +139,11 @@ public class PdfACheckfieldTest extends ExtendedITextTest {
 
         PdfWriter writer = new PdfWriter(outPath);
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
         PdfFormField chk = new CheckBoxFormFieldBuilder(doc, "name").setWidgetRectangle(new Rectangle(100, 500, 50, 50))
-                .setCheckType(CheckBoxType.CHECK).setConformanceLevel(PdfAConformanceLevel.PDF_A_1B)
+                .setCheckType(CheckBoxType.CHECK).setConformance(PdfConformance.PDF_A_1B)
                 .createCheckBox().setValue("On");
         chk.getFirstFormAnnotation().setBorderColor(ColorConstants.BLACK);
         chk.getFirstFormAnnotation().setBorderWidth(1);
@@ -162,13 +162,13 @@ public class PdfACheckfieldTest extends ExtendedITextTest {
 
         PdfWriter writer = new PdfWriter(outPath);
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2A, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_2A, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.setTagged();
         doc.getCatalog().setLang(new PdfString("en-US"));
         doc.addNewPage();
         PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
         PdfFormField chk = new CheckBoxFormFieldBuilder(doc, "name").setWidgetRectangle(new Rectangle(100, 500, 50, 50))
-                .setCheckType(CheckBoxType.CHECK).setConformanceLevel(PdfAConformanceLevel.PDF_A_2A)
+                .setCheckType(CheckBoxType.CHECK).setConformance(PdfConformance.PDF_A_2A)
                 .createCheckBox().setValue("Off");
         chk.getFirstFormAnnotation().setBorderColor(ColorConstants.BLACK);
         chk.getFirstFormAnnotation().setBorderWidth(1);
@@ -187,13 +187,13 @@ public class PdfACheckfieldTest extends ExtendedITextTest {
 
         PdfWriter writer = new PdfWriter(outPath);
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2A, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_2A, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.setTagged();
         doc.getCatalog().setLang(new PdfString("en-US"));
         doc.addNewPage();
         PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
         PdfFormField chk = new CheckBoxFormFieldBuilder(doc, "name").setWidgetRectangle(new Rectangle(100, 500, 50, 50))
-                .setCheckType(CheckBoxType.CHECK).setConformanceLevel(PdfAConformanceLevel.PDF_A_2A)
+                .setCheckType(CheckBoxType.CHECK).setConformance(PdfConformance.PDF_A_2A)
                 .createCheckBox().setValue("On");
         chk.getFirstFormAnnotation().setBorderColor(ColorConstants.BLACK);
         chk.getFirstFormAnnotation().setBorderWidth(1);
@@ -212,11 +212,11 @@ public class PdfACheckfieldTest extends ExtendedITextTest {
 
         PdfWriter writer = new PdfWriter(outPath);
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
         PdfFormField chk = new CheckBoxFormFieldBuilder(doc, "name").setWidgetRectangle(new Rectangle(100, 500, 50, 50))
-                .setCheckType(CheckBoxType.CHECK).setConformanceLevel(PdfAConformanceLevel.PDF_A_2B)
+                .setCheckType(CheckBoxType.CHECK).setConformance(PdfConformance.PDF_A_2B)
                 .createCheckBox().setValue("Off");
         chk.getFirstFormAnnotation().setBorderColor(ColorConstants.BLACK);
         chk.getFirstFormAnnotation().setBorderWidth(1);
@@ -235,11 +235,11 @@ public class PdfACheckfieldTest extends ExtendedITextTest {
 
         PdfWriter writer = new PdfWriter(outPath);
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
         PdfFormField chk = new CheckBoxFormFieldBuilder(doc, "name").setWidgetRectangle(new Rectangle(100, 500, 50, 50))
-                .setCheckType(CheckBoxType.CHECK).setConformanceLevel(PdfAConformanceLevel.PDF_A_2B)
+                .setCheckType(CheckBoxType.CHECK).setConformance(PdfConformance.PDF_A_2B)
                 .createCheckBox().setValue("On");
         chk.getFirstFormAnnotation().setBorderColor(ColorConstants.BLACK);
         chk.getFirstFormAnnotation().setBorderWidth(1);
@@ -258,11 +258,11 @@ public class PdfACheckfieldTest extends ExtendedITextTest {
 
         PdfWriter writer = new PdfWriter(outPath);
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2U, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_2U, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
         PdfFormField chk = new CheckBoxFormFieldBuilder(doc, "name").setWidgetRectangle(new Rectangle(100, 500, 50, 50))
-                .setCheckType(CheckBoxType.CHECK).setConformanceLevel(PdfAConformanceLevel.PDF_A_2U)
+                .setCheckType(CheckBoxType.CHECK).setConformance(PdfConformance.PDF_A_2U)
                 .createCheckBox().setValue("Off");
         chk.getFirstFormAnnotation().setBorderColor(ColorConstants.BLACK);
         chk.getFirstFormAnnotation().setBorderWidth(1);
@@ -281,11 +281,11 @@ public class PdfACheckfieldTest extends ExtendedITextTest {
 
         PdfWriter writer = new PdfWriter(outPath);
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2U, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_2U, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
         PdfFormField chk = new CheckBoxFormFieldBuilder(doc, "name").setWidgetRectangle(new Rectangle(100, 500, 50, 50))
-                .setCheckType(CheckBoxType.CHECK).setConformanceLevel(PdfAConformanceLevel.PDF_A_2U)
+                .setCheckType(CheckBoxType.CHECK).setConformance(PdfConformance.PDF_A_2U)
                 .createCheckBox().setValue("On");
         chk.getFirstFormAnnotation().setBorderColor(ColorConstants.BLACK);
         chk.getFirstFormAnnotation().setBorderWidth(1);
@@ -304,13 +304,13 @@ public class PdfACheckfieldTest extends ExtendedITextTest {
 
         PdfWriter writer = new PdfWriter(outPath);
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_3A, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_3A, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.setTagged();
         doc.getCatalog().setLang(new PdfString("en-US"));
         doc.addNewPage();
         PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
         PdfFormField chk = new CheckBoxFormFieldBuilder(doc, "name").setWidgetRectangle(new Rectangle(100, 500, 50, 50))
-                .setCheckType(CheckBoxType.CHECK).setConformanceLevel(PdfAConformanceLevel.PDF_A_3A)
+                .setCheckType(CheckBoxType.CHECK).setConformance(PdfConformance.PDF_A_3A)
                 .createCheckBox().setValue("Off");
         chk.getFirstFormAnnotation().setBorderColor(ColorConstants.BLACK);
         chk.getFirstFormAnnotation().setBorderWidth(1);
@@ -329,13 +329,13 @@ public class PdfACheckfieldTest extends ExtendedITextTest {
 
         PdfWriter writer = new PdfWriter(outPath);
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_3A, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_3A, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.setTagged();
         doc.getCatalog().setLang(new PdfString("en-US"));
         doc.addNewPage();
         PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
         PdfFormField chk = new CheckBoxFormFieldBuilder(doc, "name").setWidgetRectangle(new Rectangle(100, 500, 50, 50))
-                .setCheckType(CheckBoxType.CHECK).setConformanceLevel(PdfAConformanceLevel.PDF_A_3A)
+                .setCheckType(CheckBoxType.CHECK).setConformance(PdfConformance.PDF_A_3A)
                 .createCheckBox().setValue("On");
         chk.getFirstFormAnnotation().setBorderColor(ColorConstants.BLACK);
         chk.getFirstFormAnnotation().setBorderWidth(1);
@@ -354,11 +354,11 @@ public class PdfACheckfieldTest extends ExtendedITextTest {
 
         PdfWriter writer = new PdfWriter(outPath);
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_3B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_3B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
         PdfFormField chk = new CheckBoxFormFieldBuilder(doc, "name").setWidgetRectangle(new Rectangle(100, 500, 50, 50))
-                .setCheckType(CheckBoxType.CHECK).setConformanceLevel(PdfAConformanceLevel.PDF_A_3B)
+                .setCheckType(CheckBoxType.CHECK).setConformance(PdfConformance.PDF_A_3B)
                 .createCheckBox().setValue("Off");
         chk.getFirstFormAnnotation().setBorderColor(ColorConstants.BLACK);
         chk.getFirstFormAnnotation().setBorderWidth(1);
@@ -377,11 +377,11 @@ public class PdfACheckfieldTest extends ExtendedITextTest {
 
         PdfWriter writer = new PdfWriter(outPath);
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_3B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_3B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
         PdfFormField chk = new CheckBoxFormFieldBuilder(doc, "name").setWidgetRectangle(new Rectangle(100, 500, 50, 50))
-                .setCheckType(CheckBoxType.CHECK).setConformanceLevel(PdfAConformanceLevel.PDF_A_3B)
+                .setCheckType(CheckBoxType.CHECK).setConformance(PdfConformance.PDF_A_3B)
                 .createCheckBox().setValue("On");
         chk.getFirstFormAnnotation().setBorderColor(ColorConstants.BLACK);
         chk.getFirstFormAnnotation().setBorderWidth(1);
@@ -400,11 +400,11 @@ public class PdfACheckfieldTest extends ExtendedITextTest {
 
         PdfWriter writer = new PdfWriter(outPath);
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_3U, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_3U, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
         PdfFormField chk = new CheckBoxFormFieldBuilder(doc, "name").setWidgetRectangle(new Rectangle(100, 500, 50, 50))
-                .setCheckType(CheckBoxType.CHECK).setConformanceLevel(PdfAConformanceLevel.PDF_A_3U)
+                .setCheckType(CheckBoxType.CHECK).setConformance(PdfConformance.PDF_A_3U)
                 .createCheckBox().setValue("Off");
         chk.getFirstFormAnnotation().setBorderColor(ColorConstants.BLACK);
         chk.getFirstFormAnnotation().setBorderWidth(1);
@@ -423,11 +423,11 @@ public class PdfACheckfieldTest extends ExtendedITextTest {
 
         PdfWriter writer = new PdfWriter(outPath);
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_3U, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_3U, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
         PdfFormField chk = new CheckBoxFormFieldBuilder(doc, "name").setWidgetRectangle(new Rectangle(100, 500, 50, 50))
-                .setCheckType(CheckBoxType.CHECK).setConformanceLevel(PdfAConformanceLevel.PDF_A_3U)
+                .setCheckType(CheckBoxType.CHECK).setConformance(PdfConformance.PDF_A_3U)
                 .createCheckBox().setValue("On");
         chk.getFirstFormAnnotation().setBorderColor(ColorConstants.BLACK);
         chk.getFirstFormAnnotation().setBorderWidth(1);

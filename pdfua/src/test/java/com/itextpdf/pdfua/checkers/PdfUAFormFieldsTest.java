@@ -23,23 +23,37 @@
 package com.itextpdf.pdfua.checkers;
 
 import com.itextpdf.forms.PdfAcroForm;
-import com.itextpdf.forms.fields.*;
-import com.itextpdf.forms.form.element.SignatureFieldAppearance;
+import com.itextpdf.forms.fields.ChoiceFormFieldBuilder;
+import com.itextpdf.forms.fields.PdfButtonFormField;
+import com.itextpdf.forms.fields.PdfChoiceFormField;
+import com.itextpdf.forms.fields.PdfFormAnnotation;
+import com.itextpdf.forms.fields.PdfSignatureFormField;
+import com.itextpdf.forms.fields.PdfTextFormField;
+import com.itextpdf.forms.fields.PushButtonFormFieldBuilder;
+import com.itextpdf.forms.fields.RadioFormFieldBuilder;
+import com.itextpdf.forms.fields.SignatureFormFieldBuilder;
+import com.itextpdf.forms.fields.TextFormFieldBuilder;
 import com.itextpdf.forms.fields.properties.CheckBoxType;
 import com.itextpdf.forms.fields.properties.SignedAppearanceText;
 import com.itextpdf.forms.form.element.Button;
-import com.itextpdf.forms.form.element.ComboBoxField;
 import com.itextpdf.forms.form.element.CheckBox;
-import com.itextpdf.forms.form.element.SelectFieldItem;
-import com.itextpdf.forms.form.element.TextArea;
+import com.itextpdf.forms.form.element.ComboBoxField;
+import com.itextpdf.forms.form.element.InputField;
 import com.itextpdf.forms.form.element.ListBoxField;
 import com.itextpdf.forms.form.element.Radio;
-import com.itextpdf.forms.form.element.InputField;
+import com.itextpdf.forms.form.element.SelectFieldItem;
+import com.itextpdf.forms.form.element.SignatureFieldAppearance;
+import com.itextpdf.forms.form.element.TextArea;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.*;
+import com.itextpdf.kernel.pdf.PdfConformance;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfStream;
+import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
@@ -51,14 +65,12 @@ import com.itextpdf.pdfua.UaValidationTestFramework;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PdfUAFormFieldsTest extends ExtendedITextTest {
@@ -95,7 +107,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             @Override
             public IBlockElement generate() {
                 CheckBox cb = new CheckBox("name");
-                cb.setPdfConformanceLevel(PdfUAConformanceLevel.PDFUA_1);
+                cb.setPdfConformance(PdfConformance.PDF_UA_1);
                 cb.setBorder(new SolidBorder(ColorConstants.MAGENTA, 2));
                 cb.setBackgroundColor(ColorConstants.YELLOW);
                 return cb;
@@ -110,7 +122,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             @Override
             public IBlockElement generate() {
                 CheckBox cb = new CheckBox("name");
-                cb.setPdfConformanceLevel(PdfUAConformanceLevel.PDFUA_1);
+                cb.setPdfConformance(PdfConformance.PDF_UA_1);
                 cb.setChecked(true);
                 return cb;
             }
@@ -124,7 +136,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             @Override
             public IBlockElement generate() {
                 CheckBox cb = new CheckBox("name");
-                cb.setPdfConformanceLevel(PdfUAConformanceLevel.PDFUA_1);
+                cb.setPdfConformance(PdfConformance.PDF_UA_1);
                 cb.getAccessibilityProperties().setAlternateDescription("Yello");
                 cb.setChecked(true);
                 return cb;
@@ -139,7 +151,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             @Override
             public IBlockElement generate() {
                 CheckBox cb = new CheckBox("name");
-                cb.setPdfConformanceLevel(PdfUAConformanceLevel.PDFUA_1);
+                cb.setPdfConformance(PdfConformance.PDF_UA_1);
                 cb.setChecked(true);
                 cb.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
                 cb.setBackgroundColor(ColorConstants.GREEN);
@@ -157,7 +169,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             @Override
             public IBlockElement generate() {
                 CheckBox checkBox = (CheckBox) new CheckBox("name").setInteractive(true);
-                checkBox.setPdfConformanceLevel(PdfUAConformanceLevel.PDFUA_1);
+                checkBox.setPdfConformance(PdfConformance.PDF_UA_1);
                 checkBox.getAccessibilityProperties().setAlternateDescription("Alternative description");
                 return checkBox;
             }
@@ -171,7 +183,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             @Override
             public IBlockElement generate() {
                 CheckBox checkBox = (CheckBox) new CheckBox("name").setInteractive(true);
-                checkBox.setPdfConformanceLevel(PdfUAConformanceLevel.PDFUA_1);
+                checkBox.setPdfConformance(PdfConformance.PDF_UA_1);
                 checkBox.getAccessibilityProperties().setAlternateDescription("Alternative description");
                 checkBox.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
                 checkBox.setBackgroundColor(ColorConstants.GREEN);
@@ -189,7 +201,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             @Override
             public IBlockElement generate() {
                 CheckBox checkBox = (CheckBox) new CheckBox("name").setInteractive(true);
-                checkBox.setPdfConformanceLevel(PdfUAConformanceLevel.PDFUA_1);
+                checkBox.setPdfConformance(PdfConformance.PDF_UA_1);
                 checkBox.getAccessibilityProperties().setAlternateDescription("Alternative description");
                 checkBox.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
                 checkBox.setBackgroundColor(ColorConstants.GREEN);
@@ -1326,7 +1338,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             @Override
             public IBlockElement generate() {
                 CheckBox cb = new CheckBox("name");
-                cb.setPdfConformanceLevel(PdfUAConformanceLevel.PDFUA_1);
+                cb.setPdfConformance(PdfConformance.PDF_UA_1);
                 cb.setInteractive(true);
                 return cb;
             }
@@ -1445,7 +1457,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             @Override
             public IBlockElement generate() {
                 CheckBox cb = new CheckBox("name");
-                cb.setPdfConformanceLevel(PdfUAConformanceLevel.PDFUA_1);
+                cb.setPdfConformance(PdfConformance.PDF_UA_1);
                 cb.getAccessibilityProperties().setRole(StandardRoles.FIGURE);
                 cb.getAccessibilityProperties().setAlternateDescription("Hello");
                 return cb;
@@ -1455,7 +1467,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             @Override
             public IBlockElement generate() {
                 CheckBox cb = new CheckBox("name");
-                cb.setPdfConformanceLevel(PdfUAConformanceLevel.PDFUA_1);
+                cb.setPdfConformance(PdfConformance.PDF_UA_1);
                 cb.getAccessibilityProperties().setRole(StandardRoles.ARTIFACT);
                 return cb;
             }
@@ -1680,7 +1692,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             PdfTextFormField field = new TextFormFieldBuilder(pdfDoc,"hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
+                    .setConformance(PdfConformance.PDF_UA_1)
                     .createText();
             field.setValue("Some value");
             field.setAlternativeName("Some tu entry value");
@@ -1696,7 +1708,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             PdfTextFormField field = new TextFormFieldBuilder(pdfDoc,"hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
+                    .setConformance(PdfConformance.PDF_UA_1)
                     .createText();
             field.setValue("Some value");
             form.addField(field);
@@ -1711,7 +1723,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             PdfChoiceFormField field = new ChoiceFormFieldBuilder(pdfDoc,"hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
+                    .setConformance(PdfConformance.PDF_UA_1)
                     .createComboBox();
             field.setAlternativeName("Some tu entry value");
             form.addField(field);
@@ -1726,7 +1738,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             PdfChoiceFormField field = new ChoiceFormFieldBuilder(pdfDoc,"hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
+                    .setConformance(PdfConformance.PDF_UA_1)
                     .createComboBox();
             form.addField(field);
         });
@@ -1740,7 +1752,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             PdfButtonFormField field = new PushButtonFormFieldBuilder(pdfDoc,"hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
+                    .setConformance(PdfConformance.PDF_UA_1)
                     .createPushButton();
             field.setAlternativeName("Some tu entry value");
             form.addField(field);
@@ -1755,7 +1767,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             PdfButtonFormField field = new PushButtonFormFieldBuilder(pdfDoc,"hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
+                    .setConformance(PdfConformance.PDF_UA_1)
                     .createPushButton();
             form.addField(field);
         });
@@ -1769,7 +1781,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             PdfButtonFormField field = new PushButtonFormFieldBuilder(pdfDoc,"hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
+                    .setConformance(PdfConformance.PDF_UA_1)
                     .createPushButton();
             List<PdfFormAnnotation> annList = field.getChildFormAnnotations();
             annList.get(0).setVisibility(PdfFormAnnotation.HIDDEN);
@@ -1827,7 +1839,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             PdfSignatureFormField field = new SignatureFormFieldBuilder(pdfDoc,"hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
+                    .setConformance(PdfConformance.PDF_UA_1)
                     .createSignature();
             field.setValue("some value");
             field.setAlternativeName("Some tu entry value");
@@ -1843,7 +1855,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             PdfSignatureFormField field = new SignatureFormFieldBuilder(pdfDoc,"hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
+                    .setConformance(PdfConformance.PDF_UA_1)
                     .createSignature();
             field.setValue("some value");
             form.addField(field);
@@ -1858,7 +1870,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             PdfTextFormField field = new TextFormFieldBuilder(pdfDoc,"hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
+                    .setConformance(PdfConformance.PDF_UA_1)
                     .createText();
             field.setValue("Some value");
             pdfDoc.getTagStructureContext().getAutoTaggingPointer().addTag(

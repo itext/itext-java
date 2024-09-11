@@ -36,7 +36,7 @@ import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -78,8 +78,8 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @Tag("IntegrationTest")
@@ -102,7 +102,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
         InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
 
-        try (PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, outputIntent)) {
+        try (PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4, outputIntent)) {
             doc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(doc.getLastPage());
             PdfDictionary colourantHalftone = new PdfDictionary();
@@ -128,7 +128,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
         InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
 
-        try (PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, outputIntent)) {
+        try (PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4, outputIntent)) {
             doc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(doc.getLastPage());
 
@@ -150,7 +150,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
         InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
 
-        try (PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, outputIntent)) {
+        try (PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4, outputIntent)) {
             doc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(doc.getLastPage());
             PdfDictionary colourantHalftone = new PdfDictionary();
@@ -179,7 +179,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
         InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
 
-        try (PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, outputIntent)) {
+        try (PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4, outputIntent)) {
             doc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(doc.getLastPage());
             PdfDictionary colourantHalftone = new PdfDictionary();
@@ -206,7 +206,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
         InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
 
-        try (PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, outputIntent)) {
+        try (PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4, outputIntent)) {
             doc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(doc.getLastPage());
             PdfDictionary halftone = new PdfDictionary();
@@ -227,7 +227,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
         InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
 
-        try (PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, outputIntent)) {
+        try (PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4, outputIntent)) {
             doc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(doc.getLastPage());
             PdfDictionary halftone = new PdfDictionary();
@@ -268,7 +268,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
         InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
 
-        try (PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, outputIntent)) {
+        try (PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4, outputIntent)) {
 
             float[] whitePoint = {0.9505f, 1f, 1.089f};
             float[] gamma = {2.2f, 2.2f, 2.2f};
@@ -293,7 +293,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
         String cmpPdf = CMP_FOLDER + "cmp_pdfA4_colorCheckTest2.pdf";
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
 
-        try (PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, null)) {
+        try (PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4, null)) {
 
             float[] whitePoint = {0.9505f, 1f, 1.089f};
             float[] gamma = {2.2f, 2.2f, 2.2f};
@@ -325,7 +325,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
                 new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, outputIntent);
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4, outputIntent);
 
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
 
@@ -350,7 +350,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, outputIntent);
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4, outputIntent);
 
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
 
@@ -380,7 +380,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, outputIntent);
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4, outputIntent);
 
         PdfPage page = doc.addNewPage();
         page.addOutputIntent(new PdfOutputIntent("Custom", "", "http://www.color.org", "cmyk",
@@ -413,7 +413,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
                 new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, outputIntent);
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4, outputIntent);
 
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
 
@@ -444,7 +444,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, outputIntent);
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4, outputIntent);
 
         PdfPage page = doc.addNewPage();
         page.addOutputIntent(new PdfOutputIntent("Custom", "", "http://www.color.org", "cmyk",
@@ -480,7 +480,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, outputIntent);
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4, outputIntent);
 
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
 
@@ -511,7 +511,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, outputIntent);
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4, outputIntent);
 
         PdfPage page = doc.addNewPage();
         page.addOutputIntent(new PdfOutputIntent("Custom", "", "http://www.color.org", "cmyk",
@@ -543,7 +543,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
         String cmpPdf = CMP_FOLDER + "cmp_pdfA4_colorCheckTest10.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, null);
+        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformance.PDF_A_4, null);
 
         PdfPage page = pdfDoc.addNewPage();
         // Add page blending colorspace
@@ -568,7 +568,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
         String cmpPdf = CMP_FOLDER + "cmp_pdfA4_colorCheckTest11.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, null);
+        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformance.PDF_A_4, null);
 
         PdfPage page = pdfDoc.addNewPage();
         // Add page blending colorspace
@@ -606,7 +606,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
         String cmpPdf = CMP_FOLDER + "cmp_pdfA4_colorCheckTest12.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, null);
+        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformance.PDF_A_4, null);
 
         PdfPage page = pdfDoc.addNewPage();
         // Add page blending colorspace
@@ -631,7 +631,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
 
         PdfDocument pdfDocument = new PdfADocument(
                 new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)),
-                PdfAConformanceLevel.PDF_A_4, null);
+                PdfAConformance.PDF_A_4, null);
         PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
                 "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED);
 
@@ -657,7 +657,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
 
         PdfDocument pdfDocument = new PdfADocument(
                 new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)),
-                PdfAConformanceLevel.PDF_A_4, null);
+                PdfAConformance.PDF_A_4, null);
         PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
                 "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED);
 
@@ -686,7 +686,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
 
         PdfDocument pdfDocument = new PdfADocument(
                 new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)),
-                PdfAConformanceLevel.PDF_A_4, null);
+                PdfAConformance.PDF_A_4, null);
         PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
                 "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED);
 
@@ -711,7 +711,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
 
         PdfDocument pdfDocument = new PdfADocument(
                 new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)),
-                PdfAConformanceLevel.PDF_A_4, null);
+                PdfAConformance.PDF_A_4, null);
         PdfPage page = pdfDocument.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState();
@@ -740,7 +740,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
-        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, outputIntent);
+        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformance.PDF_A_4, outputIntent);
 
         PdfPage page = pdfDoc.addNewPage();
         page.addOutputIntent(new PdfOutputIntent("Custom", "", "http://www.color.org", "cmyk",
@@ -766,7 +766,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
-        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, outputIntent);
+        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformance.PDF_A_4, outputIntent);
 
         PdfPage page = pdfDoc.addNewPage();
         // Add page blending colorspace
@@ -797,7 +797,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
-        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, outputIntent);
+        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformance.PDF_A_4, outputIntent);
 
         PdfPage page = pdfDoc.addNewPage();
         // Add page blending colorspace
@@ -837,7 +837,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
-        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, outputIntent);
+        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformance.PDF_A_4, outputIntent);
 
         PdfPage page = pdfDoc.addNewPage();
 
@@ -883,7 +883,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
-        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, outputIntent);
+        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformance.PDF_A_4, outputIntent);
 
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
@@ -907,7 +907,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
-        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, outputIntent);
+        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformance.PDF_A_4, outputIntent);
 
         PdfPage page = pdfDoc.addNewPage();
         page.addOutputIntent(new PdfOutputIntent("Custom", "", "http://www.color.org", "cmyk",
@@ -935,7 +935,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
-        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, outputIntent);
+        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformance.PDF_A_4, outputIntent);
 
         PdfPage page = pdfDoc.addNewPage();
         page.addOutputIntent(new PdfOutputIntent("Custom", "", "http://www.color.org", "cmyk",
@@ -962,7 +962,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfPage page = doc.addNewPage();
 
         PdfColorSpace alternateSpace= new PdfDeviceCs.Rgb();
@@ -991,7 +991,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfPage page = doc.addNewPage();
 
         PdfColorSpace alternateSpace= new PdfDeviceCs.Rgb();
@@ -1019,7 +1019,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfPage page = doc.addNewPage();
 
         PdfColorSpace alternateSpace= new PdfDeviceCs.Rgb();
@@ -1055,7 +1055,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
 
         PdfDocument pdfDoc = new PdfADocument(
                 new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)),
-                PdfAConformanceLevel.PDF_A_4, null);
+                PdfAConformance.PDF_A_4, null);
 
         PdfPage page = pdfDoc.addNewPage();
         // This should suppress transparency issue
@@ -1081,7 +1081,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
 
         PdfDocument pdfDoc = new PdfADocument(
                 new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)),
-                PdfAConformanceLevel.PDF_A_4, null);
+                PdfAConformance.PDF_A_4, null);
 
         PdfPage page = pdfDoc.addNewPage();
         // This should suppress transparency and device RGB
@@ -1106,7 +1106,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
 
         PdfDocument pdfDoc = new PdfADocument(
                 new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)),
-                PdfAConformanceLevel.PDF_A_4, null);
+                PdfAConformance.PDF_A_4, null);
 
         PdfPage page = pdfDoc.addNewPage();
         // This should suppress transparency and device RGB
@@ -1133,7 +1133,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
 
         PdfDocument pdfDoc = new PdfADocument(
                 new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)),
-                PdfAConformanceLevel.PDF_A_4, null);
+                PdfAConformance.PDF_A_4, null);
 
         PdfPage page = pdfDoc.addNewPage();
         // This should suppress transparency and device RGB
@@ -1158,7 +1158,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
         String cmpPdf = CMP_FOLDER + "cmp_pdfA4AnnotationsNoOutputIntent.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, null);
+        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformance.PDF_A_4, null);
         PdfPage page = pdfDoc.addNewPage();
 
         PdfAnnotation annot = new PdfCircleAnnotation(new Rectangle(100, 100, 100, 100));
@@ -1184,7 +1184,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
         String cmpPdf = CMP_FOLDER + "cmp_pdfA4AnnotationsWrongPageOutputIntent.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, null);
+        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformance.PDF_A_4, null);
         PdfPage page = pdfDoc.addNewPage();
         page.addOutputIntent(new PdfOutputIntent("Custom", "", "http://www.color.org", "cmyk",
                 FileUtil.getInputStreamForFile(SOURCE_FOLDER + "USWebUncoated.icc")));
@@ -1214,7 +1214,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
         String cmpPdf = CMP_FOLDER + "cmp_pdfA4AnnotationsCorrectPageOutputIntent.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, null);
+        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformance.PDF_A_4, null);
         PdfPage page = pdfDoc.addNewPage();
         page.addOutputIntent(new PdfOutputIntent("Custom", "",
                 "http://www.color.org", "sRGB IEC61966-2.1",
@@ -1245,7 +1245,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
         String isoFilePath = SOURCE_FOLDER + "ISOcoated_v2_300_bas.icc";
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, null);
+        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformance.PDF_A_4, null);
 
         byte[] bytes = Files.readAllBytes(Paths.get(isoFilePath));
         byte[] manipulatedBytes = new String(bytes, StandardCharsets.US_ASCII).replace("prtr", "not_def").getBytes(StandardCharsets.US_ASCII);
@@ -1267,7 +1267,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
         String isoFilePath = SOURCE_FOLDER + "ISOcoated_v2_300_bas.icc";
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, null);
+        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformance.PDF_A_4, null);
         PdfPage page = pdfDoc.addNewPage();
 
         byte[] bytes = Files.readAllBytes(Paths.get(isoFilePath));
@@ -1291,7 +1291,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
         String isoFilePath = SOURCE_FOLDER + "ISOcoated_v2_300_bas.icc";
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, null);
+        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformance.PDF_A_4, null);
 
         byte[] bytes = Files.readAllBytes(Paths.get(isoFilePath));
         byte[] manipulatedBytes = new String(bytes, StandardCharsets.US_ASCII).replace("CMYK", "not_def").getBytes(StandardCharsets.US_ASCII);
@@ -1314,7 +1314,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
         String isoFilePath = SOURCE_FOLDER + "ISOcoated_v2_300_bas.icc";
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, null);
+        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformance.PDF_A_4, null);
         PdfPage page = pdfDoc.addNewPage();
 
         byte[] bytes = Files.readAllBytes(Paths.get(isoFilePath));
@@ -1336,9 +1336,9 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
     @Test
     public void destOutputIntentRefNotAllowedTest() throws IOException {
         String outPdf = DESTINATION_FOLDER + "PdfWithOutputIntentProfileRef.pdf";
-        PdfAConformanceLevel conformanceLevel = PdfAConformanceLevel.PDF_A_4;
+        PdfAConformance conformance = PdfAConformance.PDF_A_4;
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        PdfADocument pdfADocument = new PdfADocument(writer, conformanceLevel,
+        PdfADocument pdfADocument = new PdfADocument(writer, conformance,
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
                         FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm")));
         PdfPage page = pdfADocument.addNewPage();
@@ -1363,7 +1363,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
                 is);
 
-        try (PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, outputIntent)) {
+        try (PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4, outputIntent)) {
             doc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(doc.getLastPage());
             PdfDictionary colourantHalftone = new PdfDictionary();

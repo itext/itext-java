@@ -26,8 +26,8 @@ import com.itextpdf.forms.fields.ChoiceFormFieldBuilder;
 import com.itextpdf.forms.fields.PdfChoiceFormField;
 import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfFormField;
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -48,8 +48,8 @@ import com.itextpdf.test.annotations.LogMessages;
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PdfChoiceFieldTest extends ExtendedITextTest {
@@ -77,7 +77,7 @@ public class PdfChoiceFieldTest extends ExtendedITextTest {
         // 规
         PdfFormField field = new ChoiceFormFieldBuilder(pdfDoc, "combo1")
                 .setWidgetRectangle(new Rectangle(36, 666, 40, 80)).setOptions(new String[]{"\u89c4", "\u89c9"})
-                .setConformanceLevel(null).createComboBox()
+                .setConformance(null).createComboBox()
                 .setValue("\u89c4");
         field.setFont(font);
         field.getFirstFormAnnotation().setBorderColor(ColorConstants.BLACK);
@@ -86,7 +86,7 @@ public class PdfChoiceFieldTest extends ExtendedITextTest {
         // 觉
         field = new ChoiceFormFieldBuilder(pdfDoc, "combo2")
                 .setWidgetRectangle(new Rectangle(136, 666, 40, 80)).setOptions(new String[]{"\u89c4", "\u89c9"})
-                .setConformanceLevel(null).createComboBox();
+                .setConformance(null).createComboBox();
         field.setValue("\u89c4").setFont(font);
         field.setValue("\u89c9");
         field.getFirstFormAnnotation().setBorderColor(ColorConstants.BLACK);
@@ -95,7 +95,7 @@ public class PdfChoiceFieldTest extends ExtendedITextTest {
         // 规
         field = new ChoiceFormFieldBuilder(pdfDoc, "list1")
                 .setWidgetRectangle(new Rectangle(236, 666, 50, 80)).setOptions(new String[]{"\u89c4", "\u89c9"})
-                .setConformanceLevel(null).createList()
+                .setConformance(null).createList()
                 .setValue("\u89c4");
         field.setFont(font);
         field.getFirstFormAnnotation().setBorderColor(ColorConstants.BLACK);
@@ -104,7 +104,7 @@ public class PdfChoiceFieldTest extends ExtendedITextTest {
         // 觉
         field = new ChoiceFormFieldBuilder(pdfDoc, "list2")
                 .setWidgetRectangle(new Rectangle(336, 666, 50, 80)).setOptions(new String[]{"\u89c4", "\u89c9"})
-                .setConformanceLevel(null).createList();
+                .setConformance(null).createList();
         field.setValue("\u89c4").setFont(font);
         field.setValue("\u89c9");
         field.getFirstFormAnnotation().setBorderColor(ColorConstants.BLACK);
@@ -181,7 +181,7 @@ public class PdfChoiceFieldTest extends ExtendedITextTest {
         PdfAcroForm form = PdfFormCreator.getAcroForm(document, true);
         PdfChoiceFormField choice = (PdfChoiceFormField) new ChoiceFormFieldBuilder(document, "choice")
                 .setWidgetRectangle(new Rectangle(336, 666, 50, 80)).setOptions(new String[]{"one", "two", "three", "four"})
-                .setConformanceLevel(null).createList()
+                .setConformance(null).createList()
                 .setValue("two").setFont(null);
         choice.getFirstFormAnnotation().setBorderColor(ColorConstants.BLACK);
         choice.setMultiSelect(true);

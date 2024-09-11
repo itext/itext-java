@@ -24,7 +24,7 @@ package com.itextpdf.pdfa;
 
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -70,7 +70,7 @@ public class PdfAXmpTest extends ExtendedITextTest {
 
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
-        PdfADocument doc = new PdfADocument(new PdfWriter(outFile), PdfAConformanceLevel.PDF_A_1B, outputIntent);
+        PdfADocument doc = new PdfADocument(new PdfWriter(outFile), PdfAConformance.PDF_A_1B, outputIntent);
         doc.addNewPage();
 
         doc.getDocumentInfo().setKeywords("key1, key2 , key3;key4,key5");
@@ -90,7 +90,7 @@ public class PdfAXmpTest extends ExtendedITextTest {
 
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
-        PdfADocument doc = new PdfADocument(new PdfWriter(outFile), PdfAConformanceLevel.PDF_A_2B, outputIntent);
+        PdfADocument doc = new PdfADocument(new PdfWriter(outFile), PdfAConformance.PDF_A_2B, outputIntent);
         doc.addNewPage();
 
         doc.getDocumentInfo().setKeywords("key1, key2 , key3;key4,key5");
@@ -107,18 +107,18 @@ public class PdfAXmpTest extends ExtendedITextTest {
     public void saveAndReadDocumentWithCanonicalXmpMetadata() throws IOException, XMPException {
         String outFile = destinationFolder + "saveAndReadDocumentWithCanonicalXmpMetadata.pdf";
         String cmpFile = cmpFolder + "cmp_saveAndReadDocumentWithCanonicalXmpMetadata.pdf";
-        PdfAConformanceLevel conformanceLevel = PdfAConformanceLevel.PDF_A_2B;
+        PdfAConformance conformance = PdfAConformance.PDF_A_2B;
         PdfOutputIntent outputIntent;
 
         try (InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm")) {
             outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
         }
 
-        try (PdfADocument doc = new PdfADocument(new PdfWriter(outFile), conformanceLevel, outputIntent)) {
+        try (PdfADocument doc = new PdfADocument(new PdfWriter(outFile), conformance, outputIntent)) {
             doc.addNewPage();
             XMPMeta xmp = XMPMetaFactory.create();
-            xmp.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, conformanceLevel.getPart(), new PropertyOptions().setSchemaNode(true));
-            xmp.setProperty(XMPConst.NS_PDFA_ID, XMPConst.CONFORMANCE, conformanceLevel.getConformance(), new PropertyOptions().setSchemaNode(true));
+            xmp.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, conformance.getPart(), new PropertyOptions().setSchemaNode(true));
+            xmp.setProperty(XMPConst.NS_PDFA_ID, XMPConst.CONFORMANCE, conformance.getLevel(), new PropertyOptions().setSchemaNode(true));
             SerializeOptions options = new SerializeOptions().setUseCanonicalFormat(true).setUseCompactFormat(false);
             doc.setXmpMetadata(xmp, options);
             doc.setTagged();
@@ -175,7 +175,7 @@ public class PdfAXmpTest extends ExtendedITextTest {
                         is
                 );
             }
-            PdfDocument pdfDoc = new PdfADocument(w, PdfAConformanceLevel.PDF_A_2A, outputIntent).setTagged();
+            PdfDocument pdfDoc = new PdfADocument(w, PdfAConformance.PDF_A_2A, outputIntent).setTagged();
             pdfDoc.getDocumentInfo().setTitle("Test document");
             pdfDoc.getCatalog().setViewerPreferences(new PdfViewerPreferences().setDisplayDocTitle(true));
             pdfDoc.getCatalog().setLang(new PdfString("en"));

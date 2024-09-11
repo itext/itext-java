@@ -25,9 +25,9 @@ package com.itextpdf.pdfa;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.pdf.DocumentProperties;
-import com.itextpdf.kernel.pdf.IConformanceLevel;
 import com.itextpdf.kernel.pdf.IPdfPageFactory;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
+import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
@@ -37,8 +37,8 @@ import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
-import com.itextpdf.kernel.validation.ValidationContainer;
 import com.itextpdf.kernel.validation.IValidationContext;
+import com.itextpdf.kernel.validation.ValidationContainer;
 import com.itextpdf.kernel.xmp.XMPConst;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
@@ -63,50 +63,50 @@ import org.slf4j.LoggerFactory;
  *
  * Client code is still responsible for making sure the file is actually PDF/A
  * compliant: multiple steps must be undertaken (depending on the
- * {@link PdfAConformanceLevel}) to ensure that the PDF/A standard is followed.
+ * {@link PdfConformance}) to ensure that the PDF/A standard is followed.
  *
  * This class will throw exceptions, mostly {@link PdfAConformanceException},
  * and thus refuse to output a PDF/A file if at any point the document does not
- * adhere to the PDF/A guidelines specified by the {@link PdfAConformanceLevel}.
+ * adhere to the PDF/A guidelines specified by the {@link PdfConformance}.
  */
 public class PdfADocument extends PdfDocument {
 
-    private static IPdfPageFactory pdfAPageFactory = new PdfAPageFactory();
+    private static final IPdfPageFactory pdfAPageFactory = new PdfAPageFactory();
 
     protected PdfAChecker checker;
 
     private boolean alreadyLoggedThatObjectFlushingWasNotPerformed = false;
 
     private boolean alreadyLoggedThatPageFlushingWasNotPerformed = false;
-
-    private boolean isPdfADocument = true;
+    private PdfConformance conformance;
 
     /**
      * Constructs a new PdfADocument for writing purposes, i.e. from scratch. A
-     * PDF/A file has a conformance level, and must have an explicit output
+     * PDF/A file has a conformance, and must have an explicit output
      * intent.
      *
      * @param writer the {@link PdfWriter} object to write to
-     * @param conformanceLevel the generation and strictness level of the PDF/A that must be followed.
+     * @param aConformance the generation and strictness level of the PDF/A that must be followed.
      * @param outputIntent a {@link PdfOutputIntent}
      */
-    public PdfADocument(PdfWriter writer, PdfAConformanceLevel conformanceLevel, PdfOutputIntent outputIntent) {
-        this(writer, conformanceLevel, outputIntent, new DocumentProperties());
+    public PdfADocument(PdfWriter writer, PdfAConformance aConformance, PdfOutputIntent outputIntent) {
+        this(writer, aConformance, outputIntent, new DocumentProperties());
     }
 
     /**
      * Constructs a new PdfADocument for writing purposes, i.e. from scratch. A
-     * PDF/A file has a conformance level, and must have an explicit output
+     * PDF/A file has a conformance, and must have an explicit output
      * intent.
      *
      * @param writer the {@link PdfWriter} object to write to
-     * @param conformanceLevel the generation and strictness level of the PDF/A that must be followed.
+     * @param aConformance the generation and strictness level of the PDF/A that must be followed.
      * @param outputIntent a {@link PdfOutputIntent}
      * @param properties a {@link com.itextpdf.kernel.pdf.DocumentProperties}
      */
-    public PdfADocument(PdfWriter writer, PdfAConformanceLevel conformanceLevel, PdfOutputIntent outputIntent, DocumentProperties properties) {
+    public PdfADocument(PdfWriter writer, PdfAConformance aConformance, PdfOutputIntent outputIntent, DocumentProperties properties) {
         super(writer, properties);
-        setChecker(conformanceLevel);
+        this.conformance = new PdfConformance(aConformance);
+        setChecker(aConformance);
         addOutputIntent(outputIntent);
     }
 
@@ -118,11 +118,12 @@ public class PdfADocument extends PdfDocument {
      */
     @Override
     public PdfFont getDefaultFont() {
-        if (isPdfADocument) {
+        if (getConformance().isPdfA()) {
             return null;
         }
         return super.getDefaultFont();
     }
+
 
     /**
      * Opens a PDF/A document in the stamping mode.
@@ -147,31 +148,15 @@ public class PdfADocument extends PdfDocument {
 
     PdfADocument(PdfReader reader, PdfWriter writer, StampingProperties properties, boolean tolerant) {
         super(reader, writer, properties);
-        PdfAConformanceLevel conformanceLevel = reader.getPdfAConformanceLevel();
-        if (conformanceLevel == null) {
-            if (tolerant) {
-                isPdfADocument = false;
-            } else {
-                throw new PdfAConformanceException(
-                        PdfaExceptionMessageConstant.
-                                DOCUMENT_TO_READ_FROM_SHALL_BE_A_PDFA_CONFORMANT_FILE_WITH_VALID_XMP_METADATA);
-            }
+        this.conformance = super.getConformance();
+        if (!getConformance().isPdfA() && !tolerant) {
+            throw new PdfAConformanceException(
+                    PdfaExceptionMessageConstant.
+                            DOCUMENT_TO_READ_FROM_SHALL_BE_A_PDFA_CONFORMANT_FILE_WITH_VALID_XMP_METADATA);
+
         }
 
-        setChecker(conformanceLevel);
-    }
-
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IConformanceLevel getConformanceLevel() {
-        if (isPdfADocument) {
-            return checker.getConformanceLevel();
-        } else {
-            return null;
-        }
+        setChecker(getConformance().getAConformance());
     }
 
     /**
@@ -185,6 +170,11 @@ public class PdfADocument extends PdfDocument {
         checker.setPdfAOutputIntentColorSpace(getCatalog().getPdfObject());
     }
 
+    @Override
+    public PdfConformance getConformance() {
+        return conformance;
+    }
+
     void logThatPdfAPageFlushingWasNotPerformed() {
         if (!alreadyLoggedThatPageFlushingWasNotPerformed) {
             alreadyLoggedThatPageFlushingWasNotPerformed = true;
@@ -195,7 +185,7 @@ public class PdfADocument extends PdfDocument {
 
     @Override
     protected void addCustomMetadataExtensions(XMPMeta xmpMeta) {
-        if (!isPdfADocument) {
+        if (!getConformance().isPdfA()) {
             super.addCustomMetadataExtensions(xmpMeta);
             return;
         }
@@ -215,20 +205,20 @@ public class PdfADocument extends PdfDocument {
 
     @Override
     protected void updateXmpMetadata() {
-        if (!isPdfADocument) {
+        if (!getConformance().isPdfA()) {
             super.updateXmpMetadata();
             return;
         }
 
         try {
             XMPMeta xmpMeta = updateDefaultXmpMetadata();
-            xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, checker.getConformanceLevel().getPart());
-            if (checker.getConformanceLevel().getConformance() != null) {
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.CONFORMANCE,
-                        checker.getConformanceLevel().getConformance());
+            final PdfAConformance aLevel = checker.getAConformance();
+            xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, aLevel.getPart());
+            if (aLevel.getLevel() != null) {
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.CONFORMANCE, aLevel.getLevel());
             }
-            if ("4".equals(checker.getConformanceLevel().getPart())) {
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.REV, PdfAConformanceLevel.PDF_A_4_REVISION);
+            if ("4".equals(aLevel.getPart())) {
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.REV, PdfConformance.PDF_A_4_REVISION);
             }
             addCustomMetadataExtensions(xmpMeta);
             setXmpMetadata(xmpMeta);
@@ -246,7 +236,7 @@ public class PdfADocument extends PdfDocument {
 
     @Override
     protected void flushObject(PdfObject pdfObject, boolean canBeInObjStm) throws IOException {
-        if (!isPdfADocument) {
+        if (!getConformance().isPdfA()) {
             super.flushObject(pdfObject, canBeInObjStm);
             return;
         }
@@ -264,19 +254,19 @@ public class PdfADocument extends PdfDocument {
 
     /**
      * Sets the checker that defines the requirements of the PDF/A standard
-     * depending on conformance level.
+     * depending on conformance.
      *
-     * @param conformanceLevel {@link PdfAConformanceLevel}
+     * @param aConformance {@link PdfAConformance}
      */
-    protected void setChecker(PdfAConformanceLevel conformanceLevel) {
-        if (!isPdfADocument) {
+    protected void setChecker(PdfAConformance aConformance) {
+        if (!getConformance().isPdfA()) {
             return;
         }
-        setChecker(getCorrectCheckerFromConformance(conformanceLevel));
+        setChecker(getCorrectCheckerFromConformance(aConformance));
     }
 
     protected void setChecker(PdfAChecker checker) {
-        if (!isPdfADocument) {
+        if (!getConformance().isPdfA()) {
             return;
         }
         this.checker = checker;
@@ -286,7 +276,7 @@ public class PdfADocument extends PdfDocument {
     }
 
     private void setCheckerIfChanged() {
-        if (!isPdfADocument) {
+        if (!getConformance().isPdfA()) {
             return;
         }
         if (!getDiContainer().isRegistered(ValidationContainer.class)) {
@@ -298,20 +288,20 @@ public class PdfADocument extends PdfDocument {
         }
     }
 
-    private static PdfAChecker getCorrectCheckerFromConformance(PdfAConformanceLevel conformanceLevel) {
+    private static PdfAChecker getCorrectCheckerFromConformance(PdfAConformance aConformance) {
         PdfAChecker checker;
-        switch (conformanceLevel.getPart()) {
+        switch (aConformance.getPart()) {
             case "1":
-                checker = new PdfA1Checker(conformanceLevel);
+                checker = new PdfA1Checker(aConformance);
                 break;
             case "2":
-                checker = new PdfA2Checker(conformanceLevel);
+                checker = new PdfA2Checker(aConformance);
                 break;
             case "3":
-                checker = new PdfA3Checker(conformanceLevel);
+                checker = new PdfA3Checker(aConformance);
                 break;
             case "4":
-                checker = new PdfA4Checker(conformanceLevel);
+                checker = new PdfA4Checker(aConformance);
                 break;
             default:
                 throw new IllegalArgumentException(PdfaExceptionMessageConstant
@@ -325,8 +315,8 @@ public class PdfADocument extends PdfDocument {
      */
     @Override
     protected void initTagStructureContext() {
-        if (isPdfADocument) {
-            tagStructureContext = new TagStructureContext(this, getPdfVersionForPdfA(checker.getConformanceLevel()));
+        if (getConformance().isPdfA()) {
+            tagStructureContext = new TagStructureContext(this, getPdfVersionForPdfA(checker.getAConformance()));
         } else {
             super.initTagStructureContext();
         }
@@ -334,7 +324,7 @@ public class PdfADocument extends PdfDocument {
 
     @Override
     protected IPdfPageFactory getPageFactory() {
-        if (isPdfADocument) {
+        if (getConformance().isPdfA()) {
             return pdfAPageFactory;
         } else {
             return super.getPageFactory();
@@ -348,7 +338,7 @@ public class PdfADocument extends PdfDocument {
      */
     @Override
     protected void flushInfoDictionary(boolean appendMode) {
-        if (!isPdfADocument || (!"4".equals(checker.getConformanceLevel().getPart()))) {
+        if (!getConformance().isPdfA() || (!"4".equals(getConformance().getAConformance().getPart()))) {
             super.flushInfoDictionary(appendMode);
         } else if (getCatalog().getPdfObject().get(PdfName.PieceInfo) != null) {
             // Leave only ModDate as required by 6.1.3 File trailer of pdf/a-4 spec
@@ -361,9 +351,9 @@ public class PdfADocument extends PdfDocument {
         return isClosing;
     }
 
-    private static PdfVersion getPdfVersionForPdfA(PdfAConformanceLevel conformanceLevel) {
+    private static PdfVersion getPdfVersionForPdfA(PdfAConformance aConformance) {
         PdfVersion version;
-        switch (conformanceLevel.getPart()) {
+        switch (aConformance.getPart()) {
             case "1":
                 version = PdfVersion.PDF_1_4;
                 break;

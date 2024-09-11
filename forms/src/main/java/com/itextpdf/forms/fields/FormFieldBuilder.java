@@ -22,8 +22,7 @@
  */
 package com.itextpdf.forms.fields;
 
-import com.itextpdf.kernel.pdf.IConformanceLevel;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.PdfDocument;
 
 /**
@@ -42,9 +41,9 @@ public abstract class FormFieldBuilder<T extends FormFieldBuilder<T>> {
      */
     private final String formFieldName;
     /**
-     * Conformance level of the form field.
+     * Conformance of the form field.
      */
-    private IConformanceLevel conformanceLevel = null;
+    private PdfConformance conformance = null;
 
     /**
      * Creates builder for {@link PdfFormField} creation.
@@ -56,7 +55,7 @@ public abstract class FormFieldBuilder<T extends FormFieldBuilder<T>> {
         this.document = document;
         this.formFieldName = formFieldName;
         if (document != null) {
-            this.conformanceLevel = document.getConformanceLevel();
+            this.conformance = document.getConformance();
         }
     }
 
@@ -79,23 +78,23 @@ public abstract class FormFieldBuilder<T extends FormFieldBuilder<T>> {
     }
 
     /**
-     * Gets conformance level for form field creation.
+     * Gets conformance for form field creation.
      *
-     * @return instance of {@link IConformanceLevel} to be used for form field creation
+     * @return instance of {@link PdfConformance} to be used for form field creation
      */
-    public IConformanceLevel getConformanceLevel() {
-        return conformanceLevel;
+    public PdfConformance getConformance() {
+        return conformance;
     }
 
     /**
-     * Sets conformance level for form field creation.
+     * Sets conformance for form field creation.
      *
-     * @param conformanceLevel Instance of {@link IConformanceLevel} to be used for form field creation.
+     * @param conformance Instance of {@link PdfConformance} to be used for form field creation.
      *
      * @return this builder
      */
-    public T setConformanceLevel(IConformanceLevel conformanceLevel) {
-        this.conformanceLevel = conformanceLevel;
+    public T setConformance(PdfConformance conformance) {
+        this.conformance = conformance;
         return getThis();
     }
 

@@ -25,7 +25,7 @@ package com.itextpdf.pdfa;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.kernel.pdf.PdfString;
@@ -62,7 +62,7 @@ public class PdfA2LayoutOcgTest extends ExtendedITextTest {
         InputStream colorStream = FileUtil.getInputStreamForFile(sourceFolder + "color/sRGB_CS_profile.icm");
         String outFileName = destinationFolder + fileName;
         String cmpFileName = sourceFolder + "cmp/PdfA2LayoutOcgTest/cmp_" + fileName;
-        PdfDocument pdfDoc = new PdfADocument(new PdfWriter(outFileName), PdfAConformanceLevel.PDF_A_2A,
+        PdfDocument pdfDoc = new PdfADocument(new PdfWriter(outFileName), PdfAConformance.PDF_A_2A,
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", colorStream));
         pdfDoc.setTagged();
         pdfDoc.getCatalog().setLang(new PdfString("en-US"));

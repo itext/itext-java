@@ -22,15 +22,17 @@
  */
 package com.itextpdf.forms.fields;
 
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
+import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfUAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.test.ExtendedITextTest;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Tag;
+
 import java.io.ByteArrayOutputStream;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class FormFieldBuilderTest extends ExtendedITextTest {
@@ -48,15 +50,15 @@ public class FormFieldBuilderTest extends ExtendedITextTest {
     @Test
     public void getSetConformanceLevelTest() {
         TestBuilder builder = new TestBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
-        builder.setConformanceLevel(PdfAConformanceLevel.PDF_A_1A);
-        Assertions.assertSame(PdfAConformanceLevel.PDF_A_1A, builder.getConformanceLevel());
+        builder.setConformance(PdfConformance.PDF_A_1A);
+        Assertions.assertSame(PdfAConformance.PDF_A_1A, builder.getConformance().getAConformance());
     }
 
     @Test
     public void getSetConformanceLevelPdfUATest() {
         TestBuilder builder = new TestBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
-        builder.setConformanceLevel(PdfUAConformanceLevel.PDFUA_1);
-        Assertions.assertSame(PdfUAConformanceLevel.PDFUA_1, builder.getConformanceLevel());
+        builder.setConformance(PdfConformance.PDF_UA_1);
+        Assertions.assertSame(PdfUAConformance.PDF_UA_1, builder.getConformance().getUAConformance());
     }
 
     private static class TestBuilder extends FormFieldBuilder<TestBuilder> {

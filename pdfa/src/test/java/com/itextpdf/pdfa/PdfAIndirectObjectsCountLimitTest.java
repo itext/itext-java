@@ -27,7 +27,7 @@ import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -40,7 +40,6 @@ import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -55,7 +54,7 @@ public class PdfAIndirectObjectsCountLimitTest extends ExtendedITextTest {
 
     @Test
     public void validAmountOfIndirectObjectsTest() throws IOException {
-        PdfA1Checker testChecker = new PdfA1Checker(PdfAConformanceLevel.PDF_A_1B) {
+        PdfA1Checker testChecker = new PdfA1Checker(PdfAConformance.PDF_A_1B) {
             @Override
             protected long getMaxNumberOfIndirectObjects() {
                 return 10;
@@ -66,7 +65,7 @@ public class PdfAIndirectObjectsCountLimitTest extends ExtendedITextTest {
                 InputStream icm = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
                 OutputStream fos = new ByteArrayOutputStream();
                 Document document = new Document(new PdfADocument(new PdfWriter(fos),
-                        PdfAConformanceLevel.PDF_A_1B,
+                        PdfAConformance.PDF_A_1B,
                         getOutputIntent(icm)));
         ) {
             PdfADocument pdfa = (PdfADocument) document.getPdfDocument();
@@ -80,7 +79,7 @@ public class PdfAIndirectObjectsCountLimitTest extends ExtendedITextTest {
 
     @Test
     public void invalidAmountOfIndirectObjectsTest() throws IOException {
-        PdfA1Checker testChecker = new PdfA1Checker(PdfAConformanceLevel.PDF_A_1B) {
+        PdfA1Checker testChecker = new PdfA1Checker(PdfAConformance.PDF_A_1B) {
             @Override
             protected long getMaxNumberOfIndirectObjects() {
                 return 9;
@@ -92,7 +91,7 @@ public class PdfAIndirectObjectsCountLimitTest extends ExtendedITextTest {
                 OutputStream fos = new ByteArrayOutputStream();
         ) {
             Document document = new Document(new PdfADocument(new PdfWriter(fos),
-                    PdfAConformanceLevel.PDF_A_1B,
+                    PdfAConformance.PDF_A_1B,
                     getOutputIntent(icm)));
             PdfADocument pdfa = (PdfADocument) document.getPdfDocument();
             pdfa.checker = testChecker;
@@ -108,7 +107,7 @@ public class PdfAIndirectObjectsCountLimitTest extends ExtendedITextTest {
 
     @Test
     public void invalidAmountOfIndirectObjectsAppendModeTest() throws IOException {
-        PdfA1Checker testChecker = new PdfA1Checker(PdfAConformanceLevel.PDF_A_1B) {
+        PdfA1Checker testChecker = new PdfA1Checker(PdfAConformance.PDF_A_1B) {
             @Override
             protected long getMaxNumberOfIndirectObjects() {
                 return 11;

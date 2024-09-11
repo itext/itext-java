@@ -36,7 +36,7 @@ import com.itextpdf.kernel.font.PdfTrueTypeFont;
 import com.itextpdf.kernel.font.PdfType3Font;
 import com.itextpdf.kernel.font.Type3Glyph;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -172,13 +172,13 @@ public class PdfA2Checker extends PdfA1Checker {
     private final Map<PdfName, PdfArray> separationColorSpaces = new HashMap<>();
 
     /**
-     * Creates a PdfA2Checker with the required conformance level
+     * Creates a PdfA2Checker with the required conformance
      *
-     * @param conformanceLevel the required conformance level, <code>a</code> or
+     * @param aConformance the required conformance, <code>a</code> or
      *                         <code>u</code> or <code>b</code>
      */
-    public PdfA2Checker(PdfAConformanceLevel conformanceLevel) {
-        super(conformanceLevel);
+    public PdfA2Checker(PdfAConformance aConformance) {
+        super(aConformance);
     }
 
     @Override
@@ -479,7 +479,7 @@ public class PdfA2Checker extends PdfA1Checker {
 
         checkAnnotationAgainstActions(annotDic);
 
-        if (checkStructure(conformanceLevel)) {
+        if (checkStructure(conformance)) {
             if (contentAnnotations.contains(subtype) && !annotDic.containsKey(PdfName.Contents)) {
                 logger.warn(MessageFormatUtil.format(
                         PdfAConformanceLogMessageConstant.ANNOTATION_OF_TYPE_0_SHOULD_HAVE_CONTENTS_KEY, subtype.getValue()));

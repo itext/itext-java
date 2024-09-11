@@ -25,8 +25,8 @@ package com.itextpdf.forms.fields;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -43,8 +43,8 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class RadioFormFieldBuilderTest extends ExtendedITextTest {
@@ -174,7 +174,7 @@ public class RadioFormFieldBuilderTest extends ExtendedITextTest {
         RadioFormFieldBuilder builder = new RadioFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
         PdfButtonFormField radioGroup = builder.createRadioGroup();
         PdfFormAnnotation radioAnnotation = builder
-                .setConformanceLevel(PdfAConformanceLevel.PDF_A_1A)
+                .setConformance(PdfConformance.PDF_A_1A)
                 .createRadioButton(DUMMY_APPEARANCE_NAME, DUMMY_RECTANGLE);
         compareRadioButtons(radioAnnotation, radioGroup, false);
     }
@@ -185,7 +185,7 @@ public class RadioFormFieldBuilderTest extends ExtendedITextTest {
         RadioFormFieldBuilder builder = new RadioFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
         PdfButtonFormField radioGroup = builder.createRadioGroup();
         PdfFormAnnotation radioAnnotation = builder
-                .setConformanceLevel(PdfAConformanceLevel.PDF_A_1A)
+                .setConformance(PdfConformance.PDF_A_1A)
                 .createRadioButton(DUMMY_APPEARANCE_NAME, DUMMY_RECTANGLE);
         radioGroup.addKid(radioAnnotation);
         compareRadioButtons(radioAnnotation, radioGroup, true);
@@ -272,9 +272,8 @@ public class RadioFormFieldBuilderTest extends ExtendedITextTest {
                         radioButtonFormField.getPdfObject().getAsDictionary(PdfName.AP));
             }
         }
-        if (radioButtonFormField.pdfConformanceLevel != null) {
-            putIfAbsent(expectedDictionary, PdfName.F,
-                    new PdfNumber(PdfAnnotation.PRINT));
+        if (radioButtonFormField.pdfConformance != null && radioButtonFormField.pdfConformance.isPdfAOrUa()) {
+            putIfAbsent(expectedDictionary, PdfName.F, new PdfNumber(PdfAnnotation.PRINT));
         }
         // for the AS key if it's added to the group we expect it to be off or the value if the radiogroup was selected
         // if its was not added we expect it to be the value

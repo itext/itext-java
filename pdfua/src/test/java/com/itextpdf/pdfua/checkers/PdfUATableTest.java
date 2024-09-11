@@ -37,12 +37,11 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.pdfua.UaValidationTestFramework;
 import com.itextpdf.pdfua.UaValidationTestFramework.Generator;
-import com.itextpdf.pdfua.exceptions.PdfUALogMessageConstants;
+import com.itextpdf.pdfua.logs.PdfUALogMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,8 +49,8 @@ import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PdfUATableTest extends ExtendedITextTest {

@@ -23,8 +23,8 @@
 package com.itextpdf.pdfua;
 
 import com.itextpdf.kernel.pdf.DocumentProperties;
-import com.itextpdf.kernel.pdf.IConformanceLevel;
 import com.itextpdf.kernel.pdf.IPdfPageFactory;
+import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfDocumentInfo;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -34,7 +34,7 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.validation.ValidationContainer;
 import com.itextpdf.pdfua.checkers.PdfUA1Checker;
-import com.itextpdf.pdfua.exceptions.PdfUALogMessageConstants;
+import com.itextpdf.pdfua.logs.PdfUALogMessageConstants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,8 +48,9 @@ public class PdfUADocument extends PdfDocument {
 
     private static final IPdfPageFactory pdfPageFactory = new PdfUAPageFactory();
     private static final Logger LOGGER = LoggerFactory.getLogger(PdfUADocument.class);
-    private PdfUAConfig config;
+
     private boolean warnedOnPageFlush = false;
+    private PdfConformance conformance;
 
     /**
      * Creates a PdfUADocument instance.
@@ -70,6 +71,7 @@ public class PdfUADocument extends PdfDocument {
      */
     public PdfUADocument(PdfWriter writer, DocumentProperties properties, PdfUAConfig config) {
         super(configureWriterProperties(writer), properties);
+        conformance = new PdfConformance(config.getConformance());
         setupUAConfiguration(config);
     }
 
@@ -81,8 +83,7 @@ public class PdfUADocument extends PdfDocument {
      * @param config The configuration for the PDF/UA document.
      */
     public PdfUADocument(PdfReader reader, PdfWriter writer, PdfUAConfig config) {
-        super(reader, configureWriterProperties(writer));
-        setupUAConfiguration(config);
+        this(reader, writer, new StampingProperties(), config);
     }
 
     /**
@@ -95,15 +96,11 @@ public class PdfUADocument extends PdfDocument {
      */
     public PdfUADocument(PdfReader reader, PdfWriter writer, StampingProperties properties, PdfUAConfig config) {
         super(reader, configureWriterProperties(writer), properties);
+        conformance = super.getConformance();
         setupUAConfiguration(config);
-    }
-
-    /**
-     * {inheritDoc}
-     */
-    @Override
-    public IConformanceLevel getConformanceLevel() {
-        return config.getConformanceLevel();
+        if (!getConformance().isPdfUA()) {
+            LOGGER.warn(PdfUALogMessageConstants.PDF_TO_PDF_UA_CONVERSION_IS_NOT_SUPPORTED);
+        }
     }
 
     /**
@@ -112,6 +109,11 @@ public class PdfUADocument extends PdfDocument {
     @Override
     protected IPdfPageFactory getPageFactory() {
         return pdfPageFactory;
+    }
+
+    @Override
+    public PdfConformance getConformance() {
+        return conformance;
     }
 
     /**
@@ -143,7 +145,6 @@ public class PdfUADocument extends PdfDocument {
 
     private void setupUAConfiguration(PdfUAConfig config) {
         //basic configuration
-        this.config = config;
         this.setTagged();
         this.getCatalog().setViewerPreferences(new PdfViewerPreferences().setDisplayDocTitle(true));
         this.getCatalog().setLang(new PdfString(config.getLanguage()));

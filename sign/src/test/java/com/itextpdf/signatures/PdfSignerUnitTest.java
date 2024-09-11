@@ -41,7 +41,7 @@ import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.EncryptionConstants;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -73,12 +73,11 @@ import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.Calendar;
-
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("BouncyCastleUnitTest")
 public class PdfSignerUnitTest extends ExtendedITextTest {
@@ -321,7 +320,8 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
         PdfSigner signer = new PdfSigner(
                 new PdfReader(new ByteArrayInputStream(createSimplePdfaDocument())),
                 new ByteArrayOutputStream(), new StampingProperties());
-        Assertions.assertEquals(PdfAConformanceLevel.PDF_A_1A, ((PdfAAgnosticPdfDocument) signer.getDocument()).getConformanceLevel());
+        Assertions.assertEquals(PdfAConformance.PDF_A_1A,
+                ((PdfAAgnosticPdfDocument) signer.getDocument()).getConformance().getAConformance());
     }
 
     @Test
@@ -589,7 +589,7 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
         InputStream is = FileUtil.getInputStreamForFile(PDFA_RESOURCES + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent =
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
-        PdfDocument document = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1A, outputIntent);
+        PdfDocument document = new PdfADocument(writer, PdfAConformance.PDF_A_1A, outputIntent);
 
         document.setTagged();
         document.getCatalog().setLang(new PdfString("en-US"));

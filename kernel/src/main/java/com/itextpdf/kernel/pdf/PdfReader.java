@@ -107,7 +107,7 @@ public class PdfReader implements Closeable {
     protected boolean xrefStm = false;
 
     private XMPMeta xmpMeta;
-    private PdfAConformanceLevel pdfAConformanceLevel;
+    private PdfConformance pdfConformance;
 
     /**
      * Constructs a new PdfReader.
@@ -628,16 +628,15 @@ public class PdfReader implements Closeable {
     }
 
     /**
-     * Gets the declared PDF/A conformance level of the source document that is being read.
+     * Gets the declared PDF conformance of the source document that is being read.
      * Note that this information is provided via XMP metadata and is not verified by iText.
-     * {@link PdfReader#pdfAConformanceLevel} is lazy initialized.
+     * Conformance is lazy initialized.
      * It will be initialized during the first call of this method.
      *
-     * @return conformance level of the source document, or {@code null} if no PDF/A
-     * conformance level information is specified.
+     * @return conformance of the source document
      */
-    public PdfAConformanceLevel getPdfAConformanceLevel() {
-        if (pdfAConformanceLevel == null) {
+    public PdfConformance getPdfConformance() {
+        if (pdfConformance == null) {
             if (pdfDocument == null || !pdfDocument.getXref().isReadingCompleted()) {
                 throw new PdfException(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET);
             }
@@ -646,14 +645,12 @@ public class PdfReader implements Closeable {
                 if (xmpMeta == null && pdfDocument.getXmpMetadata() != null) {
                     xmpMeta = pdfDocument.getXmpMetadata();
                 }
-                if (xmpMeta != null) {
-                    pdfAConformanceLevel = PdfAConformanceLevel.getConformanceLevel(xmpMeta);
-                }
+                pdfConformance = PdfConformance.getConformance(xmpMeta);
             } catch (XMPException ignored) {
             }
         }
 
-        return pdfAConformanceLevel;
+        return pdfConformance;
     }
 
     /**

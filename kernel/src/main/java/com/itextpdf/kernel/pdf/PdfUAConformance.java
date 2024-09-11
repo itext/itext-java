@@ -23,37 +23,30 @@
 package com.itextpdf.kernel.pdf;
 
 /**
- * Implementation of {@link IConformanceLevel} interface for PDF/UA conformance level.
- * <p>
- *
- * PDF/UA is a conformance level for PDF files that ensures the files are accessible.
- * It contains an enumeration of all the PDF/UA conformance levels currently supported by iText.
+ * PDF/UA is a conformance for PDF files that ensures the files are accessible to all users.
+ * It contains an enumeration of all the PDF/UA conformance currently supported by iText.
  */
-public class PdfUAConformanceLevel implements IConformanceLevel {
+public enum PdfUAConformance {
+    /** PDF/UA-1 conformance **/
+    PDF_UA_1("1");
+
+    private final String part;
 
     /**
-     * PDF/UA conformance level PDF/UA-1.
-     */
-    public static final PdfUAConformanceLevel PDFUA_1 = new PdfUAConformanceLevel(1);
-
-    private final int version;
-
-
-    /**
-     * Creates a new {@link PdfUAConformanceLevel} instance.
+     * Creates a new {@link PdfUAConformance} instance.
      *
-     * @param version the version of the PDF/UA conformance level
+     * @param part the part of the PDF/UA conformance
      */
-    private PdfUAConformanceLevel(int version) {
-        this.version = version;
+    PdfUAConformance(String part) {
+        this.part = part;
     }
 
     /**
-     * Get the version of the PDF/UA conformance level.
+     * Get the part of the PDF/UA conformance.
      *
-     * @return the version of the PDF/UA conformance level
+     * @return the part of the PDF/UA conformance
      */
-    public int getVersion() {
-        return version;
+    public String getPart() {
+        return this.part;
     }
 }

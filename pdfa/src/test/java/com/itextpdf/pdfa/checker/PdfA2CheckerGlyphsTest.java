@@ -25,7 +25,7 @@ package com.itextpdf.pdfa.checker;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -48,7 +48,7 @@ import org.junit.jupiter.api.Tag;
 @Tag("UnitTest")
 public class PdfA2CheckerGlyphsTest extends ExtendedITextTest {
 
-    private final PdfA2Checker pdfA2Checker = new PdfA2Checker(PdfAConformanceLevel.PDF_A_2B);
+    private final PdfA2Checker pdfA2Checker = new PdfA2Checker(PdfAConformance.PDF_A_2B);
 
     @BeforeEach
     public void before() {

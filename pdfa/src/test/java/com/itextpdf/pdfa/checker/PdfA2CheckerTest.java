@@ -25,7 +25,7 @@ package com.itextpdf.pdfa.checker;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.PatternColor;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -53,7 +53,7 @@ import org.junit.jupiter.api.Tag;
 
 @Tag("UnitTest")
 public class PdfA2CheckerTest extends ExtendedITextTest {
-    private PdfA2Checker pdfA2Checker = new PdfA2Checker(PdfAConformanceLevel.PDF_A_2B);
+    private PdfA2Checker pdfA2Checker = new PdfA2Checker(PdfAConformance.PDF_A_2B);
 
     @Test
     public void checkNameEntryShouldBeUniqueBetweenDefaultAndAdditionalConfigs() {

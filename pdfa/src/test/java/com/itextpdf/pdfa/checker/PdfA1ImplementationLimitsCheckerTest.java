@@ -26,7 +26,7 @@ import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.PatternColor;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -57,7 +57,7 @@ import org.junit.jupiter.api.Tag;
 
 @Tag("UnitTest")
 public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
-    private PdfA1Checker pdfA1Checker = new PdfA1Checker(PdfAConformanceLevel.PDF_A_1B);
+    private PdfA1Checker pdfA1Checker = new PdfA1Checker(PdfAConformance.PDF_A_1B);
     private final static int MAX_ARRAY_CAPACITY = 8191;
     private final static int MAX_DICTIONARY_CAPACITY = 4095;
 

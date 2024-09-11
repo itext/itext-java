@@ -26,7 +26,7 @@ import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
@@ -60,7 +60,7 @@ public class PdfALongStringTest extends ExtendedITextTest {
         String filename = destinationFolder + file;
         try (InputStream icm = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
                 OutputStream fos = FileUtil.getFileOutputStream(filename)) {
-            Document document = new Document(new PdfADocument(new PdfWriter(fos), PdfAConformanceLevel.PDF_A_3U,
+            Document document = new Document(new PdfADocument(new PdfWriter(fos), PdfAConformance.PDF_A_3U,
                     new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB ICC preference", icm))
             );
             StringBuilder stringBuilder = new StringBuilder(LOREM_IPSUM);

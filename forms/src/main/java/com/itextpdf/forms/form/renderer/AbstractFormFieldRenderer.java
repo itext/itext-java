@@ -27,8 +27,7 @@ import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.IFormField;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.IConformanceLevel;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
@@ -42,16 +41,12 @@ import com.itextpdf.layout.layout.MinMaxWidthLayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
-import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.BlockRenderer;
 import com.itextpdf.layout.renderer.DrawContext;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.tagging.IAccessibleElement;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -298,22 +293,21 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
     }
 
     /**
-     * Gets the conformance level. If the conformance level is not set, the conformance level of the document is used.
+     * Gets the conformance. If the conformance is not set, the conformance of the document is used.
      *
      * @param document the document
      *
-     * @return the conformance level or null if the conformance level is not set.
+     * @return the conformance or null if the conformance is not set.
      */
-    protected IConformanceLevel getConformanceLevel(PdfDocument document) {
-        final IConformanceLevel conformanceLevel = this.<IConformanceLevel>getProperty(
-                FormProperty.FORM_CONFORMANCE_LEVEL);
-        if (conformanceLevel != null) {
-            return conformanceLevel;
+    protected PdfConformance getConformance(PdfDocument document) {
+        final PdfConformance conformance = this.<PdfConformance>getProperty(FormProperty.FORM_CONFORMANCE_LEVEL);
+        if (conformance != null) {
+            return conformance;
         }
         if (document == null) {
             return null;
         }
-        return document.getConformanceLevel();
+        return document.getConformance();
     }
 
     /**

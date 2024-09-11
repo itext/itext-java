@@ -255,9 +255,8 @@ public class PdfFormField extends AbstractPdfFormField {
         }
         field.makeIndirect(document);
 
-        if (document != null && document.getReader() != null &&
-                document.getReader().getPdfAConformanceLevel() != null) {
-            field.pdfConformanceLevel = document.getReader().getPdfAConformanceLevel();
+        if (document != null) {
+            field.pdfConformance = document.getConformance();
         }
 
         return field;
@@ -1068,7 +1067,7 @@ public class PdfFormField extends AbstractPdfFormField {
             checkType = CheckBoxType.CROSS;
         }
         this.checkType = new NullableContainer<>(checkType);
-        if (getPdfConformanceLevel() != null) {
+        if (getPdfConformance() != null && getPdfConformance().isPdfAOrUa()) {
             return this;
         }
         try {

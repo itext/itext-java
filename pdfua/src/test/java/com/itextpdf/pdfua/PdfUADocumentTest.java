@@ -22,34 +22,33 @@
  */
 package com.itextpdf.pdfua;
 
-import com.itextpdf.kernel.pdf.DocumentProperties;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.pdf.StampingProperties;
+import com.itextpdf.pdfua.logs.PdfUALogMessageConstants;
+import com.itextpdf.test.AssertUtil;
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.LogLevelConstants;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 
-/**
- * PdfDocument extension for testing purposes.
- */
-public class PdfUATestPdfDocument extends PdfUADocument {
+import java.io.ByteArrayOutputStream;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-    public PdfUATestPdfDocument(PdfWriter writer) {
-        super(writer, createConfig());
-    }
+@Tag("IntegrationTest")
+public class PdfUADocumentTest extends ExtendedITextTest {
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfua/PdfUADocumentTest/";
 
-    public PdfUATestPdfDocument(PdfWriter writer, DocumentProperties properties) {
-        super(writer, properties, createConfig());
-    }
-
-    public PdfUATestPdfDocument(PdfReader reader, PdfWriter writer) {
-        super(reader, writer, createConfig());
-    }
-
-    public PdfUATestPdfDocument(PdfReader reader, PdfWriter writer, StampingProperties properties) {
-        super(reader, writer, properties, createConfig());
-    }
-
-    private static PdfUAConfig createConfig() {
-        return new PdfUAConfig(PdfUAConformance.PDF_UA_1, "English pangram", "en-US");
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = PdfUALogMessageConstants.PDF_TO_PDF_UA_CONVERSION_IS_NOT_SUPPORTED, logLevel = LogLevelConstants.WARN)
+    })
+    public void openNotUaDocumentTest() {
+        AssertUtil.doesNotThrow(() ->
+                new PdfUADocument(
+                        new PdfReader(SOURCE_FOLDER + "usualPdf.pdf"),
+                        new PdfWriter(new ByteArrayOutputStream()),
+                        new PdfUAConfig(PdfUAConformance.PDF_UA_1, "simple doc", "eng")));
     }
 }

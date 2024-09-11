@@ -29,7 +29,7 @@ import com.itextpdf.forms.form.element.AbstractSelectField;
 import com.itextpdf.forms.form.element.IFormField;
 import com.itextpdf.forms.form.element.SelectFieldItem;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.IConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
@@ -286,22 +286,21 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
     }
 
     /**
-     * Gets the conformance level. If the conformance level is not set, the conformance level of the document is used.
+     * Gets the conformance. If the conformance is not set, the conformance of the document is used.
      *
      * @param document the document
      *
-     * @return the conformance level or null if the conformance level is not set.
+     * @return the conformance or null if the conformance is not set.
      */
-    protected IConformanceLevel getConformanceLevel(PdfDocument document) {
-        final IConformanceLevel conformanceLevel = this.<IConformanceLevel>getProperty(
-                FormProperty.FORM_CONFORMANCE_LEVEL);
-        if (conformanceLevel != null) {
-            return conformanceLevel;
+    protected PdfConformance getConformance(PdfDocument document) {
+        final PdfConformance conformance = this.<PdfConformance>getProperty(FormProperty.FORM_CONFORMANCE_LEVEL);
+        if (conformance != null) {
+            return conformance;
         }
         if (document == null) {
             return null;
         }
-        return document.getConformanceLevel();
+        return document.getConformance();
     }
 
     /**

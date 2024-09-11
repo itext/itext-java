@@ -31,8 +31,7 @@ import com.itextpdf.kernel.colors.DeviceCmyk;
 import com.itextpdf.kernel.colors.DeviceGray;
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.kernel.pdf.IConformanceLevel;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -84,7 +83,7 @@ public abstract class AbstractPdfFormField extends PdfObjectWrapper<PdfDictionar
     protected float fontSize = -1;
     protected Color color;
 
-    protected IConformanceLevel pdfConformanceLevel;
+    protected PdfConformance pdfConformance;
 
     /**
      * Parent form field.
@@ -225,12 +224,12 @@ public abstract class AbstractPdfFormField extends PdfObjectWrapper<PdfDictionar
     }
 
     /**
-     * Gets the declared conformance level.
+     * Gets the declared conformance.
      *
-     * @return the {@link IConformanceLevel}
+     * @return the {@link PdfConformance}
      */
-    public IConformanceLevel getPdfConformanceLevel() {
-        return pdfConformanceLevel == null && parent != null ? parent.getPdfConformanceLevel() : pdfConformanceLevel;
+    public PdfConformance getPdfConformance() {
+        return pdfConformance == null && parent != null ? parent.getPdfConformance() : pdfConformance;
     }
 
     /**
