@@ -80,13 +80,4 @@ public class DigestAlgorithmsTest extends ExtendedITextTest {
         String oid = "1.2.156.10197.1.401";
         Assertions.assertEquals(FIPS_MODE ? oid : name, DigestAlgorithms.getDigest(oid));
     }
-
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = SignLogMessageConstant.ALGORITHM_NOT_FROM_SPEC, ignore = true)})
-    @Test
-    public void notAllowedNameGetAllowedDigestTest() {
-        String name = "SM3";
-        String oid = "1.2.156.10197.1.401";
-        Assertions.assertEquals(FIPS_MODE ? null : oid, DigestAlgorithms.getAllowedDigest(name));
-    }
 }

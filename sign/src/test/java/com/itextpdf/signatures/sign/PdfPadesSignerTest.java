@@ -40,6 +40,7 @@ import com.itextpdf.signatures.testutils.client.TestCrlClient;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
 import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.ExtendedITextTest;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
@@ -48,7 +49,6 @@ import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
@@ -275,15 +275,10 @@ public class PdfPadesSignerTest extends ExtendedITextTest {
 
         SignerProperties signerProperties = createSignerProperties();
         PdfPadesSigner padesSigner = createPdfPadesSigner(srcFileName, outFileName);
-        if (FIPS_MODE) {
-            // SHAKE256 is currently not supported in BCFIPS
-            Exception exception = Assertions.assertThrows(NoSuchAlgorithmException.class,
-                    () -> padesSigner.signWithBaselineBProfile(signerProperties, signEdDSAChain, signEdDSAPrivateKey));
-        } else {
-            padesSigner.signWithBaselineBProfile(signerProperties, signEdDSAChain, signEdDSAPrivateKey);
-            TestSignUtils.basicCheckSignedDoc(outFileName, "Signature1");
-            Assertions.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
-        }
+
+        padesSigner.signWithBaselineBProfile(signerProperties, signEdDSAChain, signEdDSAPrivateKey);
+        TestSignUtils.basicCheckSignedDoc(outFileName, "Signature1");
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
     }
 
     private SignerProperties createSignerProperties() {

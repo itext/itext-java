@@ -66,4 +66,14 @@ public class PdfPKCS7ManuallyPortedTest extends PdfPKCS7BasicTest {
         verifyIsoExtensionExample("RSASSA-PSS", "sample-pss-sha3_256.pdf");
     }
 
+    @Test
+    public void verifyEd448SignatureTest() throws IOException, GeneralSecurityException {
+        // Ed448 is not available in BCFIPS approved mode
+        if (BOUNCY_CASTLE_FACTORY.isInApprovedOnlyMode()) {
+            Assertions.assertThrows(PdfException.class,
+                    () -> verifyIsoExtensionExample("Ed448", "sample-ed448-shake256.pdf"));
+        } else {
+            verifyIsoExtensionExample("Ed448", "sample-ed448-shake256.pdf");
+        }
+    }
 }

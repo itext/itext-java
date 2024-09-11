@@ -280,8 +280,6 @@ import org.bouncycastle.asn1.ASN1TaggedObject;
 import org.bouncycastle.asn1.ASN1UTCTime;
 import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.DEROctetString;
-import org.bouncycastle.asn1.DEROutputStream;
-import org.bouncycastle.asn1.DLOutputStream;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.esf.SigPolicyQualifierInfo;
@@ -613,12 +611,7 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
      */
     @Override
     public IASN1OutputStream createASN1OutputStream(OutputStream outputStream, String asn1Encoding) {
-        if ("DER".equals(asn1Encoding)) {
-            return new ASN1OutputStreamBCFips(new DEROutputStream(outputStream));
-        } else {
-            return new ASN1OutputStreamBCFips("DL".equals(asn1Encoding) ? new DLOutputStream(outputStream)
-                    : new ASN1OutputStream(outputStream));
-        }
+        return new ASN1OutputStreamBCFips(ASN1OutputStream.create(outputStream, asn1Encoding));
     }
 
     /**

@@ -60,7 +60,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
 import java.security.KeyException;
-import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
@@ -107,13 +106,7 @@ public class IsoSignatureExtensionsRoundtripTest extends ExtendedITextTest {
 
     @Test
     public void testEd448() throws Exception {
-        if ("BC".equals(BOUNCY_CASTLE_FACTORY.getProviderName())) {
-            doRoundTrip("ed448", DigestAlgorithms.SHAKE256, EdECObjectIdentifiers.id_Ed448);
-        } else {
-            // SHAKE256 is currently not supported in BCFIPS
-            Exception e = Assertions.assertThrows(NoSuchAlgorithmException.class, () ->
-                    doRoundTrip("ed448", DigestAlgorithms.SHAKE256, EdECObjectIdentifiers.id_Ed448));
-        }
+        doRoundTrip("ed448", DigestAlgorithms.SHAKE256, EdECObjectIdentifiers.id_Ed448);
     }
 
     @Test
@@ -241,14 +234,8 @@ public class IsoSignatureExtensionsRoundtripTest extends ExtendedITextTest {
     @Test
     public void testEd448ExtensionDeclarations() throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        if ("BC".equals(BOUNCY_CASTLE_FACTORY.getProviderName())) {
-            doSign("ed448", DigestAlgorithms.SHAKE256, null, baos);
-            checkIsoExtensions(baos.toByteArray(), Arrays.asList(32001, 32002));
-        } else {
-            // SHAKE256 is currently not supported in BCFIPS
-            Exception e = Assertions.assertThrows(NoSuchAlgorithmException.class, () ->
-                    doSign("ed448", DigestAlgorithms.SHAKE256, null, baos));
-        }
+        doSign("ed448", DigestAlgorithms.SHAKE256, null, baos);
+        checkIsoExtensions(baos.toByteArray(), Arrays.asList(32001, 32002));
     }
 
     @Test

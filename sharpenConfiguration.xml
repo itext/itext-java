@@ -223,6 +223,7 @@
                 <file path="com/itextpdf/bouncycastle/tsp/TimeStampTokenGeneratorBC.java"/>
                 <file path="com/itextpdf/bouncycastle/tsp/TimeStampTokenBC.java"/>
                 <file path="com/itextpdf/bouncycastlefips/BouncyCastleFipsFactory.java"/>
+                <file path="com/itextpdf/bouncycastlefips/BouncyCastleFipsTestConstantsFactory.java"/>
                 <file path="com/itextpdf/bouncycastlefips/asn1/ASN1IntegerBCFips.java"/>
                 <file path="com/itextpdf/bouncycastlefips/asn1/ASN1OctetStringBCFips.java"/>
                 <file path="com/itextpdf/bouncycastlefips/asn1/ASN1SequenceBCFips.java"/>

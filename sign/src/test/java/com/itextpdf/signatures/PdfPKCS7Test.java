@@ -349,17 +349,6 @@ public class PdfPKCS7Test extends PdfPKCS7BasicTest {
     }
 
     @Test
-    public void verifyEd448SignatureTest() throws IOException, GeneralSecurityException {
-        // SHAKE256 is not available in BCFIPS
-        if ("BCFIPS".equals(BOUNCY_CASTLE_FACTORY.getProviderName())) {
-            Assertions.assertThrows(PdfException.class,
-                    () -> verifyIsoExtensionExample("Ed448", "sample-ed448-shake256.pdf"));
-        } else {
-            verifyIsoExtensionExample("Ed448", "sample-ed448-shake256.pdf");
-        }
-    }
-
-    @Test
     public void verifyNistECDSASha2SignatureTest() throws IOException, GeneralSecurityException {
         verifyIsoExtensionExample("SHA256withECDSA", "sample-nistp256-sha256.pdf");
     }
