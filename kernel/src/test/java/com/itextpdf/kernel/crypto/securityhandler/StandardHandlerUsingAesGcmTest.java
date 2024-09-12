@@ -109,8 +109,13 @@ public class StandardHandlerUsingAesGcmTest extends ExtendedITextTest {
             ignore = true))
     public void testKnownOutput() throws Exception {
         String srcFile = SRC + "encryptedDocument.pdf";
+        String outFile = DEST + "encryptedDocument.pdf";
         String cmpFile = SRC + "simpleDocument.pdf";
-        tryCompare(srcFile, cmpFile);
+        try (PdfDocument ignored = new PdfDocument(new PdfReader(srcFile, new ReaderProperties()
+                .setPassword("supersecret".getBytes(StandardCharsets.UTF_8))), new PdfWriter(outFile))) {
+            // We need to copy the source file to the destination folder to be able to compare pdf files in android.
+        }
+        tryCompare(outFile, cmpFile);
     }
 
     // In all these tampered files, the stream content of object 14 has been modified.
