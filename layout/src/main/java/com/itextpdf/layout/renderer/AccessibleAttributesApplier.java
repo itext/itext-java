@@ -24,7 +24,6 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -374,27 +373,12 @@ public class AccessibleAttributesApplier {
     }
 
     private static void applyBorderAttributes(AbstractRenderer renderer, PdfDictionary attributes) {
-        boolean specificBorderProperties = renderer.<Border>getProperty(Property.BORDER_TOP) != null
+        boolean borderPropertiesSet = renderer.<Border>getProperty(Property.BORDER_TOP) != null
                 || renderer.<Border>getProperty(Property.BORDER_RIGHT) != null
                 || renderer.<Border>getProperty(Property.BORDER_BOTTOM) != null
                 || renderer.<Border>getProperty(Property.BORDER_LEFT) != null;
 
-        boolean generalBorderProperties = !specificBorderProperties && renderer.<Object>getProperty(Property.BORDER) != null;
-
-        if (generalBorderProperties) {
-            Border generalBorder = renderer.<Border>getProperty(Property.BORDER);
-            Color generalBorderColor = generalBorder.getColor();
-            int borderType = generalBorder.getType();
-            float borderWidth = generalBorder.getWidth();
-
-            if (generalBorderColor instanceof DeviceRgb) {
-                attributes.put(PdfName.BorderColor, new PdfArray(generalBorderColor.getColorValue()));
-                attributes.put(PdfName.BorderStyle, transformBorderTypeToName(borderType));
-                attributes.put(PdfName.BorderThickness, new PdfNumber(borderWidth));
-            }
-        }
-
-        if (specificBorderProperties) {
+        if (borderPropertiesSet) {
             PdfArray borderColors = new PdfArray();
             PdfArray borderTypes = new PdfArray();
             PdfArray borderWidths = new PdfArray();

@@ -86,7 +86,7 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
 
         Div flexContainer = createFlexContainer(alignItemsValue, justifyContentValue, wrapValue, directionValue);
         flexContainer.setProperty(Property.MARGIN_TOP, UnitValue.createPointValue(50));
-        flexContainer.setProperty(Property.BORDER, new SolidBorder(2));
+        flexContainer.setBorder(new SolidBorder(2));
         flexContainer.setProperty(Property.PADDING_LEFT, UnitValue.createPointValue(40));
         flexContainer.setProperty(Property.BACKGROUND, new Background(ColorConstants.LIGHT_GRAY));
 
@@ -116,7 +116,7 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
 
         Div flexContainer = createFlexContainer(alignItemsValue, justifyContentValue, wrapValue, directionValue);
         flexContainer.setProperty(Property.MARGIN_TOP, UnitValue.createPointValue(50));
-        flexContainer.setProperty(Property.BORDER, new SolidBorder(2));
+        flexContainer.setBorder(new SolidBorder(2));
         flexContainer.setProperty(Property.PADDING_LEFT, UnitValue.createPointValue(40));
         flexContainer.setProperty(Property.BACKGROUND, new Background(ColorConstants.LIGHT_GRAY));
         flexContainer.setProperty(Property.WIDTH, UnitValue.createPointValue(450));
@@ -147,7 +147,7 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
         Document document = new Document(pdfDocument);
 
         Div flexContainer = createFlexContainer(alignItemsValue, justifyContentValue, wrapValue, directionValue);
-        flexContainer.setProperty(Property.BORDER, new SolidBorder(2));
+        flexContainer.setBorder(new SolidBorder(2));
         flexContainer.setProperty(Property.BACKGROUND, new Background(ColorConstants.LIGHT_GRAY));
 
         Div innerDiv = new Div();
@@ -184,7 +184,7 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
         Document document = new Document(pdfDocument);
 
         Div flexContainer = createFlexContainer(alignItemsValue, justifyContentValue, wrapValue, directionValue);
-        flexContainer.setProperty(Property.BORDER, new SolidBorder(2));
+        flexContainer.setBorder(new SolidBorder(2));
         flexContainer.setProperty(Property.BACKGROUND, new Background(ColorConstants.LIGHT_GRAY));
         flexContainer.setProperty(Property.HEIGHT, UnitValue.createPointValue(300));
 
@@ -220,7 +220,7 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
         Document document = new Document(pdfDocument);
 
         Div flexContainer = createFlexContainer(alignItemsValue, justifyContentValue, wrapValue, directionValue);
-        flexContainer.setProperty(Property.BORDER, new SolidBorder(2));
+        flexContainer.setBorder(new SolidBorder(2));
         flexContainer.setProperty(Property.BACKGROUND, new Background(ColorConstants.LIGHT_GRAY));
 
         Div innerDiv = new Div();
@@ -262,7 +262,7 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
         Document document = new Document(pdfDocument);
 
         Div flexContainer = createFlexContainer(alignItemsValue, justifyContentValue, wrapValue, directionValue);
-        flexContainer.setProperty(Property.BORDER, new SolidBorder(2));
+        flexContainer.setBorder(new SolidBorder(2));
         flexContainer.setProperty(Property.BACKGROUND, new Background(ColorConstants.LIGHT_GRAY));
 
         Table table = new Table(UnitValue.createPercentArray(new float[] {50, 50}));
@@ -300,7 +300,7 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
 
         Div flexContainer = createFlexContainer(alignItemsValue, justifyContentValue, wrapValue, directionValue);
         flexContainer.setHeight(450);
-        flexContainer.setProperty(Property.BORDER, new SolidBorder(2));
+        flexContainer.setBorder(new SolidBorder(2));
         flexContainer.setProperty(Property.BACKGROUND, new Background(ColorConstants.LIGHT_GRAY));
 
         Table table = new Table(UnitValue.createPercentArray(new float[] {50, 50}));
@@ -340,7 +340,7 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
         Document document = new Document(pdfDocument);
 
         Div flexContainer = createFlexContainer(alignItemsValue, justifyContentValue, wrapValue, directionValue);
-        flexContainer.setProperty(Property.BORDER, new SolidBorder(2));
+        flexContainer.setBorder(new SolidBorder(2));
         flexContainer.setProperty(Property.BACKGROUND, new Background(ColorConstants.LIGHT_GRAY));
 
         Div innerFlex = new FlexContainer();
@@ -371,7 +371,7 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
         Document document = new Document(pdfDocument);
 
         Div flexContainer = createFlexContainer(alignItemsValue, justifyContentValue, wrapValue, directionValue);
-        flexContainer.setProperty(Property.BORDER, new SolidBorder(2));
+        flexContainer.setBorder(new SolidBorder(2));
         flexContainer.setProperty(Property.BACKGROUND, new Background(ColorConstants.LIGHT_GRAY));
 
         Div innerFlex1 = new FlexContainer();
@@ -411,7 +411,7 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
         Document document = new Document(pdfDocument);
 
         Div flexContainer = createFlexContainer(alignItemsValue, justifyContentValue, wrapValue, directionValue);
-        flexContainer.setProperty(Property.BORDER, new SolidBorder(2));
+        flexContainer.setBorder(new SolidBorder(2));
         flexContainer.setProperty(Property.BACKGROUND, new Background(ColorConstants.LIGHT_GRAY));
         flexContainer.setProperty(Property.ROTATION_ANGLE, 20f);
 
@@ -444,7 +444,7 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
         Document document = new Document(pdfDocument);
 
         Div flexContainer = createFlexContainer(alignItemsValue, justifyContentValue, wrapValue, directionValue);
-        flexContainer.setProperty(Property.BORDER, new SolidBorder(ColorConstants.BLUE, 30));
+        flexContainer.setBorder(new SolidBorder(ColorConstants.BLUE, 30));
         flexContainer.setProperty(Property.BACKGROUND, new Background(ColorConstants.LIGHT_GRAY));
         flexContainer.setWidth(250);
         flexContainer.setHeight(400);
@@ -494,7 +494,7 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
         Document document = new Document(pdfDocument);
 
         Div flexContainer = createFlexContainer(alignItemsValue, justifyContentValue, wrapValue, directionValue);
-        flexContainer.setProperty(Property.BORDER, new SolidBorder(ColorConstants.BLUE, 30));
+        flexContainer.setBorder(new SolidBorder(ColorConstants.BLUE, 30));
         flexContainer.setProperty(Property.BACKGROUND, new Background(ColorConstants.LIGHT_GRAY));
         flexContainer.setWidth(450);
         flexContainer.setProperty(Property.BOX_SIZING, BoxSizingPropertyValue.BORDER_BOX);
@@ -663,7 +663,7 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
 
     private static Div createNewDiv() {
         Div newDiv = new Div();
-        newDiv.setProperty(Property.BORDER, new SolidBorder(1));
+        newDiv.setBorder(new SolidBorder(1));
         newDiv.setProperty(Property.WIDTH, UnitValue.createPointValue(50));
         newDiv.setProperty(Property.HEIGHT, UnitValue.createPointValue(100));
         return newDiv;

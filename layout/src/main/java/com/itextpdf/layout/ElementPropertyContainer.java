@@ -443,7 +443,10 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> ext
      * @return this Element.
      */
     public T setBorder(Border border) {
-        setProperty(Property.BORDER, border);
+        setProperty(Property.BORDER_TOP, border);
+        setProperty(Property.BORDER_RIGHT, border);
+        setProperty(Property.BORDER_BOTTOM, border);
+        setProperty(Property.BORDER_LEFT, border);
         return (T) (Object) this;
     }
 
@@ -498,7 +501,10 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> ext
      * @return this Element.
      */
     public T setBorderRadius(BorderRadius borderRadius) {
-        setProperty(Property.BORDER_RADIUS, borderRadius);
+        setProperty(Property.BORDER_BOTTOM_LEFT_RADIUS, borderRadius);
+        setProperty(Property.BORDER_BOTTOM_RIGHT_RADIUS, borderRadius);
+        setProperty(Property.BORDER_TOP_LEFT_RADIUS, borderRadius);
+        setProperty(Property.BORDER_TOP_RIGHT_RADIUS, borderRadius);
         return (T) (Object) this;
     }
 

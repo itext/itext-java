@@ -543,7 +543,11 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
             for (Supplier<IFormField> formFieldSupplier : generateFormFields()) {
                 IFormField formField = formFieldSupplier.get();
                 formField.setProperty(Property.FONT, font);
-                formField.setProperty(Property.BORDER, new SolidBorder(ColorConstants.BLACK, 1));
+                SolidBorder border = new SolidBorder(ColorConstants.BLACK, 1);
+                formField.setProperty(Property.BORDER_TOP, border);
+                formField.setProperty(Property.BORDER_RIGHT, border);
+                formField.setProperty(Property.BORDER_BOTTOM, border);
+                formField.setProperty(Property.BORDER_LEFT, border);
                 formField.setInteractive(true);
                 document.add(formField);
             }
@@ -560,7 +564,11 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
             for (Supplier<IFormField> formFieldSupplier : generateFormFields()) {
                 IFormField formField = formFieldSupplier.get();
                 formField.setProperty(Property.FONT, font);
-                formField.setProperty(Property.BORDER, new SolidBorder(ColorConstants.BLACK, 1));
+                SolidBorder border = new SolidBorder(ColorConstants.BLACK, 1);
+                formField.setProperty(Property.BORDER_TOP, border);
+                formField.setProperty(Property.BORDER_RIGHT, border);
+                formField.setProperty(Property.BORDER_BOTTOM, border);
+                formField.setProperty(Property.BORDER_LEFT, border);
                 formField.setInteractive(true);
                 document.add(formField);
             }
@@ -588,7 +596,11 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
             document.setFont(font);
             for (Supplier<IFormField> formFieldSupplier : generateFormFields()) {
                 IFormField formField = formFieldSupplier.get();
-                formField.setProperty(Property.BORDER, new SolidBorder(ColorConstants.BLACK, 1));
+                SolidBorder border = new SolidBorder(ColorConstants.BLACK, 1);
+                formField.setProperty(Property.BORDER_TOP, border);
+                formField.setProperty(Property.BORDER_RIGHT, border);
+                formField.setProperty(Property.BORDER_BOTTOM, border);
+                formField.setProperty(Property.BORDER_LEFT, border);
                 formField.setProperty(Property.FONT, font);
                 formField.setInteractive(true);
                 document.add(formField);
@@ -606,7 +618,11 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
             for (Supplier<IFormField> formFieldSupplier : generateFormFields()) {
                 IFormField formField = formFieldSupplier.get();
                 formField.setProperty(Property.FONT, font);
-                formField.setProperty(Property.BORDER, new SolidBorder(ColorConstants.BLACK, 1));
+                SolidBorder border = new SolidBorder(ColorConstants.BLACK, 1);
+                formField.setProperty(Property.BORDER_TOP, border);
+                formField.setProperty(Property.BORDER_RIGHT, border);
+                formField.setProperty(Property.BORDER_BOTTOM, border);
+                formField.setProperty(Property.BORDER_LEFT, border);
                 formField.setInteractive(false);
                 document.add(formField);
             }
@@ -623,7 +639,11 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
             document.setFont(font);
             for (Supplier<IFormField> formFieldSupplier : generateFormFields()) {
                 IFormField formField = formFieldSupplier.get();
-                formField.setProperty(Property.BORDER, new SolidBorder(ColorConstants.BLACK, 1));
+                SolidBorder border = new SolidBorder(ColorConstants.BLACK, 1);
+                formField.setProperty(Property.BORDER_TOP, border);
+                formField.setProperty(Property.BORDER_RIGHT, border);
+                formField.setProperty(Property.BORDER_BOTTOM, border);
+                formField.setProperty(Property.BORDER_LEFT, border);
                 formField.setProperty(Property.FONT, font);
                 formField.setInteractive(false);
                 document.add(formField);

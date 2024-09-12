@@ -25,7 +25,6 @@ package com.itextpdf.layout.margincollapse;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.properties.ContinuousContainer;
 import com.itextpdf.layout.properties.FloatPropertyValue;
 import com.itextpdf.layout.properties.Property;
@@ -539,11 +538,11 @@ public class MarginsCollapseHandler {
     }
 
     private static boolean hasTopBorders(IRenderer renderer) {
-        return MarginsCollapseHandler.hasBorders(renderer, Property.BORDER_TOP);
+        return renderer.getModelElement().hasProperty(Property.BORDER_TOP);
     }
 
     private static boolean hasBottomBorders(IRenderer renderer) {
-        return MarginsCollapseHandler.hasBorders(renderer, Property.BORDER_BOTTOM);
+        return renderer.getModelElement().hasProperty(Property.BORDER_BOTTOM);
     }
 
     private static boolean rendererIsFloated(IRenderer renderer) {
@@ -604,10 +603,5 @@ public class MarginsCollapseHandler {
                     property));
         }
         return padding != null && padding.getValue() > 0;
-    }
-
-    private static boolean hasBorders(IRenderer renderer, int property) {
-        IPropertyContainer modelElement = renderer.getModelElement();
-        return modelElement.hasProperty(property) || modelElement.hasProperty(Property.BORDER);
     }
 }

@@ -844,7 +844,10 @@ public class TableBorderTest extends AbstractTableTest {
         doc.add(table);
 
         doc.add(new AreaBreak());
-        table.deleteOwnProperty(Property.BORDER);
+        table.deleteOwnProperty(Property.BORDER_LEFT);
+        table.deleteOwnProperty(Property.BORDER_BOTTOM);
+        table.deleteOwnProperty(Property.BORDER_RIGHT);
+        table.deleteOwnProperty(Property.BORDER_TOP);
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
         table.setHorizontalBorderSpacing(20);
         table.setVerticalBorderSpacing(20);
@@ -1401,7 +1404,10 @@ public class TableBorderTest extends AbstractTableTest {
         doc.add(table);
         doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().addCell("Hello").setBorder(new SolidBorder(ColorConstants.ORANGE, 5)));
 
-        table.deleteOwnProperty(Property.BORDER);
+        table.deleteOwnProperty(Property.BORDER_LEFT);
+        table.deleteOwnProperty(Property.BORDER_BOTTOM);
+        table.deleteOwnProperty(Property.BORDER_RIGHT);
+        table.deleteOwnProperty(Property.BORDER_TOP);
         doc.add(table);
         doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().addCell("Hello").setBorder(new SolidBorder(ColorConstants.ORANGE, 5)));
 
@@ -1413,7 +1419,10 @@ public class TableBorderTest extends AbstractTableTest {
         doc.add(table);
         doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().addCell("Hello").setBorder(new SolidBorder(ColorConstants.ORANGE, 5)));
 
-        table.deleteOwnProperty(Property.BORDER);
+        table.deleteOwnProperty(Property.BORDER_LEFT);
+        table.deleteOwnProperty(Property.BORDER_BOTTOM);
+        table.deleteOwnProperty(Property.BORDER_RIGHT);
+        table.deleteOwnProperty(Property.BORDER_TOP);
         doc.add(table);
         doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().addCell("Hello").setBorder(new SolidBorder(ColorConstants.ORANGE, 5)));
 

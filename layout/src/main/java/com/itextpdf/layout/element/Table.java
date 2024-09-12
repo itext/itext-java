@@ -783,16 +783,13 @@ public class Table extends BlockElement<Table> implements ILargeElement {
     public List<Border> getLastRowBottomBorder() {
         List<Border> horizontalBorder = new ArrayList<>();
         if (lastAddedRow != null) {
-            for (int i = 0; i < lastAddedRow.length; i++) {
-                Cell cell = lastAddedRow[i];
+            for (Cell cell : lastAddedRow) {
                 Border border = null;
                 if (cell != null) {
                     if (cell.hasProperty(Property.BORDER_BOTTOM)) {
                         border = cell.<Border>getProperty(Property.BORDER_BOTTOM);
-                    } else if (cell.hasProperty(Property.BORDER)) {
-                        border = cell.<Border>getProperty(Property.BORDER);
                     } else {
-                        border = cell.<Border>getDefaultProperty(Property.BORDER);
+                        border = cell.<Border>getDefaultProperty(Property.BORDER_BOTTOM);
                     }
                 }
                 horizontalBorder.add(border);

@@ -43,7 +43,7 @@ import org.junit.jupiter.api.Tag;
 
 @Tag("UnitTest")
 public class FlexContainerRendererTest extends ExtendedITextTest {
-    private static float EPS = 0.0001F;
+    private static final float EPS = 0.0001F;
 
     @Test
     public void widthNotSetTest() {
@@ -94,7 +94,11 @@ public class FlexContainerRendererTest extends ExtendedITextTest {
         FlexContainerRenderer flexRenderer = new FlexContainerRenderer(new Div());
         DivRenderer divRenderer1 = new DivRenderer(new Div());
         divRenderer1.setProperty(Property.WIDTH, UnitValue.createPointValue(50));
-        divRenderer1.setProperty(Property.BORDER, new SolidBorder(5));
+        SolidBorder border = new SolidBorder(5);
+        divRenderer1.setProperty(Property.BORDER_TOP, border);
+        divRenderer1.setProperty(Property.BORDER_RIGHT, border);
+        divRenderer1.setProperty(Property.BORDER_BOTTOM, border);
+        divRenderer1.setProperty(Property.BORDER_LEFT, border);
         DivRenderer divRenderer2 = new DivRenderer(new Div());
         divRenderer2.setProperty(Property.WIDTH, UnitValue.createPointValue(40));
         divRenderer2.setProperty(Property.MARGIN_LEFT, UnitValue.createPointValue(10));
@@ -120,7 +124,11 @@ public class FlexContainerRendererTest extends ExtendedITextTest {
 
         DivRenderer divRenderer1 = new DivRenderer(new Div());
         divRenderer1.setProperty(Property.WIDTH, UnitValue.createPointValue(50));
-        divRenderer1.setProperty(Property.BORDER, new SolidBorder(5));
+        SolidBorder border = new SolidBorder(5);
+        divRenderer1.setProperty(Property.BORDER_TOP, border);
+        divRenderer1.setProperty(Property.BORDER_RIGHT, border);
+        divRenderer1.setProperty(Property.BORDER_BOTTOM, border);
+        divRenderer1.setProperty(Property.BORDER_LEFT, border);
         DivRenderer divRenderer2 = new DivRenderer(new Div());
         divRenderer2.setProperty(Property.WIDTH, UnitValue.createPointValue(40));
         divRenderer2.setProperty(Property.MARGIN_LEFT, UnitValue.createPointValue(10));
@@ -308,7 +316,11 @@ public class FlexContainerRendererTest extends ExtendedITextTest {
         FlexContainerRenderer flexRenderer = new FlexContainerRenderer(new Div());
         flexRenderer.setProperty(Property.FLEX_WRAP, FlexWrapPropertyValue.WRAP);
         flexRenderer.setProperty(Property.MAX_WIDTH, UnitValue.createPointValue(100));
-        flexRenderer.setProperty(Property.BORDER, new SolidBorder(5));
+        SolidBorder border = new SolidBorder(5);
+        flexRenderer.setProperty(Property.BORDER_TOP, border);
+        flexRenderer.setProperty(Property.BORDER_RIGHT, border);
+        flexRenderer.setProperty(Property.BORDER_BOTTOM, border);
+        flexRenderer.setProperty(Property.BORDER_LEFT, border);
 
         // line 1
         DivRenderer divRenderer1 = new DivRenderer(new Div());

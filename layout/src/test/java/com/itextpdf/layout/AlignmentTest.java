@@ -599,7 +599,7 @@ public class AlignmentTest extends ExtendedITextTest {
             div.setNextRenderer(flexContainerRenderer);
 
             Div innerDiv = new Div();
-            innerDiv.setProperty(Property.BORDER, new SolidBorder(1));
+            innerDiv.setBorder(new SolidBorder(1));
             innerDiv.setProperty(Property.WIDTH, UnitValue.createPointValue(50));
             innerDiv.setProperty(Property.HEIGHT, UnitValue.createPointValue(100));
             innerDiv.setProperty(Property.BACKGROUND, new Background(ColorConstants.GREEN));

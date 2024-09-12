@@ -282,8 +282,8 @@ public class BorderTest extends ExtendedITextTest {
 
         Paragraph p = new Paragraph(text).setBackgroundColor(ColorConstants.GRAY);
         p.setMargins(25, 60, 70, 80);
-        p.setBorderLeft(new DoubleBorder(ColorConstants.RED, 25));
         p.setBorder(new DoubleBorder(ColorConstants.BLACK, 6));
+        p.setBorderLeft(new DoubleBorder(ColorConstants.RED, 25));
         doc.add(p);
 
         doc.add(new Paragraph(textAfter).setBorder(new DottedBorder(ColorConstants.BLACK, 3)).setBorderRight(new DottedBorder(ColorConstants.BLACK, 12)));

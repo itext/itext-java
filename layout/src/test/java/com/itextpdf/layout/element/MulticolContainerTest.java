@@ -91,7 +91,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
             ctx.setProperty(Property.COLUMN_COUNT, 2);
             Div div = new Div();
             div.setProperty(Property.MARGIN_TOP, UnitValue.createPointValue(50));
-            div.setProperty(Property.BORDER, new SolidBorder(2));
+            div.setBorder(new SolidBorder(2));
             div.setProperty(Property.PADDING_LEFT, UnitValue.createPointValue(40));
             div.setProperty(Property.BACKGROUND, new Background(ColorConstants.LIGHT_GRAY));
             div.setProperty(Property.WIDTH, UnitValue.createPointValue(450));
@@ -659,7 +659,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
                     "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, ");
             paragraph.setBorder(new SolidBorder(2));
             Div columnDiv = new Div();
-            columnDiv.setProperty(Property.BORDER, new SolidBorder(1));
+            columnDiv.setBorder(new SolidBorder(1));
             columnDiv.setProperty(Property.BACKGROUND, new Background(ColorConstants.BLUE));
             columnDiv.setProperty(Property.KEEP_TOGETHER, Boolean.TRUE);
             columnDiv.setProperty(Property.WIDTH, UnitValue.createPointValue(50));
@@ -690,7 +690,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
                     "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, ");
             paragraph.setBorder(new SolidBorder(2));
             Div columnDiv = new Div();
-            columnDiv.setProperty(Property.BORDER, new SolidBorder(1));
+            columnDiv.setBorder(new SolidBorder(1));
             columnDiv.setProperty(Property.BACKGROUND, new Background(ColorConstants.BLUE));
             columnDiv.setProperty(Property.KEEP_TOGETHER, Boolean.TRUE);
             columnDiv.setProperty(Property.MARGIN_BOTTOM, UnitValue.createPointValue(40));
@@ -722,7 +722,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
                     "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, ");
             paragraph.setBorder(new SolidBorder(2));
             Div columnDiv = new Div();
-            columnDiv.setProperty(Property.BORDER, new SolidBorder(1));
+            columnDiv.setBorder(new SolidBorder(1));
             columnDiv.setProperty(Property.BACKGROUND, new Background(ColorConstants.BLUE));
             columnDiv.setProperty(Property.KEEP_TOGETHER, Boolean.TRUE);
             columnDiv.setProperty(Property.PADDING_BOTTOM, UnitValue.createPointValue(40));
@@ -1219,7 +1219,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
     private static Div createFirstPageFiller() {
         Div firstPageFiller = new Div();
         firstPageFiller.setProperty(Property.MARGIN_TOP, UnitValue.createPointValue(50));
-        firstPageFiller.setProperty(Property.BORDER, new SolidBorder(1));
+        firstPageFiller.setBorder(new SolidBorder(1));
         firstPageFiller.setProperty(Property.PADDING_LEFT, UnitValue.createPointValue(20));
         firstPageFiller.setProperty(Property.BACKGROUND, new Background(ColorConstants.LIGHT_GRAY));
         firstPageFiller.setProperty(Property.WIDTH, UnitValue.createPointValue(450));

@@ -1795,7 +1795,6 @@ public class TableRenderer extends AbstractRenderer {
         if (bordersHandler instanceof SeparatedTableBorders) {
             headerOrFooterRenderer.setProperty(Property.HORIZONTAL_BORDER_SPACING, this.getPropertyAsFloat(Property.HORIZONTAL_BORDER_SPACING));
             headerOrFooterRenderer.setProperty(Property.VERTICAL_BORDER_SPACING, this.getPropertyAsFloat(Property.VERTICAL_BORDER_SPACING));
-            headerOrFooterRenderer.setProperty(Property.BORDER, Border.NO_BORDER);
             headerOrFooterRenderer.setProperty(Property.BORDER_LEFT, Border.NO_BORDER);
             headerOrFooterRenderer.setProperty(Property.BORDER_TOP, Border.NO_BORDER);
             headerOrFooterRenderer.setProperty(Property.BORDER_RIGHT, Border.NO_BORDER);

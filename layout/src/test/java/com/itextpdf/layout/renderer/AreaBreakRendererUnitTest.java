@@ -66,66 +66,68 @@ public class AreaBreakRendererUnitTest extends ExtendedITextTest {
 
     @Test
     //Properties are not supported for AbstractRenderer, and it's expected that the result is false for all the properties.
-    //The BORDER property is chosen without any specific intention. It could be replaced with any other property.
+    //The AREA_BREAK_TYPE property is chosen without any specific intention. It could be replaced with any other property.
     public void hasPropertyTest() {
         AreaBreakRenderer areaBreakRenderer = new AreaBreakRenderer(new AreaBreak());
-        Assertions.assertFalse(areaBreakRenderer.hasProperty(Property.BORDER));
+        Assertions.assertFalse(areaBreakRenderer.hasProperty(Property.AREA_BREAK_TYPE));
     }
 
     @Test
     //Properties are not supported for AbstractRenderer, and it's expected that the result is false for all the properties.
-    //The BORDER property is chosen without any specific intention. It could be replaced with any other property.
+    //The AREA_BREAK_TYPE property is chosen without any specific intention. It could be replaced with any other property.
     public void hasOwnPropertyTest() {
         AreaBreakRenderer areaBreakRenderer = new AreaBreakRenderer(new AreaBreak());
-        Assertions.assertFalse(areaBreakRenderer.hasProperty(Property.BORDER));
+        Assertions.assertFalse(areaBreakRenderer.hasOwnProperty(Property.AREA_BREAK_TYPE));
     }
 
     @Test
     //Properties are not supported for AbstractRenderer, and it's expected that the result is null for all the properties.
-    //The BORDER property is chosen without any specific intention. It could be replaced with any other property.
+    //The AREA_BREAK_TYPE property is chosen without any specific intention. It could be replaced with any other property.
     public void getPropertyTest() {
         AreaBreakRenderer areaBreakRenderer = new AreaBreakRenderer(new AreaBreak());
-        Assertions.assertNull(areaBreakRenderer.<Property>getProperty(Property.BORDER));
+        Assertions.assertNull(areaBreakRenderer.<Property>getProperty(Property.AREA_BREAK_TYPE));
     }
 
     @Test
     //Properties are not supported for AbstractRenderer, and it's expected that the result is null for all the properties.
-    //The BORDER property is chosen without any specific intention. It could be replaced with any other property.
+    //The AREA_BREAK_TYPE property is chosen without any specific intention. It could be replaced with any other property.
     public void getOwnPropertyTest() {
         AreaBreakRenderer areaBreakRenderer = new AreaBreakRenderer(new AreaBreak());
-        Assertions.assertNull(areaBreakRenderer.<Property>getOwnProperty(Property.BORDER));
+        Assertions.assertNull(areaBreakRenderer.<Property>getOwnProperty(Property.AREA_BREAK_TYPE));
     }
 
     @Test
     //Properties are not supported for AbstractRenderer, and it's expected that the result is null for all the properties.
-    //The BORDER property is chosen without any specific intention. It could be replaced with any other property.
+    //The AREA_BREAK_TYPE property is chosen without any specific intention. It could be replaced with any other property.
     public void getDefaultPropertyTest() {
         AreaBreakRenderer areaBreakRenderer = new AreaBreakRenderer(new AreaBreak());
-        Assertions.assertNull(areaBreakRenderer.<Property>getDefaultProperty(Property.BORDER));
+        Assertions.assertNull(areaBreakRenderer.<Property>getDefaultProperty(Property.AREA_BREAK_TYPE));
     }
 
     @Test
-    //The BORDER_RADIUS property is chosen without any specific intention. It could be replaced with any other property.
+    //The BORDER_BOTTOM_LEFT_RADIUS property is chosen without any specific intention. It could be replaced with any other property.
     public void getPropertyWithDefaultValueTestUnsupported() {
         AreaBreakRenderer areaBreakRenderer = new AreaBreakRenderer(new AreaBreak());
 
-        Assertions.assertThrows(UnsupportedOperationException.class, () -> areaBreakRenderer.getProperty(Property.BORDER_RADIUS, 3));
+        Assertions.assertThrows(UnsupportedOperationException.class,
+                () -> areaBreakRenderer.getProperty(Property.BORDER_BOTTOM_LEFT_RADIUS, 3));
     }
 
     @Test
-    //The BORDER_RADIUS property is chosen without any specific intention. It could be replaced with any other property.
+    //The BORDER_BOTTOM_LEFT_RADIUS property is chosen without any specific intention. It could be replaced with any other property.
     public void setPropertyTestUnsupported() {
         AreaBreakRenderer areaBreakRenderer = new AreaBreakRenderer(new AreaBreak());
 
-        Assertions.assertThrows(UnsupportedOperationException.class, () -> areaBreakRenderer.setProperty(Property.BORDER_RADIUS, 5));
+        Assertions.assertThrows(UnsupportedOperationException.class,
+                () -> areaBreakRenderer.setProperty(Property.BORDER_BOTTOM_LEFT_RADIUS, 5));
     }
 
     @Test
-    //The BORDER property is chosen without any specific intention. It could be replaced with any other property.
+    //The AREA_BREAK_TYPE property is chosen without any specific intention. It could be replaced with any other property.
     //Here we just check that no exception has been thrown.
     public void deleteOwnProperty() {
         AreaBreakRenderer areaBreakRenderer = new AreaBreakRenderer(new AreaBreak());
-        AssertUtil.doesNotThrow(() -> areaBreakRenderer.deleteOwnProperty(Property.BORDER));
+        AssertUtil.doesNotThrow(() -> areaBreakRenderer.deleteOwnProperty(Property.AREA_BREAK_TYPE));
     }
 
     @Test

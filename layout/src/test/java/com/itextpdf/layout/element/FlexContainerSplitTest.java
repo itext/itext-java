@@ -367,7 +367,7 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
 
     private Div createDefaultFlexContainer() {
         Div flexContainer = new FlexContainer();
-        flexContainer.setProperty(Property.BORDER, new SolidBorder(2));
+        flexContainer.setBorder(new SolidBorder(2));
         flexContainer.setProperty(Property.BACKGROUND, new Background(ColorConstants.LIGHT_GRAY));
         Paragraph p1 = new Paragraph(SHORT_TEXT)
                 .setWidth(UnitValue.createPercentValue(25))
@@ -388,7 +388,7 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
 
     private Div createDefaultFlexContainerForWrap() {
         Div flexContainer = new FlexContainer();
-        flexContainer.setProperty(Property.BORDER, new SolidBorder(2));
+        flexContainer.setBorder(new SolidBorder(2));
         flexContainer.setProperty(Property.BACKGROUND, new Background(ColorConstants.LIGHT_GRAY));
         Paragraph p1 = new Paragraph(SHORT_TEXT)
                 .setWidth(UnitValue.createPercentValue(20))

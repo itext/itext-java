@@ -140,9 +140,9 @@ public class MulticolRenderer extends AbstractRenderer {
     }
 
     /**
-     * Performs the drawing operation for the border of this renderer, if
-     * defined by any of the {@link Property#BORDER} values in either the layout
-     * element or this {@link IRenderer} itself.
+     * Performs the drawing operation for the border of this renderer, if defined by the {@link Property#BORDER_TOP},
+     * {@link Property#BORDER_RIGHT}, {@link Property#BORDER_BOTTOM} and {@link Property#BORDER_LEFT} values in either
+     * the layout element or this {@link IRenderer} itself.
      *
      * @param drawContext the context (canvas, document, etc) of this drawing operation.
      */
@@ -345,12 +345,12 @@ public class MulticolRenderer extends AbstractRenderer {
         LayoutArea area = layoutContext.getArea().clone();
         final Rectangle areaBBox = area.getBBox();
 
-        final float totalContainerHeight = GridMulticolUtil.updateOccupiedHeight(approximateHeight, isFull, isFirstLayout, this);
+        final float totalContainerHeight = GridMulticolUtil.updateOccupiedHeight(approximateHeight, isFull, this);
         if (totalContainerHeight < areaBBox.getHeight() || isFull) {
             areaBBox.setHeight(totalContainerHeight);
             Float height = determineHeight(areaBBox);
             if (height != null) {
-                height = GridMulticolUtil.updateOccupiedHeight((float) height, isFull, isFirstLayout, this);
+                height = GridMulticolUtil.updateOccupiedHeight((float) height, isFull, this);
                 areaBBox.setHeight((float) height);
             }
         }

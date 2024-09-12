@@ -422,15 +422,13 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
      * @return The edited {@link PdfFormAnnotation}.
      */
     public PdfFormAnnotation setBorderWidth(float borderWidth) {
-        // Acrobat doesn't support float border width therefore we round it.
-        int roundedBorderWidth = (int) Math.round(borderWidth);
         PdfDictionary bs = getWidget().getBorderStyle();
         if (bs == null) {
             bs = new PdfDictionary();
             put(PdfName.BS, bs);
         }
-        bs.put(PdfName.W, new PdfNumber(roundedBorderWidth));
-        this.borderWidth = roundedBorderWidth;
+        bs.put(PdfName.W, new PdfNumber(borderWidth));
+        this.borderWidth = borderWidth;
 
         regenerateField();
         return this;
@@ -446,7 +444,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         Border border = FormBorderFactory.getBorder(
                 this.getWidget().getBorderStyle(), borderWidth, borderColor, backgroundColor);
         if (border == null && borderWidth > 0 && borderColor != null) {
-            border = new SolidBorder(borderColor, Math.max(1, borderWidth));
+            border = new SolidBorder(borderColor, borderWidth);
         }
         return border;
     }
@@ -514,9 +512,9 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
      * <p>
      * Also note that the model element won't be used for annotations for choice form field.
      *
-     * @param element model element to set.
+     * @param element model element to set
      *
-     * @return this {@link PdfFormAnnotation}.
+     * @return this {@link PdfFormAnnotation}
      */
     public PdfFormAnnotation setFormFieldElement(IFormField element) {
         this.formFieldElement = element;
@@ -1235,7 +1233,10 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         if (backgroundColor != null) {
             formFieldElement.setProperty(Property.BACKGROUND, new Background(backgroundColor));
         }
-        formFieldElement.setProperty(Property.BORDER, getBorder());
+        formFieldElement.setProperty(Property.BORDER_TOP, getBorder());
+        formFieldElement.setProperty(Property.BORDER_RIGHT, getBorder());
+        formFieldElement.setProperty(Property.BORDER_BOTTOM, getBorder());
+        formFieldElement.setProperty(Property.BORDER_LEFT, getBorder());
         // Set fixed size
         BoxSizingPropertyValue boxSizing = formFieldElement.<BoxSizingPropertyValue>getProperty(Property.BOX_SIZING);
         // Borders and paddings are already taken into account for rectangle area, but shouldn't be included into width

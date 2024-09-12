@@ -226,7 +226,10 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
 
         paragraph.setProperty(Property.BOX_SIZING, this.<BoxSizingPropertyValue>getProperty(Property.BOX_SIZING));
         modelElement.setProperty(Property.RENDERING_MODE, this.<RenderingMode>getProperty(Property.RENDERING_MODE));
-        paragraph.setBorder(this.<Border>getProperty(Property.BORDER));
+        paragraph.setBorderTop(this.<Border>getProperty(Property.BORDER_TOP));
+        paragraph.setBorderRight(this.<Border>getProperty(Property.BORDER_RIGHT));
+        paragraph.setBorderBottom(this.<Border>getProperty(Property.BORDER_BOTTOM));
+        paragraph.setBorderLeft(this.<Border>getProperty(Property.BORDER_LEFT));
         paragraph.setProperty(Property.BACKGROUND, this.<Background>getProperty(Property.BACKGROUND));
 
         //In html 2 pdf rendering the boxes height width ratio is always 1:1

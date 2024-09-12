@@ -112,7 +112,7 @@ public class TextAreaTest extends ExtendedITextTest {
             flattenTextArea.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenTextArea.setProperty(FormProperty.FORM_FIELD_VALUE, "flatten\ntext area\nwith height");
             flattenTextArea.setProperty(Property.HEIGHT, new UnitValue(UnitValue.POINT, 100));
-            flattenTextArea.setProperty(Property.BORDER, new SolidBorder(2f));
+            flattenTextArea.setBorder(new SolidBorder(2f));
             document.add(flattenTextArea);
         }
 
@@ -129,7 +129,7 @@ public class TextAreaTest extends ExtendedITextTest {
             flattenTextArea.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenTextArea.setProperty(FormProperty.FORM_FIELD_VALUE, "flatten\ntext area\nwith height");
             flattenTextArea.setProperty(Property.MIN_HEIGHT, new UnitValue(UnitValue.POINT, 100));
-            flattenTextArea.setProperty(Property.BORDER, new SolidBorder(2f));
+            flattenTextArea.setBorder(new SolidBorder(2f));
             document.add(flattenTextArea);
         }
 
@@ -191,7 +191,7 @@ public class TextAreaTest extends ExtendedITextTest {
             textArea.setProperty(FormProperty.FORM_FIELD_VALUE,
                     "some text to not\nbe able to fit in on the page\nmore text just text\nreally big height");
             textArea.setHeight(50);
-            textArea.setProperty(Property.BORDER, new SolidBorder(2f));
+            textArea.setBorder(new SolidBorder(2f));
             document.add(textArea);
         }
 
@@ -210,7 +210,7 @@ public class TextAreaTest extends ExtendedITextTest {
             textArea.setInteractive(true);
             textArea.setProperty(FormProperty.FORM_FIELD_VALUE,
                     "Font\n size \nof this\nText Area will \nbe approximated\nbased on the content");
-            textArea.setProperty(Property.BORDER, new SolidBorder(1f));
+            textArea.setBorder(new SolidBorder(1f));
             textArea.setFontSize(0);
             textArea.setHeight(75);
             document.add(textArea);
@@ -221,7 +221,7 @@ public class TextAreaTest extends ExtendedITextTest {
             flattenTextArea.setInteractive(false);
             flattenTextArea.setProperty(FormProperty.FORM_FIELD_VALUE,
                     "Font\n size \nof this\nText Area will \nbe approximated\nbased on the content");
-            flattenTextArea.setProperty(Property.BORDER, new SolidBorder(1f));
+            flattenTextArea.setBorder(new SolidBorder(1f));
             flattenTextArea.setFontSize(0);
             flattenTextArea.setHeight(75);
             document.add(flattenTextArea);
@@ -240,7 +240,7 @@ public class TextAreaTest extends ExtendedITextTest {
             textArea.setInteractive(true);
             textArea.setProperty(FormProperty.FORM_FIELD_VALUE,
                     "Font\n size \nof this\nText Area will \nbe approximated\nbased on the content");
-            textArea.setProperty(Property.BORDER, new SolidBorder(1f));
+            textArea.setBorder(new SolidBorder(1f));
             textArea.setFontSize(0);
             textArea.setHeight(75);
             document.add(textArea);
@@ -249,7 +249,7 @@ public class TextAreaTest extends ExtendedITextTest {
             flattenTextArea.setInteractive(false);
             flattenTextArea.setProperty(FormProperty.FORM_FIELD_VALUE,
                     "Font\n size \nof this\nText Area will \nbe approximated\nbased on the content");
-            flattenTextArea.setProperty(Property.BORDER, new SolidBorder(1f));
+            flattenTextArea.setBorder(new SolidBorder(1f));
             flattenTextArea.setFontSize(0);
             flattenTextArea.setHeight(75);
             document.add(flattenTextArea);
@@ -268,7 +268,7 @@ public class TextAreaTest extends ExtendedITextTest {
             textArea.setInteractive(true);
             textArea.setProperty(FormProperty.FORM_FIELD_VALUE, "Font\n size \nof this\nText Area will not "
                     + "\nbe approximated\nbased on the content\nbecause height is not set");
-            textArea.setProperty(Property.BORDER, new SolidBorder(1f));
+            textArea.setBorder(new SolidBorder(1f));
             textArea.setFontSize(0);
             document.add(textArea);
 
@@ -276,7 +276,7 @@ public class TextAreaTest extends ExtendedITextTest {
             flattenTextArea.setInteractive(false);
             flattenTextArea.setProperty(FormProperty.FORM_FIELD_VALUE, "Font\n size \nof this\nText Area will not "
                     + "\nbe approximated\nbased on the content\nbecause height is not set");
-            flattenTextArea.setProperty(Property.BORDER, new SolidBorder(1f));
+            flattenTextArea.setBorder(new SolidBorder(1f));
             flattenTextArea.setFontSize(0);
             document.add(flattenTextArea);
         }
@@ -294,7 +294,7 @@ public class TextAreaTest extends ExtendedITextTest {
             textArea.setInteractive(true);
             textArea.setProperty(FormProperty.FORM_FIELD_VALUE,
                     "Is border visible?\nAnd after clicking on the field?\nIt should be by the way");
-            textArea.setProperty(Property.BORDER, new SolidBorder(0.5f));
+            textArea.setBorder(new SolidBorder(0.5f));
             document.add(textArea);
         }
 
@@ -356,7 +356,7 @@ public class TextAreaTest extends ExtendedITextTest {
             flattenTextArea.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenTextArea.setProperty(FormProperty.FORM_FIELD_VALUE, "flatten\ntext area\nwith height");
             flattenTextArea.setProperty(Property.MAX_HEIGHT, new UnitValue(UnitValue.POINT, 28));
-            flattenTextArea.setProperty(Property.BORDER, new SolidBorder(2f));
+            flattenTextArea.setBorder(new SolidBorder(2f));
             document.add(flattenTextArea);
         }
 

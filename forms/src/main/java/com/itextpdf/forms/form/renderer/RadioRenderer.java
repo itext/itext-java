@@ -142,7 +142,10 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
                 .setVerticalAlignment(DEFAULT_VERTICAL_ALIGNMENT)
                 .setMargin(0);
         paragraph.setProperty(Property.BOX_SIZING, this.<BoxSizingPropertyValue>getProperty(Property.BOX_SIZING));
-        paragraph.setBorder(this.<Border>getProperty(Property.BORDER));
+        paragraph.setBorderTop(this.<Border>getProperty(Property.BORDER_TOP));
+        paragraph.setBorderRight(this.<Border>getProperty(Property.BORDER_RIGHT));
+        paragraph.setBorderBottom(this.<Border>getProperty(Property.BORDER_BOTTOM));
+        paragraph.setBorderLeft(this.<Border>getProperty(Property.BORDER_LEFT));
         paragraph.setProperty(Property.BACKGROUND, this.<Background>getProperty(Property.BACKGROUND));
         paragraph.setBorderRadius(new BorderRadius(UnitValue.createPercentValue(50)));
 
@@ -248,11 +251,14 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
                 canvas.openTag(tp.getTagReference());
             }
             Rectangle rectangle = getOccupiedArea().getBBox().clone();
-            Border border = this.<Border>getProperty(Property.BORDER);
-            if (border != null) {
-                rectangle.applyMargins(border.getWidth(), border.getWidth(), border.getWidth(), border.getWidth(),
-                        false);
-            }
+            Border borderTop = this.<Border>getProperty(Property.BORDER_TOP);
+            Border borderRight = this.<Border>getProperty(Property.BORDER_RIGHT);
+            Border borderBottom = this.<Border>getProperty(Property.BORDER_BOTTOM);
+            Border borderLeft = this.<Border>getProperty(Property.BORDER_LEFT);
+            rectangle.applyMargins(borderTop == null ? 0 : borderTop.getWidth(),
+                    borderRight == null ? 0 : borderRight.getWidth(),
+                    borderBottom == null ? 0 : borderBottom.getWidth(),
+                    borderLeft == null ? 0 : borderLeft.getWidth(), false);
             final float radius = Math.min(rectangle.getWidth(), rectangle.getHeight()) / 2;
             canvas.saveState();
             canvas.setFillColor(DEFAULT_CHECKED_COLOR);

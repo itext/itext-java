@@ -93,7 +93,7 @@ public class InputFieldTest extends ExtendedITextTest {
             InputField flattenInputField = new InputField("no value input field");
             flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, null);
             flattenInputField.setProperty(FormProperty.FORM_FIELD_VALUE, null);
-            flattenInputField.setProperty(Property.BORDER, new SolidBorder(2f));
+            flattenInputField.setBorder(new SolidBorder(2f));
             document.add(flattenInputField);
         }
 
@@ -115,7 +115,7 @@ public class InputFieldTest extends ExtendedITextTest {
             InputField flattenInputField = new InputField("input field does not fit");
             flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenInputField.setProperty(FormProperty.FORM_FIELD_VALUE, "input field does not fit");
-            flattenInputField.setProperty(Property.BORDER, new SolidBorder(2f));
+            flattenInputField.setBorder(new SolidBorder(2f));
             document.add(flattenInputField);
         }
 
@@ -134,7 +134,7 @@ public class InputFieldTest extends ExtendedITextTest {
             flattenInputField.setProperty(FormProperty.FORM_FIELD_VALUE, "input field with lang");
 
             flattenInputField.getAccessibilityProperties().setLanguage("random_lang");
-            flattenInputField.setProperty(Property.BORDER, new SolidBorder(2f));
+            flattenInputField.setBorder(new SolidBorder(2f));
             document.add(flattenInputField);
         }
 
@@ -153,7 +153,7 @@ public class InputFieldTest extends ExtendedITextTest {
             flattenInputField.setProperty(FormProperty.FORM_FIELD_VALUE, "input field with null lang");
 
             flattenInputField.getAccessibilityProperties().setLanguage(null);
-            flattenInputField.setProperty(Property.BORDER, new SolidBorder(2f));
+            flattenInputField.setBorder(new SolidBorder(2f));
             document.add(flattenInputField);
         }
 
@@ -169,14 +169,14 @@ public class InputFieldTest extends ExtendedITextTest {
             InputField formInputField = new InputField("form input field with password");
             formInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             formInputField.setProperty(FormProperty.FORM_FIELD_VALUE, "form input field with password");
-            formInputField.setProperty(Property.BORDER, new SolidBorder(2f));
+            formInputField.setBorder(new SolidBorder(2f));
             formInputField.setProperty(FormProperty.FORM_FIELD_PASSWORD_FLAG, Boolean.TRUE);
             document.add(formInputField);
 
             InputField flattenInputField = new InputField("flatten input field with password");
             flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenInputField.setProperty(FormProperty.FORM_FIELD_VALUE, "flatten input field with password");
-            flattenInputField.setProperty(Property.BORDER, new SolidBorder(2f));
+            flattenInputField.setBorder(new SolidBorder(2f));
             flattenInputField.setProperty(FormProperty.FORM_FIELD_PASSWORD_FLAG, Boolean.TRUE);
             document.add(flattenInputField);
         }
@@ -194,7 +194,7 @@ public class InputFieldTest extends ExtendedITextTest {
             flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenInputField.setProperty(FormProperty.FORM_FIELD_VALUE, "flatten input field with height");
             flattenInputField.setProperty(Property.HEIGHT, new UnitValue(UnitValue.POINT, 100));
-            flattenInputField.setProperty(Property.BORDER, new SolidBorder(2f));
+            flattenInputField.setBorder(new SolidBorder(2f));
             document.add(flattenInputField);
         }
 
@@ -211,7 +211,7 @@ public class InputFieldTest extends ExtendedITextTest {
             flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenInputField.setProperty(FormProperty.FORM_FIELD_VALUE, "flatten input field with height");
             flattenInputField.setProperty(Property.MIN_HEIGHT, new UnitValue(UnitValue.POINT, 100));
-            flattenInputField.setProperty(Property.BORDER, new SolidBorder(2f));
+            flattenInputField.setBorder(new SolidBorder(2f));
             document.add(flattenInputField);
         }
 
@@ -228,7 +228,7 @@ public class InputFieldTest extends ExtendedITextTest {
             flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenInputField.setProperty(FormProperty.FORM_FIELD_VALUE, "flatten input field with height");
             flattenInputField.setProperty(Property.MAX_HEIGHT, new UnitValue(UnitValue.POINT, 10));
-            flattenInputField.setProperty(Property.BORDER, new SolidBorder(2f));
+            flattenInputField.setBorder(new SolidBorder(2f));
             document.add(flattenInputField);
         }
 

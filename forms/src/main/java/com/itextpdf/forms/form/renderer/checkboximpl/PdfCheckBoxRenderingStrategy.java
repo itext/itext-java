@@ -71,31 +71,55 @@ public final class PdfCheckBoxRenderingStrategy implements ICheckBoxRenderingStr
         if (!checkBoxRenderer.isBoxChecked()) {
             return;
         }
-        float borderWidth = CheckBoxRenderer.DEFAULT_BORDER_WIDTH;
-        final Border border = checkBoxRenderer.<Border>getProperty(Property.BORDER);
-        if (border != null) {
-            borderWidth = border.getWidth();
-            rectangle.applyMargins(borderWidth, borderWidth, borderWidth, borderWidth, true);
-        }
+        Border borderTop = checkBoxRenderer.<Border>getProperty(Property.BORDER_TOP);
+        Border borderRight = checkBoxRenderer.<Border>getProperty(Property.BORDER_RIGHT);
+        Border borderBottom = checkBoxRenderer.<Border>getProperty(Property.BORDER_BOTTOM);
+        Border borderLeft = checkBoxRenderer.<Border>getProperty(Property.BORDER_LEFT);
+        rectangle.applyMargins(borderTop == null ? 0 : borderTop.getWidth(),
+                borderRight == null ? 0 : borderRight.getWidth(),
+                borderBottom == null ? 0 : borderBottom.getWidth(),
+                borderLeft == null ? 0 : borderLeft.getWidth(), true);
         final PdfCanvas canvas = drawContext.getCanvas();
         canvas.saveState();
         canvas.setFillColor(ColorConstants.BLACK);
         // matrix transformation to draw the checkbox in the right place
         // because we come here with relative and not absolute coordinates
         canvas.concatMatrix(1, 0, 0, 1, rectangle.getLeft(), rectangle.getBottom());
-
         final CheckBoxType checkBoxType = checkBoxRenderer.getCheckBoxType();
         if (checkBoxType == CheckBoxType.CROSS || checkBoxType == null) {
-            final float customBorderWidth = border == null ? 1 : borderWidth;
+            final float customBorderWidth = retrieveBorderWidth(1, borderTop, borderRight, borderBottom, borderLeft);
             DrawingUtil.drawCross(canvas, rectangle.getWidth(), rectangle.getHeight(), customBorderWidth);
         } else {
             final String text = ZAPFDINGBATS_CHECKBOX_MAPPING.getByKey(checkBoxType);
             final PdfFont fontContainingSymbols = loadFontContainingSymbols();
-            float fontSize = calculateFontSize(checkBoxRenderer, fontContainingSymbols, text, rectangle, borderWidth);
+            float fontSize = calculateFontSize(checkBoxRenderer, fontContainingSymbols, text, rectangle,
+                    retrieveBorderWidth(CheckBoxRenderer.DEFAULT_BORDER_WIDTH,
+                            borderTop, borderRight, borderBottom, borderLeft));
             drawZapfdingbatsIcon(fontContainingSymbols, text, fontSize, rectangle, canvas);
         }
 
         canvas.restoreState();
+    }
+
+    private static float retrieveBorderWidth(float defaultWidth, Border borderTop, Border borderRight, Border borderBottom,
+                                      Border borderLeft) {
+        if (borderTop == null && borderRight == null && borderBottom == null && borderLeft == null) {
+            return defaultWidth;
+        }
+        float borderWidth = 0;
+        if (borderTop != null) {
+            borderWidth = Math.max(borderWidth, borderTop.getWidth());
+        }
+        if (borderRight != null) {
+            borderWidth = Math.max(borderWidth, borderRight.getWidth());
+        }
+        if (borderBottom != null) {
+            borderWidth = Math.max(borderWidth, borderBottom.getWidth());
+        }
+        if (borderLeft != null) {
+            borderWidth = Math.max(borderWidth, borderLeft.getWidth());
+        }
+        return borderWidth;
     }
 
     private PdfFont loadFontContainingSymbols() {
