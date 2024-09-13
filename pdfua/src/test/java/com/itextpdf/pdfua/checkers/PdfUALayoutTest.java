@@ -102,7 +102,7 @@ public class PdfUALayoutTest extends ExtendedITextTest {
 
     @Test
     public void simpleParagraphWithUnderlineTest() throws IOException, InterruptedException {
-        String outPdf = DESTINATION_FOLDER + "simpleParagraphTest.pdf";
+        String outPdf = DESTINATION_FOLDER + "simpleParagraphUnderlinesTest.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_simpleParagraphWithUnderlineTest.pdf";
 
         PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(

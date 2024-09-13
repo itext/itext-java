@@ -199,7 +199,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
 
     @Test
     public void pdfUA2RubberStampNoContentsAnnotationsTest() throws IOException, XMPException {
-        String outFile = DESTINATION_FOLDER + "pdfuaRubberstampAnnotationTest.pdf";
+        String outFile = DESTINATION_FOLDER + "pdfuaRubberstampNoContentAnnotationTest.pdf";
 
         try (PdfDocument pdfDocument = new PdfDocument(
                 new PdfWriter(outFile, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)))) {
