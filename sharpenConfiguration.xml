@@ -361,7 +361,7 @@
             <fileset reason="Encrypting and decrypting works differently in fips mode">
                 <file path="com/itextpdf/kernel/crypto/PdfDecryptingTest.java" />
                 <file path="com/itextpdf/kernel/crypto/PdfEncryptingTest.java" />
-                <file path="com/itextpdf/kernel/crypto/securityhandler/PublicHandlerUsingAesGcmTest.java" />
+                <file path="com/itextpdf/kernel/crypto/securityhandler/PubSecHandlerUsingAesGcmTest.java" />
             </fileset>
             <fileset reason="This test is affected by FIPS Mode, where some encryption features are not supported">
                 <file path="com/itextpdf/kernel/crypto/PdfEncryptionManuallyPortedTest.java"/>

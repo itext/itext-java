@@ -28,7 +28,6 @@ import com.itextpdf.kernel.crypto.OutputStreamAesGcmEncryption;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfVersion;
 
 import java.io.OutputStream;
@@ -66,25 +65,14 @@ public class StandardHandlerUsingAesGcm extends StandardHandlerUsingAes256 {
         super(encryptionDictionary, password);
     }
 
-    /**
-     * Checks whether the document-level metadata stream will be encrypted.
-     *
-     * @return {@code true} if the document-level metadata stream shall be encrypted, {@code false} otherwise
-     */
-    public boolean isEncryptMetadata() {
-        return encryptMetadata;
-    }
-
     @Override
     public void setHashKeyForNextObject(int objNumber, int objGeneration) {
-        // make sure the same IV is never used twice in the same file
-        // we do this by turning the objId/objGen into a 5-byte nonce (with generation restricted
-        // to 1 byte instead of 2) plus an in-object 2-byte counter that increments each time
-        // a new string is encrypted within the same object.
-        // The remaining 5 bytes will be generated randomly using a strong PRNG.
-        // This is *very different* from the situation with AES-CBC, where randomness is paramount.
-        // GCM uses a variation of counter mode, so making sure the IV is unique is more important
-        // than randomness.
+        // Make sure the same IV is never used twice in the same file. We do this by turning the objId/objGen into a
+        // 5-byte nonce (with generation restricted to 1 byte instead of 2) plus an in-object 2-byte counter that
+        // increments each time a new string is encrypted within the same object. The remaining 5 bytes will be
+        // generated randomly using a strong PRNG.
+        // This is very different from the situation with AES-CBC, where randomness is paramount. GCM uses a variation
+        // of counter mode, so making sure the IV is unique is more important than randomness.
         this.inObjectNonceCounter = 0;
         this.noncePart = new byte[]{
                 0, 0,
@@ -110,10 +98,17 @@ public class StandardHandlerUsingAesGcm extends StandardHandlerUsingAes256 {
     }
 
     @Override
-    protected void setAES256DicEntries(PdfDictionary encryptionDictionary, byte[] oeKey, byte[] ueKey, byte[] aes256Perms,
+    void setAES256DicEntries(PdfDictionary encryptionDictionary, byte[] oeKey, byte[] ueKey, byte[] aes256Perms,
                                      boolean encryptMetadata, boolean embeddedFilesOnly) {
-        super.setAES256DicEntries(encryptionDictionary, oeKey, ueKey, aes256Perms, encryptMetadata, embeddedFilesOnly);
-        encryptionDictionary.put(PdfName.R, new PdfNumber(7));
-        encryptionDictionary.put(PdfName.V, new PdfNumber(6));
+        int version = 6;
+        int revision = 7;
+        PdfName cryptoFilter = PdfName.AESV4;
+        setEncryptionDictionaryEntries(encryptionDictionary, oeKey, ueKey, aes256Perms, encryptMetadata, embeddedFilesOnly,
+                version, revision, cryptoFilter);
+    }
+
+    @Override
+    boolean isPdf2(PdfDictionary encryptionDictionary) {
+        return true;
     }
 }

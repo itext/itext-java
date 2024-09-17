@@ -25,6 +25,8 @@ package com.itextpdf.kernel.crypto.securityhandler;
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.EncryptionConstants;
 import com.itextpdf.kernel.pdf.PdfBoolean;
@@ -58,12 +60,14 @@ import java.util.HashMap;
 
 @Tag("BouncyCastleIntegrationTest")
 public class StandardHandlerUsingAesGcmTest extends ExtendedITextTest {
-    private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
-
     public static final String SRC =
             "./src/test/resources/com/itextpdf/kernel/crypto/securityhandler/StandardHandlerUsingAesGcmTest/";
     public static final String DEST =
             "./target/test/com/itextpdf/kernel/crypto/securityhandler/StandardHandlerUsingAesGcmTest/";
+
+    private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
+    private static final byte[] OWNER_PASSWORD = "supersecret".getBytes(StandardCharsets.UTF_8);
+    private static final byte[] USER_PASSWORD = "secret".getBytes(StandardCharsets.UTF_8);
 
     @BeforeAll
     public static void setUp() {
@@ -72,57 +76,64 @@ public class StandardHandlerUsingAesGcmTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = VersionConforming.NOT_SUPPORTED_AES_GCM,
-            ignore = true),
+    @LogMessages(messages = {
             @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
                     ignore = true)})
-    public void testSimpleEncryptDecryptTest() throws Exception {
+    public void simpleEncryptDecryptTest() throws Exception {
         String srcFile = SRC + "simpleDocument.pdf";
-        String cmpFile = SRC + "cmp_simpleDocument.pdf";
-        String outFile = DEST + "simpleEncryptDecryptTest.pdf";
-        doEncrypt(srcFile, outFile);
-        tryCompare(outFile, cmpFile);
+        String decryptedCmpFile = SRC + "cmp_simpleEncryptDecrypt.pdf";
+        String encryptedCmpFile = SRC + "cmp_encryptedSimpleDocument.pdf";
+        String outFile = DEST + "simpleEncryptDecrypt.pdf";
+
+        // Set usage permissions.
+        int perms = EncryptionConstants.ALLOW_PRINTING | EncryptionConstants.ALLOW_DEGRADED_PRINTING;
+        WriterProperties wProps = new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)
+                .setStandardEncryption(USER_PASSWORD, OWNER_PASSWORD, perms, EncryptionConstants.ENCRYPTION_AES_GCM);
+        // Instantiate input/output document.
+        try (PdfDocument docIn = new PdfDocument(new PdfReader(srcFile));
+             PdfDocument docOut = new PdfDocument(new PdfWriter(outFile, wProps))) {
+            // Copy one page from input to output.
+            docIn.copyPagesTo(1, 1, docOut);
+        }
+        new CompareTool().compareByContent(outFile, decryptedCmpFile, DEST, "diff", USER_PASSWORD, null);
+        new CompareTool().compareByContent(outFile, encryptedCmpFile, DEST, "diff", USER_PASSWORD, USER_PASSWORD);
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = VersionConforming.NOT_SUPPORTED_AES_GCM,
-            ignore = true),
-            @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
-            ignore = true)})
-    public void testSimpleEncryptDecryptPdf15Test() throws Exception {
+    @LogMessages(messages = {@LogMessage(messageTemplate = VersionConforming.NOT_SUPPORTED_AES_GCM),
+            @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT, ignore = true)})
+    public void simpleEncryptDecryptPdf15Test() throws Exception {
         String srcFile = SRC + "simpleDocument.pdf";
-        String cmpFile = SRC + "cmp_simpleDocument.pdf";
+        String cmpFile = SRC + "cmp_simpleEncryptDecrypt.pdf";
         String outFile = DEST + "notSupportedVersionDocument.pdf";
 
-        byte[] userBytes = "secret".getBytes(StandardCharsets.UTF_8);
-        byte[] ownerBytes = "supersecret".getBytes(StandardCharsets.UTF_8);
         int perms = EncryptionConstants.ALLOW_PRINTING | EncryptionConstants.ALLOW_DEGRADED_PRINTING;
         WriterProperties wProps = new WriterProperties()
-                .setStandardEncryption(userBytes, ownerBytes, perms, EncryptionConstants.ENCRYPTION_AES_GCM);
+                .setStandardEncryption(USER_PASSWORD, OWNER_PASSWORD, perms, EncryptionConstants.ENCRYPTION_AES_GCM);
         PdfDocument ignored = new PdfDocument(new PdfReader(srcFile), new PdfWriter(outFile, wProps));
         ignored.close();
-        tryCompare(outFile, cmpFile);
+        new CompareTool().compareByContent(outFile, cmpFile, DEST, "diff", USER_PASSWORD, null);
     }
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
             ignore = true))
-    public void testKnownOutput() throws Exception {
+    public void knownOutputTest() throws Exception {
         String srcFile = SRC + "encryptedDocument.pdf";
         String outFile = DEST + "encryptedDocument.pdf";
         String cmpFile = SRC + "simpleDocument.pdf";
-        try (PdfDocument ignored = new PdfDocument(new PdfReader(srcFile, new ReaderProperties()
-                .setPassword("supersecret".getBytes(StandardCharsets.UTF_8))), new PdfWriter(outFile))) {
+        try (PdfDocument ignored = new PdfDocument(new PdfReader(srcFile,
+                new ReaderProperties().setPassword(OWNER_PASSWORD)), new PdfWriter(outFile))) {
             // We need to copy the source file to the destination folder to be able to compare pdf files in android.
         }
-        tryCompare(outFile, cmpFile);
+        new CompareTool().compareByContent(outFile, cmpFile, DEST, "diff", USER_PASSWORD, null);
     }
 
     // In all these tampered files, the stream content of object 14 has been modified.
     @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
             ignore = true))
     @Test
-    public void testMacTampered() throws IOException {
+    public void macTamperedTest() throws IOException {
         String srcFile = SRC + "encryptedDocumentTamperedMac.pdf";
         assertTampered(srcFile);
     }
@@ -130,7 +141,7 @@ public class StandardHandlerUsingAesGcmTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
             ignore = true))
     @Test
-    public void testIVTampered() throws IOException {
+    public void initVectorTamperedTest() throws IOException {
         String srcFile = SRC + "encryptedDocumentTamperedIv.pdf";
         assertTampered(srcFile);
     }
@@ -138,7 +149,7 @@ public class StandardHandlerUsingAesGcmTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
             ignore = true))
     @Test
-    public void testCiphertextTampered() throws IOException {
+    public void ciphertextTamperedTest() throws IOException {
         String srcFile = SRC + "encryptedDocumentTamperedCiphertext.pdf";
         assertTampered(srcFile);
     }
@@ -160,6 +171,9 @@ public class StandardHandlerUsingAesGcmTest extends ExtendedITextTest {
         encMap.put(PdfName.StrF, PdfName.Identity);
         PdfDictionary embeddedFilesDict = new PdfDictionary();
         embeddedFilesDict.put(PdfName.FlateDecode, new PdfDictionary());
+        PdfDictionary cfmDict = new PdfDictionary();
+        cfmDict.put(PdfName.CFM, PdfName.AESV4);
+        embeddedFilesDict.put(PdfName.StdCF, cfmDict);
         encMap.put(PdfName.CF, embeddedFilesDict);
         encMap.put(PdfName.EncryptMetadata, PdfBoolean.FALSE);
         encMap.put(PdfName.O, new PdfString("\u0006¡Ê\u009A<@\u009DÔG\u0013&\u008C5r\u0096\u0081i!\u0091\u000Fªìh=±\u0091\u0006Að¨\u008D\"¼\u0018?õ\u001DNó»{y\u0091)\u0090vâý"));
@@ -187,6 +201,9 @@ public class StandardHandlerUsingAesGcmTest extends ExtendedITextTest {
         encMap.put(PdfName.StrF, PdfName.StdCF);
         PdfDictionary embeddedFilesDict = new PdfDictionary();
         embeddedFilesDict.put(PdfName.FlateDecode, new PdfDictionary());
+        PdfDictionary cfmDict = new PdfDictionary();
+        cfmDict.put(PdfName.CFM, PdfName.AESV4);
+        embeddedFilesDict.put(PdfName.StdCF, cfmDict);
         encMap.put(PdfName.CF, embeddedFilesDict);
         encMap.put(PdfName.EncryptMetadata, PdfBoolean.TRUE);
         encMap.put(PdfName.O, new PdfString("\u0006¡Ê\u009A<@\u009DÔG\u0013&\u008C5r\u0096\u0081i!\u0091\u000Fªìh=±\u0091\u0006Að¨\u008D\"¼\u0018?õ\u001DNó»{y\u0091)\u0090vâý"));
@@ -199,36 +216,72 @@ public class StandardHandlerUsingAesGcmTest extends ExtendedITextTest {
         Assertions.assertTrue(encryption.isMetadataEncrypted());
     }
 
-    private void doEncrypt(String input, String output) throws IOException {
-        // Pick user/owner password
-        byte[] userBytes = "secret".getBytes(StandardCharsets.UTF_8);
-        byte[] ownerBytes = "supersecret".getBytes(StandardCharsets.UTF_8);
-        // Set usage permissions
-        int perms = EncryptionConstants.ALLOW_PRINTING | EncryptionConstants.ALLOW_DEGRADED_PRINTING;
-        WriterProperties wProps = new WriterProperties()
-                .setPdfVersion(PdfVersion.PDF_2_0)
-                .setStandardEncryption(userBytes, ownerBytes, perms, EncryptionConstants.ENCRYPTION_AES_GCM);
-        // Instantiate input/output document
-        try (PdfDocument docIn = new PdfDocument(new PdfReader(input));
-             PdfDocument docOut = new PdfDocument(new PdfWriter(output, wProps))) {
-            // Copy one page from input to output
-            docIn.copyPagesTo(1, 1, docOut);
-        }
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true)})
+    public void encryptPdfWithMissingCFTest() {
+        byte[] documentId = new byte[]{(byte)88, (byte)189, (byte)192, (byte)48, (byte)240, (byte)200, (byte)87,
+                (byte)183, (byte)244, (byte)119, (byte)224, (byte)109, (byte)226, (byte)173, (byte)32, (byte)90};
+        byte[] password = new byte[]{(byte)115, (byte)101, (byte)99, (byte)114, (byte)101, (byte)116};
+        HashMap<PdfName, PdfObject> encMap = new HashMap<PdfName, PdfObject>();
+        encMap.put(PdfName.R, new PdfNumber(7));
+        encMap.put(PdfName.V, new PdfNumber(6));
+        PdfDictionary dictionary = new PdfDictionary(encMap);
+        Exception e = Assertions.assertThrows(PdfException.class, () -> new PdfEncryption(dictionary, password, documentId));
+        Assertions.assertEquals(KernelExceptionMessageConstant.CF_NOT_FOUND_ENCRYPTION, e.getMessage());
     }
 
-    private void tryCompare(String outPdf, String cmpPdf) throws Exception {
-        new CompareTool()
-                .compareByContent(outPdf, cmpPdf, DEST, "diff", "secret".getBytes(StandardCharsets.UTF_8), null);
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true)})
+    public void encryptPdfWithMissingStdCFTest() {
+        byte[] documentId = new byte[]{(byte)88, (byte)189, (byte)192, (byte)48, (byte)240, (byte)200, (byte)87,
+                (byte)183, (byte)244, (byte)119, (byte)224, (byte)109, (byte)226, (byte)173, (byte)32, (byte)90};
+        byte[] password = new byte[]{(byte)115, (byte)101, (byte)99, (byte)114, (byte)101, (byte)116};
+        HashMap<PdfName, PdfObject> encMap = new HashMap<PdfName, PdfObject>();
+        encMap.put(PdfName.R, new PdfNumber(7));
+        encMap.put(PdfName.V, new PdfNumber(6));
+        PdfDictionary embeddedFilesDict = new PdfDictionary();
+        embeddedFilesDict.put(PdfName.FlateDecode, new PdfDictionary());
+        PdfDictionary cfmDict = new PdfDictionary();
+        cfmDict.put(PdfName.CFM, PdfName.AESV4);
+        encMap.put(PdfName.CF, embeddedFilesDict);
+        PdfDictionary dictionary = new PdfDictionary(encMap);
+        Exception e = Assertions.assertThrows(PdfException.class, () -> new PdfEncryption(dictionary, password, documentId));
+        Assertions.assertEquals(KernelExceptionMessageConstant.STDCF_NOT_FOUND_ENCRYPTION, e.getMessage());
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true)})
+    public void encryptPdfWithMissingCFMTest() {
+        byte[] documentId = new byte[]{(byte)88, (byte)189, (byte)192, (byte)48, (byte)240, (byte)200, (byte)87,
+                (byte)183, (byte)244, (byte)119, (byte)224, (byte)109, (byte)226, (byte)173, (byte)32, (byte)90};
+        byte[] password = new byte[]{(byte)115, (byte)101, (byte)99, (byte)114, (byte)101, (byte)116};
+        HashMap<PdfName, PdfObject> encMap = new HashMap<PdfName, PdfObject>();
+        encMap.put(PdfName.R, new PdfNumber(7));
+        encMap.put(PdfName.V, new PdfNumber(6));
+        encMap.put(PdfName.P, new PdfNumber(-1852));
+        encMap.put(PdfName.StmF, PdfName.StdCF);
+        encMap.put(PdfName.StrF, PdfName.StdCF);
+        PdfDictionary embeddedFilesDict = new PdfDictionary();
+        embeddedFilesDict.put(PdfName.FlateDecode, new PdfDictionary());
+        PdfDictionary cfmDict = new PdfDictionary();
+        embeddedFilesDict.put(PdfName.StdCF, cfmDict);
+        encMap.put(PdfName.CF, embeddedFilesDict);
+        PdfDictionary dictionary = new PdfDictionary(encMap);
+        Exception e = Assertions.assertThrows(PdfException.class, () -> new PdfEncryption(dictionary, password, documentId));
+        Assertions.assertEquals(KernelExceptionMessageConstant.NO_COMPATIBLE_ENCRYPTION_FOUND, e.getMessage());
     }
 
     private void assertTampered(String outFile) throws IOException {
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(outFile,
-                new ReaderProperties().setPassword("secret".getBytes(StandardCharsets.UTF_8))));
-
-        PdfObject obj = pdfDoc.getPdfObject(14);
-        if (obj != null && obj.isStream()) {
-            // Get decoded stream bytes.
-            Assertions.assertThrows(Exception.class, () -> ((PdfStream) obj).getBytes());
+        try (PdfDocument pdfDoc =
+                     new PdfDocument(new PdfReader(outFile, new ReaderProperties().setPassword(USER_PASSWORD)))) {
+            PdfObject obj = pdfDoc.getPdfObject(14);
+            if (obj != null && obj.isStream()) {
+                // Get decoded stream bytes.
+                Assertions.assertThrows(Exception.class, () -> ((PdfStream) obj).getBytes());
+            }
         }
     }
 }

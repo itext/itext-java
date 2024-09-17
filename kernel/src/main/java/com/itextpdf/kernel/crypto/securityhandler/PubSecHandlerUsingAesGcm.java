@@ -28,7 +28,6 @@ import com.itextpdf.kernel.crypto.OutputStreamAesGcmEncryption;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.security.IExternalDecryptionProcess;
 
 import java.io.OutputStream;
@@ -77,6 +76,12 @@ public class PubSecHandlerUsingAesGcm extends PubSecHandlerUsingAes256 {
 
     @Override
     public void setHashKeyForNextObject(int objNumber, int objGeneration) {
+        // Make sure the same IV is never used twice in the same file. We do this by turning the objId/objGen into a
+        // 5-byte nonce (with generation restricted to 1 byte instead of 2) plus an in-object 2-byte counter that
+        // increments each time a new string is encrypted within the same object. The remaining 5 bytes will be
+        // generated randomly using a strong PRNG.
+        // This is very different from the situation with AES-CBC, where randomness is paramount.
+        // GCM uses a variation of counter mode, so making sure the IV is unique is more important than randomness.
         this.inObjectNonceCounter = 0;
         this.noncePart = new byte[]{
                 0, 0,
@@ -102,8 +107,10 @@ public class PubSecHandlerUsingAesGcm extends PubSecHandlerUsingAes256 {
     }
 
     @Override
-    protected void setPubSecSpecificHandlerDicEntries(PdfDictionary encryptionDictionary, boolean encryptMetadata, boolean embeddedFilesOnly) {
-        super.setPubSecSpecificHandlerDicEntries(encryptionDictionary, encryptMetadata, embeddedFilesOnly);
-        encryptionDictionary.put(PdfName.V, new PdfNumber(7));
+    protected void setPubSecSpecificHandlerDicEntries(PdfDictionary encryptionDictionary, boolean encryptMetadata,
+                                                      boolean embeddedFilesOnly) {
+        int version = 6;
+        PdfName filter = PdfName.AESV4;
+        setEncryptionDictEntries(encryptionDictionary, encryptMetadata, embeddedFilesOnly, version, filter);
     }
 }

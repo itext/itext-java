@@ -35,6 +35,7 @@ import com.itextpdf.kernel.pdf.EncryptionConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.VersionConforming;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.mac.MacProperties.KeyWrappingAlgorithm;
 import com.itextpdf.kernel.mac.MacProperties.MacAlgorithm;
@@ -49,6 +50,9 @@ import java.io.IOException;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
+
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;

@@ -33,12 +33,16 @@ import java.security.cert.Certificate;
 
 public class PubSecHandlerUsingAes256 extends PubSecHandlerUsingAes128 {
 
-    public PubSecHandlerUsingAes256(PdfDictionary encryptionDictionary, Certificate[] certs, int[] permissions, boolean encryptMetadata, boolean embeddedFilesOnly) {
+    public PubSecHandlerUsingAes256(PdfDictionary encryptionDictionary, Certificate[] certs, int[] permissions,
+                                    boolean encryptMetadata, boolean embeddedFilesOnly) {
         super(encryptionDictionary, certs, permissions, encryptMetadata, embeddedFilesOnly);
     }
 
-    public PubSecHandlerUsingAes256(PdfDictionary encryptionDictionary, Key certificateKey, Certificate certificate, String certificateKeyProvider, IExternalDecryptionProcess externalDecryptionProcess, boolean encryptMetadata) {
-        super(encryptionDictionary, certificateKey, certificate, certificateKeyProvider, externalDecryptionProcess, encryptMetadata);
+    public PubSecHandlerUsingAes256(PdfDictionary encryptionDictionary, Key certificateKey, Certificate certificate,
+                                    String certificateKeyProvider, IExternalDecryptionProcess externalDecryptionProcess,
+                                    boolean encryptMetadata) {
+        super(encryptionDictionary, certificateKey, certificate, certificateKeyProvider, externalDecryptionProcess,
+                encryptMetadata);
     }
 
     @Override
@@ -57,11 +61,19 @@ public class PubSecHandlerUsingAes256 extends PubSecHandlerUsingAes128 {
     }
 
     @Override
-    protected void setPubSecSpecificHandlerDicEntries(PdfDictionary encryptionDictionary, boolean encryptMetadata, boolean embeddedFilesOnly) {
+    protected void setPubSecSpecificHandlerDicEntries(PdfDictionary encryptionDictionary, boolean encryptMetadata,
+                                                      boolean embeddedFilesOnly) {
+        int version = 5;
+        PdfName filter = PdfName.AESV3;
+        setEncryptionDictEntries(encryptionDictionary, encryptMetadata, embeddedFilesOnly, version, filter);
+    }
+
+    void setEncryptionDictEntries(PdfDictionary encryptionDictionary, boolean encryptMetadata,
+                                        boolean embeddedFilesOnly, int version, PdfName cryptFilter) {
         encryptionDictionary.put(PdfName.Filter, PdfName.Adobe_PubSec);
         encryptionDictionary.put(PdfName.SubFilter, PdfName.Adbe_pkcs7_s5);
 
-        encryptionDictionary.put(PdfName.V, new PdfNumber(5));
+        encryptionDictionary.put(PdfName.V, new PdfNumber(version));
 
         PdfArray recipients = createRecipientsArray();
         PdfDictionary stdcf = new PdfDictionary();
@@ -69,7 +81,7 @@ public class PubSecHandlerUsingAes256 extends PubSecHandlerUsingAes128 {
         if (!encryptMetadata) {
             stdcf.put(PdfName.EncryptMetadata, PdfBoolean.FALSE);
         }
-        stdcf.put(PdfName.CFM, PdfName.AESV3);
+        stdcf.put(PdfName.CFM, cryptFilter);
         stdcf.put(PdfName.Length, new PdfNumber(256));
         PdfDictionary cf = new PdfDictionary();
         cf.put(PdfName.DefaultCryptFilter, stdcf);
