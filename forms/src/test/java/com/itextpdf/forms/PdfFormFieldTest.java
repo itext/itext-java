@@ -1222,10 +1222,13 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         // list
         PdfChoiceFormField f = new ChoiceFormFieldBuilder(pdfDoc, "combo")
                 .setWidgetRectangle(new Rectangle(36, 556, 50, 100)).setOptions(new String[]{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}).createList();
+        f.disableFieldRegeneration();
         f.setValue("9", true);
         f.setValue("4");
         f.setTopIndex(2);
         f.setListSelected(new String[]{"3", "5"});
+        f.setMultiSelect(true);
+        f.enableFieldRegeneration();
         form.addField(f);
         // push button
         form.addField(new PushButtonFormFieldBuilder(pdfDoc, "push button")
@@ -1420,8 +1423,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
     @Test
     // Acrobat removes /NeedAppearances flag when document is opened and suggests to resave the document at once.
-    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA),
-            @LogMessage(messageTemplate = FormsLogMessageConstants.INPUT_FIELD_DOES_NOT_FIT)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = FormsLogMessageConstants.INPUT_FIELD_DOES_NOT_FIT)})
     public void appendModeAppearance() throws IOException, InterruptedException {
         String inputFile = "appendModeAppearance.pdf";
         String outputFile = "appendModeAppearance.pdf";

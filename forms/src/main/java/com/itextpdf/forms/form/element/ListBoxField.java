@@ -73,6 +73,8 @@ public class ListBoxField extends AbstractSelectField {
                 return (T1) (Object) false;
             case FormProperty.FORM_FIELD_SIZE:
                 return (T1) (Object) 4;
+            case FormProperty.LIST_BOX_TOP_INDEX:
+                return (T1) (Object) 0;
             default:
                 return super.<T1>getDefaultProperty(property);
         }
@@ -117,6 +119,18 @@ public class ListBoxField extends AbstractSelectField {
         }
 
         return selectedStrings;
+    }
+
+    /**
+     * Sets the index of the first visible option in a scrollable list.
+     *
+     * @param topIndex the index of the first option
+     *
+     * @return this {@link ListBoxField} instance
+     */
+    public ListBoxField setTopIndex(int topIndex) {
+        setProperty(FormProperty.LIST_BOX_TOP_INDEX, topIndex);
+        return this;
     }
 
     /**

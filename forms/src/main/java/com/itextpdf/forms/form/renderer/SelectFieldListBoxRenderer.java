@@ -128,7 +128,9 @@ public class SelectFieldListBoxRenderer extends AbstractSelectFieldRenderer {
         List<SelectFieldItem> options = selectField.getOptions();
 
         Div optionsContainer = new Div();
-        for (SelectFieldItem option : options) {
+        int topIndex = (int) this.<Integer>getProperty(FormProperty.LIST_BOX_TOP_INDEX, 0);
+        List<SelectFieldItem> visibleOptions = topIndex > 0 ? options.subList(topIndex, options.size()) : options;
+        for (SelectFieldItem option : visibleOptions) {
             optionsContainer.add(option.getElement());
         }
         String lang = getLang();
@@ -217,6 +219,11 @@ public class SelectFieldListBoxRenderer extends AbstractSelectFieldRenderer {
         choiceField.setMultiSelect(isMultiple());
         choiceField.setListSelected(selectedOptions.toArray(new String[selectedOptions.size()]));
 
+        Integer topIndex = modelElement.<Integer>getOwnProperty(FormProperty.LIST_BOX_TOP_INDEX);
+        if (topIndex != null) {
+            choiceField.setTopIndex((int) topIndex);
+        }
+
         TransparentColor color = getPropertyAsTransparentColor(Property.FONT_COLOR);
         if (color != null) {
             choiceField.setColor(color.getColor());
@@ -304,7 +311,13 @@ public class SelectFieldListBoxRenderer extends AbstractSelectFieldRenderer {
     }
 
     private void applySelectedStyle(IRenderer selectedOption) {
-        selectedOption.setProperty(Property.BACKGROUND, new Background(new DeviceRgb(0, 120, 215)));
+        RenderingMode mode = this.<RenderingMode>getProperty(Property.RENDERING_MODE);
+        if (RenderingMode.HTML_MODE.equals(mode) && isFlatten() &&
+                selectedOption.<Background>getProperty(Property.BACKGROUND) == null) {
+            selectedOption.setProperty(Property.BACKGROUND, new Background(new DeviceRgb(206,206,206)));
+        } else {
+            selectedOption.setProperty(Property.BACKGROUND, new Background(new DeviceRgb(169, 204, 225)));
+        }
         setFontColorRecursively(selectedOption);
     }
 
@@ -314,7 +327,7 @@ public class SelectFieldListBoxRenderer extends AbstractSelectFieldRenderer {
      * otherwise it will be not applied due to the css resolving mechanism.
      */
     private void setFontColorRecursively(IRenderer selectedOption) {
-        selectedOption.setProperty(Property.FONT_COLOR, new TransparentColor(ColorConstants.WHITE));
+        selectedOption.setProperty(Property.FONT_COLOR, new TransparentColor(ColorConstants.BLACK));
         for (IRenderer renderer : selectedOption.getChildRenderers()) {
             setFontColorRecursively(renderer);
         }

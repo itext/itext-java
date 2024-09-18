@@ -59,24 +59,6 @@ public class TextArea extends FormField<TextArea> implements IPlaceholderable {
         setProperties();
     }
 
-    /**
-     * Determines, whether the input field will be password.
-     *
-     * <p>
-     * Usually means that instead of glyphs '*' will be shown in case of flatten field.
-     *
-     * <p>
-     * If the field is not flatten, value will be ignored.
-     *
-     * @param isPassword {@code true} is this field shall be considered as password, {@code false} otherwise
-     *
-     * @return this input field
-     */
-    public TextArea useAsPassword(boolean isPassword) {
-        setProperty(FormProperty.FORM_FIELD_PASSWORD_FLAG, isPassword);
-        return this;
-    }
-
     /* (non-Javadoc)
      * @see FormField#getDefaultProperty(int)
      */

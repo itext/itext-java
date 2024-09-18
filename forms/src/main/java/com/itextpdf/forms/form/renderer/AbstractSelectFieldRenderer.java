@@ -59,7 +59,6 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
      */
     protected AbstractSelectFieldRenderer(AbstractSelectField modelElement) {
         super(modelElement);
-        addChild(createFlatRenderer());
     }
 
     /**
@@ -67,6 +66,9 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
      */
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
+        childRenderers.clear();
+        addChild(createFlatRenderer());
+
         // Resolve width here in case it's relative, while parent width is still intact.
         // If it's inline-block context, relative width is already resolved.
         Float width = retrieveWidth(layoutContext.getArea().getBBox().getWidth());
@@ -83,7 +85,7 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
         final boolean isForcedPlacement = Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT));
         LayoutResult layoutResult = super.layout(new LayoutContext(area, layoutContext.getMarginsCollapseInfo(),
                 layoutContext.getFloatRendererAreas(), layoutContext.isClippedHeight()));
-        if (isForcedPlacement){
+        if (isForcedPlacement) {
             // Restore the Property.FORCED_PLACEMENT value as it was before super.layout
             setProperty(Property.FORCED_PLACEMENT, true);
         }

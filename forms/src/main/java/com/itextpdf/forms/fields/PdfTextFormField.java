@@ -174,7 +174,8 @@ public class PdfTextFormField extends PdfFormField {
      * and if the Multiline, Password, and FileSelect flags are clear.
      * If true, the field is automatically divided into as many equally spaced positions,
      * or combs, as the value of MaxLen, and the text is laid out into those combs.
-     * @return whether or not combing is enabled
+     *
+     * @return {@code true} if combing is enabled, {@code false} otherwise
      */
     public boolean isComb() {
         return getFieldFlag(FF_COMB);

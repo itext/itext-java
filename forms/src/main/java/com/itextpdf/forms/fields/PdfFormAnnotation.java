@@ -802,12 +802,15 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             return;
         }
 
+        boolean multiselect = parent.getFieldFlag(PdfChoiceFormField.FF_MULTI_SELECT);
         if (!(formFieldElement instanceof ListBoxField)) {
             // Create it once and reset properties during each widget regeneration.
-            formFieldElement = new ListBoxField("", 0, parent.getFieldFlag(PdfChoiceFormField.FF_MULTI_SELECT));
+            formFieldElement = new ListBoxField(parent.getPartialFieldName().toUnicodeString(), 0, multiselect);
         }
-        formFieldElement.setProperty(FormProperty.FORM_FIELD_MULTIPLE,
-                parent.getFieldFlag(PdfChoiceFormField.FF_MULTI_SELECT));
+        formFieldElement.setProperty(FormProperty.FORM_FIELD_MULTIPLE, multiselect);
+        ((ListBoxField) formFieldElement).setTopIndex(parent instanceof PdfChoiceFormField &&
+                ((PdfChoiceFormField) parent).getTopIndex() != null ?
+                ((PdfChoiceFormField) parent).getTopIndex().intValue() : 0);
 
         PdfArray indices = getParent().getAsArray(PdfName.I);
         PdfArray options = parent.getOptions();
@@ -831,13 +834,24 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             final boolean selected = indices != null && indices.contains(new PdfNumber(index));
             SelectFieldItem existingItem = ((ListBoxField) formFieldElement).getOption(exportValue);
             if (existingItem == null) {
-                existingItem = new SelectFieldItem(exportValue, displayValue);
+                existingItem = displayValue == null ? new SelectFieldItem(exportValue) :
+                        new SelectFieldItem(exportValue, displayValue);
                 ((ListBoxField) formFieldElement).addOption(existingItem);
             }
             existingItem.getElement().setProperty(Property.TEXT_ALIGNMENT, parent.getJustification());
             existingItem.getElement().setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.VISIBLE);
             existingItem.getElement().setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
             existingItem.getElement().setProperty(FormProperty.FORM_FIELD_SELECTED, selected);
+            // Workaround for com.itextpdf.forms.form.renderer.SelectFieldListBoxRenderer.applySelectedStyle:
+            // in HTML rendering mode we want to draw gray background for flattened fields and blue one for interactive,
+            // but here we temporarily flatten formFieldElement, so blue background property is explicitly set to
+            // the selected item. We also need to clear background property for not selected items in case field
+            // is regenerated with modified indices list.
+            if (selected && (multiselect || index == indices.getAsNumber(indices.size() - 1).intValue())) {
+                existingItem.getElement().setProperty(Property.BACKGROUND, new Background(new DeviceRgb(169, 204, 225)));
+            } else {
+                existingItem.getElement().setProperty(Property.BACKGROUND, null);
+            }
         }
 
         formFieldElement.setProperty(Property.FONT, getFont());
@@ -881,9 +895,18 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         if (parent.isMultiline()) {
             formFieldElement.setProperty(Property.FONT_SIZE, UnitValue.createPointValue(getFontSize()));
         } else {
-            formFieldElement.setProperty(Property.FONT_SIZE,
-                    UnitValue.createPointValue(getFontSize(new PdfArray(rectangle), parent.getValueAsString())));
+            float fontSize = getFontSize(new PdfArray(rectangle), parent.getValueAsString());
+            if (fontSize != 0) {
+                // We want to always draw the text using the given font size even if it's not fit into layout area.
+                // Without setting this property the height of the drawn field will be 0 which is unexpected.
+                formFieldElement.setProperty(Property.FORCED_PLACEMENT, true);
+            }
+            formFieldElement.setProperty(Property.FONT_SIZE, UnitValue.createPointValue(fontSize));
             value = value.replaceAll(LINE_ENDINGS_REGEXP, " ");
+            ((InputField) formFieldElement).setComb(this.isCombTextFormField());
+            ((InputField) formFieldElement).setMaxLen((parent instanceof PdfTextFormField ? (PdfTextFormField) parent :
+                            PdfFormCreator.createTextFormField(parent.getPdfObject())).getMaxLen());
+            ((InputField)formFieldElement).useAsPassword(parent.isPassword());
         }
         formFieldElement.setValue(value);
         formFieldElement.setProperty(Property.FONT, getFont());
@@ -924,7 +947,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             return;
         }
         if (!(formFieldElement instanceof ComboBoxField)) {
-            formFieldElement = new ComboBoxField("");
+            formFieldElement = new ComboBoxField(parent.getPartialFieldName().toUnicodeString());
         }
 
         ComboBoxField comboBoxField = (ComboBoxField) formFieldElement;
@@ -1057,20 +1080,13 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         final PdfName type = parent.getFormType();
         retrieveStyles();
 
-        if ((PdfName.Ch.equals(type) && parent.getFieldFlag(PdfChoiceFormField.FF_COMBO))
-                || this.isCombTextFormField()) {
-            if (parent.getFieldFlag(PdfChoiceFormField.FF_COMBO) && formFieldElement != null) {
+        if (PdfName.Ch.equals(type)) {
+            if (parent.getFieldFlag(PdfChoiceFormField.FF_COMBO)) {
                 drawComboBoxAndSaveAppearance();
                 return true;
             }
-            return TextAndChoiceLegacyDrawer.regenerateTextAndChoiceField(this);
-        } else if (PdfName.Ch.equals(type) && !parent.getFieldFlag(PdfChoiceFormField.FF_COMBO)) {
-            if (formFieldElement != null) {
-                drawListFormFieldAndSaveAppearance();
-                return true;
-            } else {
-                return TextAndChoiceLegacyDrawer.regenerateTextAndChoiceField(this);
-            }
+            drawListFormFieldAndSaveAppearance();
+            return true;
         } else if (PdfName.Tx.equals(type)) {
             drawTextFormFieldAndSaveAppearance();
             return true;
@@ -1164,14 +1180,17 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
 
     private boolean isCombTextFormField() {
         final PdfName type = parent.getFormType();
-        if (PdfName.Tx.equals(type) && parent.getFieldFlag(PdfTextFormField.FF_COMB)) {
-            int maxLen = PdfFormCreator.createTextFormField(parent.getPdfObject()).getMaxLen();
-            if (maxLen == 0 || parent.isMultiline()) {
-                LOGGER.error(
-                        MessageFormatUtil.format(IoLogMessageConstant.COMB_FLAG_MAY_BE_SET_ONLY_IF_MAXLEN_IS_PRESENT));
-                return false;
+        if (PdfName.Tx.equals(type)) {
+            PdfTextFormField textField = parent instanceof PdfTextFormField ? (PdfTextFormField) parent :
+                    PdfFormCreator.createTextFormField(parent.getPdfObject());
+            if (textField.isComb()) {
+                if (textField.getMaxLen() == 0 ||
+                        textField.isMultiline() || textField.isPassword() || textField.isFileSelect()) {
+                    LOGGER.error(IoLogMessageConstant.COMB_FLAG_MAY_BE_SET_ONLY_IF_MAXLEN_IS_PRESENT);
+                    return false;
+                }
+                return true;
             }
-            return true;
         }
         return false;
     }

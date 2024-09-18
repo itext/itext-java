@@ -277,7 +277,6 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.MULTIPLE_VALUES_ON_A_NON_MULTISELECT_FIELD)})
     public void pdfA1DocWithPdfA1ListFieldTest() throws IOException, InterruptedException {
         String name = "pdfA1DocWithPdfA1ListField";
         String fileName = DESTINATION_FOLDER + name + ".pdf";
@@ -301,6 +300,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         f.setValue("9").setFont(fontFreeSans);
         f.setValue("4");
         f.setTopIndex(2);
+        f.setMultiSelect(true);
         f.setListSelected(new String[] {"3", "5"});
         form.addField(f);
 

@@ -22,7 +22,6 @@
  */
 package com.itextpdf.forms.form.element;
 
-import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -40,11 +39,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-
 
 @Tag("IntegrationTest")
 public class AccessibleElementTest extends ExtendedITextTest {
@@ -57,8 +56,8 @@ public class AccessibleElementTest extends ExtendedITextTest {
         return data;
     }
 
-    private Supplier<IFormField> getDataToTest(int index){
-        switch (index){
+    private Supplier<IFormField> getDataToTest(int index) {
+        switch (index) {
             case 0:
                 return () -> new InputField("inputField");
             case 1:
@@ -178,7 +177,7 @@ public class AccessibleElementTest extends ExtendedITextTest {
 
         @Override
         public String toString() {
-            switch (index){
+            switch (index) {
                 case 0:
                     return "InputField";
                 case 1:

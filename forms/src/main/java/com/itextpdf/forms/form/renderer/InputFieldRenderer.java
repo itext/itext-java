@@ -24,7 +24,7 @@ package com.itextpdf.forms.form.renderer;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.fields.PdfFormCreator;
-import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.forms.fields.PdfTextFormField;
 import com.itextpdf.forms.fields.TextFormFieldBuilder;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.InputField;
@@ -35,12 +35,15 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.properties.BoxSizingPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.RenderingMode;
+import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.DrawContext;
 import com.itextpdf.layout.renderer.IRenderer;
@@ -56,6 +59,8 @@ import org.slf4j.LoggerFactory;
  * The {@link AbstractOneLineTextFieldRenderer} implementation for input fields.
  */
 public class InputFieldRenderer extends AbstractOneLineTextFieldRenderer {
+
+    private static final float DEFAULT_COMB_PADDING = 0;
 
     /**
      * Creates a new {@link InputFieldRenderer} instance.
@@ -104,8 +109,47 @@ public class InputFieldRenderer extends AbstractOneLineTextFieldRenderer {
                 && !((InputField) modelElement).getPlaceholder().isEmpty()) {
             return ((InputField) modelElement).getPlaceholder().createRendererSubTree();
         }
+        if (defaultValue.isEmpty()) {
+            defaultValue = "\u00a0";
+        }
+        IRenderer flatRenderer;
+        if (isComb()) {
+            setProperty(Property.PADDING_LEFT, UnitValue.createPointValue(DEFAULT_COMB_PADDING));
+            setProperty(Property.PADDING_RIGHT, UnitValue.createPointValue(DEFAULT_COMB_PADDING));
 
-        IRenderer flatRenderer = super.createParagraphRenderer(defaultValue);
+            int maxLen = getMaxLen();
+            int numberOfCharacters = Math.min(maxLen, defaultValue.length());
+
+            int start;
+            TextAlignment textAlignment = this.<TextAlignment>getProperty(Property.TEXT_ALIGNMENT, TextAlignment.LEFT);
+            switch (textAlignment) {
+                case RIGHT:
+                    start = (maxLen - numberOfCharacters);
+                    break;
+                case CENTER:
+                    start = (maxLen - numberOfCharacters) / 2;
+                    break;
+                default:
+                    start = 0;
+            }
+            Paragraph paragraph = new Paragraph();
+            for (int i = 0; i < start; i++) {
+                paragraph.add(getSubParagraph("", maxLen));
+            }
+            for (int i = 0; i < numberOfCharacters; i++) {
+                paragraph.add(getSubParagraph(defaultValue.substring(i, i + 1), maxLen));
+            }
+            for (int i = start + numberOfCharacters; i < maxLen; i++) {
+                paragraph.add(getSubParagraph("", maxLen));
+            }
+            flatRenderer = paragraph.setMargin(0).createRendererSubTree();
+        } else {
+            Text text = new Text(defaultValue);
+            FormFieldValueNonTrimmingTextRenderer nextRenderer = new FormFieldValueNonTrimmingTextRenderer(text);
+            text.setNextRenderer(nextRenderer);
+
+            flatRenderer = new Paragraph(text).setMargin(0).createRendererSubTree();
+        }
         flatRenderer.setProperty(Property.NO_SOFT_WRAP_INLINE, true);
         return flatRenderer;
     }
@@ -176,7 +220,7 @@ public class InputFieldRenderer extends AbstractOneLineTextFieldRenderer {
         // Default html2pdf input field appearance differs from the default one for form fields.
         // That's why we got rid of several properties we set by default during InputField instance creation.
         modelElement.setProperty(Property.BOX_SIZING, BoxSizingPropertyValue.BORDER_BOX);
-        final PdfFormField inputField = new TextFormFieldBuilder(doc, name).setWidgetRectangle(area)
+        final PdfTextFormField inputField = new TextFormFieldBuilder(doc, name).setWidgetRectangle(area)
                 .setFont(font)
                 .setConformance(getConformance(doc))
                 .createText();
@@ -184,9 +228,13 @@ public class InputFieldRenderer extends AbstractOneLineTextFieldRenderer {
         inputField.setValue(value);
         inputField.setFontSize(fontSizeValue);
         if (password) {
-            inputField.setFieldFlag(PdfFormField.FF_PASSWORD, true);
+            inputField.setPassword(true);
         } else {
             inputField.setDefaultValue(new PdfString(value));
+        }
+        if (isComb()) {
+            inputField.setComb(true);
+            inputField.setMaxLen(getMaxLen());
         }
         final int rotation = ((InputField)modelElement).getRotation();
         if (rotation != 0) {
@@ -249,6 +297,36 @@ public class InputFieldRenderer extends AbstractOneLineTextFieldRenderer {
             result = super.setMinMaxWidthBasedOnFixedWidth(minMaxWidth);
         }
         return result;
+    }
+
+    private static Paragraph getSubParagraph(String value, int maxLen) {
+        Text text = new Text(value);
+        FormFieldValueNonTrimmingTextRenderer nextRenderer = new FormFieldValueNonTrimmingTextRenderer(text);
+        text.setNextRenderer(nextRenderer);
+
+        return new Paragraph(text)
+                .setTextAlignment(TextAlignment.CENTER)
+                .setWidth(UnitValue.createPercentValue((float) 100 / maxLen))
+                .setHeight(UnitValue.createPercentValue(100))
+                .setMargin(0);
+    }
+
+    /**
+     * Checks if the input field is a comb field.
+     *
+     * @return true, if the input field is a comb field
+     */
+    private boolean isComb() {
+        return (boolean) this.<Boolean>getProperty(FormProperty.TEXT_FIELD_COMB_FLAG, false);
+    }
+
+    /**
+     * Gets the maximum length of the field's text, in characters.
+     *
+     * @return the current maximum text length
+     */
+    private int getMaxLen() {
+        return (int) this.<Integer>getProperty(FormProperty.TEXT_FIELD_MAX_LEN, 0);
     }
 
     /**
