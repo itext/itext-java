@@ -25,6 +25,8 @@ package com.itextpdf.kernel.utils;
 import com.itextpdf.commons.utils.DIContainer;
 import com.itextpdf.kernel.di.pagetree.IPageTreeListFactory;
 import com.itextpdf.kernel.di.pagetree.DefaultPageTreeListFactory;
+import com.itextpdf.kernel.mac.IMacContainerLocator;
+import com.itextpdf.kernel.mac.StandaloneMacContainerLocator;
 
 /**
  * Registers a default instance for a dependency injection container for the kernel module.
@@ -44,5 +46,6 @@ public class RegisterDefaultDiContainer {
     static {
         DIContainer.registerDefault(IPageTreeListFactory.class,
                 () -> new DefaultPageTreeListFactory(DEFAULT_PAGE_TREE_LIST_FACTORY_MAX_SAFE_ENTRIES));
+        DIContainer.registerDefault(IMacContainerLocator.class, () -> new StandaloneMacContainerLocator());
     }
 }

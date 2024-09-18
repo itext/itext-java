@@ -38,7 +38,6 @@ import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.MemoryLimitsAwareException;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.XrefCycledReferencesException;
-import com.itextpdf.kernel.mac.MacIntegrityProtector;
 import com.itextpdf.kernel.pdf.filters.FilterHandlers;
 import com.itextpdf.kernel.pdf.filters.IFilterHandler;
 import com.itextpdf.kernel.xmp.XMPException;
@@ -1436,11 +1435,6 @@ public class PdfReader implements Closeable {
         if (enc == null)
             return;
         encrypted = true;
-        MacIntegrityProtector mac = null;
-        if (trailer.getAsDictionary(PdfName.AuthCode) != null &&
-                trailer.getAsDictionary(PdfName.AuthCode).getAsString(PdfName.MAC) != null) {
-            mac = new MacIntegrityProtector(pdfDocument, trailer.getAsDictionary(PdfName.AuthCode));
-        }
         PdfName filter = enc.getAsName(PdfName.Filter);
         if (PdfName.Adobe_PubSec.equals(filter)) {
             if (properties.certificate == null) {
@@ -1448,17 +1442,14 @@ public class PdfReader implements Closeable {
                         KernelExceptionMessageConstant.CERTIFICATE_IS_NOT_PROVIDED_DOCUMENT_IS_ENCRYPTED_WITH_PUBLIC_KEY_CERTIFICATE);
             }
             decrypt = new PdfEncryption(enc, properties.certificateKey, properties.certificate,
-                    properties.certificateKeyProvider, properties.externalDecryptionProcess, mac);
+                    properties.certificateKeyProvider, properties.externalDecryptionProcess);
         } else if (PdfName.Standard.equals(filter)) {
-            decrypt = new PdfEncryption(enc, properties.password, getOriginalFileId(), mac);
+            decrypt = new PdfEncryption(enc, properties.password, getOriginalFileId());
         } else {
             throw new UnsupportedSecurityHandlerException(MessageFormatUtil.format(KernelExceptionMessageConstant.UNSUPPORTED_SECURITY_HANDLER, filter));
         }
-        decrypt.checkEncryptionPermissions();
-        if (mac != null) {
-            decrypt.configureEncryptionParameters(pdfDocument, false);
-            mac.validateMacToken(trailer.getAsDictionary(PdfName.AuthCode));
-        }
+
+        decrypt.configureEncryptionParametersFromReader(pdfDocument, trailer);
     }
 
     private PdfObject readObject(PdfIndirectReference reference, boolean fixXref) {

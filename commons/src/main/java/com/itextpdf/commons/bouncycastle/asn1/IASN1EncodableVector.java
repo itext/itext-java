@@ -71,4 +71,11 @@ public interface IASN1EncodableVector {
      * @param element AlgorithmIdentifier wrapper.
      */
     void addOptional(IAlgorithmIdentifier element);
+
+    /**
+     * Calls actual {@code size} method for the wrapped ASN1EncodableVector object.
+     *
+     * @return {@code int} representing current vector size
+     */
+    int size();
 }

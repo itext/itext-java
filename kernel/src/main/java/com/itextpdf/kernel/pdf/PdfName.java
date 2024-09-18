@@ -124,6 +124,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName ASCIIHexDecode = createDirectName("ASCIIHexDecode");
     public static final PdfName Aside = createDirectName("Aside");
     public static final PdfName AsIs = createDirectName("AsIs");
+    public static final PdfName AttachedToSig = createDirectName("AttachedToSig");
     public static final PdfName AuthEvent = createDirectName("AuthEvent");
     public static final PdfName AuthCode = createDirectName("AuthCode");
     public static final PdfName Author = createDirectName("Author");
@@ -753,6 +754,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName SigFieldLock = createDirectName("SigFieldLock");
     public static final PdfName SigFlags = createDirectName("SigFlags");
     public static final PdfName Signed = createDirectName("Signed");
+    public static final PdfName SigObjRef = createDirectName("SigObjRef");
     public static final PdfName SigRef = createDirectName("SigRef");
     public static final PdfName Simplex = createDirectName("Simplex");
     public static final PdfName SinglePage = createDirectName("SinglePage");

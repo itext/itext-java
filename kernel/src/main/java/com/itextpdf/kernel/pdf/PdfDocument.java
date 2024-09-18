@@ -1107,7 +1107,6 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                 }
             }
             catalog.getPageTree().clearPageRefs();
-            removeAllHandlers();
         } catch (IOException e) {
             throw new PdfException(KernelExceptionMessageConstant.CANNOT_CLOSE_DOCUMENT, e, this);
         } finally {
@@ -2195,7 +2194,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                 writer.crypto = reader.decrypt;
                 if (writer.crypto != null) {
                     writer.crypto.checkEncryptionRequirements(this);
-                    writer.crypto.configureEncryptionParameters(this, true);
+                    writer.crypto.configureEncryptionParametersFromWriter(this);
                 }
 
                 if (newPdfVersion != null) {
@@ -2232,7 +2231,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                         encryptedEmbeddedStreamsHandler.storeAllEmbeddedStreams();
                     }
                     writer.crypto.checkEncryptionRequirements(this);
-                    writer.crypto.configureEncryptionParameters(this, true);
+                    writer.crypto.configureEncryptionParametersFromWriter(this);
                 }
             }
             if (EventConfirmationType.ON_DEMAND == event.getConfirmationType()) {

@@ -188,6 +188,35 @@ public class MacIntegrityProtectorReadingAndRewritingTest extends ExtendedITextT
     }
 
     @Test
+    public void readSignedMacProtectedDocumentWithoutAttributeTest() {
+        String message = Assertions.assertThrows(PdfException.class, () -> {
+            try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "signedMacProtectedDocWithoutAttribute.pdf",
+                    new ReaderProperties().setPassword(PASSWORD)))) {
+            }
+        }).getMessage();
+        Assertions.assertEquals(KernelExceptionMessageConstant.MAC_ATTRIBUTE_NOT_SPECIFIED, message);
+    }
+
+    @Test
+    public void macProtectionStrippedTest() {
+        String message = Assertions.assertThrows(PdfException.class, () -> {
+            try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "macProtectionStrippedTest.pdf",
+                    new ReaderProperties().setPassword(PASSWORD)))) {
+            }
+        }).getMessage();
+        Assertions.assertEquals(KernelExceptionMessageConstant.MAC_PERMS_WITHOUT_MAC, message);
+    }
+
+    @Test
+    public void readSignedMacProtectedDocumentTest() {
+        AssertUtil.doesNotThrow(() -> {
+            try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "signedMacProtectedDocument.pdf",
+                    new ReaderProperties().setPassword(PASSWORD)))) {
+            }
+        });
+    }
+
+    @Test
     public void readThirdPartyMacProtectedDocumentTest() {
         AssertUtil.doesNotThrow(() -> {
             try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "thirdPartyMacProtectedDocument.pdf",

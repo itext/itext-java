@@ -28,7 +28,8 @@ import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.kernel.events.PdfDocumentEvent;
 import com.itextpdf.kernel.exceptions.PdfException;
-import com.itextpdf.kernel.mac.MacIntegrityProtector;
+import com.itextpdf.kernel.mac.AbstractMacIntegrityProtector;
+import com.itextpdf.kernel.mac.IMacContainerLocator;
 import com.itextpdf.kernel.utils.ICopyFilter;
 import com.itextpdf.kernel.utils.NullCopyFilter;
 
@@ -208,8 +209,9 @@ public class PdfWriter extends PdfOutputStream {
      */
     protected void initCryptoIfSpecified(PdfVersion version) {
         EncryptionProperties encryptProps = properties.encryptionProperties;
-        MacIntegrityProtector mac = encryptProps.macProperties == null ?
-                null : new MacIntegrityProtector(document, encryptProps.macProperties);
+        AbstractMacIntegrityProtector mac = encryptProps.macProperties == null ? null : document.getDiContainer()
+                .getInstance(IMacContainerLocator.class)
+                .createMacIntegrityProtector(document, encryptProps.macProperties);
         if (properties.isStandardEncryptionUsed()) {
             crypto = new PdfEncryption(encryptProps.userPassword, encryptProps.ownerPassword,
                     encryptProps.standardEncryptPermissions,

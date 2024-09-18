@@ -268,11 +268,19 @@ public final class KernelExceptionMessageConstant {
     public static final String LZW_DECODER_EXCEPTION = "LZW decoder exception.";
     public static final String LZW_FLAVOUR_NOT_SUPPORTED = "LZW flavour not supported.";
     public static final String MAC_ALGORITHM_NOT_SUPPORTED = "This MAC algorithm is not supported.";
+    public static final String MAC_ATTRIBUTE_NOT_SPECIFIED =
+            "Signature doesn't contain unsigned MAC attribute, which is required in \"attached to signature\" mode.";
+    public static final String MAC_EXTRACTION_EXCEPTION =
+            "Exception occurred during signature parsing. It is not possible to extract MAC.";
+    public static final String MAC_LOCATION_NOT_SPECIFIED = "AuthCode dictionary doesn't contain MACLocation entry.";
+    public static final String MAC_NOT_SPECIFIED =
+            "AuthCode dictionary doesn't contain MAC entry, which is required in standalone mode.";
     public static final String MAC_FOR_ENCRYPTION_5 =
             "MAC integrity protection is only supported for encryption algorithms of version 5 or higher.";
     public static final String MAC_FOR_PDF_2 = "MAC integrity protection is only supported for PDF 2.0 or higher.";
     public static final String MAC_PERMS_WITHOUT_MAC = "Permissions bit 13 is set to zero, "
             + "which indicates that MAC integrity protection is enabled. However MAC container wasn't found.";
+    public static final String MAC_VALIDATION_EXCEPTION = "Unexpected exception occurred during MAC token validation.";
     public static final String MAC_VALIDATION_FAILED =
             "MAC integrity protection was compromised. Document content was modified.";
     public static final String MISSING_REQUIRED_FIELD_IN_FONT_DICTIONARY
@@ -337,6 +345,8 @@ public final class KernelExceptionMessageConstant {
     public static final String RESOURCES_DO_NOT_CONTAIN_EXTGSTATE_ENTRY_UNABLE_TO_PROCESS_THIS_OPERATOR = "Resources "
             + "do not contain ExtGState entry. Unable to process operator {0}.";
     public static final String SHADING_TYPE_NOT_FOUND = "Shading type not found.";
+    public static final String SIG_OBJ_REF_NOT_SPECIFIED =
+            "AuthCode dictionary doesn't contain SigObjRef entry, which is required in signature mode.";
     public static final String STDCF_NOT_FOUND_ENCRYPTION = "/StdCF not found (encryption)";
     public static final String STREAM_SHALL_END_WITH_ENDSTREAM = "Stream shall end with endstream keyword.";
     public static final String STRUCT_PARENT_INDEX_NOT_FOUND_IN_TAGGED_OBJECT = "StructParent index not found in "
@@ -387,7 +397,6 @@ public final class KernelExceptionMessageConstant {
             "Unknown ASN1-encoding {0}. Only DER and BER encodings are supported!";
     public static final String UNSUPPORTED_FONT_EMBEDDING_STRATEGY = "Unsupported font embedding strategy.";
     public static final String UNSUPPORTED_XOBJECT_TYPE = "Unsupported XObject type.";
-    public static final String VALIDATION_EXCEPTION = "Unexpected exception occurred during MAC token validation.";
     public static final String WHEN_ADDING_OBJECT_REFERENCE_TO_THE_TAG_TREE_IT_MUST_BE_CONNECTED_TO_NOT_FLUSHED_OBJECT =
             "When adding object reference to the tag tree, it must be connected to not flushed object.";
     public static final String WHITE_POINT_IS_INCORRECTLY_SPECIFIED = "White point is incorrectly specified.";

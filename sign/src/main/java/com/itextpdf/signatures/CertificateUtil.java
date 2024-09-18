@@ -373,7 +373,7 @@ public class CertificateUtil {
     public static IDERSet createRevocationInfoChoices(Collection<CRL> crls, Collection<IBasicOCSPResponse> ocsps,
                                                       Collection<IASN1Sequence> otherRevocationInfoFormats)
             throws CRLException, IOException {
-        if (crls.size() == 0 && ocsps.size() == 0) {
+        if (crls.isEmpty() && ocsps.isEmpty()) {
             return null;
         }
         IASN1EncodableVector revocationInfoChoices = FACTORY.createASN1EncodableVector();

@@ -122,6 +122,14 @@ public class ASN1EncodableVectorBC implements IASN1EncodableVector {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int size() {
+        return encodableVector.size();
+    }
+
+    /**
      * Indicates whether some other object is "equal to" this one. Compares wrapped objects.
      */
     @Override

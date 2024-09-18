@@ -133,6 +133,8 @@ public class PdfPKCS7 {
      */
     private final Collection<IASN1Sequence> signedDataRevocationInfo = new ArrayList<>();
 
+    private final IASN1EncodableVector unsignedAttributes = BOUNCY_CASTLE_FACTORY.createASN1EncodableVector();
+
     // Constructors for creating new signatures
 
     /**
@@ -479,6 +481,15 @@ public class PdfPKCS7 {
         } catch (Exception e) {
             throw new PdfException(e);
         }
+    }
+
+    /**
+     * Get unsigned attributes associated with this PKCS7 signature container.
+     *
+     * @return unsigned attributes as {@link IASN1EncodableVector}
+     */
+    public IASN1EncodableVector getUnsignedAttributes() {
+        return unsignedAttributes;
     }
 
     /**
@@ -1043,13 +1054,11 @@ public class PdfPKCS7 {
             if (tsaClient != null) {
                 byte[] tsImprint = tsaClient.getMessageDigest().digest(signatureValue);
                 byte[] tsToken = tsaClient.getTimeStampToken(tsImprint);
-                if (tsToken != null) {
-                    IASN1EncodableVector unauthAttributes = buildUnauthenticatedAttributes(tsToken);
-                    if (unauthAttributes != null) {
-                        signerInfo.add(BOUNCY_CASTLE_FACTORY.createDERTaggedObject(
-                                false, 1, BOUNCY_CASTLE_FACTORY.createDERSet(unauthAttributes)));
-                    }
-                }
+                addTimestampTokenToUnsignedAttributes(tsToken);
+            }
+            if (unsignedAttributes.size() > 0) {
+                signerInfo.add(BOUNCY_CASTLE_FACTORY.createDERTaggedObject(
+                        false, 1, BOUNCY_CASTLE_FACTORY.createDERSet(unsignedAttributes)));
             }
 
             // Finally build the body out of all the components above
@@ -1092,16 +1101,12 @@ public class PdfPKCS7 {
      *
      * @param timeStampToken byte[] - time stamp token, DER encoded signedData
      *
-     * @return {@link IASN1EncodableVector}
-     *
      * @throws IOException if an I/O error occurs.
      */
-    private IASN1EncodableVector buildUnauthenticatedAttributes(byte[] timeStampToken) throws IOException {
+    private void addTimestampTokenToUnsignedAttributes(byte[] timeStampToken) throws IOException {
         if (timeStampToken == null) {
-            return null;
+            return;
         }
-
-        IASN1EncodableVector unauthAttributes = BOUNCY_CASTLE_FACTORY.createASN1EncodableVector();
 
         IASN1EncodableVector v = BOUNCY_CASTLE_FACTORY.createASN1EncodableVector();
         v.add(BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(SecurityIDs.ID_AA_TIME_STAMP_TOKEN));
@@ -1111,8 +1116,7 @@ public class PdfPKCS7 {
             v.add(BOUNCY_CASTLE_FACTORY.createDERSet(seq));
         }
 
-        unauthAttributes.add(BOUNCY_CASTLE_FACTORY.createDERSequence(v));
-        return unauthAttributes;
+        unsignedAttributes.add(BOUNCY_CASTLE_FACTORY.createDERSequence(v));
     }
 
     // Authenticated attributes
@@ -1395,7 +1399,7 @@ public class PdfPKCS7 {
      * All the X.509 certificates in no particular order.
      */
     private final Collection<Certificate> certs;
-    
+
     private Collection<Certificate> timestampCerts;
 
     /**
@@ -1420,7 +1424,7 @@ public class PdfPKCS7 {
 
     /**
      * Get all X.509 certificates associated with this PKCS#7 object timestamp in no particular order.
-     * 
+     *
      * @return {@link Certificate[]} array
      */
     public Certificate[] getTimestampCertificates() {

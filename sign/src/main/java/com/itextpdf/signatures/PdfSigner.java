@@ -44,6 +44,8 @@ import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.mac.IMacContainerLocator;
+import com.itextpdf.signatures.mac.SignatureContainerGenerationEvent;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDate;
 import com.itextpdf.kernel.pdf.PdfDeveloperExtension;
@@ -73,6 +75,8 @@ import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.tagging.IAccessibleElement;
 import com.itextpdf.pdfa.PdfAAgnosticPdfDocument;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
+import com.itextpdf.signatures.mac.SignatureDocumentClosingEvent;
+import com.itextpdf.signatures.mac.SignatureMacContainerLocator;
 
 import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
@@ -98,6 +102,8 @@ import java.util.Map;
  * Takes care of the cryptographic options and appearances that form a signature.
  */
 public class PdfSigner {
+    private static final int MAXIMUM_MAC_SIZE = 788;
+
     /**
      * Enum containing the Cryptographic Standards. Possible values are "CMS" and "CADES".
      */
@@ -235,6 +241,7 @@ public class PdfSigner {
     public PdfSigner(PdfReader reader, OutputStream outputStream, String path, StampingProperties properties)
             throws IOException {
         StampingProperties localProps = new StampingProperties(properties).preserveEncryption();
+        localProps.registerDependency(IMacContainerLocator.class, new SignatureMacContainerLocator());
         if (path == null) {
             this.temporaryOS = new ByteArrayOutputStream();
             this.document = initDocument(reader, new PdfWriter(temporaryOS), localProps);
@@ -589,6 +596,10 @@ public class PdfSigner {
             if (tsaClient != null) {
                 estimatedSize += tsaClient.getTokenSizeEstimate() + 96;
             }
+            if (document.getTrailer().getAsDictionary(PdfName.AuthCode) != null) {
+                // if AuthCode is found in trailer, we assume MAC will be embedded and allocate additional space.
+                estimatedSize += MAXIMUM_MAC_SIZE;
+            }
         }
         this.signerName = PdfSigner.getSignerName((X509Certificate) chain[0]);
         if (sigtype == CryptoStandard.CADES && !isDocumentPdf2()) {
@@ -642,6 +653,9 @@ public class PdfSigner {
                 externalSignature.getSignatureAlgorithmName(),
                 externalSignature.getSignatureMechanismParameters()
         );
+
+        document.dispatchEvent(new SignatureContainerGenerationEvent(sgn.getUnsignedAttributes(), extSignature,
+                getRangeStream()));
 
         byte[] encodedSig = sgn.getEncodedPKCS7(hash, sigtype, tsaClient, ocspList, crlBytes);
 
@@ -864,6 +878,8 @@ public class PdfSigner {
         }
 
         cryptoDictionary.getPdfObject().makeIndirect(document);
+        document.dispatchEvent(
+                new SignatureDocumentClosingEvent(cryptoDictionary.getPdfObject().getIndirectReference()));
 
         if (fieldExist) {
             fieldLock = populateExistingSignatureFormField(acroForm);

@@ -87,7 +87,7 @@ public class MacIntegrityProtectorCreationTest extends ExtendedITextTest {
         WriterProperties writerProperties = new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)
                 .setStandardEncryption(PASSWORD, PASSWORD, 0, EncryptionConstants.ENCRYPTION_AES_256, macProperties);
 
-        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outputFileName, writerProperties))) {
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outputFileName, writerProperties))) {
             pdfDoc.addNewPage().addAnnotation(new PdfTextAnnotation(new Rectangle(100, 100, 100, 100)));
         }
         Assertions.assertNull(new CompareTool().compareByContent(
