@@ -25,7 +25,7 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
-import com.itextpdf.kernel.pdf.colorspace.PdfShading;
+import com.itextpdf.kernel.pdf.colorspace.shading.AbstractPdfShading;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
@@ -35,7 +35,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import static java.util.Collections.emptySet;
 
 /**
  * Wrapper class that represent resource dictionary - that define named resources
@@ -253,12 +252,12 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Adds {@link PdfShading} object to the resources.
+     * Adds {@link AbstractPdfShading} object to the resources.
      *
-     * @param shading the {@link PdfShading} to add.
+     * @param shading the {@link AbstractPdfShading} to add.
      * @return added shading resource name.
      */
-    public PdfName addShading(PdfShading shading) {
+    public PdfName addShading(AbstractPdfShading shading) {
         return addResource(shading, shadingNamesGen);
     }
 
@@ -272,9 +271,9 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return addResource(shading, shadingNamesGen);
     }
 
-    public PdfShading getShading(PdfName name) {
+    public AbstractPdfShading getShading(PdfName name) {
         PdfObject shading = getResourceObject(PdfName.Shading, name);
-        return shading instanceof PdfDictionary ? PdfShading.makeShading((PdfDictionary) shading) : null;
+        return shading instanceof PdfDictionary ? AbstractPdfShading.makeShading((PdfDictionary) shading) : null;
     }
 
     protected boolean isReadOnly() {

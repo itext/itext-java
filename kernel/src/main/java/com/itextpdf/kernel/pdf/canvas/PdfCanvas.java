@@ -60,7 +60,7 @@ import com.itextpdf.kernel.pdf.canvas.wmf.WmfImageHelper;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
-import com.itextpdf.kernel.pdf.colorspace.PdfShading;
+import com.itextpdf.kernel.pdf.colorspace.shading.AbstractPdfShading;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.pdf.layer.IPdfOCG;
@@ -1280,7 +1280,7 @@ public class PdfCanvas {
      * @param shading a shading object to be painted
      * @return current canvas.
      */
-    public PdfCanvas paintShading(PdfShading shading) {
+    public PdfCanvas paintShading(AbstractPdfShading shading) {
         PdfName shadingName = resources.addShading(shading);
         contentStream.getOutputStream().write((PdfObject) shadingName).writeSpace().writeBytes(sh);
         return this;

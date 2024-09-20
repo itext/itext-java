@@ -49,8 +49,10 @@ import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
-import com.itextpdf.kernel.pdf.colorspace.PdfShading;
+import com.itextpdf.kernel.pdf.colorspace.shading.AbstractPdfShading;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
+import com.itextpdf.kernel.pdf.colorspace.shading.PdfAxialShading;
+import com.itextpdf.kernel.pdf.colorspace.shading.PdfRadialShading;
 import com.itextpdf.kernel.pdf.function.PdfType4Function;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
@@ -397,7 +399,7 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
 
         PdfCanvas canvas = new PdfCanvas(page);
 
-        PdfShading axial = new PdfShading.Axial(
+        AbstractPdfShading axial = new PdfAxialShading(
                 new PdfDeviceCs.Rgb(),
                 36, 716, new float[]{1, .784f, 0},
                 396, 788, new float[]{0, 0, 1},
@@ -424,7 +426,7 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
 
         PdfCanvas canvas = new PdfCanvas(page);
 
-        PdfShading radial = new PdfShading.Radial(
+        AbstractPdfShading radial = new PdfRadialShading(
                 new PdfDeviceCs.Rgb(),
                 200, 700, 50, new float[] {1, 0.968f, 0.58f},
                 300, 700, 100, new float[] {0.968f, 0.541f, 0.42f}
@@ -625,9 +627,9 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
         float[] colorValue1 = pattern ? null : new float[]{1.0f, 0.6f, 0.7f};
         float[] colorValue2 = pattern ? null : new float[]{0.1f, 0.9f, 0.9f};
 
-        PdfPattern pattern1 = pattern? new PdfPattern.Shading(new PdfShading.Axial(new PdfDeviceCs.Rgb(), 45, 750, ColorConstants.PINK.getColorValue(),
+        PdfPattern pattern1 = pattern? new PdfPattern.Shading(new PdfAxialShading(new PdfDeviceCs.Rgb(), 45, 750, ColorConstants.PINK.getColorValue(),
                 100, 760, ColorConstants.MAGENTA.getColorValue())) : null;
-        PdfPattern pattern2 = pattern ? new PdfPattern.Shading(new PdfShading.Axial(new PdfDeviceCs.Rgb(), 45, 690, ColorConstants.BLUE.getColorValue(),
+        PdfPattern pattern2 = pattern ? new PdfPattern.Shading(new PdfAxialShading(new PdfDeviceCs.Rgb(), 45, 690, ColorConstants.BLUE.getColorValue(),
                 100, 710, ColorConstants.CYAN.getColorValue())) : null;
 
         canvas.setColor(space, colorValue1, pattern1, true);

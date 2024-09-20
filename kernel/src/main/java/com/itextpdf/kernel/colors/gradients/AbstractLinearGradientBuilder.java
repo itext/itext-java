@@ -36,7 +36,7 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
-import com.itextpdf.kernel.pdf.colorspace.PdfShading;
+import com.itextpdf.kernel.pdf.colorspace.shading.PdfAxialShading;
 import com.itextpdf.kernel.pdf.function.AbstractPdfFunction;
 import com.itextpdf.kernel.pdf.function.IPdfFunction;
 import com.itextpdf.kernel.pdf.function.PdfType2Function;
@@ -166,7 +166,7 @@ public abstract class AbstractLinearGradientBuilder {
             }
         }
 
-        PdfShading.Axial axial = createAxialShading(baseCoordinatesVector, this.stops, this.spreadMethod,
+        PdfAxialShading axial = createAxialShading(baseCoordinatesVector, this.stops, this.spreadMethod,
                 targetBoundingBox);
         if (axial == null) {
             return null;
@@ -273,7 +273,7 @@ public abstract class AbstractLinearGradientBuilder {
         return targetCoords;
     }
 
-    private static PdfShading.Axial createAxialShading(Point[] baseCoordinatesVector,
+    private static PdfAxialShading createAxialShading(Point[] baseCoordinatesVector,
             List<GradientColorStop> stops, GradientSpreadMethod spreadMethod, Rectangle targetBoundingBox) {
         double baseVectorLength = baseCoordinatesVector[1].distance(baseCoordinatesVector[0]);
 
@@ -315,7 +315,7 @@ public abstract class AbstractLinearGradientBuilder {
             actualCoordinates = createCoordinatesForNewDomain(coordinatesDomain, baseCoordinatesVector);
         }
 
-        return new PdfShading.Axial(
+        return new PdfAxialShading(
                 new PdfDeviceCs.Rgb(),
                 createCoordsPdfArray(actualCoordinates),
                 new PdfArray(coordinatesDomain),

@@ -29,14 +29,14 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfResources;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs.Cmyk;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs.Gray;
-import com.itextpdf.kernel.pdf.colorspace.PdfShading.Axial;
-import com.itextpdf.kernel.pdf.colorspace.PdfShading.Radial;
-import com.itextpdf.kernel.pdf.colorspace.PdfShading.ShadingType;
+import com.itextpdf.kernel.pdf.colorspace.shading.PdfAxialShading;
+import com.itextpdf.kernel.pdf.colorspace.shading.AbstractPdfShading;
+import com.itextpdf.kernel.pdf.colorspace.shading.PdfRadialShading;
+import com.itextpdf.kernel.pdf.colorspace.shading.ShadingType;
 import com.itextpdf.kernel.pdf.function.AbstractPdfFunction;
 import com.itextpdf.kernel.pdf.function.PdfType2Function;
 import com.itextpdf.kernel.pdf.function.PdfType3Function;
@@ -85,7 +85,7 @@ public class CreateShadingTest extends ExtendedITextTest {
 
         PdfType3Function stitchingFunction = createStitchingCmykShadingFunction();
 
-        Axial axialShading = new Axial(new Cmyk(), shadingVector, stitchingFunction);
+        PdfAxialShading axialShading = new PdfAxialShading(new Cmyk(), shadingVector, stitchingFunction);
 
         pdfCanvas.paintShading(axialShading);
         pdfDocument.close();
@@ -106,9 +106,9 @@ public class CreateShadingTest extends ExtendedITextTest {
 
         PdfResources resources = pdfDocument.getPage(1).getResources();
         for (PdfName resName : resources.getResourceNames()) {
-            PdfShading shading = resources.getShading(resName);
+            AbstractPdfShading shading = resources.getShading(resName);
             if (shading != null && shading.getShadingType() == ShadingType.AXIAL) {
-                Axial axialShading = (Axial) shading;
+                PdfAxialShading axialShading = (PdfAxialShading) shading;
 
                 // "cut" shading and extend colors
                 axialShading.setDomain(0.1f, 0.8f);
@@ -137,7 +137,7 @@ public class CreateShadingTest extends ExtendedITextTest {
         int y1 = y0;
         int r1 = 50;
 
-        Radial radialShading = new Radial(
+        PdfRadialShading radialShading = new PdfRadialShading(
                 new Gray(),
                 x0, y0, r0, new float[] {0.9f},
                 x1, y1, r1, new float[] {0.2f},
@@ -169,7 +169,7 @@ public class CreateShadingTest extends ExtendedITextTest {
 
         PdfType3Function stitchingFunction = createStitchingCmykShadingFunction();
 
-        Radial radialShading = new Radial(new Cmyk(), shadingVector, stitchingFunction);
+        PdfRadialShading radialShading = new PdfRadialShading(new Cmyk(), shadingVector, stitchingFunction);
 
         pdfCanvas.paintShading(radialShading);
         pdfDocument.close();
@@ -190,9 +190,9 @@ public class CreateShadingTest extends ExtendedITextTest {
 
         PdfResources resources = pdfDocument.getPage(1).getResources();
         for (PdfName resName : resources.getResourceNames()) {
-            PdfShading shading = resources.getShading(resName);
+            AbstractPdfShading shading = resources.getShading(resName);
             if (shading != null && shading.getShadingType() == ShadingType.RADIAL) {
-                Radial radialShading = (Radial) shading;
+                PdfRadialShading radialShading = (PdfRadialShading) shading;
 
                 // "cut" shading and extend colors
                 radialShading.setDomain(0.1f, 0.8f);

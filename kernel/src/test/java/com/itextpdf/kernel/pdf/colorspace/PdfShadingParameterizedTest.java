@@ -27,6 +27,7 @@ import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.colorspace.shading.AbstractPdfShading;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.util.Arrays;
@@ -54,7 +55,7 @@ public class PdfShadingParameterizedTest extends ExtendedITextTest {
         PdfDictionary dict = new PdfDictionary();
         dict.put(PdfName.ShadingType, new PdfNumber(shadingType));
         dict.put(PdfName.ColorSpace, PdfName.DeviceRGB);
-        Exception e = Assertions.assertThrows(PdfException.class, () -> PdfShading.makeShading(dict),
+        Exception e = Assertions.assertThrows(PdfException.class, () -> AbstractPdfShading.makeShading(dict),
                 "Creating " + shadingName + " should throw PdfException.");
 
         Assertions.assertEquals(KernelExceptionMessageConstant.UNEXPECTED_SHADING_TYPE, e.getMessage());

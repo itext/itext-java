@@ -31,6 +31,7 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfStream;
+import com.itextpdf.kernel.pdf.colorspace.shading.AbstractPdfShading;
 
 /**
  * Dictionary wrapper that represent special type of color space, that uses pattern objects
@@ -427,10 +428,10 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
         /**
          * Creates a new instance of Shading Pattern.
          *
-         * @param shading the {@link PdfShading} that specifies the details of a particular
+         * @param shading the {@link AbstractPdfShading} that specifies the details of a particular
          *                gradient fill
          */
-        public Shading(com.itextpdf.kernel.pdf.colorspace.PdfShading shading) {
+        public Shading(AbstractPdfShading shading) {
             super(new PdfDictionary());
             getPdfObject().put(PdfName.Type, PdfName.Pattern);
             getPdfObject().put(PdfName.PatternType, new PdfNumber(2));
@@ -438,20 +439,20 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
         }
 
         /**
-         * Gets the dictionary of the pattern's {@link PdfShading}.
+         * Gets the dictionary of the pattern's {@link AbstractPdfShading}.
          *
-         * @return the dictionary of the pattern's {@link PdfShading}
+         * @return the dictionary of the pattern's {@link AbstractPdfShading}
          */
         public PdfDictionary getShading() {
             return (PdfDictionary) getPdfObject().get(PdfName.Shading);
         }
 
         /**
-         * Sets the {@link PdfShading} that specifies the details of a particular gradient fill.
+         * Sets the {@link AbstractPdfShading} that specifies the details of a particular gradient fill.
          *
-         * @param shading the {@link PdfShading} that specifies the details of a particular gradient fill
+         * @param shading the {@link AbstractPdfShading} that specifies the details of a particular gradient fill
          */
-        public void setShading(com.itextpdf.kernel.pdf.colorspace.PdfShading shading) {
+        public void setShading(AbstractPdfShading shading) {
             getPdfObject().put(PdfName.Shading, shading.getPdfObject());
             setModified();
         }
@@ -459,7 +460,7 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
         /**
          * Sets the dictionary which specifies the details of a particular gradient fill.
          *
-         * @param shading the dictionary of the pattern's {@link PdfShading}
+         * @param shading the dictionary of the pattern's {@link AbstractPdfShading}
          */
         public void setShading(PdfDictionary shading) {
             getPdfObject().put(PdfName.Shading, shading);
