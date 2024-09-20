@@ -27,19 +27,19 @@ import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.FileUtil;
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
+import com.itextpdf.kernel.crypto.OID;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.signatures.BouncyCastleDigest;
-import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.IApplicableSignatureParams;
 import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.PdfPKCS7;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
 import com.itextpdf.signatures.RSASSAPSSMechanismParams;
-import com.itextpdf.signatures.SecurityIDs;
 import com.itextpdf.signatures.SignatureUtil;
 import com.itextpdf.signatures.SignerProperties;
 import com.itextpdf.signatures.testutils.PemFileHelper;
@@ -55,8 +55,8 @@ import java.security.Security;
 import java.security.cert.Certificate;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("BouncyCastleUnitTest")
 public class RSASSAPSSTest extends ExtendedITextTest {
@@ -197,7 +197,7 @@ public class RSASSAPSSTest extends ExtendedITextTest {
         try (PdfReader r = new PdfReader(fileName); PdfDocument pdfDoc = new PdfDocument(r)) {
             SignatureUtil u = new SignatureUtil(pdfDoc);
             PdfPKCS7 data = u.readSignatureData(SIGNATURE_FIELD, FACTORY.getProviderName());
-            Assertions.assertEquals(SecurityIDs.ID_RSASSA_PSS, data.getSignatureMechanismOid());
+            Assertions.assertEquals(OID.RSASSA_PSS, data.getSignatureMechanismOid());
             Assertions.assertTrue(data.verifySignatureIntegrityAndAuthenticity());
         }
     }

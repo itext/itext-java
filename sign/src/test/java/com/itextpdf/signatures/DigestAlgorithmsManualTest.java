@@ -22,7 +22,8 @@
  */
 package com.itextpdf.signatures;
 
-import com.itextpdf.signatures.logs.SignLogMessageConstant;
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -32,8 +33,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("BouncyCastleUnitTest")
 public class DigestAlgorithmsManualTest extends ExtendedITextTest {
@@ -59,7 +60,7 @@ public class DigestAlgorithmsManualTest extends ExtendedITextTest {
     }
 
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = SignLogMessageConstant.ALGORITHM_NOT_FROM_SPEC, ignore = true)})
+            @LogMessage(messageTemplate = KernelLogMessageConstant.ALGORITHM_NOT_FROM_SPEC, ignore = true)})
     @Test
     public void notAllowedNameGetAllowedDigestTest() {
         String name = "SM3";

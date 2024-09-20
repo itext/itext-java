@@ -26,9 +26,6 @@ package com.itextpdf.signatures.logs;
  * Class which contains constants to be used in logging inside sign module.
  */
 public final class SignLogMessageConstant {
-
-    public static final String ALGORITHM_NOT_FROM_SPEC =
-            "Requested algorithm might not be supported by the pdf specification.";
     public static final String EXCEPTION_WITHOUT_MESSAGE =
             "Unexpected exception without message was thrown during keystore processing";
     public static final String UNABLE_TO_PARSE_AIA_CERT = "Unable to parse certificates coming from authority info "

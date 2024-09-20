@@ -24,8 +24,8 @@ package com.itextpdf.signatures.validation.extensions;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
-import com.itextpdf.signatures.OID;
-import com.itextpdf.signatures.OID.X509Extensions;
+import com.itextpdf.kernel.crypto.OID;
+import com.itextpdf.kernel.crypto.OID.X509Extensions;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.test.ExtendedITextTest;
 
@@ -33,8 +33,8 @@ import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("BouncyCastleUnitTest")
 public class CertificateExtensionTest extends ExtendedITextTest {

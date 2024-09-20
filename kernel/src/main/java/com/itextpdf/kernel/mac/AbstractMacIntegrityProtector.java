@@ -30,6 +30,8 @@ import com.itextpdf.commons.bouncycastle.asn1.IDERSet;
 import com.itextpdf.io.source.IRandomAccessSource;
 import com.itextpdf.io.source.RASInputStream;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
+import com.itextpdf.kernel.crypto.OID;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.mac.MacProperties.MacDigestAlgorithm;
@@ -44,6 +46,7 @@ import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.util.Arrays;
 
 /**
@@ -52,12 +55,6 @@ import java.util.Arrays;
 public abstract class AbstractMacIntegrityProtector {
     private static final IBouncyCastleFactory BC_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
-    private static final String ID_AUTHENTICATED_DATA = "1.2.840.113549.1.9.16.1.2";
-    private static final String ID_KDF_PDF_MAC_WRAP_KDF = "1.0.32004.1.1";
-    private static final String ID_CT_PDF_MAC_INTEGRITY_INFO = "1.0.32004.1.0";
-    private static final String ID_CONTENT_TYPE = "1.2.840.113549.1.9.3";
-    private static final String ID_CMS_ALGORITHM_PROTECTION = "1.2.840.113549.1.9.52";
-    private static final String ID_MESSAGE_DIGEST = "1.2.840.113549.1.9.4";
     private static final String PDF_MAC = "PDFMAC";
 
     protected final PdfDocument document;
@@ -164,8 +161,10 @@ public abstract class AbstractMacIntegrityProtector {
      *
      * @throws NoSuchAlgorithmException in case of digesting algorithm related exceptions
      * @throws IOException in case of input-output related exceptions
+     * @throws NoSuchProviderException thrown when a particular security provider is
+     * requested but is not available in the environment
      */
-    protected byte[] digestBytes(byte[] bytes) throws NoSuchAlgorithmException, IOException {
+    protected byte[] digestBytes(byte[] bytes) throws NoSuchAlgorithmException, IOException, NoSuchProviderException {
         return bytes == null ? null : digestBytes(new ByteArrayInputStream(bytes));
     }
 
@@ -178,12 +177,17 @@ public abstract class AbstractMacIntegrityProtector {
      *
      * @throws NoSuchAlgorithmException in case of digesting algorithm related exceptions
      * @throws IOException in case of input-output related exceptions
+     * @throws NoSuchProviderException thrown when a particular security provider is
+     * requested but is not available in the environment
      */
-    protected byte[] digestBytes(InputStream inputStream) throws NoSuchAlgorithmException, IOException {
+    protected byte[] digestBytes(InputStream inputStream)
+            throws NoSuchAlgorithmException, IOException, NoSuchProviderException {
+
         if (inputStream == null) {
             return null;
         }
-        MessageDigest digest = getMessageDigest();
+        final String algorithm = MacProperties.macDigestAlgorithmToString(macProperties.getMacDigestAlgorithm());
+        MessageDigest digest = DigestAlgorithms.getMessageDigest(algorithm, null);
         byte[] buf = new byte[8192];
         int rd;
         while ((rd = inputStream.read(buf, 0, buf.length)) > 0) {
@@ -207,13 +211,13 @@ public abstract class AbstractMacIntegrityProtector {
     protected IDERSequence createMacContainer(byte[] dataDigest, byte[] macKey, byte[] signature)
             throws GeneralSecurityException, IOException {
         IASN1EncodableVector contentInfoV = BC_FACTORY.createASN1EncodableVector();
-        contentInfoV.add(BC_FACTORY.createASN1ObjectIdentifier(ID_AUTHENTICATED_DATA));
+        contentInfoV.add(BC_FACTORY.createASN1ObjectIdentifier(OID.AUTHENTICATED_DATA));
 
         // Recipient info
         IASN1EncodableVector recInfoV = BC_FACTORY.createASN1EncodableVector();
         recInfoV.add(BC_FACTORY.createASN1Integer(0)); // version
         recInfoV.add(BC_FACTORY.createDERTaggedObject(0,
-                BC_FACTORY.createASN1ObjectIdentifier(ID_KDF_PDF_MAC_WRAP_KDF)));
+                BC_FACTORY.createASN1ObjectIdentifier(OID.KDF_PDF_MAC_WRAP_KDF)));
         recInfoV.add(BC_FACTORY.createDERSequence(BC_FACTORY.createASN1ObjectIdentifier(getKeyWrappingAlgorithmOid())));
 
         ////////////////////// KEK
@@ -228,7 +232,7 @@ public abstract class AbstractMacIntegrityProtector {
 
         // Encapsulated content info
         IASN1EncodableVector encapContentInfoV = BC_FACTORY.createASN1EncodableVector();
-        encapContentInfoV.add(BC_FACTORY.createASN1ObjectIdentifier(ID_CT_PDF_MAC_INTEGRITY_INFO));
+        encapContentInfoV.add(BC_FACTORY.createASN1ObjectIdentifier(OID.CT_PDF_MAC_INTEGRITY_INFO));
         encapContentInfoV.add(BC_FACTORY.createDERTaggedObject(0, BC_FACTORY.createDEROctetString(messageBytes)));
 
         IDERSet authAttrs = createAuthAttributes(messageBytes);
@@ -244,52 +248,16 @@ public abstract class AbstractMacIntegrityProtector {
                 BC_FACTORY.createDERSequence(recInfoV))));
 
         authDataV.add(BC_FACTORY.createDERSequence(BC_FACTORY.createASN1ObjectIdentifier(getMacAlgorithmOid())));
+        final String algorithm = MacProperties.macDigestAlgorithmToString(macProperties.getMacDigestAlgorithm());
+        final String macDigestOid = DigestAlgorithms.getAllowedDigest(algorithm);
         authDataV.add(BC_FACTORY.createDERTaggedObject(false, 1,
-                BC_FACTORY.createDERSequence(BC_FACTORY.createASN1ObjectIdentifier(getMacDigestOid()))));
+                BC_FACTORY.createDERSequence(BC_FACTORY.createASN1ObjectIdentifier(macDigestOid))));
         authDataV.add(BC_FACTORY.createDERSequence(encapContentInfoV));
         authDataV.add(BC_FACTORY.createDERTaggedObject(false, 2, authAttrs));
         authDataV.add(BC_FACTORY.createDEROctetString(mac));
 
         contentInfoV.add(BC_FACTORY.createDERTaggedObject(0, BC_FACTORY.createDERSequence(authDataV)));
         return BC_FACTORY.createDERSequence(contentInfoV);
-    }
-
-    private MessageDigest getMessageDigest() throws NoSuchAlgorithmException {
-        switch (macProperties.getMacDigestAlgorithm()) {
-            case SHA_256:
-                return MessageDigest.getInstance("SHA256");
-            case SHA_384:
-                return MessageDigest.getInstance("SHA384");
-            case SHA_512:
-                return MessageDigest.getInstance("SHA512");
-            case SHA3_256:
-                return MessageDigest.getInstance("SHA3-256");
-            case SHA3_384:
-                return MessageDigest.getInstance("SHA3-384");
-            case SHA3_512:
-                return MessageDigest.getInstance("SHA3-512");
-            default:
-                throw new PdfException("This digest algorithm is not supported by MAC.");
-        }
-    }
-
-    private String getMacDigestOid() {
-        switch (macProperties.getMacDigestAlgorithm()) {
-            case SHA_256:
-                return "2.16.840.1.101.3.4.2.1";
-            case SHA_384:
-                return "2.16.840.1.101.3.4.2.2";
-            case SHA_512:
-                return "2.16.840.1.101.3.4.2.3";
-            case SHA3_256:
-                return "2.16.840.1.101.3.4.2.8";
-            case SHA3_384:
-                return "2.16.840.1.101.3.4.2.9";
-            case SHA3_512:
-                return "2.16.840.1.101.3.4.2.10";
-            default:
-                throw new PdfException(KernelExceptionMessageConstant.DIGEST_NOT_SUPPORTED);
-        }
     }
 
     private byte[] generateMac(byte[] macKey, byte[] data) throws NoSuchAlgorithmException, InvalidKeyException {
@@ -338,35 +306,42 @@ public abstract class AbstractMacIntegrityProtector {
         }
     }
 
-    private IDERSequence createMessageDigestSequence(byte[] messageBytes) throws NoSuchAlgorithmException, IOException {
+    private IDERSequence createMessageDigestSequence(byte[] messageBytes)
+            throws NoSuchAlgorithmException, IOException, NoSuchProviderException {
+
+        final String algorithm = MacProperties.macDigestAlgorithmToString(macProperties.getMacDigestAlgorithm());
         // Hash messageBytes to get messageDigest attribute
-        MessageDigest digest = getMessageDigest();
+        MessageDigest digest = DigestAlgorithms.getMessageDigest(algorithm, null);
         digest.update(messageBytes);
         byte[] messageDigest = digestBytes(messageBytes);
 
         // Message digest
         IASN1EncodableVector messageDigestV = BC_FACTORY.createASN1EncodableVector();
-        messageDigestV.add(BC_FACTORY.createASN1ObjectIdentifier(ID_MESSAGE_DIGEST));
+        messageDigestV.add(BC_FACTORY.createASN1ObjectIdentifier(OID.MESSAGE_DIGEST));
         messageDigestV.add(BC_FACTORY.createDERSet(BC_FACTORY.createDEROctetString(messageDigest)));
 
         return BC_FACTORY.createDERSequence(messageDigestV);
     }
 
-    private IDERSet createAuthAttributes(byte[] messageBytes) throws NoSuchAlgorithmException, IOException {
+    private IDERSet createAuthAttributes(byte[] messageBytes)
+            throws NoSuchAlgorithmException, IOException, NoSuchProviderException {
+
         // Content type - mac integrity info
         IASN1EncodableVector contentTypeInfoV = BC_FACTORY.createASN1EncodableVector();
-        contentTypeInfoV.add(BC_FACTORY.createASN1ObjectIdentifier(ID_CONTENT_TYPE));
+        contentTypeInfoV.add(BC_FACTORY.createASN1ObjectIdentifier(OID.CONTENT_TYPE));
         contentTypeInfoV.add(BC_FACTORY.createDERSet(
-                BC_FACTORY.createASN1ObjectIdentifier(ID_CT_PDF_MAC_INTEGRITY_INFO)));
+                BC_FACTORY.createASN1ObjectIdentifier(OID.CT_PDF_MAC_INTEGRITY_INFO)));
 
         IASN1EncodableVector algorithmsInfoV = BC_FACTORY.createASN1EncodableVector();
-        algorithmsInfoV.add(BC_FACTORY.createDERSequence(BC_FACTORY.createASN1ObjectIdentifier(getMacDigestOid())));
+        final String algorithm = MacProperties.macDigestAlgorithmToString(macProperties.getMacDigestAlgorithm());
+        final String macDigestOid = DigestAlgorithms.getAllowedDigest(algorithm);
+        algorithmsInfoV.add(BC_FACTORY.createDERSequence(BC_FACTORY.createASN1ObjectIdentifier(macDigestOid)));
         algorithmsInfoV.add(BC_FACTORY.createDERTaggedObject(2,
                 BC_FACTORY.createASN1ObjectIdentifier(getMacAlgorithmOid())));
 
         // CMS algorithm protection
         IASN1EncodableVector algoProtectionInfoV = BC_FACTORY.createASN1EncodableVector();
-        algoProtectionInfoV.add(BC_FACTORY.createASN1ObjectIdentifier(ID_CMS_ALGORITHM_PROTECTION));
+        algoProtectionInfoV.add(BC_FACTORY.createASN1ObjectIdentifier(OID.CMS_ALGORITHM_PROTECTION));
         algoProtectionInfoV.add(BC_FACTORY.createDERSet(BC_FACTORY.createDERSequence(algorithmsInfoV)));
 
         IASN1EncodableVector authAttrsV = BC_FACTORY.createASN1EncodableVector();
@@ -396,17 +371,17 @@ public abstract class AbstractMacIntegrityProtector {
 
     private static MacDigestAlgorithm getMacDigestAlgorithm(String oid) {
         switch (oid) {
-            case "2.16.840.1.101.3.4.2.1":
+            case OID.SHA_256:
                 return MacDigestAlgorithm.SHA_256;
-            case "2.16.840.1.101.3.4.2.2":
+            case OID.SHA_384:
                 return MacDigestAlgorithm.SHA_384;
-            case "2.16.840.1.101.3.4.2.3":
+            case OID.SHA_512:
                 return MacDigestAlgorithm.SHA_512;
-            case "2.16.840.1.101.3.4.2.8":
+            case OID.SHA3_256:
                 return MacDigestAlgorithm.SHA3_256;
-            case "2.16.840.1.101.3.4.2.9":
+            case OID.SHA3_384:
                 return MacDigestAlgorithm.SHA3_384;
-            case "2.16.840.1.101.3.4.2.10":
+            case OID.SHA3_512:
                 return MacDigestAlgorithm.SHA3_512;
             default:
                 throw new PdfException(KernelExceptionMessageConstant.DIGEST_NOT_SUPPORTED);

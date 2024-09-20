@@ -24,7 +24,6 @@ package com.itextpdf.signatures.cms;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
-
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Encodable;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1EncodableVector;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Enumerated;
@@ -43,15 +42,12 @@ import com.itextpdf.commons.bouncycastle.asn1.IDERTaggedObject;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPObjectIdentifiers;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ITBSCertificate;
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
+import com.itextpdf.kernel.crypto.OID;
 import com.itextpdf.kernel.exceptions.PdfException;
-
 import com.itextpdf.signatures.CertificateInfo;
 import com.itextpdf.signatures.CertificateUtil;
-import com.itextpdf.signatures.DigestAlgorithms;
-import com.itextpdf.signatures.OID;
-import com.itextpdf.signatures.SecurityIDs;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
-
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -89,8 +85,8 @@ public class SignerInfo {
      */
     public SignerInfo() {
         CmsAttribute contentType =
-                new CmsAttribute(SecurityIDs.ID_CONTENT_TYPE,
-                        BC_FACTORY.createDERSet(BC_FACTORY.createASN1ObjectIdentifier(SecurityIDs.ID_PKCS7_DATA)));
+                new CmsAttribute(OID.CONTENT_TYPE,
+                        BC_FACTORY.createDERSet(BC_FACTORY.createASN1ObjectIdentifier(OID.PKCS7_DATA)));
         signedAttributes.add(contentType);
         unSignedAttributes = new ArrayList<>();
     }
@@ -167,7 +163,7 @@ public class SignerInfo {
         if (signedAttributesReadOnly) {
             throw new IllegalStateException(SignExceptionMessageConstant.CMS_SIGNERINFO_READONLY);
         }
-        CmsAttribute digestAttribute = new CmsAttribute(SecurityIDs.ID_MESSAGE_DIGEST, BC_FACTORY.createDERSet(
+        CmsAttribute digestAttribute = new CmsAttribute(OID.MESSAGE_DIGEST, BC_FACTORY.createDERSet(
                                 BC_FACTORY.createDEROctetString(digest)));
         signedAttributes.add(digestAttribute);
     }
@@ -280,7 +276,7 @@ public class SignerInfo {
                 BC_FACTORY.getProviderName());
         IASN1EncodableVector certContents = BC_FACTORY.createASN1EncodableVector();
         // don't add if it is the default value
-        if (!SecurityIDs.ID_SHA256.equals(digestAlgorithmOid)) {
+        if (!OID.SHA_256.equals(digestAlgorithmOid)) {
             IAlgorithmIdentifier algoId = BC_FACTORY.createAlgorithmIdentifier(
                     BC_FACTORY.createASN1ObjectIdentifier(digestAlgorithmOid));
             certContents.add(algoId);
@@ -301,7 +297,7 @@ public class SignerInfo {
         IDERSequence certContentsSeqSeq = BC_FACTORY.createDERSequence(certContentsSeq);
         IDERSequence certContentsSeqSeqSeq = BC_FACTORY.createDERSequence(certContentsSeqSeq);
         IDERSet certContentsSeqSeqSeqSet = BC_FACTORY.createDERSet(certContentsSeqSeqSeq);
-        CmsAttribute attribute = new CmsAttribute(SecurityIDs.ID_AA_SIGNING_CERTIFICATE_V2, certContentsSeqSeqSeqSet);
+        CmsAttribute attribute = new CmsAttribute(OID.AA_SIGNING_CERTIFICATE_V2, certContentsSeqSeqSeqSet);
 
         signedAttributes.add(attribute);
     }
@@ -575,7 +571,7 @@ public class SignerInfo {
     }
 
     private void setRevocationInfo() {
-        signedAttributes.removeIf(a -> SecurityIDs.ID_ADBE_REVOCATION.equals(a.getType()));
+        signedAttributes.removeIf(a -> OID.ADBE_REVOCATION.equals(a.getType()));
 
         if (containsRevocationData()) {
 
@@ -585,7 +581,7 @@ public class SignerInfo {
             createOCPSStructure(revocationV);
 
             CmsAttribute digestAttribute =
-                    new CmsAttribute(SecurityIDs.ID_ADBE_REVOCATION,
+                    new CmsAttribute(OID.ADBE_REVOCATION,
                             BC_FACTORY.createDERSequence(revocationV));
             signedAttributes.add(digestAttribute);
         }

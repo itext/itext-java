@@ -23,6 +23,8 @@
 package com.itextpdf.signatures;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
+import com.itextpdf.kernel.crypto.OID;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 
@@ -100,14 +102,14 @@ public class PrivateKeySignature implements IExternalSignature {
 
         switch (this.signatureAlgorithm) {
             case "Ed25519":
-                if (!SecurityIDs.ID_SHA512.equals(digestAlgorithmOid)) {
+                if (!OID.SHA_512.equals(digestAlgorithmOid)) {
                     throw new PdfException(SignExceptionMessageConstant.ALGO_REQUIRES_SPECIFIC_HASH)
                             .setMessageParams("Ed25519", "SHA-512", this.hashAlgorithm);
                 }
                 this.parameters = null;
                 break;
             case "Ed448":
-                if (!SecurityIDs.ID_SHAKE256.equals(digestAlgorithmOid)) {
+                if (!OID.SHAKE_256.equals(digestAlgorithmOid)) {
                     throw new PdfException(SignExceptionMessageConstant.ALGO_REQUIRES_SPECIFIC_HASH)
                             .setMessageParams("Ed448", "512-bit SHAKE256", this.hashAlgorithm);
                 }

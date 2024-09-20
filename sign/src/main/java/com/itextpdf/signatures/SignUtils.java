@@ -75,8 +75,8 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
 import java.security.cert.X509CRL;
+import java.security.cert.X509Certificate;
 import java.security.spec.MGF1ParameterSpec;
 import java.security.spec.PSSParameterSpec;
 import java.text.ParseException;
@@ -128,15 +128,6 @@ final class SignUtils {
 
     static MessageDigest getMessageDigest(String hashAlgorithm, IExternalDigest externalDigest) throws GeneralSecurityException {
         return externalDigest.getMessageDigest(hashAlgorithm);
-    }
-
-    static MessageDigest getMessageDigest(String hashAlgorithm, String provider)
-            throws NoSuchAlgorithmException, NoSuchProviderException {
-        if (provider == null || provider.startsWith("SunPKCS11") || provider.startsWith("SunMSCAPI")) {
-            return MessageDigest.getInstance(DigestAlgorithms.normalizeDigestName(hashAlgorithm));
-        } else {
-            return MessageDigest.getInstance(hashAlgorithm, provider);
-        }
     }
 
     static InputStream getHttpResponse(URL urlt) throws IOException {

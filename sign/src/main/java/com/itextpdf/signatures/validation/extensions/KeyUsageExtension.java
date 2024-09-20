@@ -24,7 +24,7 @@ package com.itextpdf.signatures.validation.extensions;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
-import com.itextpdf.signatures.OID;
+import com.itextpdf.kernel.crypto.OID;
 
 import java.security.cert.X509Certificate;
 import java.util.Collections;

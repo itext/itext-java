@@ -22,6 +22,7 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.security.GeneralSecurityException;
@@ -29,8 +30,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class ProviderDigestUnitTest extends ExtendedITextTest {

@@ -29,6 +29,8 @@ import com.itextpdf.commons.bouncycastle.asn1.tsp.ITSTInfo;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
+import com.itextpdf.kernel.crypto.OID;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -57,8 +59,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("BouncyCastleUnitTest")
 public class PdfPKCS7Test extends PdfPKCS7BasicTest {
@@ -105,7 +107,7 @@ public class PdfPKCS7Test extends PdfPKCS7BasicTest {
         Assertions.assertEquals(expectedOid, pkcs7.getDigestAlgorithmOid());
         Assertions.assertEquals(chain[0], pkcs7.getSigningCertificate());
         Assertions.assertArrayEquals(chain, pkcs7.getCertificates());
-        Assertions.assertEquals(SecurityIDs.ID_RSA_WITH_SHA256, pkcs7.getSignatureMechanismOid());
+        Assertions.assertEquals(OID.RSA_WITH_SHA256, pkcs7.getSignatureMechanismOid());
     }
 
     @Test

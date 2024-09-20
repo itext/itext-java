@@ -28,12 +28,12 @@ import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.ISingleResp;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.crypto.OID;
 import com.itextpdf.signatures.CertificateUtil;
 import com.itextpdf.signatures.CrlClientOnline;
 import com.itextpdf.signatures.ICrlClient;
 import com.itextpdf.signatures.IOcspClient;
 import com.itextpdf.signatures.IssuingCertificateRetriever;
-import com.itextpdf.signatures.OID;
 import com.itextpdf.signatures.OcspClientBouncyCastle;
 import com.itextpdf.signatures.validation.context.CertificateSource;
 import com.itextpdf.signatures.validation.context.TimeBasedContext;
@@ -54,7 +54,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import static com.itextpdf.signatures.validation.SafeCalling.onExceptionLog;
 import static com.itextpdf.signatures.validation.SafeCalling.onRuntimeExceptionLog;
 

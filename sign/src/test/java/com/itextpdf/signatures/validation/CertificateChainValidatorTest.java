@@ -24,8 +24,8 @@ package com.itextpdf.signatures.validation;
 
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.crypto.OID.X509Extensions;
 import com.itextpdf.signatures.IssuingCertificateRetriever;
-import com.itextpdf.signatures.OID.X509Extensions;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.TimeTestUtil;
 import com.itextpdf.signatures.validation.context.CertificateSource;
@@ -52,11 +52,10 @@ import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("BouncyCastleUnitTest")
 public class CertificateChainValidatorTest extends ExtendedITextTest {

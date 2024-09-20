@@ -29,11 +29,11 @@ import com.itextpdf.commons.bouncycastle.asn1.IASN1Primitive;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.Base64;
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
+import com.itextpdf.kernel.crypto.OID;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.PdfPKCS7;
-import com.itextpdf.signatures.SecurityIDs;
 import com.itextpdf.signatures.SignatureMechanisms;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.logs.SignLogMessageConstant;
@@ -43,10 +43,6 @@ import com.itextpdf.signatures.testutils.builder.TestCrlBuilder;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Tag;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -56,13 +52,17 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.Security;
+import java.security.cert.CRLException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
-import java.security.cert.CRLException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collections;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("BouncyCastleUnitTest")
 public class CMSContainerTest extends ExtendedITextTest {
@@ -107,8 +107,8 @@ public class CMSContainerTest extends ExtendedITextTest {
         si.setMessageDigest(new byte[256]);
         si.setOcspResponses(fakeOcspREsponses);
         si.setCrlResponses(Collections.singletonList(testCrlResponse));
-        si.setDigestAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_SHA512));
-        si.setSigningCertificateAndAddToSignedAttributes(signCert, SecurityIDs.ID_SHA512);
+        si.setDigestAlgorithm(new AlgorithmIdentifier(OID.SHA_512));
+        si.setSigningCertificateAndAddToSignedAttributes(signCert, OID.SHA_512);
         si.setSignatureAlgorithm(new AlgorithmIdentifier(
                 SignatureMechanisms.getSignatureMechanismOid("RSA", DigestAlgorithms.SHA512)));
         si.setSignature(new byte[256]);
@@ -131,8 +131,8 @@ public class CMSContainerTest extends ExtendedITextTest {
         SignerInfo si = new SignerInfo();
         si.setSigningCertificate(signCert);
         si.setMessageDigest(new byte[256]);
-        si.setDigestAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_SHA512));
-        si.setSigningCertificateAndAddToSignedAttributes(signCert, SecurityIDs.ID_SHA512);
+        si.setDigestAlgorithm(new AlgorithmIdentifier(OID.SHA_512));
+        si.setSigningCertificateAndAddToSignedAttributes(signCert, OID.SHA_512);
         si.setSignatureAlgorithm(new AlgorithmIdentifier(
                 SignatureMechanisms.getSignatureMechanismOid("RSA", DigestAlgorithms.SHA512)));
         si.setSignature(new byte[256]);
@@ -157,10 +157,10 @@ public class CMSContainerTest extends ExtendedITextTest {
         si.setMessageDigest(new byte[256]);
         si.setOcspResponses(fakeOcspREsponses);
         si.setCrlResponses(Collections.singletonList(testCrlResponse));
-        si.setDigestAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_SHA512));
+        si.setDigestAlgorithm(new AlgorithmIdentifier(OID.SHA_512));
         si.setSignatureAlgorithm(new AlgorithmIdentifier(
                 SignatureMechanisms.getSignatureMechanismOid("RSA", DigestAlgorithms.SHA512)));
-        si.setSigningCertificateAndAddToSignedAttributes(signCert, SecurityIDs.ID_SHA512);
+        si.setSigningCertificateAndAddToSignedAttributes(signCert, OID.SHA_512);
         si.setSignature(new byte[256]);
         sut.setSignerInfo(si);
 

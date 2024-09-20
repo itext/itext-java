@@ -27,10 +27,11 @@ import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampRequest;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampRequestGenerator;
 import com.itextpdf.commons.utils.SystemUtil;
-import com.itextpdf.signatures.DigestAlgorithms;
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
 import com.itextpdf.signatures.ITSAClient;
 import com.itextpdf.signatures.testutils.SignTestPortUtil;
 import com.itextpdf.signatures.testutils.builder.TestTimestampTokenBuilder;
+
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;

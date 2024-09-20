@@ -24,15 +24,15 @@ package com.itextpdf.signatures;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.kernel.crypto.OID;
 import com.itextpdf.signatures.testutils.X509MockCertificate;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.security.Security;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("BouncyCastleUnitTest")
 public class CertificateSupportedCriticalExtensionsTest extends ExtendedITextTest {

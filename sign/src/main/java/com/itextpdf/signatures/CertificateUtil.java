@@ -46,9 +46,8 @@ import com.itextpdf.commons.bouncycastle.cert.ocsp.AbstractOCSPException;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateID;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
+import com.itextpdf.kernel.crypto.OID;
 import com.itextpdf.signatures.logs.SignLogMessageConstant;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -60,13 +59,15 @@ import java.security.cert.CRLException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 import java.security.cert.X509CRL;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class contains a series of static methods that
@@ -215,7 +216,7 @@ public class CertificateUtil {
         IASN1Primitive obj;
         try {
             obj = getExtensionValue(crl, FACTORY.createExtension().getAuthorityInfoAccess().getId());
-            return getValueFromAIAExtension(obj, SecurityIDs.ID_CA_ISSUERS);
+            return getValueFromAIAExtension(obj, OID.CA_ISSUERS);
         } catch (IOException e) {
             return null;
         }
@@ -234,7 +235,7 @@ public class CertificateUtil {
         IASN1Primitive obj;
         try {
             obj = getExtensionValue(certificate, FACTORY.createExtension().getAuthorityInfoAccess().getId());
-            return getValueFromAIAExtension(obj, SecurityIDs.ID_OCSP);
+            return getValueFromAIAExtension(obj, OID.OCSP);
         } catch (IOException e) {
             return null;
         }
@@ -253,7 +254,7 @@ public class CertificateUtil {
         IASN1Primitive obj;
         try {
             obj = getExtensionValue(certificate, FACTORY.createExtension().getAuthorityInfoAccess().getId());
-            return getValueFromAIAExtension(obj, SecurityIDs.ID_CA_ISSUERS);
+            return getValueFromAIAExtension(obj, OID.CA_ISSUERS);
         } catch (IOException e) {
             return null;
         }
@@ -269,7 +270,7 @@ public class CertificateUtil {
      * @return a TSA URL
      */
     public static String getTSAURL(X509Certificate certificate) {
-        byte[] der = SignUtils.getExtensionValueByOid(certificate, SecurityIDs.ID_TSA);
+        byte[] der = SignUtils.getExtensionValueByOid(certificate, OID.TSA);
         if (der == null) {
             return null;
         }
@@ -320,7 +321,7 @@ public class CertificateUtil {
         while (revInfo.hasMoreElements()) {
             IASN1Sequence s = FACTORY.createASN1Sequence(revInfo.nextElement());
             IASN1ObjectIdentifier o = FACTORY.createASN1ObjectIdentifier(s.getObjectAt(0));
-            if (o != null && SecurityIDs.ID_RI_OCSP_RESPONSE.equals(o.getId())) {
+            if (o != null && OID.RI_OCSP_RESPONSE.equals(o.getId())) {
                 IASN1Sequence ocspResp = FACTORY.createASN1Sequence(s.getObjectAt(1));
                 IASN1Enumerated respStatus = FACTORY.createASN1Enumerated(ocspResp.getObjectAt(0));
                 if (respStatus.intValueExact() == FACTORY.createOCSPRespBuilderInstance().getSuccessful()) {
@@ -388,7 +389,7 @@ public class CertificateUtil {
         for (IBasicOCSPResponse element : ocsps) {
             IASN1EncodableVector ocspResponseRevInfo = FACTORY.createASN1EncodableVector();
             // Add otherRevInfoFormat (ID_RI_OCSP_RESPONSE)
-            ocspResponseRevInfo.add(FACTORY.createASN1ObjectIdentifier(SecurityIDs.ID_RI_OCSP_RESPONSE));
+            ocspResponseRevInfo.add(FACTORY.createASN1ObjectIdentifier(OID.RI_OCSP_RESPONSE));
 
             IASN1EncodableVector ocspResponse = FACTORY.createASN1EncodableVector();
             ocspResponse.add(FACTORY.createOCSPResponseStatus(

@@ -34,18 +34,13 @@ import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationExcept
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.Base64;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.crypto.OID;
 import com.itextpdf.kernel.exceptions.PdfException;
-import com.itextpdf.signatures.SecurityIDs;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignTestPortUtil;
 import com.itextpdf.signatures.testutils.builder.TestCrlBuilder;
 import com.itextpdf.test.ExtendedITextTest;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -61,6 +56,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("BouncyCastleUnitTest")
 public class SignerInfoTest extends ExtendedITextTest {
@@ -113,14 +113,14 @@ public class SignerInfoTest extends ExtendedITextTest {
     @Test
     public void testSignedAttributesReadonlyModeActivatedByGettingSerializedData() throws IOException, CertificateEncodingException {
         SignerInfo si = new SignerInfo();
-        si.setSignatureAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_RSA));
+        si.setSignatureAlgorithm(new AlgorithmIdentifier(OID.RSA));
         si.setSigningCertificate(signCert);
         ArrayList<byte[]> fakeOcspREsponses = new ArrayList<>();
         fakeOcspREsponses.add(Base64.decode(CMSTestHelper.BASE64_OCSP_RESPONSE));
         si.setMessageDigest(new byte[1024]);
         si.setOcspResponses(fakeOcspREsponses);
         si.setCrlResponses(testCrlResponse);
-        si.setDigestAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_SHA512));
+        si.setDigestAlgorithm(new AlgorithmIdentifier(OID.SHA_512));
         si.serializeSignedAttributes();
 
         Assertions.assertThrows(IllegalStateException.class, () -> si.setSerializedSignedAttributes(new byte[1235]));
@@ -133,16 +133,16 @@ public class SignerInfoTest extends ExtendedITextTest {
         Assertions.assertThrows(IllegalStateException.class,
                 () -> si.addSignedAttribute(attribute));
         Assertions.assertThrows(IllegalStateException.class, () ->
-                si.addSignerCertificateToSignedAttributes(signCert, SecurityIDs.ID_SHA512));
+                si.addSignerCertificateToSignedAttributes(signCert, OID.SHA_512));
     }
 
     @Test
     public void testGetSerializedBasicSignedAttributes() throws IOException, CertificateEncodingException {
         SignerInfo si = new SignerInfo();
-        si.setSignatureAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_RSASSA_PSS));
+        si.setSignatureAlgorithm(new AlgorithmIdentifier(OID.RSASSA_PSS));
         si.setSigningCertificate(signCert);
         si.setMessageDigest(MESSAGE_DIGEST);
-        si.setDigestAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_SHA512));
+        si.setDigestAlgorithm(new AlgorithmIdentifier(OID.SHA_512));
         byte[] serRes = si.serializeSignedAttributes();
         Assertions.assertEquals(serializedAsString(EXPECTEDRESULT_1), serializedAsString(serRes));
     }
@@ -150,14 +150,14 @@ public class SignerInfoTest extends ExtendedITextTest {
     @Test
     public void testGetSerializedExtendedSignedAttributes() throws IOException, CertificateEncodingException {
         SignerInfo si = new SignerInfo();
-        si.setSignatureAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_RSASSA_PSS));
+        si.setSignatureAlgorithm(new AlgorithmIdentifier(OID.RSASSA_PSS));
         si.setSigningCertificate(signCert);
         ArrayList<byte[]> fakeOcspREsponses = new ArrayList<>();
         fakeOcspREsponses.add(Base64.decode(CMSTestHelper.BASE64_OCSP_RESPONSE));
         si.setOcspResponses(fakeOcspREsponses);
         si.setCrlResponses(testCrlResponse);
         si.setMessageDigest(new byte[1024]);
-        si.setDigestAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_SHA512));
+        si.setDigestAlgorithm(new AlgorithmIdentifier(OID.SHA_512));
         byte[] serRes = si.serializeSignedAttributes();
         Assertions.assertEquals(serializedAsString(EXPECTEDRESULT_2), serializedAsString(serRes));
     }
@@ -165,11 +165,11 @@ public class SignerInfoTest extends ExtendedITextTest {
     @Test
     public void testGetSerializedExtendedSignedAttributesCrlOnly() throws IOException, CertificateEncodingException {
         SignerInfo si = new SignerInfo();
-        si.setSignatureAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_RSASSA_PSS));
+        si.setSignatureAlgorithm(new AlgorithmIdentifier(OID.RSASSA_PSS));
         si.setSigningCertificate(signCert);
         si.setCrlResponses(testCrlResponse);
         si.setMessageDigest(new byte[1024]);
-        si.setDigestAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_SHA512));
+        si.setDigestAlgorithm(new AlgorithmIdentifier(OID.SHA_512));
         byte[] serRes = si.serializeSignedAttributes();
         Assertions.assertEquals(serializedAsString(EXPECTEDRESULT_5), serializedAsString(serRes));
     }
@@ -178,19 +178,19 @@ public class SignerInfoTest extends ExtendedITextTest {
     public void testAddSignedAttribute() {
         SignerInfo si = new SignerInfo();
         Assertions.assertFalse(si.getSignedAttributes().stream().anyMatch(a ->
-                Objects.equals(a.getType(), SecurityIDs.ID_SIGNING_TIME)));
-        CmsAttribute attrib = new CmsAttribute(SecurityIDs.ID_SIGNING_TIME, FACTORY.createNullASN1Set());
+                Objects.equals(a.getType(), OID.SIGNING_TIME)));
+        CmsAttribute attrib = new CmsAttribute(OID.SIGNING_TIME, FACTORY.createNullASN1Set());
         si.addSignedAttribute(attrib);
         Assertions.assertTrue(si.getSignedAttributes().stream().anyMatch(a ->
-                Objects.equals(a.getType(), SecurityIDs.ID_SIGNING_TIME)));
+                Objects.equals(a.getType(), OID.SIGNING_TIME)));
     }
 
     @Test
     public void testAddUnsignedAttribute() {
         SignerInfo si = new SignerInfo();
-        CmsAttribute attrib = new CmsAttribute(SecurityIDs.ID_SIGNING_TIME, FACTORY.createNullASN1Set());
+        CmsAttribute attrib = new CmsAttribute(OID.SIGNING_TIME, FACTORY.createNullASN1Set());
         si.addUnSignedAttribute(attrib);
-        Assertions.assertEquals(SecurityIDs.ID_SIGNING_TIME,
+        Assertions.assertEquals(OID.SIGNING_TIME,
                 SignTestPortUtil.<CmsAttribute>getFirstElement(si.getUnSignedAttributes()).getType());
     }
 
@@ -198,10 +198,10 @@ public class SignerInfoTest extends ExtendedITextTest {
     public void testGetSerializedSignedAttributesWithCertificateId() throws CertificateEncodingException,
             NoSuchAlgorithmException, NoSuchProviderException, IOException {
         SignerInfo si = new SignerInfo();
-        si.setSignatureAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_RSASSA_PSS));
+        si.setSignatureAlgorithm(new AlgorithmIdentifier(OID.RSASSA_PSS));
         si.setSigningCertificate(signCert);
         si.setMessageDigest(new byte[1024]);
-        si.setDigestAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_SHA512));
+        si.setDigestAlgorithm(new AlgorithmIdentifier(OID.SHA_512));
         si.addSignerCertificateToSignedAttributes(signCert, "2.16.840.1.101.3.4.2.3");
         byte[] serRes = si.serializeSignedAttributes();
         Assertions.assertEquals(serializedAsString(EXPECTEDRESULT_3), serializedAsString(serRes));
@@ -211,10 +211,10 @@ public class SignerInfoTest extends ExtendedITextTest {
     public void testGetSerializedSignedAttributesWithCertificateIdTroughCertSetter()
             throws CertificateEncodingException, NoSuchAlgorithmException, NoSuchProviderException, IOException {
         SignerInfo si = new SignerInfo();
-        si.setSignatureAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_RSASSA_PSS));
+        si.setSignatureAlgorithm(new AlgorithmIdentifier(OID.RSASSA_PSS));
         si.setSigningCertificateAndAddToSignedAttributes(signCert, "2.16.840.1.101.3.4.2.3");
         si.setMessageDigest(new byte[1024]);
-        si.setDigestAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_SHA512));
+        si.setDigestAlgorithm(new AlgorithmIdentifier(OID.SHA_512));
         byte[] serRes = si.serializeSignedAttributes();
         Assertions.assertEquals(serializedAsString(EXPECTEDRESULT_3), serializedAsString(serRes));
     }
@@ -224,13 +224,13 @@ public class SignerInfoTest extends ExtendedITextTest {
             NoSuchProviderException, IOException {
         SignerInfo si = new SignerInfo();
 
-        si.addUnSignedAttribute(new CmsAttribute(SecurityIDs.ID_SIGNING_TIME, FACTORY.
+        si.addUnSignedAttribute(new CmsAttribute(OID.SIGNING_TIME, FACTORY.
                 createDERSet(FACTORY.createASN1Integer(123456))));
 
         si.setSigningCertificateAndAddToSignedAttributes(signCert, "2.16.840.1.101.3.4.2.3");
-        si.setSignatureAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_RSASSA_PSS));
+        si.setSignatureAlgorithm(new AlgorithmIdentifier(OID.RSASSA_PSS));
         si.setMessageDigest(new byte[1024]);
-        si.setDigestAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_SHA512));
+        si.setDigestAlgorithm(new AlgorithmIdentifier(OID.SHA_512));
         si.setSignature(new byte[512]);
         IDERSequence res = si.getAsDerSequence();
         Assertions.assertEquals(serializedAsString(EXPECTEDRESULT_4),
@@ -242,13 +242,13 @@ public class SignerInfoTest extends ExtendedITextTest {
             NoSuchProviderException, IOException {
         SignerInfo si = new SignerInfo();
 
-        si.addUnSignedAttribute(new CmsAttribute(SecurityIDs.ID_SIGNING_TIME, FACTORY.
+        si.addUnSignedAttribute(new CmsAttribute(OID.SIGNING_TIME, FACTORY.
                 createDERSet(FACTORY.createASN1Integer(123456))));
 
-        si.setSignatureAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_RSASSA_PSS));
+        si.setSignatureAlgorithm(new AlgorithmIdentifier(OID.RSASSA_PSS));
         si.setSigningCertificateAndAddToSignedAttributes(signCert, "2.16.840.1.101.3.4.2.3");
         si.setMessageDigest(new byte[1024]);
-        si.setDigestAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_SHA512));
+        si.setDigestAlgorithm(new AlgorithmIdentifier(OID.SHA_512));
         si.setSignature(new byte[512]);
 
         long res = si.getEstimatedSize();
@@ -261,10 +261,10 @@ public class SignerInfoTest extends ExtendedITextTest {
             NoSuchAlgorithmException, IOException, NoSuchProviderException {
         SignerInfo si = new SignerInfo();
 
-        si.setSignatureAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_RSASSA_PSS));
+        si.setSignatureAlgorithm(new AlgorithmIdentifier(OID.RSASSA_PSS));
         si.setSigningCertificateAndAddToSignedAttributes(signCert, "2.16.840.1.101.3.4.2.3");
         si.setMessageDigest(new byte[1024]);
-        si.setDigestAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_SHA512));
+        si.setDigestAlgorithm(new AlgorithmIdentifier(OID.SHA_512));
         si.setSignature(new byte[512]);
         byte[] serialized = si.serializeSignedAttributes();
 
@@ -285,12 +285,12 @@ public class SignerInfoTest extends ExtendedITextTest {
             NoSuchProviderException, IOException {
         SignerInfo si = new SignerInfo();
 
-        si.addUnSignedAttribute(new CmsAttribute(SecurityIDs.ID_SIGNING_TIME, FACTORY.
+        si.addUnSignedAttribute(new CmsAttribute(OID.SIGNING_TIME, FACTORY.
                 createDERSet(FACTORY.createASN1Integer(123456))));
-        si.setSignatureAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_RSASSA_PSS));
+        si.setSignatureAlgorithm(new AlgorithmIdentifier(OID.RSASSA_PSS));
         si.setSigningCertificateAndAddToSignedAttributes(signCert, "2.16.840.1.101.3.4.2.3");
         si.setMessageDigest(new byte[1024]);
-        si.setDigestAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_SHA512));
+        si.setDigestAlgorithm(new AlgorithmIdentifier(OID.SHA_512));
 
         long res = si.getEstimatedSize();
 
@@ -302,12 +302,12 @@ public class SignerInfoTest extends ExtendedITextTest {
             NoSuchProviderException, IOException {
         SignerInfo si = new SignerInfo();
 
-        si.addUnSignedAttribute(new CmsAttribute(SecurityIDs.ID_SIGNING_TIME, FACTORY.
+        si.addUnSignedAttribute(new CmsAttribute(OID.SIGNING_TIME, FACTORY.
                 createDERSet(FACTORY.createASN1Integer(123456))));
-        si.setSignatureAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_RSASSA_PSS));
+        si.setSignatureAlgorithm(new AlgorithmIdentifier(OID.RSASSA_PSS));
         si.setSigningCertificateAndAddToSignedAttributes(signCert, "2.16.840.1.101.3.4.2.3");
         si.setMessageDigest(new byte[1024]);
-        si.setDigestAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_SHA512));
+        si.setDigestAlgorithm(new AlgorithmIdentifier(OID.SHA_512));
 
         IDERSequence encoded = si.getAsDerSequence(false);
 
@@ -322,7 +322,7 @@ public class SignerInfoTest extends ExtendedITextTest {
             NoSuchAlgorithmException, NoSuchProviderException, IOException {
         SignerInfo si = new SignerInfo();
 
-        si.addSignerCertificateToSignedAttributes(signCert, SecurityIDs.ID_SHA256);
+        si.addSignerCertificateToSignedAttributes(signCert, OID.SHA_256);
         si.setMessageDigest(new byte[20]);
 
         byte[] attribs = si.serializeSignedAttributes();

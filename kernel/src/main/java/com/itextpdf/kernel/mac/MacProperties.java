@@ -90,7 +90,27 @@ public class MacProperties {
         SHA_512,
         SHA3_256,
         SHA3_384,
-        SHA3_512
+        SHA3_512;
+    }
+
+    // We can't use here enum with fields, because .NET doesn't support it, and enum
+    // will be ported to class, and EnumUtil.getAllValuesOfEnum won't work with class
+    public static String macDigestAlgorithmToString(MacDigestAlgorithm macDigestAlgorithm) {
+        switch (macDigestAlgorithm) {
+            case SHA_256:
+                return "SHA256";
+            case SHA_384:
+                return "SHA384";
+            case SHA_512:
+                return "SHA512";
+            case SHA3_256:
+                return "SHA3-256";
+            case SHA3_384:
+                return "SHA3-384";
+            case SHA3_512:
+                return "SHA3-512";
+        }
+        return null;
     }
 
     /**

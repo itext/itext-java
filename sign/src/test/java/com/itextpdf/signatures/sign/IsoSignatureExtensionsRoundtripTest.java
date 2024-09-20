@@ -27,8 +27,11 @@ import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.forms.form.element.SignatureFieldAppearance;
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
+import com.itextpdf.kernel.crypto.OID;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -36,15 +39,12 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.signatures.BouncyCastleDigest;
-import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.PdfPKCS7;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
-import com.itextpdf.signatures.SecurityIDs;
 import com.itextpdf.signatures.SignatureUtil;
 import com.itextpdf.signatures.SignerProperties;
-import com.itextpdf.signatures.logs.SignLogMessageConstant;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -77,8 +77,8 @@ import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("BouncyCastleIntegrationTest")
 public class IsoSignatureExtensionsRoundtripTest extends ExtendedITextTest {
@@ -115,7 +115,7 @@ public class IsoSignatureExtensionsRoundtripTest extends ExtendedITextTest {
     }
     
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = SignLogMessageConstant.ALGORITHM_NOT_FROM_SPEC, count = 3), ignore = true)
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.ALGORITHM_NOT_FROM_SPEC, count = 3), ignore = true)
     public void testPlainBrainpoolP384r1WithSha384() throws Exception {
         if ("BC".equals(BOUNCY_CASTLE_FACTORY.getProviderName())) {
             doRoundTrip("plainBrainpoolP384r1", DigestAlgorithms.SHA384, "PLAIN-ECDSA",
@@ -129,7 +129,7 @@ public class IsoSignatureExtensionsRoundtripTest extends ExtendedITextTest {
     }
     
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = SignLogMessageConstant.ALGORITHM_NOT_FROM_SPEC, count = 3), ignore = true)
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.ALGORITHM_NOT_FROM_SPEC, count = 3), ignore = true)
     public void testCvcBrainpoolP384r1WithSha384() throws Exception {
         if ("BC".equals(BOUNCY_CASTLE_FACTORY.getProviderName())) {
             doRoundTrip("cvcBrainpoolP384r1", DigestAlgorithms.SHA384, "CVC-ECDSA",
@@ -156,12 +156,12 @@ public class IsoSignatureExtensionsRoundtripTest extends ExtendedITextTest {
     public void testRsaWithSha3_512() throws Exception {
         // For now we use a generic OID, but NISTObjectIdentifiers.id_rsassa_pkcs1_v1_5_with_sha3_512 would
         // be more appropriate
-        doRoundTrip("rsa", DigestAlgorithms.SHA3_512, new ASN1ObjectIdentifier(SecurityIDs.ID_RSA_WITH_SHA3_512));
+        doRoundTrip("rsa", DigestAlgorithms.SHA3_512, new ASN1ObjectIdentifier(OID.RSA_WITH_SHA3_512));
     }
 
     @Test
     public void testRsaSsaPssWithSha3_256() throws Exception {
-        doRoundTrip("rsa", DigestAlgorithms.SHA3_256, "RSASSA-PSS", new ASN1ObjectIdentifier(SecurityIDs.ID_RSASSA_PSS));
+        doRoundTrip("rsa", DigestAlgorithms.SHA3_256, "RSASSA-PSS", new ASN1ObjectIdentifier(OID.RSASSA_PSS));
     }
 
     @Test

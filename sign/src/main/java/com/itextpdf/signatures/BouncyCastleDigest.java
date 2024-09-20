@@ -23,6 +23,8 @@
 package com.itextpdf.signatures;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
+import com.itextpdf.kernel.crypto.OID;
 
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
@@ -42,38 +44,38 @@ public class BouncyCastleDigest implements IExternalDigest {
         if (oid == null) {
             throw new NoSuchAlgorithmException(hashAlgorithm);
         }
-        
+
         Provider provider = BouncyCastleFactoryCreator.getFactory().getProvider();
         switch (oid) {
             // SHA1
             case "1.3.14.3.2.26":
                 return MessageDigest.getInstance("SHA1", provider);
             // SHA224
-            case "2.16.840.1.101.3.4.2.4":
+            case OID.SHA_224:
                 return MessageDigest.getInstance("SHA224", provider);
             // SHA256
-            case "2.16.840.1.101.3.4.2.1":
+            case OID.SHA_256:
                 return MessageDigest.getInstance("SHA256", provider);
             // SHA384
-            case "2.16.840.1.101.3.4.2.2":
+            case OID.SHA_384:
                 return MessageDigest.getInstance("SHA384", provider);
             // SHA512
-            case "2.16.840.1.101.3.4.2.3":
+            case OID.SHA_512:
                 return MessageDigest.getInstance("SHA512", provider);
             // SHA3-224
-            case "2.16.840.1.101.3.4.2.7":
+            case OID.SHA3_224:
                 return MessageDigest.getInstance("SHA3-224", provider);
             // SHA3-256
-            case "2.16.840.1.101.3.4.2.8":
+            case OID.SHA3_256:
                 return MessageDigest.getInstance("SHA3-256", provider);
             // SHA3-384
-            case "2.16.840.1.101.3.4.2.9":
+            case OID.SHA3_384:
                 return MessageDigest.getInstance("SHA3-384", provider);
             // SHA3-512
-            case "2.16.840.1.101.3.4.2.10":
+            case OID.SHA3_512:
                 return MessageDigest.getInstance("SHA3-512", provider);
             // SHAKE-256 (512-bit)
-            case "2.16.840.1.101.3.4.2.12":
+            case OID.SHAKE_256:
                 return MessageDigest.getInstance("SHAKE256", provider);
             // RIPEMD128
             case "1.3.36.3.2.2":

@@ -20,14 +20,12 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.signatures;
+package com.itextpdf.kernel.crypto;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
-import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
-import com.itextpdf.signatures.logs.SignLogMessageConstant;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,6 +35,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.HashMap;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class that contains a map with the different message digest algorithms.
@@ -123,10 +123,10 @@ public class DigestAlgorithms {
         digestNames.put("1.2.840.113549.2.5", "MD5");
         digestNames.put("1.2.840.113549.2.2", "MD2");
         digestNames.put("1.3.14.3.2.26", "SHA1");
-        digestNames.put("2.16.840.1.101.3.4.2.4", "SHA224");
-        digestNames.put("2.16.840.1.101.3.4.2.1", "SHA256");
-        digestNames.put("2.16.840.1.101.3.4.2.2", "SHA384");
-        digestNames.put("2.16.840.1.101.3.4.2.3", "SHA512");
+        digestNames.put(OID.SHA_224, "SHA224");
+        digestNames.put(OID.SHA_256, "SHA256");
+        digestNames.put(OID.SHA_384, "SHA384");
+        digestNames.put(OID.SHA_512, "SHA512");
         digestNames.put("1.3.36.3.2.2", "RIPEMD128");
         digestNames.put("1.3.36.3.2.1", "RIPEMD160");
         digestNames.put("1.3.36.3.2.3", "RIPEMD256");
@@ -137,8 +137,6 @@ public class DigestAlgorithms {
         digestNames.put("1.2.840.113549.1.1.11", "SHA256");
         digestNames.put("1.2.840.113549.1.1.12", "SHA384");
         digestNames.put("1.2.840.113549.1.1.13", "SHA512");
-        digestNames.put("1.2.840.113549.2.5", "MD5");
-        digestNames.put("1.2.840.113549.2.2", "MD2");
         digestNames.put("1.2.840.10040.4.3", "SHA1");
         digestNames.put("2.16.840.1.101.3.4.3.1", "SHA224");
         digestNames.put("2.16.840.1.101.3.4.3.2", "SHA256");
@@ -148,11 +146,11 @@ public class DigestAlgorithms {
         digestNames.put("1.3.36.3.3.1.2", "RIPEMD160");
         digestNames.put("1.3.36.3.3.1.4", "RIPEMD256");
         digestNames.put("1.2.643.2.2.9", "GOST3411");
-        digestNames.put("2.16.840.1.101.3.4.2.7", "SHA3-224");
-        digestNames.put("2.16.840.1.101.3.4.2.8", "SHA3-256");
-        digestNames.put("2.16.840.1.101.3.4.2.9", "SHA3-384");
-        digestNames.put("2.16.840.1.101.3.4.2.10", "SHA3-512");
-        digestNames.put("2.16.840.1.101.3.4.2.12", "SHAKE256");
+        digestNames.put(OID.SHA3_224, "SHA3-224");
+        digestNames.put(OID.SHA3_256, "SHA3-256");
+        digestNames.put(OID.SHA3_384, "SHA3-384");
+        digestNames.put(OID.SHA3_512, "SHA3-512");
+        digestNames.put(OID.SHAKE_256, "SHAKE256");
 
         fixNames.put("SHA256", SHA256);
         fixNames.put("SHA384", SHA384);
@@ -164,14 +162,14 @@ public class DigestAlgorithms {
         allowedDigests.put("MD-5", "1.2.840.113549.2.5");
         allowedDigests.put("SHA1", "1.3.14.3.2.26");
         allowedDigests.put("SHA-1", "1.3.14.3.2.26");
-        allowedDigests.put("SHA224", "2.16.840.1.101.3.4.2.4");
-        allowedDigests.put("SHA-224", "2.16.840.1.101.3.4.2.4");
-        allowedDigests.put("SHA256", "2.16.840.1.101.3.4.2.1");
-        allowedDigests.put("SHA-256", "2.16.840.1.101.3.4.2.1");
-        allowedDigests.put("SHA384", "2.16.840.1.101.3.4.2.2");
-        allowedDigests.put("SHA-384", "2.16.840.1.101.3.4.2.2");
-        allowedDigests.put("SHA512", "2.16.840.1.101.3.4.2.3");
-        allowedDigests.put("SHA-512", "2.16.840.1.101.3.4.2.3");
+        allowedDigests.put("SHA224", OID.SHA_224);
+        allowedDigests.put("SHA-224", OID.SHA_224);
+        allowedDigests.put("SHA256", OID.SHA_256);
+        allowedDigests.put("SHA-256", OID.SHA_256);
+        allowedDigests.put("SHA384", OID.SHA_384);
+        allowedDigests.put("SHA-384", OID.SHA_384);
+        allowedDigests.put("SHA512", OID.SHA_512);
+        allowedDigests.put("SHA-512", OID.SHA_512);
         allowedDigests.put("RIPEMD128", "1.3.36.3.2.2");
         allowedDigests.put("RIPEMD-128", "1.3.36.3.2.2");
         allowedDigests.put("RIPEMD160", "1.3.36.3.2.1");
@@ -179,11 +177,11 @@ public class DigestAlgorithms {
         allowedDigests.put("RIPEMD256", "1.3.36.3.2.3");
         allowedDigests.put("RIPEMD-256", "1.3.36.3.2.3");
         allowedDigests.put("GOST3411", "1.2.643.2.2.9");
-        allowedDigests.put("SHA3-224", "2.16.840.1.101.3.4.2.7");
-        allowedDigests.put("SHA3-256", "2.16.840.1.101.3.4.2.8");
-        allowedDigests.put("SHA3-384", "2.16.840.1.101.3.4.2.9");
-        allowedDigests.put("SHA3-512", "2.16.840.1.101.3.4.2.10");
-        allowedDigests.put("SHAKE256", "2.16.840.1.101.3.4.2.12");
+        allowedDigests.put("SHA3-224", OID.SHA3_224);
+        allowedDigests.put("SHA3-256", OID.SHA3_256);
+        allowedDigests.put("SHA3-384", OID.SHA3_384);
+        allowedDigests.put("SHA3-512", OID.SHA3_512);
+        allowedDigests.put("SHAKE256", OID.SHAKE_256);
 
         bitLengths.put("MD2", 128);
         bitLengths.put("MD-2", 128);
@@ -217,7 +215,9 @@ public class DigestAlgorithms {
      *
      * @param digestOid oid of the digest algorithm
      * @param provider the provider you want to use to create the hash
+     *
      * @return MessageDigest object
+     *
      * @throws NoSuchAlgorithmException thrown when a particular cryptographic algorithm is
      * requested but is not available in the environment
      * @throws NoSuchProviderException thrown when a particular security provider is
@@ -233,7 +233,9 @@ public class DigestAlgorithms {
      *
      * @param hashAlgorithm	the algorithm you want to use to create a hash
      * @param provider	the provider you want to use to create the hash
+     *
      * @return	a MessageDigest object
+     *
      * @throws NoSuchAlgorithmException thrown when a particular cryptographic algorithm is
      * requested but is not available in the environment
      * @throws NoSuchProviderException thrown when a particular security provider is
@@ -241,7 +243,7 @@ public class DigestAlgorithms {
      */
     public static MessageDigest getMessageDigest(String hashAlgorithm, String provider)
             throws NoSuchAlgorithmException, NoSuchProviderException {
-        return SignUtils.getMessageDigest(hashAlgorithm, provider);
+        return CryptoUtil.getMessageDigest(hashAlgorithm, provider);
     }
 
     /**
@@ -250,7 +252,9 @@ public class DigestAlgorithms {
      * @param data	the message of which you want to create a hash
      * @param hashAlgorithm	the algorithm used to create the hash
      * @param provider	the provider used to create the hash
+     *
      * @return	the hash
+     *
      * @throws GeneralSecurityException when requested cryptographic algorithm or security provider
      * is not available
      * @throws IOException signals that an I/O exception has occurred
@@ -262,11 +266,13 @@ public class DigestAlgorithms {
     }
 
     /**
-     * Create a digest based on the inputstream.
+     * Create a digest based on the input stream.
      *
      * @param data data to be digested
      * @param messageDigest algorithm to be used
+     *
      * @return digest of the data
+     *
      * @throws IOException signals that an I/O exception has occurred
      */
     public static byte[] digest(InputStream data, MessageDigest messageDigest)
@@ -291,7 +297,7 @@ public class DigestAlgorithms {
         if (ret == null) {
             try {
                 String digest = getMessageDigest(oid, BOUNCY_CASTLE_FACTORY.getProviderName()).getAlgorithm();
-                LOGGER.warn(SignLogMessageConstant.ALGORITHM_NOT_FROM_SPEC);
+                LOGGER.warn(KernelLogMessageConstant.ALGORITHM_NOT_FROM_SPEC);
                 return digest;
             } catch (Exception e) {
                 return oid;
@@ -305,6 +311,7 @@ public class DigestAlgorithms {
      * Normalize the digest name.
      *
      * @param algo the name to be normalized
+     *
      * @return normalized name
      */
     public static String normalizeDigestName(String algo) {
@@ -318,13 +325,14 @@ public class DigestAlgorithms {
      * Returns the id of a digest algorithms that is allowed in PDF,
      * or null if it isn't allowed.
      *
-     * @param name	The name of the digest algorithm.
-     * @return	An oid.
+     * @param name the name of the digest algorithm
+     *
+     * @return an oid
      */
     public static String getAllowedDigest(String name) {
         if (name == null) {
             throw new IllegalArgumentException(
-                    SignExceptionMessageConstant.THE_NAME_OF_THE_DIGEST_ALGORITHM_IS_NULL);
+                    KernelExceptionMessageConstant.THE_NAME_OF_THE_DIGEST_ALGORITHM_IS_NULL);
         }
         String allowedDigest = allowedDigests.get(name.toUpperCase());
         if (allowedDigest != null) {
@@ -332,7 +340,7 @@ public class DigestAlgorithms {
         }
         allowedDigest = BOUNCY_CASTLE_FACTORY.getDigestAlgorithmOid(name.toUpperCase());
         if (allowedDigest != null) {
-            LOGGER.warn(SignLogMessageConstant.ALGORITHM_NOT_FROM_SPEC);
+            LOGGER.warn(KernelLogMessageConstant.ALGORITHM_NOT_FROM_SPEC);
         }
         return allowedDigest;
     }
@@ -341,12 +349,13 @@ public class DigestAlgorithms {
      * Retrieve the output length in bits of the given digest algorithm.
      *
      * @param name the name of the digest algorithm
+     *
      * @return the length of the output of the algorithm in bits
      */
     public static int getOutputBitLength(String name) {
         if (name == null) {
             throw new IllegalArgumentException(
-                    SignExceptionMessageConstant.THE_NAME_OF_THE_DIGEST_ALGORITHM_IS_NULL);
+                    KernelExceptionMessageConstant.THE_NAME_OF_THE_DIGEST_ALGORITHM_IS_NULL);
         }
         return bitLengths.get(name).intValue();
     }

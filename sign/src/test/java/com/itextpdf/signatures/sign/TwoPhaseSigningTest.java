@@ -30,19 +30,19 @@ import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
+import com.itextpdf.kernel.crypto.OID;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.signatures.BouncyCastleDigest;
-import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.PdfPKCS7;
 import com.itextpdf.signatures.PdfSignature;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PdfTwoPhaseSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
-import com.itextpdf.signatures.SecurityIDs;
 import com.itextpdf.signatures.SignatureUtil;
 import com.itextpdf.signatures.SignerProperties;
 import com.itextpdf.signatures.cms.AlgorithmIdentifier;
@@ -52,28 +52,33 @@ import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.DERNull;
-import org.bouncycastle.asn1.x509.DigestInfo;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Tag;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.*;
+import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.DERNull;
+import org.bouncycastle.asn1.x509.DigestInfo;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("BouncyCastleIntegrationTest")
 public class TwoPhaseSigningTest extends ExtendedITextTest {
@@ -88,7 +93,7 @@ public class TwoPhaseSigningTest extends ExtendedITextTest {
     private static final String SIMPLE_DOC_PATH = SOURCE_FOLDER + "SimpleDoc.pdf";
 
     private static final String DIGEST_ALGORITHM = DigestAlgorithms.SHA384;
-    private static final String DIGEST_ALGORITHM_OID = SecurityIDs.ID_SHA384;
+    private static final String DIGEST_ALGORITHM_OID = OID.SHA_384;
 
     public static final String FIELD_NAME = "Signature1";
 
@@ -346,7 +351,7 @@ public class TwoPhaseSigningTest extends ExtendedITextTest {
             CMSContainer cms = new CMSContainer();
             SignerInfo signerInfo = new SignerInfo();
 
-            //signerInfo.setSigningCertificateAndAddToSignedAttributes(chain[0], SecurityIDs.ID_SHA384);
+            //signerInfo.setSigningCertificateAndAddToSignedAttributes(chain[0], OID.ID_SHA384);
             signerInfo.setSigningCertificate(chain[0]);
             // in the two phase scenario,; we don't have the private key! So we start from the signing certificate
 
