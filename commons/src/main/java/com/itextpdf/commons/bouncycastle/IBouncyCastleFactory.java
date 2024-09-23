@@ -1386,6 +1386,15 @@ public interface IBouncyCastleFactory {
     IX500Name createX500Name(String s);
 
     /**
+     * Create X500 Name wrapper from {@link IASN1Sequence}.
+     *
+     * @param s {@link IASN1Sequence} to create X500 Name wrapper from
+     *
+     * @return created X500 Name wrapper
+     */
+    IX500Name createX500Name(IASN1Sequence s);
+
+    /**
      * Create resp ID wrapper from X500 Name wrapper.
      *
      * @param x500Name X500 Name wrapper to create resp ID wrapper from

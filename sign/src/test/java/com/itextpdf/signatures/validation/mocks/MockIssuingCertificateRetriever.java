@@ -30,9 +30,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.cert.CRL;
 import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -41,6 +44,7 @@ public class MockIssuingCertificateRetriever extends IssuingCertificateRetriever
     private final IssuingCertificateRetriever wrapped;
     public List<Certificate[]> retrieveMissingCertificatesCalls = new ArrayList<>();
     public List<CRL> getCrlIssuerCertificatesCalls = new ArrayList<>();
+    public List<CRL> getCrlIssuerCertificatesByNameCalls = new ArrayList<>();
 
     public List<Certificate> retrieveIssuerCertificateCalls = new ArrayList<>();
     public List<IBasicOCSPResp> retrieveOCSPResponderCertificateCalls = new ArrayList<>();
@@ -54,8 +58,9 @@ public class MockIssuingCertificateRetriever extends IssuingCertificateRetriever
 
     private Function<Certificate[], Certificate[]> retrieveMissingCertificatesHandler;
     private Function<CRL, Certificate[]> getCrlIssuerCertificatesHandler;
+    private Function<CRL, Certificate[][]> getCrlIssuerCertificatesByNameHandler;
     private Function<Certificate, Certificate> retrieveIssuerCertificateHandler;
-    private Function<IBasicOCSPResp, Certificate> retrieveOCSPResponderCertificateHandler;
+    private Function<IBasicOCSPResp, Set<Certificate>> retrieveOCSPResponderCertificateHandler;
     private Consumer<Collection<Certificate>> setTrustedCertificatesHandler;
     private Consumer<Collection<Certificate>> addKnownCertificatesHandler;
 
@@ -98,10 +103,22 @@ public class MockIssuingCertificateRetriever extends IssuingCertificateRetriever
     }
 
     @Override
-    public Certificate retrieveIssuerCertificate(Certificate certificate) {
+    public Certificate[][] getCrlIssuerCertificatesByName(CRL crl) {
+        getCrlIssuerCertificatesByNameCalls.add(crl);
+        if (getCrlIssuerCertificatesByNameHandler != null) {
+            return getCrlIssuerCertificatesByNameHandler.apply(crl);
+        }
+        if (wrapped != null) {
+            return wrapped.getCrlIssuerCertificatesByName(crl);
+        }
+        return new Certificate[0][];
+    }
+
+    @Override
+    public List<X509Certificate> retrieveIssuerCertificate(Certificate certificate) {
         retrieveIssuerCertificateCalls.add(certificate);
         if (retrieveIssuerCertificateHandler != null) {
-            return retrieveIssuerCertificateHandler.apply(certificate);
+            return Collections.singletonList((X509Certificate) retrieveIssuerCertificateHandler.apply(certificate));
         }
         if (wrapped != null) {
             return wrapped.retrieveIssuerCertificate(certificate);
@@ -110,13 +127,13 @@ public class MockIssuingCertificateRetriever extends IssuingCertificateRetriever
     }
 
     @Override
-    public Certificate retrieveOCSPResponderCertificate(IBasicOCSPResp ocspResp) {
+    public Set<Certificate> retrieveOCSPResponderByNameCertificate(IBasicOCSPResp ocspResp) {
         retrieveOCSPResponderCertificateCalls.add(ocspResp);
         if (retrieveOCSPResponderCertificateHandler != null) {
             return retrieveOCSPResponderCertificateHandler.apply(ocspResp);
         }
         if (wrapped != null) {
-            return wrapped.retrieveOCSPResponderCertificate(ocspResp);
+            return wrapped.retrieveOCSPResponderByNameCertificate(ocspResp);
         }
         return null;
     }
@@ -200,12 +217,18 @@ public class MockIssuingCertificateRetriever extends IssuingCertificateRetriever
         return this;
     }
 
+    public MockIssuingCertificateRetriever ongetCrlIssuerCertificatesByNameDo(Function<CRL, Certificate[][]> callback) {
+        getCrlIssuerCertificatesByNameHandler = callback;
+        return this;
+    }
+
     public MockIssuingCertificateRetriever onRetrieveIssuerCertificateDo(Function<Certificate, Certificate> callback) {
         retrieveIssuerCertificateHandler = callback;
         return this;
     }
 
-    public MockIssuingCertificateRetriever onRetrieveOCSPResponderCertificateDo(Function<IBasicOCSPResp, Certificate> callback) {
+    public MockIssuingCertificateRetriever onRetrieveOCSPResponderCertificateDo(
+            Function<IBasicOCSPResp, Set<Certificate>> callback) {
         retrieveOCSPResponderCertificateHandler = callback;
         return this;
     }
@@ -230,7 +253,8 @@ public class MockIssuingCertificateRetriever extends IssuingCertificateRetriever
         return this;
     }
 
-    public MockIssuingCertificateRetriever onGetTrustedCertificatesStoreDo(Supplier<TrustedCertificatesStore> callBack) {
+    public MockIssuingCertificateRetriever onGetTrustedCertificatesStoreDo(
+            Supplier<TrustedCertificatesStore> callBack) {
         getTrustedCertificatesStoreHandler = callBack;
         return this;
     }

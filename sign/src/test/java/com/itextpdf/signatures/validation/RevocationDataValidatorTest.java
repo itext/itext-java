@@ -881,7 +881,7 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
 
         AssertValidationReport.assertThat(report, a -> a
                 .hasStatus(ValidationReport.ValidationResult.INDETERMINATE)
-                .hasLogItem(l -> l.withMessage(RevocationDataValidator.ISSUER_RETRIEVAL_FAILED)));
+                .hasLogItem(l -> l.withMessage(RevocationDataValidator.UNABLE_TO_RETRIEVE_REV_DATA_ONLINE)));
     }
 
     @Test

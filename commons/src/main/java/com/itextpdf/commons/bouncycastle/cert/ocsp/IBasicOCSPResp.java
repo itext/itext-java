@@ -85,4 +85,12 @@ public interface IBasicOCSPResp {
      * @return wrapped extension parsed value.
      */
     IASN1Encodable getExtensionParsedValue(IASN1ObjectIdentifier objectIdentifier);
+
+
+    /**
+     * Calls actual {@code getEncoded} method for the wrapped BasicOCSPResp object.
+     *
+     * @return the Responder Id
+     */
+    IRespID getResponderId();
 }

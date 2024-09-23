@@ -133,11 +133,15 @@ public class OCSPValidatorIntegrationTest extends ExtendedITextTest {
         AssertValidationReport.assertThat(report, a -> a
                 .hasNumberOfFailures(0)
                 .hasNumberOfLogs(2)
-                .hasLogItems(2, al -> al
+                .hasLogItem(al -> al
                     .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
                     .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED, l->
                                 ((CertificateReportItem) l).getCertificate().getSubjectX500Principal())
                     )
+                        .hasLogItem(al -> al
+                                .withCheckName(OCSPValidator.OCSP_CHECK)
+                                .withMessage(OCSPValidator.OCSP_RESPONDER_IS_CA)
+                        )
                 .hasStatus(ValidationReport.ValidationResult.VALID)
                 );
     }

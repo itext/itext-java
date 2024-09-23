@@ -1590,6 +1590,15 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
      * {@inheritDoc}
      */
     @Override
+    public IX500Name createX500Name(IASN1Sequence s) {
+        return new X500NameBC(X500Name.getInstance(((ASN1SequenceBC) s).getASN1Sequence()));
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public IRespID createRespID(IX500Name x500Name) {
         return new RespIDBC(x500Name);
     }

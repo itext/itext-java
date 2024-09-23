@@ -23,8 +23,6 @@
 package com.itextpdf.signatures.validation;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.signatures.ICrlClient;
-import com.itextpdf.signatures.IOcspClient;
 import com.itextpdf.signatures.IssuingCertificateRetriever;
 import com.itextpdf.signatures.validation.context.CertificateSource;
 import com.itextpdf.signatures.validation.context.ValidationContext;
@@ -34,6 +32,7 @@ import com.itextpdf.signatures.validation.extensions.DynamicCertificateExtension
 import com.itextpdf.signatures.validation.report.CertificateReportItem;
 import com.itextpdf.signatures.validation.report.ValidationReport;
 import com.itextpdf.signatures.validation.report.ReportItem.ReportItemStatus;
+import com.itextpdf.signatures.validation.report.ValidationReport.ValidationResult;
 
 import java.security.GeneralSecurityException;
 import java.security.cert.CertificateExpiredException;
@@ -263,34 +262,48 @@ public class CertificateChainValidator {
 
     private void validateChain(ValidationReport result, ValidationContext context, X509Certificate certificate,
             Date validationDate, int certificateChainSize) {
-        X509Certificate issuerCertificate = null;
+        List<X509Certificate> issuerCertificates;
         try {
-            issuerCertificate =
-                    (X509Certificate) certificateRetriever.retrieveIssuerCertificate(certificate);
+            issuerCertificates = certificateRetriever.retrieveIssuerCertificate(certificate);
         } catch (RuntimeException e) {
             result.addReportItem(new CertificateReportItem(certificate, CERTIFICATE_CHECK,
                     ISSUER_RETRIEVAL_FAILED, e, ReportItemStatus.INDETERMINATE));
             return;
         }
-        if (issuerCertificate == null) {
+        if (issuerCertificates.isEmpty()) {
             result.addReportItem(new CertificateReportItem(certificate, CERTIFICATE_CHECK, MessageFormatUtil.format(
                     ISSUER_MISSING, certificate.getSubjectX500Principal()), ReportItemStatus.INDETERMINATE));
             return;
         }
-        try {
-            certificate.verify(issuerCertificate.getPublicKey());
-        } catch (GeneralSecurityException e) {
-            result.addReportItem(new CertificateReportItem(certificate, CERTIFICATE_CHECK,
-                    MessageFormatUtil.format(ISSUER_CANNOT_BE_VERIFIED, issuerCertificate.getSubjectX500Principal(),
-                            certificate.getSubjectX500Principal()), e, ReportItemStatus.INVALID));
-            return;
-        } catch (RuntimeException e) {
-            result.addReportItem(new CertificateReportItem(certificate, CERTIFICATE_CHECK,
-                    MessageFormatUtil.format(ISSUER_VERIFICATION_FAILED, issuerCertificate.getSubjectX500Principal(),
-                            certificate.getSubjectX500Principal()), e, ReportItemStatus.INVALID));
-            return;
+        ValidationReport[] candidateReports = new ValidationReport[issuerCertificates.size()];
+        for (int i = 0; i < issuerCertificates.size(); i++) {
+            candidateReports[i] = new ValidationReport();
+            try {
+                certificate.verify(issuerCertificates.get(i).getPublicKey());
+            } catch (GeneralSecurityException e) {
+                candidateReports[i].addReportItem(new CertificateReportItem(certificate, CERTIFICATE_CHECK,
+                        MessageFormatUtil.format(ISSUER_CANNOT_BE_VERIFIED,
+                                issuerCertificates.get(i).getSubjectX500Principal(),
+                                certificate.getSubjectX500Principal()), e, ReportItemStatus.INVALID));
+                continue;
+            } catch (RuntimeException e) {
+                candidateReports[i].addReportItem(new CertificateReportItem(certificate, CERTIFICATE_CHECK,
+                        MessageFormatUtil.format(ISSUER_VERIFICATION_FAILED,
+                                issuerCertificates.get(i).getSubjectX500Principal(),
+                                certificate.getSubjectX500Principal()), e, ReportItemStatus.INVALID));
+                continue;
+            }
+            this.validate(candidateReports[i], context.setCertificateSource(CertificateSource.CERT_ISSUER),
+                    issuerCertificates.get(i), validationDate, certificateChainSize + 1);
+            if (candidateReports[i].getValidationResult() == ValidationResult.VALID) {
+                // We found valid issuer, no need to try other ones.
+                result.merge(candidateReports[i]);
+                return;
+            }
         }
-        this.validate(result, context.setCertificateSource(CertificateSource.CERT_ISSUER),
-                issuerCertificate, validationDate, certificateChainSize + 1);
+        // Valid issuer wasn't found, add all the reports
+        for (ValidationReport candidateReport : candidateReports) {
+            result.merge(candidateReport);
+        }
     }
 }

@@ -20,46 +20,40 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.bouncycastle.asn1.x500;
+package com.itextpdf.bouncycastlefips.cert.ocsp;
 
-import com.itextpdf.bouncycastle.asn1.ASN1EncodableBC;
+import com.itextpdf.bouncycastlefips.asn1.x500.X500NameBCFips;
 import com.itextpdf.commons.bouncycastle.asn1.x500.IX500Name;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IResponderID;
 
-import java.io.IOException;
-import javax.security.auth.x500.X500Principal;
-import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.ocsp.ResponderID;
 
-/**
- * Wrapper class for {@link X500Name}.
- */
-public class X500NameBC extends ASN1EncodableBC implements IX500Name {
+public class ResponderIDBCFips implements IResponderID {
+    private final ResponderID responderID;
+
     /**
-     * Creates new wrapper instance for {@link X500Name}.
+     * Creates new wrapper instance for {@link ResponderID}.
      *
-     * @param x500Name {@link X500Name} to be wrapped
+     * @param responderID {@link ResponderID} to be wrapped
      */
-    public X500NameBC(X500Name x500Name) {
-        super(x500Name);
+    public ResponderIDBCFips(ResponderID responderID) {
+        this.responderID = responderID;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IX500Name getName() {
+        return new X500NameBCFips(responderID.getName());
     }
 
     /**
      * Gets actual org.bouncycastle object being wrapped.
      *
-     * @return wrapped {@link X500Name}.
+     * @return wrapped {@link ResponderID}.
      */
-    public X500Name getX500Name() {
-        return (X500Name) getEncodable();
-    }
-
-
-    // expected format CN=iTextTestOcspResponder,O=iText,C=BY
-    @Override
-    public String getName(){
-        try {
-            return new X500Principal(getX500Name().getEncoded()).getName();
-        } catch (IOException e) {
-            // should never happen
-            throw new RuntimeException(e);
-        }
+    public ResponderID getResponderID() {
+        return responderID;
     }
 }

@@ -1595,6 +1595,15 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
      * {@inheritDoc}
      */
     @Override
+    public IX500Name createX500Name(IASN1Sequence s) {
+        return new X500NameBCFips(X500Name.getInstance(((ASN1SequenceBCFips) s).getASN1Sequence()));
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public IRespID createRespID(IX500Name x500Name) {
         return new RespIDBCFips(x500Name);
     }

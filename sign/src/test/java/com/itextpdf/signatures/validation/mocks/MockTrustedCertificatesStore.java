@@ -28,6 +28,7 @@ import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -53,12 +54,12 @@ public class MockTrustedCertificatesStore extends TrustedCertificatesStore {
     private Function<Certificate, Boolean> isCertificateTrustedForCrlHandler;
     private Function<Certificate, Boolean> isCertificateTrustedForTimestampHandler;
     private Function<Certificate, Boolean> isCertificateTrustedForCAHandler;
-    private Function<String, Certificate> getGenerallyTrustedCertificateHandler;
-    private Function<String, Certificate> getCertificateTrustedForOcspHandler;
-    private Function<String, Certificate> getCertificateTrustedForCrlHandler;
-    private Function<String, Certificate> getCertificateTrustedForTimestampHandler;
-    private Function<String, Certificate> getCertificateTrustedForCAHandler;
-    private Function<String, Certificate> getKnownCertificateHandler;
+    private Function<String, Set<Certificate>> getGenerallyTrustedCertificateHandler;
+    private Function<String, Set<Certificate>> getCertificateTrustedForOcspHandler;
+    private Function<String, Set<Certificate>> getCertificateTrustedForCrlHandler;
+    private Function<String, Set<Certificate>> getCertificateTrustedForTimestampHandler;
+    private Function<String, Set<Certificate>> getCertificateTrustedForCAHandler;
+    private Function<String, Set<Certificate>> getKnownCertificateHandler;
     private Supplier<Collection<Certificate>> getAllTrustedCertificatesHandler;
 
 
@@ -130,73 +131,73 @@ public class MockTrustedCertificatesStore extends TrustedCertificatesStore {
     }
 
     @Override
-    public Certificate getGenerallyTrustedCertificate(String certificateName) {
+    public Set<Certificate> getGenerallyTrustedCertificates(String certificateName) {
         getGenerallyTrustedCertificateCalls.add(certificateName);
         if (getGenerallyTrustedCertificateHandler != null) {
             return getGenerallyTrustedCertificateHandler.apply(certificateName);
         }
         if (wrapped != null) {
-            return wrapped.getGenerallyTrustedCertificate(certificateName);
+            return wrapped.getGenerallyTrustedCertificates(certificateName);
         }
         return null;
     }
 
     @Override
-    public Certificate getCertificateTrustedForOcsp(String certificateName) {
+    public Set<Certificate> getCertificatesTrustedForOcsp(String certificateName) {
         getCertificateTrustedForOcspCalls.add(certificateName);
         if (getCertificateTrustedForOcspHandler != null) {
             return getCertificateTrustedForOcspHandler.apply(certificateName);
         }
         if (wrapped != null) {
-            return wrapped.getCertificateTrustedForOcsp(certificateName);
+            return wrapped.getCertificatesTrustedForOcsp(certificateName);
         }
         return null;
     }
 
     @Override
-    public Certificate getCertificateTrustedForCrl(String certificateName) {
+    public Set<Certificate> getCertificatesTrustedForCrl(String certificateName) {
         getCertificateTrustedForCrlCalls.add(certificateName);
         if (getCertificateTrustedForCrlHandler != null) {
             return getCertificateTrustedForCrlHandler.apply(certificateName);
         }
         if (wrapped != null) {
-            return wrapped.getCertificateTrustedForCrl(certificateName);
+            return wrapped.getCertificatesTrustedForCrl(certificateName);
         }
         return null;
     }
 
     @Override
-    public Certificate getCertificateTrustedForTimestamp(String certificateName) {
+    public Set<Certificate> getCertificatesTrustedForTimestamp(String certificateName) {
         getCertificateTrustedForTimestampCalls.add(certificateName);
         if (getCertificateTrustedForTimestampHandler != null) {
             return getCertificateTrustedForTimestampHandler.apply(certificateName);
         }
         if (wrapped != null) {
-            return wrapped.getCertificateTrustedForTimestamp(certificateName);
+            return wrapped.getCertificatesTrustedForTimestamp(certificateName);
         }
         return null;
     }
 
     @Override
-    public Certificate getCertificateTrustedForCA(String certificateName) {
+    public Set<Certificate> getCertificatesTrustedForCA(String certificateName) {
         getCertificateTrustedForCACalls.add(certificateName);
         if (getCertificateTrustedForCAHandler != null) {
             return getCertificateTrustedForCAHandler.apply(certificateName);
         }
         if (wrapped != null) {
-            return wrapped.getCertificateTrustedForCA(certificateName);
+            return wrapped.getCertificatesTrustedForCA(certificateName);
         }
         return null;
     }
 
     @Override
-    public Certificate getKnownCertificate(String certificateName) {
+    public Set<Certificate> getKnownCertificates(String certificateName) {
         getKnownCertificateCalls.add(certificateName);
         if (getKnownCertificateHandler != null) {
             return getKnownCertificateHandler.apply(certificateName);
         }
         if (wrapped != null) {
-            return wrapped.getKnownCertificate(certificateName);
+            return wrapped.getKnownCertificates(certificateName);
         }
         return null;
     }
@@ -235,27 +236,27 @@ public class MockTrustedCertificatesStore extends TrustedCertificatesStore {
         isCertificateTrustedForCAHandler = callBack;
         return this;
     }
-    public MockTrustedCertificatesStore onGetGenerallyTrustedCertificateDo(Function<String, Certificate> callBack) {
+    public MockTrustedCertificatesStore onGetGenerallyTrustedCertificateDo(Function<String, Set<Certificate>> callBack) {
         getGenerallyTrustedCertificateHandler = callBack;
         return this;
     }
-    public MockTrustedCertificatesStore onGetCertificateTrustedForOcspDo(Function<String, Certificate> callBack) {
+    public MockTrustedCertificatesStore onGetCertificateTrustedForOcspDo(Function<String, Set<Certificate>> callBack) {
         getCertificateTrustedForOcspHandler = callBack;
         return this;
     }
-    public MockTrustedCertificatesStore onGetCertificateTrustedForCrlDo(Function<String, Certificate> callBack) {
+    public MockTrustedCertificatesStore onGetCertificateTrustedForCrlDo(Function<String, Set<Certificate>> callBack) {
         getCertificateTrustedForCrlHandler = callBack;
         return this;
     }
-    public MockTrustedCertificatesStore onGetCertificateTrustedForTimestampDo(Function<String, Certificate> callBack) {
+    public MockTrustedCertificatesStore onGetCertificateTrustedForTimestampDo(Function<String, Set<Certificate>> callBack) {
         getCertificateTrustedForTimestampHandler = callBack;
         return this;
     }
-    public MockTrustedCertificatesStore onGetCertificateTrustedForCADo(Function<String, Certificate> callBack) {
+    public MockTrustedCertificatesStore onGetCertificateTrustedForCADo(Function<String, Set<Certificate>> callBack) {
         getCertificateTrustedForCAHandler = callBack;
         return this;
     }
-    public MockTrustedCertificatesStore onGetKnownCertificateDo(Function<String, Certificate> callBack) {
+    public MockTrustedCertificatesStore onGetKnownCertificateDo(Function<String, Set<Certificate>> callBack) {
         getKnownCertificateHandler = callBack;
         return this;
     }

@@ -867,6 +867,7 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
                 .hasStatus(ValidationResult.INVALID)
                 );
         Assertions.assertEquals(0, mockCertificateRetriever.getCrlIssuerCertificatesCalls.size());
+        Assertions.assertEquals(0, mockCertificateRetriever.getCrlIssuerCertificatesByNameCalls.size());
         Assertions.assertEquals(1, mockRevocationDataValidator.calls.size());
     }
 }

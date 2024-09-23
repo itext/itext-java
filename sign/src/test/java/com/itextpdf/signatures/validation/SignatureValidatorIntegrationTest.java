@@ -111,11 +111,17 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
 
         AssertValidationReport.assertThat(report, a -> a
                 .hasStatus(ValidationResult.VALID)
-                .hasLogItems(3, al -> al
+                .hasLogItem(al -> al
                         .withCertificate(rootCert)
                         .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
                         .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED,
                                 i -> rootCert.getSubjectX500Principal()))
+                .hasLogItem(al -> al
+                        .withCheckName(OCSPValidator.OCSP_CHECK)
+                        .withMessage(OCSPValidator.OCSP_RESPONDER_TRUSTED))
+                .hasLogItem(al -> al
+                        .withCheckName(OCSPValidator.OCSP_CHECK)
+                        .withMessage(OCSPValidator.OCSP_RESPONDER_IS_CA))
         );
     }
 
@@ -149,11 +155,11 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
                 .hasLogItem(al -> al
                         .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
                         .withMessage(SignatureValidator.VALIDATING_SIGNATURE_NAME, i -> "Signature1"))
-                .hasLogItems(2, al -> al
+                .hasLogItem(al -> al
                         .withCertificate(rootCert)
                         .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
                         .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED, i -> rootCert.getSubjectX500Principal()))
-                .hasLogItems(4, al -> al
+                .hasLogItems(2, al -> al
                         .withCertificate(tsRootCert)
                         .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
                         .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED, i -> tsRootCert.getSubjectX500Principal()))
@@ -266,11 +272,14 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
                 .hasLogItem(al -> al
                         .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
                         .withMessage(SignatureValidator.VALIDATING_SIGNATURE_NAME, p -> "Signature1"))
-                .hasLogItems(2, al -> al
+                .hasLogItem(al -> al
                         .withCertificate(rootCert)
                         .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
                         .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED,
                                 i -> rootCert.getSubjectX500Principal()))
+                .hasLogItem(al -> al
+                        .withCheckName(OCSPValidator.OCSP_CHECK)
+                        .withMessage(OCSPValidator.OCSP_RESPONDER_IS_CA))
         );
 
         AssertValidationReport.assertThat(report2, a -> a
@@ -283,11 +292,14 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
                 .hasLogItem(al -> al
                         .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
                         .withMessage(SignatureValidator.VALIDATING_SIGNATURE_NAME, p -> "Signature2"))
-                .hasLogItems(2, al -> al
+                .hasLogItem(al -> al
                         .withCertificate(rootCert)
                         .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
                         .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED,
                                 i -> rootCert.getSubjectX500Principal()))
+                .hasLogItem(al -> al
+                        .withCheckName(OCSPValidator.OCSP_CHECK)
+                        .withMessage(OCSPValidator.OCSP_RESPONDER_IS_CA))
         );
     }
 
@@ -456,7 +468,7 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
         AssertValidationReport.assertThat(report, a -> a
                 .hasNumberOfFailures(0)
                 .hasNumberOfLogs(3)
-                .hasLogItems(2, la -> la
+                .hasLogItem(la -> la
                         .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
                         .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED,
                                 l -> rootCert.getSubjectX500Principal())
@@ -518,11 +530,17 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
         }
         AssertValidationReport.assertThat(report, a -> a
                 .hasStatus(ValidationResult.VALID)
-                .hasLogItems(3, al -> al
+                .hasLogItem(al -> al
                         .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
                         .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED,
                                 i -> rootCert.getSubjectX500Principal())
                         .withCertificate(rootCert))
+                .hasLogItem(al -> al
+                        .withCheckName(OCSPValidator.OCSP_CHECK)
+                        .withMessage(OCSPValidator.OCSP_RESPONDER_TRUSTED))
+                .hasLogItem(al -> al
+                        .withCheckName(OCSPValidator.OCSP_CHECK)
+                        .withMessage(OCSPValidator.OCSP_RESPONDER_IS_CA))
         );
     }
 

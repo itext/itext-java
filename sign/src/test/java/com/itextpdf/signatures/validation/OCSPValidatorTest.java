@@ -48,7 +48,13 @@ import com.itextpdf.signatures.validation.mocks.MockIssuingCertificateRetriever;
 import com.itextpdf.signatures.validation.mocks.MockTrustedCertificatesStore;
 import com.itextpdf.signatures.validation.report.ReportItem;
 import com.itextpdf.signatures.validation.report.ValidationReport;
+import com.itextpdf.signatures.validation.report.ValidationReport.ValidationResult;
 import com.itextpdf.test.ExtendedITextTest;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Supplier;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -121,6 +127,60 @@ public class OCSPValidatorTest extends ExtendedITextTest {
                 .hasStatus(ValidationReport.ValidationResult.VALID));
     }
 
+
+    @Test
+    public void multipleIssuerCandidatesHappyPathTest() throws GeneralSecurityException, IOException {
+        X509Certificate candidateOcspIssuerCert1 = (X509Certificate) PemFileHelper.readFirstChain(
+                SOURCE_FOLDER + "candidate1-ocsp-issuer.cert.pem")[0];
+        X509Certificate candidateOcspIssuerCert2 = (X509Certificate) PemFileHelper.readFirstChain(
+                SOURCE_FOLDER + "candidate2-ocsp-issuer.cert.pem")[0];
+
+        certificateRetriever.addTrustedCertificates(Arrays.asList(candidateOcspIssuerCert1, responderCert,
+                candidateOcspIssuerCert2));
+
+        TestOcspResponseBuilder builder = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
+        builder.setOcspCertsChain(new IX509CertificateHolder[]{FACTORY.createJcaX509CertificateHolder(caCert)});
+        TestOcspClient ocspClient = new TestOcspClient().addBuilderForCertIssuer(caCert, builder);
+        IBasicOCSPResp basicOCSPResp = FACTORY.createBasicOCSPResp(FACTORY.createBasicOCSPResponse(
+                FACTORY.createASN1Primitive(ocspClient.getEncoded(checkCert, caCert, null))));
+
+        ValidationReport report = new ValidationReport();
+        certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
+
+        OCSPValidator validator = validatorChainBuilder.buildOCSPValidator();
+        validator.validate(report, baseContext, checkCert, basicOCSPResp.getResponses()[0], basicOCSPResp,
+                TimeTestUtil.TEST_DATE_TIME, TimeTestUtil.TEST_DATE_TIME);
+
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationReport.ValidationResult.VALID));
+    }
+
+    @Test
+    public void multipleIssuerCandidatesFailingTest() throws GeneralSecurityException, IOException {
+        X509Certificate candidateOcspIssuerCert1 = (X509Certificate) PemFileHelper.readFirstChain(
+                SOURCE_FOLDER + "candidate1-ocsp-issuer.cert.pem")[0];
+        X509Certificate candidateOcspIssuerCert2 = (X509Certificate) PemFileHelper.readFirstChain(
+                SOURCE_FOLDER + "candidate2-ocsp-issuer.cert.pem")[0];
+
+        certificateRetriever.addTrustedCertificates(Arrays.asList(candidateOcspIssuerCert1,
+                candidateOcspIssuerCert2));
+
+        TestOcspResponseBuilder builder = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
+        builder.setOcspCertsChain(new IX509CertificateHolder[]{FACTORY.createJcaX509CertificateHolder(caCert)});
+        TestOcspClient ocspClient = new TestOcspClient().addBuilderForCertIssuer(caCert, builder);
+        IBasicOCSPResp basicOCSPResp = FACTORY.createBasicOCSPResp(FACTORY.createBasicOCSPResponse(
+                FACTORY.createASN1Primitive(ocspClient.getEncoded(checkCert, caCert, null))));
+
+        ValidationReport report = new ValidationReport();
+        certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
+
+        OCSPValidator validator = validatorChainBuilder.buildOCSPValidator();
+        validator.validate(report, baseContext, checkCert, basicOCSPResp.getResponses()[0], basicOCSPResp,
+                TimeTestUtil.TEST_DATE_TIME, TimeTestUtil.TEST_DATE_TIME);
+
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationResult.INDETERMINATE));
+    }
     @Test
     public void ocpsIssuerChainValidationsUsesCorrectParametersTest() throws CertificateException, IOException {
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
@@ -546,6 +606,11 @@ public class OCSPValidatorTest extends ExtendedITextTest {
         mockCertificateRetriever.onIsCertificateTrustedDo(c -> {
             throw new RuntimeException("Test isCertificateTrusted failure");
         });
+        MockTrustedCertificatesStore mockTrustStore = new MockTrustedCertificatesStore();
+        mockTrustStore.onIsCertificateTrustedForOcspDo(c -> {
+            throw new RuntimeException("Test isCertificateTrusted failure");
+        });
+        mockCertificateRetriever.onGetTrustedCertificatesStoreDo(() ->mockTrustStore);
 
         ValidationReport report = validateTest(checkDate);
 
@@ -639,8 +704,8 @@ public class OCSPValidatorTest extends ExtendedITextTest {
         }
 
         @Override
-        public Certificate retrieveIssuerCertificate(Certificate certificate) {
-            return issuerCertificate;
+        public List<X509Certificate> retrieveIssuerCertificate(Certificate certificate) {
+            return Collections.singletonList((X509Certificate) issuerCertificate);
         }
     }
 }

@@ -165,6 +165,7 @@
                 <file path="com/itextpdf/bouncycastle/asn1/ASN1OutputStreamBC.java"/>
                 <file path="com/itextpdf/bouncycastle/asn1/ocsp/BasicOCSPResponseBC.java"/>
                 <file path="com/itextpdf/bouncycastle/asn1/ocsp/OCSPResponseBC.java"/>
+                <file path="com/itextpdf/bouncycastle/asn1/ocsp/ResponderIdBC.java"/>
                 <file path="com/itextpdf/bouncycastle/asn1/pcks/PrivateKeyInfoBC.java"/>
                 <file path="com/itextpdf/bouncycastle/asn1/pkcs/PrivateKeyInfoBC.java"/>
                 <file path="com/itextpdf/bouncycastle/asn1/pcks/RSASSAPSSParamsBC.java"/>
@@ -188,6 +189,8 @@
                 <file path="com/itextpdf/bouncycastle/cert/ocsp/CertificateStatusBC.java"/>
                 <file path="com/itextpdf/bouncycastle/cert/ocsp/OCSPReqBC.java"/>
                 <file path="com/itextpdf/bouncycastle/cert/ocsp/OCSPReqBuilderBC.java"/>
+                <file path="com/itextpdf/bouncycastle/cert/ocsp/RespIDBC.java"/>
+                <file path="com/itextpdf/bouncycastle/cert/ocsp/ResponderIDBC.java"/>
                 <file path="com/itextpdf/bouncycastle/cert/ocsp/OCSPRespBC.java"/>
                 <file path="com/itextpdf/bouncycastle/cert/ocsp/OCSPRespBuilderBC.java"/>
                 <file path="com/itextpdf/bouncycastle/cert/ocsp/ReqBC.java"/>
@@ -230,6 +233,7 @@
                 <file path="com/itextpdf/bouncycastlefips/asn1/ASN1OutputStreamBCFips.java"/>
                 <file path="com/itextpdf/bouncycastlefips/asn1/ocsp/BasicOCSPResponseBCFips.java"/>
                 <file path="com/itextpdf/bouncycastlefips/asn1/ocsp/OCSPResponseBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/asn1/ocsp/ResponderIdBCFips.java"/>
                 <file path="com/itextpdf/bouncycastlefips/asn1/pcks/PrivateKeyInfoBCFips.java"/>
                 <file path="com/itextpdf/bouncycastlefips/asn1/pkcs/PrivateKeyInfoBCFips.java"/>
                 <file path="com/itextpdf/bouncycastlefips/asn1/x500/X500NameBCFips.java"/>
@@ -255,6 +259,7 @@
                 <file path="com/itextpdf/bouncycastlefips/cert/ocsp/OCSPReqBCFips.java"/>
                 <file path="com/itextpdf/bouncycastlefips/cert/ocsp/OCSPReqBuilderBCFips.java"/>
                 <file path="com/itextpdf/bouncycastlefips/cert/ocsp/RespIDBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/cert/ocsp/ResponderIDBCFips.java"/>
                 <file path="com/itextpdf/bouncycastlefips/cert/ocsp/ReqBCFips.java"/>
                 <file path="com/itextpdf/bouncycastlefips/cert/ocsp/RevokedStatusBCFips.java"/>
                 <file path="com/itextpdf/bouncycastlefips/cert/ocsp/SingleRespBCFips.java"/>

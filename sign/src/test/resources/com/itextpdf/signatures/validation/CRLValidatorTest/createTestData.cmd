@@ -12,6 +12,7 @@ call :runTestCase happyPath
 call :runTestCase crlIssuerRevokedBeforeSigningDate
 call :runTestCase crlIssuerAndSignCertHaveNoSharedRoot
 call :runTestCase crlSignerInValidatedChain
+call :runTestCase multipleCrlIssuerCandidates
 EXIT
 
 :runTestCase

@@ -20,46 +20,19 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.bouncycastle.asn1.x500;
+package com.itextpdf.commons.bouncycastle.cert.ocsp;
 
-import com.itextpdf.bouncycastle.asn1.ASN1EncodableBC;
 import com.itextpdf.commons.bouncycastle.asn1.x500.IX500Name;
 
-import java.io.IOException;
-import javax.security.auth.x500.X500Principal;
-import org.bouncycastle.asn1.x500.X500Name;
-
 /**
- * Wrapper class for {@link X500Name}.
+ * This interface represents the wrapper for ResponderID that provides the ability
+ * to switch between bouncy-castle and bouncy-castle FIPS implementations.
  */
-public class X500NameBC extends ASN1EncodableBC implements IX500Name {
+public interface IResponderID {
     /**
-     * Creates new wrapper instance for {@link X500Name}.
+     * Calls actual {@code getName} method for the wrapped BasicOCSPResp object.
      *
-     * @param x500Name {@link X500Name} to be wrapped
+     * @return wrapped X500NAme.
      */
-    public X500NameBC(X500Name x500Name) {
-        super(x500Name);
-    }
-
-    /**
-     * Gets actual org.bouncycastle object being wrapped.
-     *
-     * @return wrapped {@link X500Name}.
-     */
-    public X500Name getX500Name() {
-        return (X500Name) getEncodable();
-    }
-
-
-    // expected format CN=iTextTestOcspResponder,O=iText,C=BY
-    @Override
-    public String getName(){
-        try {
-            return new X500Principal(getX500Name().getEncoded()).getName();
-        } catch (IOException e) {
-            // should never happen
-            throw new RuntimeException(e);
-        }
-    }
+    IX500Name getName();
 }

@@ -43,6 +43,7 @@ import com.itextpdf.signatures.validation.report.CertificateReportItem;
 import com.itextpdf.signatures.validation.report.ReportItem;
 import com.itextpdf.signatures.validation.report.ReportItem.ReportItemStatus;
 import com.itextpdf.signatures.validation.report.ValidationReport;
+import com.itextpdf.signatures.validation.report.ValidationReport.ValidationResult;
 
 import java.io.IOException;
 import java.security.cert.Certificate;
@@ -54,7 +55,9 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.itextpdf.signatures.validation.SafeCalling.onExceptionLog;
 
@@ -277,47 +280,62 @@ public class CRLValidator {
 
     private void verifyCrlIntegrity(ValidationReport report, ValidationContext context, X509Certificate certificate,
             X509CRL crl, Date responseGenerationDate) {
-        Certificate[] certs = null;
+        Certificate[][] certificateSets = null;
         try {
-            certs = certificateRetriever.getCrlIssuerCertificates(crl);
+            certificateSets = certificateRetriever.getCrlIssuerCertificatesByName(crl);
         } catch (RuntimeException e) {
             report.addReportItem(new CertificateReportItem(certificate, CRL_CHECK, CRL_ISSUER_REQUEST_FAILED, e,
                     ReportItemStatus.INDETERMINATE));
             return;
         }
-        if (certs == null || certs.length == 0) {
+        if (certificateSets == null || certificateSets.length == 0) {
             report.addReportItem(new CertificateReportItem(certificate, CRL_CHECK, CRL_ISSUER_NOT_FOUND,
                     ReportItemStatus.INDETERMINATE));
             return;
         }
 
-        if (Arrays.stream(certs).anyMatch(c -> c.equals(certificate))) {
-            report.addReportItem(new CertificateReportItem(certificate, CRL_CHECK, CERTIFICATE_IN_ISSUER_CHAIN,
-                    ReportItemStatus.INDETERMINATE));
-            return;
+        ValidationReport[] candidateReports = new ValidationReport[certificateSets.length];
+        for (int i = 0; i < certificateSets.length; i++) {
+            ValidationReport candidateReport = new ValidationReport();
+            candidateReports[i] = candidateReport;
+            Certificate[] certs = certificateSets[i];
+            if (Arrays.asList(certs).contains(certificate)) {
+                candidateReport.addReportItem(new CertificateReportItem(certificate,
+                        CRL_CHECK, CERTIFICATE_IN_ISSUER_CHAIN, ReportItemStatus.INDETERMINATE));
+                continue;
+            }
+            Certificate crlIssuer = certs[0];
+            List<X509Certificate> crlIssuerRoots = getRoots(crlIssuer);
+            List<X509Certificate> subjectRoots = getRoots(certificate);
+            if (!crlIssuerRoots.stream().anyMatch(cert -> subjectRoots.contains(cert))) {
+                candidateReport.addReportItem(new CertificateReportItem(certificate,
+                        CRL_CHECK, CRL_ISSUER_NO_COMMON_ROOT, ReportItemStatus.INDETERMINATE));
+                continue;
+            }
+            onExceptionLog(() -> crl.verify(crlIssuer.getPublicKey()), candidateReport,
+                    e -> new CertificateReportItem(certificate, CRL_CHECK, CRL_INVALID, e,
+                            ReportItemStatus.INDETERMINATE));
+            ValidationReport responderReport = new ValidationReport();
+            onExceptionLog(() -> builder.getCertificateChainValidator().validate(responderReport,
+                    context.setCertificateSource(CertificateSource.CRL_ISSUER),
+                    (X509Certificate) crlIssuer, responseGenerationDate), candidateReport, e ->
+                    new CertificateReportItem(certificate, CRL_CHECK, CRL_ISSUER_CHAIN_FAILED, e,
+                            ReportItemStatus.INDETERMINATE));
+            addResponderValidationReport(candidateReport, responderReport);
+            if (candidateReport.getValidationResult() == ValidationResult.VALID) {
+                report.merge(candidateReport);
+                return;
+            }
         }
-        Certificate crlIssuer = certs[0];
-        Certificate crlIssuerRoot = getRoot(crlIssuer);
-        Certificate subjectRoot = getRoot(certificate);
-        if (!crlIssuerRoot.equals(subjectRoot)) {
-            report.addReportItem(new CertificateReportItem(certificate, CRL_CHECK, CRL_ISSUER_NO_COMMON_ROOT,
-                    ReportItemStatus.INDETERMINATE));
-            return;
+        // if failed, add all logs
+        for (ValidationReport candidateReport : candidateReports) {
+            report.merge(candidateReport);
         }
-        onExceptionLog(() -> crl.verify(crlIssuer.getPublicKey()), report,
-                e -> new CertificateReportItem(certificate, CRL_CHECK, CRL_INVALID, e, ReportItemStatus.INDETERMINATE));
-        ValidationReport responderReport = new ValidationReport();
-        onExceptionLog(() -> builder.getCertificateChainValidator().validate(responderReport,
-                context.setCertificateSource(CertificateSource.CRL_ISSUER),
-                (X509Certificate) crlIssuer, responseGenerationDate), report, e ->
-                new CertificateReportItem(certificate, CRL_CHECK, CRL_ISSUER_CHAIN_FAILED, e,
-                        ReportItemStatus.INDETERMINATE));
-        addResponderValidationReport(report, responderReport);
     }
 
-    private Certificate getRoot(Certificate cert) {
-        Certificate[] chain = certificateRetriever.retrieveMissingCertificates(new Certificate[]{cert});
-        return chain[chain.length - 1];
+    private List<X509Certificate> getRoots(Certificate cert) {
+        List<X509Certificate[]> chains = certificateRetriever.buildCertificateChains((X509Certificate) cert);
+        return chains.stream().map(certArray -> certArray[certArray.length - 1]).collect(Collectors.toList());
     }
 
     private static void addResponderValidationReport(ValidationReport report, ValidationReport responderReport) {

@@ -22,10 +22,15 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.signatures.logs.SignLogMessageConstant;
 import com.itextpdf.signatures.validation.TrustedCertificatesStore;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,10 +53,11 @@ import java.util.Map;
  */
 public class IssuingCertificateRetriever implements IIssuingCertificateRetriever {
 
+    private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
     private static final Logger LOGGER = LoggerFactory.getLogger(IssuingCertificateRetriever.class);
 
     private final TrustedCertificatesStore trustedCertificatesStore = new TrustedCertificatesStore();
-    private final Map<String, Certificate> knownCertificates = new HashMap<>();
+    private final Map<String, List<Certificate>> knownCertificates = new HashMap<>();
 
     /**
      * Creates {@link IssuingCertificateRetriever} instance.
@@ -87,10 +93,11 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
                 Collection<Certificate> certificatesFromAIA = processCertificatesFromAIA(url);
                 if (certificatesFromAIA == null || certificatesFromAIA.isEmpty()) {
                     // Retrieve Issuer from the certificate store
-                    Certificate issuer = trustedCertificatesStore
-                            .getKnownCertificate(lastAddedCert.getIssuerX500Principal().getName());
-                    if (issuer == null) {
-                        issuer = knownCertificates.get(lastAddedCert.getIssuerX500Principal().getName());
+                    Certificate issuer = getIssuerFromCertificateSet(lastAddedCert, trustedCertificatesStore
+                            .getKnownCertificates(lastAddedCert.getIssuerX500Principal().getName()));
+                    if (issuer == null || !isSignedBy(lastAddedCert, issuer)) {
+                        issuer = getIssuerFromCertificateSet(lastAddedCert, knownCertificates.get(
+                                lastAddedCert.getIssuerX500Principal().getName()));
                         if (issuer == null) {
                             // Unable to retrieve missing certificates
                             while (i < chain.length) {
@@ -112,58 +119,137 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
     }
 
     /**
+     * This method tries to rebuild certificate issuer chain. The result contains all possible chains
+     * starting with the given certificate based on issuer names and public keys.
+     *
+     * @param certificate {@link X509Certificate} for which issuer chains shall be built
+     *
+     * @return all possible issuer chains
+     */
+    public List<X509Certificate[]> buildCertificateChains(X509Certificate certificate) {
+        return buildCertificateChains(new X509Certificate[] {certificate});
+    }
+
+    /**
+     * This method tries to rebuild certificate issuer chain. The result contains all possible chains
+     * starting with the given certificate array based on issuer names and public keys.
+     *
+     * @param certificate {@link X509Certificate} array for which issuer chains shall be built
+     *
+     * @return all possible issuer chains
+     */
+    public List<X509Certificate[]> buildCertificateChains(X509Certificate[] certificate) {
+        List<List<X509Certificate>> allCertificateChains = buildCertificateChainsList(certificate);
+        List<X509Certificate[]> result = new ArrayList<>(allCertificateChains.size() * 5);
+        for (List<X509Certificate> chain : allCertificateChains) {
+            Collections.reverse(chain);
+            result.add(chain.toArray(new X509Certificate[0]));
+        }
+        return result;
+    }
+
+    private List<List<X509Certificate>> buildCertificateChainsList(X509Certificate[] certificates) {
+        List<List<X509Certificate>> allChains =
+                new ArrayList<>(buildCertificateChainsList(certificates[certificates.length - 1]));
+        for (List<X509Certificate> issuerChain : allChains) {
+            for (int i = certificates.length - 2; i >= 0; --i) {
+                issuerChain.add(certificates[i]);
+            }
+        }
+        return allChains;
+    }
+
+    private List<List<X509Certificate>> buildCertificateChainsList(X509Certificate certificate) {
+        if (CertificateUtil.isSelfSigned(certificate)) {
+            List<List<X509Certificate>> singleChain = new ArrayList<>();
+            List<X509Certificate> chain = new ArrayList<>();
+            chain.add(certificate);
+            singleChain.add(chain);
+            return singleChain;
+        }
+
+        List<List<X509Certificate>> allChains = new ArrayList<>();
+        // Get missing certificates using AIA Extensions
+        String url = CertificateUtil.getIssuerCertURL(certificate);
+        Collection<Certificate> certificatesFromAIA = processCertificatesFromAIA(url);
+        if (certificatesFromAIA != null && !certificatesFromAIA.isEmpty()) {
+            List<List<X509Certificate>> issuerChains = buildCertificateChainsList(certificatesFromAIA
+                    .toArray(new X509Certificate[0]));
+            for (List<X509Certificate> issuerChain : issuerChains) {
+                issuerChain.add(certificate);
+                allChains.add(issuerChain);
+            }
+        } else {
+            Set<Certificate> possibleIssuers = trustedCertificatesStore
+                    .getKnownCertificates(certificate.getIssuerX500Principal().getName());
+            if (knownCertificates.get(
+                    certificate.getIssuerX500Principal().getName()) != null) {
+                possibleIssuers.addAll(knownCertificates.get(certificate.getIssuerX500Principal().getName()));
+            }
+            if (possibleIssuers.isEmpty()) {
+                List<List<X509Certificate>> singleChain = new ArrayList<>();
+                List<X509Certificate> chain = new ArrayList<>();
+                chain.add(certificate);
+                singleChain.add(chain);
+                return singleChain;
+            }
+            for (Certificate possibleIssuer : possibleIssuers) {
+                List<List<X509Certificate>> issuerChains = buildCertificateChainsList((X509Certificate) possibleIssuer);
+                for (List<X509Certificate> issuerChain : issuerChains) {
+                    issuerChain.add(certificate);
+                    allChains.add(issuerChain);
+                }
+            }
+        }
+        return allChains;
+    }
+
+    /**
      * Retrieve issuer certificate for the provided certificate.
      *
      * @param certificate {@link Certificate} for which issuer certificate shall be retrieved
      *
      * @return issuer certificate. {@code null} if there is no issuer certificate, or it cannot be retrieved.
      */
-    public Certificate retrieveIssuerCertificate(Certificate certificate) {
-        Certificate[] certificateChain = retrieveMissingCertificates(new Certificate[]{certificate});
-        if (certificateChain.length > 1) {
-            return certificateChain[1];
+    public List<X509Certificate> retrieveIssuerCertificate(Certificate certificate) {
+        List<X509Certificate> result = new ArrayList<>();
+        for (X509Certificate[] certificateChain : buildCertificateChains((X509Certificate) certificate)) {
+            if (certificateChain.length > 1) {
+                result.add(certificateChain[1]);
+            }
         }
-        return null;
+        return result;
     }
 
     /**
-     * Retrieves OCSP responder certificate either from the response certs or
+     * Retrieves OCSP responder certificate candidates either from the response certs or
      * trusted store in case responder certificate isn't found in /Certs.
      *
      * @param ocspResp basic OCSP response to get responder certificate for
      *
-     * @return retrieved OCSP responder certificate or null in case it wasn't found.
+     * @return retrieved OCSP responder candidates or an empty set in case none were found.
      */
-    public Certificate retrieveOCSPResponderCertificate(IBasicOCSPResp ocspResp) {
+    public Set<Certificate> retrieveOCSPResponderByNameCertificate(IBasicOCSPResp ocspResp) {
+
+        String name = null;
+        name = FACTORY.createX500Name( FACTORY.createASN1Sequence(
+                ocspResp.getResponderId().toASN1Primitive().getName().toASN1Primitive())).getName();
+
         // Look for the existence of an Authorized OCSP responder inside the cert chain in the ocsp response.
         Iterable<X509Certificate> certs = SignUtils.getCertsFromOcspResponse(ocspResp);
         for (X509Certificate cert : certs) {
             try {
-                if (CertificateUtil.isSignatureValid(ocspResp, cert)) {
-                    return cert;
+                if (name.equals(cert.getSubjectX500Principal().getName())) {
+                    return Collections.singleton(cert);
                 }
             } catch (Exception ignored) {
                 // Ignore.
             }
         }
-        // Certificate chain is not present in the response.
-        // Try to verify using trusted store according to RFC 6960 2.2. Response:
-        // "The key used to sign the response MUST belong to one of the following:
-        // - ...
-        // - a Trusted Responder whose public key is trusted by the requester;
-        // - ..."
-        try {
-            for (Certificate anchor : trustedCertificatesStore.getAllTrustedCertificates()) {
-                if (CertificateUtil.isSignatureValid(ocspResp, anchor)) {
-                    // Certificate from the root store is considered trusted and valid by this method.
-                    return anchor;
-                }
-            }
-        } catch (Exception ignored) {
-            // Ignore.
-        }
-        return null;
+        // Certificate chain is not present in the response, or is does not contain the responder.
+        return trustedCertificatesStore.getKnownCertificates(name);
     }
+
 
     /**
      * {@inheritDoc}
@@ -174,6 +260,27 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
      */
     @Override
     public Certificate[] getCrlIssuerCertificates(CRL crl) {
+        Certificate[][] result = getCrlIssuerCertificatesGeneric(crl, true);
+        if (result.length == 0) {
+            return new Certificate[0];
+        }
+        return result[0];
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param crl {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
+
+    @Override
+    public Certificate[][] getCrlIssuerCertificatesByName(CRL crl) {
+        return getCrlIssuerCertificatesGeneric(crl, false);
+    }
+
+    private Certificate[][] getCrlIssuerCertificatesGeneric(CRL crl, boolean verify) {
         // Usually CRLs are signed using CA certificate, so we don’t need to do anything extra and the revocation data
         // is already collected. However, it is possible to sign it with any other certificate.
 
@@ -181,22 +288,33 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
         // Nothing special for the indirect CRLs.
 
         // AIA Extension
+        ArrayList<Certificate[]> matches = new ArrayList<Certificate[]>();
         String url = CertificateUtil.getIssuerCertURL(crl);
         List<Certificate> certificatesFromAIA = (List<Certificate>) processCertificatesFromAIA(url);
         if (certificatesFromAIA == null) {
             // Retrieve Issuer from the certificate store
-            Certificate issuer = trustedCertificatesStore
-                    .getKnownCertificate(((X509CRL) crl).getIssuerX500Principal().getName());
-            if (issuer == null) {
-                issuer = knownCertificates.get(((X509CRL) crl).getIssuerX500Principal().getName());
-                if (issuer == null) {
-                    // Unable to retrieve CRL issuer
-                    return new Certificate[0];
+            Set<Certificate> issuers = trustedCertificatesStore
+                    .getKnownCertificates(((X509CRL) crl).getIssuerX500Principal().getName());
+            if (issuers == null) {
+                issuers = new HashSet<>();
+            }
+            List<Certificate> localIssuers = getCrlIssuersFromKnownCertificates((X509CRL) crl);
+            if (localIssuers != null) {
+                issuers.addAll(localIssuers);
+            }
+            if (issuers.isEmpty()) {
+                // Unable to retrieve CRL issuer
+                return new Certificate[0][];
+            }
+            for (Certificate i: issuers) {
+                if (!verify || isSignedBy((X509CRL) crl, i)) {
+                    matches.addAll(buildCertificateChains((X509Certificate) i));
                 }
             }
-            return retrieveMissingCertificates(new Certificate[]{issuer});
+            return matches.toArray(new Certificate[][]{});
         }
-        return retrieveMissingCertificates(certificatesFromAIA.toArray(new Certificate[0]));
+        return buildCertificateChains(certificatesFromAIA.toArray(new X509Certificate[0]))
+                .toArray(new Certificate[][]{});
     }
 
     /**
@@ -227,7 +345,9 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
      */
     public void addKnownCertificates(Collection<Certificate> certificates) {
         for (Certificate certificate : certificates) {
-            knownCertificates.put(((X509Certificate) certificate).getSubjectX500Principal().getName(), certificate);
+            String name = ((X509Certificate) certificate).getSubjectX500Principal().getName();
+            List<Certificate> certs = knownCertificates.computeIfAbsent(name,k -> new ArrayList<>());
+            certs.add(certificate);
         }
     }
 
@@ -289,5 +409,39 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
             LOGGER.warn(SignLogMessageConstant.UNABLE_TO_PARSE_AIA_CERT);
             return null;
         }
+    }
+
+    private static boolean isSignedBy(X509Certificate certificate, Certificate issuer) {
+        try {
+            certificate.verify(issuer.getPublicKey());
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private static boolean isSignedBy(X509CRL crl, Certificate issuer) {
+        try {
+            crl.verify(issuer.getPublicKey());
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private static Certificate getIssuerFromCertificateSet(X509Certificate lastAddedCert,
+            Collection<Certificate> certs) {
+        if (certs != null) {
+            for (Certificate cert : certs) {
+                if (isSignedBy(lastAddedCert, cert)) {
+                    return cert;
+                }
+            }
+        }
+        return null;
+    }
+
+    private List<Certificate> getCrlIssuersFromKnownCertificates(X509CRL crl) {
+        return knownCertificates.get(crl.getIssuerX500Principal().getName());
     }
 }

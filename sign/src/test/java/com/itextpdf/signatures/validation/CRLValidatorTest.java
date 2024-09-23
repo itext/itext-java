@@ -41,6 +41,7 @@ import com.itextpdf.signatures.validation.mocks.MockChainValidator;
 import com.itextpdf.signatures.validation.mocks.MockIssuingCertificateRetriever;
 import com.itextpdf.signatures.validation.report.ReportItem;
 import com.itextpdf.signatures.validation.report.ValidationReport;
+import com.itextpdf.signatures.validation.report.ValidationReport.ValidationResult;
 import com.itextpdf.test.ExtendedITextTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -103,6 +104,62 @@ public class CRLValidatorTest extends ExtendedITextTest {
         ValidationReport report = performValidation("happyPath", TimeTestUtil.TEST_DATE_TIME, crl);
         AssertValidationReport.assertThat(report, a -> a
                 .hasStatus(ValidationReport.ValidationResult.VALID));
+    }
+
+
+    @Test
+    public void multipleIssuersWithOneMatch() throws Exception {
+        retrieveTestResources("multipleCrlIssuerCandidates");
+        byte[] crl = createCrl(
+                crlIssuerCert,
+                crlIssuerKey,
+                DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, -5),
+                DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, +5)
+        );
+        X509Certificate candidateCrlIssuerCert1 = (X509Certificate) PemFileHelper.readFirstChain(
+                SOURCE_FOLDER + "multipleCrlIssuerCandidates/crl-issuer-candidate1.cert.pem")[0];
+        X509Certificate candidateCrlIssuerCert2 = (X509Certificate) PemFileHelper.readFirstChain(
+                SOURCE_FOLDER + "multipleCrlIssuerCandidates/crl-issuer-candidate2.cert.pem")[0];
+
+        certificateRetriever.addTrustedCertificates(Arrays.asList(candidateCrlIssuerCert1, crlIssuerCert,
+                candidateCrlIssuerCert2));
+
+        ValidationReport report = performValidation("multipleCrlIssuerCandidates", TimeTestUtil.TEST_DATE_TIME,
+                crl);
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationReport.ValidationResult.VALID));
+        // expected the CRL validator to stop after correct issuer was found
+        Assertions.assertEquals(2, mockChainValidator.verificationCalls.size());
+    }
+
+
+    @Test
+    public void multipleIssuersWithNoMatch() throws Exception {
+        retrieveTestResources("multipleCrlIssuerCandidates");
+        byte[] crl = createCrl(
+                crlIssuerCert,
+                crlIssuerKey,
+                DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, -5),
+                DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, +5)
+        );
+        X509Certificate candidateCrlIssuerCert1 = (X509Certificate) PemFileHelper.readFirstChain(
+                SOURCE_FOLDER + "multipleCrlIssuerCandidates/crl-issuer-candidate1.cert.pem")[0];
+        X509Certificate candidateCrlIssuerCert2 = (X509Certificate) PemFileHelper.readFirstChain(
+                SOURCE_FOLDER + "multipleCrlIssuerCandidates/crl-issuer-candidate2.cert.pem")[0];
+
+        certificateRetriever.addTrustedCertificates(Arrays.asList(candidateCrlIssuerCert1,
+                candidateCrlIssuerCert2));
+
+        X509Certificate certificateUnderTest =
+                (X509Certificate) PemFileHelper.readFirstChain(SOURCE_FOLDER + "multipleCrlIssuerCandidates/sign.cert.pem")[0];
+        ValidationReport result = new ValidationReport();
+        ValidationContext context = new ValidationContext(
+                ValidatorContext.REVOCATION_DATA_VALIDATOR, CertificateSource.SIGNER_CERT,
+                TimeBasedContext.PRESENT);
+        validatorChainBuilder.getCRLValidator().validate(result, context, certificateUnderTest,
+                (X509CRL) CertificateUtil.parseCrlFromStream(new ByteArrayInputStream(crl)), TimeTestUtil.TEST_DATE_TIME, TimeTestUtil.TEST_DATE_TIME);
+        AssertValidationReport.assertThat(result, a -> a
+                .hasStatus(ValidationResult.INDETERMINATE));
     }
 
     @Test
@@ -458,7 +515,7 @@ public class CRLValidatorTest extends ExtendedITextTest {
                 DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, +5)
         );
         MockIssuingCertificateRetriever mockCertificateRetriever = new MockIssuingCertificateRetriever();
-        mockCertificateRetriever.ongetCrlIssuerCertificatesDo(c -> {throw new RuntimeException("just testing");});
+        mockCertificateRetriever.ongetCrlIssuerCertificatesByNameDo(c -> {throw new RuntimeException("just testing");});
         validatorChainBuilder.withIssuingCertificateRetrieverFactory(() -> mockCertificateRetriever);
         validatorChainBuilder.withCRLValidatorFactory(() -> new CRLValidator(validatorChainBuilder));
 
