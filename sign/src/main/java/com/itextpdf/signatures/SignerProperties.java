@@ -35,6 +35,7 @@ import java.util.Calendar;
  * Properties to be used in signing operations.
  */
 public class SignerProperties {
+    public static final String IGNORED_ID = "";
 
     private PdfSigFieldLock fieldLock;
     private SignatureFieldAppearance appearance;
@@ -78,6 +79,8 @@ public class SignerProperties {
 
     /**
      * Sets the signature field layout element to customize the appearance of the signature.
+     * ID specified for {@link SignatureFieldAppearance} will be ignored and won't override field name, so
+     * {@link #IGNORED_ID} could be used. To specify signature name use {@link SignerProperties#setFieldName}.
      *
      * <p>
      * Note that if {@link SignedAppearanceText} was set as the content (or part of the content)
@@ -153,6 +156,10 @@ public class SignerProperties {
     /**
      * Sets the name indicating the field to be signed. The field can already be presented in the
      * document but shall not be signed. If the field is not presented in the document, it will be created.
+     *
+     * <p>
+     * Note that ID specified for {@link SignatureFieldAppearance} set by {@link #setSignatureAppearance} will be
+     * ignored and won't override the field name.
      *
      * @param fieldName the name indicating the field to be signed
      *

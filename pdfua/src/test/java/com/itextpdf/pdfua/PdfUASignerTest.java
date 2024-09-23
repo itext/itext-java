@@ -94,7 +94,7 @@ public class PdfUASignerTest extends ExtendedITextTest {
         ByteArrayInputStream inPdf = generateSimplePdfUA1Document();
         String outPdf = generateSignature(inPdf, "invisibleSignatureWithTU", (signer) -> {
             signer.setSignerProperties(new SignerProperties().setFieldName("Signature12"));
-            SignatureFieldAppearance appearance = new SignatureFieldAppearance(signer.getSignerProperties().getFieldName());
+            SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID);
             appearance.getAccessibilityProperties().setAlternateDescription("Some alternate description");
             signer.getSignerProperties().setSignatureAppearance(appearance);
         });
@@ -106,7 +106,7 @@ public class PdfUASignerTest extends ExtendedITextTest {
         ByteArrayInputStream inPdf = generateSimplePdfUA1Document();
         String outPdf = generateSignature(inPdf, "visibleSignatureWithTUButNotAFont", (signer) -> {
             signer.setSignerProperties(new SignerProperties().setFieldName("Signature12"));
-            SignatureFieldAppearance appearance = new SignatureFieldAppearance(signer.getSignerProperties().getFieldName());
+            SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID);
             appearance.getAccessibilityProperties().setAlternateDescription("Some alternate description");
             try {
                 appearance.setFont(PdfFontFactory.createFont(FONT));
@@ -128,7 +128,7 @@ public class PdfUASignerTest extends ExtendedITextTest {
         Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> {
             generateSignature(inPdf, "visibleSignatureWithoutTUFont", (signer) -> {
                 signer.setSignerProperties(new SignerProperties().setFieldName("Signature12"));
-                SignatureFieldAppearance appearance = new SignatureFieldAppearance(signer.getSignerProperties().getFieldName());
+                SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID);
                 appearance.setContent(new SignedAppearanceText().setLocationLine("Dummy location").setReasonLine("Dummy reason").setSignedBy("Dummy"));
 
                 try {
@@ -151,7 +151,7 @@ public class PdfUASignerTest extends ExtendedITextTest {
         Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> {
             generateSignature(inPdf, "visibleSignatureWithNoFontSelected", (signer) -> {
                 signer.setSignerProperties(new SignerProperties().setFieldName("Signature12"));
-                SignatureFieldAppearance appearance = new SignatureFieldAppearance(signer.getSignerProperties().getFieldName());
+                SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID);
                 appearance.setContent("Some signature content");
                 signer.getSignerProperties().setPageNumber(1).setPageRect(new Rectangle(36, 648, 200, 100));
                 appearance.getAccessibilityProperties().setAlternateDescription("Some alternate description");
@@ -167,7 +167,7 @@ public class PdfUASignerTest extends ExtendedITextTest {
         ByteArrayInputStream inPdf = generateSimplePdfUA1Document();
         String outPdf = generateSignatureNormal(inPdf, "normalPdfSignerInvisibleSignatureWithTU", (signer) -> {
             signer.setSignerProperties(new SignerProperties().setFieldName("Signature12"));
-            SignatureFieldAppearance appearance = new SignatureFieldAppearance(signer.getSignerProperties().getFieldName());
+            SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID);
             appearance.getAccessibilityProperties().setAlternateDescription("Some alternate description");
             signer.getSignerProperties().setSignatureAppearance(appearance);
         });
@@ -179,7 +179,7 @@ public class PdfUASignerTest extends ExtendedITextTest {
         ByteArrayInputStream inPdf = generateSimplePdfUA1Document();
         String outPdf = generateSignatureNormal(inPdf, "normalPdfSignerInvisibleSignatureWithoutTU", (signer) -> {
             signer.setSignerProperties(new SignerProperties().setFieldName("Signature12"));
-            SignatureFieldAppearance appearance = new SignatureFieldAppearance(signer.getSignerProperties().getFieldName());
+            SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID);
             signer.getSignerProperties().setSignatureAppearance(appearance);
         });
         Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
@@ -192,7 +192,7 @@ public class PdfUASignerTest extends ExtendedITextTest {
         ByteArrayInputStream inPdf = generateSimplePdfUA1Document();
         String outPdf = generateSignatureNormal(inPdf, "normalPdfSignerVisibleSignatureWithoutFont", (signer) -> {
             signer.setSignerProperties(new SignerProperties().setFieldName("Signature12"));
-            SignatureFieldAppearance appearance = new SignatureFieldAppearance(signer.getSignerProperties().getFieldName());
+            SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID);
             appearance.getAccessibilityProperties().setAlternateDescription("Some alternate description");
             appearance.setContent(new SignedAppearanceText().setLocationLine("Dummy location").setReasonLine("Dummy reason").setSignedBy("Dummy"));
             signer.getSignerProperties()
@@ -210,7 +210,7 @@ public class PdfUASignerTest extends ExtendedITextTest {
         PdfFont font = PdfFontFactory.createFont(FONT);
         String outPdf = generateSignatureNormal(inPdf, "normalPdfSignerVisibleSignatureWithFont", (signer) -> {
             signer.setSignerProperties(new SignerProperties().setFieldName("Signature12"));
-            SignatureFieldAppearance appearance = new SignatureFieldAppearance(signer.getSignerProperties().getFieldName());
+            SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID);
             appearance.getAccessibilityProperties().setAlternateDescription("Some alternate description");
             appearance.setContent(new SignedAppearanceText().setLocationLine("Dummy location").setReasonLine("Dummy reason").setSignedBy("Dummy"));
             appearance.setFont(font);
@@ -230,7 +230,7 @@ public class PdfUASignerTest extends ExtendedITextTest {
         PdfFont font = PdfFontFactory.createFont(FONT);
         String outPdf = generateSignatureNormal(inPdf, "normalPdfSignerVisibleSignatureWithFontEmptyTU", (signer) -> {
             signer.setSignerProperties(new SignerProperties().setFieldName("Signature12"));
-            SignatureFieldAppearance appearance = new SignatureFieldAppearance(signer.getSignerProperties().getFieldName());
+            SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID);
             appearance.getAccessibilityProperties().setAlternateDescription("");
             appearance.setContent(new SignedAppearanceText().setLocationLine("Dummy location").setReasonLine("Dummy reason").setSignedBy("Dummy"));
             appearance.setFont(font);
@@ -250,7 +250,7 @@ public class PdfUASignerTest extends ExtendedITextTest {
         Assertions.assertThrows(PdfUAConformanceException.class, () -> {
             generateSignature(inPdf, "pdfSignerVisibleSignatureWithFontEmptyTU", (signer) -> {
                 signer.setSignerProperties(new SignerProperties().setFieldName("Signature12"));
-                SignatureFieldAppearance appearance = new SignatureFieldAppearance(signer.getSignerProperties().getFieldName());
+                SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID);
                 appearance.getAccessibilityProperties().setAlternateDescription("");
                 appearance.setContent(new SignedAppearanceText().setLocationLine("Dummy location").setReasonLine("Dummy reason").setSignedBy("Dummy"));
                 appearance.setFont(font);

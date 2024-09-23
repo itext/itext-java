@@ -206,7 +206,7 @@ public class SimpleSigningTest extends ExtendedITextTest {
 
     private static void createAppearance(PdfSigner signer, String signatureName, String reason, String location,
                                          boolean setReuseAppearance, Rectangle rectangleForNewField, Float fontSize) {
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance(signatureName)
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID)
                 .setContent(new SignedAppearanceText());
         signer.getSignerProperties()
                 .setReason(reason)

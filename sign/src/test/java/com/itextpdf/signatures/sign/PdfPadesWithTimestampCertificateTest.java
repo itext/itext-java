@@ -128,7 +128,7 @@ public class PdfPadesWithTimestampCertificateTest extends ExtendedITextTest {
     private SignerProperties createSignerProperties() {
         SignerProperties signerProperties = new SignerProperties();
         signerProperties.setFieldName("Signature1");
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance(signerProperties.getFieldName())
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID)
                 .setContent("Approval test signature.\nCreated by iText.");
         signerProperties.setPageRect(new Rectangle(50, 650, 200, 100))
                 .setSignatureAppearance(appearance);

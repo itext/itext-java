@@ -160,7 +160,7 @@ public class TaggedPdfSigningTest extends ExtendedITextTest {
         signer.setSignerProperties(signerProperties);
 
         // Creating the appearance
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance(name)
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID)
                 .setContent(new SignedAppearanceText());
         if (rectangleForNewField != null) {
             signerProperties.setPageRect(rectangleForNewField);

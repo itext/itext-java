@@ -287,7 +287,7 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
                 .setPageRect(new Rectangle(100, 100, 10, 10));
         signer.setSignerProperties(signerProperties);
 
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance(signerProperties.getFieldName());
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID);
         appearance.setContent("Some text");
         appearance.getAccessibilityProperties().setAlternateDescription("Alternate description");
         signerProperties.setSignatureAppearance(appearance);

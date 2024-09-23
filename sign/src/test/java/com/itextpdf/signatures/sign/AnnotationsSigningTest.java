@@ -184,7 +184,7 @@ public class AnnotationsSigningTest extends ExtendedITextTest {
                 .setFieldName(name);
 
         // Creating the appearance
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance(name)
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID)
                 .setContent(new SignedAppearanceText());
         signerProperties
                 .setReason(reason)

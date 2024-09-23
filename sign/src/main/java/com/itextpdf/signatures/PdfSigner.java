@@ -995,8 +995,7 @@ public class PdfSigner {
      */
     protected SignatureFieldAppearance getSignatureAppearance() {
         if (this.signerProperties.getSignatureAppearance() == null) {
-            this.signerProperties.setSignatureAppearance(
-                    new SignatureFieldAppearance(this.signerProperties.getFieldName()));
+            this.signerProperties.setSignatureAppearance(new SignatureFieldAppearance(SignerProperties.IGNORED_ID));
             setContent();
         } else {
             populateExistingModelElement();

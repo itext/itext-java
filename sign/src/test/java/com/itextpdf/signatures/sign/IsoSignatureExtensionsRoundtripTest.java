@@ -312,7 +312,7 @@ public class IsoSignatureExtensionsRoundtripTest extends ExtendedITextTest {
         IExternalSignature pks = new PrivateKeySignature(signPrivateKey, digestAlgo, signatureAlgo, BOUNCY_CASTLE_FACTORY.getProviderName(), null);
 
         PdfSigner signer = new PdfSigner(new PdfReader(SOURCE_FILE), os, new StampingProperties());
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance(SIGNATURE_FIELD)
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID)
                 .setContent("Approval test signature.\nCreated by iText.");
         SignerProperties signerProperties = new SignerProperties()
                 .setFieldName(SIGNATURE_FIELD)

@@ -88,7 +88,7 @@ public class SequentialSignaturesTest extends ExtendedITextTest {
 
         String signatureName = "Signature2";
         PdfSigner signer = new PdfSigner(new PdfReader(srcFileName), FileUtil.getFileOutputStream(outFileName), new StampingProperties().useAppendMode());
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance(signatureName)
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID)
                 .setContent("Approval test signature.\nCreated by iText.");
         SignerProperties signerProperties = new SignerProperties()
                 .setFieldName(signatureName)
@@ -126,7 +126,7 @@ public class SequentialSignaturesTest extends ExtendedITextTest {
         PdfDocument document = signer.getDocument();
         document.getWriter().setCompressionLevel(CompressionConstants.NO_COMPRESSION);
 
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance(signatureName)
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID)
                 .setContent("Approval test signature #2.\nCreated by iText.");
         SignerProperties signerProperties = new SignerProperties()
                 .setFieldName(signatureName)

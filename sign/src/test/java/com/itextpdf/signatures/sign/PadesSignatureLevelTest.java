@@ -95,7 +95,7 @@ public class PadesSignatureLevelTest extends ExtendedITextTest {
         PrivateKey tsaPrivateKey = PemFileHelper.readFirstKey(tsaCertFileName, password);
 
         PdfSigner signer = new PdfSigner(new PdfReader(srcFileName), FileUtil.getFileOutputStream(outFileName), new StampingProperties());
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance("Signature1")
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID)
                 .setContent("Approval test signature.\nCreated by iText.");
         SignerProperties signerProperties = new SignerProperties()
                 .setFieldName("Signature1")

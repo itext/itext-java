@@ -192,7 +192,7 @@ public class PdfASigningTest extends ExtendedITextTest {
         PdfFont font = PdfFontFactory.createFont("Helvetica","WinAnsi",
                 EmbeddingStrategy.PREFER_EMBEDDED);
 
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance(signer.getSignerProperties().getFieldName())
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID)
                 .setContent(new SignedAppearanceText())
                 .setFont(font);
         signerProperties
@@ -241,7 +241,7 @@ public class PdfASigningTest extends ExtendedITextTest {
         PdfFont font = PdfFontFactory.createFont(FONT, "WinAnsi", EmbeddingStrategy.PREFER_EMBEDDED);
 
         // Creating the appearance
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance(name)
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID)
                 .setContent(new SignedAppearanceText());
         appearance.setFont(font);
         signerProperties

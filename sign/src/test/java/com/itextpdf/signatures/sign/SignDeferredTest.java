@@ -101,7 +101,7 @@ public class SignDeferredTest extends ExtendedITextTest {
         PdfSigner signer = new PdfSigner(reader, FileUtil.getFileOutputStream(output), new StampingProperties());
         SignerProperties signerProperties = new SignerProperties().setFieldName(sigFieldName);
         signer.setSignerProperties(signerProperties);
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance(sigFieldName)
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID)
                 .setContent("Signature field which signing is deferred.");
         signerProperties
                 .setPageRect(new Rectangle(36, 600, 200, 100))
@@ -127,7 +127,7 @@ public class SignDeferredTest extends ExtendedITextTest {
         PdfSigner signer = new PdfSigner(reader, new ByteArrayOutputStream(), new StampingProperties());
         SignerProperties signerProperties = new SignerProperties().setFieldName(sigFieldName);
         signer.setSignerProperties(signerProperties);
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance(sigFieldName)
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID)
                 .setContent("Signature field which signing is deferred.");
         signerProperties
                 .setPageRect(new Rectangle(36, 600, 200, 100))
@@ -154,7 +154,7 @@ public class SignDeferredTest extends ExtendedITextTest {
         PdfSigner signer = new PdfSigner(reader, new ByteArrayOutputStream(), new StampingProperties());
         SignerProperties signerProperties = new SignerProperties().setFieldName(sigFieldName);
         signer.setSignerProperties(signerProperties);
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance(sigFieldName)
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID)
                 .setContent("Signature field which signing is deferred.");
         signerProperties
                 .setPageRect(new Rectangle(36, 600, 200, 100))
@@ -216,7 +216,7 @@ public class SignDeferredTest extends ExtendedITextTest {
                 .setCertificationLevel(AccessPermissions.NO_CHANGES_PERMITTED)
                 .setFieldName(sigFieldName);
         signer.setSignerProperties(signerProperties);
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance(sigFieldName)
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID)
                 .setContent("Signature field which signing is deferred.");
         signerProperties
                 .setPageRect(new Rectangle(36, 600, 200, 100))
