@@ -31,11 +31,11 @@ import com.itextpdf.kernel.crypto.CryptoUtil;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.EncryptionConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.pdf.VersionConforming;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.mac.MacProperties.KeyWrappingAlgorithm;
 import com.itextpdf.kernel.mac.MacProperties.MacAlgorithm;
@@ -70,7 +70,6 @@ public class MacIntegrityProtectorCreationTest extends ExtendedITextTest {
 
     @BeforeAll
     public static void beforeClass() {
-        Assumptions.assumeTrue("BC".equals(PROVIDER_NAME));
         createOrClearDestinationFolder(DESTINATION_FOLDER);
         Security.addProvider(BouncyCastleFactoryCreator.getFactory().getProvider());
     }
@@ -81,6 +80,8 @@ public class MacIntegrityProtectorCreationTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void standaloneMacStandardEncryptionTest() throws IOException, InterruptedException {
         String fileName = "standaloneMacStandardEncryptionTest.pdf";
         String outputFileName = DESTINATION_FOLDER + fileName;
@@ -99,6 +100,8 @@ public class MacIntegrityProtectorCreationTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void macEncryptionWithAesGsmTest() throws IOException, InterruptedException {
         String fileName = "macEncryptionWithAesGsmTest.pdf";
         String outputFileName = DESTINATION_FOLDER + fileName;
@@ -116,6 +119,8 @@ public class MacIntegrityProtectorCreationTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void standaloneMacUnwritableStreamTest() throws IOException {
         MacProperties macProperties = new MacProperties(MacDigestAlgorithm.SHA_256, MacAlgorithm.HMAC_WITH_SHA_256,
                 KeyWrappingAlgorithm.AES_256_NO_PADD);
@@ -139,6 +144,8 @@ public class MacIntegrityProtectorCreationTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void standaloneMacWithAllHashAlgorithmsTest() throws IOException, InterruptedException {
         for (int i = 0; i < EnumUtil.getAllValuesOfEnum(MacDigestAlgorithm.class).size(); i++) {
             String fileName = "standaloneMacWithAllHashAlgorithmsTest" + (i + 1) + ".pdf";
@@ -160,6 +167,8 @@ public class MacIntegrityProtectorCreationTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void standaloneMacPdfVersionNotSetTest() {
         String fileName = "standaloneMacPdfVersionNotSetTest.pdf";
         String outputFileName = DESTINATION_FOLDER + fileName;
@@ -178,6 +187,8 @@ public class MacIntegrityProtectorCreationTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void standaloneMacOldEncryptionAlgorithmTest() {
         String fileName = "standaloneMacOldEncryptionAlgorithmTest.pdf";
         String outputFileName = DESTINATION_FOLDER + fileName;
@@ -197,6 +208,12 @@ public class MacIntegrityProtectorCreationTest extends ExtendedITextTest {
 
     @Test
     public void standaloneMacPublicKeyEncryptionTest() throws Exception {
+        try {
+            BouncyCastleFactoryCreator.getFactory().isEncryptionFeatureSupported(0, true);
+        } catch (Exception ignored) {
+            Assumptions.assumeTrue(false);
+        }
+        Assumptions.assumeTrue(!BouncyCastleFactoryCreator.getFactory().isInApprovedOnlyMode());
         String fileName = "standaloneMacPublicKeyEncryptionTest.pdf";
         String outputFileName = DESTINATION_FOLDER + fileName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName;

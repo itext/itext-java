@@ -28,6 +28,7 @@ import com.itextpdf.kernel.crypto.CryptoUtil;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.mac.MacProperties.MacDigestAlgorithm;
 import com.itextpdf.kernel.pdf.EncryptionConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -40,6 +41,8 @@ import com.itextpdf.kernel.pdf.annot.PdfTextAnnotation;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
 import java.security.PrivateKey;
@@ -62,7 +65,6 @@ public class MacIntegrityProtectorReadingAndRewritingTest extends ExtendedITextT
 
     @BeforeAll
     public static void beforeClass() {
-        Assumptions.assumeTrue("BC".equals(PROVIDER_NAME));
         createOrClearDestinationFolder(DESTINATION_FOLDER);
         Security.addProvider(BouncyCastleFactoryCreator.getFactory().getProvider());
     }
@@ -73,6 +75,8 @@ public class MacIntegrityProtectorReadingAndRewritingTest extends ExtendedITextT
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void appendModeTest() throws IOException, InterruptedException {
         String fileName = "appendModeTest.pdf";
         String outputFileName = DESTINATION_FOLDER + fileName;
@@ -88,6 +92,8 @@ public class MacIntegrityProtectorReadingAndRewritingTest extends ExtendedITextT
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void preserveEncryptionTest() throws IOException, InterruptedException {
         String fileName = "preserveEncryptionTest.pdf";
         String outputFileName = DESTINATION_FOLDER + fileName;
@@ -104,6 +110,8 @@ public class MacIntegrityProtectorReadingAndRewritingTest extends ExtendedITextT
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void writerPropertiesTest() throws IOException, InterruptedException {
         String fileName = "writerPropertiesTest.pdf";
         String outputFileName = DESTINATION_FOLDER + fileName;
@@ -123,6 +131,8 @@ public class MacIntegrityProtectorReadingAndRewritingTest extends ExtendedITextT
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void macShouldNotBePreservedWithEncryptionTest() throws IOException, InterruptedException {
         String fileName = "macShouldNotBePreservedWithEncryptionTest.pdf";
         String outputFileName = DESTINATION_FOLDER + fileName;
@@ -139,6 +149,8 @@ public class MacIntegrityProtectorReadingAndRewritingTest extends ExtendedITextT
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void macShouldNotBePreservedTest() throws IOException, InterruptedException {
         String fileName = "macShouldNotBePreservedTest.pdf";
         String outputFileName = DESTINATION_FOLDER + fileName;
@@ -154,6 +166,8 @@ public class MacIntegrityProtectorReadingAndRewritingTest extends ExtendedITextT
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void invalidMacTokenTest() {
         String fileName = "invalidMacTokenTest.pdf";
         String outputFileName = DESTINATION_FOLDER + fileName;
@@ -168,7 +182,14 @@ public class MacIntegrityProtectorReadingAndRewritingTest extends ExtendedITextT
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void invalidPublicKeyMacProtectedDocumentTest() throws Exception {
+        try {
+            BouncyCastleFactoryCreator.getFactory().isEncryptionFeatureSupported(0, true);
+        } catch (Exception ignored) {
+            Assumptions.assumeTrue(false);
+        }
         String fileName = "invalidPublicKeyMacProtectedDocumentTest.pdf";
         String outputFileName = DESTINATION_FOLDER + fileName;
 
@@ -188,9 +209,11 @@ public class MacIntegrityProtectorReadingAndRewritingTest extends ExtendedITextT
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void readSignedMacProtectedDocumentWithoutAttributeTest() {
         String message = Assertions.assertThrows(PdfException.class, () -> {
-            try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "signedMacProtectedDocWithoutAttribute.pdf",
+            try (PdfDocument ignored = new PdfDocument(new PdfReader(SOURCE_FOLDER + "signedMacProtectedDocWithoutAttribute.pdf",
                     new ReaderProperties().setPassword(PASSWORD)))) {
             }
         }).getMessage();
@@ -198,9 +221,11 @@ public class MacIntegrityProtectorReadingAndRewritingTest extends ExtendedITextT
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void macProtectionStrippedTest() {
         String message = Assertions.assertThrows(PdfException.class, () -> {
-            try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "macProtectionStrippedTest.pdf",
+            try (PdfDocument ignored = new PdfDocument(new PdfReader(SOURCE_FOLDER + "macProtectionStrippedTest.pdf",
                     new ReaderProperties().setPassword(PASSWORD)))) {
             }
         }).getMessage();
@@ -208,39 +233,52 @@ public class MacIntegrityProtectorReadingAndRewritingTest extends ExtendedITextT
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void readSignedMacProtectedDocumentTest() {
         AssertUtil.doesNotThrow(() -> {
-            try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "signedMacProtectedDocument.pdf",
+            try (PdfDocument ignored = new PdfDocument(new PdfReader(SOURCE_FOLDER + "signedMacProtectedDocument.pdf",
                     new ReaderProperties().setPassword(PASSWORD)))) {
             }
         });
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void readThirdPartyMacProtectedDocumentTest() {
         AssertUtil.doesNotThrow(() -> {
-            try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "thirdPartyMacProtectedDocument.pdf",
+            try (PdfDocument ignored = new PdfDocument(new PdfReader(SOURCE_FOLDER + "thirdPartyMacProtectedDocument.pdf",
                     new ReaderProperties().setPassword(PASSWORD)))) {
             }
         });
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void readThirdPartyPublicKeyMacProtectedDocumentTest() throws Exception {
+        try {
+            BouncyCastleFactoryCreator.getFactory().isEncryptionFeatureSupported(0, true);
+        } catch (Exception ignored) {
+            Assumptions.assumeTrue(false);
+        }
         PrivateKey privateKey = MacIntegrityProtectorCreationTest.getPrivateKey(CERTS_SRC + "keyForEncryption.pem");
         Certificate certificate = CryptoUtil.readPublicCertificate(
                 FileUtil.getInputStreamForFile(CERTS_SRC + "certForEncryption.crt"));
         AssertUtil.doesNotThrow(() -> {
-            try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "thirdPartyPublicKeyMacProtectedDocument.pdf",
+            try (PdfDocument ignored = new PdfDocument(new PdfReader(SOURCE_FOLDER + "thirdPartyPublicKeyMacProtectedDocument.pdf",
                     new ReaderProperties().setPublicKeySecurityParams(certificate, privateKey, PROVIDER_NAME, null)))) {
             }
         });
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void readMacProtectedPdf1_7() {
         AssertUtil.doesNotThrow(() -> {
-            try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "macProtectedDocumentPdf1_7.pdf",
+            try (PdfDocument ignored = new PdfDocument(new PdfReader(SOURCE_FOLDER + "macProtectedDocumentPdf1_7.pdf",
                     new ReaderProperties().setPassword(PASSWORD)))) {
             }
         });

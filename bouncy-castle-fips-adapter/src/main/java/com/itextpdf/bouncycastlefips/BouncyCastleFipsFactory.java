@@ -323,6 +323,12 @@ import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.cms.jcajce.JceKeyAgreeEnvelopedRecipient;
 import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
 import org.bouncycastle.crypto.CryptoServicesRegistrar;
+import org.bouncycastle.crypto.KDFCalculator;
+import org.bouncycastle.crypto.fips.FipsKDF;
+import org.bouncycastle.crypto.fips.FipsKDF.AgreementKDFPRF;
+import org.bouncycastle.crypto.fips.FipsKDF.AgreementKDFParameters;
+import org.bouncycastle.crypto.fips.FipsKDF.AgreementOperatorFactory;
+import org.bouncycastle.crypto.fips.FipsKDF.HKDFKeyBuilder;
 import org.bouncycastle.crypto.fips.FipsUnapprovedOperationError;
 import org.bouncycastle.jcajce.provider.BouncyCastleFipsProvider;
 import org.bouncycastle.openssl.PEMParser;
@@ -1873,7 +1879,14 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
      */
     @Override
     public byte[] generateHKDF(byte[] inputKey, byte[] salt, byte[] info) {
-        throw new UnsupportedOperationException("HKDF algorithm is not supported in bouncy-castle FIPS mode.");
+        HKDFKeyBuilder hkdfKeyBuilder = FipsKDF.HKDF_KEY_BUILDER.withSalt(salt).withPrf(AgreementKDFPRF.SHA256_HMAC);
+        byte[] extractedKey = hkdfKeyBuilder.build(inputKey).getKey();
+        AgreementOperatorFactory factory = new AgreementOperatorFactory();
+        KDFCalculator<AgreementKDFParameters> kdfCalculator = factory.createKDFCalculator(FipsKDF.HKDF.withPRF(
+                AgreementKDFPRF.SHA256_HMAC).using(extractedKey).withIV(info));
+        byte[] hkdf = new byte[32];
+        kdfCalculator.generateBytes(hkdf);
+        return hkdf;
     }
 
     /**

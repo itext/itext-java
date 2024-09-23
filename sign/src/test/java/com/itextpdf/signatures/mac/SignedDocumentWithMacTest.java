@@ -29,6 +29,7 @@ import com.itextpdf.kernel.crypto.CryptoUtil;
 import com.itextpdf.kernel.crypto.DigestAlgorithms;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -41,6 +42,8 @@ import com.itextpdf.signatures.PrivateKeySignature;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.OutputStream;
 import java.security.PrivateKey;
@@ -63,12 +66,13 @@ public class SignedDocumentWithMacTest extends ExtendedITextTest {
 
     @BeforeAll
     public static void before() {
-        Assumptions.assumeTrue("BC".equals(FACTORY.getProviderName()));
         Security.addProvider(FACTORY.getProvider());
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void signMacProtectedDocTest() throws Exception {
         String fileName = "signMacProtectedDocTest.pdf";
         String srcFileName = SOURCE_FOLDER + "macEncryptedDoc.pdf";
@@ -90,6 +94,8 @@ public class SignedDocumentWithMacTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void signMacProtectedDocInAppendModeTest() throws Exception {
         String fileName = "signMacProtectedDocInAppendModeTest.pdf";
         String srcFileName = SOURCE_FOLDER + "macEncryptedDoc.pdf";
@@ -111,6 +117,8 @@ public class SignedDocumentWithMacTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void signMacProtectedDocWithSHA3_384Test() throws Exception {
         String fileName = "signMacProtectedDocWithSHA3_384Test.pdf";
         String srcFileName = SOURCE_FOLDER + "macEncryptedDocSHA3_384.pdf";
@@ -132,7 +140,14 @@ public class SignedDocumentWithMacTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void signMacPublicEncryptionDocTest() throws Exception {
+        try {
+            BouncyCastleFactoryCreator.getFactory().isEncryptionFeatureSupported(0, true);
+        } catch (Exception ignored) {
+            Assumptions.assumeTrue(false);
+        }
         String fileName = "signMacPublicEncryptionDocTest.pdf";
         String srcFileName = SOURCE_FOLDER + "macEncryptedWithPublicHandlerDoc.pdf";
         String outputFileName = DESTINATION_FOLDER + fileName;
@@ -155,11 +170,13 @@ public class SignedDocumentWithMacTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void readSignedMacProtectedInvalidDocTest() {
         String srcFileName = SOURCE_FOLDER + "signedMacProtectedInvalidDoc.pdf";
 
         String exceptionMessage = Assertions.assertThrows(PdfException.class, () -> {
-            try (PdfDocument document = new PdfDocument(
+            try (PdfDocument ignored = new PdfDocument(
                     new PdfReader(srcFileName, new ReaderProperties().setPassword(ENCRYPTION_PASSWORD)))) {
                 // Do nothing.
             }
@@ -168,13 +185,15 @@ public class SignedDocumentWithMacTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void updateSignedMacProtectedDocumentTest() throws Exception {
         String fileName = "updateSignedMacProtectedDocumentTest.pdf";
         String srcFileName = SOURCE_FOLDER + "thirdPartyMacProtectedAndSignedDocument.pdf";
         String outputFileName = DESTINATION_FOLDER + fileName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName;
 
-        try (PdfDocument document = new PdfDocument(
+        try (PdfDocument ignored = new PdfDocument(
                 new PdfReader(srcFileName, new ReaderProperties().setPassword(ENCRYPTION_PASSWORD)),
                 new PdfWriter(FileUtil.getFileOutputStream(outputFileName)),
                 new StampingProperties().useAppendMode())) {
