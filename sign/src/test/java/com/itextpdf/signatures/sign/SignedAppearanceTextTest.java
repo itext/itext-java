@@ -61,6 +61,7 @@ import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
 import com.itextpdf.signatures.SignerProperties;
+import com.itextpdf.signatures.TimestampConstants;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
@@ -75,9 +76,11 @@ import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -125,6 +128,41 @@ public class SignedAppearanceTextTest extends ExtendedITextTest {
         SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID)
                 .setContent(new SignedAppearanceText());
         sign(srcFile, fieldName, outPdf, "Test 1", "TestCity 1", rect, appearance);
+
+        Assertions.assertNull(new CompareTool().compareVisually(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_",
+                getTestMap(new Rectangle(36, 676, 200, 15))));
+
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf));
+    }
+
+    @Test
+    public void noReasonLocationSignDateInAppearanceTextTest() throws GeneralSecurityException, IOException, InterruptedException {
+        String srcFile = SOURCE_FOLDER + "simpleDocument.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_noReasonLocationSignDateInAppearanceText.pdf";
+        String outPdf = DESTINATION_FOLDER + "noReasonLocationSignDateInAppearanceText.pdf";
+
+        Rectangle rect = new Rectangle(36, 648, 200, 100);
+
+        String fieldName = "Signature1";
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID)
+                .setContent(new SignedAppearanceText().setReasonLine(null).setLocationLine(null));
+
+        PdfSigner signer = new PdfSigner(new PdfReader(srcFile), FileUtil.getFileOutputStream(outPdf),
+                new StampingProperties());
+
+        SignerProperties signerProperties = new SignerProperties()
+                .setCertificationLevel(AccessPermissions.UNSPECIFIED)
+                .setFieldName(fieldName)
+                .setReason("Test 1")
+                .setLocation("TestCity 1")
+                .setSignatureAppearance(appearance)
+                .setClaimedSignDate((Calendar) TimestampConstants.UNDEFINED_TIMESTAMP_DATE)
+                .setPageRect(rect);
+        signer.setSignerProperties(signerProperties);
+
+        // Creating the signature
+        IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, FACTORY.getProviderName());
+        signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
 
         Assertions.assertNull(new CompareTool().compareVisually(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_",
                 getTestMap(new Rectangle(36, 676, 200, 15))));

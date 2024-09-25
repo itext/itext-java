@@ -166,6 +166,44 @@ public class SignatureFieldAppearanceTest extends ExtendedITextTest {
     }
 
     @Test
+    public void emptySigFieldAppearanceTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "emptySigFieldAppearance.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_emptySigFieldAppearance.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+            SignedAppearanceText description = new SignedAppearanceText()
+                    .setSignedBy(null).setLocationLine(null).setReasonLine(null);
+
+            SignatureFieldAppearance formSigField = new SignatureFieldAppearance("Signature1").setContent(description);
+            formSigField.setBackgroundColor(ColorConstants.LIGHT_GRAY);
+            formSigField.setBorder(new SolidBorder(ColorConstants.GREEN, 2));
+            formSigField.setHeight(100).setWidth(200);
+            document.add(formSigField);
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void ignoreSignDateAndReasonInAppearanceTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "ignoreSignDateAndReasonInAppearance.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_ignoreSignDateAndReasonInAppearance.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+            SignedAppearanceText description = new SignedAppearanceText()
+                    .setSignedBy("Signer Name").setLocationLine("Test Location").setReasonLine(null);
+
+            SignatureFieldAppearance formSigField = new SignatureFieldAppearance("Signature1").setContent(description);
+            formSigField.setBackgroundColor(ColorConstants.LIGHT_GRAY);
+            formSigField.setBorder(new SolidBorder(ColorConstants.GREEN, 2));
+            formSigField.setHeight(100).setWidth(200);
+            document.add(formSigField);
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT))
     public void signatureFieldVerticalAlignmentTest() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "signatureFieldVerticalAlignment.pdf";

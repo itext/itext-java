@@ -94,6 +94,7 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -623,7 +624,10 @@ public class PdfSigner {
         dic.setLocation(this.signerProperties.getLocation());
         dic.setSignatureCreator(this.signerProperties.getSignatureCreator());
         dic.setContact(this.signerProperties.getContact());
-        dic.setDate(new PdfDate(this.signerProperties.getClaimedSignDate())); // time-stamp will over-rule this
+        Calendar claimedSignDate = this.signerProperties.getClaimedSignDate();
+        if (claimedSignDate != TimestampConstants.UNDEFINED_TIMESTAMP_DATE) {
+            dic.setDate(new PdfDate(claimedSignDate)); // time-stamp will over-rule this
+        }
         cryptoDictionary = dic;
 
         Map<PdfName, Integer> exc = new HashMap<>();
@@ -1357,8 +1361,9 @@ public class PdfSigner {
         dic.setLocation(this.signerProperties.getLocation());
         dic.setSignatureCreator(this.signerProperties.getSignatureCreator());
         dic.setContact(this.signerProperties.getContact());
-        if (includeDate) {
-            dic.setDate(new PdfDate(this.signerProperties.getClaimedSignDate())); // time-stamp will over-rule this
+        Calendar claimedSignDate = this.signerProperties.getClaimedSignDate();
+        if (includeDate && claimedSignDate != TimestampConstants.UNDEFINED_TIMESTAMP_DATE) {
+            dic.setDate(new PdfDate(claimedSignDate)); // time-stamp will over-rule this
         }
         return dic;
     }
@@ -1412,25 +1417,34 @@ public class PdfSigner {
     }
 
     private SignedAppearanceText generateSignatureText() {
-        return new SignedAppearanceText()
-                .setSignedBy(signerName)
-                .setSignDate(this.signerProperties.getClaimedSignDate())
-                .setReasonLine("Reason: " + this.signerProperties.getReason())
-                .setLocationLine("Location: " + this.signerProperties.getLocation());
+        SignedAppearanceText signedAppearanceText = new SignedAppearanceText();
+        fillInAppearanceText(signedAppearanceText);
+        return signedAppearanceText;
     }
 
     private void populateExistingModelElement() {
         this.signerProperties.getSignatureAppearance().setSignerName(signerName);
-        SignedAppearanceText signedAppearanceText =
-                this.signerProperties.getSignatureAppearance().getSignedAppearanceText();
-        if (signedAppearanceText != null) {
-            signedAppearanceText.setSignedBy(signerName).setSignDate(this.signerProperties.getClaimedSignDate());
-            if (signedAppearanceText.getReasonLine().isEmpty()) {
-                signedAppearanceText.setReasonLine("Reason: " + this.signerProperties.getReason());
-            }
-            if (signedAppearanceText.getLocationLine().isEmpty()) {
-                signedAppearanceText.setLocationLine("Location: " + this.signerProperties.getLocation());
-            }
+        SignedAppearanceText appearanceText = this.signerProperties.getSignatureAppearance().getSignedAppearanceText();
+        if (appearanceText != null) {
+            fillInAppearanceText(appearanceText);
+        }
+    }
+
+    private void fillInAppearanceText(SignedAppearanceText appearanceText) {
+        appearanceText.setSignedBy(signerName);
+        Calendar claimedSignDate = this.signerProperties.getClaimedSignDate();
+        if (claimedSignDate != TimestampConstants.UNDEFINED_TIMESTAMP_DATE) {
+            appearanceText.setSignDate(claimedSignDate);
+        }
+        String reason = signerProperties.getReason();
+        boolean setReason = appearanceText.getReasonLine() != null && appearanceText.getReasonLine().isEmpty();
+        if (setReason && reason != null && !reason.isEmpty()) {
+            appearanceText.setReasonLine("Reason: " + reason);
+        }
+        String location = signerProperties.getLocation();
+        boolean setLocation = appearanceText.getLocationLine() != null && appearanceText.getLocationLine().isEmpty();
+        if (setLocation && location != null && !location.isEmpty()) {
+            appearanceText.setLocationLine("Location: " + location);
         }
     }
 

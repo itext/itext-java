@@ -35,6 +35,12 @@ import java.util.Calendar;
  * Properties to be used in signing operations.
  */
 public class SignerProperties {
+    /**
+     * This string could be used to create the {@link SignatureFieldAppearance} instance which will be used for signing
+     * since its ID will be ignored anyway in that case, and specified ID won't override the field name.
+     *
+     * @see #setSignatureAppearance(SignatureFieldAppearance)
+     */
     public static final String IGNORED_ID = "";
 
     private PdfSigFieldLock fieldLock;
