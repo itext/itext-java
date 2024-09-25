@@ -396,6 +396,42 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
             ignore = true))
+    public void encryptWithPasswordAes256EmbeddedFilesOnly() throws IOException, InterruptedException {
+        String filename = "encryptWithPasswordAes256EmbeddedFilesOnly.pdf";
+        int encryptionType = EncryptionConstants.ENCRYPTION_AES_256 | EncryptionConstants.EMBEDDED_FILES_ONLY;
+
+        String outFileName = destinationFolder + filename;
+        int permissions = EncryptionConstants.ALLOW_SCREENREADERS;
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName,
+                new WriterProperties().setStandardEncryption(PdfEncryptionTestUtils.USER, PdfEncryptionTestUtils.OWNER, permissions,
+                        encryptionType).addXmpMetadata().setPdfVersion(PdfVersion.PDF_2_0)
+        );
+        PdfDocument document = new PdfDocument(writer);
+        document.getDocumentInfo().setMoreInfo(PdfEncryptionTestUtils.CUSTOM_INFO_ENTRY_KEY, PdfEncryptionTestUtils.CUSTOM_INFO_ENTRY_VALUE);
+        PdfPage page = document.addNewPage();
+        String textContent = "Hello world!";
+        PdfEncryptionTestUtils.writeTextBytesOnPageContent(page, textContent);
+
+        String descripton = "encryptedFile";
+        String path = sourceFolder + "pageWithContent.pdf";
+        document.addFileAttachment(descripton,
+                PdfFileSpec.createEmbeddedFileSpec(document, path, descripton, path, null, null));
+
+        page.flush();
+        document.close();
+
+        //TODO DEVSIX-5355 Specific crypto filters for EFF StmF and StrF are not supported at the moment.
+        // However we can read embedded files only mode.
+        boolean ERROR_IS_EXPECTED = false;
+        encryptionUtil.checkDecryptedWithPasswordContent(destinationFolder + filename, PdfEncryptionTestUtils.OWNER,
+                textContent, ERROR_IS_EXPECTED);
+        encryptionUtil.checkDecryptedWithPasswordContent(destinationFolder + filename, PdfEncryptionTestUtils.USER,
+                textContent, ERROR_IS_EXPECTED);
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void encryptAes256Pdf2NotEncryptMetadata() throws InterruptedException, IOException {
         String filename = "encryptAes256Pdf2NotEncryptMetadata.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_256 | EncryptionConstants.DO_NOT_ENCRYPT_METADATA;
@@ -670,7 +706,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         PdfEncryptionTestUtils.writeTextBytesOnPageContent(newPage, "Hello world page_2!");
         document.close();
 
-        CompareTool compareTool = new CompareTool().enableEncryptionCompare();
+        CompareTool compareTool = new CompareTool().enableEncryptionCompare(false);
 
         String compareResult = compareTool.compareByContent(outFileName, sourceFolder + "cmp_appended_" + filename,
                 destinationFolder, "diff_", PdfEncryptionTestUtils.USER, PdfEncryptionTestUtils.USER);

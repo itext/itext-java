@@ -587,10 +587,10 @@ public class PdfReader implements Closeable {
      * {@link WriterProperties#setStandardEncryption(byte[], byte[], int, int)}.
      * See ISO 32000-1, Table 22 for more details.
      *
-     * @return the encryption permissions, an unsigned 32-bit quantity.
+     * @return the encryption permissions.
      * @throws PdfException if the method has been invoked before the PDF document was read.
      */
-    public long getPermissions() {
+    public int getPermissions() {
 
         /* !pdfDocument.getXref().isReadingCompleted() can be used for encryption properties as well,
          * because decrypt object is initialized in private readDecryptObj method which is called in our code
@@ -601,9 +601,9 @@ public class PdfReader implements Closeable {
             throw new PdfException(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET);
         }
 
-        long perm = 0;
+        int perm = 0;
         if (encrypted && decrypt.getPermissions() != null) {
-            perm = (long) decrypt.getPermissions();
+            perm = decrypt.getPermissions().intValue();
         }
         return perm;
     }

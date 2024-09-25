@@ -56,4 +56,11 @@ public interface IMacContainerLocator {
      * @return {@link AbstractMacIntegrityProtector} which specific implementation depends on interface implementation.
      */
     AbstractMacIntegrityProtector createMacIntegrityProtector(PdfDocument document, PdfDictionary authDictionary);
+
+    /**
+     * Handles MAC validation error.
+     *
+     * @param exception {@link MacValidationException} to handle.
+     */
+    void handleMacValidationError(MacValidationException exception);
 }

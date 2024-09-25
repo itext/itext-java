@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.forms.fields.PdfButtonFormField;
 import com.itextpdf.forms.fields.PdfFormAnnotation;
 import com.itextpdf.forms.fields.PdfFormCreator;
@@ -42,6 +43,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
+import java.security.Security;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -67,6 +69,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
+        Security.addProvider(BouncyCastleFactoryCreator.getFactory().getProvider());
     }
 
     // Custom entry in Info dictionary is used because standard entried are gone into metadata in PDF 2.0

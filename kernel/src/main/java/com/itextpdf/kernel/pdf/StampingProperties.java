@@ -28,6 +28,7 @@ public class StampingProperties extends DocumentProperties {
 
     protected boolean appendMode = false;
     protected boolean preserveEncryption = false;
+    protected boolean disableMac = false;
 
     public StampingProperties() {
     }
@@ -45,6 +46,7 @@ public class StampingProperties extends DocumentProperties {
 
     /**
      * Defines if the document will be edited in append mode.
+     *
      * @return this {@link StampingProperties} instance
      */
     public StampingProperties useAppendMode() {
@@ -55,10 +57,24 @@ public class StampingProperties extends DocumentProperties {
     /**
      * Defines if the encryption of the original document (if it was encrypted) will be preserved.
      * By default, the resultant document doesn't preserve the original encryption.
+     *
      * @return this {@link StampingProperties} instance
      */
     public StampingProperties preserveEncryption() {
         this.preserveEncryption = true;
+        return this;
+    }
+
+    /**
+     * Disables MAC token in the output PDF-2.0 document.
+     * By default, MAC token will be embedded.
+     * This property does not remove MAC token from existing document in append mode because it removes MAC protection
+     * from all previous revisions also.
+     *
+     * @return this {@link StampingProperties} instance
+     */
+    public StampingProperties disableMac() {
+        this.disableMac = true;
         return this;
     }
 }

@@ -58,7 +58,7 @@ class StandaloneMacIntegrityProtector extends AbstractMacIntegrityProtector {
     void prepareDocument() {
         document.addEventHandler(PdfDocumentEvent.START_DOCUMENT_CLOSING,
                 new StandaloneMacIntegrityProtector.StandaloneMacPdfObjectAdder());
-        document.addEventHandler(PdfDocumentEvent.END_WRITER_FLUSH,
+        document.addEventHandler(PdfDocumentEvent.START_WRITER_CLOSING,
                 new StandaloneMacIntegrityProtector.StandaloneMacContainerEmbedder());
     }
 

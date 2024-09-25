@@ -74,6 +74,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -138,6 +139,7 @@ public class CompareTool {
     private boolean generateCompareByContentXmlReport = false;
 
     private boolean encryptionCompareEnabled = false;
+    private boolean kdfSaltCompareEnabled = true;
 
     private boolean useCachedPagesForComparison = true;
     private IMetaInfo metaInfo;
@@ -336,7 +338,24 @@ public class CompareTool {
      * @return this CompareTool instance.
      */
     public CompareTool enableEncryptionCompare() {
+        return enableEncryptionCompare(true);
+    }
+
+    /**
+     * Enables the comparison of the encryption properties of the documents. Encryption properties comparison
+     * results are returned along with all other comparison results.
+     * <p>
+     * IMPORTANT NOTE: this flag affects only the comparison performed by compareByContent methods!
+     * {@link #compareByCatalog(PdfDocument, PdfDocument)} doesn't compare encryption properties
+     * because encryption properties aren't part of the document's Catalog.
+     *
+     * @param kdfSaltCompareEnabled set to {@code true} if {@link PdfName#KDFSalt} entry must be compared,
+     *                             {code false} otherwise
+     * @return this CompareTool instance.
+     */
+    public CompareTool enableEncryptionCompare(boolean kdfSaltCompareEnabled) {
         this.encryptionCompareEnabled = true;
+        this.kdfSaltCompareEnabled = kdfSaltCompareEnabled;
         return this;
     }
 
@@ -1271,6 +1290,7 @@ public class CompareTool {
 
             if (encryptionCompareEnabled) {
                 compareDocumentsEncryption(outDocument, cmpDocument, compareResult);
+                compareDocumentsMac(outDocument, cmpDocument, compareResult);
             }
             if (generateCompareByContentXmlReport) {
                 String outPdfName = new File(outPdf).getName();
@@ -1371,6 +1391,27 @@ public class CompareTool {
         }
     }
 
+    private void compareDocumentsMac(PdfDocument outDocument, PdfDocument cmpDocument, CompareResult compareResult) {
+        PdfDictionary outAuthCode = outDocument.getTrailer().getAsDictionary(PdfName.AuthCode);
+        PdfDictionary cmpAuthCode = cmpDocument.getTrailer().getAsDictionary(PdfName.AuthCode);
+        if (outAuthCode == null && cmpAuthCode == null) {
+            return;
+        }
+
+        ObjectPath trailerPath = new TrailerPath(cmpDocument, outDocument);
+        if (outAuthCode == null) {
+            compareResult.addError(trailerPath, "Output document does not contain MAC.");
+            return;
+        }
+        if (cmpAuthCode == null) {
+            compareResult.addError(trailerPath, "Output document contains MAC which is not expected.");
+            return;
+        }
+
+        compareDictionariesExtended(outAuthCode, cmpAuthCode, trailerPath, compareResult,
+                new HashSet<>(Arrays.asList(PdfName.ByteRange, PdfName.MAC)));
+    }
+
     private boolean compareStreams(InputStream is1, InputStream is2) throws IOException {
         byte[] buffer1 = new byte[64 * 1024];
         byte[] buffer2 = new byte[64 * 1024];
@@ -1410,7 +1451,10 @@ public class CompareTool {
             if (excludedKeys != null && excludedKeys.contains(key)) {
                 continue;
             }
-            if (key.equals(PdfName.Parent) || key.equals(PdfName.P) || key.equals(PdfName.ModDate)) continue;
+            if (key.equals(PdfName.Parent) || key.equals(PdfName.P) || key.equals(PdfName.ModDate) ||
+                    (key.equals(PdfName.KDFSalt) && !kdfSaltCompareEnabled)) {
+                continue;
+            }
             if (outDict.isStream() && cmpDict.isStream() && (key.equals(PdfName.Filter) || key.equals(PdfName.Length)))
                 continue;
             if (key.equals(PdfName.BaseFont) || key.equals(PdfName.FontName)) {

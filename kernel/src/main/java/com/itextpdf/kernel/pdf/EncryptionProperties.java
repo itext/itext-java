@@ -23,6 +23,7 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.kernel.mac.MacProperties;
+import com.itextpdf.kernel.mac.MacProperties.MacDigestAlgorithm;
 
 import java.security.SecureRandom;
 import java.security.cert.Certificate;
@@ -48,6 +49,8 @@ public class EncryptionProperties {
      * {@link MacProperties} class to configure MAC integrity protection properties.
      */
     protected MacProperties macProperties;
+
+    static final MacProperties DEFAULT_MAC_PROPERTIES = new MacProperties(MacDigestAlgorithm.SHA3_512);
 
     /**
      * Sets the encryption options for the document.
@@ -85,7 +88,8 @@ public class EncryptionProperties {
      */
     public EncryptionProperties setStandardEncryption(byte[] userPassword, byte[] ownerPassword, int permissions,
             int encryptionAlgorithm) {
-        return setStandardEncryption(userPassword, ownerPassword, permissions, encryptionAlgorithm, null);
+        return setStandardEncryption(userPassword, ownerPassword, permissions, encryptionAlgorithm,
+                DEFAULT_MAC_PROPERTIES);
     }
 
     /**
@@ -119,7 +123,8 @@ public class EncryptionProperties {
      *                            {@link EncryptionConstants#EMBEDDED_FILES_ONLY} as false;
      *                            {@link EncryptionConstants#STANDARD_ENCRYPTION_128} implicitly sets
      *                            {@link EncryptionConstants#EMBEDDED_FILES_ONLY} as false;
-     * @param macProperties {@link MacProperties} class to configure MAC integrity protection properties
+     * @param macProperties {@link MacProperties} class to configure MAC integrity protection properties.
+     *                                           Pass {@code null} if you want to disable MAC protection for any reason
      *
      * @return this {@link EncryptionProperties}
      */
@@ -172,7 +177,8 @@ public class EncryptionProperties {
      *                            {@link EncryptionConstants#EMBEDDED_FILES_ONLY} as false;
      *                            {@link EncryptionConstants#STANDARD_ENCRYPTION_128} implicitly sets
      *                            {@link EncryptionConstants#EMBEDDED_FILES_ONLY} as false;
-     * @param macProperties {@link MacProperties} class to configure MAC integrity protection properties
+     * @param macProperties {@link MacProperties} class to configure MAC integrity protection properties.
+     *                                           Pass {@code null} if you want to disable MAC protection for any reason
      *
      * @return this {@link EncryptionProperties}
      */
@@ -185,46 +191,6 @@ public class EncryptionProperties {
         this.macProperties = macProperties;
 
         return this;
-    }
-
-    /**
-     * Sets the certificate encryption options for the document.
-     * <p>
-     * An array of one or more public certificates must be provided together with an array of the same size
-     * for the permissions for each certificate.
-     *
-     * @param certs               the public certificates to be used for the encryption
-     * @param permissions         the user permissions for each of the certificates
-     *                            The open permissions for the document can be
-     *                            {@link EncryptionConstants#ALLOW_PRINTING},
-     *                            {@link EncryptionConstants#ALLOW_MODIFY_CONTENTS},
-     *                            {@link EncryptionConstants#ALLOW_COPY},
-     *                            {@link EncryptionConstants#ALLOW_MODIFY_ANNOTATIONS},
-     *                            {@link EncryptionConstants#ALLOW_FILL_IN},
-     *                            {@link EncryptionConstants#ALLOW_SCREENREADERS},
-     *                            {@link EncryptionConstants#ALLOW_ASSEMBLY} and
-     *                            {@link EncryptionConstants#ALLOW_DEGRADED_PRINTING}.
-     *                            The permissions can be combined by ORing them
-     * @param encryptionAlgorithm the type of encryption. It can be one of
-     *                            {@link EncryptionConstants#STANDARD_ENCRYPTION_40},
-     *                            {@link EncryptionConstants#STANDARD_ENCRYPTION_128},
-     *                            {@link EncryptionConstants#ENCRYPTION_AES_128} or
-     *                            {@link EncryptionConstants#ENCRYPTION_AES_256}.
-     *                            Optionally {@link EncryptionConstants#DO_NOT_ENCRYPT_METADATA}
-     *                            can be ORed to output the metadata in cleartext.
-     *                            {@link EncryptionConstants#EMBEDDED_FILES_ONLY} can be ORed as well.
-     *                            Please be aware that the passed encryption types may override permissions:
-     *                            {@link EncryptionConstants#STANDARD_ENCRYPTION_40} implicitly sets
-     *                            {@link EncryptionConstants#DO_NOT_ENCRYPT_METADATA} and
-     *                            {@link EncryptionConstants#EMBEDDED_FILES_ONLY} as false;
-     *                            {@link EncryptionConstants#STANDARD_ENCRYPTION_128} implicitly sets
-     *                            {@link EncryptionConstants#EMBEDDED_FILES_ONLY} as false;
-     *
-     * @return this {@link EncryptionProperties}
-     */
-    public EncryptionProperties setPublicKeyEncryption(Certificate[] certs, int[] permissions,
-            int encryptionAlgorithm) {
-        return setPublicKeyEncryption(certs, permissions, encryptionAlgorithm, null);
     }
 
     boolean isStandardEncryptionUsed() {

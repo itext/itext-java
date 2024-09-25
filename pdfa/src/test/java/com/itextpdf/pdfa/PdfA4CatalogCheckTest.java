@@ -22,6 +22,7 @@
  */
 package com.itextpdf.pdfa;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.font.PdfFont;
@@ -53,6 +54,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.security.Security;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -67,6 +69,7 @@ public class PdfA4CatalogCheckTest  extends ExtendedITextTest {
     @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
+        Security.addProvider(BouncyCastleFactoryCreator.getFactory().getProvider());
     }
 
     @Test
@@ -142,7 +145,7 @@ public class PdfA4CatalogCheckTest  extends ExtendedITextTest {
 
     @Test
     public void encryptedDocumentTest() throws IOException {
-        String outPdf = destinationFolder + "pdfA4_catalogCheck03.pdf";
+        String outPdf = destinationFolder + "pdfA4_encryptedDocument.pdf";
 
         byte[] userPassword = "user".getBytes(StandardCharsets.ISO_8859_1);
         byte[] ownerPassword = "owner".getBytes(StandardCharsets.ISO_8859_1);

@@ -30,6 +30,7 @@ import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.mac.MacProperties.MacDigestAlgorithm;
+import com.itextpdf.kernel.pdf.DocumentProperties;
 import com.itextpdf.kernel.pdf.EncryptionConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -103,6 +104,43 @@ public class MacIntegrityProtectorReadingAndRewritingTest extends ExtendedITextT
                 new PdfReader(SOURCE_FOLDER + "macProtectedDocument.pdf", new ReaderProperties().setPassword(PASSWORD)),
                 CompareTool.createTestPdfWriter(outputFileName),
                 new StampingProperties().preserveEncryption())) {
+            pdfDoc.addNewPage().addAnnotation(new PdfTextAnnotation(new Rectangle(100, 100, 100, 100)));
+        }
+        Assertions.assertNull(new CompareTool().enableEncryptionCompare().compareByContent(
+                outputFileName, cmpFileName, DESTINATION_FOLDER, "diff", PASSWORD, PASSWORD));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
+    public void disableMacTest() throws IOException, InterruptedException {
+        String fileName = "disableMacTest.pdf";
+        String outputFileName = DESTINATION_FOLDER + fileName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName;
+
+        try (PdfDocument pdfDoc = new PdfDocument(
+                new PdfReader(SOURCE_FOLDER + "macProtectedDocument.pdf", new ReaderProperties().setPassword(PASSWORD)),
+                CompareTool.createTestPdfWriter(outputFileName),
+                new StampingProperties().preserveEncryption().disableMac())) {
+            pdfDoc.addNewPage().addAnnotation(new PdfTextAnnotation(new Rectangle(100, 100, 100, 100)));
+        }
+        Assertions.assertNull(new CompareTool().enableEncryptionCompare().compareByContent(
+                outputFileName, cmpFileName, DESTINATION_FOLDER, "diff", PASSWORD, PASSWORD));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
+    public void disableMacInAppendModeTest() throws IOException, InterruptedException {
+        // We do not disable MAC in append mode if it was there
+        String fileName = "disableMacInAppendModeTest.pdf";
+        String outputFileName = DESTINATION_FOLDER + fileName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName;
+
+        try (PdfDocument pdfDoc = new PdfDocument(
+                new PdfReader(SOURCE_FOLDER + "macProtectedDocument.pdf", new ReaderProperties().setPassword(PASSWORD)),
+                CompareTool.createTestPdfWriter(outputFileName),
+                new StampingProperties().useAppendMode().disableMac())) {
             pdfDoc.addNewPage().addAnnotation(new PdfTextAnnotation(new Rectangle(100, 100, 100, 100)));
         }
         Assertions.assertNull(new CompareTool().enableEncryptionCompare().compareByContent(
@@ -282,5 +320,79 @@ public class MacIntegrityProtectorReadingAndRewritingTest extends ExtendedITextT
                     new ReaderProperties().setPassword(PASSWORD)))) {
             }
         });
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
+    public void noSaltTest() {
+        String message = Assertions.assertThrows(PdfException.class, () -> {
+            try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "noSaltTest.pdf",
+                    new ReaderProperties().setPassword(PASSWORD)))) {
+            }
+        }).getMessage();
+        Assertions.assertEquals(KernelExceptionMessageConstant.MAC_VALIDATION_NO_SALT, message);
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
+    public void readTamperedMacProtectedDocumentTest() {
+        String message = Assertions.assertThrows(PdfException.class, () -> {
+            try (PdfDocument ignored = new PdfDocument(
+                    new PdfReader(SOURCE_FOLDER + "thirdPartyMacProtectedDocumentTampered.pdf",
+                    new ReaderProperties().setPassword(PASSWORD)))) {
+            }
+        }).getMessage();
+        Assertions.assertEquals(KernelExceptionMessageConstant.MAC_VALIDATION_FAILED, message);
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
+    public void doNotThrowOnValidationTest1() throws IOException, InterruptedException {
+        String fileName = "doNotThrowOnValidationTest1.pdf";
+        String outputFileName = DESTINATION_FOLDER + fileName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName;
+
+        StampingProperties stampingProperties = new StampingProperties();
+        stampingProperties.registerDependency(IMacContainerLocator.class,
+                new StandaloneMacContainerLocator() {
+                    @Override
+                    public void handleMacValidationError(MacValidationException exception) {
+                        // do nothing
+                    }
+                });
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "macProtectionStrippedTest.pdf",
+                new ReaderProperties().setPassword(PASSWORD)),
+                CompareTool.createTestPdfWriter(outputFileName), stampingProperties)) {
+        }
+
+        new CompareTool().compareByContent(outputFileName, cmpFileName, DESTINATION_FOLDER, "diff");
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
+    public void doNotThrowOnValidationTest2() throws IOException, InterruptedException {
+        String fileName = "doNotThrowOnValidationTest2.pdf";
+        String outputFileName = DESTINATION_FOLDER + fileName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName;
+
+        StampingProperties stampingProperties = new StampingProperties();
+        stampingProperties.registerDependency(IMacContainerLocator.class,
+                new StandaloneMacContainerLocator() {
+                    @Override
+                    public void handleMacValidationError(MacValidationException exception) {
+                        // do nothing
+                    }
+                });
+        try (PdfDocument pdfDoc = new PdfDocument(
+                new PdfReader(SOURCE_FOLDER + "thirdPartyMacProtectedDocumentTampered.pdf",
+                new ReaderProperties().setPassword(PASSWORD)),
+                CompareTool.createTestPdfWriter(outputFileName), stampingProperties)) {
+        }
+
+        new CompareTool().compareByContent(outputFileName, cmpFileName, DESTINATION_FOLDER, "diff");
     }
 }

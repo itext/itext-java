@@ -214,7 +214,7 @@ public class UnicodeBasedPasswordEncryptionTest extends ExtendedITextTest {
 
         encryptionUtil.checkDecryptedWithPasswordContent(destinationFolder + filename, ownerPassword, PdfEncryptionTestUtils.PAGE_TEXT_CONTENT);
 
-        CompareTool compareTool = new CompareTool().enableEncryptionCompare();
+        CompareTool compareTool = new CompareTool().enableEncryptionCompare(false);
         String compareResult = compareTool.compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_", ownerPassword, ownerPassword);
         if (compareResult != null) {
             fail(compareResult);

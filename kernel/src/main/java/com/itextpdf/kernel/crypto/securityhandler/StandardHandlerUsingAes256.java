@@ -92,6 +92,17 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
         return new AesDecryptor(nextObjectKey, 0, nextObjectKeySize);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setPermissions(int permissions, PdfDictionary encryptionDictionary) {
+        super.setPermissions(permissions, encryptionDictionary);
+
+        byte[] aes256Perms = getAes256Perms(permissions, isEncryptMetadata());
+        encryptionDictionary.put(PdfName.Perms, new PdfLiteral(StreamUtil.createEscapedString(aes256Perms)));
+    }
+
     void setAES256DicEntries(PdfDictionary encryptionDictionary, byte[] oeKey, byte[] ueKey, byte[] aes256Perms,
                                      boolean encryptMetadata, boolean embeddedFilesOnly) {
         int version = 5;
@@ -191,21 +202,7 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
 
 
             // Algorithm 10
-            byte[] permsp = IVGenerator.getIV(16);
-            permsp[0] = (byte) permissions;
-            permsp[1] = (byte) (permissions >> 8);
-            permsp[2] = (byte) (permissions >> 16);
-            permsp[3] = (byte) (permissions >> 24);
-            permsp[4] = (byte) (255);
-            permsp[5] = (byte) (255);
-            permsp[6] = (byte) (255);
-            permsp[7] = (byte) (255);
-            permsp[8] = encryptMetadata ? (byte) 'T' : (byte) 'F';
-            permsp[9] = (byte) 'a';
-            permsp[10] = (byte) 'd';
-            permsp[11] = (byte) 'b';
-            ac = new AESCipherCBCnoPad(true, nextObjectKey);
-            aes256Perms = ac.processBlock(permsp, 0, permsp.length);
+            aes256Perms = getAes256Perms(permissions, encryptMetadata);
 
             this.permissions = permissions;
             this.encryptMetadata = encryptMetadata;
@@ -214,6 +211,28 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
         } catch (Exception ex) {
             throw new PdfException(KernelExceptionMessageConstant.PDF_ENCRYPTION, ex);
         }
+    }
+
+    private byte[] getAes256Perms(int permissions, boolean encryptMetadata) {
+        byte[] aes256Perms;
+        AESCipherCBCnoPad ac;
+        byte[] permsp = IVGenerator.getIV(16);
+        permsp[0] = (byte) permissions;
+        permsp[1] = (byte) (permissions >> 8);
+        permsp[2] = (byte) (permissions >> 16);
+        permsp[3] = (byte) (permissions >> 24);
+        permsp[4] = (byte) (255);
+        permsp[5] = (byte) (255);
+        permsp[6] = (byte) (255);
+        permsp[7] = (byte) (255);
+        permsp[8] = encryptMetadata ? (byte) 'T' : (byte) 'F';
+        permsp[9] = (byte) 'a';
+        permsp[10] = (byte) 'd';
+        permsp[11] = (byte) 'b';
+        ac = new AESCipherCBCnoPad(true, nextObjectKey);
+        aes256Perms = ac.processBlock(permsp, 0, permsp.length);
+
+        return aes256Perms;
     }
 
     private void initKeyAndReadDictionary(PdfDictionary encryptionDictionary, byte[] password) {
@@ -235,7 +254,7 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
             byte[] perms = getIsoBytes(encryptionDictionary.getAsString(PdfName.Perms));
             PdfNumber pValue = (PdfNumber) encryptionDictionary.get(PdfName.P);
 
-            this.permissions = pValue.longValue();
+            this.permissions = pValue.intValue();
 
             byte[] hash;
 

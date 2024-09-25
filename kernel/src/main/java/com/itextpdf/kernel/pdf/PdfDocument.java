@@ -30,6 +30,7 @@ import com.itextpdf.commons.actions.sequence.SequenceId;
 import com.itextpdf.commons.utils.DIContainer;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.kernel.actions.data.ITextCoreProductData;
@@ -1102,7 +1103,10 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                 xref.writeXrefTableAndTrailer(this, fileId, crypto);
                 writer.flush();
                 if (writer.getOutputStream() instanceof CountOutputStream) {
-                    long amountOfBytes = ((CountOutputStream) writer.getOutputStream()).getAmountOfWrittenBytes();
+                    final long amountOfBytes = ((CountOutputStream) writer.getOutputStream()).getAmountOfWrittenBytes();
+                    manager.onEvent(new SizeOfPdfStatisticsEvent(amountOfBytes, ITextCoreProductData.getInstance()));
+                } else if (writer.getOutputStream() instanceof ByteArrayOutputStream) {
+                    final long amountOfBytes = ((ByteArrayOutputStream) writer.getOutputStream()).size();
                     manager.onEvent(new SizeOfPdfStatisticsEvent(amountOfBytes, ITextCoreProductData.getInstance()));
                 }
             }
@@ -1112,7 +1116,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         } finally {
             if (writer != null && isCloseWriter()) {
                 try {
-                    writer.close();
+                    writer.finish();
                 } catch (Exception e) {
                     Logger logger = LoggerFactory.getLogger(PdfDocument.class);
                     logger.error(IoLogMessageConstant.PDF_WRITER_CLOSING_FAILED, e);
@@ -2434,7 +2438,9 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                 writer.enableByteArrayWritingMode();
             }
         } else if (writer.properties.encryptionProperties != null &&
-                writer.properties.encryptionProperties.macProperties != null) {
+                writer.properties.encryptionProperties.macProperties != null &&
+                writer.properties.pdfVersion != null &&
+                PdfVersion.PDF_2_0.compareTo(writer.properties.pdfVersion) <= 0) {
             writer.enableByteArrayWritingMode();
         }
     }

@@ -54,4 +54,12 @@ public class StandaloneMacContainerLocator implements IMacContainerLocator {
             PdfDictionary authDictionary) {
         return new StandaloneMacIntegrityProtector(document, authDictionary);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void handleMacValidationError(MacValidationException exception) {
+        throw exception;
+    }
 }

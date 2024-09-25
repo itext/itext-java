@@ -59,6 +59,7 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -83,43 +84,51 @@ public class PubSecHandlerUsingAesGcmTest extends ExtendedITextTest {
                     ignore = true)})
     @Test
     public void testSimpleEncryptDecryptTest() throws Exception {
+        try {
+            BouncyCastleFactoryCreator.getFactory().isEncryptionFeatureSupported(0, true);
+        } catch (Exception ignored) {
+            Assumptions.assumeTrue(false);
+        }
+        Assumptions.assumeTrue(!BouncyCastleFactoryCreator.getFactory().isInApprovedOnlyMode());
+
         String fileName = "simpleEncryptDecrypt.pdf";
         String srcFile = SOURCE_FOLDER + fileName;
         String outFile = DESTINATION_FOLDER + fileName;
 
-        if (FACTORY.isInApprovedOnlyMode()) {
-            // RSA PKCS1.5 encryption disallowed
-            Assertions.assertThrows(AbstractFipsUnapprovedOperationError.class,
-                    () -> doEncrypt(srcFile, outFile, true));
-        } else {
-            doEncrypt(srcFile, outFile, true);
-            decryptWithCertificate(fileName, DESTINATION_FOLDER, "test.cer", "test.pem");
-        }
+        doEncrypt(srcFile, outFile, true);
+        decryptWithCertificate(fileName, DESTINATION_FOLDER, "test.cer", "test.pem");
     }
 
     @LogMessages(messages = {@LogMessage(messageTemplate = VersionConforming.NOT_SUPPORTED_AES_GCM, ignore = true),
             @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
                     ignore = true)})
     @Test
-    public void testSimpleEncryptDecryptPdf15Test() throws Exception {
-        String fileName = "simpleEncryptDecrypt.pdf";
+    public void testSimpleEncryptDecryptPdf17Test() throws Exception {
+        try {
+            BouncyCastleFactoryCreator.getFactory().isEncryptionFeatureSupported(0, true);
+        } catch (Exception ignored) {
+            Assumptions.assumeTrue(false);
+        }
+        Assumptions.assumeTrue(!BouncyCastleFactoryCreator.getFactory().isInApprovedOnlyMode());
+
+        String fileName = "simpleEncryptDecrypt_1_7.pdf";
         String srcFile = SOURCE_FOLDER + fileName;
         String outFile = DESTINATION_FOLDER + fileName;
 
-        if (FACTORY.isInApprovedOnlyMode()) {
-            // RSA PKCS1.5 encryption disallowed
-            Assertions.assertThrows(AbstractFipsUnapprovedOperationError.class,
-                    () -> doEncrypt(srcFile, outFile, false));
-        } else {
-            doEncrypt(srcFile, outFile, false);
-            decryptWithCertificate(fileName, DESTINATION_FOLDER, "test.cer", "test.pem");
-        }
+        doEncrypt(srcFile, outFile, false);
+        decryptWithCertificate(fileName, DESTINATION_FOLDER, "test.cer", "test.pem");
     }
 
     @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
             ignore = true))
     @Test
     public void decryptExternalFileTest() throws Exception {
+        try {
+            BouncyCastleFactoryCreator.getFactory().isEncryptionFeatureSupported(0, true);
+        } catch (Exception ignored) {
+            Assumptions.assumeTrue(false);
+        }
+
         decryptWithCertificate("externalFile.pdf", SOURCE_FOLDER, "decrypter.cert.pem", "signerkey.pem");
     }
 

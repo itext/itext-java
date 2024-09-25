@@ -42,6 +42,7 @@ import com.itextpdf.kernel.crypto.securityhandler.StandardSecurityHandler;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.mac.IMacContainerLocator;
+import com.itextpdf.kernel.mac.MacValidationException;
 import com.itextpdf.kernel.security.IExternalDecryptionProcess;
 import com.itextpdf.kernel.mac.AbstractMacIntegrityProtector;
 
@@ -67,52 +68,12 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
 
     private int cryptoMode;
 
-    private Long permissions;
+    private Integer permissions;
     private boolean encryptMetadata;
     private boolean embeddedFilesOnly;
     private byte[] documentId;
     private SecurityHandler securityHandler;
     private AbstractMacIntegrityProtector macContainer;
-
-    /**
-     * Creates the encryption.
-     *
-     * @param userPassword   the user password. Can be null or of zero length, which is equal to
-     *                       omitting the user password
-     * @param ownerPassword  the owner password. If it's null or empty, iText will generate
-     *                       a random string to be used as the owner password
-     * @param permissions    the user permissions
-     *                       The open permissions for the document can be
-     *                       {@link EncryptionConstants#ALLOW_PRINTING},
-     *                       {@link EncryptionConstants#ALLOW_MODIFY_CONTENTS},
-     *                       {@link EncryptionConstants#ALLOW_COPY},
-     *                       {@link EncryptionConstants#ALLOW_MODIFY_ANNOTATIONS},
-     *                       {@link EncryptionConstants#ALLOW_FILL_IN},
-     *                       {@link EncryptionConstants#ALLOW_SCREENREADERS},
-     *                       {@link EncryptionConstants#ALLOW_ASSEMBLY} and
-     *                       {@link EncryptionConstants#ALLOW_DEGRADED_PRINTING}.
-     *                       The permissions can be combined by ORing them
-     * @param encryptionType the type of encryption. It can be one of
-     *                       {@link EncryptionConstants#STANDARD_ENCRYPTION_40},
-     *                       {@link EncryptionConstants#STANDARD_ENCRYPTION_128},
-     *                       {@link EncryptionConstants#ENCRYPTION_AES_128}
-     *                       or {@link EncryptionConstants#ENCRYPTION_AES_256}.
-     *                       Optionally {@link EncryptionConstants#DO_NOT_ENCRYPT_METADATA} can be
-     *                       ORed to output the metadata in cleartext.
-     *                       {@link EncryptionConstants#EMBEDDED_FILES_ONLY} can be ORed as well.
-     *                       Please be aware that the passed encryption types may override permissions:
-     *                       {@link EncryptionConstants#STANDARD_ENCRYPTION_40} implicitly sets
-     *                       {@link EncryptionConstants#DO_NOT_ENCRYPT_METADATA} and
-     *                       {@link EncryptionConstants#EMBEDDED_FILES_ONLY} as false;
-     *                       {@link EncryptionConstants#STANDARD_ENCRYPTION_128} implicitly sets
-     *                       {@link EncryptionConstants#EMBEDDED_FILES_ONLY} as false;
-     * @param documentId     document id which will be used for encryption
-     * @param version        the {@link PdfVersion} of the target document for encryption
-     */
-    public PdfEncryption(byte[] userPassword, byte[] ownerPassword, int permissions, int encryptionType,
-            byte[] documentId, PdfVersion version) {
-        this(userPassword, ownerPassword, permissions, encryptionType, documentId, version, null);
-    }
 
     /**
      * Creates the encryption.
@@ -228,45 +189,6 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
      *                       {@link EncryptionConstants#EMBEDDED_FILES_ONLY} as false;
      *
      * @param version        the {@link PdfVersion} of the target document for encryption
-     */
-    public PdfEncryption(Certificate[] certs, int[] permissions, int encryptionType, PdfVersion version) {
-        this(certs, permissions, encryptionType, version, null);
-    }
-
-    /**
-     * Creates the certificate encryption.
-     * <p>
-     * An array of one or more public certificates must be provided together with
-     * an array of the same size for the permissions for each certificate.
-     *
-     * @param certs          the public certificates to be used for the encryption
-     * @param permissions    the user permissions for each of the certificates
-     *                       The open permissions for the document can be
-     *                       {@link EncryptionConstants#ALLOW_PRINTING},
-     *                       {@link EncryptionConstants#ALLOW_MODIFY_CONTENTS},
-     *                       {@link EncryptionConstants#ALLOW_COPY},
-     *                       {@link EncryptionConstants#ALLOW_MODIFY_ANNOTATIONS},
-     *                       {@link EncryptionConstants#ALLOW_FILL_IN},
-     *                       {@link EncryptionConstants#ALLOW_SCREENREADERS},
-     *                       {@link EncryptionConstants#ALLOW_ASSEMBLY} and
-     *                       {@link EncryptionConstants#ALLOW_DEGRADED_PRINTING}.
-     *                       The permissions can be combined by ORing them
-     * @param encryptionType the type of encryption. It can be one of
-     *                       {@link EncryptionConstants#STANDARD_ENCRYPTION_40},
-     *                       {@link EncryptionConstants#STANDARD_ENCRYPTION_128},
-     *                       {@link EncryptionConstants#ENCRYPTION_AES_128}
-     *                       or {@link EncryptionConstants#ENCRYPTION_AES_256}.
-     *                       Optionally {@link EncryptionConstants#DO_NOT_ENCRYPT_METADATA} can be ORed
-     *                       to output the metadata in cleartext.
-     *                       {@link EncryptionConstants#EMBEDDED_FILES_ONLY} can be ORed as well.
-     *                       Please be aware that the passed encryption types may override permissions:
-     *                       {@link EncryptionConstants#STANDARD_ENCRYPTION_40} implicitly sets
-     *                       {@link EncryptionConstants#DO_NOT_ENCRYPT_METADATA} and
-     *                       {@link EncryptionConstants#EMBEDDED_FILES_ONLY} as false;
-     *                       {@link EncryptionConstants#STANDARD_ENCRYPTION_128} implicitly sets
-     *                       {@link EncryptionConstants#EMBEDDED_FILES_ONLY} as false;
-     *
-     * @param version        the {@link PdfVersion} of the target document for encryption
      * @param macContainer   {@link AbstractMacIntegrityProtector} class for MAC integrity protection
      */
     public PdfEncryption(Certificate[] certs, int[] permissions, int encryptionType, PdfVersion version,
@@ -308,25 +230,11 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param pdfDict {@link PdfDictionary}, which represents encryption dictionary
      * @param password {@code byte[]}, which represents encryption password
-     * @param documentId original file ID, the first element in {@link PdfName#ID} key of trailer.
+     * @param documentId original file ID, the first element in {@link PdfName#ID} key of trailer
      */
     public PdfEncryption(PdfDictionary pdfDict, byte[] password, byte[] documentId) {
-        this(pdfDict, password, documentId, null);
-    }
-
-    /**
-     * Creates {@link PdfEncryption} instance based on already existing standard encryption dictionary.
-     *
-     * @param pdfDict {@link PdfDictionary}, which represents encryption dictionary
-     * @param password {@code byte[]}, which represents encryption password
-     * @param documentId original file ID, the first element in {@link PdfName#ID} key of trailer
-     * @param macContainer   {@link AbstractMacIntegrityProtector} class for MAC integrity protection
-     */
-    public PdfEncryption(PdfDictionary pdfDict, byte[] password, byte[] documentId,
-            AbstractMacIntegrityProtector macContainer) {
         super(pdfDict);
         setForbidRelease();
-        this.macContainer = macContainer;
         this.documentId = documentId;
 
         int revision = readAndSetCryptoModeForStdHandler(pdfDict);
@@ -376,24 +284,7 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfEncryption(PdfDictionary pdfDict, Key certificateKey, Certificate certificate,
             String certificateKeyProvider, IExternalDecryptionProcess externalDecryptionProcess) {
-        this(pdfDict, certificateKey, certificate, certificateKeyProvider, externalDecryptionProcess, null);
-    }
-
-    /**
-     * Creates {@link PdfEncryption} instance based on already existing public encryption dictionary.
-     *
-     * @param pdfDict {@link PdfDictionary}, which represents encryption dictionary
-     * @param certificateKey the recipient private {@link Key} to the certificate
-     * @param certificate the recipient {@link Certificate}, which serves as recipient identifier
-     * @param certificateKeyProvider the certificate key provider id for {@link java.security.Security#getProvider}
-     * @param externalDecryptionProcess {@link IExternalDecryptionProcess} the external decryption process to be used
-     * @param macContainer   {@link AbstractMacIntegrityProtector} class for MAC integrity protection
-     */
-    public PdfEncryption(PdfDictionary pdfDict, Key certificateKey, Certificate certificate,
-            String certificateKeyProvider, IExternalDecryptionProcess externalDecryptionProcess,
-            AbstractMacIntegrityProtector macContainer) {
         super(pdfDict);
-        this.macContainer = macContainer;
         setForbidRelease();
         int revision = readAndSetCryptoModeForPubSecHandler(pdfDict);
         switch (revision) {
@@ -503,7 +394,7 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
      *
      * @return the encryption permissions, an unsigned 32-bit quantity.
      */
-    public Long getPermissions() {
+    public Integer getPermissions() {
         return permissions;
     }
 
@@ -515,6 +406,16 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
      */
     public int getCryptoMode() {
         return cryptoMode;
+    }
+
+    /**
+     * Gets encryption algorithm.
+     *
+     * @return the encryption algorithm
+     * @see EncryptionConstants
+     */
+    public int getEncryptionAlgorithm() {
+        return cryptoMode & EncryptionConstants.ENCRYPTION_MASK;
     }
 
     public boolean isMetadataEncrypted() {
@@ -872,16 +773,18 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
                 throw new PdfException(KernelExceptionMessageConstant.MAC_FOR_ENCRYPTION_5);
             }
         }
-        if (getCryptoMode() < EncryptionConstants.ENCRYPTION_AES_256) {
+
+        final int encryption = getEncryptionAlgorithm();
+        if (encryption < EncryptionConstants.ENCRYPTION_AES_256) {
             VersionConforming.validatePdfVersionForDeprecatedFeatureLogWarn(document, PdfVersion.PDF_2_0,
                     VersionConforming.DEPRECATED_ENCRYPTION_ALGORITHMS);
-        } else if (getCryptoMode() == EncryptionConstants.ENCRYPTION_AES_256) {
+        } else if (encryption == EncryptionConstants.ENCRYPTION_AES_256) {
             PdfNumber r = getPdfObject().getAsNumber(PdfName.R);
             if (r != null && r.intValue() == 5) {
                 VersionConforming.validatePdfVersionForDeprecatedFeatureLogWarn(document, PdfVersion.PDF_2_0,
                         VersionConforming.DEPRECATED_AES256_REVISION);
             }
-        } else if (getCryptoMode() == EncryptionConstants.ENCRYPTION_AES_GCM) {
+        } else if (encryption == EncryptionConstants.ENCRYPTION_AES_GCM) {
             VersionConforming.validatePdfVersionForNotSupportedFeatureLogError(document, PdfVersion.PDF_2_0,
                     VersionConforming.NOT_SUPPORTED_AES_GCM);
         }
@@ -897,10 +800,16 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
             PdfString kdfSalt = getPdfObject().getAsString(PdfName.KDFSalt);
             if (kdfSalt == null) {
                 getPdfObject().put(PdfName.KDFSalt, new PdfString(macContainer.getKdfSalt()).setHexWriting(true));
+                getPdfObject().setModified();
             }
+        } else {
+            document.getCatalog().removeDeveloperExtension(PdfDeveloperExtension.ISO_32004);
         }
-        if (getCryptoMode() == EncryptionConstants.ENCRYPTION_AES_GCM) {
+
+        if (getEncryptionAlgorithm() == EncryptionConstants.ENCRYPTION_AES_GCM) {
             document.getCatalog().addDeveloperExtension(PdfDeveloperExtension.ISO_32003);
+        } else {
+            document.getCatalog().removeDeveloperExtension(PdfDeveloperExtension.ISO_32003);
         }
     }
 
@@ -909,18 +818,70 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
     }
 
     void configureEncryptionParametersFromReader(PdfDocument document, PdfDictionary trailer) {
-        if (trailer.getAsDictionary(PdfName.AuthCode) != null) {
-            macContainer = document.getDiContainer().getInstance(IMacContainerLocator.class)
-                    .createMacIntegrityProtector(document, trailer.getAsDictionary(PdfName.AuthCode));
-            macContainer.setFileEncryptionKey(securityHandler.getMkey().length == 0 ?
-                    securityHandler.getNextObjectKey() : securityHandler.getMkey());
-            PdfString kdfSalt = getPdfObject().getAsString(PdfName.KDFSalt);
-            if (kdfSalt != null) {
-                macContainer.setKdfSalt(kdfSalt.getValueBytes());
+        PdfVersion sourceVersion = document.getReader().headerPdfVersion;
+        PdfVersion destVersion = sourceVersion;
+        if (document.getWriter() != null && document.getWriter().getProperties().pdfVersion != null) {
+            destVersion = document.getWriter().getProperties().pdfVersion;
+        }
+        try {
+            if (trailer.getAsDictionary(PdfName.AuthCode) != null) {
+                macContainer = document.getDiContainer().getInstance(IMacContainerLocator.class)
+                        .createMacIntegrityProtector(document, trailer.getAsDictionary(PdfName.AuthCode));
+                macContainer.setFileEncryptionKey(securityHandler.getMkey().length == 0 ?
+                        securityHandler.getNextObjectKey() : securityHandler.getMkey());
+                PdfString kdfSalt = getPdfObject().getAsString(PdfName.KDFSalt);
+                if (kdfSalt != null) {
+                    macContainer.setKdfSalt(kdfSalt.getValueBytes());
+                }
+                macContainer.validateMacToken();
+
+                // Disable MAC for writing if explicitly requested. In append mode we cannot disable it because it will
+                // remove MAC protection from all previous revisions also for knowledgeable attackers
+                // TODO DEVSIX-8635 - Verify MAC permission and embed MAC in stamping mode for public key encryption
+                if (document.properties.disableMac && !document.properties.appendMode &&
+                        securityHandler instanceof StandardSecurityHandler) {
+                    macContainer = null;
+                    updateMacPermission();
+                }
+            } else if (PdfVersion.PDF_2_0.compareTo(destVersion) <= 0 &&
+                    permissions != null && (permissions & MAC_DISABLED) == 0) {
+                // TODO DEVSIX-8635 - Verify MAC permission and embed MAC in stamping mode for public key encryption
+                throw new MacValidationException(KernelExceptionMessageConstant.MAC_PERMS_WITHOUT_MAC);
+            } else if (!document.properties.disableMac && !document.properties.appendMode &&
+                    securityHandler instanceof StandardSecurityHandler) {
+                // TODO DEVSIX-8635 - Verify MAC permission and embed MAC in stamping mode for public key encryption
+
+                // This is the branch responsible for embedding MAC into the documents without MAC
+                // Do not embed MAC in append mode as it does not add extra security
+
+                PdfNumber vValue = getPdfObject().getAsNumber(PdfName.V);
+                if (vValue == null) {
+                    throw new PdfException(KernelExceptionMessageConstant.ILLEGAL_V_VALUE);
+                }
+                final int v = vValue.intValue();
+                // We do not support MAC for increasing PDF version to 2.0 (old encryption do not support it)
+                // and decreasing from 2.0 (not supported by the spec)
+                // v >= 5 stands for supported encryption algorithms for MAC being used
+                if (PdfVersion.PDF_2_0.compareTo(destVersion) <= 0 && PdfVersion.PDF_2_0.compareTo(sourceVersion) <= 0
+                        && v >= 5) {
+                    macContainer = document.getDiContainer().getInstance(IMacContainerLocator.class)
+                            .createMacIntegrityProtector(document, EncryptionProperties.DEFAULT_MAC_PROPERTIES);
+
+                    updateMacPermission();
+                }
             }
-            macContainer.validateMacToken();
-        } else if (permissions != null && (permissions & MAC_DISABLED) == 0) {
-            throw new PdfException(KernelExceptionMessageConstant.MAC_PERMS_WITHOUT_MAC);
+        } catch (MacValidationException exception) {
+            document.getDiContainer().getInstance(IMacContainerLocator.class).handleMacValidationError(exception);
+        }
+    }
+
+    private void updateMacPermission() {
+        // We don't parse permissions on reading for PubSec currently
+        if (permissions != null) {
+            permissions = configureAccessibilityPermissionsForMac(permissions.intValue());
+            if (securityHandler instanceof StandardSecurityHandler) {
+                ((StandardSecurityHandler) securityHandler).setPermissions(permissions.intValue(), this.getPdfObject());
+            }
         }
     }
 }

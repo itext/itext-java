@@ -53,9 +53,9 @@ public class PdfDocumentEvent extends Event {
     public static final String END_PAGE = "EndPdfPage";
 
     /**
-     * Dispatched before writer is flushed to a document.
+     * Dispatched before writer is closed.
      */
-    public static final String END_WRITER_FLUSH = "EndWriterFlush";
+    public static final String START_WRITER_CLOSING = "StartWriterClosing";
     /**
      * Dispatched after writer is flushed to a document.
      */

@@ -25,6 +25,7 @@ package com.itextpdf.signatures.mac;
 import com.itextpdf.kernel.mac.IMacContainerLocator;
 import com.itextpdf.kernel.mac.AbstractMacIntegrityProtector;
 import com.itextpdf.kernel.mac.MacProperties;
+import com.itextpdf.kernel.mac.MacValidationException;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 
@@ -57,5 +58,13 @@ public class SignatureMacContainerLocator implements IMacContainerLocator {
     public AbstractMacIntegrityProtector createMacIntegrityProtector(PdfDocument document,
             PdfDictionary authDictionary) {
         return new SignatureMacIntegrityProtector(document, authDictionary);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void handleMacValidationError(MacValidationException exception) {
+        throw exception;
     }
 }

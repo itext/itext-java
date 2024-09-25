@@ -347,7 +347,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Add an extensions dictionary containing developer prefix identification and version
+     * Adds an extensions dictionary containing developer prefix identification and version
      * numbers for developer extensions that occur in this document.
      * See ISO 32000-1, Table 28 – Entries in the catalog dictionary.
      *
@@ -393,6 +393,39 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
                     return;
             }
             extensions.put(extension.getPrefix(), extension.getDeveloperExtensions());
+        }
+    }
+
+    /**
+     * Removes an extensions dictionary containing developer prefix identification and version
+     * numbers for developer extensions that do not occur in this document.
+     * See ISO 32000-1, Table 28 – Entries in the catalog dictionary.
+     *
+     * @param extension developer extension to be removed from the document
+     */
+    public void removeDeveloperExtension(PdfDeveloperExtension extension) {
+        PdfDictionary extensions = getPdfObject().getAsDictionary(PdfName.Extensions);
+        if (extensions == null) {
+            return;
+        }
+
+        if (extension.isMultiValued()) {
+            PdfArray existingExtensionArray = extensions.getAsArray(extension.getPrefix());
+            if (existingExtensionArray == null) {
+                return;
+            }
+
+            for (int i = 0; i < existingExtensionArray.size(); i++) {
+                PdfDictionary pdfDict = existingExtensionArray.getAsDictionary(i);
+                // for array-based extensions, we check for membership only, since comparison doesn't make sense
+                if (pdfDict.getAsNumber(PdfName.ExtensionLevel).intValue() == extension.getExtensionLevel()) {
+                    existingExtensionArray.remove(i);
+                    existingExtensionArray.setModified();
+                    return;
+                }
+            }
+        } else {
+            extensions.remove(extension.getPrefix());
         }
     }
 

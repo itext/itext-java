@@ -283,6 +283,7 @@ public final class KernelExceptionMessageConstant {
     public static final String MAC_VALIDATION_EXCEPTION = "Unexpected exception occurred during MAC token validation.";
     public static final String MAC_VALIDATION_FAILED =
             "MAC integrity protection was compromised. Document content was modified.";
+    public static final String MAC_VALIDATION_NO_SALT = "MAC token validation failed. Salt is not found.";
     public static final String MISSING_REQUIRED_FIELD_IN_FONT_DICTIONARY
             = "Missing required field {0} in font dictionary.";
     public static final String MUST_BE_A_TAGGED_DOCUMENT = "Must be a tagged document.";

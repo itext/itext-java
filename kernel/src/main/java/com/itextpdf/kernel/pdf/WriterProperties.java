@@ -29,7 +29,6 @@ import java.security.cert.Certificate;
 
 public class WriterProperties {
 
-
     protected int compressionLevel;
 
     /**
@@ -163,7 +162,8 @@ public class WriterProperties {
      */
     public WriterProperties setStandardEncryption(byte[] userPassword, byte[] ownerPassword, int permissions,
             int encryptionAlgorithm) {
-        return setStandardEncryption(userPassword, ownerPassword, permissions, encryptionAlgorithm, null);
+        return setStandardEncryption(userPassword, ownerPassword, permissions, encryptionAlgorithm,
+                EncryptionProperties.DEFAULT_MAC_PROPERTIES);
     }
 
     /**
@@ -198,7 +198,8 @@ public class WriterProperties {
      *                            {@link EncryptionConstants#EMBEDDED_FILES_ONLY} as false;
      *                            {@link EncryptionConstants#STANDARD_ENCRYPTION_128} implicitly sets
      *                            {@link EncryptionConstants#EMBEDDED_FILES_ONLY} as false;
-     * @param macProperties {@link MacProperties} class to configure MAC integrity protection properties
+     * @param macProperties {@link MacProperties} class to configure MAC integrity protection properties.
+     *                                          Pass {@code null} if you want to disable MAC protection for any reason
      *
      * @return this {@link WriterProperties} instance
      */
@@ -243,7 +244,8 @@ public class WriterProperties {
      * @return this {@link WriterProperties} instance
      */
     public WriterProperties setPublicKeyEncryption(Certificate[] certs, int[] permissions, int encryptionAlgorithm) {
-        return setPublicKeyEncryption(certs, permissions, encryptionAlgorithm, null);
+        return setPublicKeyEncryption(certs, permissions, encryptionAlgorithm,
+                EncryptionProperties.DEFAULT_MAC_PROPERTIES);
     }
 
     /**
@@ -276,7 +278,8 @@ public class WriterProperties {
      *                            {@link EncryptionConstants#EMBEDDED_FILES_ONLY} as false;
      *                            {@link EncryptionConstants#STANDARD_ENCRYPTION_128} implicitly sets
      *                            {@link EncryptionConstants#EMBEDDED_FILES_ONLY} as false;
-     * @param macProperties       {@link MacProperties} class to configure MAC integrity protection properties
+     * @param macProperties       {@link MacProperties} class to configure MAC integrity protection properties.
+     *                                           Pass {@code null} if you want to disable MAC protection for any reason
      *
      * @return this {@link WriterProperties} instance
      */

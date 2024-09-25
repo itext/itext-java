@@ -130,20 +130,6 @@ public class PdfWriter extends PdfOutputStream {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void flush() throws IOException {
-        super.flush();
-        if (document != null) {
-            document.dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.END_WRITER_FLUSH, document));
-        }
-        if (isByteArrayWritingMode()) {
-            completeByteArrayWritingMode();
-        }
-    }
-
-    /**
      * Indicates if to use full compression mode.
      *
      * @return true if to use full compression, false otherwise.
@@ -209,6 +195,19 @@ public class PdfWriter extends PdfOutputStream {
      */
     protected void initCryptoIfSpecified(PdfVersion version) {
         EncryptionProperties encryptProps = properties.encryptionProperties;
+        // Suppress MAC properties for PDF version < 2.0 and old deprecated encryption algorithms
+        // if default ones have been passed to WriterProperties
+        final int encryptionAlgorithm = crypto == null ?
+                (encryptProps.encryptionAlgorithm & EncryptionConstants.ENCRYPTION_MASK) :
+                crypto.getEncryptionAlgorithm();
+        if (encryptProps.macProperties == EncryptionProperties.DEFAULT_MAC_PROPERTIES) {
+            if ((version == null || version.compareTo(PdfVersion.PDF_2_0) < 0) ||
+                    (encryptionAlgorithm != EncryptionConstants.ENCRYPTION_AES_256 &&
+                            encryptionAlgorithm != EncryptionConstants.ENCRYPTION_AES_GCM)) {
+                encryptProps.macProperties = null;
+            }
+        }
+
         AbstractMacIntegrityProtector mac = encryptProps.macProperties == null ? null : document.getDiContainer()
                 .getInstance(IMacContainerLocator.class)
                 .createMacIntegrityProtector(document, encryptProps.macProperties);
@@ -419,6 +418,19 @@ public class PdfWriter extends PdfOutputStream {
             objectStream.flush();
             objectStream = null;
         }
+    }
+
+    void finish() throws IOException {
+        if (document != null && !document.isClosed()) {
+            // Writer is always closed as part of document closing
+            document.dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.START_WRITER_CLOSING, document));
+
+            if (isByteArrayWritingMode()) {
+                completeByteArrayWritingMode();
+            }
+        }
+
+        close();
     }
 
     /**

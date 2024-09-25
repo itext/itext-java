@@ -96,6 +96,76 @@ public class SignedDocumentWithMacTest extends ExtendedITextTest {
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
             ignore = true))
+    public void signNotMacProtectedDocTest() throws Exception {
+        String fileName = "signNotMacProtectedDocTest.pdf";
+        String srcFileName = SOURCE_FOLDER + "noMacProtectionDocument.pdf";
+        String outputFileName = DESTINATION_FOLDER + fileName;
+        String signCertFileName = CERTS_SRC + "signCertRsa01.pem";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName;
+
+        Certificate[] signRsaChain = PemFileHelper.readFirstChain(signCertFileName);
+        PrivateKey signRsaPrivateKey = PemFileHelper.readFirstKey(signCertFileName, PRIVATE_KEY_PASSWORD);
+
+        try (PdfReader reader = new PdfReader(srcFileName, new ReaderProperties().setPassword(ENCRYPTION_PASSWORD));
+                OutputStream outputStream = FileUtil.getFileOutputStream(outputFileName)) {
+            PdfSigner pdfSigner = new PdfSigner(reader, outputStream, new StampingProperties());
+            performSignDetached(pdfSigner, signRsaPrivateKey, signRsaChain);
+        }
+
+        ReaderProperties properties = new ReaderProperties().setPassword(ENCRYPTION_PASSWORD);
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outputFileName, cmpFileName, properties, properties));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
+    public void signNotMacProtectedDoc17Test() throws Exception {
+        String fileName = "signNotMacProtectedDoc17Test.pdf";
+        String srcFileName = SOURCE_FOLDER + "noMacProtectionDocument_1_7.pdf";
+        String outputFileName = DESTINATION_FOLDER + fileName;
+        String signCertFileName = CERTS_SRC + "signCertRsa01.pem";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName;
+
+        Certificate[] signRsaChain = PemFileHelper.readFirstChain(signCertFileName);
+        PrivateKey signRsaPrivateKey = PemFileHelper.readFirstKey(signCertFileName, PRIVATE_KEY_PASSWORD);
+
+        try (PdfReader reader = new PdfReader(srcFileName, new ReaderProperties().setPassword(ENCRYPTION_PASSWORD));
+                OutputStream outputStream = FileUtil.getFileOutputStream(outputFileName)) {
+            PdfSigner pdfSigner = new PdfSigner(reader, outputStream, new StampingProperties());
+            performSignDetached(pdfSigner, signRsaPrivateKey, signRsaChain);
+        }
+
+        ReaderProperties properties = new ReaderProperties().setPassword(ENCRYPTION_PASSWORD);
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outputFileName, cmpFileName, properties, properties));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
+    public void signNotMacProtectedDocInAppendModeTest() throws Exception {
+        // MAC should not be added in append mode
+        String fileName = "signNotMacProtectedDocInAppendModeTest.pdf";
+        String srcFileName = SOURCE_FOLDER + "noMacProtectionDocument.pdf";
+        String outputFileName = DESTINATION_FOLDER + fileName;
+        String signCertFileName = CERTS_SRC + "signCertRsa01.pem";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName;
+
+        Certificate[] signRsaChain = PemFileHelper.readFirstChain(signCertFileName);
+        PrivateKey signRsaPrivateKey = PemFileHelper.readFirstKey(signCertFileName, PRIVATE_KEY_PASSWORD);
+
+        try (PdfReader reader = new PdfReader(srcFileName, new ReaderProperties().setPassword(ENCRYPTION_PASSWORD));
+                OutputStream outputStream = FileUtil.getFileOutputStream(outputFileName)) {
+            PdfSigner pdfSigner = new PdfSigner(reader, outputStream, new StampingProperties().useAppendMode());
+            performSignDetached(pdfSigner, signRsaPrivateKey, signRsaChain);
+        }
+
+        ReaderProperties properties = new ReaderProperties().setPassword(ENCRYPTION_PASSWORD);
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outputFileName, cmpFileName, properties, properties));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void signMacProtectedDocInAppendModeTest() throws Exception {
         String fileName = "signMacProtectedDocInAppendModeTest.pdf";
         String srcFileName = SOURCE_FOLDER + "macEncryptedDoc.pdf";

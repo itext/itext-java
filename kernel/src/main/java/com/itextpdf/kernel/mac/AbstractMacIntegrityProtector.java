@@ -122,6 +122,9 @@ public abstract class AbstractMacIntegrityProtector {
      * introduced to the document in question, after MAC container is integrated.
      */
     public void validateMacToken() {
+        if (kdfSalt == null) {
+            throw new MacValidationException(KernelExceptionMessageConstant.MAC_VALIDATION_NO_SALT);
+        }
         try {
             byte[] macKey = generateDecryptedKey(macContainerReader.parseMacKey());
             long[] byteRange = macContainerReader.getByteRange();
@@ -143,12 +146,12 @@ public abstract class AbstractMacIntegrityProtector {
 
             if (!Arrays.equals(expectedMac, actualMac) ||
                     !Arrays.equals(expectedMessageDigest, actualMessageDigest)) {
-                throw new PdfException(KernelExceptionMessageConstant.MAC_VALIDATION_FAILED);
+                throw new MacValidationException(KernelExceptionMessageConstant.MAC_VALIDATION_FAILED);
             }
         } catch (PdfException e) {
             throw e;
         } catch (Exception e) {
-            throw new PdfException(KernelExceptionMessageConstant.MAC_VALIDATION_EXCEPTION, e);
+            throw new MacValidationException(KernelExceptionMessageConstant.MAC_VALIDATION_EXCEPTION, e);
         }
     }
 
@@ -187,7 +190,7 @@ public abstract class AbstractMacIntegrityProtector {
             return null;
         }
         final String algorithm = MacProperties.macDigestAlgorithmToString(macProperties.getMacDigestAlgorithm());
-        MessageDigest digest = DigestAlgorithms.getMessageDigest(algorithm, null);
+        MessageDigest digest = DigestAlgorithms.getMessageDigest(algorithm, BC_FACTORY.getProviderName());
         byte[] buf = new byte[8192];
         int rd;
         while ((rd = inputStream.read(buf, 0, buf.length)) > 0) {
@@ -311,7 +314,7 @@ public abstract class AbstractMacIntegrityProtector {
 
         final String algorithm = MacProperties.macDigestAlgorithmToString(macProperties.getMacDigestAlgorithm());
         // Hash messageBytes to get messageDigest attribute
-        MessageDigest digest = DigestAlgorithms.getMessageDigest(algorithm, null);
+        MessageDigest digest = DigestAlgorithms.getMessageDigest(algorithm, BC_FACTORY.getProviderName());
         digest.update(messageBytes);
         byte[] messageDigest = digestBytes(messageBytes);
 

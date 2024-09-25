@@ -63,7 +63,7 @@ public class PdfEncryptionTestUtils {
         checkDecryptedWithPasswordContent(destinationFolder + filename, OWNER, PAGE_TEXT_CONTENT);
         checkDecryptedWithPasswordContent(destinationFolder + filename, USER, PAGE_TEXT_CONTENT);
 
-        CompareTool compareTool = new CompareTool().enableEncryptionCompare();
+        CompareTool compareTool = new CompareTool().enableEncryptionCompare(false);
         String compareResult = compareTool.compareByContent(destinationFolder + filename,
                 sourceFolder + "cmp_" + filename, destinationFolder, "diff_", USER, USER);
         if (compareResult != null) {

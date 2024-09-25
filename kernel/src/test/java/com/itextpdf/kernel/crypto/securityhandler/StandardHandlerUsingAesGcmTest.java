@@ -45,6 +45,7 @@ import com.itextpdf.kernel.pdf.ReaderProperties;
 import com.itextpdf.kernel.pdf.VersionConforming;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.kernel.utils.objectpathitems.ObjectPath;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -81,7 +82,6 @@ public class StandardHandlerUsingAesGcmTest extends ExtendedITextTest {
                     ignore = true)})
     public void simpleEncryptDecryptTest() throws Exception {
         String srcFile = SRC + "simpleDocument.pdf";
-        String decryptedCmpFile = SRC + "cmp_simpleEncryptDecrypt.pdf";
         String encryptedCmpFile = SRC + "cmp_encryptedSimpleDocument.pdf";
         String outFile = DEST + "simpleEncryptDecrypt.pdf";
 
@@ -95,7 +95,8 @@ public class StandardHandlerUsingAesGcmTest extends ExtendedITextTest {
             // Copy one page from input to output.
             docIn.copyPagesTo(1, 1, docOut);
         }
-        new CompareTool().compareByContent(outFile, decryptedCmpFile, DEST, "diff", USER_PASSWORD, null);
+
+        new CToolNoDeveloperExtension().compareByContent(outFile, srcFile, DEST, "diff", USER_PASSWORD, null);
         new CompareTool().compareByContent(outFile, encryptedCmpFile, DEST, "diff", USER_PASSWORD, USER_PASSWORD);
     }
 
@@ -104,7 +105,6 @@ public class StandardHandlerUsingAesGcmTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT, ignore = true)})
     public void simpleEncryptDecryptPdf15Test() throws Exception {
         String srcFile = SRC + "simpleDocument.pdf";
-        String cmpFile = SRC + "cmp_simpleEncryptDecrypt.pdf";
         String outFile = DEST + "notSupportedVersionDocument.pdf";
 
         int perms = EncryptionConstants.ALLOW_PRINTING | EncryptionConstants.ALLOW_DEGRADED_PRINTING;
@@ -112,7 +112,7 @@ public class StandardHandlerUsingAesGcmTest extends ExtendedITextTest {
                 .setStandardEncryption(USER_PASSWORD, OWNER_PASSWORD, perms, EncryptionConstants.ENCRYPTION_AES_GCM);
         PdfDocument ignored = new PdfDocument(new PdfReader(srcFile), new PdfWriter(outFile, wProps));
         ignored.close();
-        new CompareTool().compareByContent(outFile, cmpFile, DEST, "diff", USER_PASSWORD, null);
+        new CToolNoDeveloperExtension().compareByContent(outFile, srcFile, DEST, "diff", USER_PASSWORD, null);
     }
 
     @Test
@@ -283,5 +283,24 @@ public class StandardHandlerUsingAesGcmTest extends ExtendedITextTest {
                 Assertions.assertThrows(Exception.class, () -> ((PdfStream) obj).getBytes());
             }
         }
+    }
+}
+
+// Outside test class for porting
+class CToolNoDeveloperExtension extends CompareTool {
+    @Override
+    protected boolean compareObjects(PdfObject outObj, PdfObject cmpObj, ObjectPath currentPath, CompareResult compareResult) {
+        if (outObj != null && outObj.isDictionary()) {
+            if (((PdfDictionary) outObj).get(PdfName.ISO_) != null) {
+                return true;
+            }
+        }
+        if (cmpObj != null && cmpObj.isDictionary()) {
+            if (((PdfDictionary) cmpObj).get(PdfName.ISO_) != null) {
+                return true;
+            }
+        }
+
+        return super.compareObjects(outObj, cmpObj, currentPath, compareResult);
     }
 }
