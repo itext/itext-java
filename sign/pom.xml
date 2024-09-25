@@ -36,6 +36,11 @@
     </dependency>
     <dependency>
       <groupId>com.itextpdf</groupId>
+      <artifactId>pdfua</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.itextpdf</groupId>
       <artifactId>pdftest</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>

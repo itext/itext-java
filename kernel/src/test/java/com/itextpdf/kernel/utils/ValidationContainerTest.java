@@ -22,11 +22,12 @@
  */
 package com.itextpdf.kernel.utils;
 
+import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.validation.IValidationChecker;
+import com.itextpdf.kernel.validation.IValidationContext;
 import com.itextpdf.kernel.validation.ValidationContainer;
 import com.itextpdf.kernel.validation.ValidationType;
 import com.itextpdf.kernel.validation.context.FontValidationContext;
-import com.itextpdf.kernel.validation.IValidationContext;
 import com.itextpdf.kernel.validation.context.PdfDocumentValidationContext;
 import com.itextpdf.test.ExtendedITextTest;
 
@@ -73,6 +74,11 @@ public class ValidationContainerTest extends ExtendedITextTest {
             } else {
                 objectValidationPerformed = true;
             }
+        }
+
+        @Override
+        public boolean isPdfObjectReadyToFlush(PdfObject object) {
+            return true;
         }
     }
 }

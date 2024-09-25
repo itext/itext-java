@@ -71,12 +71,14 @@ import com.itextpdf.pdfua.checkers.utils.headings.HeadingsChecker;
 import com.itextpdf.pdfua.checkers.utils.tables.TableCheckUtil;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
+import com.itextpdf.pdfua.logs.PdfUALogMessageConstants;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import org.slf4j.LoggerFactory;
 
 /**
  * The class defines the requirements of the PDF/UA-1 standard.
@@ -93,6 +95,8 @@ public class PdfUA1Checker implements IValidationChecker {
 
     private final PdfUAValidationContext context;
 
+    private boolean warnedOnPageFlush = false;
+
     /**
      * Creates PdfUA1Checker instance with PDF document which will be validated against PDF/UA-1 standard.
      *
@@ -105,6 +109,9 @@ public class PdfUA1Checker implements IValidationChecker {
         this.headingsChecker = new HeadingsChecker(context);
     }
 
+    /**
+     * {@inheritDoc}.
+     */
     @Override
     public void validate(IValidationContext context) {
         switch (context.getType()) {
@@ -148,6 +155,24 @@ public class PdfUA1Checker implements IValidationChecker {
     }
 
     /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public boolean isPdfObjectReadyToFlush(PdfObject object) {
+        return true;
+    }
+
+    /**
+     * Logs a warn on page flushing that page flushing is disabled in PDF/UA mode.
+     */
+    public void warnOnPageFlush() {
+        if (!warnedOnPageFlush) {
+            LoggerFactory.getLogger(PdfUA1Checker.class).warn(PdfUALogMessageConstants.PAGE_FLUSHING_DISABLED);
+            warnedOnPageFlush = true;
+        }
+    }
+
+    /**
      * Verify the conformity of the file specification dictionary.
      *
      * @param fileSpec the {@link PdfDictionary} containing file specification to be checked
@@ -159,7 +184,6 @@ public class PdfUA1Checker implements IValidationChecker {
             }
         }
     }
-
 
     private void checkText(String str, PdfFont font) {
         int index = FontCheckUtil.checkGlyphsOfText(str, font, new UaCharacterChecker());

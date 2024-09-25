@@ -32,6 +32,8 @@ import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.validation.ValidationContainer;
+import com.itextpdf.kernel.validation.context.PdfPageValidationContext;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.pdfa.logs.PdfALogMessageConstant;
@@ -40,12 +42,11 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 
+import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
-
-import java.io.IOException;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PdfAPageTest extends ExtendedITextTest {
@@ -193,7 +194,7 @@ public class PdfAPageTest extends ExtendedITextTest {
         int pageCount = 3;
         for (int i = 0; i < pageCount; i++) {
             PdfPage page = pdfDoc.addNewPage();
-            pdfDoc.checker.checkSinglePage(page);
+            pdfDoc.getDiContainer().getInstance(ValidationContainer.class).validate(new PdfPageValidationContext(page));
             page.flush(false);
         }
 

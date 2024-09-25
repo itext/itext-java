@@ -22,7 +22,6 @@
  */
 package com.itextpdf.pdfa.checker;
 
-import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.PatternColor;
@@ -43,20 +42,18 @@ import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.pdf.function.PdfType4Function;
-import com.itextpdf.layout.Canvas;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class PdfA2CheckerTest extends ExtendedITextTest {
@@ -435,7 +432,7 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
     public void checkSignatureTest() {
         PdfDictionary signatureDict = createSignatureDict();
         pdfA2Checker.checkSignature(signatureDict);
-        Assertions.assertTrue(pdfA2Checker.objectIsChecked(signatureDict));
+        Assertions.assertTrue(pdfA2Checker.isPdfObjectReadyToFlush(signatureDict));
     }
 
     @Test

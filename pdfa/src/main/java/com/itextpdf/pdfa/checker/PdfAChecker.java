@@ -59,11 +59,13 @@ import com.itextpdf.kernel.validation.context.SignTypeValidationContext;
 import com.itextpdf.kernel.validation.context.SignatureValidationContext;
 import com.itextpdf.kernel.validation.context.TagStructElementValidationContext;
 import com.itextpdf.kernel.validation.context.XrefTableValidationContext;
+import com.itextpdf.pdfa.logs.PdfALogMessageConstant;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.slf4j.LoggerFactory;
 
 /**
  * An abstract class that will run through all necessary checks defined in the
@@ -145,6 +147,8 @@ public abstract class PdfAChecker implements IValidationChecker {
     protected Map<PdfObject, PdfColorSpace> checkedObjectsColorspace = new HashMap<>();
 
     private boolean fullCheckMode = false;
+    private boolean alreadyLoggedThatPageFlushingWasNotPerformed = false;
+    private boolean alreadyLoggedThatObjectFlushingWasNotPerformed = false;
 
     /**
      * Creates a PdfAChecker with the required conformance.
@@ -181,6 +185,9 @@ public abstract class PdfAChecker implements IValidationChecker {
         checkOpenAction(catalogDict.get(PdfName.OpenAction));
     }
 
+    /**
+     * {@inheritDoc}.
+     */
     @Override
     public void validate(IValidationContext context) {
         CanvasGraphicsState gState = null;
@@ -260,11 +267,36 @@ public abstract class PdfAChecker implements IValidationChecker {
     }
 
     /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public boolean isPdfObjectReadyToFlush(PdfObject object) {
+        if (checkedObjects.contains(object)) {
+            return true;
+        }
+
+        if (object instanceof PdfDictionary && PdfName.Page.equals(((PdfDictionary) object).getAsName(PdfName.Type))) {
+            if (!alreadyLoggedThatPageFlushingWasNotPerformed) {
+                alreadyLoggedThatPageFlushingWasNotPerformed = true;
+                // This log message will be printed once for one instance of the document.
+                LoggerFactory.getLogger(PdfAChecker.class).warn(PdfALogMessageConstant.PDFA_PAGE_FLUSHING_WAS_NOT_PERFORMED);
+            }
+        } else if (!alreadyLoggedThatObjectFlushingWasNotPerformed) {
+            alreadyLoggedThatObjectFlushingWasNotPerformed = true;
+            // This log message will be printed once for one instance of the document.
+            LoggerFactory.getLogger(PdfAChecker.class).warn(PdfALogMessageConstant.PDFA_OBJECT_FLUSHING_WAS_NOT_PERFORMED);
+
+        }
+        return false;
+    }
+
+    /**
      * This method checks all requirements that must be fulfilled by a page in a
      * PDF/A document.
      * @param page the page that must be checked
      */
     public void checkSinglePage(PdfPage page) {
+        setPdfAOutputIntentColorSpace(page.getDocument().getCatalog().getPdfObject());
         checkPage(page);
     }
 
@@ -335,17 +367,6 @@ public abstract class PdfAChecker implements IValidationChecker {
      */
     public void setFullCheckMode(boolean fullCheckMode) {
         this.fullCheckMode = fullCheckMode;
-    }
-
-    /**
-     * Remembers which objects have already been checked, in order to avoid
-     * redundant checks.
-     *
-     * @param object the object to check
-     * @return whether or not the object has already been checked
-     */
-    public boolean objectIsChecked(PdfObject object) {
-        return checkedObjects.contains(object);
     }
 
     /**

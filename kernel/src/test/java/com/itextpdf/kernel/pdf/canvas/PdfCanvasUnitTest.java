@@ -32,18 +32,19 @@ import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.validation.IValidationChecker;
+import com.itextpdf.kernel.validation.IValidationContext;
 import com.itextpdf.kernel.validation.ValidationContainer;
 import com.itextpdf.kernel.validation.ValidationType;
 import com.itextpdf.kernel.validation.context.CanvasBmcValidationContext;
 import com.itextpdf.kernel.validation.context.ExtendedGStateValidationContext;
 import com.itextpdf.kernel.validation.context.FontGlyphsGStateValidationContext;
-import com.itextpdf.kernel.validation.IValidationContext;
 import com.itextpdf.kernel.validation.context.RenderingIntentValidationContext;
 import com.itextpdf.test.ExtendedITextTest;
 
@@ -212,6 +213,11 @@ public class PdfCanvasUnitTest extends ExtendedITextTest {
                 contentStream = glyphsContext.getContentStream();
                 gState = glyphsContext.getGraphicsState();
             }
+        }
+
+        @Override
+        public boolean isPdfObjectReadyToFlush(PdfObject object) {
+            return true;
         }
     }
 }

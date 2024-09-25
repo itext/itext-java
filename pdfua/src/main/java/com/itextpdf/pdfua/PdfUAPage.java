@@ -26,23 +26,27 @@ import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.pdfua.checkers.PdfUA1Checker;
 
 class PdfUAPage extends PdfPage {
-    protected PdfUAPage(PdfDictionary pdfObject) {
+    private final PdfUA1Checker checker;
+
+    protected PdfUAPage(PdfDictionary pdfObject, PdfUA1Checker checker) {
         super(pdfObject);
+        this.checker = checker;
     }
 
-    protected PdfUAPage(PdfDocument pdfDocument, PageSize pageSize) {
+    protected PdfUAPage(PdfDocument pdfDocument, PageSize pageSize, PdfUA1Checker checker) {
         super(pdfDocument, pageSize);
+        this.checker = checker;
     }
 
     @Override
     public void flush(boolean flushResourcesContentStreams) {
-        final PdfDocument document = getDocument();
-        if (((PdfUADocument) document).isClosing()) {
+        if (getDocument().isClosing()) {
             super.flush(flushResourcesContentStreams);
             return;
         }
-        ((PdfUADocument) document).warnOnPageFlush();
+        checker.warnOnPageFlush();
     }
 }

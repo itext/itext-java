@@ -39,8 +39,8 @@ import com.itextpdf.test.ExtendedITextTest;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class PdfA1CheckerTest extends ExtendedITextTest {
@@ -119,7 +119,7 @@ public class PdfA1CheckerTest extends ExtendedITextTest {
     public void checkSignatureTest() {
         PdfDictionary dict = new PdfDictionary();
         pdfA1Checker.checkSignature(dict);
-        Assertions.assertTrue(pdfA1Checker.objectIsChecked(dict));
+        Assertions.assertTrue(pdfA1Checker.isPdfObjectReadyToFlush(dict));
     }
 
     @Test

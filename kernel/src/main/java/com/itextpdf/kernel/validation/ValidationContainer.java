@@ -22,6 +22,8 @@
  */
 package com.itextpdf.kernel.validation;
 
+import com.itextpdf.kernel.pdf.PdfObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,4 +79,19 @@ public class ValidationContainer {
         return validationCheckers.contains(checker);
     }
 
+    /**
+     * Is {@link PdfObject} ready to flush according to all added {@link IValidationChecker} implementations.
+     *
+     * @param pdfObject the pdf object to check
+     *
+     * @return {@code true} if the object is ready to flush, {@code false} otherwise
+     */
+    public boolean isPdfObjectChecked(PdfObject pdfObject) {
+        for (IValidationChecker checker : validationCheckers) {
+            if (!checker.isPdfObjectReadyToFlush(pdfObject)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

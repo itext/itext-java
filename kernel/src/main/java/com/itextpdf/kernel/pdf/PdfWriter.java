@@ -32,8 +32,6 @@ import com.itextpdf.kernel.mac.IMacContainerLocator;
 import com.itextpdf.kernel.pdf.event.PdfDocumentEvent;
 import com.itextpdf.kernel.utils.ICopyFilter;
 import com.itextpdf.kernel.utils.NullCopyFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -43,6 +41,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PdfWriter extends PdfOutputStream {
     private static final byte[] OBJ = ByteUtils.getIsoBytes(" obj\n");
@@ -159,6 +159,15 @@ public class PdfWriter extends PdfOutputStream {
     public PdfWriter setCompressionLevel(int compressionLevel) {
         this.properties.setCompressionLevel(compressionLevel);
         return this;
+    }
+
+    /**
+     * Gets defined pdf version for the document.
+     *
+     * @return version for the document
+     */
+    public PdfVersion getPdfVersion() {
+        return properties.pdfVersion;
     }
 
     /**

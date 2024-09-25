@@ -40,9 +40,9 @@ import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.validation.IValidationChecker;
+import com.itextpdf.kernel.validation.IValidationContext;
 import com.itextpdf.kernel.validation.ValidationContainer;
 import com.itextpdf.kernel.validation.ValidationType;
-import com.itextpdf.kernel.validation.IValidationContext;
 import com.itextpdf.kernel.validation.context.PdfPageValidationContext;
 import com.itextpdf.test.ExtendedITextTest;
 
@@ -452,6 +452,11 @@ public class PageFlushingTest extends ExtendedITextTest {
             if (validationContext.getType() == ValidationType.PDF_PAGE) {
                 page = ((PdfPageValidationContext) validationContext).getPage();
             }
+        }
+
+        @Override
+        public boolean isPdfObjectReadyToFlush(PdfObject object) {
+            return true;
         }
     }
 

@@ -421,5 +421,10 @@ public class PdfDocumentUnitTest extends ExtendedITextTest {
                 documentValidationPerformed = true;
             }
         }
+
+        @Override
+        public boolean isPdfObjectReadyToFlush(PdfObject object) {
+            return true;
+        }
     }
 }

@@ -71,7 +71,6 @@ import com.itextpdf.kernel.xmp.XMPConst;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
-import com.itextpdf.kernel.xmp.options.PropertyOptions;
 import com.itextpdf.kernel.xmp.options.SerializeOptions;
 
 import java.io.Closeable;
@@ -106,7 +105,8 @@ public class PdfDocument implements Closeable {
             PdfName.AuthCode
     };
 
-    private static final IPdfPageFactory pdfPageFactory = new PdfPageFactory();
+    private static final Logger LOGGER = LoggerFactory.getLogger(PdfDocument.class);
+
     protected final StampingProperties properties;
     /**
      * List of indirect objects used in the document.
@@ -145,6 +145,7 @@ public class PdfDocument implements Closeable {
      * Document version.
      */
     protected PdfVersion pdfVersion = PdfVersion.PDF_1_7;
+    protected PdfConformance pdfConformance = PdfConformance.PDF_NONE_CONFORMANCE;
     protected FingerPrint fingerPrint;
     protected SerializeOptions serializeOptions = new SerializeOptions();
     protected PdfStructTreeRoot structTreeRoot;
@@ -158,6 +159,10 @@ public class PdfDocument implements Closeable {
      */
     protected boolean flushUnusedObjects = false;
     protected TagStructureContext tagStructureContext;
+
+    protected DocumentInfoHelper documentInfoHelper = new DocumentInfoHelper();
+    protected DefaultFontStrategy defaultFontStrategy = new DefaultFontStrategy(this);
+    protected IPdfPageFactory pdfPageFactory = new PdfPageFactory();
     /**
      * Cache of already serialized objects from this document for smart mode.
      */
@@ -179,7 +184,6 @@ public class PdfDocument implements Closeable {
      * The original modified (second) id when the document is read initially.
      */
     private PdfString modifiedDocumentId;
-    private PdfFont defaultFont = null;
     private EncryptedEmbeddedStreamsHandler encryptedEmbeddedStreamsHandler;
     /**
      * Document info.
@@ -281,15 +285,22 @@ public class PdfDocument implements Closeable {
 
         boolean writerHasEncryption = writerHasEncryption();
         if (properties.appendMode && writerHasEncryption) {
-            Logger logger = LoggerFactory.getLogger(PdfDocument.class);
-            logger.warn(IoLogMessageConstant.WRITER_ENCRYPTION_IS_IGNORED_APPEND);
+            LOGGER.warn(IoLogMessageConstant.WRITER_ENCRYPTION_IS_IGNORED_APPEND);
         }
         if (properties.preserveEncryption && writerHasEncryption) {
-            Logger logger = LoggerFactory.getLogger(PdfDocument.class);
-            logger.warn(IoLogMessageConstant.WRITER_ENCRYPTION_IS_IGNORED_PRESERVE);
+            LOGGER.warn(IoLogMessageConstant.WRITER_ENCRYPTION_IS_IGNORED_PRESERVE);
         }
 
         open(writer.properties.pdfVersion);
+    }
+
+    /**
+     * Checks if the document closing has been started or not.
+     *
+     * @return {@code true} if closing process has been started, otherwise {@code false}
+     */
+    public boolean isClosing() {
+        return isClosing;
     }
 
     /**
@@ -337,8 +348,7 @@ public class PdfDocument implements Closeable {
         try {
             getXmpMetadata();
         } catch (XMPException e) {
-            Logger logger = LoggerFactory.getLogger(PdfDocument.class);
-            logger.error(IoLogMessageConstant.EXCEPTION_WHILE_UPDATING_XMPMETADATA, e);
+            LOGGER.error(IoLogMessageConstant.EXCEPTION_WHILE_UPDATING_XMPMETADATA, e);
         }
     }
 
@@ -414,7 +424,6 @@ public class PdfDocument implements Closeable {
             XMPMeta xmpMeta = XMPMetaFactory.create();
             xmpMeta.setObjectName(XMPConst.TAG_XMPMETA);
             xmpMeta.setObjectName("");
-            addCustomMetadataExtensions(xmpMeta);
             try {
                 xmpMeta.setProperty(XMPConst.NS_DC, PdfConst.Format, "application/pdf");
                 setXmpMetadata(xmpMeta);
@@ -985,6 +994,14 @@ public class PdfDocument implements Closeable {
 
                 PdfObject crypto = null;
                 final Set<PdfIndirectReference> forbiddenToFlush = new HashSet<>();
+                documentInfoHelper.adjustDocumentInfo(getDocumentInfo());
+                // The following 2 operators prevent the possible inconsistency between root and info
+                // entries existing in the trailer object and corresponding fields. This inconsistency
+                // may appear when user gets trailer and explicitly sets new root or info dictionaries.
+                if (documentInfoHelper.shouldAddDocumentInfoToTrailer()) {
+                    trailer.put(PdfName.Info, getDocumentInfo().getPdfObject());
+                }
+                trailer.put(PdfName.Root, catalog.getPdfObject());
                 if (properties.appendMode) {
                     if (structTreeRoot != null) {
                         tryFlushTagStructure(true);
@@ -1005,10 +1022,12 @@ public class PdfDocument implements Closeable {
                     }
 
                     PdfObject pageRoot = catalog.getPageTree().generateTree();
-                    flushInfoDictionary(properties.appendMode);
                     if (catalog.getPdfObject().isModified() || pageRoot.isModified()) {
                         catalog.put(PdfName.Pages, pageRoot);
                         catalog.getPdfObject().flush(false);
+                    }
+                    if (getDocumentInfo().getPdfObject().isModified()) {
+                        getDocumentInfo().getPdfObject().flush(false);
                     }
                     flushFonts();
 
@@ -1057,8 +1076,8 @@ public class PdfDocument implements Closeable {
                     if (structTreeRoot != null) {
                         tryFlushTagStructure(false);
                     }
-                    flushInfoDictionary(properties.appendMode);
                     catalog.getPdfObject().flush(false);
+                    getDocumentInfo().getPdfObject().flush(false);
                     flushFonts();
 
                     if (writer.crypto != null) {
@@ -1094,11 +1113,6 @@ public class PdfDocument implements Closeable {
                     crypto.flush(false);
                 }
 
-                // The following operator prevents the possible inconsistency between root and info
-                // entries existing in the trailer object and corresponding fields. This inconsistency
-                // may appear when user gets trailer and explicitly sets new root or info dictionaries.
-                trailer.put(PdfName.Root, catalog.getPdfObject());
-
                 //By this time original and modified document ids should always be not null due to initializing in
                 // either writer properties, or in the writer init section on document open or from pdfreader. So we
                 // shouldn't worry about it being null next
@@ -1122,8 +1136,7 @@ public class PdfDocument implements Closeable {
                 try {
                     writer.finish();
                 } catch (Exception e) {
-                    Logger logger = LoggerFactory.getLogger(PdfDocument.class);
-                    logger.error(IoLogMessageConstant.PDF_WRITER_CLOSING_FAILED, e);
+                    LOGGER.error(IoLogMessageConstant.PDF_WRITER_CLOSING_FAILED, e);
                 }
             }
 
@@ -1131,8 +1144,7 @@ public class PdfDocument implements Closeable {
                 try {
                     reader.close();
                 } catch (Exception e) {
-                    Logger logger = LoggerFactory.getLogger(PdfDocument.class);
-                    logger.error(IoLogMessageConstant.PDF_READER_CLOSING_FAILED, e);
+                    LOGGER.error(IoLogMessageConstant.PDF_READER_CLOSING_FAILED, e);
                 }
             }
 
@@ -1239,15 +1251,14 @@ public class PdfDocument implements Closeable {
     public List<PdfPage> copyPagesTo(int pageFrom, int pageTo, PdfDocument toDocument, int insertBeforePage) {
         return copyPagesTo(pageFrom, pageTo, toDocument, insertBeforePage, null);
     }
-
-
+    
     /**
      * Get the {@link PdfConformance}
      *
      * @return the document conformance
      */
     public PdfConformance getConformance() {
-        return reader == null ? PdfConformance.PDF_NONE_CONFORMANCE : reader.getPdfConformance();
+        return pdfConformance;
     }
 
     /**
@@ -1441,8 +1452,7 @@ public class PdfDocument implements Closeable {
                     ((IPdfPageFormCopier) copier).recreateAcroformToProcessCopiedFields(toDocument);
                 }
             } else {
-                Logger logger = LoggerFactory.getLogger(PdfDocument.class);
-                logger.warn(IoLogMessageConstant.NOT_TAGGED_PAGES_IN_TAGGED_DOCUMENT);
+                LOGGER.warn(IoLogMessageConstant.NOT_TAGGED_PAGES_IN_TAGGED_DOCUMENT);
             }
         }
         if (catalog.isOutlineMode()) {
@@ -1609,7 +1619,7 @@ public class PdfDocument implements Closeable {
     public void addNamedDestination(PdfString key, PdfObject value) {
         checkClosingStatus();
         if (value.isArray() && ((PdfArray) value).get(0).isNumber()) {
-            LoggerFactory.getLogger(PdfDocument.class).warn(IoLogMessageConstant.INVALID_DESTINATION_TYPE);
+            LOGGER.warn(IoLogMessageConstant.INVALID_DESTINATION_TYPE);
         }
         catalog.addNamedDestination(key, value);
     }
@@ -1702,8 +1712,7 @@ public class PdfDocument implements Closeable {
      */
     public void addAssociatedFile(String description, PdfFileSpec fs) {
         if (null == ((PdfDictionary) fs.getPdfObject()).get(PdfName.AFRelationship)) {
-            Logger logger = LoggerFactory.getLogger(PdfDocument.class);
-            logger.error(IoLogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
+            LOGGER.error(IoLogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
         }
 
         PdfArray afArray = catalog.getPdfObject().getAsArray(PdfName.AF);
@@ -1758,7 +1767,7 @@ public class PdfDocument implements Closeable {
                         }
                     }
                 } catch (PdfException e) {
-                    LoggerFactory.getLogger(getClass()).error(e.getMessage());
+                    LOGGER.error(e.getMessage());
                 }
             }
         }
@@ -1781,8 +1790,7 @@ public class PdfDocument implements Closeable {
             throw new PdfException(KernelExceptionMessageConstant.CANNOT_SET_ENCRYPTED_PAYLOAD_TO_ENCRYPTED_DOCUMENT);
         }
         if (!PdfName.EncryptedPayload.equals(((PdfDictionary) fs.getPdfObject()).get(PdfName.AFRelationship))) {
-            LoggerFactory.getLogger(getClass())
-                    .error(IoLogMessageConstant.ENCRYPTED_PAYLOAD_FILE_SPEC_SHALL_HAVE_AFRELATIONSHIP_FILED_EQUAL_TO_ENCRYPTED_PAYLOAD);
+            LOGGER.error(IoLogMessageConstant.ENCRYPTED_PAYLOAD_FILE_SPEC_SHALL_HAVE_AFRELATIONSHIP_FILED_EQUAL_TO_ENCRYPTED_PAYLOAD);
         }
         PdfEncryptedPayload encryptedPayload = PdfEncryptedPayload.extractFrom(fs);
         if (encryptedPayload == null) {
@@ -1791,8 +1799,7 @@ public class PdfDocument implements Closeable {
         }
         PdfCollection collection = getCatalog().getCollection();
         if (collection != null) {
-            LoggerFactory.getLogger(getClass())
-                    .warn(IoLogMessageConstant.COLLECTION_DICTIONARY_ALREADY_EXISTS_IT_WILL_BE_MODIFIED);
+            LOGGER.warn(IoLogMessageConstant.COLLECTION_DICTIONARY_ALREADY_EXISTS_IT_WILL_BE_MODIFIED);
         } else {
             collection = new PdfCollection();
             getCatalog().setCollection(collection);
@@ -1912,19 +1919,7 @@ public class PdfDocument implements Closeable {
      * @return instance of {@link PdfFont} or {@code null} on error.
      */
     public PdfFont getDefaultFont() {
-        if (defaultFont == null) {
-            try {
-                defaultFont = PdfFontFactory.createFont();
-                if (writer != null) {
-                    defaultFont.makeIndirect(this);
-                }
-            } catch (IOException e) {
-                Logger logger = LoggerFactory.getLogger(PdfDocument.class);
-                logger.error(IoLogMessageConstant.EXCEPTION_WHILE_CREATING_DEFAULT_FONT, e);
-                defaultFont = null;
-            }
-        }
-        return defaultFont;
+        return defaultFontStrategy.getFont();
     }
 
     /**
@@ -2039,17 +2034,6 @@ public class PdfDocument implements Closeable {
     }
 
     /**
-     * Mark an object with {@link PdfObject#MUST_BE_FLUSHED}.
-     *
-     * @param pdfObject an object to mark.
-     */
-    protected void markObjectAsMustBeFlushed(PdfObject pdfObject) {
-        if (pdfObject.getIndirectReference() != null) {
-            pdfObject.getIndirectReference().setState(PdfObject.MUST_BE_FLUSHED);
-        }
-    }
-
-    /**
      * Flush an object.
      *
      * @param pdfObject     object to flush.
@@ -2058,7 +2042,18 @@ public class PdfDocument implements Closeable {
      * @throws IOException on error.
      */
     protected void flushObject(PdfObject pdfObject, boolean canBeInObjStm) throws IOException {
-        writer.flushObject(pdfObject, canBeInObjStm);
+        boolean flushAllowed = true;
+        if (!isClosing && this.getDiContainer().isRegistered(ValidationContainer.class)) {
+            ValidationContainer container = this.getDiContainer().getInstance(ValidationContainer.class);
+            if (container != null) {
+                flushAllowed = container.isPdfObjectChecked(pdfObject);
+            }
+        }
+        if (isClosing || flushAllowed) {
+            writer.flushObject(pdfObject, canBeInObjStm);
+        } else if (pdfObject.getIndirectReference() != null)  {
+            pdfObject.getIndirectReference().setState(PdfObject.MUST_BE_FLUSHED);
+        }
     }
 
     /**
@@ -2118,9 +2113,14 @@ public class PdfDocument implements Closeable {
                     throw new PdfException(
                             KernelExceptionMessageConstant.APPEND_MODE_REQUIRES_A_DOCUMENT_WITHOUT_ERRORS_EVEN_IF_RECOVERY_IS_POSSIBLE);
                 }
+                pdfConformance = reader.getPdfConformance();
             }
             xref.initFreeReferencesList(this);
             if (writer != null) {
+                if (writer.properties.addPdfAXmpMetadata != null || writer.properties.addPdfUaXmpMetadata != null) {
+                    pdfConformance = new PdfConformance(writer.properties.addPdfAXmpMetadata,
+                            writer.properties.addPdfUaXmpMetadata);
+                }
                 enableByteArrayWritingMode();
                 if (reader != null && reader.hasXrefStm() && writer.properties.isFullCompression == null) {
                     writer.properties.isFullCompression = Boolean.TRUE;
@@ -2252,31 +2252,6 @@ public class PdfDocument implements Closeable {
     }
 
     /**
-     * Adds custom XMP metadata extension. Useful for PDF/UA, ZUGFeRD, etc.
-     *
-     * @param xmpMeta {@link XMPMeta} to add custom metadata to.
-     */
-    protected void addCustomMetadataExtensions(XMPMeta xmpMeta) {
-    }
-
-    /**
-     * Flush info dictionary if needed.
-     *
-     * @param appendMode <code>true</code> if the document is edited in append mode.
-     */
-    protected void flushInfoDictionary(boolean appendMode) {
-        PdfObject infoDictObj = getDocumentInfo().getPdfObject();
-        if (!appendMode || infoDictObj.isModified()) {
-            infoDictObj.flush(false);
-        }
-
-        // The following operator prevents the possible inconsistency between root and info
-        // entries existing in the trailer object and corresponding fields. This inconsistency
-        // may appear when user gets trailer and explicitly sets new root or info dictionaries.
-        trailer.put(PdfName.Info, infoDictObj);
-    }
-
-    /**
      * Updates XMP metadata.
      * Shall be overridden.
      */
@@ -2286,11 +2261,11 @@ public class PdfDocument implements Closeable {
             // in the info dictionary.
             if (getXmpMetadataBytes() != null || writer.properties.addXmpMetadata
                     || pdfVersion.compareTo(PdfVersion.PDF_2_0) >= 0) {
-                setXmpMetadata(updateDefaultXmpMetadata());
+                final XMPMeta xmpMeta = updateDefaultXmpMetadata();
+                setXmpMetadata(xmpMeta);
             }
         } catch (XMPException e) {
-            Logger logger = LoggerFactory.getLogger(PdfDocument.class);
-            logger.error(IoLogMessageConstant.EXCEPTION_WHILE_UPDATING_XMPMETADATA, e);
+            LOGGER.error(IoLogMessageConstant.EXCEPTION_WHILE_UPDATING_XMPMETADATA, e);
         }
     }
 
@@ -2304,12 +2279,7 @@ public class PdfDocument implements Closeable {
     protected XMPMeta updateDefaultXmpMetadata() throws XMPException {
         XMPMeta xmpMeta = getXmpMetadata(true);
         XmpMetaInfoConverter.appendDocumentInfoToMetadata(getDocumentInfo(), xmpMeta);
-
-        if (isTagged() && writer.properties.addUAXmpMetadata && xmpMeta.getProperty(XMPConst.NS_PDFUA_ID, XMPConst.PART) == null) {
-            xmpMeta.setPropertyInteger(XMPConst.NS_PDFUA_ID, XMPConst.PART, 1,
-                    new PropertyOptions(PropertyOptions.SEPARATE_NODE));
-        }
-
+        PdfConformance.setConformanceToXmp(xmpMeta, pdfConformance);
         return xmpMeta;
     }
 
@@ -2410,8 +2380,7 @@ public class PdfDocument implements Closeable {
         } catch (Exception e) {
             structTreeRoot = null;
             structParentIndex = -1;
-            Logger logger = LoggerFactory.getLogger(PdfDocument.class);
-            logger.error(IoLogMessageConstant.TAG_STRUCTURE_INIT_FAILED, e);
+            LOGGER.error(IoLogMessageConstant.TAG_STRUCTURE_INIT_FAILED, e);
         }
     }
 
@@ -2638,8 +2607,7 @@ public class PdfDocument implements Closeable {
 
     private void processReadingError(String errorMessage) {
         if (StrictnessLevel.CONSERVATIVE.isStricter(reader.getStrictnessLevel())) {
-            Logger logger = LoggerFactory.getLogger(PdfDocument.class);
-            logger.error(errorMessage);
+            LOGGER.error(errorMessage);
         } else {
             throw new PdfException(errorMessage);
         }
@@ -2648,11 +2616,9 @@ public class PdfDocument implements Closeable {
     private static void overrideFullCompressionInWriterProperties(WriterProperties properties,
             boolean readerHasXrefStream) {
         if (Boolean.TRUE == properties.isFullCompression && !readerHasXrefStream) {
-            Logger logger = LoggerFactory.getLogger(PdfDocument.class);
-            logger.warn(KernelLogMessageConstant.FULL_COMPRESSION_APPEND_MODE_XREF_TABLE_INCONSISTENCY);
+            LOGGER.warn(KernelLogMessageConstant.FULL_COMPRESSION_APPEND_MODE_XREF_TABLE_INCONSISTENCY);
         } else if (Boolean.FALSE == properties.isFullCompression && readerHasXrefStream) {
-            Logger logger = LoggerFactory.getLogger(PdfDocument.class);
-            logger.warn(KernelLogMessageConstant.FULL_COMPRESSION_APPEND_MODE_XREF_STREAM_INCONSISTENCY);
+            LOGGER.warn(KernelLogMessageConstant.FULL_COMPRESSION_APPEND_MODE_XREF_STREAM_INCONSISTENCY);
         }
         properties.isFullCompression = readerHasXrefStream;
     }

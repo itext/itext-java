@@ -22,28 +22,29 @@
  */
 package com.itextpdf.pdfa;
 
-import java.nio.ByteBuffer;
-import java.nio.charset.CharacterCodingException;
-import java.nio.charset.StandardCharsets;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.pdf.DefaultFontStrategy;
+import com.itextpdf.kernel.pdf.PdfDocument;
 
 /**
- * Utilities to construct an XMP for a PDF/A file.
+ * The class presents default font strategy for PDF/A documents which
+ * doesn't provide default font because all used fonts must be embedded.
  */
-public class PdfAXMPUtil {
+public class PdfADefaultFontStrategy extends DefaultFontStrategy {
     /**
-     * Check whether the given byte array is an UTF-8 encoded character sequence.
+     * Instantiates a new {@link PdfADefaultFontStrategy} instance based on the document which will use that strategy.
      *
-     * @param array array to check
-     *
-     * @return true if array is UTF-8 encoded data, false otherwise
+     * @param pdfDocument the pdf document which will use that strategy
      */
-    public static boolean isUtf8(byte[] array) {
-        try {
-            StandardCharsets.UTF_8.newDecoder().decode(ByteBuffer.wrap(array));
-        }
-        catch (CharacterCodingException e) {
-            return false;
-        }
-        return true;
+    public PdfADefaultFontStrategy(PdfDocument pdfDocument) {
+        super(pdfDocument);
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public PdfFont getFont() {
+        return null;
     }
 }

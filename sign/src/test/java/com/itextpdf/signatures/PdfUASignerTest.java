@@ -20,8 +20,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.pdfua;
+package com.itextpdf.signatures;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.FileUtil;
@@ -37,13 +39,11 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
+import com.itextpdf.pdfua.PdfUAConfig;
+import com.itextpdf.pdfua.PdfUADocument;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
-import com.itextpdf.signatures.BouncyCastleDigest;
-import com.itextpdf.signatures.IExternalSignature;
-import com.itextpdf.signatures.PdfSigner;
-import com.itextpdf.signatures.PrivateKeySignature;
-import com.itextpdf.signatures.SignerProperties;
+import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 
@@ -56,7 +56,6 @@ import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.util.function.Consumer;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -66,12 +65,13 @@ import org.slf4j.LoggerFactory;
 
 @Tag("IntegrationTest")
 public class PdfUASignerTest extends ExtendedITextTest {
+    private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfua/PdfUASignerTest/";
-    private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/FreeSans.ttf";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/PdfUASignerTest/";
+    private static final String FONT = "./src/test/resources/com/itextpdf/signatures/font/FreeSans.ttf";
     private static final Logger logger = LoggerFactory.getLogger(PdfUASignerTest.class);
 
-    public static final String CERTIFICATE_FOLDER = "./src/test/resources/com/itextpdf/pdfua/certificates/";
+    public static final String CERTIFICATE_FOLDER = "./src/test/resources/com/itextpdf/signatures/certs/";
     private static final char[] PASSWORD = "testpassphrase".toCharArray();
 
     @BeforeAll
@@ -186,7 +186,7 @@ public class PdfUASignerTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO DEVSIX-8623 Spike: Get rid of PdfADocument, PdfUADocument, PdfAAgnosticDocument in favour of one PdfDocument
+    // TODO DEVSIX-8676 Enable keeping A and UA conformance in PdfSigner
     public void normalPdfSignerVisibleSignatureWithoutFont() throws GeneralSecurityException, IOException, AbstractOperatorCreationException, AbstractPKCSException {
         //This test should fail with the appropriate exception
         ByteArrayInputStream inPdf = generateSimplePdfUA1Document();
@@ -223,7 +223,7 @@ public class PdfUASignerTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO DEVSIX-8623 Spike: Get rid of PdfADocument, PdfUADocument, PdfAAgnosticDocument in favour of one PdfDocument
+    // TODO DEVSIX-8676 Enable keeping A and UA conformance in PdfSigner
     public void normalPdfSignerVisibleSignatureWithFontEmptyTU() throws GeneralSecurityException, IOException, AbstractOperatorCreationException, AbstractPKCSException {
         //Should throw the correct exception if the font is not set
         ByteArrayInputStream inPdf = generateSimplePdfUA1Document();
@@ -275,9 +275,9 @@ public class PdfUASignerTest extends ExtendedITextTest {
     private String generateSignature(ByteArrayInputStream inPdf, String name, Consumer<PdfSigner> signingAction) throws GeneralSecurityException, IOException, AbstractOperatorCreationException, AbstractPKCSException {
         String certFileName = CERTIFICATE_FOLDER + "sign.pem";
 
-        Security.addProvider(new BouncyCastleProvider());
+        Security.addProvider(BOUNCY_CASTLE_FACTORY.getProvider());
         PrivateKey signPrivateKey = PemFileHelper.readFirstKey(certFileName, PASSWORD);
-        IExternalSignature pks = new PrivateKeySignature(signPrivateKey, DigestAlgorithms.SHA256, BouncyCastleProvider.PROVIDER_NAME);
+        IExternalSignature pks = new PrivateKeySignature(signPrivateKey, DigestAlgorithms.SHA256, BOUNCY_CASTLE_FACTORY.getProviderName());
         Certificate[] signChain = PemFileHelper.readFirstChain(certFileName);
 
         String outPdf = DESTINATION_FOLDER + name + ".pdf";
@@ -294,9 +294,9 @@ public class PdfUASignerTest extends ExtendedITextTest {
     private String generateSignatureNormal(ByteArrayInputStream inPdf, String name, Consumer<PdfSigner> signingAction) throws GeneralSecurityException, IOException, AbstractOperatorCreationException, AbstractPKCSException {
         String certFileName = CERTIFICATE_FOLDER + "sign.pem";
 
-        Security.addProvider(new BouncyCastleProvider());
+        Security.addProvider(BOUNCY_CASTLE_FACTORY.getProvider());
         PrivateKey signPrivateKey = PemFileHelper.readFirstKey(certFileName, PASSWORD);
-        IExternalSignature pks = new PrivateKeySignature(signPrivateKey, DigestAlgorithms.SHA256, BouncyCastleProvider.PROVIDER_NAME);
+        IExternalSignature pks = new PrivateKeySignature(signPrivateKey, DigestAlgorithms.SHA256, BOUNCY_CASTLE_FACTORY.getProviderName());
         Certificate[] signChain = PemFileHelper.readFirstChain(certFileName);
 
         String outPdf = DESTINATION_FOLDER + name + ".pdf";

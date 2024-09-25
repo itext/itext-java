@@ -29,6 +29,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.kernel.pdf.PdfViewerPreferences;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
@@ -164,7 +165,7 @@ public class PdfAXmpTest extends ExtendedITextTest {
     }
 
     private void generatePdfAWithUA(OutputStream os) throws IOException {
-        WriterProperties wp = new WriterProperties().addUAXmpMetadata();
+        WriterProperties wp = new WriterProperties().addPdfUaXmpMetadata(PdfUAConformance.PDF_UA_1);
         try (PdfWriter w = new PdfWriter(os, wp)) {
             PdfOutputIntent outputIntent;
             try (InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm")) {
@@ -175,7 +176,8 @@ public class PdfAXmpTest extends ExtendedITextTest {
                         is
                 );
             }
-            PdfDocument pdfDoc = new PdfADocument(w, PdfAConformance.PDF_A_2A, outputIntent).setTagged();
+            PdfDocument pdfDoc = new PdfADocument(w, PdfAConformance.PDF_A_2A, outputIntent);
+            pdfDoc.setTagged();
             pdfDoc.getDocumentInfo().setTitle("Test document");
             pdfDoc.getCatalog().setViewerPreferences(new PdfViewerPreferences().setDisplayDocTitle(true));
             pdfDoc.getCatalog().setLang(new PdfString("en"));

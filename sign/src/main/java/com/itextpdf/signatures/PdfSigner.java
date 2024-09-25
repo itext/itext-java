@@ -49,9 +49,6 @@ import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.mac.IMacContainerLocator;
-import com.itextpdf.signatures.cms.CMSContainer;
-import com.itextpdf.signatures.cms.CmsAttribute;
-import com.itextpdf.signatures.mac.SignatureContainerGenerationEvent;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDate;
 import com.itextpdf.kernel.pdf.PdfDeveloperExtension;
@@ -71,6 +68,7 @@ import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
+import com.itextpdf.kernel.validation.ValidationContainer;
 import com.itextpdf.kernel.validation.context.SignTypeValidationContext;
 import com.itextpdf.kernel.validation.context.SignatureValidationContext;
 import com.itextpdf.layout.properties.Background;
@@ -79,8 +77,15 @@ import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.TransparentColor;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.tagging.IAccessibleElement;
-import com.itextpdf.pdfa.PdfAAgnosticPdfDocument;
+import com.itextpdf.pdfa.PdfADefaultFontStrategy;
+import com.itextpdf.pdfa.PdfADocument;
+import com.itextpdf.pdfa.PdfADocumentInfoHelper;
+import com.itextpdf.pdfa.PdfAPageFactory;
+import com.itextpdf.pdfa.checker.PdfAChecker;
+import com.itextpdf.signatures.cms.CMSContainer;
+import com.itextpdf.signatures.cms.CmsAttribute;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
+import com.itextpdf.signatures.mac.SignatureContainerGenerationEvent;
 import com.itextpdf.signatures.mac.SignatureDocumentClosingEvent;
 import com.itextpdf.signatures.mac.SignatureMacContainerLocator;
 
@@ -286,7 +291,9 @@ public class PdfSigner {
      * @return new {@link PdfDocument} instance
      */
     protected PdfDocument initDocument(PdfReader reader, PdfWriter writer, StampingProperties properties) {
-        return new PdfAAgnosticPdfDocument(reader, writer, properties);
+        // TODO DEVSIX-8676 Enable keeping A and UA conformance in PdfSigner
+        // TODO DEVSIX-8677 let users preserve document's conformance without knowing upfront their conformance
+        return new PdfSignerDocument(reader, writer, properties);
     }
 
     /**
@@ -1573,5 +1580,21 @@ public class PdfSigner {
     @FunctionalInterface
     interface ISignatureDataProvider {
         byte[] sign(SignatureApplier applier) throws GeneralSecurityException, IOException;
+    }
+
+    private static class PdfSignerDocument extends PdfDocument {
+        public PdfSignerDocument(PdfReader reader, PdfWriter writer, StampingProperties properties) {
+            super(reader, writer, properties);
+            if (getConformance().isPdfA()) {
+                PdfAChecker checker = PdfADocument.getCorrectCheckerFromConformance(getConformance().getAConformance());
+                ValidationContainer validationContainer = new ValidationContainer();
+                validationContainer.addChecker(checker);
+                getDiContainer().register(ValidationContainer.class, validationContainer);
+                this.pdfPageFactory = new PdfAPageFactory(checker);
+                this.documentInfoHelper = new PdfADocumentInfoHelper(this);
+                this.defaultFontStrategy = new PdfADefaultFontStrategy(this);
+                setFlushUnusedObjects(true);
+            }
+        }
     }
 }

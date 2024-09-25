@@ -27,9 +27,7 @@ import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
@@ -52,14 +50,13 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.pdfa.VeraPdfValidator;// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PdfUAGraphicsTest extends ExtendedITextTest {
@@ -87,8 +84,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
 
     @Test
     public void imageWithoutAlternativeDescription_ThrowsInLayout() throws MalformedURLException {
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream(),
-                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Document document = new Document(pdfDoc);
         Image img = new Image(ImageDataFactory.create(DOG));
         Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> {
@@ -104,8 +100,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
 
     @Test
     public void imageWithEmptyAlternativeDescription_ThrowsInLayout() throws MalformedURLException {
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream(),
-                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Document document = new Document(pdfDoc);
 
         Image img = new Image(ImageDataFactory.create(DOG));
@@ -212,8 +207,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
     @Test
     public void imageWithValidAlternativeDescription_OK() throws IOException, InterruptedException {
         final String OUTPUT_FILE = DESTINATION_FOLDER + "imageWithValidAlternativeDescription_OK.pdf";
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(OUTPUT_FILE,
-                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(OUTPUT_FILE));
         Document document = new Document(pdfDoc);
         Image img = new Image(ImageDataFactory.create(DOG));
         img.getAccessibilityProperties().setAlternateDescription("Alternative description");
@@ -228,8 +222,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
     @Test
     public void imageWithValidActualText_OK() throws IOException, InterruptedException {
         final String OUTPUT_FILE = DESTINATION_FOLDER + "imageWithValidActualText_OK.pdf";
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(OUTPUT_FILE,
-                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(OUTPUT_FILE));
         Document document = new Document(pdfDoc);
         Image img = new Image(ImageDataFactory.create(DOG));
         img.getAccessibilityProperties().setActualText("Actual text");
@@ -244,8 +237,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
     @Test
     public void imageWithCaption_OK() throws IOException, InterruptedException {
         final String OUTPUT_FILE = DESTINATION_FOLDER + "imageWithCaption_OK.pdf";
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(OUTPUT_FILE,
-                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(OUTPUT_FILE));
         Document document = new Document(pdfDoc);
 
         Div imgWithCaption = new Div();
@@ -271,8 +263,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
 
     @Test
     public void imageWithCaptionWithoutAlternateDescription_Throws() throws IOException {
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream(),
-                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Document document = new Document(pdfDoc);
 
         Div imgWithCaption = new Div();
@@ -295,8 +286,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
 
     @Test
     public void imageWithoutActualText_ThrowsInLayout() throws MalformedURLException {
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream(),
-                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Document document = new Document(pdfDoc);
         Image img = new Image(ImageDataFactory.create(DOG));
         img.getAccessibilityProperties().setActualText(null);
@@ -308,8 +298,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
 
     @Test
     public void imageWithEmptyActualText_ThrowsInLayout() throws MalformedURLException {
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream(),
-                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Document document = new Document(pdfDoc);
 
         Image img = new Image(ImageDataFactory.create(DOG));
@@ -321,8 +310,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
     @Test
     public void imageDirectlyOnCanvas_OK() throws IOException, InterruptedException {
         String OUTPUT_FILE = DESTINATION_FOLDER + "imageDirectlyOnCanvas_OK.pdf";
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(OUTPUT_FILE,
-                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(OUTPUT_FILE));
         Document document = new Document(pdfDoc);
 
         Image img = new Image(ImageDataFactory.create(DOG));
@@ -358,8 +346,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
     @Test
     public void imageDirectlyOnCanvasWithoutAlternateDescription_ThrowsOnClose()
             throws IOException {
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream(),
-                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
 
         TagTreePointer pointerForImage = new TagTreePointer(pdfDoc);
         PdfPage page = pdfDoc.addNewPage();
@@ -378,8 +365,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
     @Test
     public void imageDirectlyOnCanvasWithEmptyActualText_OK()
             throws IOException {
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream(),
-                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
 
         TagTreePointer pointerForImage = new TagTreePointer(pdfDoc);
         PdfPage page = pdfDoc.addNewPage();
@@ -395,8 +381,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
 
     @Test
     public void testOverflowImage() throws IOException {
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream(),
-                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Image img = new Image(ImageDataFactory.create(DOG));
         Document document = new Document(pdfDoc);
         document.add(new Div().setHeight(730).setBackgroundColor(ColorConstants.CYAN));
@@ -409,8 +394,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
 
     @Test
     public void testEmbeddedImageInTable() throws MalformedURLException {
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream(),
-                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Image img = new Image(ImageDataFactory.create(DOG));
         Document document = new Document(pdfDoc);
         Table table = new Table(2);
@@ -426,8 +410,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
 
     @Test
     public void testEmbeddedImageInDiv() throws MalformedURLException {
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream(),
-                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Image img = new Image(ImageDataFactory.create(DOG));
         Document document = new Document(pdfDoc);
         Div div = new Div();
@@ -439,8 +422,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
 
     @Test
     public void testEmbeddedImageInParagraph() throws MalformedURLException {
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream(),
-                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Image img = new Image(ImageDataFactory.create(DOG));
         Document document = new Document(pdfDoc);
         Div div = new Div();

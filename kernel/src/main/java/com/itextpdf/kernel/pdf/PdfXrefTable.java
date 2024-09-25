@@ -297,7 +297,9 @@ public class PdfXrefTable {
             int offsetSize = getOffsetSize(Math.max(startxref, size()));
             xrefStream.put(PdfName.W, new PdfArray(
                     Arrays.asList((PdfObject) new PdfNumber(1), new PdfNumber(offsetSize), new PdfNumber(2))));
-            xrefStream.put(PdfName.Info, document.getDocumentInfo().getPdfObject());
+            if (document.getTrailer().get(PdfName.Info) != null) {
+                xrefStream.put(PdfName.Info, document.getTrailer().get(PdfName.Info));
+            }
             xrefStream.put(PdfName.Root, document.getCatalog().getPdfObject());
             PdfArray index = new PdfArray();
             for (Integer section : sections) {

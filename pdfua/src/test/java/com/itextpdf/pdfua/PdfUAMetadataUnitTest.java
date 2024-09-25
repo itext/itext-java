@@ -28,9 +28,9 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfStream;
+import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.pdfua.checkers.PdfUA1Checker;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
@@ -118,8 +118,10 @@ public class PdfUAMetadataUnitTest extends ExtendedITextTest {
 
     @Test
     public void documentWithInvalidPdfVersionTest() {
-        PdfDocument pdfDocument = new PdfUATestPdfDocument(
-                new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
+        PdfDocumentCustomVersion pdfDocument = new PdfDocumentCustomVersion(
+                new PdfWriter(new ByteArrayOutputStream()), new PdfUAConfig(
+                PdfUAConformance.PDF_UA_1, "en-us", "title"));
+        pdfDocument.setPdfVersion(PdfVersion.PDF_2_0);
         pdfDocument.addNewPage();
         Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> pdfDocument.close());
         Assertions.assertEquals(PdfUAExceptionMessageConstants.INVALID_PDF_VERSION, e.getMessage());
@@ -161,6 +163,16 @@ public class PdfUAMetadataUnitTest extends ExtendedITextTest {
         @Override
         public void checkMetadata(PdfCatalog catalog) {
             super.checkMetadata(catalog);
+        }
+    }
+
+    private static class PdfDocumentCustomVersion extends PdfUADocument {
+        public PdfDocumentCustomVersion(PdfWriter writer, PdfUAConfig config) {
+            super(writer, config);
+        }
+
+        public void setPdfVersion(PdfVersion pdfVersion) {
+            this.pdfVersion = pdfVersion;
         }
     }
 }

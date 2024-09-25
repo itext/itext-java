@@ -42,7 +42,8 @@ public class WriterProperties {
      */
     protected boolean smartMode;
     protected boolean addXmpMetadata;
-    protected boolean addUAXmpMetadata;
+    protected PdfAConformance addPdfAXmpMetadata = null;
+    protected PdfUAConformance addPdfUaXmpMetadata = null;
     protected PdfVersion pdfVersion;
     protected EncryptionProperties encryptionProperties;
     /**
@@ -57,7 +58,6 @@ public class WriterProperties {
 
     public WriterProperties() {
         smartMode = false;
-        addUAXmpMetadata = false;
         compressionLevel = CompressionConstants.DEFAULT_COMPRESSION;
         isFullCompression = null;
         encryptionProperties = new EncryptionProperties();
@@ -98,6 +98,48 @@ public class WriterProperties {
      */
     public WriterProperties addXmpMetadata() {
         this.addXmpMetadata = true;
+        return this;
+    }
+
+    /**
+     * Adds PDF/A XMP metadata to the PDF document.
+     *
+     * <p>
+     * This method calls {@link #addXmpMetadata()} implicitly.
+     *
+     * <p>
+     * NOTE: Calling this method only affects the XMP metadata, but doesn't enable any additional checks that the
+     * created document meets all PDF/A requirements. When using this method make sure you are familiar with PDF/A
+     * document requirements. If you are not sure, use dedicated iText PDF/A module to create valid PDF/A documents.
+     *
+     * @param aConformance the PDF/A conformance which will be added to XMP metadata
+     *
+     * @return this {@link WriterProperties} instance
+     */
+    public WriterProperties addPdfAXmpMetadata(PdfAConformance aConformance) {
+        this.addPdfAXmpMetadata = aConformance;
+        addXmpMetadata();
+        return this;
+    }
+
+    /**
+     * Adds PDF/UA XMP metadata to the PDF document.
+     *
+     * <p>
+     * This method calls {@link #addXmpMetadata()} implicitly.
+     *
+     * <p>
+     * NOTE: Calling this method only affects the XMP metadata, but doesn't enable any additional checks that the
+     * created document meets all PDF/UA requirements. When using this method make sure you are familiar with PDF/UA
+     * document requirements. If you are not sure, use dedicated iText PDF/UA module to create valid PDF/UA documents.
+     *
+     * @param uaConformance the PDF/UA conformance which will be added to XMP metadata
+     *
+     * @return this {@link WriterProperties} instance
+     */
+    public WriterProperties addPdfUaXmpMetadata(PdfUAConformance uaConformance) {
+        this.addPdfUaXmpMetadata = uaConformance;
+        addXmpMetadata();
         return this;
     }
 
@@ -320,19 +362,6 @@ public class WriterProperties {
     public WriterProperties setModifiedDocumentId(PdfString modifiedDocumentId) {
         this.modifiedDocumentId = modifiedDocumentId;
         return this;
-    }
-
-    /**
-     * This method marks the document as PDF/UA and sets related flags is XMPMetaData.
-     * This method calls {@link #addXmpMetadata()} implicitly.
-     * NOTE: iText does not validate PDF/UA, which means we don't check if created PDF meets all PDF/UA requirements.
-     * Don't use this method if you are not familiar with PDF/UA specification in order to avoid creation of non-conformant PDF/UA file.
-     *
-     * @return this {@link WriterProperties} instance
-     */
-    public WriterProperties addUAXmpMetadata() {
-        this.addUAXmpMetadata = true;
-        return addXmpMetadata();
     }
 
     boolean isStandardEncryptionUsed() {

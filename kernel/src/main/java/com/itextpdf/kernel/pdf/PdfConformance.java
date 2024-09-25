@@ -25,6 +25,9 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.kernel.xmp.XMPConst;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
+import com.itextpdf.kernel.xmp.XMPMetaFactory;
+import com.itextpdf.kernel.xmp.XMPUtils;
+import com.itextpdf.kernel.xmp.options.PropertyOptions;
 import com.itextpdf.kernel.xmp.properties.XMPProperty;
 
 /**
@@ -193,6 +196,46 @@ public class PdfConformance {
     }
 
     /**
+     * Sets required fields into XMP metadata according to passed PDF conformance.
+     *
+     * @param xmpMeta the xmp metadata to which required PDF conformance fields will be set
+     * @param conformance the PDF conformance according to which XMP will be updated
+     *
+     * @throws XMPException if the file is not well-formed XML or if the parsing fails
+     */
+    public static void setConformanceToXmp(XMPMeta xmpMeta, PdfConformance conformance) throws XMPException {
+        if (conformance == null) {
+            return;
+        }
+        // Don't set any property if property value was set, so if
+        // smth was invalid in source document, it will be left as is.
+        // But if e.g. for PDF/A-4 revision wasn't specified, we will fix it.
+        if (conformance.isPdfUA()) {
+            if (xmpMeta.getProperty(XMPConst.NS_PDFUA_ID, XMPConst.PART) == null) {
+                xmpMeta.setPropertyInteger(XMPConst.NS_PDFUA_ID, XMPConst.PART, 1,
+                        new PropertyOptions(PropertyOptions.SEPARATE_NODE));
+            }
+        }
+        if (conformance.isPdfA()) {
+            final PdfAConformance aLevel = conformance.getAConformance();
+            if (xmpMeta.getProperty(XMPConst.NS_PDFA_ID, XMPConst.PART) == null) {
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, aLevel.getPart());
+            }
+            if (aLevel.getLevel() != null && xmpMeta.getProperty(XMPConst.NS_PDFA_ID, XMPConst.CONFORMANCE) == null) {
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.CONFORMANCE, aLevel.getLevel());
+            }
+            if ("4".equals(aLevel.getPart()) && xmpMeta.getProperty(XMPConst.NS_PDFA_ID, XMPConst.REV) == null) {
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.REV, PdfConformance.PDF_A_4_REVISION);
+            }
+
+            if (xmpMeta.getPropertyInteger(XMPConst.NS_PDFUA_ID, XMPConst.PART) != null) {
+                XMPMeta taggedExtensionMeta = XMPMetaFactory.parseFromString(PDF_UA_EXTENSION);
+                XMPUtils.appendProperties(taggedExtensionMeta, xmpMeta, true, false);
+            }
+        }
+    }
+
+    /**
      * Gets an instance of {@link PdfAConformance} based on passed part and level.
      *
      * @param part the part of PDF/A conformance
@@ -257,4 +300,44 @@ public class PdfConformance {
         }
         return null;
     }
+
+    private static final String PDF_UA_EXTENSION =
+            "    <x:xmpmeta xmlns:x=\"adobe:ns:meta/\">\n" +
+                    "      <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\">\n" +
+                    "        <rdf:Description rdf:about=\"\" xmlns:pdfaExtension=\"http://www.aiim.org/pdfa/ns/extension/\" xmlns:pdfaSchema=\"http://www.aiim.org/pdfa/ns/schema#\" xmlns:pdfaProperty=\"http://www.aiim.org/pdfa/ns/property#\">\n" +
+                    "          <pdfaExtension:schemas>\n" +
+                    "            <rdf:Bag>\n" +
+                    "              <rdf:li rdf:parseType=\"Resource\">\n" +
+                    "                <pdfaSchema:namespaceURI rdf:resource=\"http://www.aiim.org/pdfua/ns/id/\"/>\n" +
+                    "                <pdfaSchema:prefix>pdfuaid</pdfaSchema:prefix>\n" +
+                    "                <pdfaSchema:schema>PDF/UA identification schema</pdfaSchema:schema>\n" +
+                    "                <pdfaSchema:property>\n" +
+                    "                  <rdf:Seq>\n" +
+                    "                    <rdf:li rdf:parseType=\"Resource\">\n" +
+                    "                      <pdfaProperty:category>internal</pdfaProperty:category>\n" +
+                    "                      <pdfaProperty:description>PDF/UA version identifier</pdfaProperty:description>\n" +
+                    "                      <pdfaProperty:name>part</pdfaProperty:name>\n" +
+                    "                      <pdfaProperty:valueType>Integer</pdfaProperty:valueType>\n" +
+                    "                    </rdf:li>\n" +
+                    "                    <rdf:li rdf:parseType=\"Resource\">\n" +
+                    "                      <pdfaProperty:category>internal</pdfaProperty:category>\n" +
+                    "                      <pdfaProperty:description>PDF/UA amendment identifier</pdfaProperty:description>\n" +
+                    "                      <pdfaProperty:name>amd</pdfaProperty:name>\n" +
+                    "                      <pdfaProperty:valueType>Text</pdfaProperty:valueType>\n" +
+                    "                    </rdf:li>\n" +
+                    "                    <rdf:li rdf:parseType=\"Resource\">\n" +
+                    "                      <pdfaProperty:category>internal</pdfaProperty:category>\n" +
+                    "                      <pdfaProperty:description>PDF/UA corrigenda identifier</pdfaProperty:description>\n" +
+                    "                      <pdfaProperty:name>corr</pdfaProperty:name>\n" +
+                    "                      <pdfaProperty:valueType>Text</pdfaProperty:valueType>\n" +
+                    "                    </rdf:li>\n" +
+                    "                  </rdf:Seq>\n" +
+                    "                </pdfaSchema:property>\n" +
+                    "              </rdf:li>\n" +
+                    "            </rdf:Bag>\n" +
+                    "          </pdfaExtension:schemas>\n" +
+                    "        </rdf:Description>\n" +
+                    "      </rdf:RDF>\n" +
+                    "    </x:xmpmeta>";
+
 }

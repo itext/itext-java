@@ -56,7 +56,6 @@ import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
-import com.itextpdf.pdfa.PdfAAgnosticPdfDocument;
 import com.itextpdf.pdfa.PdfADocument;
 import com.itextpdf.signatures.PdfSigner.ISignatureEvent;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
@@ -321,8 +320,7 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
         PdfSigner signer = new PdfSigner(
                 new PdfReader(new ByteArrayInputStream(createSimplePdfaDocument())),
                 new ByteArrayOutputStream(), new StampingProperties());
-        Assertions.assertEquals(PdfAConformance.PDF_A_1A,
-                ((PdfAAgnosticPdfDocument) signer.getDocument()).getConformance().getAConformance());
+        Assertions.assertEquals(PdfAConformance.PDF_A_1A, signer.getDocument().getConformance().getAConformance());
     }
 
     @Test

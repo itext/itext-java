@@ -32,6 +32,7 @@ import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
+import com.itextpdf.kernel.validation.ValidationContainer;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.pdfa.checker.PdfA1Checker;
@@ -45,8 +46,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PdfAIndirectObjectsCountLimitTest extends ExtendedITextTest {
@@ -69,7 +70,9 @@ public class PdfAIndirectObjectsCountLimitTest extends ExtendedITextTest {
                         getOutputIntent(icm)));
         ) {
             PdfADocument pdfa = (PdfADocument) document.getPdfDocument();
-            pdfa.checker = testChecker;
+            final ValidationContainer container = new ValidationContainer();
+            container.addChecker(testChecker);
+            pdfa.getDiContainer().register(ValidationContainer.class, container);
             document.add(buildContent());
 
             // generated document contains exactly 10 indirect objects. Given 10 is the allowed
@@ -94,7 +97,9 @@ public class PdfAIndirectObjectsCountLimitTest extends ExtendedITextTest {
                     PdfAConformance.PDF_A_1B,
                     getOutputIntent(icm)));
             PdfADocument pdfa = (PdfADocument) document.getPdfDocument();
-            pdfa.checker = testChecker;
+            final ValidationContainer container = new ValidationContainer();
+            container.addChecker(testChecker);
+            pdfa.getDiContainer().register(ValidationContainer.class, container);
             document.add(buildContent());
 
             // generated document contains exactly 10 indirect objects. Given 9 is the allowed
@@ -119,7 +124,9 @@ public class PdfAIndirectObjectsCountLimitTest extends ExtendedITextTest {
                 OutputStream fos = new ByteArrayOutputStream();
         ) {
             PdfADocument pdfa = new PdfADocument(new PdfReader(fis), new PdfWriter(fos), new StampingProperties().useAppendMode());
-            pdfa.checker = testChecker;
+            final ValidationContainer container = new ValidationContainer();
+            container.addChecker(testChecker);
+            pdfa.getDiContainer().register(ValidationContainer.class, container);
             pdfa.addNewPage();
 
             // during closing of pdfa object exception will be thrown as new document will contain

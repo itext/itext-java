@@ -27,12 +27,21 @@ import com.itextpdf.kernel.pdf.IPdfPageFactory;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.pdfua.checkers.PdfUA1Checker;
 
+/**
+ * The class implements PDF page factory which is used for creating correct PDF/UA documents.
+ */
 class PdfUAPageFactory implements IPdfPageFactory {
+    private final PdfUA1Checker checker;
 
-
-    public PdfUAPageFactory() {
-        //empty constructor
+    /**
+     * Instantiates a new {@link PdfUAPageFactory} instance based on {@link PdfUA1Checker}.
+     *
+     * @param checker the PDF/UA checker
+     */
+    public PdfUAPageFactory(PdfUA1Checker checker) {
+        this.checker = checker;
     }
 
     /**
@@ -42,7 +51,7 @@ class PdfUAPageFactory implements IPdfPageFactory {
      */
     @Override
     public PdfPage createPdfPage(PdfDictionary pdfObject) {
-        return new PdfUAPage(pdfObject);
+        return new PdfUAPage(pdfObject, checker);
     }
 
     /**
@@ -53,6 +62,6 @@ class PdfUAPageFactory implements IPdfPageFactory {
      */
     @Override
     public PdfPage createPdfPage(PdfDocument pdfDocument, PageSize pageSize) {
-        return new PdfUAPage(pdfDocument, pageSize);
+        return new PdfUAPage(pdfDocument, pageSize, checker);
     }
 }

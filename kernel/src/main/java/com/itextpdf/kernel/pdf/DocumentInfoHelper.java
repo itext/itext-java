@@ -20,30 +20,28 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.pdfa;
-
-import java.nio.ByteBuffer;
-import java.nio.charset.CharacterCodingException;
-import java.nio.charset.StandardCharsets;
+package com.itextpdf.kernel.pdf;
 
 /**
- * Utilities to construct an XMP for a PDF/A file.
+ * The class is helper which used inside {@link PdfDocument} to properly configure PDF document's info dictionary.
  */
-public class PdfAXMPUtil {
+public class DocumentInfoHelper {
     /**
-     * Check whether the given byte array is an UTF-8 encoded character sequence.
+     * If document info dictionary should be added to the trailer.
      *
-     * @param array array to check
-     *
-     * @return true if array is UTF-8 encoded data, false otherwise
+     * @return {@code true} if should be added, otherwise {@code false}
      */
-    public static boolean isUtf8(byte[] array) {
-        try {
-            StandardCharsets.UTF_8.newDecoder().decode(ByteBuffer.wrap(array));
-        }
-        catch (CharacterCodingException e) {
-            return false;
-        }
+    public boolean shouldAddDocumentInfoToTrailer() {
         return true;
+    }
+
+    /**
+     * Adjusts document info before it's flushing and adding to the trailer
+     * if required, see {@link #shouldAddDocumentInfoToTrailer()}.
+     *
+     * @param documentInfo the {@link PdfDocumentInfo} instance to adjust
+     */
+    public void adjustDocumentInfo(PdfDocumentInfo documentInfo) {
+        // do nothing
     }
 }

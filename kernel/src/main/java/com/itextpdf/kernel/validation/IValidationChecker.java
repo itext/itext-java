@@ -23,6 +23,8 @@
 package com.itextpdf.kernel.validation;
 
 
+import com.itextpdf.kernel.pdf.PdfObject;
+
 /**
  * Used to check if a PDF document is compliant to a specific validation profile.
  */
@@ -33,4 +35,13 @@ public interface IValidationChecker {
      * @param validationContext the {@link IValidationContext} to validate
      */
     void validate(IValidationContext validationContext);
+
+    /**
+     * Is {@link PdfObject} ready to flush.
+     *
+     * @param object the pdf object to check
+     *
+     * @return {@code true} if the object is ready to flush, {@code false} otherwise
+     */
+    boolean isPdfObjectReadyToFlush(PdfObject object);
 }

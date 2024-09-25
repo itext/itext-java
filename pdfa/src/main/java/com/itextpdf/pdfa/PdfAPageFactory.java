@@ -27,16 +27,36 @@ import com.itextpdf.kernel.pdf.IPdfPageFactory;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.pdfa.checker.PdfAChecker;
 
-class PdfAPageFactory implements IPdfPageFactory {
+/**
+ * The class implements PDF page factory which is used for creating correct PDF/A documents.
+ */
+public class PdfAPageFactory implements IPdfPageFactory {
+    private final PdfAChecker checker;
 
-    @Override
-    public PdfPage createPdfPage(PdfDictionary pdfObject) {
-        return new PdfAPage(pdfObject);
+    /**
+     * Instantiates a new {@link PdfAPageFactory} instance based on {@link PdfAChecker}.
+     *
+     * @param checker the PDF/A checker
+     */
+    public PdfAPageFactory(PdfAChecker checker) {
+        this.checker = checker;
     }
 
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public PdfPage createPdfPage(PdfDictionary pdfObject) {
+        return new PdfAPage(pdfObject, checker);
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
     @Override
     public PdfPage createPdfPage(PdfDocument pdfDocument, PageSize pageSize) {
-        return new PdfAPage(pdfDocument, pageSize);
+        return new PdfAPage(pdfDocument, pageSize, checker);
     }
 }

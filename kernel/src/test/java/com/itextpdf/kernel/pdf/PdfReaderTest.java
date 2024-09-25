@@ -2672,9 +2672,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         try (PdfReader reader = new PdfReader(fileName)) {
             reader.setStrictnessLevel(StrictnessLevel.CONSERVATIVE);
 
-            final PdfDocument pdfDocument = new PdfDocument(reader);
-            // Initialize xmp metadata, because we in reader mode in which xmp will be initialized only during closing
-            Exception exception = Assertions.assertThrows(PdfException.class, () -> pdfDocument.getXmpMetadata());
+            Exception exception = Assertions.assertThrows(PdfException.class, () -> new PdfDocument(reader));
             Assertions.assertEquals(KernelExceptionMessageConstant.STREAM_SHALL_END_WITH_ENDSTREAM, exception.getMessage());
 
             PdfCatalog catalog = new PdfCatalog((PdfDictionary) reader.trailer.get(PdfName.Root, true));

@@ -676,6 +676,19 @@ public class PdfDocumentTest extends ExtendedITextTest {
                 KernelExceptionMessageConstant.UNABLE_TO_REMOVE_DUPLICATE_LAYER, "27 0 R"), e.getMessage());
     }
 
+    @Test
+    public void createPdfDocumentWithAAndUaMetadataTest() throws IOException, InterruptedException {
+        String outputPdf = "pdfDocWithAAndUaMetadata.pdf";
+        final WriterProperties writerProperties = new WriterProperties().addPdfAXmpMetadata(PdfAConformance.PDF_A_3A)
+                .addPdfUaXmpMetadata(PdfUAConformance.PDF_UA_1);
+        PdfDocument doc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + outputPdf, writerProperties));
+        doc.addNewPage();
+        doc.close();
+
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + outputPdf,
+                SOURCE_FOLDER + "cmp_" + outputPdf, DESTINATION_FOLDER));
+    }
+
     private static class IgnoreTagStructurePdfDocument extends PdfDocument {
 
         IgnoreTagStructurePdfDocument(PdfReader reader) {
