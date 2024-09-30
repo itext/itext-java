@@ -25,6 +25,7 @@ package com.itextpdf.kernel.pdf.canvas.parser.clipper;
 import com.itextpdf.kernel.geom.IShape;
 import com.itextpdf.kernel.geom.Line;
 import com.itextpdf.kernel.geom.Path;
+import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Subpath;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.LineCapStyle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.LineJoinStyle;
@@ -34,6 +35,7 @@ import com.itextpdf.kernel.pdf.canvas.parser.clipper.IClipper.JoinType;
 import com.itextpdf.kernel.pdf.canvas.parser.clipper.IClipper.PolyType;
 import com.itextpdf.test.ExtendedITextTest;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
@@ -64,12 +66,13 @@ public class ClipperBridgeTest extends ExtendedITextTest {
         rectanglePath.addSubpath(rectangleSubpath);
 
         DefaultClipper clipper = new DefaultClipper();
-        ClipperBridge.addPath(clipper, squarePath, PolyType.SUBJECT);
-        ClipperBridge.addPath(clipper, rectanglePath, PolyType.CLIP);
+        ClipperBridge clipperBridge = new ClipperBridge(squarePath, rectanglePath);
+        clipperBridge.addPath(clipper, squarePath, PolyType.SUBJECT);
+        clipperBridge.addPath(clipper, rectanglePath, PolyType.CLIP);
 
         PolyTree polyTree = new PolyTree();
         clipper.execute(ClipType.UNION, polyTree);
-        Path result = ClipperBridge.convertToPath(polyTree);
+        Path result = clipperBridge.convertToPath(polyTree);
 
         Assertions.assertEquals(new com.itextpdf.kernel.geom.Point(20, 40), result.getCurrentPoint());
         Assertions.assertEquals(2, result.getSubpaths().size());
@@ -108,14 +111,40 @@ public class ClipperBridgeTest extends ExtendedITextTest {
     @Test
     public void longRectWidthTest() {
         LongRect longRect = new LongRect(14900000000000000L, 21275000000000000L, 71065802001953128L, 71075000000000000L);
-        Assertions.assertEquals(561.658, ClipperBridge.longRectCalculateWidth(longRect), 0.001f);
+        Assertions.assertEquals(561.658, new ClipperBridge().longRectCalculateWidth(longRect), 0.001f);
     }
 
 
     @Test
     public void longRectHeightTest() {
         LongRect longRect = new LongRect(14900000000000000L, 21275000000000000L, 71065802001953128L, 71075000000000000L);
-        Assertions.assertEquals(498, ClipperBridge.longRectCalculateHeight(longRect), 0.001f);
+        Assertions.assertEquals(498, new ClipperBridge().longRectCalculateHeight(longRect), 0.001f);
+    }
+
+    @Test
+    public void dynamicFloatMultiplierCalculationsSmallValuesTest() {
+        Point[] points = new Point[]{
+                new Point(1e-10, 0),
+                new Point(0, 1e-13)
+        };
+        Assertions.assertEquals(1.8014398509481984e26, new ClipperBridge(points).getFloatMultiplier(), 0e+10);
+    }
+
+    @Test
+    public void dynamicFloatMultiplierCalculationsBigValuesTest() {
+        Point[] points = new Point[]{
+                new Point(1e+11, 10),
+                new Point(10, 1e+10)
+        };
+        Assertions.assertEquals(180143, new ClipperBridge(points).getFloatMultiplier(), 0.001f);
+    }
+
+    @Test
+    public void smallFloatMultiplierCoefficientTest() {
+        Point[] points = new Point[]{new Point(1e-10, 1e+10)};
+        Assertions.assertEquals(
+                new com.itextpdf.kernel.pdf.canvas.parser.clipper.Point.LongPoint(0, 18014390000000000L),
+                new ClipperBridge(points).convertToLongPoints(Arrays.asList(points)).get(0));
     }
 
     private boolean areShapesEqual(IShape expected, IShape actual) {

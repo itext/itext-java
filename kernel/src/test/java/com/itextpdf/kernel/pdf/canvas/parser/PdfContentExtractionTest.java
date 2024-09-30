@@ -24,36 +24,52 @@ package com.itextpdf.kernel.pdf.canvas.parser;
 
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.canvas.parser.clipper.ClipperBridge;
 import com.itextpdf.kernel.pdf.canvas.parser.clipper.ClipperException;
 import com.itextpdf.kernel.pdf.canvas.parser.clipper.ClipperExceptionConstant;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStrategy;
+import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Tag;
 
 @Tag("IntegrationTest")
 public class PdfContentExtractionTest extends ExtendedITextTest {
-    
-    private static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/parser/PdfContentExtractionTest/";
+
+    private static final String SOURCE_FOLDER =
+            "./src/test/resources/com/itextpdf/kernel/parser/PdfContentExtractionTest/";
 
     @Test
-    //TODO: remove the expected exception construct once the issue is fixed (DEVSIX-1279)
     public void contentExtractionInDocWithBigCoordinatesTest() throws IOException {
-        String inputFileName = sourceFolder + "docWithBigCoordinates.pdf";
-        //In this document the CTM shrinks coordinates and this coordinates are large numbers.
+        String inputFileName = SOURCE_FOLDER + "docWithBigCoordinates.pdf";
+        // In this document the CTM shrinks coordinates and these coordinates are large numbers.
         // At the moment creation of this test clipper has a problem with handling large numbers
         // since internally it deals with integers and has to multiply large numbers even more
         // for internal purposes
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(inputFileName))) {
+            PdfDocumentContentParser contentParser = new PdfDocumentContentParser(pdfDocument);
+            AssertUtil.doesNotThrow(() -> contentParser.processContent(1, new LocationTextExtractionStrategy()));
+        }
+    }
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inputFileName));
-        PdfDocumentContentParser contentParser = new PdfDocumentContentParser(pdfDocument);
-
-        Exception e = Assertions.assertThrows(ClipperException.class,
-                () -> contentParser.processContent(1, new LocationTextExtractionStrategy())
-        );
-        Assertions.assertEquals(ClipperExceptionConstant.COORDINATE_OUTSIDE_ALLOWED_RANGE, e.getMessage());
+    @Test
+    public void contentExtractionInDocWithStaticFloatMultiplierTest() throws IOException {
+        String inputFileName = SOURCE_FOLDER + "docWithBigCoordinates.pdf";
+        // In this document the CTM shrinks coordinates and these coordinates are large numbers.
+        // At the moment creation of this test clipper has a problem with handling large numbers
+        // since internally it deals with integers and has to multiply large numbers even more
+        // for internal purposes
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(inputFileName))) {
+            PdfDocumentContentParser contentParser = new PdfDocumentContentParser(pdfDocument);
+            ClipperBridge.floatMultiplier = Math.pow(10, 14);
+            Exception e = Assertions.assertThrows(ClipperException.class,
+                    () -> contentParser.processContent(1, new LocationTextExtractionStrategy())
+            );
+            Assertions.assertEquals(ClipperExceptionConstant.COORDINATE_OUTSIDE_ALLOWED_RANGE, e.getMessage());
+            ClipperBridge.floatMultiplier = null;
+        }
     }
 }
