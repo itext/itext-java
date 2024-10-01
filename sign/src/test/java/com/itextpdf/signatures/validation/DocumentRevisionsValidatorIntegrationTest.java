@@ -98,11 +98,8 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
             DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
             ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
 
-            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INDETERMINATE)
-                    .hasNumberOfFailures(1).hasNumberOfLogs(1)
-                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
-                            .withMessage(DocumentRevisionsValidator.LINEARIZED_NOT_SUPPORTED)
-                            .withStatus(ReportItemStatus.INDETERMINATE)));
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID)
+                    .hasNumberOfFailures(0).hasNumberOfLogs(0));
 
             Assertions.assertEquals(AccessPermissions.ANNOTATION_MODIFICATION, validator.getAccessPermissions());
         }

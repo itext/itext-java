@@ -97,8 +97,6 @@ public class DocumentRevisionsValidator {
     static final String FIELD_NOT_DICTIONARY =
             "Form field \"{0}\" or one of its widgets is not a dictionary. It will not be validated.";
     static final String FIELD_REMOVED = "Form field {0} was removed or unexpectedly modified.";
-    static final String LINEARIZED_NOT_SUPPORTED =
-            "Linearized PDF documents are not supported by DocumentRevisionsValidator.";
     static final String LOCKED_FIELD_KIDS_ADDED =
             "Kids were added to locked form field \"{0}\".";
     static final String LOCKED_FIELD_KIDS_REMOVED =
@@ -251,6 +249,7 @@ public class DocumentRevisionsValidator {
                             ReportItemStatus.INDETERMINATE));
             return report;
         }
+        mergeRevisionsInLinearizedDocument(document, documentRevisions);
         SignatureUtil signatureUtil = new SignatureUtil(document);
         List<String> signatures = new ArrayList<>(signatureUtil.getSignatureNames());
         if (signatures.isEmpty()) {
@@ -324,6 +323,28 @@ public class DocumentRevisionsValidator {
                         createDocumentAndPerformOperation(currentRevision, originalDocument, validationReport,
                                 documentWithRevision -> validateRevision(validationReport, context,
                                         documentWithoutRevision, documentWithRevision, currentRevision)));
+    }
+
+    private void mergeRevisionsInLinearizedDocument(PdfDocument document, List<DocumentRevision> documentRevisions) {
+        if (documentRevisions.size() > 1) {
+            // We need to check if document is linearized in first revision
+            // We don't need to populate validation report in case of exceptions, it will happen later
+            createDocumentAndPerformOperation(documentRevisions.get(0), document, new ValidationReport(),
+                    firstRevisionDocument -> {
+                        if (isLinearizedPdf(document)) {
+                            Set<PdfIndirectReference> mergedModifiedReferences =
+                                    new HashSet<>(documentRevisions.get(0).getModifiedObjects());
+                            mergedModifiedReferences.addAll(documentRevisions.get(1).getModifiedObjects());
+                            DocumentRevision mergedRevision = new DocumentRevision(
+                                    documentRevisions.get(0).getEofOffset(),
+                                    mergedModifiedReferences);
+                            documentRevisions.add(0, mergedRevision);
+                            documentRevisions.remove(1);
+                            documentRevisions.remove(1);
+                        }
+                        return true;
+                    });
+        }
     }
 
     private boolean validateRevision(ValidationReport validationReport, ValidationContext context,
@@ -559,13 +580,8 @@ public class DocumentRevisionsValidator {
                         new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
             return (boolean) operation.apply(documentWithRevision);
         } catch (IOException | RuntimeException exception) {
-            if (isLinearizedPdf(originalDocument)) {
-                report.addReportItem(new ReportItem(DOC_MDP_CHECK, LINEARIZED_NOT_SUPPORTED, exception,
-                        ReportItemStatus.INDETERMINATE));
-            } else {
-                report.addReportItem(new ReportItem(DOC_MDP_CHECK, REVISIONS_READING_EXCEPTION, exception,
-                        ReportItemStatus.INDETERMINATE));
-            }
+            report.addReportItem(new ReportItem(DOC_MDP_CHECK, REVISIONS_READING_EXCEPTION, exception,
+                    ReportItemStatus.INDETERMINATE));
             return false;
         }
     }
