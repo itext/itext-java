@@ -23,14 +23,14 @@
 package com.itextpdf.signatures.mac;
 
 import com.itextpdf.commons.bouncycastle.asn1.IASN1EncodableVector;
-import com.itextpdf.kernel.events.Event;
+import com.itextpdf.kernel.pdf.event.AbstractPdfDocumentEvent;
 
 import java.io.InputStream;
 
 /**
  * Represents an event firing before creating signature container.
  */
-public class SignatureContainerGenerationEvent extends Event {
+public class SignatureContainerGenerationEvent extends AbstractPdfDocumentEvent {
     public static final String START_SIGNATURE_CONTAINER_GENERATION = "StartSignatureContainerGeneration";
 
     private final IASN1EncodableVector unsignedAttributes;

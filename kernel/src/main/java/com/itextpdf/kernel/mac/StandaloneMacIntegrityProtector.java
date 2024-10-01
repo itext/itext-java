@@ -25,9 +25,9 @@ package com.itextpdf.kernel.mac;
 import com.itextpdf.io.source.IRandomAccessSource;
 import com.itextpdf.io.source.RASInputStream;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
-import com.itextpdf.kernel.events.Event;
-import com.itextpdf.kernel.events.IEventHandler;
-import com.itextpdf.kernel.events.PdfDocumentEvent;
+import com.itextpdf.kernel.pdf.event.AbstractPdfDocumentEventHandler;
+import com.itextpdf.kernel.pdf.event.AbstractPdfDocumentEvent;
+import com.itextpdf.kernel.pdf.event.PdfDocumentEvent;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -110,17 +110,17 @@ class StandaloneMacIntegrityProtector extends AbstractMacIntegrityProtector {
         return ((ByteArrayOutputStream) document.getWriter().getOutputStream());
     }
 
-    private final class StandaloneMacPdfObjectAdder implements IEventHandler {
+    private final class StandaloneMacPdfObjectAdder extends AbstractPdfDocumentEventHandler {
         @Override
-        public void handleEvent(Event event) {
+        public void onAcceptedEvent(AbstractPdfDocumentEvent event) {
             macPdfObject = new MacPdfObject(getContainerSizeEstimate());
             document.getTrailer().put(PdfName.AuthCode, macPdfObject.getPdfObject());
         }
     }
 
-    private final class StandaloneMacContainerEmbedder implements IEventHandler {
+    private final class StandaloneMacContainerEmbedder extends AbstractPdfDocumentEventHandler {
         @Override
-        public void handleEvent(Event event) {
+        public void onAcceptedEvent(AbstractPdfDocumentEvent event) {
             try {
                 embedMacContainerInTrailer();
             } catch (IOException e) {

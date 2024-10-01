@@ -20,15 +20,14 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.kernel.events;
+package com.itextpdf.kernel.pdf.event;
 
-import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 
 /**
  * Event dispatched by PdfDocument.
  */
-public class PdfDocumentEvent extends Event {
+public class PdfDocumentEvent extends AbstractPdfDocumentEvent {
 
     /**
      * Dispatched after page is created.
@@ -67,19 +66,12 @@ public class PdfDocumentEvent extends Event {
     protected PdfPage page;
 
     /**
-     * The PdfDocument associated with this event.
-     */
-    private PdfDocument document;
-
-    /**
      * Creates a PdfDocumentEvent.
      *
      * @param type type of the event that fired this event
-     * @param document document that fired this event
      */
-    public PdfDocumentEvent(String type, PdfDocument document) {
+    public PdfDocumentEvent(String type) {
         super(type);
-        this.document = document;
     }
 
     /**
@@ -91,16 +83,6 @@ public class PdfDocumentEvent extends Event {
     public PdfDocumentEvent(String type, PdfPage page) {
         super(type);
         this.page = page;
-        this.document = page.getDocument();
-    }
-
-    /**
-     * Returns the PdfDocument associated with this event.
-     *
-     * @return the PdfDocument associated with this event
-     */
-    public PdfDocument getDocument() {
-        return document;
     }
 
     /**

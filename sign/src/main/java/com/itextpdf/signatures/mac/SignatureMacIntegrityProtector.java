@@ -26,8 +26,8 @@ import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1EncodableVector;
 import com.itextpdf.commons.bouncycastle.asn1.IDERSequence;
-import com.itextpdf.kernel.events.Event;
-import com.itextpdf.kernel.events.IEventHandler;
+import com.itextpdf.kernel.pdf.event.AbstractPdfDocumentEventHandler;
+import com.itextpdf.kernel.pdf.event.AbstractPdfDocumentEvent;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.mac.AbstractMacIntegrityProtector;
@@ -77,9 +77,9 @@ class SignatureMacIntegrityProtector extends AbstractMacIntegrityProtector {
         unsignedAttributes.add(BC_FACTORY.createDERSequence(macAttribute));
     }
 
-    private final class SignatureMacPdfObjectAdder implements IEventHandler {
+    private final class SignatureMacPdfObjectAdder extends AbstractPdfDocumentEventHandler {
         @Override
-        public void handleEvent(Event event) {
+        public void onAcceptedEvent(AbstractPdfDocumentEvent event) {
             if (event instanceof SignatureDocumentClosingEvent) {
                 PdfDictionary signatureMacDictionary = new PdfDictionary();
                 signatureMacDictionary.put(PdfName.MACLocation, PdfName.AttachedToSig);
@@ -90,9 +90,9 @@ class SignatureMacIntegrityProtector extends AbstractMacIntegrityProtector {
         }
     }
 
-    private final class SignatureMacContainerEmbedder implements IEventHandler {
+    private final class SignatureMacContainerEmbedder extends AbstractPdfDocumentEventHandler {
         @Override
-        public void handleEvent(Event event) {
+        public void onAcceptedEvent(AbstractPdfDocumentEvent event) {
             if (event instanceof SignatureContainerGenerationEvent) {
                 SignatureContainerGenerationEvent signatureEvent = (SignatureContainerGenerationEvent) event;
                 try {

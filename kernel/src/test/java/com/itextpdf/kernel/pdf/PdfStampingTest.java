@@ -25,9 +25,9 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
-import com.itextpdf.kernel.events.Event;
-import com.itextpdf.kernel.events.IEventHandler;
-import com.itextpdf.kernel.events.PdfDocumentEvent;
+import com.itextpdf.kernel.pdf.event.AbstractPdfDocumentEventHandler;
+import com.itextpdf.kernel.pdf.event.AbstractPdfDocumentEvent;
+import com.itextpdf.kernel.pdf.event.PdfDocumentEvent;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
@@ -44,6 +44,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -54,7 +55,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 
 @Tag("IntegrationTest")
 public class PdfStampingTest extends ExtendedITextTest {
@@ -1336,10 +1336,10 @@ public class PdfStampingTest extends ExtendedITextTest {
         }
     }
 
-    static class WatermarkEventHandler implements IEventHandler {
+    static class WatermarkEventHandler extends AbstractPdfDocumentEventHandler {
 
         @Override
-        public void handleEvent(Event event) {
+        public void onAcceptedEvent(AbstractPdfDocumentEvent event) {
             PdfDocumentEvent pdfEvent = (PdfDocumentEvent) event;
             PdfPage page = pdfEvent.getPage();
             PdfCanvas pdfCanvas = new PdfCanvas(page);

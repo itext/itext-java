@@ -20,24 +20,31 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.kernel.events;
+package com.itextpdf.kernel.pdf.event;
+
+import com.itextpdf.commons.actions.IEvent;
+import com.itextpdf.kernel.pdf.PdfDocument;
 
 /**
- * Describes abstract event.
+ * Describes abstract PDF document event of the specified type.
+ *
+ * <p>
+ * Use {@link PdfDocument#dispatchEvent(AbstractPdfDocumentEvent)} to fire an event
+ * and {@link PdfDocument#addEventHandler(String, AbstractPdfDocumentEventHandler)}
+ * to register {@link AbstractPdfDocumentEventHandler} handler for that type of event.
  */
-public class Event {
+public abstract class AbstractPdfDocumentEvent implements IEvent {
 
-    /**
-     * A type of event.
-     */
+    /** A type of event. */
     protected String type;
+    private PdfDocument document;
 
     /**
      * Creates an event of the specified type.
      *
-     * @param type type of event
+     * @param type the type of event
      */
-    public Event(String type) {
+    protected AbstractPdfDocumentEvent(String type) {
         this.type = type;
     }
 
@@ -48,5 +55,26 @@ public class Event {
      */
     public String getType() {
         return type;
+    }
+
+    /**
+     * Retrieves the document associated with this event.
+     *
+     * @return {@link PdfDocument} that triggered this event
+     */
+    public PdfDocument getDocument() {
+        return document;
+    }
+
+    /**
+     * Sets the document associated with this event.
+     *
+     * @param document {@link PdfDocument} that triggered this event
+     *
+     * @return this {@link AbstractPdfDocumentEvent} instance
+     */
+    public AbstractPdfDocumentEvent setDocument(PdfDocument document) {
+        this.document = document;
+        return this;
     }
 }

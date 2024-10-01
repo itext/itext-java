@@ -24,9 +24,9 @@ package com.itextpdf.layout;
 
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
-import com.itextpdf.kernel.events.Event;
-import com.itextpdf.kernel.events.IEventHandler;
-import com.itextpdf.kernel.events.PdfDocumentEvent;
+import com.itextpdf.kernel.pdf.event.AbstractPdfDocumentEventHandler;
+import com.itextpdf.kernel.pdf.event.AbstractPdfDocumentEvent;
+import com.itextpdf.kernel.pdf.event.PdfDocumentEvent;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -52,6 +52,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -299,9 +300,9 @@ public class DefaultLayoutTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
-    private static class ParagraphAdderHandler implements IEventHandler {
+    private static class ParagraphAdderHandler extends AbstractPdfDocumentEventHandler {
         @Override
-        public void handleEvent(Event event) {
+        public void onAcceptedEvent(AbstractPdfDocumentEvent event) {
             PdfDocumentEvent docEvent = (PdfDocumentEvent) event;
             PdfPage page = docEvent.getPage();
             PdfDocument pdfDoc = ((PdfDocumentEvent) event).getDocument();
@@ -317,13 +318,13 @@ public class DefaultLayoutTest extends ExtendedITextTest {
         }
     }
 
-    private static class PageRemoverHandler implements IEventHandler {
+    private static class PageRemoverHandler extends AbstractPdfDocumentEventHandler {
         @Override
-        public void handleEvent(Event event) {
+        public void onAcceptedEvent(AbstractPdfDocumentEvent event) {
             PdfDocumentEvent docEvent = (PdfDocumentEvent) event;
             PdfPage page = docEvent.getPage();
-            PdfDocument pdfDoc = ((PdfDocumentEvent) event).getDocument();
-            pdfDoc.removePage(1);
+            PdfDocument pdfDoc = event.getDocument();
+            pdfDoc.removePage(page);
         }
     }
 }

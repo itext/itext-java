@@ -23,6 +23,7 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.commons.actions.EventManager;
+import com.itextpdf.commons.actions.IEventHandler;
 import com.itextpdf.commons.actions.confirmations.ConfirmEvent;
 import com.itextpdf.commons.actions.confirmations.EventConfirmationType;
 import com.itextpdf.commons.actions.data.ProductData;
@@ -37,9 +38,6 @@ import com.itextpdf.kernel.actions.data.ITextCoreProductData;
 import com.itextpdf.kernel.actions.events.FlushPdfDocumentEvent;
 import com.itextpdf.kernel.actions.events.ITextCoreProductEvent;
 import com.itextpdf.kernel.colors.Color;
-import com.itextpdf.kernel.events.EventDispatcher;
-import com.itextpdf.kernel.events.IEventDispatcher;
-import com.itextpdf.kernel.events.PdfDocumentEvent;
 import com.itextpdf.kernel.exceptions.BadPasswordException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.MemoryLimitsAwareException;
@@ -54,6 +52,9 @@ import com.itextpdf.kernel.pdf.PdfReader.StrictnessLevel;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.pdf.collection.PdfCollection;
+import com.itextpdf.kernel.pdf.event.AbstractPdfDocumentEvent;
+import com.itextpdf.kernel.pdf.event.AbstractPdfDocumentEventHandler;
+import com.itextpdf.kernel.pdf.event.PdfDocumentEvent;
 import com.itextpdf.kernel.pdf.filespec.PdfEncryptedPayloadFileSpecFactory;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
@@ -82,6 +83,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -92,7 +94,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Main enter point to work with PDF document.
  */
-public class PdfDocument implements IEventDispatcher, Closeable {
+public class PdfDocument implements Closeable {
     private static final PdfName[] PDF_NAMES_TO_REMOVE_FROM_ORIGINAL_TRAILER = new PdfName[] {
             PdfName.Encrypt,
             PdfName.Size,
@@ -111,6 +113,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      */
     final PdfXrefTable xref = new PdfXrefTable();
     private final Map<PdfIndirectReference, PdfFont> documentFonts = new HashMap<>();
+    private final Set<IEventHandler> documentHandlers = new LinkedHashSet<>();
     private final SequenceId documentId;
     /**
      * To be adjusted destinations.
@@ -119,7 +122,6 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      */
     private final List<DestinationMutationInfo> pendingDestinationMutations =
             new ArrayList<DestinationMutationInfo>();
-    protected EventDispatcher eventDispatcher = new EventDispatcher();
     /**
      * PdfWriter associated with the document.
      * Not null if document opened either in writing or stamping mode.
@@ -809,51 +811,53 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     }
 
     /**
-     * {@inheritDoc}
+     * Adds new event handler.
+     *
+     * @param type a type of event to be handled
+     * @param handler event handler
      */
-    @Override
-    public void addEventHandler(String type, com.itextpdf.kernel.events.IEventHandler handler) {
-        eventDispatcher.addEventHandler(type, handler);
+    public void addEventHandler(String type, AbstractPdfDocumentEventHandler handler) {
+        handler.addType(type);
+        documentHandlers.add(handler);
     }
 
     /**
-     * {@inheritDoc}
+     * Dispatches an event.
+     *
+     * @param event the {@link AbstractPdfDocumentEvent} to be dispatched
      */
-    @Override
-    public void dispatchEvent(com.itextpdf.kernel.events.Event event) {
-        eventDispatcher.dispatchEvent(event);
+    public void dispatchEvent(AbstractPdfDocumentEvent event) {
+        event.setDocument(this);
+        for (final IEventHandler handler : documentHandlers) {
+            handler.onEvent(event);
+        }
     }
 
     /**
-     * {@inheritDoc}
+     * Checks if provided event handler assigned for this document.
+     *
+     * @param handler the {@link AbstractPdfDocumentEventHandler} to check
+     *
+     * @return {@code true} if event handler is assigned for this document, {@code false} otherwise
      */
-    @Override
-    public void dispatchEvent(com.itextpdf.kernel.events.Event event, boolean delayed) {
-        eventDispatcher.dispatchEvent(event, delayed);
+    public boolean hasEventHandler(AbstractPdfDocumentEventHandler handler) {
+        return documentHandlers.contains(handler);
     }
 
     /**
-     * {@inheritDoc}
+     * Removes event handler.
+     *
+     * @param handler {@link AbstractPdfDocumentEventHandler} event handler to remove for this document
      */
-    @Override
-    public boolean hasEventHandler(String type) {
-        return eventDispatcher.hasEventHandler(type);
+    public void removeEventHandler(AbstractPdfDocumentEventHandler handler) {
+        documentHandlers.remove(handler);
     }
 
     /**
-     * {@inheritDoc}
+     * Removes all event handlers for this document.
      */
-    @Override
-    public void removeEventHandler(String type, com.itextpdf.kernel.events.IEventHandler handler) {
-        eventDispatcher.removeEventHandler(type, handler);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void removeAllHandlers() {
-        eventDispatcher.removeAllHandlers();
+        documentHandlers.clear();
     }
 
     /**
@@ -936,7 +940,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                         ITextCoreProductData.getInstance()));
                 // The event will prepare document for flushing, i.e. will set an appropriate producer line
                 manager.onEvent(new FlushPdfDocumentEvent(this));
-                dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.START_DOCUMENT_CLOSING, this));
+                dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.START_DOCUMENT_CLOSING));
 
                 updateXmpMetadata();
                 // In PDF 2.0, all the values except CreationDate and ModDate are deprecated. Remove them now

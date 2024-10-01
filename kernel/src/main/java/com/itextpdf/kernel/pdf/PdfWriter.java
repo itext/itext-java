@@ -26,12 +26,14 @@ import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
-import com.itextpdf.kernel.events.PdfDocumentEvent;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.mac.AbstractMacIntegrityProtector;
 import com.itextpdf.kernel.mac.IMacContainerLocator;
+import com.itextpdf.kernel.pdf.event.PdfDocumentEvent;
 import com.itextpdf.kernel.utils.ICopyFilter;
 import com.itextpdf.kernel.utils.NullCopyFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -41,8 +43,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PdfWriter extends PdfOutputStream {
     private static final byte[] OBJ = ByteUtils.getIsoBytes(" obj\n");
@@ -423,7 +423,7 @@ public class PdfWriter extends PdfOutputStream {
     void finish() throws IOException {
         if (document != null && !document.isClosed()) {
             // Writer is always closed as part of document closing
-            document.dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.START_WRITER_CLOSING, document));
+            document.dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.START_WRITER_CLOSING));
 
             if (isByteArrayWritingMode()) {
                 completeByteArrayWritingMode();

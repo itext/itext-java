@@ -22,13 +22,13 @@
  */
 package com.itextpdf.signatures.mac;
 
-import com.itextpdf.kernel.events.Event;
+import com.itextpdf.kernel.pdf.event.AbstractPdfDocumentEvent;
 import com.itextpdf.kernel.pdf.PdfIndirectReference;
 
 /**
  * Represents an event firing before embedding the signature into the document.
  */
-public class SignatureDocumentClosingEvent extends Event {
+public class SignatureDocumentClosingEvent extends AbstractPdfDocumentEvent {
     public static final String START_SIGNATURE_PRE_CLOSE = "StartSignaturePreClose";
 
     private final PdfIndirectReference signatureReference;

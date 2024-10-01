@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.crypto.pdfencryption;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.EncryptionConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -41,6 +42,7 @@ import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.security.Security;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -172,6 +174,7 @@ public class UnicodeBasedPasswordEncryptionTest extends ExtendedITextTest {
 
     @BeforeAll
     public static void before() {
+        Security.addProvider(BouncyCastleFactoryCreator.getFactory().getProvider());
         createOrClearDestinationFolder(destinationFolder);
     }
 

@@ -85,7 +85,7 @@ final class OcgPropertiesCopier {
      * @param page where to search for OCGs.
      * @return set of indirect references pointing to found OCGs.
      */
-    public static Set<PdfIndirectReference> getOCGsFromPage(PdfPage page) {
+    static Set<PdfIndirectReference> getOCGsFromPage(PdfPage page) {
         //Using linked hash set for elements order consistency (e.g. in tests)
         final Set<PdfIndirectReference> ocgs = new LinkedHashSet<>();
         final List<PdfAnnotation> annotations = page.getAnnotations();
