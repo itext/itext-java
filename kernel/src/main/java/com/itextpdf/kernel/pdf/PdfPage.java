@@ -36,6 +36,7 @@ import com.itextpdf.kernel.pdf.annot.PdfMarkupAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfPrinterMarkAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
+import com.itextpdf.kernel.pdf.layer.PdfLayer;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
@@ -53,7 +54,11 @@ import com.itextpdf.kernel.xmp.options.SerializeOptions;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -419,6 +424,24 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             }
         }
         return copyTo(page, toDocument, copier);
+    }
+
+    /**
+     * Get all pdf layers stored under this page's annotations/xobjects/resources.
+     * Note that it will include all layers, even those already stored under /OCProperties entry in catalog.
+     * To get only unique layers, you can simply exclude ocgs, which already present in catalog.
+     *
+     * @return set of pdf layers, associated with this page.
+     */
+    public Set<PdfLayer> getPdfLayers() {
+        Set<PdfIndirectReference> ocgs = OcgPropertiesCopier.getOCGsFromPage(this);
+        Set<PdfLayer> result = new LinkedHashSet<>();
+        for (PdfIndirectReference ocg : ocgs) {
+            if (ocg.getRefersTo() != null && ocg.getRefersTo().isDictionary()) {
+                result.add(new PdfLayer((PdfDictionary) ocg.getRefersTo()));
+            }
+        }
+        return result;
     }
 
     /**

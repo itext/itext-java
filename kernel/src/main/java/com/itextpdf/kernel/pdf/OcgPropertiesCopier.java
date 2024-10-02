@@ -46,30 +46,57 @@ final class OcgPropertiesCopier {
         // Empty constructor
     }
 
-    public static void copyOCGProperties(PdfDocument fromDocument, PdfDocument toDocument, Map<PdfPage, PdfPage> page2page) {
+    /**
+     * Copy unique page OCGs stored inside annotations/xobjects/resources from source pages to destination pages.
+     *
+     * @param sourceDocument document from which OCGs should be copied
+     * @param destinationDocument document to which OCGs should be copied
+     * @param sourceToDestPageMapping page mapping, linking source pages to destination ones
+     */
+    public static void copyOCGProperties(PdfDocument sourceDocument, PdfDocument destinationDocument,
+                                         Map<PdfPage, PdfPage> sourceToDestPageMapping) {
         try {
             // Configs are not copied
-
-            PdfDictionary toOcProperties = toDocument.getCatalog().getPdfObject().getAsDictionary(PdfName.OCProperties);
-            final Set<PdfIndirectReference> fromOcgsToCopy = OcgPropertiesCopier
-                    .getAllUsedNonFlushedOCGs(page2page, toOcProperties);
-            if (fromOcgsToCopy.isEmpty()) {
+            PdfDictionary toOcProperties = destinationDocument.getCatalog().getPdfObject().getAsDictionary(PdfName.OCProperties);
+            final Set<PdfIndirectReference> ocgsToCopy = OcgPropertiesCopier
+                    .getAllUsedNonFlushedOCGs(sourceToDestPageMapping, toOcProperties);
+            if (ocgsToCopy.isEmpty()) {
                 return;
             }
 
             // Reset ocProperties field in order to create it a new at the
             // method end using the new (merged) OCProperties dictionary
-            toOcProperties = toDocument.getCatalog().fillAndGetOcPropertiesDictionary();
-            final PdfDictionary fromOcProperties = fromDocument.getCatalog().getPdfObject()
+            toOcProperties = destinationDocument.getCatalog().fillAndGetOcPropertiesDictionary();
+            final PdfDictionary fromOcProperties = sourceDocument.getCatalog().getPdfObject()
                     .getAsDictionary(PdfName.OCProperties);
 
-            OcgPropertiesCopier.copyOCGs(fromOcgsToCopy, toOcProperties, toDocument);
+            OcgPropertiesCopier.copyOCGs(ocgsToCopy, toOcProperties, destinationDocument);
 
-            OcgPropertiesCopier.copyDDictionary(fromOcgsToCopy, fromOcProperties.getAsDictionary(PdfName.D),
-                    toOcProperties, toDocument);
+            OcgPropertiesCopier.copyDDictionary(ocgsToCopy, fromOcProperties.getAsDictionary(PdfName.D),
+                    toOcProperties, destinationDocument);
         } catch (Exception e) {
             LOGGER.error(MessageFormatUtil.format(IoLogMessageConstant.OCG_COPYING_ERROR, e.toString()));
         }
+    }
+
+    /**
+     * Get all OCGs from a given page annotations/xobjects/resources, including ones already stored in catalog
+     *
+     * @param page where to search for OCGs.
+     * @return set of indirect references pointing to found OCGs.
+     */
+    public static Set<PdfIndirectReference> getOCGsFromPage(PdfPage page) {
+        //Using linked hash set for elements order consistency (e.g. in tests)
+        final Set<PdfIndirectReference> ocgs = new LinkedHashSet<>();
+        final List<PdfAnnotation> annotations = page.getAnnotations();
+        for (PdfAnnotation annotation : annotations) {
+            //Pass null instead of catalog OCProperties value, to include ocg clashing with catalog
+            getUsedNonFlushedOCGsFromAnnotation(null, ocgs, annotation, annotation);
+        }
+        final PdfDictionary resources = page.getPdfObject().getAsDictionary(PdfName.Resources);
+        OcgPropertiesCopier.getUsedNonFlushedOCGsFromResources(resources, resources, ocgs,
+                null, new HashSet<>());
+        return ocgs;
     }
 
     private static Set<PdfIndirectReference> getAllUsedNonFlushedOCGs(Map<PdfPage, PdfPage> page2page, PdfDictionary toOcProperties) {
@@ -87,20 +114,10 @@ final class OcgPropertiesCopier {
             final List<PdfAnnotation> fromAnnotations = fromPage.getAnnotations();
             for (int j = 0; j < toAnnotations.size(); j++) {
                 if (!toAnnotations.get(j).isFlushed()) {
-                    final PdfDictionary toAnnotDict = toAnnotations.get(j).getPdfObject();
-                    final PdfDictionary fromAnnotDict = fromAnnotations.get(j).getPdfObject();
                     final PdfAnnotation toAnnot = toAnnotations.get(j);
                     final PdfAnnotation fromAnnot = fromAnnotations.get(j);
-                    if (!toAnnotDict.isFlushed()) {
-                        OcgPropertiesCopier.getUsedNonFlushedOCGsFromOcDict(toAnnotDict.getAsDictionary(PdfName.OC),
-                                fromAnnotDict.getAsDictionary(PdfName.OC), fromUsedOcgs, toOcProperties);
-
-                        OcgPropertiesCopier.getUsedNonFlushedOCGsFromXObject(toAnnot.getNormalAppearanceObject(),
-                                fromAnnot.getNormalAppearanceObject(), fromUsedOcgs, toOcProperties, new HashSet<>());
-                        OcgPropertiesCopier.getUsedNonFlushedOCGsFromXObject(toAnnot.getRolloverAppearanceObject(),
-                                fromAnnot.getRolloverAppearanceObject(), fromUsedOcgs, toOcProperties, new HashSet<>());
-                        OcgPropertiesCopier.getUsedNonFlushedOCGsFromXObject(toAnnot.getDownAppearanceObject(),
-                                fromAnnot.getDownAppearanceObject(), fromUsedOcgs, toOcProperties, new HashSet<>());
+                    if (!toAnnot.getPdfObject().isFlushed()) {
+                        getUsedNonFlushedOCGsFromAnnotation(toOcProperties, fromUsedOcgs, toAnnot, fromAnnot);
                     }
                 }
             }
@@ -111,6 +128,17 @@ final class OcgPropertiesCopier {
                     toOcProperties, new HashSet<>());
         }
         return fromUsedOcgs;
+    }
+
+    private static void getUsedNonFlushedOCGsFromAnnotation(PdfDictionary toOcProperties, Set<PdfIndirectReference> fromUsedOcgs, PdfAnnotation toAnnot, PdfAnnotation fromAnnot) {
+        OcgPropertiesCopier.getUsedNonFlushedOCGsFromOcDict(toAnnot.getPdfObject().getAsDictionary(PdfName.OC),
+                fromAnnot.getPdfObject().getAsDictionary(PdfName.OC), fromUsedOcgs, toOcProperties);
+        OcgPropertiesCopier.getUsedNonFlushedOCGsFromXObject(toAnnot.getNormalAppearanceObject(),
+                fromAnnot.getNormalAppearanceObject(), fromUsedOcgs, toOcProperties, new HashSet<>());
+        OcgPropertiesCopier.getUsedNonFlushedOCGsFromXObject(toAnnot.getRolloverAppearanceObject(),
+                fromAnnot.getRolloverAppearanceObject(), fromUsedOcgs, toOcProperties, new HashSet<>());
+        OcgPropertiesCopier.getUsedNonFlushedOCGsFromXObject(toAnnot.getDownAppearanceObject(),
+                fromAnnot.getDownAppearanceObject(), fromUsedOcgs, toOcProperties, new HashSet<>());
     }
 
     private static void getUsedNonFlushedOCGsFromResources(PdfDictionary toResources, PdfDictionary fromResources,

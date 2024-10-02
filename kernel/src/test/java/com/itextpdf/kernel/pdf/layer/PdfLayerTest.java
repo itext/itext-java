@@ -24,18 +24,28 @@ package com.itextpdf.kernel.pdf.layer;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.io.image.ImageData;
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.OcgPropertiesCopierTest;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfTextAnnotation;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.PdfIndirectReference;
+import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
+import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import java.io.IOException;
@@ -43,6 +53,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -438,6 +450,141 @@ public class PdfLayerTest extends ExtendedITextTest {
 
         pdfDoc.close();
         Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "output_layered.pdf", sourceFolder + "cmp_output_layered.pdf", destinationFolder, "diff"));
+    }
+
+    @Test
+    public void testReadAllLayersFromPage1() throws IOException, InterruptedException {
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "input_layered.pdf"),
+                CompareTool.createTestPdfWriter(destinationFolder + "output_layered_2.pdf"));
+
+        PdfCanvas canvas = new PdfCanvas(pdfDoc, 1);
+
+        //create layer on page
+        PdfLayer newLayer = new PdfLayer("appended", pdfDoc);
+        canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 18);
+        PdfLayerTestUtils.addTextInsideLayer(newLayer, canvas, "APPENDED CONTENT", 200, 600);
+
+        List<PdfLayer> layersFromCatalog = pdfDoc.getCatalog().getOCProperties(true).getLayers();
+        Assertions.assertEquals(13, layersFromCatalog.size());
+        PdfPage page = pdfDoc.getPage(1);
+        Set<PdfLayer> layersFromPage = page.getPdfLayers();
+        Assertions.assertEquals(11, layersFromPage.size());
+
+        pdfDoc.close();
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "output_layered_2.pdf", sourceFolder + "cmp_output_layered_2.pdf", destinationFolder, "diff"));
+    }
+
+    @Test
+    public void testReadAllLayersFromPage2() throws IOException, InterruptedException {
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "input_layers_in_resources_xobject.pdf"));
+
+        List<PdfLayer> layersFromCatalog = pdfDoc.getCatalog().getOCProperties(true).getLayers();
+        Assertions.assertEquals(16, layersFromCatalog.size());
+        PdfPage page = pdfDoc.getPage(2);
+        Set<PdfLayer> layersFromPage = page.getPdfLayers();
+        //There is 8 ocgs nested under the resources xobject on 2nd page
+        Assertions.assertEquals(8, layersFromPage.size());
+        pdfDoc.close();
+    }
+
+    @Test
+    public void testReadAllLayersFromDocumentWithComplexOCG() throws IOException, InterruptedException {
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "input_complex_layers.pdf"),
+                CompareTool.createTestPdfWriter(destinationFolder + "output_complex_layers.pdf"));
+
+        List<PdfLayer> layersFromCatalog = pdfDoc.getCatalog().getOCProperties(true).getLayers();
+        Assertions.assertEquals(12, layersFromCatalog.size());
+        PdfPage page = pdfDoc.getPage(1);
+        Set<PdfLayer> layersFromPage = page.getPdfLayers();
+        Assertions.assertEquals(10, layersFromPage.size());
+        pdfDoc.close();
+    }
+
+
+    //Read OCGs from different locations (annotations, content streams, xObjects) test block
+
+    @Test
+    public void testReadOcgFromStreamProperties() throws IOException {
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            try (PdfDocument document = new PdfDocument(new PdfWriter(outputStream))) {
+                PdfPage page = document.addNewPage();
+
+                PdfResources pdfResource = page.getResources();
+                pdfResource.addProperties(new PdfLayer("name", document).getPdfObject());
+                pdfResource.makeIndirect(document);
+
+                Set<PdfLayer> layersFromPage = page.getPdfLayers();
+                Assertions.assertEquals(1, layersFromPage.size());
+            }
+        }
+    }
+
+    @Test
+    public void testReadOcgFromAnnotation() throws IOException {
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            try (PdfDocument fromDocument = new PdfDocument(new PdfWriter(outputStream))) {
+                PdfPage page = fromDocument.addNewPage();
+                PdfAnnotation annotation = new PdfTextAnnotation(new Rectangle(50, 10));
+                annotation.setLayer(new PdfLayer("name", fromDocument));
+                page.addAnnotation(annotation);
+
+                Set<PdfLayer> layersFromPage = page.getPdfLayers();
+                Assertions.assertEquals(1, layersFromPage.size());
+            }
+        }
+    }
+
+    @Test
+    public void testReadOcgFromFlushedAnnotation() throws IOException {
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            try (PdfDocument fromDocument = new PdfDocument(new PdfWriter(outputStream))) {
+                PdfPage page = fromDocument.addNewPage();
+                PdfAnnotation annotation = new PdfTextAnnotation(new Rectangle(50, 10));
+                annotation.setLayer(new PdfLayer("name", fromDocument));
+                page.addAnnotation(annotation);
+                annotation.flush();
+
+                Set<PdfLayer> layersFromPage = page.getPdfLayers();
+                Assertions.assertEquals(1, layersFromPage.size());
+            }
+        }
+    }
+
+    @Test
+    public void testReadOcgFromApAnnotation() throws IOException {
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            try (PdfDocument fromDocument = new PdfDocument(new PdfWriter(outputStream))) {
+                PdfPage page = fromDocument.addNewPage();
+
+                PdfAnnotation annotation = new PdfTextAnnotation(new Rectangle(50, 10));
+
+                PdfFormXObject formXObject = new PdfFormXObject(new Rectangle(50, 10));
+                formXObject.setLayer(new PdfLayer("someName1", fromDocument));
+                formXObject.makeIndirect(fromDocument);
+                PdfDictionary nDict = new PdfDictionary();
+                nDict.put(PdfName.ON, formXObject.getPdfObject());
+                annotation.setAppearance(PdfName.N, nDict);
+
+                formXObject = new PdfFormXObject(new Rectangle(50, 10));
+                formXObject.setLayer(new PdfLayer("someName2", fromDocument));
+                PdfResources formResources = formXObject.getResources();
+                formResources.addProperties(new PdfLayer("someName3", fromDocument).getPdfObject());
+                formXObject.makeIndirect(fromDocument);
+                PdfDictionary rDict = new PdfDictionary();
+                rDict.put(PdfName.OFF, formXObject.getPdfObject());
+                annotation.setAppearance(PdfName.R, rDict);
+
+                formXObject = new PdfFormXObject(new Rectangle(50, 10));
+                formXObject.setLayer(new PdfLayer("someName4", fromDocument));
+                formXObject.makeIndirect(fromDocument);
+                annotation.setAppearance(PdfName.D, formXObject.getPdfObject());
+
+                page.addAnnotation(annotation);
+
+                Set<PdfLayer> layersFromPage = page.getPdfLayers();
+                Assertions.assertEquals(4, layersFromPage.size());
+            }
+        }
     }
 
     //TODO DEVSIX-8490 remove this test when implemented
