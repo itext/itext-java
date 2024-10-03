@@ -91,7 +91,7 @@ final class OcgPropertiesCopier {
         final List<PdfAnnotation> annotations = page.getAnnotations();
         for (PdfAnnotation annotation : annotations) {
             //Pass null instead of catalog OCProperties value, to include ocg clashing with catalog
-            getUsedNonFlushedOCGsFromAnnotation(null, ocgs, annotation, annotation);
+            getUsedNonFlushedOCGsFromAnnotation(annotation, annotation, ocgs, null);
         }
         final PdfDictionary resources = page.getPdfObject().getAsDictionary(PdfName.Resources);
         OcgPropertiesCopier.getUsedNonFlushedOCGsFromResources(resources, resources, ocgs,
@@ -117,7 +117,7 @@ final class OcgPropertiesCopier {
                     final PdfAnnotation toAnnot = toAnnotations.get(j);
                     final PdfAnnotation fromAnnot = fromAnnotations.get(j);
                     if (!toAnnot.getPdfObject().isFlushed()) {
-                        getUsedNonFlushedOCGsFromAnnotation(toOcProperties, fromUsedOcgs, toAnnot, fromAnnot);
+                        getUsedNonFlushedOCGsFromAnnotation(toAnnot, fromAnnot, fromUsedOcgs, toOcProperties);
                     }
                 }
             }
@@ -130,7 +130,7 @@ final class OcgPropertiesCopier {
         return fromUsedOcgs;
     }
 
-    private static void getUsedNonFlushedOCGsFromAnnotation(PdfDictionary toOcProperties, Set<PdfIndirectReference> fromUsedOcgs, PdfAnnotation toAnnot, PdfAnnotation fromAnnot) {
+    private static void getUsedNonFlushedOCGsFromAnnotation(PdfAnnotation toAnnot, PdfAnnotation fromAnnot, Set<PdfIndirectReference> fromUsedOcgs, PdfDictionary toOcProperties) {
         OcgPropertiesCopier.getUsedNonFlushedOCGsFromOcDict(toAnnot.getPdfObject().getAsDictionary(PdfName.OC),
                 fromAnnot.getPdfObject().getAsDictionary(PdfName.OC), fromUsedOcgs, toOcProperties);
         OcgPropertiesCopier.getUsedNonFlushedOCGsFromXObject(toAnnot.getNormalAppearanceObject(),

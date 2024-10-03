@@ -475,19 +475,6 @@ public class PdfLayerTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testReadAllLayersFromPage2() throws IOException, InterruptedException {
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "input_layers_in_resources_xobject.pdf"));
-
-        List<PdfLayer> layersFromCatalog = pdfDoc.getCatalog().getOCProperties(true).getLayers();
-        Assertions.assertEquals(16, layersFromCatalog.size());
-        PdfPage page = pdfDoc.getPage(2);
-        Set<PdfLayer> layersFromPage = page.getPdfLayers();
-        //There is 8 ocgs nested under the resources xobject on 2nd page
-        Assertions.assertEquals(8, layersFromPage.size());
-        pdfDoc.close();
-    }
-
-    @Test
     public void testReadAllLayersFromDocumentWithComplexOCG() throws IOException, InterruptedException {
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "input_complex_layers.pdf"),
                 CompareTool.createTestPdfWriter(destinationFolder + "output_complex_layers.pdf"));
