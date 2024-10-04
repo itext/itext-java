@@ -395,6 +395,15 @@ public class SignerInfo {
     }
 
     /**
+     * Removes unsigned attribute from signer info object based on attribute type.
+     *
+     * @param type {@link String} attribute type
+     */
+    public void removeUnSignedAttribute(String type) {
+        unSignedAttributes.removeIf(cmsAttribute -> cmsAttribute.getType().equals(type));
+    }
+
+    /**
      * Retrieves the encoded signed attributes of the signer info.
      * This makes the signed attributes read only.
      *

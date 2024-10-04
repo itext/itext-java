@@ -38,6 +38,13 @@ public interface IMacContainerLocator {
     void locateMacContainer(AbstractMacIntegrityProtector macIntegrityProtector);
 
     /**
+     * Indicates, if MAC container was already located.
+     *
+     * @return {@code true} if MAC container was already located, {@code false} otherwise
+     */
+    boolean isMacContainerLocated();
+
+    /**
      * Creates {@link AbstractMacIntegrityProtector} from explicitly provided MAC properties.
      *
      * @param document {@link PdfDocument} for which MAC container shall be created

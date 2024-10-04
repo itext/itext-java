@@ -246,6 +246,27 @@ public class MacIntegrityProtectorCreationTest extends ExtendedITextTest {
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
             ignore = true))
+    public void addMacWithDisableMacPropertyTest() throws IOException, InterruptedException {
+        // MAC should not be added in disable MAC mode even if it was provided with writer properties
+        String fileName = "addMacWithDisableMacPropertyTest.pdf";
+        String outputFileName = DESTINATION_FOLDER + fileName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName;
+
+        MacProperties macProperties = new MacProperties(MacDigestAlgorithm.SHA_384);
+        WriterProperties writerProperties = new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)
+                .setStandardEncryption(PASSWORD, PASSWORD, 0, EncryptionConstants.ENCRYPTION_AES_256, macProperties);
+        try (PdfDocument pdfDoc = new PdfDocument(
+                new PdfReader(SOURCE_FOLDER + "noMacProtectionDocument.pdf", new ReaderProperties().setPassword(PASSWORD)),
+                new PdfWriter(outputFileName, writerProperties), new StampingProperties().disableMac())) {
+            pdfDoc.addNewPage().addAnnotation(new PdfTextAnnotation(new Rectangle(100, 100, 100, 100)));
+        }
+        Assertions.assertNull(new CompareTool().enableEncryptionCompare().compareByContent(
+                outputFileName, cmpFileName, DESTINATION_FOLDER, "diff", PASSWORD, PASSWORD));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void addMacOnPreserveEncryptionWhileDowngradingTest() throws IOException, InterruptedException {
         String fileName = "addMacOnPreserveEncryptionWhileDowngradingTest.pdf";
         String outputFileName = DESTINATION_FOLDER + fileName;

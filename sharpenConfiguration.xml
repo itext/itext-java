@@ -657,6 +657,14 @@
             <file path="com/itextpdf/signatures/sign/TimestampSigTest/cmp_timestampTest01.pdf"/>
             <file path="com/itextpdf/signatures/PKCS7ExternalSignatureContainerTest/cmp_testTroughPdfSignerWithTsaClient.pdf"/>
             <file path="com/itextpdf/signatures/PKCS7ExternalSignatureContainerTest/cmp_testTroughPdfSignerWithTsaClient_FIPS.pdf"/>
+
+            <file path="com/itextpdf/signatures/mac/SignedDocumentWithMacTest/cmp_signMacProtectedDocInAppendModeTest_timestamping.pdf"/>
+            <file path="com/itextpdf/signatures/mac/SignedDocumentWithMacTest/cmp_signMacProtectedDocTest_timestamping.pdf"/>
+            <file path="com/itextpdf/signatures/mac/SignedDocumentWithMacTest/cmp_signMacProtectedDocWithSHA3_384Test_timestamping.pdf"/>
+            <file path="com/itextpdf/signatures/mac/SignedDocumentWithMacTest/cmp_signMacPublicEncryptionDocTest_timestamping.pdf"/>
+            <file path="com/itextpdf/signatures/mac/SignedDocumentWithMacTest/cmp_signNotMacProtectedDoc17Test_timestamping.pdf"/>
+            <file path="com/itextpdf/signatures/mac/SignedDocumentWithMacTest/cmp_signNotMacProtectedDocInAppendModeTest_timestamping.pdf"/>
+            <file path="com/itextpdf/signatures/mac/SignedDocumentWithMacTest/cmp_signNotMacProtectedDocTest_timestamping.pdf"/>
         </fileset>
         <fileset reason="Bug in java version, not in sharp version, therefor a separate reference file is needed see DEVSIX-6752">
             <file path="com/itextpdf/kernel/pdf/xobject/GetImageBytesTest/grayImages.png" />

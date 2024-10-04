@@ -70,6 +70,8 @@ public final class SignExceptionMessageConstant {
     public static final String NOT_A_VALID_PKCS7_OBJECT_NOT_SIGNED_DATA = "Not a valid PKCS#7 object - not signed "
             + "data.";
     public static final String NOT_ENOUGH_SPACE = "Not enough space.";
+    public static final String NOT_POSSIBLE_TO_EMBED_MAC_TO_SIGNATURE =
+            "It was not possible to embed MAC token into signature. Most likely signature container is empty.";
     public static final String PATH_IS_NOT_DIRECTORY = "Provided path: {0} is not a directory. "
             + "Please provide a directory path to store temporary pdf files which are required for signing.";
     public static final String PROVIDED_TSA_CLIENT_IS_NULL =

@@ -29,12 +29,23 @@ import com.itextpdf.kernel.pdf.PdfDocument;
  * Default {@link AbstractMacIntegrityProtector} location strategy, which locates MAC container in document's trailer.
  */
 public class StandaloneMacContainerLocator implements IMacContainerLocator {
+    private boolean macContainerLocated = false;
+
     /**
      * {@inheritDoc}.
      */
     @Override
     public void locateMacContainer(AbstractMacIntegrityProtector macIntegrityProtector) {
         ((StandaloneMacIntegrityProtector) macIntegrityProtector).prepareDocument();
+        macContainerLocated = true;
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public boolean isMacContainerLocated() {
+        return macContainerLocated;
     }
 
     /**

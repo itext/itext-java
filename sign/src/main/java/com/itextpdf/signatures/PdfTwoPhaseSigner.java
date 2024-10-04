@@ -24,6 +24,7 @@ package com.itextpdf.signatures;
 
 import com.itextpdf.kernel.crypto.DigestAlgorithms;
 import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.mac.IMacContainerLocator;
 import com.itextpdf.kernel.pdf.PdfDeveloperExtension;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -166,8 +167,7 @@ public class PdfTwoPhaseSigner {
 
     private byte[] prepareDocumentForSignature(SignerProperties signerProperties, MessageDigest messageDigest,
                                                PdfName filter, PdfName subFilter, int estimatedSize,
-                                               boolean includeDate)
-            throws IOException {
+                                               boolean includeDate) throws IOException {
         if (closed) {
             throw new PdfException(SignExceptionMessageConstant.THIS_INSTANCE_OF_PDF_SIGNER_ALREADY_CLOSED);
         }
@@ -175,6 +175,9 @@ public class PdfTwoPhaseSigner {
 
 
         PdfDocument document = pdfSigner.getDocument();
+        if (document.getDiContainer().getInstance(IMacContainerLocator.class).isMacContainerLocated()) {
+            throw new PdfException(SignExceptionMessageConstant.NOT_POSSIBLE_TO_EMBED_MAC_TO_SIGNATURE);
+        }
         if (document.getPdfVersion().compareTo(PdfVersion.PDF_2_0) < 0) {
             document.getCatalog().addDeveloperExtension(PdfDeveloperExtension.ESIC_1_7_EXTENSIONLEVEL2);
         }

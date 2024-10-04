@@ -98,6 +98,8 @@ public class CMSContainer {
      */
     private SignerInfo signerInfo = new SignerInfo();
 
+    private int version = 1;
+
     /**
      * Creates an empty SignedData structure.
      */
@@ -119,6 +121,7 @@ public class CMSContainer {
             IASN1Sequence contentInfo = BC_FACTORY.createASN1Sequence(is.readObject());
             IASN1Sequence signedData = BC_FACTORY.createASN1Sequence(
                     BC_FACTORY.createASN1TaggedObject(contentInfo.getObjectAt(1)).getObject());
+            version = BC_FACTORY.createASN1Integer(signedData.getObjectAt(0)).getValue().intValue();
 
             // The digest algorithm is retrieved from SignerInfo later on, here we just validate
             // that there is exactly 1 digest algorithm.
@@ -184,12 +187,12 @@ public class CMSContainer {
     }
 
     /**
-     * Only version 1 is supported by this class.
+     * The version of the CMS container.
      *
-     * @return 1 as CMSversion
+     * @return version of the CMS container
      */
     public int getCmsVersion() {
-        return 1;
+        return version;
     }
 
     /**
@@ -365,7 +368,7 @@ public class CMSContainer {
         IASN1EncodableVector encapContentInfoV = BC_FACTORY.createASN1EncodableVector();
         encapContentInfoV.add(BC_FACTORY.createASN1ObjectIdentifier(encapContentInfo.getContentType()));
         if (encapContentInfo.getContent() != null) {
-            encapContentInfoV.add(encapContentInfo.getContent());
+            encapContentInfoV.add(BC_FACTORY.createDERTaggedObject(0, encapContentInfo.getContent()));
         }
         singedDataV.add(BC_FACTORY.createDERSequence(encapContentInfoV));
         IASN1EncodableVector certificateSetV = BC_FACTORY.createASN1EncodableVector();

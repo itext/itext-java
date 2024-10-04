@@ -27,33 +27,37 @@ import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.crypto.CryptoUtil;
 import com.itextpdf.kernel.crypto.DigestAlgorithms;
-import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
-import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.ReaderProperties;
 import com.itextpdf.kernel.pdf.StampingProperties;
-import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.signatures.ExternalBlankSignatureContainer;
+import com.itextpdf.signatures.PKCS7ExternalSignatureContainer;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PdfSigner.CryptoStandard;
 import com.itextpdf.signatures.PrivateKeySignature;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
+import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
+import java.io.IOException;
 import java.io.OutputStream;
+import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
+import java.util.Arrays;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 @Tag("BouncyCastleIntegrationTest")
 public class SignedDocumentWithMacTest extends ExtendedITextTest {
@@ -70,14 +74,22 @@ public class SignedDocumentWithMacTest extends ExtendedITextTest {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
-    @Test
+    public static Iterable<Object[]> createParameters() {
+        return Arrays.asList(new Object[] {"signCertRsa01.pem", "signDetached"},
+                new Object[] {"tsaCert.pem", "timestamping"},
+                new Object[] {"signCertRsa01.pem", "signExternalContainerReal"},
+                new Object[] {"signCertRsa01.pem", "signExternalContainerBlank"});
+    }
+
+    @ParameterizedTest(name = "Signing operation: {1}")
+    @MethodSource("createParameters")
     @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
             ignore = true))
-    public void signMacProtectedDocTest() throws Exception {
-        String fileName = "signMacProtectedDocTest.pdf";
+    public void signMacProtectedDocTest(String certName, String signingOperation) throws Exception {
+        String fileName = "signMacProtectedDocTest_" + signingOperation + ".pdf";
         String srcFileName = SOURCE_FOLDER + "macEncryptedDoc.pdf";
         String outputFileName = DESTINATION_FOLDER + fileName;
-        String signCertFileName = CERTS_SRC + "signCertRsa01.pem";
+        String signCertFileName = CERTS_SRC + certName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName;
 
         Certificate[] signRsaChain = PemFileHelper.readFirstChain(signCertFileName);
@@ -86,21 +98,30 @@ public class SignedDocumentWithMacTest extends ExtendedITextTest {
         try (PdfReader reader = new PdfReader(srcFileName, new ReaderProperties().setPassword(ENCRYPTION_PASSWORD));
                 OutputStream outputStream = FileUtil.getFileOutputStream(outputFileName)) {
             PdfSigner pdfSigner = new PdfSigner(reader, outputStream, new StampingProperties());
-            performSignDetached(pdfSigner, signRsaPrivateKey, signRsaChain);
+            if (signingOperation.equals("signExternalContainerBlank")) {
+                Assertions.assertThrows(PdfException.class,
+                        () -> performSigningOperation(signingOperation, pdfSigner, signRsaPrivateKey, signRsaChain));
+            } else {
+                performSigningOperation(signingOperation, pdfSigner, signRsaPrivateKey, signRsaChain);
+            }
         }
 
-        ReaderProperties properties = new ReaderProperties().setPassword(ENCRYPTION_PASSWORD);
-        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outputFileName, cmpFileName, properties, properties));
+        if (!signingOperation.equals("signExternalContainerBlank")) {
+            ReaderProperties properties = new ReaderProperties().setPassword(ENCRYPTION_PASSWORD);
+            Assertions.assertNull(
+                    SignaturesCompareTool.compareSignatures(outputFileName, cmpFileName, properties, properties));
+        }
     }
 
-    @Test
+    @ParameterizedTest(name = "Signing operation: {1}")
+    @MethodSource("createParameters")
     @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
             ignore = true))
-    public void signNotMacProtectedDocTest() throws Exception {
-        String fileName = "signNotMacProtectedDocTest.pdf";
+    public void signNotMacProtectedDocTest(String certName, String signingOperation) throws Exception {
+        String fileName = "signNotMacProtectedDocTest_" + signingOperation + ".pdf";
         String srcFileName = SOURCE_FOLDER + "noMacProtectionDocument.pdf";
         String outputFileName = DESTINATION_FOLDER + fileName;
-        String signCertFileName = CERTS_SRC + "signCertRsa01.pem";
+        String signCertFileName = CERTS_SRC + certName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName;
 
         Certificate[] signRsaChain = PemFileHelper.readFirstChain(signCertFileName);
@@ -109,21 +130,30 @@ public class SignedDocumentWithMacTest extends ExtendedITextTest {
         try (PdfReader reader = new PdfReader(srcFileName, new ReaderProperties().setPassword(ENCRYPTION_PASSWORD));
                 OutputStream outputStream = FileUtil.getFileOutputStream(outputFileName)) {
             PdfSigner pdfSigner = new PdfSigner(reader, outputStream, new StampingProperties());
-            performSignDetached(pdfSigner, signRsaPrivateKey, signRsaChain);
+            if (signingOperation.equals("signExternalContainerBlank")) {
+                Assertions.assertThrows(PdfException.class,
+                        () -> performSigningOperation(signingOperation, pdfSigner, signRsaPrivateKey, signRsaChain));
+            } else {
+                performSigningOperation(signingOperation, pdfSigner, signRsaPrivateKey, signRsaChain);
+            }
         }
 
-        ReaderProperties properties = new ReaderProperties().setPassword(ENCRYPTION_PASSWORD);
-        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outputFileName, cmpFileName, properties, properties));
+        if (!signingOperation.equals("signExternalContainerBlank")) {
+            ReaderProperties properties = new ReaderProperties().setPassword(ENCRYPTION_PASSWORD);
+            Assertions.assertNull(
+                    SignaturesCompareTool.compareSignatures(outputFileName, cmpFileName, properties, properties));
+        }
     }
 
-    @Test
+    @ParameterizedTest(name = "Signing operation: {1}")
+    @MethodSource("createParameters")
     @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
             ignore = true))
-    public void signNotMacProtectedDoc17Test() throws Exception {
-        String fileName = "signNotMacProtectedDoc17Test.pdf";
+    public void signNotMacProtectedDoc17Test(String certName, String signingOperation) throws Exception {
+        String fileName = "signNotMacProtectedDoc17Test_" + signingOperation + ".pdf";
         String srcFileName = SOURCE_FOLDER + "noMacProtectionDocument_1_7.pdf";
         String outputFileName = DESTINATION_FOLDER + fileName;
-        String signCertFileName = CERTS_SRC + "signCertRsa01.pem";
+        String signCertFileName = CERTS_SRC + certName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName;
 
         Certificate[] signRsaChain = PemFileHelper.readFirstChain(signCertFileName);
@@ -132,22 +162,27 @@ public class SignedDocumentWithMacTest extends ExtendedITextTest {
         try (PdfReader reader = new PdfReader(srcFileName, new ReaderProperties().setPassword(ENCRYPTION_PASSWORD));
                 OutputStream outputStream = FileUtil.getFileOutputStream(outputFileName)) {
             PdfSigner pdfSigner = new PdfSigner(reader, outputStream, new StampingProperties());
-            performSignDetached(pdfSigner, signRsaPrivateKey, signRsaChain);
+            performSigningOperation(signingOperation, pdfSigner, signRsaPrivateKey, signRsaChain);
         }
 
-        ReaderProperties properties = new ReaderProperties().setPassword(ENCRYPTION_PASSWORD);
-        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outputFileName, cmpFileName, properties, properties));
+        // TODO DEVSIX-8637 Add else statement for empty signature container
+        if (!signingOperation.equals("signExternalContainerBlank")) {
+            ReaderProperties properties = new ReaderProperties().setPassword(ENCRYPTION_PASSWORD);
+            Assertions.assertNull(
+                    SignaturesCompareTool.compareSignatures(outputFileName, cmpFileName, properties, properties));
+        }
     }
 
-    @Test
+    @ParameterizedTest(name = "Signing operation: {1}")
+    @MethodSource("createParameters")
     @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
             ignore = true))
-    public void signNotMacProtectedDocInAppendModeTest() throws Exception {
+    public void signNotMacProtectedDocInAppendModeTest(String certName, String signingOperation) throws Exception {
         // MAC should not be added in append mode
-        String fileName = "signNotMacProtectedDocInAppendModeTest.pdf";
+        String fileName = "signNotMacProtectedDocInAppendModeTest_" + signingOperation + ".pdf";
         String srcFileName = SOURCE_FOLDER + "noMacProtectionDocument.pdf";
         String outputFileName = DESTINATION_FOLDER + fileName;
-        String signCertFileName = CERTS_SRC + "signCertRsa01.pem";
+        String signCertFileName = CERTS_SRC + certName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName;
 
         Certificate[] signRsaChain = PemFileHelper.readFirstChain(signCertFileName);
@@ -156,21 +191,26 @@ public class SignedDocumentWithMacTest extends ExtendedITextTest {
         try (PdfReader reader = new PdfReader(srcFileName, new ReaderProperties().setPassword(ENCRYPTION_PASSWORD));
                 OutputStream outputStream = FileUtil.getFileOutputStream(outputFileName)) {
             PdfSigner pdfSigner = new PdfSigner(reader, outputStream, new StampingProperties().useAppendMode());
-            performSignDetached(pdfSigner, signRsaPrivateKey, signRsaChain);
+            performSigningOperation(signingOperation, pdfSigner, signRsaPrivateKey, signRsaChain);
         }
 
-        ReaderProperties properties = new ReaderProperties().setPassword(ENCRYPTION_PASSWORD);
-        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outputFileName, cmpFileName, properties, properties));
+        // TODO DEVSIX-8637 Add else statement for empty signature container
+        if (!signingOperation.equals("signExternalContainerBlank")) {
+            ReaderProperties properties = new ReaderProperties().setPassword(ENCRYPTION_PASSWORD);
+            Assertions.assertNull(
+                    SignaturesCompareTool.compareSignatures(outputFileName, cmpFileName, properties, properties));
+        }
     }
 
-    @Test
+    @ParameterizedTest(name = "Signing operation: {1}")
+    @MethodSource("createParameters")
     @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
             ignore = true))
-    public void signMacProtectedDocInAppendModeTest() throws Exception {
-        String fileName = "signMacProtectedDocInAppendModeTest.pdf";
+    public void signMacProtectedDocInAppendModeTest(String certName, String signingOperation) throws Exception {
+        String fileName = "signMacProtectedDocInAppendModeTest_" + signingOperation + ".pdf";
         String srcFileName = SOURCE_FOLDER + "macEncryptedDoc.pdf";
         String outputFileName = DESTINATION_FOLDER + fileName;
-        String signCertFileName = CERTS_SRC + "signCertRsa01.pem";
+        String signCertFileName = CERTS_SRC + certName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName;
 
         Certificate[] signRsaChain = PemFileHelper.readFirstChain(signCertFileName);
@@ -179,21 +219,30 @@ public class SignedDocumentWithMacTest extends ExtendedITextTest {
         try (PdfReader reader = new PdfReader(srcFileName, new ReaderProperties().setPassword(ENCRYPTION_PASSWORD));
                 OutputStream outputStream = FileUtil.getFileOutputStream(outputFileName)) {
             PdfSigner pdfSigner = new PdfSigner(reader, outputStream, new StampingProperties().useAppendMode());
-            performSignDetached(pdfSigner, signRsaPrivateKey, signRsaChain);
+            if (signingOperation.equals("signExternalContainerBlank")) {
+                Assertions.assertThrows(PdfException.class,
+                        () -> performSigningOperation(signingOperation, pdfSigner, signRsaPrivateKey, signRsaChain));
+            } else {
+                performSigningOperation(signingOperation, pdfSigner, signRsaPrivateKey, signRsaChain);
+            }
         }
 
-        ReaderProperties properties = new ReaderProperties().setPassword(ENCRYPTION_PASSWORD);
-        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outputFileName, cmpFileName, properties, properties));
+        if (!signingOperation.equals("signExternalContainerBlank")) {
+            ReaderProperties properties = new ReaderProperties().setPassword(ENCRYPTION_PASSWORD);
+            Assertions.assertNull(
+                    SignaturesCompareTool.compareSignatures(outputFileName, cmpFileName, properties, properties));
+        }
     }
 
-    @Test
+    @ParameterizedTest(name = "Signing operation: {1}")
+    @MethodSource("createParameters")
     @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
             ignore = true))
-    public void signMacProtectedDocWithSHA3_384Test() throws Exception {
-        String fileName = "signMacProtectedDocWithSHA3_384Test.pdf";
+    public void signMacProtectedDocWithSHA3_384Test(String certName, String signingOperation) throws Exception {
+        String fileName = "signMacProtectedDocWithSHA3_384Test_" + signingOperation + ".pdf";
         String srcFileName = SOURCE_FOLDER + "macEncryptedDocSHA3_384.pdf";
         String outputFileName = DESTINATION_FOLDER + fileName;
-        String signCertFileName = CERTS_SRC + "signCertRsa01.pem";
+        String signCertFileName = CERTS_SRC + certName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName;
 
         Certificate[] signRsaChain = PemFileHelper.readFirstChain(signCertFileName);
@@ -202,26 +251,35 @@ public class SignedDocumentWithMacTest extends ExtendedITextTest {
         try (PdfReader reader = new PdfReader(srcFileName, new ReaderProperties().setPassword(ENCRYPTION_PASSWORD));
                 OutputStream outputStream = FileUtil.getFileOutputStream(outputFileName)) {
             PdfSigner pdfSigner = new PdfSigner(reader, outputStream, new StampingProperties());
-            performSignDetached(pdfSigner, signRsaPrivateKey, signRsaChain);
+            if (signingOperation.equals("signExternalContainerBlank")) {
+                Assertions.assertThrows(PdfException.class,
+                        () -> performSigningOperation(signingOperation, pdfSigner, signRsaPrivateKey, signRsaChain));
+            } else {
+                performSigningOperation(signingOperation, pdfSigner, signRsaPrivateKey, signRsaChain);
+            }
         }
 
-        ReaderProperties properties = new ReaderProperties().setPassword(ENCRYPTION_PASSWORD);
-        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outputFileName, cmpFileName, properties, properties));
+        if (!signingOperation.equals("signExternalContainerBlank")) {
+            ReaderProperties properties = new ReaderProperties().setPassword(ENCRYPTION_PASSWORD);
+            Assertions.assertNull(
+                    SignaturesCompareTool.compareSignatures(outputFileName, cmpFileName, properties, properties));
+        }
     }
 
-    @Test
+    @ParameterizedTest(name = "Signing operation: {1}")
+    @MethodSource("createParameters")
     @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
             ignore = true))
-    public void signMacPublicEncryptionDocTest() throws Exception {
+    public void signMacPublicEncryptionDocTest(String certName, String signingOperation) throws Exception {
         try {
             BouncyCastleFactoryCreator.getFactory().isEncryptionFeatureSupported(0, true);
         } catch (Exception ignored) {
             Assumptions.assumeTrue(false);
         }
-        String fileName = "signMacPublicEncryptionDocTest.pdf";
+        String fileName = "signMacPublicEncryptionDocTest_" + signingOperation + ".pdf";
         String srcFileName = SOURCE_FOLDER + "macEncryptedWithPublicHandlerDoc.pdf";
         String outputFileName = DESTINATION_FOLDER + fileName;
-        String signCertFileName = CERTS_SRC + "signCertRsa01.pem";
+        String signCertFileName = CERTS_SRC + certName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName;
 
         Certificate[] signRsaChain = PemFileHelper.readFirstChain(signCertFileName);
@@ -233,53 +291,56 @@ public class SignedDocumentWithMacTest extends ExtendedITextTest {
         try (PdfReader reader = new PdfReader(srcFileName, properties);
                 OutputStream outputStream = FileUtil.getFileOutputStream(outputFileName)) {
             PdfSigner pdfSigner = new PdfSigner(reader, outputStream, new StampingProperties());
-            performSignDetached(pdfSigner, signRsaPrivateKey, signRsaChain);
-        }
-
-        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outputFileName, cmpFileName, properties, properties));
-    }
-
-    @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
-            ignore = true))
-    public void readSignedMacProtectedInvalidDocTest() {
-        String srcFileName = SOURCE_FOLDER + "signedMacProtectedInvalidDoc.pdf";
-
-        String exceptionMessage = Assertions.assertThrows(PdfException.class, () -> {
-            try (PdfDocument ignored = new PdfDocument(
-                    new PdfReader(srcFileName, new ReaderProperties().setPassword(ENCRYPTION_PASSWORD)))) {
-                // Do nothing.
+            if (signingOperation.equals("signExternalContainerBlank")) {
+                Assertions.assertThrows(PdfException.class,
+                        () -> performSigningOperation(signingOperation, pdfSigner, signRsaPrivateKey, signRsaChain));
+            } else {
+                performSigningOperation(signingOperation, pdfSigner, signRsaPrivateKey, signRsaChain);
             }
-        }).getMessage();
-        Assertions.assertEquals(KernelExceptionMessageConstant.MAC_VALIDATION_FAILED, exceptionMessage);
-    }
-
-    @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
-            ignore = true))
-    public void updateSignedMacProtectedDocumentTest() throws Exception {
-        String fileName = "updateSignedMacProtectedDocumentTest.pdf";
-        String srcFileName = SOURCE_FOLDER + "thirdPartyMacProtectedAndSignedDocument.pdf";
-        String outputFileName = DESTINATION_FOLDER + fileName;
-        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName;
-
-        try (PdfDocument ignored = new PdfDocument(
-                new PdfReader(srcFileName, new ReaderProperties().setPassword(ENCRYPTION_PASSWORD)),
-                new PdfWriter(FileUtil.getFileOutputStream(outputFileName)),
-                new StampingProperties().useAppendMode())) {
-            // Do nothing.
         }
 
-        // This call produces INFO log from AESCipher caused by exception while decrypting. The reason is that,
-        // while comparing encrypted signed documents, CompareTool needs to mark signature value as unencrypted.
-        // Instead, it tries to decrypt not encrypted value which results in exception.
-        Assertions.assertNull(new CompareTool().compareByContent(
-                outputFileName, cmpFileName, DESTINATION_FOLDER, "diff", ENCRYPTION_PASSWORD, ENCRYPTION_PASSWORD));
+        if (!signingOperation.equals("signExternalContainerBlank")) {
+            Assertions.assertNull(
+                    SignaturesCompareTool.compareSignatures(outputFileName, cmpFileName, properties, properties));
+        }
+    }
+
+    private static void performSigningOperation(String signingOperation, PdfSigner pdfSigner, PrivateKey privateKey, Certificate[] chain)
+            throws Exception {
+        switch (signingOperation) {
+            case "signDetached":
+                performSignDetached(pdfSigner, privateKey, chain);
+                break;
+            case "timestamping":
+                performTimestamping(pdfSigner, privateKey, chain);
+                break;
+            case "signExternalContainerReal":
+                performSignExternalContainerReal(pdfSigner, privateKey, chain);
+                break;
+            case "signExternalContainerBlank":
+                performSignExternalContainerBlank(pdfSigner);
+                break;
+        }
     }
 
     private static void performSignDetached(PdfSigner pdfSigner, PrivateKey privateKey, Certificate[] chain) throws Exception {
         pdfSigner.signDetached(
                 new PrivateKeySignature(privateKey, DigestAlgorithms.SHA256, FACTORY.getProviderName()),
                 chain, null, null, null, 0, CryptoStandard.CADES);
+    }
+
+    private static void performSignExternalContainerReal(PdfSigner pdfSigner, PrivateKey privateKey, Certificate[] chain)
+            throws GeneralSecurityException, IOException {
+        pdfSigner.signExternalContainer(new PKCS7ExternalSignatureContainer(privateKey, chain, "SHA-512"), 5000);
+    }
+
+    private static void performSignExternalContainerBlank(PdfSigner pdfSigner)
+            throws GeneralSecurityException, IOException {
+        pdfSigner.signExternalContainer(new ExternalBlankSignatureContainer(PdfName.Adobe_PPKLite, PdfName.Adbe_pkcs7_detached), 5000);
+    }
+
+    private static void performTimestamping(PdfSigner pdfSigner, PrivateKey privateKey, Certificate[] chain)
+            throws GeneralSecurityException, IOException {
+        pdfSigner.timestamp(new TestTsaClient(Arrays.asList(chain), privateKey), "timestamp1");
     }
 }

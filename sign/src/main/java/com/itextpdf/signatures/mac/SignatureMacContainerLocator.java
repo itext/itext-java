@@ -34,12 +34,23 @@ import com.itextpdf.kernel.pdf.PdfDocument;
  * This strategy locates MAC container in signature unsigned attributes.
  */
 public class SignatureMacContainerLocator implements IMacContainerLocator {
+    private boolean macContainerLocated = false;
+
     /**
      * {@inheritDoc}.
      */
     @Override
     public void locateMacContainer(AbstractMacIntegrityProtector macIntegrityProtector) {
         ((SignatureMacIntegrityProtector) macIntegrityProtector).prepareDocument();
+        macContainerLocated = true;
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public boolean isMacContainerLocated() {
+        return macContainerLocated;
     }
 
     /**

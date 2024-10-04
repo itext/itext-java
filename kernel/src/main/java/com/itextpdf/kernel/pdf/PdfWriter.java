@@ -200,10 +200,12 @@ public class PdfWriter extends PdfOutputStream {
         final int encryptionAlgorithm = crypto == null ?
                 (encryptProps.encryptionAlgorithm & EncryptionConstants.ENCRYPTION_MASK) :
                 crypto.getEncryptionAlgorithm();
+        if (document.properties.disableMac) {
+            encryptProps.macProperties = null;
+        }
         if (encryptProps.macProperties == EncryptionProperties.DEFAULT_MAC_PROPERTIES) {
-            if ((version == null || version.compareTo(PdfVersion.PDF_2_0) < 0) ||
-                    (encryptionAlgorithm != EncryptionConstants.ENCRYPTION_AES_256 &&
-                            encryptionAlgorithm != EncryptionConstants.ENCRYPTION_AES_GCM)) {
+            if (version == null || version.compareTo(PdfVersion.PDF_2_0) < 0 ||
+                    encryptionAlgorithm < EncryptionConstants.ENCRYPTION_AES_256) {
                 encryptProps.macProperties = null;
             }
         }

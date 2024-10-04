@@ -24,8 +24,6 @@ package com.itextpdf.kernel.pdf;
 
 
 public class StampingProperties extends DocumentProperties {
-
-
     protected boolean appendMode = false;
     protected boolean preserveEncryption = false;
     protected boolean disableMac = false;
@@ -37,6 +35,7 @@ public class StampingProperties extends DocumentProperties {
         super(other);
         this.appendMode = other.appendMode;
         this.preserveEncryption = other.preserveEncryption;
+        this.disableMac = other.disableMac;
     }
 
     StampingProperties(DocumentProperties documentProperties) {

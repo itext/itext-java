@@ -23,6 +23,9 @@
 package com.itextpdf.signatures;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1EncodableVector;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1Sequence;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISignaturePolicyIdentifier;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
@@ -46,6 +49,8 @@ import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.mac.IMacContainerLocator;
+import com.itextpdf.signatures.cms.CMSContainer;
+import com.itextpdf.signatures.cms.CmsAttribute;
 import com.itextpdf.signatures.mac.SignatureContainerGenerationEvent;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDate;
@@ -104,7 +109,9 @@ import java.util.Map;
  * Takes care of the cryptographic options and appearances that form a signature.
  */
 public class PdfSigner {
-    private static final int MAXIMUM_MAC_SIZE = 788;
+    static final int MAXIMUM_MAC_SIZE = 788;
+    private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
+    private static final String ID_ATTR_PDF_MAC_DATA = "1.0.32004.1.2";
 
     /**
      * Enum containing the Cryptographic Standards. Possible values are "CMS" and "CADES".
@@ -598,8 +605,8 @@ public class PdfSigner {
             if (tsaClient != null) {
                 estimatedSize += tsaClient.getTokenSizeEstimate() + 96;
             }
-            if (document.getTrailer().getAsDictionary(PdfName.AuthCode) != null) {
-                // if AuthCode is found in trailer, we assume MAC will be embedded and allocate additional space.
+            if (document.getDiContainer().getInstance(IMacContainerLocator.class).isMacContainerLocated()) {
+                // If MAC container was located, we presume MAC will be embedded and allocate additional space.
                 estimatedSize += MAXIMUM_MAC_SIZE;
             }
         }
@@ -700,12 +707,18 @@ public class PdfSigner {
         externalSignatureContainer.modifySigningDictionary(dic.getPdfObject());
         cryptoDictionary = dic;
 
+        if (document.getDiContainer().getInstance(IMacContainerLocator.class).isMacContainerLocated()) {
+            // If MAC container was located, we presume MAC will be embedded and allocate additional space.
+            estimatedSize += MAXIMUM_MAC_SIZE;
+        }
+
         Map<PdfName, Integer> exc = new HashMap<>();
         exc.put(PdfName.Contents, estimatedSize * 2 + 2);
         preClose(exc);
 
         InputStream data = getRangeStream();
         byte[] encodedSig = externalSignatureContainer.sign(data);
+        encodedSig = embedMacTokenIntoSignatureContainer(encodedSig);
 
         if (estimatedSize < encodedSig.length) {
             throw new IOException(SignExceptionMessageConstant.NOT_ENOUGH_SPACE);
@@ -744,6 +757,10 @@ public class PdfSigner {
         }
 
         int contentEstimated = tsa.getTokenSizeEstimate();
+        if (document.getDiContainer().getInstance(IMacContainerLocator.class).isMacContainerLocated()) {
+            // If MAC container was located, we presume MAC will be embedded and allocate additional space.
+            contentEstimated += MAXIMUM_MAC_SIZE;
+        }
         if (!isDocumentPdf2()) {
             addDeveloperExtension(PdfDeveloperExtension.ESIC_1_7_EXTENSIONLEVEL5);
         }
@@ -770,6 +787,8 @@ public class PdfSigner {
         } catch (Exception e) {
             throw new GeneralSecurityException(e.getMessage(), e);
         }
+
+        tsToken = embedMacTokenIntoSignatureContainer(tsToken);
 
         if (contentEstimated + 2 < tsToken.length) {
             throw new IOException(MessageFormatUtil.format(
@@ -1308,6 +1327,19 @@ public class PdfSigner {
         return pageNumber;
     }
 
+    PdfSignature createSignatureDictionary(boolean includeDate) {
+        PdfSignature dic = new PdfSignature();
+        dic.setReason(this.signerProperties.getReason());
+        dic.setLocation(this.signerProperties.getLocation());
+        dic.setSignatureCreator(this.signerProperties.getSignatureCreator());
+        dic.setContact(this.signerProperties.getContact());
+        Calendar claimedSignDate = this.signerProperties.getClaimedSignDate();
+        if (includeDate && claimedSignDate != TimestampConstants.UNDEFINED_TIMESTAMP_DATE) {
+            dic.setDate(new PdfDate(claimedSignDate)); // time-stamp will over-rule this
+        }
+        return dic;
+    }
+
     private static String getSignerName(X509Certificate certificate) {
         String name = null;
         CertificateInfo.X500Name x500name = CertificateInfo.getSubjectFields(certificate);
@@ -1355,20 +1387,6 @@ public class PdfSigner {
         return document.getPdfVersion().compareTo(PdfVersion.PDF_2_0) >= 0;
     }
 
-    PdfSignature createSignatureDictionary(boolean includeDate) {
-        PdfSignature dic = new PdfSignature();
-        dic.setReason(this.signerProperties.getReason());
-        dic.setLocation(this.signerProperties.getLocation());
-        dic.setSignatureCreator(this.signerProperties.getSignatureCreator());
-        dic.setContact(this.signerProperties.getContact());
-        Calendar claimedSignDate = this.signerProperties.getClaimedSignDate();
-        if (includeDate && claimedSignDate != TimestampConstants.UNDEFINED_TIMESTAMP_DATE) {
-            dic.setDate(new PdfDate(claimedSignDate)); // time-stamp will over-rule this
-        }
-        return dic;
-    }
-
-
     protected void applyAccessibilityProperties(PdfFormField formField, IAccessibleElement modelElement,
                                                 PdfDocument pdfDocument) {
         if (!pdfDocument.isTagged()) {
@@ -1379,6 +1397,30 @@ public class PdfSigner {
         if (alternativeDescription != null && !alternativeDescription.isEmpty()) {
             formField.setAlternativeName(alternativeDescription);
         }
+    }
+
+    private byte[] embedMacTokenIntoSignatureContainer(byte[] signatureContainer) {
+        if (document.getDiContainer().getInstance(IMacContainerLocator.class).isMacContainerLocated()) {
+            try {
+                CMSContainer cmsContainer = new CMSContainer(signatureContainer);
+                // If MAC is in the signature already, we regenerate it anyway.
+                cmsContainer.getSignerInfo().removeUnSignedAttribute(ID_ATTR_PDF_MAC_DATA);
+                IASN1EncodableVector unsignedVector = FACTORY.createASN1EncodableVector();
+                document.dispatchEvent(new SignatureContainerGenerationEvent(unsignedVector,
+                        cmsContainer.getSignerInfo().getSignatureData(), getRangeStream()));
+                if (FACTORY.createDERSequence(unsignedVector).size() != 0) {
+                    IASN1Sequence sequence =
+                            FACTORY.createASN1Sequence(FACTORY.createDERSequence(unsignedVector).getObjectAt(0));
+                    cmsContainer.getSignerInfo().addUnSignedAttribute(new CmsAttribute(
+                            FACTORY.createASN1ObjectIdentifier(sequence.getObjectAt(0)).getId(),
+                            sequence.getObjectAt(1).toASN1Primitive()));
+                    return cmsContainer.serialize();
+                }
+            } catch (Exception exception) {
+                throw new PdfException(SignExceptionMessageConstant.NOT_POSSIBLE_TO_EMBED_MAC_TO_SIGNATURE, exception);
+            }
+        }
+        return signatureContainer;
     }
 
     private void applyDefaultPropertiesForTheNewField(PdfSignatureFormField sigField) {
