@@ -28,6 +28,9 @@ import com.itextpdf.commons.bouncycastle.cert.ocsp.IResponderID;
 
 import org.bouncycastle.asn1.ocsp.ResponderID;
 
+/**
+ * Wrapper class for {@link ResponderID}.
+ */
 public class ResponderIDBC implements IResponderID {
     private final ResponderID responderID;
 
