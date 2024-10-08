@@ -1475,9 +1475,14 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     private void rebuildFormFieldParent(PdfDictionary field, PdfDictionary newField, PdfDocument toDocument) {
+        rebuildFormFieldParent(field, newField, toDocument, new HashSet<>());
+    }
+
+    private void rebuildFormFieldParent(PdfDictionary field, PdfDictionary newField, PdfDocument toDocument, Set<PdfDictionary> visitedForms) {
         if (newField.containsKey(PdfName.Parent)) {
             return;
         }
+        visitedForms.add(field);
         PdfDictionary oldParent = field.getAsDictionary(PdfName.Parent);
         if (oldParent != null) {
             PdfDictionary newParent = oldParent.copyTo(toDocument, Arrays.asList(PdfName.P, PdfName.Kids,
@@ -1486,10 +1491,10 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
                 newParent = oldParent.copyTo(toDocument, Arrays.asList(PdfName.P, PdfName.Kids, PdfName.Parent),
                         true, NullCopyFilter.getInstance());
             }
-            if (oldParent == oldParent.getAsDictionary(PdfName.Parent)) {
+            if (visitedForms.contains(oldParent)) {
                 return;
             }
-            rebuildFormFieldParent(oldParent, newParent, toDocument);
+            rebuildFormFieldParent(oldParent, newParent, toDocument, visitedForms);
 
             PdfArray kids = newParent.getAsArray(PdfName.Kids);
             if (kids == null) {

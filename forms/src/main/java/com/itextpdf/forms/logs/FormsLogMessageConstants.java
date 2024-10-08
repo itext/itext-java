@@ -81,6 +81,8 @@ public final class FormsLogMessageConstants {
 
     public static final String FORM_FIELD_MUST_HAVE_A_NAME = "Form field must have a name."
             + " Set it using PdfFormField#setFieldName call.";
+    public static final String FORM_FIELD_HAS_CYCLED_PARENT_STRUCTURE = "Form field contains parent pointing to itself."
+            + " This form field parent reference will be invalidated.";
     public static final String DUPLICATE_EXPORT_VALUE = "More than one option with the same value. This is an invalid"
             + " state.";
 

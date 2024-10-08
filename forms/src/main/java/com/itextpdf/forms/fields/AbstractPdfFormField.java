@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms.fields;
 
+import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
@@ -38,9 +39,13 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfString;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * This class represents a single field or field group in an {@link com.itextpdf.forms.PdfAcroForm
@@ -63,6 +68,8 @@ public abstract class AbstractPdfFormField extends PdfObjectWrapper<PdfDictionar
     public static final int MIN_FONT_SIZE = 4;
 
     private static final PdfName[] TERMINAL_FIELDS = new PdfName[] {PdfName.Btn, PdfName.Tx, PdfName.Ch, PdfName.Sig};
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPdfFormField.class);
 
     /**
      * Index of font value in default appearance element.
@@ -158,26 +165,7 @@ public abstract class AbstractPdfFormField extends PdfObjectWrapper<PdfDictionar
      * @return the current field name, as a {@link PdfString}.
      */
     public PdfString getFieldName() {
-        String parentName = "";
-        PdfDictionary parentDict = getParent();
-        if (parentDict != null) {
-            PdfFormField parentField = getParentField();
-            if (parentField == null) {
-                parentField = PdfFormField.makeFormField(getParent(), getDocument());
-            }
-            PdfString pName = parentField.getFieldName();
-            if (pName != null) {
-                parentName = pName.toUnicodeString() + ".";
-            }
-        }
-        PdfString name = getPdfObject().getAsString(PdfName.T);
-        if (name != null) {
-            return new PdfString(parentName + name.toUnicodeString(), PdfEncodings.UNICODE_BIG);
-        }
-        if (isTerminalFormField()) {
-            return new PdfString(parentName, PdfEncodings.UNICODE_BIG);
-        }
-        return null;
+       return getFieldName(new HashSet<>());
     }
 
     /**
@@ -474,6 +462,43 @@ public abstract class AbstractPdfFormField extends PdfObjectWrapper<PdfDictionar
             }
         }
         return false;
+    }
+
+    /**
+     * Gets the current field name.
+     *
+     * @param visited list of visited parents which is used to determine cycle references
+     *
+     * @return the current field name, as a {@link PdfString}.
+     */
+    PdfString getFieldName(Set<PdfFormField> visited) {
+        String parentName = "";
+        PdfDictionary parentDict = getParent();
+        if (parentDict != null) {
+            PdfFormField parentField = getParentField();
+            if (!visited.contains(parentField)) {
+                if (parentField == null) {
+                    parentField = PdfFormField.makeFormField(getParent(), getDocument());
+                }
+                visited.add(parentField);
+                PdfString pName = parentField.getFieldName(visited);
+                if (pName != null) {
+                    parentName = pName.toUnicodeString() + ".";
+                }
+            } else {
+                LOGGER.warn(FormsLogMessageConstants.FORM_FIELD_HAS_CYCLED_PARENT_STRUCTURE);
+                remove(PdfName.Parent);
+                this.parent = null;
+            }
+        }
+        PdfString name = getPdfObject().getAsString(PdfName.T);
+        if (name != null) {
+            return new PdfString(parentName + name.toUnicodeString(), PdfEncodings.UNICODE_BIG);
+        }
+        if (isTerminalFormField()) {
+            return new PdfString(parentName, PdfEncodings.UNICODE_BIG);
+        }
+        return null;
     }
 
     void updateFontAndFontSize(PdfFont font, float fontSize) {

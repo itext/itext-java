@@ -179,6 +179,22 @@ public class PdfMergerTest extends ExtendedITextTest {
     }
 
     @Test
+    public void mergeDocumentWithCycleReferenceInFormFieldTest() throws IOException, InterruptedException {
+        String filename1 = sourceFolder + "doc1.pdf";
+        String filename2 = sourceFolder + "pdfWithCycleRefInFormField.pdf";
+        String resultFile = destinationFolder + "pdfWithCycleRefInFormField.pdf";
+        try (PdfDocument pdfDocument1 = new PdfDocument(new PdfReader(filename2));
+             PdfDocument pdfDocument2 = new PdfDocument(new PdfReader(filename1),
+                     CompareTool.createTestPdfWriter(resultFile).setSmartMode(true));) {
+            PdfMerger merger = new PdfMerger(pdfDocument2);
+            merger.merge(pdfDocument1, 1, pdfDocument1.getNumberOfPages());
+        }
+        Assertions.assertNull(
+                new CompareTool().compareByContent(resultFile, sourceFolder + "cmp_pdfWithCycleRefInFormField.pdf",
+                        destinationFolder, "diff_"));
+    }
+
+    @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = IoLogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
     })
