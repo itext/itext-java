@@ -575,7 +575,8 @@ public class DocumentRevisionsValidator {
     private boolean createDocumentAndPerformOperation(DocumentRevision revision, PdfDocument originalDocument,
             ValidationReport report, Function<PdfDocument, Boolean> operation) {
         try (InputStream inputStream = createInputStreamFromRevision(originalDocument, revision);
-                PdfReader reader = new PdfReader(inputStream).setStrictnessLevel(StrictnessLevel.CONSERVATIVE);
+                PdfReader reader = new PdfReader(inputStream, originalDocument.getReader().getPropertiesCopy())
+                        .setStrictnessLevel(StrictnessLevel.CONSERVATIVE);
                 PdfDocument documentWithRevision = new PdfDocument(reader,
                         new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
             return (boolean) operation.apply(documentWithRevision);

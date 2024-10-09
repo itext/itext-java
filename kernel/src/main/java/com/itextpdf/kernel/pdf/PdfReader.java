@@ -733,6 +733,15 @@ public class PdfReader implements Closeable {
     }
 
     /**
+     * Gets a copy of {@link ReaderProperties} used to create this instance of {@link PdfReader}.
+     *
+     * @return a copy of {@link ReaderProperties} used to create this instance of {@link PdfReader}
+     */
+    public ReaderProperties getPropertiesCopy() {
+        return new ReaderProperties(properties);
+    }
+
+    /**
      * Parses the entire PDF
      *
      * @throws IOException if an I/O error occurs.

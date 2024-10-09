@@ -107,6 +107,9 @@ public final class KernelLogMessageConstant {
     public static final String ALGORITHM_NOT_FROM_SPEC =
             "Requested algorithm might not be supported by the pdf specification.";
 
+    public static final String MEMORYLIMITAWAREHANDLER_OVERRIDE_CREATENEWINSTANCE_METHOD =
+            "MemoryLimitsAwareHandler#createNewInstance method must be overriden.";
+
     private KernelLogMessageConstant() {
         //Private constructor will prevent the instantiation of this class directly
     }

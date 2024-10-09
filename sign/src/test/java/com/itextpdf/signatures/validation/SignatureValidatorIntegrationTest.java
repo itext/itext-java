@@ -27,8 +27,12 @@ import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.DateTimeUtil;
+import com.itextpdf.commons.utils.FileUtil;
+import com.itextpdf.kernel.crypto.CryptoUtil;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.ReaderProperties;
 import com.itextpdf.signatures.ICrlClient;
 import com.itextpdf.signatures.IOcspClient;
 import com.itextpdf.signatures.IssuingCertificateRetriever;
@@ -46,11 +50,15 @@ import com.itextpdf.signatures.validation.report.ReportItem;
 import com.itextpdf.signatures.validation.report.ValidationReport;
 import com.itextpdf.signatures.validation.report.ValidationReport.ValidationResult;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
 
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -122,6 +130,84 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
                 .hasLogItem(al -> al
                         .withCheckName(OCSPValidator.OCSP_CHECK)
                         .withMessage(OCSPValidator.OCSP_RESPONDER_IS_CA))
+        );
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT, ignore = true)})
+    public void validateSignatureInEncryptedDocumentTest()
+            throws IOException, CertificateException {
+        String chainName = CERTS_SRC + "signCertRsa01.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+        X509Certificate rootCert = (X509Certificate) certificateChain[1];
+
+        ValidationReport report;
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "encryptedDoc.pdf",
+                new ReaderProperties().setPassword("123".getBytes(StandardCharsets.ISO_8859_1))))) {
+            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
+            report = signatureValidator.validateSignatures();
+        }
+
+        Assertions.assertEquals(2, report.getFailures().size());
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationResult.INDETERMINATE)
+                .hasLogItem(al -> al
+                        .withCertificate(rootCert)
+                        .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
+                                .withMessage(CertificateChainValidator.ISSUER_MISSING,
+                                i -> rootCert.getSubjectX500Principal()))
+                .hasLogItem(al -> al
+                        .withCheckName(RevocationDataValidator.REVOCATION_DATA_CHECK)
+                        .withMessage(RevocationDataValidator.NO_REVOCATION_DATA))
+                .hasLogItem(al -> al
+                        .withCheckName(RevocationDataValidator.REVOCATION_DATA_CHECK)
+                        .withMessage(RevocationDataValidator.SELF_SIGNED_CERTIFICATE))
+        );
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT, ignore = true)})
+    public void validateSignatureInEncryptedPubKeyDocumentTest()
+            throws IOException, CertificateException, AbstractOperatorCreationException, AbstractPKCSException {
+        try {
+            BouncyCastleFactoryCreator.getFactory().isEncryptionFeatureSupported(0, true);
+        } catch (Exception ignored) {
+            Assumptions.assumeTrue(false);
+        }
+
+        String chainName = CERTS_SRC + "signCertRsa01.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+        X509Certificate rootCert = (X509Certificate) certificateChain[1];
+
+        ValidationReport report;
+        Certificate certificate = CryptoUtil.readPublicCertificate(
+                FileUtil.getInputStreamForFile(CERTS_SRC + "SHA256withRSA.cer"));
+        PrivateKey privateKey = PemFileHelper.readFirstKey(CERTS_SRC + "SHA256withRSA.key", PASSWORD);
+        ReaderProperties properties = new ReaderProperties().setPublicKeySecurityParams(certificate, privateKey,
+                FACTORY.getProviderName(), null);
+
+        try (PdfDocument document = new PdfDocument(
+                new PdfReader(SOURCE_FOLDER + "encryptedPublicKeyDocTest.pdf", properties))) {
+            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
+            report = signatureValidator.validateSignatures();
+        }
+
+        Assertions.assertEquals(2, report.getFailures().size());
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationResult.INDETERMINATE)
+                .hasLogItem(al -> al
+                        .withCertificate(rootCert)
+                        .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
+                        .withMessage(CertificateChainValidator.ISSUER_MISSING,
+                                i -> rootCert.getSubjectX500Principal()))
+                .hasLogItem(al -> al
+                        .withCheckName(RevocationDataValidator.REVOCATION_DATA_CHECK)
+                        .withMessage(RevocationDataValidator.NO_REVOCATION_DATA))
+                .hasLogItem(al -> al
+                        .withCheckName(RevocationDataValidator.REVOCATION_DATA_CHECK)
+                        .withMessage(RevocationDataValidator.SELF_SIGNED_CERTIFICATE))
         );
     }
 

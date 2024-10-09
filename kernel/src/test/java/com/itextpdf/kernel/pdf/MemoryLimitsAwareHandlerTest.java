@@ -25,11 +25,17 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.MemoryLimitsAwareException;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Tag("UnitTest")
 public class MemoryLimitsAwareHandlerTest extends ExtendedITextTest {
@@ -67,7 +73,6 @@ public class MemoryLimitsAwareHandlerTest extends ExtendedITextTest {
 
         Assertions.assertFalse(defaultHandler.isMemoryLimitsAwarenessRequiredOnDecompression(filters));
         Assertions.assertTrue(customHandler.isMemoryLimitsAwarenessRequiredOnDecompression(filters));
-
     }
 
     @Test
@@ -159,6 +164,53 @@ public class MemoryLimitsAwareHandlerTest extends ExtendedITextTest {
         final int capacityToSet = 2;
 
         AssertUtil.doesNotThrow(() -> memoryLimitsAwareHandler.checkIfXrefStructureExceedsTheLimit(capacityToSet));
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate =
+            KernelLogMessageConstant.MEMORYLIMITAWAREHANDLER_OVERRIDE_CREATENEWINSTANCE_METHOD)})
+    public void createCopyMemoryHandlerWarningTest() {
+        MemoryLimitsAwareHandler customHandler = new MemoryLimitsAwareHandler() {};
+
+        customHandler.setMaxNumberOfElementsInXrefStructure(1);
+        customHandler.setMaxXObjectsSizePerPage(2);
+        customHandler.setMaxSizeOfDecompressedPdfStreamsSum(3);
+        customHandler.setMaxSizeOfSingleDecompressedPdfStream(4);
+
+        MemoryLimitsAwareHandler copy = customHandler.createNewInstance();
+
+        Assertions.assertEquals(1, copy.getMaxNumberOfElementsInXrefStructure());
+        Assertions.assertEquals(2, copy.getMaxXObjectsSizePerPage());
+        Assertions.assertEquals(3, copy.getMaxSizeOfDecompressedPdfStreamsSum());
+        Assertions.assertEquals(4, copy.getMaxSizeOfSingleDecompressedPdfStream());
+    }
+
+    @Test
+    public void createCopyMemoryHandlerNoWarningTest() {
+        MemoryLimitsAwareHandler customHandler = new MemoryLimitsAwareHandler() {
+            @Override
+            public MemoryLimitsAwareHandler createNewInstance() {
+                MemoryLimitsAwareHandler to = new MemoryLimitsAwareHandler();
+                to.setMaxSizeOfSingleDecompressedPdfStream(this.getMaxSizeOfSingleDecompressedPdfStream());
+                to.setMaxSizeOfDecompressedPdfStreamsSum(this.getMaxSizeOfDecompressedPdfStreamsSum());
+                to.setMaxNumberOfElementsInXrefStructure(this.getMaxNumberOfElementsInXrefStructure());
+                to.setMaxXObjectsSizePerPage(this.getMaxXObjectsSizePerPage());
+
+                return to;
+            }
+        };
+
+        customHandler.setMaxNumberOfElementsInXrefStructure(1);
+        customHandler.setMaxXObjectsSizePerPage(2);
+        customHandler.setMaxSizeOfDecompressedPdfStreamsSum(3);
+        customHandler.setMaxSizeOfSingleDecompressedPdfStream(4);
+
+        MemoryLimitsAwareHandler copy = customHandler.createNewInstance();
+
+        Assertions.assertEquals(1, copy.getMaxNumberOfElementsInXrefStructure());
+        Assertions.assertEquals(2, copy.getMaxXObjectsSizePerPage());
+        Assertions.assertEquals(3, copy.getMaxSizeOfDecompressedPdfStreamsSum());
+        Assertions.assertEquals(4, copy.getMaxSizeOfSingleDecompressedPdfStream());
     }
 
     private static void testSingleStream(MemoryLimitsAwareHandler handler) {
