@@ -36,6 +36,7 @@ import com.itextpdf.kernel.pdf.PdfReader.StrictnessLevel;
 import com.itextpdf.kernel.pdf.annot.PdfTextAnnotation;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
+import com.itextpdf.kernel.pdf.layer.PdfLayer;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
@@ -51,6 +52,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -616,64 +619,13 @@ public class PdfDocumentTest extends ExtendedITextTest {
         Assertions.assertFalse(document.getConformance().isPdfAOrUa());
     }
 
-    //TODO DEVSIX-8490 remove this test when implemented
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate =
-            KernelLogMessageConstant.DUPLICATE_ENTRIES_IN_ORDER_ARRAY_REMOVED))
-    public void removeDuplicatesInOrderArrayTest() throws IOException, InterruptedException {
-        String inputPdf = "removeDuplicatesInOrderArray.pdf";
-        String outputPdf = "removedDuplicateInOrderArray.pdf";
-        PdfDocument doc = new PdfDocument(new PdfReader(SOURCE_FOLDER + inputPdf)
-                , CompareTool.createTestPdfWriter(DESTINATION_FOLDER + outputPdf));
-        //Need to update OCProperties
-        doc.getCatalog().getOCProperties(false);
+    public void ocgWithTwoParentsTest() throws IOException {
+        String inputPdf = "ocgWithTwoParents.pdf";
+        PdfDocument doc = new PdfDocument(new PdfReader(SOURCE_FOLDER + inputPdf));
+        List<PdfLayer> layerList = doc.getCatalog().getOCProperties(false).getLayers();
+        Assertions.assertEquals(2, layerList.get(4).getParents().size());
         doc.close();
-
-        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + outputPdf, SOURCE_FOLDER + "cmp_" + outputPdf,
-                DESTINATION_FOLDER));
-    }
-
-    //TODO DEVSIX-8490 remove this test when implemented
-    @Test
-    @LogMessages(messages = @LogMessage(messageTemplate =
-            KernelLogMessageConstant.DUPLICATE_ENTRIES_IN_ORDER_ARRAY_REMOVED))
-    public void removeNestedDuplicatesInOrderArrayTest() throws IOException, InterruptedException {
-        String inputPdf = "removeNestedDuplicatesInOrderArray.pdf";
-        String outputPdf = "removedNestedDuplicatesInOrderArray.pdf";
-        PdfDocument doc = new PdfDocument(new PdfReader(SOURCE_FOLDER + inputPdf)
-                , new PdfWriter(DESTINATION_FOLDER + outputPdf));
-        //Need to update OCProperties
-        doc.getCatalog().getOCProperties(false);
-        doc.close();
-
-        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + outputPdf, SOURCE_FOLDER + "cmp_" + outputPdf,
-                DESTINATION_FOLDER));
-    }
-
-    //TODO DEVSIX-8490 remove this test when implemented
-    @Test
-    public void removeDuplicatesHasChildInOrderArrayTest() throws IOException, InterruptedException {
-        String inputPdf = "removeDuplicatesHasChildInOrderArray.pdf";
-        String outputPdf = "removedDuplicatesHasChildInOrderArray.pdf";
-        PdfDocument doc = new PdfDocument(new PdfReader(SOURCE_FOLDER + inputPdf)
-                , CompareTool.createTestPdfWriter(DESTINATION_FOLDER + outputPdf));
-        PdfCatalog catalog = doc.getCatalog();
-        Exception e = Assertions.assertThrows(PdfException.class, () -> catalog.getOCProperties(false));
-        Assertions.assertEquals(MessageFormatUtil.format(
-                KernelExceptionMessageConstant.UNABLE_TO_REMOVE_DUPLICATE_LAYER, "4 0 R"), e.getMessage());
-    }
-
-    //TODO DEVSIX-8490 remove this test when implemented
-    @Test
-    public void removeNestedDuplicatesHasChildInOrderArrayTest() throws IOException, InterruptedException {
-        String inputPdf = "removeNestedDuplicatesHasChildInOrderArray.pdf";
-        String outputPdf = "removedNestedDuplicatesHasChildInOrderArray.pdf";
-        PdfDocument doc = new PdfDocument(new PdfReader(SOURCE_FOLDER + inputPdf)
-                , CompareTool.createTestPdfWriter(DESTINATION_FOLDER + outputPdf));
-        PdfCatalog catalog = doc.getCatalog();
-        Exception e = Assertions.assertThrows(PdfException.class, () -> catalog.getOCProperties(false));
-        Assertions.assertEquals(MessageFormatUtil.format(
-                KernelExceptionMessageConstant.UNABLE_TO_REMOVE_DUPLICATE_LAYER, "27 0 R"), e.getMessage());
     }
 
     @Test

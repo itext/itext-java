@@ -98,7 +98,7 @@ public final class KernelLogMessageConstant {
     public static final String XOBJECT_STRUCT_PARENT_INDEX_MISSED_AND_RECREATED =
             "XObject has no StructParents index in its stream, so index is recreated";
 
-    //TODO DEVSIX-8490 remove this log message when implemented
+    @Deprecated
     public static final String DUPLICATE_ENTRIES_IN_ORDER_ARRAY_REMOVED = "Duplicated entries in order array are " +
             "removed";
 

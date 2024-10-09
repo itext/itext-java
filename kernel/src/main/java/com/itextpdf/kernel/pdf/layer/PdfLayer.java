@@ -22,10 +22,7 @@
  */
 package com.itextpdf.kernel.pdf.layer;
 
-import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -36,10 +33,12 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfString;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.LinkedHashSet;
+import java.util.ArrayList;
 
 /**
  * An optional content group is a dictionary representing a collection of graphics
@@ -59,8 +58,14 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements IPdfOCG
     protected boolean on = true;
     protected boolean onPanel = true;
     protected boolean locked = false;
+    @Deprecated
     protected PdfLayer parent;
+    // After removing deprecated parent rename to parents
+    protected Set<PdfLayer> parentLayers;
+    @Deprecated
     protected List<PdfLayer> children;
+    // After removing deprecated children rename to children
+    protected Set<PdfLayer> childLayers;
 
     /**
      * Creates a new layer by existing dictionary, which must be an indirect object.
@@ -121,27 +126,34 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements IPdfOCG
      * @param childLayer the child layer
      */
     public void addChild(PdfLayer childLayer) {
-        //TODO DEVSIX-8490 implement multiple parent support
-        if (childLayer.parent != null) {
-            PdfIndirectReference ref = childLayer.getIndirectReference();
-            throw new PdfException(MessageFormatUtil.format(
-                    KernelExceptionMessageConstant.UNABLE_TO_ADD_SECOND_PARENT_LAYER, ref.toString()));
+        if (childLayer.parentLayers == null) {
+            childLayer.parentLayers = new LinkedHashSet<>();
         }
 
-        childLayer.parent = this;
-        if (children == null) {
-            children = new ArrayList<>();
+        childLayer.parentLayers.add(this);
+        if (childLayers == null) {
+            childLayers = new LinkedHashSet<>();
         }
 
-        children.add(childLayer);
+        childLayers.add(childLayer);
     }
 
     /**
-     * Gets the parent of this layer, be it a title layer, or a usual one.
-     * @return the parent of the layer, or null if it has no parent
+     * Gets the first parent of this layer, be it a title layer, or a usual one.
+     *
+     * @return the first parent of the layer, or null if it has no parent
      */
     public PdfLayer getParent() {
-        return parent;
+        return parentLayers == null ? null : new ArrayList<>(parentLayers).get(0);
+    }
+
+    /**
+     * Gets all parents of this layer.
+     *
+     * @return list of parents of the layer, or null if it has no parent
+     */
+    public List<PdfLayer> getParents() {
+        return parentLayers == null ? null : new ArrayList<>(parentLayers);
     }
 
     /**
@@ -426,7 +438,7 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements IPdfOCG
      * @return the list of the current child layers, null if the layer has no children.
      */
     public List<PdfLayer> getChildren() {
-        return children == null ? null : new ArrayList<>(children);
+        return childLayers == null ? null : new ArrayList<>(childLayers);
     }
 
     @Override

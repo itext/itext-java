@@ -22,17 +22,11 @@
  */
 package com.itextpdf.kernel.pdf.layer;
 
-import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.constants.StandardFonts;
-import com.itextpdf.io.image.ImageData;
-import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.OcgPropertiesCopierTest;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -43,9 +37,7 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfTextAnnotation;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.pdf.PdfIndirectReference;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
-import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import java.io.IOException;
@@ -574,22 +566,83 @@ public class PdfLayerTest extends ExtendedITextTest {
         }
     }
 
-    //TODO DEVSIX-8490 remove this test when implemented
     @Test
-    public void addSecondParentlayerTest() throws IOException {
-        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-            try (PdfDocument doc = new PdfDocument(new PdfWriter(outputStream))) {
-                PdfLayer childLayer = new PdfLayer("childLayer", doc);
-                PdfLayer parentLayer1 = new PdfLayer("firstParentLayer", doc);
-                PdfLayer parentLayer2 = new PdfLayer("secondParentLayer", doc);
+    public void nestedLayerTwoParentsTest() throws IOException {
+        String outPdf = destinationFolder + "nestedLayerTwoParents.pdf";
+        String cmpPdf = sourceFolder + "cmp_nestedLayerTwoParents.pdf";
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outPdf));
 
-                parentLayer1.addChild(childLayer);
-                PdfIndirectReference ref = childLayer.getIndirectReference();
-                Exception e = Assertions.assertThrows(PdfException.class, () -> parentLayer2.addChild(childLayer));
-                Assertions.assertEquals(MessageFormatUtil.format(
-                        KernelExceptionMessageConstant.UNABLE_TO_ADD_SECOND_PARENT_LAYER
-                        , ref.toString()), e.getMessage());
-            }
-        }
+        PdfFont font = PdfFontFactory.createFont();
+
+        PdfLayer parentLayer1 = new PdfLayer("Parent layer 1", pdfDoc);
+        PdfLayer parentLayer2 = new PdfLayer("Parent layer 2", pdfDoc);
+        PdfLayer nestedLayer = new PdfLayer("Nested layer 1", pdfDoc);
+
+        parentLayer1.addChild(nestedLayer);
+        parentLayer2.addChild(nestedLayer);
+        PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+        canvas.setFontAndSize(font, 12);
+
+        PdfLayerTestUtils.addTextInsideLayer(parentLayer1, canvas, "Parent layer 1 text", 50, 750);
+        PdfLayerTestUtils.addTextInsideLayer(parentLayer2, canvas, "Parent layer 2 text", 50, 700);
+        PdfLayerTestUtils.addTextInsideLayer(nestedLayer, canvas, "Nested layer 1 text", 100, 650);
+        canvas.release();
+        pdfDoc.close();
+
+        PdfLayerTestUtils.compareLayers(outPdf, cmpPdf);
+    }
+
+    @Test
+    public void nestedLayerTwoParentsWithOneParentTest() throws IOException {
+        String outPdf = destinationFolder + "nestedLayerTwoParentsWithOneParent.pdf";
+        String cmpPdf = sourceFolder + "cmp_nestedLayerTwoParentsWithOneParent.pdf";
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outPdf));
+
+        PdfFont font = PdfFontFactory.createFont();
+
+        PdfLayer parentLayer = new PdfLayer("Parent layer", pdfDoc);
+        PdfLayer layer1 = new PdfLayer("Layer 1", pdfDoc);
+        PdfLayer layer2 = new PdfLayer("Layer 2", pdfDoc);
+        PdfLayer nestedLayer = new PdfLayer("Nested layer 1", pdfDoc);
+
+        layer1.addChild(nestedLayer);
+        layer2.addChild(nestedLayer);
+        parentLayer.addChild(layer1);
+        parentLayer.addChild(layer2);
+        PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+        canvas.setFontAndSize(font, 12);
+
+        PdfLayerTestUtils.addTextInsideLayer(parentLayer, canvas, "Parent layer text", 50, 750);
+        PdfLayerTestUtils.addTextInsideLayer(layer1, canvas, "layer 1 text", 100, 700);
+        PdfLayerTestUtils.addTextInsideLayer(layer2, canvas, "layer 2 text", 100, 650);
+        PdfLayerTestUtils.addTextInsideLayer(nestedLayer, canvas, "Nested layer text", 150, 600);
+        canvas.release();
+        pdfDoc.close();
+
+        PdfLayerTestUtils.compareLayers(outPdf, cmpPdf);
+    }
+
+    @Test
+    public void duplicatedNestedLayersTest() throws IOException {
+        String outPdf = destinationFolder + "duplicatedNestedLayers.pdf";
+        String cmpPdf = sourceFolder + "cmp_duplicatedNestedLayers.pdf";
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outPdf));
+
+        PdfFont font = PdfFontFactory.createFont();
+
+        PdfLayer parentLayer = new PdfLayer("Parent layer", pdfDoc);
+        PdfLayer nestedLayer1 = new PdfLayer("Nested layer", pdfDoc);
+
+        parentLayer.addChild(nestedLayer1);
+        parentLayer.addChild(nestedLayer1);
+        PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+        canvas.setFontAndSize(font, 12);
+
+        PdfLayerTestUtils.addTextInsideLayer(parentLayer, canvas, "Parent layer text", 50, 750);
+        PdfLayerTestUtils.addTextInsideLayer(nestedLayer1, canvas, "Nested layer text", 100, 700);
+        canvas.release();
+        pdfDoc.close();
+
+        PdfLayerTestUtils.compareLayers(outPdf, cmpPdf);
     }
 }

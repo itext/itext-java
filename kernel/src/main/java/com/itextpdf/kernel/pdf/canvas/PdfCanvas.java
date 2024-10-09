@@ -86,6 +86,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import java.util.Set;
+import java.util.HashSet;
 
 /**
  * PdfCanvas class represents an algorithm for writing data into content stream.
@@ -1885,16 +1887,10 @@ public class PdfCanvas {
             layerDepth.add(1);
             addToPropertiesAndBeginLayer(layer);
         } else if (layer instanceof PdfLayer) {
-            int num = 0;
             PdfLayer la = (PdfLayer) layer;
-            while (la != null) {
-                if (la.getTitle() == null) {
-                    addToPropertiesAndBeginLayer(la);
-                    num++;
-                }
-                la = la.getParent();
-            }
-            layerDepth.add(num);
+            Set<PdfLayer> layers = new HashSet<>();
+            int depth = beginLayerTree(la, layers);
+            layerDepth.add(depth);
         } else
             throw new UnsupportedOperationException("Unsupported type for operand: layer");
         return this;
@@ -2608,6 +2604,32 @@ public class PdfCanvas {
     private static boolean isIdentityMatrix(float a, float b, float c, float d, float e, float f) {
         return Math.abs(1 - a) < IDENTITY_MATRIX_EPS && Math.abs(b) < IDENTITY_MATRIX_EPS && Math.abs(c) < IDENTITY_MATRIX_EPS &&
                 Math.abs(1 - d) < IDENTITY_MATRIX_EPS && Math.abs(e) < IDENTITY_MATRIX_EPS && Math.abs(f) < IDENTITY_MATRIX_EPS;
+    }
+
+    /**
+     * This method is used to traverse parent tree and begin all layers in it.
+     * If layer was already begun during method call, it will not be processed again.
+     */
+    private int beginLayerTree(PdfLayer layer, Set<PdfLayer> layers) {
+        if (layer == null || layers.contains(layer)) {
+            return 0;
+        }
+
+        layers.add(layer);
+        int depth = 0;
+        if (layer.getTitle() == null) {
+            addToPropertiesAndBeginLayer(layer);
+            depth++;
+        }
+
+        List<PdfLayer> parentLayers = layer.getParents();
+        if (parentLayers != null) {
+            for (PdfLayer parentLayer : parentLayers) {
+                depth += beginLayerTree(parentLayer, layers);
+            }
+        }
+
+        return depth;
     }
 
     private enum CheckColorMode {

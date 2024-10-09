@@ -24,8 +24,6 @@ package com.itextpdf.kernel.pdf.layer;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -42,6 +40,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.HashMap;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,12 +57,6 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
     static final String OC_CONFIG_NAME_PATTERN = "OCConfigName";
 
     private List<PdfLayer> layers = new ArrayList<>();
-
-    //TODO DEVSIX-8490 remove this field when implemented
-    private Set<PdfIndirectReference> references;
-
-    //TODO DEVSIX-8490 remove this field when implemented
-    private boolean isDuplicateRemoved;
 
     /**
      * Creates a new PdfOCProperties instance.
@@ -167,7 +161,7 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
         List<PdfLayer> docOrder = new ArrayList<>(layers);
         for (int i = 0; i < docOrder.size(); i++) {
             PdfLayer layer = docOrder.get(i);
-            if (layer.getParent() != null) {
+            if (layer.getParents() != null) {
                 docOrder.remove(layer);
                 i--;
             }
@@ -411,14 +405,9 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
 
             PdfArray orderArray = d.getAsArray(PdfName.Order);
             if (orderArray != null && !orderArray.isEmpty()) {
-                references = new HashSet<>();
-                isDuplicateRemoved = false;
-                readOrderFromDictionary(null, orderArray, layerMap);
-                //TODO DEVSIX-8490 remove this check when implemented
-                if (isDuplicateRemoved) {
-                    Logger logger = LoggerFactory.getLogger(PdfOCProperties.class);
-                    logger.warn(KernelLogMessageConstant.DUPLICATE_ENTRIES_IN_ORDER_ARRAY_REMOVED);
-                }
+                Set<PdfIndirectReference> layerReferences = new HashSet<>();
+                Map<PdfString, PdfLayer> titleLayers = new HashMap<>();
+                readOrderFromDictionary(null, orderArray, layerMap, layerReferences, titleLayers);
             }
 
         }
@@ -433,7 +422,8 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Reads the /Order in the /D entry and initialized the parent-child hierarchy.
      */
-    private void readOrderFromDictionary(PdfLayer parent, PdfArray orderArray, Map<PdfIndirectReference, PdfLayer> layerMap) {
+    private void readOrderFromDictionary(PdfLayer parent, PdfArray orderArray, Map<PdfIndirectReference,
+            PdfLayer> layerMap, Set<PdfIndirectReference> layerReferences, Map<PdfString, PdfLayer> titleLayers) {
         for (int i = 0; i < orderArray.size(); i++) {
             PdfObject item = orderArray.get(i);
             if (item.getType() == PdfObject.DICTIONARY) {
@@ -442,48 +432,47 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
                     continue;
                 }
 
-                //TODO DEVSIX-8490 remove this check and it statement when implemented
-                if (references.contains(layer.getIndirectReference())) {
-                    //We want to check if this duplicate layer has childLayers, if it has - throw an exception,
-                    // else just don't add this layer.
-                    if (i + 1 < orderArray.size() && orderArray.get(i + 1).getType() == PdfObject.ARRAY) {
-                        final PdfArray nextArray = orderArray.getAsArray(i + 1);
-                        if (nextArray.size() > 0 && nextArray.get(0).getType() != PdfObject.STRING) {
-                            PdfIndirectReference ref = layer.getIndirectReference();
-                            throw new PdfException(MessageFormatUtil.format(
-                                    KernelExceptionMessageConstant.UNABLE_TO_REMOVE_DUPLICATE_LAYER
-                                    , ref.toString()));
-                        }
-                    }
-
-                    isDuplicateRemoved = true;
-                } else {
-                    references.add(layer.getIndirectReference());
+                if (!layerReferences.contains(layer.getIndirectReference())) {
+                    layerReferences.add(layer.getIndirectReference());
                     layers.add(layer);
                     layer.onPanel = true;
-                    if (parent != null)
-                        parent.addChild(layer);
-                    if (i + 1 < orderArray.size() && orderArray.get(i + 1).getType() == PdfObject.ARRAY) {
-                        final PdfArray nextArray = orderArray.getAsArray(i + 1);
-                        if (nextArray.size() > 0 && nextArray.get(0).getType() != PdfObject.STRING) {
-                            readOrderFromDictionary(layer, orderArray.getAsArray(i + 1), layerMap);
-                            i++;
-                        }
+                }
+
+                if (parent != null)
+                    parent.addChild(layer);
+                if (i + 1 < orderArray.size() && orderArray.get(i + 1).getType() == PdfObject.ARRAY) {
+                    final PdfArray nextArray = orderArray.getAsArray(i + 1);
+                    if (nextArray.size() > 0 && nextArray.get(0).getType() != PdfObject.STRING) {
+                        readOrderFromDictionary(layer, orderArray.getAsArray(i + 1), layerMap, layerReferences,
+                                titleLayers);
+                        i++;
                     }
                 }
             } else if (item.getType() == PdfObject.ARRAY) {
                 PdfArray subArray = (PdfArray) item;
-                if (subArray.isEmpty()) continue;
+                if (subArray.isEmpty()) {
+                    continue;
+                }
+
                 PdfObject firstObj = subArray.get(0);
                 if (firstObj.getType() == PdfObject.STRING) {
-                    PdfLayer titleLayer = PdfLayer.createTitleSilent(((PdfString) firstObj).toUnicodeString(), getDocument());
-                    titleLayer.onPanel = true;
-                    layers.add(titleLayer);
-                    if (parent != null)
+                    PdfString title = (PdfString) firstObj;
+                    PdfLayer titleLayer = titleLayers.get(title);
+                    if (titleLayer == null) {
+                        titleLayer = PdfLayer.createTitleSilent(title.toUnicodeString(), getDocument());
+                        titleLayer.onPanel = true;
+                        layers.add(titleLayer);
+                        titleLayers.put(title, titleLayer);
+                    }
+
+                    if (parent != null) {
                         parent.addChild(titleLayer);
-                    readOrderFromDictionary(titleLayer, new PdfArray(subArray.subList(1, subArray.size())), layerMap);
+                    }
+
+                    readOrderFromDictionary(titleLayer, new PdfArray(subArray.subList(1, subArray.size())), layerMap,
+                            layerReferences, titleLayers);
                 } else {
-                    readOrderFromDictionary(parent, subArray, layerMap);
+                    readOrderFromDictionary(parent, subArray, layerMap, layerReferences, titleLayers);
                 }
             }
         }

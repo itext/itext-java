@@ -22,10 +22,7 @@
  */
 package com.itextpdf.kernel.pdf.layer;
 
-import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
@@ -33,95 +30,247 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.List;
 
 @Tag("UnitTest")
 public class PdfOCPropertiesUnitTest {
 
-    //TODO DEVSIX-8490 remove this test when implemented
     @Test
-    public void removeOrderDuplicatesTest() throws IOException {
+    public void orderArrayOcgWithTwoParentsTest() throws IOException {
         byte[] docBytes;
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             try (PdfDocument document = new PdfDocument(new PdfWriter(outputStream))) {
-                PdfDictionary ocgDic = new PdfDictionary();
-                ocgDic.makeIndirect(document);
+                PdfDictionary parentOcg1 = new PdfDictionary();
+                parentOcg1.put(PdfName.Name, new PdfString("Parent1"));
+                parentOcg1.put(PdfName.Type, PdfName.OCG);
+                parentOcg1.makeIndirect(document);
                 PdfArray orderArray = new PdfArray();
-                for (int i = 0; i < 3; i++) {
-                    orderArray.add(ocgDic);
-                }
+                orderArray.add(parentOcg1);
 
-                PdfDictionary ocgDic2 = new PdfDictionary();
-                ocgDic.makeIndirect(document);
-                for (int i = 0; i < 3; i++) {
-                    PdfArray layerArray = new PdfArray();
-                    layerArray.add(new PdfString("layerName" + i));
-                    layerArray.add(ocgDic2);
-                    orderArray.add(layerArray);
-                }
+                PdfDictionary childOcg = new PdfDictionary();
+                childOcg.put(PdfName.Name, new PdfString("child"));
+                childOcg.put(PdfName.Type, PdfName.OCG);
+                childOcg.makeIndirect(document);
+                PdfArray childArray = new PdfArray();
+                childArray.add(childOcg);
+                orderArray.add(childArray);
+
+                PdfDictionary parentOcg2 = new PdfDictionary();
+                parentOcg2.put(PdfName.Name, new PdfString("Parent2"));
+                parentOcg2.put(PdfName.Type, PdfName.OCG);
+                parentOcg2.makeIndirect(document);
+                orderArray.add(parentOcg2);
+                orderArray.add(new PdfArray(childArray));
 
                 PdfDictionary DDictionary = new PdfDictionary();
                 DDictionary.put(PdfName.Order, orderArray);
-                PdfArray OCGsArray = new PdfArray();
-                OCGsArray.add(ocgDic);
-                OCGsArray.add(ocgDic2);
+                PdfArray ocgArray = new PdfArray();
+                ocgArray.add(parentOcg1);
+                ocgArray.add(parentOcg2);
+                ocgArray.add(childOcg);
 
                 PdfDictionary OCPropertiesDic = new PdfDictionary();
                 OCPropertiesDic.put(PdfName.D, DDictionary);
-                OCPropertiesDic.put(PdfName.OCGs, OCGsArray);
+                OCPropertiesDic.put(PdfName.OCGs, ocgArray);
+                OCPropertiesDic.makeIndirect(document);
                 document.getCatalog().getPdfObject().put(PdfName.OCProperties, OCPropertiesDic);
-
-                document.getCatalog().getOCProperties(false);
-
             }
             docBytes = outputStream.toByteArray();
         }
 
         try (PdfDocument docReopen = new PdfDocument(new PdfReader(new ByteArrayInputStream(docBytes)))) {
-            PdfArray resultArray = docReopen.getCatalog().getPdfObject().getAsDictionary(PdfName.OCProperties)
-                    .getAsDictionary(PdfName.D).getAsArray(PdfName.Order);
-            Assertions.assertEquals(2, resultArray.size());
+            List<PdfLayer> layers = docReopen.getCatalog().getOCProperties(false).getLayers();
+            Assertions.assertEquals(3, layers.size());
+            Assertions.assertEquals(1, layers.get(0).getChildren().size());
+            Assertions.assertEquals(2, layers.get(1).getParents().size());
+            Assertions.assertEquals(1, layers.get(2).getChildren().size());
         }
     }
 
-    //TODO DEVSIX-8490 remove this test when implemented
     @Test
-    public void removeOrderDuplicateHasChildTest() throws IOException {
+    public void orderArrayOcgWithTwoTitleParentsTest() throws IOException {
+        byte[] docBytes;
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             try (PdfDocument document = new PdfDocument(new PdfWriter(outputStream))) {
-                PdfDictionary ocgDic = new PdfDictionary();
-                PdfDictionary ocgDicChild1 = new PdfDictionary();
-                PdfDictionary ocgDicChild2 = new PdfDictionary();
-                ocgDic.makeIndirect(document);
+                PdfDictionary childOcg = new PdfDictionary();
+                childOcg.put(PdfName.Name, new PdfString("child"));
+                childOcg.put(PdfName.Type, PdfName.OCG);
+                childOcg.makeIndirect(document);
+                PdfArray childArray = new PdfArray();
+                childArray.add(childOcg);
 
+                PdfArray titleOcg1 = new PdfArray();
+                titleOcg1.add(new PdfString("parent title layer 1"));
+                titleOcg1.add(childArray);
                 PdfArray orderArray = new PdfArray();
-                PdfArray childArray1 = new PdfArray();
-                childArray1.add(ocgDicChild1);
-                PdfArray childArray2 = new PdfArray();
-                childArray2.add(ocgDicChild2);
+                orderArray.add(titleOcg1);
 
-                orderArray.add(ocgDic);
-                orderArray.add(childArray1);
-                orderArray.add(ocgDic);
-                orderArray.add(childArray2);
+                PdfArray titleOcg2 = new PdfArray();
+                titleOcg2.add(new PdfString("parent title 2"));
+                titleOcg2.add(childArray);
+                orderArray.add(titleOcg2);
 
                 PdfDictionary DDictionary = new PdfDictionary();
                 DDictionary.put(PdfName.Order, orderArray);
-                PdfArray OCGsArray = new PdfArray();
-                OCGsArray.add(ocgDic);
-                OCGsArray.add(ocgDicChild1);
-                OCGsArray.add(ocgDicChild2);
 
-                PdfDictionary OCPropertiesDic = new PdfDictionary();
-                OCPropertiesDic.put(PdfName.D, DDictionary);
-                OCPropertiesDic.put(PdfName.OCGs, OCGsArray);
-                document.getCatalog().getPdfObject().put(PdfName.OCProperties, OCPropertiesDic);
+                PdfArray ocgArray = new PdfArray();
+                ocgArray.add(childOcg);
 
-                PdfIndirectReference ref = ocgDic.getIndirectReference();
-                PdfCatalog catalog = document.getCatalog();
-                Exception e = Assertions.assertThrows(PdfException.class, () -> catalog.getOCProperties(false));
-                Assertions.assertEquals(MessageFormatUtil.format(
-                        KernelExceptionMessageConstant.UNABLE_TO_REMOVE_DUPLICATE_LAYER, ref.toString()), e.getMessage());
+                PdfDictionary ocPropertiesDic = new PdfDictionary();
+                ocPropertiesDic.put(PdfName.D, DDictionary);
+                ocPropertiesDic.put(PdfName.OCGs, ocgArray);
+                ocPropertiesDic.makeIndirect(document);
+                document.getCatalog().getPdfObject().put(PdfName.OCProperties, ocPropertiesDic);
             }
+            docBytes = outputStream.toByteArray();
+        }
+
+        try (PdfDocument docReopen = new PdfDocument(new PdfReader(new ByteArrayInputStream(docBytes)),
+                new PdfWriter(new ByteArrayOutputStream()))) {
+            List<PdfLayer> layers = docReopen.getCatalog().getOCProperties(false).getLayers();
+            Assertions.assertEquals(3, layers.size());
+            Assertions.assertEquals(1, layers.get(0).getChildren().size());
+            Assertions.assertEquals(2, layers.get(1).getParents().size());
+            Assertions.assertEquals(1, layers.get(2).getChildren().size());
+        }
+    }
+
+    @Test
+    public void orderArrayTitleOcgWithTwoParentsTest() throws IOException {
+        byte[] docBytes;
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            try (PdfDocument document = new PdfDocument(new PdfWriter(outputStream))) {
+                PdfDictionary parentOcg1 = new PdfDictionary();
+                parentOcg1.put(PdfName.Name, new PdfString("Parent1"));
+                parentOcg1.put(PdfName.Type, PdfName.OCG);
+                parentOcg1.makeIndirect(document);
+                PdfArray orderArray = new PdfArray();
+                orderArray.add(parentOcg1);
+
+                PdfArray titleChildOcg = new PdfArray();
+                titleChildOcg.add(new PdfString("child title layer"));
+                PdfArray childArray = new PdfArray();
+                childArray.add(titleChildOcg);
+                orderArray.add(childArray);
+
+                PdfDictionary parentOcg2 = new PdfDictionary();
+                parentOcg2.put(PdfName.Name, new PdfString("Parent2"));
+                parentOcg2.put(PdfName.Type, PdfName.OCG);
+                parentOcg2.makeIndirect(document);
+                orderArray.add(parentOcg2);
+                orderArray.add(new PdfArray(childArray));
+
+                PdfDictionary DDictionary = new PdfDictionary();
+                DDictionary.put(PdfName.Order, orderArray);
+                PdfArray ocgArray = new PdfArray();
+                ocgArray.add(parentOcg1);
+                ocgArray.add(parentOcg2);
+
+                PdfDictionary ocPropertiesDic = new PdfDictionary();
+                ocPropertiesDic.put(PdfName.D, DDictionary);
+                ocPropertiesDic.put(PdfName.OCGs, ocgArray);
+                ocPropertiesDic.makeIndirect(document);
+                document.getCatalog().getPdfObject().put(PdfName.OCProperties, ocPropertiesDic);
+            }
+            docBytes = outputStream.toByteArray();
+        }
+
+        try (PdfDocument docReopen = new PdfDocument(new PdfReader(new ByteArrayInputStream(docBytes)),
+                new PdfWriter(new ByteArrayOutputStream()))) {
+            List<PdfLayer> layers = docReopen.getCatalog().getOCProperties(false).getLayers();
+            Assertions.assertEquals(3, layers.size());
+            Assertions.assertEquals(1, layers.get(0).getChildren().size());
+            Assertions.assertEquals(2, layers.get(1).getParents().size());
+            Assertions.assertEquals(1, layers.get(2).getChildren().size());
+        }
+    }
+
+    @Test
+    public void orderArrayDuplicatedOcgTest() throws IOException {
+        byte[] docBytes;
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            try (PdfDocument document = new PdfDocument(new PdfWriter(outputStream))) {
+                PdfDictionary ocg = new PdfDictionary();
+                ocg.put(PdfName.Name, new PdfString("ocg"));
+                ocg.put(PdfName.Type, PdfName.OCG);
+                ocg.makeIndirect(document);
+                PdfArray orderArray = new PdfArray();
+                orderArray.add(ocg);
+                orderArray.add(ocg);
+                orderArray.add(ocg);
+
+                PdfDictionary parentOcg = new PdfDictionary();
+                parentOcg.put(PdfName.Name, new PdfString("Parent"));
+                parentOcg.put(PdfName.Type, PdfName.OCG);
+                parentOcg.makeIndirect(document);
+                orderArray.add(parentOcg);
+                orderArray.add(new PdfArray(ocg));
+
+                PdfDictionary DDictionary = new PdfDictionary();
+                DDictionary.put(PdfName.Order, orderArray);
+                PdfArray ocgArray = new PdfArray();
+                ocgArray.add(ocg);
+                ocgArray.add(parentOcg);
+
+                PdfDictionary ocPropertiesDic = new PdfDictionary();
+                ocPropertiesDic.put(PdfName.D, DDictionary);
+                ocPropertiesDic.put(PdfName.OCGs, ocgArray);
+                ocPropertiesDic.makeIndirect(document);
+                document.getCatalog().getPdfObject().put(PdfName.OCProperties, ocPropertiesDic);
+            }
+            docBytes = outputStream.toByteArray();
+        }
+
+        try (PdfDocument docReopen = new PdfDocument(new PdfReader(new ByteArrayInputStream(docBytes)),
+                new PdfWriter(new ByteArrayOutputStream()))) {
+            List<PdfLayer> layers = docReopen.getCatalog().getOCProperties(false).getLayers();
+            Assertions.assertEquals(2, layers.size());
+            Assertions.assertEquals(1, layers.get(0).getParents().size());
+            Assertions.assertEquals(1, layers.get(1).getChildren().size());
+        }
+    }
+
+    @Test
+    public void orderArrayDuplicatedTitleOcgTest() throws IOException {
+        byte[] docBytes;
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            try (PdfDocument document = new PdfDocument(new PdfWriter(outputStream))) {
+                PdfArray orderArray = new PdfArray();
+                PdfArray titleOcg = new PdfArray();
+                titleOcg.add(new PdfString("title layer"));
+                orderArray.add(titleOcg);
+
+                PdfDictionary parentOcg = new PdfDictionary();
+                parentOcg.put(PdfName.Name, new PdfString("Parent"));
+                parentOcg.put(PdfName.Type, PdfName.OCG);
+                parentOcg.makeIndirect(document);
+                orderArray.add(parentOcg);
+
+                PdfArray nestedOcg = new PdfArray();
+                nestedOcg.add(titleOcg);
+                orderArray.add(nestedOcg);
+                orderArray.add(titleOcg);
+
+                PdfDictionary DDictionary = new PdfDictionary();
+                DDictionary.put(PdfName.Order, orderArray);
+                PdfArray ocgArray = new PdfArray();
+                ocgArray.add(parentOcg);
+
+                PdfDictionary ocPropertiesDic = new PdfDictionary();
+                ocPropertiesDic.put(PdfName.D, DDictionary);
+                ocPropertiesDic.put(PdfName.OCGs, ocgArray);
+                ocPropertiesDic.makeIndirect(document);
+                document.getCatalog().getPdfObject().put(PdfName.OCProperties, ocPropertiesDic);
+            }
+            docBytes = outputStream.toByteArray();
+        }
+        try (PdfDocument docReopen = new PdfDocument(new PdfReader(new ByteArrayInputStream(docBytes)),
+                new PdfWriter(new ByteArrayOutputStream()))) {
+            List<PdfLayer> layers = docReopen.getCatalog().getOCProperties(false).getLayers();
+            Assertions.assertEquals(2, layers.size());
+            Assertions.assertEquals("title layer", layers.get(0).getTitle());
+            Assertions.assertEquals(1, layers.get(0).getParents().size());
+            Assertions.assertEquals(1, layers.get(1).getChildren().size());
         }
     }
 }
