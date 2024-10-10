@@ -95,4 +95,12 @@ public class PubSecHandlerUsingAes256 extends PubSecHandlerUsingAes128 {
             encryptionDictionary.put(PdfName.StmF, PdfName.DefaultCryptFilter);
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void initMd5MessageDigest() {
+        //Do nothing to not initialize md5 message digest, since it's not used by AES256 handler
+    }
 }

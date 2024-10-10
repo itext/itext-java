@@ -113,4 +113,12 @@ public class PubSecHandlerUsingAesGcm extends PubSecHandlerUsingAes256 {
         PdfName filter = PdfName.AESV4;
         setEncryptionDictEntries(encryptionDictionary, encryptMetadata, embeddedFilesOnly, version, filter);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void initMd5MessageDigest() {
+        //Do nothing to not initialize md5 message digest, since it's not used by AES-GCM handler
+    }
 }

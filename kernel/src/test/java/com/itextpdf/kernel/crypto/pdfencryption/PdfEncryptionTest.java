@@ -164,8 +164,6 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
-            ignore = true))
     public void encryptWithPasswordAes256() throws IOException, InterruptedException {
         String filename = "encryptWithPasswordAes256.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_256;
@@ -182,8 +180,6 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
-            ignore = true))
     public void encryptWithPasswordAes256NoCompression() throws IOException, InterruptedException {
         String filename = "encryptWithPasswordAes256NoCompression.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_256;
@@ -394,8 +390,6 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
-            ignore = true))
     public void encryptWithPasswordAes256EmbeddedFilesOnly() throws IOException, InterruptedException {
         String filename = "encryptWithPasswordAes256EmbeddedFilesOnly.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_256 | EncryptionConstants.EMBEDDED_FILES_ONLY;
@@ -430,8 +424,6 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
-            ignore = true))
     public void encryptAes256Pdf2NotEncryptMetadata() throws InterruptedException, IOException {
         String filename = "encryptAes256Pdf2NotEncryptMetadata.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_256 | EncryptionConstants.DO_NOT_ENCRYPT_METADATA;
@@ -439,8 +431,6 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
-            ignore = true))
     public void encryptAes256Pdf2NotEncryptMetadata02() throws InterruptedException, IOException {
         String filename = "encryptAes256Pdf2NotEncryptMetadata02.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_256 | EncryptionConstants.DO_NOT_ENCRYPT_METADATA;
@@ -473,8 +463,6 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
-            ignore = true))
     public void encryptAes256FullCompression() throws InterruptedException, IOException {
         String filename = "encryptAes256FullCompression.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_256;
@@ -482,8 +470,6 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
-            ignore = true))
     public void encryptWithPasswordAes256Pdf2() throws InterruptedException, IOException {
         String filename = "encryptWithPasswordAes256Pdf2.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_256;
@@ -501,8 +487,6 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
-            ignore = true))
     public void stampAndUpdateVersionNewAes256() throws InterruptedException, IOException {
         String filename = "stampAndUpdateVersionNewAes256.pdf";
         PdfDocument doc = new PdfDocument(
@@ -518,8 +502,6 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
-            ignore = true))
     public void encryptAes256Pdf2Permissions() throws InterruptedException, IOException {
         String filename = "encryptAes256Pdf2Permissions.pdf";
         int permissions = EncryptionConstants.ALLOW_FILL_IN | EncryptionConstants.ALLOW_SCREENREADERS
@@ -571,8 +553,6 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
-            ignore = true, count = 2))
     public void decryptAdobeWithPasswordAes256() throws IOException {
         String filename = Paths.get(sourceFolder + "AdobeAes256.pdf").toString();
         decryptWithPassword(filename, "user".getBytes());

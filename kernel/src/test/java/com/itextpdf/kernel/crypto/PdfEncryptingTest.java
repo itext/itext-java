@@ -103,21 +103,18 @@ public class PdfEncryptingTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT), ignore = true)
     public void encryptWithPasswordAes256() throws IOException, InterruptedException {
         encryptWithPassword("encryptWithPasswordAes256.pdf", EncryptionConstants.ENCRYPTION_AES_256,
                 false);
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT), ignore = true)
     public void encryptWithPasswordAes256Pdf2() throws IOException, InterruptedException {
         encryptWithPassword("encryptWithPasswordAes256Pdf2.pdf", EncryptionConstants.ENCRYPTION_AES_256,
                 true);
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT), ignore = true)
     public void encryptWithCertificateAes256Rsa() throws GeneralSecurityException, IOException, InterruptedException {
         if (BouncyCastleFactoryCreator.getFactory().isInApprovedOnlyMode()) {
             // RSA PKCS1.5 encryption disallowed
@@ -129,7 +126,6 @@ public class PdfEncryptingTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT), ignore = true)
     public void encryptWithCertificateAes256EcdsaP256() {
         String exceptionTest = Assertions.assertThrows(PdfException.class,
                 () -> encryptWithCertificate("encryptWithCertificateAes256EcdsaP256.pdf", "SHA256withECDSA_P256.crt"))
@@ -139,7 +135,6 @@ public class PdfEncryptingTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT), ignore = true)
     public void encryptWithCertificateAes256EcdsaBrainpoolP256R1() {
         String exceptionTest = Assertions.assertThrows(PdfException.class,
                 () -> encryptWithCertificate(

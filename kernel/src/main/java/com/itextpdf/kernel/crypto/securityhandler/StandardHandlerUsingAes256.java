@@ -147,6 +147,14 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
         return encryptionDictionary.getAsNumber(PdfName.R).getValue() == 6;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void initMd5MessageDigest() {
+        //Do nothing to not initialize md5 message digest, since it's not used by AES256 handler
+    }
+
     private void initKeyAndFillDictionary(PdfDictionary encryptionDictionary, byte[] userPassword, byte[] ownerPassword,
                                           int permissions, boolean encryptMetadata, boolean embeddedFilesOnly) {
         ownerPassword = generateOwnerPasswordIfNullOrEmpty(ownerPassword);

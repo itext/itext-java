@@ -85,8 +85,6 @@ public class MacIntegrityProtectorCreationTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
-            ignore = true))
     public void standaloneMacStandardEncryptionTest() throws IOException, InterruptedException {
         String fileName = "standaloneMacStandardEncryptionTest.pdf";
         String outputFileName = DESTINATION_FOLDER + fileName;
@@ -104,8 +102,6 @@ public class MacIntegrityProtectorCreationTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
-            ignore = true))
     public void noMacProtectionTest() throws IOException, InterruptedException {
         String fileName = "noMacProtectionTest.pdf";
         String outputFileName = DESTINATION_FOLDER + fileName;
@@ -142,7 +138,6 @@ public class MacIntegrityProtectorCreationTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT, ignore = true),
             @LogMessage(messageTemplate = IoLogMessageConstant.PDF_WRITER_CLOSING_FAILED)
     })
     public void standaloneMacUnwritableStreamTest() throws IOException {
@@ -164,8 +159,6 @@ public class MacIntegrityProtectorCreationTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
-            ignore = true))
     public void standaloneMacWithAllHashAlgorithmsTest() throws IOException, InterruptedException {
         for (int i = 0; i < EnumUtil.getAllValuesOfEnum(MacDigestAlgorithm.class).size(); i++) {
             String fileName = "standaloneMacWithAllHashAlgorithmsTest" + (i + 1) + ".pdf";
@@ -187,8 +180,6 @@ public class MacIntegrityProtectorCreationTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
-            ignore = true))
     public void standaloneMacPdfVersionNotSetTest() {
         String fileName = "standaloneMacPdfVersionNotSetTest.pdf";
         String outputFileName = DESTINATION_FOLDER + fileName;
@@ -244,8 +235,6 @@ public class MacIntegrityProtectorCreationTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
-            ignore = true))
     public void addMacWithDisableMacPropertyTest() throws IOException, InterruptedException {
         // MAC should not be added in disable MAC mode even if it was provided with writer properties
         String fileName = "addMacWithDisableMacPropertyTest.pdf";
@@ -324,8 +313,6 @@ public class MacIntegrityProtectorCreationTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
-            ignore = true))
     public void standaloneMacPublicKeyEncryptionTest() throws Exception {
         try {
             BouncyCastleFactoryCreator.getFactory().isEncryptionFeatureSupported(0, true);

@@ -80,8 +80,6 @@ public class PubSecHandlerUsingAesGcmTest extends ExtendedITextTest {
         Security.addProvider(FACTORY.getProvider());
     }
 
-    @LogMessages(messages = {@LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
-                    ignore = true)})
     @Test
     public void testSimpleEncryptDecryptTest() throws Exception {
         try {
@@ -99,9 +97,7 @@ public class PubSecHandlerUsingAesGcmTest extends ExtendedITextTest {
         decryptWithCertificate(fileName, DESTINATION_FOLDER, "test.cer", "test.pem");
     }
 
-    @LogMessages(messages = {@LogMessage(messageTemplate = VersionConforming.NOT_SUPPORTED_AES_GCM, ignore = true),
-            @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
-                    ignore = true)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = VersionConforming.NOT_SUPPORTED_AES_GCM, ignore = true)})
     @Test
     public void testSimpleEncryptDecryptPdf17Test() throws Exception {
         try {
@@ -119,8 +115,6 @@ public class PubSecHandlerUsingAesGcmTest extends ExtendedITextTest {
         decryptWithCertificate(fileName, DESTINATION_FOLDER, "test.cer", "test.pem");
     }
 
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
-            ignore = true))
     @Test
     public void decryptExternalFileTest() throws Exception {
         try {
@@ -132,8 +126,6 @@ public class PubSecHandlerUsingAesGcmTest extends ExtendedITextTest {
         decryptWithCertificate("externalFile.pdf", SOURCE_FOLDER, "decrypter.cert.pem", "signerkey.pem");
     }
 
-    @LogMessages(messages = {@LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
-            ignore = true)})
     @Test
     public void invalidCryptFilterTest() {
         String fileName = "invalidCryptFilter.pdf";

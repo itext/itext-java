@@ -24,12 +24,17 @@ package com.itextpdf.kernel.crypto.securityhandler;
 
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.util.StreamUtil;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfEncryption;
 import com.itextpdf.kernel.pdf.PdfLiteral;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfString;
+
+import java.security.MessageDigest;
 
 public abstract class StandardSecurityHandler extends SecurityHandler {
 
@@ -68,7 +73,12 @@ public abstract class StandardSecurityHandler extends SecurityHandler {
 
     protected byte[] generateOwnerPasswordIfNullOrEmpty(byte[] ownerPassword) {
         if (ownerPassword == null || ownerPassword.length == 0) {
-            ownerPassword = md5.digest(PdfEncryption.generateNewDocumentId());
+            try {
+                MessageDigest sha256 = MessageDigest.getInstance("SHA-256");
+                ownerPassword = sha256.digest(PdfEncryption.generateNewDocumentId());
+            } catch (Exception e) {
+                throw new PdfException(KernelExceptionMessageConstant.PDF_ENCRYPTION, e);
+            }
         }
         return ownerPassword;
     }

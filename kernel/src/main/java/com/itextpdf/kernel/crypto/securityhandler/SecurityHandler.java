@@ -57,7 +57,6 @@ public abstract class SecurityHandler {
      */
     protected int nextObjectKeySize;
 
-
     protected MessageDigest md5;
     /**
      * Work area to prepare the object/generation bytes
@@ -65,7 +64,7 @@ public abstract class SecurityHandler {
     protected byte[] extra = new byte[5];
 
     protected SecurityHandler() {
-        safeInitMessageDigest();
+        initMd5MessageDigest();
     }
 
     /**
@@ -126,7 +125,10 @@ public abstract class SecurityHandler {
         return Arrays.copyOf(mkey, mkey.length);
     }
 
-    private void safeInitMessageDigest() {
+    /**
+     * Init md5 message digest.
+     */
+    protected void initMd5MessageDigest() {
         try {
             md5 = MessageDigest.getInstance("MD5");
             if (FACTORY.isInApprovedOnlyMode()) {

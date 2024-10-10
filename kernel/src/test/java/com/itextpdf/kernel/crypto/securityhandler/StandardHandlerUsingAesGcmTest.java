@@ -77,9 +77,6 @@ public class StandardHandlerUsingAesGcmTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
-                    ignore = true)})
     public void simpleEncryptDecryptTest() throws Exception {
         String srcFile = SRC + "simpleDocument.pdf";
         String encryptedCmpFile = SRC + "cmp_encryptedSimpleDocument.pdf";
@@ -101,8 +98,7 @@ public class StandardHandlerUsingAesGcmTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = VersionConforming.NOT_SUPPORTED_AES_GCM),
-            @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT, ignore = true)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = VersionConforming.NOT_SUPPORTED_AES_GCM)})
     public void simpleEncryptDecryptPdf15Test() throws Exception {
         String srcFile = SRC + "simpleDocument.pdf";
         String outFile = DEST + "notSupportedVersionDocument.pdf";
@@ -116,8 +112,6 @@ public class StandardHandlerUsingAesGcmTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
-            ignore = true))
     public void knownOutputTest() throws Exception {
         String srcFile = SRC + "encryptedDocument.pdf";
         String outFile = DEST + "encryptedDocument.pdf";
@@ -130,24 +124,18 @@ public class StandardHandlerUsingAesGcmTest extends ExtendedITextTest {
     }
 
     // In all these tampered files, the stream content of object 14 has been modified.
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
-            ignore = true))
     @Test
     public void macTamperedTest() throws IOException {
         String srcFile = SRC + "encryptedDocumentTamperedMac.pdf";
         assertTampered(srcFile);
     }
 
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
-            ignore = true))
     @Test
     public void initVectorTamperedTest() throws IOException {
         String srcFile = SRC + "encryptedDocumentTamperedIv.pdf";
         assertTampered(srcFile);
     }
 
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
-            ignore = true))
     @Test
     public void ciphertextTamperedTest() throws IOException {
         String srcFile = SRC + "encryptedDocumentTamperedCiphertext.pdf";
@@ -155,9 +143,7 @@ public class StandardHandlerUsingAesGcmTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
-            ignore = true),
-        @LogMessage(messageTemplate = IoLogMessageConstant.ENCRYPTION_ENTRIES_P_AND_ENCRYPT_METADATA_NOT_CORRESPOND_PERMS_ENTRY)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.ENCRYPTION_ENTRIES_P_AND_ENCRYPT_METADATA_NOT_CORRESPOND_PERMS_ENTRY)})
     public void pdfEncryptionWithEmbeddedFilesTest() {
         byte[] documentId = new byte[]{(byte)88, (byte)189, (byte)192, (byte)48, (byte)240, (byte)200, (byte)87,
                 (byte)183, (byte)244, (byte)119, (byte)224, (byte)109, (byte)226, (byte)173, (byte)32, (byte)90};
@@ -187,8 +173,6 @@ public class StandardHandlerUsingAesGcmTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
-            ignore = true)})
     public void pdfEncryptionWithMetadataTest() {
         byte[] documentId = new byte[]{(byte)88, (byte)189, (byte)192, (byte)48, (byte)240, (byte)200, (byte)87,
                 (byte)183, (byte)244, (byte)119, (byte)224, (byte)109, (byte)226, (byte)173, (byte)32, (byte)90};
@@ -217,8 +201,6 @@ public class StandardHandlerUsingAesGcmTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
-            ignore = true)})
     public void encryptPdfWithMissingCFTest() {
         byte[] documentId = new byte[]{(byte)88, (byte)189, (byte)192, (byte)48, (byte)240, (byte)200, (byte)87,
                 (byte)183, (byte)244, (byte)119, (byte)224, (byte)109, (byte)226, (byte)173, (byte)32, (byte)90};
@@ -232,8 +214,6 @@ public class StandardHandlerUsingAesGcmTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
-            ignore = true)})
     public void encryptPdfWithMissingStdCFTest() {
         byte[] documentId = new byte[]{(byte)88, (byte)189, (byte)192, (byte)48, (byte)240, (byte)200, (byte)87,
                 (byte)183, (byte)244, (byte)119, (byte)224, (byte)109, (byte)226, (byte)173, (byte)32, (byte)90};
@@ -252,8 +232,6 @@ public class StandardHandlerUsingAesGcmTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
-            ignore = true)})
     public void encryptPdfWithMissingCFMTest() {
         byte[] documentId = new byte[]{(byte)88, (byte)189, (byte)192, (byte)48, (byte)240, (byte)200, (byte)87,
                 (byte)183, (byte)244, (byte)119, (byte)224, (byte)109, (byte)226, (byte)173, (byte)32, (byte)90};

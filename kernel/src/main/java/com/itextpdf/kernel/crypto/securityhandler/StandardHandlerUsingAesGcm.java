@@ -111,4 +111,12 @@ public class StandardHandlerUsingAesGcm extends StandardHandlerUsingAes256 {
     boolean isPdf2(PdfDictionary encryptionDictionary) {
         return true;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void initMd5MessageDigest() {
+        //Do nothing to not initialize md5 message digest, since it's not used by AES-GCM handler
+    }
 }

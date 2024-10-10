@@ -76,7 +76,6 @@ public class EncryptionInApprovedModeTest extends ExtendedITextTest {
     }
     
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT))
     public void checkMD5LogMessageWhileReadingPdfTest() throws IOException {
         String fileName = "checkMD5LogMessageWhileReadingPdf.pdf";
         try (PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + fileName))) {
@@ -85,7 +84,6 @@ public class EncryptionInApprovedModeTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT))
     public void checkMD5LogMessageWhileCreatingPdfTest() throws IOException {
         String fileName = "checkMD5LogMessageWhileCreatingPdf.pdf";
         try (PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + fileName,
@@ -96,15 +94,13 @@ public class EncryptionInApprovedModeTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
-            count = 3))
     public void checkMD5LogMessageForEachPdfTest() throws IOException {
         String fileName = "checkMD5LogMessageForEachPdf.pdf";
         for (int i = 0; i < 3; ++i) {
             try (PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + fileName,
                     new WriterProperties().setStandardEncryption(USER, OWNER, EncryptionConstants.ALLOW_SCREENREADERS,
                             EncryptionConstants.ENCRYPTION_AES_256).addXmpMetadata()))) {
-                // this test checks log message
+                // this test checks absence of log messages
             }
         }
     }
