@@ -26,15 +26,14 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfActionOcgStateTest extends ExtendedITextTest {
     @Test
     public void pdfActionOcgStateUsageTest() {
@@ -54,13 +53,13 @@ public class PdfActionOcgStateTest extends ExtendedITextTest {
 
         PdfActionOcgState ocgState = new PdfActionOcgState(stateName, dicts);
 
-        Assert.assertEquals(stateName, ocgState.getState());
-        Assert.assertEquals(dicts, ocgState.getOcgs());
+        Assertions.assertEquals(stateName, ocgState.getState());
+        Assertions.assertEquals(dicts, ocgState.getOcgs());
 
         List<PdfObject> states = ocgState.getObjectList();
-        Assert.assertEquals(3, states.size());
-        Assert.assertEquals(stateName, states.get(0));
-        Assert.assertEquals(ocgDict1, states.get(1));
-        Assert.assertEquals(ocgDict2, states.get(2));
+        Assertions.assertEquals(3, states.size());
+        Assertions.assertEquals(stateName, states.get(0));
+        Assertions.assertEquals(ocgDict1, states.get(1));
+        Assertions.assertEquals(ocgDict2, states.get(2));
     }
 }

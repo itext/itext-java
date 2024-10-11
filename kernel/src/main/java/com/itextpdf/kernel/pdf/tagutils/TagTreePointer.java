@@ -528,8 +528,7 @@ public class TagTreePointer {
         }
 
         RoleFinderHandler handler = new RoleFinderHandler(n, role);
-        TagTreeIteratorApproverWithStop approver = new TagTreeIteratorApproverWithStop(handler);
-        TagTreeIterator iterator = new TagTreeIterator(getCurrentStructElem(), approver,
+        TagTreeIterator iterator = new TagTreeIterator(getCurrentStructElem(),
                 TagTreeIterator.TreeTraversalOrder.PRE_ORDER);
 
         iterator.addHandler(handler);
@@ -837,7 +836,7 @@ public class TagTreePointer {
         }
     }
 
-    private static class RoleFinderHandler implements ITagTreeIteratorHandler {
+    private static class RoleFinderHandler extends AbstractAvoidDuplicatesTagTreeIteratorHandler {
         private final int n;
         private final String role;
         private int foundIdx = 0;
@@ -848,8 +847,17 @@ public class TagTreePointer {
             this.role = role;
         }
 
+        public PdfStructElem getFoundElement() {
+            return foundElem;
+        }
+
         @Override
-        public void nextElement(IStructureNode elem) {
+        public boolean accept(IStructureNode node) {
+            return getFoundElement() == null && super.accept(node);
+        }
+
+        @Override
+        public void processElement(IStructureNode elem) {
             if (foundElem != null) {
                 return;
             }
@@ -858,28 +866,6 @@ public class TagTreePointer {
             if (descendantRole.equals(role) && foundIdx++ == n) {
                 foundElem = (PdfStructElem) elem;
             }
-        }
-
-        public PdfStructElem getFoundElement() {
-            return foundElem;
-        }
-    }
-
-    /**
-     * @deprecated change ITagTreeIteratorHandler#nextElement to return boolean
-     * showing whether the iteration should be continued. It will allow to get rid of this ugly workaround.
-     */
-    @Deprecated
-    private static class TagTreeIteratorApproverWithStop extends TagTreeIteratorAvoidDuplicatesApprover {
-        private final RoleFinderHandler handler;
-        public TagTreeIteratorApproverWithStop(RoleFinderHandler handler) {
-            super();
-            this.handler = handler;
-        }
-
-        @Override
-        public boolean approve(IStructureNode elem) {
-            return super.approve(elem) && handler.getFoundElement() == null;
         }
     }
 }

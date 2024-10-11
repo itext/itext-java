@@ -26,13 +26,12 @@ import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class Jpeg2000Test extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/io/image/";
@@ -43,15 +42,15 @@ public class Jpeg2000Test extends ExtendedITextTest {
             // Test a more specific entry point
             ImageDataFactory.createJpeg2000(UrlUtil.toURL(sourceFolder + "bee.jp2"));
         } catch (IOException e) {
-            Assert.assertEquals(IoExceptionMessageConstant.UNSUPPORTED_BOX_SIZE_EQ_EQ_0, e.getMessage());
+            Assertions.assertEquals(IoExceptionMessageConstant.UNSUPPORTED_BOX_SIZE_EQ_EQ_0, e.getMessage());
         }
     }
 
     @Test
     public void openJpeg2000_2() throws java.io.IOException {
         ImageData img = ImageDataFactory.create(sourceFolder + "bee.jpc");
-        Assert.assertEquals(640, img.getWidth(), 0);
-        Assert.assertEquals(800, img.getHeight(), 0);
-        Assert.assertEquals(7, img.getBpc());
+        Assertions.assertEquals(640, img.getWidth(), 0);
+        Assertions.assertEquals(800, img.getHeight(), 0);
+        Assertions.assertEquals(7, img.getBpc());
     }
 }

@@ -56,7 +56,8 @@ public class SvgDrawContext {
     private FontSet tempFonts;
     private SvgCssContext cssContext;
 
-    private AffineTransform lastTextTransform = new AffineTransform();
+    private AffineTransform lastTextTransform;
+    private AffineTransform rootTransform;
     private float[] textMove = new float[]{0.0f, 0.0f};
     private float[] previousElementTextMove;
 
@@ -276,6 +277,27 @@ public class SvgDrawContext {
      */
     public void setLastTextTransform(AffineTransform newTransform) {
         this.lastTextTransform = newTransform;
+    }
+
+    /**
+     * Get the current root transformation that was last applied.
+     *
+     * @return {@link AffineTransform} representing the root transformation.
+     */
+    public AffineTransform getRootTransform() {
+        if (rootTransform == null) {
+            rootTransform = new AffineTransform();
+        }
+        return this.rootTransform;
+    }
+
+    /**
+     * Set the current root transformation.
+     *
+     * @param newTransform root transformation.
+     */
+    public void setRootTransform(AffineTransform newTransform) {
+        this.rootTransform = newTransform;
     }
 
     /**

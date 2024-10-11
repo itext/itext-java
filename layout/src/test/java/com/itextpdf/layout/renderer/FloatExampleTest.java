@@ -43,16 +43,15 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class FloatExampleTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/FloatExampleTest/";
@@ -63,7 +62,7 @@ public class FloatExampleTest extends ExtendedITextTest {
     private static final float DIV_BORDER_WIDTH = 1f;
 
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
@@ -142,7 +141,7 @@ public class FloatExampleTest extends ExtendedITextTest {
                 Property.MAX_WIDTH, new UnitValue(UnitValue.PERCENT, 60f), ClearPropertyValue.BOTH, firstImage, lastImage);
 
         document.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder,
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder,
                 "diff01_"));
     }
 
@@ -176,7 +175,7 @@ public class FloatExampleTest extends ExtendedITextTest {
                 ClearPropertyValue.BOTH, firstImage, lastImage);
 
         document.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder,
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder,
                 "diff01_"));
     }
 
@@ -228,7 +227,7 @@ public class FloatExampleTest extends ExtendedITextTest {
                     image.setProperty(imageWidthProperty, imageWidth);
                 div.add(image);
                 div.add(new Paragraph("Figure for Div" + i + ": This is longer text that wraps This is longer text that wraps")
-                        .setTextAlignment(TextAlignment.CENTER)).setBold();
+                        .setTextAlignment(TextAlignment.CENTER)).simulateBold();
                 document.add(div);
             } else {
                 image.setMargins(BORDER_MARGIN, 0, BORDER_MARGIN, BORDER_MARGIN);

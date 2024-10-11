@@ -68,8 +68,8 @@ class Jbig2ImageHelper {
             Jbig2SegmentReader.Jbig2Page p = sr.getPage(image.getPage());
             raf.close();
 
-            image.setHeight(p.pageBitmapHeight);
-            image.setWidth(p.pageBitmapWidth);
+            image.setHeight(p.getPageBitmapHeight());
+            image.setWidth(p.getPageBitmapWidth());
             image.setBpc(1);
             image.setColorEncodingComponentsNumber(1);
 

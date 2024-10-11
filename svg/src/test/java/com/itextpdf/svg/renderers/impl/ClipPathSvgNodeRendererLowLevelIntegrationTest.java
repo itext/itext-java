@@ -32,23 +32,22 @@ import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class ClipPathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrationTest {
 
     private PdfCanvas cv;
     private SvgDrawContext sdc;
 
-    @Before
+    @BeforeEach
     public void setupDrawContextAndCanvas() {
         sdc = new SvgDrawContext(new ResourceResolver(""), new FontProvider());
 
@@ -60,7 +59,7 @@ public class ClipPathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrati
         sdc.pushCanvas(cv);
     }
 
-    @After
+    @AfterEach
     public void close() {
         cv.getDocument().close();
     }
@@ -70,7 +69,7 @@ public class ClipPathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrati
         ClipPathSvgNodeRenderer clipRenderer = new ClipPathSvgNodeRenderer();
         clipRenderer.setAttributesAndStyles(new HashMap<String, String>());
         clipRenderer.draw(sdc);
-        Assert.assertEquals(0, cv.getContentStream().getBytes().length);
+        Assertions.assertEquals(0, cv.getContentStream().getBytes().length);
     }
 
     @Test
@@ -78,7 +77,7 @@ public class ClipPathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrati
         ClipPathSvgNodeRenderer clipRenderer = new ClipPathSvgNodeRenderer();
         clipRenderer.setAttribute(SvgConstants.Attributes.CLIP_RULE, SvgConstants.Values.FILL_RULE_EVEN_ODD);
         clipRenderer.draw(sdc);
-        Assert.assertEquals(0, cv.getContentStream().getBytes().length);
+        Assertions.assertEquals(0, cv.getContentStream().getBytes().length);
     }
 
     @Test
@@ -91,7 +90,7 @@ public class ClipPathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrati
         clipRenderer.addChild(rectRenderer);
         clipRenderer.draw(sdc);
 
-        Assert.assertEquals("q\n% rect\n0 0 300 300 re\nW\nn\nQ\n", new String(cv.getContentStream().getBytes()));
+        Assertions.assertEquals("q\n% rect\n0 0 300 300 re\nW\nn\nQ\n", new String(cv.getContentStream().getBytes()));
     }
 
     @Test
@@ -105,7 +104,7 @@ public class ClipPathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrati
         clipRenderer.addChild(rectRenderer);
         clipRenderer.draw(sdc);
 
-        Assert.assertEquals("q\n% rect\n0 0 300 300 re\nW\nn\nQ\n", new String(cv.getContentStream().getBytes()));
+        Assertions.assertEquals("q\n% rect\n0 0 300 300 re\nW\nn\nQ\n", new String(cv.getContentStream().getBytes()));
     }
 
     @Test
@@ -119,7 +118,7 @@ public class ClipPathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrati
         clipRenderer.addChild(rectRenderer);
         clipRenderer.draw(sdc);
 
-        Assert.assertEquals("q\n% rect\n0 0 300 300 re\nW*\nn\nQ\n", new String(cv.getContentStream().getBytes()));
+        Assertions.assertEquals("q\n% rect\n0 0 300 300 re\nW*\nn\nQ\n", new String(cv.getContentStream().getBytes()));
     }
 
     @Test
@@ -153,7 +152,7 @@ public class ClipPathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrati
                 "34.79 -63 63 -34.79 63 0 c\n" +
                 "f\n" +
                 "Q\n";
-        Assert.assertEquals(expected, new String(cv.getContentStream().getBytes()));
+        Assertions.assertEquals(expected, new String(cv.getContentStream().getBytes()));
     }
 
     @Test
@@ -192,7 +191,7 @@ public class ClipPathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrati
                 "f\n" +
                 "Q\n" +
                 "Q\n";
-        Assert.assertEquals(expected, new String(cv.getContentStream().getBytes()));
+        Assertions.assertEquals(expected, new String(cv.getContentStream().getBytes()));
     }
 
     @Test
@@ -251,6 +250,6 @@ public class ClipPathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrati
                 "f\n" +
                 "Q\n" +
                 "Q\n";
-        Assert.assertEquals(expected, new String(cv.getContentStream().getBytes()));
+        Assertions.assertEquals(expected, new String(cv.getContentStream().getBytes()));
     }
 }

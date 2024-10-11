@@ -36,10 +36,7 @@ final class TableBorderUtil {
     public static Border getCellSideBorder(Cell cellModel, int borderType) {
         Border cellModelSideBorder = cellModel.<Border>getProperty(borderType);
         if (null == cellModelSideBorder && !cellModel.hasProperty(borderType)) {
-            cellModelSideBorder = cellModel.<Border>getProperty(Property.BORDER);
-            if (null == cellModelSideBorder && !cellModel.hasProperty(Property.BORDER)) {
-                cellModelSideBorder = cellModel.<Border>getDefaultProperty(Property.BORDER);
-            }
+            cellModelSideBorder = cellModel.<Border>getDefaultProperty(borderType);
         }
         return cellModelSideBorder;
     }

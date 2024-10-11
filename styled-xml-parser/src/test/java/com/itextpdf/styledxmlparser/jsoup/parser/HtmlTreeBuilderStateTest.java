@@ -25,10 +25,9 @@ package com.itextpdf.styledxmlparser.jsoup.parser;
 import com.itextpdf.styledxmlparser.jsoup.Jsoup;
 import com.itextpdf.styledxmlparser.jsoup.parser.HtmlTreeBuilderState.Constants;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -36,7 +35,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class HtmlTreeBuilderStateTest extends ExtendedITextTest {
     static List<Object[]> findConstantArrays(Class aClass) throws IllegalAccessException {
         ArrayList<Object[]> array = new ArrayList<>();
@@ -56,7 +55,7 @@ public class HtmlTreeBuilderStateTest extends ExtendedITextTest {
         for (Object[] array : constants) {
             Object[] copy = Arrays.copyOf(array, array.length);
             Arrays.sort(array);
-            Assert.assertArrayEquals(array, copy);
+            Assertions.assertArrayEquals(array, copy);
         }
     }
 
@@ -64,7 +63,7 @@ public class HtmlTreeBuilderStateTest extends ExtendedITextTest {
     public void ensureArraysAreSorted() throws IllegalAccessException {
         List<Object[]> constants = findConstantArrays(Constants.class);
         ensureSorted(constants);
-        Assert.assertEquals(38, constants.size());
+        Assertions.assertEquals(38, constants.size());
     }
 
 
@@ -80,7 +79,7 @@ public class HtmlTreeBuilderStateTest extends ExtendedITextTest {
                 "  </body>\n" +
                 "</html>";
         String s = Jsoup.parse(html).toString();
-        Assert.assertEquals("<html> \n" +
+        Assertions.assertEquals("<html> \n" +
                 " <head></head>\n" +
                 " <body> <a href=\"#1\"> </a>\n" +
                 "  <div>\n" +
@@ -104,7 +103,7 @@ public class HtmlTreeBuilderStateTest extends ExtendedITextTest {
                 "  </body>\n" +
                 "</html>";
         String s = Jsoup.parse(html).toString();
-        Assert.assertEquals("<html> \n" +
+        Assertions.assertEquals("<html> \n" +
                 " <head></head>\n" +
                 " <body> <a href=\"#1\"> </a>\n" +
                 "  <div>\n" +

@@ -30,7 +30,6 @@ import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -51,23 +50,22 @@ import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class ListBoxFieldTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER =
             "./src/test/resources/com/itextpdf/forms/form/element/ListBoxFieldTest/";
     public static final String DESTINATION_FOLDER =
             "./target/test/com/itextpdf/forms/form/element/ListBoxFieldTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
@@ -79,12 +77,12 @@ public class ListBoxFieldTest extends ExtendedITextTest {
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             ListBoxField flattenListBoxField = new ListBoxField("flatten empty list box field", 0, false);
-            flattenListBoxField.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            flattenListBoxField.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenListBoxField.setBackgroundColor(ColorConstants.RED);
             document.add(flattenListBoxField);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -100,13 +98,13 @@ public class ListBoxFieldTest extends ExtendedITextTest {
             document.add(formListBoxField);
 
             ListBoxField flattenListBoxField = new ListBoxField("flatten list box field", 2, false);
-            flattenListBoxField.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            flattenListBoxField.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenListBoxField.addOption("option 1", false);
             flattenListBoxField.addOption("option 2", true);
             document.add(flattenListBoxField);
 
             Paragraph option3 = new Paragraph("option 3");
-            option3.setProperty(FormProperty.FORM_FIELD_SELECTED, true);
+            option3.setProperty(FormProperty.FORM_FIELD_SELECTED, Boolean.TRUE);
             option3.setMargin(0);
             option3.setMultipliedLeading(2);
 
@@ -115,11 +113,11 @@ public class ListBoxFieldTest extends ExtendedITextTest {
             flattenListBoxFieldWithMultipleSelection.setInteractive(false);
             flattenListBoxFieldWithMultipleSelection.addOption("option 1", false);
             flattenListBoxFieldWithMultipleSelection.addOption("option 2", true);
-            flattenListBoxFieldWithMultipleSelection.addOption(option3);
+            flattenListBoxFieldWithMultipleSelection.addOption(new SelectFieldItem("option 3", option3));
             document.add(flattenListBoxFieldWithMultipleSelection);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -163,7 +161,7 @@ public class ListBoxFieldTest extends ExtendedITextTest {
             document.add(flattenListBoxFieldWithPercentFont);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -177,15 +175,15 @@ public class ListBoxFieldTest extends ExtendedITextTest {
             option1.setMargin(4);
 
             Paragraph option2 = new Paragraph("option 2");
-            option2.setProperty(FormProperty.FORM_FIELD_SELECTED, true);
+            option2.setProperty(FormProperty.FORM_FIELD_SELECTED, Boolean.TRUE);
             option2.setProperty(FormProperty.FORM_FIELD_LABEL, "option 2");
             option2.setMargin(4);
 
             ListBoxField listBoxField = new ListBoxField("list box field with margins", 1, false);
             listBoxField.setInteractive(false);
             listBoxField.setBackgroundColor(ColorConstants.RED);
-            listBoxField.addOption(option1);
-            listBoxField.addOption(option2);
+            listBoxField.addOption(new SelectFieldItem("option 1", option1));
+            listBoxField.addOption(new SelectFieldItem("option 2", option2));
             document.add(listBoxField);
 
             document.add(new Paragraph("line break"));
@@ -197,7 +195,7 @@ public class ListBoxFieldTest extends ExtendedITextTest {
             document.add(listBoxField.setInteractive(true));
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -219,7 +217,7 @@ public class ListBoxFieldTest extends ExtendedITextTest {
             document.add(listBoxField.setInteractive(true));
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -241,7 +239,7 @@ public class ListBoxFieldTest extends ExtendedITextTest {
             document.add(listBoxField.setInteractive(true));
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -264,7 +262,7 @@ public class ListBoxFieldTest extends ExtendedITextTest {
             document.add(listBoxField.setInteractive(true));
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -287,7 +285,7 @@ public class ListBoxFieldTest extends ExtendedITextTest {
             document.add(listBoxField);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -297,7 +295,7 @@ public class ListBoxFieldTest extends ExtendedITextTest {
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             Paragraph option1 = new Paragraph("option 1");
-            option1.setProperty(FormProperty.FORM_FIELD_SELECTED, true);
+            option1.setProperty(FormProperty.FORM_FIELD_SELECTED, Boolean.TRUE);
             option1.setProperty(FormProperty.FORM_FIELD_LABEL, "option 1");
 
             Paragraph option2 = new Paragraph("option 2");
@@ -308,8 +306,8 @@ public class ListBoxFieldTest extends ExtendedITextTest {
             listBoxField.setBackgroundColor(ColorConstants.RED);
             listBoxField.setProperty(Property.WIDTH, UnitValue.createPointValue(600));
             listBoxField.setBorder(new SolidBorder(20));
-            listBoxField.addOption(option1);
-            listBoxField.addOption(option2);
+            listBoxField.addOption(new SelectFieldItem("option 1", option1));
+            listBoxField.addOption(new SelectFieldItem("option 2", option2));
             document.add(listBoxField);
 
             document.add(new Paragraph("Line break"));
@@ -317,7 +315,7 @@ public class ListBoxFieldTest extends ExtendedITextTest {
             document.add(listBoxField.setInteractive(true));
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -332,7 +330,7 @@ public class ListBoxFieldTest extends ExtendedITextTest {
             listBoxField.setBackgroundColor(ColorConstants.RED);
             listBoxField.addOption("option 1");
             listBoxField.addOption("option 2");
-            listBoxField.setProperty(FormProperty.FORM_ACCESSIBILITY_LANGUAGE, "random_lang");
+            listBoxField.getAccessibilityProperties().setLanguage("random_lang");
             document.add(listBoxField);
 
             document.add(new Paragraph("Line break"));
@@ -340,7 +338,7 @@ public class ListBoxFieldTest extends ExtendedITextTest {
             document.add(listBoxField.setInteractive(true));
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -363,7 +361,7 @@ public class ListBoxFieldTest extends ExtendedITextTest {
             document.add(listBoxField.setInteractive(true));
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -393,7 +391,7 @@ public class ListBoxFieldTest extends ExtendedITextTest {
             document.add(listBoxField.setInteractive(true));
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -439,7 +437,7 @@ public class ListBoxFieldTest extends ExtendedITextTest {
             document.add(rightListBoxField.setInteractive(true));
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -461,7 +459,7 @@ public class ListBoxFieldTest extends ExtendedITextTest {
             document.add(listBoxField.setInteractive(true));
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -499,7 +497,7 @@ public class ListBoxFieldTest extends ExtendedITextTest {
             PdfAcroForm.getAcroForm(doc, true).addField(field);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -516,7 +514,7 @@ public class ListBoxFieldTest extends ExtendedITextTest {
         document.add(list);
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -533,7 +531,7 @@ public class ListBoxFieldTest extends ExtendedITextTest {
         document.add(list);
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -548,21 +546,21 @@ public class ListBoxFieldTest extends ExtendedITextTest {
             option1.add(new PdfString("English3"));
             PdfArray options = new PdfArray();
             options.add(option1);
-            Exception e = Assert.assertThrows(IllegalArgumentException.class,  () -> builder.setOptions(options));
-            Assert.assertEquals(FormsExceptionMessageConstant.INNER_ARRAY_SHALL_HAVE_TWO_ELEMENTS, e.getMessage());
+            Exception e = Assertions.assertThrows(IllegalArgumentException.class,  () -> builder.setOptions(options));
+            Assertions.assertEquals(FormsExceptionMessageConstant.INNER_ARRAY_SHALL_HAVE_TWO_ELEMENTS, e.getMessage());
             options.clear();
 
             option1 = new PdfArray();
             option1.add(new PdfString("English"));
             option1.add(new PdfNumber(1));
             options.add(option1);
-            e = Assert.assertThrows(IllegalArgumentException.class,  () -> builder.setOptions(options));
-            Assert.assertEquals(FormsExceptionMessageConstant.OPTION_ELEMENT_MUST_BE_STRING_OR_ARRAY, e.getMessage());
+            e = Assertions.assertThrows(IllegalArgumentException.class,  () -> builder.setOptions(options));
+            Assertions.assertEquals(FormsExceptionMessageConstant.OPTION_ELEMENT_MUST_BE_STRING_OR_ARRAY, e.getMessage());
 
             PdfArray options2 = new PdfArray();
             options2.add(new PdfNumber(1));
-            e = Assert.assertThrows(IllegalArgumentException.class,  () -> builder.setOptions(options2));
-            Assert.assertEquals(FormsExceptionMessageConstant.OPTION_ELEMENT_MUST_BE_STRING_OR_ARRAY, e.getMessage());
+            e = Assertions.assertThrows(IllegalArgumentException.class,  () -> builder.setOptions(options2));
+            Assertions.assertEquals(FormsExceptionMessageConstant.OPTION_ELEMENT_MUST_BE_STRING_OR_ARRAY, e.getMessage());
         }
     }
 }

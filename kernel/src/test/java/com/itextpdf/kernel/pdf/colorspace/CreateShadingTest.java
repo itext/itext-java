@@ -29,42 +29,41 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfResources;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs.Cmyk;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs.Gray;
-import com.itextpdf.kernel.pdf.colorspace.PdfShading.Axial;
-import com.itextpdf.kernel.pdf.colorspace.PdfShading.Radial;
-import com.itextpdf.kernel.pdf.colorspace.PdfShading.ShadingType;
+import com.itextpdf.kernel.pdf.colorspace.shading.PdfAxialShading;
+import com.itextpdf.kernel.pdf.colorspace.shading.AbstractPdfShading;
+import com.itextpdf.kernel.pdf.colorspace.shading.PdfRadialShading;
+import com.itextpdf.kernel.pdf.colorspace.shading.ShadingType;
 import com.itextpdf.kernel.pdf.function.AbstractPdfFunction;
 import com.itextpdf.kernel.pdf.function.PdfType2Function;
 import com.itextpdf.kernel.pdf.function.PdfType3Function;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.utils.CompareTool.CompareResult;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class CreateShadingTest extends ExtendedITextTest {
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/colorspace/CreateShadingTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/colorspace/CreateShadingTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -86,7 +85,7 @@ public class CreateShadingTest extends ExtendedITextTest {
 
         PdfType3Function stitchingFunction = createStitchingCmykShadingFunction();
 
-        Axial axialShading = new Axial(new Cmyk(), shadingVector, stitchingFunction);
+        PdfAxialShading axialShading = new PdfAxialShading(new Cmyk(), shadingVector, stitchingFunction);
 
         pdfCanvas.paintShading(axialShading);
         pdfDocument.close();
@@ -107,9 +106,9 @@ public class CreateShadingTest extends ExtendedITextTest {
 
         PdfResources resources = pdfDocument.getPage(1).getResources();
         for (PdfName resName : resources.getResourceNames()) {
-            PdfShading shading = resources.getShading(resName);
+            AbstractPdfShading shading = resources.getShading(resName);
             if (shading != null && shading.getShadingType() == ShadingType.AXIAL) {
-                Axial axialShading = (Axial) shading;
+                PdfAxialShading axialShading = (PdfAxialShading) shading;
 
                 // "cut" shading and extend colors
                 axialShading.setDomain(0.1f, 0.8f);
@@ -138,7 +137,7 @@ public class CreateShadingTest extends ExtendedITextTest {
         int y1 = y0;
         int r1 = 50;
 
-        Radial radialShading = new Radial(
+        PdfRadialShading radialShading = new PdfRadialShading(
                 new Gray(),
                 x0, y0, r0, new float[] {0.9f},
                 x1, y1, r1, new float[] {0.2f},
@@ -170,7 +169,7 @@ public class CreateShadingTest extends ExtendedITextTest {
 
         PdfType3Function stitchingFunction = createStitchingCmykShadingFunction();
 
-        Radial radialShading = new Radial(new Cmyk(), shadingVector, stitchingFunction);
+        PdfRadialShading radialShading = new PdfRadialShading(new Cmyk(), shadingVector, stitchingFunction);
 
         pdfCanvas.paintShading(radialShading);
         pdfDocument.close();
@@ -191,9 +190,9 @@ public class CreateShadingTest extends ExtendedITextTest {
 
         PdfResources resources = pdfDocument.getPage(1).getResources();
         for (PdfName resName : resources.getResourceNames()) {
-            PdfShading shading = resources.getShading(resName);
+            AbstractPdfShading shading = resources.getShading(resName);
             if (shading != null && shading.getShadingType() == ShadingType.RADIAL) {
-                Radial radialShading = (Radial) shading;
+                PdfRadialShading radialShading = (PdfRadialShading) shading;
 
                 // "cut" shading and extend colors
                 radialShading.setDomain(0.1f, 0.8f);
@@ -233,11 +232,11 @@ public class CreateShadingTest extends ExtendedITextTest {
         PdfObject outShDictionary = outPdf.getPage(1).getResources().getResourceObject(PdfName.Shading, resName);
         PdfObject cmpShDictionary = cmpPdf.getPage(1).getResources().getResourceObject(PdfName.Shading, resName);
 
-        Assert.assertTrue(outShDictionary.isDictionary());
+        Assertions.assertTrue(outShDictionary.isDictionary());
 
         CompareResult compareResult = new CompareTool()
                 .compareDictionariesStructure((PdfDictionary) outShDictionary, (PdfDictionary) cmpShDictionary);
-        Assert.assertNull(compareResult);
+        Assertions.assertNull(compareResult);
 
         outPdf.close();
         cmpPdf.close();

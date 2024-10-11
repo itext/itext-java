@@ -360,8 +360,8 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMar
                     .getEndingPoint();
         }
         if (point != null) {
-            String moveX = SvgCssUtils.convertDoubleToString(point.x);
-            String moveY = SvgCssUtils.convertDoubleToString(point.y);
+            String moveX = SvgCssUtils.convertDoubleToString(point.getX());
+            String moveY = SvgCssUtils.convertDoubleToString(point.getY());
             MarkerSvgNodeRenderer.drawMarker(context, moveX, moveY, markerVertexType, this);
         }
     }

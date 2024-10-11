@@ -57,8 +57,9 @@ import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
@@ -83,7 +84,6 @@ import com.itextpdf.layout.renderer.ParagraphRenderer;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 
 import java.io.IOException;
@@ -93,18 +93,18 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfAFormFieldTest extends ExtendedITextTest {
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfa/";
     public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfa/PdfAFormFieldTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(DESTINATION_FOLDER);
     }
@@ -117,7 +117,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         String filename = DESTINATION_FOLDER + file;
         pdf = new PdfADocument(
                 new PdfWriter(FileUtil.getFileOutputStream(filename)),
-                PdfAConformanceLevel.PDF_A_1B,
+                PdfAConformance.PDF_A_1B,
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB ICC preference", is));
 
         PageSize pageSize = PageSize.LETTER;
@@ -127,7 +127,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
                 SOURCE_FOLDER + "FreeSans.ttf", EmbeddingStrategy.PREFER_EMBEDDED);
 
         PdfButtonFormField group = new RadioFormFieldBuilder(pdf, "group")
-                .setGenericConformanceLevel(PdfAConformanceLevel.PDF_A_1B).createRadioGroup();
+                .setConformance(PdfConformance.PDF_A_1B).createRadioGroup();
         group.setValue("");
         group.setReadOnly(true);
 
@@ -163,7 +163,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         PdfFormCreator.getAcroForm(pdf, true).addField(group);
 
         pdf.close();
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareByContent(filename, SOURCE_FOLDER + "cmp/PdfAFormFieldTest/cmp_" + file,
                         DESTINATION_FOLDER, "diff_"));
     }
@@ -176,23 +176,23 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
 
         InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
 
-        PdfAConformanceLevel conformanceLevel = PdfAConformanceLevel.PDF_A_1B;
+        PdfConformance conformance = PdfConformance.PDF_A_1B;
 
-        PdfADocument pdfDoc = new PdfADocument(new PdfWriter(fileName), conformanceLevel,
+        PdfADocument pdfDoc = new PdfADocument(new PdfWriter(fileName), conformance.getAConformance(),
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
 
         PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         PdfFormField emptyField = new NonTerminalFormFieldBuilder(pdfDoc, "empty")
-                .setGenericConformanceLevel(conformanceLevel).createNonTerminalFormField();
+                .setConformance(conformance).createNonTerminalFormField();
         emptyField.addKid(new PushButtonFormFieldBuilder(pdfDoc, "button")
-                .setWidgetRectangle(new Rectangle(36, 756, 20, 20)).setGenericConformanceLevel(conformanceLevel)
+                .setWidgetRectangle(new Rectangle(36, 756, 20, 20)).setConformance(conformance)
                 .createPushButton().setFieldFlags(PdfAnnotation.PRINT)
                 .setFieldName("button").setValue("hello"));
         form.addField(emptyField);
 
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
+        Assertions.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -203,19 +203,19 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
 
         InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
 
-        PdfAConformanceLevel conformanceLevel = PdfAConformanceLevel.PDF_A_1B;
+        PdfConformance conformance = PdfConformance.PDF_A_1B;
 
-        PdfADocument pdfDoc = new PdfADocument(new PdfWriter(fileName), conformanceLevel,
+        PdfADocument pdfDoc = new PdfADocument(new PdfWriter(fileName), conformance.getAConformance(),
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
 
         PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         form.addField(new CheckBoxFormFieldBuilder(pdfDoc, "checkBox").setWidgetRectangle(new Rectangle(36, 726, 20, 20))
-                .setCheckType(CheckBoxType.STAR).setGenericConformanceLevel(conformanceLevel)
+                .setCheckType(CheckBoxType.STAR).setConformance(conformance)
                 .createCheckBox().setValue("1"));
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
+        Assertions.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -229,23 +229,23 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
                 "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
         InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
 
-        PdfAConformanceLevel conformanceLevel = PdfAConformanceLevel.PDF_A_1B;
-        PdfADocument pdfDoc = new PdfADocument(new PdfWriter(fileName), conformanceLevel,
+        PdfConformance conformance = PdfConformance.PDF_A_1B;
+        PdfADocument pdfDoc = new PdfADocument(new PdfWriter(fileName), conformance.getAConformance(),
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         PdfArray options = new PdfArray();
         options.add(new PdfString("Name"));
         options.add(new PdfString("Surname"));
         PdfFormField choiceFormField = new ChoiceFormFieldBuilder(pdfDoc, "choice").setWidgetRectangle(new Rectangle(36, 696, 100, 70))
-                .setOptions(options).setGenericConformanceLevel(conformanceLevel)
+                .setOptions(options).setConformance(conformance)
                 .createList().setValue("1", true);
         choiceFormField.setFont(fontFreeSans);
         form.addField(choiceFormField);
 
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
+        Assertions.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -259,25 +259,24 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
 
         InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
 
-        PdfAConformanceLevel conformanceLevel = PdfAConformanceLevel.PDF_A_1B;
-        PdfADocument pdfDoc = new PdfADocument(new PdfWriter(fileName), conformanceLevel,
+        PdfConformance conformance = PdfConformance.PDF_A_1B;
+        PdfADocument pdfDoc = new PdfADocument(new PdfWriter(fileName), conformance.getAConformance(),
                 new PdfOutputIntent("Custom", "",
                         "http://www.color.org", "sRGB IEC61966-2.1", is));
 
         PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         PdfFormField choiceFormField = new ChoiceFormFieldBuilder(pdfDoc, "combo")
                 .setWidgetRectangle(new Rectangle(156, 616, 70, 70)).setOptions(new String[]{"用", "规", "表"})
-                .setGenericConformanceLevel(conformanceLevel).createComboBox()
+                .setConformance(conformance).createComboBox()
                 .setValue("用");
         choiceFormField.setFont(fontCJK);
         form.addField(choiceFormField);
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
+        Assertions.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.MULTIPLE_VALUES_ON_A_NON_MULTISELECT_FIELD)})
     public void pdfA1DocWithPdfA1ListFieldTest() throws IOException, InterruptedException {
         String name = "pdfA1DocWithPdfA1ListField";
         String fileName = DESTINATION_FOLDER + name + ".pdf";
@@ -288,8 +287,8 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
 
         InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
 
-        PdfAConformanceLevel conformanceLevel = PdfAConformanceLevel.PDF_A_1B;
-        PdfADocument pdfDoc = new PdfADocument(new PdfWriter(fileName), conformanceLevel,
+        PdfConformance conformance = PdfConformance.PDF_A_1B;
+        PdfADocument pdfDoc = new PdfADocument(new PdfWriter(fileName), conformance.getAConformance(),
                 new PdfOutputIntent("Custom", "",
                         "http://www.color.org", "sRGB IEC61966-2.1", is));
 
@@ -297,16 +296,17 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
 
         PdfChoiceFormField f = new ChoiceFormFieldBuilder(pdfDoc, "list")
                 .setWidgetRectangle(new Rectangle(86, 556, 50, 200)).setOptions(new String[]{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"})
-                .setGenericConformanceLevel(conformanceLevel).createList();
+                .setConformance(conformance).createList();
         f.setValue("9").setFont(fontFreeSans);
         f.setValue("4");
         f.setTopIndex(2);
+        f.setMultiSelect(true);
         f.setListSelected(new String[] {"3", "5"});
         form.addField(f);
 
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
+        Assertions.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -320,21 +320,21 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
 
         InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
 
-        PdfAConformanceLevel conformanceLevel = PdfAConformanceLevel.PDF_A_1B;
-        PdfADocument pdfDoc = new PdfADocument(new PdfWriter(fileName), conformanceLevel,
+        PdfConformance conformance = PdfConformance.PDF_A_1B;
+        PdfADocument pdfDoc = new PdfADocument(new PdfWriter(fileName), conformance.getAConformance(),
                 new PdfOutputIntent("Custom", "",
                         "http://www.color.org", "sRGB IEC61966-2.1", is));
 
         PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         PdfFormField pushButtonFormField = new PushButtonFormFieldBuilder(pdfDoc, "push button").setWidgetRectangle(new Rectangle(36, 526, 100, 20))
-                .setCaption("Push").setGenericConformanceLevel(conformanceLevel)
+                .setCaption("Push").setConformance(conformance)
                 .createPushButton();
         pushButtonFormField.setFont(fontFreeSans).setFontSize(12);
         form.addField(pushButtonFormField);
 
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
+        Assertions.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -345,16 +345,16 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
 
         InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
 
-        PdfAConformanceLevel conformanceLevel = PdfAConformanceLevel.PDF_A_1B;
-        PdfADocument pdfDoc = new PdfADocument(new PdfWriter(fileName), conformanceLevel,
+        PdfConformance conformance = PdfConformance.PDF_A_1B;
+        PdfADocument pdfDoc = new PdfADocument(new PdfWriter(fileName), conformance.getAConformance(),
                 new PdfOutputIntent("Custom", "",
                         "http://www.color.org", "sRGB IEC61966-2.1", is));
 
         PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
         String pdfFormFieldName = "radio group";
-        RadioFormFieldBuilder builder = new RadioFormFieldBuilder(pdfDoc, pdfFormFieldName).setGenericConformanceLevel(conformanceLevel);
-        PdfButtonFormField radioGroup = builder.setGenericConformanceLevel(conformanceLevel)
+        RadioFormFieldBuilder builder = new RadioFormFieldBuilder(pdfDoc, pdfFormFieldName).setConformance(conformance);
+        PdfButtonFormField radioGroup = builder.setConformance(conformance)
                 .createRadioGroup();
         radioGroup.setValue("");
         PdfFormAnnotation radio1 = builder
@@ -371,8 +371,8 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
+        Assertions.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -387,19 +387,19 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
 
         InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
 
-        PdfAConformanceLevel conformanceLevel = PdfAConformanceLevel.PDF_A_1B;
-        PdfADocument pdfDoc = new PdfADocument(new PdfWriter(fileName), conformanceLevel,
+        PdfConformance conformance = PdfConformance.PDF_A_1B;
+        PdfADocument pdfDoc = new PdfADocument(new PdfWriter(fileName), conformance.getAConformance(),
                 new PdfOutputIntent("Custom", "",
                         "http://www.color.org", "sRGB IEC61966-2.1", is));
 
         PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         PdfFormField textFormField = new TextFormFieldBuilder(pdfDoc, "text").setWidgetRectangle(new Rectangle(36, 466, 90, 20))
-                .setGenericConformanceLevel(conformanceLevel).createText().setValue("textField").setValue("iText");
+                .setConformance(conformance).createText().setValue("textField").setValue("iText");
         textFormField.setFont(fontFreeSans).setFontSize(12);
         form.addField(textFormField);
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
+        Assertions.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -414,21 +414,21 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
 
         InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
 
-        PdfAConformanceLevel conformanceLevel = PdfAConformanceLevel.PDF_A_1B;
-        PdfADocument pdfDoc = new PdfADocument(new PdfWriter(fileName), conformanceLevel,
+        PdfConformance conformance = PdfConformance.PDF_A_1B;
+        PdfADocument pdfDoc = new PdfADocument(new PdfWriter(fileName), conformance.getAConformance(),
                 new PdfOutputIntent("Custom", "",
                         "http://www.color.org", "sRGB IEC61966-2.1", is));
 
         PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         PdfFormField signFormField = new SignatureFormFieldBuilder(pdfDoc, "signature")
-                .setGenericConformanceLevel(conformanceLevel).createSignature();
+                .setConformance(conformance).createSignature();
         signFormField.setFont(fontFreeSans).setFontSize(20);
         form.addField(signFormField);
 
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
+        Assertions.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -437,7 +437,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         String mergedDocFileName = DESTINATION_FOLDER + "mergedPdfADoc.pdf";
 
         try (InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
-                PdfADocument pdfDoc = new PdfADocument(new PdfWriter(fileName), PdfAConformanceLevel.PDF_A_1B,
+                PdfADocument pdfDoc = new PdfADocument(new PdfWriter(fileName), PdfAConformance.PDF_A_1B,
                         new PdfOutputIntent("Custom", "",
                                 "http://www.color.org", "sRGB ICC preference", is));
                 Document doc = new Document(pdfDoc)) {
@@ -448,20 +448,20 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
 
             PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
             PdfFormField field = new TextFormFieldBuilder(pdfDoc, "text").setWidgetRectangle(new Rectangle(150, 100, 100, 20))
-                    .setGenericConformanceLevel(PdfAConformanceLevel.PDF_A_1B).createText()
+                    .setConformance(PdfConformance.PDF_A_1B).createText()
                     .setValue("textField").setFieldName("text");
             field.setFont(font).setFontSize(10);
             field.getFirstFormAnnotation().setPage(1);
             form.addField(field, pdfDoc.getPage(1));
         }
 
-        Assert.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 
         PdfADocument pdfDocToMerge;
         try (InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
                 PdfDocument newDoc = new PdfDocument(new PdfReader(fileName))) {
             pdfDocToMerge = new PdfADocument(new PdfWriter(mergedDocFileName).setSmartMode(true),
-                    PdfAConformanceLevel.PDF_A_1B,
+                    PdfAConformance.PDF_A_1B,
                     new PdfOutputIntent("Custom", "",
                             "http://www.color.org", "sRGB ICC preference", is));
 
@@ -470,8 +470,8 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
 
         pdfDocToMerge.close();
         String cmp = SOURCE_FOLDER + "cmp/PdfAFormFieldTest/cmp_mergePdfADocWithForm.pdf";
-        Assert.assertNull(new VeraPdfValidator().validate(mergedDocFileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
-        Assert.assertNull(new CompareTool().compareByContent(mergedDocFileName, cmp, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new VeraPdfValidator().validate(mergedDocFileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new CompareTool().compareByContent(mergedDocFileName, cmp, DESTINATION_FOLDER, "diff_"));
 
     }
 
@@ -486,7 +486,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
             comboBoxField.addOption(new SelectFieldItem("item1"));
             comboBoxField.addOption(new SelectFieldItem("item2"));
             comboBoxField.addOption(new SelectFieldItem("item3"));
-            Assert.assertThrows(IllegalStateException.class, () -> {
+            Assertions.assertThrows(IllegalStateException.class, () -> {
                 document.add(comboBoxField);
             });
         }));
@@ -499,7 +499,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
             Button button = new Button("button");
             button.setValue("Hello there");
             button.setInteractive(true);
-            Assert.assertThrows(IllegalStateException.class, () -> {
+            Assertions.assertThrows(IllegalStateException.class, () -> {
                 document.add(button);
             });
         }));
@@ -513,7 +513,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
                 inputField.setValue("Hello there");
                 inputField.setInteractive(true);
 
-                Assert.assertThrows(IllegalStateException.class, () -> {
+                Assertions.assertThrows(IllegalStateException.class, () -> {
                     document.add(inputField);
                 });
             }));
@@ -528,7 +528,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
             CheckBox checkBox = new CheckBox("CheckBox");
             checkBox.setChecked(true);
             checkBox.setInteractive(true);
-            checkBox.setPdfAConformanceLevel(PdfAConformanceLevel.PDF_A_1A);
+            checkBox.setPdfConformance(PdfConformance.PDF_A_1A);
             doc.add(checkBox);
         });
     }
@@ -544,7 +544,11 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
             for (Supplier<IFormField> formFieldSupplier : generateFormFields()) {
                 IFormField formField = formFieldSupplier.get();
                 formField.setProperty(Property.FONT, font);
-                formField.setProperty(Property.BORDER, new SolidBorder(ColorConstants.BLACK, 1));
+                SolidBorder border = new SolidBorder(ColorConstants.BLACK, 1);
+                formField.setProperty(Property.BORDER_TOP, border);
+                formField.setProperty(Property.BORDER_RIGHT, border);
+                formField.setProperty(Property.BORDER_BOTTOM, border);
+                formField.setProperty(Property.BORDER_LEFT, border);
                 formField.setInteractive(true);
                 document.add(formField);
             }
@@ -561,7 +565,11 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
             for (Supplier<IFormField> formFieldSupplier : generateFormFields()) {
                 IFormField formField = formFieldSupplier.get();
                 formField.setProperty(Property.FONT, font);
-                formField.setProperty(Property.BORDER, new SolidBorder(ColorConstants.BLACK, 1));
+                SolidBorder border = new SolidBorder(ColorConstants.BLACK, 1);
+                formField.setProperty(Property.BORDER_TOP, border);
+                formField.setProperty(Property.BORDER_RIGHT, border);
+                formField.setProperty(Property.BORDER_BOTTOM, border);
+                formField.setProperty(Property.BORDER_LEFT, border);
                 formField.setInteractive(true);
                 document.add(formField);
             }
@@ -574,8 +582,8 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
             stringPdfFormFieldEntry.getValue().setValue("item1");
         }
         newDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outPdf2, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf2)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf2, cmp, DESTINATION_FOLDER));
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf2)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 
     }
 
@@ -589,7 +597,11 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
             document.setFont(font);
             for (Supplier<IFormField> formFieldSupplier : generateFormFields()) {
                 IFormField formField = formFieldSupplier.get();
-                formField.setProperty(Property.BORDER, new SolidBorder(ColorConstants.BLACK, 1));
+                SolidBorder border = new SolidBorder(ColorConstants.BLACK, 1);
+                formField.setProperty(Property.BORDER_TOP, border);
+                formField.setProperty(Property.BORDER_RIGHT, border);
+                formField.setProperty(Property.BORDER_BOTTOM, border);
+                formField.setProperty(Property.BORDER_LEFT, border);
                 formField.setProperty(Property.FONT, font);
                 formField.setInteractive(true);
                 document.add(formField);
@@ -607,7 +619,11 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
             for (Supplier<IFormField> formFieldSupplier : generateFormFields()) {
                 IFormField formField = formFieldSupplier.get();
                 formField.setProperty(Property.FONT, font);
-                formField.setProperty(Property.BORDER, new SolidBorder(ColorConstants.BLACK, 1));
+                SolidBorder border = new SolidBorder(ColorConstants.BLACK, 1);
+                formField.setProperty(Property.BORDER_TOP, border);
+                formField.setProperty(Property.BORDER_RIGHT, border);
+                formField.setProperty(Property.BORDER_BOTTOM, border);
+                formField.setProperty(Property.BORDER_LEFT, border);
                 formField.setInteractive(false);
                 document.add(formField);
             }
@@ -624,7 +640,11 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
             document.setFont(font);
             for (Supplier<IFormField> formFieldSupplier : generateFormFields()) {
                 IFormField formField = formFieldSupplier.get();
-                formField.setProperty(Property.BORDER, new SolidBorder(ColorConstants.BLACK, 1));
+                SolidBorder border = new SolidBorder(ColorConstants.BLACK, 1);
+                formField.setProperty(Property.BORDER_TOP, border);
+                formField.setProperty(Property.BORDER_RIGHT, border);
+                formField.setProperty(Property.BORDER_BOTTOM, border);
+                formField.setProperty(Property.BORDER_LEFT, border);
                 formField.setProperty(Property.FONT, font);
                 formField.setInteractive(false);
                 document.add(formField);
@@ -643,7 +663,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
 
         PdfWriter writer = new PdfWriter(simplePdf, new WriterProperties()
                 .setPdfVersion(PdfVersion.PDF_2_0));
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4E,
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4E,
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
                         FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm")));
 
@@ -655,7 +675,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         PdfWriter writer2 = new PdfWriter(outPdf,
                 new WriterProperties()
                         .setPdfVersion(PdfVersion.PDF_2_0));
-        PdfADocument doc2 = new PdfADocument(writer2, PdfAConformanceLevel.PDF_A_4,
+        PdfADocument doc2 = new PdfADocument(writer2, PdfAConformance.PDF_A_4,
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
                         FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm")));
 
@@ -664,8 +684,8 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         docToCopy.close();
         doc2.close();
 
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmp, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmp, DESTINATION_FOLDER, "diff_"));
 
     }
 
@@ -695,7 +715,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
             PdfSignatureFormField signatureFormField = signatureFormFieldBuilder.setWidgetRectangle(
                             new Rectangle(200, 200, 40, 40))
                     .setFont(fontFreeSans)
-                    .setGenericConformanceLevel(PdfAConformanceLevel.PDF_A_4)
+                    .setConformance(PdfConformance.PDF_A_4)
                     .createSignature();
             signatureFormField.getFirstFormAnnotation().setFormFieldElement(signatureFieldAppearance2);
             form.addField(signatureFormField);
@@ -709,7 +729,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(outPdf,
                 new WriterProperties()
                         .setPdfVersion(PdfVersion.PDF_2_0));
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4E,
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4E,
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
                         FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm")));
 
@@ -719,8 +739,8 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         if (cmp == null) {
             return;
         }
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmp, DESTINATION_FOLDER));
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmp, DESTINATION_FOLDER));
     }
 
     private List<Supplier<IFormField>> generateFormFields() {
@@ -729,13 +749,13 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         inputs.add(() -> {
                     CheckBox checkBox = new CheckBox("CheckBox");
                     checkBox.setChecked(true);
-                    checkBox.setPdfAConformanceLevel(PdfAConformanceLevel.PDF_A_4);
+                    checkBox.setPdfConformance(PdfConformance.PDF_A_4);
                     return checkBox;
         });
         inputs.add(() -> {
                     CheckBox checkBox = new CheckBox("CheckBox1");
                     checkBox.setChecked(false);
-                    checkBox.setPdfAConformanceLevel(PdfAConformanceLevel.PDF_A_4);
+                    checkBox.setPdfConformance(PdfConformance.PDF_A_4);
                     return checkBox;
         });
         inputs.add(() -> {
@@ -813,7 +833,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
             PdfDocument pdf = context.getDocument();
             PdfAcroForm form = PdfFormCreator.getAcroForm(pdf, true);
             PdfFormAnnotation chk = new RadioFormFieldBuilder(pdf, "")
-                    .setGenericConformanceLevel(PdfAConformanceLevel.PDF_A_1B).createRadioButton(_value, bbox);
+                    .setConformance(PdfConformance.PDF_A_1B).createRadioButton(_value, bbox);
             _group.addKid(chk);
             chk.setPage(pageNumber);
 

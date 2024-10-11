@@ -41,10 +41,10 @@ public class GsubLookupType3 extends OpenTableLookup {
 
     @Override
     public boolean transformOne(GlyphLine line) {
-        if (line.idx >= line.end) {
+        if (line.getIdx() >= line.getEnd()) {
             return false;
         }
-        Glyph g = line.get(line.idx);
+        Glyph g = line.get(line.getIdx());
         boolean changed = false;
         if (!openReader.isSkip(g.getCode(), lookupFlag)) {
             int[] substCode = substMap.get(g.getCode());
@@ -55,7 +55,7 @@ public class GsubLookupType3 extends OpenTableLookup {
                 changed = true;
             }
         }
-        line.idx++;
+        line.setIdx(line.getIdx()+1);
         return changed;
     }
 

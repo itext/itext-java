@@ -35,12 +35,11 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class BlockRendererUnitTest extends ExtendedITextTest {
 
     @Test
@@ -60,6 +59,6 @@ public class BlockRendererUnitTest extends ExtendedITextTest {
         blockRenderer.draw(context);
 
         // This test checks that there is log message and there is no NPE so assertions are not required
-        Assert.assertTrue(true);
+        Assertions.assertTrue(true);
     }
 }

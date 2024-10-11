@@ -23,17 +23,16 @@
 package com.itextpdf.commons.utils;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class DateTimeUtilTest extends ExtendedITextTest {
 
     private static final double ZERO_DELTA = 1e-6;
@@ -43,13 +42,13 @@ public class DateTimeUtilTest extends ExtendedITextTest {
     public void getCurrentTest() {
         long nowEpoch = new Date().getTime();
         long nowDateTimeUtilEpoch = DateTimeUtil.getCurrentTimeDate().getTime();
-        Assert.assertEquals(nowEpoch, nowDateTimeUtilEpoch, ONE_SECOND_DELTA);
+        Assertions.assertEquals(nowEpoch, nowDateTimeUtilEpoch, ONE_SECOND_DELTA);
     }
 
     @Test
     public void isInPastTest() {
         Date date = new Date(1);
-        Assert.assertTrue(DateTimeUtil.isInPast(date));
+        Assertions.assertTrue(DateTimeUtil.isInPast(date));
     }
 
     @Test
@@ -61,28 +60,28 @@ public class DateTimeUtilTest extends ExtendedITextTest {
 
         long offset = DateTimeUtil.getCurrentTimeZoneOffset(date);
 
-        Assert.assertEquals(1588636800000d - offset, millisFromEpochTo2020_05_05, ZERO_DELTA);
+        Assertions.assertEquals(1588636800000d - offset, millisFromEpochTo2020_05_05, ZERO_DELTA);
     }
 
     @Test
     public void getCalenderForNullDateTest() {
         Calendar result = DateTimeUtil.getCalendar(null);
-        Assert.assertNull(result);
+        Assertions.assertNull(result);
     }
 
     @Test
     public void getCalenderTest() {
         Date testDate = DateTimeUtil.getCurrentTimeDate();
         Calendar result = DateTimeUtil.getCalendar(testDate);
-        Assert.assertNotNull(result);
-        Assert.assertEquals(testDate, result.getTime());
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(testDate, result.getTime());
     }
 
     @Test
     public void addMillisToDateTest() {
         Date almostCurrentTime = new Date(new Date().getTime() - 2000);
         long twoSeconds = 2000;
-        Assert.assertEquals(new Date().getTime(),
+        Assertions.assertEquals(new Date().getTime(),
                 DateTimeUtil.addMillisToDate(almostCurrentTime, twoSeconds).getTime(), ONE_SECOND_DELTA);
     }
 
@@ -91,7 +90,7 @@ public class DateTimeUtilTest extends ExtendedITextTest {
         double getUtcMillisFromEpochWithNullParam = DateTimeUtil.getUtcMillisFromEpoch(null);
         double millisFromEpochToCurrentTime = DateTimeUtil.getUtcMillisFromEpoch(DateTimeUtil.getCurrentTimeCalendar());
 
-        Assert.assertEquals(millisFromEpochToCurrentTime, getUtcMillisFromEpochWithNullParam, ONE_SECOND_DELTA);
+        Assertions.assertEquals(millisFromEpochToCurrentTime, getUtcMillisFromEpochWithNullParam, ONE_SECOND_DELTA);
     }
 
     @Test
@@ -101,7 +100,7 @@ public class DateTimeUtilTest extends ExtendedITextTest {
 
         long offset = DateTimeUtil.getCurrentTimeZoneOffset(date);
 
-        Assert.assertEquals(1588636800000d - offset, relativeTime, ZERO_DELTA);
+        Assertions.assertEquals(1588636800000d - offset, relativeTime, ZERO_DELTA);
     }
 
     @Test
@@ -111,7 +110,7 @@ public class DateTimeUtilTest extends ExtendedITextTest {
 
         Date newDate = DateTimeUtil.addYearsToDate(originalDate.getTime(), 5);
 
-        Assert.assertEquals(2005, newDate.getYear());
+        Assertions.assertEquals(2005, newDate.getYear());
     }
 
     @Test
@@ -121,6 +120,6 @@ public class DateTimeUtilTest extends ExtendedITextTest {
 
         Date newDate = DateTimeUtil.addYearsToDate(originalDate.getTime(), -3);
 
-        Assert.assertEquals(1997, newDate.getYear());
+        Assertions.assertEquals(1997, newDate.getYear());
     }
 }

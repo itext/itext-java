@@ -30,15 +30,14 @@ import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStra
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfTextExtractorUnicodeIdentityTest extends ExtendedITextTest {
 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/parser/PdfTextExtractorUnicodeIdentityTest/";
@@ -50,7 +49,7 @@ public class PdfTextExtractorUnicodeIdentityTest extends ExtendedITextTest {
         Rectangle rectangle = new Rectangle(71, 708, 154, 9);
         IEventFilter filter = new TextRegionEventFilter(rectangle);
         String txt = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1), new FilteredTextEventListener(new LocationTextExtractionStrategy(), filter));
-        Assert.assertEquals("Pname Dname Email Address", txt);
+        Assertions.assertEquals("Pname Dname Email Address", txt);
     }
 
 }

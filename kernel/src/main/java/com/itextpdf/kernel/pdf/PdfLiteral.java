@@ -29,8 +29,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 public class PdfLiteral extends PdfPrimitiveObject {
-
-	
     private long position;
 
     public PdfLiteral(byte[] content) {

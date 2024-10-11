@@ -35,26 +35,25 @@ import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class LineSvgNodeRendererTest extends SvgIntegrationTest{
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/LineSvgNodeRendererTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/svg/renderers/impl/LineSvgNodeRendererTest/";
 
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         ITextTest.createDestinationFolder(destinationFolder);
     }
@@ -83,7 +82,7 @@ public class LineSvgNodeRendererTest extends SvgIntegrationTest{
 
         root.draw(context);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -103,7 +102,7 @@ public class LineSvgNodeRendererTest extends SvgIntegrationTest{
 
         root.draw(context);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -121,10 +120,10 @@ public class LineSvgNodeRendererTest extends SvgIntegrationTest{
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
 
-        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+        Exception e = Assertions.assertThrows(StyledXMLParserException.class,
                 () -> root.draw(context)
         );
-        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.NAN, "notAnum"), e.getMessage());
+        Assertions.assertEquals(MessageFormatUtil.format(StyledXMLParserException.NAN, "notAnum"), e.getMessage());
     }
 
 
@@ -172,8 +171,8 @@ public class LineSvgNodeRendererTest extends SvgIntegrationTest{
         doc.close();
 
         int numPoints = ((LineSvgNodeRenderer) root).attributesAndStyles.size();
-        Assert.assertEquals(numPoints, 0);
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+        Assertions.assertEquals(numPoints, 0);
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -186,7 +185,7 @@ public class LineSvgNodeRendererTest extends SvgIntegrationTest{
 
         float actual = lineSvgNodeRenderer.getAttribute(attributes, "key");
 
-        Assert.assertEquals(expected, actual, 0f);
+        Assertions.assertEquals(expected, actual, 0f);
     }
 
     @Test
@@ -199,7 +198,7 @@ public class LineSvgNodeRendererTest extends SvgIntegrationTest{
 
         float actual = lineSvgNodeRenderer.getAttribute(attributes, "notHere");
 
-        Assert.assertEquals(expected, actual, 0f);
+        Assertions.assertEquals(expected, actual, 0f);
     }
 
 }

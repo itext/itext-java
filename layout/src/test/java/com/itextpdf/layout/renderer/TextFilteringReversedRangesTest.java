@@ -23,14 +23,13 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.util.ArrayList;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class TextFilteringReversedRangesTest extends ExtendedITextTest {
 
     @Test
@@ -40,7 +39,7 @@ public class TextFilteringReversedRangesTest extends ExtendedITextTest {
 
         int[] range = new int[] {0, 1};
         TextRenderer.updateRangeBasedOnRemovedCharacters(removedIds, range);
-        Assert.assertArrayEquals(new int[] {0, 0}, range);
+        Assertions.assertArrayEquals(new int[] {0, 0}, range);
     }
 
     @Test
@@ -50,7 +49,7 @@ public class TextFilteringReversedRangesTest extends ExtendedITextTest {
 
         int[] range = new int[] {0, 5};
         TextRenderer.updateRangeBasedOnRemovedCharacters(removedIds, range);
-        Assert.assertArrayEquals(new int[] {0, 5}, range);
+        Assertions.assertArrayEquals(new int[] {0, 5}, range);
     }
 
     @Test
@@ -62,7 +61,7 @@ public class TextFilteringReversedRangesTest extends ExtendedITextTest {
 
         int[] range = new int[] {0, 5};
         TextRenderer.updateRangeBasedOnRemovedCharacters(removedIds, range);
-        Assert.assertArrayEquals(new int[] {0, 3}, range);
+        Assertions.assertArrayEquals(new int[] {0, 3}, range);
     }
 
     @Test
@@ -72,7 +71,7 @@ public class TextFilteringReversedRangesTest extends ExtendedITextTest {
 
         int[] range = new int[] {0, 1};
         TextRenderer.updateRangeBasedOnRemovedCharacters(removedIds, range);
-        Assert.assertArrayEquals(new int[] {0, 0}, range);
+        Assertions.assertArrayEquals(new int[] {0, 0}, range);
     }
 
 }

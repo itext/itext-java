@@ -26,50 +26,49 @@ import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.properties.BackgroundRepeat.BackgroundRepeatValue;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class BackgroundRepeatUnitTest extends ExtendedITextTest {
     private static final double EPSILON = 0.000001;
 
     @Test
     public void defaultConstructorTest() {
         final BackgroundRepeat backgroundRepeat = new BackgroundRepeat();
-        Assert.assertEquals(BackgroundRepeatValue.REPEAT, backgroundRepeat.getXAxisRepeat());
-        Assert.assertEquals(BackgroundRepeatValue.REPEAT, backgroundRepeat.getYAxisRepeat());
+        Assertions.assertEquals(BackgroundRepeatValue.REPEAT, backgroundRepeat.getXAxisRepeat());
+        Assertions.assertEquals(BackgroundRepeatValue.REPEAT, backgroundRepeat.getYAxisRepeat());
     }
 
     @Test
     public void oneBackgroundRepeatValueConstructorTest() {
         final BackgroundRepeat backgroundRepeat = new BackgroundRepeat(BackgroundRepeatValue.ROUND);
-        Assert.assertEquals(BackgroundRepeatValue.ROUND, backgroundRepeat.getXAxisRepeat());
-        Assert.assertEquals(BackgroundRepeatValue.ROUND, backgroundRepeat.getYAxisRepeat());
+        Assertions.assertEquals(BackgroundRepeatValue.ROUND, backgroundRepeat.getXAxisRepeat());
+        Assertions.assertEquals(BackgroundRepeatValue.ROUND, backgroundRepeat.getYAxisRepeat());
     }
 
     @Test
     public void twoBackgroundRepeatValueConstructorTest() {
         final BackgroundRepeat backgroundRepeat = new BackgroundRepeat(BackgroundRepeatValue.SPACE, BackgroundRepeatValue.ROUND);
-        Assert.assertEquals(BackgroundRepeatValue.SPACE, backgroundRepeat.getXAxisRepeat());
-        Assert.assertEquals(BackgroundRepeatValue.ROUND, backgroundRepeat.getYAxisRepeat());
+        Assertions.assertEquals(BackgroundRepeatValue.SPACE, backgroundRepeat.getXAxisRepeat());
+        Assertions.assertEquals(BackgroundRepeatValue.ROUND, backgroundRepeat.getYAxisRepeat());
     }
 
     @Test
     public void isNoRepeatOnAxis() {
         BackgroundRepeat backgroundRepeat = new BackgroundRepeat(BackgroundRepeatValue.SPACE, BackgroundRepeatValue.REPEAT);
-        Assert.assertFalse(backgroundRepeat.isNoRepeatOnXAxis());
-        Assert.assertFalse(backgroundRepeat.isNoRepeatOnYAxis());
+        Assertions.assertFalse(backgroundRepeat.isNoRepeatOnXAxis());
+        Assertions.assertFalse(backgroundRepeat.isNoRepeatOnYAxis());
 
         backgroundRepeat = new BackgroundRepeat(BackgroundRepeatValue.NO_REPEAT, BackgroundRepeatValue.ROUND);
-        Assert.assertTrue(backgroundRepeat.isNoRepeatOnXAxis());
-        Assert.assertFalse(backgroundRepeat.isNoRepeatOnYAxis());
+        Assertions.assertTrue(backgroundRepeat.isNoRepeatOnXAxis());
+        Assertions.assertFalse(backgroundRepeat.isNoRepeatOnYAxis());
 
         backgroundRepeat = new BackgroundRepeat(BackgroundRepeatValue.NO_REPEAT);
-        Assert.assertTrue(backgroundRepeat.isNoRepeatOnXAxis());
-        Assert.assertTrue(backgroundRepeat.isNoRepeatOnYAxis());
+        Assertions.assertTrue(backgroundRepeat.isNoRepeatOnXAxis());
+        Assertions.assertTrue(backgroundRepeat.isNoRepeatOnYAxis());
     }
 
     @Test
@@ -80,9 +79,9 @@ public class BackgroundRepeatUnitTest extends ExtendedITextTest {
         Rectangle availableArea = new Rectangle(0, 0, 160, 123);
 
         Point whitespace = repeat.prepareRectangleToDrawingAndGetWhitespace(imageRect, availableArea, new BackgroundSize());
-        Assert.assertEquals(0, whitespace.getX(), EPSILON);
-        Assert.assertEquals(0, whitespace.getY(), EPSILON);
-        Assert.assertTrue(originalRect.equalsWithEpsilon(imageRect));
+        Assertions.assertEquals(0, whitespace.getX(), EPSILON);
+        Assertions.assertEquals(0, whitespace.getY(), EPSILON);
+        Assertions.assertTrue(originalRect.equalsWithEpsilon(imageRect));
     }
 
     @Test
@@ -93,9 +92,9 @@ public class BackgroundRepeatUnitTest extends ExtendedITextTest {
         Rectangle availableArea = new Rectangle(0, 0, 160, 123);
 
         Point whitespace = repeat.prepareRectangleToDrawingAndGetWhitespace(imageRect, availableArea, new BackgroundSize());
-        Assert.assertEquals(5, whitespace.getX(), EPSILON);
-        Assert.assertEquals(0, whitespace.getY(), EPSILON);
-        Assert.assertTrue(originalRect.equalsWithEpsilon(imageRect));
+        Assertions.assertEquals(5, whitespace.getX(), EPSILON);
+        Assertions.assertEquals(0, whitespace.getY(), EPSILON);
+        Assertions.assertTrue(originalRect.equalsWithEpsilon(imageRect));
     }
 
     @Test
@@ -106,9 +105,9 @@ public class BackgroundRepeatUnitTest extends ExtendedITextTest {
         Rectangle availableArea = new Rectangle(0, 0, 160, 123);
 
         Point whitespace = repeat.prepareRectangleToDrawingAndGetWhitespace(imageRect, availableArea, new BackgroundSize());
-        Assert.assertEquals(0, whitespace.getX(), EPSILON);
-        Assert.assertEquals(3, whitespace.getY(), EPSILON);
-        Assert.assertTrue(originalRect.equalsWithEpsilon(imageRect));
+        Assertions.assertEquals(0, whitespace.getX(), EPSILON);
+        Assertions.assertEquals(3, whitespace.getY(), EPSILON);
+        Assertions.assertTrue(originalRect.equalsWithEpsilon(imageRect));
     }
 
     @Test
@@ -119,9 +118,9 @@ public class BackgroundRepeatUnitTest extends ExtendedITextTest {
         Rectangle availableArea = new Rectangle(0, 0, 160, 123);
 
         Point whitespace = repeat.prepareRectangleToDrawingAndGetWhitespace(imageRect, availableArea, new BackgroundSize());
-        Assert.assertEquals(5, whitespace.getX(), EPSILON);
-        Assert.assertEquals(3, whitespace.getY(), EPSILON);
-        Assert.assertTrue(originalRect.equalsWithEpsilon(imageRect));
+        Assertions.assertEquals(5, whitespace.getX(), EPSILON);
+        Assertions.assertEquals(3, whitespace.getY(), EPSILON);
+        Assertions.assertTrue(originalRect.equalsWithEpsilon(imageRect));
     }
 
     @Test
@@ -132,9 +131,9 @@ public class BackgroundRepeatUnitTest extends ExtendedITextTest {
         Rectangle availableArea = new Rectangle(0, 0, 45, 55);
 
         Point whitespace = repeat.prepareRectangleToDrawingAndGetWhitespace(imageRect, availableArea, new BackgroundSize());
-        Assert.assertEquals(0, whitespace.getX(), EPSILON);
-        Assert.assertEquals(0, whitespace.getY(), EPSILON);
-        Assert.assertTrue(originalRect.equalsWithEpsilon(imageRect));
+        Assertions.assertEquals(0, whitespace.getX(), EPSILON);
+        Assertions.assertEquals(0, whitespace.getY(), EPSILON);
+        Assertions.assertTrue(originalRect.equalsWithEpsilon(imageRect));
     }
 
     @Test
@@ -144,12 +143,12 @@ public class BackgroundRepeatUnitTest extends ExtendedITextTest {
         Rectangle availableArea = new Rectangle(0, 0, 120, 180);
 
         Point whitespace = repeat.prepareRectangleToDrawingAndGetWhitespace(imageRect, availableArea, new BackgroundSize());
-        Assert.assertEquals(0, whitespace.getX(), EPSILON);
-        Assert.assertEquals(0, whitespace.getY(), EPSILON);
-        Assert.assertEquals(0, imageRect.getX(), EPSILON);
-        Assert.assertEquals(-14, imageRect.getY(), EPSILON);
-        Assert.assertEquals(60, imageRect.getWidth(), EPSILON);
-        Assert.assertEquals(84, imageRect.getHeight(), EPSILON);
+        Assertions.assertEquals(0, whitespace.getX(), EPSILON);
+        Assertions.assertEquals(0, whitespace.getY(), EPSILON);
+        Assertions.assertEquals(0, imageRect.getX(), EPSILON);
+        Assertions.assertEquals(-14, imageRect.getY(), EPSILON);
+        Assertions.assertEquals(60, imageRect.getWidth(), EPSILON);
+        Assertions.assertEquals(84, imageRect.getHeight(), EPSILON);
     }
 
     @Test
@@ -159,12 +158,12 @@ public class BackgroundRepeatUnitTest extends ExtendedITextTest {
         Rectangle availableArea = new Rectangle(0, 0, 120, 180);
 
         Point whitespace = repeat.prepareRectangleToDrawingAndGetWhitespace(imageRect, availableArea, new BackgroundSize());
-        Assert.assertEquals(0, whitespace.getX(), EPSILON);
-        Assert.assertEquals(0, whitespace.getY(), EPSILON);
-        Assert.assertEquals(0, imageRect.getX(), EPSILON);
-        Assert.assertEquals(-15, imageRect.getY(), EPSILON);
-        Assert.assertEquals(60, imageRect.getWidth(), EPSILON);
-        Assert.assertEquals(90, imageRect.getHeight(), EPSILON);
+        Assertions.assertEquals(0, whitespace.getX(), EPSILON);
+        Assertions.assertEquals(0, whitespace.getY(), EPSILON);
+        Assertions.assertEquals(0, imageRect.getX(), EPSILON);
+        Assertions.assertEquals(-15, imageRect.getY(), EPSILON);
+        Assertions.assertEquals(60, imageRect.getWidth(), EPSILON);
+        Assertions.assertEquals(90, imageRect.getHeight(), EPSILON);
     }
 
     @Test
@@ -174,12 +173,12 @@ public class BackgroundRepeatUnitTest extends ExtendedITextTest {
         Rectangle availableArea = new Rectangle(0, 0, 120, 180);
 
         Point whitespace = repeat.prepareRectangleToDrawingAndGetWhitespace(imageRect, availableArea, new BackgroundSize());
-        Assert.assertEquals(0, whitespace.getX(), EPSILON);
-        Assert.assertEquals(0, whitespace.getY(), EPSILON);
-        Assert.assertEquals(0, imageRect.getX(), EPSILON);
-        Assert.assertEquals(10, imageRect.getY(), EPSILON);
-        Assert.assertEquals(60, imageRect.getWidth(), EPSILON);
-        Assert.assertEquals(60, imageRect.getHeight(), EPSILON);
+        Assertions.assertEquals(0, whitespace.getX(), EPSILON);
+        Assertions.assertEquals(0, whitespace.getY(), EPSILON);
+        Assertions.assertEquals(0, imageRect.getX(), EPSILON);
+        Assertions.assertEquals(10, imageRect.getY(), EPSILON);
+        Assertions.assertEquals(60, imageRect.getWidth(), EPSILON);
+        Assertions.assertEquals(60, imageRect.getHeight(), EPSILON);
     }
 
     @Test
@@ -189,12 +188,12 @@ public class BackgroundRepeatUnitTest extends ExtendedITextTest {
         Rectangle availableArea = new Rectangle(0, 0, 144, 160);
 
         Point whitespace = repeat.prepareRectangleToDrawingAndGetWhitespace(imageRect, availableArea, new BackgroundSize());
-        Assert.assertEquals(0, whitespace.getX(), EPSILON);
-        Assert.assertEquals(0, whitespace.getY(), EPSILON);
-        Assert.assertEquals(0, imageRect.getX(), EPSILON);
-        Assert.assertEquals(-10, imageRect.getY(), EPSILON);
-        Assert.assertEquals(48, imageRect.getWidth(), EPSILON);
-        Assert.assertEquals(80, imageRect.getHeight(), EPSILON);
+        Assertions.assertEquals(0, whitespace.getX(), EPSILON);
+        Assertions.assertEquals(0, whitespace.getY(), EPSILON);
+        Assertions.assertEquals(0, imageRect.getX(), EPSILON);
+        Assertions.assertEquals(-10, imageRect.getY(), EPSILON);
+        Assertions.assertEquals(48, imageRect.getWidth(), EPSILON);
+        Assertions.assertEquals(80, imageRect.getHeight(), EPSILON);
     }
 
     @Test
@@ -204,12 +203,12 @@ public class BackgroundRepeatUnitTest extends ExtendedITextTest {
         Rectangle availableArea = new Rectangle(0, 0, 144, 180);
 
         Point whitespace = repeat.prepareRectangleToDrawingAndGetWhitespace(imageRect, availableArea, new BackgroundSize());
-        Assert.assertEquals(0, whitespace.getX(), EPSILON);
-        Assert.assertEquals(0, whitespace.getY(), EPSILON);
-        Assert.assertEquals(0, imageRect.getX(), EPSILON);
-        Assert.assertEquals(10, imageRect.getY(), EPSILON);
-        Assert.assertEquals(48, imageRect.getWidth(), EPSILON);
-        Assert.assertEquals(60, imageRect.getHeight(), EPSILON);
+        Assertions.assertEquals(0, whitespace.getX(), EPSILON);
+        Assertions.assertEquals(0, whitespace.getY(), EPSILON);
+        Assertions.assertEquals(0, imageRect.getX(), EPSILON);
+        Assertions.assertEquals(10, imageRect.getY(), EPSILON);
+        Assertions.assertEquals(48, imageRect.getWidth(), EPSILON);
+        Assertions.assertEquals(60, imageRect.getHeight(), EPSILON);
     }
 
     @Test
@@ -219,12 +218,12 @@ public class BackgroundRepeatUnitTest extends ExtendedITextTest {
         Rectangle availableArea = new Rectangle(0, 0, 120, 160);
 
         Point whitespace = repeat.prepareRectangleToDrawingAndGetWhitespace(imageRect, availableArea, new BackgroundSize());
-        Assert.assertEquals(0, whitespace.getX(), EPSILON);
-        Assert.assertEquals(0, whitespace.getY(), EPSILON);
-        Assert.assertEquals(0, imageRect.getX(), EPSILON);
-        Assert.assertEquals(-10, imageRect.getY(), EPSILON);
-        Assert.assertEquals(60, imageRect.getWidth(), EPSILON);
-        Assert.assertEquals(80, imageRect.getHeight(), EPSILON);
+        Assertions.assertEquals(0, whitespace.getX(), EPSILON);
+        Assertions.assertEquals(0, whitespace.getY(), EPSILON);
+        Assertions.assertEquals(0, imageRect.getX(), EPSILON);
+        Assertions.assertEquals(-10, imageRect.getY(), EPSILON);
+        Assertions.assertEquals(60, imageRect.getWidth(), EPSILON);
+        Assertions.assertEquals(80, imageRect.getHeight(), EPSILON);
     }
 
     @Test
@@ -234,12 +233,12 @@ public class BackgroundRepeatUnitTest extends ExtendedITextTest {
         Rectangle availableArea = new Rectangle(0, 0, 130, 180);
 
         Point whitespace = repeat.prepareRectangleToDrawingAndGetWhitespace(imageRect, availableArea, new BackgroundSize());
-        Assert.assertEquals(10, whitespace.getX(), EPSILON);
-        Assert.assertEquals(0, whitespace.getY(), EPSILON);
-        Assert.assertEquals(0, imageRect.getX(), EPSILON);
-        Assert.assertEquals(-15, imageRect.getY(), EPSILON);
-        Assert.assertEquals(60, imageRect.getWidth(), EPSILON);
-        Assert.assertEquals(90, imageRect.getHeight(), EPSILON);
+        Assertions.assertEquals(10, whitespace.getX(), EPSILON);
+        Assertions.assertEquals(0, whitespace.getY(), EPSILON);
+        Assertions.assertEquals(0, imageRect.getX(), EPSILON);
+        Assertions.assertEquals(-15, imageRect.getY(), EPSILON);
+        Assertions.assertEquals(60, imageRect.getWidth(), EPSILON);
+        Assertions.assertEquals(90, imageRect.getHeight(), EPSILON);
     }
 
     @Test
@@ -249,11 +248,11 @@ public class BackgroundRepeatUnitTest extends ExtendedITextTest {
         Rectangle availableArea = new Rectangle(0, 0, 120, 369);
 
         Point whitespace = repeat.prepareRectangleToDrawingAndGetWhitespace(imageRect, availableArea, new BackgroundSize());
-        Assert.assertEquals(0, whitespace.getX(), EPSILON);
-        Assert.assertEquals(3, whitespace.getY(), EPSILON);
-        Assert.assertEquals(0, imageRect.getX(), EPSILON);
-        Assert.assertEquals(279, imageRect.getY(), EPSILON);
-        Assert.assertEquals(60, imageRect.getWidth(), EPSILON);
-        Assert.assertEquals(90, imageRect.getHeight(), EPSILON);
+        Assertions.assertEquals(0, whitespace.getX(), EPSILON);
+        Assertions.assertEquals(3, whitespace.getY(), EPSILON);
+        Assertions.assertEquals(0, imageRect.getX(), EPSILON);
+        Assertions.assertEquals(279, imageRect.getY(), EPSILON);
+        Assertions.assertEquals(60, imageRect.getWidth(), EPSILON);
+        Assertions.assertEquals(90, imageRect.getHeight(), EPSILON);
     }
 }

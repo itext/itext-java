@@ -39,7 +39,6 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -49,11 +48,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class OcgPropertiesCopierTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/OcgPropertiesCopierTest/";
 
@@ -195,7 +194,7 @@ public class OcgPropertiesCopierTest extends ExtendedITextTest {
             try (PdfDocument fromDocument = new PdfDocument(new PdfReader(new ByteArrayInputStream(fromDocBytes)))) {
                 // This test verifies that if the PDF is invalid, i.e. if OCProperties.OCGs is empty in the document,
                 // but there are OCGs that are used on the page, then OCGs will be copied
-                Assert.assertTrue(fromDocument.getCatalog().getPdfObject().getAsDictionary(PdfName.OCProperties).getAsArray(PdfName.OCGs).isEmpty());
+                Assertions.assertTrue(fromDocument.getCatalog().getPdfObject().getAsDictionary(PdfName.OCProperties).getAsArray(PdfName.OCGs).isEmpty());
 
                 fromDocument.copyPagesTo(1, 1, toDocument);
 
@@ -238,7 +237,7 @@ public class OcgPropertiesCopierTest extends ExtendedITextTest {
 
                 PdfOCProperties ocProperties = toDocument.getCatalog().getOCProperties(false);
                 // Check that the Configs field has not been copied
-                Assert.assertFalse(ocProperties.getPdfObject().containsKey(PdfName.Configs));
+                Assertions.assertFalse(ocProperties.getPdfObject().containsKey(PdfName.Configs));
             }
         }
     }
@@ -367,15 +366,15 @@ public class OcgPropertiesCopierTest extends ExtendedITextTest {
 
 
         PdfArray rbGroups = dDict.getAsArray(PdfName.RBGroups);
-        Assert.assertEquals(2, rbGroups.size());
+        Assertions.assertEquals(2, rbGroups.size());
 
-        Assert.assertEquals(3, rbGroups.getAsArray(0).size());
-        Assert.assertEquals("Radio1", rbGroups.getAsArray(0).getAsDictionary(0).getAsString(PdfName.Name).toUnicodeString());
-        Assert.assertEquals("Radio2", rbGroups.getAsArray(0).getAsDictionary(1).getAsString(PdfName.Name).toUnicodeString());
-        Assert.assertEquals("Radio3", rbGroups.getAsArray(0).getAsDictionary(2).getAsString(PdfName.Name).toUnicodeString());
+        Assertions.assertEquals(3, rbGroups.getAsArray(0).size());
+        Assertions.assertEquals("Radio1", rbGroups.getAsArray(0).getAsDictionary(0).getAsString(PdfName.Name).toUnicodeString());
+        Assertions.assertEquals("Radio2", rbGroups.getAsArray(0).getAsDictionary(1).getAsString(PdfName.Name).toUnicodeString());
+        Assertions.assertEquals("Radio3", rbGroups.getAsArray(0).getAsDictionary(2).getAsString(PdfName.Name).toUnicodeString());
 
-        Assert.assertEquals(1, rbGroups.getAsArray(1).size());
-        Assert.assertEquals("Radio3", rbGroups.getAsArray(1).getAsDictionary(0).getAsString(PdfName.Name).toUnicodeString());
+        Assertions.assertEquals(1, rbGroups.getAsArray(1).size());
+        Assertions.assertEquals("Radio3", rbGroups.getAsArray(1).getAsDictionary(0).getAsString(PdfName.Name).toUnicodeString());
     }
 
     @Test
@@ -491,31 +490,31 @@ public class OcgPropertiesCopierTest extends ExtendedITextTest {
 
 
         PdfArray order = dDict.getAsArray(PdfName.Order);
-        Assert.assertEquals(8, order.size());
+        Assertions.assertEquals(8, order.size());
 
-        Assert.assertEquals("parent1", order.getAsDictionary(0).getAsString(PdfName.Name).toUnicodeString());
+        Assertions.assertEquals("parent1", order.getAsDictionary(0).getAsString(PdfName.Name).toUnicodeString());
 
-        Assert.assertEquals(2, order.getAsArray(1).size());
-        Assert.assertEquals("child1", order.getAsArray(1).getAsDictionary(0).getAsString(PdfName.Name).toUnicodeString());
-        Assert.assertEquals("child2", order.getAsArray(1).getAsDictionary(1).getAsString(PdfName.Name).toUnicodeString());
+        Assertions.assertEquals(2, order.getAsArray(1).size());
+        Assertions.assertEquals("child1", order.getAsArray(1).getAsDictionary(0).getAsString(PdfName.Name).toUnicodeString());
+        Assertions.assertEquals("child2", order.getAsArray(1).getAsDictionary(1).getAsString(PdfName.Name).toUnicodeString());
 
-        Assert.assertEquals("parent2", order.getAsDictionary(2).getAsString(PdfName.Name).toUnicodeString());
+        Assertions.assertEquals("parent2", order.getAsDictionary(2).getAsString(PdfName.Name).toUnicodeString());
 
-        Assert.assertEquals("parent3", order.getAsDictionary(3).getAsString(PdfName.Name).toUnicodeString());
+        Assertions.assertEquals("parent3", order.getAsDictionary(3).getAsString(PdfName.Name).toUnicodeString());
 
-        Assert.assertEquals(1, order.getAsArray(4).size());
-        Assert.assertEquals("child5", order.getAsArray(4).getAsDictionary(0).getAsString(PdfName.Name).toUnicodeString());
+        Assertions.assertEquals(1, order.getAsArray(4).size());
+        Assertions.assertEquals("child5", order.getAsArray(4).getAsDictionary(0).getAsString(PdfName.Name).toUnicodeString());
 
-        Assert.assertEquals(2, order.getAsArray(5).size());
-        Assert.assertEquals("parent4", order.getAsArray(5).getAsString(0).toUnicodeString());
-        Assert.assertEquals("child6", order.getAsArray(5).getAsDictionary(1).getAsString(PdfName.Name).toUnicodeString());
+        Assertions.assertEquals(2, order.getAsArray(5).size());
+        Assertions.assertEquals("parent4", order.getAsArray(5).getAsString(0).toUnicodeString());
+        Assertions.assertEquals("child6", order.getAsArray(5).getAsDictionary(1).getAsString(PdfName.Name).toUnicodeString());
 
-        Assert.assertEquals("grandpa1", order.getAsDictionary(6).getAsString(PdfName.Name).toUnicodeString());
+        Assertions.assertEquals("grandpa1", order.getAsDictionary(6).getAsString(PdfName.Name).toUnicodeString());
 
-        Assert.assertEquals(2, order.getAsArray(7).size());
-        Assert.assertEquals("parent6", order.getAsArray(7).getAsDictionary(0).getAsString(PdfName.Name).toUnicodeString());
-        Assert.assertEquals(1, order.getAsArray(7).getAsArray(1).size());
-        Assert.assertEquals("child8", order.getAsArray(7).getAsArray(1).getAsDictionary(0).getAsString(PdfName.Name).toUnicodeString());
+        Assertions.assertEquals(2, order.getAsArray(7).size());
+        Assertions.assertEquals("parent6", order.getAsArray(7).getAsDictionary(0).getAsString(PdfName.Name).toUnicodeString());
+        Assertions.assertEquals(1, order.getAsArray(7).getAsArray(1).size());
+        Assertions.assertEquals("child8", order.getAsArray(7).getAsArray(1).getAsDictionary(0).getAsString(PdfName.Name).toUnicodeString());
     }
 
     @Test
@@ -581,24 +580,24 @@ public class OcgPropertiesCopierTest extends ExtendedITextTest {
         namesOrTitles.add("Parent2");
         namesOrTitles.add("Child5");
         PdfArray order = OcgPropertiesCopierTest.copyPagesAndAssertLayersNameAndGetDDict(namesOrTitles, fromDocBytes, null).getAsArray(PdfName.Order);
-        Assert.assertEquals(4, order.size());
-        Assert.assertEquals("Layer1", order.getAsDictionary(0).getAsString(PdfName.Name).toUnicodeString());
+        Assertions.assertEquals(4, order.size());
+        Assertions.assertEquals("Layer1", order.getAsDictionary(0).getAsString(PdfName.Name).toUnicodeString());
 
         PdfArray subArray = order.getAsArray(1);
-        Assert.assertEquals(3, subArray.size());
-        Assert.assertEquals("Grandpa1", subArray.getAsString(0).toUnicodeString());
+        Assertions.assertEquals(3, subArray.size());
+        Assertions.assertEquals("Grandpa1", subArray.getAsString(0).toUnicodeString());
 
-        Assert.assertEquals(2, subArray.getAsArray(1).size());
-        Assert.assertEquals("Parent1", subArray.getAsArray(1).getAsString(0).toUnicodeString());
-        Assert.assertEquals("Child2", subArray.getAsArray(1).getAsDictionary(1).getAsString(PdfName.Name).toUnicodeString());
+        Assertions.assertEquals(2, subArray.getAsArray(1).size());
+        Assertions.assertEquals("Parent1", subArray.getAsArray(1).getAsString(0).toUnicodeString());
+        Assertions.assertEquals("Child2", subArray.getAsArray(1).getAsDictionary(1).getAsString(PdfName.Name).toUnicodeString());
 
-        Assert.assertEquals("Child4", subArray.getAsDictionary(2).getAsString(PdfName.Name).toUnicodeString());
+        Assertions.assertEquals("Child4", subArray.getAsDictionary(2).getAsString(PdfName.Name).toUnicodeString());
 
 
-        Assert.assertEquals("Parent2", order.getAsDictionary(2).getAsString(PdfName.Name).toUnicodeString());
+        Assertions.assertEquals("Parent2", order.getAsDictionary(2).getAsString(PdfName.Name).toUnicodeString());
 
-        Assert.assertEquals(1, order.getAsArray(3).size());
-        Assert.assertEquals("Child5", order.getAsArray(3).getAsDictionary(0).getAsString(PdfName.Name).toUnicodeString());
+        Assertions.assertEquals(1, order.getAsArray(3).size());
+        Assertions.assertEquals("Child5", order.getAsArray(3).getAsDictionary(0).getAsString(PdfName.Name).toUnicodeString());
     }
 
     @Test
@@ -619,38 +618,38 @@ public class OcgPropertiesCopierTest extends ExtendedITextTest {
         PdfDictionary dDict = OcgPropertiesCopierTest.copyPagesAndAssertLayersNameAndGetDDict(namesOrTitles, fromDocBytes, null);
 
         PdfArray locked = dDict.getAsArray(PdfName.Locked);
-        Assert.assertEquals(1, locked.size());
-        Assert.assertEquals("Locked1", locked.getAsDictionary(0).getAsString(PdfName.Name).toUnicodeString());
+        Assertions.assertEquals(1, locked.size());
+        Assertions.assertEquals("Locked1", locked.getAsDictionary(0).getAsString(PdfName.Name).toUnicodeString());
 
         PdfArray rbGroups = dDict.getAsArray(PdfName.RBGroups);
-        Assert.assertEquals(2, rbGroups.size());
-        Assert.assertEquals(2, rbGroups.getAsArray(0).size());
-        Assert.assertEquals("Radio1", rbGroups.getAsArray(0).getAsDictionary(0).getAsString(PdfName.Name).toUnicodeString());
-        Assert.assertEquals("Radio3", rbGroups.getAsArray(0).getAsDictionary(1).getAsString(PdfName.Name).toUnicodeString());
-        Assert.assertEquals(1, rbGroups.getAsArray(1).size());
-        Assert.assertEquals("Radio4", rbGroups.getAsArray(1).getAsDictionary(0).getAsString(PdfName.Name).toUnicodeString());
+        Assertions.assertEquals(2, rbGroups.size());
+        Assertions.assertEquals(2, rbGroups.getAsArray(0).size());
+        Assertions.assertEquals("Radio1", rbGroups.getAsArray(0).getAsDictionary(0).getAsString(PdfName.Name).toUnicodeString());
+        Assertions.assertEquals("Radio3", rbGroups.getAsArray(0).getAsDictionary(1).getAsString(PdfName.Name).toUnicodeString());
+        Assertions.assertEquals(1, rbGroups.getAsArray(1).size());
+        Assertions.assertEquals("Radio4", rbGroups.getAsArray(1).getAsDictionary(0).getAsString(PdfName.Name).toUnicodeString());
 
-        Assert.assertNull(dDict.getAsArray(PdfName.ON));
+        Assertions.assertNull(dDict.getAsArray(PdfName.ON));
 
         PdfArray off = dDict.getAsArray(PdfName.OFF);
-        Assert.assertEquals(1, off.size());
-        Assert.assertEquals("Off1", off.getAsDictionary(0).getAsString(PdfName.Name).toUnicodeString());
+        Assertions.assertEquals(1, off.size());
+        Assertions.assertEquals("Off1", off.getAsDictionary(0).getAsString(PdfName.Name).toUnicodeString());
 
-        Assert.assertNull(dDict.getAsArray(PdfName.Creator));
+        Assertions.assertNull(dDict.getAsArray(PdfName.Creator));
 
-        Assert.assertEquals("Name", dDict.getAsString(PdfName.Name).toUnicodeString());
+        Assertions.assertEquals("Name", dDict.getAsString(PdfName.Name).toUnicodeString());
 
-        Assert.assertEquals(PdfName.ON, dDict.getAsName(PdfName.BaseState));
+        Assertions.assertEquals(PdfName.ON, dDict.getAsName(PdfName.BaseState));
 
         PdfArray asArray = dDict.getAsArray(PdfName.AS);
-        Assert.assertEquals(1, asArray.size());
-        Assert.assertEquals(1, asArray.getAsDictionary(0).getAsArray(PdfName.Category).size());
-        Assert.assertEquals(PdfName.Print, asArray.getAsDictionary(0).getAsArray(PdfName.Category).getAsName(0));
-        Assert.assertEquals("noPrint1", asArray.getAsDictionary(0).getAsArray(PdfName.OCGs).getAsDictionary(0).getAsString(PdfName.Name).toUnicodeString());
+        Assertions.assertEquals(1, asArray.size());
+        Assertions.assertEquals(1, asArray.getAsDictionary(0).getAsArray(PdfName.Category).size());
+        Assertions.assertEquals(PdfName.Print, asArray.getAsDictionary(0).getAsArray(PdfName.Category).getAsName(0));
+        Assertions.assertEquals("noPrint1", asArray.getAsDictionary(0).getAsArray(PdfName.OCGs).getAsDictionary(0).getAsString(PdfName.Name).toUnicodeString());
 
-        Assert.assertEquals(PdfName.View, dDict.getAsName(PdfName.Intent));
+        Assertions.assertEquals(PdfName.View, dDict.getAsName(PdfName.Intent));
 
-        Assert.assertEquals(PdfName.VisiblePages, dDict.getAsName(PdfName.ListMode));
+        Assertions.assertEquals(PdfName.VisiblePages, dDict.getAsName(PdfName.ListMode));
     }
 
     @Test
@@ -738,47 +737,47 @@ public class OcgPropertiesCopierTest extends ExtendedITextTest {
         PdfDictionary dDict = OcgPropertiesCopierTest.copyPagesAndAssertLayersNameAndGetDDict(namesOrTitles, fromDocBytes, toDocBytes);
 
         PdfArray locked = dDict.getAsArray(PdfName.Locked);
-        Assert.assertEquals(3, locked.size());
-        Assert.assertEquals("Locked1", locked.getAsDictionary(0).getAsString(PdfName.Name).toUnicodeString());
-        Assert.assertEquals("Locked2", locked.getAsDictionary(1).getAsString(PdfName.Name).toUnicodeString());
-        Assert.assertEquals("from_Locked1", locked.getAsDictionary(2).getAsString(PdfName.Name).toUnicodeString());
+        Assertions.assertEquals(3, locked.size());
+        Assertions.assertEquals("Locked1", locked.getAsDictionary(0).getAsString(PdfName.Name).toUnicodeString());
+        Assertions.assertEquals("Locked2", locked.getAsDictionary(1).getAsString(PdfName.Name).toUnicodeString());
+        Assertions.assertEquals("from_Locked1", locked.getAsDictionary(2).getAsString(PdfName.Name).toUnicodeString());
 
         PdfArray rbGroups = dDict.getAsArray(PdfName.RBGroups);
-        Assert.assertEquals(3, rbGroups.size());
-        Assert.assertEquals(3, rbGroups.getAsArray(0).size());
-        Assert.assertEquals("Radio1", rbGroups.getAsArray(0).getAsDictionary(0).getAsString(PdfName.Name).toUnicodeString());
-        Assert.assertEquals("Radio2", rbGroups.getAsArray(0).getAsDictionary(1).getAsString(PdfName.Name).toUnicodeString());
-        Assert.assertEquals("Radio3", rbGroups.getAsArray(0).getAsDictionary(2).getAsString(PdfName.Name).toUnicodeString());
-        Assert.assertEquals(1, rbGroups.getAsArray(1).size());
-        Assert.assertEquals("Radio4", rbGroups.getAsArray(1).getAsDictionary(0).getAsString(PdfName.Name).toUnicodeString());
-        Assert.assertEquals(1, rbGroups.getAsArray(2).size());
-        Assert.assertEquals("from_Radio1", rbGroups.getAsArray(2).getAsDictionary(0).getAsString(PdfName.Name).toUnicodeString());
+        Assertions.assertEquals(3, rbGroups.size());
+        Assertions.assertEquals(3, rbGroups.getAsArray(0).size());
+        Assertions.assertEquals("Radio1", rbGroups.getAsArray(0).getAsDictionary(0).getAsString(PdfName.Name).toUnicodeString());
+        Assertions.assertEquals("Radio2", rbGroups.getAsArray(0).getAsDictionary(1).getAsString(PdfName.Name).toUnicodeString());
+        Assertions.assertEquals("Radio3", rbGroups.getAsArray(0).getAsDictionary(2).getAsString(PdfName.Name).toUnicodeString());
+        Assertions.assertEquals(1, rbGroups.getAsArray(1).size());
+        Assertions.assertEquals("Radio4", rbGroups.getAsArray(1).getAsDictionary(0).getAsString(PdfName.Name).toUnicodeString());
+        Assertions.assertEquals(1, rbGroups.getAsArray(2).size());
+        Assertions.assertEquals("from_Radio1", rbGroups.getAsArray(2).getAsDictionary(0).getAsString(PdfName.Name).toUnicodeString());
 
-        Assert.assertNull(dDict.getAsArray(PdfName.ON));
+        Assertions.assertNull(dDict.getAsArray(PdfName.ON));
 
         PdfArray off = dDict.getAsArray(PdfName.OFF);
-        Assert.assertEquals(3, off.size());
-        Assert.assertEquals("Off1", off.getAsDictionary(0).getAsString(PdfName.Name).toUnicodeString());
-        Assert.assertEquals("Off2", off.getAsDictionary(1).getAsString(PdfName.Name).toUnicodeString());
-        Assert.assertEquals("from_Off1", off.getAsDictionary(2).getAsString(PdfName.Name).toUnicodeString());
+        Assertions.assertEquals(3, off.size());
+        Assertions.assertEquals("Off1", off.getAsDictionary(0).getAsString(PdfName.Name).toUnicodeString());
+        Assertions.assertEquals("Off2", off.getAsDictionary(1).getAsString(PdfName.Name).toUnicodeString());
+        Assertions.assertEquals("from_Off1", off.getAsDictionary(2).getAsString(PdfName.Name).toUnicodeString());
 
-        Assert.assertNull(dDict.getAsArray(PdfName.Creator));
+        Assertions.assertNull(dDict.getAsArray(PdfName.Creator));
 
-        Assert.assertEquals("Name", dDict.getAsString(PdfName.Name).toUnicodeString());
+        Assertions.assertEquals("Name", dDict.getAsString(PdfName.Name).toUnicodeString());
 
-        Assert.assertEquals(PdfName.ON, dDict.getAsName(PdfName.BaseState));
+        Assertions.assertEquals(PdfName.ON, dDict.getAsName(PdfName.BaseState));
 
         PdfArray asArray = dDict.getAsArray(PdfName.AS);
-        Assert.assertEquals(1, asArray.size());
-        Assert.assertEquals(1, asArray.getAsDictionary(0).getAsArray(PdfName.Category).size());
-        Assert.assertEquals(PdfName.Print, asArray.getAsDictionary(0).getAsArray(PdfName.Category).getAsName(0));
-        Assert.assertEquals(2, asArray.getAsDictionary(0).getAsArray(PdfName.OCGs).size());
-        Assert.assertEquals("noPrint1", asArray.getAsDictionary(0).getAsArray(PdfName.OCGs).getAsDictionary(0).getAsString(PdfName.Name).toUnicodeString());
-        Assert.assertEquals("from_noPrint1", asArray.getAsDictionary(0).getAsArray(PdfName.OCGs).getAsDictionary(1).getAsString(PdfName.Name).toUnicodeString());
+        Assertions.assertEquals(1, asArray.size());
+        Assertions.assertEquals(1, asArray.getAsDictionary(0).getAsArray(PdfName.Category).size());
+        Assertions.assertEquals(PdfName.Print, asArray.getAsDictionary(0).getAsArray(PdfName.Category).getAsName(0));
+        Assertions.assertEquals(2, asArray.getAsDictionary(0).getAsArray(PdfName.OCGs).size());
+        Assertions.assertEquals("noPrint1", asArray.getAsDictionary(0).getAsArray(PdfName.OCGs).getAsDictionary(0).getAsString(PdfName.Name).toUnicodeString());
+        Assertions.assertEquals("from_noPrint1", asArray.getAsDictionary(0).getAsArray(PdfName.OCGs).getAsDictionary(1).getAsString(PdfName.Name).toUnicodeString());
 
-        Assert.assertEquals(PdfName.View, dDict.getAsName(PdfName.Intent));
+        Assertions.assertEquals(PdfName.View, dDict.getAsName(PdfName.Intent));
 
-        Assert.assertEquals(PdfName.VisiblePages, dDict.getAsName(PdfName.ListMode));
+        Assertions.assertEquals(PdfName.VisiblePages, dDict.getAsName(PdfName.ListMode));
     }
 
     // Copy OCGs from different locations (OCMDs, annotations, content streams, xObjects) test block
@@ -1083,7 +1082,7 @@ public class OcgPropertiesCopierTest extends ExtendedITextTest {
             try (PdfDocument fromDocument = new PdfDocument(new PdfReader(new ByteArrayInputStream(fromDocBytes)))) {
                 fromDocument.copyPagesTo(1, 1, toDocument);
 
-                Assert.assertNull(toDocument.getCatalog().getOCProperties(false));
+                Assertions.assertNull(toDocument.getCatalog().getOCProperties(false));
             }
         }
     }
@@ -1224,37 +1223,37 @@ public class OcgPropertiesCopierTest extends ExtendedITextTest {
     }
 
     private static void checkLayersOrTitleNameInToDocument(PdfDocument toDocument, Set<String> namesOrTitles) {
-        Assert.assertNotNull(toDocument.getCatalog());
+        Assertions.assertNotNull(toDocument.getCatalog());
         PdfOCProperties ocProperties = toDocument.getCatalog().getOCProperties(false);
         ocProperties.fillDictionary();
-        Assert.assertNotNull(ocProperties);
-        Assert.assertEquals(namesOrTitles.size(), ocProperties.getLayers().size());
+        Assertions.assertNotNull(ocProperties);
+        Assertions.assertEquals(namesOrTitles.size(), ocProperties.getLayers().size());
         for (PdfLayer layer : ocProperties.getLayers()) {
-            Assert.assertNotNull(layer);
+            Assertions.assertNotNull(layer);
             String layerTitle = layer.getTitle();
             if (namesOrTitles.contains(layerTitle)) {
-                Assert.assertTrue(namesOrTitles.remove(layerTitle));
+                Assertions.assertTrue(namesOrTitles.remove(layerTitle));
             } else {
                 PdfDictionary layerDictionary = layer.getPdfObject();
-                Assert.assertNotNull(layerDictionary.get(PdfName.Name));
+                Assertions.assertNotNull(layerDictionary.get(PdfName.Name));
                 String layerName = layerDictionary.get(PdfName.Name).toString();
-                Assert.assertTrue(namesOrTitles.remove(layerName));
+                Assertions.assertTrue(namesOrTitles.remove(layerName));
             }
         }
     }
 
     private static void checkLayersNameInToDocument(PdfDocument toDocument, List<String> names) {
-        Assert.assertNotNull(toDocument.getCatalog());
+        Assertions.assertNotNull(toDocument.getCatalog());
         PdfOCProperties ocProperties = toDocument.getCatalog().getOCProperties(false);
-        Assert.assertNotNull(ocProperties);
-        Assert.assertEquals(names.size(), ocProperties.getLayers().size());
+        Assertions.assertNotNull(ocProperties);
+        Assertions.assertEquals(names.size(), ocProperties.getLayers().size());
         for (PdfLayer layer : ocProperties.getLayers()) {
-            Assert.assertNotNull(layer);
+            Assertions.assertNotNull(layer);
 
             PdfDictionary layerDictionary = layer.getPdfObject();
-            Assert.assertNotNull(layerDictionary.get(PdfName.Name));
+            Assertions.assertNotNull(layerDictionary.get(PdfName.Name));
             String layerNameString = layerDictionary.get(PdfName.Name).toString();
-            Assert.assertTrue(names.contains(layerNameString));
+            Assertions.assertTrue(names.contains(layerNameString));
             names.remove(layerNameString);
         }
     }

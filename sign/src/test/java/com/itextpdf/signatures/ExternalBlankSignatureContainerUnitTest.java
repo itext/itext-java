@@ -25,22 +25,21 @@ package com.itextpdf.signatures;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayInputStream;
 import java.security.GeneralSecurityException;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class ExternalBlankSignatureContainerUnitTest extends ExtendedITextTest {
 
     @Test
     public void createBlankSignTest() throws GeneralSecurityException {
         IExternalSignatureContainer container = new ExternalBlankSignatureContainer(new PdfDictionary());
         byte[] blankSign = container.sign(new ByteArrayInputStream(new byte[] {1, 0, 32, 5}));
-        Assert.assertEquals(0, blankSign.length);
+        Assertions.assertEquals(0, blankSign.length);
     }
 
     @Test
@@ -55,6 +54,6 @@ public class ExternalBlankSignatureContainerUnitTest extends ExtendedITextTest {
         container.modifySigningDictionary(addDict);
 
         byte[] blankSign = container.sign(new ByteArrayInputStream(new byte[] {1, 0, 32, 5}));
-        Assert.assertEquals(0, blankSign.length);
+        Assertions.assertEquals(0, blankSign.length);
     }
 }

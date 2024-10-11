@@ -34,22 +34,21 @@ import com.itextpdf.commons.exceptions.UnknownProductException;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class ProductEventHandlerTest extends ExtendedITextTest {
-    @Before
+    @BeforeEach
     public void clearProcessors() {
         ProductEventHandler.INSTANCE.clearProcessors();
     }
 
-    @After
+    @AfterEach
     public void afterEach() {
         ProductProcessorFactoryKeeper.restoreDefaultProductProcessorFactory();
     }
@@ -59,9 +58,9 @@ public class ProductEventHandlerTest extends ExtendedITextTest {
         ProductEventHandler handler = ProductEventHandler.INSTANCE;
 
         AbstractContextBasedITextEvent event = new ITextTestEvent(new SequenceId(), null, "test-event", "Unknown Product");
-        Exception ex = Assert.assertThrows(UnknownProductException.class,
+        Exception ex = Assertions.assertThrows(UnknownProductException.class,
                 () -> handler.onAcceptedEvent(event));
-        Assert.assertEquals(MessageFormatUtil.format(UnknownProductException.UNKNOWN_PRODUCT, "Unknown Product"),
+        Assertions.assertEquals(MessageFormatUtil.format(UnknownProductException.UNKNOWN_PRODUCT, "Unknown Product"),
                 ex.getMessage());
     }
 
@@ -71,18 +70,18 @@ public class ProductEventHandlerTest extends ExtendedITextTest {
 
         SequenceId sequenceId = new SequenceId();
 
-        Assert.assertTrue(handler.getEvents(sequenceId).isEmpty());
+        Assertions.assertTrue(handler.getEvents(sequenceId).isEmpty());
 
         handler.onAcceptedEvent(new ITextTestEvent(sequenceId, null, "test-event",
                 ProductNameConstant.ITEXT_CORE));
 
-        Assert.assertEquals(1, handler.getEvents(sequenceId).size());
+        Assertions.assertEquals(1, handler.getEvents(sequenceId).size());
 
         AbstractProductProcessITextEvent event = handler.getEvents(sequenceId).get(0);
-        Assert.assertEquals(sequenceId.getId(), event.getSequenceId().getId());
-        Assert.assertNull(event.getMetaInfo());
-        Assert.assertEquals("test-event", event.getEventType());
-        Assert.assertEquals(ProductNameConstant.ITEXT_CORE, event.getProductName());
+        Assertions.assertEquals(sequenceId.getId(), event.getSequenceId().getId());
+        Assertions.assertNull(event.getMetaInfo());
+        Assertions.assertEquals("test-event", event.getEventType());
+        Assertions.assertEquals(ProductNameConstant.ITEXT_CORE, event.getProductName());
     }
 
     @Test
@@ -91,19 +90,19 @@ public class ProductEventHandlerTest extends ExtendedITextTest {
 
         SequenceId sequenceId = new SequenceId();
 
-        Assert.assertTrue(handler.getEvents(sequenceId).isEmpty());
+        Assertions.assertTrue(handler.getEvents(sequenceId).isEmpty());
 
         ITextTestEvent event = new ITextTestEvent(sequenceId, null, "test-event",
                 ProductNameConstant.ITEXT_CORE);
         EventManager.getInstance().onEvent(event);
 
-        Assert.assertEquals(1, handler.getEvents(sequenceId).size());
-        Assert.assertEquals(event, handler.getEvents(sequenceId).get(0));
+        Assertions.assertEquals(1, handler.getEvents(sequenceId).size());
+        Assertions.assertEquals(event, handler.getEvents(sequenceId).get(0));
 
         EventManager.getInstance().onEvent(event);
-        Assert.assertEquals(2, handler.getEvents(sequenceId).size());
-        Assert.assertEquals(event, handler.getEvents(sequenceId).get(0));
-        Assert.assertEquals(event, handler.getEvents(sequenceId).get(1));
+        Assertions.assertEquals(2, handler.getEvents(sequenceId).size());
+        Assertions.assertEquals(event, handler.getEvents(sequenceId).get(0));
+        Assertions.assertEquals(event, handler.getEvents(sequenceId).get(1));
     }
 
     @Test
@@ -112,7 +111,7 @@ public class ProductEventHandlerTest extends ExtendedITextTest {
 
         SequenceId sequenceId = new SequenceId();
 
-        Assert.assertTrue(handler.getEvents(sequenceId).isEmpty());
+        Assertions.assertTrue(handler.getEvents(sequenceId).isEmpty());
 
         ITextTestEvent event = new ITextTestEvent(sequenceId, null, "test-event",
                 ProductNameConstant.ITEXT_CORE);
@@ -121,9 +120,9 @@ public class ProductEventHandlerTest extends ExtendedITextTest {
         ConfirmEvent confirmEvent = new ConfirmEvent(sequenceId, event);
         EventManager.getInstance().onEvent(confirmEvent);
 
-        Assert.assertEquals(1, handler.getEvents(sequenceId).size());
-        Assert.assertTrue(handler.getEvents(sequenceId).get(0) instanceof ConfirmedEventWrapper);
-        Assert.assertEquals(event, ((ConfirmedEventWrapper) handler.getEvents(sequenceId).get(0)).getEvent());
+        Assertions.assertEquals(1, handler.getEvents(sequenceId).size());
+        Assertions.assertTrue(handler.getEvents(sequenceId).get(0) instanceof ConfirmedEventWrapper);
+        Assertions.assertEquals(event, ((ConfirmedEventWrapper) handler.getEvents(sequenceId).get(0)).getEvent());
     }
 
     @Test
@@ -135,7 +134,7 @@ public class ProductEventHandlerTest extends ExtendedITextTest {
         ProductEventHandler handler = ProductEventHandler.INSTANCE;
 
         ITextProductEventProcessor activeProcessor = handler.getActiveProcessor(ProductNameConstant.ITEXT_CORE);
-        Assert.assertTrue(activeProcessor instanceof TestProductEventProcessor);
+        Assertions.assertTrue(activeProcessor instanceof TestProductEventProcessor);
     }
 
     @Test
@@ -147,9 +146,9 @@ public class ProductEventHandlerTest extends ExtendedITextTest {
         AbstractContextBasedITextEvent event = new ITextTestEvent(new SequenceId(), null, "test",
                 ProductNameConstant.ITEXT_CORE);
 
-        Exception e = Assert.assertThrows(ProductEventHandlerRepeatException.class,
+        Exception e = Assertions.assertThrows(ProductEventHandlerRepeatException.class,
                 () -> handler.onAcceptedEvent(event));
-        Assert.assertEquals("customMessage5", e.getMessage());
+        Assertions.assertEquals("customMessage5", e.getMessage());
     }
 
     @Test

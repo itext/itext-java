@@ -27,6 +27,8 @@ import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1InputStream;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Sequence;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
+import com.itextpdf.kernel.crypto.OID;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -313,7 +315,7 @@ public class PadesTwoPhaseSigningHelper {
         try (IASN1InputStream tempStream = FACTORY.createASN1InputStream(new ByteArrayInputStream(timestamp))) {
             IASN1Sequence seq = FACTORY.createASN1Sequence(tempStream.readObject());
             CmsAttribute timestampAttribute = new CmsAttribute(
-                    SecurityIDs.ID_AA_TIME_STAMP_TOKEN, FACTORY.createDERSet(seq));
+                    OID.AA_TIME_STAMP_TOKEN, FACTORY.createDERSet(seq));
             cmsContainer.getSignerInfo().addUnSignedAttribute(timestampAttribute);
         }
 

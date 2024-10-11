@@ -28,15 +28,14 @@ import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class StopSvgNodeRendererUnitTest extends ExtendedITextTest {
     private static final float DELTA = 0;
 
@@ -50,7 +49,7 @@ public class StopSvgNodeRendererUnitTest extends ExtendedITextTest {
 
         double expected = 0.5;
 
-        Assert.assertEquals(expected, renderer.getOffset(), DELTA);
+        Assertions.assertEquals(expected, renderer.getOffset(), DELTA);
     }
 
     @Test
@@ -63,7 +62,7 @@ public class StopSvgNodeRendererUnitTest extends ExtendedITextTest {
 
         double expected = 0.5;
 
-        Assert.assertEquals(expected, renderer.getOffset(), DELTA);
+        Assertions.assertEquals(expected, renderer.getOffset(), DELTA);
     }
 
     @Test
@@ -76,7 +75,7 @@ public class StopSvgNodeRendererUnitTest extends ExtendedITextTest {
 
         double expected = 1;
 
-        Assert.assertEquals(expected, renderer.getOffset(), DELTA);
+        Assertions.assertEquals(expected, renderer.getOffset(), DELTA);
     }
 
     @Test
@@ -89,7 +88,7 @@ public class StopSvgNodeRendererUnitTest extends ExtendedITextTest {
 
         double expected = 0;
 
-        Assert.assertEquals(expected, renderer.getOffset(), DELTA);
+        Assertions.assertEquals(expected, renderer.getOffset(), DELTA);
     }
 
     @Test
@@ -102,7 +101,7 @@ public class StopSvgNodeRendererUnitTest extends ExtendedITextTest {
 
         double expected = 0;
 
-        Assert.assertEquals(expected, renderer.getOffset(), DELTA);
+        Assertions.assertEquals(expected, renderer.getOffset(), DELTA);
     }
 
     @Test
@@ -115,7 +114,7 @@ public class StopSvgNodeRendererUnitTest extends ExtendedITextTest {
 
         double expected = 0;
 
-        Assert.assertEquals(expected, renderer.getOffset(), DELTA);
+        Assertions.assertEquals(expected, renderer.getOffset(), DELTA);
     }
 
     @Test
@@ -128,7 +127,7 @@ public class StopSvgNodeRendererUnitTest extends ExtendedITextTest {
 
         double expected = 0;
 
-        Assert.assertEquals(expected, renderer.getOffset(), DELTA);
+        Assertions.assertEquals(expected, renderer.getOffset(), DELTA);
     }
 
     @Test
@@ -142,7 +141,7 @@ public class StopSvgNodeRendererUnitTest extends ExtendedITextTest {
         float[] expected = {1, 0, 0, 1};
         float[] actual = renderer.getStopColor();
 
-        Assert.assertArrayEquals(expected, actual, DELTA);
+        Assertions.assertArrayEquals(expected, actual, DELTA);
     }
 
     @Test
@@ -156,7 +155,7 @@ public class StopSvgNodeRendererUnitTest extends ExtendedITextTest {
         float[] expected = {0, 0, 0, 1};
         float[] actual = renderer.getStopColor();
 
-        Assert.assertArrayEquals(expected, actual, DELTA);
+        Assertions.assertArrayEquals(expected, actual, DELTA);
     }
 
     @Test
@@ -170,7 +169,7 @@ public class StopSvgNodeRendererUnitTest extends ExtendedITextTest {
         float[] expected = {0, 0, 0, 1};
         float[] actual = renderer.getStopColor();
 
-        Assert.assertArrayEquals(expected, actual, DELTA);
+        Assertions.assertArrayEquals(expected, actual, DELTA);
     }
 
     @Test
@@ -184,7 +183,7 @@ public class StopSvgNodeRendererUnitTest extends ExtendedITextTest {
         float[] expected = {0, 0, 0, 1};
         float[] actual = renderer.getStopColor();
 
-        Assert.assertArrayEquals(expected, actual, DELTA);
+        Assertions.assertArrayEquals(expected, actual, DELTA);
     }
 
     @Test
@@ -198,7 +197,7 @@ public class StopSvgNodeRendererUnitTest extends ExtendedITextTest {
         float[] expected = {0, 0, 0, 1};
         float[] actual = renderer.getStopColor();
 
-        Assert.assertArrayEquals(expected, actual, DELTA);
+        Assertions.assertArrayEquals(expected, actual, DELTA);
     }
 
     @Test
@@ -211,7 +210,7 @@ public class StopSvgNodeRendererUnitTest extends ExtendedITextTest {
 
         float expected = 1;
 
-        Assert.assertEquals(expected, renderer.getStopOpacity(), DELTA);
+        Assertions.assertEquals(expected, renderer.getStopOpacity(), DELTA);
     }
 
     @Test
@@ -224,7 +223,7 @@ public class StopSvgNodeRendererUnitTest extends ExtendedITextTest {
 
         float expected = 1;
 
-        Assert.assertEquals(expected, renderer.getStopOpacity(), DELTA);
+        Assertions.assertEquals(expected, renderer.getStopOpacity(), DELTA);
     }
 
     @Test
@@ -237,7 +236,7 @@ public class StopSvgNodeRendererUnitTest extends ExtendedITextTest {
 
         float expected = 1;
 
-        Assert.assertEquals(expected, renderer.getStopOpacity(), DELTA);
+        Assertions.assertEquals(expected, renderer.getStopOpacity(), DELTA);
     }
 
     @Test
@@ -250,7 +249,7 @@ public class StopSvgNodeRendererUnitTest extends ExtendedITextTest {
 
         float expected = 1;
 
-        Assert.assertEquals(expected, renderer.getStopOpacity(), DELTA);
+        Assertions.assertEquals(expected, renderer.getStopOpacity(), DELTA);
     }
 
     @Test
@@ -263,24 +262,24 @@ public class StopSvgNodeRendererUnitTest extends ExtendedITextTest {
 
         ISvgNodeRenderer copy = renderer.createDeepCopy();
 
-        Assert.assertNotSame(renderer, copy);
-        Assert.assertEquals(renderer.getClass(), copy.getClass());
-        Assert.assertEquals(renderer.getAttributeMapCopy(), copy.getAttributeMapCopy());
+        Assertions.assertNotSame(renderer, copy);
+        Assertions.assertEquals(renderer.getClass(), copy.getClass());
+        Assertions.assertEquals(renderer.getAttributeMapCopy(), copy.getAttributeMapCopy());
     }
 
     @Test
     public void doDrawTest() {
         StopSvgNodeRenderer renderer = new StopSvgNodeRenderer();
 
-        Exception e = Assert.assertThrows(UnsupportedOperationException.class,
+        Exception e = Assertions.assertThrows(UnsupportedOperationException.class,
                 () -> renderer.doDraw(new SvgDrawContext(null, null))
         );
-        Assert.assertEquals(SvgExceptionMessageConstant.DRAW_NO_DRAW, e.getMessage());
+        Assertions.assertEquals(SvgExceptionMessageConstant.DRAW_NO_DRAW, e.getMessage());
     }
 
     @Test
     public void noObjectBoundingBoxTest() {
         StopSvgNodeRenderer renderer = new StopSvgNodeRenderer();
-        Assert.assertNull(renderer.getObjectBoundingBox(null));
+        Assertions.assertNull(renderer.getObjectBoundingBox(null));
     }
 }

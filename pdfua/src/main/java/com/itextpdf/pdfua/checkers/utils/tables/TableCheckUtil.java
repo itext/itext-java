@@ -46,18 +46,6 @@ public final class TableCheckUtil {
     }
 
     /**
-     * WARNING! This method is an artifact and currently does nothing.
-     * It is kept to ensure backward binary compatibility
-     *
-     * @param table the table to check.
-     * @deprecated This method is an artifact and will be removed.
-     */
-    @Deprecated
-    public static void checkLayoutTable(Table table) {
-        //No impl
-    }
-
-    /**
      * Checks if the table is pdf/ua compliant.
      *
      * @param table the table to check.
@@ -80,11 +68,13 @@ public final class TableCheckUtil {
             super(context);
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
-        public void nextElement(IStructureNode elem) {
+        public boolean accept(IStructureNode node) {
+            return node != null;
+        }
+
+        @Override
+        public void processElement(IStructureNode elem) {
             PdfStructElem table = context.getElementIfRoleMatches(PdfName.Table, elem);
             if (table == null) {
                 return;

@@ -23,7 +23,6 @@
 package com.itextpdf.commons.utils;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -33,12 +32,12 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class SystemUtilTest extends ExtendedITextTest {
     private static final String MAGICK_COMPARE_ENVIRONMENT_VARIABLE = "ITEXT_MAGICK_COMPARE_EXEC";
     private static final String MAGICK_COMPARE_ENVIRONMENT_VARIABLE_LEGACY = "compareExec";
@@ -50,7 +49,7 @@ public class SystemUtilTest extends ExtendedITextTest {
     // This is empty file that used to check the logic for existed execution file
     private final static String STUB_EXEC_FILE = SOURCE_FOLDER + "folder with space/stubFile";
 
-    @Before
+    @BeforeEach
     public void setUp() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
@@ -58,7 +57,7 @@ public class SystemUtilTest extends ExtendedITextTest {
     @Test
     public void prepareProcessArgumentsStubExecFileTest() {
         List<String> processArguments = SystemUtil.prepareProcessArguments(STUB_EXEC_FILE, "param1 param2");
-        Assert.assertEquals(Arrays.asList(
+        Assertions.assertEquals(Arrays.asList(
                 "./src/test/resources/com/itextpdf/commons/utils/SystemUtilTest/folder with space/stubFile", "param1",
                 "param2"),
                 processArguments);
@@ -68,7 +67,7 @@ public class SystemUtilTest extends ExtendedITextTest {
     public void prepareProcessArgumentsStubExecFileInQuotesTest() {
         String testLine = "\"" + STUB_EXEC_FILE + "\"" + " compare";
         List<String> processArguments = SystemUtil.prepareProcessArguments(testLine, "param1 param2");
-        Assert.assertEquals(Arrays.asList(
+        Assertions.assertEquals(Arrays.asList(
                 "./src/test/resources/com/itextpdf/commons/utils/SystemUtilTest/folder with space/stubFile", "compare",
                 "param1", "param2"),
                 processArguments);
@@ -77,7 +76,7 @@ public class SystemUtilTest extends ExtendedITextTest {
     @Test
     public void prepareProcessArgumentsGsTest() {
         List<String> processArguments = SystemUtil.prepareProcessArguments("gs", "param1 param2");
-        Assert.assertEquals(Arrays.asList(
+        Assertions.assertEquals(Arrays.asList(
                 "gs", "param1", "param2"),
                 processArguments);
     }
@@ -85,7 +84,7 @@ public class SystemUtilTest extends ExtendedITextTest {
     @Test
     public void prepareProcessArgumentsMagickCompareTest() {
         List<String> processArguments = SystemUtil.prepareProcessArguments("magick compare", "param1 param2");
-        Assert.assertEquals(Arrays.asList(
+        Assertions.assertEquals(Arrays.asList(
                 "magick", "compare", "param1", "param2"),
                 processArguments);
     }
@@ -94,7 +93,7 @@ public class SystemUtilTest extends ExtendedITextTest {
     public void splitIntoProcessArgumentsPathInQuotesTest() {
         List<String> processArguments = SystemUtil
                 .splitIntoProcessArguments("\"C:\\Test directory with spaces\\file.exe\"");
-        Assert.assertEquals(Collections.singletonList(
+        Assertions.assertEquals(Collections.singletonList(
                 "C:\\Test directory with spaces\\file.exe"),
                 processArguments);
     }
@@ -103,7 +102,7 @@ public class SystemUtilTest extends ExtendedITextTest {
     public void splitIntoProcessArgumentsGsParamsTest() {
         List<String> processArguments = SystemUtil.splitIntoProcessArguments(
                 " -dSAFER -dNOPAUSE -dBATCH -sDEVICE=png16m -r150 -sOutputFile='./target/test/com/itextpdf/kernel/utils/CompareToolTest/cmp_simple_pdf_with_space .pdf-%03d.png' './src/test/resources/com/itextpdf/kernel/utils/CompareToolTest/cmp_simple_pdf_with_space .pdf'");
-        Assert.assertEquals(Arrays.asList(
+        Assertions.assertEquals(Arrays.asList(
                 "-dSAFER", "-dNOPAUSE", "-dBATCH", "-sDEVICE=png16m", "-r150",
                 "-sOutputFile=./target/test/com/itextpdf/kernel/utils/CompareToolTest/cmp_simple_pdf_with_space .pdf-%03d.png",
                 "./src/test/resources/com/itextpdf/kernel/utils/CompareToolTest/cmp_simple_pdf_with_space .pdf"),
@@ -114,7 +113,7 @@ public class SystemUtilTest extends ExtendedITextTest {
     public void splitIntoProcessArgumentsMagickCompareParamsTest() {
         List<String> processArguments = SystemUtil.splitIntoProcessArguments(
                 "'D:\\itext\\java\\itextcore\\kernel\\.\\target\\test\\com\\itextpdf\\kernel\\utils\\CompareToolTest\\simple_pdf.pdf-001.png' 'D:\\itext\\java\\itextcore\\kernel\\.\\target\\test\\com\\itextpdf\\kernel\\utils\\CompareToolTest\\cmp_simple_pdf_with_space .pdf-001.png' './target/test/com/itextpdf/kernel/utils/CompareToolTest/diff_simple_pdf.pdf_1.png'");
-        Assert.assertEquals(Arrays.asList(
+        Assertions.assertEquals(Arrays.asList(
                 "D:\\itext\\java\\itextcore\\kernel\\.\\target\\test\\com\\itextpdf\\kernel\\utils\\CompareToolTest\\simple_pdf.pdf-001.png",
                 "D:\\itext\\java\\itextcore\\kernel\\.\\target\\test\\com\\itextpdf\\kernel\\utils\\CompareToolTest\\cmp_simple_pdf_with_space .pdf-001.png",
                 "./target/test/com/itextpdf/kernel/utils/CompareToolTest/diff_simple_pdf.pdf_1.png"),
@@ -125,14 +124,14 @@ public class SystemUtilTest extends ExtendedITextTest {
     // There is no similar test in the C# version, since no way was found to test the Process class.
     public void printProcessErrorsOutputTest() throws IOException {
         StringBuilder stringBuilder = SystemUtil.printProcessErrorsOutput(new TestProcess());
-        Assert.assertEquals("This is error info", stringBuilder.toString());
+        Assertions.assertEquals("This is error info", stringBuilder.toString());
     }
 
     @Test
     // There is no similar test in the C# version, since no way was found to test the Process class.
     public void getProcessOutputTest() throws IOException {
         String result = SystemUtil.getProcessOutput(new TestProcess());
-        Assert.assertEquals("This is process info\n"
+        Assertions.assertEquals("This is process info\n"
                 + "This is error info", result);
     }
 
@@ -140,7 +139,7 @@ public class SystemUtilTest extends ExtendedITextTest {
     // There is no similar test in the C# version, since no way was found to test the Process class.
     public void getProcessOutputEmptyTest() throws IOException {
         String result = SystemUtil.getProcessOutput(new EmptyTestProcess());
-        Assert.assertEquals("This is error info", result);
+        Assertions.assertEquals("This is error info", result);
     }
 
     @Test
@@ -162,8 +161,8 @@ public class SystemUtilTest extends ExtendedITextTest {
                 .append(diff).append("'");
         boolean result = SystemUtil.runProcessAndWait(imageMagickPath, currCompareParams.toString(), SOURCE_FOLDER);
 
-        Assert.assertFalse(result);
-        Assert.assertTrue(FileUtil.fileExists(diff));
+        Assertions.assertFalse(result);
+        Assertions.assertTrue(FileUtil.fileExists(diff));
     }
 
     @Test
@@ -176,8 +175,8 @@ public class SystemUtilTest extends ExtendedITextTest {
 
         ProcessInfo processInfo = SystemUtil.runProcessAndGetProcessInfo(imageMagickPath,"--version");
 
-        Assert.assertNotNull(processInfo);
-        Assert.assertEquals(0, processInfo.getExitCode());
+        Assertions.assertNotNull(processInfo);
+        Assertions.assertEquals(0, processInfo.getExitCode());
     }
 
 

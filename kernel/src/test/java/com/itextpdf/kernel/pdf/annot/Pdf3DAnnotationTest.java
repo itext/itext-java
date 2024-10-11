@@ -26,12 +26,11 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class Pdf3DAnnotationTest extends ExtendedITextTest {
 
     @Test
@@ -42,7 +41,7 @@ public class Pdf3DAnnotationTest extends ExtendedITextTest {
 
         pdf3DAnnotation.setDefaultInitialView(dict);
 
-        Assert.assertEquals(dict, pdf3DAnnotation.getDefaultInitialView());
+        Assertions.assertEquals(dict, pdf3DAnnotation.getDefaultInitialView());
     }
 
     @Test
@@ -53,7 +52,7 @@ public class Pdf3DAnnotationTest extends ExtendedITextTest {
 
         pdf3DAnnotation.setActivationDictionary(dict);
 
-        Assert.assertEquals(dict, pdf3DAnnotation.getActivationDictionary());
+        Assertions.assertEquals(dict, pdf3DAnnotation.getActivationDictionary());
     }
 
     @Test
@@ -63,7 +62,7 @@ public class Pdf3DAnnotationTest extends ExtendedITextTest {
 
         pdf3DAnnotation.setInteractive(flag);
 
-        Assert.assertEquals(flag, pdf3DAnnotation.isInteractive().getValue());
+        Assertions.assertEquals(flag, pdf3DAnnotation.isInteractive().getValue());
     }
 
     @Test
@@ -74,6 +73,6 @@ public class Pdf3DAnnotationTest extends ExtendedITextTest {
         pdf3DAnnotation.setViewBox(rect);
 
         boolean result = rect.equalsWithEpsilon(pdf3DAnnotation.getViewBox());
-        Assert.assertTrue("Rectangles are different", result);
+        Assertions.assertTrue(result, "Rectangles are different");
     }
 }

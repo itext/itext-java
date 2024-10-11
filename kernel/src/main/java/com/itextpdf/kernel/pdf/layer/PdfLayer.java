@@ -22,7 +22,10 @@
  */
 package com.itextpdf.kernel.pdf.layer;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -118,11 +121,18 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements IPdfOCG
      * @param childLayer the child layer
      */
     public void addChild(PdfLayer childLayer) {
-        if (childLayer.parent != null)
-            throw new IllegalArgumentException("Illegal argument: childLayer");
+        //TODO DEVSIX-8490 implement multiple parent support
+        if (childLayer.parent != null) {
+            PdfIndirectReference ref = childLayer.getIndirectReference();
+            throw new PdfException(MessageFormatUtil.format(
+                    KernelExceptionMessageConstant.UNABLE_TO_ADD_SECOND_PARENT_LAYER, ref.toString()));
+        }
+
         childLayer.parent = this;
-        if (children == null)
+        if (children == null) {
             children = new ArrayList<>();
+        }
+
         children.add(childLayer);
     }
 

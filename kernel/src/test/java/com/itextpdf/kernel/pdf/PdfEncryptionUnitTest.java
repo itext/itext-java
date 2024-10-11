@@ -23,12 +23,11 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfEncryptionUnitTest extends ExtendedITextTest {
     @Test
     public void readEncryptEmbeddedFilesOnlyFromPdfDocumentCorrectEntryTest() {
@@ -40,7 +39,7 @@ public class PdfEncryptionUnitTest extends ExtendedITextTest {
         cfDictionary.put(PdfName.StdCF, new PdfDictionary());
         cryptDictionary.put(PdfName.CF, cfDictionary);
 
-        Assert.assertTrue(PdfEncryption.readEmbeddedFilesOnlyFromEncryptDictionary(cryptDictionary));
+        Assertions.assertTrue(PdfEncryption.readEmbeddedFilesOnlyFromEncryptDictionary(cryptDictionary));
     }
 
     @Test
@@ -53,7 +52,7 @@ public class PdfEncryptionUnitTest extends ExtendedITextTest {
         cfDictionary.put(PdfName.StdCF, new PdfDictionary());
         cryptDictionary.put(PdfName.CF, cfDictionary);
 
-        Assert.assertFalse(PdfEncryption.readEmbeddedFilesOnlyFromEncryptDictionary(cryptDictionary));
+        Assertions.assertFalse(PdfEncryption.readEmbeddedFilesOnlyFromEncryptDictionary(cryptDictionary));
     }
 
     @Test
@@ -66,7 +65,7 @@ public class PdfEncryptionUnitTest extends ExtendedITextTest {
         cfDictionary.put(PdfName.StdCF, new PdfDictionary());
         cryptDictionary.put(PdfName.CF, cfDictionary);
 
-        Assert.assertFalse(PdfEncryption.readEmbeddedFilesOnlyFromEncryptDictionary(cryptDictionary));
+        Assertions.assertFalse(PdfEncryption.readEmbeddedFilesOnlyFromEncryptDictionary(cryptDictionary));
     }
 
     @Test
@@ -79,7 +78,7 @@ public class PdfEncryptionUnitTest extends ExtendedITextTest {
         cfDictionary.put(PdfName.StdCF, new PdfDictionary());
         cryptDictionary.put(PdfName.CF, cfDictionary);
 
-        Assert.assertFalse(PdfEncryption.readEmbeddedFilesOnlyFromEncryptDictionary(cryptDictionary));
+        Assertions.assertFalse(PdfEncryption.readEmbeddedFilesOnlyFromEncryptDictionary(cryptDictionary));
     }
 
     @Test
@@ -92,11 +91,11 @@ public class PdfEncryptionUnitTest extends ExtendedITextTest {
         cfDictionary.put(PdfName.DefaultCryptFilter, new PdfDictionary());
         cryptDictionary.put(PdfName.CF, cfDictionary);
 
-        Assert.assertFalse(PdfEncryption.readEmbeddedFilesOnlyFromEncryptDictionary(cryptDictionary));
+        Assertions.assertFalse(PdfEncryption.readEmbeddedFilesOnlyFromEncryptDictionary(cryptDictionary));
     }
 
     @Test
-    public void createIdNormalLength(){
+    public void createIdNormalLength() {
         byte[] originalId = new byte[]{0x33, 0x39, 0x62, 0x38, 0x65, 0x61, 0x30, 0x33, 0x65, 0x32, 0x39, 0x31, 0x38,
                 0x32, 0x66, 0x31, 0x39, 0x63, 0x62, 0x65, 0x64, 0x32, 0x33, 0x37, 0x37, 0x33, 0x61, 0x63, 0x39, 0x65,
                 0x34, 0x39};
@@ -105,12 +104,12 @@ public class PdfEncryptionUnitTest extends ExtendedITextTest {
                 0x76, 0x30, (byte) 0x83, 0x49, 0x2F, 0x07, 0x61, (byte) 0xBC, (byte) 0xBA, 0x04, 0x37, 0x1B, 0x0E,
                 (byte) 0x80, 0x34, 0x30, 0x4A, 0x3B, 0x0E, 0x27, 0x4F, 0x01, 0x1D, 0x36, 0x71, 0x7A, 0x42, 0x2B, 0x2C,
                 0x14, 0x6A, 0x52, 0x07, 0x1E, 0x4C};
-        PdfObject fileId = PdfEncryption.createInfoId(originalId,modifiedId);
+        PdfObject fileId = PdfEncryption.createInfoId(originalId, modifiedId, false);
         PdfObject expectedFileId = new PdfLiteral("[<3339623865613033653239313832663139636265643233373733616" +
                 "339653439><082704302042226a5f405657444a6e1c187671803780715c687e3541763083492f0761bcba04371b0e80343" +
                 "04a3b0e274f011d36717a422b2c146a52071e4c>]");
 
-        Assert.assertEquals(expectedFileId,fileId);
+        Assertions.assertEquals(expectedFileId, fileId);
     }
 
     @Test
@@ -134,7 +133,7 @@ public class PdfEncryptionUnitTest extends ExtendedITextTest {
                 "62aab38fe1bb4a00caf3fed9903889d055fe15c99c430345cea6883d2ec147752bea504470701><f5bf982c35aa0ffe0" +
                 "c4c50e50d9f098efce8b6bca714fe7b26acc0ebdccaf909678d25f92a82d4a983e34f8f71978f9a581004eb67c0>]");
 
-        Assert.assertEquals(expectedFileId,fileId);
+        Assertions.assertEquals(expectedFileId,fileId);
     }
 
     @Test
@@ -159,7 +158,7 @@ public class PdfEncryptionUnitTest extends ExtendedITextTest {
                 "ffe638b782848af59cddf679381aada88823c0a38c1b43283b3a2a272019a85ed3d6f504fa5e14c1f9de77c8936db3e9df" +
                 "805d210d>]");
 
-        Assert.assertEquals(expectedFileId,fileId);
+        Assertions.assertEquals(expectedFileId,fileId);
     }
 
     @Test
@@ -171,7 +170,7 @@ public class PdfEncryptionUnitTest extends ExtendedITextTest {
         PdfObject expectedFileId = new PdfLiteral("[<e404d540f7094be108090a0b0c0d0e0f><d3c4e291bdff7bc2fb4b" +
                 "133e0c0d0e0f>]");
 
-        Assert.assertEquals(expectedFileId,fileId);
+        Assertions.assertEquals(expectedFileId,fileId);
     }
 
     @Test
@@ -183,6 +182,6 @@ public class PdfEncryptionUnitTest extends ExtendedITextTest {
         PdfObject fileId = PdfEncryption.createInfoId(originalId,modifiedId,true);
         PdfObject expectedFileId = new PdfLiteral("[<3b0d7aede4a34ba612240c65><4e844fc286503a6c82dfab7d168075>]");
 
-        Assert.assertEquals(expectedFileId,fileId);
+        Assertions.assertEquals(expectedFileId,fileId);
     }
 }

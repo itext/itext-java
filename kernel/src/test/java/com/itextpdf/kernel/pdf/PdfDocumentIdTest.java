@@ -35,18 +35,17 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfDocumentIdTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfDocumentTestID/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfDocumentTestID/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
@@ -69,11 +68,11 @@ public class PdfDocumentIdTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(new ByteArrayInputStream(documentBytes));
         pdfDocument = new PdfDocument(reader);
         PdfArray idArray = pdfDocument.getTrailer().getAsArray(PdfName.ID);
-        Assert.assertNotNull(idArray);
+        Assertions.assertNotNull(idArray);
         String extractedValue = idArray.getAsString(1).getValue();
         pdfDocument.close();
 
-        Assert.assertEquals(value, extractedValue);
+        Assertions.assertEquals(value, extractedValue);
     }
 
     @Test
@@ -99,11 +98,11 @@ public class PdfDocumentIdTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(new ByteArrayInputStream(documentBytes));
         pdfDocument = new PdfDocument(reader);
         PdfArray idArray = pdfDocument.getTrailer().getAsArray(PdfName.ID);
-        Assert.assertNotNull(idArray);
+        Assertions.assertNotNull(idArray);
         PdfString extractedString = idArray.getAsString(1);
         pdfDocument.close();
 
-        Assert.assertEquals(initialId, extractedString);
+        Assertions.assertEquals(initialId, extractedString);
     }
 
     @Test
@@ -130,11 +129,11 @@ public class PdfDocumentIdTest extends ExtendedITextTest {
         pdfDocument = new PdfDocument(reader);
         PdfArray idArray = pdfDocument.getTrailer().getAsArray(PdfName.ID);
         pdfDocument.close();
-        Assert.assertNotNull(idArray);
+        Assertions.assertNotNull(idArray);
         PdfString extractedInitialValue = idArray.getAsString(0);
-        Assert.assertEquals(initialId, extractedInitialValue);
+        Assertions.assertEquals(initialId, extractedInitialValue);
         PdfString extractedModifiedValue = idArray.getAsString(1);
-        Assert.assertEquals(modifiedId, extractedModifiedValue);
+        Assertions.assertEquals(modifiedId, extractedModifiedValue);
 
 
         pdfDocument = new PdfDocument(new PdfReader(new RandomAccessSourceFactory().createSource(baosInitial.toByteArray()), new ReaderProperties()),
@@ -151,11 +150,11 @@ public class PdfDocumentIdTest extends ExtendedITextTest {
         pdfDocument = new PdfDocument(reader);
         idArray = pdfDocument.getTrailer().getAsArray(PdfName.ID);
         pdfDocument.close();
-        Assert.assertNotNull(idArray);
+        Assertions.assertNotNull(idArray);
         extractedInitialValue = idArray.getAsString(0);
-        Assert.assertEquals(initialId, extractedInitialValue);
+        Assertions.assertEquals(initialId, extractedInitialValue);
         extractedModifiedValue = idArray.getAsString(1);
-        Assert.assertNotEquals(modifiedId, extractedModifiedValue);
+        Assertions.assertNotEquals(modifiedId, extractedModifiedValue);
     }
 
     @Test
@@ -185,8 +184,8 @@ public class PdfDocumentIdTest extends ExtendedITextTest {
         String firstModifiedId = new String(reader.getModifiedFileId());
         String secondModifiedId = new String(reader.getModifiedFileId());
 
-        Assert.assertEquals(firstOriginalId, secondOriginalId);
-        Assert.assertEquals(firstModifiedId, secondModifiedId);
+        Assertions.assertEquals(firstOriginalId, secondOriginalId);
+        Assertions.assertEquals(firstModifiedId, secondModifiedId);
     }
 
     @Test
@@ -224,8 +223,8 @@ public class PdfDocumentIdTest extends ExtendedITextTest {
 
         pdfDocument.close();
 
-        Assert.assertEquals(extractedOriginalId, newOriginalId.getValue());
-        Assert.assertEquals(extractedModifiedId, newModifiedId.getValue());
+        Assertions.assertEquals(extractedOriginalId, newOriginalId.getValue());
+        Assertions.assertEquals(extractedModifiedId, newModifiedId.getValue());
     }
 
     @Test
@@ -241,8 +240,8 @@ public class PdfDocumentIdTest extends ExtendedITextTest {
         }
         pdfDocument.close();
 
-        Assert.assertNotNull(originalId);
-        Assert.assertNotNull(modifiedId);
+        Assertions.assertNotNull(originalId);
+        Assertions.assertNotNull(modifiedId);
 
     }
 
@@ -263,8 +262,8 @@ public class PdfDocumentIdTest extends ExtendedITextTest {
 
         pdfDocument.close();
 
-        Assert.assertNull(originalId);
-        Assert.assertNull(modifiedId);
+        Assertions.assertNull(originalId);
+        Assertions.assertNull(modifiedId);
 
     }
 
@@ -284,8 +283,8 @@ public class PdfDocumentIdTest extends ExtendedITextTest {
         }
         pdfDocument.close();
 
-        Assert.assertNull(originalId);
-        Assert.assertNotNull(modifiedId);
+        Assertions.assertNull(originalId);
+        Assertions.assertNotNull(modifiedId);
     }
 
     @Test
@@ -304,8 +303,8 @@ public class PdfDocumentIdTest extends ExtendedITextTest {
         }
         pdfDocument.close();
 
-        Assert.assertNull(originalId);
-        Assert.assertNull(modifiedId);
+        Assertions.assertNull(originalId);
+        Assertions.assertNull(modifiedId);
     }
 
     @Test
@@ -324,8 +323,8 @@ public class PdfDocumentIdTest extends ExtendedITextTest {
         }
         pdfDocument.close();
 
-        Assert.assertNull(originalId);
-        Assert.assertNull(modifiedId);
+        Assertions.assertNull(originalId);
+        Assertions.assertNull(modifiedId);
     }
 
     @Test
@@ -346,11 +345,11 @@ public class PdfDocumentIdTest extends ExtendedITextTest {
         }
         pdfDocument.close();
 
-        Assert.assertNull(originalId);
-        Assert.assertNull(modifiedId);
+        Assertions.assertNull(originalId);
+        Assertions.assertNull(modifiedId);
 
-        Assert.assertEquals(0, reader.getOriginalFileId().length);
-        Assert.assertEquals(0, reader.getModifiedFileId().length);
+        Assertions.assertEquals(0, reader.getOriginalFileId().length);
+        Assertions.assertEquals(0, reader.getModifiedFileId().length);
     }
 
     @Test
@@ -358,8 +357,8 @@ public class PdfDocumentIdTest extends ExtendedITextTest {
         try (PdfReader reader = new PdfReader(sourceFolder + "pdfWithNoId.pdf")
                 .setStrictnessLevel(StrictnessLevel.CONSERVATIVE)) {
 
-            Exception e = Assert.assertThrows(PdfException.class, () -> new PdfDocument(reader));
-            Assert.assertEquals(IoLogMessageConstant.DOCUMENT_IDS_ARE_CORRUPTED, e.getMessage());
+            Exception e = Assertions.assertThrows(PdfException.class, () -> new PdfDocument(reader));
+            Assertions.assertEquals(IoLogMessageConstant.DOCUMENT_IDS_ARE_CORRUPTED, e.getMessage());
         }
     }
 
@@ -383,8 +382,8 @@ public class PdfDocumentIdTest extends ExtendedITextTest {
 //        PdfString originalId = new PdfString("Original ID 56789");
 //        PdfWriter initialWriter = CompareTool.createTestPdfWriter(baos, new WriterProperties().setInitialDocumentId(originalId));
 //
-//        Assert.assertNotEquals();
-//        Assert.assertEquals();
+//        Assertions.assertNotEquals();
+//        Assertions.assertEquals();
 //
 //    }
 }

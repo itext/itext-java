@@ -30,28 +30,27 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 
-@Category(BouncyCastleIntegrationTest.class)
+@Tag("BouncyCastleIntegrationTest")
 public class EncryptedEmbeddedStreamsHandlerTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/EncryptedEmbeddedStreamsHandlerTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/EncryptedEmbeddedStreamsHandlerTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -71,7 +70,7 @@ public class EncryptedEmbeddedStreamsHandlerTest extends ExtendedITextTest {
         pdfDocument.addNewPage();
         pdfDocument.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff", "password".getBytes(), "password".getBytes()));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff", "password".getBytes(), "password".getBytes()));
     }
 
     @Test
@@ -89,7 +88,7 @@ public class EncryptedEmbeddedStreamsHandlerTest extends ExtendedITextTest {
         pdfDocument.addNewPage();
         pdfDocument.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff", "password".getBytes(), "password".getBytes()));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff", "password".getBytes(), "password".getBytes()));
     }
 
     @Test
@@ -110,7 +109,7 @@ public class EncryptedEmbeddedStreamsHandlerTest extends ExtendedITextTest {
         pdfDocument.addNewPage();
         pdfDocument.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -128,7 +127,7 @@ public class EncryptedEmbeddedStreamsHandlerTest extends ExtendedITextTest {
 
         pdfDocument.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff", "password".getBytes(), "password".getBytes()));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff", "password".getBytes(), "password".getBytes()));
     }
 
     @Test
@@ -149,7 +148,7 @@ public class EncryptedEmbeddedStreamsHandlerTest extends ExtendedITextTest {
 
         pdfDocument.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -167,7 +166,7 @@ public class EncryptedEmbeddedStreamsHandlerTest extends ExtendedITextTest {
 
         pdfDocument.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff", "password".getBytes(), "password".getBytes()));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff", "password".getBytes(), "password".getBytes()));
     }
 
     private PdfDocument createEncryptedDocument(int encryptionAlgorithm, String outFileName) throws IOException {

@@ -34,23 +34,22 @@ import com.itextpdf.layout.element.Image;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class ImageColorProfileTest extends ExtendedITextTest {
 
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/ImageColorProfileTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/ImageColorProfileTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
@@ -59,7 +58,7 @@ public class ImageColorProfileTest extends ExtendedITextTest {
     @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.PNG_IMAGE_HAS_ICC_PROFILE_WITH_INCOMPATIBLE_NUMBER_OF_COLOR_COMPONENTS)})
     public void extractIncompatibleColorProfileTest() throws IOException {
         ImageData imageData = ImageDataFactory.create(sourceFolder + "png-incorrect-embedded-color-profile.png");
-        Assert.assertNotNull(imageData.getProfile());
+        Assertions.assertNotNull(imageData.getProfile());
     }
 
     @Test
@@ -148,6 +147,6 @@ public class ImageColorProfileTest extends ExtendedITextTest {
         document.add(png);
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, diff));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, diff));
     }
 }

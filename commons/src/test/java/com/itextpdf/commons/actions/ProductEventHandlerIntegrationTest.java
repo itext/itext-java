@@ -27,27 +27,26 @@ import com.itextpdf.commons.actions.confirmations.ConfirmedEventWrapper;
 import com.itextpdf.commons.actions.sequence.SequenceId;
 import com.itextpdf.commons.ecosystem.ITextTestEvent;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class ProductEventHandlerIntegrationTest extends ExtendedITextTest {
     private PrintStream outBackup;
 
-    @Before
+    @BeforeEach
     public void initTest() {
         outBackup = System.out;
         ProductEventHandler.INSTANCE.clearProcessors();
     }
 
-    @After
+    @AfterEach
     public void afterEach() {
         System.setOut(outBackup);
         ProductProcessorFactoryKeeper.restoreDefaultProductProcessorFactory();
@@ -66,7 +65,7 @@ public class ProductEventHandlerIntegrationTest extends ExtendedITextTest {
 
             SequenceId sequenceId = new SequenceId();
 
-            Assert.assertTrue(handler.getEvents(sequenceId).isEmpty());
+            Assertions.assertTrue(handler.getEvents(sequenceId).isEmpty());
             ITextTestEvent event = new ITextTestEvent(sequenceId, null, "test-event",
                     ProductNameConstant.ITEXT_CORE);
             EventManager.getInstance().onEvent(event);
@@ -74,10 +73,10 @@ public class ProductEventHandlerIntegrationTest extends ExtendedITextTest {
             ConfirmEvent confirmEvent = new ConfirmEvent(sequenceId, event);
             EventManager.getInstance().onEvent(confirmEvent);
 
-            Assert.assertEquals(1, handler.getEvents(sequenceId).size());
-            Assert.assertTrue(handler.getEvents(sequenceId).get(0) instanceof ConfirmedEventWrapper);
-            Assert.assertEquals(event, ((ConfirmedEventWrapper) handler.getEvents(sequenceId).get(0)).getEvent());
+            Assertions.assertEquals(1, handler.getEvents(sequenceId).size());
+            Assertions.assertTrue(handler.getEvents(sequenceId).get(0) instanceof ConfirmedEventWrapper);
+            Assertions.assertEquals(event, ((ConfirmedEventWrapper) handler.getEvents(sequenceId).get(0)).getEvent());
         }
-        Assert.assertEquals("", testOut.toString());
+        Assertions.assertEquals("", testOut.toString());
     }
 }

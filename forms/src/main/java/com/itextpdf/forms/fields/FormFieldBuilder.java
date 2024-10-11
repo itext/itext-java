@@ -22,8 +22,7 @@
  */
 package com.itextpdf.forms.fields;
 
-import com.itextpdf.kernel.pdf.IConformanceLevel;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.PdfDocument;
 
 /**
@@ -42,9 +41,9 @@ public abstract class FormFieldBuilder<T extends FormFieldBuilder<T>> {
      */
     private final String formFieldName;
     /**
-     * Conformance level of the form field.
+     * Conformance of the form field.
      */
-    private IConformanceLevel conformanceLevel = null;
+    private PdfConformance conformance = null;
 
     /**
      * Creates builder for {@link PdfFormField} creation.
@@ -56,7 +55,7 @@ public abstract class FormFieldBuilder<T extends FormFieldBuilder<T>> {
         this.document = document;
         this.formFieldName = formFieldName;
         if (document != null) {
-            this.conformanceLevel = document.getConformanceLevel();
+            this.conformance = document.getConformance();
         }
     }
 
@@ -79,55 +78,23 @@ public abstract class FormFieldBuilder<T extends FormFieldBuilder<T>> {
     }
 
     /**
-     * Gets conformance level for form field creation.
+     * Gets conformance for form field creation.
      *
-     * @return instance of {@link PdfAConformanceLevel} to be used for form field creation
-     * @deprecated since 8.0.4 will return {@link IConformanceLevel} in next major release
+     * @return instance of {@link PdfConformance} to be used for form field creation
      */
-    @Deprecated
-    public PdfAConformanceLevel getConformanceLevel() {
-        if (conformanceLevel instanceof PdfAConformanceLevel){
-            return (PdfAConformanceLevel) conformanceLevel;
-        }
-        return  null;
+    public PdfConformance getConformance() {
+        return conformance;
     }
 
     /**
-     * Gets conformance level for form field creation.
+     * Sets conformance for form field creation.
      *
-     * @return instance of {@link IConformanceLevel} to be used for form field creation
+     * @param conformance Instance of {@link PdfConformance} to be used for form field creation.
      *
-     * @deprecated since 8.0.4 will be renamed to getConformanceLevel()
-     */
-    @Deprecated
-    public IConformanceLevel getGenericConformanceLevel() {
-        return conformanceLevel;
-    }
-
-    /**
-     * Sets conformance level for form field creation.
-     *
-     * @param conformanceLevel instance of {@link PdfAConformanceLevel} to be used for form field creation
      * @return this builder
-     *
-     * @deprecated since 8.0.4 conformance level param will change to {@link IConformanceLevel}
      */
-    @Deprecated
-    public T setConformanceLevel(PdfAConformanceLevel conformanceLevel) {
-        this.conformanceLevel = conformanceLevel;
-        return getThis();
-    }
-
-    /**
-     * Sets conformance level for form field creation.
-     *
-     * @param conformanceLevel Instance of {@link IConformanceLevel} to be used for form field creation.
-     * @return This builder.
-     * @deprecated since 8.0.4 will be renamed to setConformanceLevel
-     */
-    @Deprecated
-    public T setGenericConformanceLevel(IConformanceLevel conformanceLevel) {
-        this.conformanceLevel = conformanceLevel;
+    public T setConformance(PdfConformance conformance) {
+        this.conformance = conformance;
         return getThis();
     }
 

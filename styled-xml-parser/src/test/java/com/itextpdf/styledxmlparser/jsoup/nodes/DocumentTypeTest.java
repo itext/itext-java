@@ -26,15 +26,14 @@ import com.itextpdf.styledxmlparser.jsoup.Jsoup;
 import com.itextpdf.styledxmlparser.jsoup.parser.Parser;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 /**
  * Tests for the DocumentType node
  */
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class DocumentTypeTest extends ExtendedITextTest {
     @Test
     public void constructorValidationOkWithBlankName() {
@@ -43,7 +42,7 @@ public class DocumentTypeTest extends ExtendedITextTest {
 
     @Test
     public void constructorValidationThrowsExceptionOnNulls() {
-        Assert.assertThrows(IllegalArgumentException.class, () -> new DocumentType("html", null, null));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new DocumentType("html", null, null));
     }
 
     @Test
@@ -53,37 +52,37 @@ public class DocumentTypeTest extends ExtendedITextTest {
 
     @Test public void outerHtmlGeneration() {
         DocumentType html5 = new DocumentType("html", "", "");
-        Assert.assertEquals("<!doctype html>", html5.outerHtml());
+        Assertions.assertEquals("<!doctype html>", html5.outerHtml());
 
         DocumentType publicDocType = new DocumentType("html", "-//IETF//DTD HTML//", "");
-        Assert.assertEquals("<!DOCTYPE html PUBLIC \"-//IETF//DTD HTML//\">", publicDocType.outerHtml());
+        Assertions.assertEquals("<!DOCTYPE html PUBLIC \"-//IETF//DTD HTML//\">", publicDocType.outerHtml());
 
         DocumentType systemDocType = new DocumentType("html", "", "http://www.ibm.com/data/dtd/v11/ibmxhtml1-transitional.dtd");
-        Assert.assertEquals("<!DOCTYPE html SYSTEM \"http://www.ibm.com/data/dtd/v11/ibmxhtml1-transitional.dtd\">", systemDocType.outerHtml());
+        Assertions.assertEquals("<!DOCTYPE html SYSTEM \"http://www.ibm.com/data/dtd/v11/ibmxhtml1-transitional.dtd\">", systemDocType.outerHtml());
 
         DocumentType combo = new DocumentType("notHtml", "--public", "--system");
-        Assert.assertEquals("<!DOCTYPE notHtml PUBLIC \"--public\" \"--system\">", combo.outerHtml());
-        Assert.assertEquals("notHtml", combo.name());
-        Assert.assertEquals("--public", combo.publicId());
-        Assert.assertEquals("--system", combo.systemId());
+        Assertions.assertEquals("<!DOCTYPE notHtml PUBLIC \"--public\" \"--system\">", combo.outerHtml());
+        Assertions.assertEquals("notHtml", combo.name());
+        Assertions.assertEquals("--public", combo.publicId());
+        Assertions.assertEquals("--system", combo.systemId());
     }
 
     @Test public void testRoundTrip() {
         String base = "<!DOCTYPE html>";
-        Assert.assertEquals("<!doctype html>", htmlOutput(base));
-        Assert.assertEquals(base, xmlOutput(base));
+        Assertions.assertEquals("<!doctype html>", htmlOutput(base));
+        Assertions.assertEquals(base, xmlOutput(base));
 
         String publicDoc = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">";
-        Assert.assertEquals(publicDoc, htmlOutput(publicDoc));
-        Assert.assertEquals(publicDoc, xmlOutput(publicDoc));
+        Assertions.assertEquals(publicDoc, htmlOutput(publicDoc));
+        Assertions.assertEquals(publicDoc, xmlOutput(publicDoc));
 
         String systemDoc = "<!DOCTYPE html SYSTEM \"exampledtdfile.dtd\">";
-        Assert.assertEquals(systemDoc, htmlOutput(systemDoc));
-        Assert.assertEquals(systemDoc, xmlOutput(systemDoc));
+        Assertions.assertEquals(systemDoc, htmlOutput(systemDoc));
+        Assertions.assertEquals(systemDoc, xmlOutput(systemDoc));
 
         String legacyDoc = "<!DOCTYPE html SYSTEM \"about:legacy-compat\">";
-        Assert.assertEquals(legacyDoc, htmlOutput(legacyDoc));
-        Assert.assertEquals(legacyDoc, xmlOutput(legacyDoc));
+        Assertions.assertEquals(legacyDoc, htmlOutput(legacyDoc));
+        Assertions.assertEquals(legacyDoc, xmlOutput(legacyDoc));
     }
 
     private String htmlOutput(String in) {

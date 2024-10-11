@@ -23,13 +23,12 @@
 package com.itextpdf.kernel.geom;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class MatrixTest extends ExtendedITextTest {
 
     @Test
@@ -39,13 +38,13 @@ public class MatrixTest extends ExtendedITextTest {
         Matrix shouldBe = new Matrix(46, 51, 82, 91, 130, 144);
 
         Matrix rslt = m1.multiply(m2);
-        Assert.assertEquals(shouldBe, rslt);
+        Assertions.assertEquals(shouldBe, rslt);
     }
 
     @Test
     public void testDeterminant(){
         Matrix m = new Matrix(2, 3, 4, 5, 6, 7);
-        Assert.assertEquals(-2f, m.getDeterminant(), .001f);
+        Assertions.assertEquals(-2f, m.getDeterminant(), .001f);
     }
 
     @Test
@@ -55,7 +54,7 @@ public class MatrixTest extends ExtendedITextTest {
         Matrix shouldBe = new Matrix(-5, -3,0, -1, 1,0, 3, 5,0);
 
         Matrix rslt = m1.subtract(m2);
-        Assert.assertEquals(shouldBe, rslt);
+        Assertions.assertEquals(shouldBe, rslt);
     }
 
     @Test
@@ -65,7 +64,7 @@ public class MatrixTest extends ExtendedITextTest {
         Matrix shouldBe = new Matrix(7, 7,0, 7, 7,0, 7, 7,2);
 
         Matrix rslt = m1.add(m2);
-        Assert.assertEquals(shouldBe, rslt);
+        Assertions.assertEquals(shouldBe, rslt);
     }
 
 }

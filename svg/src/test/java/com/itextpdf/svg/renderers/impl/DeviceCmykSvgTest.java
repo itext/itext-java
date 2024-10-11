@@ -35,10 +35,10 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class DeviceCmykSvgTest extends SvgIntegrationTest {
 
@@ -47,18 +47,18 @@ public class DeviceCmykSvgTest extends SvgIntegrationTest {
 
     private ISvgConverterProperties properties;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         ITextTest.createDestinationFolder(DESTINATION_FOLDER);
         CssDeclarationValidationMaster.setValidator(new CssDeviceCmykAwareValidator());
     }
 
-    @Before
+    @BeforeEach
     public void before() {
         properties = new SvgConverterProperties().setBaseUri(SOURCE_FOLDER);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CssDeclarationValidationMaster.setValidator(new CssDefaultValidator());
     }

@@ -24,7 +24,8 @@ package com.itextpdf.signatures;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
-import com.itextpdf.signatures.logs.SignLogMessageConstant;
+import com.itextpdf.kernel.crypto.OID;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -104,11 +105,11 @@ public class SignatureMechanisms {
          * the digest is required to be specified in the algorithm params anyway,
          * and the OID does not depend on the digest. BouncyCastle accepts both.
          */
-        algorithmNames.put(SecurityIDs.ID_RSASSA_PSS, "RSASSA-PSS");
+        algorithmNames.put(OID.RSASSA_PSS, "RSASSA-PSS");
 
         // EdDSA
-        algorithmNames.put(SecurityIDs.ID_ED25519, "Ed25519");
-        algorithmNames.put(SecurityIDs.ID_ED448, "Ed448");
+        algorithmNames.put(OID.ED25519, "Ed25519");
+        algorithmNames.put(OID.ED448, "Ed448");
 
         rsaOidsByDigest.put("SHA224", "1.2.840.113549.1.1.14");
         rsaOidsByDigest.put("SHA256", "1.2.840.113549.1.1.11");
@@ -155,7 +156,7 @@ public class SignatureMechanisms {
         switch (signatureAlgorithmName) {
             case "RSA":
                 final String oId = rsaOidsByDigest.get(digestAlgorithmName);
-                resultingOId = oId == null ? SecurityIDs.ID_RSA : oId;
+                resultingOId = oId == null ? OID.RSA : oId;
                 break;
             case "DSA":
                 resultingOId = dsaOidsByDigest.get(digestAlgorithmName);
@@ -164,14 +165,14 @@ public class SignatureMechanisms {
                 resultingOId = ecdsaOidsByDigest.get(digestAlgorithmName);
                 break;
             case "Ed25519":
-                resultingOId = SecurityIDs.ID_ED25519;
+                resultingOId = OID.ED25519;
                 break;
             case "Ed448":
-                resultingOId = SecurityIDs.ID_ED448;
+                resultingOId = OID.ED448;
                 break;
             case "RSASSA-PSS":
             case "RSA/PSS":
-                resultingOId = SecurityIDs.ID_RSASSA_PSS;
+                resultingOId = OID.RSASSA_PSS;
                 break;
             default:
                 resultingOId = null;
@@ -179,7 +180,7 @@ public class SignatureMechanisms {
         if (resultingOId != null) {
             return resultingOId;
         }
-        LOGGER.warn(SignLogMessageConstant.ALGORITHM_NOT_FROM_SPEC);
+        LOGGER.warn(KernelLogMessageConstant.ALGORITHM_NOT_FROM_SPEC);
         resultingOId = BOUNCY_CASTLE_FACTORY.getAlgorithmOid(digestAlgorithmName + "with" + signatureAlgorithmName);
         if (resultingOId == null) {
             return BOUNCY_CASTLE_FACTORY.getAlgorithmOid(signatureAlgorithmName);
@@ -215,7 +216,7 @@ public class SignatureMechanisms {
         if (!algorithm.equals(oid)) {
             return digest + "with" + algorithm;
         }
-        LOGGER.warn(SignLogMessageConstant.ALGORITHM_NOT_FROM_SPEC);
+        LOGGER.warn(KernelLogMessageConstant.ALGORITHM_NOT_FROM_SPEC);
         return BOUNCY_CASTLE_FACTORY.getAlgorithmName(oid);
     }
 }

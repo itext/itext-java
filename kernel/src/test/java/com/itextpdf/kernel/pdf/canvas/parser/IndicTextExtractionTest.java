@@ -29,15 +29,14 @@ import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStra
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class IndicTextExtractionTest extends ExtendedITextTest {
 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/parser/IndicTextExtractionTest/";
@@ -79,7 +78,7 @@ public class IndicTextExtractionTest extends ExtendedITextTest {
 
         for (int i = 0; i < regions.length; i++) {
             String actualText = extractionStrategies[i].getResultantText();
-            Assert.assertEquals(expectedText[i], actualText);
+            Assertions.assertEquals(expectedText[i], actualText);
         }
     }
 
@@ -97,7 +96,7 @@ public class IndicTextExtractionTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "test02.pdf"));
         String extractedText = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1), new LocationTextExtractionStrategy().setUseActualText(true));
 
-        Assert.assertEquals(expectedText, extractedText);
+        Assertions.assertEquals(expectedText, extractedText);
     }
 
 }

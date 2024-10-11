@@ -44,7 +44,7 @@ public final class EventManager {
     }
 
     /**
-     * Allows an access to the instance of EventManager.
+     * Allows access to the instance of EventManager.
      *
      * @return the instance of the class
      */

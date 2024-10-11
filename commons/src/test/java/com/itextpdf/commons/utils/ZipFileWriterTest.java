@@ -24,7 +24,6 @@ package com.itextpdf.commons.utils;
 
 import com.itextpdf.commons.exceptions.CommonsExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -34,31 +33,31 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Set;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class ZipFileWriterTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/commons/utils/ZipFileWriter/";
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/commons/utils/ZipFileWriter/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     public void constructorWithNullPathTest() {
-        Exception ex = Assert.assertThrows(IOException.class, () -> new ZipFileWriter(null));
-        Assert.assertEquals(CommonsExceptionMessageConstant.FILE_NAME_CAN_NOT_BE_NULL, ex.getMessage());
+        Exception ex = Assertions.assertThrows(IOException.class, () -> new ZipFileWriter(null));
+        Assertions.assertEquals(CommonsExceptionMessageConstant.FILE_NAME_CAN_NOT_BE_NULL, ex.getMessage());
     }
 
     @Test
     public void constructorWithNotExistingDirsInPathTest() {
-        Assert.assertThrows(IOException.class, () -> new ZipFileWriter(
+        Assertions.assertThrows(IOException.class, () -> new ZipFileWriter(
                 DESTINATION_FOLDER + "notExistingDir/archive.zip"));
     }
 
@@ -67,9 +66,9 @@ public class ZipFileWriterTest extends ExtendedITextTest {
         final String fileName = "constructorWithAlreadyExistedFilePath.zip";
         FileUtil.copy(SOURCE_FOLDER + fileName, DESTINATION_FOLDER + fileName);
 
-        Exception ex = Assert.assertThrows(IOException.class,
+        Exception ex = Assertions.assertThrows(IOException.class,
                 () -> new ZipFileWriter(DESTINATION_FOLDER + fileName));
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 MessageFormatUtil.format(CommonsExceptionMessageConstant.FILE_NAME_ALREADY_EXIST,
                         DESTINATION_FOLDER + fileName),
                 ex.getMessage());
@@ -80,9 +79,9 @@ public class ZipFileWriterTest extends ExtendedITextTest {
         final String fileName = "testFile.txt";
         FileUtil.copy(SOURCE_FOLDER + fileName, DESTINATION_FOLDER + fileName);
 
-        Exception ex = Assert.assertThrows(IOException.class,
+        Exception ex = Assertions.assertThrows(IOException.class,
                 () -> new ZipFileWriter(DESTINATION_FOLDER + fileName));
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 MessageFormatUtil.format(CommonsExceptionMessageConstant.FILE_NAME_ALREADY_EXIST,
                         DESTINATION_FOLDER + fileName), ex.getMessage());
     }
@@ -92,8 +91,8 @@ public class ZipFileWriterTest extends ExtendedITextTest {
         final String pathToDirectory = DESTINATION_FOLDER + "constructorWithDirectoryPath/";
         FileUtil.createDirectories(pathToDirectory);
 
-        Exception ex = Assert.assertThrows(IOException.class, () -> new ZipFileWriter(pathToDirectory));
-        Assert.assertEquals(
+        Exception ex = Assertions.assertThrows(IOException.class, () -> new ZipFileWriter(pathToDirectory));
+        Assertions.assertEquals(
                 MessageFormatUtil.format(CommonsExceptionMessageConstant.FILE_NAME_ALREADY_EXIST, pathToDirectory),
                 ex.getMessage());
     }
@@ -105,11 +104,11 @@ public class ZipFileWriterTest extends ExtendedITextTest {
 
         ZipFileWriter writer = new ZipFileWriter(pathToFile);
         writer.close();
-        Assert.assertTrue(FileUtil.fileExists(pathToFile));
+        Assertions.assertTrue(FileUtil.fileExists(pathToFile));
 
         // We are not using ZipFileWriter in ZipFileReader tests, so we don't have testing cycles here.
         try (ZipFileReader zip = new ZipFileReader(pathToFile)) {
-            Assert.assertTrue(zip.getFileNames().isEmpty());
+            Assertions.assertTrue(zip.getFileNames().isEmpty());
         }
     }
 
@@ -119,9 +118,9 @@ public class ZipFileWriterTest extends ExtendedITextTest {
         final String pathToFile = DESTINATION_FOLDER + "addNullFileEntry.zip";
 
         try (ZipFileWriter writer = new ZipFileWriter(pathToFile)) {
-            Exception ex = Assert.assertThrows(IOException.class,
+            Exception ex = Assertions.assertThrows(IOException.class,
                     () -> writer.addEntry("fileName.txt", (File) null));
-            Assert.assertEquals(CommonsExceptionMessageConstant.FILE_SHOULD_EXIST, ex.getMessage());
+            Assertions.assertEquals(CommonsExceptionMessageConstant.FILE_SHOULD_EXIST, ex.getMessage());
         }
     }
 
@@ -130,7 +129,7 @@ public class ZipFileWriterTest extends ExtendedITextTest {
     public void addEntryWithNotExistingFileTest() throws IOException {
         try (ZipFileWriter writer = new ZipFileWriter(
                 DESTINATION_FOLDER + "addEntryWithNotExistingFile.zip")) {
-            Assert.assertThrows(IOException.class,
+            Assertions.assertThrows(IOException.class,
                     () -> writer.addEntry("fileName", new File(SOURCE_FOLDER + "invalidPath")));
         }
     }
@@ -141,9 +140,9 @@ public class ZipFileWriterTest extends ExtendedITextTest {
         final String pathToFile = DESTINATION_FOLDER + "addNullStreamEntry.zip";
 
         try (ZipFileWriter writer = new ZipFileWriter(pathToFile)) {
-            Exception ex = Assert.assertThrows(IOException.class,
+            Exception ex = Assertions.assertThrows(IOException.class,
                     () -> writer.addEntry("fileName.txt", (InputStream) null));
-            Assert.assertEquals(CommonsExceptionMessageConstant.STREAM_CAN_NOT_BE_NULL, ex.getMessage());
+            Assertions.assertEquals(CommonsExceptionMessageConstant.STREAM_CAN_NOT_BE_NULL, ex.getMessage());
         }
     }
 
@@ -153,9 +152,9 @@ public class ZipFileWriterTest extends ExtendedITextTest {
         final String pathToFile = DESTINATION_FOLDER + "addNullJsonEntry.zip";
 
         try (ZipFileWriter writer = new ZipFileWriter(pathToFile)) {
-            Exception ex = Assert.assertThrows(IOException.class,
+            Exception ex = Assertions.assertThrows(IOException.class,
                     () -> writer.addJsonEntry("fileName.txt", null));
-            Assert.assertEquals(CommonsExceptionMessageConstant.JSON_OBJECT_CAN_NOT_BE_NULL, ex.getMessage());
+            Assertions.assertEquals(CommonsExceptionMessageConstant.JSON_OBJECT_CAN_NOT_BE_NULL, ex.getMessage());
         }
     }
 
@@ -167,7 +166,7 @@ public class ZipFileWriterTest extends ExtendedITextTest {
         ZipFileWriter writer = new ZipFileWriter(pathToFile);
         writer.close();
 
-        Assert.assertThrows(Exception.class,
+        Assertions.assertThrows(Exception.class,
                 () -> writer.addEntry("firstName", new File(SOURCE_FOLDER + "testFile.txt")));
     }
 
@@ -186,9 +185,9 @@ public class ZipFileWriterTest extends ExtendedITextTest {
                 InputStream streamWithFile = FileUtil.getInputStreamForFile(textFilePath)) {
 
             Set<String> fileNames = reader.getFileNames();
-            Assert.assertEquals(1, fileNames.size());
-            Assert.assertTrue(fileNames.contains(fileNameInZip));
-            Assert.assertTrue(compareStreams(streamWithFile, streamFromZip));
+            Assertions.assertEquals(1, fileNames.size());
+            Assertions.assertTrue(fileNames.contains(fileNameInZip));
+            Assertions.assertTrue(compareStreams(streamWithFile, streamFromZip));
         }
     }
 
@@ -207,9 +206,9 @@ public class ZipFileWriterTest extends ExtendedITextTest {
                 InputStream streamWithFile = FileUtil.getInputStreamForFile(textFilePath)) {
 
             Set<String> fileNames = reader.getFileNames();
-            Assert.assertEquals(1, fileNames.size());
-            Assert.assertTrue(fileNames.contains(fileNameInZip));
-            Assert.assertTrue(compareStreams(streamWithFile, streamFromZip));
+            Assertions.assertEquals(1, fileNames.size());
+            Assertions.assertTrue(fileNames.contains(fileNameInZip));
+            Assertions.assertTrue(compareStreams(streamWithFile, streamFromZip));
         }
     }
 
@@ -228,9 +227,9 @@ public class ZipFileWriterTest extends ExtendedITextTest {
                 InputStream compareStream = new ByteArrayInputStream(compareString.getBytes(StandardCharsets.UTF_8))) {
 
             Set<String> fileNames = reader.getFileNames();
-            Assert.assertEquals(1, fileNames.size());
-            Assert.assertTrue(fileNames.contains(fileNameInZip));
-            Assert.assertTrue(compareStreams(compareStream, streamFromZip));
+            Assertions.assertEquals(1, fileNames.size());
+            Assertions.assertTrue(fileNames.contains(fileNameInZip));
+            Assertions.assertTrue(compareStreams(compareStream, streamFromZip));
         }
     }
 
@@ -241,7 +240,7 @@ public class ZipFileWriterTest extends ExtendedITextTest {
 
         try (ZipFileWriter writer = new ZipFileWriter(pathToFile)) {
             writer.addJsonEntry(fileNameInZip, "©");
-            Assert.assertThrows(IOException.class, () -> writer.addJsonEntry(fileNameInZip, "aaa"));
+            Assertions.assertThrows(IOException.class, () -> writer.addJsonEntry(fileNameInZip, "aaa"));
         }
     }
 
@@ -270,14 +269,14 @@ public class ZipFileWriterTest extends ExtendedITextTest {
                 InputStream streamWithJsonFromZip = reader.readFromZip(thirdFileNameInZip);
                 InputStream compareStream = new ByteArrayInputStream(compareString.getBytes(StandardCharsets.UTF_8))) {
             Set<String> fileNames = reader.getFileNames();
-            Assert.assertEquals(3, fileNames.size());
-            Assert.assertTrue(fileNames.contains(firstFileNameInZip));
-            Assert.assertTrue(fileNames.contains(secondFileNameInZip));
-            Assert.assertTrue(fileNames.contains(thirdFileNameInZip));
+            Assertions.assertEquals(3, fileNames.size());
+            Assertions.assertTrue(fileNames.contains(firstFileNameInZip));
+            Assertions.assertTrue(fileNames.contains(secondFileNameInZip));
+            Assertions.assertTrue(fileNames.contains(thirdFileNameInZip));
 
-            Assert.assertTrue(compareStreams(streamWithFirstFile, streamWithFirstFromZip));
-            Assert.assertTrue(compareStreams(streamWithSecondFile, streamWithSecondFromZip));
-            Assert.assertTrue(compareStreams(compareStream, streamWithJsonFromZip));
+            Assertions.assertTrue(compareStreams(streamWithFirstFile, streamWithFirstFromZip));
+            Assertions.assertTrue(compareStreams(streamWithSecondFile, streamWithSecondFromZip));
+            Assertions.assertTrue(compareStreams(compareStream, streamWithJsonFromZip));
         }
     }
 
@@ -288,9 +287,9 @@ public class ZipFileWriterTest extends ExtendedITextTest {
         final String firstTextFilePath = SOURCE_FOLDER + "testFile.txt";
 
         try (ZipFileWriter writer = new ZipFileWriter(pathToFile)) {
-            Exception ex = Assert.assertThrows(IOException.class,
+            Exception ex = Assertions.assertThrows(IOException.class,
                     () -> writer.addEntry(null, new File(firstTextFilePath)));
-            Assert.assertEquals(CommonsExceptionMessageConstant.FILE_NAME_SHOULD_BE_UNIQUE, ex.getMessage());
+            Assertions.assertEquals(CommonsExceptionMessageConstant.FILE_NAME_SHOULD_BE_UNIQUE, ex.getMessage());
         }
     }
 

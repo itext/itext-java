@@ -23,42 +23,41 @@
 package com.itextpdf.io.font.otf;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class GlyphTest extends ExtendedITextTest {
 
     @Test
     public void hasPlacementIfAnchorDeltaNonZeroTest() {
         Glyph glyph = createDummyGlyph();
 
-        Assert.assertEquals(0, glyph.getXPlacement());
-        Assert.assertEquals(0, glyph.getYPlacement());
-        Assert.assertEquals(0, glyph.getAnchorDelta());
-        Assert.assertFalse(glyph.hasPlacement());
+        Assertions.assertEquals(0, glyph.getXPlacement());
+        Assertions.assertEquals(0, glyph.getYPlacement());
+        Assertions.assertEquals(0, glyph.getAnchorDelta());
+        Assertions.assertFalse(glyph.hasPlacement());
 
         glyph.setAnchorDelta((short) 10);
 
-        Assert.assertTrue(glyph.hasPlacement());
+        Assertions.assertTrue(glyph.hasPlacement());
     }
 
     @Test
     public void hasOffsetsIfAnchorDeltaNonZeroTest() {
         Glyph glyph = createDummyGlyph();
 
-        Assert.assertEquals(0, glyph.getXPlacement());
-        Assert.assertEquals(0, glyph.getYPlacement());
-        Assert.assertEquals(0, glyph.getAnchorDelta());
-        Assert.assertFalse(glyph.hasOffsets());
+        Assertions.assertEquals(0, glyph.getXPlacement());
+        Assertions.assertEquals(0, glyph.getYPlacement());
+        Assertions.assertEquals(0, glyph.getAnchorDelta());
+        Assertions.assertFalse(glyph.hasOffsets());
 
         glyph.setAnchorDelta((short) 10);
 
-        Assert.assertTrue(glyph.hasOffsets());
+        Assertions.assertTrue(glyph.hasOffsets());
     }
 
     private static Glyph createDummyGlyph() {

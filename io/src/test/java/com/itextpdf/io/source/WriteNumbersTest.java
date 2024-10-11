@@ -27,16 +27,15 @@ import com.itextpdf.io.util.DecimalFormatUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Random;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class WriteNumbersTest extends ExtendedITextTest {
 
     public static double round(double value, int places) {
@@ -56,7 +55,7 @@ public class WriteNumbersTest extends ExtendedITextTest {
             byte[] actuals = ByteUtils.getIsoBytes(d);
             byte[] expecteds = DecimalFormatUtil.formatNumber(d, "0.##").getBytes(StandardCharsets.ISO_8859_1);
             String message = "Expects: " + new String(expecteds) + ", actual: " + new String(actuals) + " \\\\ "+ d;
-            Assert.assertArrayEquals(message, expecteds, actuals);
+            Assertions.assertArrayEquals(expecteds, actuals, message);
         }
     }
 
@@ -70,7 +69,7 @@ public class WriteNumbersTest extends ExtendedITextTest {
             byte[] actuals = ByteUtils.getIsoBytes(d);
             byte[] expecteds = DecimalFormatUtil.formatNumber(d, "0.#####").getBytes(StandardCharsets.ISO_8859_1);
             String message = "Expects: " + new String(expecteds) + ", actual: " + new String(actuals) + " \\\\ " + d;
-            Assert.assertArrayEquals(message, expecteds, actuals);
+            Assertions.assertArrayEquals(expecteds, actuals, message);
         }
     }
 
@@ -83,7 +82,7 @@ public class WriteNumbersTest extends ExtendedITextTest {
             byte[] actuals = ByteUtils.getIsoBytes(d);
             byte[] expecteds = DecimalFormatUtil.formatNumber(d, "0").getBytes(StandardCharsets.ISO_8859_1);
             String message = "Expects: " + new String(expecteds) + ", actual: " + new String(actuals) + " \\\\ "+ d;
-            Assert.assertArrayEquals(message, expecteds, actuals);
+            Assertions.assertArrayEquals(expecteds, actuals, message);
         }
     }
 
@@ -96,7 +95,7 @@ public class WriteNumbersTest extends ExtendedITextTest {
         byte[] expecteds = DecimalFormatUtil.formatNumber(0, "0.##").getBytes(StandardCharsets.ISO_8859_1);
 
         String message = "Expects: " + new String(expecteds) + ", actual: " + new String(actuals) + " \\\\ "+ d;
-        Assert.assertArrayEquals(message, expecteds, actuals);
+        Assertions.assertArrayEquals(expecteds, actuals, message);
     }
 
     @Test
@@ -108,6 +107,6 @@ public class WriteNumbersTest extends ExtendedITextTest {
         byte[] expecteds = DecimalFormatUtil.formatNumber(0, "0.##").getBytes(StandardCharsets.ISO_8859_1);
 
         String message = "Expects: " + new String(expecteds) + ", actual: " + new String(actuals) + " \\\\ "+ d;
-        Assert.assertArrayEquals(message, expecteds, actuals);
+        Assertions.assertArrayEquals(expecteds, actuals, message);
     }
 }

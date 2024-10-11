@@ -36,25 +36,24 @@ import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/css/SvgStyleResolver/";
     public static final String destinationFolder = "./target/test/com/itextpdf/svg/css/SvgStyleResolver/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         ITextTest.createDestinationFolder(destinationFolder);
     }
@@ -92,7 +91,7 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
         expected.put("stroke", "#da0000");
         expected.put("stroke-opacity", "1");
 
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -135,7 +134,7 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
         expected.put("stroke", "#da0000");
         expected.put("stroke-opacity", "1");
 
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -172,7 +171,7 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
         expected.put("fill", "none");
         expected.put("d", "M0 100 L0 50 L70 50");
 
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test

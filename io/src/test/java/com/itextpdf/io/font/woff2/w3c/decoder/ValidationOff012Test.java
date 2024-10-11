@@ -23,7 +23,6 @@
 package com.itextpdf.io.font.woff2.w3c.decoder;
 
 import com.itextpdf.io.font.woff2.w3c.W3CWoff2DecodeTest;
-import org.junit.Ignore;
 
 public class ValidationOff012Test extends W3CWoff2DecodeTest {
     @Override

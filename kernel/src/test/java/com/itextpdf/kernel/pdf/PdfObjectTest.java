@@ -26,17 +26,16 @@ import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfObjectTest extends ExtendedITextTest {
 
     @Test
@@ -47,7 +46,7 @@ public class PdfObjectTest extends ExtendedITextTest {
         catalog.put(new PdfName("a"), getTestPdfDictionary()
                 .makeIndirect(document).getIndirectReference().makeIndirect(document).getIndirectReference().makeIndirect(document));
         PdfObject object = ((PdfIndirectReference)catalog.get(new PdfName("a"), false)).getRefersTo(true);
-        Assert.assertTrue(object instanceof PdfDictionary);
+        Assertions.assertTrue(object instanceof PdfDictionary);
         document.close();
     }
 
@@ -63,7 +62,7 @@ public class PdfObjectTest extends ExtendedITextTest {
         }
         catalog.put(new PdfName("a"), object);
         ((PdfIndirectReference)catalog.get(new PdfName("a"))).getRefersTo(true);
-        Assert.assertNotNull(((PdfIndirectReference) catalog.get(new PdfName("a"))).getRefersTo(true));
+        Assertions.assertNotNull(((PdfIndirectReference) catalog.get(new PdfName("a"))).getRefersTo(true));
         document.close();
     }
 
@@ -79,8 +78,8 @@ public class PdfObjectTest extends ExtendedITextTest {
         }
         catalog.put(new PdfName("a"), object);
         object = catalog.get(new PdfName("a"), true);
-        Assert.assertTrue(object instanceof PdfDictionary);
-        Assert.assertEquals(new PdfName("c").toString(), ((PdfDictionary) object).get(new PdfName("b")).toString());
+        Assertions.assertTrue(object instanceof PdfDictionary);
+        Assertions.assertEquals(new PdfName("c").toString(), ((PdfDictionary) object).get(new PdfName("b")).toString());
         document.close();
     }
 
@@ -98,8 +97,8 @@ public class PdfObjectTest extends ExtendedITextTest {
         array.add(object);
         catalog.put(new PdfName("a"), array);
         object = ((PdfArray)catalog.get(new PdfName("a"))).get(0, true);
-        Assert.assertTrue(object instanceof PdfDictionary);
-        Assert.assertEquals(new PdfName("c").toString(), ((PdfDictionary)object).get(new PdfName("b")).toString());
+        Assertions.assertTrue(object instanceof PdfDictionary);
+        Assertions.assertEquals(new PdfName("c").toString(), ((PdfDictionary)object).get(new PdfName("b")).toString());
         document.close();
     }
 
@@ -110,42 +109,44 @@ public class PdfObjectTest extends ExtendedITextTest {
         reference.setState(PdfObject.READING);
         reference.setState(PdfObject.MODIFIED);
 
-        Assert.assertEquals("Free", true, reference.checkState(PdfObject.FREE));
-        Assert.assertEquals("Reading", true, reference.checkState(PdfObject.READING));
-        Assert.assertEquals("Modified", true, reference.checkState(PdfObject.MODIFIED));
-        Assert.assertEquals("Free|Reading|Modified", true,
-                reference.checkState((byte)(PdfObject.FREE |PdfObject.MODIFIED |PdfObject.READING)));
+        Assertions.assertEquals(Boolean.TRUE, reference.checkState(PdfObject.FREE), "Free");
+        Assertions.assertEquals(Boolean.TRUE, reference.checkState(PdfObject.READING), "Reading");
+        Assertions.assertEquals(Boolean.TRUE, reference.checkState(PdfObject.MODIFIED), "Modified");
+        Assertions.assertEquals(Boolean.TRUE,
+                reference.checkState((byte) (PdfObject.FREE | PdfObject.MODIFIED | PdfObject.READING)),
+                "Free|Reading|Modified");
 
         reference.clearState(PdfObject.FREE);
 
-        Assert.assertEquals("Free", false, reference.checkState(PdfObject.FREE));
-        Assert.assertEquals("Reading", true, reference.checkState(PdfObject.READING));
-        Assert.assertEquals("Modified", true, reference.checkState(PdfObject.MODIFIED));
-        Assert.assertEquals("Reading|Modified", true,
-                reference.checkState((byte)(PdfObject.READING |PdfObject.MODIFIED)));
-        Assert.assertEquals("Free|Reading|Modified", false,
-                reference.checkState((byte)(PdfObject.FREE |PdfObject.READING |PdfObject.MODIFIED)));
+        Assertions.assertEquals(Boolean.FALSE, reference.checkState(PdfObject.FREE), "Free");
+        Assertions.assertEquals(Boolean.TRUE, reference.checkState(PdfObject.READING), "Reading");
+        Assertions.assertEquals(Boolean.TRUE, reference.checkState(PdfObject.MODIFIED), "Modified");
+        Assertions.assertEquals(Boolean.TRUE,
+                reference.checkState((byte)(PdfObject.READING |PdfObject.MODIFIED)), "Reading|Modified");
+        Assertions.assertEquals(Boolean.FALSE,
+                reference.checkState((byte) (PdfObject.FREE | PdfObject.READING | PdfObject.MODIFIED)),
+                "Free|Reading|Modified");
 
         reference.clearState(PdfObject.READING);
 
-        Assert.assertEquals("Free", false, reference.checkState(PdfObject.FREE));
-        Assert.assertEquals("Reading", false, reference.checkState(PdfObject.READING));
-        Assert.assertEquals("Modified", true, reference.checkState(PdfObject.MODIFIED));
-        Assert.assertEquals("Free|Reading", false,
-                reference.checkState((byte) (PdfObject.FREE | PdfObject.READING)));
+        Assertions.assertEquals(Boolean.FALSE, reference.checkState(PdfObject.FREE), "Free");
+        Assertions.assertEquals(Boolean.FALSE, reference.checkState(PdfObject.READING), "Reading");
+        Assertions.assertEquals(Boolean.TRUE, reference.checkState(PdfObject.MODIFIED), "Modified");
+        Assertions.assertEquals(Boolean.FALSE,
+                reference.checkState((byte) (PdfObject.FREE | PdfObject.READING)), "Free|Reading");
 
         reference.clearState(PdfObject.MODIFIED);
 
-        Assert.assertEquals("Free", false, reference.checkState(PdfObject.FREE));
-        Assert.assertEquals("Reading", false, reference.checkState(PdfObject.READING));
-        Assert.assertEquals("Modified", false, reference.checkState(PdfObject.MODIFIED));
+        Assertions.assertEquals(Boolean.FALSE, reference.checkState(PdfObject.FREE), "Free");
+        Assertions.assertEquals(Boolean.FALSE, reference.checkState(PdfObject.READING), "Reading");
+        Assertions.assertEquals(Boolean.FALSE, reference.checkState(PdfObject.MODIFIED), "Modified");
 
 
-        Assert.assertEquals("Is InUse", true, !reference.isFree());
+        Assertions.assertEquals(Boolean.TRUE, !reference.isFree(), "Is InUse");
 
         reference.setState(PdfObject.FREE);
 
-        Assert.assertEquals("Not IsInUse", false, !reference.isFree());
+        Assertions.assertEquals(Boolean.FALSE, !reference.isFree(), "Not IsInUse");
     }
 
     @Test
@@ -170,10 +171,10 @@ public class PdfObjectTest extends ExtendedITextTest {
         document = new PdfDocument(new PdfReader(bais));
 
         PdfObject object = document.getCatalog().getPdfObject().get(new PdfName("Smth"));
-        Assert.assertTrue(object instanceof PdfDictionary);
+        Assertions.assertTrue(object instanceof PdfDictionary);
         dictionary = (PdfDictionary) object;
         PdfString a = (PdfString) dictionary.get(new PdfName("A"));
-        Assert.assertTrue(a.getValue().equals("a"));
+        Assertions.assertTrue(a.getValue().equals("a"));
 
         document.close();
     }
@@ -182,7 +183,7 @@ public class PdfObjectTest extends ExtendedITextTest {
     @LogMessages(messages = {
             @LogMessage(messageTemplate = IoLogMessageConstant.FLUSHED_OBJECT_CONTAINS_REFERENCE_WHICH_NOT_REFER_TO_ANY_OBJECT),
             @LogMessage(messageTemplate = IoLogMessageConstant.INDIRECT_REFERENCE_USED_IN_FLUSHED_OBJECT_MADE_FREE),
-            @LogMessage(messageTemplate = IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT)
+            @LogMessage(messageTemplate = IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE)
     })
         public void pdtIndirectReferenceLateInitializing2() throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -209,8 +210,8 @@ public class PdfObjectTest extends ExtendedITextTest {
         PdfDictionary catalogDict = document.getCatalog().getPdfObject();
         PdfObject object1 = catalogDict.get(new PdfName("Smth1"));
         PdfObject object2 = catalogDict.get(new PdfName("Smth2"));
-        Assert.assertTrue(object1 instanceof PdfNull);
-        Assert.assertTrue(object2 instanceof PdfArray);
+        Assertions.assertTrue(object1 instanceof PdfNull);
+        Assertions.assertTrue(object2 instanceof PdfArray);
     }
 
     @Test
@@ -243,18 +244,18 @@ public class PdfObjectTest extends ExtendedITextTest {
         PdfObject object1 = arrayClone.get(1, false);
         PdfObject object2 = arrayClone.get(2, false);
 
-        Assert.assertTrue(object0 instanceof PdfString);
-        Assert.assertTrue(object1 instanceof PdfDictionary);
-        Assert.assertTrue(object2 instanceof PdfNull);
+        Assertions.assertTrue(object0 instanceof PdfString);
+        Assertions.assertTrue(object1 instanceof PdfDictionary);
+        Assertions.assertTrue(object2 instanceof PdfNull);
 
         PdfString string1 = (PdfString)object0;
-        Assert.assertTrue(string != string1);
-        Assert.assertTrue(string.getValue().equals(string1.getValue()));
+        Assertions.assertTrue(string != string1);
+        Assertions.assertTrue(string.getValue().equals(string1.getValue()));
 
         PdfDictionary dict1 = (PdfDictionary) object1;
-        Assert.assertTrue(dict1.getIndirectReference().getObjNumber() == dict.getIndirectReference().getObjNumber());
-        Assert.assertTrue(dict1.getIndirectReference().getGenNumber() == dict.getIndirectReference().getGenNumber());
-        Assert.assertTrue(dict1 == dict);
+        Assertions.assertTrue(dict1.getIndirectReference().getObjNumber() == dict.getIndirectReference().getObjNumber());
+        Assertions.assertTrue(dict1.getIndirectReference().getGenNumber() == dict.getIndirectReference().getGenNumber());
+        Assertions.assertTrue(dict1 == dict);
 
         document.close();
     }

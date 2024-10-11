@@ -24,13 +24,12 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.ITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfNameTest extends ExtendedITextTest {
 
     @Test
@@ -38,9 +37,9 @@ public class PdfNameTest extends ExtendedITextTest {
         String str1 = " %()<>";
         String str2 = "[]{}/#";
         PdfName name1 = new PdfName(str1);
-        Assert.assertEquals(str1, createStringByEscaped(name1.getInternalContent()));
+        Assertions.assertEquals(str1, createStringByEscaped(name1.getInternalContent()));
         PdfName name2 = new PdfName(str2);
-        Assert.assertEquals(str2, createStringByEscaped(name2.getInternalContent()));
+        Assertions.assertEquals(str2, createStringByEscaped(name2.getInternalContent()));
     }
 
     @Test
@@ -72,13 +71,13 @@ public class PdfNameTest extends ExtendedITextTest {
         int oneContentToTwo = name1ContentOnly.compareTo(name2);
 
         double delta = 1e-8;
-        Assert.assertEquals(Math.signum(oneToTwo), -Math.signum(twoToOne), delta);
+        Assertions.assertEquals(Math.signum(oneToTwo), -Math.signum(twoToOne), delta);
 
-        Assert.assertEquals(Math.signum(oneToTwo), Math.signum(twoToThree), delta);
-        Assert.assertEquals(Math.signum(oneToTwo), Math.signum(oneToThree), delta);
+        Assertions.assertEquals(Math.signum(oneToTwo), Math.signum(twoToThree), delta);
+        Assertions.assertEquals(Math.signum(oneToTwo), Math.signum(oneToThree), delta);
 
-        Assert.assertEquals(oneToOneContent, 0);
-        Assert.assertEquals(Math.signum(oneToTwo), Math.signum(oneContentToTwo), delta);
+        Assertions.assertEquals(oneToOneContent, 0);
+        Assertions.assertEquals(Math.signum(oneToTwo), Math.signum(oneContentToTwo), delta);
     }
 
 }

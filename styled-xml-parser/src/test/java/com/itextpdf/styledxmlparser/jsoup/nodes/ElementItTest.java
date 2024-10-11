@@ -24,14 +24,13 @@ package com.itextpdf.styledxmlparser.jsoup.nodes;
 
 import com.itextpdf.styledxmlparser.jsoup.Jsoup;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.util.List;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class ElementItTest extends ExtendedITextTest {
     @Test
     public void testFastReparent() {
@@ -52,16 +51,16 @@ public class ElementItTest extends ExtendedITextTest {
         wrapper.insertChildren(0, childNodes);
 
         long runtime = (System.nanoTime() - start) / 1000000;
-        Assert.assertEquals(rows, wrapper.childNodes.size());
-        Assert.assertEquals(rows, childNodes.size()); // child nodes is a wrapper, so still there
-        Assert.assertEquals(0, doc.body().childNodes().size()); // but on a fresh look, all gone
+        Assertions.assertEquals(rows, wrapper.childNodes.size());
+        Assertions.assertEquals(rows, childNodes.size()); // child nodes is a wrapper, so still there
+        Assertions.assertEquals(0, doc.body().childNodes().size()); // but on a fresh look, all gone
 
         ((Element) doc.body().empty()).appendChild(wrapper);
         Element wrapperAcutal = doc.body().children().get(0);
-        Assert.assertEquals(wrapper, wrapperAcutal);
-        Assert.assertEquals("El-1", wrapperAcutal.children().get(0).text());
-        Assert.assertEquals("El-" + rows, wrapperAcutal.children().get(rows - 1).text());
-        Assert.assertTrue(runtime <= 10000);
+        Assertions.assertEquals(wrapper, wrapperAcutal);
+        Assertions.assertEquals("El-1", wrapperAcutal.children().get(0).text());
+        Assertions.assertEquals("El-" + rows, wrapperAcutal.children().get(rows - 1).text());
+        Assertions.assertTrue(runtime <= 10000);
     }
 
     @Test
@@ -81,25 +80,25 @@ public class ElementItTest extends ExtendedITextTest {
         Element wrapper = new Element("div");
         wrapper.append("<p>Prior Content</p>");
         wrapper.append("<p>End Content</p>");
-        Assert.assertEquals(2, wrapper.childNodes.size());
+        Assertions.assertEquals(2, wrapper.childNodes.size());
 
         List<Node> childNodes = doc.body().childNodes();
         wrapper.insertChildren(1, childNodes);
 
         long runtime = (System.nanoTime() - start) / 1000000;
-        Assert.assertEquals(rows + 2, wrapper.childNodes.size());
-        Assert.assertEquals(rows, childNodes.size()); // child nodes is a wrapper, so still there
-        Assert.assertEquals(0, doc.body().childNodes().size()); // but on a fresh look, all gone
+        Assertions.assertEquals(rows + 2, wrapper.childNodes.size());
+        Assertions.assertEquals(rows, childNodes.size()); // child nodes is a wrapper, so still there
+        Assertions.assertEquals(0, doc.body().childNodes().size()); // but on a fresh look, all gone
 
         ((Element) doc.body().empty()).appendChild(wrapper);
         Element wrapperAcutal = doc.body().children().get(0);
-        Assert.assertEquals(wrapper, wrapperAcutal);
-        Assert.assertEquals("Prior Content", wrapperAcutal.children().get(0).text());
-        Assert.assertEquals("El-1", wrapperAcutal.children().get(1).text());
+        Assertions.assertEquals(wrapper, wrapperAcutal);
+        Assertions.assertEquals("Prior Content", wrapperAcutal.children().get(0).text());
+        Assertions.assertEquals("El-1", wrapperAcutal.children().get(1).text());
 
-        Assert.assertEquals("El-" + rows, wrapperAcutal.children().get(rows).text());
-        Assert.assertEquals("End Content", wrapperAcutal.children().get(rows + 1).text());
+        Assertions.assertEquals("El-" + rows, wrapperAcutal.children().get(rows).text());
+        Assertions.assertEquals("End Content", wrapperAcutal.children().get(rows + 1).text());
 
-        Assert.assertTrue(runtime <= 10000);
+        Assertions.assertTrue(runtime <= 10000);
     }
 }

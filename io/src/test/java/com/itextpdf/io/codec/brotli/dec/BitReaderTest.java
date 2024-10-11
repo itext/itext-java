@@ -6,19 +6,18 @@
 
 package com.itextpdf.io.codec.brotli.dec;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 /**
  * Tests for {@link BitReader}.
  */
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class BitReaderTest extends ExtendedITextTest{
 
   @Test

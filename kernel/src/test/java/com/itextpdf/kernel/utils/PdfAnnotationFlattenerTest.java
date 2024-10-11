@@ -56,30 +56,29 @@ import com.itextpdf.kernel.utils.annotationsflattening.WarnFormfieldFlattener;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/utils/flatteningTest/";
     public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/utils/flatteningTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(DESTINATION_FOLDER);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(DESTINATION_FOLDER);
     }
@@ -90,7 +89,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
             pdfDoc.addNewPage();
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             List<PdfAnnotation> annotations = null;
-            Assert.assertThrows(PdfException.class, () -> {
+            Assertions.assertThrows(PdfException.class, () -> {
                 flattener.flatten(annotations);
             });
         }
@@ -101,7 +100,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
     public void testNullDocument() {
         PdfDocument pdfDoc = null;
         PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
-        Assert.assertThrows(PdfException.class, () -> {
+        Assertions.assertThrows(PdfException.class, () -> {
             flattener.flatten(pdfDoc);
         });
     }
@@ -112,7 +111,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
             pdfDoc.addNewPage();
             IAnnotationFlattener flattener = new DefaultAnnotationFlattener();
             PdfPage page = pdfDoc.getFirstPage();
-            Assert.assertThrows(PdfException.class, () -> {
+            Assertions.assertThrows(PdfException.class, () -> {
                 flattener.flatten(null, page);
             });
         }
@@ -123,7 +122,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
         try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
             pdfDoc.addNewPage();
             IAnnotationFlattener flattener = new DefaultAnnotationFlattener();
-            Assert.assertThrows(PdfException.class, () -> {
+            Assertions.assertThrows(PdfException.class, () -> {
                 flattener.flatten(new PdfLinkAnnotation(new Rectangle(20, 20)), null);
             });
         }
@@ -135,7 +134,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
             pdfDoc.addNewPage();
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(new ArrayList<>());
-            Assert.assertEquals(0, pdfDoc.getFirstPage().getAnnotsSize());
+            Assertions.assertEquals(0, pdfDoc.getFirstPage().getAnnotsSize());
         }
     }
 
@@ -171,7 +170,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
             worker.flatten(annotation, pdfDoc.getFirstPage());
         }
 
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareByContent(resultFile,
                         SOURCE_FOLDER + "cmp_default_annotations_app.pdf",
                         DESTINATION_FOLDER, "diff_"));
@@ -190,7 +189,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(Collections.singletonList(unknownAnnotation));
             //Annotation is not removed in default implementation
-            Assert.assertEquals(1, pdfDoc.getFirstPage().getAnnotsSize());
+            Assertions.assertEquals(1, pdfDoc.getFirstPage().getAnnotsSize());
         }
     }
 
@@ -206,7 +205,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(Collections.singletonList(unknownAnnotation));
             //Annotation is not removed in default implementation
-            Assert.assertEquals(1, pdfDoc.getFirstPage().getAnnotsSize());
+            Assertions.assertEquals(1, pdfDoc.getFirstPage().getAnnotsSize());
         }
     }
 
@@ -220,7 +219,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
                     setBorder(new PdfArray(borders)));
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener(new CustomPdfAnnotationFlattenFactory());
             flattener.flatten(pdfDoc.getFirstPage().getAnnotations());
-            Assert.assertEquals(0, pdfDoc.getFirstPage().getAnnotsSize());
+            Assertions.assertEquals(0, pdfDoc.getFirstPage().getAnnotsSize());
         }
     }
 
@@ -247,7 +246,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
         }
         //it is expected that the line is the middle of the page because the annotation whole rectangle is the
         // size of the page, it's also expected that underline will not show up as it is at the bottom of the page
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_text_quadpoints.pdf",
                         DESTINATION_FOLDER, "diff_"));
     }
@@ -276,7 +275,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
         }
         //it is expected that the line is the middle of the page because the annotation whole rectangle is the
         // size of the page, it's also expected that underline will not show up as it is at the bottom of the page
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_invalid_quadpoints.pdf",
                         DESTINATION_FOLDER, "diff_"));
     }
@@ -291,7 +290,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
                     setBorder(new PdfArray(borders)));
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(new ArrayList<>());
-            Assert.assertEquals(1, pdfDoc.getFirstPage().getAnnotsSize());
+            Assertions.assertEquals(1, pdfDoc.getFirstPage().getAnnotsSize());
         }
     }
 
@@ -310,8 +309,8 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
                     setBorder(new PdfArray(borders)));
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(pdfDoc.getPage(2).getAnnotations());
-            Assert.assertEquals(1, pdfDoc.getFirstPage().getAnnotsSize());
-            Assert.assertEquals(1, pdfDoc.getPage(2).getAnnotsSize());
+            Assertions.assertEquals(1, pdfDoc.getFirstPage().getAnnotsSize());
+            Assertions.assertEquals(1, pdfDoc.getPage(2).getAnnotsSize());
         }
     }
 
@@ -323,7 +322,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
                 CompareTool.createTestPdfWriter(resultFile))) {
             new PdfAnnotationFlattener().flatten(pdfDoc);
         }
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattened_pdf_link.pdf",
                         DESTINATION_FOLDER, "diff_"));
     }
@@ -347,7 +346,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
             annot.setNormalAppearance(formN.getPdfObject());
             new PdfAnnotationFlattener().flatten(pdfDoc);
         }
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattened_DA_pdf_link.pdf",
                         DESTINATION_FOLDER, "diff_"));
     }
@@ -380,7 +379,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
             new PdfAnnotationFlattener()
                     .flatten(pdfDoc.getFirstPage().getAnnotations());
         }
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_text_markup_flatten.pdf",
                         DESTINATION_FOLDER, "diff_"));
     }
@@ -393,9 +392,9 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
         try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), CompareTool.createTestPdfWriter(resultFile))) {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(document);
-            Assert.assertEquals(1, document.getFirstPage().getAnnotations().size());
+            Assertions.assertEquals(1, document.getFirstPage().getAnnotations().size());
         }
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattenLinkAnnotationTest.pdf",
                         DESTINATION_FOLDER, "diff_"));
     }
@@ -409,10 +408,10 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
         try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), CompareTool.createTestPdfWriter(resultFile))) {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             List<PdfAnnotation> annot = flattener.flatten(document);
-            Assert.assertEquals(1, annot.size());
-            Assert.assertEquals(1, document.getFirstPage().getAnnotations().size());
+            Assertions.assertEquals(1, annot.size());
+            Assertions.assertEquals(1, document.getFirstPage().getAnnotations().size());
         }
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattenWidgetAnnotationTest.pdf",
                         DESTINATION_FOLDER, "diff_"));
     }
@@ -424,9 +423,9 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
         try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), CompareTool.createTestPdfWriter(resultFile))) {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(document);
-            Assert.assertEquals(0, document.getFirstPage().getAnnotations().size());
+            Assertions.assertEquals(0, document.getFirstPage().getAnnotations().size());
         }
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattenScreenAnnotationTest.pdf",
                         DESTINATION_FOLDER, "diff_"));
     }
@@ -438,9 +437,9 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
         try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), CompareTool.createTestPdfWriter(resultFile))) {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(document);
-            Assert.assertEquals(0, document.getFirstPage().getAnnotations().size());
+            Assertions.assertEquals(0, document.getFirstPage().getAnnotations().size());
         }
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flatten3DAnnotationTest.pdf",
                         DESTINATION_FOLDER, "diff_"));
     }
@@ -453,9 +452,9 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(document);
 
-            Assert.assertEquals(0, document.getFirstPage().getAnnotations().size());
+            Assertions.assertEquals(0, document.getFirstPage().getAnnotations().size());
         }
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattenHighlightAnnotationTest.pdf",
                         DESTINATION_FOLDER, "diff_"));
     }
@@ -468,10 +467,10 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(document);
 
-            Assert.assertEquals(0, document.getFirstPage().getAnnotations().size());
+            Assertions.assertEquals(0, document.getFirstPage().getAnnotations().size());
         }
 
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattenUnderlineAnnotationTest.pdf",
                         DESTINATION_FOLDER, "diff_"));
     }
@@ -484,10 +483,10 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(document);
 
-            Assert.assertEquals(0, document.getFirstPage().getAnnotations().size());
+            Assertions.assertEquals(0, document.getFirstPage().getAnnotations().size());
         }
 
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattenSquigglyAnnotationTest.pdf",
                         DESTINATION_FOLDER, "diff_"));
     }
@@ -500,10 +499,10 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(document);
 
-            Assert.assertEquals(0, document.getFirstPage().getAnnotations().size());
+            Assertions.assertEquals(0, document.getFirstPage().getAnnotations().size());
         }
 
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattenStrikeOutAnnotationTest.pdf",
                         DESTINATION_FOLDER, "diff_"));
     }
@@ -516,10 +515,10 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(document);
 
-            Assert.assertEquals(0, document.getFirstPage().getAnnotations().size());
+            Assertions.assertEquals(0, document.getFirstPage().getAnnotations().size());
         }
 
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattenCaretAnnotationTest.pdf",
                         DESTINATION_FOLDER, "diff_"));
     }
@@ -532,10 +531,10 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(document);
 
-            Assert.assertEquals(0, document.getFirstPage().getAnnotations().size());
+            Assertions.assertEquals(0, document.getFirstPage().getAnnotations().size());
         }
 
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattenTextAnnotationTest.pdf",
                         DESTINATION_FOLDER, "diff_"));
     }
@@ -548,10 +547,10 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(document);
 
-            Assert.assertEquals(0, document.getFirstPage().getAnnotations().size());
+            Assertions.assertEquals(0, document.getFirstPage().getAnnotations().size());
         }
 
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattenSoundAnnotationTest.pdf",
                         DESTINATION_FOLDER, "diff_"));
     }
@@ -562,11 +561,11 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
         String resultFile = DESTINATION_FOLDER + "flattenStampAnnotationTest.pdf";
         try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), CompareTool.createTestPdfWriter(resultFile))) {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
-            Assert.assertEquals(0, flattener.flatten(document).size());
-            Assert.assertEquals(0, document.getFirstPage().getAnnotations().size());
+            Assertions.assertEquals(0, flattener.flatten(document).size());
+            Assertions.assertEquals(0, document.getFirstPage().getAnnotations().size());
         }
 
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattenStampAnnotationTest.pdf",
                         DESTINATION_FOLDER, "diff_"));
     }
@@ -579,10 +578,10 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(document);
 
-            Assert.assertEquals(0, document.getFirstPage().getAnnotations().size());
+            Assertions.assertEquals(0, document.getFirstPage().getAnnotations().size());
         }
 
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareByContent(resultFile,
                         SOURCE_FOLDER + "cmp_flattenFileAttachmentAnnotationTest.pdf",
                         DESTINATION_FOLDER, "diff_"));
@@ -596,10 +595,10 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(document);
 
-            Assert.assertEquals(0, document.getFirstPage().getAnnotations().size());
+            Assertions.assertEquals(0, document.getFirstPage().getAnnotations().size());
         }
 
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattenInkAnnotationTest.pdf",
                         DESTINATION_FOLDER, "diff_"));
     }
@@ -612,10 +611,10 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(document);
 
-            Assert.assertEquals(0, document.getFirstPage().getAnnotations().size());
+            Assertions.assertEquals(0, document.getFirstPage().getAnnotations().size());
         }
 
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareByContent(resultFile,
                         SOURCE_FOLDER + "cmp_flattenPrinterMarkAnnotationTest.pdf",
                         DESTINATION_FOLDER, "diff_"));
@@ -629,10 +628,10 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(document);
 
-            Assert.assertEquals(0, document.getFirstPage().getAnnotations().size());
+            Assertions.assertEquals(0, document.getFirstPage().getAnnotations().size());
         }
 
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattenTrapNetAnnotationTest.pdf",
                         DESTINATION_FOLDER, "diff_"));
     }
@@ -641,7 +640,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
     public void testWarnAnnotationFlattenerAnnotNull() {
         WarnFormfieldFlattener warnFormfieldFlattener = new WarnFormfieldFlattener();
         PdfPage page = null;
-        Assert.assertThrows(PdfException.class, () -> {
+        Assertions.assertThrows(PdfException.class, () -> {
             warnFormfieldFlattener.flatten(null, page);
         });
     }
@@ -650,7 +649,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
     public void testWarnAnnotationFlattenerPageNull() {
         WarnFormfieldFlattener warnFormfieldFlattener = new WarnFormfieldFlattener();
         PdfAnnotation annot = new PdfCircleAnnotation(new Rectangle(100, 100, 100, 100));
-        Assert.assertThrows(PdfException.class, () -> {
+        Assertions.assertThrows(PdfException.class, () -> {
             warnFormfieldFlattener.flatten(annot, null);
         });
     }
@@ -659,7 +658,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
     public void removeWithoutDrawingFormfieldFlattenerNull() {
         RemoveWithoutDrawingFlattener flattener = new RemoveWithoutDrawingFlattener();
         PdfPage page = null;
-        Assert.assertThrows(PdfException.class, () -> {
+        Assertions.assertThrows(PdfException.class, () -> {
             flattener.flatten(null, page);
         });
     }
@@ -668,7 +667,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
     public void removeWithoutDrawingAnnotationFlattenerPageNull() {
         RemoveWithoutDrawingFlattener warnFormfieldFlattener = new RemoveWithoutDrawingFlattener();
         PdfAnnotation annot = new PdfCircleAnnotation(new Rectangle(100, 100, 100, 100));
-        Assert.assertThrows(PdfException.class, () -> {
+        Assertions.assertThrows(PdfException.class, () -> {
             warnFormfieldFlattener.flatten(annot, null);
         });
     }
@@ -682,10 +681,10 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(document);
 
-            Assert.assertEquals(0, document.getFirstPage().getAnnotations().size());
+            Assertions.assertEquals(0, document.getFirstPage().getAnnotations().size());
         }
 
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattenFreeTextAnnotationTest.pdf",
                         DESTINATION_FOLDER, "diff_"));
     }
@@ -698,10 +697,10 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(document);
 
-            Assert.assertEquals(0, document.getFirstPage().getAnnotations().size());
+            Assertions.assertEquals(0, document.getFirstPage().getAnnotations().size());
         }
 
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattenSquareAnnotationTest.pdf",
                         DESTINATION_FOLDER, "diff_"));
     }
@@ -714,10 +713,10 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(document);
 
-            Assert.assertEquals(0, document.getFirstPage().getAnnotations().size());
+            Assertions.assertEquals(0, document.getFirstPage().getAnnotations().size());
         }
 
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattenCircleAnnotationTest.pdf",
                         DESTINATION_FOLDER, "diff_"));
     }
@@ -732,7 +731,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
             annots.add(null);
             flattener.flatten(annots);
 
-            Assert.assertEquals(0, document.getFirstPage().getAnnotations().size());
+            Assertions.assertEquals(0, document.getFirstPage().getAnnotations().size());
         }
     }
 
@@ -745,7 +744,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
             annots.add(new PdfCircleAnnotation(new Rectangle(100, 100, 100, 100)));
             flattener.flatten(annots);
 
-            Assert.assertEquals(0, document.getFirstPage().getAnnotations().size());
+            Assertions.assertEquals(0, document.getFirstPage().getAnnotations().size());
         }
     }
 
@@ -757,10 +756,10 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(document);
 
-            Assert.assertEquals(0, document.getFirstPage().getAnnotations().size());
+            Assertions.assertEquals(0, document.getFirstPage().getAnnotations().size());
         }
 
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattenLineAnnotationTest.pdf",
                         DESTINATION_FOLDER, "diff_"));
     }
@@ -773,10 +772,10 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(document);
 
-            Assert.assertEquals(0, document.getFirstPage().getAnnotations().size());
+            Assertions.assertEquals(0, document.getFirstPage().getAnnotations().size());
         }
 
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattenPolygonAnnotationTest.pdf",
                         DESTINATION_FOLDER, "diff_"));
     }
@@ -789,10 +788,10 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(document);
 
-            Assert.assertEquals(0, document.getFirstPage().getAnnotations().size());
+            Assertions.assertEquals(0, document.getFirstPage().getAnnotations().size());
         }
 
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattenPolyLineAnnotationTest.pdf",
                         DESTINATION_FOLDER, "diff_"));
     }
@@ -805,10 +804,10 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(document);
 
-            Assert.assertEquals(0, document.getFirstPage().getAnnotations().size());
+            Assertions.assertEquals(0, document.getFirstPage().getAnnotations().size());
         }
 
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattenRedactAnnotationTest.pdf",
                         DESTINATION_FOLDER, "diff_"));
     }
@@ -821,10 +820,10 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(document);
 
-            Assert.assertEquals(0, document.getFirstPage().getAnnotations().size());
+            Assertions.assertEquals(0, document.getFirstPage().getAnnotations().size());
         }
 
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattenWatermarkAnnotationTest.pdf",
                         DESTINATION_FOLDER, "diff_"));
     }

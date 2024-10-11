@@ -39,7 +39,6 @@ import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.IsoKey;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -1232,10 +1231,10 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                     -Float.MAX_VALUE, -Float.MAX_VALUE,
             };
             for (Point p : transformedAppBoxPoints) {
-                transformedRectArr[0] = (float) Math.min(transformedRectArr[0], p.x);
-                transformedRectArr[1] = (float) Math.min(transformedRectArr[1], p.y);
-                transformedRectArr[2] = (float) Math.max(transformedRectArr[2], p.x);
-                transformedRectArr[3] = (float) Math.max(transformedRectArr[3], p.y);
+                transformedRectArr[0] = (float) Math.min(transformedRectArr[0], p.getX());
+                transformedRectArr[1] = (float) Math.min(transformedRectArr[1], p.getY());
+                transformedRectArr[2] = (float) Math.max(transformedRectArr[2], p.getX());
+                transformedRectArr[3] = (float) Math.max(transformedRectArr[3], p.getY());
             }
 
             transformedRect = new Rectangle(transformedRectArr[0], transformedRectArr[1], transformedRectArr[2] - transformedRectArr[0], transformedRectArr[3] - transformedRectArr[1]);

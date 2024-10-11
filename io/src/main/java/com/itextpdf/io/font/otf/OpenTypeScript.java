@@ -50,14 +50,14 @@ public class OpenTypeScript {
         ScriptRecord scriptFound = null;
         ScriptRecord scriptDefault = null;
         for (ScriptRecord sr : records) {
-            if (DEFAULT_SCRIPT.equals(sr.tag)) {
+            if (DEFAULT_SCRIPT.equals(sr.getTag())) {
                 scriptDefault = sr;
                 break;
             }
         }
         for (String script : scripts) {
             for (ScriptRecord sr : records) {
-                if (sr.tag.equals(script)) {
+                if (sr.getTag().equals(script)) {
                     scriptFound = sr;
                     break;
                 }
@@ -76,36 +76,38 @@ public class OpenTypeScript {
             return null;
         }
         LanguageRecord lang = null;
-        for (LanguageRecord lr : scriptFound.languages) {
-            if (lr.tag.equals(language)) {
+        for (LanguageRecord lr : scriptFound.getLanguages()) {
+            if (lr.getTag().equals(language)) {
                 lang = lr;
                 break;
             }
         }
         if (lang == null) {
-            lang = scriptFound.defaultLanguage;
+            lang = scriptFound.getDefaultLanguage();
         }
         return lang;
     }
     
     private void readScriptRecord(TagAndLocation tagLoc) throws java.io.IOException {
-        openTypeReader.rf.seek(tagLoc.location);
+        openTypeReader.rf.seek(tagLoc.getLocation());
         int locationDefaultLanguage = openTypeReader.rf.readUnsignedShort();
         if (locationDefaultLanguage > 0) {
-            locationDefaultLanguage += tagLoc.location;
+            locationDefaultLanguage += tagLoc.getLocation();
         }
-        TagAndLocation[] tagsLocs = openTypeReader.readTagAndLocations(tagLoc.location);
+        TagAndLocation[] tagsLocs = openTypeReader.readTagAndLocations(tagLoc.getLocation());
         ScriptRecord srec = new ScriptRecord();
-        srec.tag = tagLoc.tag;
-        srec.languages = new LanguageRecord[tagsLocs.length];
+        srec.setTag(tagLoc.getTag());
+        srec.setLanguages(new LanguageRecord[tagsLocs.length]);
         for (int k = 0; k < tagsLocs.length; ++k) {
-            srec.languages[k] = readLanguageRecord(tagsLocs[k]);
+            LanguageRecord[] languages = srec.getLanguages();
+            languages[k] = readLanguageRecord(tagsLocs[k]);
+            srec.setLanguages(languages);
         }
         if (locationDefaultLanguage > 0) {
             TagAndLocation t = new TagAndLocation();
-            t.tag = "";
-            t.location = locationDefaultLanguage;
-            srec.defaultLanguage = readLanguageRecord(t);
+            t.setTag("");
+            t.setLocation(locationDefaultLanguage);
+            srec.setDefaultLanguage(readLanguageRecord(t));
         }
         records.add(srec);
     }
@@ -113,11 +115,11 @@ public class OpenTypeScript {
     private LanguageRecord readLanguageRecord(TagAndLocation tagLoc) throws java.io.IOException {
         LanguageRecord rec = new LanguageRecord();
         //skip lookup order
-        openTypeReader.rf.seek(tagLoc.location + 2);
-        rec.featureRequired = openTypeReader.rf.readUnsignedShort();
+        openTypeReader.rf.seek(tagLoc.getLocation() + 2L);
+        rec.setFeatureRequired(openTypeReader.rf.readUnsignedShort());
         int count = openTypeReader.rf.readUnsignedShort();
-        rec.features = openTypeReader.readUShortArray(count);
-        rec.tag = tagLoc.tag;
+        rec.setFeatures(openTypeReader.readUShortArray(count));
+        rec.setTag(tagLoc.getTag());
         return rec;
     }
 }

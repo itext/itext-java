@@ -122,12 +122,12 @@ public class MetaDo {
     /**
      * PdfCanvas of the MetaDo object.
      */
-    public PdfCanvas cb;
+    private final PdfCanvas cb;
 
     /**
      * The InputMeta instance containing the data.
      */
-    public InputMeta in;
+    private final InputMeta in;
 
     int left;
     int top;

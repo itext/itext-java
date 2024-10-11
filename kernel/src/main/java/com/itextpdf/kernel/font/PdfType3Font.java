@@ -365,10 +365,10 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
 
             int flags = fontProgram.getPdfFontFlags();
             // reset both flags
-            flags &= ~(FontDescriptorFlags.Symbolic | FontDescriptorFlags.Nonsymbolic);
+            flags &= ~(FontDescriptorFlags.SYMBOLIC | FontDescriptorFlags.NONSYMBOLIC);
             // set fontSpecific based on font encoding
             flags |= fontEncoding.isFontSpecific() ?
-                    FontDescriptorFlags.Symbolic : FontDescriptorFlags.Nonsymbolic;
+                    FontDescriptorFlags.SYMBOLIC : FontDescriptorFlags.NONSYMBOLIC;
 
             fontDescriptor.put(PdfName.Flags, new PdfNumber(flags));
             return fontDescriptor;

@@ -46,9 +46,6 @@ public class ImageMagickHelper {
      */
     public static final String MAGICK_COMPARE_ENVIRONMENT_VARIABLE = "ITEXT_MAGICK_COMPARE_EXEC";
 
-    @Deprecated
-    static final String MAGICK_COMPARE_ENVIRONMENT_VARIABLE_LEGACY = "compareExec";
-
     static final String MAGICK_COMPARE_KEYWORD = "ImageMagick Studio LLC";
 
     private static final String TEMP_FILE_PREFIX = "itext_im_io_temp";
@@ -75,9 +72,6 @@ public class ImageMagickHelper {
         compareExec = newCompareExec;
         if (compareExec == null) {
             compareExec = SystemUtil.getPropertyOrEnvironmentVariable(MAGICK_COMPARE_ENVIRONMENT_VARIABLE);
-            if (compareExec == null) {
-                compareExec = SystemUtil.getPropertyOrEnvironmentVariable(MAGICK_COMPARE_ENVIRONMENT_VARIABLE_LEGACY);
-            }
         }
 
         if (!CliCommandUtil.isVersionCommandExecutable(compareExec, MAGICK_COMPARE_KEYWORD)) {

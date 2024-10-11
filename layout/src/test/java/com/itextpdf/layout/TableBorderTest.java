@@ -44,17 +44,16 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class TableBorderTest extends AbstractTableTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/TableBorderTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/TableBorderTest/";
@@ -64,7 +63,7 @@ public class TableBorderTest extends AbstractTableTest {
     String outFileName;
     String cmpFileName;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
@@ -845,7 +844,10 @@ public class TableBorderTest extends AbstractTableTest {
         doc.add(table);
 
         doc.add(new AreaBreak());
-        table.deleteOwnProperty(Property.BORDER);
+        table.deleteOwnProperty(Property.BORDER_LEFT);
+        table.deleteOwnProperty(Property.BORDER_BOTTOM);
+        table.deleteOwnProperty(Property.BORDER_RIGHT);
+        table.deleteOwnProperty(Property.BORDER_TOP);
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
         table.setHorizontalBorderSpacing(20);
         table.setVerticalBorderSpacing(20);
@@ -924,7 +926,7 @@ public class TableBorderTest extends AbstractTableTest {
     }
 
     @Test
-    @Ignore("DEVSIX-1734")
+    @Disabled("DEVSIX-1734")
     public void splitCellsTest04A() throws IOException, InterruptedException {
         fileName = "splitCellsTest04A.pdf";
         Document doc = createDocument();
@@ -1161,7 +1163,7 @@ public class TableBorderTest extends AbstractTableTest {
     }
 
     @Test
-    @Ignore("DEVSIX-1736")
+    @Disabled("DEVSIX-1736")
     public void splitCellsTest10B() throws IOException, InterruptedException {
         fileName = "splitCellsTest10B.pdf";
         Document doc = createDocument();
@@ -1402,7 +1404,10 @@ public class TableBorderTest extends AbstractTableTest {
         doc.add(table);
         doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().addCell("Hello").setBorder(new SolidBorder(ColorConstants.ORANGE, 5)));
 
-        table.deleteOwnProperty(Property.BORDER);
+        table.deleteOwnProperty(Property.BORDER_LEFT);
+        table.deleteOwnProperty(Property.BORDER_BOTTOM);
+        table.deleteOwnProperty(Property.BORDER_RIGHT);
+        table.deleteOwnProperty(Property.BORDER_TOP);
         doc.add(table);
         doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().addCell("Hello").setBorder(new SolidBorder(ColorConstants.ORANGE, 5)));
 
@@ -1414,7 +1419,10 @@ public class TableBorderTest extends AbstractTableTest {
         doc.add(table);
         doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().addCell("Hello").setBorder(new SolidBorder(ColorConstants.ORANGE, 5)));
 
-        table.deleteOwnProperty(Property.BORDER);
+        table.deleteOwnProperty(Property.BORDER_LEFT);
+        table.deleteOwnProperty(Property.BORDER_BOTTOM);
+        table.deleteOwnProperty(Property.BORDER_RIGHT);
+        table.deleteOwnProperty(Property.BORDER_TOP);
         doc.add(table);
         doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().addCell("Hello").setBorder(new SolidBorder(ColorConstants.ORANGE, 5)));
 
@@ -1779,7 +1787,7 @@ public class TableBorderTest extends AbstractTableTest {
         addTableBelowToCheckThatOccupiedAreaIsCorrect(doc);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -1807,7 +1815,7 @@ public class TableBorderTest extends AbstractTableTest {
         closeDocumentAndCompareOutputs(doc);
     }
 
-    @Ignore("DEVSIX-1219")
+    @Disabled("DEVSIX-1219")
     @Test
     public void tableWithHeaderFooterTest13() throws IOException, InterruptedException {
         fileName = "tableWithHeaderFooterTest13.pdf";
@@ -1868,7 +1876,7 @@ public class TableBorderTest extends AbstractTableTest {
                 .setBorderTop(new SolidBorder(2))
                 .setBorderBottom(new SolidBorder(1));
         table.getFooter()
-                .setBold()
+                .simulateBold()
                 .setBorderTop(new SolidBorder(10))
                 .setBorderBottom(new SolidBorder(1))
                 .setBackgroundColor(ColorConstants.LIGHT_GRAY);
@@ -2411,10 +2419,10 @@ public class TableBorderTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
-    private Document createDocument() throws FileNotFoundException {
+    private Document createDocument() throws IOException {
         outFileName = destinationFolder + fileName;
         cmpFileName = sourceFolder + cmpPrefix + fileName;
 
@@ -2427,7 +2435,7 @@ public class TableBorderTest extends AbstractTableTest {
         document.close();
         String compareResult = new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff");
         if (compareResult != null) {
-            Assert.fail(compareResult);
+            Assertions.fail(compareResult);
         }
     }
 }

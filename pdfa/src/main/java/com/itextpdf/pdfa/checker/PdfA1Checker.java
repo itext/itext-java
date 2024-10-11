@@ -34,7 +34,7 @@ import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfTrueTypeFont;
 import com.itextpdf.kernel.font.PdfType3Font;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfCatalog;
@@ -116,13 +116,13 @@ public class PdfA1Checker extends PdfAChecker {
     private static final Logger logger = LoggerFactory.getLogger(PdfAChecker.class);
 
     /**
-     * Creates a PdfA1Checker with the required conformance level
+     * Creates a PdfA1Checker with the required conformance
      *
-     * @param conformanceLevel the required conformance level, <code>a</code> or
+     * @param aConformance the required conformance, <code>a</code> or
      *                         <code>b</code>
      */
-    public PdfA1Checker(PdfAConformanceLevel conformanceLevel) {
-        super(conformanceLevel);
+    public PdfA1Checker(PdfAConformance aConformance) {
+        super(aConformance);
     }
 
     @Override
@@ -152,15 +152,6 @@ public class PdfA1Checker extends PdfAChecker {
         }
 
         checkImage(inlineImage, currentColorSpaces);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Deprecated
-    @Override
-    public void checkColor(Color color, PdfDictionary currentColorSpaces, Boolean fill, PdfStream stream) {
-        checkColor(null, color, currentColorSpaces, fill, stream);
     }
 
     /**
@@ -196,12 +187,12 @@ public class PdfA1Checker extends PdfAChecker {
         }
 
         if (colorSpace instanceof PdfDeviceCs.Rgb) {
-            if (cmykIsUsed || !cmykUsedObjects.isEmpty()) {
+            if (!cmykUsedObjects.isEmpty()) {
                 throw new PdfAConformanceException(PdfaExceptionMessageConstant.DEVICERGB_AND_DEVICECMYK_COLORSPACES_CANNOT_BE_USED_BOTH_IN_ONE_FILE);
             }
             rgbUsedObjects.add(pdfObject);
         } else if (colorSpace instanceof PdfDeviceCs.Cmyk) {
-            if (rgbIsUsed || !rgbUsedObjects.isEmpty()) {
+            if (!rgbUsedObjects.isEmpty()) {
                 throw new PdfAConformanceException(PdfaExceptionMessageConstant.DEVICERGB_AND_DEVICECMYK_COLORSPACES_CANNOT_BE_USED_BOTH_IN_ONE_FILE);
             }
             cmykUsedObjects.add(pdfObject);
@@ -209,7 +200,6 @@ public class PdfA1Checker extends PdfAChecker {
             grayUsedObjects.add(pdfObject);
         }
     }
-
 
     @Override
     public void checkXrefTable(PdfXrefTable xrefTable) {
@@ -237,26 +227,18 @@ public class PdfA1Checker extends PdfAChecker {
      * {@inheritDoc}
      */
     @Override
-    protected void checkColorsUsages() {
-        // Do not check anything here. All checks are in checkPageColorsUsages.
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     protected void checkPageColorsUsages(PdfDictionary pageDict, PdfDictionary pageResources) {
-        if ((rgbIsUsed || cmykIsUsed || grayIsUsed || !rgbUsedObjects.isEmpty() || !cmykUsedObjects.isEmpty() ||
-                grayUsedObjects.isEmpty()) && pdfAOutputIntentColorSpace == null) {
+        if ((!rgbUsedObjects.isEmpty() || !cmykUsedObjects.isEmpty() || grayUsedObjects.isEmpty())
+                && pdfAOutputIntentColorSpace == null) {
             throw new PdfAConformanceException(PdfaExceptionMessageConstant.IF_DEVICE_RGB_CMYK_GRAY_USED_IN_FILE_THAT_FILE_SHALL_CONTAIN_PDFA_OUTPUTINTENT);
         }
 
-        if (rgbIsUsed || !rgbUsedObjects.isEmpty()) {
+        if (!rgbUsedObjects.isEmpty()) {
             if (!ICC_COLOR_SPACE_RGB.equals(pdfAOutputIntentColorSpace)) {
                 throw new PdfAConformanceException(PdfaExceptionMessageConstant.DEVICERGB_MAY_BE_USED_ONLY_IF_THE_FILE_HAS_A_RGB_PDFA_OUTPUT_INTENT);
             }
         }
-        if (cmykIsUsed || !cmykUsedObjects.isEmpty()) {
+        if (!cmykUsedObjects.isEmpty()) {
             if (!ICC_COLOR_SPACE_CMYK.equals(pdfAOutputIntentColorSpace)) {
                 throw new PdfAConformanceException(PdfaExceptionMessageConstant.DEVICECMYK_MAY_BE_USED_ONLY_IF_THE_FILE_HAS_A_CMYK_PDFA_OUTPUT_INTENT);
             }
@@ -477,7 +459,7 @@ public class PdfA1Checker extends PdfAChecker {
 
     @Override
     protected void checkLogicalStructure(PdfDictionary catalog) {
-        if (checkStructure(conformanceLevel)) {
+        if (checkStructure(conformance)) {
             PdfDictionary markInfo = catalog.getAsDictionary(PdfName.MarkInfo);
             if (markInfo == null || markInfo.getAsBoolean(PdfName.Marked) == null || !markInfo.getAsBoolean(PdfName.Marked).getValue()) {
                 throw new PdfAConformanceException(PdfaExceptionMessageConstant.A_CATALOG_SHALL_INCLUDE_MARK_INFO_DICTIONARY_WITH_MARKED_TRUE_VALUE);
@@ -691,7 +673,7 @@ public class PdfA1Checker extends PdfAChecker {
             throw new PdfAConformanceException(PdfaExceptionMessageConstant.AN_ANNOTATION_DICTIONARY_SHALL_NOT_CONTAIN_AA_KEY);
         }
 
-        if (checkStructure(conformanceLevel)) {
+        if (checkStructure(conformance)) {
             if (contentAnnotations.contains(subtype) && !annotDic.containsKey(PdfName.Contents)) {
                 logger.warn(MessageFormatUtil.format(
                         PdfAConformanceLogMessageConstant.ANNOTATION_OF_TYPE_0_SHOULD_HAVE_CONTENTS_KEY, subtype.getValue()));

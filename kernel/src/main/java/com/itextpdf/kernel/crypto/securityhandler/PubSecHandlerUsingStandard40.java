@@ -69,7 +69,6 @@ public class PubSecHandlerUsingStandard40 extends PubKeySecurityHandler {
 
     protected void setPubSecSpecificHandlerDicEntries(PdfDictionary encryptionDictionary, boolean encryptMetadata, boolean embeddedFilesOnly) {
         encryptionDictionary.put(PdfName.Filter, PdfName.Adobe_PubSec);
-        encryptionDictionary.put(PdfName.R, new PdfNumber(2));
 
         PdfArray recipients = createRecipientsArray();
         encryptionDictionary.put(PdfName.V, new PdfNumber(1));

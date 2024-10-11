@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser;
 
+import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -32,11 +33,12 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
 import com.itextpdf.kernel.pdf.canvas.parser.data.ImageRenderInfo;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
+import com.itextpdf.kernel.pdf.canvas.parser.listener.SimpleTextExtractionStrategy;
+import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs.Indexed;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -46,17 +48,17 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class InlineImageExtractionTest extends ExtendedITextTest {
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/canvas/parser/InlineImageExtractionTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/canvas/parser/InlineImageExtractionTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
@@ -72,11 +74,11 @@ public class InlineImageExtractionTest extends ExtendedITextTest {
 
         List<PdfStream> inlineImages = eventListener.getInlineImages();
 
-        Assert.assertEquals(1, inlineImages.size());
+        Assertions.assertEquals(1, inlineImages.size());
 
         byte[] imgBytes = inlineImages.get(0).getBytes();
         byte[] cmpImgBytes = Files.readAllBytes(Paths.get(sourceFolder, "imgtest.dat"));
-        Assert.assertArrayEquals(cmpImgBytes, imgBytes);
+        Assertions.assertArrayEquals(cmpImgBytes, imgBytes);
 
         PdfDictionary expectedDict = new PdfDictionary();
         expectedDict.put(PdfName.BitsPerComponent, new PdfNumber(8));
@@ -102,7 +104,7 @@ public class InlineImageExtractionTest extends ExtendedITextTest {
         Indexed expectedIndexedCs = new Indexed(PdfName.DeviceRGB, 255, new PdfString(indexedCsLookupData));
         expectedDict.put(PdfName.ColorSpace, expectedIndexedCs.getPdfObject());
 
-        Assert.assertTrue(new CompareTool().compareDictionaries(inlineImages.get(0), expectedDict));
+        Assertions.assertTrue(new CompareTool().compareDictionaries(inlineImages.get(0), expectedDict));
     }
 
     @Test
@@ -117,24 +119,173 @@ public class InlineImageExtractionTest extends ExtendedITextTest {
 
         byte[] cmpImgBytes = Files.readAllBytes(Paths.get(sourceFolder, "docWithInlineImageBytes.dat"));
 
-        Assert.assertArrayEquals(cmpImgBytes, data);
+        Assertions.assertArrayEquals(cmpImgBytes, data);
+    }
+
+    @Test
+    public void parseInlineImageCalRGBColorSpaceTest() throws IOException {
+        try(PdfDocument pdf = new PdfDocument(new PdfReader(sourceFolder + "inlineImageCalRGBColorSpace.pdf"))){
+            PdfCanvasProcessor pdfCanvasProcessor = new PdfCanvasProcessor(new SimpleTextExtractionStrategy());
+            pdfCanvasProcessor.processPageContent(pdf.getPage(1));
+
+            PdfName name = new PdfName("Cs1");
+            PdfColorSpace colorSpace = pdf.getPage(1).getResources().getColorSpace(name);
+
+            PdfArray pdfArray = (PdfArray) colorSpace.getPdfObject();
+            PdfName actualName = (PdfName) pdfArray.get(0);
+
+            Assertions.assertEquals(PdfName.CalRGB, actualName);
+        }
+    }
+
+    @Test
+    public void parseInlineImageCalGrayColorSpaceTest() throws IOException {
+        try(PdfDocument pdf = new PdfDocument(new PdfReader(sourceFolder + "inlineImageCalGrayColorSpace.pdf"))){
+            PdfCanvasProcessor pdfCanvasProcessor = new PdfCanvasProcessor(new SimpleTextExtractionStrategy());
+            pdfCanvasProcessor.processPageContent(pdf.getPage(1));
+
+            PdfName name = new PdfName("Cs1");
+            PdfColorSpace colorSpace = pdf.getPage(1).getResources().getColorSpace(name);
+
+            PdfArray pdfArray = (PdfArray) colorSpace.getPdfObject();
+            PdfName actualName = (PdfName) pdfArray.get(0);
+
+            Assertions.assertEquals(PdfName.CalGray, actualName);
+        }
+    }
+
+    @Test
+    public void parseInlineImageLabColorSpaceTest() throws IOException {
+        try(PdfDocument pdf = new PdfDocument(new PdfReader(sourceFolder + "inlineImageLabColorSpace.pdf"))){
+            PdfCanvasProcessor pdfCanvasProcessor = new PdfCanvasProcessor(new SimpleTextExtractionStrategy());
+            pdfCanvasProcessor.processPageContent(pdf.getPage(1));
+
+            PdfName name = new PdfName("Cs1");
+            PdfColorSpace colorSpace = pdf.getPage(1).getResources().getColorSpace(name);
+
+            PdfArray pdfArray = (PdfArray) colorSpace.getPdfObject();
+            PdfName actualName = (PdfName) pdfArray.get(0);
+
+            Assertions.assertEquals(PdfName.Lab, actualName);
+        }
+    }
+
+    @Test
+    public void parseInlineImageICCBasedColorSpaceTest() throws IOException {
+        try(PdfDocument pdf = new PdfDocument(new PdfReader(sourceFolder + "inlineImageICCBasedColorSpace.pdf"))){
+            PdfCanvasProcessor pdfCanvasProcessor = new PdfCanvasProcessor(new SimpleTextExtractionStrategy());
+            pdfCanvasProcessor.processPageContent(pdf.getPage(1));
+
+            PdfName name = new PdfName("Cs1");
+            PdfColorSpace colorSpace = pdf.getPage(1).getResources().getColorSpace(name);
+
+            PdfArray pdfArray = (PdfArray) colorSpace.getPdfObject();
+            PdfName actualName = (PdfName) pdfArray.get(0);
+
+            Assertions.assertEquals(PdfName.ICCBased, actualName);
+        }
+    }
+
+    @Test
+    public void parseInlineImageDeviceRGBColorSpaceTest() throws IOException {
+        try(PdfDocument pdf = new PdfDocument(new PdfReader(sourceFolder + "inlineImageDeviceRGBColorSpace.pdf"))){
+            PdfCanvasProcessor pdfCanvasProcessor = new PdfCanvasProcessor(new SimpleTextExtractionStrategy());
+            pdfCanvasProcessor.processPageContent(pdf.getPage(1));
+
+            PdfStream stream = pdf.getPage(1).getContentStream(0);
+            String firstPageData = new String(stream.getBytes());
+
+            Assertions.assertTrue(firstPageData.contains(PdfName.DeviceRGB.getValue()));
+        }
+    }
+
+    @Test
+    public void parseInlineImageDeviceCMYKColorSpaceTest() throws IOException {
+        try(PdfDocument pdf = new PdfDocument(new PdfReader(sourceFolder + "inlineImageDeviceCMYKColorSpace.pdf"))){
+            PdfCanvasProcessor pdfCanvasProcessor = new PdfCanvasProcessor(new SimpleTextExtractionStrategy());
+            pdfCanvasProcessor.processPageContent(pdf.getPage(1));
+
+            PdfStream stream = pdf.getPage(1).getContentStream(0);
+            String firstPageData = new String(stream.getBytes());
+
+            Assertions.assertTrue(firstPageData.contains(PdfName.DeviceCMYK.getValue()));
+        }
+    }
+
+    @Test
+    public void parseInlineImageDeviceGrayColorSpaceTest() throws IOException {
+        try(PdfDocument pdf = new PdfDocument(new PdfReader(sourceFolder + "inlineImageDeviceGrayColorSpace.pdf"))){
+            PdfCanvasProcessor pdfCanvasProcessor = new PdfCanvasProcessor(new SimpleTextExtractionStrategy());
+            pdfCanvasProcessor.processPageContent(pdf.getPage(1));
+
+            PdfStream stream = pdf.getPage(1).getContentStream(0);
+            String firstPageData = new String(stream.getBytes());
+
+            Assertions.assertTrue(firstPageData.contains(PdfName.DeviceGray.getValue()));
+        }
+    }
+
+    @Test
+    public void parseInlineImageSeparationColorSpaceTest() throws IOException {
+        try(PdfDocument pdf = new PdfDocument(new PdfReader(sourceFolder + "inlineImageSeparationColorSpace.pdf"))){
+            PdfCanvasProcessor pdfCanvasProcessor = new PdfCanvasProcessor(new SimpleTextExtractionStrategy());
+            pdfCanvasProcessor.processPageContent(pdf.getPage(1));
+
+            PdfName name = new PdfName("Cs1");
+            PdfColorSpace colorSpace = pdf.getPage(1).getResources().getColorSpace(name);
+
+            PdfArray pdfArray = (PdfArray) colorSpace.getPdfObject();
+            PdfName actualName = (PdfName) pdfArray.get(0);
+
+            Assertions.assertEquals(PdfName.Separation, actualName);
+        }
+    }
+
+    @Test
+    public void parseInlineImageDeviceNColorSpaceTest() throws IOException {
+        try(PdfDocument pdf = new PdfDocument(new PdfReader(sourceFolder + "inlineImageDeviceNColorSpace.pdf"))){
+            PdfCanvasProcessor pdfCanvasProcessor = new PdfCanvasProcessor(new SimpleTextExtractionStrategy());
+            pdfCanvasProcessor.processPageContent(pdf.getPage(1));
+
+            PdfName name = new PdfName("Cs1");
+            PdfColorSpace colorSpace = pdf.getPage(1).getResources().getColorSpace(name);
+
+            PdfArray pdfArray = (PdfArray) colorSpace.getPdfObject();
+            PdfName actualName = (PdfName) pdfArray.get(0);
+
+            Assertions.assertEquals(PdfName.DeviceN, actualName);
+        }
+    }
+
+    @Test
+    public void parseInlineImageIndexedColorSpaceTest() throws IOException {
+        try(PdfDocument pdf = new PdfDocument(new PdfReader(sourceFolder + "inlineImageIndexedColorSpace.pdf"))){
+            PdfCanvasProcessor pdfCanvasProcessor = new PdfCanvasProcessor(new SimpleTextExtractionStrategy());
+            pdfCanvasProcessor.processPageContent(pdf.getPage(1));
+
+            PdfName name = new PdfName("Cs1");
+            PdfColorSpace colorSpace = pdf.getPage(1).getResources().getColorSpace(name);
+
+            PdfArray pdfArray = (PdfArray) colorSpace.getPdfObject();
+            PdfName actualName = (PdfName) pdfArray.get(0);
+
+            Assertions.assertEquals(PdfName.Indexed, actualName);
+        }
     }
 
     private static class InlineImageEventListener implements IEventListener {
-        private List<PdfStream> inlineImages = new ArrayList<>();
+        private final List<PdfStream> inlineImages = new ArrayList<>();
 
         public List<PdfStream> getInlineImages() {
             return inlineImages;
         }
 
         public void eventOccurred(IEventData data, EventType type) {
-            switch (type) {
-                case RENDER_IMAGE:
-                    ImageRenderInfo imageEventData = (ImageRenderInfo) data;
-                    if (((ImageRenderInfo) data).isInline()) {
-                        inlineImages.add(imageEventData.getImage().getPdfObject());
-                    }
-                    break;
+            if (type == EventType.RENDER_IMAGE) {
+                ImageRenderInfo imageEventData = (ImageRenderInfo) data;
+                if (((ImageRenderInfo) data).isInline()) {
+                    inlineImages.add(imageEventData.getImage().getPdfObject());
+                }
             }
         }
 

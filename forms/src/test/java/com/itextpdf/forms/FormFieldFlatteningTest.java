@@ -37,22 +37,21 @@ import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class FormFieldFlatteningTest extends ExtendedITextTest {
 
     public static final String destinationFolder = "./target/test/com/itextpdf/forms/FormFieldFlatteningTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/FormFieldFlatteningTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
@@ -65,7 +64,7 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
 
         PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, false);
 
-        Assert.assertEquals(0, form.getFieldsForFlattening().size());
+        Assertions.assertEquals(0, form.getFieldsForFlattening().size());
 
         form.partialFormFlattening("radioName");
         form.partialFormFlattening("Text1");
@@ -73,9 +72,9 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
         PdfFormField radioNameField = form.getField("radioName");
         PdfFormField text1Field = form.getField("Text1");
 
-        Assert.assertEquals(2, form.getFieldsForFlattening().size());
-        Assert.assertTrue(form.getFieldsForFlattening().contains(radioNameField));
-        Assert.assertTrue(form.getFieldsForFlattening().contains(text1Field));
+        Assertions.assertEquals(2, form.getFieldsForFlattening().size());
+        Assertions.assertTrue(form.getFieldsForFlattening().contains(radioNameField));
+        Assertions.assertTrue(form.getFieldsForFlattening().contains(text1Field));
 
         form.flattenFields();
         pdfDoc.close();
@@ -83,7 +82,7 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
         PdfDocument outPdfDoc = new PdfDocument(new PdfReader(outPdfName));
         PdfAcroForm outPdfForm = PdfFormCreator.getAcroForm(outPdfDoc, false);
 
-        Assert.assertEquals(2, outPdfForm.getAllFormFields().size());
+        Assertions.assertEquals(2, outPdfForm.getAllFormFields().size());
 
         outPdfDoc.close();
     }
@@ -116,7 +115,7 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
         form.flattenFields();
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(dest, cmp, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(dest, cmp, destinationFolder, "diff_"));
     }
 
     @Test
@@ -174,7 +173,7 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
                         "diff_");
 
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -234,7 +233,7 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
         form.flattenFields();
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(dest, cmp, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(dest, cmp, destinationFolder, "diff_"));
     }
 
     @Test
@@ -257,7 +256,7 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
             isReadOnly = (isReadOnly && field.isReadOnly());
         }
         pdfDoc.close();
-        Assert.assertTrue(isReadOnly);
+        Assertions.assertTrue(isReadOnly);
     }
 
     @Test

@@ -29,15 +29,14 @@ import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.Collections;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class GapShorthandResolverTest extends ExtendedITextTest {
     @Test
     public void initialOrInheritOrUnsetValuesTest() {
@@ -45,27 +44,27 @@ public class GapShorthandResolverTest extends ExtendedITextTest {
 
         String initialShorthand = CommonCssConstants.INITIAL;
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(initialShorthand);
-        Assert.assertEquals(2, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.ROW_GAP, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals(CommonCssConstants.INITIAL, resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.COLUMN_GAP, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals(CommonCssConstants.INITIAL, resolvedShorthand.get(1).getExpression());
+        Assertions.assertEquals(2, resolvedShorthand.size());
+        Assertions.assertEquals(CommonCssConstants.ROW_GAP, resolvedShorthand.get(0).getProperty());
+        Assertions.assertEquals(CommonCssConstants.INITIAL, resolvedShorthand.get(0).getExpression());
+        Assertions.assertEquals(CommonCssConstants.COLUMN_GAP, resolvedShorthand.get(1).getProperty());
+        Assertions.assertEquals(CommonCssConstants.INITIAL, resolvedShorthand.get(1).getExpression());
 
         String inheritShorthand = CommonCssConstants.INHERIT;
         resolvedShorthand = resolver.resolveShorthand(inheritShorthand);
-        Assert.assertEquals(2, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.ROW_GAP, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals(CommonCssConstants.INHERIT, resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.COLUMN_GAP, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals(CommonCssConstants.INHERIT, resolvedShorthand.get(1).getExpression());
+        Assertions.assertEquals(2, resolvedShorthand.size());
+        Assertions.assertEquals(CommonCssConstants.ROW_GAP, resolvedShorthand.get(0).getProperty());
+        Assertions.assertEquals(CommonCssConstants.INHERIT, resolvedShorthand.get(0).getExpression());
+        Assertions.assertEquals(CommonCssConstants.COLUMN_GAP, resolvedShorthand.get(1).getProperty());
+        Assertions.assertEquals(CommonCssConstants.INHERIT, resolvedShorthand.get(1).getExpression());
 
         String unsetShorthand = CommonCssConstants.UNSET;
         resolvedShorthand = resolver.resolveShorthand(unsetShorthand);
-        Assert.assertEquals(2, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.ROW_GAP, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals(CommonCssConstants.UNSET, resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.COLUMN_GAP, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals(CommonCssConstants.UNSET, resolvedShorthand.get(1).getExpression());
+        Assertions.assertEquals(2, resolvedShorthand.size());
+        Assertions.assertEquals(CommonCssConstants.ROW_GAP, resolvedShorthand.get(0).getProperty());
+        Assertions.assertEquals(CommonCssConstants.UNSET, resolvedShorthand.get(0).getExpression());
+        Assertions.assertEquals(CommonCssConstants.COLUMN_GAP, resolvedShorthand.get(1).getProperty());
+        Assertions.assertEquals(CommonCssConstants.UNSET, resolvedShorthand.get(1).getExpression());
     }
 
     @Test
@@ -74,11 +73,11 @@ public class GapShorthandResolverTest extends ExtendedITextTest {
 
         String initialWithSpacesShorthand = "  initial  ";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(initialWithSpacesShorthand);
-        Assert.assertEquals(2, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.ROW_GAP, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals(CommonCssConstants.INITIAL, resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.COLUMN_GAP, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals(CommonCssConstants.INITIAL, resolvedShorthand.get(1).getExpression());
+        Assertions.assertEquals(2, resolvedShorthand.size());
+        Assertions.assertEquals(CommonCssConstants.ROW_GAP, resolvedShorthand.get(0).getProperty());
+        Assertions.assertEquals(CommonCssConstants.INITIAL, resolvedShorthand.get(0).getExpression());
+        Assertions.assertEquals(CommonCssConstants.COLUMN_GAP, resolvedShorthand.get(1).getProperty());
+        Assertions.assertEquals(CommonCssConstants.INITIAL, resolvedShorthand.get(1).getExpression());
     }
 
     @Test
@@ -87,13 +86,13 @@ public class GapShorthandResolverTest extends ExtendedITextTest {
         IShorthandResolver resolver = new GapShorthandResolver();
 
         String containsInitialShorthand = "10px initial ";
-        Assert.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(containsInitialShorthand));
+        Assertions.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(containsInitialShorthand));
 
         String containsInheritShorthand = "inherit 10%";
-        Assert.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(containsInheritShorthand));
+        Assertions.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(containsInheritShorthand));
 
         String containsUnsetShorthand = "0 unset";
-        Assert.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(containsUnsetShorthand));
+        Assertions.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(containsUnsetShorthand));
     }
 
     @Test
@@ -101,10 +100,10 @@ public class GapShorthandResolverTest extends ExtendedITextTest {
     public void emptyShorthandTest() {
         IShorthandResolver resolver = new GapShorthandResolver();
         String emptyShorthand = "";
-        Assert.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(emptyShorthand));
+        Assertions.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(emptyShorthand));
 
         String shorthandWithSpaces = "    ";
-        Assert.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(shorthandWithSpaces));
+        Assertions.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(shorthandWithSpaces));
     }
 
     @Test
@@ -114,11 +113,11 @@ public class GapShorthandResolverTest extends ExtendedITextTest {
         String shorthand = "10px";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(2, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.ROW_GAP, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals("10px", resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.COLUMN_GAP, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals("10px", resolvedShorthand.get(1).getExpression());
+        Assertions.assertEquals(2, resolvedShorthand.size());
+        Assertions.assertEquals(CommonCssConstants.ROW_GAP, resolvedShorthand.get(0).getProperty());
+        Assertions.assertEquals("10px", resolvedShorthand.get(0).getExpression());
+        Assertions.assertEquals(CommonCssConstants.COLUMN_GAP, resolvedShorthand.get(1).getProperty());
+        Assertions.assertEquals("10px", resolvedShorthand.get(1).getExpression());
     }
 
     @Test
@@ -129,7 +128,7 @@ public class GapShorthandResolverTest extends ExtendedITextTest {
         String shorthand = "10";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(0, resolvedShorthand.size());
+        Assertions.assertEquals(0, resolvedShorthand.size());
     }
 
     @Test
@@ -139,11 +138,11 @@ public class GapShorthandResolverTest extends ExtendedITextTest {
         String shorthand = "10px 15px";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(2, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.ROW_GAP, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals("10px", resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.COLUMN_GAP, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals("15px", resolvedShorthand.get(1).getExpression());
+        Assertions.assertEquals(2, resolvedShorthand.size());
+        Assertions.assertEquals(CommonCssConstants.ROW_GAP, resolvedShorthand.get(0).getProperty());
+        Assertions.assertEquals("10px", resolvedShorthand.get(0).getExpression());
+        Assertions.assertEquals(CommonCssConstants.COLUMN_GAP, resolvedShorthand.get(1).getProperty());
+        Assertions.assertEquals("15px", resolvedShorthand.get(1).getExpression());
     }
 
     @Test
@@ -153,11 +152,11 @@ public class GapShorthandResolverTest extends ExtendedITextTest {
         String shorthand = "10px 15px";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(2, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.ROW_GAP, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals("10px", resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.COLUMN_GAP, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals("15px", resolvedShorthand.get(1).getExpression());
+        Assertions.assertEquals(2, resolvedShorthand.size());
+        Assertions.assertEquals(CommonCssConstants.ROW_GAP, resolvedShorthand.get(0).getProperty());
+        Assertions.assertEquals("10px", resolvedShorthand.get(0).getExpression());
+        Assertions.assertEquals(CommonCssConstants.COLUMN_GAP, resolvedShorthand.get(1).getProperty());
+        Assertions.assertEquals("15px", resolvedShorthand.get(1).getExpression());
     }
 
     @Test
@@ -168,7 +167,7 @@ public class GapShorthandResolverTest extends ExtendedITextTest {
         String shorthand = "10px 15";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(0, resolvedShorthand.size());
+        Assertions.assertEquals(0, resolvedShorthand.size());
     }
 
     @Test
@@ -179,7 +178,7 @@ public class GapShorthandResolverTest extends ExtendedITextTest {
         String shorthand = "10 15px";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(0, resolvedShorthand.size());
+        Assertions.assertEquals(0, resolvedShorthand.size());
     }
 
     @Test
@@ -189,11 +188,11 @@ public class GapShorthandResolverTest extends ExtendedITextTest {
         String shorthand = "0 10px";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(2, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.ROW_GAP, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals("0", resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.COLUMN_GAP, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals("10px", resolvedShorthand.get(1).getExpression());
+        Assertions.assertEquals(2, resolvedShorthand.size());
+        Assertions.assertEquals(CommonCssConstants.ROW_GAP, resolvedShorthand.get(0).getProperty());
+        Assertions.assertEquals("0", resolvedShorthand.get(0).getExpression());
+        Assertions.assertEquals(CommonCssConstants.COLUMN_GAP, resolvedShorthand.get(1).getProperty());
+        Assertions.assertEquals("10px", resolvedShorthand.get(1).getExpression());
     }
 
     @Test
@@ -204,6 +203,6 @@ public class GapShorthandResolverTest extends ExtendedITextTest {
         String shorthand = "10px 15px 20px";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(Collections.<CssDeclaration>emptyList(), resolvedShorthand);
+        Assertions.assertEquals(Collections.<CssDeclaration>emptyList(), resolvedShorthand);
     }
 }

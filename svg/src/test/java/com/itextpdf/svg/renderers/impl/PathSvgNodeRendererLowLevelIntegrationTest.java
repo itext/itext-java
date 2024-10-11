@@ -32,15 +32,14 @@ import com.itextpdf.svg.renderers.path.impl.ClosePath;
 import com.itextpdf.svg.renderers.path.impl.EllipticalCurveTo;
 import com.itextpdf.svg.renderers.path.impl.MoveTo;
 import com.itextpdf.svg.renderers.path.impl.SmoothSCurveTo;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.util.List;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrationTest {
 
     @Test
@@ -49,9 +48,9 @@ public class PathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrationTe
         String instructions = "M 200,300 a 10 10 0 0 0 10 10";
         path.setAttribute(SvgConstants.Attributes.D, instructions);
         List<IPathShape> segments = (List<IPathShape>) path.getShapes();
-        Assert.assertEquals(2, segments.size());
-        Assert.assertTrue(segments.get(0) instanceof MoveTo);
-        Assert.assertTrue(segments.get(1) instanceof EllipticalCurveTo);
+        Assertions.assertEquals(2, segments.size());
+        Assertions.assertTrue(segments.get(0) instanceof MoveTo);
+        Assertions.assertTrue(segments.get(1) instanceof EllipticalCurveTo);
     }
 
     @Test
@@ -61,7 +60,7 @@ public class PathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrationTe
         path.setAttribute(SvgConstants.Attributes.D, instructions);
         IPathShape arc = ((List<IPathShape>) path.getShapes()).get(1);
         Point end = arc.getEndingPoint();
-        Assert.assertEquals(new Point(210, 310), end);
+        Assertions.assertEquals(new Point(210, 310), end);
     }
 
     @Test
@@ -71,7 +70,7 @@ public class PathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrationTe
         path.setAttribute(SvgConstants.Attributes.D, instructions);
         IPathShape arc = ((List<IPathShape>) path.getShapes()).get(2);
         Point end = arc.getEndingPoint();
-        Assert.assertEquals(new Point(220, 320), end);
+        Assertions.assertEquals(new Point(220, 320), end);
     }
 
     @Test
@@ -81,7 +80,7 @@ public class PathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrationTe
         path.setAttribute(SvgConstants.Attributes.D, instructions);
         IPathShape arc = ((List<IPathShape>) path.getShapes()).get(1);
         Point end = arc.getEndingPoint();
-        Assert.assertEquals(new Point(210, 310), end);
+        Assertions.assertEquals(new Point(210, 310), end);
     }
 
     @Test
@@ -91,7 +90,7 @@ public class PathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrationTe
         path.setAttribute(SvgConstants.Attributes.D, instructions);
         IPathShape arc = ((List<IPathShape>) path.getShapes()).get(2);
         Point end = arc.getEndingPoint();
-        Assert.assertEquals(new Point(220, 320), end);
+        Assertions.assertEquals(new Point(220, 320), end);
     }
 
     // tests resulting in empty path
@@ -100,7 +99,7 @@ public class PathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrationTe
         PathSvgNodeRenderer path = new PathSvgNodeRenderer();
         String instructions = "";
         path.setAttribute(SvgConstants.Attributes.D, instructions);
-        Assert.assertTrue(path.getShapes().isEmpty());
+        Assertions.assertTrue(path.getShapes().isEmpty());
     }
 
     @Test
@@ -108,7 +107,7 @@ public class PathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrationTe
         PathSvgNodeRenderer path = new PathSvgNodeRenderer();
         String instructions = "200";
         path.setAttribute(SvgConstants.Attributes.D, instructions);
-        Assert.assertTrue(path.getShapes().isEmpty());
+        Assertions.assertTrue(path.getShapes().isEmpty());
     }
 
     @Test
@@ -117,7 +116,7 @@ public class PathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrationTe
         String instructions = "F";
         path.setAttribute(SvgConstants.Attributes.D, instructions);
 
-        Assert.assertThrows(SvgProcessingException.class, () -> path.getShapes());
+        Assertions.assertThrows(SvgProcessingException.class, () -> path.getShapes());
     }
 
     @Test
@@ -126,7 +125,7 @@ public class PathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrationTe
         String instructions = "z";
         path.setAttribute(SvgConstants.Attributes.D, instructions);
 
-        Assert.assertThrows(SvgProcessingException.class, () -> path.getShapes());
+        Assertions.assertThrows(SvgProcessingException.class, () -> path.getShapes());
     }
 
     @Test
@@ -134,7 +133,7 @@ public class PathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrationTe
         PathSvgNodeRenderer path = new PathSvgNodeRenderer();
         String instructions = "M";
         path.setAttribute(SvgConstants.Attributes.D, instructions);
-        Assert.assertTrue(path.getShapes().isEmpty());
+        Assertions.assertTrue(path.getShapes().isEmpty());
     }
 
     @Test
@@ -142,7 +141,7 @@ public class PathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrationTe
         PathSvgNodeRenderer path = new PathSvgNodeRenderer();
         String instructions = "M 500";
         path.setAttribute(SvgConstants.Attributes.D, instructions);
-        Assert.assertTrue(path.getShapes().isEmpty());
+        Assertions.assertTrue(path.getShapes().isEmpty());
     }
 
     @Test
@@ -150,7 +149,7 @@ public class PathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrationTe
         PathSvgNodeRenderer path = new PathSvgNodeRenderer();
         String instructions = "M 500 500 200 200 300 300";
         path.setAttribute(SvgConstants.Attributes.D, instructions);
-        Assert.assertEquals(3, path.getShapes().size());
+        Assertions.assertEquals(3, path.getShapes().size());
     }
 
     @Test
@@ -158,7 +157,7 @@ public class PathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrationTe
         PathSvgNodeRenderer path = new PathSvgNodeRenderer();
         String instructions = "L 500 500 200 200 300";
         path.setAttribute(SvgConstants.Attributes.D, instructions);
-        Assert.assertEquals(2, path.getShapes().size());
+        Assertions.assertEquals(2, path.getShapes().size());
     }
 
     @Test
@@ -166,8 +165,8 @@ public class PathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrationTe
         PathSvgNodeRenderer path = new PathSvgNodeRenderer();
         String instructions = "M 500 500 200 200 300 z";
         path.setAttribute(SvgConstants.Attributes.D, instructions);
-        Assert.assertEquals(3, path.getShapes().size());
-        Assert.assertTrue(((List<IPathShape>) path.getShapes()).get(2) instanceof ClosePath);
+        Assertions.assertEquals(3, path.getShapes().size());
+        Assertions.assertTrue(((List<IPathShape>) path.getShapes()).get(2) instanceof ClosePath);
     }
 
     @Test
@@ -175,8 +174,8 @@ public class PathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrationTe
         PathSvgNodeRenderer path = new PathSvgNodeRenderer();
         String instructions = "M 500 500 S 200 100 100 200 300 300 400 400";
         path.setAttribute(SvgConstants.Attributes.D, instructions);
-        Assert.assertEquals(3, path.getShapes().size());
-        Assert.assertTrue(((List<IPathShape>) path.getShapes()).get(2) instanceof SmoothSCurveTo);
+        Assertions.assertEquals(3, path.getShapes().size());
+        Assertions.assertTrue(((List<IPathShape>) path.getShapes()).get(2) instanceof SmoothSCurveTo);
     }
 
     @Test
@@ -185,8 +184,8 @@ public class PathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrationTe
         PathSvgNodeRenderer path = new PathSvgNodeRenderer();
         path.setAttribute(SvgConstants.Attributes.D, instructions);
 
-        Exception e = Assert.assertThrows(SvgProcessingException.class, () -> path.getShapes());
-        Assert.assertEquals(SvgExceptionMessageConstant.INVALID_SMOOTH_CURVE_USE, e.getMessage());
+        Exception e = Assertions.assertThrows(SvgProcessingException.class, () -> path.getShapes());
+        Assertions.assertEquals(SvgExceptionMessageConstant.INVALID_SMOOTH_CURVE_USE, e.getMessage());
     }
 
     @Test
@@ -195,7 +194,7 @@ public class PathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrationTe
         PathSvgNodeRenderer path = new PathSvgNodeRenderer();
         path.setAttribute(SvgConstants.Attributes.D, instructions);
 
-        Exception e = Assert.assertThrows(SvgProcessingException.class, () -> path.getShapes());
-        Assert.assertEquals(SvgExceptionMessageConstant.INVALID_SMOOTH_CURVE_USE, e.getMessage());
+        Exception e = Assertions.assertThrows(SvgProcessingException.class, () -> path.getShapes());
+        Assertions.assertEquals(SvgExceptionMessageConstant.INVALID_SMOOTH_CURVE_USE, e.getMessage());
     }
 }

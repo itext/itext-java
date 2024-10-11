@@ -24,7 +24,6 @@ package com.itextpdf.layout;
 
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
-import com.itextpdf.kernel.pdf.IsoKey;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
@@ -47,6 +46,7 @@ import com.itextpdf.layout.renderer.RootRenderer;
 import com.itextpdf.layout.splitting.DefaultSplitCharacters;
 import com.itextpdf.layout.splitting.ISplitCharacters;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
+import com.itextpdf.layout.validation.context.LayoutValidationContext;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -365,7 +365,7 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
         if (renderer == null) {
             return;
         }
-        pdfDocument.checkIsoConformance(renderer, IsoKey.LAYOUT);
+        pdfDocument.checkIsoConformance(new LayoutValidationContext(renderer));
         List<IRenderer> renderers = renderer.getChildRenderers();
         if (renderers == null) {
             return;

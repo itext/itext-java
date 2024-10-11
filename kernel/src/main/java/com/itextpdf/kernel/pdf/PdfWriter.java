@@ -24,11 +24,18 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.mac.AbstractMacIntegrityProtector;
+import com.itextpdf.kernel.mac.IMacContainerLocator;
+import com.itextpdf.kernel.pdf.event.PdfDocumentEvent;
 import com.itextpdf.kernel.utils.ICopyFilter;
 import com.itextpdf.kernel.utils.NullCopyFilter;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -38,8 +45,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PdfWriter extends PdfOutputStream {
-    private static final byte[] obj = ByteUtils.getIsoBytes(" obj\n");
-    private static final byte[] endobj = ByteUtils.getIsoBytes("\nendobj\n");
+    private static final byte[] OBJ = ByteUtils.getIsoBytes(" obj\n");
+    private static final byte[] ENDOBJ = ByteUtils.getIsoBytes("\nendobj\n");
 
     protected WriterProperties properties;
     //forewarned is forearmed
@@ -54,11 +61,12 @@ public class PdfWriter extends PdfOutputStream {
      * It stores hashes of the indirect reference from the source document and the corresponding
      * indirect references of the copied objects from the new document.
      */
-    private Map<PdfIndirectReference, PdfIndirectReference> copiedObjects = new LinkedHashMap<>();
+    private final Map<PdfIndirectReference, PdfIndirectReference> copiedObjects = new LinkedHashMap<>();
     /**
      * Is used in smart mode to serialize and store serialized objects content.
      */
-    private SmartModePdfObjectsSerializer smartModeSerializer = new SmartModePdfObjectsSerializer();
+    private final SmartModePdfObjectsSerializer smartModeSerializer = new SmartModePdfObjectsSerializer();
+    private OutputStream originalOutputStream;
 
     /**
      * Create a PdfWriter writing to the passed File and with default writer properties.
@@ -69,7 +77,7 @@ public class PdfWriter extends PdfOutputStream {
      *                               rather than a regular file, does not exist but cannot
      *                               be created, or cannot be opened for any other reason
      */
-    public PdfWriter(java.io.File file) throws FileNotFoundException {
+    public PdfWriter(java.io.File file) throws IOException {
         this(file.getAbsolutePath());
     }
 
@@ -82,6 +90,13 @@ public class PdfWriter extends PdfOutputStream {
         this(os, new WriterProperties());
     }
 
+    /**
+     * Creates {@link PdfWriter} instance, which writes to the passed {@link OutputStream},
+     * using provided {@link WriterProperties}.
+     *
+     * @param os {@link OutputStream} in which writing should happen
+     * @param properties {@link WriterProperties} to be used during the writing
+     */
     public PdfWriter(java.io.OutputStream os, WriterProperties properties) {
         super(new CountOutputStream(FileUtil.wrapWithBufferedOutputStream(os)));
         this.properties = properties;
@@ -96,7 +111,7 @@ public class PdfWriter extends PdfOutputStream {
      *                               rather than a regular file, does not exist but cannot
      *                               be created, or cannot be opened for any other reason
      */
-    public PdfWriter(String filename) throws FileNotFoundException {
+    public PdfWriter(String filename) throws IOException {
         this(filename, new WriterProperties());
     }
 
@@ -110,7 +125,7 @@ public class PdfWriter extends PdfOutputStream {
      *                               rather than a regular file, does not exist but cannot
      *                               be created, or cannot be opened for any other reason
      */
-    public PdfWriter(String filename, WriterProperties properties) throws FileNotFoundException {
+    public PdfWriter(String filename, WriterProperties properties) throws IOException {
         this(FileUtil.getBufferedOutputStream(filename), properties);
     }
 
@@ -147,6 +162,15 @@ public class PdfWriter extends PdfOutputStream {
     }
 
     /**
+     * Gets defined pdf version for the document.
+     *
+     * @return version for the document
+     */
+    public PdfVersion getPdfVersion() {
+        return properties.pdfVersion;
+    }
+
+    /**
      * Gets the writer properties.
      *
      * @return The {@link WriterProperties} of the current PdfWriter.
@@ -173,16 +197,40 @@ public class PdfWriter extends PdfOutputStream {
         return this;
     }
 
+    /**
+     * Initializes {@link PdfEncryption} object if any encryption is specified in {@link WriterProperties}.
+     *
+     * @param version {@link PdfVersion} version of the document in question
+     */
     protected void initCryptoIfSpecified(PdfVersion version) {
         EncryptionProperties encryptProps = properties.encryptionProperties;
+        // Suppress MAC properties for PDF version < 2.0 and old deprecated encryption algorithms
+        // if default ones have been passed to WriterProperties
+        final int encryptionAlgorithm = crypto == null ?
+                (encryptProps.encryptionAlgorithm & EncryptionConstants.ENCRYPTION_MASK) :
+                crypto.getEncryptionAlgorithm();
+        if (document.properties.disableMac) {
+            encryptProps.macProperties = null;
+        }
+        if (encryptProps.macProperties == EncryptionProperties.DEFAULT_MAC_PROPERTIES) {
+            if (version == null || version.compareTo(PdfVersion.PDF_2_0) < 0 ||
+                    encryptionAlgorithm < EncryptionConstants.ENCRYPTION_AES_256) {
+                encryptProps.macProperties = null;
+            }
+        }
+
+        AbstractMacIntegrityProtector mac = encryptProps.macProperties == null ? null : document.getDiContainer()
+                .getInstance(IMacContainerLocator.class)
+                .createMacIntegrityProtector(document, encryptProps.macProperties);
         if (properties.isStandardEncryptionUsed()) {
             crypto = new PdfEncryption(encryptProps.userPassword, encryptProps.ownerPassword,
                     encryptProps.standardEncryptPermissions,
                     encryptProps.encryptionAlgorithm,
-                    ByteUtils.getIsoBytes(this.document.getOriginalDocumentId().getValue()), version);
+                    ByteUtils.getIsoBytes(this.document.getOriginalDocumentId().getValue()),
+                    version, mac);
         } else if (properties.isPublicKeyEncryptionUsed()) {
-            crypto = new PdfEncryption(encryptProps.publicCertificates,
-                    encryptProps.publicKeyEncryptPermissions, encryptProps.encryptionAlgorithm, version);
+            crypto = new PdfEncryption(encryptProps.publicCertificates, encryptProps.publicKeyEncryptPermissions,
+                    encryptProps.encryptionAlgorithm, version, mac);
         }
     }
 
@@ -310,9 +358,9 @@ public class PdfWriter extends PdfOutputStream {
         }
         writeInteger(pdfObj.getIndirectReference().getObjNumber()).
                 writeSpace().
-                writeInteger(pdfObj.getIndirectReference().getGenNumber()).writeBytes(obj);
+                writeInteger(pdfObj.getIndirectReference().getGenNumber()).writeBytes(OBJ);
         write(pdfObj);
-        writeBytes(endobj);
+        writeBytes(ENDOBJ);
     }
 
     /**
@@ -383,6 +431,19 @@ public class PdfWriter extends PdfOutputStream {
         }
     }
 
+    void finish() throws IOException {
+        if (document != null && !document.isClosed()) {
+            // Writer is always closed as part of document closing
+            document.dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.START_WRITER_CLOSING));
+
+            if (isByteArrayWritingMode()) {
+                completeByteArrayWritingMode();
+            }
+        }
+
+        close();
+    }
+
     /**
      * Gets the current object stream.
      *
@@ -420,6 +481,25 @@ public class PdfWriter extends PdfOutputStream {
         for (PdfIndirectReference ird : remove) {
             copiedObjects.remove(ird);
         }
+    }
+
+    void enableByteArrayWritingMode() {
+        if (isByteArrayWritingMode()) {
+            throw new PdfException("Byte array writing mode is already enabled");
+        } else {
+            this.originalOutputStream = this.outputStream;
+            this.outputStream = new ByteArrayOutputStream();
+        }
+    }
+
+    private void completeByteArrayWritingMode() throws IOException {
+        byte[] baos = ((ByteArrayOutputStream) getOutputStream()).toByteArray();
+        originalOutputStream.write(baos, 0, baos.length);
+        originalOutputStream.close();
+    }
+
+    private boolean isByteArrayWritingMode() {
+        return originalOutputStream != null;
     }
 
     private void markArrayContentToFlush(PdfArray array) {

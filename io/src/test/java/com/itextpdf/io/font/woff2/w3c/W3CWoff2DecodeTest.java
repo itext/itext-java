@@ -23,8 +23,8 @@
 package com.itextpdf.io.font.woff2.w3c;
 
 import com.itextpdf.io.font.woff2.Woff2DecodeTest;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,7 +39,7 @@ public abstract class W3CWoff2DecodeTest extends Woff2DecodeTest{
 
     protected abstract boolean isFontValid();
 
-    @Before
+    @BeforeEach
     public void setUp() {
         if (isDebug()) {
             createOrClearDestinationFolder(getDestinationFolder());

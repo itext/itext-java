@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledInNativeImage;
 
 class BouncyCastleTest {
-    private static final String SOURCE_FOLDER = "com/itextpdf/nativeimage/BouncyCastleTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/nativeimage/BouncyCastleTest/";
 
     @Test
     void readEncryptedDocument() throws IOException {

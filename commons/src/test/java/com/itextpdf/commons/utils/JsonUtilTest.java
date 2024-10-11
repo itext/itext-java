@@ -27,7 +27,6 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -42,11 +41,11 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class JsonUtilTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/commons/utils/JsonUtilTest/";
@@ -61,14 +60,14 @@ public class JsonUtilTest extends ExtendedITextTest {
 
     @Test
     public void utf8CharsetStringTest() {
-        Assert.assertEquals("\"©\"", JsonUtil.serializeToString("©"));
+        Assertions.assertEquals("\"©\"", JsonUtil.serializeToString("©"));
     }
 
     @Test
     public void utf8CharsetStreamTest() throws UnsupportedEncodingException {
         final ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
         JsonUtil.serializeToStream(byteArray, "©");
-        Assert.assertEquals("\"©\"",
+        Assertions.assertEquals("\"©\"",
                 EncodingUtil.convertToString(byteArray.toByteArray(), "UTF-8"));
     }
 
@@ -80,7 +79,7 @@ public class JsonUtilTest extends ExtendedITextTest {
         String resultString = JsonUtil.serializeToString(classWithEnum);
 
         String cmpString = getJsonStringFromFile(cmp);
-        Assert.assertTrue(JsonUtil.areTwoJsonObjectEquals(cmpString, resultString));
+        Assertions.assertTrue(JsonUtil.areTwoJsonObjectEquals(cmpString, resultString));
     }
 
     @Test
@@ -100,7 +99,7 @@ public class JsonUtilTest extends ExtendedITextTest {
             JsonUtil.serializeToStream(serializationResult, createClassWithEnumObject());
             serializationResult.flush();
 
-            Assert.assertArrayEquals(baos.toByteArray(), serializationResult.toByteArray());
+            Assertions.assertArrayEquals(baos.toByteArray(), serializationResult.toByteArray());
         }
     }
 
@@ -112,7 +111,7 @@ public class JsonUtilTest extends ExtendedITextTest {
         String resultString = JsonUtil.serializeToMinimalString(classWithEnum);
 
         String compareString = getJsonStringFromFile(cmp);
-        Assert.assertTrue(JsonUtil.areTwoJsonObjectEquals(compareString, resultString));
+        Assertions.assertTrue(JsonUtil.areTwoJsonObjectEquals(compareString, resultString));
     }
 
     @Test
@@ -132,7 +131,7 @@ public class JsonUtilTest extends ExtendedITextTest {
             JsonUtil.serializeToMinimalStream(serializationResult, createClassWithEnumObject());
             serializationResult.flush();
 
-            Assert.assertArrayEquals(baos.toByteArray(), serializationResult.toByteArray());
+            Assertions.assertArrayEquals(baos.toByteArray(), serializationResult.toByteArray());
         }
     }
 
@@ -144,7 +143,7 @@ public class JsonUtilTest extends ExtendedITextTest {
         String resultString = JsonUtil.serializeToString(stringsForSerialization);
 
         String cmpString = getJsonStringFromFile(cmp);
-        Assert.assertEquals(cmpString,resultString);
+        Assertions.assertEquals(cmpString,resultString);
     }
 
     @Test
@@ -156,7 +155,7 @@ public class JsonUtilTest extends ExtendedITextTest {
                 ByteArrayOutputStream serializationResult = new ByteArrayOutputStream()) {
             JsonUtil.serializeToStream(serializationResult, createStringWithLineBreaks());
 
-            Assert.assertArrayEquals(baos.toByteArray(), serializationResult.toByteArray());
+            Assertions.assertArrayEquals(baos.toByteArray(), serializationResult.toByteArray());
         }
     }
 
@@ -168,7 +167,7 @@ public class JsonUtilTest extends ExtendedITextTest {
         String resultString = JsonUtil.serializeToMinimalString(stringsForSerialization);
 
         String cmpString = getJsonStringFromFile(cmp);
-        Assert.assertEquals(cmpString,resultString);
+        Assertions.assertEquals(cmpString,resultString);
     }
 
     @Test
@@ -180,7 +179,7 @@ public class JsonUtilTest extends ExtendedITextTest {
                 ByteArrayOutputStream serializationResult = new ByteArrayOutputStream()) {
             JsonUtil.serializeToMinimalStream(serializationResult, createStringWithLineBreaks());
 
-            Assert.assertArrayEquals(baos.toByteArray(), serializationResult.toByteArray());
+            Assertions.assertArrayEquals(baos.toByteArray(), serializationResult.toByteArray());
         }
     }
 
@@ -192,7 +191,7 @@ public class JsonUtilTest extends ExtendedITextTest {
         String resultString = JsonUtil.serializeToString(complexStructure);
 
         String compareString = getJsonStringFromFile(cmp);
-        Assert.assertTrue(JsonUtil.areTwoJsonObjectEquals(compareString, resultString));
+        Assertions.assertTrue(JsonUtil.areTwoJsonObjectEquals(compareString, resultString));
     }
 
     @Test
@@ -211,8 +210,8 @@ public class JsonUtilTest extends ExtendedITextTest {
                 ByteArrayOutputStream serializationResult = new ByteArrayOutputStream()) {
             JsonUtil.serializeToStream(serializationResult, createComplexStructureObject());
 
-            Assert.assertNotEquals(0, serializationResult.size());
-            Assert.assertArrayEquals(baos.toByteArray(), serializationResult.toByteArray());
+            Assertions.assertNotEquals(0, serializationResult.size());
+            Assertions.assertArrayEquals(baos.toByteArray(), serializationResult.toByteArray());
         }
     }
 
@@ -224,7 +223,7 @@ public class JsonUtilTest extends ExtendedITextTest {
         String resultString = JsonUtil.serializeToMinimalString(complexStructure);
 
         String compareString = getJsonStringFromFile(cmp);
-        Assert.assertTrue(JsonUtil.areTwoJsonObjectEquals(compareString, resultString));
+        Assertions.assertTrue(JsonUtil.areTwoJsonObjectEquals(compareString, resultString));
     }
 
     @Test
@@ -243,8 +242,8 @@ public class JsonUtilTest extends ExtendedITextTest {
                 ByteArrayOutputStream serializationResult = new ByteArrayOutputStream()) {
             JsonUtil.serializeToMinimalStream(serializationResult, createComplexStructureObject());
 
-            Assert.assertNotEquals(0, serializationResult.size());
-            Assert.assertArrayEquals(baos.toByteArray(), serializationResult.toByteArray());
+            Assertions.assertNotEquals(0, serializationResult.size());
+            Assertions.assertArrayEquals(baos.toByteArray(), serializationResult.toByteArray());
         }
     }
 
@@ -257,7 +256,7 @@ public class JsonUtilTest extends ExtendedITextTest {
         String resultString = JsonUtil.serializeToString(complexStructure);
 
         String compareString = getJsonStringFromFile(cmp);
-        Assert.assertTrue(JsonUtil.areTwoJsonObjectEquals(compareString, resultString));
+        Assertions.assertTrue(JsonUtil.areTwoJsonObjectEquals(compareString, resultString));
     }
 
     @Test
@@ -270,7 +269,7 @@ public class JsonUtilTest extends ExtendedITextTest {
             JsonUtil.serializeToStream(serializationResult,
                     createClassWithDefaultValueObject(null, 4, null));
 
-            Assert.assertArrayEquals(baos.toByteArray(), serializationResult.toByteArray());
+            Assertions.assertArrayEquals(baos.toByteArray(), serializationResult.toByteArray());
         }
     }
 
@@ -283,7 +282,7 @@ public class JsonUtilTest extends ExtendedITextTest {
         String resultString = JsonUtil.serializeToMinimalString(complexStructure);
 
         String compareString = getJsonStringFromFile(cmp);
-        Assert.assertTrue(JsonUtil.areTwoJsonObjectEquals(compareString, resultString));
+        Assertions.assertTrue(JsonUtil.areTwoJsonObjectEquals(compareString, resultString));
     }
 
     @Test
@@ -296,7 +295,7 @@ public class JsonUtilTest extends ExtendedITextTest {
             JsonUtil.serializeToMinimalStream(serializationResult,
                     createClassWithDefaultValueObject(null, 4, null));
 
-            Assert.assertArrayEquals(baos.toByteArray(), serializationResult.toByteArray());
+            Assertions.assertArrayEquals(baos.toByteArray(), serializationResult.toByteArray());
         }
     }
 
@@ -311,7 +310,7 @@ public class JsonUtilTest extends ExtendedITextTest {
         String jsonString = getJsonStringFromFile(source);
 
         String resultStr = JsonUtil.<String>deserializeFromString(jsonString, String.class);
-        Assert.assertNull(resultStr);
+        Assertions.assertNull(resultStr);
     }
 
     @Test
@@ -324,7 +323,7 @@ public class JsonUtilTest extends ExtendedITextTest {
 
         try (InputStream inputStream = FileUtil.getInputStreamForFile(source)) {
             String resultStr = JsonUtil.<String>deserializeFromStream(inputStream, String.class);
-            Assert.assertNull(resultStr);
+            Assertions.assertNull(resultStr);
         }
     }
 
@@ -336,7 +335,7 @@ public class JsonUtilTest extends ExtendedITextTest {
 
         ClassWithDefaultValue instance =
                 JsonUtil.<ClassWithDefaultValue>deserializeFromString(jsonString, ClassWithDefaultValue.class);
-        Assert.assertEquals(createClassWithDefaultValueObject(null, 2, 5.0), instance);
+        Assertions.assertEquals(createClassWithDefaultValueObject(null, 2, 5.0), instance);
     }
 
     @Test
@@ -346,7 +345,7 @@ public class JsonUtilTest extends ExtendedITextTest {
         try (InputStream inputStream = FileUtil.getInputStreamForFile(source)) {
             ClassWithDefaultValue instance =
                     JsonUtil.<ClassWithDefaultValue>deserializeFromStream(inputStream, ClassWithDefaultValue.class);
-            Assert.assertEquals(createClassWithDefaultValueObject(null, 2, 5.0), instance);
+            Assertions.assertEquals(createClassWithDefaultValueObject(null, 2, 5.0), instance);
         }
     }
 
@@ -359,7 +358,7 @@ public class JsonUtilTest extends ExtendedITextTest {
         ComplexStructure complexStructure =
                 JsonUtil.<ComplexStructure>deserializeFromString(jsonString, ComplexStructure.class);
 
-        Assert.assertEquals(createComplexStructureObject(), complexStructure);
+        Assertions.assertEquals(createComplexStructureObject(), complexStructure);
     }
 
     @Test
@@ -370,7 +369,7 @@ public class JsonUtilTest extends ExtendedITextTest {
             ComplexStructure complexStructure =
                     JsonUtil.<ComplexStructure>deserializeFromStream(inputStream, ComplexStructure.class);
 
-            Assert.assertEquals(createComplexStructureObject(), complexStructure);
+            Assertions.assertEquals(createComplexStructureObject(), complexStructure);
         }
     }
 
@@ -382,7 +381,7 @@ public class JsonUtilTest extends ExtendedITextTest {
 
         ClassWithEnum classWithEnum = JsonUtil.<ClassWithEnum>deserializeFromString(jsonString, ClassWithEnum.class);
 
-        Assert.assertEquals(createClassWithEnumObject(), classWithEnum);
+        Assertions.assertEquals(createClassWithEnumObject(), classWithEnum);
     }
 
     @Test
@@ -393,7 +392,7 @@ public class JsonUtilTest extends ExtendedITextTest {
             ClassWithEnum classWithEnum = JsonUtil
                     .<ClassWithEnum>deserializeFromStream(inputStream, ClassWithEnum.class);
 
-            Assert.assertEquals(createClassWithEnumObject(), classWithEnum);
+            Assertions.assertEquals(createClassWithEnumObject(), classWithEnum);
         }
     }
 
@@ -406,7 +405,7 @@ public class JsonUtilTest extends ExtendedITextTest {
         ClassWithDefaultValue instance =
                 JsonUtil.<ClassWithDefaultValue>deserializeFromString(jsonString, ClassWithDefaultValue.class);
 
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 createClassWithDefaultValueObject("some small string", 8, 26.0), instance);
     }
 
@@ -418,8 +417,8 @@ public class JsonUtilTest extends ExtendedITextTest {
             ClassWithDefaultValue instance =
                     JsonUtil.<ClassWithDefaultValue>deserializeFromStream(inputStream, ClassWithDefaultValue.class);
 
-            Assert.assertNotNull(instance);
-            Assert.assertEquals(
+            Assertions.assertNotNull(instance);
+            Assertions.assertEquals(
                     createClassWithDefaultValueObject("some small string", 8, 26.0), instance);
         }
     }
@@ -433,7 +432,7 @@ public class JsonUtilTest extends ExtendedITextTest {
                     JsonUtil.<ClassWithDefaultValue>deserializeFromStream(inputStream,
                             new TypeReference<ClassWithDefaultValue>() {
                             });
-            Assert.assertEquals(createClassWithDefaultValueObject(null, 2, 5.0), instance);
+            Assertions.assertEquals(createClassWithDefaultValueObject(null, 2, 5.0), instance);
         }
     }
 
@@ -447,7 +446,7 @@ public class JsonUtilTest extends ExtendedITextTest {
                 JsonUtil.<ClassWithDefaultValue>deserializeFromString(jsonString,
                         new TypeReference<ClassWithDefaultValue>() {
                         });
-        Assert.assertEquals(createClassWithDefaultValueObject(null, 2, 5.0), instance);
+        Assertions.assertEquals(createClassWithDefaultValueObject(null, 2, 5.0), instance);
     }
 
     private String getJsonStringFromFile(String pathToFile) throws IOException {

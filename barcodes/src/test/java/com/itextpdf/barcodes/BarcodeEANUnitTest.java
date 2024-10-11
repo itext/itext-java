@@ -27,14 +27,13 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class BarcodeEANUnitTest extends ExtendedITextTest {
 
     public static final float EPS = 0.0001f;
@@ -43,91 +42,91 @@ public class BarcodeEANUnitTest extends ExtendedITextTest {
     public void calculateEANParityTest() throws PdfException {
         int expectedParity = BarcodeEAN.calculateEANParity("1234567890");
 
-        Assert.assertEquals(5, expectedParity);
+        Assertions.assertEquals(5, expectedParity);
     }
 
     @Test
     public void convertUPCAtoUPCEIncorrectTextTest() throws PdfException {
         String expectedUpce = BarcodeEAN.convertUPCAtoUPCE("HelloWorld");
 
-        Assert.assertNull(expectedUpce);
+        Assertions.assertNull(expectedUpce);
     }
 
     @Test
     public void convertUPCAtoUPCE12DigitsStartNotWith0Or1Test() throws PdfException {
         String expectedUpce = BarcodeEAN.convertUPCAtoUPCE("025272730706");
 
-        Assert.assertNull(expectedUpce);
+        Assertions.assertNull(expectedUpce);
     }
 
     @Test
     public void convertUPCAtoUPCEFrom3Position00000Test() throws PdfException {
         String expectedUpce = BarcodeEAN.convertUPCAtoUPCE("012000005706");
 
-        Assert.assertEquals("01257006", expectedUpce);
+        Assertions.assertEquals("01257006", expectedUpce);
     }
 
     @Test
     public void convertUPCAtoUPCEFrom3Position10000Test() throws PdfException {
         String expectedUpce = BarcodeEAN.convertUPCAtoUPCE("012100005706");
 
-        Assert.assertEquals("01257016", expectedUpce);
+        Assertions.assertEquals("01257016", expectedUpce);
     }
 
     @Test
     public void convertUPCAtoUPCEFrom3Position20000Test() throws PdfException {
         String expectedUpce = BarcodeEAN.convertUPCAtoUPCE("012200005706");
 
-        Assert.assertEquals("01257026", expectedUpce);
+        Assertions.assertEquals("01257026", expectedUpce);
     }
 
     @Test
     public void convertUPCAtoUPCEFrom3Position000NullTest() throws PdfException {
         String expectedUpce = BarcodeEAN.convertUPCAtoUPCE("012000111706");
 
-        Assert.assertNull(expectedUpce);
+        Assertions.assertNull(expectedUpce);
     }
 
     @Test
     public void convertUPCAtoUPCEFrom4Position00NullTest() throws PdfException {
         String expectedUpce = BarcodeEAN.convertUPCAtoUPCE("012300111706");
 
-        Assert.assertNull(expectedUpce);
+        Assertions.assertNull(expectedUpce);
     }
 
     @Test
     public void convertUPCAtoUPCEFrom4Position00000Test() throws PdfException {
         String expectedUpce = BarcodeEAN.convertUPCAtoUPCE("012300000706");
 
-        Assert.assertEquals("01237036", expectedUpce);
+        Assertions.assertEquals("01237036", expectedUpce);
     }
 
     @Test
     public void convertUPCAtoUPCEFrom5Position0NullTest() throws PdfException {
         String expectedUpce = BarcodeEAN.convertUPCAtoUPCE("012340111706");
 
-        Assert.assertNull(expectedUpce);
+        Assertions.assertNull(expectedUpce);
     }
 
     @Test
     public void convertUPCAtoUPCEFrom5Position00000Test() throws PdfException {
         String expectedUpce = BarcodeEAN.convertUPCAtoUPCE("012340000006");
 
-        Assert.assertEquals("01234046", expectedUpce);
+        Assertions.assertEquals("01234046", expectedUpce);
     }
 
     @Test
     public void convertUPCAtoUPCE10PositionBiggerThan5NullTest() throws PdfException {
         String expectedUpce = BarcodeEAN.convertUPCAtoUPCE("011111111711");
 
-        Assert.assertNull(expectedUpce);
+        Assertions.assertNull(expectedUpce);
     }
 
     @Test
     public void convertUPCAtoUPCE10PositionBiggerThan5Test() throws PdfException {
         String expectedUpce = BarcodeEAN.convertUPCAtoUPCE("011111000090");
 
-        Assert.assertEquals("01111190", expectedUpce);
+        Assertions.assertEquals("01111190", expectedUpce);
     }
 
     @Test
@@ -135,9 +134,9 @@ public class BarcodeEANUnitTest extends ExtendedITextTest {
         String expectedBytes = "111212211411132132141111312111111";
 
         byte[] bytes = BarcodeEAN.getBarsUPCE("12345678");
-        Assert.assertEquals(33, bytes.length);
+        Assertions.assertEquals(33, bytes.length);
         for (int i = 0; i < expectedBytes.length(); i++) {
-            Assert.assertEquals(expectedBytes.charAt(i) - '0', bytes[i]);
+            Assertions.assertEquals(expectedBytes.charAt(i) - '0', bytes[i]);
         }
     }
 
@@ -146,9 +145,9 @@ public class BarcodeEANUnitTest extends ExtendedITextTest {
         String expectedBytes = "1121222113211";
 
         byte[] bytes = BarcodeEAN.getBarsSupplemental2("10");
-        Assert.assertEquals(13, bytes.length);
+        Assertions.assertEquals(13, bytes.length);
         for (int i = 0; i < expectedBytes.length(); i++) {
-            Assert.assertEquals(expectedBytes.charAt(i) - '0', bytes[i]);
+            Assertions.assertEquals(expectedBytes.charAt(i) - '0', bytes[i]);
         }
     }
 
@@ -164,8 +163,8 @@ public class BarcodeEANUnitTest extends ExtendedITextTest {
 
         Rectangle barcodeSize = barcode.getBarcodeSize();
 
-        Assert.assertEquals(expectedRectangle.getWidth(), barcodeSize.getWidth(), EPS);
-        Assert.assertEquals(expectedRectangle.getHeight(), barcodeSize.getHeight(), EPS);
+        Assertions.assertEquals(expectedRectangle.getWidth(), barcodeSize.getWidth(), EPS);
+        Assertions.assertEquals(expectedRectangle.getHeight(), barcodeSize.getHeight(), EPS);
     }
 
     @Test
@@ -180,8 +179,8 @@ public class BarcodeEANUnitTest extends ExtendedITextTest {
 
         Rectangle barcodeSize = barcode.getBarcodeSize();
 
-        Assert.assertEquals(expectedRectangle.getWidth(), barcodeSize.getWidth(), EPS);
-        Assert.assertEquals(expectedRectangle.getHeight(), barcodeSize.getHeight(), EPS);
+        Assertions.assertEquals(expectedRectangle.getWidth(), barcodeSize.getWidth(), EPS);
+        Assertions.assertEquals(expectedRectangle.getHeight(), barcodeSize.getHeight(), EPS);
     }
 
     @Test
@@ -196,8 +195,8 @@ public class BarcodeEANUnitTest extends ExtendedITextTest {
 
         Rectangle barcodeSize = barcode.getBarcodeSize();
 
-        Assert.assertEquals(expectedRectangle.getWidth(), barcodeSize.getWidth(), EPS);
-        Assert.assertEquals(expectedRectangle.getHeight(), barcodeSize.getHeight(), EPS);
+        Assertions.assertEquals(expectedRectangle.getWidth(), barcodeSize.getWidth(), EPS);
+        Assertions.assertEquals(expectedRectangle.getHeight(), barcodeSize.getHeight(), EPS);
     }
 
     @Test
@@ -211,7 +210,7 @@ public class BarcodeEANUnitTest extends ExtendedITextTest {
         barcode.setCodeType(1234);
 
         // We do expect an exception here
-        Exception e = Assert.assertThrows(PdfException.class, () -> barcode.getBarcodeSize());
-        Assert.assertEquals("Invalid code type", e.getMessage());
+        Exception e = Assertions.assertThrows(PdfException.class, () -> barcode.getBarcodeSize());
+        Assertions.assertEquals("Invalid code type", e.getMessage());
     }
 }

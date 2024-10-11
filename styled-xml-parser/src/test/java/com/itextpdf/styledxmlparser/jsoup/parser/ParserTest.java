@@ -23,18 +23,17 @@
 package com.itextpdf.styledxmlparser.jsoup.parser;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class ParserTest extends ExtendedITextTest {
 
     @Test
     public void unescapeEntities() {
         String s = Parser.unescapeEntities("One &amp; Two", false);
-        Assert.assertEquals("One & Two", s);
+        Assertions.assertEquals("One & Two", s);
     }
 
     @Test
@@ -45,6 +44,6 @@ public class ParserTest extends ExtendedITextTest {
         } while (longBody.length() < 64 * 1024);
 
         String body = longBody.toString();
-        Assert.assertEquals(body, Parser.unescapeEntities(body, false));
+        Assertions.assertEquals(body, Parser.unescapeEntities(body, false));
     }
 }

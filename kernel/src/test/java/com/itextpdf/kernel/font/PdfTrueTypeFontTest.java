@@ -29,14 +29,13 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfTrueTypeFontTest extends ExtendedITextTest {
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/font/PdfTrueTypeFontTest/";
@@ -51,15 +50,15 @@ public class PdfTrueTypeFontTest extends ExtendedITextTest {
         PdfDictionary fontDict = pdfDocument.getPage(1).getResources().getResource(PdfName.Font).getAsDictionary(new PdfName("F1"));
         PdfFont pdfFont = PdfFontFactory.createFont(fontDict);
 
-        Assert.assertEquals(542, pdfFont.getFontProgram().getAvgWidth());
-        Assert.assertEquals(556, pdfFont.getGlyph('a').getWidth());
+        Assertions.assertEquals(542, pdfFont.getFontProgram().getAvgWidth());
+        Assertions.assertEquals(556, pdfFont.getGlyph('a').getWidth());
     }
 
     @Test
     public void isBuiltInTest() {
         PdfFont font = PdfFontFactory.createFont(createTrueTypeFontDictionaryWithStandardHelveticaFont());
-        Assert.assertTrue(font instanceof PdfTrueTypeFont);
-        Assert.assertTrue(((PdfTrueTypeFont) font).isBuiltInFont());
+        Assertions.assertTrue(font instanceof PdfTrueTypeFont);
+        Assertions.assertTrue(((PdfTrueTypeFont) font).isBuiltInFont());
     }
 
     @Test
@@ -67,8 +66,8 @@ public class PdfTrueTypeFontTest extends ExtendedITextTest {
         PdfFont font = PdfFontFactory.createFont(
                 SOURCE_FOLDER + "NotoSans-Regular.ttf",
                 PdfEncodings.WINANSI);
-        Assert.assertTrue(font instanceof PdfTrueTypeFont);
-        Assert.assertFalse(((PdfTrueTypeFont) font).isBuiltInFont());
+        Assertions.assertTrue(font instanceof PdfTrueTypeFont);
+        Assertions.assertFalse(((PdfTrueTypeFont) font).isBuiltInFont());
     }
 
     private static PdfDictionary createTrueTypeFontDictionaryWithStandardHelveticaFont() {

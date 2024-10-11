@@ -27,22 +27,21 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfIndirectReference;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.util.Stack;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class ObjectPathTest extends ExtendedITextTest {
 
     private PdfDocument testCmp;
     private PdfDocument testOut;
 
-    @Before
+    @BeforeEach
     public void setUpPdfDocuments() {
         testCmp = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         testCmp.addNewPage();
@@ -53,7 +52,7 @@ public class ObjectPathTest extends ExtendedITextTest {
         testOut.addNewPage();
     }
 
-    @After
+    @AfterEach
     public void closePdfDocuments() {
         testCmp.close();
         testOut.close();
@@ -70,10 +69,10 @@ public class ObjectPathTest extends ExtendedITextTest {
 
         ObjectPath objectPath = new ObjectPath(cmpIndirect, outIndirect, localPath, indirectPathItems);
 
-        Assert.assertEquals(cmpIndirect, objectPath.getBaseCmpObject());
-        Assert.assertEquals(outIndirect, objectPath.getBaseOutObject());
-        Assert.assertEquals(localPath, objectPath.getLocalPath());
-        Assert.assertEquals(indirectPathItems, objectPath.getIndirectPath());
+        Assertions.assertEquals(cmpIndirect, objectPath.getBaseCmpObject());
+        Assertions.assertEquals(outIndirect, objectPath.getBaseOutObject());
+        Assertions.assertEquals(localPath, objectPath.getLocalPath());
+        Assertions.assertEquals(indirectPathItems, objectPath.getIndirectPath());
     }
 
     @Test
@@ -88,8 +87,8 @@ public class ObjectPathTest extends ExtendedITextTest {
         ObjectPath objectPath1 = new ObjectPath(cmpIndirect, outIndirect, localPath, indirectPathItems);
         ObjectPath objectPath2 = new ObjectPath(cmpIndirect, outIndirect, localPath, indirectPathItems);
 
-        Assert.assertNotEquals(0, objectPath1.hashCode());
-        Assert.assertEquals(objectPath1.hashCode(), objectPath2.hashCode());
+        Assertions.assertNotEquals(0, objectPath1.hashCode());
+        Assertions.assertEquals(objectPath1.hashCode(), objectPath2.hashCode());
     }
 
     @Test
@@ -100,8 +99,8 @@ public class ObjectPathTest extends ExtendedITextTest {
         ObjectPath objectPath1 = new ObjectPath(null, null, localPath, indirectPathItems);
         ObjectPath objectPath2 = new ObjectPath(null, null, localPath, indirectPathItems);
 
-        Assert.assertEquals(0, objectPath1.hashCode());
-        Assert.assertEquals(objectPath1.hashCode(), objectPath2.hashCode());
+        Assertions.assertEquals(0, objectPath1.hashCode());
+        Assertions.assertEquals(objectPath1.hashCode(), objectPath2.hashCode());
     }
 
     @Test
@@ -119,8 +118,8 @@ public class ObjectPathTest extends ExtendedITextTest {
         ObjectPath objectPath2 = new ObjectPath(cmpIndirect, outIndirect, localPath, indirectPathItems);
 
         boolean result = objectPath1.equals(objectPath2);
-        Assert.assertTrue(result);
-        Assert.assertEquals(objectPath1.hashCode(), objectPath2.hashCode());
+        Assertions.assertTrue(result);
+        Assertions.assertEquals(objectPath1.hashCode(), objectPath2.hashCode());
     }
 
     @Test
@@ -139,8 +138,8 @@ public class ObjectPathTest extends ExtendedITextTest {
         ObjectPath objectPath2 = new ObjectPath(cmpIndirect, outIndirect, localPath, indirectPathItems);
 
         boolean result = objectPath1.equals(objectPath2);
-        Assert.assertFalse(result);
-        Assert.assertNotEquals(objectPath1.hashCode(), objectPath2.hashCode());
+        Assertions.assertFalse(result);
+        Assertions.assertNotEquals(objectPath1.hashCode(), objectPath2.hashCode());
     }
 
     @Test
@@ -157,7 +156,7 @@ public class ObjectPathTest extends ExtendedITextTest {
         ObjectPath objectPath2 = new ObjectPath(objectPath1);
 
         boolean result = objectPath1.equals(objectPath2);
-        Assert.assertTrue(result);
-        Assert.assertEquals(objectPath1.hashCode(), objectPath2.hashCode());
+        Assertions.assertTrue(result);
+        Assertions.assertEquals(objectPath1.hashCode(), objectPath2.hashCode());
     }
 }

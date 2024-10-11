@@ -24,13 +24,12 @@ package com.itextpdf.layout.renderer.objectfit;
 
 import com.itextpdf.layout.properties.ObjectFit;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class ObjectFitCalculatorUnitTest extends ExtendedITextTest {
 
     private final static float SMALL_WIDTH = 200;
@@ -43,9 +42,9 @@ public class ObjectFitCalculatorUnitTest extends ExtendedITextTest {
         ObjectFitApplyingResult result = ObjectFitCalculator.calculateRenderedImageSize(
                 ObjectFit.FILL, SMALL_WIDTH, SMALL_HEIGHT, BIG_WIDTH, BIG_HEIGHT
         );
-        Assert.assertEquals(BIG_WIDTH, result.getRenderedImageWidth(), 0.1);
-        Assert.assertEquals(BIG_HEIGHT, result.getRenderedImageHeight(), 0.1);
-        Assert.assertFalse(result.isImageCuttingRequired());
+        Assertions.assertEquals(BIG_WIDTH, result.getRenderedImageWidth(), 0.1);
+        Assertions.assertEquals(BIG_HEIGHT, result.getRenderedImageHeight(), 0.1);
+        Assertions.assertFalse(result.isImageCuttingRequired());
     }
 
     @Test
@@ -53,9 +52,9 @@ public class ObjectFitCalculatorUnitTest extends ExtendedITextTest {
         ObjectFitApplyingResult result = ObjectFitCalculator.calculateRenderedImageSize(
                 ObjectFit.FILL, BIG_WIDTH, BIG_HEIGHT, SMALL_WIDTH, SMALL_HEIGHT
         );
-        Assert.assertEquals(SMALL_WIDTH, result.getRenderedImageWidth(), 0.1);
-        Assert.assertEquals(SMALL_HEIGHT, result.getRenderedImageHeight(), 0.1);
-        Assert.assertFalse(result.isImageCuttingRequired());
+        Assertions.assertEquals(SMALL_WIDTH, result.getRenderedImageWidth(), 0.1);
+        Assertions.assertEquals(SMALL_HEIGHT, result.getRenderedImageHeight(), 0.1);
+        Assertions.assertFalse(result.isImageCuttingRequired());
     }
 
     @Test
@@ -63,9 +62,9 @@ public class ObjectFitCalculatorUnitTest extends ExtendedITextTest {
         ObjectFitApplyingResult result = ObjectFitCalculator.calculateRenderedImageSize(
                 ObjectFit.FILL, BIG_WIDTH, SMALL_HEIGHT, SMALL_WIDTH, BIG_HEIGHT
         );
-        Assert.assertEquals(SMALL_WIDTH, result.getRenderedImageWidth(), 0.1);
-        Assert.assertEquals(BIG_HEIGHT, result.getRenderedImageHeight(), 0.1);
-        Assert.assertFalse(result.isImageCuttingRequired());
+        Assertions.assertEquals(SMALL_WIDTH, result.getRenderedImageWidth(), 0.1);
+        Assertions.assertEquals(BIG_HEIGHT, result.getRenderedImageHeight(), 0.1);
+        Assertions.assertFalse(result.isImageCuttingRequired());
     }
 
     @Test
@@ -73,9 +72,9 @@ public class ObjectFitCalculatorUnitTest extends ExtendedITextTest {
         ObjectFitApplyingResult result = ObjectFitCalculator.calculateRenderedImageSize(
                 ObjectFit.FILL, SMALL_WIDTH, BIG_HEIGHT, BIG_WIDTH, SMALL_HEIGHT
         );
-        Assert.assertEquals(BIG_WIDTH, result.getRenderedImageWidth(), 0.1);
-        Assert.assertEquals(SMALL_HEIGHT, result.getRenderedImageHeight(), 0.1);
-        Assert.assertFalse(result.isImageCuttingRequired());
+        Assertions.assertEquals(BIG_WIDTH, result.getRenderedImageWidth(), 0.1);
+        Assertions.assertEquals(SMALL_HEIGHT, result.getRenderedImageHeight(), 0.1);
+        Assertions.assertFalse(result.isImageCuttingRequired());
     }
 
     @Test
@@ -84,9 +83,9 @@ public class ObjectFitCalculatorUnitTest extends ExtendedITextTest {
                 ObjectFit.CONTAIN, SMALL_WIDTH, SMALL_HEIGHT, BIG_WIDTH, BIG_HEIGHT
         );
         float expectedWidth = SMALL_WIDTH / SMALL_HEIGHT * BIG_HEIGHT ;
-        Assert.assertEquals(expectedWidth, result.getRenderedImageWidth(), 0.1);
-        Assert.assertEquals(BIG_HEIGHT, result.getRenderedImageHeight(), 0.1);
-        Assert.assertFalse(result.isImageCuttingRequired());
+        Assertions.assertEquals(expectedWidth, result.getRenderedImageWidth(), 0.1);
+        Assertions.assertEquals(BIG_HEIGHT, result.getRenderedImageHeight(), 0.1);
+        Assertions.assertFalse(result.isImageCuttingRequired());
     }
 
     @Test
@@ -95,9 +94,9 @@ public class ObjectFitCalculatorUnitTest extends ExtendedITextTest {
                 ObjectFit.CONTAIN, BIG_WIDTH, BIG_HEIGHT, SMALL_WIDTH, SMALL_HEIGHT
         );
         float expectedHeight = BIG_HEIGHT / BIG_WIDTH * SMALL_WIDTH;
-        Assert.assertEquals(SMALL_WIDTH, result.getRenderedImageWidth(), 0.1);
-        Assert.assertEquals(expectedHeight, result.getRenderedImageHeight(), 0.1);
-        Assert.assertFalse(result.isImageCuttingRequired());
+        Assertions.assertEquals(SMALL_WIDTH, result.getRenderedImageWidth(), 0.1);
+        Assertions.assertEquals(expectedHeight, result.getRenderedImageHeight(), 0.1);
+        Assertions.assertFalse(result.isImageCuttingRequired());
     }
 
     @Test
@@ -106,9 +105,9 @@ public class ObjectFitCalculatorUnitTest extends ExtendedITextTest {
                 ObjectFit.CONTAIN, BIG_WIDTH, SMALL_HEIGHT, SMALL_WIDTH, BIG_HEIGHT
         );
         float expectedHeight = SMALL_HEIGHT / BIG_WIDTH * SMALL_WIDTH;
-        Assert.assertEquals(SMALL_WIDTH, result.getRenderedImageWidth(), 0.1);
-        Assert.assertEquals(expectedHeight, result.getRenderedImageHeight(), 0.1);
-        Assert.assertFalse(result.isImageCuttingRequired());
+        Assertions.assertEquals(SMALL_WIDTH, result.getRenderedImageWidth(), 0.1);
+        Assertions.assertEquals(expectedHeight, result.getRenderedImageHeight(), 0.1);
+        Assertions.assertFalse(result.isImageCuttingRequired());
     }
 
     @Test
@@ -117,9 +116,9 @@ public class ObjectFitCalculatorUnitTest extends ExtendedITextTest {
                 ObjectFit.CONTAIN, SMALL_WIDTH, BIG_HEIGHT, BIG_WIDTH, SMALL_HEIGHT
         );
         float expectedWidth = SMALL_WIDTH / BIG_HEIGHT * SMALL_HEIGHT;
-        Assert.assertEquals(expectedWidth, result.getRenderedImageWidth(), 0.1);
-        Assert.assertEquals(SMALL_HEIGHT, result.getRenderedImageHeight(), 0.1);
-        Assert.assertFalse(result.isImageCuttingRequired());
+        Assertions.assertEquals(expectedWidth, result.getRenderedImageWidth(), 0.1);
+        Assertions.assertEquals(SMALL_HEIGHT, result.getRenderedImageHeight(), 0.1);
+        Assertions.assertFalse(result.isImageCuttingRequired());
     }
 
     @Test
@@ -128,9 +127,9 @@ public class ObjectFitCalculatorUnitTest extends ExtendedITextTest {
                 ObjectFit.COVER, SMALL_WIDTH, SMALL_HEIGHT, BIG_WIDTH, BIG_HEIGHT
         );
         float expectedHeight = SMALL_HEIGHT / SMALL_WIDTH * BIG_WIDTH;
-        Assert.assertEquals(BIG_WIDTH, result.getRenderedImageWidth(), 0.1);
-        Assert.assertEquals(expectedHeight, result.getRenderedImageHeight(), 0.1);
-        Assert.assertTrue(result.isImageCuttingRequired());
+        Assertions.assertEquals(BIG_WIDTH, result.getRenderedImageWidth(), 0.1);
+        Assertions.assertEquals(expectedHeight, result.getRenderedImageHeight(), 0.1);
+        Assertions.assertTrue(result.isImageCuttingRequired());
     }
 
     @Test
@@ -139,9 +138,9 @@ public class ObjectFitCalculatorUnitTest extends ExtendedITextTest {
                 ObjectFit.COVER, BIG_WIDTH, BIG_HEIGHT, SMALL_WIDTH, SMALL_HEIGHT
         );
         float expectedWidth = BIG_WIDTH / BIG_HEIGHT * SMALL_HEIGHT;
-        Assert.assertEquals(expectedWidth, result.getRenderedImageWidth(), 0.1);
-        Assert.assertEquals(SMALL_HEIGHT, result.getRenderedImageHeight(), 0.1);
-        Assert.assertTrue(result.isImageCuttingRequired());
+        Assertions.assertEquals(expectedWidth, result.getRenderedImageWidth(), 0.1);
+        Assertions.assertEquals(SMALL_HEIGHT, result.getRenderedImageHeight(), 0.1);
+        Assertions.assertTrue(result.isImageCuttingRequired());
     }
 
     @Test
@@ -150,9 +149,9 @@ public class ObjectFitCalculatorUnitTest extends ExtendedITextTest {
                 ObjectFit.COVER, BIG_WIDTH, SMALL_HEIGHT, SMALL_WIDTH, BIG_HEIGHT
         );
         float expectedWidth = BIG_WIDTH / SMALL_HEIGHT * BIG_HEIGHT;
-        Assert.assertEquals(expectedWidth, result.getRenderedImageWidth(), 0.1);
-        Assert.assertEquals(BIG_HEIGHT, result.getRenderedImageHeight(), 0.1);
-        Assert.assertTrue(result.isImageCuttingRequired());
+        Assertions.assertEquals(expectedWidth, result.getRenderedImageWidth(), 0.1);
+        Assertions.assertEquals(BIG_HEIGHT, result.getRenderedImageHeight(), 0.1);
+        Assertions.assertTrue(result.isImageCuttingRequired());
     }
 
     @Test
@@ -161,9 +160,9 @@ public class ObjectFitCalculatorUnitTest extends ExtendedITextTest {
                 ObjectFit.COVER, SMALL_WIDTH, BIG_HEIGHT, BIG_WIDTH, SMALL_HEIGHT
         );
         float expectedHeight = BIG_HEIGHT / SMALL_WIDTH * BIG_WIDTH;
-        Assert.assertEquals(BIG_WIDTH, result.getRenderedImageWidth(), 0.1);
-        Assert.assertEquals(expectedHeight, result.getRenderedImageHeight(), 0.1);
-        Assert.assertTrue(result.isImageCuttingRequired());
+        Assertions.assertEquals(BIG_WIDTH, result.getRenderedImageWidth(), 0.1);
+        Assertions.assertEquals(expectedHeight, result.getRenderedImageHeight(), 0.1);
+        Assertions.assertTrue(result.isImageCuttingRequired());
     }
 
     @Test
@@ -171,9 +170,9 @@ public class ObjectFitCalculatorUnitTest extends ExtendedITextTest {
         ObjectFitApplyingResult result = ObjectFitCalculator.calculateRenderedImageSize(
                 ObjectFit.SCALE_DOWN, SMALL_WIDTH, SMALL_HEIGHT, BIG_WIDTH, BIG_HEIGHT
         );
-        Assert.assertEquals(SMALL_WIDTH, result.getRenderedImageWidth(), 0.1);
-        Assert.assertEquals(SMALL_HEIGHT, result.getRenderedImageHeight(), 0.1);
-        Assert.assertFalse(result.isImageCuttingRequired());
+        Assertions.assertEquals(SMALL_WIDTH, result.getRenderedImageWidth(), 0.1);
+        Assertions.assertEquals(SMALL_HEIGHT, result.getRenderedImageHeight(), 0.1);
+        Assertions.assertFalse(result.isImageCuttingRequired());
     }
 
     @Test
@@ -182,9 +181,9 @@ public class ObjectFitCalculatorUnitTest extends ExtendedITextTest {
                 ObjectFit.SCALE_DOWN, BIG_WIDTH, BIG_HEIGHT, SMALL_WIDTH, SMALL_HEIGHT
         );
         float expectedHeight = BIG_HEIGHT / BIG_WIDTH * SMALL_WIDTH;
-        Assert.assertEquals(SMALL_WIDTH, result.getRenderedImageWidth(), 0.1);
-        Assert.assertEquals(expectedHeight, result.getRenderedImageHeight(), 0.1);
-        Assert.assertFalse(result.isImageCuttingRequired());
+        Assertions.assertEquals(SMALL_WIDTH, result.getRenderedImageWidth(), 0.1);
+        Assertions.assertEquals(expectedHeight, result.getRenderedImageHeight(), 0.1);
+        Assertions.assertFalse(result.isImageCuttingRequired());
     }
 
     @Test
@@ -193,9 +192,9 @@ public class ObjectFitCalculatorUnitTest extends ExtendedITextTest {
                 ObjectFit.SCALE_DOWN, BIG_WIDTH, SMALL_HEIGHT, SMALL_WIDTH, BIG_HEIGHT
         );
         float expectedHeight = SMALL_HEIGHT / BIG_WIDTH * SMALL_WIDTH;
-        Assert.assertEquals(SMALL_WIDTH, result.getRenderedImageWidth(), 0.1);
-        Assert.assertEquals(expectedHeight, result.getRenderedImageHeight(), 0.1);
-        Assert.assertFalse(result.isImageCuttingRequired());
+        Assertions.assertEquals(SMALL_WIDTH, result.getRenderedImageWidth(), 0.1);
+        Assertions.assertEquals(expectedHeight, result.getRenderedImageHeight(), 0.1);
+        Assertions.assertFalse(result.isImageCuttingRequired());
     }
 
     @Test
@@ -204,9 +203,9 @@ public class ObjectFitCalculatorUnitTest extends ExtendedITextTest {
                 ObjectFit.SCALE_DOWN, SMALL_WIDTH, BIG_HEIGHT, BIG_WIDTH, SMALL_HEIGHT
         );
         float expectedWidth = SMALL_WIDTH / BIG_HEIGHT * SMALL_HEIGHT;
-        Assert.assertEquals(expectedWidth, result.getRenderedImageWidth(), 0.1);
-        Assert.assertEquals(SMALL_HEIGHT, result.getRenderedImageHeight(), 0.1);
-        Assert.assertFalse(result.isImageCuttingRequired());
+        Assertions.assertEquals(expectedWidth, result.getRenderedImageWidth(), 0.1);
+        Assertions.assertEquals(SMALL_HEIGHT, result.getRenderedImageHeight(), 0.1);
+        Assertions.assertFalse(result.isImageCuttingRequired());
     }
 
 
@@ -215,9 +214,9 @@ public class ObjectFitCalculatorUnitTest extends ExtendedITextTest {
         ObjectFitApplyingResult result = ObjectFitCalculator.calculateRenderedImageSize(
                 ObjectFit.NONE, SMALL_WIDTH, SMALL_HEIGHT, BIG_WIDTH, BIG_HEIGHT
         );
-        Assert.assertEquals(SMALL_WIDTH, result.getRenderedImageWidth(), 0.1);
-        Assert.assertEquals(SMALL_HEIGHT, result.getRenderedImageHeight(), 0.1);
-        Assert.assertFalse(result.isImageCuttingRequired());
+        Assertions.assertEquals(SMALL_WIDTH, result.getRenderedImageWidth(), 0.1);
+        Assertions.assertEquals(SMALL_HEIGHT, result.getRenderedImageHeight(), 0.1);
+        Assertions.assertFalse(result.isImageCuttingRequired());
     }
 
     @Test
@@ -225,9 +224,9 @@ public class ObjectFitCalculatorUnitTest extends ExtendedITextTest {
         ObjectFitApplyingResult result = ObjectFitCalculator.calculateRenderedImageSize(
                 ObjectFit.NONE, BIG_WIDTH, BIG_HEIGHT, SMALL_WIDTH, SMALL_HEIGHT
         );
-        Assert.assertEquals(BIG_WIDTH, result.getRenderedImageWidth(), 0.1);
-        Assert.assertEquals(BIG_HEIGHT, result.getRenderedImageHeight(), 0.1);
-        Assert.assertTrue(result.isImageCuttingRequired());
+        Assertions.assertEquals(BIG_WIDTH, result.getRenderedImageWidth(), 0.1);
+        Assertions.assertEquals(BIG_HEIGHT, result.getRenderedImageHeight(), 0.1);
+        Assertions.assertTrue(result.isImageCuttingRequired());
     }
 
     @Test
@@ -235,9 +234,9 @@ public class ObjectFitCalculatorUnitTest extends ExtendedITextTest {
         ObjectFitApplyingResult result = ObjectFitCalculator.calculateRenderedImageSize(
                 ObjectFit.NONE, BIG_WIDTH, SMALL_HEIGHT, SMALL_WIDTH, BIG_HEIGHT
         );
-        Assert.assertEquals(BIG_WIDTH, result.getRenderedImageWidth(), 0.1);
-        Assert.assertEquals(SMALL_HEIGHT, result.getRenderedImageHeight(), 0.1);
-        Assert.assertTrue(result.isImageCuttingRequired());
+        Assertions.assertEquals(BIG_WIDTH, result.getRenderedImageWidth(), 0.1);
+        Assertions.assertEquals(SMALL_HEIGHT, result.getRenderedImageHeight(), 0.1);
+        Assertions.assertTrue(result.isImageCuttingRequired());
     }
 
     @Test
@@ -245,8 +244,8 @@ public class ObjectFitCalculatorUnitTest extends ExtendedITextTest {
         ObjectFitApplyingResult result = ObjectFitCalculator.calculateRenderedImageSize(
                 ObjectFit.NONE, SMALL_WIDTH, BIG_HEIGHT, BIG_WIDTH, SMALL_HEIGHT
         );
-        Assert.assertEquals(SMALL_WIDTH, result.getRenderedImageWidth(), 0.1);
-        Assert.assertEquals(BIG_HEIGHT, result.getRenderedImageHeight(), 0.1);
-        Assert.assertTrue(result.isImageCuttingRequired());
+        Assertions.assertEquals(SMALL_WIDTH, result.getRenderedImageWidth(), 0.1);
+        Assertions.assertEquals(BIG_HEIGHT, result.getRenderedImageHeight(), 0.1);
+        Assertions.assertTrue(result.isImageCuttingRequired());
     }
 }

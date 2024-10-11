@@ -32,26 +32,25 @@ import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import javax.xml.parsers.ParserConfigurationException;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 import org.xml.sax.SAXException;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class TaggedPdfReaderToolTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/utils/TaggedPdfReaderToolTest/";
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/utils/TaggedPdfReaderToolTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
@@ -75,7 +74,7 @@ public class TaggedPdfReaderToolTest extends ExtendedITextTest {
 
         CompareTool compareTool = new CompareTool();
         if (!compareTool.compareXmls(outXmlPath, cmpXmlPath)) {
-            Assert.fail("Resultant xml is different.");
+            Assertions.fail("Resultant xml is different.");
         }
     }
 
@@ -87,13 +86,13 @@ public class TaggedPdfReaderToolTest extends ExtendedITextTest {
             PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
             TaggedPdfReaderTool tool = new TaggedPdfReaderTool(pdfDocument);
             try (OutputStream outXml = FileUtil.getFileOutputStream(outXmlPath)) {
-                Exception exception = Assert.assertThrows(PdfException.class,
+                Exception exception = Assertions.assertThrows(PdfException.class,
                         () -> tool.convertToXml(outXml, "UTF-8"));
-                Assert.assertEquals(KernelExceptionMessageConstant.DOCUMENT_DOES_NOT_CONTAIN_STRUCT_TREE_ROOT,
+                Assertions.assertEquals(KernelExceptionMessageConstant.DOCUMENT_DOES_NOT_CONTAIN_STRUCT_TREE_ROOT,
                         exception.getMessage());
             }
         } catch (IOException e) {
-            Assert.fail("IOException is not expected to be triggered");
+            Assertions.fail("IOException is not expected to be triggered");
         }
     }
 
@@ -118,7 +117,7 @@ public class TaggedPdfReaderToolTest extends ExtendedITextTest {
 
         CompareTool compareTool = new CompareTool();
         if (!compareTool.compareXmls(outXmlPath, cmpXmlPath)) {
-            Assert.fail("Resultant xml is different.");
+            Assertions.fail("Resultant xml is different.");
         }
     }
 }

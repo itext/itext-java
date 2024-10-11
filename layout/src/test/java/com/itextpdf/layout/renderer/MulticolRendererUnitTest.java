@@ -36,14 +36,13 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.splitting.DefaultSplitCharacters;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class MulticolRendererUnitTest extends ExtendedITextTest {
 
     @Test
@@ -60,9 +59,9 @@ public class MulticolRendererUnitTest extends ExtendedITextTest {
 
         MulticolRenderer renderer = (MulticolRenderer) columnContainer.createRendererSubTree();
         LayoutResult result = renderer.layout(new LayoutContext(new LayoutArea(1, new Rectangle(600f, 200.0f))));
-        Assert.assertTrue(result.getSplitRenderer() instanceof MulticolRenderer);
-        Assert.assertEquals(3, result.getSplitRenderer().getChildRenderers().size());
-        Assert.assertEquals(9, result.getSplitRenderer().getChildRenderers().get(0).getChildRenderers().size());
+        Assertions.assertTrue(result.getSplitRenderer() instanceof MulticolRenderer);
+        Assertions.assertEquals(3, result.getSplitRenderer().getChildRenderers().size());
+        Assertions.assertEquals(9, result.getSplitRenderer().getChildRenderers().get(0).getChildRenderers().size());
     }
 
     @Test
@@ -80,7 +79,7 @@ public class MulticolRendererUnitTest extends ExtendedITextTest {
 
         MulticolRenderer renderer = (MulticolRenderer) columnContainer.createRendererSubTree();
         LayoutResult result = renderer.layout(new LayoutContext(new LayoutArea(1, new Rectangle(200f, 20f))));
-        Assert.assertEquals(1, result.getOverflowRenderer().getChildRenderers().size());
+        Assertions.assertEquals(1, result.getOverflowRenderer().getChildRenderers().size());
     }
 
     @Test
@@ -97,7 +96,7 @@ public class MulticolRendererUnitTest extends ExtendedITextTest {
 
         MulticolRenderer renderer = (MulticolRenderer) div.createRendererSubTree();
         LayoutResult result = renderer.layout(new LayoutContext(new LayoutArea(1, new Rectangle(20.0f, 20.0f))));
-        Assert.assertEquals(LayoutResult.NOTHING, result.getStatus());
+        Assertions.assertEquals(LayoutResult.NOTHING, result.getStatus());
     }
 
     @Test
@@ -116,10 +115,10 @@ public class MulticolRendererUnitTest extends ExtendedITextTest {
 
         MulticolRenderer renderer = (MulticolRenderer) div.createRendererSubTree();
         LayoutResult result = renderer.layout(new LayoutContext(new LayoutArea(1, new Rectangle(600f, 30.0f))));
-        Assert.assertTrue(result.getSplitRenderer() instanceof MulticolRenderer);
-        Assert.assertEquals(3, result.getSplitRenderer().getChildRenderers().size());
-        Assert.assertEquals(1, result.getSplitRenderer().getChildRenderers().get(0).getChildRenderers().size());
-        Assert.assertEquals(1, ((ParagraphRenderer)result.getSplitRenderer().getChildRenderers().get(0)
+        Assertions.assertTrue(result.getSplitRenderer() instanceof MulticolRenderer);
+        Assertions.assertEquals(3, result.getSplitRenderer().getChildRenderers().size());
+        Assertions.assertEquals(1, result.getSplitRenderer().getChildRenderers().get(0).getChildRenderers().size());
+        Assertions.assertEquals(1, ((ParagraphRenderer)result.getSplitRenderer().getChildRenderers().get(0)
                 .getChildRenderers().get(0)).getLines().size());
     }
 

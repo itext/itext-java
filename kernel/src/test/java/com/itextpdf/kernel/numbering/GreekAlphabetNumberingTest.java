@@ -23,12 +23,11 @@
 package com.itextpdf.kernel.numbering;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class GreekAlphabetNumberingTest extends ExtendedITextTest {
 
     @Test
@@ -38,7 +37,7 @@ public class GreekAlphabetNumberingTest extends ExtendedITextTest {
             builder.append(GreekAlphabetNumbering.toGreekAlphabetNumber(i, true));
         }
         // 25th symbol is `AA`, i.e. alphabet has 24 letters.
-        Assert.assertEquals("ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩΑΑ", builder.toString());
+        Assertions.assertEquals("ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩΑΑ", builder.toString());
     }
 
     @Test
@@ -48,7 +47,7 @@ public class GreekAlphabetNumberingTest extends ExtendedITextTest {
             builder.append(GreekAlphabetNumbering.toGreekAlphabetNumber(i, false));
         }
         // 25th symbol is `αα`, i.e. alphabet has 24 letters.
-        Assert.assertEquals("αβγδεζηθικλμνξοπρστυφχψωαα", builder.toString());
+        Assertions.assertEquals("αβγδεζηθικλμνξοπρστυφχψωαα", builder.toString());
     }
 
     @Test
@@ -58,7 +57,7 @@ public class GreekAlphabetNumberingTest extends ExtendedITextTest {
             builder.append(GreekAlphabetNumbering.toGreekAlphabetNumber(i, true, true));
         }
         // Symbol font use regular WinAnsi codes for greek letters.
-        Assert.assertEquals("ABGDEZHQIKLMNXOPRSTUFCYWAA", builder.toString());
+        Assertions.assertEquals("ABGDEZHQIKLMNXOPRSTUFCYWAA", builder.toString());
     }
 
     @Test
@@ -68,11 +67,11 @@ public class GreekAlphabetNumberingTest extends ExtendedITextTest {
             builder.append(GreekAlphabetNumbering.toGreekAlphabetNumber(i, false, true));
         }
         // Symbol font use regular WinAnsi codes for greek letters.
-        Assert.assertEquals("abgdezhqiklmnxoprstufcywaa", builder.toString());
+        Assertions.assertEquals("abgdezhqiklmnxoprstufcywaa", builder.toString());
     }
 
     @Test
     public void intIsNotEnoughForInternalCalculationsTest() {
-        Assert.assertEquals("ζλαββωσ", GreekAlphabetNumbering.toGreekAlphabetNumberLowerCase(1234567890));
+        Assertions.assertEquals("ζλαββωσ", GreekAlphabetNumbering.toGreekAlphabetNumberLowerCase(1234567890));
     }
 }

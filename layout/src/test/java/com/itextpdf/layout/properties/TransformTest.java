@@ -25,12 +25,11 @@ package com.itextpdf.layout.properties;
 import com.itextpdf.kernel.geom.AffineTransform;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class TransformTest extends ExtendedITextTest {
     // AffineTransform.TYPE_UNKNOWN
     private static final float type = -1;
@@ -39,33 +38,33 @@ public class TransformTest extends ExtendedITextTest {
     public void createDefaultSingleTransformTest() {
         Transform.SingleTransform defaultSingleTransform = new Transform.SingleTransform();
         UnitValue[] defaultUnitValues = defaultSingleTransform.getUnitValues();
-        Assert.assertArrayEquals(new float[] {1f, 0f, 0f, 1f}, defaultSingleTransform.getFloats(), 0);
-        Assert.assertEquals(2, defaultUnitValues.length);
-        Assert.assertEquals(UnitValue.createPointValue(0), defaultUnitValues[0]);
-        Assert.assertEquals(UnitValue.createPointValue(0), defaultUnitValues[1]);
+        Assertions.assertArrayEquals(new float[] {1f, 0f, 0f, 1f}, defaultSingleTransform.getFloats(), 0);
+        Assertions.assertEquals(2, defaultUnitValues.length);
+        Assertions.assertEquals(UnitValue.createPointValue(0), defaultUnitValues[0]);
+        Assertions.assertEquals(UnitValue.createPointValue(0), defaultUnitValues[1]);
     }
 
     @Test
     public void getAffineTransformPercentPointUnitValuesTest() {
-        Assert.assertEquals(new AffineTransform(new float[] {-2f, 3f, -4f, -5f, 12f, 30f, type}),
+        Assertions.assertEquals(new AffineTransform(new float[] {-2f, 3f, -4f, -5f, 12f, 30f, type}),
                 getAffineTransform(UnitValue.PERCENT, UnitValue.POINT));
     }
 
     @Test
     public void getAffineTransformPointPercentUnitValuesTest() {
-        Assert.assertEquals(new AffineTransform(new float[] {-2f, 3f, -4f, -5f, 20f, 24f, type}),
+        Assertions.assertEquals(new AffineTransform(new float[] {-2f, 3f, -4f, -5f, 20f, 24f, type}),
                 getAffineTransform(UnitValue.POINT, UnitValue.PERCENT));
     }
 
     @Test
     public void getAffineTransformPercentPercentUnitValuesTest() {
-        Assert.assertEquals(new AffineTransform(new float[] {-2f, 3f, -4f, -5f, 12f, 24f, type}),
+        Assertions.assertEquals(new AffineTransform(new float[] {-2f, 3f, -4f, -5f, 12f, 24f, type}),
                 getAffineTransform(UnitValue.PERCENT, UnitValue.PERCENT));
     }
 
     @Test
     public void getAffineTransformPointPointUnitValuesTest() {
-        Assert.assertEquals(new AffineTransform(new float[] {-2f, 3f, -4f, -5f, 20f, 30f, type}),
+        Assertions.assertEquals(new AffineTransform(new float[] {-2f, 3f, -4f, -5f, 20f, 30f, type}),
                 getAffineTransform(UnitValue.POINT, UnitValue.POINT));
     }
 
@@ -83,7 +82,7 @@ public class TransformTest extends ExtendedITextTest {
                         UnitValue.createPercentValue(tyUnitValue2)));
         transform.addSingleTransform(createSingleTransform(UnitValue.createPointValue(txUnitValue),
                 UnitValue.createPointValue(tyUnitValue2)));
-        Assert.assertEquals(new AffineTransform(new float[] {-524f, -105f, 140f, -419f, -788f, 2220f, type}),
+        Assertions.assertEquals(new AffineTransform(new float[] {-524f, -105f, 140f, -419f, -788f, 2220f, type}),
                 Transform.getAffineTransform(transform, 60f, 80f));
     }
 
@@ -96,7 +95,7 @@ public class TransformTest extends ExtendedITextTest {
         transform.addSingleTransform(singleTransform);
         transform.addSingleTransform(singleTransform);
         transform.addSingleTransform(singleTransform);
-        Assert.assertEquals(new AffineTransform(new float[] {-524f, -105f, 140f, -419f, -700f, 2100f, type}),
+        Assertions.assertEquals(new AffineTransform(new float[] {-524f, -105f, 140f, -419f, -700f, 2100f, type}),
                 Transform.getAffineTransform(transform, 60f, 60f));
     }
 
@@ -105,13 +104,13 @@ public class TransformTest extends ExtendedITextTest {
         Transform transform = new Transform(1);
         transform.addSingleTransform(createSingleTransform(UnitValue.createPercentValue(20f),
                 UnitValue.createPercentValue(30f)));
-        Assert.assertEquals(new AffineTransform(new float[] {-2f, 3f, -4f, -5f, -10f, -6f, type}),
+        Assertions.assertEquals(new AffineTransform(new float[] {-2f, 3f, -4f, -5f, -10f, -6f, type}),
                 Transform.getAffineTransform(transform, -50f, -20f));
-        Assert.assertEquals(new AffineTransform(new float[] {-2f, 3f, -4f, -5f, 10f, -6f, type}),
+        Assertions.assertEquals(new AffineTransform(new float[] {-2f, 3f, -4f, -5f, 10f, -6f, type}),
                 Transform.getAffineTransform(transform, 50f, -20f));
-        Assert.assertEquals(new AffineTransform(new float[] {-2f, 3f, -4f, -5f, -10f, 6f, type}),
+        Assertions.assertEquals(new AffineTransform(new float[] {-2f, 3f, -4f, -5f, -10f, 6f, type}),
                 Transform.getAffineTransform(transform, -50f, 20f));
-        Assert.assertEquals(new AffineTransform(new float[] {-2f, 3f, -4f, -5f, 10f, 6f, type}),
+        Assertions.assertEquals(new AffineTransform(new float[] {-2f, 3f, -4f, -5f, 10f, 6f, type}),
                 Transform.getAffineTransform(transform, 50f, 20f));
     }
 

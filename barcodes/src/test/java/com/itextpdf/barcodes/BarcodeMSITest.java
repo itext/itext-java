@@ -31,29 +31,28 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 
 import java.io.IOException;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class BarcodeMSITest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/barcodes/";
     public static final String destinationFolder = "./target/test/com/itextpdf/barcodes/BarcodeMSI/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -71,7 +70,7 @@ public class BarcodeMSITest extends ExtendedITextTest {
         barcode.setTextAlignment(Barcode1D.ALIGN_LEFT);
         barcode.placeBarcode(canvas, ColorConstants.BLACK, ColorConstants.WHITE);
         document.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff01_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff01_"));
     }
 
 
@@ -87,7 +86,7 @@ public class BarcodeMSITest extends ExtendedITextTest {
         barcode.setTextAlignment(Barcode1D.ALIGN_LEFT);
         barcode.placeBarcode(canvas, ColorConstants.BLACK, ColorConstants.WHITE);
         document.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff02_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff02_"));
     }
 
     @Test
@@ -103,7 +102,7 @@ public class BarcodeMSITest extends ExtendedITextTest {
         barcode.setTextAlignment(Barcode1D.ALIGN_RIGHT);
         barcode.placeBarcode(canvas, ColorConstants.BLACK, ColorConstants.RED);
         document.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff01_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff01_"));
     }
 
     @Test
@@ -119,7 +118,7 @@ public class BarcodeMSITest extends ExtendedITextTest {
         barcode.setTextAlignment(Barcode1D.ALIGN_CENTER);
         barcode.placeBarcode(canvas, ColorConstants.BLACK, ColorConstants.RED);
         document.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff01_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff01_"));
     }
 
     @Test
@@ -127,7 +126,7 @@ public class BarcodeMSITest extends ExtendedITextTest {
         byte[] expected = {1, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1};
         byte[] barcodeBytes = BarcodeMSI.getBarsMSI("1234");
         boolean isEqual = java.util.Arrays.equals(expected, barcodeBytes);
-        Assert.assertTrue(isEqual);
+        Assertions.assertTrue(isEqual);
     }
 
     @Test
@@ -135,6 +134,6 @@ public class BarcodeMSITest extends ExtendedITextTest {
         String code = "0987654321";
         int expectedChecksum = 7;
         int checksum = BarcodeMSI.getChecksum(code);
-        Assert.assertEquals(checksum, expectedChecksum);
+        Assertions.assertEquals(checksum, expectedChecksum);
     }
 }

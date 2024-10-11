@@ -24,7 +24,11 @@ package com.itextpdf.kernel.pdf.canvas;
 
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.io.font.otf.ActualTextIterator;
+import com.itextpdf.io.font.otf.Glyph;
+import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.source.ByteArrayOutputStream;
@@ -34,6 +38,7 @@ import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.MemoryLimitsAwareException;
 import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.*;
@@ -42,21 +47,21 @@ import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfCanvasTest extends ExtendedITextTest {
 
     /**
@@ -70,6 +75,9 @@ public class PdfCanvasTest extends ExtendedITextTest {
     };
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/canvas/PdfCanvasTest/";
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/canvas/PdfCanvasTest/";
+
+    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/fonts/";
+
 
     private static final String AUTHOR = "iText Software";
     private static final String CREATOR = "iText";
@@ -91,12 +99,12 @@ public class PdfCanvasTest extends ExtendedITextTest {
     };
 
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(DESTINATION_FOLDER);
     }
@@ -146,7 +154,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
             canvas.release();
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(output, cmp, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(output, cmp, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -501,14 +509,14 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         for (int i = 1; i <= pdfDocument.getNumberOfPages(); i++) {
             PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
-            Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
+            Assertions.assertEquals(PdfName.Page, page.get(PdfName.Type));
         }
         reader.close();
-        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        Assertions.assertEquals(false, reader.hasRebuiltXref(), "Rebuilt");
         PdfDictionary page = pdfDocument.getPage(1).getPdfObject();
-        Assert.assertNotNull(page.get(PdfName.Parent));
+        Assertions.assertNotNull(page.get(PdfName.Parent));
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(file1, file2, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(file1, file2, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -548,9 +556,9 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         PdfReader reader = CompareTool.createOutputReader(file2);
         PdfDocument pdfDocument = new PdfDocument(reader);
-        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        Assertions.assertEquals(false, reader.hasRebuiltXref(), "Rebuilt");
         PdfDictionary page = pdfDocument.getPage(1).getPdfObject();
-        Assert.assertNotNull(page.get(PdfName.Parent));
+        Assertions.assertNotNull(page.get(PdfName.Parent));
         pdfDocument.close();
 
         CompareTool cmpTool = new CompareTool();
@@ -560,7 +568,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         for (int i = 0; i < 10; i++) {
             PdfDictionary page1 = doc1.getPage(i + 1).getPdfObject();
             PdfDictionary page2 = doc2.getPage(10 - i).getPdfObject();
-            Assert.assertTrue(cmpTool.compareDictionaries(page1, page2));
+            Assertions.assertTrue(cmpTool.compareDictionaries(page1, page2));
         }
 
         doc1.close();
@@ -606,14 +614,14 @@ public class PdfCanvasTest extends ExtendedITextTest {
         CompareTool cmpTool = new CompareTool();
         PdfReader reader1 = CompareTool.createOutputReader(file1);
         PdfDocument doc1 = new PdfDocument(reader1);
-        Assert.assertEquals("Rebuilt", false, reader1.hasRebuiltXref());
+        Assertions.assertEquals(false, reader1.hasRebuiltXref(), "Rebuilt");
         PdfDictionary p1 = doc1.getPage(1).getPdfObject();
         PdfReader reader2 = CompareTool.createOutputReader(file2);
         PdfDocument doc2 = new PdfDocument(reader2);
-        Assert.assertEquals("Rebuilt", false, reader2.hasRebuiltXref());
+        Assertions.assertEquals(false, reader2.hasRebuiltXref(), "Rebuilt");
         for (int i = 0; i < 10; i++) {
             PdfDictionary p2 = doc2.getPage(i + 1).getPdfObject();
-            Assert.assertTrue(cmpTool.compareDictionaries(p1, p2));
+            Assertions.assertTrue(cmpTool.compareDictionaries(p1, p2));
         }
         doc1.close();
         doc2.close();
@@ -654,14 +662,14 @@ public class PdfCanvasTest extends ExtendedITextTest {
         CompareTool cmpTool = new CompareTool();
         PdfReader reader1 = CompareTool.createOutputReader(file1);
         PdfDocument doc1 = new PdfDocument(reader1);
-        Assert.assertEquals("Rebuilt", false, reader1.hasRebuiltXref());
+        Assertions.assertEquals(false, reader1.hasRebuiltXref(), "Rebuilt");
 
         for (int i = 0; i < 5; i++) {
             PdfDictionary page1 = doc1.getPage(i + 1).getPdfObject();
             PdfDocument doc2 = new PdfDocument(CompareTool.createOutputReader(
                     DESTINATION_FOLDER + MessageFormatUtil.format("copyPages4_{0}.pdf", i + 2)));
             PdfDictionary page = doc2.getPage(1).getPdfObject();
-            Assert.assertTrue(cmpTool.compareDictionaries(page1, page));
+            Assertions.assertTrue(cmpTool.compareDictionaries(page1, page));
             doc2.close();
         }
 
@@ -710,13 +718,13 @@ public class PdfCanvasTest extends ExtendedITextTest {
         for (int i = 0; i < 3; i++) {
             PdfReader reader1 = CompareTool.createOutputReader(DESTINATION_FOLDER + MessageFormatUtil.format("copyPages5_{0}.pdf", i + 1));
             PdfDocument doc1 = new PdfDocument(reader1);
-            Assert.assertEquals("Rebuilt", false, reader1.hasRebuiltXref());
+            Assertions.assertEquals(false, reader1.hasRebuiltXref(), "Rebuilt");
             PdfReader reader2 = CompareTool.createOutputReader(DESTINATION_FOLDER + "copyPages5_4.pdf");
             PdfDocument doc2 = new PdfDocument(reader2);
-            Assert.assertEquals("Rebuilt", false, reader2.hasRebuiltXref());
+            Assertions.assertEquals(false, reader2.hasRebuiltXref(), "Rebuilt");
             PdfDictionary page1 = doc1.getPage(1).getPdfObject();
             PdfDictionary page2 = doc2.getPage(i + 1).getPdfObject();
-            Assert.assertTrue(cmpTool.compareDictionaries(page1, page2));
+            Assertions.assertTrue(cmpTool.compareDictionaries(page1, page2));
             doc1.close();
             doc2.close();
         }
@@ -774,19 +782,19 @@ public class PdfCanvasTest extends ExtendedITextTest {
         for (int i = 0; i < 3; i++) {
             PdfReader reader1 = CompareTool.createOutputReader(file1);
             PdfDocument doc1 = new PdfDocument(reader1);
-            Assert.assertEquals("Rebuilt", false, reader1.hasRebuiltXref());
+            Assertions.assertEquals(false, reader1.hasRebuiltXref(), "Rebuilt");
             PdfReader reader2 = CompareTool.createOutputReader(file2);
             PdfDocument doc2 = new PdfDocument(reader2);
-            Assert.assertEquals("Rebuilt", false, reader2.hasRebuiltXref());
+            Assertions.assertEquals(false, reader2.hasRebuiltXref(), "Rebuilt");
             PdfReader reader3 = CompareTool.createOutputReader(file3);
             PdfDocument doc3 = new PdfDocument(reader3);
-            Assert.assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
+            Assertions.assertEquals(false, reader3.hasRebuiltXref(), "Rebuilt");
             PdfReader reader4 = CompareTool.createOutputReader(file1_upd);
             PdfDocument doc4 = new PdfDocument(reader4);
-            Assert.assertEquals("Rebuilt", false, reader4.hasRebuiltXref());
-            Assert.assertTrue(cmpTool.compareDictionaries(doc1.getPage(1).getPdfObject(), doc4.getPage(2).getPdfObject()));
-            Assert.assertTrue(cmpTool.compareDictionaries(doc4.getPage(2).getPdfObject(), doc2.getPage(1).getPdfObject()));
-            Assert.assertTrue(cmpTool.compareDictionaries(doc2.getPage(1).getPdfObject(), doc4.getPage(1).getPdfObject()));
+            Assertions.assertEquals(false, reader4.hasRebuiltXref(), "Rebuilt");
+            Assertions.assertTrue(cmpTool.compareDictionaries(doc1.getPage(1).getPdfObject(), doc4.getPage(2).getPdfObject()));
+            Assertions.assertTrue(cmpTool.compareDictionaries(doc4.getPage(2).getPdfObject(), doc2.getPage(1).getPdfObject()));
+            Assertions.assertTrue(cmpTool.compareDictionaries(doc2.getPage(1).getPdfObject(), doc4.getPage(1).getPdfObject()));
             doc1.close();
             doc2.close();
             doc3.close();
@@ -810,7 +818,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         }
         canvas.release();
         document.close();
-        Assert.assertEquals(KernelExceptionMessageConstant.UNBALANCED_BEGIN_END_MARKED_CONTENT_OPERATORS, message);
+        Assertions.assertEquals(KernelExceptionMessageConstant.UNBALANCED_BEGIN_END_MARKED_CONTENT_OPERATORS, message);
     }
 
     @Test
@@ -833,7 +841,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         canvas.release();
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(
+        Assertions.assertNull(new CompareTool().compareByContent(
                 DESTINATION_FOLDER + "markedContentTest2.pdf", SOURCE_FOLDER + "cmp_markedContentTest2.pdf",
                 DESTINATION_FOLDER, "diff_"));
     }
@@ -846,13 +854,13 @@ public class PdfCanvasTest extends ExtendedITextTest {
         canvas.setLineWidth(3);
         canvas.saveState();
         canvas.setLineWidth(5);
-        Assert.assertEquals(5, canvas.getGraphicsState().getLineWidth(), 0);
+        Assertions.assertEquals(5, canvas.getGraphicsState().getLineWidth(), 0);
         canvas.restoreState();
-        Assert.assertEquals(3, canvas.getGraphicsState().getLineWidth(), 0);
+        Assertions.assertEquals(3, canvas.getGraphicsState().getLineWidth(), 0);
         PdfExtGState egs = new PdfExtGState();
         egs.getPdfObject().put(com.itextpdf.kernel.pdf.PdfName.LW, new PdfNumber(2));
         canvas.setExtGState(egs);
-        Assert.assertEquals(2, canvas.getGraphicsState().getLineWidth(), 0);
+        Assertions.assertEquals(2, canvas.getGraphicsState().getLineWidth(), 0);
         canvas.release();
         document.close();
     }
@@ -868,7 +876,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "wmfImageTest01.pdf", SOURCE_FOLDER + "cmp_wmfImageTest01.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "wmfImageTest01.pdf", SOURCE_FOLDER + "cmp_wmfImageTest01.pdf",
                 DESTINATION_FOLDER, "diff_"));
     }
 
@@ -883,7 +891,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "wmfImageTest02.pdf", SOURCE_FOLDER + "cmp_wmfImageTest02.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "wmfImageTest02.pdf", SOURCE_FOLDER + "cmp_wmfImageTest02.pdf",
                 DESTINATION_FOLDER, "diff_"));
     }
 
@@ -899,7 +907,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "wmfImageTest03.pdf", SOURCE_FOLDER + "cmp_wmfImageTest03.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "wmfImageTest03.pdf", SOURCE_FOLDER + "cmp_wmfImageTest03.pdf",
                 DESTINATION_FOLDER, "diff_"));
     }
 
@@ -914,7 +922,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "wmfImageTest04.pdf", SOURCE_FOLDER + "cmp_wmfImageTest04.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "wmfImageTest04.pdf", SOURCE_FOLDER + "cmp_wmfImageTest04.pdf",
                 DESTINATION_FOLDER, "diff_"));
     }
 
@@ -932,7 +940,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "wmfImageTest05.pdf", SOURCE_FOLDER + "cmp_wmfImageTest05.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "wmfImageTest05.pdf", SOURCE_FOLDER + "cmp_wmfImageTest05.pdf",
                 DESTINATION_FOLDER, "diff_"));
     }
 
@@ -947,7 +955,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "gifImageTest01.pdf", SOURCE_FOLDER + "cmp_gifImageTest01.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "gifImageTest01.pdf", SOURCE_FOLDER + "cmp_gifImageTest01.pdf",
                 DESTINATION_FOLDER, "diff_"));
     }
 
@@ -970,7 +978,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "gifImageTest02.pdf", SOURCE_FOLDER + "cmp_gifImageTest02.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "gifImageTest02.pdf", SOURCE_FOLDER + "cmp_gifImageTest02.pdf",
                 DESTINATION_FOLDER, "diff_"));
     }
 
@@ -993,7 +1001,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "gifImageTest03.pdf", SOURCE_FOLDER + "cmp_gifImageTest03.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "gifImageTest03.pdf", SOURCE_FOLDER + "cmp_gifImageTest03.pdf",
                 DESTINATION_FOLDER, "diff_"));
     }
 
@@ -1013,7 +1021,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfCanvas canvas = new PdfCanvas(page);
         try {
             ImageDataFactory.createGifFrame(baos.toByteArray(), 3);
-            Assert.fail("IOException expected");
+            Assertions.fail("IOException expected");
         } catch (com.itextpdf.io.exceptions.IOException ignored) {
 
         }
@@ -1042,7 +1050,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "gifImageTest05.pdf", SOURCE_FOLDER + "cmp_gifImageTest05.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "gifImageTest05.pdf", SOURCE_FOLDER + "cmp_gifImageTest05.pdf",
                 DESTINATION_FOLDER, "diff_"));
     }
 
@@ -1067,7 +1075,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename,
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename,
                 DESTINATION_FOLDER, "diff_"));
     }
     // Android-Conversion-Skip-Block-End
@@ -1086,7 +1094,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destFile, cmpFile, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -1104,7 +1112,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destFile, cmpFile, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -1145,7 +1153,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfDocument document = new PdfDocument(new PdfReader(srcFile, properties));
 
         PdfPage page = document.getPage(1);
-        Assert.assertThrows(MemoryLimitsAwareException.class, () ->{
+        Assertions.assertThrows(MemoryLimitsAwareException.class, () ->{
             new PdfCanvas(page.getLastContentStream(), page.getResources(), page.getDocument());
         });
     }
@@ -1168,7 +1176,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destFile, cmpFile, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -1224,7 +1232,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destFile, cmpFile, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -1238,7 +1246,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "addWmfImage.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "addWmfImage.pdf",
                 SOURCE_FOLDER + "cmp_addWmfImage.pdf", DESTINATION_FOLDER, "diff_"));
     }
 
@@ -1276,7 +1284,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -1313,7 +1321,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -1339,7 +1347,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -1364,7 +1372,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -1402,7 +1410,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -1436,7 +1444,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -1469,7 +1477,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -1502,7 +1510,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -1535,7 +1543,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -1568,7 +1576,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -1601,7 +1609,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -1633,7 +1641,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -1665,7 +1673,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -1697,7 +1705,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -1727,7 +1735,127 @@ public class PdfCanvasTest extends ExtendedITextTest {
         canvas.release();
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void ignorePageRotationForContentTest() throws IOException, InterruptedException {
+        final String outPdf = DESTINATION_FOLDER + "ignorePageRotationForContent.pdf";
+        final String cmpPdf = SOURCE_FOLDER + "cmp_ignorePageRotationForContent.pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outPdf))) {
+            pdfDoc.getDocumentInfo().setAuthor(AUTHOR).setCreator(CREATOR).setTitle(TITLE);
+
+            PdfPage page = pdfDoc.addNewPage().setRotation(270);
+
+            // When "true": in case the page has a rotation, then new content will be automatically rotated in the
+            // opposite direction. On the rotated page this would look as if new content ignores page rotation.
+            page.setIgnorePageRotationForContent(true);
+
+            PdfCanvas canvas = new PdfCanvas(page, false);
+            canvas
+                    .saveState()
+                    .beginText()
+                    .moveText(180, 350)
+                    .setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 30)
+                    .showText("Page rotation is set to 270 degrees,")
+                    .endText()
+                    .restoreState();
+            PdfCanvas canvas2 = new PdfCanvas(page, false);
+            canvas2
+                    .saveState()
+                    .beginText()
+                    .moveText(180, 250)
+                    .setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 30)
+                    .showText("but new content ignores page rotation")
+                    .endText()
+                    .restoreState();
+            page.flush();
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void getResourcesTest() throws IOException {
+        final String outPdf = DESTINATION_FOLDER + "getResourcesDoc.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outPdf));
+        PdfPage page1 = pdfDoc.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page1);
+
+        canvas.saveState()
+                .beginText()
+                .moveText(150, 400)
+                .setFontAndSize(PdfFontFactory.createFont(), 8)
+                .showText("test text")
+                .endText()
+                .restoreState();
+
+        PdfResources resources = canvas.getResources();
+
+        pdfDoc.close();
+
+        Assertions.assertEquals(1, resources.getResourceNames().size());
+    }
+
+    @Test
+    public void attachContentStreamTest() throws IOException {
+        final String outPdf = DESTINATION_FOLDER + "attachContentStreamDoc.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outPdf));
+        PdfPage page1 = pdfDoc.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page1);
+
+        canvas.attachContentStream(new PdfStream("test".getBytes(StandardCharsets.UTF_8)));
+        String contentFromStream = new String(canvas.getContentStream().getBytes(), StandardCharsets.UTF_8);
+        pdfDoc.close();
+
+        Assertions.assertEquals("test", contentFromStream);
+    }
+
+    @Test
+    public void graphicStateFontNullTest() throws IOException {
+        final String outPdf = DESTINATION_FOLDER + "showTextDoc.pdf";
+
+        try(PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outPdf))) {
+            PdfPage page1 = pdfDoc.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page1);
+            GlyphLine glyphLine = new GlyphLine();
+            canvas.getGraphicsState().setFont(null);
+            ActualTextIterator actualTextIterator = new ActualTextIterator(glyphLine);
+            Assertions.assertThrows(PdfException.class, () ->
+                    canvas.showText(glyphLine, actualTextIterator));
+        }
+    }
+
+
+
+    @Test
+    public void glyphlineActualTextTest() throws IOException {
+        String outFileName = DESTINATION_FOLDER + "glyphlineActualText.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
+            PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "NotoSansCJKjp-Bold.otf",
+                    PdfEncodings.IDENTITY_H);
+
+            List<Glyph> glyphs = Collections.singletonList(font.getGlyph((int) '\u65E0'));
+            GlyphLine glyphLine = new GlyphLine(glyphs);
+            glyphLine.setActualText(0, 1, "TEST");
+            PdfCanvas canvas = new PdfCanvas(pdfDocument.addNewPage());
+            canvas
+                    .saveState()
+                    .beginText()
+                    .setFontAndSize(font, 7)
+                    .showText(glyphLine)
+                    .endText()
+                    .restoreState();
+
+            String contentstream = new String(canvas.getContentStream().getBytes(), StandardCharsets.UTF_8);
+            canvas.release();
+
+            Assertions.assertTrue(contentstream.contains("/ActualText"));
+        }
     }
 
     private void createStandardDocument(PdfWriter writer, int pageCount, ContentProvider contentProvider) throws IOException {
@@ -1750,15 +1878,15 @@ public class PdfCanvasTest extends ExtendedITextTest {
     private void assertStandardDocument(String filename, int pageCount) throws IOException {
         PdfReader reader = CompareTool.createOutputReader(filename);
         PdfDocument pdfDocument = new PdfDocument(reader);
-        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        Assertions.assertFalse(reader.hasRebuiltXref(), "Rebuilt");
         PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
-        Assert.assertEquals("Author", AUTHOR, info.get(PdfName.Author).toString());
-        Assert.assertEquals("Creator", CREATOR, info.get(PdfName.Creator).toString());
-        Assert.assertEquals("Title", TITLE, info.get(PdfName.Title).toString());
-        Assert.assertEquals("Page count", pageCount, pdfDocument.getNumberOfPages());
+        Assertions.assertEquals(AUTHOR, info.get(PdfName.Author).toString(), "Author");
+        Assertions.assertEquals(CREATOR, info.get(PdfName.Creator).toString(), "Creator");
+        Assertions.assertEquals(TITLE, info.get(PdfName.Title).toString(), "Title");
+        Assertions.assertEquals(pageCount, pdfDocument.getNumberOfPages(), "Page count");
         for (int i = 1; i <= pageCount; i++) {
             PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
-            Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
+            Assertions.assertEquals(PdfName.Page, page.get(PdfName.Type));
         }
         pdfDocument.close();
     }

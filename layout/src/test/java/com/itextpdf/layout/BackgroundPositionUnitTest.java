@@ -25,19 +25,18 @@ package com.itextpdf.layout;
 import com.itextpdf.layout.properties.BackgroundPosition;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class BackgroundPositionUnitTest extends ExtendedITextTest {
 
     @Test
     public void defaultConstructorTest() {
         BackgroundPosition position = new BackgroundPosition();
 
-        Assert.assertEquals(new BackgroundPosition().setPositionX(BackgroundPosition.PositionX.LEFT).setPositionY(BackgroundPosition.PositionY.TOP)
+        Assertions.assertEquals(new BackgroundPosition().setPositionX(BackgroundPosition.PositionX.LEFT).setPositionY(BackgroundPosition.PositionY.TOP)
                 .setXShift(new UnitValue(UnitValue.POINT, 0)).setYShift(new UnitValue(UnitValue.POINT, 0)), position);
     }
 
@@ -50,8 +49,8 @@ public class BackgroundPositionUnitTest extends ExtendedITextTest {
         UnitValue yPosition = UnitValue.createPointValue(0);
         position.calculatePositionValues(1000, 300, xPosition, yPosition);
 
-        Assert.assertEquals(new UnitValue(UnitValue.POINT, 970), xPosition);
-        Assert.assertEquals(new UnitValue(UnitValue.POINT, 30), yPosition);
+        Assertions.assertEquals(new UnitValue(UnitValue.POINT, 970), xPosition);
+        Assertions.assertEquals(new UnitValue(UnitValue.POINT, 30), yPosition);
 
         position = new BackgroundPosition().setPositionX(BackgroundPosition.PositionX.CENTER).setPositionY(BackgroundPosition.PositionY.BOTTOM)
                 .setXShift(new UnitValue(UnitValue.POINT, 30)).setYShift(new UnitValue(UnitValue.PERCENT, 10));
@@ -60,8 +59,8 @@ public class BackgroundPositionUnitTest extends ExtendedITextTest {
         yPosition = UnitValue.createPointValue(0);
         position.calculatePositionValues(1000, 300, xPosition, yPosition);
 
-        Assert.assertEquals(new UnitValue(UnitValue.POINT, 0), xPosition);
-        Assert.assertEquals(new UnitValue(UnitValue.POINT, 270), yPosition);
+        Assertions.assertEquals(new UnitValue(UnitValue.POINT, 0), xPosition);
+        Assertions.assertEquals(new UnitValue(UnitValue.POINT, 270), yPosition);
     }
 
     @Test
@@ -70,8 +69,8 @@ public class BackgroundPositionUnitTest extends ExtendedITextTest {
         final UnitValue valueX = new UnitValue(UnitValue.PERCENT, 0);
         final UnitValue valueY = new UnitValue(UnitValue.PERCENT, 0);
         position.calculatePositionValues(1000, 1000, valueX, valueY);
-        Assert.assertEquals(new UnitValue(UnitValue.POINT, 170), valueX);
-        Assert.assertEquals(new UnitValue(UnitValue.POINT, 0), valueY);
+        Assertions.assertEquals(new UnitValue(UnitValue.POINT, 170), valueX);
+        Assertions.assertEquals(new UnitValue(UnitValue.POINT, 0), valueY);
     }
 
     @Test
@@ -82,8 +81,8 @@ public class BackgroundPositionUnitTest extends ExtendedITextTest {
         final UnitValue valueX = new UnitValue(UnitValue.PERCENT, 0);
         final UnitValue valueY = new UnitValue(UnitValue.PERCENT, 0);
         position.calculatePositionValues(1000, 1000, valueX, valueY);
-        Assert.assertEquals(new UnitValue(UnitValue.POINT, 0), valueX);
-        Assert.assertEquals(new UnitValue(UnitValue.POINT, 0), valueY);
+        Assertions.assertEquals(new UnitValue(UnitValue.POINT, 0), valueX);
+        Assertions.assertEquals(new UnitValue(UnitValue.POINT, 0), valueY);
     }
 
     @Test
@@ -94,8 +93,8 @@ public class BackgroundPositionUnitTest extends ExtendedITextTest {
         final UnitValue valueX = new UnitValue(UnitValue.PERCENT, 0);
         final UnitValue valueY = new UnitValue(UnitValue.PERCENT, 0);
         position.calculatePositionValues(1000, 1000, valueX, valueY);
-        Assert.assertEquals(new UnitValue(UnitValue.POINT, 500), valueX);
-        Assert.assertEquals(new UnitValue(UnitValue.POINT, 500), valueY);
+        Assertions.assertEquals(new UnitValue(UnitValue.POINT, 500), valueX);
+        Assertions.assertEquals(new UnitValue(UnitValue.POINT, 500), valueY);
     }
 
     @Test
@@ -106,8 +105,8 @@ public class BackgroundPositionUnitTest extends ExtendedITextTest {
         final UnitValue valueX = new UnitValue(UnitValue.PERCENT, 0);
         final UnitValue valueY = new UnitValue(UnitValue.PERCENT, 0);
         position.calculatePositionValues(1000, 1000, valueX, valueY);
-        Assert.assertEquals(new UnitValue(UnitValue.POINT, 500), valueX);
-        Assert.assertEquals(new UnitValue(UnitValue.POINT, 500), valueY);
+        Assertions.assertEquals(new UnitValue(UnitValue.POINT, 500), valueX);
+        Assertions.assertEquals(new UnitValue(UnitValue.POINT, 500), valueY);
     }
 
     @Test
@@ -118,8 +117,8 @@ public class BackgroundPositionUnitTest extends ExtendedITextTest {
         final UnitValue valueX = new UnitValue(UnitValue.PERCENT, 0);
         final UnitValue valueY = new UnitValue(UnitValue.PERCENT, 0);
         position.calculatePositionValues(1000, 1000, valueX, valueY);
-        Assert.assertEquals(new UnitValue(UnitValue.POINT, 0), valueX);
-        Assert.assertEquals(new UnitValue(UnitValue.POINT, 0), valueY);
+        Assertions.assertEquals(new UnitValue(UnitValue.POINT, 0), valueX);
+        Assertions.assertEquals(new UnitValue(UnitValue.POINT, 0), valueY);
     }
 
     @Test
@@ -127,10 +126,10 @@ public class BackgroundPositionUnitTest extends ExtendedITextTest {
         BackgroundPosition position = new BackgroundPosition().setPositionX(BackgroundPosition.PositionX.RIGHT).setPositionY(BackgroundPosition.PositionY.BOTTOM)
                 .setXShift(new UnitValue(UnitValue.POINT, 30)).setYShift(new UnitValue(UnitValue.PERCENT, 10));
 
-        Assert.assertEquals(BackgroundPosition.PositionX.RIGHT, position.getPositionX());
-        Assert.assertEquals(BackgroundPosition.PositionY.BOTTOM, position.getPositionY());
-        Assert.assertEquals(new UnitValue(UnitValue.POINT, 30), position.getXShift());
-        Assert.assertEquals(new UnitValue(UnitValue.PERCENT, 10), position.getYShift());
+        Assertions.assertEquals(BackgroundPosition.PositionX.RIGHT, position.getPositionX());
+        Assertions.assertEquals(BackgroundPosition.PositionY.BOTTOM, position.getPositionY());
+        Assertions.assertEquals(new UnitValue(UnitValue.POINT, 30), position.getXShift());
+        Assertions.assertEquals(new UnitValue(UnitValue.PERCENT, 10), position.getYShift());
     }
 
     @Test
@@ -142,10 +141,10 @@ public class BackgroundPositionUnitTest extends ExtendedITextTest {
         position.setXShift(new UnitValue(UnitValue.POINT, 30));
         position.setYShift(new UnitValue(UnitValue.PERCENT, 10));
 
-        Assert.assertEquals(BackgroundPosition.PositionX.RIGHT, position.getPositionX());
-        Assert.assertEquals(BackgroundPosition.PositionY.BOTTOM, position.getPositionY());
-        Assert.assertEquals(new UnitValue(UnitValue.POINT, 30), position.getXShift());
-        Assert.assertEquals(new UnitValue(UnitValue.PERCENT, 10), position.getYShift());
+        Assertions.assertEquals(BackgroundPosition.PositionX.RIGHT, position.getPositionX());
+        Assertions.assertEquals(BackgroundPosition.PositionY.BOTTOM, position.getPositionY());
+        Assertions.assertEquals(new UnitValue(UnitValue.POINT, 30), position.getXShift());
+        Assertions.assertEquals(new UnitValue(UnitValue.PERCENT, 10), position.getYShift());
     }
 
     @Test
@@ -156,7 +155,7 @@ public class BackgroundPositionUnitTest extends ExtendedITextTest {
         BackgroundPosition position2 = new BackgroundPosition().setPositionX(BackgroundPosition.PositionX.RIGHT).setPositionY(BackgroundPosition.PositionY.BOTTOM)
                 .setXShift(new UnitValue(UnitValue.POINT, 30)).setYShift(new UnitValue(UnitValue.PERCENT, 10));
 
-        Assert.assertEquals(position1, position2);
+        Assertions.assertEquals(position1, position2);
     }
 
     @Test
@@ -164,7 +163,7 @@ public class BackgroundPositionUnitTest extends ExtendedITextTest {
         BackgroundPosition position1 = new BackgroundPosition().setPositionX(BackgroundPosition.PositionX.RIGHT).setPositionY(BackgroundPosition.PositionY.BOTTOM)
                 .setXShift(new UnitValue(UnitValue.POINT, 30)).setYShift(new UnitValue(UnitValue.PERCENT, 10));
 
-        Assert.assertEquals(position1, position1);
+        Assertions.assertEquals(position1, position1);
     }
 
     @Test
@@ -172,7 +171,7 @@ public class BackgroundPositionUnitTest extends ExtendedITextTest {
         BackgroundPosition position1 = new BackgroundPosition().setPositionX(BackgroundPosition.PositionX.RIGHT).setPositionY(BackgroundPosition.PositionY.BOTTOM)
                 .setXShift(new UnitValue(UnitValue.POINT, 30)).setYShift(new UnitValue(UnitValue.PERCENT, 10));
 
-        Assert.assertNotEquals(position1, null);
+        Assertions.assertNotEquals(position1, null);
     }
 
     @Test
@@ -180,7 +179,7 @@ public class BackgroundPositionUnitTest extends ExtendedITextTest {
         BackgroundPosition position1 = new BackgroundPosition().setPositionX(BackgroundPosition.PositionX.RIGHT).setPositionY(BackgroundPosition.PositionY.BOTTOM)
                 .setXShift(new UnitValue(UnitValue.POINT, 30)).setYShift(new UnitValue(UnitValue.PERCENT, 10));
 
-        Assert.assertNotEquals(position1, 5);
+        Assertions.assertNotEquals(position1, 5);
     }
 
     @Test
@@ -188,10 +187,10 @@ public class BackgroundPositionUnitTest extends ExtendedITextTest {
         BackgroundPosition position = new BackgroundPosition().setPositionX(BackgroundPosition.PositionX.RIGHT).setPositionY(BackgroundPosition.PositionY.BOTTOM)
                 .setXShift(new UnitValue(UnitValue.POINT, 30)).setYShift(new UnitValue(UnitValue.PERCENT, 10));
 
-        Assert.assertEquals(1028641704, position.hashCode());
+        Assertions.assertEquals(1028641704, position.hashCode());
 
         position.setXShift(new UnitValue(UnitValue.POINT, 37));
 
-        Assert.assertEquals(1101779880, position.hashCode());
+        Assertions.assertEquals(1101779880, position.hashCode());
     }
 }

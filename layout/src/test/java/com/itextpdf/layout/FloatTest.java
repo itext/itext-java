@@ -53,16 +53,15 @@ import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class FloatTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/FloatTest/";
@@ -78,7 +77,7 @@ public class FloatTest extends ExtendedITextTest {
             "Save time in Word with new buttons that show up where you need them. To change the way a picture fits in your document, click it and a button for layout options appears next to it. When you work on a table, click where you want to add a row or a column, and then click the plus sign. " +
             "Reading is easier, too, in the new Reading view. You can collapse parts of the document and focus on the text you want. If you need to stop reading before you reach the end, Word remembers where you left off - even on another device. ";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
@@ -113,7 +112,7 @@ public class FloatTest extends ExtendedITextTest {
         doc.add(p2);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff01_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff01_"));
     }
 
     @Test
@@ -146,7 +145,7 @@ public class FloatTest extends ExtendedITextTest {
         p3.setBorder(new SolidBorder(1));
         doc.add(p3);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff02_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff02_"));
     }
 
     @Test
@@ -171,7 +170,7 @@ public class FloatTest extends ExtendedITextTest {
         doc.add(new Paragraph("div2"));
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff03_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff03_"));
     }
 
     @Test
@@ -209,7 +208,7 @@ public class FloatTest extends ExtendedITextTest {
         doc.add(coloredDiv);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff04_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff04_"));
     }
 
     @Test
@@ -244,7 +243,7 @@ public class FloatTest extends ExtendedITextTest {
         doc.add(div);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff05_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff05_"));
     }
 
     @Test
@@ -271,7 +270,7 @@ public class FloatTest extends ExtendedITextTest {
         document.add(table);
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff06_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff06_"));
     }
 
     @Test
@@ -296,7 +295,7 @@ public class FloatTest extends ExtendedITextTest {
         document.add(new Paragraph(text));
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff07_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff07_"));
     }
 
     @Test
@@ -322,7 +321,7 @@ public class FloatTest extends ExtendedITextTest {
         document.add(p);
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff08_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff08_"));
     }
 
     @Test
@@ -345,7 +344,7 @@ public class FloatTest extends ExtendedITextTest {
         document.add(new Paragraph(text));
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff09_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff09_"));
     }
 
     @Test
@@ -368,7 +367,7 @@ public class FloatTest extends ExtendedITextTest {
         document.add(new Paragraph(text));
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff10_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff10_"));
     }
 
     @Test
@@ -426,7 +425,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff11_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff11_"));
     }
 
     @Test
@@ -465,7 +464,7 @@ public class FloatTest extends ExtendedITextTest {
         canvas.close();
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff12_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff12_"));
     }
 
     @Test
@@ -492,7 +491,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_width01_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_width01_"));
     }
 
     @Test
@@ -518,7 +517,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_width01_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_width01_"));
     }
 
     @Test
@@ -545,7 +544,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_width01_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_width01_"));
     }
 
     @Test
@@ -578,7 +577,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff13_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff13_"));
     }
 
     @Test
@@ -604,7 +603,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff13_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff13_"));
     }
 
     @Test
@@ -632,7 +631,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff14_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff14_"));
     }
 
     @Test
@@ -659,7 +658,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff15_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff15_"));
     }
 
     @Test
@@ -692,7 +691,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff14_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff14_"));
     }
 
     @Test
@@ -729,7 +728,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff23_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff23_"));
     }
 
     @Test
@@ -759,7 +758,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff24_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff24_"));
     }
 
     @Test
@@ -800,7 +799,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff23_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff23_"));
     }
 
     @Test
@@ -830,7 +829,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff16_01_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff16_01_"));
     }
 
     @Test
@@ -859,7 +858,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff16_02_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff16_02_"));
     }
 
     @Test
@@ -889,7 +888,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff16_02_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff16_02_"));
     }
 
     @Test
@@ -922,7 +921,7 @@ public class FloatTest extends ExtendedITextTest {
         document.add(containerDiv);
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff25_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff25_"));
     }
 
     @Test
@@ -954,7 +953,7 @@ public class FloatTest extends ExtendedITextTest {
         document.add(containerDiv);
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff25_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff25_"));
     }
 
     @Test
@@ -987,7 +986,7 @@ public class FloatTest extends ExtendedITextTest {
         document.add(containerDiv);
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff25_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff25_"));
     }
 
     @Test
@@ -1019,7 +1018,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff15_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff15_"));
     }
 
     @Test
@@ -1050,7 +1049,7 @@ public class FloatTest extends ExtendedITextTest {
         document.add(containerDiv);
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff26_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff26_"));
     }
 
     @Test
@@ -1073,7 +1072,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff17_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff17_"));
     }
 
     @Test
@@ -1095,7 +1094,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff18_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff18_"));
     }
 
     @Test
@@ -1117,7 +1116,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff19_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff19_"));
     }
 
     @Test
@@ -1138,7 +1137,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff20_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff20_"));
     }
 
     @Test
@@ -1167,7 +1166,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff21_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff21_"));
     }
 
     @Test
@@ -1195,7 +1194,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff22_01_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff22_01_"));
     }
 
     @Test
@@ -1223,7 +1222,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff22_02"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff22_02"));
     }
 
     @Test
@@ -1251,7 +1250,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff22_03"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff22_03"));
     }
 
     @Test
@@ -1280,7 +1279,7 @@ public class FloatTest extends ExtendedITextTest {
         document.add(containerDiv);
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff27_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff27_"));
     }
 
     @Test
@@ -1308,7 +1307,7 @@ public class FloatTest extends ExtendedITextTest {
         document.add(containerDiv);
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff28_01_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff28_01_"));
     }
 
     @Test
@@ -1337,7 +1336,7 @@ public class FloatTest extends ExtendedITextTest {
         document.add(containerDiv);
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff28_02_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff28_02_"));
     }
 
     @Test
@@ -1363,7 +1362,7 @@ public class FloatTest extends ExtendedITextTest {
         document.add(containerDiv);
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff28_03_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff28_03_"));
     }
 
     @Test
@@ -1392,7 +1391,7 @@ public class FloatTest extends ExtendedITextTest {
         document.add(containerDiv);
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff29_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff29_"));
     }
 
     @Test
@@ -1416,7 +1415,7 @@ public class FloatTest extends ExtendedITextTest {
         document.add(containerDiv);
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff30_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff30_"));
     }
 
     @Test
@@ -1449,7 +1448,7 @@ public class FloatTest extends ExtendedITextTest {
         document.add(containerDiv);
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff31_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff31_"));
     }
 
     @Test
@@ -1469,7 +1468,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff32_01_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff32_01_"));
     }
 
     @Test
@@ -1489,7 +1488,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff32_02_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff32_02_"));
     }
 
     @Test
@@ -1515,7 +1514,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff33_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff33_"));
     }
 
     @Test
@@ -1548,7 +1547,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff34_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff34_"));
     }
 
     @Test
@@ -1580,7 +1579,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff34_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff34_"));
     }
 
     @Test
@@ -1605,7 +1604,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff35_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff35_"));
     }
 
     @Test
@@ -1634,7 +1633,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff36_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff36_"));
     }
 
     @Test
@@ -1663,7 +1662,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff37_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff37_"));
     }
 
     @Test
@@ -1684,7 +1683,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff38_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff38_"));
     }
 
     @Test
@@ -1708,7 +1707,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff39_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff39_"));
     }
 
     @Test
@@ -1736,7 +1735,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff39_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff39_"));
     }
 
 
@@ -1761,7 +1760,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff40_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff40_"));
     }
 
     @Test
@@ -1789,7 +1788,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff41_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff41_"));
     }
 
     @Test
@@ -1817,7 +1816,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff42_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff42_"));
     }
 
     @Test
@@ -1845,7 +1844,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff43_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff43_"));
     }
 
     @Test
@@ -1868,7 +1867,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff44_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff44_"));
     }
 
     @Test
@@ -1900,7 +1899,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff45_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff45_"));
     }
 
     @Test
@@ -1932,7 +1931,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff46_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff46_"));
     }
 
     @Test
@@ -1963,7 +1962,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff47_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff47_"));
     }
 
     @Test
@@ -1984,7 +1983,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff51_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff51_"));
     }
 
     @Test
@@ -2025,7 +2024,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff52_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff52_"));
     }
 
     @Test
@@ -2056,7 +2055,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff53"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff53"));
     }
 
     @Test
@@ -2083,7 +2082,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff48_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff48_"));
     }
 
     @Test
@@ -2110,7 +2109,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff49_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff49_"));
     }
 
     @Test
@@ -2134,7 +2133,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff50_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff50_"));
     }
 
     @Test
@@ -2160,7 +2159,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff54_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff54_"));
     }
 
     @Test
@@ -2195,7 +2194,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff55_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff55_"));
     }
 
     @Test
@@ -2221,7 +2220,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff56_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff56_"));
     }
 
     @Test
@@ -2258,7 +2257,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff57_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff57_"));
     }
 
     @Test
@@ -2281,7 +2280,7 @@ public class FloatTest extends ExtendedITextTest {
         document.add(p);
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff58_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff58_"));
     }
 
     @Test
@@ -2303,7 +2302,7 @@ public class FloatTest extends ExtendedITextTest {
         doc.add(p);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff14_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff14_"));
     }
 
     @Test
@@ -2324,7 +2323,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_height_01_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_height_01_"));
     }
 
     @Test
@@ -2349,7 +2348,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_height_02_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_height_02_"));
     }
 
     @Test
@@ -2373,7 +2372,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_height_03_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_height_03_"));
     }
 
     @Test
@@ -2399,7 +2398,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_height_04_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_height_04_"));
     }
 
     @Test
@@ -2420,7 +2419,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_maxheight_01_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_maxheight_01_"));
     }
 
     @Test
@@ -2445,7 +2444,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_maxheight_02_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_maxheight_02_"));
     }
 
     @Test
@@ -2469,7 +2468,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_maxheight_03_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_maxheight_03_"));
     }
 
     @Test
@@ -2495,7 +2494,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_maxheight_04_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_maxheight_04_"));
     }
 
     @Test
@@ -2515,7 +2514,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_minheight_01_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_minheight_01_"));
     }
 
     @Test
@@ -2539,7 +2538,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_minheight_02_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_minheight_02_"));
     }
 
     @Test
@@ -2562,7 +2561,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_minheight_03_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_minheight_03_"));
     }
 
     @Test
@@ -2587,7 +2586,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_minheight_04_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_minheight_04_"));
     }
 
     @Test
@@ -2612,7 +2611,7 @@ public class FloatTest extends ExtendedITextTest {
         document.add(mainDiv);
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_minheightapplying_01_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_minheightapplying_01_"));
     }
 
     @Test
@@ -2643,7 +2642,7 @@ public class FloatTest extends ExtendedITextTest {
         document.add(mainDiv);
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_minheightapplying_02_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_minheightapplying_02_"));
     }
 
     @Test
@@ -2673,7 +2672,7 @@ public class FloatTest extends ExtendedITextTest {
         document.add(mainDiv);
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_minheightapplying_03_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_minheightapplying_03_"));
     }
 
     @Test
@@ -2711,7 +2710,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_minheightapplying_04_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_minheightapplying_04_"));
     }
 
     @Test
@@ -2761,7 +2760,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_minheightapplying_05_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_minheightapplying_05_"));
     }
 
     @Test
@@ -2796,7 +2795,7 @@ public class FloatTest extends ExtendedITextTest {
 
         // TODO DEVSIX-1818: overflow value HIDDEN doesn't clip floats because they are drawn later in different part of content stream.
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_maxheighthidden_01_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_maxheighthidden_01_"));
     }
 
     @Test
@@ -2827,7 +2826,7 @@ public class FloatTest extends ExtendedITextTest {
         document.add(mainP);
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_overflowNextLineAtPageEnd_01_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_overflowNextLineAtPageEnd_01_"));
     }
 
     @Test
@@ -2854,7 +2853,7 @@ public class FloatTest extends ExtendedITextTest {
         document.add(mainP);
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_overflowNextLineAtPageEnd_02_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_overflowNextLineAtPageEnd_02_"));
     }
 
     @Test
@@ -2883,7 +2882,7 @@ public class FloatTest extends ExtendedITextTest {
         document.add(mainP);
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_overflowNextLineAtPageEnd_03_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_overflowNextLineAtPageEnd_03_"));
     }
 
     private void addFloatingElements(Div mainDiv) {
@@ -2954,7 +2953,7 @@ public class FloatTest extends ExtendedITextTest {
                 .add("Some text\nSome text"));
 
         document.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff15_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff15_"));
     }
 
     /**
@@ -3007,7 +3006,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff16_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff16_"));
     }
 
     @Test
@@ -3031,7 +3030,7 @@ public class FloatTest extends ExtendedITextTest {
         document.add(new Paragraph(text + text));
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_overflowNewContent01_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_overflowNewContent01_"));
     }
 
     @Test
@@ -3055,7 +3054,7 @@ public class FloatTest extends ExtendedITextTest {
         document.add(new Paragraph(text + text + text));
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_overflowNewContent02_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_overflowNewContent02_"));
     }
 
     @Test
@@ -3086,7 +3085,7 @@ public class FloatTest extends ExtendedITextTest {
         doc.add(div);
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff03_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff03_"));
     }
 
     @Test
@@ -3101,7 +3100,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff50_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff50_"));
     }
 
     @Test
@@ -3117,7 +3116,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff50_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff50_"));
     }
 
     @Test
@@ -3132,7 +3131,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff50_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff50_"));
     }
 
     @Test
@@ -3147,7 +3146,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff50_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff50_"));
     }
 
 
@@ -3163,7 +3162,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff50_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff50_"));
     }
 
     @Test
@@ -3180,7 +3179,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff50_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff50_"));
     }
 
     @Test
@@ -3195,7 +3194,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff50_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff50_"));
     }
 
     @Test
@@ -3218,7 +3217,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder));
     }
 
     @Test
@@ -3240,7 +3239,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder));
     }
 
     @Test
@@ -3262,7 +3261,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder));
     }
 
     @Test
@@ -3284,7 +3283,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder));
     }
 
     @Test
@@ -3306,7 +3305,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder));
     }
 
     @Test
@@ -3329,7 +3328,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder));
     }
 
     @Test
@@ -3352,7 +3351,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder));
     }
 
 

@@ -53,24 +53,23 @@ import com.itextpdf.layout.testutil.TestProductEvent;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class CanvasTest extends ExtendedITextTest {
     private static final TestConfigurationEvent CONFIGURATION_ACCESS = new TestConfigurationEvent();
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/CanvasTest/";
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/CanvasTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
@@ -100,7 +99,7 @@ public class CanvasTest extends ExtendedITextTest {
         canvas.close();
         pdf.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(out, cmp, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(out, cmp, DESTINATION_FOLDER));
     }
 
     @Test
@@ -126,7 +125,7 @@ public class CanvasTest extends ExtendedITextTest {
         canvas.close();
         pdf.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(out, cmp, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(out, cmp, DESTINATION_FOLDER));
     }
 
     @Test
@@ -147,7 +146,7 @@ public class CanvasTest extends ExtendedITextTest {
         canvas.close();
         pdf.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(out, cmp, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(out, cmp, DESTINATION_FOLDER));
     }
 
     @Test
@@ -165,7 +164,7 @@ public class CanvasTest extends ExtendedITextTest {
         canvas.close();
         pdf.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(out, cmp, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(out, cmp, DESTINATION_FOLDER));
     }
 
     @Test
@@ -183,7 +182,7 @@ public class CanvasTest extends ExtendedITextTest {
         canvas.close();
         pdf.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(out, cmp, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(out, cmp, DESTINATION_FOLDER));
     }
 
     @Test
@@ -212,7 +211,7 @@ public class CanvasTest extends ExtendedITextTest {
         canvas.close();
         pdf.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(out, cmp, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(out, cmp, DESTINATION_FOLDER));
     }
 
     @Test
@@ -247,7 +246,7 @@ public class CanvasTest extends ExtendedITextTest {
         canvas.close();
         pdf.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(out, cmp, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(out, cmp, DESTINATION_FOLDER));
     }
 
     @Test
@@ -272,7 +271,7 @@ public class CanvasTest extends ExtendedITextTest {
             canvas.close();
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(out, cmp, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(out, cmp, DESTINATION_FOLDER));
     }
 
     @Test
@@ -299,7 +298,7 @@ public class CanvasTest extends ExtendedITextTest {
             canvas.close();
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(out, cmp, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(out, cmp, DESTINATION_FOLDER));
     }
 
     @Test
@@ -322,11 +321,11 @@ public class CanvasTest extends ExtendedITextTest {
 
             notFittingDiv.add(divWithPosition);
 
-            Assert.assertThrows(NullPointerException.class, () -> canvas.add(notFittingDiv));
+            Assertions.assertThrows(NullPointerException.class, () -> canvas.add(notFittingDiv));
             canvas.close();
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(out, cmp, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(out, cmp, DESTINATION_FOLDER));
     }
 
     @Test
@@ -347,10 +346,10 @@ public class CanvasTest extends ExtendedITextTest {
             }
 
             // Second event was linked by adding block element method
-            Assert.assertEquals(2, events.size());
+            Assertions.assertEquals(2, events.size());
 
-            Assert.assertTrue(events.get(0) instanceof ITextCoreProductEvent);
-            Assert.assertTrue(events.get(1) instanceof TestProductEvent);
+            Assertions.assertTrue(events.get(0) instanceof ITextCoreProductEvent);
+            Assertions.assertTrue(events.get(1) instanceof TestProductEvent);
         }
     }
 
@@ -372,10 +371,10 @@ public class CanvasTest extends ExtendedITextTest {
             }
 
             // Second event was linked by adding block element method
-            Assert.assertEquals(2, events.size());
+            Assertions.assertEquals(2, events.size());
 
-            Assert.assertTrue(events.get(0) instanceof ITextCoreProductEvent);
-            Assert.assertTrue(events.get(1) instanceof TestProductEvent);
+            Assertions.assertTrue(events.get(0) instanceof ITextCoreProductEvent);
+            Assertions.assertTrue(events.get(1) instanceof TestProductEvent);
         }
     }
 
@@ -383,9 +382,9 @@ public class CanvasTest extends ExtendedITextTest {
     public void drawingOnPageReuseCanvas() {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
             ExposedPdfCanvas canvas = new ExposedPdfCanvas(pdfDocument.addNewPage());
-            Assert.assertTrue(canvas.getDrawingOnPage());
+            Assertions.assertTrue(canvas.getDrawingOnPage());
             try (Canvas canvas1 = new Canvas(canvas, new Rectangle(200, 200, 200, 200))) {
-                Assert.assertTrue(((ExposedPdfCanvas) canvas1.pdfCanvas).getDrawingOnPage());
+                Assertions.assertTrue(((ExposedPdfCanvas) canvas1.pdfCanvas).getDrawingOnPage());
             }
         }
     }
@@ -395,9 +394,9 @@ public class CanvasTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
             PdfStream stream = new PdfStream();
             ExposedPdfCanvas canvas = new ExposedPdfCanvas(stream, new PdfResources(), pdfDocument);
-            Assert.assertFalse(canvas.getDrawingOnPage());
+            Assertions.assertFalse(canvas.getDrawingOnPage());
             try (Canvas canvas1 = new Canvas(canvas, new Rectangle(200, 200, 200, 200))) {
-                Assert.assertFalse(((ExposedPdfCanvas) canvas1.pdfCanvas).getDrawingOnPage());
+                Assertions.assertFalse(((ExposedPdfCanvas) canvas1.pdfCanvas).getDrawingOnPage());
             }
         }
     }

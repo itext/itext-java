@@ -35,27 +35,27 @@ import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
 import com.itextpdf.layout.properties.FloatPropertyValue;
 import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.IOException;
 
-@Category(IntegrationTest.class)
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+
+@Tag("IntegrationTest")
 public class TextWritingTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/TextWritingTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/TextWritingTest/";
     public static final String fontsFolder = "./src/test/resources/com/itextpdf/layout/fonts/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
@@ -84,7 +84,7 @@ public class TextWritingTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -117,7 +117,7 @@ public class TextWritingTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -143,7 +143,7 @@ public class TextWritingTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -160,7 +160,7 @@ public class TextWritingTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -206,7 +206,7 @@ public class TextWritingTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -229,7 +229,7 @@ public class TextWritingTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -253,7 +253,7 @@ public class TextWritingTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -266,15 +266,15 @@ public class TextWritingTest extends ExtendedITextTest {
 
         document.add(new Paragraph("I'm underlined").setUnderline());
         document.add(new Paragraph("I'm strikethrough").setLineThrough());
-        document.add(new Paragraph(new Text("I'm a bold simulation font").setBackgroundColor(ColorConstants.GREEN)).setBold());
-        document.add(new Paragraph(new Text("I'm an italic simulation font").setBackgroundColor(ColorConstants.GREEN)).setItalic());
+        document.add(new Paragraph(new Text("I'm a bold simulation font").setBackgroundColor(ColorConstants.GREEN)).simulateBold());
+        document.add(new Paragraph(new Text("I'm an italic simulation font").setBackgroundColor(ColorConstants.GREEN)).simulateItalic());
         document.add(new Paragraph(new Text("I'm a super bold italic underlined linethrough piece of text and no one can be better than me, even if " +
                 "such a long description will cause me to occupy two lines").setBackgroundColor(ColorConstants.GREEN))
-                .setItalic().setBold().setUnderline().setLineThrough());
+                .simulateItalic().simulateBold().setUnderline().setLineThrough());
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
 
@@ -317,7 +317,7 @@ public class TextWritingTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -337,7 +337,7 @@ public class TextWritingTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -354,12 +354,18 @@ public class TextWritingTest extends ExtendedITextTest {
         Text textDown = new Text("textRise-10f_with_lineThrough");
         textDown.setTextRise(-10f);
         textDown.setLineThrough();
-        Paragraph n= new Paragraph("baseline");
+        Paragraph n = new Paragraph("baseline");
         n.add(textUp).add(textDown);
         document.add(n);
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void textInitializationWithNullValueThrowsException() {
+        Exception e = Assertions.assertThrows(IllegalArgumentException.class, () -> new Text(null));
+        Assertions.assertEquals(LayoutExceptionMessageConstant.TEXT_CONTENT_CANNOT_BE_NULL, e.getMessage());
     }
 
     @Test
@@ -383,7 +389,7 @@ public class TextWritingTest extends ExtendedITextTest {
         document.add(p);
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
     @Test
@@ -420,6 +426,6 @@ public class TextWritingTest extends ExtendedITextTest {
         document.close();
         writer.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 }

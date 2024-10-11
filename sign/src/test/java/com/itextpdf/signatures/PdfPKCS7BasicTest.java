@@ -30,7 +30,6 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -38,11 +37,11 @@ import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 
-@Category(BouncyCastleUnitTest.class)
+@Tag("BouncyCastleUnitTest")
 public class PdfPKCS7BasicTest extends ExtendedITextTest {
     protected static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/PdfPKCS7Test/";
 
@@ -56,7 +55,7 @@ public class PdfPKCS7BasicTest extends ExtendedITextTest {
 
     private static final char[] PASSWORD = "testpassphrase".toCharArray();
 
-    @BeforeClass
+    @BeforeAll
     public static void init()
             throws IOException, CertificateException, AbstractPKCSException, AbstractOperatorCreationException {
         Security.addProvider(BOUNCY_CASTLE_FACTORY.getProvider());
@@ -78,8 +77,8 @@ public class PdfPKCS7BasicTest extends ExtendedITextTest {
             it causes a runtime error.
             */
             PdfPKCS7 data = u.readSignatureData("Signature", BOUNCY_CASTLE_FACTORY.getProviderName());
-            Assert.assertEquals(expectedSigMechanismName, data.getSignatureMechanismName());
-            Assert.assertTrue(data.verifySignatureIntegrityAndAuthenticity());
+            Assertions.assertEquals(expectedSigMechanismName, data.getSignatureMechanismName());
+            Assertions.assertTrue(data.verifySignatureIntegrityAndAuthenticity());
         }
     }
 }

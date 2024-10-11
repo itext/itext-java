@@ -22,6 +22,8 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
+
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 

@@ -45,7 +45,6 @@ import com.itextpdf.signatures.testutils.client.TestOcspClient;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -63,12 +62,12 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(BouncyCastleUnitTest.class)
+@Tag("BouncyCastleUnitTest")
 public class OcspVerifierTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
@@ -77,7 +76,7 @@ public class OcspVerifierTest extends ExtendedITextTest {
     private static final char[] password = "testpassphrase".toCharArray();
     private static final String caCertFileName = certsSrc + "rootRsa.pem";
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         Security.addProvider(FACTORY.getProvider());
     }
@@ -93,7 +92,7 @@ public class OcspVerifierTest extends ExtendedITextTest {
         builder.setThisUpdate(thisUpdate);
         builder.setNextUpdate(nextUpdate);
         builder.setProducedAt(caCert.getNotBefore());
-        Assert.assertTrue(verifyTest(builder, certsSrc + "signCertRsa01.pem", caCert.getNotAfter()));
+        Assertions.assertTrue(verifyTest(builder, certsSrc + "signCertRsa01.pem", caCert.getNotAfter()));
     }
 
     @Test
@@ -103,7 +102,7 @@ public class OcspVerifierTest extends ExtendedITextTest {
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
 
         OCSPVerifier ocspVerifier = new OCSPVerifier(null, null);
-        Assert.assertTrue(ocspVerifier.verify(caCert, rootCert, checkDate).isEmpty());
+        Assertions.assertTrue(ocspVerifier.verify(caCert, rootCert, checkDate).isEmpty());
     }
 
     @Test
@@ -116,7 +115,7 @@ public class OcspVerifierTest extends ExtendedITextTest {
         builder.setCertificateStatus(FACTORY.createRevokedStatus(
                 DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, -20),
                 FACTORY.createCRLReason().getKeyCompromise()));
-        Assert.assertFalse(verifyTest(builder));
+        Assertions.assertFalse(verifyTest(builder));
     }
 
     @Test
@@ -132,7 +131,7 @@ public class OcspVerifierTest extends ExtendedITextTest {
         builder.setCertificateStatus(FACTORY.createRevokedStatus(
                 DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, 20),
                 FACTORY.createCRLReason().getKeyCompromise()));
-        Assert.assertTrue(verifyTest(builder, checkCertFileName, TimeTestUtil.TEST_DATE_TIME));
+        Assertions.assertTrue(verifyTest(builder, checkCertFileName, TimeTestUtil.TEST_DATE_TIME));
     }
 
     @Test
@@ -143,7 +142,7 @@ public class OcspVerifierTest extends ExtendedITextTest {
         TestOcspResponseBuilder builder = new TestOcspResponseBuilder(caCert, caPrivateKey);
 
         builder.setCertificateStatus(FACTORY.createUnknownStatus());
-        Assert.assertFalse(verifyTest(builder));
+        Assertions.assertFalse(verifyTest(builder));
     }
 
     @Test
@@ -157,7 +156,7 @@ public class OcspVerifierTest extends ExtendedITextTest {
         Calendar nextUpdate = DateTimeUtil.addDaysToCalendar(DateTimeUtil.getCalendar(TimeTestUtil.TEST_DATE_TIME), -15);
         builder.setThisUpdate(thisUpdate);
         builder.setNextUpdate(nextUpdate);
-        Assert.assertFalse(verifyTest(builder));
+        Assertions.assertFalse(verifyTest(builder));
     }
 
     @Test
@@ -173,7 +172,7 @@ public class OcspVerifierTest extends ExtendedITextTest {
         Calendar nextUpdate = DateTimeUtil.addDaysToCalendar(DateTimeUtil.getCalendar(TimeTestUtil.TEST_DATE_TIME), 30);
         builder.setThisUpdate(thisUpdate);
         builder.setNextUpdate(nextUpdate);
-        Assert.assertTrue(verifyTest(builder, checkCertFileName, TimeTestUtil.TEST_DATE_TIME));
+        Assertions.assertTrue(verifyTest(builder, checkCertFileName, TimeTestUtil.TEST_DATE_TIME));
     }
 
     @Test
@@ -187,7 +186,7 @@ public class OcspVerifierTest extends ExtendedITextTest {
         builder.setThisUpdate(thisUpdate);
         builder.setNextUpdate(nextUpdate);
         builder.setProducedAt(caCert.getNotBefore());
-        Assert.assertTrue(verifyTest(builder, certsSrc + "signCertRsaWithExpiredChain.pem",
+        Assertions.assertTrue(verifyTest(builder, certsSrc + "signCertRsaWithExpiredChain.pem",
                 DateTimeUtil.addDaysToDate(caCert.getNotAfter(), -1)));
     }
 
@@ -202,7 +201,7 @@ public class OcspVerifierTest extends ExtendedITextTest {
         builder.setThisUpdate(thisUpdate);
         builder.setNextUpdate(nextUpdate);
         builder.setProducedAt(DateTimeUtil.addDaysToDate(caCert.getNotAfter(), 1));
-        Assert.assertThrows(CertificateExpiredException.class, () ->
+        Assertions.assertThrows(CertificateExpiredException.class, () ->
                 verifyTest(builder, certsSrc + "signCertRsaWithExpiredChain.pem",
                         DateTimeUtil.addDaysToDate(caCert.getNotAfter(), 1)));
     }
@@ -216,7 +215,7 @@ public class OcspVerifierTest extends ExtendedITextTest {
 
         boolean verifyRes = verifyAuthorizedOCSPResponderWithOCSPNoCheckTest(ocspResponderCertStartDate,
                 ocspResponderCertEndDate, checkDate);
-        Assert.assertTrue(verifyRes);
+        Assertions.assertTrue(verifyRes);
     }
 
     @Test
@@ -228,7 +227,7 @@ public class OcspVerifierTest extends ExtendedITextTest {
 
         boolean verifyRes = verifyAuthorizedOCSPResponderWithOCSPNoCheckTest(ocspResponderCertStartDate,
                 ocspResponderCertEndDate, checkDate);
-        Assert.assertTrue(verifyRes);
+        Assertions.assertTrue(verifyRes);
     }
 
     @Test
@@ -237,7 +236,7 @@ public class OcspVerifierTest extends ExtendedITextTest {
         Date ocspResponderCertEndDate = DateTimeUtil.addYearsToDate(TimeTestUtil.TEST_DATE_TIME, -1);
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
 
-        Assert.assertThrows(CertificateExpiredException.class, () -> verifyAuthorizedOCSPResponderWithOCSPNoCheckTest(
+        Assertions.assertThrows(CertificateExpiredException.class, () -> verifyAuthorizedOCSPResponderWithOCSPNoCheckTest(
                 ocspResponderCertStartDate, ocspResponderCertEndDate, checkDate)
         );
     }
@@ -247,13 +246,13 @@ public class OcspVerifierTest extends ExtendedITextTest {
             AbstractPKCSException, AbstractOperatorCreationException {
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
         boolean verifyRes = verifyOcspResponseWithResponderFromRootStoreTest(checkDate);
-        Assert.assertTrue(verifyRes);
+        Assertions.assertTrue(verifyRes);
     }
 
     @Test
     public void expiredResponderFromRootStoreTestAfterValidPeriod() {
         Date checkDate = DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, 365 * 100);
-        Assert.assertThrows(CertificateExpiredException.class, () -> verifyOcspResponseWithResponderFromRootStoreTest(
+        Assertions.assertThrows(CertificateExpiredException.class, () -> verifyOcspResponseWithResponderFromRootStoreTest(
                 checkDate)
         );
     }
@@ -266,7 +265,7 @@ public class OcspVerifierTest extends ExtendedITextTest {
         String ocspResponderCertFileName = src + "ocspResponderCertForOcspTest.pem";
         boolean verifyRes = verifyOcspResponseWithRevocationCheckTest(rootCertFileName, checkCertFileName,
                 ocspResponderCertFileName, true, false);
-        Assert.assertTrue(verifyRes);
+        Assertions.assertTrue(verifyRes);
     }
 
     @Test
@@ -278,7 +277,7 @@ public class OcspVerifierTest extends ExtendedITextTest {
         String ocspResponderCertFileName = src + "ocspResponderCertForOcspTest.pem";
         boolean verifyRes = verifyOcspResponseWithRevocationCheckTest(rootCertFileName, checkCertFileName,
                 ocspResponderCertFileName, true, true);
-        Assert.assertTrue(verifyRes);
+        Assertions.assertTrue(verifyRes);
     }
 
     @Test
@@ -289,7 +288,7 @@ public class OcspVerifierTest extends ExtendedITextTest {
         String ocspResponderCertFileName = src + "ocspResponderCertForCrlTest.pem";
         boolean verifyRes = verifyOcspResponseWithRevocationCheckTest(rootCertFileName, checkCertFileName,
                 ocspResponderCertFileName, false, false);
-        Assert.assertTrue(verifyRes);
+        Assertions.assertTrue(verifyRes);
     }
 
     @Test
@@ -298,7 +297,7 @@ public class OcspVerifierTest extends ExtendedITextTest {
         Date ocspResponderCertEndDate = DateTimeUtil.addDaysToDate(ocspResponderCertStartDate, 365 * 100);
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
 
-        Assert.assertThrows(VerificationException.class, () -> verifyAuthorizedOCSPResponderCheckRevDataTest
+        Assertions.assertThrows(VerificationException.class, () -> verifyAuthorizedOCSPResponderCheckRevDataTest
                 (ocspResponderCertStartDate, ocspResponderCertEndDate, checkDate));
     }
 
@@ -308,7 +307,7 @@ public class OcspVerifierTest extends ExtendedITextTest {
         Date ocspResponderCertEndDate = DateTimeUtil.addDaysToDate(ocspResponderCertStartDate, 365 * 100);
         Date checkDate = DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, 365 * 20);
 
-        Assert.assertTrue(verifyAuthorizedOCSPResponderWithProvidedOcspsTest(ocspResponderCertStartDate,
+        Assertions.assertTrue(verifyAuthorizedOCSPResponderWithProvidedOcspsTest(ocspResponderCertStartDate,
                 ocspResponderCertEndDate, checkDate));
     }
 
@@ -318,7 +317,7 @@ public class OcspVerifierTest extends ExtendedITextTest {
         Date ocspResponderCertEndDate = DateTimeUtil.addDaysToDate(ocspResponderCertStartDate, 365 * 100);
         Date checkDate = DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, 365 * 20);
 
-        Assert.assertTrue(verifyAuthorizedOCSPResponderWithProvidedCrlsTest(ocspResponderCertStartDate,
+        Assertions.assertTrue(verifyAuthorizedOCSPResponderWithProvidedCrlsTest(ocspResponderCertStartDate,
                 ocspResponderCertEndDate, checkDate));
     }
 
@@ -326,21 +325,21 @@ public class OcspVerifierTest extends ExtendedITextTest {
     public void ocspResponseCouldNotBeVerifiedTest() throws CertificateException, IOException {
         X509Certificate wrongCert = (X509Certificate)
                 PemFileHelper.readFirstChain(certsSrc + "intermediateExpiredCert.pem")[0];
-        Assert.assertThrows(VerificationException.class, () ->
+        Assertions.assertThrows(VerificationException.class, () ->
                 verifyOcspResponseWithoutResponderAvailableTest(new IX509CertificateHolder[]
                         {FACTORY.createJcaX509CertificateHolder(wrongCert)}));
     }
 
     @Test
     public void ocspResponseWithoutCertsCouldNotBeVerifiedTest() {
-        Assert.assertThrows(VerificationException.class, () ->
+        Assertions.assertThrows(VerificationException.class, () ->
                 verifyOcspResponseWithoutResponderAvailableTest(new IX509CertificateHolder[0]));
     }
 
     @Test
     public void getOcspResponseNullTest() {
         OCSPVerifier verifier = new OCSPVerifier(null, null);
-        Assert.assertNull(verifier.getOcspResponse(null, null));
+        Assertions.assertNull(verifier.getOcspResponse(null, null));
     }
 
     @Test
@@ -348,7 +347,7 @@ public class OcspVerifierTest extends ExtendedITextTest {
         String rootCertFileName = src + "rootCertForCrlTest.pem";
         String checkCertFileName = src + "signCertForCrlTest.pem";
         String ocspResponderCertFileName = src + "ocspResponderCertForOcspTest.pem";
-        Assert.assertThrows(SignatureException.class, () ->
+        Assertions.assertThrows(SignatureException.class, () ->
                 verifyOcspResponseWithRevocationCheckTest(rootCertFileName, checkCertFileName,
                         ocspResponderCertFileName, true, false));
     }
@@ -375,7 +374,7 @@ public class OcspVerifierTest extends ExtendedITextTest {
                 FACTORY.createASN1Primitive(ocspClient.getEncoded(checkCert, caCert, null))));
 
         OCSPVerifier ocspVerifier = new OCSPVerifier(null, null);
-        Assert.assertFalse(ocspVerifier.verify(basicOCSPResp, checkCert, wrongCaCert, checkDate));
+        Assertions.assertFalse(ocspVerifier.verify(basicOCSPResp, checkCert, wrongCaCert, checkDate));
     }
 
     @Test
@@ -403,7 +402,7 @@ public class OcspVerifierTest extends ExtendedITextTest {
         OCSPVerifier ocspVerifier = new CustomOCSPVerifier(null, Collections.singletonList(basicOCSPResp));
         ocspVerifier.setRootStore(PemFileHelper.initStore(ocspResponderCertFileName, password, FACTORY.getProvider()));
 
-        Assert.assertTrue(ocspVerifier.verify(checkCert, caCert, checkDate).get(0).toString()
+        Assertions.assertTrue(ocspVerifier.verify(checkCert, caCert, checkDate).get(0).toString()
                 .contains("Valid OCSPs Found: 2 (1 online)"));
     }
 
@@ -429,7 +428,7 @@ public class OcspVerifierTest extends ExtendedITextTest {
                 FACTORY.createASN1Primitive(ocspClient.getEncoded(checkCert, caCert, null))));
 
         OCSPVerifier ocspVerifier = new OCSPVerifier(null, null);
-        Assert.assertTrue(ocspVerifier.verify(basicOCSPResp, checkCert, caCert, checkDate));
+        Assertions.assertTrue(ocspVerifier.verify(basicOCSPResp, checkCert, caCert, checkDate));
     }
 
     private boolean verifyTest(TestOcspResponseBuilder rootRsaOcspBuilder) throws IOException, GeneralSecurityException {

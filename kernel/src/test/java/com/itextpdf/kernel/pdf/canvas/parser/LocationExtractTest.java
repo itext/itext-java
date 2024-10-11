@@ -30,10 +30,9 @@ import com.itextpdf.kernel.pdf.canvas.parser.listener.ILocationExtractionStrateg
 import com.itextpdf.kernel.pdf.canvas.parser.listener.IPdfTextLocation;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.RegexBasedLocationExtractionStrategy;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,7 +47,7 @@ import java.util.Set;
  * It uses RegexBasedLocationExtractionStrategy, and searches for the word "Alice" in the book
  * "Alice in Wonderland" by Lewis Caroll on page 1.
  */
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class LocationExtractTest extends ExtendedITextTest {
 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/parser/LocationExtractionTest/";
@@ -77,8 +76,8 @@ public class LocationExtractTest extends ExtendedITextTest {
         expectedRectangles.add(new Rectangle(510.3833f, 618.4366f, 29.380737f, 14.982483f));
         expectedRectangles.add(new Rectangle(84.0f, 649.3966f, 29.297523f, 14.982483f));
 
-        Assert.assertTrue(expectedRectangles.size() == rectangleCollection.size());
-        Assert.assertTrue(fuzzyContainsAll(rectangleCollection, expectedRectangles));
+        Assertions.assertTrue(expectedRectangles.size() == rectangleCollection.size());
+        Assertions.assertTrue(fuzzyContainsAll(rectangleCollection, expectedRectangles));
 
     }
 

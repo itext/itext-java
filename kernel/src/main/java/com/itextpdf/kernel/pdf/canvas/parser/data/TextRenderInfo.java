@@ -106,10 +106,10 @@ public class TextRenderInfo extends AbstractRenderInfo {
         if (text == null) {
             GlyphLine gl = gs.getFont().decodeIntoGlyphLine(string);
             if (!isReversedChars()) {
-                text = gl.toUnicodeString(gl.start, gl.end);
+                text = gl.toUnicodeString(gl.getStart(), gl.getEnd());
             } else {
-                StringBuilder sb = new StringBuilder(gl.end - gl.start);
-                for (int i = gl.end - 1; i >= gl.start; i--) {
+                StringBuilder sb = new StringBuilder(gl.getEnd() - gl.getStart());
+                for (int i = gl.getEnd() - 1; i >= gl.getStart(); i--) {
                     sb.append(gl.get(i).getUnicodeChars());
                 }
                 text = sb.toString();
@@ -521,7 +521,7 @@ public class TextRenderInfo extends AbstractRenderInfo {
             // Number of bytes forming one glyph can be arbitrary from [1; 4] range
             List<PdfString> strings = new ArrayList<>();
             GlyphLine glyphLine = gs.getFont().decodeIntoGlyphLine(string);
-            for (int i = glyphLine.start; i < glyphLine.end; i++) {
+            for (int i = glyphLine.getStart(); i < glyphLine.getEnd(); i++) {
                 strings.add(new PdfString(gs.getFont().convertToBytes(glyphLine.get(i))));
             }
             return strings.toArray(new PdfString[strings.size()]);

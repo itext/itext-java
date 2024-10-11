@@ -30,13 +30,12 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfCollectionItemTest extends ExtendedITextTest {
 
     @Test
@@ -55,7 +54,7 @@ public class PdfCollectionItemTest extends ExtendedITextTest {
         PdfCollectionItem item = new PdfCollectionItem(schema);
 
         item.addItem(fieldName, fieldValue);
-        Assert.assertEquals(fieldValue, item.getPdfObject().getAsString(new PdfName(fieldName)).getValue());
+        Assertions.assertEquals(fieldValue, item.getPdfObject().getAsString(new PdfName(fieldName)).getValue());
     }
 
     @Test
@@ -74,7 +73,7 @@ public class PdfCollectionItemTest extends ExtendedITextTest {
         PdfCollectionItem item = new PdfCollectionItem(schema);
 
         item.addItem(fieldName, new PdfDate(PdfDate.decode(timeValueAsString)));
-        Assert.assertTrue(((PdfString)field.getValue(timeValueAsString)).getValue().startsWith("D:1986"));
+        Assertions.assertTrue(((PdfString)field.getValue(timeValueAsString)).getValue().startsWith("D:1986"));
     }
 
     @Test
@@ -93,7 +92,7 @@ public class PdfCollectionItemTest extends ExtendedITextTest {
         PdfCollectionItem item = new PdfCollectionItem(schema);
 
         item.addItem(fieldName, new PdfDate(PdfDate.decode(timeValueAsString)));
-        Assert.assertNull(item.getPdfObject().getAsString(new PdfName(fieldName)));
+        Assertions.assertNull(item.getPdfObject().getAsString(new PdfName(fieldName)));
     }
 
     @Test
@@ -113,7 +112,7 @@ public class PdfCollectionItemTest extends ExtendedITextTest {
         PdfCollectionItem item = new PdfCollectionItem(schema);
 
         item.addItem(fieldName, new PdfNumber(numberValue));
-        Assert.assertEquals(numberValue, item.getPdfObject().getAsNumber(new PdfName(fieldName)).getValue(), 0.0001);
+        Assertions.assertEquals(numberValue, item.getPdfObject().getAsNumber(new PdfName(fieldName)).getValue(), 0.0001);
     }
 
     @Test
@@ -133,7 +132,7 @@ public class PdfCollectionItemTest extends ExtendedITextTest {
         PdfCollectionItem item = new PdfCollectionItem(schema);
 
         item.addItem(fieldName, new PdfNumber(numberValue));
-        Assert.assertNull(item.getPdfObject().getAsString(new PdfName(fieldName)));
+        Assertions.assertNull(item.getPdfObject().getAsString(new PdfName(fieldName)));
     }
 
     @Test
@@ -155,9 +154,9 @@ public class PdfCollectionItemTest extends ExtendedITextTest {
         item.addItem(fieldName, fieldValue);
         item.setPrefix(fieldName, fieldPrefix);
 
-        Assert.assertEquals(fieldValue, item.getPdfObject().getAsDictionary(new PdfName(fieldName))
+        Assertions.assertEquals(fieldValue, item.getPdfObject().getAsDictionary(new PdfName(fieldName))
                 .getAsString(PdfName.D).getValue());
-        Assert.assertEquals(fieldPrefix, item.getPdfObject().getAsDictionary(new PdfName(fieldName))
+        Assertions.assertEquals(fieldPrefix, item.getPdfObject().getAsDictionary(new PdfName(fieldName))
                 .getAsString(PdfName.P).getValue());
     }
 
@@ -178,16 +177,16 @@ public class PdfCollectionItemTest extends ExtendedITextTest {
 
         // this line will throw an exception as setPrefix() method may be called
         // only if value was set previously
-        Exception e = Assert.assertThrows(PdfException.class,
+        Exception e = Assertions.assertThrows(PdfException.class,
                 () -> item.setPrefix(fieldName, fieldPrefix)
         );
-        Assert.assertEquals(KernelExceptionMessageConstant.YOU_MUST_SET_A_VALUE_BEFORE_ADDING_A_PREFIX, e.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.YOU_MUST_SET_A_VALUE_BEFORE_ADDING_A_PREFIX, e.getMessage());
     }
 
     @Test
     public void isWrappedObjectMustBeIndirectTest() {
         PdfCollectionItem item = new PdfCollectionItem(new PdfCollectionSchema());
 
-        Assert.assertFalse(item.isWrappedObjectMustBeIndirect());
+        Assertions.assertFalse(item.isWrappedObjectMustBeIndirect());
     }
 }

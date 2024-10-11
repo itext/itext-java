@@ -44,7 +44,6 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -56,13 +55,12 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(BouncyCastleUnitTest.class)
+@Tag("BouncyCastleUnitTest")
 public class LtvVerificationTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
@@ -75,7 +73,7 @@ public class LtvVerificationTest extends ExtendedITextTest {
 
     private static LtvVerification TEST_VERIFICATION;
 
-    @BeforeClass
+    @BeforeAll
     public static void before() throws IOException {
         Security.addProvider(BOUNCY_CASTLE_FACTORY.getProvider());
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(SRC_PDF));
@@ -96,18 +94,18 @@ public class LtvVerificationTest extends ExtendedITextTest {
 
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(input))) {
             PdfDictionary dss = pdfDocument.getCatalog().getPdfObject().getAsDictionary(PdfName.DSS);
-            Assert.assertNull(dss.get(PdfName.CRLs));
+            Assertions.assertNull(dss.get(PdfName.CRLs));
             PdfArray ocsps = dss.getAsArray(PdfName.OCSPs);
-            Assert.assertEquals(1, ocsps.size());
+            Assertions.assertEquals(1, ocsps.size());
             PdfIndirectReference pir = ocsps.get(0).getIndirectReference();
 
             PdfDictionary vri = dss.getAsDictionary(PdfName.VRI);
-            Assert.assertEquals(1, vri.entrySet().size());
+            Assertions.assertEquals(1, vri.entrySet().size());
             PdfDictionary vriElem = vri.getAsDictionary(new PdfName(signatureHash));
-            Assert.assertEquals(1, vriElem.entrySet().size());
+            Assertions.assertEquals(1, vriElem.entrySet().size());
             final PdfArray vriOcsp = vriElem.getAsArray(PdfName.OCSP);
-            Assert.assertEquals(1, vriOcsp.size());
-            Assert.assertEquals(pir, vriOcsp.get(0).getIndirectReference());
+            Assertions.assertEquals(1, vriOcsp.size());
+            Assertions.assertEquals(pir, vriOcsp.get(0).getIndirectReference());
         }
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -126,18 +124,18 @@ public class LtvVerificationTest extends ExtendedITextTest {
 
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(new ByteArrayInputStream(baos.toByteArray())))) {
             PdfDictionary dss = pdfDocument.getCatalog().getPdfObject().getAsDictionary(PdfName.DSS);
-            Assert.assertNull(dss.get(PdfName.OCSPs));
+            Assertions.assertNull(dss.get(PdfName.OCSPs));
             PdfArray crls = dss.getAsArray(PdfName.CRLs);
-            Assert.assertEquals(1, crls.size());
+            Assertions.assertEquals(1, crls.size());
             PdfIndirectReference pir = crls.get(0).getIndirectReference();
 
             PdfDictionary vri = dss.getAsDictionary(PdfName.VRI);
-            Assert.assertEquals(1, vri.entrySet().size());
+            Assertions.assertEquals(1, vri.entrySet().size());
             PdfDictionary vriElem = vri.getAsDictionary(new PdfName(signatureHash));
-            Assert.assertEquals(1, vriElem.entrySet().size());
+            Assertions.assertEquals(1, vriElem.entrySet().size());
             final PdfArray vriCrl = vriElem.getAsArray(PdfName.CRL);
-            Assert.assertEquals(1, vriCrl.size());
-            Assert.assertEquals(pir, vriCrl.get(0).getIndirectReference());
+            Assertions.assertEquals(1, vriCrl.size());
+            Assertions.assertEquals(pir, vriCrl.get(0).getIndirectReference());
         }
     }
 
@@ -150,7 +148,7 @@ public class LtvVerificationTest extends ExtendedITextTest {
         List<byte[]> certs = new ArrayList<>();
         certs.add(new byte[0]);
 
-        Assert.assertTrue(TEST_VERIFICATION.addVerification(SIG_FIELD_NAME, ocsps, crls, certs));
+        Assertions.assertTrue(TEST_VERIFICATION.addVerification(SIG_FIELD_NAME, ocsps, crls, certs));
     }
     
     @Test
@@ -169,34 +167,34 @@ public class LtvVerificationTest extends ExtendedITextTest {
             verificationWithWriter.addVerification(SIG_FIELD_NAME, ocsps, crls, certs);
             
             verificationWithWriter.merge();
-            Exception exception1 = Assert.assertThrows(IllegalStateException.class,
+            Exception exception1 = Assertions.assertThrows(IllegalStateException.class,
                     () -> verificationWithWriter.addVerification(SIG_FIELD_NAME, ocsps, crls, certs));
-            Assert.assertEquals(SignExceptionMessageConstant.VERIFICATION_ALREADY_OUTPUT, exception1.getMessage());
+            Assertions.assertEquals(SignExceptionMessageConstant.VERIFICATION_ALREADY_OUTPUT, exception1.getMessage());
 
             verificationWithWriter.merge();
-            Exception exception2 = Assert.assertThrows(IllegalStateException.class,
+            Exception exception2 = Assertions.assertThrows(IllegalStateException.class,
                     () -> verificationWithWriter.addVerification(null, null, null,
                             CertificateOption.SIGNING_CERTIFICATE, Level.CRL, CertificateInclusion.YES));
-            Assert.assertEquals(SignExceptionMessageConstant.VERIFICATION_ALREADY_OUTPUT, exception2.getMessage());
+            Assertions.assertEquals(SignExceptionMessageConstant.VERIFICATION_ALREADY_OUTPUT, exception2.getMessage());
         }
     }
 
     @Test
     public void validateSigNameWithNullCrlOcspCertTest() throws GeneralSecurityException, IOException {
-        Assert.assertTrue(TEST_VERIFICATION.addVerification(SIG_FIELD_NAME, null, null, null));
+        Assertions.assertTrue(TEST_VERIFICATION.addVerification(SIG_FIELD_NAME, null, null, null));
     }
 
     @Test
     //TODO DEVSIX-5696 Sign: NPE is thrown because no such a signature
     public void exceptionWhenValidateNonExistentSigNameTest() {
-        Assert.assertThrows(NullPointerException.class,
+        Assertions.assertThrows(NullPointerException.class,
                 () -> TEST_VERIFICATION.addVerification("nonExistentSigName", null, null, null));
     }
 
     @Test
     //TODO DEVSIX-5696 Sign: NPE is thrown because no such a signature
     public void exceptionWhenValidateParticularNonExistentSigNameTest() {
-        Assert.assertThrows(NullPointerException.class,
+        Assertions.assertThrows(NullPointerException.class,
                 () -> TEST_VERIFICATION.addVerification("nonExistentSigName", null, null,
                         CertificateOption.SIGNING_CERTIFICATE, Level.OCSP_CRL, CertificateInclusion.YES));
     }
@@ -563,7 +561,7 @@ public class LtvVerificationTest extends ExtendedITextTest {
     public void getParentWithoutCertsTest() {
         try (PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
             LtvVerification verification = new LtvVerification(document);
-            Assert.assertNull(verification.getParent(null, new Certificate[0]));
+            Assertions.assertNull(verification.getParent(null, new Certificate[0]));
         }
     }
 
@@ -577,7 +575,7 @@ public class LtvVerificationTest extends ExtendedITextTest {
         } else {
             crl = new CrlClientOnline(crlUrl);
         }
-        Assert.assertEquals(expectedResult,
+        Assertions.assertEquals(expectedResult,
                 TEST_VERIFICATION.addVerification(SIG_FIELD_NAME, ocsp, crl, certificateOption, level, inclusion));
     }
 }

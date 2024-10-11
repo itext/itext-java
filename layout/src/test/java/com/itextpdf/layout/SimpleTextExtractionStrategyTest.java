@@ -42,17 +42,16 @@ import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class SimpleTextExtractionStrategyTest extends ExtendedITextTest {
 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/SimpleTextExtractionStrategyTest/";
@@ -68,7 +67,7 @@ public class SimpleTextExtractionStrategyTest extends ExtendedITextTest {
     public void testCoLinnearText() throws Exception {
         byte[] bytes = createPdfWithRotatedText(TEXT1, TEXT2, 0, false, 0);
 
-        Assert.assertEquals(TEXT1 + TEXT2, PdfTextExtractor.getTextFromPage(new PdfDocument(new PdfReader(new ByteArrayInputStream(bytes))).getPage(1),
+        Assertions.assertEquals(TEXT1 + TEXT2, PdfTextExtractor.getTextFromPage(new PdfDocument(new PdfReader(new ByteArrayInputStream(bytes))).getPage(1),
                 createRenderListenerForTest()));
     }
 
@@ -77,7 +76,7 @@ public class SimpleTextExtractionStrategyTest extends ExtendedITextTest {
         byte[] bytes = createPdfWithRotatedText(TEXT1, TEXT2, 0, false, 2);
         //saveBytesToFile(bytes, new File("c:/temp/test.pdf"));
 
-        Assert.assertEquals(TEXT1 + " " + TEXT2, PdfTextExtractor.getTextFromPage(new PdfDocument(new PdfReader(new ByteArrayInputStream(bytes))).getPage(1),
+        Assertions.assertEquals(TEXT1 + " " + TEXT2, PdfTextExtractor.getTextFromPage(new PdfDocument(new PdfReader(new ByteArrayInputStream(bytes))).getPage(1),
                 createRenderListenerForTest()));
     }
 
@@ -88,7 +87,7 @@ public class SimpleTextExtractionStrategyTest extends ExtendedITextTest {
 
         //TestResourceUtils.openBytesAsPdf(bytes);
 
-        Assert.assertEquals(TEXT1 + " " + TEXT2, PdfTextExtractor.getTextFromPage(new PdfDocument(new PdfReader(new ByteArrayInputStream(bytes))).getPage(1),
+        Assertions.assertEquals(TEXT1 + " " + TEXT2, PdfTextExtractor.getTextFromPage(new PdfDocument(new PdfReader(new ByteArrayInputStream(bytes))).getPage(1),
                 createRenderListenerForTest()));
 
     }
@@ -97,7 +96,7 @@ public class SimpleTextExtractionStrategyTest extends ExtendedITextTest {
     public void testUnRotatedText() throws Exception {
         byte[] bytes = createPdfWithRotatedText(TEXT1, TEXT2, 0, true, -20);
 
-        Assert.assertEquals(TEXT1 + "\n" + TEXT2, PdfTextExtractor.getTextFromPage(new PdfDocument(new PdfReader(new ByteArrayInputStream(bytes))).getPage(1),
+        Assertions.assertEquals(TEXT1 + "\n" + TEXT2, PdfTextExtractor.getTextFromPage(new PdfDocument(new PdfReader(new ByteArrayInputStream(bytes))).getPage(1),
                 createRenderListenerForTest()));
 
     }
@@ -106,7 +105,7 @@ public class SimpleTextExtractionStrategyTest extends ExtendedITextTest {
     public void testRotatedText() throws Exception {
         byte[] bytes = createPdfWithRotatedText(TEXT1, TEXT2, -90, true, -20);
 
-        Assert.assertEquals(TEXT1 + "\n" + TEXT2, PdfTextExtractor.getTextFromPage(new PdfDocument(new PdfReader(new ByteArrayInputStream(bytes))).getPage(1),
+        Assertions.assertEquals(TEXT1 + "\n" + TEXT2, PdfTextExtractor.getTextFromPage(new PdfDocument(new PdfReader(new ByteArrayInputStream(bytes))).getPage(1),
                 createRenderListenerForTest()));
 
     }
@@ -116,7 +115,7 @@ public class SimpleTextExtractionStrategyTest extends ExtendedITextTest {
         byte[] bytes = createPdfWithRotatedText(TEXT1, TEXT2, 90, true, -20);
         //TestResourceUtils.saveBytesToFile(bytes, new File("C:/temp/out.pdf"));
 
-        Assert.assertEquals(TEXT1 + "\n" + TEXT2, PdfTextExtractor.getTextFromPage(new PdfDocument(new PdfReader(new ByteArrayInputStream(bytes))).getPage(1),
+        Assertions.assertEquals(TEXT1 + "\n" + TEXT2, PdfTextExtractor.getTextFromPage(new PdfDocument(new PdfReader(new ByteArrayInputStream(bytes))).getPage(1),
                 createRenderListenerForTest()));
 
     }
@@ -125,7 +124,7 @@ public class SimpleTextExtractionStrategyTest extends ExtendedITextTest {
     public void testPartiallyRotatedText() throws Exception {
         byte[] bytes = createPdfWithRotatedText(TEXT1, TEXT2, 33, true, -20);
 
-        Assert.assertEquals(TEXT1 + "\n" + TEXT2, PdfTextExtractor.getTextFromPage(new PdfDocument(new PdfReader(new ByteArrayInputStream(bytes))).getPage(1),
+        Assertions.assertEquals(TEXT1 + "\n" + TEXT2, PdfTextExtractor.getTextFromPage(new PdfDocument(new PdfReader(new ByteArrayInputStream(bytes))).getPage(1),
                 createRenderListenerForTest()));
 
     }
@@ -134,7 +133,7 @@ public class SimpleTextExtractionStrategyTest extends ExtendedITextTest {
     public void testWordSpacingCausedByExplicitGlyphPositioning() throws Exception {
         byte[] bytes = createPdfWithArrayText(TEXT1, TEXT2, 250);
 
-        Assert.assertEquals(TEXT1 + " " + TEXT2, PdfTextExtractor.getTextFromPage(new PdfDocument(new PdfReader(new ByteArrayInputStream(bytes))).getPage(1),
+        Assertions.assertEquals(TEXT1 + " " + TEXT2, PdfTextExtractor.getTextFromPage(new PdfDocument(new PdfReader(new ByteArrayInputStream(bytes))).getPage(1),
                 createRenderListenerForTest()));
     }
 
@@ -168,7 +167,7 @@ public class SimpleTextExtractionStrategyTest extends ExtendedITextTest {
 
         byte[] bytes = createPdfWithArrayText(textArray);
 
-        Assert.assertEquals("San Diego Chapter", PdfTextExtractor.getTextFromPage(new PdfDocument(new PdfReader(new ByteArrayInputStream(bytes))).getPage(1),
+        Assertions.assertEquals("San Diego Chapter", PdfTextExtractor.getTextFromPage(new PdfDocument(new PdfReader(new ByteArrayInputStream(bytes))).getPage(1),
                 createRenderListenerForTest()));
     }
 
@@ -177,7 +176,7 @@ public class SimpleTextExtractionStrategyTest extends ExtendedITextTest {
     public void testTrailingSpace() throws Exception {
         byte[] bytes = createPdfWithRotatedText(TEXT1 + " ", TEXT2, 0, false, 6);
 
-        Assert.assertEquals(TEXT1 + " " + TEXT2, PdfTextExtractor.getTextFromPage(new PdfDocument(new PdfReader(new ByteArrayInputStream(bytes))).getPage(1),
+        Assertions.assertEquals(TEXT1 + " " + TEXT2, PdfTextExtractor.getTextFromPage(new PdfDocument(new PdfReader(new ByteArrayInputStream(bytes))).getPage(1),
                 createRenderListenerForTest()));
     }
 
@@ -185,7 +184,7 @@ public class SimpleTextExtractionStrategyTest extends ExtendedITextTest {
     public void testLeadingSpace() throws Exception {
         byte[] bytes = createPdfWithRotatedText(TEXT1, " " + TEXT2, 0, false, 6);
 
-        Assert.assertEquals(TEXT1 + " " + TEXT2, PdfTextExtractor.getTextFromPage(new PdfDocument(new PdfReader(new ByteArrayInputStream(bytes))).getPage(1),
+        Assertions.assertEquals(TEXT1 + " " + TEXT2, PdfTextExtractor.getTextFromPage(new PdfDocument(new PdfReader(new ByteArrayInputStream(bytes))).getPage(1),
                 createRenderListenerForTest()));
     }
 
@@ -195,7 +194,7 @@ public class SimpleTextExtractionStrategyTest extends ExtendedITextTest {
         byte[] bytes = createPdfWithXObject(text1);
         String text = PdfTextExtractor.getTextFromPage(new PdfDocument(new PdfReader(new ByteArrayInputStream(bytes))).getPage(1),
                 createRenderListenerForTest());
-        Assert.assertTrue("extracted text (" + text + ") must contain '" + text1 + "'", text.contains(text1));
+        Assertions.assertTrue(text.contains(text1), "extracted text (" + text + ") must contain '" + text1 + "'");
     }
 
     @Test
@@ -206,7 +205,7 @@ public class SimpleTextExtractionStrategyTest extends ExtendedITextTest {
         String text1 = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1), new SimpleTextExtractionStrategy());
         String text2 = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1), new GlyphTextEventListener(new SimpleTextExtractionStrategy()));
         pdfDocument.close();
-        Assert.assertEquals(text1, text2);
+        Assertions.assertEquals(text1, text2);
     }
 
     @Test
@@ -221,7 +220,7 @@ public class SimpleTextExtractionStrategyTest extends ExtendedITextTest {
                 "\n" +
                 PdfTextExtractor.getTextFromPage(pdfDocument.getPage(2), new GlyphTextEventListener(new SimpleTextExtractionStrategy()));
         pdfDocument.close();
-        Assert.assertEquals(text1, text2);
+        Assertions.assertEquals(text1, text2);
     }
 
 

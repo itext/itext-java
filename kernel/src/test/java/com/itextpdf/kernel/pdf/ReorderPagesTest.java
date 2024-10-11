@@ -24,32 +24,31 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.util.Arrays;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class ReorderPagesTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/ReorderPagesTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/ReorderPagesTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -124,7 +123,7 @@ public class ReorderPagesTest extends ExtendedITextTest {
         if (contentErrors != null) {
             resultMessage += contentErrors + "\n";
         }
-        assertTrue(resultMessage, tagStructureErrors == null && contentErrors == null);
+        assertTrue(tagStructureErrors == null && contentErrors == null, resultMessage);
     }
 
 }

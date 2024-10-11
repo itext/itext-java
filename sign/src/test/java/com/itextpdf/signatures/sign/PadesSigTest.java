@@ -32,32 +32,33 @@ import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.FileUtil;
+import com.itextpdf.forms.form.element.SignatureFieldAppearance;
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
-import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
 import com.itextpdf.signatures.SignaturePolicyInfo;
+import com.itextpdf.signatures.SignerProperties;
 import com.itextpdf.signatures.TestSignUtils;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-@Category(BouncyCastleIntegrationTest.class)
+@Tag("BouncyCastleIntegrationTest")
 public class PadesSigTest extends ExtendedITextTest {
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
@@ -68,7 +69,7 @@ public class PadesSigTest extends ExtendedITextTest {
 
     private static final char[] password = "testpassphrase".toCharArray();
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         Security.addProvider(FACTORY.getProvider());
         createOrClearDestinationFolder(destinationFolder);
@@ -80,7 +81,7 @@ public class PadesSigTest extends ExtendedITextTest {
         signApproval(certsSrc + "signCertRsa01.pem", destinationFolder + "padesRsaSigTest01.pdf");
 
         TestSignUtils.basicCheckSignedDoc(destinationFolder + "padesRsaSigTest01.pdf", "Signature1");
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(destinationFolder
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(destinationFolder
                 + "padesRsaSigTest01.pdf", sourceFolder + "cmp_padesRsaSigTest01.pdf"));
     }
 
@@ -90,12 +91,12 @@ public class PadesSigTest extends ExtendedITextTest {
         signApproval(certsSrc + "signCertRsaWithChain.pem", destinationFolder + "padesRsaSigTestWithChain01.pdf");
 
         TestSignUtils.basicCheckSignedDoc(destinationFolder + "padesRsaSigTestWithChain01.pdf", "Signature1");
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(destinationFolder
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(destinationFolder
                 + "padesRsaSigTestWithChain01.pdf", sourceFolder + "cmp_padesRsaSigTestWithChain01.pdf"));
     }
 
     @Test
-    @Ignore("DEVSIX-1620: For some reason signatures created with the given cert (either by iText or acrobat) are considered invalid")
+    @Disabled("DEVSIX-1620: For some reason signatures created with the given cert (either by iText or acrobat) are considered invalid")
     public void padesDsaSigTest01()
             throws IOException, GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
         signApproval(certsSrc + "signCertDsa01.pem", destinationFolder + "padesDsaSigTest01.pdf");
@@ -108,7 +109,7 @@ public class PadesSigTest extends ExtendedITextTest {
                 destinationFolder + "padesEccSigTest01.pdf");
 
         TestSignUtils.basicCheckSignedDoc(destinationFolder + "padesEccSigTest01.pdf", "Signature1");
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(destinationFolder
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(destinationFolder
                 + "padesEccSigTest01.pdf", sourceFolder + "cmp_padesEccSigTest01.pdf"));
     }
 
@@ -132,7 +133,7 @@ public class PadesSigTest extends ExtendedITextTest {
         signApproval(certsSrc + "signCertRsa01.pem", destinationFolder + "padesEpesProfileTest01.pdf", sigPolicyIdentifier);
 
         TestSignUtils.basicCheckSignedDoc(destinationFolder + "padesEpesProfileTest01.pdf", "Signature1");
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(destinationFolder +
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(destinationFolder +
                 "padesEpesProfileTest01.pdf", sourceFolder + "cmp_padesEpesProfileTest01.pdf"));
     }
 
@@ -148,7 +149,7 @@ public class PadesSigTest extends ExtendedITextTest {
         signApproval(certsSrc + "signCertRsa01.pem", signedFileName, spi);
 
         TestSignUtils.basicCheckSignedDoc(signedFileName, "Signature1");
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(signedFileName,
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(signedFileName,
                 sourceFolder + "cmp_signaturePolicyInfoUnavailableUrl_signed.pdf"));
     }
 
@@ -177,13 +178,17 @@ public class PadesSigTest extends ExtendedITextTest {
         IExternalSignature pks =
                 new PrivateKeySignature(signPrivateKey, DigestAlgorithms.SHA256, FACTORY.getProviderName());
 
-        PdfSigner signer = new PdfSigner(new PdfReader(srcFileName), FileUtil.getFileOutputStream(outFileName), new StampingProperties());
-        signer.setFieldName("Signature1");
-        signer.getSignatureAppearance()
+        PdfSigner signer = new PdfSigner(new PdfReader(srcFileName), FileUtil.getFileOutputStream(outFileName),
+                new StampingProperties());
+        SignerProperties signerProperties = new SignerProperties().setFieldName("Signature1");
+        signer.setSignerProperties(signerProperties);
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID)
+                .setContent("Approval test signature.\nCreated by iText.");
+        signerProperties
                 .setPageRect(new Rectangle(50, 650, 200, 100))
                 .setReason("Test")
                 .setLocation("TestCity")
-                .setLayer2Text("Approval test signature.\nCreated by iText.");
+                .setSignatureAppearance(appearance);
 
         if (sigPolicyIdentifier != null) {
             signer.signDetached(pks, signChain, null, null, null, 0,

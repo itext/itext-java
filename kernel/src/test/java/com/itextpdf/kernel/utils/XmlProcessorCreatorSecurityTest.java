@@ -25,7 +25,6 @@ package com.itextpdf.kernel.utils;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.test.ExceptionTestUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -33,17 +32,17 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class XmlProcessorCreatorSecurityTest extends ExtendedITextTest {
 
     private static final String XML_WITHOUT_DTD = "<?xml version=\"1.0\"?>\n"
@@ -93,7 +92,7 @@ public class XmlProcessorCreatorSecurityTest extends ExtendedITextTest {
 
     private final static String DTD_EXCEPTION_MESSAGE = ExceptionTestUtil.getDoctypeIsDisallowedExceptionMessage();
 
-    @Before
+    @BeforeEach
     public void resetXmlParserFactoryToDefault() {
         XmlProcessorCreator.setXmlParserFactory(null);
     }
@@ -105,7 +104,7 @@ public class XmlProcessorCreatorSecurityTest extends ExtendedITextTest {
         try (InputStream inputStream = new ByteArrayInputStream(XML_WITHOUT_DTD.getBytes(StandardCharsets.UTF_8))) {
             document = documentBuilder.parse(inputStream);
         }
-        Assert.assertNotNull(document);
+        Assertions.assertNotNull(document);
     }
 
     @Test
@@ -113,10 +112,10 @@ public class XmlProcessorCreatorSecurityTest extends ExtendedITextTest {
         XmlProcessorCreator.setXmlParserFactory(new SecurityTestXmlParserFactory());
         DocumentBuilder documentBuilder = XmlProcessorCreator.createSafeDocumentBuilder(false, false);
         try (InputStream inputStream = new ByteArrayInputStream(XML_WITH_XXE.getBytes(StandardCharsets.UTF_8))) {
-            Exception e = Assert.assertThrows(PdfException.class,
+            Exception e = Assertions.assertThrows(PdfException.class,
                     () -> documentBuilder.parse(inputStream)
             );
-            Assert.assertEquals("Test message", e.getMessage());
+            Assertions.assertEquals("Test message", e.getMessage());
         }
     }
 
@@ -187,10 +186,10 @@ public class XmlProcessorCreatorSecurityTest extends ExtendedITextTest {
         try (InputStream inputStream = new ByteArrayInputStream(
                 XmlProcessorCreatorSecurityTest.XML_WITH_XXE.getBytes(StandardCharsets.UTF_8))) {
             InputSource inputSource = new InputSource(inputStream);
-            Exception e = Assert.assertThrows(SAXParseException.class,
+            Exception e = Assertions.assertThrows(SAXParseException.class,
                     () -> reader.parse(inputSource)
             );
-            Assert.assertEquals(XmlProcessorCreatorSecurityTest.DTD_EXCEPTION_MESSAGE, e.getMessage());
+            Assertions.assertEquals(XmlProcessorCreatorSecurityTest.DTD_EXCEPTION_MESSAGE, e.getMessage());
         }
     }
 
@@ -198,10 +197,10 @@ public class XmlProcessorCreatorSecurityTest extends ExtendedITextTest {
             throws IOException, SAXException {
         DocumentBuilder documentBuilder = XmlProcessorCreator.createSafeDocumentBuilder(nameSpace, comments);
         try (InputStream inputStream = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8))) {
-            Exception e = Assert.assertThrows(SAXParseException.class,
+            Exception e = Assertions.assertThrows(SAXParseException.class,
                     () -> documentBuilder.parse(inputStream)
             );
-            Assert.assertEquals(XmlProcessorCreatorSecurityTest.DTD_EXCEPTION_MESSAGE, e.getMessage());
+            Assertions.assertEquals(XmlProcessorCreatorSecurityTest.DTD_EXCEPTION_MESSAGE, e.getMessage());
         }
     }
 }

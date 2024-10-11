@@ -29,21 +29,21 @@ import com.itextpdf.commons.bouncycastle.asn1.IASN1EncodableVector;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1InputStream;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Sequence;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Set;
-import com.itextpdf.commons.bouncycastle.asn1.IDERSet;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1TaggedObject;
+import com.itextpdf.commons.bouncycastle.asn1.IDERSet;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IBasicOCSPResponse;
+import com.itextpdf.kernel.crypto.OID;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.signatures.CertificateUtil;
-import com.itextpdf.signatures.SecurityIDs;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.cert.CertificateEncodingException;
-import java.security.cert.CertificateException;
 import java.security.cert.CRL;
 import java.security.cert.CRLException;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -98,6 +98,8 @@ public class CMSContainer {
      */
     private SignerInfo signerInfo = new SignerInfo();
 
+    private int version = 1;
+
     /**
      * Creates an empty SignedData structure.
      */
@@ -119,6 +121,7 @@ public class CMSContainer {
             IASN1Sequence contentInfo = BC_FACTORY.createASN1Sequence(is.readObject());
             IASN1Sequence signedData = BC_FACTORY.createASN1Sequence(
                     BC_FACTORY.createASN1TaggedObject(contentInfo.getObjectAt(1)).getObject());
+            version = BC_FACTORY.createASN1Integer(signedData.getObjectAt(0)).getValue().intValue();
 
             // The digest algorithm is retrieved from SignerInfo later on, here we just validate
             // that there is exactly 1 digest algorithm.
@@ -184,12 +187,12 @@ public class CMSContainer {
     }
 
     /**
-     * Only version 1 is supported by this class.
+     * The version of the CMS container.
      *
-     * @return 1 as CMSversion
+     * @return version of the CMS container
      */
     public int getCmsVersion() {
-        return 1;
+        return version;
     }
 
     /**
@@ -356,7 +359,7 @@ public class CMSContainer {
      */
 
         IASN1EncodableVector contentInfoV = BC_FACTORY.createASN1EncodableVector();
-        contentInfoV.add(BC_FACTORY.createASN1ObjectIdentifier(SecurityIDs.ID_PKCS7_SIGNED_DATA));
+        contentInfoV.add(BC_FACTORY.createASN1ObjectIdentifier(OID.PKCS7_SIGNED_DATA));
         IASN1EncodableVector singedDataV = BC_FACTORY.createASN1EncodableVector();
         singedDataV.add(BC_FACTORY.createASN1Integer(getCmsVersion())); // version
         IASN1EncodableVector digestAlgorithmsV = BC_FACTORY.createASN1EncodableVector();
@@ -365,7 +368,7 @@ public class CMSContainer {
         IASN1EncodableVector encapContentInfoV = BC_FACTORY.createASN1EncodableVector();
         encapContentInfoV.add(BC_FACTORY.createASN1ObjectIdentifier(encapContentInfo.getContentType()));
         if (encapContentInfo.getContent() != null) {
-            encapContentInfoV.add(encapContentInfo.getContent());
+            encapContentInfoV.add(BC_FACTORY.createDERTaggedObject(0, encapContentInfo.getContent()));
         }
         singedDataV.add(BC_FACTORY.createDERSequence(encapContentInfoV));
         IASN1EncodableVector certificateSetV = BC_FACTORY.createASN1EncodableVector();

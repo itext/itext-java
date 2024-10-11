@@ -29,6 +29,7 @@ import com.itextpdf.commons.bouncycastle.tsp.ITimeStampRequestGenerator;
 
 import java.math.BigInteger;
 import java.util.Objects;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.tsp.TimeStampRequestGenerator;
 
 /**
@@ -68,7 +69,7 @@ public class TimeStampRequestGeneratorBCFips implements ITimeStampRequestGenerat
      */
     @Override
     public void setReqPolicy(String reqPolicy) {
-        requestGenerator.setReqPolicy(reqPolicy);
+        requestGenerator.setReqPolicy(new ASN1ObjectIdentifier(reqPolicy));
     }
 
     /**

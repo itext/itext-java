@@ -28,16 +28,21 @@ import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationExcept
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.forms.form.element.SignatureFieldAppearance;
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.signatures.*;
+import com.itextpdf.signatures.ICrlClient;
+import com.itextpdf.signatures.IExternalSignature;
+import com.itextpdf.signatures.PdfPadesSigner;
+import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.SignerProperties;
+import com.itextpdf.signatures.TestSignUtils;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.signatures.testutils.client.TestCrlClient;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
 import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -46,15 +51,13 @@ import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(Parameterized.class)
-@Category(BouncyCastleIntegrationTest.class)
+@Tag("BouncyCastleIntegrationTest")
 public class PdfPadesSignerLevelsTest extends ExtendedITextTest {
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
@@ -64,34 +67,23 @@ public class PdfPadesSignerLevelsTest extends ExtendedITextTest {
     private static final String certsSrc = "./src/test/resources/com/itextpdf/signatures/certs/";
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/";
     private static final String destinationFolder = "./target/test/com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/";
-    
-    private final Boolean useTempFolder;
-    private final Integer comparisonPdfId;
-    private final Boolean useSignature;
-
     private static final char[] password = "testpassphrase".toCharArray();
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         Security.addProvider(FACTORY.getProvider());
         createOrClearDestinationFolder(destinationFolder);
     }
 
-    public PdfPadesSignerLevelsTest(Object useTempFolder, Object useSignature, Object comparisonPdfId) {
-        this.useTempFolder = (Boolean) useTempFolder;
-        this.useSignature = (Boolean) useSignature; 
-        this.comparisonPdfId = (Integer) comparisonPdfId;
-    }
-
-    @Parameterized.Parameters(name = "{2}: folder path: {0}; pass whole signature: {1}")
     public static Iterable<Object[]> createParameters() {
         return Arrays.asList(new Object[] {true, true, 1},
                 new Object[] {false, true, 2},
                 new Object[] {false, false, 3});
     }
-    
-    @Test
-    public void padesSignatureLevelBTest()
+
+    @ParameterizedTest(name = "{2}: folder path: {0}; pass whole signature: {1}")
+    @MethodSource("createParameters")
+    public void padesSignatureLevelBTest(Boolean useTempFolder, Boolean useSignature, Integer comparisonPdfId)
             throws IOException, GeneralSecurityException, AbstractOperatorCreationException, AbstractPKCSException {
         String fileName = "padesSignatureLevelBTest" + comparisonPdfId + ".pdf";
         String outFileName = destinationFolder + fileName;
@@ -118,11 +110,12 @@ public class PdfPadesSignerLevelsTest extends ExtendedITextTest {
 
         TestSignUtils.basicCheckSignedDoc(outFileName, "Signature1");
 
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
     }
 
-    @Test
-    public void padesSignatureLevelTTest()
+    @ParameterizedTest(name = "{2}: folder path: {0}; pass whole signature: {1}")
+    @MethodSource("createParameters")
+    public void padesSignatureLevelTTest(Boolean useTempFolder, Boolean useSignature, Integer comparisonPdfId)
             throws IOException, GeneralSecurityException, AbstractOperatorCreationException, AbstractPKCSException {
         String fileName = "padesSignatureLevelTTest" + comparisonPdfId + ".pdf";
         String outFileName = destinationFolder + fileName;
@@ -154,11 +147,12 @@ public class PdfPadesSignerLevelsTest extends ExtendedITextTest {
 
         TestSignUtils.basicCheckSignedDoc(outFileName, "Signature1");
 
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
     }
 
-    @Test
-    public void padesSignatureLevelLTTest()
+    @ParameterizedTest(name = "{2}: folder path: {0}; pass whole signature: {1}")
+    @MethodSource("createParameters")
+    public void padesSignatureLevelLTTest(Boolean useTempFolder, Boolean useSignature, Integer comparisonPdfId)
             throws IOException, GeneralSecurityException, AbstractOperatorCreationException, AbstractPKCSException {
         String fileName = "padesSignatureLevelLTTest" + comparisonPdfId + ".pdf";
         String outFileName = destinationFolder + fileName;
@@ -197,11 +191,12 @@ public class PdfPadesSignerLevelsTest extends ExtendedITextTest {
 
         TestSignUtils.basicCheckSignedDoc(outFileName, "Signature1");
 
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
     }
 
-    @Test
-    public void padesSignatureLevelLTATest()
+    @ParameterizedTest(name = "{2}: folder path: {0}; pass whole signature: {1}")
+    @MethodSource("createParameters")
+    public void padesSignatureLevelLTATest(Boolean useTempFolder, Boolean useSignature, Integer comparisonPdfId)
             throws IOException, GeneralSecurityException, AbstractOperatorCreationException, AbstractPKCSException {
         String fileName = "padesSignatureLevelLTATest" + comparisonPdfId + ".pdf";
         String outFileName = destinationFolder + fileName;
@@ -241,11 +236,12 @@ public class PdfPadesSignerLevelsTest extends ExtendedITextTest {
 
         TestSignUtils.basicCheckSignedDoc(outFileName, "Signature1");
 
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
     }
-    
-    @Test
-    public void prolongDocumentSignaturesTest()
+
+    @ParameterizedTest(name = "{2}: folder path: {0}; pass whole signature: {1}")
+    @MethodSource("createParameters")
+    public void prolongDocumentSignaturesTest(Boolean useTempFolder, Boolean useSignature, Integer comparisonPdfId)
             throws GeneralSecurityException, IOException, AbstractOperatorCreationException, AbstractPKCSException {
         String fileName = "prolongDocumentSignaturesTest" + comparisonPdfId + (FIPS_MODE ? "_FIPS.pdf" : ".pdf");
         String outFileName = destinationFolder + fileName;
@@ -275,13 +271,13 @@ public class PdfPadesSignerLevelsTest extends ExtendedITextTest {
         }
 
         TestSignUtils.basicCheckSignedDoc(outFileName, "Signature1");
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
     }
 
     private SignerProperties createSignerProperties() {
         SignerProperties signerProperties = new SignerProperties();
         signerProperties.setFieldName("Signature1");
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance(signerProperties.getFieldName())
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID)
                 .setContent("Approval test signature.\nCreated by iText.");
         signerProperties.setPageRect(new Rectangle(50, 650, 200, 100))
                 .setSignatureAppearance(appearance);

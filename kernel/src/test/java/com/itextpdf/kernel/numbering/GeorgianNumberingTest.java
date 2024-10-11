@@ -23,32 +23,31 @@
 package com.itextpdf.kernel.numbering;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class GeorgianNumberingTest extends ExtendedITextTest {
     @Test
     public void negativeToGeorgianTest() {
-        Assert.assertEquals("", GeorgianNumbering.toGeorgian(-10));
+        Assertions.assertEquals("", GeorgianNumbering.toGeorgian(-10));
     }
 
     @Test
     public void zeroToGeorgianTest() {
-        Assert.assertEquals("", GeorgianNumbering.toGeorgian(0));
+        Assertions.assertEquals("", GeorgianNumbering.toGeorgian(0));
     }
 
     @Test
     public void toGeorgianTest() {
-        Assert.assertEquals("\u10F5", GeorgianNumbering.toGeorgian(10000));
-        Assert.assertEquals("\u10F4\u10E8\u10F2\u10D6", GeorgianNumbering.toGeorgian(7967));
+        Assertions.assertEquals("\u10F5", GeorgianNumbering.toGeorgian(10000));
+        Assertions.assertEquals("\u10F4\u10E8\u10F2\u10D6", GeorgianNumbering.toGeorgian(7967));
     }
 
     @Test
     public void numberGreaterThan10000toGeorgianTest() {
-        Assert.assertEquals("\u10F5\u10F5\u10F5\u10F5\u10F5\u10F5\u10D2", GeorgianNumbering.toGeorgian(60003));;
+        Assertions.assertEquals("\u10F5\u10F5\u10F5\u10F5\u10F5\u10F5\u10D2", GeorgianNumbering.toGeorgian(60003));;
     }
 }

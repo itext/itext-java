@@ -23,27 +23,26 @@
 package com.itextpdf.kernel.geom;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class AffineTransformTest extends ExtendedITextTest {
 
     @Test
     public void selfTest() {
         AffineTransform affineTransform = new AffineTransform();
 
-        Assert.assertTrue(affineTransform.equals(affineTransform));
+        Assertions.assertTrue(affineTransform.equals(affineTransform));
     }
 
     @Test
     public void nullTest() {
         AffineTransform affineTransform = new AffineTransform();
 
-        Assert.assertFalse(affineTransform.equals(null));
+        Assertions.assertFalse(affineTransform.equals(null));
     }
 
     @Test
@@ -51,7 +50,7 @@ public class AffineTransformTest extends ExtendedITextTest {
         AffineTransform affineTransform = new AffineTransform();
         String string = "Test";
 
-        Assert.assertFalse(affineTransform.equals(string));
+        Assertions.assertFalse(affineTransform.equals(string));
     }
 
     @Test
@@ -61,9 +60,9 @@ public class AffineTransformTest extends ExtendedITextTest {
         int hash1 = affineTransform1.hashCode();
         int hash2 = affineTransform2.hashCode();
 
-        Assert.assertFalse(affineTransform1 == affineTransform2);
-        Assert.assertEquals(hash1, hash2);
-        Assert.assertTrue(affineTransform1.equals(affineTransform2));
+        Assertions.assertFalse(affineTransform1 == affineTransform2);
+        Assertions.assertEquals(hash1, hash2);
+        Assertions.assertTrue(affineTransform1.equals(affineTransform2));
     }
 
     @Test
@@ -73,9 +72,9 @@ public class AffineTransformTest extends ExtendedITextTest {
         int hash1 = affineTransform1.hashCode();
         int hash2 = affineTransform2.hashCode();
 
-        Assert.assertFalse(affineTransform1 == affineTransform2);
-        Assert.assertNotEquals(hash1, hash2);
-        Assert.assertFalse(affineTransform1.equals(affineTransform2));
+        Assertions.assertFalse(affineTransform1 == affineTransform2);
+        Assertions.assertNotEquals(hash1, hash2);
+        Assertions.assertFalse(affineTransform1.equals(affineTransform2));
     }
 
     @Test
@@ -83,7 +82,7 @@ public class AffineTransformTest extends ExtendedITextTest {
         AffineTransform rotateOne = AffineTransform.getRotateInstance(Math.PI / 2);
         AffineTransform expected = new AffineTransform(0, 1, -1, 0, 0, 0);
 
-        Assert.assertEquals(rotateOne, expected);
+        Assertions.assertEquals(rotateOne, expected);
     }
 
     @Test
@@ -91,7 +90,7 @@ public class AffineTransformTest extends ExtendedITextTest {
         AffineTransform rotateTranslate = AffineTransform.getRotateInstance(Math.PI / 2, 10, 5);
         AffineTransform expected = new AffineTransform(0, 1, -1, 0, 15, -5);
 
-        Assert.assertEquals(rotateTranslate, expected);
+        Assertions.assertEquals(rotateTranslate, expected);
     }
 
     @Test
@@ -99,8 +98,8 @@ public class AffineTransformTest extends ExtendedITextTest {
         AffineTransform original = new AffineTransform();
         AffineTransform clone = original.clone();
 
-        Assert.assertTrue(original != clone);
-        Assert.assertTrue(original.equals(clone));
+        Assertions.assertTrue(original != clone);
+        Assertions.assertTrue(original.equals(clone));
     }
 
     @Test
@@ -108,13 +107,13 @@ public class AffineTransformTest extends ExtendedITextTest {
         float[] matrix = new float[]{0f, 1f, 2f, 3f, 4f, 5f};
         AffineTransform affineTransform = new AffineTransform(matrix);
 
-        Assert.assertEquals(matrix[0], affineTransform.getScaleX(), 0.0);
-        Assert.assertEquals(matrix[3], affineTransform.getScaleY(), 0.0);
-        Assert.assertEquals(matrix[2], affineTransform.getShearX(), 0.0);
-        Assert.assertEquals(matrix[1], affineTransform.getShearY(), 0.0);
-        Assert.assertEquals(matrix[4], affineTransform.getTranslateX(), 0.0);
-        Assert.assertEquals(matrix[5], affineTransform.getTranslateY(), 0.0);
-        Assert.assertEquals(32, affineTransform.getType(), 0.0);
+        Assertions.assertEquals(matrix[0], affineTransform.getScaleX(), 0.0);
+        Assertions.assertEquals(matrix[3], affineTransform.getScaleY(), 0.0);
+        Assertions.assertEquals(matrix[2], affineTransform.getShearX(), 0.0);
+        Assertions.assertEquals(matrix[1], affineTransform.getShearY(), 0.0);
+        Assertions.assertEquals(matrix[4], affineTransform.getTranslateX(), 0.0);
+        Assertions.assertEquals(matrix[5], affineTransform.getTranslateY(), 0.0);
+        Assertions.assertEquals(32, affineTransform.getType(), 0.0);
     }
 
     @Test
@@ -122,8 +121,8 @@ public class AffineTransformTest extends ExtendedITextTest {
         AffineTransform template = new AffineTransform(0, 1, 2, 3, 4, 5);
         AffineTransform result = new AffineTransform(template);
 
-        Assert.assertNotSame(template, result);
-        Assert.assertEquals(template, result);
+        Assertions.assertNotSame(template, result);
+        Assertions.assertEquals(template, result);
     }
 
     @Test
@@ -132,7 +131,7 @@ public class AffineTransformTest extends ExtendedITextTest {
         AffineTransform expected = new AffineTransform(matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5]);
         AffineTransform result = new AffineTransform(matrix);
 
-        Assert.assertEquals(expected, result);
+        Assertions.assertEquals(expected, result);
     }
 
     @Test
@@ -141,7 +140,7 @@ public class AffineTransformTest extends ExtendedITextTest {
         AffineTransform expected = new AffineTransform(matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5]);
         AffineTransform result = new AffineTransform(matrix);
 
-        Assert.assertEquals(expected, result);
+        Assertions.assertEquals(expected, result);
     }
 
     @Test
@@ -152,7 +151,7 @@ public class AffineTransformTest extends ExtendedITextTest {
 
         result.setTransform(matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5]);
 
-        Assert.assertEquals(expected, result);
+        Assertions.assertEquals(expected, result);
     }
 
     @Test
@@ -162,7 +161,7 @@ public class AffineTransformTest extends ExtendedITextTest {
 
         result.setToIdentity();
 
-        Assert.assertEquals(expected, result);
+        Assertions.assertEquals(expected, result);
     }
 
     @Test
@@ -174,7 +173,7 @@ public class AffineTransformTest extends ExtendedITextTest {
 
         result.setToShear(shx, shy);
 
-        Assert.assertEquals(expected, result);
+        Assertions.assertEquals(expected, result);
     }
 
     @Test
@@ -186,7 +185,7 @@ public class AffineTransformTest extends ExtendedITextTest {
 
         result.setToShear(shx, shy);
 
-        Assert.assertEquals(expected, result);
+        Assertions.assertEquals(expected, result);
     }
 
     @Test
@@ -196,7 +195,7 @@ public class AffineTransformTest extends ExtendedITextTest {
         AffineTransform expected = new AffineTransform(1, shx, shy, 1, 0, 0);
         AffineTransform result = AffineTransform.getShearInstance(shx, shy);
 
-        Assert.assertEquals(expected, result);
+        Assertions.assertEquals(expected, result);
     }
 
     @Test
@@ -208,7 +207,7 @@ public class AffineTransformTest extends ExtendedITextTest {
 
         result.shear(shx, shy);
 
-        Assert.assertEquals(expected, result);
+        Assertions.assertEquals(expected, result);
     }
 
     @Test
@@ -219,7 +218,7 @@ public class AffineTransformTest extends ExtendedITextTest {
 
         result.rotate(angle);
 
-        Assert.assertEquals(expected, result);
+        Assertions.assertEquals(expected, result);
     }
 
     @Test
@@ -230,7 +229,7 @@ public class AffineTransformTest extends ExtendedITextTest {
 
         result.preConcatenate(template);
 
-        Assert.assertEquals(expected, result);
+        Assertions.assertEquals(expected, result);
     }
 
     @Test
@@ -242,7 +241,7 @@ public class AffineTransformTest extends ExtendedITextTest {
 
         affineTransform.transform(src, 1, dest, 1, 2);
 
-        Assert.assertArrayEquals(expected, dest, 0);
+        Assertions.assertArrayEquals(expected, dest, 0);
     }
 
     @Test
@@ -253,7 +252,7 @@ public class AffineTransformTest extends ExtendedITextTest {
 
         affineTransform.transform(src, 1, src, 2, 2);
 
-        Assert.assertArrayEquals(expected, src, 0);
+        Assertions.assertArrayEquals(expected, src, 0);
     }
 
     @Test
@@ -265,7 +264,7 @@ public class AffineTransformTest extends ExtendedITextTest {
 
         affineTransform.transform(src, 1, dest, 1, 2);
 
-        Assert.assertArrayEquals(expected, dest, 0);
+        Assertions.assertArrayEquals(expected, dest, 0);
     }
 
     @Test
@@ -276,7 +275,7 @@ public class AffineTransformTest extends ExtendedITextTest {
 
         affineTransform.transform(src, 1, src, 2, 2);
 
-        Assert.assertArrayEquals(expected, src, 0);
+        Assertions.assertArrayEquals(expected, src, 0);
     }
 
     @Test
@@ -288,7 +287,7 @@ public class AffineTransformTest extends ExtendedITextTest {
 
         affineTransform.transform(src, 1, dest, 1, 2);
 
-        Assert.assertArrayEquals(expected, dest, 0);
+        Assertions.assertArrayEquals(expected, dest, 0);
     }
 
     @Test
@@ -300,7 +299,7 @@ public class AffineTransformTest extends ExtendedITextTest {
 
         affineTransform.transform(src, 1, dest, 1, 2);
 
-        Assert.assertArrayEquals(expected, dest, 0);
+        Assertions.assertArrayEquals(expected, dest, 0);
     }
 
     @Test
@@ -312,7 +311,7 @@ public class AffineTransformTest extends ExtendedITextTest {
 
         affineTransform.deltaTransform(src, dest);
 
-        Assert.assertEquals(expected, dest);
+        Assertions.assertEquals(expected, dest);
     }
 
     @Test
@@ -323,7 +322,7 @@ public class AffineTransformTest extends ExtendedITextTest {
 
         Point dest = affineTransform.deltaTransform(src, null);
 
-        Assert.assertEquals(expected, dest);
+        Assertions.assertEquals(expected, dest);
     }
 
     @Test
@@ -335,7 +334,7 @@ public class AffineTransformTest extends ExtendedITextTest {
 
         affineTransform.deltaTransform(src, 1, dest, 1, 2);
 
-        Assert.assertArrayEquals(expected, dest, 0);
+        Assertions.assertArrayEquals(expected, dest, 0);
     }
 
     @Test
@@ -347,7 +346,7 @@ public class AffineTransformTest extends ExtendedITextTest {
 
         affineTransform.inverseTransform(src, dest);
 
-        Assert.assertEquals(expected, dest);
+        Assertions.assertEquals(expected, dest);
     }
 
     @Test
@@ -358,7 +357,7 @@ public class AffineTransformTest extends ExtendedITextTest {
 
         Point dest = affineTransform.inverseTransform(src, null);
 
-        Assert.assertEquals(expected, dest);
+        Assertions.assertEquals(expected, dest);
     }
 
     @Test
@@ -370,7 +369,7 @@ public class AffineTransformTest extends ExtendedITextTest {
 
         affineTransform.inverseTransform(src, 1, dest, 1, 2);
 
-        Assert.assertArrayEquals(expected, dest, 0);
+        Assertions.assertArrayEquals(expected, dest, 0);
     }
 
     @Test
@@ -382,6 +381,6 @@ public class AffineTransformTest extends ExtendedITextTest {
 
         affineTransform.inverseTransform(src, 1, dest, 1, 2);
 
-        Assert.assertArrayEquals(expected, dest, 0);
+        Assertions.assertArrayEquals(expected, dest, 0);
     }
 }

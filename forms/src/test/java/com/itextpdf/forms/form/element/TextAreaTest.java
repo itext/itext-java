@@ -39,22 +39,21 @@ import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class TextAreaTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER =
             "./src/test/resources/com/itextpdf/forms/form/element/TextAreaTest/";
     public static final String DESTINATION_FOLDER =
             "./target/test/com/itextpdf/forms/form/element/TextAreaTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
@@ -66,17 +65,17 @@ public class TextAreaTest extends ExtendedITextTest {
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             TextArea formTextArea = new TextArea("form text area");
-            formTextArea.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
+            formTextArea.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             formTextArea.setProperty(FormProperty.FORM_FIELD_VALUE, "form\ntext\narea");
             document.add(formTextArea);
 
             TextArea flattenTextArea = new TextArea("flatten text area");
-            flattenTextArea.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            flattenTextArea.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenTextArea.setProperty(FormProperty.FORM_FIELD_VALUE, "flatten\ntext\narea");
             document.add(flattenTextArea);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -88,19 +87,19 @@ public class TextAreaTest extends ExtendedITextTest {
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             TextArea formTextArea = new TextArea("form text area");
-            formTextArea.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
+            formTextArea.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             formTextArea.setProperty(FormProperty.FORM_FIELD_VALUE, "form\ntext\narea");
             formTextArea.setProperty(Property.FONT_SIZE, UnitValue.createPercentValue(10));
             document.add(formTextArea);
 
             TextArea flattenTextArea = new TextArea("flatten text area");
-            flattenTextArea.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            flattenTextArea.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenTextArea.setProperty(FormProperty.FORM_FIELD_VALUE, "flatten\ntext\narea");
             formTextArea.setProperty(Property.FONT_SIZE, UnitValue.createPercentValue(10));
             document.add(flattenTextArea);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -110,14 +109,14 @@ public class TextAreaTest extends ExtendedITextTest {
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             TextArea flattenTextArea = new TextArea("flatten text area with height");
-            flattenTextArea.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            flattenTextArea.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenTextArea.setProperty(FormProperty.FORM_FIELD_VALUE, "flatten\ntext area\nwith height");
             flattenTextArea.setProperty(Property.HEIGHT, new UnitValue(UnitValue.POINT, 100));
-            flattenTextArea.setProperty(Property.BORDER, new SolidBorder(2f));
+            flattenTextArea.setBorder(new SolidBorder(2f));
             document.add(flattenTextArea);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -127,14 +126,14 @@ public class TextAreaTest extends ExtendedITextTest {
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             TextArea flattenTextArea = new TextArea("flatten text area with height");
-            flattenTextArea.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            flattenTextArea.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenTextArea.setProperty(FormProperty.FORM_FIELD_VALUE, "flatten\ntext area\nwith height");
             flattenTextArea.setProperty(Property.MIN_HEIGHT, new UnitValue(UnitValue.POINT, 100));
-            flattenTextArea.setProperty(Property.BORDER, new SolidBorder(2f));
+            flattenTextArea.setBorder(new SolidBorder(2f));
             document.add(flattenTextArea);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -172,7 +171,7 @@ public class TextAreaTest extends ExtendedITextTest {
             document.add(flattenTextArea);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -192,11 +191,11 @@ public class TextAreaTest extends ExtendedITextTest {
             textArea.setProperty(FormProperty.FORM_FIELD_VALUE,
                     "some text to not\nbe able to fit in on the page\nmore text just text\nreally big height");
             textArea.setHeight(50);
-            textArea.setProperty(Property.BORDER, new SolidBorder(2f));
+            textArea.setBorder(new SolidBorder(2f));
             document.add(textArea);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -211,7 +210,7 @@ public class TextAreaTest extends ExtendedITextTest {
             textArea.setInteractive(true);
             textArea.setProperty(FormProperty.FORM_FIELD_VALUE,
                     "Font\n size \nof this\nText Area will \nbe approximated\nbased on the content");
-            textArea.setProperty(Property.BORDER, new SolidBorder(1f));
+            textArea.setBorder(new SolidBorder(1f));
             textArea.setFontSize(0);
             textArea.setHeight(75);
             document.add(textArea);
@@ -222,13 +221,13 @@ public class TextAreaTest extends ExtendedITextTest {
             flattenTextArea.setInteractive(false);
             flattenTextArea.setProperty(FormProperty.FORM_FIELD_VALUE,
                     "Font\n size \nof this\nText Area will \nbe approximated\nbased on the content");
-            flattenTextArea.setProperty(Property.BORDER, new SolidBorder(1f));
+            flattenTextArea.setBorder(new SolidBorder(1f));
             flattenTextArea.setFontSize(0);
             flattenTextArea.setHeight(75);
             document.add(flattenTextArea);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -241,7 +240,7 @@ public class TextAreaTest extends ExtendedITextTest {
             textArea.setInteractive(true);
             textArea.setProperty(FormProperty.FORM_FIELD_VALUE,
                     "Font\n size \nof this\nText Area will \nbe approximated\nbased on the content");
-            textArea.setProperty(Property.BORDER, new SolidBorder(1f));
+            textArea.setBorder(new SolidBorder(1f));
             textArea.setFontSize(0);
             textArea.setHeight(75);
             document.add(textArea);
@@ -250,13 +249,13 @@ public class TextAreaTest extends ExtendedITextTest {
             flattenTextArea.setInteractive(false);
             flattenTextArea.setProperty(FormProperty.FORM_FIELD_VALUE,
                     "Font\n size \nof this\nText Area will \nbe approximated\nbased on the content");
-            flattenTextArea.setProperty(Property.BORDER, new SolidBorder(1f));
+            flattenTextArea.setBorder(new SolidBorder(1f));
             flattenTextArea.setFontSize(0);
             flattenTextArea.setHeight(75);
             document.add(flattenTextArea);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -269,7 +268,7 @@ public class TextAreaTest extends ExtendedITextTest {
             textArea.setInteractive(true);
             textArea.setProperty(FormProperty.FORM_FIELD_VALUE, "Font\n size \nof this\nText Area will not "
                     + "\nbe approximated\nbased on the content\nbecause height is not set");
-            textArea.setProperty(Property.BORDER, new SolidBorder(1f));
+            textArea.setBorder(new SolidBorder(1f));
             textArea.setFontSize(0);
             document.add(textArea);
 
@@ -277,12 +276,12 @@ public class TextAreaTest extends ExtendedITextTest {
             flattenTextArea.setInteractive(false);
             flattenTextArea.setProperty(FormProperty.FORM_FIELD_VALUE, "Font\n size \nof this\nText Area will not "
                     + "\nbe approximated\nbased on the content\nbecause height is not set");
-            flattenTextArea.setProperty(Property.BORDER, new SolidBorder(1f));
+            flattenTextArea.setBorder(new SolidBorder(1f));
             flattenTextArea.setFontSize(0);
             document.add(flattenTextArea);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -295,11 +294,11 @@ public class TextAreaTest extends ExtendedITextTest {
             textArea.setInteractive(true);
             textArea.setProperty(FormProperty.FORM_FIELD_VALUE,
                     "Is border visible?\nAnd after clicking on the field?\nIt should be by the way");
-            textArea.setProperty(Property.BORDER, new SolidBorder(0.5f));
+            textArea.setBorder(new SolidBorder(0.5f));
             document.add(textArea);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -321,7 +320,7 @@ public class TextAreaTest extends ExtendedITextTest {
             document.add(flattenedTextArea);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -344,7 +343,7 @@ public class TextAreaTest extends ExtendedITextTest {
             document.add(flattenedTextArea);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -354,14 +353,14 @@ public class TextAreaTest extends ExtendedITextTest {
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             TextArea flattenTextArea = new TextArea("flatten text area with height");
-            flattenTextArea.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            flattenTextArea.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenTextArea.setProperty(FormProperty.FORM_FIELD_VALUE, "flatten\ntext area\nwith height");
             flattenTextArea.setProperty(Property.MAX_HEIGHT, new UnitValue(UnitValue.POINT, 28));
-            flattenTextArea.setProperty(Property.BORDER, new SolidBorder(2f));
+            flattenTextArea.setBorder(new SolidBorder(2f));
             document.add(flattenTextArea);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -398,6 +397,6 @@ public class TextAreaTest extends ExtendedITextTest {
             document.add(flattenedTextArea2);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 }

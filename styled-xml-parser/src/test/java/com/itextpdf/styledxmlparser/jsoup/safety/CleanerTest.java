@@ -27,69 +27,68 @@ import com.itextpdf.styledxmlparser.jsoup.TextUtil;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Document;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Entities;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 /**
  Tests for the cleaner.
 */
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class CleanerTest extends ExtendedITextTest {
     @Test public void simpleBehaviourTest() {
         String h = "<div><p class=foo><a href='http://evil.com'>Hello <b id=bar>there</b>!</a></div>";
         String cleanHtml = Jsoup.clean(h, Safelist.simpleText());
 
-        Assert.assertEquals("Hello <b>there</b>!", TextUtil.stripNewlines(cleanHtml));
+        Assertions.assertEquals("Hello <b>there</b>!", TextUtil.stripNewlines(cleanHtml));
     }
 
     @Test public void simpleBehaviourTest2() {
         String h = "Hello <b>there</b>!";
         String cleanHtml = Jsoup.clean(h, Safelist.simpleText());
 
-        Assert.assertEquals("Hello <b>there</b>!", TextUtil.stripNewlines(cleanHtml));
+        Assertions.assertEquals("Hello <b>there</b>!", TextUtil.stripNewlines(cleanHtml));
     }
 
     @Test public void basicBehaviourTest() {
         String h = "<div><p><a href='javascript:sendAllMoney()'>Dodgy</a> <A HREF='HTTP://nice.com/'>Nice</a></p><blockquote>Hello</blockquote>";
         String cleanHtml = Jsoup.clean(h, Safelist.basic());
 
-        Assert.assertEquals("<p><a rel=\"nofollow\">Dodgy</a> <a href=\"http://nice.com/\" rel=\"nofollow\">Nice</a></p><blockquote>Hello</blockquote>",
+        Assertions.assertEquals("<p><a rel=\"nofollow\">Dodgy</a> <a href=\"http://nice.com/\" rel=\"nofollow\">Nice</a></p><blockquote>Hello</blockquote>",
                 TextUtil.stripNewlines(cleanHtml));
     }
 
     @Test public void basicWithImagesTest() {
         String h = "<div><p><img src='http://example.com/' alt=Image></p><p><img src='ftp://ftp.example.com'></p></div>";
         String cleanHtml = Jsoup.clean(h, Safelist.basicWithImages());
-        Assert.assertEquals("<p><img src=\"http://example.com/\" alt=\"Image\"></p><p><img></p>", TextUtil.stripNewlines(cleanHtml));
+        Assertions.assertEquals("<p><img src=\"http://example.com/\" alt=\"Image\"></p><p><img></p>", TextUtil.stripNewlines(cleanHtml));
     }
 
     @Test public void testRelaxed() {
         String h = "<h1>Head</h1><table><tr><td>One<td>Two</td></tr></table>";
         String cleanHtml = Jsoup.clean(h, Safelist.relaxed());
-        Assert.assertEquals("<h1>Head</h1><table><tbody><tr><td>One</td><td>Two</td></tr></tbody></table>", TextUtil.stripNewlines(cleanHtml));
+        Assertions.assertEquals("<h1>Head</h1><table><tbody><tr><td>One</td><td>Two</td></tr></tbody></table>", TextUtil.stripNewlines(cleanHtml));
     }
 
     @Test public void testRemoveTags() {
         String h = "<div><p><A HREF='HTTP://nice.com'>Nice</a></p><blockquote>Hello</blockquote>";
         String cleanHtml = Jsoup.clean(h, Safelist.basic().removeTags("a"));
 
-        Assert.assertEquals("<p>Nice</p><blockquote>Hello</blockquote>", TextUtil.stripNewlines(cleanHtml));
+        Assertions.assertEquals("<p>Nice</p><blockquote>Hello</blockquote>", TextUtil.stripNewlines(cleanHtml));
     }
 
     @Test public void testRemoveAttributes() {
         String h = "<div><p>Nice</p><blockquote cite='http://example.com/quotations'>Hello</blockquote>";
         String cleanHtml = Jsoup.clean(h, Safelist.basic().removeAttributes("blockquote", "cite"));
 
-        Assert.assertEquals("<p>Nice</p><blockquote>Hello</blockquote>", TextUtil.stripNewlines(cleanHtml));
+        Assertions.assertEquals("<p>Nice</p><blockquote>Hello</blockquote>", TextUtil.stripNewlines(cleanHtml));
     }
 
     @Test public void testRemoveEnforcedAttributes() {
         String h = "<div><p><A HREF='HTTP://nice.com/'>Nice</a></p><blockquote>Hello</blockquote>";
         String cleanHtml = Jsoup.clean(h, Safelist.basic().removeEnforcedAttribute("a", "rel"));
 
-        Assert.assertEquals("<p><a href=\"http://nice.com/\">Nice</a></p><blockquote>Hello</blockquote>",
+        Assertions.assertEquals("<p><a href=\"http://nice.com/\">Nice</a></p><blockquote>Hello</blockquote>",
                 TextUtil.stripNewlines(cleanHtml));
     }
 
@@ -97,38 +96,38 @@ public class CleanerTest extends ExtendedITextTest {
         String h = "<p>Contact me <a href='mailto:info@example.com'>here</a></p>";
         String cleanHtml = Jsoup.clean(h, Safelist.basic().removeProtocols("a", "href", "ftp", "mailto"));
 
-        Assert.assertEquals("<p>Contact me <a rel=\"nofollow\">here</a></p>",
+        Assertions.assertEquals("<p>Contact me <a rel=\"nofollow\">here</a></p>",
                 TextUtil.stripNewlines(cleanHtml));
     }
 
     @Test public void testDropComments() {
         String h = "<p>Hello<!-- no --></p>";
         String cleanHtml = Jsoup.clean(h, Safelist.relaxed());
-        Assert.assertEquals("<p>Hello</p>", cleanHtml);
+        Assertions.assertEquals("<p>Hello</p>", cleanHtml);
     }
 
     @Test public void testDropXmlProc() {
         String h = "<?import namespace=\"xss\"><p>Hello</p>";
         String cleanHtml = Jsoup.clean(h, Safelist.relaxed());
-        Assert.assertEquals("<p>Hello</p>", cleanHtml);
+        Assertions.assertEquals("<p>Hello</p>", cleanHtml);
     }
 
     @Test public void testDropScript() {
         String h = "<SCRIPT SRC=//ha.ckers.org/.j><SCRIPT>alert(/XSS/.source)</SCRIPT>";
         String cleanHtml = Jsoup.clean(h, Safelist.relaxed());
-        Assert.assertEquals("", cleanHtml);
+        Assertions.assertEquals("", cleanHtml);
     }
 
     @Test public void testDropImageScript() {
         String h = "<IMG SRC=\"javascript:alert('XSS')\">";
         String cleanHtml = Jsoup.clean(h, Safelist.relaxed());
-        Assert.assertEquals("<img>", cleanHtml);
+        Assertions.assertEquals("<img>", cleanHtml);
     }
 
     @Test public void testCleanJavascriptHref() {
         String h = "<A HREF=\"javascript:document.location='http://www.google.com/'\">XSS</A>";
         String cleanHtml = Jsoup.clean(h, Safelist.relaxed());
-        Assert.assertEquals("<a>XSS</a>", cleanHtml);
+        Assertions.assertEquals("<a>XSS</a>", cleanHtml);
     }
 
     @Test public void testCleanAnchorProtocol() {
@@ -137,32 +136,32 @@ public class CleanerTest extends ExtendedITextTest {
 
         // A Safelist that does not allow anchors will strip them out.
         String cleanHtml = Jsoup.clean(validAnchor, Safelist.relaxed());
-        Assert.assertEquals("<a>Valid anchor</a>", cleanHtml);
+        Assertions.assertEquals("<a>Valid anchor</a>", cleanHtml);
 
         cleanHtml = Jsoup.clean(invalidAnchor, Safelist.relaxed());
-        Assert.assertEquals("<a>Invalid anchor</a>", cleanHtml);
+        Assertions.assertEquals("<a>Invalid anchor</a>", cleanHtml);
 
         // A Safelist that allows them will keep them.
         Safelist relaxedWithAnchor = Safelist.relaxed().addProtocols("a", "href", "#");
 
         cleanHtml = Jsoup.clean(validAnchor, relaxedWithAnchor);
-        Assert.assertEquals(validAnchor, cleanHtml);
+        Assertions.assertEquals(validAnchor, cleanHtml);
 
         // An invalid anchor is never valid.
         cleanHtml = Jsoup.clean(invalidAnchor, relaxedWithAnchor);
-        Assert.assertEquals("<a>Invalid anchor</a>", cleanHtml);
+        Assertions.assertEquals("<a>Invalid anchor</a>", cleanHtml);
     }
 
     @Test public void testDropsUnknownTags() {
         String h = "<p><custom foo=true>Test</custom></p>";
         String cleanHtml = Jsoup.clean(h, Safelist.relaxed());
-        Assert.assertEquals("<p>Test</p>", cleanHtml);
+        Assertions.assertEquals("<p>Test</p>", cleanHtml);
     }
 
     @Test public void testHandlesEmptyAttributes() {
         String h = "<img alt=\"\" src= unknown=''>";
         String cleanHtml = Jsoup.clean(h, Safelist.basicWithImages());
-        Assert.assertEquals("<img alt=\"\">", cleanHtml);
+        Assertions.assertEquals("<img alt=\"\">", cleanHtml);
     }
 
     @Test public void testIsValidBodyHtml() {
@@ -175,16 +174,16 @@ public class CleanerTest extends ExtendedITextTest {
         String nok5 = "<p>Test <b><a href='http://example.com/' rel='nofollowme'>OK</a></b></p>";
         String nok6 = "<p>Test <b><a href='http://example.com/'>OK</b></p>"; // missing close tag
         String nok7 = "</div>What";
-        Assert.assertTrue(Jsoup.isValid(ok, Safelist.basic()));
-        Assert.assertTrue(Jsoup.isValid(ok1, Safelist.basic()));
-        Assert.assertFalse(Jsoup.isValid(nok1, Safelist.basic()));
-        Assert.assertFalse(Jsoup.isValid(nok2, Safelist.basic()));
-        Assert.assertFalse(Jsoup.isValid(nok3, Safelist.basic()));
-        Assert.assertFalse(Jsoup.isValid(nok4, Safelist.basic()));
-        Assert.assertFalse(Jsoup.isValid(nok5, Safelist.basic()));
-        Assert.assertFalse(Jsoup.isValid(nok6, Safelist.basic()));
-        Assert.assertFalse(Jsoup.isValid(ok, Safelist.none()));
-        Assert.assertFalse(Jsoup.isValid(nok7, Safelist.basic()));
+        Assertions.assertTrue(Jsoup.isValid(ok, Safelist.basic()));
+        Assertions.assertTrue(Jsoup.isValid(ok1, Safelist.basic()));
+        Assertions.assertFalse(Jsoup.isValid(nok1, Safelist.basic()));
+        Assertions.assertFalse(Jsoup.isValid(nok2, Safelist.basic()));
+        Assertions.assertFalse(Jsoup.isValid(nok3, Safelist.basic()));
+        Assertions.assertFalse(Jsoup.isValid(nok4, Safelist.basic()));
+        Assertions.assertFalse(Jsoup.isValid(nok5, Safelist.basic()));
+        Assertions.assertFalse(Jsoup.isValid(nok6, Safelist.basic()));
+        Assertions.assertFalse(Jsoup.isValid(ok, Safelist.none()));
+        Assertions.assertFalse(Jsoup.isValid(nok7, Safelist.basic()));
     }
 
     @Test public void testIsValidDocument() {
@@ -194,36 +193,36 @@ public class CleanerTest extends ExtendedITextTest {
         Safelist relaxed = Safelist.relaxed();
         Cleaner cleaner = new Cleaner(relaxed);
         Document okDoc = Jsoup.parse(ok);
-        Assert.assertTrue(cleaner.isValid(okDoc));
-        Assert.assertFalse(cleaner.isValid(Jsoup.parse(nok)));
-        Assert.assertFalse(new Cleaner(Safelist.none()).isValid(okDoc));
+        Assertions.assertTrue(cleaner.isValid(okDoc));
+        Assertions.assertFalse(cleaner.isValid(Jsoup.parse(nok)));
+        Assertions.assertFalse(new Cleaner(Safelist.none()).isValid(okDoc));
     }
 
     @Test public void resolvesRelativeLinks() {
         String html = "<a href='/foo'>Link</a><img src='/bar'>";
         String clean = Jsoup.clean(html, "http://example.com/", Safelist.basicWithImages());
-        Assert.assertEquals("<a href=\"http://example.com/foo\" rel=\"nofollow\">Link</a>\n<img src=\"http://example.com/bar\">", clean);
+        Assertions.assertEquals("<a href=\"http://example.com/foo\" rel=\"nofollow\">Link</a>\n<img src=\"http://example.com/bar\">", clean);
     }
 
     @Test public void preservesRelativeLinksIfConfigured() {
         String html = "<a href='/foo'>Link</a><img src='/bar'> <img src='javascript:alert()'>";
         String clean = Jsoup.clean(html, "http://example.com/", Safelist.basicWithImages().preserveRelativeLinks(true));
-        Assert.assertEquals("<a href=\"/foo\" rel=\"nofollow\">Link</a>\n<img src=\"/bar\"> \n<img>", clean);
+        Assertions.assertEquals("<a href=\"/foo\" rel=\"nofollow\">Link</a>\n<img src=\"/bar\"> \n<img>", clean);
     }
 
     @Test public void dropsUnresolvableRelativeLinks() {
         String html = "<a href='/foo'>Link</a>";
         String clean = Jsoup.clean(html, Safelist.basic());
-        Assert.assertEquals("<a rel=\"nofollow\">Link</a>", clean);
+        Assertions.assertEquals("<a rel=\"nofollow\">Link</a>", clean);
     }
 
     @Test public void handlesCustomProtocols() {
         String html = "<img src='cid:12345' /> <img src='data:gzzt' />";
         String dropped = Jsoup.clean(html, Safelist.basicWithImages());
-        Assert.assertEquals("<img> \n<img>", dropped);
+        Assertions.assertEquals("<img> \n<img>", dropped);
 
         String preserved = Jsoup.clean(html, Safelist.basicWithImages().addProtocols("img", "src", "cid", "data"));
-        Assert.assertEquals("<img src=\"cid:12345\"> \n<img src=\"data:gzzt\">", preserved);
+        Assertions.assertEquals("<img src=\"cid:12345\"> \n<img src=\"data:gzzt\">", preserved);
     }
 
     @Test public void handlesAllPseudoTag() {
@@ -234,7 +233,7 @@ public class CleanerTest extends ExtendedITextTest {
                 .addTags("p", "a");
 
         String clean = Jsoup.clean(html, safelist);
-        Assert.assertEquals("<p class=\"foo\"><a class=\"qux\">link</a></p>", clean);
+        Assertions.assertEquals("<p class=\"foo\"><a class=\"qux\">link</a></p>", clean);
     }
 
     @Test public void addsTagOnAttributesIfNotSet() {
@@ -243,7 +242,7 @@ public class CleanerTest extends ExtendedITextTest {
             .addAttributes("p", "class");
         // ^^ safelist does not have explicit tag add for p, inferred from add attributes.
         String clean = Jsoup.clean(html, safelist);
-        Assert.assertEquals("<p class=\"foo\">One</p>", clean);
+        Assertions.assertEquals("<p class=\"foo\">One</p>", clean);
     }
 
     @Test public void supplyOutputSettings() {
@@ -256,44 +255,44 @@ public class CleanerTest extends ExtendedITextTest {
         String html = "<div><p>&bernou;</p></div>";
         String customOut = Jsoup.clean(html, "http://foo.com/", Safelist.relaxed(), os);
         String defaultOut = Jsoup.clean(html, "http://foo.com/", Safelist.relaxed());
-        Assert.assertNotSame(defaultOut, customOut);
+        Assertions.assertNotSame(defaultOut, customOut);
 
-        Assert.assertEquals("<div><p>&Bscr;</p></div>", customOut); // entities now prefers shorted names if aliased
-        Assert.assertEquals("<div>\n" +
+        Assertions.assertEquals("<div><p>&Bscr;</p></div>", customOut); // entities now prefers shorted names if aliased
+        Assertions.assertEquals("<div>\n" +
             " <p>ℬ</p>\n" +
             "</div>", defaultOut);
 
         os.charset("ASCII");
         os.escapeMode(Entities.EscapeMode.base);
         String customOut2 = Jsoup.clean(html, "http://foo.com/", Safelist.relaxed(), os);
-        Assert.assertEquals("<div><p>&#x212c;</p></div>", customOut2);
+        Assertions.assertEquals("<div><p>&#x212c;</p></div>", customOut2);
     }
 
     @Test public void handlesFramesets() {
         String dirty = "<html><head><script></script><noscript></noscript></head><frameset><frame src=\"foo\" /><frame src=\"foo\" /></frameset></html>";
         String clean = Jsoup.clean(dirty, Safelist.basic());
-        Assert.assertEquals("", clean); // nothing good can come out of that
+        Assertions.assertEquals("", clean); // nothing good can come out of that
 
         Document dirtyDoc = Jsoup.parse(dirty);
         Document cleanDoc = new Cleaner(Safelist.basic()).clean(dirtyDoc);
-        Assert.assertNotNull(cleanDoc);
-        Assert.assertEquals(0, cleanDoc.body().childNodeSize());
+        Assertions.assertNotNull(cleanDoc);
+        Assertions.assertEquals(0, cleanDoc.body().childNodeSize());
     }
 
     @Test public void cleansInternationalText() {
-        Assert.assertEquals("привет", Jsoup.clean("привет", Safelist.none()));
+        Assertions.assertEquals("привет", Jsoup.clean("привет", Safelist.none()));
     }
 
     @Test
     public void testScriptTagInSafeList() {
         Safelist safelist = Safelist.relaxed();
         safelist.addTags( "script" );
-        Assert.assertTrue( Jsoup.isValid("Hello<script>alert('Doh')</script>World !", safelist) );
+        Assertions.assertTrue( Jsoup.isValid("Hello<script>alert('Doh')</script>World !", safelist) );
     }
 
     @Test
     public void bailsIfRemovingProtocolThatsNotSet() {
-        Assert.assertThrows(IllegalArgumentException.class, () -> {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
             // a case that came up on the email list
             Safelist w = Safelist.none();
 
@@ -306,21 +305,21 @@ public class CleanerTest extends ExtendedITextTest {
     @Test public void handlesControlCharactersAfterTagName() {
         String html = "<a/\06>";
         String clean = Jsoup.clean(html, Safelist.basic());
-        Assert.assertEquals("<a rel=\"nofollow\"></a>", clean);
+        Assertions.assertEquals("<a rel=\"nofollow\"></a>", clean);
     }
 
     @Test public void handlesAttributesWithNoValue() {
         // https://github.com/jhy/jsoup/issues/973
         String clean = Jsoup.clean("<a href>Clean</a>", Safelist.basic());
 
-        Assert.assertEquals("<a rel=\"nofollow\">Clean</a>", clean);
+        Assertions.assertEquals("<a rel=\"nofollow\">Clean</a>", clean);
     }
 
     @Test public void handlesNoHrefAttribute() {
         String dirty = "<a>One</a> <a href>Two</a>";
         Safelist relaxedWithAnchor = Safelist.relaxed().addProtocols("a", "href", "#");
         String clean = Jsoup.clean(dirty, relaxedWithAnchor);
-        Assert.assertEquals("<a>One</a> <a>Two</a>", clean);
+        Assertions.assertEquals("<a>One</a> <a>Two</a>", clean);
     }
 
     @Test public void handlesNestedQuotesInAttribute() {
@@ -332,8 +331,8 @@ public class CleanerTest extends ExtendedITextTest {
         String clean = Jsoup.clean(orig, allow);
         boolean isValid = Jsoup.isValid(orig, allow);
 
-        Assert.assertEquals(orig, TextUtil.stripNewlines(clean)); // only difference is pretty print wrap & indent
-        Assert.assertTrue(isValid);
+        Assertions.assertEquals(orig, TextUtil.stripNewlines(clean)); // only difference is pretty print wrap & indent
+        Assertions.assertTrue(isValid);
     }
 
     @Test public void copiesOutputSettings() {
@@ -343,7 +342,7 @@ public class CleanerTest extends ExtendedITextTest {
         Safelist whitelist = Safelist.none().addTags("p", "br");
 
         Document result = new Cleaner(whitelist).clean(orig);
-        Assert.assertEquals(Document.OutputSettings.Syntax.xml, result.outputSettings().syntax());
-        Assert.assertEquals("<p>test<br /></p>", result.body().html());
+        Assertions.assertEquals(Document.OutputSettings.Syntax.xml, result.outputSettings().syntax());
+        Assertions.assertEquals("<p>test<br /></p>", result.body().html());
     }
 }

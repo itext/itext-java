@@ -44,29 +44,28 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class AddLinkAnnotationTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/annot/AddLinkAnnotationTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/annot/AddLinkAnnotationTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -102,7 +101,7 @@ public class AddLinkAnnotationTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool()
+        Assertions.assertNull(new CompareTool()
                 .compareByContent(destinationFolder + "linkAnnotation01.pdf", sourceFolder + "cmp_linkAnnotation01.pdf",
                         destinationFolder, "diff_"));
 
@@ -130,7 +129,7 @@ public class AddLinkAnnotationTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool()
+        Assertions.assertNull(new CompareTool()
                 .compareByContent(destinationFolder + "linkAnnotation02.pdf", sourceFolder + "cmp_linkAnnotation02.pdf",
                         destinationFolder, "diff_"));
 
@@ -170,17 +169,17 @@ public class AddLinkAnnotationTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool()
+        Assertions.assertNull(new CompareTool()
                 .compareByContent(destinationFolder + "linkAnnotation03.pdf", sourceFolder + "cmp_linkAnnotation03.pdf",
                         destinationFolder, "diff_"));
 
         document = new PdfDocument(CompareTool.createOutputReader(destinationFolder + "linkAnnotation03.pdf"));
         page = document.getPage(1);
-        Assert.assertEquals(3, page.getAnnotsSize());
+        Assertions.assertEquals(3, page.getAnnotsSize());
         List<PdfAnnotation> annotations = page.getAnnotations();
-        Assert.assertEquals(3, annotations.size());
+        Assertions.assertEquals(3, annotations.size());
         PdfLinkAnnotation link = (PdfLinkAnnotation) annotations.get(0);
-        Assert.assertEquals(page, link.getPage());
+        Assertions.assertEquals(page, link.getPage());
         document.close();
     }
 
@@ -207,7 +206,7 @@ public class AddLinkAnnotationTest extends ExtendedITextTest {
 
         pdfDocument.close();
 
-        Assert.assertNull(new CompareTool()
+        Assertions.assertNull(new CompareTool()
                 .compareByContent(destinationFolder + fileName, sourceFolder + "cmp_" + fileName, destinationFolder));
     }
 
@@ -221,7 +220,7 @@ public class AddLinkAnnotationTest extends ExtendedITextTest {
             page.removeAnnotation(page.getAnnotations().get(0));
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(output, cmp, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(output, cmp, destinationFolder));
     }
 
     @Test
@@ -234,7 +233,7 @@ public class AddLinkAnnotationTest extends ExtendedITextTest {
             page.removeAnnotation(page.getAnnotations().get(0));
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(output, cmp, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(output, cmp, destinationFolder));
     }
 
     @Test
@@ -247,7 +246,7 @@ public class AddLinkAnnotationTest extends ExtendedITextTest {
             page.removeAnnotation(page.getAnnotations().get(0));
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(output, cmp, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(output, cmp, destinationFolder));
     }
 
     @Test
@@ -260,7 +259,7 @@ public class AddLinkAnnotationTest extends ExtendedITextTest {
             page.removeAnnotation(page.getAnnotations().get(0));
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(output, cmp, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(output, cmp, destinationFolder));
     }
 
 }

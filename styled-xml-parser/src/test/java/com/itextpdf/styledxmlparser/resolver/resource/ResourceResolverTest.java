@@ -30,7 +30,6 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,11 +39,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class ResourceResolverTest extends ExtendedITextTest {
 
     private final String baseUri = "./src/test/resources/com/itextpdf/styledxmlparser/resolver/retrieveStreamTest/";
@@ -65,8 +64,8 @@ public class ResourceResolverTest extends ExtendedITextTest {
         String resolveUrl = resolver.resolveAgainstBaseUri("").toString();
         String expectedUrl = uriResolver.resolveAgainstBaseUri("").toString();
 
-        Assert.assertEquals(resolveUrl, expectedUrl);
-        Assert.assertEquals(DefaultResourceRetriever.class, resolver.getRetriever().getClass());
+        Assertions.assertEquals(resolveUrl, expectedUrl);
+        Assertions.assertEquals(DefaultResourceRetriever.class, resolver.getRetriever().getClass());
     }
 
     @Test
@@ -77,8 +76,8 @@ public class ResourceResolverTest extends ExtendedITextTest {
         String resolveUrl = resolver.resolveAgainstBaseUri("").toString();
         String expectedUrl = uriResolver.resolveAgainstBaseUri("").toString();
 
-        Assert.assertEquals(resolveUrl, expectedUrl);
-        Assert.assertEquals(CustomResourceRetriever.class, resolver.getRetriever().getClass());
+        Assertions.assertEquals(resolveUrl, expectedUrl);
+        Assertions.assertEquals(CustomResourceRetriever.class, resolver.getRetriever().getClass());
     }
 
     private static class CustomResourceRetriever extends DefaultResourceRetriever {
@@ -93,7 +92,7 @@ public class ResourceResolverTest extends ExtendedITextTest {
         String fileName = "resourceResolverTest .png";
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
         byte[] bytes = resourceResolver.retrieveBytesFromResource(fileName);
-        Assert.assertNull(bytes);
+        Assertions.assertNull(bytes);
     }
 
     @Test
@@ -110,7 +109,7 @@ public class ResourceResolverTest extends ExtendedITextTest {
         String fileName = "retrieveStyl eSheetTest.css";
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
         InputStream stream = resourceResolver.retrieveResourceAsInputStream(fileName);
-        Assert.assertNull(stream);
+        Assertions.assertNull(stream);
     }
 
     @Test
@@ -119,7 +118,7 @@ public class ResourceResolverTest extends ExtendedITextTest {
         String fileName = "retrieveStyl eSheetTest.css";
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
         byte[] bytes = resourceResolver.retrieveBytesFromResource(fileName);
-        Assert.assertNull(bytes);
+        Assertions.assertNull(bytes);
     }
 
     @Test
@@ -129,7 +128,7 @@ public class ResourceResolverTest extends ExtendedITextTest {
 
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
         PdfXObject pdfXObject = resourceResolver.retrieveImage(fileName);
-        Assert.assertNull(pdfXObject);
+        Assertions.assertNull(pdfXObject);
     }
 
     @Test
@@ -141,8 +140,8 @@ public class ResourceResolverTest extends ExtendedITextTest {
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
         InputStream stream = resourceResolver.retrieveResourceAsInputStream(fileName);
 
-        Assert.assertNotNull(stream);
-        Assert.assertEquals(expected.read(), stream.read());
+        Assertions.assertNotNull(stream);
+        Assertions.assertEquals(expected.read(), stream.read());
     }
 
     @Test
@@ -155,18 +154,18 @@ public class ResourceResolverTest extends ExtendedITextTest {
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
         InputStream stream = resourceResolver.retrieveResourceAsInputStream(fileName);
 
-        Assert.assertNotNull(stream);
-        Assert.assertEquals(expected.read(), stream.read());
+        Assertions.assertNotNull(stream);
+        Assertions.assertEquals(expected.read(), stream.read());
     }
 
     // Boolean method tests block
 
     @Test
     public void isDataSrcTest() {
-        Assert.assertTrue(ResourceResolver.isDataSrc(bLogo));
-        Assert.assertTrue(ResourceResolver.isDataSrc(bLogoCorruptedData));
-        Assert.assertTrue(ResourceResolver.isDataSrc(bLogoIncorrect));
-        Assert.assertFalse(ResourceResolver.isDataSrc("https://data.com/data"));
+        Assertions.assertTrue(ResourceResolver.isDataSrc(bLogo));
+        Assertions.assertTrue(ResourceResolver.isDataSrc(bLogoCorruptedData));
+        Assertions.assertTrue(ResourceResolver.isDataSrc(bLogoIncorrect));
+        Assertions.assertFalse(ResourceResolver.isDataSrc("https://data.com/data"));
     }
 
     // Retrieve pdfXObject tests block
@@ -175,7 +174,7 @@ public class ResourceResolverTest extends ExtendedITextTest {
     public void retrieveImageBase64Test() {
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
         PdfXObject image = resourceResolver.retrieveImage(bLogo);
-        Assert.assertNotNull(image);
+        Assertions.assertNotNull(image);
     }
 
     @Test
@@ -183,7 +182,7 @@ public class ResourceResolverTest extends ExtendedITextTest {
     public void retrieveImageIncorrectBase64Test() {
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
         PdfXObject image = resourceResolver.retrieveImage(bLogoCorruptedData);
-        Assert.assertNull(image);
+        Assertions.assertNull(image);
     }
 
     @Test
@@ -191,7 +190,7 @@ public class ResourceResolverTest extends ExtendedITextTest {
     public void retrieveImageCorruptedDataBase64Test() {
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
         PdfXObject image = resourceResolver.retrieveImage(bLogoCorruptedData);
-        Assert.assertNull(image);
+        Assertions.assertNull(image);
     }
 
     @Test
@@ -199,7 +198,7 @@ public class ResourceResolverTest extends ExtendedITextTest {
     public void retrieveImageNullTest() {
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
         PdfXObject image = resourceResolver.retrieveImage(null);
-        Assert.assertNull(image);
+        Assertions.assertNull(image);
     }
 
     @Test
@@ -207,7 +206,7 @@ public class ResourceResolverTest extends ExtendedITextTest {
         String fileName = "resourceResolverTest.png";
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
         PdfXObject image = resourceResolver.retrieveImage(fileName);
-        Assert.assertNotNull(image);
+        Assertions.assertNotNull(image);
     }
 
     // Retrieve byte array tests block
@@ -216,7 +215,7 @@ public class ResourceResolverTest extends ExtendedITextTest {
     public void retrieveBytesFromResourceBase64Test() {
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
         byte[] bytes = resourceResolver.retrieveBytesFromResource(bLogo);
-        Assert.assertNotNull(bytes);
+        Assertions.assertNotNull(bytes);
     }
 
     @Test
@@ -224,7 +223,7 @@ public class ResourceResolverTest extends ExtendedITextTest {
     public void retrieveBytesFromResourceIncorrectBase64Test() {
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
         byte[] bytes = resourceResolver.retrieveBytesFromResource(bLogoIncorrect);
-        Assert.assertNull(bytes);
+        Assertions.assertNull(bytes);
     }
 
     @Test
@@ -232,7 +231,7 @@ public class ResourceResolverTest extends ExtendedITextTest {
     public void retrieveBytesFromResourceCorruptedDataBase64Test() {
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
         byte[] bytes = resourceResolver.retrieveBytesFromResource(bLogoCorruptedData);
-        Assert.assertNull(bytes);
+        Assertions.assertNull(bytes);
     }
 
     @Test
@@ -241,8 +240,8 @@ public class ResourceResolverTest extends ExtendedITextTest {
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
         byte[] expected = Files.readAllBytes(new File(baseUri + fileName).toPath());
         byte[] bytes = resourceResolver.retrieveBytesFromResource(fileName);
-        Assert.assertNotNull(bytes);
-        Assert.assertEquals(expected.length, bytes.length);
+        Assertions.assertNotNull(bytes);
+        Assertions.assertEquals(expected.length, bytes.length);
     }
 
     @Test
@@ -251,8 +250,8 @@ public class ResourceResolverTest extends ExtendedITextTest {
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
         byte[] expected = Files.readAllBytes(new File(baseUri + fileName).toPath());
         byte[] stream = resourceResolver.retrieveBytesFromResource(fileName);
-        Assert.assertNotNull(resourceResolver.retrieveBytesFromResource(fileName));
-        Assert.assertEquals(expected.length, stream.length);
+        Assertions.assertNotNull(resourceResolver.retrieveBytesFromResource(fileName));
+        Assertions.assertEquals(expected.length, stream.length);
     }
 
     @Test
@@ -261,8 +260,8 @@ public class ResourceResolverTest extends ExtendedITextTest {
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
         byte[] expected = Files.readAllBytes(new File(baseUri + fileName).toPath());
         byte[] bytes = resourceResolver.retrieveBytesFromResource(fileName);
-        Assert.assertNotNull(bytes);
-        Assert.assertEquals(expected.length, bytes.length);
+        Assertions.assertNotNull(bytes);
+        Assertions.assertEquals(expected.length, bytes.length);
     }
 
     @Test
@@ -272,7 +271,7 @@ public class ResourceResolverTest extends ExtendedITextTest {
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
         resourceResolver.setRetriever(new FilterResourceRetriever());
         byte[] bytes = resourceResolver.retrieveBytesFromResource(fileName);
-        Assert.assertNull(bytes);
+        Assertions.assertNull(bytes);
     }
 
     @Test
@@ -281,7 +280,7 @@ public class ResourceResolverTest extends ExtendedITextTest {
         String fileName = "/itextpdf.com/itis.jpg";
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
         PdfXObject image = resourceResolver.retrieveImage(fileName);
-        Assert.assertNull(image);
+        Assertions.assertNull(image);
     }
 
     @Test
@@ -289,7 +288,7 @@ public class ResourceResolverTest extends ExtendedITextTest {
         String fileName = "itextpdf.com/itis.jpg";
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
         PdfXObject image = resourceResolver.retrieveImage(fileName);
-        Assert.assertNotNull(image);
+        Assertions.assertNotNull(image);
     }
 
     @Test
@@ -297,7 +296,7 @@ public class ResourceResolverTest extends ExtendedITextTest {
         String fileName = "retrieveImagePathWithSpaces.jpg";
         ResourceResolver resourceResolver = new ResourceResolver(baseUri + "path with spaces/");
         PdfXObject image = resourceResolver.retrieveImage(fileName);
-        Assert.assertNotNull(image);
+        Assertions.assertNotNull(image);
     }
 
     @Test
@@ -306,7 +305,7 @@ public class ResourceResolverTest extends ExtendedITextTest {
         String fileName = "resourceResolverTest .png";
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
         byte[] bytes =resourceResolver.retrieveBytesFromResource(fileName);
-        Assert.assertNull(bytes);
+        Assertions.assertNull(bytes);
     }
 
     @Test
@@ -315,8 +314,8 @@ public class ResourceResolverTest extends ExtendedITextTest {
         ResourceResolver resourceResolver = new ResourceResolver(baseUri, new RetryResourceRetriever(baseUri));
         byte[] expected = Files.readAllBytes(new File(baseUri + "retrieveStyleSheetTest.css").toPath());
         byte[] bytes = resourceResolver.retrieveBytesFromResource(fileName);
-        Assert.assertNotNull(bytes);
-        Assert.assertEquals(expected.length, bytes.length);
+        Assertions.assertNotNull(bytes);
+        Assertions.assertEquals(expected.length, bytes.length);
     }
 
     @Test
@@ -327,7 +326,7 @@ public class ResourceResolverTest extends ExtendedITextTest {
         IResourceRetriever retriever = new DefaultResourceRetriever().setResourceSizeByteLimit(88);
         ResourceResolver resourceResolver = new ResourceResolver(baseUri, retriever);
         byte[] bytes = resourceResolver.retrieveBytesFromResource(fileName);
-        Assert.assertNull(bytes);
+        Assertions.assertNull(bytes);
     }
 
     @Test
@@ -337,8 +336,8 @@ public class ResourceResolverTest extends ExtendedITextTest {
         IResourceRetriever retriever = new DefaultResourceRetriever().setResourceSizeByteLimit(89);
         ResourceResolver resourceResolver = new ResourceResolver(baseUri, retriever);
         byte[] bytes = resourceResolver.retrieveBytesFromResource(fileName);
-        Assert.assertNotNull(bytes);
-        Assert.assertEquals(((DefaultResourceRetriever) retriever).getResourceSizeByteLimit(), bytes.length);
+        Assertions.assertNotNull(bytes);
+        Assertions.assertEquals(((DefaultResourceRetriever) retriever).getResourceSizeByteLimit(), bytes.length);
     }
 
     // Retrieve input stream tests block
@@ -355,14 +354,14 @@ public class ResourceResolverTest extends ExtendedITextTest {
             stream.read();
         }
 
-        Assert.assertThrows(ReadingByteLimitException.class, () -> stream.read());
+        Assertions.assertThrows(ReadingByteLimitException.class, () -> stream.read());
     }
 
     @Test
     public void retrieveResourceAsInputStreamBase64Test() {
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
         InputStream stream = resourceResolver.retrieveResourceAsInputStream(bLogo);
-        Assert.assertNotNull(stream);
+        Assertions.assertNotNull(stream);
     }
 
     @Test
@@ -371,8 +370,8 @@ public class ResourceResolverTest extends ExtendedITextTest {
         InputStream expected = FileUtil.getInputStreamForFile(baseUri + fileName);
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
         InputStream stream = resourceResolver.retrieveResourceAsInputStream(fileName);
-        Assert.assertNotNull(stream);
-        Assert.assertEquals(expected.read(), stream.read());
+        Assertions.assertNotNull(stream);
+        Assertions.assertEquals(expected.read(), stream.read());
     }
 
     @Test
@@ -381,8 +380,8 @@ public class ResourceResolverTest extends ExtendedITextTest {
         InputStream expected = FileUtil.getInputStreamForFile(baseUri + fileName);
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
         InputStream stream = resourceResolver.retrieveResourceAsInputStream(fileName);
-        Assert.assertNotNull(stream);
-        Assert.assertEquals(expected.read(), stream.read());
+        Assertions.assertNotNull(stream);
+        Assertions.assertEquals(expected.read(), stream.read());
     }
 
     @Test
@@ -392,7 +391,7 @@ public class ResourceResolverTest extends ExtendedITextTest {
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
         resourceResolver.setRetriever(new FilterResourceRetriever());
         InputStream stream = resourceResolver.retrieveResourceAsInputStream(fileName);
-        Assert.assertNull(stream);
+        Assertions.assertNull(stream);
     }
 
     private static class FilterResourceRetriever extends DefaultResourceRetriever {
@@ -408,8 +407,8 @@ public class ResourceResolverTest extends ExtendedITextTest {
         ResourceResolver resourceResolver = new ResourceResolver(baseUri, new RetryResourceRetriever(baseUri));
         InputStream expected = FileUtil.getInputStreamForFile(baseUri + "retrieveStyleSheetTest.css");
         InputStream stream = resourceResolver.retrieveResourceAsInputStream(fileName);
-        Assert.assertNotNull(stream);
-        Assert.assertEquals(expected.read(), stream.read());
+        Assertions.assertNotNull(stream);
+        Assertions.assertEquals(expected.read(), stream.read());
     }
 
     private static class RetryResourceRetriever extends DefaultResourceRetriever {
@@ -445,8 +444,8 @@ public class ResourceResolverTest extends ExtendedITextTest {
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
         try (InputStream stream = resourceResolver.retrieveResourceAsInputStream(absolutePath);
                 InputStream expected = FileUtil.getInputStreamForFile(absolutePath);) {
-            Assert.assertNotNull(stream);
-            Assert.assertEquals(expected.read(), stream.read());
+            Assertions.assertNotNull(stream);
+            Assertions.assertEquals(expected.read(), stream.read());
         }
     }
 
@@ -458,8 +457,8 @@ public class ResourceResolverTest extends ExtendedITextTest {
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
         try (InputStream stream = resourceResolver.retrieveResourceAsInputStream(absolutePath);
                 InputStream expected = FileUtil.getInputStreamForFile(absolutePath);) {
-            Assert.assertNotNull(stream);
-            Assert.assertEquals(expected.read(), stream.read());
+            Assertions.assertNotNull(stream);
+            Assertions.assertEquals(expected.read(), stream.read());
         }
     }
 
@@ -472,8 +471,8 @@ public class ResourceResolverTest extends ExtendedITextTest {
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
         try (InputStream stream = resourceResolver.retrieveResourceAsInputStream(fileUrlString);
                 InputStream expected = url.openStream()) {
-            Assert.assertNotNull(stream);
-            Assert.assertEquals(expected.read(), stream.read());
+            Assertions.assertNotNull(stream);
+            Assertions.assertEquals(expected.read(), stream.read());
         }
     }
 
@@ -486,8 +485,8 @@ public class ResourceResolverTest extends ExtendedITextTest {
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
         try (InputStream stream = resourceResolver.retrieveResourceAsInputStream(fileUrlString);
                 InputStream expected = url.openStream()) {
-            Assert.assertNotNull(stream);
-            Assert.assertEquals(expected.read(), stream.read());
+            Assertions.assertNotNull(stream);
+            Assertions.assertEquals(expected.read(), stream.read());
         }
     }
 }

@@ -72,6 +72,7 @@ public class ParserGraphicsState extends CanvasGraphicsState {
     /**
      * Intersects the current clipping path with the given path.
      *
+     * <p>
      * <strong>Note:</strong> Coordinates of the given path should be in
      * the transformed user space.
      *
@@ -89,18 +90,20 @@ public class ParserGraphicsState extends CanvasGraphicsState {
         pathCopy.closeAllSubpaths();
 
         IClipper clipper = new DefaultClipper();
-        ClipperBridge.addPath(clipper, clippingPath, IClipper.PolyType.SUBJECT);
-        ClipperBridge.addPath(clipper, pathCopy, IClipper.PolyType.CLIP);
+        ClipperBridge clipperBridge = new ClipperBridge(clippingPath, pathCopy);
+        clipperBridge.addPath(clipper, clippingPath, IClipper.PolyType.SUBJECT);
+        clipperBridge.addPath(clipper, pathCopy, IClipper.PolyType.CLIP);
 
         PolyTree resultTree = new PolyTree();
         clipper.execute(IClipper.ClipType.INTERSECTION, resultTree, IClipper.PolyFillType.NON_ZERO, ClipperBridge.getFillType(fillingRule));
 
-        clippingPath = ClipperBridge.convertToPath(resultTree);
+        clippingPath = clipperBridge.convertToPath(resultTree);
     }
 
     /**
      * Getter for the current clipping path.
      *
+     * <p>
      * <strong>Note:</strong> The returned clipping path is in the transformed user space, so
      * if you want to get it in default user space, apply transformation matrix ({@link CanvasGraphicsState#getCtm()}).
      *
@@ -113,6 +116,7 @@ public class ParserGraphicsState extends CanvasGraphicsState {
     /**
      * Sets the current clipping path to the specified path.
      *
+     * <p>
      * <strong>Note:</strong>This method doesn't modify existing clipping path,
      * it simply replaces it with the new one instead.
      *

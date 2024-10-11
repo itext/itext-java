@@ -177,7 +177,10 @@ public class Cell extends BlockElement<Cell> {
     @Override
     public <T1> T1 getDefaultProperty(int property) {
         switch (property) {
-            case Property.BORDER:
+            case Property.BORDER_TOP:
+            case Property.BORDER_RIGHT:
+            case Property.BORDER_BOTTOM:
+            case Property.BORDER_LEFT:
                 return (T1) (Object) DEFAULT_BORDER;
             case Property.PADDING_BOTTOM:
             case Property.PADDING_LEFT:

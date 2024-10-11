@@ -22,7 +22,7 @@
  */
 package com.itextpdf.test;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
 /**
  * Utilities class for assertion operation.
@@ -43,7 +43,7 @@ public class AssertUtil {
         try {
             executor.execute();
         } catch (Exception ex) {
-            Assert.fail(ex.getMessage());
+            Assertions.fail(ex.getMessage());
         }
     }
 
@@ -59,7 +59,7 @@ public class AssertUtil {
         try {
             executor.execute();
         } catch (Exception ex) {
-            Assert.fail(message);
+            Assertions.fail(message);
         }
     }
 }

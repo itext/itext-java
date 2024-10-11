@@ -23,13 +23,12 @@
 package com.itextpdf.kernel.geom;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class VectorTest extends ExtendedITextTest {
 
     @Test
@@ -39,7 +38,7 @@ public class VectorTest extends ExtendedITextTest {
         Vector shouldBe = new Vector(67, 76, 4);
 
         Vector rslt = v.cross(m);
-        Assert.assertEquals(shouldBe, rslt);
+        Assertions.assertEquals(shouldBe, rslt);
     }
 
 }

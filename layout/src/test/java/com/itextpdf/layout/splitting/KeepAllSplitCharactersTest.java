@@ -25,72 +25,71 @@ package com.itextpdf.layout.splitting;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class KeepAllSplitCharactersTest extends ExtendedITextTest {
 
     @Test
     public void dashAtStartTest() {
-        Assert.assertTrue(isSplitCharacter(new int[]{'-', 'a'}, 0));
+        Assertions.assertTrue(isSplitCharacter(new int[]{'-', 'a'}, 0));
     }
 
     @Test
     public void minusSignAtStartTest() {
-        Assert.assertFalse(isSplitCharacter(new int[]{'-', '5'}, 0));
+        Assertions.assertFalse(isSplitCharacter(new int[]{'-', '5'}, 0));
     }
 
     @Test
     public void dashBeforeLetterInTheMiddleTest() {
-        Assert.assertTrue(isSplitCharacter(new int[]{'a', ' ', '-', 'a'}, 2));
+        Assertions.assertTrue(isSplitCharacter(new int[]{'a', ' ', '-', 'a'}, 2));
     }
 
     @Test
     // TODO: DEVSIX-4863 minus sign for digests should not be split
     public void minusSignInTheMiddleTest() {
-        Assert.assertTrue(isSplitCharacter(new int[]{'a', ' ', '-', '5'}, 2));
+        Assertions.assertTrue(isSplitCharacter(new int[]{'a', ' ', '-', '5'}, 2));
     }
 
     @Test
     public void dashBeforeDigitInTheMiddleTest() {
-        Assert.assertTrue(isSplitCharacter(new int[]{'a', 'a', '-', '5'}, 2));
+        Assertions.assertTrue(isSplitCharacter(new int[]{'a', 'a', '-', '5'}, 2));
     }
 
     @Test
     public void dashAtTheEndTest() {
         int[] unicodes = new int[]{'a', '-'};
-        Assert.assertTrue(isSplitCharacter(unicodes, unicodes.length - 1));
+        Assertions.assertTrue(isSplitCharacter(unicodes, unicodes.length - 1));
     }
 
     @Test
     public void dashCharacterTest() {
-        Assert.assertTrue(isSplitCharacter(new int[]{'a', '-', 'a'}, 1));
+        Assertions.assertTrue(isSplitCharacter(new int[]{'a', '-', 'a'}, 1));
     }
 
     @Test
     public void noUnicodeTest() {
-        Assert.assertFalse(isSplitCharacter(new int[]{'a', -1, 'a'}, 1));
+        Assertions.assertFalse(isSplitCharacter(new int[]{'a', -1, 'a'}, 1));
     }
 
     @Test
     public void unicode2010CharacterTest() {
-        Assert.assertTrue(isSplitCharacter(new int[]{'a', '\u2010', 'a'}, 1));
+        Assertions.assertTrue(isSplitCharacter(new int[]{'a', '\u2010', 'a'}, 1));
     }
 
     @Test
     public void unicode2003CharacterTest() {
-        Assert.assertTrue(isSplitCharacter(new int[]{'a', '\u2003', 'a'}, 1));
+        Assertions.assertTrue(isSplitCharacter(new int[]{'a', '\u2003', 'a'}, 1));
     }
 
     @Test
     public void unicode2e81CharacterTest() {
-        Assert.assertFalse(isSplitCharacter(new int[]{'a', '\u2e81', 'a'}, 1));
+        Assertions.assertFalse(isSplitCharacter(new int[]{'a', '\u2e81', 'a'}, 1));
     }
 
     private static boolean isSplitCharacter(int[] unicodes, int glyphPosition) {

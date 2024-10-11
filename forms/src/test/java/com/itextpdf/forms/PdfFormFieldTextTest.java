@@ -39,23 +39,22 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.util.Map;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfFormFieldTextTest extends ExtendedITextTest {
 
     public static final String destinationFolder = "./target/test/com/itextpdf/forms/PdfFormFieldTextTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/PdfFormFieldTextTest/";
     private static final String TEXT = "Some text in Russian \u0442\u0435\u043A\u0441\u0442 (text)";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
@@ -73,7 +72,7 @@ public class PdfFormFieldTextTest extends ExtendedITextTest {
         fields.get("Second field").setValue("surname surname surname surname surname surname");
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
     }
 
     @Test
@@ -89,7 +88,7 @@ public class PdfFormFieldTextTest extends ExtendedITextTest {
         String errorMessage = compareTool.compareByContent(destinationFolder + "defaultAppearanceExtractionTest.pdf",
                 sourceFolder + "cmp_defaultAppearanceExtractionTest.pdf", destinationFolder, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -116,11 +115,13 @@ public class PdfFormFieldTextTest extends ExtendedITextTest {
         PdfObject actualFieldDAFont = document.getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm)
                 .getAsArray(PdfName.Fields).getAsDictionary(0).get(PdfName.DA);
 
-        Assert.assertEquals("There is no Helvetica font within DR key", new PdfName("Helvetica"),
-                actualDocumentFonts.getAsDictionary(new PdfName("F1")).get(PdfName.BaseFont));
-        Assert.assertEquals("There is no NotoSans font within DR key.", new PdfName("NotoSans"),
-                actualDocumentFonts.getAsDictionary(new PdfName("F2")).get(PdfName.BaseFont));
-        Assert.assertEquals("There is no NotoSans(/F2) font within Fields DA key", expectedFieldsDAFont, actualFieldDAFont);
+        Assertions.assertEquals(new PdfName("Helvetica"),
+                actualDocumentFonts.getAsDictionary(new PdfName("F1")).get(PdfName.BaseFont),
+                "There is no Helvetica font within DR key");
+        Assertions.assertEquals(new PdfName("NotoSans"),
+                actualDocumentFonts.getAsDictionary(new PdfName("F2")).get(PdfName.BaseFont),
+                "There is no NotoSans font within DR key.");
+        Assertions.assertEquals(expectedFieldsDAFont, actualFieldDAFont, "There is no NotoSans(/F2) font within Fields DA key");
 
         document.close();
 
@@ -153,14 +154,17 @@ public class PdfFormFieldTextTest extends ExtendedITextTest {
         PdfObject actualFieldDAFont = document.getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm)
                 .getAsArray(PdfName.Fields).getAsDictionary(0).get(PdfName.DA);
 
-        Assert.assertEquals("There is no Helvetica font within DR key", new PdfName("Helvetica"),
-                actualDocumentFonts.getAsDictionary(new PdfName("F1")).get(PdfName.BaseFont));
-        Assert.assertEquals("There is no Courier font within DR key.", new PdfName("Courier"),
-                actualDocumentFonts.getAsDictionary(new PdfName("F2")).get(PdfName.BaseFont));
-        Assert.assertEquals("There is no NotoSans font within DR key.", new PdfName("NotoSans"),
-                actualDocumentFonts.getAsDictionary(new PdfName("F3")).get(PdfName.BaseFont));
-        Assert.assertEquals("There is no Helvetica(/F1) font within AcroForm DA key", expectedAcroformDAFont, actualAcroFormDAFont);
-        Assert.assertEquals("There is no NotoSans(/F3) font within Fields DA key", expectedFieldsDAFont, actualFieldDAFont);
+        Assertions.assertEquals(new PdfName("Helvetica"),
+                actualDocumentFonts.getAsDictionary(new PdfName("F1")).get(PdfName.BaseFont),
+                "There is no Helvetica font within DR key");
+        Assertions.assertEquals(new PdfName("Courier"),
+                actualDocumentFonts.getAsDictionary(new PdfName("F2")).get(PdfName.BaseFont),
+                "There is no Courier font within DR key.");
+        Assertions.assertEquals(new PdfName("NotoSans"),
+                actualDocumentFonts.getAsDictionary(new PdfName("F3")).get(PdfName.BaseFont),
+                "There is no NotoSans font within DR key.");
+        Assertions.assertEquals(expectedAcroformDAFont, actualAcroFormDAFont, "There is no Helvetica(/F1) font within AcroForm DA key");
+        Assertions.assertEquals(expectedFieldsDAFont, actualFieldDAFont, "There is no NotoSans(/F3) font within Fields DA key");
 
         document.close();
 
@@ -186,6 +190,6 @@ public class PdfFormFieldTextTest extends ExtendedITextTest {
             form.addField(field2);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(destFilename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destFilename, cmpFilename, destinationFolder, "diff_"));
     }
 }

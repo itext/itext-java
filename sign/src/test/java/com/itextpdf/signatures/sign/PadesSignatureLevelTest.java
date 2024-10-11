@@ -27,18 +27,20 @@ import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.FileUtil;
+import com.itextpdf.forms.form.element.SignatureFieldAppearance;
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.signatures.BouncyCastleDigest;
-import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.ICrlClient;
 import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.LtvVerification;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.SignerProperties;
 import com.itextpdf.signatures.TestSignUtils;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
@@ -46,7 +48,6 @@ import com.itextpdf.signatures.testutils.client.TestCrlClient;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
 import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -55,12 +56,12 @@ import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-@Category(BouncyCastleIntegrationTest.class)
+@Tag("BouncyCastleIntegrationTest")
 public class PadesSignatureLevelTest extends ExtendedITextTest {
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
@@ -71,7 +72,7 @@ public class PadesSignatureLevelTest extends ExtendedITextTest {
 
     private static final char[] password = "testpassphrase".toCharArray();
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         Security.addProvider(FACTORY.getProvider());
         createOrClearDestinationFolder(destinationFolder);
@@ -94,13 +95,15 @@ public class PadesSignatureLevelTest extends ExtendedITextTest {
         PrivateKey tsaPrivateKey = PemFileHelper.readFirstKey(tsaCertFileName, password);
 
         PdfSigner signer = new PdfSigner(new PdfReader(srcFileName), FileUtil.getFileOutputStream(outFileName), new StampingProperties());
-        signer.setFieldName("Signature1");
-        signer.getSignatureAppearance()
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID)
+                .setContent("Approval test signature.\nCreated by iText.");
+        SignerProperties signerProperties = new SignerProperties()
+                .setFieldName("Signature1")
                 .setPageRect(new Rectangle(50, 650, 200, 100))
                 .setReason("Test")
                 .setLocation("TestCity")
-                .setLayer2Text("Approval test signature.\nCreated by iText.");
-
+                .setSignatureAppearance(appearance);
+        signer.setSignerProperties(signerProperties);
 
         TestTsaClient testTsa = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
 
@@ -108,7 +111,7 @@ public class PadesSignatureLevelTest extends ExtendedITextTest {
 
         TestSignUtils.basicCheckSignedDoc(destinationFolder + "padesSignatureLevelTTest01.pdf", "Signature1");
 
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(
                 outFileName, sourceFolder + "cmp_padesSignatureLevelTTest01.pdf"));
     }
 
@@ -131,7 +134,7 @@ public class PadesSignatureLevelTest extends ExtendedITextTest {
         ltvVerification.merge();
         document.close();
 
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(
                 outFileName, sourceFolder + "cmp_padesSignatureLevelLTTest01.pdf"));
     }
 
@@ -150,7 +153,7 @@ public class PadesSignatureLevelTest extends ExtendedITextTest {
         TestTsaClient testTsa = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
         signer.timestamp(testTsa, "timestampSig1");
 
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(
                 outFileName, sourceFolder + "cmp_padesSignatureLevelLTATest01.pdf"));
     }
 }

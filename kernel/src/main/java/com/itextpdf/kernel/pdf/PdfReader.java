@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.ByteUtils;
@@ -31,18 +32,16 @@ import com.itextpdf.io.source.RASInputStream;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.io.source.WindowRandomAccessSource;
-import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.crypto.securityhandler.UnsupportedSecurityHandlerException;
 import com.itextpdf.kernel.exceptions.InvalidXRefPrevException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.MemoryLimitsAwareException;
 import com.itextpdf.kernel.exceptions.PdfException;
-import com.itextpdf.kernel.crypto.securityhandler.UnsupportedSecurityHandlerException;
-import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.XrefCycledReferencesException;
 import com.itextpdf.kernel.pdf.filters.FilterHandlers;
 import com.itextpdf.kernel.pdf.filters.IFilterHandler;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
-import com.itextpdf.kernel.xmp.XMPMetaFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.Closeable;
@@ -50,8 +49,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashSet;
 import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import org.slf4j.Logger;
@@ -85,8 +84,6 @@ public class PdfReader implements Closeable {
     //indicate nearest first Indirect reference object which includes current reading the object, using for PdfString decrypt
     private PdfIndirectReference currentIndirectReference;
 
-    private XMPMeta xmpMeta;
-
     private XrefProcessor xrefProcessor = new XrefProcessor();
 
     protected PdfTokenizer tokens;
@@ -99,7 +96,6 @@ public class PdfReader implements Closeable {
     protected long eofPos;
     protected PdfDictionary trailer;
     protected PdfDocument pdfDocument;
-    protected PdfAConformanceLevel pdfAConformanceLevel;
 
     protected ReaderProperties properties;
 
@@ -108,6 +104,10 @@ public class PdfReader implements Closeable {
     protected boolean hybridXref = false;
     protected boolean fixedXref = false;
     protected boolean xrefStm = false;
+
+    private XMPMeta xmpMeta;
+    private PdfConformance pdfConformance;
+
     /**
      * Constructs a new PdfReader.
      *
@@ -587,10 +587,10 @@ public class PdfReader implements Closeable {
      * {@link WriterProperties#setStandardEncryption(byte[], byte[], int, int)}.
      * See ISO 32000-1, Table 22 for more details.
      *
-     * @return the encryption permissions, an unsigned 32-bit quantity.
+     * @return the encryption permissions.
      * @throws PdfException if the method has been invoked before the PDF document was read.
      */
-    public long getPermissions() {
+    public int getPermissions() {
 
         /* !pdfDocument.getXref().isReadingCompleted() can be used for encryption properties as well,
          * because decrypt object is initialized in private readDecryptObj method which is called in our code
@@ -601,9 +601,9 @@ public class PdfReader implements Closeable {
             throw new PdfException(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET);
         }
 
-        long perm = 0;
+        int perm = 0;
         if (encrypted && decrypt.getPermissions() != null) {
-            perm = (long) decrypt.getPermissions();
+            perm = decrypt.getPermissions().intValue();
         }
         return perm;
     }
@@ -627,32 +627,29 @@ public class PdfReader implements Closeable {
     }
 
     /**
-     * Gets the declared PDF/A conformance level of the source document that is being read.
+     * Gets the declared PDF conformance of the source document that is being read.
      * Note that this information is provided via XMP metadata and is not verified by iText.
-     * {@link PdfReader#pdfAConformanceLevel} is lazy initialized.
+     * Conformance is lazy initialized.
      * It will be initialized during the first call of this method.
      *
-     * @return conformance level of the source document, or {@code null} if no PDF/A
-     * conformance level information is specified.
+     * @return conformance of the source document
      */
-    public PdfAConformanceLevel getPdfAConformanceLevel() {
-        if (pdfAConformanceLevel == null) {
+    public PdfConformance getPdfConformance() {
+        if (pdfConformance == null) {
             if (pdfDocument == null || !pdfDocument.getXref().isReadingCompleted()) {
                 throw new PdfException(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET);
             }
 
             try {
                 if (xmpMeta == null && pdfDocument.getXmpMetadata() != null) {
-                    xmpMeta = XMPMetaFactory.parseFromBuffer(pdfDocument.getXmpMetadata());
+                    xmpMeta = pdfDocument.getXmpMetadata();
                 }
-                if (xmpMeta != null) {
-                    pdfAConformanceLevel = PdfAConformanceLevel.getConformanceLevel(xmpMeta);
-                }
+                pdfConformance = PdfConformance.getConformance(xmpMeta);
             } catch (XMPException ignored) {
             }
         }
 
-        return pdfAConformanceLevel;
+        return pdfConformance;
     }
 
     /**
@@ -736,6 +733,15 @@ public class PdfReader implements Closeable {
     }
 
     /**
+     * Gets a copy of {@link ReaderProperties} used to create this instance of {@link PdfReader}.
+     *
+     * @return a copy of {@link ReaderProperties} used to create this instance of {@link PdfReader}
+     */
+    public ReaderProperties getPropertiesCopy() {
+        return new ReaderProperties(properties);
+    }
+
+    /**
      * Parses the entire PDF
      *
      * @throws IOException if an I/O error occurs.
@@ -756,9 +762,7 @@ public class PdfReader implements Closeable {
             throw ex;
         } catch (RuntimeException ex) {
             if (StrictnessLevel.CONSERVATIVE.isStricter(this.getStrictnessLevel())) {
-                Logger logger = LoggerFactory.getLogger(PdfReader.class);
-                logger.error(IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT, ex);
-
+                logXrefException(ex);
                 rebuildXref();
             } else {
                 throw ex;
@@ -865,8 +869,9 @@ public class PdfReader implements Closeable {
                                     tokens.getGenNr()));
                     return createPdfNullInstance(readAsDirect);
                 } else {
-                    throw new PdfException(KernelExceptionMessageConstant.INVALID_INDIRECT_REFERENCE,
-                            MessageFormatUtil.format("{0} {1} R", reference.getObjNumber(), reference.getGenNumber()));
+                    throw new PdfException(MessageFormatUtil.format(
+                            KernelExceptionMessageConstant.INVALID_INDIRECT_REFERENCE
+                            , reference.getObjNumber(), reference.getGenNumber()), reference);
                 }
             }
         } else {
@@ -1439,7 +1444,6 @@ public class PdfReader implements Closeable {
         if (enc == null)
             return;
         encrypted = true;
-
         PdfName filter = enc.getAsName(PdfName.Filter);
         if (PdfName.Adobe_PubSec.equals(filter)) {
             if (properties.certificate == null) {
@@ -1453,6 +1457,8 @@ public class PdfReader implements Closeable {
         } else {
             throw new UnsupportedSecurityHandlerException(MessageFormatUtil.format(KernelExceptionMessageConstant.UNSUPPORTED_SECURITY_HANDLER, filter));
         }
+
+        decrypt.configureEncryptionParametersFromReader(pdfDocument, trailer);
     }
 
     private PdfObject readObject(PdfIndirectReference reference, boolean fixXref) {
@@ -1608,6 +1614,21 @@ public class PdfReader implements Closeable {
             xrefProcessor.processXref(xrefTable, tokens);
         } finally {
             tokens.seek(currentPosition);
+        }
+    }
+
+    private static void logXrefException(RuntimeException ex) {
+        Logger logger = LoggerFactory.getLogger(PdfReader.class);
+        if (ex.getCause() != null) {
+            logger.error(MessageFormatUtil.format(
+                    IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE
+                    , ex.getCause().getMessage()));
+        } else if (ex.getMessage() !=null) {
+            logger.error(MessageFormatUtil.format(
+                    IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE
+                    , ex.getMessage()));
+        } else {
+            logger.error(IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT);
         }
     }
 

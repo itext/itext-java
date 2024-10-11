@@ -24,14 +24,55 @@ package com.itextpdf.io.font.otf;
 
 
 public class GposAnchor {
-    public int XCoordinate;
-    public int YCoordinate;
+    private int xCoordinate;
+    private int yCoordinate;
     
     public GposAnchor() {
     }
-    
+
+    /**
+     * Creates a Gpos Anchor object based on a given Gpos Anchor object.
+     *
+     * @param other other Gpos Anchor object
+     */
     public GposAnchor(GposAnchor other) {
-        this.XCoordinate = other.XCoordinate;
-        this.YCoordinate = other.YCoordinate;
+        this.xCoordinate = other.xCoordinate;
+        this.yCoordinate = other.yCoordinate;
+    }
+
+    /**
+     * Retrieves the X coordinate of the Gpos Anchor.
+     *
+     * @return X coordinate
+     */
+    public int getXCoordinate() {
+        return xCoordinate;
+    }
+
+    /**
+     * Sets the x coordinate of the Gpos Anchor.
+     *
+     * @param xCoordinate X coordinate
+     */
+    public void setXCoordinate(int xCoordinate) {
+        this.xCoordinate = xCoordinate;
+    }
+
+    /**
+     * Retrieves the Y coordinate of the Gpos Anchor.
+     *
+     * @return Y coordinate
+     */
+    public int getYCoordinate() {
+        return yCoordinate;
+    }
+
+    /**
+     * Sets the Y coordinate of the Gpos Anchor.
+     *
+     * @param yCoordinate Y coordinate
+     */
+    public void setYCoordinate(int yCoordinate) {
+        this.yCoordinate = yCoordinate;
     }
 }

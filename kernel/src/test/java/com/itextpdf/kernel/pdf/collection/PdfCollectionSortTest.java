@@ -26,13 +26,12 @@ import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfCollectionSortTest extends ExtendedITextTest {
 
     @Test
@@ -40,7 +39,7 @@ public class PdfCollectionSortTest extends ExtendedITextTest {
         final String key = "testKey";
         PdfCollectionSort sort = new PdfCollectionSort(key);
 
-        Assert.assertEquals(key, sort.getPdfObject().getAsName(PdfName.S).getValue());
+        Assertions.assertEquals(key, sort.getPdfObject().getAsName(PdfName.S).getValue());
     }
 
     @Test
@@ -49,7 +48,7 @@ public class PdfCollectionSortTest extends ExtendedITextTest {
         PdfCollectionSort sort = new PdfCollectionSort(keys);
 
         for(int i = 0; i < keys.length; i++) {
-            Assert.assertEquals(keys[i], sort.getPdfObject().getAsArray(PdfName.S).getAsName(i).getValue());
+            Assertions.assertEquals(keys[i], sort.getPdfObject().getAsArray(PdfName.S).getAsName(i).getValue());
         }
     }
 
@@ -59,11 +58,11 @@ public class PdfCollectionSortTest extends ExtendedITextTest {
         final boolean testAscending = true;
         PdfCollectionSort sort = new PdfCollectionSort(key);
 
-        Assert.assertNull(sort.getPdfObject().get(PdfName.A));
+        Assertions.assertNull(sort.getPdfObject().get(PdfName.A));
 
         sort.setSortOrder(testAscending);
 
-        Assert.assertTrue(sort.getPdfObject().getAsBool(PdfName.A));
+        Assertions.assertTrue(sort.getPdfObject().getAsBool(PdfName.A));
     }
 
     @Test
@@ -75,10 +74,10 @@ public class PdfCollectionSortTest extends ExtendedITextTest {
         // this line will throw an exception as number of parameters of setSortOrder()
         // method should be exactly the same as number of keys of PdfCollectionSort
         // here we have one key but two params
-        Exception e = Assert.assertThrows(PdfException.class,
+        Exception e = Assertions.assertThrows(PdfException.class,
                 () -> sort.setSortOrder(testAscendings)
         );
-        Assert.assertEquals(KernelExceptionMessageConstant.YOU_NEED_A_SINGLE_BOOLEAN_FOR_THIS_COLLECTION_SORT_DICTIONARY, e.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.YOU_NEED_A_SINGLE_BOOLEAN_FOR_THIS_COLLECTION_SORT_DICTIONARY, e.getMessage());
     }
 
     @Test
@@ -91,7 +90,7 @@ public class PdfCollectionSortTest extends ExtendedITextTest {
         sort.setSortOrder(testAscendings);
 
         for(int i = 0; i < testAscendings.length; i++) {
-            Assert.assertEquals(testAscendings[i], sort.getPdfObject().getAsArray(PdfName.A).getAsBoolean(i).getValue());
+            Assertions.assertEquals(testAscendings[i], sort.getPdfObject().getAsArray(PdfName.A).getAsBoolean(i).getValue());
         }
     }
 
@@ -105,10 +104,10 @@ public class PdfCollectionSortTest extends ExtendedITextTest {
         // this line will throw an exception as number of parameters of setSortOrder()
         // method should be exactly the same as number of keys of PdfCollectionSort
         // here we have three keys but one param
-        Exception e = Assert.assertThrows(PdfException.class,
+        Exception e = Assertions.assertThrows(PdfException.class,
                 () -> sort.setSortOrder(testAscending)
         );
-        Assert.assertEquals(KernelExceptionMessageConstant.YOU_HAVE_TO_DEFINE_A_BOOLEAN_ARRAY_FOR_THIS_COLLECTION_SORT_DICTIONARY, e.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.YOU_HAVE_TO_DEFINE_A_BOOLEAN_ARRAY_FOR_THIS_COLLECTION_SORT_DICTIONARY, e.getMessage());
     }
 
     @Test
@@ -122,15 +121,15 @@ public class PdfCollectionSortTest extends ExtendedITextTest {
         // this line will throw an exception as number of parameters of setSortOrder()
         // method should be exactly the same as number of keys of PdfCollectionSort
         // here we have three keys but two params
-        Exception e = Assert.assertThrows(PdfException.class,
+        Exception e = Assertions.assertThrows(PdfException.class,
                 () -> sort.setSortOrder(testAscendings)
         );
-        Assert.assertEquals(KernelExceptionMessageConstant.NUMBER_OF_BOOLEANS_IN_THE_ARRAY_DOES_NOT_CORRESPOND_WITH_THE_NUMBER_OF_FIELDS, e.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.NUMBER_OF_BOOLEANS_IN_THE_ARRAY_DOES_NOT_CORRESPOND_WITH_THE_NUMBER_OF_FIELDS, e.getMessage());
     }
 
     @Test
     public void isWrappedObjectMustBeIndirectTest() {
         final String key = "testKey";
-        Assert.assertFalse(new PdfCollectionSort(key).isWrappedObjectMustBeIndirect());
+        Assertions.assertFalse(new PdfCollectionSort(key).isWrappedObjectMustBeIndirect());
     }
 }

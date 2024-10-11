@@ -27,4 +27,10 @@ package com.itextpdf.commons.bouncycastle.cert.ocsp;
  * to switch between bouncy-castle and bouncy-castle FIPS implementations.
  */
 public interface IRespID {
+    /**
+     * Calls actual {@code toASN1Primitive} method for the wrapped BasicOCSPResp object.
+     *
+     * @return Responder ID as a ASN1 primitive.
+     */
+    IResponderID toASN1Primitive();
 }

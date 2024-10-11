@@ -24,7 +24,7 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
-import com.itextpdf.kernel.events.PdfDocumentEvent;
+import com.itextpdf.kernel.pdf.event.PdfDocumentEvent;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.PageSize;
@@ -36,6 +36,7 @@ import com.itextpdf.kernel.pdf.annot.PdfMarkupAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfPrinterMarkAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
+import com.itextpdf.kernel.pdf.layer.PdfLayer;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
@@ -44,6 +45,7 @@ import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.ICopyFilter;
 import com.itextpdf.kernel.utils.NullCopyFilter;
+import com.itextpdf.kernel.validation.context.PdfPageValidationContext;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
@@ -52,7 +54,11 @@ import com.itextpdf.kernel.xmp.options.SerializeOptions;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,6 +89,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * Automatically rotate new content if the page has a rotation ( is disabled by default )
      */
     private boolean ignorePageRotationForContent = false;
+
     /**
      * See {@link #isPageRotationInverseMatrixWritten()}.
      */
@@ -240,7 +247,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Creates new {@link PdfStream} object and puts it at the end of Contents array
+     * Creates new {@link PdfStream} object and puts it at the end of {@code Contents} array
      * (if Contents object is {@link PdfStream} it will be replaced with one-element array).
      *
      * @return Created {@link PdfStream} object.
@@ -420,6 +427,24 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
+     * Get all pdf layers stored under this page's annotations/xobjects/resources.
+     * Note that it will include all layers, even those already stored under /OCProperties entry in catalog.
+     * To get only unique layers, you can simply exclude ocgs, which already present in catalog.
+     *
+     * @return set of pdf layers, associated with this page.
+     */
+    public Set<PdfLayer> getPdfLayers() {
+        Set<PdfIndirectReference> ocgs = OcgPropertiesCopier.getOCGsFromPage(this);
+        Set<PdfLayer> result = new LinkedHashSet<>();
+        for (PdfIndirectReference ocg : ocgs) {
+            if (ocg.getRefersTo() != null && ocg.getRefersTo().isDictionary()) {
+                result.add(new PdfLayer((PdfDictionary) ocg.getRefersTo()));
+            }
+        }
+        return result;
+    }
+
+    /**
      * Copies page as FormXObject to the specified document.
      *
      * @param toDocument a document to copy to.
@@ -512,7 +537,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             put(PdfName.Resources, resources.getPdfObject());
         }
         if (flushResourcesContentStreams) {
-            getDocument().checkIsoConformance(this, IsoKey.PAGE);
+            getDocument().checkIsoConformance(new PdfPageValidationContext(this));
             flushResourcesContentStreams();
         }
 
@@ -1166,32 +1191,6 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * This flag is meaningful for the case, when page rotation is applied and ignorePageRotationForContent
-     * is set to true. NOTE: It is needed for the internal usage.
-     * <br><br>
-     * This flag defines if inverse matrix (which rotates content into the opposite direction from page rotation
-     * direction in order to give the impression of the not rotated text) is already applied to the page content stream.
-     * See {@link #setIgnorePageRotationForContent(boolean)}
-     *
-     * @return true, if inverse matrix is already applied, false otherwise.
-     */
-    public boolean isPageRotationInverseMatrixWritten() {
-        return pageRotationInverseMatrixWritten;
-    }
-
-    /**
-     * NOTE: For internal usage! Use this method only if you know what you are doing.
-     * <br><br>
-     * This method is called when inverse matrix (which rotates content into the opposite direction from page rotation
-     * direction in order to give the impression of the not rotated text) is applied to the page content stream.
-     * See {@link #setIgnorePageRotationForContent(boolean)}
-     */
-    public void setPageRotationInverseMatrixWritten() {
-        // this method specifically return void to discourage it's unintended usage
-        pageRotationInverseMatrixWritten = true;
-    }
-
-    /**
      * Adds file associated with PDF page and identifies the relationship between them.
      * <p>
      * Associated files may be used in Pdf/A-3 and Pdf 2.0 documents.
@@ -1266,6 +1265,26 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     void releaseInstanceFields() {
         resources = null;
         parentPages = null;
+    }
+
+    /**
+     * Checks if page rotation inverse matrix (which rotates content into the opposite direction from page rotation
+     * direction in order to give the impression of the not rotated text) is already applied to the page content stream.
+     * See {@link #setIgnorePageRotationForContent(boolean)} and {@link PageContentRotationHelper}.
+     *
+     * @return {@code true} if inverse matrix is already applied, {@code false} otherwise
+     */
+    boolean isPageRotationInverseMatrixWritten() {
+        return pageRotationInverseMatrixWritten;
+    }
+
+    /**
+     * Specifies that page rotation inverse matrix (which rotates content into the opposite direction from page rotation
+     * direction in order to give the impression of the not rotated text) is applied to the page content stream.
+     * See {@link #setIgnorePageRotationForContent(boolean)} and {@link PageContentRotationHelper}.
+     */
+    void setPageRotationInverseMatrixWritten() {
+        pageRotationInverseMatrixWritten = true;
     }
 
     @Override

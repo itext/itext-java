@@ -23,12 +23,14 @@
 package com.itextpdf.barcodes;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
-@Category(UnitTest.class)
+import java.util.concurrent.TimeUnit;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Timeout;
+
+@Tag("UnitTest")
 public class BarcodeMultiThreadingTest extends ExtendedITextTest {
 
     private static class DataMatrixThread extends Thread {
@@ -40,11 +42,12 @@ public class BarcodeMultiThreadingTest extends ExtendedITextTest {
             bc.setHeight(10);
             int result = bc.setCode("AB01");
 
-            Assert.assertEquals(BarcodeDataMatrix.DM_NO_ERROR, result);
+            Assertions.assertEquals(BarcodeDataMatrix.DM_NO_ERROR, result);
         }
     }
 
-    @Test(timeout = 10000)
+    @Timeout(unit = TimeUnit.MILLISECONDS, value = 10000)
+    @Test
     public void test() throws InterruptedException {
         Thread[] threads = new DataMatrixThread[20];
         for (int i = 0; i < threads.length; i++) {

@@ -36,11 +36,11 @@ public class OpenTypeFeature {
         TagAndLocation[] tagsLocs = openTypeReader.readTagAndLocations(locationFeatureTable);
         for (TagAndLocation tagLoc : tagsLocs) {
             // +2 don't use FeatureParams
-            openTypeReader.rf.seek(tagLoc.location + 2L);
+            openTypeReader.rf.seek(tagLoc.getLocation() + 2L);
             int lookupCount = openTypeReader.rf.readUnsignedShort();
             FeatureRecord rec = new FeatureRecord();
-            rec.tag = tagLoc.tag;
-            rec.lookups = openTypeReader.readUShortArray(lookupCount);
+            rec.setTag(tagLoc.getTag());
+            rec.setLookups(openTypeReader.readUShortArray(lookupCount));
             records.add(rec);
         }
     }

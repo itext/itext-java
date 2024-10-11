@@ -25,15 +25,18 @@ package com.itextpdf.pdfa.checker;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.PatternColor;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
@@ -43,18 +46,18 @@ import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
+import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfA2CheckerTest extends ExtendedITextTest {
-    private PdfA2Checker pdfA2Checker = new PdfA2Checker(PdfAConformanceLevel.PDF_A_2B);
+    private PdfA2Checker pdfA2Checker = new PdfA2Checker(PdfAConformance.PDF_A_2B);
 
     @Test
     public void checkNameEntryShouldBeUniqueBetweenDefaultAndAdditionalConfigs() {
@@ -71,10 +74,10 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
         PdfDictionary catalog = new PdfDictionary();
         catalog.put(PdfName.OCProperties, ocProperties);
 
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkCatalogValidEntries(catalog)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.VALUE_OF_NAME_ENTRY_SHALL_BE_UNIQUE_AMONG_ALL_OPTIONAL_CONTENT_CONFIGURATION_DICTIONARIES,
+        Assertions.assertEquals(PdfaExceptionMessageConstant.VALUE_OF_NAME_ENTRY_SHALL_BE_UNIQUE_AMONG_ALL_OPTIONAL_CONTENT_CONFIGURATION_DICTIONARIES,
                 e.getMessage());
     }
 
@@ -91,9 +94,9 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
         PdfDictionary catalog = new PdfDictionary();
         catalog.put(PdfName.OCProperties, ocProperties);
 
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> pdfA2Checker.checkCatalogValidEntries(catalog));
-        Assert.assertEquals(PdfAConformanceException.THE_AS_KEY_SHALL_NOT_APPEAR_IN_ANY_OPTIONAL_CONTENT_CONFIGURATION_DICTIONARY,
-                e.getMessage());
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> pdfA2Checker.checkCatalogValidEntries(catalog));
+        Assertions.assertEquals(PdfaExceptionMessageConstant.
+                        THE_AS_KEY_SHALL_NOT_APPEAR_IN_ANY_OPTIONAL_CONTENT_CONFIGURATION_DICTIONARY, e.getMessage());
     }
 
     @Test
@@ -114,10 +117,10 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
         PdfDictionary catalog = new PdfDictionary();
         catalog.put(PdfName.OCProperties, ocProperties);
 
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkCatalogValidEntries(catalog)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.VALUE_OF_NAME_ENTRY_SHALL_BE_UNIQUE_AMONG_ALL_OPTIONAL_CONTENT_CONFIGURATION_DICTIONARIES,
+        Assertions.assertEquals(PdfaExceptionMessageConstant.VALUE_OF_NAME_ENTRY_SHALL_BE_UNIQUE_AMONG_ALL_OPTIONAL_CONTENT_CONFIGURATION_DICTIONARIES,
                 e.getMessage());
     }
 
@@ -138,10 +141,10 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
         PdfDictionary catalog = new PdfDictionary();
         catalog.put(PdfName.OCProperties, ocProperties);
 
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkCatalogValidEntries(catalog)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.OPTIONAL_CONTENT_CONFIGURATION_DICTIONARY_SHALL_CONTAIN_NAME_ENTRY,
+        Assertions.assertEquals(PdfaExceptionMessageConstant.OPTIONAL_CONTENT_CONFIGURATION_DICTIONARY_SHALL_CONTAIN_NAME_ENTRY,
                 e.getMessage());
     }
 
@@ -176,10 +179,10 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
         PdfDictionary catalog = new PdfDictionary();
         catalog.put(PdfName.OCProperties, ocProperties);
 
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkCatalogValidEntries(catalog)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.ORDER_ARRAY_SHALL_CONTAIN_REFERENCES_TO_ALL_OCGS, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.ORDER_ARRAY_SHALL_CONTAIN_REFERENCES_TO_ALL_OCGS, e.getMessage());
     }
 
     @Test
@@ -212,10 +215,10 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
         PdfDictionary catalog = new PdfDictionary();
         catalog.put(PdfName.OCProperties, ocProperties);
 
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkCatalogValidEntries(catalog)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.ORDER_ARRAY_SHALL_CONTAIN_REFERENCES_TO_ALL_OCGS, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.ORDER_ARRAY_SHALL_CONTAIN_REFERENCES_TO_ALL_OCGS, e.getMessage());
     }
 
     @Test
@@ -253,10 +256,10 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
         PdfDictionary catalog = new PdfDictionary();
         catalog.put(PdfName.OCProperties, ocProperties);
 
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkCatalogValidEntries(catalog)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.ORDER_ARRAY_SHALL_CONTAIN_REFERENCES_TO_ALL_OCGS, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.ORDER_ARRAY_SHALL_CONTAIN_REFERENCES_TO_ALL_OCGS, e.getMessage());
     }
 
     @Test
@@ -330,10 +333,10 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
         PdfDictionary catalog = new PdfDictionary();
         catalog.put(PdfName.Names, names);
 
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkCatalogValidEntries(catalog)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.A_CATALOG_DICTIONARY_SHALL_NOT_CONTAIN_ALTERNATEPRESENTATIONS_NAMES_ENTRY,
+        Assertions.assertEquals(PdfaExceptionMessageConstant.A_CATALOG_DICTIONARY_SHALL_NOT_CONTAIN_ALTERNATEPRESENTATIONS_NAMES_ENTRY,
                 e.getMessage());
     }
 
@@ -342,10 +345,10 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
         PdfDictionary catalog = new PdfDictionary();
         catalog.put(PdfName.Requirements, new PdfDictionary());
 
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkCatalogValidEntries(catalog)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.A_CATALOG_DICTIONARY_SHALL_NOT_CONTAIN_REQUIREMENTS_ENTRY, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.A_CATALOG_DICTIONARY_SHALL_NOT_CONTAIN_REQUIREMENTS_ENTRY, e.getMessage());
     }
 
     @Test
@@ -367,7 +370,7 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
         //TODO DEVSIX-4203 should not cause an IndexOutOfBoundException.
         // Should throw PdfAConformanceException as Colorants dictionary always must be present
         // for Pdf/A-2
-        Assert.assertThrows(RuntimeException.class,
+        Assertions.assertThrows(RuntimeException.class,
                 () -> pdfA2Checker.checkColorSpace(new PdfSpecialCs.DeviceN(tmpArray, new PdfDeviceCs.Rgb(), function),
                         null, currentColorSpaces, true, false)
         );
@@ -403,7 +406,7 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
         Color color = new PatternColor(pattern);
 
         AssertUtil.doesNotThrow(() -> {
-            pdfA2Checker.checkColor(color, new PdfDictionary(), true, null);
+            pdfA2Checker.checkColor(null, color, new PdfDictionary(), true, null);
         });
     }
 
@@ -429,7 +432,7 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
     public void checkSignatureTest() {
         PdfDictionary signatureDict = createSignatureDict();
         pdfA2Checker.checkSignature(signatureDict);
-        Assert.assertTrue(pdfA2Checker.objectIsChecked(signatureDict));
+        Assertions.assertTrue(pdfA2Checker.isPdfObjectReadyToFlush(signatureDict));
     }
 
     @Test
@@ -441,9 +444,9 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
         digestMethod.add(new PdfName("SHA256"));
         reference.put(PdfName.DigestMethod, digestMethod);
 
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkSignature(signatureDict));
-        Assert.assertEquals(PdfaExceptionMessageConstant.SIGNATURE_REFERENCES_DICTIONARY_SHALL_NOT_CONTAIN_DIGESTLOCATION_DIGESTMETHOD_DIGESTVALUE,
+        Assertions.assertEquals(PdfaExceptionMessageConstant.SIGNATURE_REFERENCES_DICTIONARY_SHALL_NOT_CONTAIN_DIGESTLOCATION_DIGESTMETHOD_DIGESTVALUE,
                 e.getMessage());
     }
 
@@ -451,70 +454,70 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
     public void checkLZWDecodeInInlineImage() {
         PdfStream stream = new PdfStream();
         stream.put(PdfName.Filter, PdfName.LZWDecode);
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkInlineImage(stream, null)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.LZWDECODE_FILTER_IS_NOT_PERMITTED, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.LZWDECODE_FILTER_IS_NOT_PERMITTED, e.getMessage());
     }
 
     @Test
     public void checkImageWithAlternateTest() {
         PdfStream image = new PdfStream();
         image.put(PdfName.Alternates, PdfName.Identity);
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkImage(image, null)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.AN_IMAGE_DICTIONARY_SHALL_NOT_CONTAIN_ALTERNATES_KEY, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.AN_IMAGE_DICTIONARY_SHALL_NOT_CONTAIN_ALTERNATES_KEY, e.getMessage());
     }
 
     @Test
     public void checkImageWithOPITest() {
         PdfStream image = new PdfStream();
         image.put(PdfName.OPI, PdfName.Identity);
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkImage(image, null)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.AN_IMAGE_DICTIONARY_SHALL_NOT_CONTAIN_OPI_KEY, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.AN_IMAGE_DICTIONARY_SHALL_NOT_CONTAIN_OPI_KEY, e.getMessage());
     }
 
     @Test
     public void checkImageWithInterpolateTest() {
         PdfStream image = new PdfStream();
         image.put(PdfName.Interpolate, new PdfBoolean(true));
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkImage(image, null)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.THE_VALUE_OF_INTERPOLATE_KEY_SHALL_BE_FALSE, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.THE_VALUE_OF_INTERPOLATE_KEY_SHALL_BE_FALSE, e.getMessage());
     }
 
     @Test
     public void checkFormXObjectWithOPITest() {
         PdfStream form = new PdfStream();
         form.put(PdfName.OPI, PdfName.Identity);
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkFormXObject(form)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.A_FORM_XOBJECT_DICTIONARY_SHALL_NOT_CONTAIN_OPI_KEY, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.A_FORM_XOBJECT_DICTIONARY_SHALL_NOT_CONTAIN_OPI_KEY, e.getMessage());
     }
 
     @Test
     public void checkFormXObjectWithPSTest() {
         PdfStream form = new PdfStream();
         form.put(PdfName.PS, PdfName.Identity);
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkFormXObject(form)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.A_FORM_XOBJECT_DICTIONARY_SHALL_NOT_CONTAIN_PS_KEY, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.A_FORM_XOBJECT_DICTIONARY_SHALL_NOT_CONTAIN_PS_KEY, e.getMessage());
     }
 
     @Test
     public void checkCryptInInlineImage() {
         PdfStream stream = new PdfStream();
         stream.put(PdfName.Filter, PdfName.Crypt);
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkInlineImage(stream, null)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.CRYPT_FILTER_IS_NOT_PERMITTED_INLINE_IMAGE, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.CRYPT_FILTER_IS_NOT_PERMITTED_INLINE_IMAGE, e.getMessage());
     }
 
 
@@ -524,10 +527,10 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
         PdfArray array = new PdfArray();
         array.add(PdfName.LZWDecode);
         stream.put(PdfName.Filter, array);
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkInlineImage(stream, null)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.LZWDECODE_FILTER_IS_NOT_PERMITTED, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.LZWDECODE_FILTER_IS_NOT_PERMITTED, e.getMessage());
     }
 
     @Test
@@ -536,10 +539,10 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
         PdfArray array = new PdfArray();
         array.add(PdfName.Crypt);
         stream.put(PdfName.Filter, array);
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkInlineImage(stream, null)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.CRYPT_FILTER_IS_NOT_PERMITTED_INLINE_IMAGE, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.CRYPT_FILTER_IS_NOT_PERMITTED_INLINE_IMAGE, e.getMessage());
     }
 
     @Test
@@ -548,29 +551,29 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
         PdfArray array = new PdfArray();
         array.add(PdfName.Identity);
         stream.put(PdfName.Filter, array);
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkInlineImage(stream, null)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.INVALID_INLINE_IMAGE_FILTER_USAGE, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.INVALID_INLINE_IMAGE_FILTER_USAGE, e.getMessage());
     }
 
     @Test
     public void checkAllowedFilterInInlineImage() {
         PdfStream stream = new PdfStream();
         stream.put(PdfName.Filter, PdfName.Identity);
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkInlineImage(stream, null)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.INVALID_INLINE_IMAGE_FILTER_USAGE, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.INVALID_INLINE_IMAGE_FILTER_USAGE, e.getMessage());
     }
 
     @Test
     public void checkEmptyAnnotationTest() {
         PdfDictionary annotation = new PdfDictionary();
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkAnnotation(annotation)
         );
-        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.ANNOTATION_TYPE_0_IS_NOT_PERMITTED, "null"), e.getMessage());
+        Assertions.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.ANNOTATION_TYPE_0_IS_NOT_PERMITTED, "null"), e.getMessage());
     }
 
     @Test
@@ -578,40 +581,40 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
         PdfDictionary annotation = new PdfDictionary();
         annotation.put(PdfName.A, PdfName.Identity);
         annotation.put(PdfName.Subtype, PdfName.Widget);
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkAnnotationAgainstActions(annotation)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.WIDGET_ANNOTATION_DICTIONARY_OR_FIELD_DICTIONARY_SHALL_NOT_INCLUDE_A_OR_AA_ENTRY, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.WIDGET_ANNOTATION_DICTIONARY_OR_FIELD_DICTIONARY_SHALL_NOT_INCLUDE_A_OR_AA_ENTRY, e.getMessage());
     }
 
     @Test
     public void checkAnnotationAgainstActionsWithAATest() {
         PdfDictionary annotation = new PdfDictionary();
         annotation.put(PdfName.AA, PdfName.Identity);
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkAnnotationAgainstActions(annotation)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.AN_ANNOTATION_DICTIONARY_SHALL_NOT_CONTAIN_AA_KEY, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.AN_ANNOTATION_DICTIONARY_SHALL_NOT_CONTAIN_AA_KEY, e.getMessage());
     }
 
     @Test
     public void checkNeedsRenderingCatalogTest() {
         PdfDictionary catalog = new PdfDictionary();
         catalog.put(PdfName.NeedsRendering, new PdfBoolean(true));
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkCatalogValidEntries(catalog)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.THE_CATALOG_DICTIONARY_SHALL_NOT_CONTAIN_THE_NEEDSRENDERING_KEY, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.THE_CATALOG_DICTIONARY_SHALL_NOT_CONTAIN_THE_NEEDSRENDERING_KEY, e.getMessage());
     }
 
     @Test
     public void checkCatalogContainsAATest() {
         PdfDictionary catalog = new PdfDictionary();
         catalog.put(PdfName.AA,  PdfName.Identity);
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkCatalogValidEntries(catalog)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.A_CATALOG_DICTIONARY_SHALL_NOT_CONTAIN_AA_ENTRY, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.A_CATALOG_DICTIONARY_SHALL_NOT_CONTAIN_AA_ENTRY, e.getMessage());
     }
 
     @Test
@@ -634,10 +637,10 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
         rect.add(new PdfNumber(0));
         rect.add(new PdfNumber(0));
         page.put(PdfName.CropBox, rect);
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkPageSize(page)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.THE_PAGE_LESS_3_UNITS_NO_GREATER_14400_IN_EITHER_DIRECTION, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.THE_PAGE_LESS_3_UNITS_NO_GREATER_14400_IN_EITHER_DIRECTION, e.getMessage());
         //nothing to check, expecting that no error is thrown
     }
 
@@ -652,10 +655,10 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
         array.add(dictionary);
         array.add(dictionary2);
         catalog.put(PdfName.OutputIntents, array);
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkOutputIntents(catalog)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.IF_OUTPUTINTENTS_ARRAY_HAS_MORE_THAN_ONE_ENTRY_WITH_DESTOUTPUTPROFILE_KEY_THE_SAME_INDIRECT_OBJECT_SHALL_BE_USED_AS_THE_VALUE_OF_THAT_OBJECT, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.IF_OUTPUTINTENTS_ARRAY_HAS_MORE_THAN_ONE_ENTRY_WITH_DESTOUTPUTPROFILE_KEY_THE_SAME_INDIRECT_OBJECT_SHALL_BE_USED_AS_THE_VALUE_OF_THAT_OBJECT, e.getMessage());
         //nothing to check, expecting that no error is thrown
     }
     @Test
@@ -664,20 +667,20 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
         PdfDictionary perms = new PdfDictionary();
         perms.put(PdfName.Identity, PdfName.Identity);
         catalog.put(PdfName.Perms,  perms);
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkCatalogValidEntries(catalog)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.NO_KEYS_OTHER_THAN_UR3_AND_DOC_MDP_SHALL_BE_PRESENT_IN_A_PERMISSIONS_DICTIONARY, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.NO_KEYS_OTHER_THAN_UR3_AND_DOC_MDP_SHALL_BE_PRESENT_IN_A_PERMISSIONS_DICTIONARY, e.getMessage());
     }
 
     @Test
     public void checkFileSpecNotContainsFKeyTest() {
         PdfDictionary fileSpec = new PdfDictionary();
         fileSpec.put(PdfName.EF, PdfName.Identity);
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkFileSpec(fileSpec)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_F_KEY_AND_UF_KEY, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_F_KEY_AND_UF_KEY, e.getMessage());
     }
 
     @Test
@@ -687,30 +690,30 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
         fileSpec.put(PdfName.F, PdfName.Identity);
         fileSpec.put(PdfName.UF, PdfName.Identity);
         fileSpec.put(PdfName.Desc, PdfName.Identity);
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkFileSpec(fileSpec)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.EF_KEY_OF_FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_DICTIONARY_WITH_VALID_F_KEY, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.EF_KEY_OF_FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_DICTIONARY_WITH_VALID_F_KEY, e.getMessage());
     }
 
     @Test
     public void checkPdfStreamContainsFKeyTest() {
         PdfStream pdfStream = new PdfStream();
         pdfStream.put(PdfName.F, PdfName.Identity);
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkPdfStream(pdfStream)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.STREAM_OBJECT_DICTIONARY_SHALL_NOT_CONTAIN_THE_F_FFILTER_OR_FDECODEPARAMS_KEYS, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.STREAM_OBJECT_DICTIONARY_SHALL_NOT_CONTAIN_THE_F_FFILTER_OR_FDECODEPARAMS_KEYS, e.getMessage());
     }
 
     @Test
     public void checkPdfStreamContainsLZWDecodeKeyTest() {
         PdfStream pdfStream = new PdfStream();
         pdfStream.put(PdfName.Filter, PdfName.LZWDecode);
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkPdfStream(pdfStream)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.LZWDECODE_FILTER_IS_NOT_PERMITTED, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.LZWDECODE_FILTER_IS_NOT_PERMITTED, e.getMessage());
     }
 
     @Test
@@ -719,10 +722,10 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
         PdfArray array = new PdfArray();
         array.add(PdfName.LZWDecode);
         pdfStream.put(PdfName.Filter, array);
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkPdfStream(pdfStream)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.LZWDECODE_FILTER_IS_NOT_PERMITTED, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.LZWDECODE_FILTER_IS_NOT_PERMITTED, e.getMessage());
     }
 
     @Test
@@ -732,10 +735,10 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
         PdfDictionary decodeParams = new PdfDictionary();
         decodeParams.put(PdfName.Name, PdfName.Crypt);
         pdfStream.put(PdfName.DecodeParms, decodeParams);
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkPdfStream(pdfStream)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.NOT_IDENTITY_CRYPT_FILTER_IS_NOT_PERMITTED, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.NOT_IDENTITY_CRYPT_FILTER_IS_NOT_PERMITTED, e.getMessage());
     }
 
     @Test
@@ -749,10 +752,10 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
         decodeArray.add(decodeParams);
         decodeParams.put(PdfName.Name, PdfName.Crypt);
         pdfStream.put(PdfName.DecodeParms, decodeArray);
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkPdfStream(pdfStream)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.NOT_IDENTITY_CRYPT_FILTER_IS_NOT_PERMITTED, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.NOT_IDENTITY_CRYPT_FILTER_IS_NOT_PERMITTED, e.getMessage());
     }
 
     @Test
@@ -774,10 +777,11 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
         PdfDictionary currentColorSpaces = new PdfDictionary();
 
 
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
-                () -> pdfA2Checker.checkColorSpace(new PdfSpecialCs.DeviceN(deviceNAsArray), currentColorSpaces, true, false)
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
+                () -> pdfA2Checker.checkColorSpace(new PdfSpecialCs.DeviceN(deviceNAsArray), null,
+                        currentColorSpaces, true, false)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.COLORANTS_DICTIONARY_SHALL_NOT_BE_EMPTY_IN_DEVICE_N_COLORSPACE, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.COLORANTS_DICTIONARY_SHALL_NOT_BE_EMPTY_IN_DEVICE_N_COLORSPACE, e.getMessage());
     }
 
 
@@ -802,10 +806,64 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
         deviceNAsArray.add(attributes);
 
 
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
-                () -> pdfA2Checker.checkColorSpace(new PdfSpecialCs.DeviceN(deviceNAsArray), currentColorSpaces, true, false)
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
+                () -> pdfA2Checker.checkColorSpace(new PdfSpecialCs.DeviceN(deviceNAsArray), null,
+                        currentColorSpaces, true, false)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.COLORANTS_DICTIONARY_SHALL_NOT_BE_EMPTY_IN_DEVICE_N_COLORSPACE, e.getMessage());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.COLORANTS_DICTIONARY_SHALL_NOT_BE_EMPTY_IN_DEVICE_N_COLORSPACE, e.getMessage());
+    }
+
+    @Test
+    public void checkColorSpaceWithIndexedTest() {
+        PdfDictionary currentColorSpaces = new PdfDictionary();
+        PdfSpecialCs.Indexed indexed = new PdfSpecialCs.Indexed(PdfName.Indexed, 255, new PdfString(new String("".getBytes(StandardCharsets.UTF_8),
+                StandardCharsets.UTF_8)));
+        pdfA2Checker.checkColorSpace(indexed, null,
+                currentColorSpaces, Boolean.TRUE, Boolean.FALSE);
+        //Nothing to check, no error should be thrown.
+    }
+
+    @Test
+    public void checkColorSpaceWithUnColoredTilingTest() {
+        PdfDictionary currentColorSpaces = new PdfDictionary();
+        PdfSpecialCs.UncoloredTilingPattern uncoloredTilingCmykCs = new PdfSpecialCs.UncoloredTilingPattern(new PdfDeviceCs.Cmyk());
+        pdfA2Checker.checkColorSpace(uncoloredTilingCmykCs, null,
+                currentColorSpaces, Boolean.TRUE, Boolean.FALSE);
+        //Nothing to check, no error should be thrown.
+    }
+
+    @Test
+    public void checkExtGateTest() {
+        PdfExtGState egs = new PdfExtGState();
+        egs.setOverprintMode(1);
+        egs.setFillOverPrintFlag(true);
+        egs.setSoftMask(new PdfDictionary());
+        egs.setStrokeOpacity(0.3f);
+        PdfDocument dummyDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        PdfCanvas canvas = new PdfCanvas(dummyDoc.addNewPage());
+        canvas.setExtGState(egs);
+        CanvasGraphicsState canvasGraphicsState = new CanvasGraphicsState(canvas.getGraphicsState());
+        pdfA2Checker.checkExtGState(canvasGraphicsState, null);
+
+
+        Assertions.assertEquals(0.3f, canvasGraphicsState.getStrokeOpacity(), 0.00001);
+        Assertions.assertNotNull(canvasGraphicsState.getSoftMask());
+        Assertions.assertTrue(canvasGraphicsState.getSoftMask().isDictionary());
+        Assertions.assertTrue(canvasGraphicsState.getFillOverprint());
+        Assertions.assertEquals(1, canvasGraphicsState.getOverprintMode());
+    }
+
+    @Test
+    public void checkExtGateOverprintModeTest() {
+        PdfExtGState egs = new PdfExtGState();
+        egs.setSoftMask(new PdfDictionary());
+        egs.setStrokeOpacity(0.3f);
+        PdfDocument dummyDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        PdfCanvas canvas = new PdfCanvas(dummyDoc.addNewPage());
+        canvas.setExtGState(egs);
+        CanvasGraphicsState canvasGraphicsState = new CanvasGraphicsState(canvas.getGraphicsState());
+        pdfA2Checker.checkExtGState(canvasGraphicsState, null);
+        //Nothing to check, no error should be thrown.
     }
 
     private static PdfDictionary createSignatureDict() {

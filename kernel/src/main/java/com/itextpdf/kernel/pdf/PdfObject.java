@@ -28,6 +28,7 @@ import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.utils.ICopyFilter;
 import com.itextpdf.kernel.utils.NullCopyFilter;
+import com.itextpdf.kernel.validation.context.PdfObjectValidationContext;
 
 import java.io.IOException;
 import org.slf4j.Logger;
@@ -75,9 +76,9 @@ public abstract class PdfObject {
     protected static final short ORIGINAL_OBJECT_STREAM = 1 << 4;
 
     /**
-     * For internal usage only. Marks objects that shall be written to the output document.
-     * Option is needed to build the correct PDF objects tree when closing the document.
-     * As a result it avoids writing unused (removed) objects.
+     * Marks objects that shall be written to the output document. Shouldn't be used on purpose
+     * since this flag is handled internally: option is needed to build the correct PDF objects
+     * tree when closing the document. As a result it avoids writing unused (removed) objects.
      */
     protected static final short MUST_BE_FLUSHED = 1 << 5;
 
@@ -162,7 +163,7 @@ public abstract class PdfObject {
                     logger.info(IoLogMessageConstant.PDF_OBJECT_FLUSHING_NOT_PERFORMED);
                     return;
                 }
-                document.checkIsoConformance(this, IsoKey.PDF_OBJECT);
+                document.checkIsoConformance(new PdfObjectValidationContext(this));
                 document.flushObject(this, canBeInObjStm && getType() != STREAM
                         && getType() != INDIRECT_REFERENCE && getIndirectReference().getGenNumber() == 0);
             }

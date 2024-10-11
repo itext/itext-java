@@ -39,16 +39,15 @@ import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.util.function.Consumer;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class ContinuousContainerTest extends ExtendedITextTest {
 
 
@@ -60,7 +59,7 @@ public class ContinuousContainerTest extends ExtendedITextTest {
     private static final Color DEFAULT_BACKGROUND_COLOR = ColorConstants.CYAN;
     private static final Border DEFAULT_BORDER = new SolidBorder(ColorConstants.RED, 5F);
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(DESTINATION_FOLDER);
     }
@@ -420,7 +419,7 @@ public class ContinuousContainerTest extends ExtendedITextTest {
             doc.add(new Paragraph("ELEMENT BELOW").setBackgroundColor(ColorConstants.YELLOW));
         }
         CompareTool compareTool = new CompareTool();
-        Assert.assertNull(compareTool.compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(compareTool.compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
 
 }

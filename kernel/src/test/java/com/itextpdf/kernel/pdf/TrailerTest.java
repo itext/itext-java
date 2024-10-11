@@ -27,26 +27,27 @@ import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.actions.data.ITextCoreProductData;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.HashMap;
 import java.util.Map.Entry;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
-@Category(IntegrationTest.class)
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
+
+@Tag("IntegrationTest")
 public class TrailerTest extends ExtendedITextTest {
 
     private ProductData productData;
@@ -54,12 +55,12 @@ public class TrailerTest extends ExtendedITextTest {
     private static final byte[] USERPASS = "user".getBytes();
     private static final byte[] OWNERPASS = "owner".getBytes();
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
 
-    @Before
+    @BeforeEach
     public void beforeTest() {
         this.productData = new ProductData("pdfProduct", "pdfProduct", "1.0.0", 1900, 2000);
     }
@@ -77,7 +78,7 @@ public class TrailerTest extends ExtendedITextTest {
 
         pdf.close();
 
-        Assert.assertTrue(doesTrailerContainFingerprint(new File(destinationFolder + "output.pdf"), MessageFormatUtil
+        Assertions.assertTrue(doesTrailerContainFingerprint(new File(destinationFolder + "output.pdf"), MessageFormatUtil
                 .format("%iText-{0}-{1}\n", productData.getProductName(), productData.getVersion())));
     }
 
@@ -101,8 +102,8 @@ public class TrailerTest extends ExtendedITextTest {
             boolean keyPresent = trailer.containsKey(expectedKey);
             PdfName actualValue = trailer.getAsName(expectedKey);
             stampingDocument.close();
-            Assert.assertTrue(keyPresent);
-            Assert.assertEquals(expectedValue, actualValue);
+            Assertions.assertTrue(keyPresent);
+            Assertions.assertEquals(expectedValue, actualValue);
         }
     }
 
@@ -133,8 +134,8 @@ public class TrailerTest extends ExtendedITextTest {
 
             stampingDocument.close();
 
-            Assert.assertTrue(keyPresent);
-            Assert.assertEquals(expectedValue, actualValue);
+            Assertions.assertTrue(keyPresent);
+            Assertions.assertEquals(expectedValue, actualValue);
         }
     }
 
@@ -164,11 +165,51 @@ public class TrailerTest extends ExtendedITextTest {
                 PdfName pdfName2 = entry.getValue();
                 boolean keyPresent = trailer.containsKey(pdfName);
                 PdfName actualValue = trailer.getAsName(pdfName);
-                Assert.assertTrue(keyPresent);
-                Assert.assertEquals(pdfName2, actualValue);
+                Assertions.assertTrue(keyPresent);
+                Assertions.assertEquals(pdfName2, actualValue);
             }
             stampingDocument.close();
         }
+    }
+
+    @Test
+    public void enableFingerprintInAGPLModeTest() throws IOException {
+        PdfDocument pdf = new PdfDocument(new PdfWriter(
+                destinationFolder + "enableFingerprintInAGPLMode.pdf"));
+        pdf.registerProduct(this.productData);
+        PdfPage page = pdf.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.beginText()
+                .setFontAndSize(PdfFontFactory.createFont(), 12f)
+                .showText("Hello World")
+                .endText();
+        pdf.close();
+
+        Assertions.assertTrue(doesTrailerContainFingerprint(new File(
+                destinationFolder + "enableFingerprintInAGPLMode.pdf"), MessageFormatUtil.format(
+                        "%iText-{0}-{1}\n", productData.getProductName(), productData.getVersion())));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate =
+            KernelLogMessageConstant.FINGERPRINT_DISABLED_BUT_NO_REQUIRED_LICENCE))
+    public void tryDisablingFingerprintInAGPLModeTest() throws IOException {
+        PdfDocument pdf = new PdfDocument(new PdfWriter(
+                destinationFolder + "tryDisablingFingerprintInAGPLMode.pdf"));
+        pdf.registerProduct(this.productData);
+        PdfPage page = pdf.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.beginText()
+                .setFontAndSize(PdfFontFactory.createFont(), 12f)
+                .showText("Hello World")
+                .endText();
+        pdf.getFingerPrint().disableFingerPrint();
+        pdf.close();
+
+
+        Assertions.assertTrue(doesTrailerContainFingerprint(new File(
+                destinationFolder + "tryDisablingFingerprintInAGPLMode.pdf"), MessageFormatUtil.format(
+                "%iText-{0}-{1}\n", productData.getProductName(), productData.getVersion())));
     }
 
     private boolean doesTrailerContainFingerprint(File file, String fingerPrint) throws IOException {
@@ -182,6 +223,10 @@ public class TrailerTest extends ExtendedITextTest {
             String templine = "";
 
             while (!templine.contains(coreProductData)) {
+                if (raf.getFilePointer() <= 2) {
+                    return false;
+                }
+
                 templine = (char) raf.read() + templine;
                 raf.seek(raf.getFilePointer() - 2);
             }
@@ -191,6 +236,10 @@ public class TrailerTest extends ExtendedITextTest {
             templine = "";
 
             while (read != '%') {
+                if (raf.getFilePointer() <= 2) {
+                    return false;
+                }
+
                 read = (char) raf.read();
                 templine = read + templine;
                 raf.seek(raf.getFilePointer() - 2);

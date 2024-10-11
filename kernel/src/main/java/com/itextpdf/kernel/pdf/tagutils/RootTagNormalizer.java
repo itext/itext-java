@@ -110,8 +110,9 @@ class RootTagNormalizer {
 
             // This boolean is used to "flatten" possible deep "stacking" of the tag structure in case of the multiple pages copying operations.
             // This could happen due to the wrapping of all the kids in the createNewRootTag or ensureExistingRootTagIsDocument methods.
-            // And therefore, we don't need here to resolve mappings, because we exactly know which role we set.
-            boolean kidIsDocument = PdfName.Document.equals(kid.getRole());
+            IRoleMappingResolver mapping = kid.getRole() == null ? null
+                    : context.resolveMappingToStandardOrDomainSpecificRole(kid.getRole().getValue(), rootTagElement.getNamespace());
+            boolean kidIsDocument = mapping != null && mapping.currentRoleIsStandard() && StandardRoles.DOCUMENT.equals(mapping.getRole());
             if (kidIsDocument && kid.getNamespace() != null && context.targetTagStructureVersionIs2()) {
                 // we flatten only tags of document role in standard structure namespace
                 String kidNamespaceName = kid.getNamespace().getNamespaceName();

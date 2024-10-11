@@ -25,25 +25,24 @@ package com.itextpdf.io.font;
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.font.cmap.CMapLocationResource;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 // Android-Conversion-Skip-File (TODO DEVSIX-7376 investigate why CjkResourceLoaderNoFontAsianTest is skipped on Android)
 public class CjkResourceLoaderNoFontAsianTest extends ExtendedITextTest {
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         // Here we mimic the absence of font asian
         CjkResourceLoader.setCmapLocation(new DummyCMapLocationResource());
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CjkResourceLoader.setCmapLocation(new CMapLocationResource());
     }
@@ -52,56 +51,56 @@ public class CjkResourceLoaderNoFontAsianTest extends ExtendedITextTest {
     public void getCompatibleCidFontNoFontAsian() {
         // Without font-asian module in the class path
         // any value passed into a method is expected to return null.
-        Assert.assertNull(CjkResourceLoader.getCompatibleCidFont("78-RKSJ-V"));
+        Assertions.assertNull(CjkResourceLoader.getCompatibleCidFont("78-RKSJ-V"));
     }
 
     @Test
     public void isPredefinedCidFontNoFontAsian() {
         // Without font-asian module in the class path
         // any value passed into a method is expected to return false.
-        Assert.assertFalse(CjkResourceLoader.isPredefinedCidFont("KozMinPro-Regular"));
+        Assertions.assertFalse(CjkResourceLoader.isPredefinedCidFont("KozMinPro-Regular"));
     }
 
     @Test
     public void getCompatibleCmapsNoFontAsian() {
         // Without font-asian module in the class path
         // any value passed into a method is expected to return null.
-        Assert.assertNull(CjkResourceLoader.getCompatibleCmaps("HeiseiKakuGo-W5"));
+        Assertions.assertNull(CjkResourceLoader.getCompatibleCmaps("HeiseiKakuGo-W5"));
     }
 
     @Test
     public void getRegistryNamesNoFontAsian() {
         // Without font-asian module in the class path
         // registry names collection is expected to be empty.
-        Assert.assertTrue(CjkResourceLoader.getRegistryNames().isEmpty());
+        Assertions.assertTrue(CjkResourceLoader.getRegistryNames().isEmpty());
     }
 
     @Test
     public void getCid2UniCMapNoFontAsian() {
         // Without font-asian module in the class path
         // no CMap can be found.
-        Assert.assertThrows(IOException.class, () -> CjkResourceLoader.getCid2UniCmap("UniJIS-UTF16-H"));
+        Assertions.assertThrows(IOException.class, () -> CjkResourceLoader.getCid2UniCmap("UniJIS-UTF16-H"));
     }
 
     @Test
     public void getUni2CidCMapNoFontAsian() {
         // Without font-asian module in the class path
         // no CMap can be found.
-        Assert.assertThrows(IOException.class, () -> CjkResourceLoader.getUni2CidCmap("UniJIS-UTF16-H"));
+        Assertions.assertThrows(IOException.class, () -> CjkResourceLoader.getUni2CidCmap("UniJIS-UTF16-H"));
     }
 
     @Test
     public void getByte2CidCMapNoFontAsian() {
         // Without font-asian module in the class path
         // no CMap can be found.
-        Assert.assertThrows(IOException.class, () -> CjkResourceLoader.getByte2CidCmap("78ms-RKSJ-H"));
+        Assertions.assertThrows(IOException.class, () -> CjkResourceLoader.getByte2CidCmap("78ms-RKSJ-H"));
     }
 
     @Test
     public void getCid2ByteCMapNoFontAsian() {
         // Without font-asian module in the class path
         // no CMap can be found.
-        Assert.assertThrows(IOException.class, () -> CjkResourceLoader.getCidToCodepointCmap("78ms-RKSJ-H"));
+        Assertions.assertThrows(IOException.class, () -> CjkResourceLoader.getCidToCodepointCmap("78ms-RKSJ-H"));
     }
 
     private static class DummyCMapLocationResource extends CMapLocationResource {

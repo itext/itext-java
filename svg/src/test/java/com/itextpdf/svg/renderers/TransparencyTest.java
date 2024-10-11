@@ -36,17 +36,16 @@ import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.impl.AbstractSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.CircleSvgNodeRenderer;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class TransparencyTest extends ExtendedITextTest {
 
     private static final PdfName DEFAULT_RESOURCE_NAME = new PdfName("Gs1");
@@ -56,7 +55,7 @@ public class TransparencyTest extends ExtendedITextTest {
     private PdfCanvas cv;
     private SvgDrawContext sdc;
 
-    @Before
+    @BeforeEach
     public void setupDrawContextAndCanvas() {
         sdc = new SvgDrawContext(new ResourceResolver(""), new FontProvider());
 
@@ -68,7 +67,7 @@ public class TransparencyTest extends ExtendedITextTest {
         sdc.pushCanvas(cv);
     }
 
-    @After
+    @AfterEach
     public void close() {
         cv.getDocument().close();
     }
@@ -80,7 +79,7 @@ public class TransparencyTest extends ExtendedITextTest {
 
         renderer.draw(sdc);
         PdfResources resources = cv.getResources();
-        Assert.assertTrue(resources.getResourceNames().isEmpty());
+        Assertions.assertTrue(resources.getResourceNames().isEmpty());
     }
 
     @Test
@@ -92,10 +91,10 @@ public class TransparencyTest extends ExtendedITextTest {
         renderer.draw(sdc);
         PdfResources resources = cv.getResources();
 
-        Assert.assertEquals(1, resources.getResourceNames().size());
+        Assertions.assertEquals(1, resources.getResourceNames().size());
         PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState, DEFAULT_RESOURCE_NAME);
-        Assert.assertEquals(1, resDic.size());
-        Assert.assertEquals(resDic.get(STROKE_OPAC), new PdfNumber(0.75));
+        Assertions.assertEquals(1, resDic.size());
+        Assertions.assertEquals(resDic.get(STROKE_OPAC), new PdfNumber(0.75));
     }
 
     @Test
@@ -106,7 +105,7 @@ public class TransparencyTest extends ExtendedITextTest {
         renderer.draw(sdc);
         PdfResources resources = cv.getResources();
 
-        Assert.assertTrue(resources.getResourceNames().isEmpty());
+        Assertions.assertTrue(resources.getResourceNames().isEmpty());
     }
 
     @Test
@@ -118,7 +117,7 @@ public class TransparencyTest extends ExtendedITextTest {
         renderer.draw(sdc);
         PdfResources resources = cv.getResources();
 
-        Assert.assertTrue(resources.getResourceNames().isEmpty());
+        Assertions.assertTrue(resources.getResourceNames().isEmpty());
     }
 
     @Test
@@ -130,7 +129,7 @@ public class TransparencyTest extends ExtendedITextTest {
         renderer.draw(sdc);
         PdfResources resources = cv.getResources();
 
-        Assert.assertTrue(resources.getResourceNames().isEmpty());
+        Assertions.assertTrue(resources.getResourceNames().isEmpty());
     }
 
 
@@ -143,10 +142,10 @@ public class TransparencyTest extends ExtendedITextTest {
         renderer.draw(sdc);
         PdfResources resources = cv.getResources();
 
-        Assert.assertEquals(1, resources.getResourceNames().size());
+        Assertions.assertEquals(1, resources.getResourceNames().size());
         PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState, DEFAULT_RESOURCE_NAME);
-        Assert.assertEquals(1, resDic.size());
-        Assert.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
+        Assertions.assertEquals(1, resDic.size());
+        Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
     }
 
     @Test
@@ -157,10 +156,10 @@ public class TransparencyTest extends ExtendedITextTest {
         renderer.draw(sdc);
         PdfResources resources = cv.getResources();
 
-        Assert.assertEquals(1, resources.getResourceNames().size());
+        Assertions.assertEquals(1, resources.getResourceNames().size());
         PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState, DEFAULT_RESOURCE_NAME);
-        Assert.assertEquals(1, resDic.size());
-        Assert.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
+        Assertions.assertEquals(1, resDic.size());
+        Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
     }
 
     @Test
@@ -172,7 +171,7 @@ public class TransparencyTest extends ExtendedITextTest {
         renderer.draw(sdc);
         PdfResources resources = cv.getResources();
 
-        Assert.assertTrue(resources.getResourceNames().isEmpty());
+        Assertions.assertTrue(resources.getResourceNames().isEmpty());
     }
 
     @Test
@@ -184,10 +183,10 @@ public class TransparencyTest extends ExtendedITextTest {
         renderer.draw(sdc);
         PdfResources resources = cv.getResources();
 
-        Assert.assertEquals(1, resources.getResourceNames().size());
+        Assertions.assertEquals(1, resources.getResourceNames().size());
         PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState, DEFAULT_RESOURCE_NAME);
-        Assert.assertEquals(1, resDic.size());
-        Assert.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
+        Assertions.assertEquals(1, resDic.size());
+        Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
     }
 
     @Test
@@ -201,11 +200,11 @@ public class TransparencyTest extends ExtendedITextTest {
         renderer.draw(sdc);
         PdfResources resources = cv.getResources();
 
-        Assert.assertEquals(1, resources.getResourceNames().size());
+        Assertions.assertEquals(1, resources.getResourceNames().size());
         PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState, DEFAULT_RESOURCE_NAME);
-        Assert.assertEquals(2, resDic.size());
-        Assert.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
-        Assert.assertEquals(resDic.get(STROKE_OPAC), new PdfNumber(0.75));
+        Assertions.assertEquals(2, resDic.size());
+        Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
+        Assertions.assertEquals(resDic.get(STROKE_OPAC), new PdfNumber(0.75));
     }
 
 
@@ -216,7 +215,7 @@ public class TransparencyTest extends ExtendedITextTest {
 
         renderer.draw(sdc);
         PdfResources resources = cv.getResources();
-        Assert.assertTrue(resources.getResourceNames().isEmpty());
+        Assertions.assertTrue(resources.getResourceNames().isEmpty());
     }
 
     @Test
@@ -228,10 +227,10 @@ public class TransparencyTest extends ExtendedITextTest {
         renderer.draw(sdc);
         PdfResources resources = cv.getResources();
 
-        Assert.assertEquals(1, resources.getResourceNames().size());
+        Assertions.assertEquals(1, resources.getResourceNames().size());
         PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState, DEFAULT_RESOURCE_NAME);
-        Assert.assertEquals(1, resDic.size());
-        Assert.assertEquals(resDic.get(STROKE_OPAC), new PdfNumber(0.75));
+        Assertions.assertEquals(1, resDic.size());
+        Assertions.assertEquals(resDic.get(STROKE_OPAC), new PdfNumber(0.75));
     }
 
     @Test
@@ -242,7 +241,7 @@ public class TransparencyTest extends ExtendedITextTest {
         renderer.draw(sdc);
         PdfResources resources = cv.getResources();
 
-        Assert.assertTrue(resources.getResourceNames().isEmpty());
+        Assertions.assertTrue(resources.getResourceNames().isEmpty());
     }
 
     @Test
@@ -254,7 +253,7 @@ public class TransparencyTest extends ExtendedITextTest {
         renderer.draw(sdc);
         PdfResources resources = cv.getResources();
 
-        Assert.assertTrue(resources.getResourceNames().isEmpty());
+        Assertions.assertTrue(resources.getResourceNames().isEmpty());
     }
 
     @Test
@@ -266,7 +265,7 @@ public class TransparencyTest extends ExtendedITextTest {
         renderer.draw(sdc);
         PdfResources resources = cv.getResources();
 
-        Assert.assertTrue(resources.getResourceNames().isEmpty());
+        Assertions.assertTrue(resources.getResourceNames().isEmpty());
     }
 
 
@@ -279,10 +278,10 @@ public class TransparencyTest extends ExtendedITextTest {
         renderer.draw(sdc);
         PdfResources resources = cv.getResources();
 
-        Assert.assertEquals(1, resources.getResourceNames().size());
+        Assertions.assertEquals(1, resources.getResourceNames().size());
         PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState, DEFAULT_RESOURCE_NAME);
-        Assert.assertEquals(1, resDic.size());
-        Assert.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
+        Assertions.assertEquals(1, resDic.size());
+        Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
     }
 
     @Test
@@ -293,10 +292,10 @@ public class TransparencyTest extends ExtendedITextTest {
         renderer.draw(sdc);
         PdfResources resources = cv.getResources();
 
-        Assert.assertEquals(1, resources.getResourceNames().size());
+        Assertions.assertEquals(1, resources.getResourceNames().size());
         PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState, DEFAULT_RESOURCE_NAME);
-        Assert.assertEquals(1, resDic.size());
-        Assert.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
+        Assertions.assertEquals(1, resDic.size());
+        Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
     }
 
     @Test
@@ -308,7 +307,7 @@ public class TransparencyTest extends ExtendedITextTest {
         renderer.draw(sdc);
         PdfResources resources = cv.getResources();
 
-        Assert.assertTrue(resources.getResourceNames().isEmpty());
+        Assertions.assertTrue(resources.getResourceNames().isEmpty());
     }
 
     @Test
@@ -320,10 +319,10 @@ public class TransparencyTest extends ExtendedITextTest {
         renderer.draw(sdc);
         PdfResources resources = cv.getResources();
 
-        Assert.assertEquals(1, resources.getResourceNames().size());
+        Assertions.assertEquals(1, resources.getResourceNames().size());
         PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState, DEFAULT_RESOURCE_NAME);
-        Assert.assertEquals(1, resDic.size());
-        Assert.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
+        Assertions.assertEquals(1, resDic.size());
+        Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
     }
 
     @Test
@@ -337,11 +336,11 @@ public class TransparencyTest extends ExtendedITextTest {
         renderer.draw(sdc);
         PdfResources resources = cv.getResources();
 
-        Assert.assertEquals(1, resources.getResourceNames().size());
+        Assertions.assertEquals(1, resources.getResourceNames().size());
         PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState, DEFAULT_RESOURCE_NAME);
-        Assert.assertEquals(2, resDic.size());
-        Assert.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
-        Assert.assertEquals(resDic.get(STROKE_OPAC), new PdfNumber(0.75));
+        Assertions.assertEquals(2, resDic.size());
+        Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
+        Assertions.assertEquals(resDic.get(STROKE_OPAC), new PdfNumber(0.75));
     }
 
     @Test
@@ -351,10 +350,10 @@ public class TransparencyTest extends ExtendedITextTest {
 
         renderer.draw(sdc);
         PdfResources resources = cv.getResources();
-        Assert.assertEquals(1, resources.getResourceNames().size());
+        Assertions.assertEquals(1, resources.getResourceNames().size());
         PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState, DEFAULT_RESOURCE_NAME);
-        Assert.assertEquals(1, resDic.size());
-        Assert.assertEquals(resDic.get(STROKE_OPAC), new PdfNumber(0.75));
+        Assertions.assertEquals(1, resDic.size());
+        Assertions.assertEquals(resDic.get(STROKE_OPAC), new PdfNumber(0.75));
     }
 
     @Test
@@ -366,10 +365,10 @@ public class TransparencyTest extends ExtendedITextTest {
         renderer.draw(sdc);
         PdfResources resources = cv.getResources();
 
-        Assert.assertEquals(1, resources.getResourceNames().size());
+        Assertions.assertEquals(1, resources.getResourceNames().size());
         PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState, DEFAULT_RESOURCE_NAME);
-        Assert.assertEquals(1, resDic.size());
-        Assert.assertEquals(resDic.get(STROKE_OPAC), new PdfNumber(0.5625));
+        Assertions.assertEquals(1, resDic.size());
+        Assertions.assertEquals(resDic.get(STROKE_OPAC), new PdfNumber(0.5625));
     }
 
     @Test
@@ -380,7 +379,7 @@ public class TransparencyTest extends ExtendedITextTest {
         renderer.draw(sdc);
         PdfResources resources = cv.getResources();
 
-        Assert.assertTrue(resources.getResourceNames().isEmpty());
+        Assertions.assertTrue(resources.getResourceNames().isEmpty());
     }
 
     @Test
@@ -392,10 +391,10 @@ public class TransparencyTest extends ExtendedITextTest {
         renderer.draw(sdc);
         PdfResources resources = cv.getResources();
 
-        Assert.assertEquals(1, resources.getResourceNames().size());
+        Assertions.assertEquals(1, resources.getResourceNames().size());
         PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState, DEFAULT_RESOURCE_NAME);
-        Assert.assertEquals(1, resDic.size());
-        Assert.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
+        Assertions.assertEquals(1, resDic.size());
+        Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
     }
 
     @Test
@@ -407,7 +406,7 @@ public class TransparencyTest extends ExtendedITextTest {
         renderer.draw(sdc);
         PdfResources resources = cv.getResources();
 
-        Assert.assertTrue(resources.getResourceNames().isEmpty());
+        Assertions.assertTrue(resources.getResourceNames().isEmpty());
     }
 
 
@@ -420,10 +419,10 @@ public class TransparencyTest extends ExtendedITextTest {
         renderer.draw(sdc);
         PdfResources resources = cv.getResources();
 
-        Assert.assertEquals(1, resources.getResourceNames().size());
+        Assertions.assertEquals(1, resources.getResourceNames().size());
         PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState, DEFAULT_RESOURCE_NAME);
-        Assert.assertEquals(1, resDic.size());
-        Assert.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.5625));
+        Assertions.assertEquals(1, resDic.size());
+        Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.5625));
     }
 
     @Test
@@ -434,10 +433,10 @@ public class TransparencyTest extends ExtendedITextTest {
         renderer.draw(sdc);
         PdfResources resources = cv.getResources();
 
-        Assert.assertEquals(1, resources.getResourceNames().size());
+        Assertions.assertEquals(1, resources.getResourceNames().size());
         PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState, DEFAULT_RESOURCE_NAME);
-        Assert.assertEquals(1, resDic.size());
-        Assert.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
+        Assertions.assertEquals(1, resDic.size());
+        Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
     }
 
     @Test
@@ -449,7 +448,7 @@ public class TransparencyTest extends ExtendedITextTest {
         renderer.draw(sdc);
         PdfResources resources = cv.getResources();
 
-        Assert.assertTrue(resources.getResourceNames().isEmpty());
+        Assertions.assertTrue(resources.getResourceNames().isEmpty());
     }
 
     @Test
@@ -461,11 +460,11 @@ public class TransparencyTest extends ExtendedITextTest {
         renderer.draw(sdc);
         PdfResources resources = cv.getResources();
 
-        Assert.assertEquals(1, resources.getResourceNames().size());
+        Assertions.assertEquals(1, resources.getResourceNames().size());
         PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState, DEFAULT_RESOURCE_NAME);
-        Assert.assertEquals(2, resDic.size());
-        Assert.assertEquals(resDic.get(STROKE_OPAC), new PdfNumber(0.75));
-        Assert.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
+        Assertions.assertEquals(2, resDic.size());
+        Assertions.assertEquals(resDic.get(STROKE_OPAC), new PdfNumber(0.75));
+        Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
     }
 
     @Test
@@ -479,11 +478,11 @@ public class TransparencyTest extends ExtendedITextTest {
         renderer.draw(sdc);
         PdfResources resources = cv.getResources();
 
-        Assert.assertEquals(1, resources.getResourceNames().size());
+        Assertions.assertEquals(1, resources.getResourceNames().size());
         PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState, DEFAULT_RESOURCE_NAME);
-        Assert.assertEquals(2, resDic.size());
-        Assert.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.5625));
-        Assert.assertEquals(resDic.get(STROKE_OPAC), new PdfNumber(0.5625));
+        Assertions.assertEquals(2, resDic.size());
+        Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.5625));
+        Assertions.assertEquals(resDic.get(STROKE_OPAC), new PdfNumber(0.5625));
     }
 
     @Test
@@ -494,10 +493,10 @@ public class TransparencyTest extends ExtendedITextTest {
         renderer.draw(sdc);
         PdfResources resources = cv.getResources();
 
-        Assert.assertEquals(1, resources.getResourceNames().size());
+        Assertions.assertEquals(1, resources.getResourceNames().size());
         PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState, DEFAULT_RESOURCE_NAME);
-        Assert.assertEquals(1, resDic.size());
-        Assert.assertEquals(resDic.get(STROKE_OPAC), new PdfNumber(0.75));
+        Assertions.assertEquals(1, resDic.size());
+        Assertions.assertEquals(resDic.get(STROKE_OPAC), new PdfNumber(0.75));
     }
 
     @Test
@@ -508,7 +507,7 @@ public class TransparencyTest extends ExtendedITextTest {
         renderer.draw(sdc);
         PdfResources resources = cv.getResources();
 
-        Assert.assertTrue(resources.getResourceNames().isEmpty());
+        Assertions.assertTrue(resources.getResourceNames().isEmpty());
     }
 
     @Test
@@ -519,10 +518,10 @@ public class TransparencyTest extends ExtendedITextTest {
         renderer.draw(sdc);
         PdfResources resources = cv.getResources();
 
-        Assert.assertEquals(1, resources.getResourceNames().size());
+        Assertions.assertEquals(1, resources.getResourceNames().size());
         PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState, DEFAULT_RESOURCE_NAME);
-        Assert.assertEquals(1, resDic.size());
-        Assert.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
+        Assertions.assertEquals(1, resDic.size());
+        Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
     }
 
     @Test
@@ -534,7 +533,7 @@ public class TransparencyTest extends ExtendedITextTest {
         renderer.draw(sdc);
         PdfResources resources = cv.getResources();
 
-        Assert.assertTrue(resources.getResourceNames().isEmpty());
+        Assertions.assertTrue(resources.getResourceNames().isEmpty());
     }
 
     @Test
@@ -545,7 +544,7 @@ public class TransparencyTest extends ExtendedITextTest {
         renderer.draw(sdc);
         PdfResources resources = cv.getResources();
 
-        Assert.assertTrue(resources.getResourceNames().isEmpty());
+        Assertions.assertTrue(resources.getResourceNames().isEmpty());
     }
 
     @Test
@@ -557,10 +556,10 @@ public class TransparencyTest extends ExtendedITextTest {
         renderer.draw(sdc);
         PdfResources resources = cv.getResources();
 
-        Assert.assertEquals(1, resources.getResourceNames().size());
+        Assertions.assertEquals(1, resources.getResourceNames().size());
         PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState, DEFAULT_RESOURCE_NAME);
-        Assert.assertEquals(2, resDic.size());
-        Assert.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
-        Assert.assertEquals(resDic.get(STROKE_OPAC), new PdfNumber(0.75));
+        Assertions.assertEquals(2, resDic.size());
+        Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
+        Assertions.assertEquals(resDic.get(STROKE_OPAC), new PdfNumber(0.75));
     }
 }

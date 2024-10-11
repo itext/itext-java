@@ -28,44 +28,55 @@ import com.itextpdf.kernel.geom.Rectangle;
  * This class acts as a default implementation of IPdfTextLocation
  */
 public class DefaultPdfTextLocation implements IPdfTextLocation {
-
-    private int pageNr;
     private Rectangle rectangle;
     private String text;
 
-    public DefaultPdfTextLocation(int pageNr, Rectangle rect, String text) {
-        this.pageNr = pageNr;
+    /**
+     * Creates new pdf text location.
+     *
+     * @param rect text rectangle on pdf canvas
+     * @param text actual text on designated area of canvas
+     */
+    public DefaultPdfTextLocation(Rectangle rect, String text) {
         this.rectangle = rect;
         this.text = text;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Rectangle getRectangle() {
         return rectangle;
     }
 
+    /**
+     * Sets text rectangle (occupied area) for this pdf text location.
+     *
+     * @param rectangle new text rectangle
+     * @return this {@code DefaultPdfTextLocation} instance
+     */
     public DefaultPdfTextLocation setRectangle(Rectangle rectangle) {
         this.rectangle = rectangle;
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getText() {
         return text;
     }
 
+    /**
+     * Sets text for this pdf text location.
+     *
+     * @param text new text
+     * @return this {@code DefaultPdfTextLocation} instance
+     */
     public DefaultPdfTextLocation setText(String text) {
         this.text = text;
-        return this;
-    }
-
-    @Override
-    public int getPageNumber() {
-        return pageNr;
-    }
-
-    public DefaultPdfTextLocation setPageNr(int pageNr) {
-        this.pageNr = pageNr;
         return this;
     }
 }

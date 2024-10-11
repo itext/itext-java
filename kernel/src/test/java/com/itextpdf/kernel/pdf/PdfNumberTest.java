@@ -26,12 +26,11 @@ import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfNumberTest extends ExtendedITextTest {
 
     private static final double DELTA = 0.0001;
@@ -42,7 +41,7 @@ public class PdfNumberTest extends ExtendedITextTest {
         PdfNumber number = new PdfNumber(Double.NaN);
         // code for "0"
         byte[] expected = {48};
-        Assert.assertArrayEquals(expected, number.getInternalContent());
+        Assertions.assertArrayEquals(expected, number.getInternalContent());
     }
 
     @Test
@@ -50,12 +49,12 @@ public class PdfNumberTest extends ExtendedITextTest {
         double valueToSet = 3000000000d;
         final PdfNumber number = new PdfNumber(valueToSet);
 
-        Assert.assertEquals(valueToSet, number.getValue(), DELTA);
-        Assert.assertEquals(valueToSet, number.doubleValue(), DELTA);
-        Assert.assertEquals(Integer.MAX_VALUE, number.intValue());
+        Assertions.assertEquals(valueToSet, number.getValue(), DELTA);
+        Assertions.assertEquals(valueToSet, number.doubleValue(), DELTA);
+        Assertions.assertEquals(Integer.MAX_VALUE, number.intValue());
 
         valueToSet = 50d;
         number.setValue(valueToSet + DELTA);
-        Assert.assertEquals(50, number.intValue());
+        Assertions.assertEquals(50, number.intValue());
     }
 }

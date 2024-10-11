@@ -23,18 +23,10 @@
 package com.itextpdf.pdfua;
 
 import com.itextpdf.kernel.pdf.DocumentProperties;
-import com.itextpdf.kernel.pdf.IConformanceLevel;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfDocumentInfo;
 import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfString;
-import com.itextpdf.kernel.pdf.PdfUAConformanceLevel;
-import com.itextpdf.kernel.pdf.PdfViewerPreferences;
+import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
-import com.itextpdf.kernel.pdf.WriterProperties;
-import com.itextpdf.kernel.utils.ValidationContainer;
-import com.itextpdf.pdfua.checkers.PdfUA1Checker;
 
 /**
  * PdfDocument extension for testing purposes.
@@ -58,6 +50,6 @@ public class PdfUATestPdfDocument extends PdfUADocument {
     }
 
     private static PdfUAConfig createConfig() {
-        return new PdfUAConfig(PdfUAConformanceLevel.PDFUA_1, "English pangram", "en-US");
+        return new PdfUAConfig(PdfUAConformance.PDF_UA_1, "English pangram", "en-US");
     }
 }

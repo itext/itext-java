@@ -39,7 +39,6 @@ import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -48,26 +47,26 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import javax.xml.parsers.ParserConfigurationException;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 import org.xml.sax.SAXException;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfOutlineTest extends ExtendedITextTest {
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/PdfOutlineTest/";
     public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/PdfOutlineTest/";
 
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(DESTINATION_FOLDER);
     }
@@ -89,7 +88,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename,
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename,
                 DESTINATION_FOLDER, "diff_"));
     }
     
@@ -99,9 +98,9 @@ public class PdfOutlineTest extends ExtendedITextTest {
         PdfOutline outlines = pdfDoc.getOutlines(false);
         List<PdfOutline> children = outlines.getAllChildren().get(0).getAllChildren();
 
-        Assert.assertEquals(outlines.getTitle(), "Outlines");
-        Assert.assertEquals(children.size(), 13);
-        Assert.assertTrue(children.get(0).getDestination() instanceof PdfStringDestination);
+        Assertions.assertEquals(outlines.getTitle(), "Outlines");
+        Assertions.assertEquals(children.size(), 13);
+        Assertions.assertTrue(children.get(0).getDestination() instanceof PdfStringDestination);
     }
 
     @Test
@@ -110,9 +109,9 @@ public class PdfOutlineTest extends ExtendedITextTest {
         PdfPage page = pdfDoc.getPage(52);
         List<PdfOutline> pageOutlines = page.getOutlines(true);
         try {
-            Assert.assertEquals(3, pageOutlines.size());
-            Assert.assertTrue(pageOutlines.get(0).getTitle().equals("Safari"));
-            Assert.assertEquals(pageOutlines.get(0).getAllChildren().size(), 4);
+            Assertions.assertEquals(3, pageOutlines.size());
+            Assertions.assertTrue(pageOutlines.get(0).getTitle().equals("Safari"));
+            Assertions.assertEquals(pageOutlines.get(0).getAllChildren().size(), 4);
         } finally {
             pdfDoc.close();
         }
@@ -140,7 +139,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename,
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename,
                 DESTINATION_FOLDER, "diff_"));
     }
 
@@ -151,8 +150,8 @@ public class PdfOutlineTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(filename));
         PdfOutline outlines = pdfDoc.getOutlines(false);
         try {
-            Assert.assertEquals(3, outlines.getAllChildren().size());
-            Assert.assertEquals("firstPageChild", outlines.getAllChildren().get(1).getAllChildren().get(0).getTitle());
+            Assertions.assertEquals(3, outlines.getAllChildren().size());
+            Assertions.assertEquals("firstPageChild", outlines.getAllChildren().get(1).getAllChildren().get(0).getTitle());
         } finally {
             pdfDoc.close();
         }
@@ -176,7 +175,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
         if (diffContent != null || diffTags != null) {
             diffContent = diffContent != null ? diffContent : "";
             diffTags = diffTags != null ? diffTags : "";
-            Assert.fail(diffContent + diffTags);
+            Assertions.fail(diffContent + diffTags);
         }
     }
 
@@ -190,7 +189,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
         PdfPage page = pdfDoc.getPage(102);
         List<PdfOutline> pageOutlines = page.getOutlines(false);
         try {
-            Assert.assertEquals(4, pageOutlines.size());
+            Assertions.assertEquals(4, pageOutlines.size());
         } finally {
             pdfDoc.close();
         }
@@ -208,7 +207,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename,
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename,
                 DESTINATION_FOLDER, "diff_"));
     }
 
@@ -222,11 +221,11 @@ public class PdfOutlineTest extends ExtendedITextTest {
         PdfOutline firstOutline = outlines.getAllChildren().get(0);
         PdfOutline secondOutline = outlines.getAllChildren().get(1);
         try {
-            Assert.assertEquals(2, outlines.getAllChildren().size());
-            Assert.assertEquals("First Page", firstOutline.getTitle());
-            Assert.assertEquals(outlines, firstOutline.getParent());
-            Assert.assertEquals("Second Page", secondOutline.getTitle());
-            Assert.assertEquals(outlines, secondOutline.getParent());
+            Assertions.assertEquals(2, outlines.getAllChildren().size());
+            Assertions.assertEquals("First Page", firstOutline.getTitle());
+            Assertions.assertEquals(outlines, firstOutline.getParent());
+            Assertions.assertEquals("Second Page", secondOutline.getTitle());
+            Assertions.assertEquals(outlines, secondOutline.getParent());
         } finally {
             pdfDoc.close();
         }
@@ -240,7 +239,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
         PdfOutline outlines = pdfDoc.getOutlines(false);
         PdfOutline outline = outlines.getAllChildren().get(0).getAllChildren().get(1);
         try {
-            Assert.assertEquals("New Title", outline.getTitle());
+            Assertions.assertEquals("New Title", outline.getTitle());
         } finally {
             pdfDoc.close();
         }
@@ -266,7 +265,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename,
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename,
                 DESTINATION_FOLDER, "diff_"));
     }
 
@@ -277,7 +276,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
 
         List<PdfOutline> pageOutlines = pdfDoc.getPage(102).getOutlines(true);
         try {
-            Assert.assertEquals(5, pageOutlines.size());
+            Assertions.assertEquals(5, pageOutlines.size());
         } finally {
             pdfDoc.close();
         }
@@ -291,8 +290,8 @@ public class PdfOutlineTest extends ExtendedITextTest {
 
         PdfOutline outlines = pdfDoc.getOutlines(false);
         try {
-            Assert.assertEquals(2, outlines.getAllChildren().size());
-            Assert.assertEquals("First Page", outlines.getAllChildren().get(0).getTitle());
+            Assertions.assertEquals(2, outlines.getAllChildren().size());
+            Assertions.assertEquals("First Page", outlines.getAllChildren().get(0).getTitle());
         } finally {
             pdfDoc.close();
         }
@@ -321,8 +320,8 @@ public class PdfOutlineTest extends ExtendedITextTest {
         pdfDoc.copyPagesTo(pages, pdfDoc1);
         pdfDoc.close();
 
-        Assert.assertEquals(6, pdfDoc1.getNumberOfPages());
-        Assert.assertEquals(4, pdfDoc1.getOutlines(false).getAllChildren().get(0).getAllChildren().size());
+        Assertions.assertEquals(6, pdfDoc1.getNumberOfPages());
+        Assertions.assertEquals(4, pdfDoc1.getOutlines(false).getAllChildren().get(0).getAllChildren().size());
         pdfDoc1.close();
     }
 
@@ -369,7 +368,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
         thirdOutline.addDestination(PdfDestination.makeDestination(new PdfString("test3")));
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, SOURCE_FOLDER + "cmp_outlinesWithNamedDestinations01.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(filename, SOURCE_FOLDER + "cmp_outlinesWithNamedDestinations01.pdf",
                 DESTINATION_FOLDER, "diff_"));
     }
 
@@ -412,7 +411,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
         thirdOutline.addDestination(PdfDestination.makeDestination(new PdfString("page3")));
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, SOURCE_FOLDER + "cmp_outlinesWithNamedDestinations02.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(filename, SOURCE_FOLDER + "cmp_outlinesWithNamedDestinations02.pdf",
                 DESTINATION_FOLDER, "diff_"));
     }
 
@@ -424,7 +423,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
         try {
             pdfDoc.getOutlines(true);
         } catch (StackOverflowError e) {
-            Assert.fail("StackOverflow thrown when reading document with a large number of outlines.");
+            Assertions.fail("StackOverflow thrown when reading document with a large number of outlines.");
         }
     }
 
@@ -437,7 +436,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
         pdfDoc.removePage(3);
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outputFile, SOURCE_FOLDER + "cmp_" + filename + ".pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(outputFile, SOURCE_FOLDER + "cmp_" + filename + ".pdf",
                 DESTINATION_FOLDER, "diff_"));
     }
 
@@ -453,7 +452,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
         pdfDocument.getOutlines(true).removeOutline();
         pdfDocument.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(output, cmp, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(output, cmp, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -470,7 +469,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
         toRemove.removeOutline();
         pdfDocument.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(output, cmp, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(output, cmp, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -478,10 +477,10 @@ public class PdfOutlineTest extends ExtendedITextTest {
         String input = SOURCE_FOLDER + "outlineTree.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(input));
         PdfOutline root = pdfDocument.getOutlines(false);
-        Assert.assertEquals(4, root.getAllChildren().size());
+        Assertions.assertEquals(4, root.getAllChildren().size());
         pdfDocument.getCatalog().getPdfObject().remove(PdfName.Outlines);
         root = pdfDocument.getOutlines(true);
-        Assert.assertNull(root);
+        Assertions.assertNull(root);
         pdfDocument.close();
     }
 
@@ -493,11 +492,11 @@ public class PdfOutlineTest extends ExtendedITextTest {
 
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(input), CompareTool.createTestPdfWriter(output));
         pdfDocument.removePage(2);
-        Assert.assertEquals(2, pdfDocument.getNumberOfPages());
+        Assertions.assertEquals(2, pdfDocument.getNumberOfPages());
 
         pdfDocument.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(output, cmp, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(output, cmp, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -508,11 +507,11 @@ public class PdfOutlineTest extends ExtendedITextTest {
 
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(input), CompareTool.createTestPdfWriter(output));
         pdfDocument.removePage(2);
-        Assert.assertEquals(2, pdfDocument.getNumberOfPages());
+        Assertions.assertEquals(2, pdfDocument.getNumberOfPages());
 
         pdfDocument.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(output, cmp, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(output, cmp, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -551,12 +550,12 @@ public class PdfOutlineTest extends ExtendedITextTest {
             outlineDictionary.put(PdfName.First, first);
             first.put(PdfName.Parent, outlineDictionary);
 
-            Exception exception = Assert.assertThrows(
+            Exception exception = Assertions.assertThrows(
                     PdfException.class,
                     () -> pdfDocument.getCatalog()
                             .constructOutlines(outlineDictionary, new EmptyNameTree())
             );
-            Assert.assertEquals(
+            Assertions.assertEquals(
                     MessageFormatUtil.format(KernelExceptionMessageConstant.CORRUPTED_OUTLINE_NO_TITLE_ENTRY,
                             first.indirectReference),
                     exception.getMessage());
@@ -580,14 +579,14 @@ public class PdfOutlineTest extends ExtendedITextTest {
             firstOutline.addDestination(PdfExplicitDestination.createFit(firstPage));
 
             PdfOutline resultedRoot = pdfDocument.getOutlines(true);
-            Assert.assertEquals(2, resultedRoot.getAllChildren().size());
-            Assert.assertEquals(resultedRoot, resultedRoot.getAllChildren().get(0).getParent());
-            Assert.assertEquals(resultedRoot, resultedRoot.getAllChildren().get(1).getParent());
+            Assertions.assertEquals(2, resultedRoot.getAllChildren().size());
+            Assertions.assertEquals(resultedRoot, resultedRoot.getAllChildren().get(0).getParent());
+            Assertions.assertEquals(resultedRoot, resultedRoot.getAllChildren().get(1).getParent());
 
             PdfOutline resultedFirstOutline = resultedRoot.getAllChildren().get(0);
-            Assert.assertEquals(2, resultedFirstOutline.getAllChildren().size());
-            Assert.assertEquals(resultedFirstOutline, resultedFirstOutline.getAllChildren().get(0).getParent());
-            Assert.assertEquals(resultedFirstOutline, resultedFirstOutline.getAllChildren().get(1).getParent());
+            Assertions.assertEquals(2, resultedFirstOutline.getAllChildren().size());
+            Assertions.assertEquals(resultedFirstOutline, resultedFirstOutline.getAllChildren().get(0).getParent());
+            Assertions.assertEquals(resultedFirstOutline, resultedFirstOutline.getAllChildren().get(1).getParent());
         }
     }
 
@@ -606,16 +605,16 @@ public class PdfOutlineTest extends ExtendedITextTest {
             firstOutline.addDestination(PdfExplicitDestination.createFit(firstPage));
 
             PdfOutline resultedRoot = pdfDocument.getOutlines(true);
-            Assert.assertEquals(1, resultedRoot.getAllChildren().size());
-            Assert.assertEquals(resultedRoot, resultedRoot.getAllChildren().get(0).getParent());
+            Assertions.assertEquals(1, resultedRoot.getAllChildren().size());
+            Assertions.assertEquals(resultedRoot, resultedRoot.getAllChildren().get(0).getParent());
 
             PdfOutline resultedFirstOutline = resultedRoot.getAllChildren().get(0);
-            Assert.assertEquals(1, resultedFirstOutline.getAllChildren().size());
-            Assert.assertEquals(resultedFirstOutline, resultedFirstOutline.getAllChildren().get(0).getParent());
+            Assertions.assertEquals(1, resultedFirstOutline.getAllChildren().size());
+            Assertions.assertEquals(resultedFirstOutline, resultedFirstOutline.getAllChildren().get(0).getParent());
 
             PdfOutline resultedSecondOutline = resultedFirstOutline.getAllChildren().get(0);
-            Assert.assertEquals(1, resultedSecondOutline.getAllChildren().size());
-            Assert.assertEquals(resultedSecondOutline, resultedSecondOutline.getAllChildren().get(0).getParent());
+            Assertions.assertEquals(1, resultedSecondOutline.getAllChildren().size());
+            Assertions.assertEquals(resultedSecondOutline, resultedSecondOutline.getAllChildren().get(0).getParent());
         }
     }
 
@@ -629,23 +628,23 @@ public class PdfOutlineTest extends ExtendedITextTest {
             PdfOutline rootOutline = pdfDocument.getOutlines(true);
             PdfOutline outline = rootOutline.addOutline("Outline");
 
-            Assert.assertTrue(outline.isOpen());
-            Assert.assertNull(outline.getStyle());
-            Assert.assertNull(outline.getColor());
+            Assertions.assertTrue(outline.isOpen());
+            Assertions.assertNull(outline.getStyle());
+            Assertions.assertNull(outline.getColor());
 
             outline.getContent().put(PdfName.C, new PdfArray(ColorConstants.BLACK.getColorValue()));
             outline.getContent().put(PdfName.F, new PdfNumber(2));
             outline.getContent().put(PdfName.Count, new PdfNumber(4));
 
-            Assert.assertTrue(outline.isOpen());
-            Assert.assertEquals(new Integer(2), outline.getStyle());
-            Assert.assertEquals(ColorConstants.BLACK, outline.getColor());
+            Assertions.assertTrue(outline.isOpen());
+            Assertions.assertEquals(new Integer(2), outline.getStyle());
+            Assertions.assertEquals(ColorConstants.BLACK, outline.getColor());
 
             outline.getContent().put(PdfName.Count, new PdfNumber(0));
-            Assert.assertTrue(outline.isOpen());
+            Assertions.assertTrue(outline.isOpen());
 
             outline.getContent().put(PdfName.Count, new PdfNumber(-5));
-            Assert.assertFalse(outline.isOpen());
+            Assertions.assertFalse(outline.isOpen());
         }
     }
 
@@ -681,8 +680,8 @@ public class PdfOutlineTest extends ExtendedITextTest {
             AssertUtil.doesNotThrow(() -> pdfDocument.getCatalog()
                     .constructOutlines(outlineDictionary, new EmptyNameTree()));
             PdfOutline resultedOutline = pdfDocument.getOutlines(false);
-            Assert.assertEquals(2, resultedOutline.getAllChildren().size());
-            Assert.assertEquals(resultedOutline.getAllChildren().get(1).getParent(),
+            Assertions.assertEquals(2, resultedOutline.getAllChildren().size());
+            Assertions.assertEquals(resultedOutline.getAllChildren().get(1).getParent(),
                     resultedOutline.getAllChildren().get(0).getParent());
         }
     }
@@ -712,8 +711,8 @@ public class PdfOutlineTest extends ExtendedITextTest {
             AssertUtil.doesNotThrow(() -> pdfDocument.getCatalog()
                     .constructOutlines(outlineDictionary, new EmptyNameTree()));
             PdfOutline resultedOutline = pdfDocument.getOutlines(false);
-            Assert.assertEquals(1, resultedOutline.getAllChildren().size());
-            Assert.assertEquals(resultedOutline,
+            Assertions.assertEquals(1, resultedOutline.getAllChildren().size());
+            Assertions.assertEquals(resultedOutline,
                     resultedOutline.getAllChildren().get(0).getParent());
         }
     }
@@ -724,11 +723,11 @@ public class PdfOutlineTest extends ExtendedITextTest {
                 PdfDocument pdfDocument = new PdfDocument(
                         new PdfReader(SOURCE_FOLDER + "outlinesNoParentLink.pdf"))) {
             pdfDocument.getReader().setStrictnessLevel(StrictnessLevel.CONSERVATIVE);
-            Exception exception = Assert.assertThrows(PdfException.class, () -> pdfDocument.getOutlines(true));
+            Exception exception = Assertions.assertThrows(PdfException.class, () -> pdfDocument.getOutlines(true));
 
             //Hardcode indirectReference, cause there is no option to get this outline due to #getOutlines method
             // will be thrown an exception.
-            Assert.assertEquals(
+            Assertions.assertEquals(
                     MessageFormatUtil.format(KernelExceptionMessageConstant.CORRUPTED_OUTLINE_NO_PARENT_ENTRY, "9 0 R"),
                     exception.getMessage());
         }
@@ -740,11 +739,11 @@ public class PdfOutlineTest extends ExtendedITextTest {
                 PdfDocument pdfDocument = new PdfDocument(
                         new PdfReader(SOURCE_FOLDER + "outlinesHaveInfiniteLoop.pdf"))) {
             pdfDocument.getReader().setStrictnessLevel(StrictnessLevel.CONSERVATIVE);
-            Exception exception = Assert.assertThrows(PdfException.class, () -> pdfDocument.getOutlines(true));
+            Exception exception = Assertions.assertThrows(PdfException.class, () -> pdfDocument.getOutlines(true));
 
             //Hardcode indirectReference, cause there is no option to get this outline due to #getOutlines method
             // will be thrown an exception.
-            Assert.assertEquals(
+            Assertions.assertEquals(
                     MessageFormatUtil.format(
                             KernelExceptionMessageConstant.CORRUPTED_OUTLINE_DICTIONARY_HAS_INFINITE_LOOP,
                             "<</Dest [4 0 R /Fit ] /Next 10 0 R /Parent <<>> /Prev 10 0 R /Title First Page >>"),
@@ -774,30 +773,30 @@ public class PdfOutlineTest extends ExtendedITextTest {
             PdfOutline resultedA = pdfDocument.getOutlines(true);
 
             // Asserting children of root outline.
-            Assert.assertEquals(2, resultedA.getAllChildren().size());
-            Assert.assertEquals(resultedA, resultedA.getAllChildren().get(0).getParent());
-            Assert.assertEquals(resultedA, resultedA.getAllChildren().get(1).getParent());
-            Assert.assertTrue(resultedA.getAllChildren().get(1).getAllChildren().isEmpty());
-            Assert.assertEquals(2, resultedA.getAllChildren().get(0).getAllChildren().size());
+            Assertions.assertEquals(2, resultedA.getAllChildren().size());
+            Assertions.assertEquals(resultedA, resultedA.getAllChildren().get(0).getParent());
+            Assertions.assertEquals(resultedA, resultedA.getAllChildren().get(1).getParent());
+            Assertions.assertTrue(resultedA.getAllChildren().get(1).getAllChildren().isEmpty());
+            Assertions.assertEquals(2, resultedA.getAllChildren().get(0).getAllChildren().size());
 
             //Asserting children of B outline after reconstructing.
             PdfOutline resultedB = resultedA.getAllChildren().get(0);
-            Assert.assertEquals(resultedB, resultedB.getAllChildren().get(0).getParent());
-            Assert.assertEquals(resultedB, resultedB.getAllChildren().get(1).getParent());
-            Assert.assertTrue(resultedB.getAllChildren().get(1).getAllChildren().isEmpty());
-            Assert.assertEquals(1, resultedB.getAllChildren().get(0).getAllChildren().size());
+            Assertions.assertEquals(resultedB, resultedB.getAllChildren().get(0).getParent());
+            Assertions.assertEquals(resultedB, resultedB.getAllChildren().get(1).getParent());
+            Assertions.assertTrue(resultedB.getAllChildren().get(1).getAllChildren().isEmpty());
+            Assertions.assertEquals(1, resultedB.getAllChildren().get(0).getAllChildren().size());
 
             //Asserting children of E outline after reconstructing.
             PdfOutline resultedE = resultedB.getAllChildren().get(0);
-            Assert.assertEquals(resultedE, resultedE.getAllChildren().get(0).getParent());
-            Assert.assertEquals(2, resultedE.getAllChildren().get(0).getAllChildren().size());
+            Assertions.assertEquals(resultedE, resultedE.getAllChildren().get(0).getParent());
+            Assertions.assertEquals(2, resultedE.getAllChildren().get(0).getAllChildren().size());
 
             //Asserting children of F outline after reconstructing.
             PdfOutline resultedF = resultedE.getAllChildren().get(0);
-            Assert.assertEquals(resultedF, resultedF.getAllChildren().get(0).getParent());
-            Assert.assertEquals(resultedF, resultedF.getAllChildren().get(1).getParent());
-            Assert.assertTrue(resultedF.getAllChildren().get(0).getAllChildren().isEmpty());
-            Assert.assertTrue(resultedF.getAllChildren().get(1).getAllChildren().isEmpty());
+            Assertions.assertEquals(resultedF, resultedF.getAllChildren().get(0).getParent());
+            Assertions.assertEquals(resultedF, resultedF.getAllChildren().get(1).getParent());
+            Assertions.assertTrue(resultedF.getAllChildren().get(0).getAllChildren().isEmpty());
+            Assertions.assertTrue(resultedF.getAllChildren().get(1).getAllChildren().isEmpty());
         }
     }
 
@@ -817,13 +816,13 @@ public class PdfOutlineTest extends ExtendedITextTest {
             PdfDestination page1Dest = PdfExplicitDestination.createFit(firstPage);
             PdfAction page1Action = PdfAction.createGoTo(page1Dest);
             firstOutline.addAction(page1Action);
-            Assert.assertEquals(page1Dest.getPdfObject(), firstOutline.getDestination().getPdfObject());
+            Assertions.assertEquals(page1Dest.getPdfObject(), firstOutline.getDestination().getPdfObject());
 
             PdfAction page2Action = PdfAction.createGoTo(PdfExplicitDestination.createFit(secondPage));
             secondOutline.addAction(page2Action);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename,
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename,
                 DESTINATION_FOLDER, "diff_"));
     }
 
@@ -840,10 +839,10 @@ public class PdfOutlineTest extends ExtendedITextTest {
             // Apparently it works!
             PdfAction action1 = PdfAction.createURI("https://example.com");
             firstOutline.addAction(action1);
-            Assert.assertNull(firstOutline.getDestination());
+            Assertions.assertNull(firstOutline.getDestination());
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename,
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename,
                 DESTINATION_FOLDER, "diff_"));
     }
 

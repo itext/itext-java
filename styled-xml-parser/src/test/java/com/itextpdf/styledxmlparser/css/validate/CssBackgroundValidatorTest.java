@@ -24,159 +24,158 @@ package com.itextpdf.styledxmlparser.css.validate;
 
 import com.itextpdf.styledxmlparser.css.validate.impl.datatype.CssBackgroundValidator;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class CssBackgroundValidatorTest extends ExtendedITextTest {
 
     @Test
     public void nullValueTest() {
         final ICssDataTypeValidator validator = new CssBackgroundValidator("any property");
-        Assert.assertFalse(validator.isValid(null));
+        Assertions.assertFalse(validator.isValid(null));
     }
 
     @Test
     public void undefinedValueTest() {
         final ICssDataTypeValidator validator = new CssBackgroundValidator("undefined");
-        Assert.assertFalse(validator.isValid("ja"));
+        Assertions.assertFalse(validator.isValid("ja"));
     }
 
     @Test
     public void initialInheritUnsetValueTest() {
         final ICssDataTypeValidator validator = new CssBackgroundValidator("any property");
-        Assert.assertTrue(validator.isValid("initial"));
-        Assert.assertTrue(validator.isValid("inherit"));
-        Assert.assertTrue(validator.isValid("unset"));
+        Assertions.assertTrue(validator.isValid("initial"));
+        Assertions.assertTrue(validator.isValid("inherit"));
+        Assertions.assertTrue(validator.isValid("unset"));
     }
 
     @Test
     public void emptyValueTest() {
         final ICssDataTypeValidator validator = new CssBackgroundValidator("any property");
-        Assert.assertFalse(validator.isValid(""));
+        Assertions.assertFalse(validator.isValid(""));
     }
 
     @Test
     public void propertyValueCorrespondsPropertyTypeTest() {
         ICssDataTypeValidator validator = new CssBackgroundValidator("background-repeat");
-        Assert.assertTrue(validator.isValid("repeat-x"));
-        Assert.assertFalse(validator.isValid("cover"));
+        Assertions.assertTrue(validator.isValid("repeat-x"));
+        Assertions.assertFalse(validator.isValid("cover"));
 
         validator = new CssBackgroundValidator("background-image");
-        Assert.assertTrue(validator.isValid("url(something.png)"));
-        Assert.assertFalse(validator.isValid("5px"));
+        Assertions.assertTrue(validator.isValid("url(something.png)"));
+        Assertions.assertFalse(validator.isValid("5px"));
 
         validator = new CssBackgroundValidator("background-attachment");
-        Assert.assertTrue(validator.isValid("fixed"));
-        Assert.assertFalse(validator.isValid("5px"));
+        Assertions.assertTrue(validator.isValid("fixed"));
+        Assertions.assertFalse(validator.isValid("5px"));
     }
 
     @Test
     public void propertyValueWithMultiTypesCorrespondsPropertyTypeTest() {
         final ICssDataTypeValidator positionValidator = new CssBackgroundValidator("background-position-x");
         final ICssDataTypeValidator sizeValidator = new CssBackgroundValidator("background-size");
-        Assert.assertTrue(positionValidator.isValid("5px"));
-        Assert.assertTrue(sizeValidator.isValid("5px"));
-        Assert.assertTrue(positionValidator.isValid("5%"));
-        Assert.assertTrue(sizeValidator.isValid("5%"));
-        Assert.assertTrue(positionValidator.isValid("left"));
-        Assert.assertFalse(sizeValidator.isValid("left"));
-        Assert.assertFalse(positionValidator.isValid("contain"));
-        Assert.assertTrue(sizeValidator.isValid("contain"));
+        Assertions.assertTrue(positionValidator.isValid("5px"));
+        Assertions.assertTrue(sizeValidator.isValid("5px"));
+        Assertions.assertTrue(positionValidator.isValid("5%"));
+        Assertions.assertTrue(sizeValidator.isValid("5%"));
+        Assertions.assertTrue(positionValidator.isValid("left"));
+        Assertions.assertFalse(sizeValidator.isValid("left"));
+        Assertions.assertFalse(positionValidator.isValid("contain"));
+        Assertions.assertTrue(sizeValidator.isValid("contain"));
 
         final ICssDataTypeValidator originValidator = new CssBackgroundValidator("background-origin");
         final ICssDataTypeValidator clipValidator = new CssBackgroundValidator("background-clip");
-        Assert.assertTrue(originValidator.isValid("border-box"));
-        Assert.assertTrue(clipValidator.isValid("border-box"));
-        Assert.assertTrue(originValidator.isValid("padding-box"));
-        Assert.assertTrue(clipValidator.isValid("padding-box"));
-        Assert.assertTrue(originValidator.isValid("content-box"));
-        Assert.assertTrue(clipValidator.isValid("content-box"));
+        Assertions.assertTrue(originValidator.isValid("border-box"));
+        Assertions.assertTrue(clipValidator.isValid("border-box"));
+        Assertions.assertTrue(originValidator.isValid("padding-box"));
+        Assertions.assertTrue(clipValidator.isValid("padding-box"));
+        Assertions.assertTrue(originValidator.isValid("content-box"));
+        Assertions.assertTrue(clipValidator.isValid("content-box"));
     }
 
     @Test
     public void checkMultiValuePositionXYTest() {
         ICssDataTypeValidator positionValidator = new CssBackgroundValidator("background-position-x");
-        Assert.assertFalse(positionValidator.isValid("50px left"));
-        Assert.assertFalse(positionValidator.isValid("50px bottom"));
-        Assert.assertFalse(positionValidator.isValid("center 50pt"));
-        Assert.assertFalse(positionValidator.isValid("50px 50pt"));
-        Assert.assertFalse(positionValidator.isValid("left right"));
-        Assert.assertFalse(positionValidator.isValid("bottom"));
+        Assertions.assertFalse(positionValidator.isValid("50px left"));
+        Assertions.assertFalse(positionValidator.isValid("50px bottom"));
+        Assertions.assertFalse(positionValidator.isValid("center 50pt"));
+        Assertions.assertFalse(positionValidator.isValid("50px 50pt"));
+        Assertions.assertFalse(positionValidator.isValid("left right"));
+        Assertions.assertFalse(positionValidator.isValid("bottom"));
 
-        Assert.assertTrue(positionValidator.isValid("left 10pt"));
-        Assert.assertTrue(positionValidator.isValid("center"));
+        Assertions.assertTrue(positionValidator.isValid("left 10pt"));
+        Assertions.assertTrue(positionValidator.isValid("center"));
 
         positionValidator = new CssBackgroundValidator("background-position-y");
-        Assert.assertTrue(positionValidator.isValid("bottom 10pt"));
-        Assert.assertTrue(positionValidator.isValid("10pt"));
+        Assertions.assertTrue(positionValidator.isValid("bottom 10pt"));
+        Assertions.assertTrue(positionValidator.isValid("10pt"));
 
-        Assert.assertFalse(positionValidator.isValid("right"));
+        Assertions.assertFalse(positionValidator.isValid("right"));
 
         final ICssDataTypeValidator notPositionValidator = new CssBackgroundValidator("background-size");
-        Assert.assertTrue(notPositionValidator.isValid("10px 15pt"));
+        Assertions.assertTrue(notPositionValidator.isValid("10px 15pt"));
     }
 
     @Test
     public void multiValuesAllowedForThisTypeTest() {
         ICssDataTypeValidator validator = new CssBackgroundValidator("background-size");
-        Assert.assertTrue(validator.isValid("5px 10%"));
+        Assertions.assertTrue(validator.isValid("5px 10%"));
 
         validator = new CssBackgroundValidator("background-position-x");
-        Assert.assertTrue(validator.isValid("left 10px"));
-        Assert.assertFalse(validator.isValid("5px 10%"));
-        Assert.assertFalse(validator.isValid("left left left left left"));
+        Assertions.assertTrue(validator.isValid("left 10px"));
+        Assertions.assertFalse(validator.isValid("5px 10%"));
+        Assertions.assertFalse(validator.isValid("left left left left left"));
 
         validator = new CssBackgroundValidator("background-position-y");
-        Assert.assertTrue(validator.isValid("bottom 10px"));
-        Assert.assertFalse(validator.isValid("5px 10%"));
-        Assert.assertFalse(validator.isValid("bottom bottom bottom bottom"));
+        Assertions.assertTrue(validator.isValid("bottom 10px"));
+        Assertions.assertFalse(validator.isValid("5px 10%"));
+        Assertions.assertFalse(validator.isValid("bottom bottom bottom bottom"));
 
         validator = new CssBackgroundValidator("background-repeat");
-        Assert.assertTrue(validator.isValid("repeat round"));
-        Assert.assertFalse(validator.isValid("repeat-x repeat"));
+        Assertions.assertTrue(validator.isValid("repeat round"));
+        Assertions.assertFalse(validator.isValid("repeat-x repeat"));
 
         validator = new CssBackgroundValidator("background-image");
-        Assert.assertFalse(validator.isValid("url(something.png) url(something2.png)"));
+        Assertions.assertFalse(validator.isValid("url(something.png) url(something2.png)"));
 
         validator = new CssBackgroundValidator("background-clip");
-        Assert.assertFalse(validator.isValid("content-box padding-box"));
+        Assertions.assertFalse(validator.isValid("content-box padding-box"));
 
         validator = new CssBackgroundValidator("background-origin");
-        Assert.assertFalse(validator.isValid("content-box padding-box"));
+        Assertions.assertFalse(validator.isValid("content-box padding-box"));
 
         validator = new CssBackgroundValidator("background-attachment");
-        Assert.assertFalse(validator.isValid("fixed scroll"));
+        Assertions.assertFalse(validator.isValid("fixed scroll"));
     }
 
     @Test
     public void multiValuesAllowedForThisValueTest() {
         ICssDataTypeValidator validator = new CssBackgroundValidator("background-repeat");
-        Assert.assertTrue(validator.isValid("repeat no-repeat"));
-        Assert.assertTrue(validator.isValid("round space"));
-        Assert.assertTrue(validator.isValid("no-repeat space"));
-        Assert.assertTrue(validator.isValid("round repeat"));
-        Assert.assertTrue(validator.isValid("space repeat"));
+        Assertions.assertTrue(validator.isValid("repeat no-repeat"));
+        Assertions.assertTrue(validator.isValid("round space"));
+        Assertions.assertTrue(validator.isValid("no-repeat space"));
+        Assertions.assertTrue(validator.isValid("round repeat"));
+        Assertions.assertTrue(validator.isValid("space repeat"));
 
-        Assert.assertFalse(validator.isValid("repeat-x repeat"));
-        Assert.assertFalse(validator.isValid("repeat-y no-repeat"));
-        Assert.assertFalse(validator.isValid("round repeat-x"));
-        Assert.assertFalse(validator.isValid("space repeat-x"));
+        Assertions.assertFalse(validator.isValid("repeat-x repeat"));
+        Assertions.assertFalse(validator.isValid("repeat-y no-repeat"));
+        Assertions.assertFalse(validator.isValid("round repeat-x"));
+        Assertions.assertFalse(validator.isValid("space repeat-x"));
 
         validator = new CssBackgroundValidator("background-size");
-        Assert.assertTrue(validator.isValid("5px 5px"));
+        Assertions.assertTrue(validator.isValid("5px 5px"));
 
-        Assert.assertFalse(validator.isValid("contain 5px"));
-        Assert.assertFalse(validator.isValid("cover 10%"));
+        Assertions.assertFalse(validator.isValid("contain 5px"));
+        Assertions.assertFalse(validator.isValid("cover 10%"));
     }
 
     @Test
     public void severalValuesTest() {
         final ICssDataTypeValidator validator = new CssBackgroundValidator("background-image");
-        Assert.assertTrue(validator.isValid("url(img.png),url(img2.png),url(img3.jpg)"));
-        Assert.assertTrue(validator.isValid("url(img.png),none,url(img3.jpg)"));
-        Assert.assertTrue(validator.isValid("linear-gradient(red, red, red),url(img2.png),url(img3.jpg)"));
+        Assertions.assertTrue(validator.isValid("url(img.png),url(img2.png),url(img3.jpg)"));
+        Assertions.assertTrue(validator.isValid("url(img.png),none,url(img3.jpg)"));
+        Assertions.assertTrue(validator.isValid("linear-gradient(red, red, red),url(img2.png),url(img3.jpg)"));
     }
 }

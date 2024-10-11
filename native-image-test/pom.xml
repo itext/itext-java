@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.itextpdf</groupId>
     <artifactId>root</artifactId>
-    <version>8.0.5</version>
+    <version>9.0.0</version>
   </parent>
 
   <artifactId>native-image-test</artifactId>
@@ -64,6 +64,11 @@
     <dependency>
       <groupId>com.itextpdf</groupId>
       <artifactId>sign</artifactId>
+      <version>${itext.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.itextpdf</groupId>
+      <artifactId>commons</artifactId>
       <version>${itext.version}</version>
     </dependency>
     <dependency>

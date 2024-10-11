@@ -24,16 +24,15 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PageFlushingHelperUnitTest extends ExtendedITextTest {
 
     @Test
@@ -45,9 +44,9 @@ public class PageFlushingHelperUnitTest extends ExtendedITextTest {
         pdfDocument.close();
         pdfDocument = new PdfDocument(new PdfReader(new ByteArrayInputStream(outputStream.toByteArray())));
         PageFlushingHelper pageFlushingHelper = new PageFlushingHelper(pdfDocument);
-        Exception exception = Assert.assertThrows(IllegalArgumentException.class,
+        Exception exception = Assertions.assertThrows(IllegalArgumentException.class,
                 () -> pageFlushingHelper.unsafeFlushDeep(pageToFlush));
-        Assert.assertEquals(KernelExceptionMessageConstant.FLUSHING_HELPER_FLUSHING_MODE_IS_NOT_FOR_DOC_READING_MODE,
+        Assertions.assertEquals(KernelExceptionMessageConstant.FLUSHING_HELPER_FLUSHING_MODE_IS_NOT_FOR_DOC_READING_MODE,
                 exception.getMessage());
     }
 
@@ -60,9 +59,9 @@ public class PageFlushingHelperUnitTest extends ExtendedITextTest {
         pdfDocument.close();
         pdfDocument = new PdfDocument(new PdfReader(new ByteArrayInputStream(outputStream.toByteArray())));
         PageFlushingHelper pageFlushingHelper = new PageFlushingHelper(pdfDocument);
-        Exception exception = Assert.assertThrows(IllegalArgumentException.class,
+        Exception exception = Assertions.assertThrows(IllegalArgumentException.class,
                 () -> pageFlushingHelper.appendModeFlush(pageToFlush));
-        Assert.assertEquals(KernelExceptionMessageConstant.FLUSHING_HELPER_FLUSHING_MODE_IS_NOT_FOR_DOC_READING_MODE,
+        Assertions.assertEquals(KernelExceptionMessageConstant.FLUSHING_HELPER_FLUSHING_MODE_IS_NOT_FOR_DOC_READING_MODE,
                 exception.getMessage());
     }
 }

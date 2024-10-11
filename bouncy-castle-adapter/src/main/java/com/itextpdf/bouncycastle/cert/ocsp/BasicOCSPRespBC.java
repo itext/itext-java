@@ -30,6 +30,7 @@ import com.itextpdf.commons.bouncycastle.asn1.IASN1Encodable;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1ObjectIdentifier;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IRespID;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.ISingleResp;
 import com.itextpdf.commons.bouncycastle.operator.IContentVerifierProvider;
 
@@ -133,6 +134,14 @@ public class BasicOCSPRespBC implements IBasicOCSPResp {
         Extension extension =
                 basicOCSPResp.getExtension(((ASN1ObjectIdentifierBC) objectIdentifier).getASN1ObjectIdentifier());
         return new ASN1EncodableBC(extension == null ? null : extension.getParsedValue());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IRespID getResponderId() {
+        return new RespIDBC(basicOCSPResp.getResponderId());
     }
 
     /**

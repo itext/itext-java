@@ -32,41 +32,40 @@ import com.itextpdf.kernel.colors.gradients.StrategyBasedLinearGradientBuilder;
 import com.itextpdf.kernel.colors.gradients.StrategyBasedLinearGradientBuilder.GradientStrategy;
 import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class CssGradientUtilTest extends ExtendedITextTest {
 
     @Test
     public void nullValueTest() {
         String gradientValue = null;
 
-        Assert.assertFalse(CssGradientUtil.isCssLinearGradientValue(gradientValue));
-        Assert.assertNull(CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12));
+        Assertions.assertFalse(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertNull(CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12));
     }
 
     @Test
     public void webkitExtensionLinearGradientTest() {
         String gradientValue = "-webkit-linear-gradient(red, green, blue)";
 
-        Assert.assertFalse(CssGradientUtil.isCssLinearGradientValue(gradientValue));
-        Assert.assertNull(CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12));
+        Assertions.assertFalse(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertNull(CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12));
     }
 
     @Test
     public void linearGradientWithNamesTest() {
         String gradientValue = "  linear-gradient(red, green, blue) \t ";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 0f, 0f}, 0f, OffsetType.RELATIVE));
@@ -79,10 +78,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradientWithHexColorsTest() {
         String gradientValue = "linear-grADIENt(#ff0000, #008000, #0000ff)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 0f, 0f}, 0f, OffsetType.RELATIVE));
@@ -95,10 +94,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradientWithRgbFunctionsTest() {
         String gradientValue = "linear-gradient(  rgb(255, 0, 0), rgb(0, 127, 0), rgb(0, 0,   255))";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 0f, 0f}, 0f, OffsetType.RELATIVE));
@@ -111,10 +110,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatingLinearGradientWithNamesTest() {
         String gradientValue = "  repeating-linear-gradient(red, green, blue) \t ";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 0f, 0f}, 0f, OffsetType.RELATIVE));
@@ -127,10 +126,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatingLinearGradientWithHexColorsAndUpperCaseTest() {
         String gradientValue = "rePEATing-linear-grADIENt(#ff0000, #008000, #0000ff)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 0f, 0f}, 0f, OffsetType.RELATIVE));
@@ -143,10 +142,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatingLinearGradientWithRgbFunctionsTest() {
         String gradientValue = "repeating-linear-gradient(  rgb(255, 0, 0), rgb(0, 127, 0), rgb(0, 0,   255))";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 0f, 0f}, 0f, OffsetType.RELATIVE));
@@ -159,11 +158,11 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void emptyParsedArguments1Test() {
         String gradientValue = "linear-gradient()";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
-        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Exception e = Assertions.assertThrows(StyledXMLParserException.class,
                 () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12)
         );
-        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_FUNCTION_ARGUMENTS_LIST, "linear-gradient()"),
+        Assertions.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_FUNCTION_ARGUMENTS_LIST, "linear-gradient()"),
                 e.getMessage());
     }
 
@@ -171,11 +170,11 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void emptyParsedArguments2Test() {
         String gradientValue = "linear-gradient( , )";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
-        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Exception e = Assertions.assertThrows(StyledXMLParserException.class,
                 () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12)
         );
-        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_FUNCTION_ARGUMENTS_LIST, "linear-gradient( , )"),
+        Assertions.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_FUNCTION_ARGUMENTS_LIST, "linear-gradient( , )"),
                 e.getMessage());
     }
 
@@ -183,11 +182,11 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void invalidFirstArgumentTest() {
         String gradientValue = "linear-gradient(not-angle-or-color, orange 100pt, red 150pt, green 200pt, blue 250pt)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
-        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Exception e = Assertions.assertThrows(StyledXMLParserException.class,
                 () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12)
         );
-        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "not-angle-or-color"),
+        Assertions.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "not-angle-or-color"),
                 e.getMessage());
     }
 
@@ -195,11 +194,11 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void invalidToSideTest0() {
         String gradientValue = "linear-gradient(to , orange 100pt, red 150pt, green 200pt, blue 250pt)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
-        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Exception e = Assertions.assertThrows(StyledXMLParserException.class,
                 () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12)
         );
-        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "to"),
+        Assertions.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "to"),
                 e.getMessage());
     }
 
@@ -207,11 +206,11 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void invalidToSideTest1() {
         String gradientValue = "linear-gradient(to, orange 100pt, red 150pt, green 200pt, blue 250pt)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
-        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Exception e = Assertions.assertThrows(StyledXMLParserException.class,
                 () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12)
         );
-        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "to"),
+        Assertions.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "to"),
                 e.getMessage());
     }
 
@@ -219,11 +218,11 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void invalidToSideTest2() {
         String gradientValue = "linear-gradient(to left left, orange 100pt, red 150pt, green 200pt, blue 250pt)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
-        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Exception e = Assertions.assertThrows(StyledXMLParserException.class,
                 () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12)
         );
-        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_TO_SIDE_OR_CORNER_STRING, "to left left"),
+        Assertions.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_TO_SIDE_OR_CORNER_STRING, "to left left"),
                 e.getMessage());
     }
 
@@ -231,11 +230,11 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void invalidToSideTest3() {
         String gradientValue = "linear-gradient(to bottom top, orange 100pt, red 150pt, green 200pt, blue 250pt)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
-        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Exception e = Assertions.assertThrows(StyledXMLParserException.class,
                 () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12)
         );
-        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_TO_SIDE_OR_CORNER_STRING, "to bottom top"),
+        Assertions.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_TO_SIDE_OR_CORNER_STRING, "to bottom top"),
                 e.getMessage());
     }
 
@@ -243,11 +242,11 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void invalidToSideTest4() {
         String gradientValue = "linear-gradient(to left right, orange 100pt, red 150pt, green 200pt, blue 250pt)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
-        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Exception e = Assertions.assertThrows(StyledXMLParserException.class,
                 () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12)
         );
-        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_TO_SIDE_OR_CORNER_STRING, "to left right"),
+        Assertions.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_TO_SIDE_OR_CORNER_STRING, "to left right"),
                 e.getMessage());
     }
 
@@ -255,11 +254,11 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void invalidToSideTest5() {
         String gradientValue = "linear-gradient(to top right right, orange 100pt, red 150pt, green 200pt, blue 250pt)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
-        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Exception e = Assertions.assertThrows(StyledXMLParserException.class,
                 () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12)
         );
-        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_TO_SIDE_OR_CORNER_STRING, "to top right right"),
+        Assertions.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_TO_SIDE_OR_CORNER_STRING, "to top right right"),
                 e.getMessage());
     }
 
@@ -267,11 +266,11 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void invalidColorWithThreeOffsetsValueTest() {
         String gradientValue = "linear-gradient(red, orange 20pt 30pt 100pt, green 200pt, blue 250pt)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
-        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Exception e = Assertions.assertThrows(StyledXMLParserException.class,
                 () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12)
         );
-        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 20pt 30pt 100pt"),
+        Assertions.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 20pt 30pt 100pt"),
                 e.getMessage());
     }
 
@@ -279,11 +278,11 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void invalidColorOffsetValueTest() {
         String gradientValue = "linear-gradient(red, orange 20, green 200pt, blue 250pt)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
-        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Exception e = Assertions.assertThrows(StyledXMLParserException.class,
                 () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12)
         );
-        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 20"),
+        Assertions.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 20"),
                 e.getMessage());
     }
 
@@ -291,11 +290,11 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void invalidMultipleHintsInARowValueTest() {
         String gradientValue = "linear-gradient(red, orange, 20%, 30%, green 200pt, blue 250pt)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
-        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Exception e = Assertions.assertThrows(StyledXMLParserException.class,
                 () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12)
         );
-        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "30%"),
+        Assertions.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "30%"),
                 e.getMessage());
     }
 
@@ -303,11 +302,11 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void invalidMultipleHintsInARowWithoutCommaValueTest() {
         String gradientValue = "linear-gradient(red, orange, 20% 30%, green 200pt, blue 250pt)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
-        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Exception e = Assertions.assertThrows(StyledXMLParserException.class,
                 () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12)
         );
-        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "20% 30%"),
+        Assertions.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "20% 30%"),
                 e.getMessage());
     }
 
@@ -315,11 +314,11 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void invalidFirstElementIsAHintValueTest() {
         String gradientValue = "linear-gradient(5%, red, orange, 30%, green 200pt, blue 250pt)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
-        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Exception e = Assertions.assertThrows(StyledXMLParserException.class,
                 () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12)
         );
-        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "5%"),
+        Assertions.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "5%"),
                 e.getMessage());
     }
 
@@ -327,11 +326,11 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void invalidLastElementIsAHintValueTest() {
         String gradientValue = "linear-gradient(red, orange, 30%, green 200pt, blue 250pt, 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
-        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Exception e = Assertions.assertThrows(StyledXMLParserException.class,
                 () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12)
         );
-        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "120%"),
+        Assertions.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "120%"),
                 e.getMessage());
     }
 
@@ -339,10 +338,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDifferentSidesLeftTest() {
         String gradientValue = "linear-gradient(to left, orange -20pt, red 0%, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, -20f, OffsetType.ABSOLUTE));
@@ -358,10 +357,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDifferentSidesRightTest() {
         String gradientValue = "linear-gradient(to right, orange -20pt, red 0%, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, -20f, OffsetType.ABSOLUTE));
@@ -377,10 +376,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDifferentSidesBottomTest() {
         String gradientValue = "linear-gradient(to bottom, orange -20pt, red 0%, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, -20f, OffsetType.ABSOLUTE));
@@ -396,10 +395,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDifferentSidesTopTest() {
         String gradientValue = "linear-gradient(to top, orange -20pt, red 0%, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, -20f, OffsetType.ABSOLUTE));
@@ -415,10 +414,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDifferentCornersToLeftTopTest() {
         String gradientValue = "linear-gradient(to left top, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, -20f, OffsetType.ABSOLUTE));
@@ -435,10 +434,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDifferentCornersToTopLeftTest() {
         String gradientValue = "linear-gradient(to top left, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, -20f, OffsetType.ABSOLUTE));
@@ -455,10 +454,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDifferentCornersToLeftBottomTest() {
         String gradientValue = "linear-gradient(to left bottom, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, -20f, OffsetType.ABSOLUTE));
@@ -475,10 +474,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDifferentCornersToBottomLeftTest() {
         String gradientValue = "linear-gradient(to bottom left, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, -20f, OffsetType.ABSOLUTE));
@@ -495,10 +494,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDifferentCornersToRightTopTest() {
         String gradientValue = "linear-gradient(to right top, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, -20f, OffsetType.ABSOLUTE));
@@ -515,10 +514,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDifferentCornersToTopRightTest() {
         String gradientValue = "linear-gradient(to top right, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, -20f, OffsetType.ABSOLUTE));
@@ -535,10 +534,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDifferentCornersToRightBottomTest() {
         String gradientValue = "linear-gradient(to right bottom, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, -20f, OffsetType.ABSOLUTE));
@@ -555,10 +554,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDifferentCornersToBottomRightTest() {
         String gradientValue = "linear-gradient(to bottom right, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, -20f, OffsetType.ABSOLUTE));
@@ -575,10 +574,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDifferentDegPositiveTest() {
         String gradientValue = "linear-gradient(41deg, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, -20f, OffsetType.ABSOLUTE));
@@ -595,10 +594,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDifferentDegNegativeTest() {
         String gradientValue = "linear-gradient(-41deg, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, -20f, OffsetType.ABSOLUTE));
@@ -615,10 +614,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDifferentDegZeroTest() {
         String gradientValue = "linear-gradient(0deg, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, -20f, OffsetType.ABSOLUTE));
@@ -635,10 +634,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDifferentRadPositiveTest() {
         String gradientValue = "linear-gradient(0.5rad, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, -20f, OffsetType.ABSOLUTE));
@@ -655,10 +654,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDifferentRadNegativeTest() {
         String gradientValue = "linear-gradient(-0.5rad, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, -20f, OffsetType.ABSOLUTE));
@@ -675,10 +674,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDifferentRadZeroTest() {
         String gradientValue = "linear-gradient(0rad, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, -20f, OffsetType.ABSOLUTE));
@@ -695,10 +694,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDifferentGradPositiveTest() {
         String gradientValue = "linear-gradient(41grad, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, -20f, OffsetType.ABSOLUTE));
@@ -715,10 +714,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDifferentGradNegativeTest() {
         String gradientValue = "linear-gradient(-41grad, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, -20f, OffsetType.ABSOLUTE));
@@ -735,10 +734,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDifferentGradZeroTest() {
         String gradientValue = "linear-gradient(0grad, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, -20f, OffsetType.ABSOLUTE));
@@ -756,12 +755,12 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDifferentTurnPositiveTest() {
         String gradientValue = "linear-gradient(0.17turn, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
-        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+        Exception e = Assertions.assertThrows(StyledXMLParserException.class,
                 () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12)
         );
-        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "0.17turn"),
+        Assertions.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "0.17turn"),
                 e.getMessage());
     }
 
@@ -770,12 +769,12 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDifferentTurnNegativeTest() {
         String gradientValue = "linear-gradient(-0.17turn, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
-        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+        Exception e = Assertions.assertThrows(StyledXMLParserException.class,
                 () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12)
         );
-        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "-0.17turn"),
+        Assertions.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "-0.17turn"),
                 e.getMessage());
     }
 
@@ -784,12 +783,12 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDifferentTurnZeroTest() {
         String gradientValue = "linear-gradient(0turn, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
-        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+        Exception e = Assertions.assertThrows(StyledXMLParserException.class,
                 () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12)
         );
-        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "0turn"),
+        Assertions.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "0turn"),
                 e.getMessage());
     }
 
@@ -797,10 +796,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatingLinearGradDifferentSidesLeftTest() {
         String gradientValue = "repeating-linear-gradient(to left, orange -20pt, red 0%, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, -20f, OffsetType.ABSOLUTE));
@@ -816,10 +815,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatingLinearGradDifferentSidesRightTest() {
         String gradientValue = "repeating-linear-gradient(to right, orange -20pt, red 0%, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, -20f, OffsetType.ABSOLUTE));
@@ -835,10 +834,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatingLinearGradDifferentSidesBottomTest() {
         String gradientValue = "repeating-linear-gradient(to bottom, orange -20pt, red 0%, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, -20f, OffsetType.ABSOLUTE));
@@ -854,10 +853,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatingLinearGradDifferentSidesTopTest() {
         String gradientValue = "repeating-linear-gradient(to top, orange -20pt, red 0%, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, -20f, OffsetType.ABSOLUTE));
@@ -873,10 +872,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatingLinearGradDifferentCornersToLeftTopTest() {
         String gradientValue = "repeating-linear-gradient(to left top, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, -20f, OffsetType.ABSOLUTE));
@@ -893,10 +892,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatingLinearGradDifferentCornersToTopLeftTest() {
         String gradientValue = "repeating-linear-gradient(to top left, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, -20f, OffsetType.ABSOLUTE));
@@ -913,10 +912,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatingLinearGradDifferentCornersToLeftBottomTest() {
         String gradientValue = "repeating-linear-gradient(to left bottom, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, -20f, OffsetType.ABSOLUTE));
@@ -933,10 +932,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatingLinearGradDifferentCornersToBottomLeftTest() {
         String gradientValue = "repeating-linear-gradient(to bottom left, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, -20f, OffsetType.ABSOLUTE));
@@ -953,10 +952,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatingLinearGradDifferentCornersToRightTopTest() {
         String gradientValue = "repeating-linear-gradient(to right top, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, -20f, OffsetType.ABSOLUTE));
@@ -973,10 +972,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatingLinearGradDifferentCornersToTopRightTest() {
         String gradientValue = "repeating-linear-gradient(to top right, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, -20f, OffsetType.ABSOLUTE));
@@ -993,10 +992,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatingLinearGradDifferentCornersToRightBottomTest() {
         String gradientValue = "repeating-linear-gradient(to right bottom, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, -20f, OffsetType.ABSOLUTE));
@@ -1013,10 +1012,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatingLinearGradDifferentCornersToBottomRightTest() {
         String gradientValue = "repeating-linear-gradient(to bottom right, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, -20f, OffsetType.ABSOLUTE));
@@ -1033,10 +1032,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatingLinearGradDifferentDegPositiveTest() {
         String gradientValue = "repeating-linear-gradient(41deg, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, -20f, OffsetType.ABSOLUTE));
@@ -1053,10 +1052,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatingLinearGradDifferentDegNegativeTest() {
         String gradientValue = "repeating-linear-gradient(-41deg, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, -20f, OffsetType.ABSOLUTE));
@@ -1073,10 +1072,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatingLinearGradDifferentDegZeroTest() {
         String gradientValue = "repeating-linear-gradient(0deg, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, -20f, OffsetType.ABSOLUTE));
@@ -1093,10 +1092,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatingLinearGradDifferentRadPositiveTest() {
         String gradientValue = "repeating-linear-gradient(0.5rad, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, -20f, OffsetType.ABSOLUTE));
@@ -1113,10 +1112,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatingLinearGradDifferentRadNegativeTest() {
         String gradientValue = "repeating-linear-gradient(-0.5rad, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, -20f, OffsetType.ABSOLUTE));
@@ -1133,10 +1132,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatingLinearGradDifferentRadZeroTest() {
         String gradientValue = "repeating-linear-gradient(0rad, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, -20f, OffsetType.ABSOLUTE));
@@ -1153,10 +1152,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatingLinearGradDifferentGradPositiveTest() {
         String gradientValue = "repeating-linear-gradient(41grad, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, -20f, OffsetType.ABSOLUTE));
@@ -1173,10 +1172,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatingLinearGradDifferentGradNegativeTest() {
         String gradientValue = "repeating-linear-gradient(-41grad, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, -20f, OffsetType.ABSOLUTE));
@@ -1193,10 +1192,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatingLinearGradDifferentGradZeroTest() {
         String gradientValue = "repeating-linear-gradient(0grad, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, -20f, OffsetType.ABSOLUTE));
@@ -1214,12 +1213,12 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatingLinearGradDifferentTurnPositiveTest() {
         String gradientValue = "repeating-linear-gradient(0.17turn, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
-        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+        Exception e = Assertions.assertThrows(StyledXMLParserException.class,
                 () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12)
         );
-        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "0.17turn"),
+        Assertions.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "0.17turn"),
                 e.getMessage());
     }
 
@@ -1228,12 +1227,12 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatingLinearGradDifferentTurnNegativeTest() {
         String gradientValue = "repeating-linear-gradient(-0.17turn, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
-        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+        Exception e = Assertions.assertThrows(StyledXMLParserException.class,
                 () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12)
         );
-        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "-0.17turn"),
+        Assertions.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "-0.17turn"),
                 e.getMessage());
     }
 
@@ -1242,12 +1241,12 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatingLinearGradDifferentTurnZeroTest() {
         String gradientValue = "repeating-linear-gradient(0turn, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
-        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+        Exception e = Assertions.assertThrows(StyledXMLParserException.class,
                 () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12)
         );
-        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "0turn"),
+        Assertions.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "0turn"),
                 e.getMessage());
     }
 
@@ -1255,10 +1254,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDiffColorNameTest() {
         String gradientValue = "linear-gradient(red, green, blue)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 0f, 0f}, 0f, OffsetType.RELATIVE));
@@ -1273,10 +1272,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDiffColorHexTest() {
         String gradientValue = "linear-gradient(#ff0000, #008000, #0000ff)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 0f, 0f}, 0f, OffsetType.RELATIVE));
@@ -1291,10 +1290,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDiffColorRGBTest() {
         String gradientValue = "linear-gradient(rgb(255, 0, 0), rgb(0, 128, 0), rgb(0, 0, 255))";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 0f, 0f}, 0f, OffsetType.RELATIVE));
@@ -1309,10 +1308,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDiffColorRGBaTest() {
         String gradientValue = "linear-gradient(rgba(255, 0, 0, 1),  rgba(0, 128, 0, 1), rgba(0, 0, 255, 1))";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 0f, 0f}, 0f, OffsetType.RELATIVE));
@@ -1327,10 +1326,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradComplexArgsLeftTopTest() {
         String gradientValue = "linear-gradient(to left top, red, green, blue)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 0f, 0f}, 0f, OffsetType.RELATIVE));
@@ -1345,10 +1344,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradComplexArgsLeftTopRGBTest() {
         String gradientValue = "linear-gradient(to left top, red, rgb(0, 127, 0), blue)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 0f, 0f}, 0f, OffsetType.RELATIVE));
@@ -1363,10 +1362,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradComplexArgsLeftTopRGBOffsetsHintsTest() {
         String gradientValue = "linear-gradient(to left top, red 10% 20%, 30%, rgb(0, 127, 0) 80%, blue)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 0f, 0f}, 0.1f, OffsetType.RELATIVE));
@@ -1383,10 +1382,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatingLinearGradDiffColorNameTest() {
         String gradientValue = "repeating-linear-gradient(red, green, blue)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 0f, 0f}, 0f, OffsetType.RELATIVE));
@@ -1401,10 +1400,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatingLinearGradDiffColorHexTest() {
         String gradientValue = "repeating-linear-gradient(#ff0000, #008000, #0000ff)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 0f, 0f}, 0f, OffsetType.RELATIVE));
@@ -1419,10 +1418,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatingLinearGradDiffColorRGBTest() {
         String gradientValue = "repeating-linear-gradient(rgb(255, 0, 0), rgb(0, 128, 0), rgb(0, 0, 255))";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 0f, 0f}, 0f, OffsetType.RELATIVE));
@@ -1437,10 +1436,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatingLinearGradDiffColorRGBaTest() {
         String gradientValue = "repeating-linear-gradient(rgba(255, 0, 0, 1),  rgba(0, 128, 0, 1), rgba(0, 0, 255, 1))";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 0f, 0f}, 0f, OffsetType.RELATIVE));
@@ -1455,10 +1454,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatingLinearGradComplexArgsLeftTopTest() {
         String gradientValue = "repeating-linear-gradient(to left top, red, green, blue)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 0f, 0f}, 0f, OffsetType.RELATIVE));
@@ -1473,10 +1472,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatingLinearGradComplexArgsLeftTopRGBTest() {
         String gradientValue = "repeating-linear-gradient(to left top, red, rgb(0, 127, 0), blue)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 0f, 0f}, 0f, OffsetType.RELATIVE));
@@ -1491,10 +1490,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatingLinearGradComplexArgsLeftTopRGBOffsetsHintsTest() {
         String gradientValue = "repeating-linear-gradient(to left top, red 10% 20%, 30%, rgb(0, 127, 0) 80%, blue)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 0f, 0f}, 0.1f, OffsetType.RELATIVE));
@@ -1511,10 +1510,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDiffMetricsAbsoluteCMTest() {
         String gradientValue = "linear-gradient(to right, orange 3cm, red 3cm, green 9cm, blue 9cm)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, (float) ((3 / 2.54) * 72), OffsetType.ABSOLUTE));
@@ -1531,10 +1530,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDiffMetricsAbsoluteMMTest() {
         String gradientValue = "linear-gradient(to right, orange 3mm, red 3mm, green 9mm, blue 9mm)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, (float) ((3f / 25.4) * 72), OffsetType.ABSOLUTE));
@@ -1551,10 +1550,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDiffMetricsAbsoluteQTest() {
         String gradientValue = "linear-gradient(to right, orange 30Q, red 30Q, green 90Q, blue 90Q)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, (float) ((30f/2.54)*72/40), OffsetType.ABSOLUTE));
@@ -1571,10 +1570,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDiffMetricsAbsoluteInTest() {
         String gradientValue = "linear-gradient(to right, orange 1in, red 1in, green 3in, blue 3in)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, 1*72f, OffsetType.ABSOLUTE));
@@ -1591,10 +1590,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDiffMetricsAbsolutePcTest() {
         String gradientValue = "linear-gradient(to right, orange 10pc, red 10pc, green 30pc, blue 30pc)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, 10*12f, OffsetType.ABSOLUTE));
@@ -1611,10 +1610,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDiffMetricsAbsolutePtTest() {
         String gradientValue = "linear-gradient(to right, orange 100pt, red 100pt, green 300pt, blue 300pt)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, 100f, OffsetType.ABSOLUTE));
@@ -1631,10 +1630,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDiffMetricsAbsolutePxTest() {
         String gradientValue = "linear-gradient(to right, orange 100px, red 100px, green 300px, blue 300px)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, 100*0.75f, OffsetType.ABSOLUTE));
@@ -1651,10 +1650,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDiffMetricsFontRelatedEmTest() {
         String gradientValue = "linear-gradient(to right, orange 3em, red 3em, green 9em, blue 9em)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, 3*12f, OffsetType.ABSOLUTE));
@@ -1671,10 +1670,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDiffMetricsFontRelatedRemTest() {
         String gradientValue = "linear-gradient(to right, orange 3rem, red 3rem, green 9rem, blue 9rem)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, 3*12f, OffsetType.ABSOLUTE));
@@ -1691,10 +1690,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDiffMetricsFontRelatedExTest() {
         String gradientValue = "linear-gradient(to right, orange 3ex, red 3ex, green 9ex, blue 9ex)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, 3*6f, OffsetType.ABSOLUTE));
@@ -1712,12 +1711,12 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDiffMetricsFontRelatedChTest() {
         String gradientValue = "linear-gradient(to right, orange 3ch, red 3ch, green 9ch, blue 9ch)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
-        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+        Exception e = Assertions.assertThrows(StyledXMLParserException.class,
                 () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12)
         );
-        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 3ch"),
+        Assertions.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 3ch"),
                 e.getMessage());
     }
 
@@ -1726,12 +1725,12 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDiffMetricsFontRelatedVhTest() {
         String gradientValue = "linear-gradient(to right, orange 3vh, red 3vh, green 9vh, blue 9vh)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
-        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+        Exception e = Assertions.assertThrows(StyledXMLParserException.class,
                 () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12)
         );
-        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 3vh"),
+        Assertions.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 3vh"),
                 e.getMessage());
     }
 
@@ -1740,12 +1739,12 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDiffMetricsViewPortVwTest() {
         String gradientValue = "linear-gradient(to right, orange 3vw, red 3vw, green 9vw, blue 9vw)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
-        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+        Exception e = Assertions.assertThrows(StyledXMLParserException.class,
                 () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12)
         );
-        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 3vw"),
+        Assertions.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 3vw"),
                 e.getMessage());
     }
 
@@ -1754,12 +1753,12 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDiffMetricsViewPortVminTest() {
         String gradientValue = "linear-gradient(to right, orange 3vmin, red 3vmin, green 9vmin, blue 9vmin)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
-        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+        Exception e = Assertions.assertThrows(StyledXMLParserException.class,
                 () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12)
         );
-        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 3vmin"),
+        Assertions.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 3vmin"),
                 e.getMessage());
     }
 
@@ -1768,12 +1767,12 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDiffMetricsViewPortVmaxTest() {
         String gradientValue = "linear-gradient(to right, orange 3vmax, red 3vmax, green 9vmax, blue 9vmax)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
-        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+        Exception e = Assertions.assertThrows(StyledXMLParserException.class,
                 () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12)
         );
-        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 3vmax"),
+        Assertions.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 3vmax"),
                 e.getMessage());
     }
 
@@ -1781,10 +1780,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatLinearGradDiffMetricsAbsoluteCMTest() {
         String gradientValue = "repeating-linear-gradient(to right, orange 3cm, red 3cm, green 9cm, blue 9cm)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, (float) ((3 / 2.54) * 72), OffsetType.ABSOLUTE));
@@ -1801,10 +1800,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatLinearGradDiffMetricsAbsoluteMMTest() {
         String gradientValue = "repeating-linear-gradient(to right, orange 3mm, red 3mm, green 9mm, blue 9mm)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, (float) ((3f / 25.4) * 72), OffsetType.ABSOLUTE));
@@ -1821,10 +1820,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatLinearGradDiffMetricsAbsoluteQTest() {
         String gradientValue = "repeating-linear-gradient(to right, orange 30Q, red 30Q, green 90Q, blue 90Q)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, (float) ((30f/2.54)*72/40), OffsetType.ABSOLUTE));
@@ -1841,10 +1840,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatLinearGradDiffMetricsAbsoluteInTest() {
         String gradientValue = "repeating-linear-gradient(to right, orange 1in, red 1in, green 3in, blue 3in)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, 1*72f, OffsetType.ABSOLUTE));
@@ -1861,10 +1860,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatLinearGradDiffMetricsAbsolutePcTest() {
         String gradientValue = "repeating-linear-gradient(to right, orange 10pc, red 10pc, green 30pc, blue 30pc)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, 10*12f, OffsetType.ABSOLUTE));
@@ -1881,10 +1880,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatLinearGradDiffMetricsAbsolutePtTest() {
         String gradientValue = "repeating-linear-gradient(to right, orange 100pt, red 100pt, green 300pt, blue 300pt)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, 100f, OffsetType.ABSOLUTE));
@@ -1901,10 +1900,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatLinearGradDiffMetricsAbsolutePxTest() {
         String gradientValue = "repeating-linear-gradient(to right, orange 100px, red 100px, green 300px, blue 300px)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, 100*0.75f, OffsetType.ABSOLUTE));
@@ -1921,10 +1920,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatLinearGradDiffMetricsFontRelatedEmTest() {
         String gradientValue = "repeating-linear-gradient(to right, orange 3em, red 3em, green 9em, blue 9em)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, 3*12f, OffsetType.ABSOLUTE));
@@ -1941,10 +1940,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatLinearGradDiffMetricsFontRelatedRemTest() {
         String gradientValue = "repeating-linear-gradient(to right, orange 3rem, red 3rem, green 9rem, blue 9rem)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, 3*12f, OffsetType.ABSOLUTE));
@@ -1961,10 +1960,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatLinearGradDiffMetricsFontRelatedExTest() {
         String gradientValue = "repeating-linear-gradient(to right, orange 3ex, red 3ex, green 9ex, blue 9ex)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, 3*6f, OffsetType.ABSOLUTE));
@@ -1982,12 +1981,12 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatLinearGradDiffMetricsFontRelatedChTest() {
         String gradientValue = "repeating-linear-gradient(to right, orange 3ch, red 3ch, green 9ch, blue 9ch)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
-        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+        Exception e = Assertions.assertThrows(StyledXMLParserException.class,
                 () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12)
         );
-        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 3ch"),
+        Assertions.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 3ch"),
                 e.getMessage());
     }
 
@@ -1996,12 +1995,12 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatLinearGradDiffMetricsFontRelatedVhTest() {
         String gradientValue = "repeating-linear-gradient(to right, orange 3vh, red 3vh, green 9vh, blue 9vh)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
-        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+        Exception e = Assertions.assertThrows(StyledXMLParserException.class,
                 () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12)
         );
-        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 3vh"),
+        Assertions.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 3vh"),
                 e.getMessage());
     }
 
@@ -2010,12 +2009,12 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatLinearGradDiffMetricsViewPortVwTest() {
         String gradientValue = "repeating-linear-gradient(to right, orange 3vw, red 3vw, green 9vw, blue 9vw)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
-        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+        Exception e = Assertions.assertThrows(StyledXMLParserException.class,
                 () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12)
         );
-        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 3vw"),
+        Assertions.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 3vw"),
                 e.getMessage());
     }
 
@@ -2024,12 +2023,12 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatLinearGradDiffMetricsViewPortVminTest() {
         String gradientValue = "repeating-linear-gradient(to right, orange 3vmin, red 3vmin, green 9vmin, blue 9vmin)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
-        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+        Exception e = Assertions.assertThrows(StyledXMLParserException.class,
                 () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12)
         );
-        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 3vmin"),
+        Assertions.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 3vmin"),
                 e.getMessage());
     }
 
@@ -2038,12 +2037,12 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatLinearGradDiffMetricsViewPortVmaxTest() {
         String gradientValue = "repeating-linear-gradient(to right, orange 3vmax, red 3vmax, green 9vmax, blue 9vmax)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
-        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+        Exception e = Assertions.assertThrows(StyledXMLParserException.class,
                 () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12)
         );
-        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 3vmax"),
+        Assertions.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 3vmax"),
                 e.getMessage());
     }
 
@@ -2051,10 +2050,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDiffOffsetStartEndInsideTest() {
         String gradientValue = "linear-gradient(to right, orange 100pt, red 150pt, green 200pt, blue 250pt)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, 100, OffsetType.ABSOLUTE));
@@ -2070,10 +2069,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDiffOffsetStartEndOutTest() {
         String gradientValue = "linear-gradient(to right, orange -100pt, red 150pt, green 200pt, blue 750pt)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, -100, OffsetType.ABSOLUTE));
@@ -2089,10 +2088,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDiffOffsetAutoStartEndMiddleElementsOutRangeTest() {
         String gradientValue = "linear-gradient(to right, orange, red -20%, green 120%, blue)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, 0, OffsetType.RELATIVE));
@@ -2108,10 +2107,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDiffOffsetAutoBetweenAbsoluteRelativeTest() {
         String gradientValue = "linear-gradient(to right, orange, red 300pt, green, blue 80%, black)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, 0, OffsetType.RELATIVE));
@@ -2128,10 +2127,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDiffOffsetAutoBetweenRelativeHintTest() {
         String gradientValue = "linear-gradient(to right, orange, red 10%, lime, 80%, blue 80.5%, black)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, 0, OffsetType.RELATIVE));
@@ -2149,10 +2148,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDiffOffsetHintBetweenAutosTest() {
         String gradientValue = "linear-gradient(to right, orange 10%, red, lime, 40%, blue, black 90%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, 0.1f, OffsetType.RELATIVE));
@@ -2170,10 +2169,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDiffOffsetSmallHintTest() {
         String gradientValue = "linear-gradient(to right, orange, 1%, blue)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, 0, OffsetType.RELATIVE)
@@ -2188,10 +2187,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDiffOffsetNegativeHintTest() {
         String gradientValue = "linear-gradient(to right, orange, -100pt, blue)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, 0, OffsetType.RELATIVE)
@@ -2206,10 +2205,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDiffOffsetHintTest() {
         String gradientValue = "linear-gradient(to right, orange, 100pt, blue)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, 0, OffsetType.RELATIVE)
@@ -2224,10 +2223,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void linearGradDiffMultipleOffsetsTest() {
         String gradientValue = "linear-gradient(to right, orange 10%, blue 60% 70%, black 90%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, 0.1f, OffsetType.RELATIVE));
@@ -2243,10 +2242,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatingLinearGradDiffOffsetStartEndInsideTest() {
         String gradientValue = "repeating-linear-gradient(to right, orange 100pt, red 150pt, green 200pt, blue 250pt)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, 100, OffsetType.ABSOLUTE));
@@ -2262,10 +2261,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatingLinearGradDiffOffsetStartEndOutTest() {
         String gradientValue = "repeating-linear-gradient(to right, orange -100pt, red 150pt, green 200pt, blue 750pt)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, -100, OffsetType.ABSOLUTE));
@@ -2281,10 +2280,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatingLinearGradDiffOffsetAutoStartEndMiddleElementsOutRangeTest() {
         String gradientValue = "repeating-linear-gradient(to right, orange, red -20%, green 120%, blue)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, 0, OffsetType.RELATIVE));
@@ -2300,10 +2299,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatingLinearGradDiffOffsetAutoBetweenAbsoluteRelativeTest() {
         String gradientValue = "repeating-linear-gradient(to right, orange, red 300pt, green, blue 80%, black)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, 0, OffsetType.RELATIVE));
@@ -2320,10 +2319,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatingLinearGradDiffOffsetAutoBetweenRelativeHintTest() {
         String gradientValue = "repeating-linear-gradient(to right, orange, red 10%, lime, 80%, blue 80.5%, black)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, 0, OffsetType.RELATIVE));
@@ -2341,10 +2340,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatingLinearGradDiffOffsetHintBetweenAutosTest() {
         String gradientValue = "repeating-linear-gradient(to right, orange 10%, red, lime, 40%, blue, black 90%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, 0.1f, OffsetType.RELATIVE));
@@ -2362,10 +2361,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatingLinearGradDiffOffsetSmallHintTest() {
         String gradientValue = "repeating-linear-gradient(to right, orange, 1%, blue)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, 0, OffsetType.RELATIVE)
@@ -2380,10 +2379,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatingLinearGradDiffOffsetNegativeHintTest() {
         String gradientValue = "repeating-linear-gradient(to right, orange, -100pt, blue)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, 0, OffsetType.RELATIVE)
@@ -2398,10 +2397,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatingLinearGradDiffOffsetHintTest() {
         String gradientValue = "repeating-linear-gradient(to right, orange, 100pt, blue)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, 0, OffsetType.RELATIVE)
@@ -2416,10 +2415,10 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     public void repeatingLinearGradDiffMultipleOffsetsTest() {
         String gradientValue = "repeating-linear-gradient(to right, orange 10%, blue 60% 70%, black 90%)";
 
-        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        Assertions.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
         StrategyBasedLinearGradientBuilder gradientBuilder = CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12);
-        Assert.assertNotNull(gradientBuilder);
+        Assertions.assertNotNull(gradientBuilder);
 
         List<GradientColorStop> colorStops = new ArrayList<>();
         colorStops.add(new GradientColorStop(new float[]{1f, 165f/255f, 0f}, 0.1f, OffsetType.RELATIVE));
@@ -2435,18 +2434,18 @@ public class CssGradientUtilTest extends ExtendedITextTest {
             boolean isCentralRotationStrategy, double rotateVectorAngle,
             GradientStrategy gradientStrategy, GradientSpreadMethod spreadMethod,
             List<GradientColorStop> stops) {
-        Assert.assertTrue(gradientBuilder instanceof StrategyBasedLinearGradientBuilder);
+        Assertions.assertTrue(gradientBuilder instanceof StrategyBasedLinearGradientBuilder);
 
         StrategyBasedLinearGradientBuilder builder = (StrategyBasedLinearGradientBuilder) gradientBuilder;
-        Assert.assertEquals(isCentralRotationStrategy, builder.isCentralRotationAngleStrategy());
-        Assert.assertEquals(rotateVectorAngle, builder.getRotateVectorAngle(), 1e-10);
-        Assert.assertEquals(gradientStrategy, builder.getGradientStrategy());
-        Assert.assertEquals(spreadMethod, builder.getSpreadMethod());
+        Assertions.assertEquals(isCentralRotationStrategy, builder.isCentralRotationAngleStrategy());
+        Assertions.assertEquals(rotateVectorAngle, builder.getRotateVectorAngle(), 1e-10);
+        Assertions.assertEquals(gradientStrategy, builder.getGradientStrategy());
+        Assertions.assertEquals(spreadMethod, builder.getSpreadMethod());
 
         List<GradientColorStop> actualStops = builder.getColorStops();
-        Assert.assertEquals(stops.size(), actualStops.size());
+        Assertions.assertEquals(stops.size(), actualStops.size());
         for (int i = 0; i < stops.size(); ++i) {
-            Assert.assertEquals(stops.get(i), actualStops.get(i));
+            Assertions.assertEquals(stops.get(i), actualStops.get(i));
         }
     }
 }

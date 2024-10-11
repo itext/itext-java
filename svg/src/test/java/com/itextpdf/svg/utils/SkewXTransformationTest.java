@@ -28,13 +28,12 @@ import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class SkewXTransformationTest extends ExtendedITextTest {
 
     @Test
@@ -42,23 +41,23 @@ public class SkewXTransformationTest extends ExtendedITextTest {
         AffineTransform expected = new AffineTransform(1d, 0d, Math.tan(Math.toRadians((float) CssDimensionParsingUtils.parseFloat("143"))), 1d, 0d, 0d);
         AffineTransform actual = TransformUtils.parseTransform("skewX(143)");
 
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
     public void noSkewXValuesTest() {
-        Exception e = Assert.assertThrows(SvgProcessingException.class,
+        Exception e = Assertions.assertThrows(SvgProcessingException.class,
                 () -> TransformUtils.parseTransform("skewX()")
         );
-        Assert.assertEquals(SvgExceptionMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES, e.getMessage());
+        Assertions.assertEquals(SvgExceptionMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES, e.getMessage());
     }
 
     @Test
     public void twoSkewXValuesTest() {
-        Exception e = Assert.assertThrows(SvgProcessingException.class,
+        Exception e = Assertions.assertThrows(SvgProcessingException.class,
                 () -> TransformUtils.parseTransform("skewX(1 2)")
         );
-        Assert.assertEquals(SvgExceptionMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES, e.getMessage());
+        Assertions.assertEquals(SvgExceptionMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES, e.getMessage());
     }
 
     @Test
@@ -66,14 +65,14 @@ public class SkewXTransformationTest extends ExtendedITextTest {
         AffineTransform expected = new AffineTransform(1d, 0d, Math.tan(Math.toRadians((float) CssDimensionParsingUtils.parseFloat("-26"))), 1d, 0d, 0d);
         AffineTransform actual = TransformUtils.parseTransform("skewX(-26)");
 
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
     @Test
     public void ninetyDegreesTest() {
         AffineTransform expected = new AffineTransform(1d, 0d, Math.tan(Math.toRadians((float) CssDimensionParsingUtils.parseFloat("90"))), 1d, 0d, 0d);
         AffineTransform actual = TransformUtils.parseTransform("skewX(90)");
 
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
 }

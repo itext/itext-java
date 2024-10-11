@@ -24,8 +24,8 @@ package com.itextpdf.forms.fields;
 
 import com.itextpdf.forms.fields.properties.CheckBoxType;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -35,15 +35,14 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayOutputStream;
 import java.util.List;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class CheckBoxFormFieldBuilderTest extends ExtendedITextTest {
     private static final PdfDocument DUMMY_DOCUMENT = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
     private static final String DUMMY_NAME = "dummy name";
@@ -53,8 +52,8 @@ public class CheckBoxFormFieldBuilderTest extends ExtendedITextTest {
     public void constructorTest() {
         CheckBoxFormFieldBuilder builder = new CheckBoxFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
 
-        Assert.assertSame(DUMMY_DOCUMENT, builder.getDocument());
-        Assert.assertSame(DUMMY_NAME, builder.getFormFieldName());
+        Assertions.assertSame(DUMMY_DOCUMENT, builder.getDocument());
+        Assertions.assertSame(DUMMY_NAME, builder.getFormFieldName());
     }
 
     @Test
@@ -62,7 +61,7 @@ public class CheckBoxFormFieldBuilderTest extends ExtendedITextTest {
         CheckBoxFormFieldBuilder builder = new CheckBoxFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
         builder.setCheckType(CheckBoxType.DIAMOND);
 
-        Assert.assertEquals(CheckBoxType.DIAMOND, builder.getCheckType());
+        Assertions.assertEquals(CheckBoxType.DIAMOND, builder.getCheckType());
     }
 
     @Test
@@ -84,7 +83,7 @@ public class CheckBoxFormFieldBuilderTest extends ExtendedITextTest {
     @Test
     public void createCheckBoxWithConformanceLevelTest() {
         PdfButtonFormField checkBoxFormField = new CheckBoxFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME)
-                .setWidgetRectangle(DUMMY_RECTANGLE).setGenericConformanceLevel(PdfAConformanceLevel.PDF_A_1A)
+                .setWidgetRectangle(DUMMY_RECTANGLE).setConformance(PdfConformance.PDF_A_1A)
                 .createCheckBox();
 
         compareCheckBoxes(checkBoxFormField, true);
@@ -96,17 +95,17 @@ public class CheckBoxFormFieldBuilderTest extends ExtendedITextTest {
         List<PdfWidgetAnnotation> widgets = checkBoxFormField.getWidgets();
 
         if (widgetExpected) {
-            Assert.assertEquals(1, widgets.size());
+            Assertions.assertEquals(1, widgets.size());
 
             PdfWidgetAnnotation annotation = widgets.get(0);
 
-            Assert.assertTrue(DUMMY_RECTANGLE.equalsWithEpsilon(annotation.getRectangle().toRectangle()));
+            Assertions.assertTrue(DUMMY_RECTANGLE.equalsWithEpsilon(annotation.getRectangle().toRectangle()));
 
             PdfArray kids = new PdfArray();
             kids.add(annotation.getPdfObject());
             putIfAbsent(expectedDictionary, PdfName.Kids, kids);
         } else {
-            Assert.assertEquals(0, widgets.size());
+            Assertions.assertEquals(0, widgets.size());
         }
 
         putIfAbsent(expectedDictionary, PdfName.FT, PdfName.Btn);
@@ -115,7 +114,7 @@ public class CheckBoxFormFieldBuilderTest extends ExtendedITextTest {
 
         expectedDictionary.makeIndirect(DUMMY_DOCUMENT);
         checkBoxFormField.makeIndirect(DUMMY_DOCUMENT);
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareDictionariesStructure(expectedDictionary, checkBoxFormField.getPdfObject()));
     }
 

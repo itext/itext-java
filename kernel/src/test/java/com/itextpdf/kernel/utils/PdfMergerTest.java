@@ -32,32 +32,31 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 import org.xml.sax.SAXException;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfMergerTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/utils/PdfMergerTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/utils/PdfMergerTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -87,7 +86,7 @@ public class PdfMergerTest extends ExtendedITextTest {
 
         pdfDoc3.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(resultFile, sourceFolder + "cmp_mergedResult01.pdf", destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(resultFile, sourceFolder + "cmp_mergedResult01.pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -104,7 +103,7 @@ public class PdfMergerTest extends ExtendedITextTest {
         resultDocument.close();
         sourceDocument.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(resultFile, sourceFolder + "cmp_mergeDocumentOutlinesWithNullDestinationTest01.pdf", destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(resultFile, sourceFolder + "cmp_mergeDocumentOutlinesWithNullDestinationTest01.pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -118,7 +117,7 @@ public class PdfMergerTest extends ExtendedITextTest {
             PdfMerger merger = new PdfMerger(pdfDocument2);
             merger.merge(pdfDocument1, 1, pdfDocument1.getNumberOfPages());
         }
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareByContent(resultFile, sourceFolder + "cmp_resultFileWithoutStackOverflow.pdf",
                         destinationFolder, "diff_"));
     }
@@ -137,7 +136,7 @@ public class PdfMergerTest extends ExtendedITextTest {
 
         merger.merge(pdfDoc, 1, 1).close();
 
-        Assert.assertNull(new CompareTool().compareByContent(resultFile, sourceFolder + "cmp_mergedDocumentWithLinkAnnotation.pdf", destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(resultFile, sourceFolder + "cmp_mergedDocumentWithLinkAnnotation.pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -160,7 +159,23 @@ public class PdfMergerTest extends ExtendedITextTest {
 
         merger.merge(pdfDoc, 1, 1).merge(pdfDoc1, 1, 1).merge(pdfDoc2, 1, 1).close();
 
-        Assert.assertNull(new CompareTool().compareByContent(resultFile, sourceFolder + "cmp_mergedResult02.pdf", destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(resultFile, sourceFolder + "cmp_mergedResult02.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void mergeDocumentWithCycleTagReferenceTest() throws IOException, InterruptedException {
+        String filename1 = sourceFolder + "doc1.pdf";
+        String filename2 = sourceFolder + "pdfWithCycleRefInParentTag.pdf";
+        String resultFile = destinationFolder + "pdfWithCycleRefInParentTag.pdf";
+        try (PdfDocument pdfDocument1 = new PdfDocument(new PdfReader(filename2));
+             PdfDocument pdfDocument2 = new PdfDocument(new PdfReader(filename1),
+                     CompareTool.createTestPdfWriter(resultFile).setSmartMode(true));) {
+            PdfMerger merger = new PdfMerger(pdfDocument2);
+            merger.merge(pdfDocument1, 1, pdfDocument1.getNumberOfPages());
+        }
+        Assertions.assertNull(
+                new CompareTool().compareByContent(resultFile, sourceFolder + "cmp_pdfWithCycleRefInParentTag.pdf",
+                        destinationFolder, "diff_"));
     }
 
     @Test
@@ -197,7 +212,7 @@ public class PdfMergerTest extends ExtendedITextTest {
         errorMessage += tagStructErrorMessage == null ? "" : tagStructErrorMessage + "\n";
         errorMessage += contentErrorMessage == null ? "" : contentErrorMessage;
         if (!errorMessage.isEmpty()) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -244,7 +259,7 @@ public class PdfMergerTest extends ExtendedITextTest {
         errorMessage += tagStructErrorMessage == null ? "" : tagStructErrorMessage + "\n";
         errorMessage += contentErrorMessage == null ? "" : contentErrorMessage;
         if (!errorMessage.isEmpty()) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -344,7 +359,7 @@ public class PdfMergerTest extends ExtendedITextTest {
         sources.add(new File(secondPageFilename));
         mergePdfs(sources, resultFilename, new PdfMergerProperties(), false);
 
-        Assert.assertNull(new CompareTool().compareTagStructures(resultFilename, cmpFilename));
+        Assertions.assertNull(new CompareTool().compareTagStructures(resultFilename, cmpFilename));
     }
 
     @Test
@@ -368,7 +383,7 @@ public class PdfMergerTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(resultFile, sourceFolder + "cmp_mergeOutlinesNamedDestinations.pdf", destinationFolder, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -388,7 +403,7 @@ public class PdfMergerTest extends ExtendedITextTest {
         sources.add(new File(pdfAcro2));
         mergePdfs(sources, outFileName, false);
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
     @Test
@@ -408,7 +423,7 @@ public class PdfMergerTest extends ExtendedITextTest {
         sources.add(new File(pdfWithOCG2));
         mergePdfs(sources, outPdf, false);
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
     }
 
     @Test
@@ -426,7 +441,7 @@ public class PdfMergerTest extends ExtendedITextTest {
         sources.add(new File(pdfWithOCG2));
         mergePdfs(sources, outPdf, false);
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
     }
 
     @Test
@@ -454,7 +469,7 @@ public class PdfMergerTest extends ExtendedITextTest {
         merger.close();
         mergedDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
     }
 
     @Test
@@ -473,7 +488,7 @@ public class PdfMergerTest extends ExtendedITextTest {
         merger.close();
         mergedDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
     }
 
     @Test
@@ -489,7 +504,7 @@ public class PdfMergerTest extends ExtendedITextTest {
         merger.merge(pdfWithOCGToMerge, 1, pdfWithOCGToMerge.getNumberOfPages());
         pdfWithOCGToMerge.close();
         pdfWithOCG.close();
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
     }
 
     @Test
@@ -503,13 +518,13 @@ public class PdfMergerTest extends ExtendedITextTest {
         PdfDocument outputDoc = new PdfDocument(CompareTool.createTestPdfWriter(
                 destinationFolder + "infiniteLoopInOutlineStructure.pdf"));
 
-        PdfMerger merger = new PdfMerger(outputDoc, false, true);
+        PdfMerger merger = new PdfMerger(outputDoc, new PdfMergerProperties().setMergeTags(false).setMergeOutlines(true));
         System.out.println("Doing merge");
         merger.merge(inputDoc, 1, 2);
         merger.close();
         System.out.println("Merge done");
 
-        Assert.assertNull(new CompareTool().compareByContent(
+        Assertions.assertNull(new CompareTool().compareByContent(
                 destinationFolder + "infiniteLoopInOutlineStructure.pdf",
                 sourceFolder + "cmp_infiniteLoopInOutlineStructure.pdf", destinationFolder));
     }
@@ -532,7 +547,7 @@ public class PdfMergerTest extends ExtendedITextTest {
         merger.close();
         output.close();
 
-        Assert.assertNull(new CompareTool().compareTagStructures(dest, cmp));
+        Assertions.assertNull(new CompareTool().compareTagStructures(dest, cmp));
     }
 
     @Test
@@ -544,7 +559,7 @@ public class PdfMergerTest extends ExtendedITextTest {
         try (PdfDocument merged = new PdfDocument(CompareTool.createTestPdfWriter(mergedPdf));
                 PdfDocument fileA = new PdfDocument(new PdfReader(firstDocument));
                 PdfDocument fileB = new PdfDocument(new PdfReader(secondDocument))) {
-            PdfMerger merger = new PdfMerger(merged, false, true);
+            PdfMerger merger = new PdfMerger(merged, new PdfMergerProperties().setMergeTags(false).setMergeOutlines(true));
 
             merger.merge(fileA, 1, fileA.getNumberOfPages());
             merger.merge(fileB, 1, fileB.getNumberOfPages());
@@ -552,7 +567,7 @@ public class PdfMergerTest extends ExtendedITextTest {
             merger.close();
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(mergedPdf, cmpDocument, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(mergedPdf, cmpDocument, destinationFolder));
     }
 
     @Test
@@ -565,14 +580,14 @@ public class PdfMergerTest extends ExtendedITextTest {
         try (PdfDocument documentA = new PdfDocument(new PdfReader(firstDocument));
                 PdfDocument documentB = new PdfDocument(new PdfReader(secondDocument));
                 PdfDocument merged = new PdfDocument(CompareTool.createTestPdfWriter(mergedPdf))) {
-            PdfMerger merger = new PdfMerger(merged, false, true);
+            PdfMerger merger = new PdfMerger(merged, new PdfMergerProperties().setMergeTags(false).setMergeOutlines(true));
 
             merger.merge(documentA, 1, documentA.getNumberOfPages());
             merger.merge(documentB, 1, documentB.getNumberOfPages());
             merger.close();
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(mergedPdf, cmpPdf, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(mergedPdf, cmpPdf, destinationFolder));
     }
 
     @Test
@@ -585,14 +600,14 @@ public class PdfMergerTest extends ExtendedITextTest {
         try (PdfDocument documentA = new PdfDocument(new PdfReader(firstPdfDocument));
                 PdfDocument documentB = new PdfDocument(new PdfReader(secondPdfDocument));
                 PdfDocument mergedPdf = new PdfDocument(CompareTool.createTestPdfWriter(mergedDocument))) {
-            PdfMerger merger = new PdfMerger(mergedPdf, false, true);
+            PdfMerger merger = new PdfMerger(mergedPdf, new PdfMergerProperties().setMergeTags(false).setMergeOutlines(true));
             merger.merge(documentA, 1, documentA.getNumberOfPages());
             merger.merge(documentB, 1, documentB.getNumberOfPages());
 
             merger.close();
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
     }
 
     @Test
@@ -607,9 +622,9 @@ public class PdfMergerTest extends ExtendedITextTest {
         sources.add(new File(secondPdfDocument));
         mergePdfs(sources, mergedDocument, true);
 
-        Assert.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
         // We have to compare visually also because compareByContent doesn't catch the differences in OCGs with the same names
-        Assert.assertNull(new CompareTool().compareVisually(mergedDocument, cmpDocument, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareVisually(mergedDocument, cmpDocument, destinationFolder, "diff_"));
     }
 
     @Test
@@ -628,7 +643,7 @@ public class PdfMergerTest extends ExtendedITextTest {
         sources.add(new File(secondPdfDocument));
         mergePdfs(sources, mergedDocument, true);
 
-        Assert.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
     }
 
     @Test
@@ -637,8 +652,8 @@ public class PdfMergerTest extends ExtendedITextTest {
     })
     public void mergePdfWithMissingStructElemBeginningOfTreeTest() throws IOException, InterruptedException {
         String name = "structParentMissingFirstElement.pdf";
-        Assert.assertNotNull(mergeSinglePdfAndGetResultingStructTreeRoot(name));
-        Assert.assertNull(new CompareTool().compareByContent(
+        Assertions.assertNotNull(mergeSinglePdfAndGetResultingStructTreeRoot(name));
+        Assertions.assertNull(new CompareTool().compareByContent(
                 destinationFolder + name,
                 sourceFolder + "cmp_" + name, destinationFolder));
     }
@@ -650,8 +665,8 @@ public class PdfMergerTest extends ExtendedITextTest {
     })
     public void mergePdfWithMissingStructElemEndOfTreeTest() throws IOException, InterruptedException {
         String name = "structParentMissingLastElement.pdf";
-        Assert.assertNotNull(mergeSinglePdfAndGetResultingStructTreeRoot(name));
-        Assert.assertNull(new CompareTool().compareByContent(
+        Assertions.assertNotNull(mergeSinglePdfAndGetResultingStructTreeRoot(name));
+        Assertions.assertNull(new CompareTool().compareByContent(
                 destinationFolder + name,
                 sourceFolder + "cmp_" + name, destinationFolder));
     }
@@ -663,8 +678,8 @@ public class PdfMergerTest extends ExtendedITextTest {
     })
     public void mergePdfAllObjectsMissingStructParentTest() throws IOException, InterruptedException {
         String name = "allObjectsHaveStructParent.pdf";
-        Assert.assertNotNull(mergeSinglePdfAndGetResultingStructTreeRoot(name));
-        Assert.assertNull(new CompareTool().compareByContent(
+        Assertions.assertNotNull(mergeSinglePdfAndGetResultingStructTreeRoot(name));
+        Assertions.assertNull(new CompareTool().compareByContent(
                 destinationFolder + name,
                 sourceFolder + "cmp_" + name, destinationFolder));
     }
@@ -675,8 +690,8 @@ public class PdfMergerTest extends ExtendedITextTest {
     })
     public void mergePdfChildObjectsOfSameStructElemMissingStructParentTest() throws IOException, InterruptedException {
         String name = "SameStructElemNoParent.pdf";
-        Assert.assertNotNull(mergeSinglePdfAndGetResultingStructTreeRoot(name));
-        Assert.assertNull(new CompareTool().compareByContent(
+        Assertions.assertNotNull(mergeSinglePdfAndGetResultingStructTreeRoot(name));
+        Assertions.assertNull(new CompareTool().compareByContent(
                 destinationFolder + name,
                 sourceFolder + "cmp_" + name, destinationFolder));
     }
@@ -693,7 +708,7 @@ public class PdfMergerTest extends ExtendedITextTest {
         sources.add(new File(secondPdfDocument));
         mergePdfs(sources, mergedDocument, new PdfMergerProperties().setMergeScripts(true), true);
 
-        Assert.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
     }
 
     @Test
@@ -708,7 +723,7 @@ public class PdfMergerTest extends ExtendedITextTest {
         sources.add(new File(firstPdfDocument));
         sources.add(new File(secondPdfDocument));
         mergePdfs(sources, mergedDocument, new PdfMergerProperties().setMergeScripts(true), true);
-        Assert.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
     }
 
     @Test
@@ -723,7 +738,7 @@ public class PdfMergerTest extends ExtendedITextTest {
         sources.add(new File(secondPdfDocument));
         mergePdfs(sources, mergedDocument, new PdfMergerProperties().setMergeScripts(true), true);
 
-        Assert.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
     }
 
     @Test
@@ -738,7 +753,7 @@ public class PdfMergerTest extends ExtendedITextTest {
         sources.add(new File(secondPdfDocument));
         mergePdfs(sources, mergedDocument, new PdfMergerProperties().setMergeScripts(true), true);
 
-        Assert.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
     }
 
     @Test
@@ -753,7 +768,7 @@ public class PdfMergerTest extends ExtendedITextTest {
         sources.add(new File(secondPdfDocument));
         mergePdfs(sources, mergedDocument, new PdfMergerProperties().setMergeScripts(true), true);
 
-        Assert.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
     }
 
     @Test
@@ -768,7 +783,7 @@ public class PdfMergerTest extends ExtendedITextTest {
         sources.add(new File(firstPdfDocument));
         sources.add(new File(secondPdfDocument));
         mergePdfs(sources, mergedDocument, new PdfMergerProperties().setMergeScripts(true), true);
-        Assert.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
     }
 
     @Test
@@ -783,7 +798,7 @@ public class PdfMergerTest extends ExtendedITextTest {
         sources.add(new File(secondPdfDocument));
         mergePdfs(sources, mergedDocument, new PdfMergerProperties().setMergeScripts(true), true);
 
-        Assert.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
     }
 
 
@@ -799,7 +814,7 @@ public class PdfMergerTest extends ExtendedITextTest {
         sources.add(new File(secondPdfDocument));
         mergePdfs(sources, mergedDocument, new PdfMergerProperties().setMergeScripts(true), true);
 
-        Assert.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
     }
 
     @Test
@@ -814,7 +829,7 @@ public class PdfMergerTest extends ExtendedITextTest {
         sources.add(new File(secondPdfDocument));
         mergePdfs(sources, mergedDocument, new PdfMergerProperties().setMergeScripts(true), true);
 
-        Assert.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
     }
 
     @Test
@@ -829,7 +844,7 @@ public class PdfMergerTest extends ExtendedITextTest {
         sources.add(new File(secondPdfDocument));
         mergePdfs(sources, mergedDocument, new PdfMergerProperties().setMergeScripts(true), true);
 
-        Assert.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
     }
 
     @Test
@@ -844,7 +859,7 @@ public class PdfMergerTest extends ExtendedITextTest {
         sources.add(new File(secondPdfDocument));
         mergePdfs(sources, mergedDocument, new PdfMergerProperties().setMergeScripts(true), true);
 
-        Assert.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
     }
 
     @Test
@@ -859,7 +874,7 @@ public class PdfMergerTest extends ExtendedITextTest {
         sources.add(new File(firstPdfDocument));
         sources.add(new File(secondPdfDocument));
         mergePdfs(sources, mergedDocument, new PdfMergerProperties().setMergeScripts(true), true);
-        Assert.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
     }
 
     @Test
@@ -874,7 +889,7 @@ public class PdfMergerTest extends ExtendedITextTest {
 
         merger.merge(pdfDoc, 1, 1).close();
 
-        Assert.assertNull(new CompareTool().compareByContent(resultFile, sourceFolder + "cmp_mergedEmptyOcPropertiesDoc.pdf", destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(resultFile, sourceFolder + "cmp_mergedEmptyOcPropertiesDoc.pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -889,7 +904,35 @@ public class PdfMergerTest extends ExtendedITextTest {
 
         merger.merge(pdfDoc, 1, 1).close();
 
-        Assert.assertNull(new CompareTool().compareByContent(resultFile, sourceFolder + "cmp_mergedOcPropertiesDoc.pdf", destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(resultFile, sourceFolder + "cmp_mergedOcPropertiesDoc.pdf", destinationFolder, "diff_"));
+    }
+
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
+    })
+    @Test
+    public void combineTagRootKidsTest() throws IOException, InterruptedException {
+        String filename1 = sourceFolder + "tagRootKidsDoc1.pdf";
+        String filename2 = sourceFolder + "tagRootKidsDoc2.pdf";
+        String resultFile = destinationFolder + "mergedTags.pdf";
+
+        PdfDocument result = new PdfDocument(CompareTool.createTestPdfWriter(resultFile));
+
+        PdfMerger merger = new PdfMerger(result, new PdfMergerProperties().setMergeTags(true).setMergeOutlines(true))
+                .setCloseSourceDocuments(true);
+
+        PdfDocument input1 = new PdfDocument(new PdfReader(filename1));
+        merger.merge(input1, 1, 1);
+        input1.close();
+
+        PdfDocument input2 = new PdfDocument(new PdfReader(filename2));
+        merger.merge(input2, 1, 1);
+        input2.close();
+
+        merger.close();
+
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(resultFile, sourceFolder + "cmp_mergedTags.pdf", destinationFolder, "diff_"));
     }
 
     private PdfDictionary mergeSinglePdfAndGetResultingStructTreeRoot(String pathToMerge)

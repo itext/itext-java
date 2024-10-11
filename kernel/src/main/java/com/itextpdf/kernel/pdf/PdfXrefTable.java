@@ -22,18 +22,17 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.commons.actions.data.ProductData;
-import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.commons.actions.EventManager;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteUtils;
-import com.itextpdf.kernel.actions.data.ITextCoreProductData;
+import com.itextpdf.kernel.actions.events.AddFingerPrintEvent;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.validation.context.XrefTableValidationContext;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -186,28 +185,6 @@ public class PdfXrefTable {
     }
 
     /**
-     * Convenience method to write the fingerprint preceding the trailer.
-     * The fingerprint contains information on iText products used in the generation or manipulation
-     * of an outputted PDF file.
-     *
-     * @param document pdfDocument to write the fingerprint to
-     */
-    protected static void writeKeyInfo(PdfDocument document) {
-        PdfWriter writer = document.getWriter();
-
-        final Collection<ProductData> products = document.getFingerPrint().getProducts();
-        if (products.isEmpty()) {
-            writer.writeString(MessageFormatUtil
-                    .format("%iText-{0}-no-registered-products\n", ITextCoreProductData.getInstance().getVersion()));
-        } else {
-            for (ProductData productData : products) {
-                writer.writeString(MessageFormatUtil
-                        .format("%iText-{0}-{1}\n", productData.getPublicProductName(), productData.getVersion()));
-            }
-        }
-    }
-
-    /**
      * Creates next available indirect reference.
      *
      * @param document is the current {@link PdfDocument document}
@@ -306,7 +283,7 @@ public class PdfXrefTable {
             return;
         }
 
-        document.checkIsoConformance(this, IsoKey.XREF_TABLE);
+        document.checkIsoConformance(new XrefTableValidationContext(this));
 
         long startxref = writer.getCurrentPos();
         long xRefStmPos = -1;
@@ -320,7 +297,9 @@ public class PdfXrefTable {
             int offsetSize = getOffsetSize(Math.max(startxref, size()));
             xrefStream.put(PdfName.W, new PdfArray(
                     Arrays.asList((PdfObject) new PdfNumber(1), new PdfNumber(offsetSize), new PdfNumber(2))));
-            xrefStream.put(PdfName.Info, document.getDocumentInfo().getPdfObject());
+            if (document.getTrailer().get(PdfName.Info) != null) {
+                xrefStream.put(PdfName.Info, document.getTrailer().get(PdfName.Info));
+            }
             xrefStream.put(PdfName.Root, document.getCatalog().getPdfObject());
             PdfArray index = new PdfArray();
             for (Integer section : sections) {
@@ -402,8 +381,10 @@ public class PdfXrefTable {
             if (xRefStmPos != -1) {
                 trailer.put(PdfName.XRefStm, new PdfNumber(xRefStmPos));
             }
-            if (crypto != null)
+            if (crypto != null) {
                 trailer.put(PdfName.Encrypt, crypto);
+            }
+
             writer.writeString("trailer\n");
             if (document.properties.appendMode) {
                 PdfNumber lastXref = new PdfNumber(document.reader.getLastXref());
@@ -412,7 +393,7 @@ public class PdfXrefTable {
             writer.write(document.getTrailer());
             writer.write('\n');
         }
-        writeKeyInfo(document);
+        EventManager.getInstance().onEvent(new AddFingerPrintEvent(document));
         writer.writeString("startxref\n").
                 writeLong(startxref).
                 writeString("\n%%EOF\n");

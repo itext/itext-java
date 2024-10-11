@@ -25,12 +25,11 @@ package com.itextpdf.kernel.pdf.annot;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfFreeTextAnnotationTest extends ExtendedITextTest {
 
     @Test
@@ -38,14 +37,14 @@ public class PdfFreeTextAnnotationTest extends ExtendedITextTest {
         PdfFreeTextAnnotation freeTextAnnotation = new PdfFreeTextAnnotation(new Rectangle(0, 0, 100, 50),
                 new PdfString("content"));
         freeTextAnnotation.setRotation(135);
-        Assert.assertEquals(135, freeTextAnnotation.getRotation().intValue());
+        Assertions.assertEquals(135, freeTextAnnotation.getRotation().intValue());
     }
 
     @Test
     public void setAndGetJustificationTest() {
         PdfFreeTextAnnotation freeTextAnnotation = new PdfFreeTextAnnotation(new Rectangle(0, 0, 100, 50), null);
-        Assert.assertEquals(PdfFreeTextAnnotation.LEFT_JUSTIFIED, freeTextAnnotation.getJustification());
+        Assertions.assertEquals(PdfFreeTextAnnotation.LEFT_JUSTIFIED, freeTextAnnotation.getJustification());
         freeTextAnnotation.setJustification(PdfFreeTextAnnotation.CENTERED);
-        Assert.assertEquals(PdfFreeTextAnnotation.CENTERED, freeTextAnnotation.getJustification());
+        Assertions.assertEquals(PdfFreeTextAnnotation.CENTERED, freeTextAnnotation.getJustification());
     }
 }

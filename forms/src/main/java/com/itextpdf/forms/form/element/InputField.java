@@ -108,6 +108,10 @@ public class InputField extends FormField<InputField> implements IPlaceholderabl
                 return (T1) (Object) false;
             case FormProperty.FORM_FIELD_SIZE:
                 return (T1) (Object) 20;
+            case FormProperty.TEXT_FIELD_COMB_FLAG:
+                return (T1) (Object) false;
+            case FormProperty.TEXT_FIELD_MAX_LEN:
+                return (T1) (Object) 0;
             default:
                 return super.<T1>getDefaultProperty(property);
         }
@@ -126,9 +130,9 @@ public class InputField extends FormField<InputField> implements IPlaceholderabl
      * Set rotation of the input field.
      *
      * @param rotation new rotation value, counterclockwise. Must be a multiple of 90 degrees.
-     *                 It has sense only in interactive mode, see {@link FormField#setInteractive}.
+     *                 It has sense only in interactive mode, see {@link FormField#setInteractive}
      *
-     * @return the edited {@link InputField}.
+     * @return the edited {@link InputField}
      */
     public InputField setRotation(int rotation) {
         if (rotation % 90 != 0) {
@@ -136,6 +140,35 @@ public class InputField extends FormField<InputField> implements IPlaceholderabl
         }
 
         this.rotation = rotation;
+        return this;
+    }
+
+    /**
+     * Sets {@code Comb} flag for the text field. Meaningful only if the MaxLen entry is present in the text field
+     * dictionary and if the Multiline, Password and FileSelect flags are clear.
+     *
+     * <p>
+     * If true, the field is automatically divided into as many equally spaced positions, or combs,
+     * as the value of MaxLen, and the text is laid out into those combs.
+     *
+     * @param isComb boolean value specifying whether to enable combing
+     *
+     * @return this {@link InputField} instance
+     */
+    public InputField setComb(boolean isComb) {
+        setProperty(FormProperty.TEXT_FIELD_COMB_FLAG, isComb);
+        return this;
+    }
+
+    /**
+     * Sets the maximum length of the field's text, in characters.
+     *
+     * @param maxLen the current maximum text length
+     *
+     * @return this {@link InputField} instance
+     */
+    public InputField setMaxLen(int maxLen) {
+        setProperty(FormProperty.TEXT_FIELD_MAX_LEN, maxLen);
         return this;
     }
 

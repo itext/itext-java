@@ -27,17 +27,16 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public abstract class AbstractPdfType0FunctionTest extends ExtendedITextTest {
 
     protected static final double DELTA = 1e-12;
@@ -64,7 +63,7 @@ public abstract class AbstractPdfType0FunctionTest extends ExtendedITextTest {
 
         double[] actual = pdfFunction.calculate(new double[] {0, 10, -99});
 
-        Assert.assertArrayEquals(expected, actual, DELTA);
+        Assertions.assertArrayEquals(expected, actual, DELTA);
     }
 
     @Test
@@ -88,7 +87,7 @@ public abstract class AbstractPdfType0FunctionTest extends ExtendedITextTest {
             double[] expected = stream.mapToDouble(x -> x).toArray();
             double[] actual = pdfFunction.calculate(new double[] {argument});
 
-            Assert.assertArrayEquals(expected, actual, DELTA);
+            Assertions.assertArrayEquals(expected, actual, DELTA);
         }
     }
 
@@ -112,7 +111,7 @@ public abstract class AbstractPdfType0FunctionTest extends ExtendedITextTest {
             double[] expected = function.apply(argument).stream().mapToDouble(x -> x).toArray();
             double[] actual = pdfFunction.calculate(new double[] {argument});
 
-            Assert.assertArrayEquals(expected, actual, DELTA);
+            Assertions.assertArrayEquals(expected, actual, DELTA);
         }
     }
 
@@ -144,7 +143,7 @@ public abstract class AbstractPdfType0FunctionTest extends ExtendedITextTest {
             double[] expected = function.apply(argument).stream().mapToDouble(d -> d).toArray();
             double[] actual = pdfFunction.calculate(argument.stream().mapToDouble(d -> d).toArray());
 
-            Assert.assertArrayEquals(expected, actual, DELTA);
+            Assertions.assertArrayEquals(expected, actual, DELTA);
         }
     }
 
@@ -171,7 +170,7 @@ public abstract class AbstractPdfType0FunctionTest extends ExtendedITextTest {
             double[] actual = pdfFunction.calculate(new double[] {argument});
 
             for (int i = 0; i < expectedDelta.length; ++i) {
-                Assert.assertEquals(expected[i], actual[i], expectedDelta[i]);
+                Assertions.assertEquals(expected[i], actual[i], expectedDelta[i]);
             }
         }
     }
@@ -206,7 +205,7 @@ public abstract class AbstractPdfType0FunctionTest extends ExtendedITextTest {
             double[] actual = pdfFunction.calculate(new double[] {argument});
 
             for (int i = 0; i < expectedDelta.length; ++i) {
-                Assert.assertEquals(expected[i], actual[i], expectedDelta[i]);
+                Assertions.assertEquals(expected[i], actual[i], expectedDelta[i]);
             }
         }
     }
@@ -240,7 +239,7 @@ public abstract class AbstractPdfType0FunctionTest extends ExtendedITextTest {
             double[] actual = pdfFunction.calculate(argument.stream().mapToDouble(d -> d).toArray());
 
             for (int i = 0; i < expectedDelta.length; ++i) {
-                Assert.assertEquals(expected[i], actual[i], expectedDelta[i]);
+                Assertions.assertEquals(expected[i], actual[i], expectedDelta[i]);
             }
         }
     }
@@ -280,7 +279,7 @@ public abstract class AbstractPdfType0FunctionTest extends ExtendedITextTest {
             double[] actual = pdfFunction.calculate(argument.stream().mapToDouble(d -> d).toArray());
 
             for (int i = 0; i < expectedDelta.length; ++i) {
-                Assert.assertEquals(expected[i], actual[i], expectedDelta[i]);
+                Assertions.assertEquals(expected[i], actual[i], expectedDelta[i]);
             }
         }
     }
@@ -302,7 +301,7 @@ public abstract class AbstractPdfType0FunctionTest extends ExtendedITextTest {
             double expected = function.apply((double) i);
             double actual = pdfFunction.calculate(new double[] {i})[0];
 
-            Assert.assertEquals(expected, actual, delta);
+            Assertions.assertEquals(expected, actual, delta);
         }
     }
 
@@ -327,7 +326,7 @@ public abstract class AbstractPdfType0FunctionTest extends ExtendedITextTest {
         for (double argument : arguments) {
             double expected = function.apply(argument);
             double actual = pdfFunction.calculate(new double[] {argument})[0];
-            Assert.assertEquals(expected, actual, delta);
+            Assertions.assertEquals(expected, actual, delta);
         }
     }
 
@@ -352,7 +351,7 @@ public abstract class AbstractPdfType0FunctionTest extends ExtendedITextTest {
         for (double argument : arguments) {
             double expected = function.apply(argument);
             double actual = pdfFunction.calculate(new double[] {argument})[0];
-            Assert.assertEquals(expected, actual, delta);
+            Assertions.assertEquals(expected, actual, delta);
         }
     }
 
@@ -376,7 +375,7 @@ public abstract class AbstractPdfType0FunctionTest extends ExtendedITextTest {
                 double expected = function.apply(Arrays.asList(x, y));
                 double actual = pdfFunction.calculate(new double[] {x, y})[0];
 
-                Assert.assertEquals(expected, actual, delta);
+                Assertions.assertEquals(expected, actual, delta);
             }
         }
     }

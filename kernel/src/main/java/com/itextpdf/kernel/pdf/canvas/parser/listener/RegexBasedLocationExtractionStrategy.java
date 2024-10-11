@@ -40,11 +40,27 @@ import java.util.regex.Pattern;
 
 /**
  * This class is designed to search for the occurrences of a regular expression and return the resultant rectangles.
+ * Do note that this class holds all text locations and can't be used for processing multiple pages.
+ * If you want to extract text from several pages of pdf document you have to create a new instance
+ * of {@link RegexBasedLocationExtractionStrategy} for each page.
+ * <p>
+ * Here is an example of usage with new instance per each page:
+ * <code>
+ *         PdfDocument document = new PdfDocument(new PdfReader("..."));
+ *         for (int i = 1; i &lt;= document.getNumberOfPages(); ++i) {
+ *             RegexBasedLocationExtractionStrategy extractionStrategy = new RegexBasedLocationExtractionStrategy("");
+ *             PdfCanvasProcessor processor = new PdfCanvasProcessor(extractionStrategy);
+ *             processor.processPageContent(document.getPage(i));
+ *             for (IPdfTextLocation location : extractionStrategy.getResultantLocations()) {
+ *                 //process locations ...
+ *              }
+ *         }
+ * </code>
  */
 public class RegexBasedLocationExtractionStrategy implements ILocationExtractionStrategy {
     private static final float EPS = 1.0E-4F;
-    private Pattern pattern;
-    private List<CharacterRenderInfo> parseResult = new ArrayList<>();
+    private final Pattern pattern;
+    private final List<CharacterRenderInfo> parseResult = new ArrayList<>();
 
     public RegexBasedLocationExtractionStrategy(String regex) {
         this.pattern = Pattern.compile(regex);
@@ -54,6 +70,9 @@ public class RegexBasedLocationExtractionStrategy implements ILocationExtraction
         this.pattern = pattern;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Collection<IPdfTextLocation> getResultantLocations() {
         // align characters in "logical" order
@@ -70,7 +89,7 @@ public class RegexBasedLocationExtractionStrategy implements ILocationExtraction
             Integer endIndex = getEndIndex(txt.indexMap, mat.end() - 1);
             if (startIndex != null && endIndex != null && startIndex <= endIndex) {
                 for (Rectangle r : toRectangles(parseResult.subList(startIndex.intValue(), endIndex.intValue() + 1))) {
-                    retval.add(new DefaultPdfTextLocation(0, r, mat.group(0)));
+                    retval.add(new DefaultPdfTextLocation(r, mat.group(0)));
                 }
             }
         }
@@ -88,29 +107,20 @@ public class RegexBasedLocationExtractionStrategy implements ILocationExtraction
         return retval;
     }
 
-    private void removeDuplicates(List<IPdfTextLocation> sortedList) {
-        IPdfTextLocation lastItem = null;
-        int orgSize = sortedList.size();
-        for (int i = orgSize - 1; i >= 0; i--) {
-            IPdfTextLocation currItem = sortedList.get(i);
-            Rectangle currRect = currItem.getRectangle();
-            if (lastItem != null && currRect.equalsWithEpsilon(lastItem.getRectangle())) {
-                sortedList.remove(currItem);
-            }
-            lastItem = currItem;
-        }
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void eventOccurred(IEventData data, EventType type) {
-        if (data instanceof TextRenderInfo) {
-            parseResult.addAll(toCRI((TextRenderInfo) data));
-        }
+        parseResult.addAll(toCRI((TextRenderInfo) data));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Set<EventType> getSupportedEvents() {
-        return null;
+        return Collections.singleton(EventType.RENDER_TEXT);
     }
 
     /**
@@ -169,6 +179,19 @@ public class RegexBasedLocationExtractionStrategy implements ILocationExtraction
         return retval;
     }
 
+    private void removeDuplicates(List<IPdfTextLocation> sortedList) {
+        IPdfTextLocation lastItem = null;
+        int orgSize = sortedList.size();
+        for (int i = orgSize - 1; i >= 0; i--) {
+            IPdfTextLocation currItem = sortedList.get(i);
+            Rectangle currRect = currItem.getRectangle();
+            if (lastItem != null && currRect.equalsWithEpsilon(lastItem.getRectangle())) {
+                sortedList.remove(currItem);
+            }
+            lastItem = currItem;
+        }
+    }
+    
     private static Integer getStartIndex(Map<Integer, Integer> indexMap, int index,
             String txt) {
         while (!indexMap.containsKey(index) && index < txt.length()) {

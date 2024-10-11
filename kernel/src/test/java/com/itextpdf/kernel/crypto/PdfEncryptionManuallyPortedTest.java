@@ -50,7 +50,6 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -60,11 +59,11 @@ import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 
 /**
@@ -79,7 +78,7 @@ import org.junit.experimental.categories.Category;
  * Extension (JCE) Unlimited Strength Jurisdiction Policy Files. These JARs
  * are available for download from http://java.oracle.com/ in eligible countries.
  */
-@Category(BouncyCastleIntegrationTest.class)
+@Tag("BouncyCastleIntegrationTest")
 public class PdfEncryptionManuallyPortedTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
@@ -100,13 +99,13 @@ public class PdfEncryptionManuallyPortedTest extends ExtendedITextTest {
 
     private PrivateKey privateKey;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
         Security.addProvider(FACTORY.getProvider());
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -120,7 +119,7 @@ public class PdfEncryptionManuallyPortedTest extends ExtendedITextTest {
         int encryptionType = EncryptionConstants.STANDARD_ENCRYPTION_128;
         if (FACTORY.isInApprovedOnlyMode()) {
             // RSA PKCS1.5 encryption disallowed
-            Assert.assertThrows(AbstractFipsUnapprovedOperationError.class,
+            Assertions.assertThrows(AbstractFipsUnapprovedOperationError.class,
                     () -> encryptWithCertificate(filename, encryptionType, CompressionConstants.DEFAULT_COMPRESSION));
         } else {
             encryptWithCertificate(filename, encryptionType, CompressionConstants.DEFAULT_COMPRESSION);
@@ -136,7 +135,7 @@ public class PdfEncryptionManuallyPortedTest extends ExtendedITextTest {
         int encryptionType = EncryptionConstants.STANDARD_ENCRYPTION_40;
         if (FACTORY.isInApprovedOnlyMode()) {
             // RSA PKCS1.5 encryption disallowed
-            Assert.assertThrows(AbstractFipsUnapprovedOperationError.class,
+            Assertions.assertThrows(AbstractFipsUnapprovedOperationError.class,
                     () -> encryptWithCertificate(filename, encryptionType, CompressionConstants.DEFAULT_COMPRESSION));
         } else {
             encryptWithCertificate(filename, encryptionType, CompressionConstants.DEFAULT_COMPRESSION);
@@ -152,7 +151,7 @@ public class PdfEncryptionManuallyPortedTest extends ExtendedITextTest {
         int encryptionType = EncryptionConstants.STANDARD_ENCRYPTION_128;
         if (FACTORY.isInApprovedOnlyMode()) {
             // RSA PKCS1.5 encryption disallowed
-            Assert.assertThrows(AbstractFipsUnapprovedOperationError.class,
+            Assertions.assertThrows(AbstractFipsUnapprovedOperationError.class,
                     () -> encryptWithCertificate(filename, encryptionType, CompressionConstants.NO_COMPRESSION));
         } else {
             encryptWithCertificate(filename, encryptionType, CompressionConstants.NO_COMPRESSION);
@@ -168,7 +167,7 @@ public class PdfEncryptionManuallyPortedTest extends ExtendedITextTest {
         int encryptionType = EncryptionConstants.STANDARD_ENCRYPTION_40;
         if (FACTORY.isInApprovedOnlyMode()) {
             // RSA PKCS1.5 encryption disallowed
-            Assert.assertThrows(AbstractFipsUnapprovedOperationError.class,
+            Assertions.assertThrows(AbstractFipsUnapprovedOperationError.class,
                     () -> encryptWithCertificate(filename, encryptionType, CompressionConstants.NO_COMPRESSION));
         } else {
             encryptWithCertificate(filename, encryptionType, CompressionConstants.NO_COMPRESSION);
@@ -184,7 +183,7 @@ public class PdfEncryptionManuallyPortedTest extends ExtendedITextTest {
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_128;
         if (FACTORY.isInApprovedOnlyMode()) {
             // RSA PKCS1.5 encryption disallowed
-            Assert.assertThrows(AbstractFipsUnapprovedOperationError.class,
+            Assertions.assertThrows(AbstractFipsUnapprovedOperationError.class,
                     () -> encryptWithCertificate(filename, encryptionType, CompressionConstants.DEFAULT_COMPRESSION));
         } else {
             encryptWithCertificate(filename, encryptionType, CompressionConstants.DEFAULT_COMPRESSION);
@@ -200,7 +199,7 @@ public class PdfEncryptionManuallyPortedTest extends ExtendedITextTest {
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_256;
         if (FACTORY.isInApprovedOnlyMode()) {
             // RSA PKCS1.5 encryption disallowed
-            Assert.assertThrows(AbstractFipsUnapprovedOperationError.class,
+            Assertions.assertThrows(AbstractFipsUnapprovedOperationError.class,
                     () -> encryptWithCertificate(filename, encryptionType, CompressionConstants.DEFAULT_COMPRESSION));
         } else {
             encryptWithCertificate(filename, encryptionType, CompressionConstants.DEFAULT_COMPRESSION);
@@ -216,7 +215,7 @@ public class PdfEncryptionManuallyPortedTest extends ExtendedITextTest {
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_128;
         if (FACTORY.isInApprovedOnlyMode()) {
             // RSA PKCS1.5 encryption disallowed
-            Assert.assertThrows(AbstractFipsUnapprovedOperationError.class,
+            Assertions.assertThrows(AbstractFipsUnapprovedOperationError.class,
                     () -> encryptWithCertificate(filename, encryptionType, CompressionConstants.NO_COMPRESSION));
         } else {
             encryptWithCertificate(filename, encryptionType, CompressionConstants.NO_COMPRESSION);
@@ -232,7 +231,7 @@ public class PdfEncryptionManuallyPortedTest extends ExtendedITextTest {
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_256;
         if (FACTORY.isInApprovedOnlyMode()) {
             // RSA PKCS1.5 encryption disallowed
-            Assert.assertThrows(AbstractFipsUnapprovedOperationError.class,
+            Assertions.assertThrows(AbstractFipsUnapprovedOperationError.class,
                     () -> encryptWithCertificate(filename, encryptionType, CompressionConstants.NO_COMPRESSION));
         } else {
             encryptWithCertificate(filename, encryptionType, CompressionConstants.NO_COMPRESSION);
@@ -253,10 +252,10 @@ public class PdfEncryptionManuallyPortedTest extends ExtendedITextTest {
                                 FACTORY.getProviderName(),
                                 null))) {
 
-            Exception e = Assert.assertThrows(PdfException.class,
+            Exception e = Assertions.assertThrows(PdfException.class,
                     () -> new PdfDocument(reader)
             );
-            Assert.assertEquals(KernelExceptionMessageConstant.PDF_DECRYPTION, e.getMessage());
+            Assertions.assertEquals(KernelExceptionMessageConstant.PDF_DECRYPTION, e.getMessage());
         }
     }
 
@@ -271,7 +270,7 @@ public class PdfEncryptionManuallyPortedTest extends ExtendedITextTest {
                 new ReaderProperties().setPublicKeySecurityParams(cert, getPrivateKey(),
                         FACTORY.getProviderName(), null));
              PdfDocument document = new PdfDocument(reader)) {
-            Assert.assertFalse(document.getTrailer().getAsDictionary(PdfName.Encrypt).containsKey(PdfName.Length));
+            Assertions.assertFalse(document.getTrailer().getAsDictionary(PdfName.Encrypt).containsKey(PdfName.Length));
         }
     }
 
@@ -304,7 +303,7 @@ public class PdfEncryptionManuallyPortedTest extends ExtendedITextTest {
         String compareResult = compareTool.compareByContent(outFileName, sourceFolder + "cmp_" + filename,
                 destinationFolder, "diff_");
         if (compareResult != null) {
-            Assert.fail(compareResult);
+            Assertions.fail(compareResult);
         }
 
         checkEncryptedWithCertificateDocumentStamping(filename, cert);
@@ -334,10 +333,10 @@ public class PdfEncryptionManuallyPortedTest extends ExtendedITextTest {
         PdfPage page = document.getPage(1);
 
         String s = new String(page.getStreamBytes(0));
-        Assert.assertTrue("Expected content: \n" + pageContent, s.contains(pageContent));
-        Assert.assertEquals("Encrypted custom", customInfoEntryValue,
+        Assertions.assertTrue(s.contains(pageContent), "Expected content: \n" + pageContent);
+        Assertions.assertEquals(customInfoEntryValue,
                 document.getTrailer().getAsDictionary(PdfName.Info).getAsString(new PdfName(customInfoEntryKey))
-                        .toUnicodeString());
+                        .toUnicodeString(), "Encrypted custom");
 
         document.close();
     }
@@ -360,7 +359,7 @@ public class PdfEncryptionManuallyPortedTest extends ExtendedITextTest {
                 destinationFolder, "diff_");
 
         if (compareResult != null) {
-            Assert.fail(compareResult);
+            Assertions.fail(compareResult);
         }
     }
 
@@ -385,7 +384,7 @@ public class PdfEncryptionManuallyPortedTest extends ExtendedITextTest {
         PdfPage secondPage = appendedDoc.getPage(2);
         PdfString helloWorldPdfString = secondPage.getPdfObject().getAsString(PdfName.Default);
         String actualHelloWorldStringValue = helloWorldPdfString != null ? helloWorldPdfString.getValue() : null;
-        Assert.assertEquals(actualHelloWorldStringValue, helloWorldStringValue);
+        Assertions.assertEquals(actualHelloWorldStringValue, helloWorldStringValue);
         appendedDoc.close();
 
         CompareTool compareTool = new CompareTool().enableEncryptionCompare();
@@ -398,7 +397,7 @@ public class PdfEncryptionManuallyPortedTest extends ExtendedITextTest {
                 destinationFolder, "diff_");
 
         if (compareResult != null) {
-            Assert.fail(compareResult);
+            Assertions.fail(compareResult);
         }
     }
 

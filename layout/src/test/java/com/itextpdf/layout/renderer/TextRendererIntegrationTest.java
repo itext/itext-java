@@ -33,6 +33,7 @@ import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.TextRenderingMode;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.ColumnDocumentRenderer;
 import com.itextpdf.layout.Document;
@@ -51,26 +52,28 @@ import com.itextpdf.layout.properties.OverflowWrapPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.RenderingMode;
 import com.itextpdf.layout.properties.TextAlignment;
+import com.itextpdf.layout.properties.TransparentColor;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import java.nio.charset.StandardCharsets;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class TextRendererIntegrationTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/TextRendererIntegrationTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/TextRendererIntegrationTest/";
     public static final String fontsFolder = "./src/test/resources/com/itextpdf/layout/fonts/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
@@ -96,7 +99,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
     @Test
@@ -134,7 +137,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
     @Test
@@ -180,7 +183,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
     @Test
@@ -214,7 +217,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
     @Test
@@ -244,7 +247,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
     @Test
@@ -280,7 +283,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
     @Test
@@ -325,7 +328,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
     @Test
@@ -363,7 +366,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
     @Test
@@ -404,7 +407,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
         doc.add(p);
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
     @Test
@@ -441,7 +444,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
     @Test
@@ -485,7 +488,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
     @Test
@@ -526,7 +529,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
         doc.add(p);
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
     @Test
@@ -574,7 +577,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
     @Test
@@ -617,7 +620,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
     @Test
@@ -661,7 +664,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
     @Test
@@ -699,7 +702,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
         narrowDivWithTable.add(table);
         doc.add(narrowDivWithTable);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
     @Test
@@ -720,7 +723,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
         paragraph.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
         doc.add(paragraph);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
     @Test
@@ -772,7 +775,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
         doc.add(new Paragraph(text));
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
     @Test
@@ -792,7 +795,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
     @Test
@@ -816,7 +819,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
     @Test
@@ -839,7 +842,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
     @Test
@@ -860,7 +863,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
     @Test
@@ -875,7 +878,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc);
 
         FontProvider fontProvider = new FontProvider();
-        Assert.assertTrue(fontProvider.addFont(fontsFolder + "NotoSans-Regular.ttf"));
+        Assertions.assertTrue(fontProvider.addFont(fontsFolder + "NotoSans-Regular.ttf"));
 
         doc.setFontProvider(fontProvider);
         // To trigger font selector related logic one need to apply some font on a document
@@ -910,7 +913,115 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
         doc.add(new Paragraph(text));
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, count = 1)
+    })
+    public void drawWithSkewAndHorizontalScalingTest() {
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            Document doc = new Document(pdfDocument);
+            Text text = new Text("test string")
+                    .setTextRise(0)
+                    .setWordSpacing(0)
+                    .setSkew(10, 10)
+                    .setHorizontalScaling(2);
+            Paragraph paragraph = new Paragraph().add(text);
+            paragraph.setNextRenderer(new TextRenderer(text) {
+                @Override
+                public void draw(DrawContext drawContext) {
+                    drawContext.getCanvas()
+                            .saveState()
+                            .rectangle(occupiedArea.getBBox())
+                            .fill()
+                            .restoreState();
+                    super.draw(drawContext);
+                }
+
+                @Override
+                public IRenderer getNextRenderer() {
+                    return new TextRendererWithOverriddenGetNextRenderer((Text) modelElement);
+                }
+            });
+            doc.add(paragraph);
+            String contentstream = new String(doc.getPdfDocument().getPage(1).getContentBytes(),
+                    StandardCharsets.UTF_8);
+            Assertions.assertTrue(contentstream.contains("test string"));
+        }
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, count = 1)
+    })
+    public void drawTextRenderingModeFillStrokeTest() {
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            Document doc = new Document(pdfDocument);
+            Text text = new Text("test string")
+                    .setTextRenderingMode(TextRenderingMode.FILL_STROKE);
+            Paragraph paragraph = new Paragraph().add(text)
+                    .setBackgroundColor(ColorConstants.YELLOW)
+                    .setWidth(10)
+                    .setStrokeWidth(1f)
+                    .setStrokeColor(null)
+                    .setBorder(new SolidBorder(1));
+            paragraph.setNextRenderer(new TextRenderer(text) {
+                @Override
+                public void draw(DrawContext drawContext) {
+                    drawContext.getCanvas()
+                            .saveState()
+                            .rectangle(occupiedArea.getBBox())
+                            .fill()
+                            .restoreState();
+                    super.draw(drawContext);
+                }
+
+                @Override
+                public IRenderer getNextRenderer() {
+                    return new TextRendererWithOverriddenGetNextRenderer((Text) modelElement);
+                }
+            });
+            doc.add(paragraph);
+            String contentstream = new String(doc.getPdfDocument().getPage(1).getContentBytes(),
+                    StandardCharsets.UTF_8);
+            Assertions.assertTrue(contentstream.contains("test string"));
+        }
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, count = 1)
+    })
+    public void fontColorNullTest() {
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            Document doc = new Document(pdfDocument);
+            Text text = new Text("test string")
+                    .setTextRenderingMode(TextRenderingMode.FILL_STROKE);
+            Paragraph paragraph = new Paragraph().add(text);
+            paragraph.setNextRenderer(new TextRenderer(text) {
+                @Override
+                public void draw(DrawContext drawContext) {
+                    drawContext.getCanvas()
+                            .saveState()
+                            .rectangle(occupiedArea.getBBox())
+                            .fill()
+                            .restoreState();
+                    this.setProperty(Property.FONT_COLOR, new TransparentColor(ColorConstants.RED));
+                    super.draw(drawContext);
+                }
+
+                @Override
+                public IRenderer getNextRenderer() {
+                    return new TextRendererWithOverriddenGetNextRenderer((Text) modelElement);
+                }
+            });
+            doc.add(paragraph);
+            String contentstream = new String(doc.getPdfDocument().getPage(1).getContentBytes(),
+                    StandardCharsets.UTF_8);
+            Assertions.assertTrue(contentstream.contains("test string"));
+        }
     }
 
     private static class TextRendererWithOverriddenGetNextRenderer extends TextRenderer {

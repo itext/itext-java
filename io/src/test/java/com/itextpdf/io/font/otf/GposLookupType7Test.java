@@ -25,16 +25,15 @@ package com.itextpdf.io.font.otf;
 import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class GposLookupType7Test extends ExtendedITextTest {
     private static final String RESOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/font/otf/GposLookupType7Test/";
 
@@ -48,9 +47,9 @@ public class GposLookupType7Test extends ExtendedITextTest {
 
         GlyphLine gl = new GlyphLine(glyphs);
 
-        Assert.assertEquals(0, gl.get(1).getXAdvance());
-        Assert.assertTrue(lookup.transformLine(gl));
-        Assert.assertEquals(219, gl.get(1).getXAdvance());
+        Assertions.assertEquals(0, gl.get(1).getXAdvance());
+        Assertions.assertTrue(lookup.transformLine(gl));
+        Assertions.assertEquals(219, gl.get(1).getXAdvance());
     }
 
     @Test
@@ -63,10 +62,10 @@ public class GposLookupType7Test extends ExtendedITextTest {
 
         GlyphLine gl = new GlyphLine(glyphs);
 
-        Assert.assertFalse(lookup.transformLine(gl));
+        Assertions.assertFalse(lookup.transformLine(gl));
         for (int i = 0; i < gl.size(); i++) {
-            Assert.assertEquals(0, gl.get(i).getXAdvance());
-            Assert.assertEquals(0, gl.get(i).getYAdvance());
+            Assertions.assertEquals(0, gl.get(i).getXAdvance());
+            Assertions.assertEquals(0, gl.get(i).getYAdvance());
         }
     }
 

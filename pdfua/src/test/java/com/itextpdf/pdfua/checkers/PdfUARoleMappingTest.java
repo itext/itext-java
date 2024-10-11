@@ -50,23 +50,22 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfUARoleMappingTest extends ExtendedITextTest {
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/FreeSans.ttf";
 
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfua/PdfUARoleMappingTest/";
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfua/PdfUARoleMappingTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
@@ -81,8 +80,8 @@ public class PdfUARoleMappingTest extends ExtendedITextTest {
 
         TagTreePointer tagPointer = new TagTreePointer(pdfDoc).setPageForTagging(page1);
 
-        Exception e = Assert.assertThrows(PdfException.class, () -> tagPointer.addTag("chapter"));
-        Assert.assertEquals(
+        Exception e = Assertions.assertThrows(PdfException.class, () -> tagPointer.addTag("chapter"));
+        Assertions.assertEquals(
                 MessageFormatUtil.format(KernelExceptionMessageConstant.ROLE_IS_NOT_MAPPED_TO_ANY_STANDARD_ROLE, "chapter"),
                 e.getMessage());
     }
@@ -101,8 +100,8 @@ public class PdfUARoleMappingTest extends ExtendedITextTest {
 
         TagTreePointer tagPointer = new TagTreePointer(pdfDoc).setPageForTagging(page1);
 
-        Exception e = Assert.assertThrows(PdfException.class, () -> tagPointer.addTag("chapter"));
-        Assert.assertEquals(
+        Exception e = Assertions.assertThrows(PdfException.class, () -> tagPointer.addTag("chapter"));
+        Assertions.assertEquals(
                 MessageFormatUtil.format(KernelExceptionMessageConstant.ROLE_IS_NOT_MAPPED_TO_ANY_STANDARD_ROLE, "chapter"),
                 e.getMessage());
     }
@@ -120,8 +119,8 @@ public class PdfUARoleMappingTest extends ExtendedITextTest {
         // Although PDF/UA defines the nomenclature for heading levels above <H6> (<Hn>), these are not standard
         // structure types and therefore <Hn> tags must be role-mapped to a standard structure type.
         // According to PDF/UA-1, PDF/UA-conforming processors are expected to ignore such mappings and respect the heading level.
-        Exception e = Assert.assertThrows(PdfException.class, () -> tagPointer.addTag("H7"));
-        Assert.assertEquals(
+        Exception e = Assertions.assertThrows(PdfException.class, () -> tagPointer.addTag("H7"));
+        Assertions.assertEquals(
                 MessageFormatUtil.format(KernelExceptionMessageConstant.ROLE_IS_NOT_MAPPED_TO_ANY_STANDARD_ROLE, "H7"),
                 e.getMessage());
     }
@@ -139,8 +138,8 @@ public class PdfUARoleMappingTest extends ExtendedITextTest {
 
 
         // Another attempts of PDF/UA document creation with non-standard tags see in PdfUACanvasTest class
-        Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> canvas.openTag(new CanvasTag(new PdfName("chapter"))));
-        Assert.assertEquals(
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> canvas.openTag(new CanvasTag(new PdfName("chapter"))));
+        Assertions.assertEquals(
                 MessageFormatUtil.format(PdfUAExceptionMessageConstants.TAG_MAPPING_DOESNT_TERMINATE_WITH_STANDARD_TYPE, "chapter"),
                 e.getMessage());
     }
@@ -160,8 +159,8 @@ public class PdfUARoleMappingTest extends ExtendedITextTest {
 
         PdfCanvas canvas = new PdfCanvas(page1);
 
-        Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> canvas.openTag(new CanvasTag(mcr)));
-        Assert.assertEquals(
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> canvas.openTag(new CanvasTag(mcr)));
+        Assertions.assertEquals(
                 MessageFormatUtil.format(PdfUAExceptionMessageConstants.TAG_MAPPING_DOESNT_TERMINATE_WITH_STANDARD_TYPE, "chapter"),
                 e.getMessage());
     }
@@ -196,8 +195,8 @@ public class PdfUARoleMappingTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
     @Test
@@ -226,8 +225,8 @@ public class PdfUARoleMappingTest extends ExtendedITextTest {
         PdfCanvas canvas = new PdfCanvas(page1);
 
         // VeraPdf also complains about non-standard mapping
-        Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> canvas.openTag(new CanvasTag(mcr)));
-        Assert.assertEquals(
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> canvas.openTag(new CanvasTag(mcr)));
+        Assertions.assertEquals(
                 MessageFormatUtil.format(PdfUAExceptionMessageConstants.TAG_MAPPING_DOESNT_TERMINATE_WITH_STANDARD_TYPE, "chapter"),
                 e.getMessage());
     }
@@ -249,8 +248,8 @@ public class PdfUARoleMappingTest extends ExtendedITextTest {
 
         TagTreePointer tagPointer = new TagTreePointer(pdfDoc).setPageForTagging(page1);
 
-        Exception e = Assert.assertThrows(PdfException.class, () -> tagPointer.addTag("chapter"));
-        Assert.assertEquals(
+        Exception e = Assertions.assertThrows(PdfException.class, () -> tagPointer.addTag("chapter"));
+        Assertions.assertEquals(
                 MessageFormatUtil.format(KernelExceptionMessageConstant.ROLE_IS_NOT_MAPPED_TO_ANY_STANDARD_ROLE, "chapter"),
                 e.getMessage());
     }
@@ -281,8 +280,8 @@ public class PdfUARoleMappingTest extends ExtendedITextTest {
                 .closeTag();
 
         // VeraPdf complains about circular mapping
-        Exception e = Assert.assertThrows(PdfException.class, () -> pdfDoc.close());
-        Assert.assertEquals(PdfUAExceptionMessageConstants.ONE_OR_MORE_STANDARD_ROLE_REMAPPED, e.getMessage());
+        Exception e = Assertions.assertThrows(PdfException.class, () -> pdfDoc.close());
+        Assertions.assertEquals(PdfUAExceptionMessageConstants.ONE_OR_MORE_STANDARD_ROLE_REMAPPED, e.getMessage());
     }
 
     @Test
@@ -311,7 +310,7 @@ public class PdfUARoleMappingTest extends ExtendedITextTest {
                 .closeTag();
 
         // VeraPdf doesn't complain
-        Exception e = Assert.assertThrows(PdfException.class, () -> pdfDoc.close());
-        Assert.assertEquals(PdfUAExceptionMessageConstants.ONE_OR_MORE_STANDARD_ROLE_REMAPPED, e.getMessage());
+        Exception e = Assertions.assertThrows(PdfException.class, () -> pdfDoc.close());
+        Assertions.assertEquals(PdfUAExceptionMessageConstants.ONE_OR_MORE_STANDARD_ROLE_REMAPPED, e.getMessage());
     }
 }

@@ -26,14 +26,13 @@ import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.HashMap;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PolylineSvgNodeRendererUnitTest extends ExtendedITextTest {
 
     @Test
@@ -41,6 +40,6 @@ public class PolylineSvgNodeRendererUnitTest extends ExtendedITextTest {
         PolylineSvgNodeRenderer renderer = new PolygonSvgNodeRenderer();
         SvgDrawContext context = new SvgDrawContext(new ResourceResolver(""), new FontProvider());
         renderer.setAttributesAndStyles(new HashMap<>());
-        Assert.assertNull(renderer.getObjectBoundingBox(context));
+        Assertions.assertNull(renderer.getObjectBoundingBox(context));
     }
 }

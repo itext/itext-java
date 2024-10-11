@@ -22,7 +22,6 @@
  */
 package com.itextpdf.test.signutils;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -51,7 +50,7 @@ public final class Pkcs12FileHelper {
         Certificate[] certChain = null;
 
         KeyStore p12 = KeyStore.getInstance("pkcs12");
-        p12.load(new FileInputStream(p12FileName), ksPass);
+        p12.load(Files.newInputStream(Paths.get(p12FileName)), ksPass);
 
         Enumeration<String> aliases = p12.aliases();
         while (aliases.hasMoreElements()) {
@@ -78,7 +77,7 @@ public final class Pkcs12FileHelper {
         PrivateKey pk = null;
 
         KeyStore p12 = KeyStore.getInstance("pkcs12");
-        p12.load(new FileInputStream(p12FileName), ksPass);
+        p12.load(Files.newInputStream(Paths.get(p12FileName)), ksPass);
 
         Enumeration<String> aliases = p12.aliases();
         while (aliases.hasMoreElements()) {

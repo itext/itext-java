@@ -115,6 +115,7 @@ import com.itextpdf.bouncycastlefips.cms.jcajce.JcaSimpleSignerInfoVerifierBuild
 import com.itextpdf.bouncycastlefips.cms.jcajce.JceKeyAgreeEnvelopedRecipientBCFips;
 import com.itextpdf.bouncycastlefips.cms.jcajce.JceKeyTransEnvelopedRecipientBCFips;
 import com.itextpdf.bouncycastlefips.crypto.fips.FipsUnapprovedOperationErrorBCFips;
+import com.itextpdf.bouncycastlefips.crypto.modes.GCMBlockCipherBCFips;
 import com.itextpdf.bouncycastlefips.openssl.PEMParserBCFips;
 import com.itextpdf.bouncycastlefips.openssl.jcajce.JcaPEMKeyConverterBCFips;
 import com.itextpdf.bouncycastlefips.openssl.jcajce.JceOpenSSLPKCS8DecryptorProviderBuilderBCFips;
@@ -222,6 +223,7 @@ import com.itextpdf.commons.bouncycastle.cms.jcajce.IJcaSignerInfoGeneratorBuild
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJcaSimpleSignerInfoVerifierBuilder;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJceKeyAgreeEnvelopedRecipient;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJceKeyTransEnvelopedRecipient;
+import com.itextpdf.commons.bouncycastle.crypto.modes.IGCMBlockCipher;
 import com.itextpdf.commons.bouncycastle.openssl.IPEMParser;
 import com.itextpdf.commons.bouncycastle.openssl.jcajce.IJcaPEMKeyConverter;
 import com.itextpdf.commons.bouncycastle.openssl.jcajce.IJceOpenSSLPKCS8DecryptorProviderBuilder;
@@ -245,6 +247,8 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
+import java.security.NoSuchProviderException;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Provider;
@@ -258,6 +262,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import javax.crypto.Cipher;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import org.bouncycastle.asn1.ASN1BitString;
 import org.bouncycastle.asn1.ASN1Enumerated;
@@ -274,8 +280,6 @@ import org.bouncycastle.asn1.ASN1TaggedObject;
 import org.bouncycastle.asn1.ASN1UTCTime;
 import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.DEROctetString;
-import org.bouncycastle.asn1.DEROutputStream;
-import org.bouncycastle.asn1.DLOutputStream;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.esf.SigPolicyQualifierInfo;
@@ -319,6 +323,12 @@ import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.cms.jcajce.JceKeyAgreeEnvelopedRecipient;
 import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
 import org.bouncycastle.crypto.CryptoServicesRegistrar;
+import org.bouncycastle.crypto.KDFCalculator;
+import org.bouncycastle.crypto.fips.FipsKDF;
+import org.bouncycastle.crypto.fips.FipsKDF.AgreementKDFPRF;
+import org.bouncycastle.crypto.fips.FipsKDF.AgreementKDFParameters;
+import org.bouncycastle.crypto.fips.FipsKDF.AgreementOperatorFactory;
+import org.bouncycastle.crypto.fips.FipsKDF.HKDFKeyBuilder;
 import org.bouncycastle.crypto.fips.FipsUnapprovedOperationError;
 import org.bouncycastle.jcajce.provider.BouncyCastleFipsProvider;
 import org.bouncycastle.openssl.PEMParser;
@@ -607,12 +617,7 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
      */
     @Override
     public IASN1OutputStream createASN1OutputStream(OutputStream outputStream, String asn1Encoding) {
-        if ("DER".equals(asn1Encoding)) {
-            return new ASN1OutputStreamBCFips(new DEROutputStream(outputStream));
-        } else {
-            return new ASN1OutputStreamBCFips("DL".equals(asn1Encoding) ? new DLOutputStream(outputStream)
-                    : new ASN1OutputStream(outputStream));
-        }
+        return new ASN1OutputStreamBCFips(ASN1OutputStream.create(outputStream, asn1Encoding));
     }
 
     /**
@@ -869,7 +874,7 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
      */
     @Override
     public IAlgorithmIdentifier createAlgorithmIdentifier(IASN1ObjectIdentifier algorithm,
-            IASN1Encodable parameters) {
+                                                          IASN1Encodable parameters) {
         ASN1ObjectIdentifierBCFips algorithmBCFips = (ASN1ObjectIdentifierBCFips) algorithm;
         ASN1EncodableBCFips encodableBCFips = (ASN1EncodableBCFips) parameters;
         return new AlgorithmIdentifierBCFips(
@@ -974,8 +979,8 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
      */
     @Override
     public ICertificateID createCertificateID(IDigestCalculator digestCalculator,
-            IX509CertificateHolder certificateHolder,
-            BigInteger bigInteger) throws OCSPExceptionBCFips {
+                                              IX509CertificateHolder certificateHolder,
+                                              BigInteger bigInteger) throws OCSPExceptionBCFips {
         return new CertificateIDBCFips(digestCalculator, certificateHolder, bigInteger);
     }
 
@@ -1009,7 +1014,7 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
      */
     @Override
     public IExtension createExtension(IASN1ObjectIdentifier objectIdentifier,
-            boolean critical, IASN1OctetString octetString) {
+                                      boolean critical, IASN1OctetString octetString) {
         return new ExtensionBCFips(new Extension(((ASN1ObjectIdentifierBCFips) objectIdentifier)
                 .getASN1ObjectIdentifier(), critical, ((ASN1OctetStringBCFips) octetString).getOctetString()));
     }
@@ -1063,7 +1068,7 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
      */
     @Override
     public ISigPolicyQualifierInfo createSigPolicyQualifierInfo(IASN1ObjectIdentifier objectIdentifier,
-            IDERIA5String string) {
+                                                                IDERIA5String string) {
         return new SigPolicyQualifierInfoBCFips(objectIdentifier, string);
     }
 
@@ -1136,7 +1141,7 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
      */
     @Override
     public IResponseBytes createResponseBytes(IASN1ObjectIdentifier asn1ObjectIdentifier,
-            IDEROctetString derOctetString) {
+                                              IDEROctetString derOctetString) {
         return new ResponseBytesBCFips(asn1ObjectIdentifier, derOctetString);
     }
 
@@ -1272,7 +1277,7 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     @Override
     public IDistributionPointName createDistributionPointName(IGeneralNames generalNames) {
         return new DistributionPointNameBCFips(
-                new DistributionPointName(((GeneralNamesBCFips)generalNames).getGeneralNames()));
+                new DistributionPointName(((GeneralNamesBCFips) generalNames).getGeneralNames()));
     }
 
     /**
@@ -1300,7 +1305,7 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
      */
     @Override
     public IOtherHashAlgAndValue createOtherHashAlgAndValue(IAlgorithmIdentifier algorithmIdentifier,
-            IASN1OctetString octetString) {
+                                                            IASN1OctetString octetString) {
         return new OtherHashAlgAndValueBCFips(algorithmIdentifier, octetString);
     }
 
@@ -1309,7 +1314,7 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
      */
     @Override
     public ISignaturePolicyId createSignaturePolicyId(IASN1ObjectIdentifier objectIdentifier,
-            IOtherHashAlgAndValue algAndValue) {
+                                                      IOtherHashAlgAndValue algAndValue) {
         return new SignaturePolicyIdBCFips(objectIdentifier, algAndValue);
     }
 
@@ -1318,8 +1323,8 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
      */
     @Override
     public ISignaturePolicyId createSignaturePolicyId(IASN1ObjectIdentifier objectIdentifier,
-            IOtherHashAlgAndValue algAndValue,
-            ISigPolicyQualifierInfo... policyQualifiers) {
+                                                      IOtherHashAlgAndValue algAndValue,
+                                                      ISigPolicyQualifierInfo... policyQualifiers) {
         SigPolicyQualifierInfo[] qualifierInfos = new SigPolicyQualifierInfo[policyQualifiers.length];
         for (int i = 0; i < qualifierInfos.length; ++i) {
             qualifierInfos[i] = ((SigPolicyQualifierInfoBCFips) policyQualifiers[i]).getQualifierInfo();
@@ -1340,7 +1345,7 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
      */
     @Override
     public IEnvelopedData createEnvelopedData(IOriginatorInfo originatorInfo, IASN1Set set,
-            IEncryptedContentInfo encryptedContentInfo, IASN1Set set1) {
+                                              IEncryptedContentInfo encryptedContentInfo, IASN1Set set1) {
         return new EnvelopedDataBCFips(originatorInfo, set, encryptedContentInfo, set1);
     }
 
@@ -1357,7 +1362,7 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
      */
     @Override
     public IEncryptedContentInfo createEncryptedContentInfo(IASN1ObjectIdentifier data,
-            IAlgorithmIdentifier algorithmIdentifier, IASN1OctetString octetString) {
+                                                            IAlgorithmIdentifier algorithmIdentifier, IASN1OctetString octetString) {
         return new EncryptedContentInfoBCFips(data, algorithmIdentifier, octetString);
     }
 
@@ -1398,7 +1403,7 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
      */
     @Override
     public IKeyTransRecipientInfo createKeyTransRecipientInfo(IRecipientIdentifier recipientIdentifier,
-            IAlgorithmIdentifier algorithmIdentifier, IASN1OctetString octetString) {
+                                                              IAlgorithmIdentifier algorithmIdentifier, IASN1OctetString octetString) {
         return new KeyTransRecipientInfoBCFips(recipientIdentifier, algorithmIdentifier, octetString);
     }
 
@@ -1523,7 +1528,7 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
      */
     @Override
     public ITimeStampResponseGenerator createTimeStampResponseGenerator(ITimeStampTokenGenerator tokenGenerator,
-            Set<String> algorithms) {
+                                                                        Set<String> algorithms) {
         return new TimeStampResponseGeneratorBCFips(tokenGenerator, algorithms);
     }
 
@@ -1557,7 +1562,7 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
      */
     @Override
     public ITimeStampTokenGenerator createTimeStampTokenGenerator(ISignerInfoGenerator siGen, IDigestCalculator dgCalc,
-            IASN1ObjectIdentifier policy) throws TSPExceptionBCFips {
+                                                                  IASN1ObjectIdentifier policy) throws TSPExceptionBCFips {
         return new TimeStampTokenGeneratorBCFips(siGen, dgCalc, policy);
     }
 
@@ -1584,6 +1589,15 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     @Override
     public IX500Name createX500Name(String s) {
         return new X500NameBCFips(new X500Name(s));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IX500Name createX500Name(IASN1Sequence s) {
+        return new X500NameBCFips(X500Name.getInstance(((ASN1SequenceBCFips) s).getASN1Sequence()));
+
     }
 
     /**
@@ -1623,7 +1637,7 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
      */
     @Override
     public IJcaX509v3CertificateBuilder createJcaX509v3CertificateBuilder(X509Certificate signingCert,
-            BigInteger certSerialNumber, Date startDate, Date endDate, IX500Name subjectDnName, PublicKey publicKey) {
+                                                                          BigInteger certSerialNumber, Date startDate, Date endDate, IX500Name subjectDnName, PublicKey publicKey) {
         return new JcaX509v3CertificateBuilderBCFips(signingCert, certSerialNumber, startDate, endDate, subjectDnName,
                 publicKey);
     }
@@ -1845,7 +1859,7 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
      */
     @Override
     public byte[] createCipherBytes(X509Certificate x509certificate, byte[] abyte0,
-            IAlgorithmIdentifier algorithmIdentifier)
+                                    IAlgorithmIdentifier algorithmIdentifier)
             throws GeneralSecurityException {
         Cipher cipher;
         try {
@@ -1861,8 +1875,70 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
         return cipher.wrap(new SecretKeySpec(abyte0, "AES"));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void isEncryptionFeatureSupported(int encryptionType, boolean withCertificate) {
         //All features supported
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] generateHKDF(byte[] inputKey, byte[] salt, byte[] info) {
+        HKDFKeyBuilder hkdfKeyBuilder = FipsKDF.HKDF_KEY_BUILDER.withSalt(salt).withPrf(AgreementKDFPRF.SHA256_HMAC);
+        byte[] extractedKey = hkdfKeyBuilder.build(inputKey).getKey();
+        AgreementOperatorFactory factory = new AgreementOperatorFactory();
+        KDFCalculator<AgreementKDFParameters> kdfCalculator = factory.createKDFCalculator(FipsKDF.HKDF.withPRF(
+                AgreementKDFPRF.SHA256_HMAC).using(extractedKey).withIV(info));
+        byte[] hkdf = new byte[32];
+        kdfCalculator.generateBytes(hkdf);
+        return hkdf;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] generateHMACSHA256Token(byte[] key, byte[] data) throws NoSuchAlgorithmException, InvalidKeyException {
+        Mac mac = Mac.getInstance("HMacSHA256", this.getProvider());
+        mac.init(new SecretKeySpec(key, "RawBytes"));
+        return mac.doFinal(data);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] generateEncryptedKeyWithAES256NoPad(byte[] key, byte[] kek) throws GeneralSecurityException {
+        Cipher cipher = Cipher.getInstance("AESWrap", this.getProvider());
+        cipher.init(Cipher.WRAP_MODE, new SecretKeySpec(kek, "AESWrap"));
+        return cipher.wrap(new SecretKeySpec(key, "AESWrap"));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] generateDecryptedKeyWithAES256NoPad(byte[] key, byte[] kek) throws GeneralSecurityException {
+        Cipher cipher = Cipher.getInstance("AESWrap", this.getProvider());
+        cipher.init(Cipher.UNWRAP_MODE, new SecretKeySpec(kek, "AESWrap"));
+        return cipher.unwrap(key, "AESWrap", Cipher.SECRET_KEY).getEncoded();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IGCMBlockCipher createGCMBlockCipher() {
+        Cipher cipher = null;
+        try {
+            cipher = Cipher.getInstance("AES/GCM/NoPadding", getProviderName());
+        } catch (NoSuchAlgorithmException | NoSuchProviderException | NoSuchPaddingException e) {
+            // Ignore.
+        }
+        return new GCMBlockCipherBCFips(cipher);
     }
 }

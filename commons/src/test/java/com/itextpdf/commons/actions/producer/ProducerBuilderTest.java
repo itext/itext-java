@@ -35,31 +35,30 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class ProducerBuilderTest extends ExtendedITextTest {
 
     @Test
     public void emptyEventsProducerLineTest() {
-        Exception exception = Assert.assertThrows(IllegalArgumentException.class,
+        Exception exception = Assertions.assertThrows(IllegalArgumentException.class,
                 () -> ProducerBuilder.modifyProducer(Collections.<AbstractProductProcessITextEvent>emptyList(), null));
-        Assert.assertEquals(CommonsExceptionMessageConstant.NO_EVENTS_WERE_REGISTERED_FOR_THE_DOCUMENT,
+        Assertions.assertEquals(CommonsExceptionMessageConstant.NO_EVENTS_WERE_REGISTERED_FOR_THE_DOCUMENT,
                 exception.getMessage());
     }
 
     @Test
     public void nullEventsProducerLineTest() {
-        Exception exception = Assert.assertThrows(IllegalArgumentException.class,
+        Exception exception = Assertions.assertThrows(IllegalArgumentException.class,
                 () -> ProducerBuilder.modifyProducer((List<AbstractProductProcessITextEvent>)null, null));
-        Assert.assertEquals(CommonsExceptionMessageConstant.NO_EVENTS_WERE_REGISTERED_FOR_THE_DOCUMENT,
+        Assertions.assertEquals(CommonsExceptionMessageConstant.NO_EVENTS_WERE_REGISTERED_FOR_THE_DOCUMENT,
                 exception.getMessage());
     }
 
@@ -68,7 +67,7 @@ public class ProducerBuilderTest extends ExtendedITextTest {
         List<ConfirmedEventWrapper> events = getEvents("Plain Text", 1, 2, 3);
         String newProducerLine = ProducerBuilder.modifyProducer(events, null);
 
-        Assert.assertEquals("Plain Text", newProducerLine);
+        Assertions.assertEquals("Plain Text", newProducerLine);
     }
 
     @Test
@@ -76,7 +75,7 @@ public class ProducerBuilderTest extends ExtendedITextTest {
         List<ConfirmedEventWrapper> events = getEvents("Plain Text", 1, 2, 3);
         String newProducerLine = ProducerBuilder.modifyProducer(events, "");
 
-        Assert.assertEquals("Plain Text", newProducerLine);
+        Assertions.assertEquals("Plain Text", newProducerLine);
     }
 
     @Test
@@ -84,7 +83,7 @@ public class ProducerBuilderTest extends ExtendedITextTest {
         List<ConfirmedEventWrapper> events = getEvents("Plain Text", 1, 2, 3);
         String newProducerLine = ProducerBuilder.modifyProducer(events, "Old producer");
 
-        Assert.assertEquals("Old producer; modified using Plain Text", newProducerLine);
+        Assertions.assertEquals("Old producer; modified using Plain Text", newProducerLine);
     }
 
     @Test
@@ -92,7 +91,7 @@ public class ProducerBuilderTest extends ExtendedITextTest {
         List<ConfirmedEventWrapper> events = getEvents("New Author", 1, 2, 3);
         String newProducerLine = ProducerBuilder.modifyProducer(events, "Old producer; modified using Plain Text");
 
-        Assert.assertEquals("Old producer; modified using Plain Text; modified using New Author", newProducerLine);
+        Assertions.assertEquals("Old producer; modified using Plain Text; modified using New Author", newProducerLine);
     }
 
 
@@ -101,7 +100,7 @@ public class ProducerBuilderTest extends ExtendedITextTest {
         List<ConfirmedEventWrapper> events = getEvents("Prod. since ${copyrightSince}", 1, 2, 3);
         String newProducerLine = ProducerBuilder.modifyProducer(events, null);
 
-        Assert.assertEquals("Prod. since 1901", newProducerLine);
+        Assertions.assertEquals("Prod. since 1901", newProducerLine);
     }
 
     @Test
@@ -109,7 +108,7 @@ public class ProducerBuilderTest extends ExtendedITextTest {
         List<ConfirmedEventWrapper> events = getEvents("All rights reserved, ${copyrightTo}", 1, 2, 3);
         String newProducerLine = ProducerBuilder.modifyProducer(events, null);
 
-        Assert.assertEquals("All rights reserved, 2103", newProducerLine);
+        Assertions.assertEquals("All rights reserved, 2103", newProducerLine);
     }
 
     @Test
@@ -117,7 +116,7 @@ public class ProducerBuilderTest extends ExtendedITextTest {
         List<ConfirmedEventWrapper> events = getEvents("Created at ${currentDate:yyyy}", 1, 2, 3);
         String newProducerLine = ProducerBuilder.modifyProducer(events, null);
 
-        Assert.assertEquals("Created at " + DateTimeUtil.format(DateTimeUtil.getCurrentTimeDate(), "yyyy"), newProducerLine);
+        Assertions.assertEquals("Created at " + DateTimeUtil.format(DateTimeUtil.getCurrentTimeDate(), "yyyy"), newProducerLine);
     }
 
     @Test
@@ -126,7 +125,7 @@ public class ProducerBuilderTest extends ExtendedITextTest {
         String newProducerLine = ProducerBuilder.modifyProducer(events, null);
         String currentYear = DateTimeUtil.format(DateTimeUtil.getCurrentTimeDate(), "yyyy");
 
-        Assert.assertEquals("Created at " + currentYear + ", {'yes::yes', " + currentYear, newProducerLine);
+        Assertions.assertEquals("Created at " + currentYear + ", {'yes::yes', " + currentYear, newProducerLine);
     }
 
     @Test
@@ -134,15 +133,15 @@ public class ProducerBuilderTest extends ExtendedITextTest {
         List<ConfirmedEventWrapper> events = getEvents("Created at ${currentDate:'${currentDate'}", 1, 2, 3);
         String newProducerLine = ProducerBuilder.modifyProducer(events, null);
 
-        Assert.assertEquals("Created at ${currentDate", newProducerLine);
+        Assertions.assertEquals("Created at ${currentDate", newProducerLine);
     }
 
     @Test
     public void currentDateNoFormatProducerLineTest() {
         List<ConfirmedEventWrapper> events = getEvents("Created at ${currentDate}", 1, 2, 3);
-        Exception exception = Assert.assertThrows(IllegalArgumentException.class,
+        Exception exception = Assertions.assertThrows(IllegalArgumentException.class,
                 () -> ProducerBuilder.modifyProducer(events, null));
-        Assert.assertEquals(MessageFormatUtil.format(CommonsExceptionMessageConstant.INVALID_USAGE_FORMAT_REQUIRED, "currentDate"),
+        Assertions.assertEquals(MessageFormatUtil.format(CommonsExceptionMessageConstant.INVALID_USAGE_FORMAT_REQUIRED, "currentDate"),
                 exception.getMessage());
     }
 
@@ -151,7 +150,7 @@ public class ProducerBuilderTest extends ExtendedITextTest {
         List<ConfirmedEventWrapper> events = getEvents("Created at ${currentDate:}", 1, 2, 3);
         String newProducerLine = ProducerBuilder.modifyProducer(events, null);
 
-        Assert.assertEquals("Created at ", newProducerLine);
+        Assertions.assertEquals("Created at ", newProducerLine);
     }
 
     @Test
@@ -159,7 +158,7 @@ public class ProducerBuilderTest extends ExtendedITextTest {
         List<ConfirmedEventWrapper> events = getEvents("Used products: ${usedProducts:P #V (T 'version')}", 1, 2, 3);
         String newProducerLine = ProducerBuilder.modifyProducer(events, null);
 
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 "Used products: product1 #1.0 (type1 version), product2 #2.0 (type2 version), product3 #3.0 (type3 version)",
                 newProducerLine);
     }
@@ -167,9 +166,9 @@ public class ProducerBuilderTest extends ExtendedITextTest {
     @Test
     public void usedProductsEmptyFormatProducerLineTest() {
         List<ConfirmedEventWrapper> events = getEvents("Used products: ${usedProducts}", 1, 2, 3);
-        Exception exception = Assert.assertThrows(IllegalArgumentException.class,
+        Exception exception = Assertions.assertThrows(IllegalArgumentException.class,
                 () -> ProducerBuilder.modifyProducer(events, null));
-        Assert.assertEquals(MessageFormatUtil.format(CommonsExceptionMessageConstant.INVALID_USAGE_FORMAT_REQUIRED, "usedProducts"),
+        Assertions.assertEquals(MessageFormatUtil.format(CommonsExceptionMessageConstant.INVALID_USAGE_FORMAT_REQUIRED, "usedProducts"),
                 exception.getMessage());
     }
 
@@ -182,7 +181,7 @@ public class ProducerBuilderTest extends ExtendedITextTest {
                 getEvents("${plchldr}|${plchldrWithParam:param}|${plchldrWithWeirdParam::$$:'''\\''}", 1, 2, 3);
         String newProducerLine = ProducerBuilder.modifyProducer(events, null);
 
-        Assert.assertEquals("||", newProducerLine);
+        Assertions.assertEquals("||", newProducerLine);
     }
 
     @Test
@@ -191,7 +190,7 @@ public class ProducerBuilderTest extends ExtendedITextTest {
         String newProducerLine = ProducerBuilder.modifyProducer(events
                 , "Old producer; modified using some Author");
 
-        Assert.assertEquals("Old producer; modified using some Author", newProducerLine);
+        Assertions.assertEquals("Old producer; modified using some Author", newProducerLine);
     }
 
     @Test
@@ -200,7 +199,7 @@ public class ProducerBuilderTest extends ExtendedITextTest {
         String newProducerLine = ProducerBuilder.modifyProducer(events
                 , "Old producer; modified using some Author; modified using another tool");
 
-        Assert.assertEquals("Old producer; modified using some Author; modified using another tool; " +
+        Assertions.assertEquals("Old producer; modified using some Author; modified using another tool; " +
                 "modified using some Author", newProducerLine);
     }
 
@@ -210,7 +209,7 @@ public class ProducerBuilderTest extends ExtendedITextTest {
         String newProducerLine = ProducerBuilder.modifyProducer(events
                 , "Old producer; modified using some Author; modified using some Author");
 
-        Assert.assertEquals("Old producer; modified using some Author; modified using some Author", newProducerLine);
+        Assertions.assertEquals("Old producer; modified using some Author; modified using some Author", newProducerLine);
     }
 
     @Test
@@ -218,7 +217,7 @@ public class ProducerBuilderTest extends ExtendedITextTest {
         List<ConfirmedEventWrapper> events = getEvents("some Author", 1, 2, 3);
         String newProducerLine = ProducerBuilder.modifyProducer(events, "some Author");
 
-        Assert.assertEquals("some Author", newProducerLine);
+        Assertions.assertEquals("some Author", newProducerLine);
     }
 
     private List<ConfirmedEventWrapper> getEvents(String initialProducerLine, int ... indexes) {

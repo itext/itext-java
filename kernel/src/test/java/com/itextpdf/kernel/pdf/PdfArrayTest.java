@@ -31,14 +31,13 @@ import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.Set;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfArrayTest extends ExtendedITextTest {
 
     @Test
@@ -53,12 +52,12 @@ public class PdfArrayTest extends ExtendedITextTest {
         array.add(new PdfNumber(4));
         array.add(new PdfNumber(5));
 
-        Assert.assertTrue(array.contains(array.get(0, false)));
-        Assert.assertTrue(array.contains(array.get(1, false)));
-        Assert.assertTrue(array.contains(array.get(2).getIndirectReference()));
-        Assert.assertTrue(array.contains(array.get(3).getIndirectReference()));
-        Assert.assertTrue(array.contains(array.get(4)));
-        Assert.assertTrue(array.contains(array.get(5)));
+        Assertions.assertTrue(array.contains(array.get(0, false)));
+        Assertions.assertTrue(array.contains(array.get(1, false)));
+        Assertions.assertTrue(array.contains(array.get(2).getIndirectReference()));
+        Assertions.assertTrue(array.contains(array.get(3).getIndirectReference()));
+        Assertions.assertTrue(array.contains(array.get(4)));
+        Assertions.assertTrue(array.contains(array.get(5)));
     }
 
     @Test
@@ -80,7 +79,7 @@ public class PdfArrayTest extends ExtendedITextTest {
         array.remove(array.get(0));
         array.remove(array.get(0));
 
-        Assert.assertEquals(0, array.size());
+        Assertions.assertEquals(0, array.size());
     }
 
     @Test
@@ -104,11 +103,11 @@ public class PdfArrayTest extends ExtendedITextTest {
         array2.add(new PdfNumber(6));
 
         for (PdfObject obj : array2) {
-            Assert.assertTrue(array.contains(obj));
+            Assertions.assertTrue(array.contains(obj));
         }
 
         for (int i = 0; i < array2.size(); i++) {
-            Assert.assertTrue(array.contains(array2.get(i)));
+            Assertions.assertTrue(array.contains(array2.get(i)));
         }
     }
 
@@ -136,7 +135,7 @@ public class PdfArrayTest extends ExtendedITextTest {
             array.remove(obj);
         }
 
-        Assert.assertEquals(0, array.size());
+        Assertions.assertEquals(0, array.size());
     }
 
     @Test
@@ -163,7 +162,7 @@ public class PdfArrayTest extends ExtendedITextTest {
             array.remove(array2.get(i));
         }
 
-        Assert.assertEquals(0, array.size());
+        Assertions.assertEquals(0, array.size());
     }
     @Test
     public void testIndexOf() {
@@ -187,7 +186,7 @@ public class PdfArrayTest extends ExtendedITextTest {
 
         int i = 0;
         for (PdfObject obj : array2) {
-            Assert.assertEquals(i++, array.indexOf(obj));
+            Assertions.assertEquals(i++, array.indexOf(obj));
         }
     }
 
@@ -212,7 +211,7 @@ public class PdfArrayTest extends ExtendedITextTest {
         array2.add(new PdfNumber(6));
 
         for (int i = 0; i < array2.size(); i++) {
-            Assert.assertEquals(i, array.indexOf(array2.get(i)));
+            Assertions.assertEquals(i, array.indexOf(array2.get(i)));
         }
     }
 
@@ -240,7 +239,7 @@ public class PdfArrayTest extends ExtendedITextTest {
         processor.processPageContent(page);
 
         // Check if we reach the end of the test without failings together with verifying expected color space instance
-        Assert.assertTrue(processor.getGraphicsState().getFillColor().getColorSpace() instanceof PdfSpecialCs.Pattern);
+        Assertions.assertTrue(processor.getGraphicsState().getFillColor().getColorSpace() instanceof PdfSpecialCs.Pattern);
     }
 
     private static class NoOpListener implements IEventListener {

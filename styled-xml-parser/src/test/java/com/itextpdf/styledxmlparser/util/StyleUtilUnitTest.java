@@ -25,23 +25,22 @@ package com.itextpdf.styledxmlparser.util;
 import com.itextpdf.styledxmlparser.css.resolve.CssInheritance;
 import com.itextpdf.styledxmlparser.css.resolve.IStyleInheritance;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class StyleUtilUnitTest extends ExtendedITextTest {
 
     private static Set<IStyleInheritance> inheritanceRules;
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         inheritanceRules = new HashSet<>();
         inheritanceRules.add(new CssInheritance());
@@ -66,7 +65,7 @@ public class StyleUtilUnitTest extends ExtendedITextTest {
         for (Map.Entry<String, String> kvp : expectedStyles.entrySet()) {
             equal &= kvp.getValue().equals(styles.get(kvp.getKey()));
         }
-        Assert.assertTrue(equal);
+        Assertions.assertTrue(equal);
     }
 
 
@@ -88,7 +87,7 @@ public class StyleUtilUnitTest extends ExtendedITextTest {
         for (Map.Entry<String, String> kvp : expectedStyles.entrySet()) {
             equal &= kvp.getValue().equals(styles.get(kvp.getKey()));
         }
-        Assert.assertTrue(equal);
+        Assertions.assertTrue(equal);
     }
 
 
@@ -110,7 +109,7 @@ public class StyleUtilUnitTest extends ExtendedITextTest {
         for (Map.Entry<String, String> kvp : expectedStyles.entrySet()) {
             equal &= kvp.getValue().equals(styles.get(kvp.getKey()));
         }
-        Assert.assertTrue(equal);
+        Assertions.assertTrue(equal);
     }
 
 }

@@ -31,35 +31,34 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class FontToUnicodeTest extends ExtendedITextTest {
     public static final String fontsFolder = "./src/test/resources/com/itextpdf/kernel/pdf/fonts/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/FontToUnicodeTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
     
     @Test
     // TODO DEVSIX-3634. In the output now we don't expect the \u2F46 unicode range.
-    // TODO DEVSIX-3634. SUBSTITUTE "Assert.assertEquals("\u2F46"..." to "Assert.assertEquals("\u65E0"..." after the fix
+    // TODO DEVSIX-3634. SUBSTITUTE "Assertions.assertEquals("\u2F46"..." to "Assertions.assertEquals("\u65E0"..." after the fix
     public void severalUnicodesWithinOneGlyphTest() throws IOException {
         String outFileName = destinationFolder + "severalUnicodesWithinOneGlyphTest.pdf";
 
@@ -85,6 +84,6 @@ public class FontToUnicodeTest extends ExtendedITextTest {
         PdfDocument resultantPdfAsFile = new PdfDocument(CompareTool.createOutputReader(outFileName));
         String actualUnicode = PdfTextExtractor.getTextFromPage(resultantPdfAsFile.getFirstPage());
 
-        Assert.assertEquals("\u2F46", actualUnicode);
+        Assertions.assertEquals("\u2F46", actualUnicode);
     }
 }

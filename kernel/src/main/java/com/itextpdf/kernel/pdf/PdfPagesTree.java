@@ -22,17 +22,18 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.commons.datastructures.ISimpleList;
+import com.itextpdf.kernel.di.pagetree.IPageTreeListFactory;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,10 +46,10 @@ class PdfPagesTree {
 
     private final int leafSize = DEFAULT_LEAF_SIZE;
 
-    private NullUnlimitedList<PdfIndirectReference> pageRefs;
+    private ISimpleList<PdfIndirectReference> pageRefs;
     private List<PdfPages> parents;
-    private NullUnlimitedList<PdfPage> pages;
-    private PdfDocument document;
+    private ISimpleList<PdfPage> pages;
+    private final PdfDocument document;
     private boolean generated = false;
     private PdfPages root;
 
@@ -61,15 +62,16 @@ class PdfPagesTree {
      */
     public PdfPagesTree(PdfCatalog pdfCatalog) {
         this.document = pdfCatalog.getDocument();
-        this.pageRefs = new NullUnlimitedList<>();
         this.parents = new ArrayList<>();
-        this.pages = new NullUnlimitedList<>();
+        IPageTreeListFactory pageTreeFactory = document.getDiContainer().getInstance(IPageTreeListFactory.class);
         if (pdfCatalog.getPdfObject().containsKey(PdfName.Pages)) {
             PdfDictionary pages = pdfCatalog.getPdfObject().getAsDictionary(PdfName.Pages);
             if (pages == null) {
                 throw new PdfException(
                         KernelExceptionMessageConstant.INVALID_PAGE_STRUCTURE_PAGES_MUST_BE_PDF_DICTIONARY);
             }
+            this.pages = pageTreeFactory.<PdfPage>createList(pages);
+            this.pageRefs = pageTreeFactory.<PdfIndirectReference>createList(pages);
             this.root = new PdfPages(0, Integer.MAX_VALUE, pages, null);
             parents.add(this.root);
             for (int i = 0; i < this.root.getCount(); i++) {
@@ -79,6 +81,8 @@ class PdfPagesTree {
         } else {
             this.root = null;
             this.parents.add(new PdfPages(0, this.document));
+            this.pages = pageTreeFactory.<PdfPage>createList(null);
+            this.pageRefs = pageTreeFactory.<PdfIndirectReference>createList(null);
         }
         //in read mode we will create PdfPages from 0 to Count
         // and reserve null indexes for pageRefs and pages.
@@ -88,7 +92,6 @@ class PdfPagesTree {
      * Returns the {@link PdfPage} at the specified position in this list.
      *
      * @param pageNum one-based index of the element to return
-     *
      * @return the {@link PdfPage} at the specified position in this list
      */
     public PdfPage getPage(int pageNum) {
@@ -129,7 +132,6 @@ class PdfPagesTree {
      * Returns the {@link PdfPage} by page's PdfDictionary.
      *
      * @param pageDictionary page's PdfDictionary
-     *
      * @return the {@code PdfPage} object, that wraps {@code pageDictionary}.
      */
     public PdfPage getPage(PdfDictionary pageDictionary) {
@@ -242,7 +244,6 @@ class PdfPagesTree {
      * indices).
      *
      * @param pageNum the one-based index of the PdfPage to be removed
-     *
      * @return the page that was removed from the list
      */
     public PdfPage removePage(int pageNum) {
@@ -270,7 +271,6 @@ class PdfPagesTree {
      * Generate PdfPages tree.
      *
      * @return root {@link PdfPages}
-     *
      * @throws PdfException in case empty document
      */
     protected PdfObject generateTree() {
@@ -512,99 +512,5 @@ class PdfPagesTree {
             }
         }
     }
-
-    /**
-     * The class represents a list which allows null elements, but doesn't allocate a memory for them, in the rest of
-     * cases it behaves like usual {@link ArrayList} and should have the same complexity (because keys are unique
-     * integers, so collisions are impossible). Class doesn't implement {@code List} interface because it provides
-     * only methods which are in use in {@link PdfPagesTree} class.
-     *
-     * @param <T> elements of the list
-     */
-    static final class NullUnlimitedList<T> {
-        private final Map<Integer, T> map = new HashMap<>();
-        private int size = 0;
-
-        // O(1)
-        public void add(T element) {
-            if (element == null) {
-                size++;
-                return;
-            }
-            map.put(size++, element);
-        }
-
-        // In worth scenario O(n^2) but it is mostly impossible because keys shouldn't have
-        // collisions at all (they are integers). So in average should be O(n).
-        public void add(int index, T element) {
-            if (index < 0 || index > size) {
-                return;
-            }
-            size++;
-            // Shifts the element currently at that position (if any) and any
-            // subsequent elements to the right (adds one to their indices).
-            T previous = map.get(index);
-            for (int i = index + 1; i < size; i++) {
-                T currentToAdd = previous;
-                previous = map.get(i);
-                this.set(i, currentToAdd);
-            }
-
-            this.set(index, element);
-        }
-
-        // average O(1), worth O(n) (mostly impossible in case when keys are integers)
-        public T get(int index) {
-            return map.get(index);
-        }
-
-        // average O(1), worth O(n) (mostly impossible in case when keys are integers)
-        public void set(int index, T element) {
-            if (element == null) {
-                map.remove(index);
-            } else {
-                map.put(index, element);
-            }
-        }
-
-        // O(n)
-        public int indexOf(T element) {
-            if (element == null) {
-                for (int i = 0; i < size; i++) {
-                    if (!map.containsKey(i)) {
-                        return i;
-                    }
-                }
-                return -1;
-            }
-            for (Map.Entry<Integer, T> entry : map.entrySet()) {
-                if (element.equals(entry.getValue())) {
-                    return entry.getKey();
-                }
-            }
-            return -1;
-        }
-
-        // In worth scenario O(n^2) but it is mostly impossible because keys shouldn't have
-        // collisions at all (they are integers). So in average should be O(n).
-        public void remove(int index) {
-            if (index < 0 || index >= size) {
-                return;
-            }
-            map.remove(index);
-            // Shifts any subsequent elements to the left (subtracts one from their indices).
-            T previous = map.get(size - 1);
-            for (int i = size - 2; i >= index; i--) {
-                T current = previous;
-                previous = map.get(i);
-                this.set(i, current);
-            }
-            map.remove(--size);
-        }
-
-        // O(1)
-        public int size() {
-            return size;
-        }
-    }
 }
+

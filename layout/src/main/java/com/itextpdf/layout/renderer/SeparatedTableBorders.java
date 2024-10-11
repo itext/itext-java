@@ -172,7 +172,8 @@ class SeparatedTableBorders extends TableBorders {
         return new float[] {0, 0, 0, 0};
     }
 
-    protected void buildBordersArrays(CellRenderer cell, int row, int col, int[] rowspansToDeduct) {
+    @Override
+    protected void buildBordersArrays(CellRenderer cell, int row, int col) {
         int colspan = (int) cell.getPropertyAsInteger(Property.COLSPAN);
         int rowspan = (int) cell.getPropertyAsInteger(Property.ROWSPAN);
         int colN = ((Cell) cell.getModelElement()).getCol();

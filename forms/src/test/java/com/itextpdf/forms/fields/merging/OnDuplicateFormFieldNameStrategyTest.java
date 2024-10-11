@@ -45,22 +45,21 @@ import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class OnDuplicateFormFieldNameStrategyTest extends ExtendedITextTest {
 
     private final static String DESTINATION_FOLDER = "./target/test/com/itextpdf/forms/merging/";
     private final static String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/forms/merging/";
 
-    @Before
+    @BeforeEach
     public void setUp() {
         createDestinationFolder(DESTINATION_FOLDER);
     }
@@ -74,7 +73,7 @@ public class OnDuplicateFormFieldNameStrategyTest extends ExtendedITextTest {
         form.addField(field1);
         PdfButtonFormField field2 = new CheckBoxFormFieldBuilder(pdfDocument,
                 "test").createCheckBox();
-        Assert.assertThrows(PdfException.class, () -> form.addField(field2));
+        Assertions.assertThrows(PdfException.class, () -> form.addField(field2));
         pdfDocument.close();
     }
 
@@ -86,8 +85,8 @@ public class OnDuplicateFormFieldNameStrategyTest extends ExtendedITextTest {
         form.addField(new CheckBoxFormFieldBuilder(pdfDocument, "test").createCheckBox());
         form.addField(new CheckBoxFormFieldBuilder(pdfDocument, "test1").createCheckBox());
 
-        Assert.assertNotNull(form.getField("test"));
-        Assert.assertNotNull(form.getField("test1"));
+        Assertions.assertNotNull(form.getField("test"));
+        Assertions.assertNotNull(form.getField("test1"));
 
         pdfDocument.close();
     }
@@ -117,13 +116,13 @@ public class OnDuplicateFormFieldNameStrategyTest extends ExtendedITextTest {
             PdfFormField field3 = form.getField("test_1");
             PdfFormField field4 = form.getField("bingbong_1");
 
-            Assert.assertNotNull(field1);
-            Assert.assertNotNull(field2);
-            Assert.assertNotNull(field3);
-            Assert.assertNotNull(field4);
+            Assertions.assertNotNull(field1);
+            Assertions.assertNotNull(field2);
+            Assertions.assertNotNull(field3);
+            Assertions.assertNotNull(field4);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(destination,
+        Assertions.assertNull(new CompareTool().compareByContent(destination,
                 SOURCE_FOLDER + "cmp_incrementalFieldNameEven.pdf", DESTINATION_FOLDER, "diff_"));
 
     }
@@ -153,10 +152,10 @@ public class OnDuplicateFormFieldNameStrategyTest extends ExtendedITextTest {
             field1.addKid(child1);
             field1.addKid(child2);
             PdfAcroForm.getAcroForm(pdfDocument, true).addField(field1);
-            Assert.assertEquals(2, field1.getKids().size());
+            Assertions.assertEquals(2, field1.getKids().size());
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(destination,
+        Assertions.assertNull(new CompareTool().compareByContent(destination,
                 SOURCE_FOLDER + "cmp_testAddFormFieldWithoutConfiguration.pdf", DESTINATION_FOLDER, "diff_"));
     }
 
@@ -190,16 +189,16 @@ public class OnDuplicateFormFieldNameStrategyTest extends ExtendedITextTest {
         PdfFormField field5 = form.getField("test_2");
         PdfFormField field6 = form.getField("bingbong_2");
 
-        Assert.assertNotNull(field1);
-        Assert.assertNotNull(field2);
-        Assert.assertNotNull(field3);
-        Assert.assertNotNull(field4);
-        Assert.assertNotNull(field5);
-        Assert.assertNotNull(field6);
+        Assertions.assertNotNull(field1);
+        Assertions.assertNotNull(field2);
+        Assertions.assertNotNull(field3);
+        Assertions.assertNotNull(field4);
+        Assertions.assertNotNull(field5);
+        Assertions.assertNotNull(field6);
 
         pdfDocument.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destination,
+        Assertions.assertNull(new CompareTool().compareByContent(destination,
                 SOURCE_FOLDER + "cmp_incrementFieldNameUnEven.pdf", DESTINATION_FOLDER, "diff_"));
     }
 
@@ -208,7 +207,7 @@ public class OnDuplicateFormFieldNameStrategyTest extends ExtendedITextTest {
     public void addIndexDotOperatorThrowsException() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(baos))) {
-            Assert.assertThrows(IllegalArgumentException.class, () -> {
+            Assertions.assertThrows(IllegalArgumentException.class, () -> {
                 PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDocument, true, new AddIndexStrategy("."));
             });
         }
@@ -218,7 +217,7 @@ public class OnDuplicateFormFieldNameStrategyTest extends ExtendedITextTest {
     public void addIndexNullOperatorThrowsException() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(baos))) {
-            Assert.assertThrows(IllegalArgumentException.class, () -> {
+            Assertions.assertThrows(IllegalArgumentException.class, () -> {
                 PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDocument, true, new AddIndexStrategy(null));
             });
         }
@@ -227,7 +226,7 @@ public class OnDuplicateFormFieldNameStrategyTest extends ExtendedITextTest {
 
     @Test
     public void invalidParamsToExecuteNull() {
-        Assert.assertFalse(new AddIndexStrategy().execute(null, null, false));
+        Assertions.assertFalse(new AddIndexStrategy().execute(null, null, false));
     }
 
     @Test
@@ -254,10 +253,10 @@ public class OnDuplicateFormFieldNameStrategyTest extends ExtendedITextTest {
         }
         int amount = form.getAllFormFields().size();
         pdfDoc.close();
-        Assert.assertTrue(isReadOnly);
-        Assert.assertEquals(4, amount);
+        Assertions.assertTrue(isReadOnly);
+        Assertions.assertEquals(4, amount);
 
-        Assert.assertNull(new CompareTool().compareByContent(destination,
+        Assertions.assertNull(new CompareTool().compareByContent(destination,
                 SOURCE_FOLDER + "cmp_flattenReadOnlyAddIndexTo.pdf", DESTINATION_FOLDER, "diff_"));
     }
 
@@ -283,7 +282,7 @@ public class OnDuplicateFormFieldNameStrategyTest extends ExtendedITextTest {
                 doc.add(new CheckBox("test").setInteractive(true));
             }
 
-            Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "add_index.pdf",
+            Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "add_index.pdf",
                     SOURCE_FOLDER + "cmp_add_index.pdf", DESTINATION_FOLDER, "diff_"));
 
         } finally {

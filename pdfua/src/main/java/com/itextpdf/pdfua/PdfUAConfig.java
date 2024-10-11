@@ -22,37 +22,37 @@
  */
 package com.itextpdf.pdfua;
 
-import com.itextpdf.kernel.pdf.PdfUAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfUAConformance;
 
 /**
  * Class that holds the configuration for the PDF/UA document.
  */
 public class PdfUAConfig {
 
-    private final PdfUAConformanceLevel conformanceLevel;
+    private final PdfUAConformance conformance;
     private final String title;
     private final String language;
 
     /**
      * Creates a new PdfUAConfig instance.
      *
-     * @param conformanceLevel The conformance level of the PDF/UA document.
-     * @param title            The title of the PDF/UA document.
-     * @param language         The language of the PDF/UA document.
+     * @param conformance the conformance of the PDF/UA document
+     * @param title the title of the PDF/UA document
+     * @param language the language of the PDF/UA document
      */
-    public PdfUAConfig(PdfUAConformanceLevel conformanceLevel, String title, String language) {
-        this.conformanceLevel = conformanceLevel;
+    public PdfUAConfig(PdfUAConformance conformance, String title, String language) {
+        this.conformance = conformance;
         this.title = title;
         this.language = language;
     }
 
     /**
-     * Gets the conformance level.
+     * Gets the UA conformance.
      *
-     * @return The {@link PdfUAConformanceLevel}.
+     * @return The {@link PdfUAConformance}.
      */
-    public PdfUAConformanceLevel getConformanceLevel() {
-        return conformanceLevel;
+    public PdfUAConformance getConformance() {
+        return conformance;
     }
 
     /**

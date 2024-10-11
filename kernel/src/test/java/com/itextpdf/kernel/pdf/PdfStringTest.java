@@ -39,32 +39,30 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfStringTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfStringTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfStringTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -91,20 +89,20 @@ public class PdfStringTest extends ExtendedITextTest {
         pdfDocument.close();
 
         PdfDocument readDoc = new PdfDocument(CompareTool.createOutputReader(destinationFolder + fileName));
-        Assert.assertEquals(author, readDoc.getDocumentInfo().getAuthor());
-        Assert.assertEquals(title, readDoc.getDocumentInfo().getTitle());
-        Assert.assertEquals(subject, readDoc.getDocumentInfo().getSubject());
-        Assert.assertEquals(keywords, readDoc.getDocumentInfo().getKeywords());
-        Assert.assertEquals(creator, readDoc.getDocumentInfo().getCreator());
+        Assertions.assertEquals(author, readDoc.getDocumentInfo().getAuthor());
+        Assertions.assertEquals(title, readDoc.getDocumentInfo().getTitle());
+        Assertions.assertEquals(subject, readDoc.getDocumentInfo().getSubject());
+        Assertions.assertEquals(keywords, readDoc.getDocumentInfo().getKeywords());
+        Assertions.assertEquals(creator, readDoc.getDocumentInfo().getCreator());
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + fileName, sourceFolder + "cmp_" + fileName, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + fileName, sourceFolder + "cmp_" + fileName, destinationFolder, "diff_"));
     }
 
     @Test
     public void testUnicodeString() {
         String unicode = "Привет!";
         PdfString string = new PdfString(unicode);
-        Assert.assertNotEquals(unicode, string.toUnicodeString());
+        Assertions.assertNotEquals(unicode, string.toUnicodeString());
     }
 
     @Test
@@ -114,7 +112,7 @@ public class PdfStringTest extends ExtendedITextTest {
         String text = PdfTextExtractor.getTextFromPage(pdfDoc.getPage(1), new LocationTextExtractionStrategy().setUseActualText(true));
         pdfDoc.close();
         //  शांति देवनागरी
-        Assert.assertEquals("\u0936\u093e\u0902\u0924\u093f \u0926\u0947\u0935\u0928\u093E\u0917\u0930\u0940", text);
+        Assertions.assertEquals("\u0936\u093e\u0902\u0924\u093f \u0926\u0947\u0935\u0928\u093E\u0917\u0930\u0940", text);
     }
 
     @Test
@@ -128,7 +126,7 @@ public class PdfStringTest extends ExtendedITextTest {
         String alternateDescription = tagTreePointer.moveToKid(0).moveToKid(0).moveToKid(0).getProperties().getAlternateDescription();
         pdfDoc.close();
         //  2001: A Space Odyssey (Космическая одиссея)
-        Assert.assertEquals("2001: A Space Odyssey (\u041A\u043E\u0441\u043C\u0438\u0447\u0435\u0441\u043A\u0430\u044F " +
+        Assertions.assertEquals("2001: A Space Odyssey (\u041A\u043E\u0441\u043C\u0438\u0447\u0435\u0441\u043A\u0430\u044F " +
                 "\u043E\u0434\u0438\u0441\u0441\u0435\u044F)", alternateDescription);
     }
 
@@ -154,7 +152,7 @@ public class PdfStringTest extends ExtendedITextTest {
         expected.add("\u4E2D\u56FD  bookmark 2-1");
         expected.add("\u4E2D\u56FD  bookmark 2-2");
         for (int i = 0; i < 6; i++)
-            Assert.assertEquals(expected.get(i), children.get(i));
+            Assertions.assertEquals(expected.get(i), children.get(i));
     }
 
     @Test
@@ -166,7 +164,7 @@ public class PdfStringTest extends ExtendedITextTest {
                 "Movies-9", "Movies-10", "Movies-11", "Movies-12"};
         pdfDoc.close();
         for (int i = 0; i < labels.length; i++)
-            Assert.assertEquals(expected[i], labels[i]);
+            Assertions.assertEquals(expected[i], labels[i]);
     }
 
     @Test
@@ -193,7 +191,7 @@ public class PdfStringTest extends ExtendedITextTest {
         canvas.closeTag();
         canvas.endText();
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "writeUtf8AltText.pdf", sourceFolder + "cmp_writeUtf8AltText.pdf", destinationFolder, "diffAltText_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "writeUtf8AltText.pdf", sourceFolder + "cmp_writeUtf8AltText.pdf", destinationFolder, "diffAltText_"));
     }
 
     @Test
@@ -224,7 +222,7 @@ public class PdfStringTest extends ExtendedITextTest {
         second.addOutline("").getContent().put(PdfName.Title, new PdfString("\u4E2D\u56FD  bookmark 2-2", PdfEncodings.UTF8));
 
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "writeUtf8Bookmarks.pdf", sourceFolder + "cmp_writeUtf8Bookmarks.pdf", destinationFolder, "diffBookmarks_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "writeUtf8Bookmarks.pdf", sourceFolder + "cmp_writeUtf8Bookmarks.pdf", destinationFolder, "diffBookmarks_"));
     }
 
     @Test
@@ -248,7 +246,7 @@ public class PdfStringTest extends ExtendedITextTest {
         canvas.endText();
 
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "writeUtf8PageLabelPrefix.pdf", sourceFolder + "cmp_writeUtf8PageLabelPrefix.pdf", destinationFolder, "diffPageLabelPrefix_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "writeUtf8PageLabelPrefix.pdf", sourceFolder + "cmp_writeUtf8PageLabelPrefix.pdf", destinationFolder, "diffPageLabelPrefix_"));
     }
 
     @Test
@@ -271,6 +269,6 @@ public class PdfStringTest extends ExtendedITextTest {
         canvas.endText();
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "writeUtf8ActualText.pdf", sourceFolder + "cmp_writeUtf8ActualText.pdf", destinationFolder, "diffActualText_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "writeUtf8ActualText.pdf", sourceFolder + "cmp_writeUtf8ActualText.pdf", destinationFolder, "diffActualText_"));
     }
 }

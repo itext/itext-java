@@ -1,7 +1,15 @@
-[{
+[
+  {
     "condition": {
-        "typeReachable": "com.itextpdf.kernel.pdf.PdfName"
+      "typeReachable": "com.itextpdf.kernel.pdf.PdfName"
     },
     "name": "com.itextpdf.kernel.pdf.PdfName",
-    "allDeclaredFields":true
-}]
+    "allDeclaredFields": true
+  },
+  {
+    "condition": {
+      "typeReachable": "com.itextpdf.kernel.di.pagetree.IPageTreeListFactory"
+    },
+    "name": "com.itextpdf.kernel.utils.RegisterDefaultDiContainer"
+  }
+]

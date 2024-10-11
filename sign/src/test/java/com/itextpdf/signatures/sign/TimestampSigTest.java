@@ -35,7 +35,6 @@ import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -43,12 +42,12 @@ import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.util.Arrays;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(BouncyCastleIntegrationTest.class)
+@Tag("BouncyCastleIntegrationTest")
 public class TimestampSigTest extends ExtendedITextTest {
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
@@ -60,7 +59,7 @@ public class TimestampSigTest extends ExtendedITextTest {
     private static final char[] password = "testpassphrase".toCharArray();
 
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         Security.addProvider(FACTORY.getProvider());
         createOrClearDestinationFolder(destinationFolder);
@@ -83,7 +82,7 @@ public class TimestampSigTest extends ExtendedITextTest {
 
         TestSignUtils.basicCheckSignedDoc(destinationFolder + "timestampTest01.pdf", "timestampSig1");
 
-        Assert.assertNull(
+        Assertions.assertNull(
                 SignaturesCompareTool.compareSignatures(outFileName, sourceFolder + "cmp_timestampTest01.pdf"));
     }
 

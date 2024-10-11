@@ -30,17 +30,16 @@ import com.itextpdf.styledxmlparser.node.IElementNode;
 import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.JsoupHtmlParser;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class CssStyleAttributeParseTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/styledxmlparser/css/parse/CssStyleAttributeParseTest/";
 
@@ -68,10 +67,10 @@ public class CssStyleAttributeParseTest extends ExtendedITextTest {
 
         parseStyleAttrForSubtree(document, styleDeclarations);
 
-        Assert.assertEquals(styleDeclarations.size(), expectStyleDeclarations.size());
+        Assertions.assertEquals(styleDeclarations.size(), expectStyleDeclarations.size());
 
         for (int i = 0; i < expectStyleDeclarations.size(); i++) {
-            Assert.assertEquals(expectStyleDeclarations.get(i), styleDeclarations.get(i));
+            Assertions.assertEquals(expectStyleDeclarations.get(i), styleDeclarations.get(i));
         }
     }
 

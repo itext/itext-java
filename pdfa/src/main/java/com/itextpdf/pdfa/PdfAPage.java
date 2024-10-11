@@ -26,15 +26,19 @@ import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.pdfa.checker.PdfAChecker;
 
 class PdfAPage extends PdfPage {
+    private final PdfAChecker checker;
 
-    PdfAPage(PdfDocument pdfDocument, PageSize pageSize) {
+    PdfAPage(PdfDocument pdfDocument, PageSize pageSize, PdfAChecker checker) {
         super(pdfDocument, pageSize);
+        this.checker = checker;
     }
 
-    PdfAPage(PdfDictionary pdfObject) {
+    PdfAPage(PdfDictionary pdfObject, PdfAChecker checker) {
         super(pdfObject);
+        this.checker = checker;
     }
 
     @Override
@@ -42,12 +46,10 @@ class PdfAPage extends PdfPage {
         // We check in advance whether this PdfAPage can be flushed and call the flush method only if it is.
         // This avoids processing actions that are invoked during flushing (for example, sending the END_PAGE event)
         // if the page is not actually flushed.
-        if (flushResourcesContentStreams
-                || ((PdfADocument) getDocument()).isClosing()
-                || ((PdfADocument) getDocument()).checker.objectIsChecked(this.getPdfObject())) {
+        if (flushResourcesContentStreams || getDocument().isClosing() ||
+                checker.isPdfObjectReadyToFlush(this.getPdfObject())) {
+
             super.flush(flushResourcesContentStreams);
-        } else {
-            ((PdfADocument) getDocument()).logThatPdfAPageFlushingWasNotPerformed();
         }
     }
 }

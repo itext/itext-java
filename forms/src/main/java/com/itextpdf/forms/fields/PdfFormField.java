@@ -32,7 +32,7 @@ import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
-import com.itextpdf.io.source.OutputStream;
+import com.itextpdf.io.source.HighPrecisionOutputStream;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.DeviceCmyk;
 import com.itextpdf.kernel.colors.DeviceGray;
@@ -255,9 +255,8 @@ public class PdfFormField extends AbstractPdfFormField {
         }
         field.makeIndirect(document);
 
-        if (document != null && document.getReader() != null &&
-                document.getReader().getPdfAConformanceLevel() != null) {
-            field.pdfConformanceLevel = document.getReader().getPdfAConformanceLevel();
+        if (document != null) {
+            field.pdfConformance = document.getConformance();
         }
 
         return field;
@@ -1068,7 +1067,7 @@ public class PdfFormField extends AbstractPdfFormField {
             checkType = CheckBoxType.CROSS;
         }
         this.checkType = new NullableContainer<>(checkType);
-        if (getPdfConformanceLevel() != null) {
+        if (getPdfConformance() != null && getPdfConformance().isPdfAOrUa()) {
             return this;
         }
         try {
@@ -1312,7 +1311,7 @@ public class PdfFormField extends AbstractPdfFormField {
         assert font != null;
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
-        PdfOutputStream pdfStream = new PdfOutputStream(new OutputStream<>(output));
+        PdfOutputStream pdfStream = new PdfOutputStream(new HighPrecisionOutputStream<>(output));
         final byte[] g = new byte[]{(byte) 'g'};
         final byte[] rg = new byte[]{(byte) 'r', (byte) 'g'};
         final byte[] k = new byte[]{(byte) 'k'};

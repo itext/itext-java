@@ -23,15 +23,14 @@
 package com.itextpdf.styledxmlparser.util;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.util.List;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class FontFamilySplitterTest extends ExtendedITextTest {
     @Test
     //TODO DEVSIX-1130: Adapt after fix
@@ -131,7 +130,7 @@ public class FontFamilySplitterTest extends ExtendedITextTest {
             for (String ff: fontFamily) {
                 result.append(ff).append("; ");
             }
-            Assert.assertEquals(splitFontFamilies[i+1],
+            Assertions.assertEquals(splitFontFamilies[i+1],
                     result.length() > 2 ? result.substring(0, result.length() - 2) : "-");
         }
     }

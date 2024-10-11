@@ -28,12 +28,11 @@ import com.itextpdf.styledxmlparser.node.IDocumentNode;
 import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.JsoupHtmlParser;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class CssMatchesTest extends ExtendedITextTest {
 
     @Test
@@ -49,7 +48,7 @@ public class CssMatchesTest extends ExtendedITextTest {
               .childNodes().get(0)
                   .childNodes().get(0);
 
-      Assert.assertTrue(item.matches(divNode));
+      Assertions.assertTrue(item.matches(divNode));
     }
 
     @Test
@@ -64,7 +63,7 @@ public class CssMatchesTest extends ExtendedITextTest {
         INode divNode = bodyNode
                 .childNodes().get(0);
 
-        Assert.assertFalse(item.matches(divNode));
+        Assertions.assertFalse(item.matches(divNode));
     }
 
     @Test
@@ -79,7 +78,7 @@ public class CssMatchesTest extends ExtendedITextTest {
         INode divNode = bodyNode
                 .childNodes().get(0);
 
-        Assert.assertFalse(item.matches(divNode));
+        Assertions.assertFalse(item.matches(divNode));
     }
 
     @Test
@@ -95,7 +94,7 @@ public class CssMatchesTest extends ExtendedITextTest {
                 .childNodes().get(0)
                     .childNodes().get(0);
 
-        Assert.assertTrue(item.matches(divNode));
+        Assertions.assertTrue(item.matches(divNode));
     }
 
     @Test
@@ -110,7 +109,7 @@ public class CssMatchesTest extends ExtendedITextTest {
         INode divNode = bodyNode
                 .childNodes().get(0);
 
-        Assert.assertFalse(item.matches(divNode));
+        Assertions.assertFalse(item.matches(divNode));
     }
 
     @Test
@@ -126,7 +125,7 @@ public class CssMatchesTest extends ExtendedITextTest {
                 .childNodes().get(0)
                     .childNodes().get(1);
 
-        Assert.assertTrue(item.matches(divNode));
+        Assertions.assertTrue(item.matches(divNode));
     }
 
     @Test
@@ -141,7 +140,7 @@ public class CssMatchesTest extends ExtendedITextTest {
         INode divNode = bodyNode
                 .childNodes().get(0);
 
-        Assert.assertFalse(item.matches(divNode));
+        Assertions.assertFalse(item.matches(divNode));
     }
 
     @Test
@@ -157,7 +156,7 @@ public class CssMatchesTest extends ExtendedITextTest {
                 .childNodes().get(0)
                     .childNodes().get(1);
 
-        Assert.assertTrue(item.matches(divNode));
+        Assertions.assertTrue(item.matches(divNode));
     }
 
     @Test
@@ -172,7 +171,7 @@ public class CssMatchesTest extends ExtendedITextTest {
         INode divNode = bodyNode
                 .childNodes().get(0);
 
-        Assert.assertFalse(item.matches(divNode));
+        Assertions.assertFalse(item.matches(divNode));
     }
 
     @Test
@@ -188,7 +187,7 @@ public class CssMatchesTest extends ExtendedITextTest {
                 .childNodes().get(0)
                     .childNodes().get(0);
 
-        Assert.assertTrue(item.matches(divNode));
+        Assertions.assertTrue(item.matches(divNode));
     }
 
     @Test
@@ -203,7 +202,7 @@ public class CssMatchesTest extends ExtendedITextTest {
         INode divNode = bodyNode
                 .childNodes().get(0);
 
-        Assert.assertFalse(item.matches(divNode));
+        Assertions.assertFalse(item.matches(divNode));
     }
 
     @Test
@@ -219,7 +218,7 @@ public class CssMatchesTest extends ExtendedITextTest {
                 .childNodes().get(0)
                     .childNodes().get(0);
 
-        Assert.assertFalse(item.matches(divNode));
+        Assertions.assertFalse(item.matches(divNode));
     }
 
     @Test
@@ -231,7 +230,7 @@ public class CssMatchesTest extends ExtendedITextTest {
         INode headNode = documentNode
                 .childNodes().get(0);
 
-        Assert.assertTrue(item.matches(headNode));
+        Assertions.assertTrue(item.matches(headNode));
     }
 
     @Test
@@ -246,6 +245,6 @@ public class CssMatchesTest extends ExtendedITextTest {
         INode divNode = bodyNode
                 .childNodes().get(0);
 
-        Assert.assertFalse(item.matches(divNode));
+        Assertions.assertFalse(item.matches(divNode));
     }
 }

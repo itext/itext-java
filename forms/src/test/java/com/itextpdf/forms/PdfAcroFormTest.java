@@ -51,14 +51,12 @@ import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 import java.util.List;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfAcroFormTest extends ExtendedITextTest {
 
     @Test
@@ -72,9 +70,9 @@ public class PdfAcroFormTest extends ExtendedITextTest {
             PdfObject sigFlags = acroForm.getPdfObject().get(PdfName.SigFlags);
             outputDoc.close();
 
-            Assert.assertEquals(new PdfNumber(65), sigFlags);
-            Assert.assertTrue(isModified);
-            Assert.assertTrue(isReleaseForbidden);
+            Assertions.assertEquals(new PdfNumber(65), sigFlags);
+            Assertions.assertTrue(isModified);
+            Assertions.assertTrue(isReleaseForbidden);
         }
     }
 
@@ -91,9 +89,9 @@ public class PdfAcroFormTest extends ExtendedITextTest {
                     .setWidgetRectangle(new Rectangle(100, 300, 200, 20)).createText();
             root.addKid(child);
             acroForm.addField(root);
-            Assert.assertEquals(2, acroForm.fields.size());
+            Assertions.assertEquals(2, acroForm.fields.size());
             PdfArray fieldKids = root.getKids();
-            Assert.assertEquals(2, fieldKids.size());
+            Assertions.assertEquals(2, fieldKids.size());
         }
     }
 
@@ -110,9 +108,9 @@ public class PdfAcroFormTest extends ExtendedITextTest {
                     .setWidgetRectangle(new Rectangle(36, 696, 20, 20)).createText();
             text.addKid(childText);
             acroForm.addField(text);
-            Assert.assertEquals(1, acroForm.fields.size());
+            Assertions.assertEquals(1, acroForm.fields.size());
             List<AbstractPdfFormField> fieldKids = text.getChildFields();
-            Assert.assertEquals(2, fieldKids.size());
+            Assertions.assertEquals(2, fieldKids.size());
         }
     }
 
@@ -131,7 +129,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
             root.addKid(child);
             acroForm.addField(root);
             PdfFormField childField = acroForm.getField("root.child");
-            Assert.assertEquals("root.child", childField.getFieldName().toString());
+            Assertions.assertEquals("root.child", childField.getFieldName().toString());
         }
     }
 
@@ -156,7 +154,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
             root.addKid(child);
             acroForm.addField(root);
             PdfFormField childField = acroForm.getField("root.field.field.another_name");
-            Assert.assertEquals("root.field.field.another_name", childField.getFieldName().toString());
+            Assertions.assertEquals("root.field.field.another_name", childField.getFieldName().toString());
         }
     }
 
@@ -176,7 +174,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
             acroForm.addField(root);
             acroForm.getField("root").setFieldName("diff");
             PdfFormField childField = PdfFormCreator.getAcroForm(outputDoc, true).getField("diff.child");
-            Assert.assertEquals("diff.child", childField.getFieldName().toString());
+            Assertions.assertEquals("diff.child", childField.getFieldName().toString());
         }
     }
 
@@ -202,8 +200,8 @@ public class PdfAcroFormTest extends ExtendedITextTest {
             root.addKid(child);
             acroForm.addField(root);
             acroForm.removeField("root.child.aaaaa");
-            Assert.assertEquals(2, acroForm.fields.size());
-            Assert.assertEquals(2, root.getKids().size());
+            Assertions.assertEquals(2, acroForm.fields.size());
+            Assertions.assertEquals(2, root.getKids().size());
         }
     }
 
@@ -238,10 +236,10 @@ public class PdfAcroFormTest extends ExtendedITextTest {
             root.addKid(child);
             acroForm.addField(root);
             PdfFormField childField = acroForm.getField("root.child.aaaaa.child2");
-            Assert.assertEquals("root.child.aaaaa.child2", childField.getFieldName().toString());
+            Assertions.assertEquals("root.child.aaaaa.child2", childField.getFieldName().toString());
 
-            Assert.assertEquals(2, acroForm.getFields().size());
-            Assert.assertEquals(2, root.getKids().size());
+            Assertions.assertEquals(2, acroForm.getFields().size());
+            Assertions.assertEquals(2, root.getKids().size());
         }
     }
 
@@ -250,22 +248,22 @@ public class PdfAcroFormTest extends ExtendedITextTest {
         try(PdfDocument outputDoc = createDocument()) {
             outputDoc.addNewPage();
             PdfAcroForm acroForm = PdfFormCreator.getAcroForm(outputDoc, true);
-            Assert.assertEquals(0, acroForm.getAllFormFields().size());
-            Assert.assertEquals(0, acroForm.getAllFormFieldsAndAnnotations().size());
+            Assertions.assertEquals(0, acroForm.getAllFormFields().size());
+            Assertions.assertEquals(0, acroForm.getAllFormFieldsAndAnnotations().size());
 
             PdfDictionary fieldDict = new PdfDictionary();
             fieldDict.put(PdfName.FT, PdfName.Tx);
             PdfFormField field = PdfFormField.makeFormField(fieldDict.makeIndirect(outputDoc), outputDoc);
             field.setFieldName("Field1");
             acroForm.addField(field);
-            Assert.assertEquals(1, acroForm.getAllFormFields().size());
-            Assert.assertEquals(1, acroForm.getAllFormFieldsAndAnnotations().size());
+            Assertions.assertEquals(1, acroForm.getAllFormFields().size());
+            Assertions.assertEquals(1, acroForm.getAllFormFieldsAndAnnotations().size());
 
             PdfDictionary annotDict = new PdfDictionary();
             annotDict.put(PdfName.Subtype, PdfName.Widget);
             field.addKid(PdfFormAnnotation.makeFormAnnotation(annotDict, outputDoc));
-            Assert.assertEquals(1, acroForm.getAllFormFields().size());
-            Assert.assertEquals(2, acroForm.getAllFormFieldsAndAnnotations().size());
+            Assertions.assertEquals(1, acroForm.getAllFormFields().size());
+            Assertions.assertEquals(2, acroForm.getAllFormFieldsAndAnnotations().size());
         }
     }
 
@@ -298,9 +296,9 @@ public class PdfAcroFormTest extends ExtendedITextTest {
             root.addKid(sameChild);
             acroForm.addField(root);
 
-            Assert.assertEquals(1, acroForm.getFields().size());
-            Assert.assertEquals(1, root.getKids().size());
-            Assert.assertEquals(2, child.getKids().size());
+            Assertions.assertEquals(1, acroForm.getFields().size());
+            Assertions.assertEquals(1, root.getKids().size());
+            Assertions.assertEquals(2, child.getKids().size());
         }
     }
 
@@ -313,17 +311,17 @@ public class PdfAcroFormTest extends ExtendedITextTest {
             PdfDictionary fieldDict = new PdfDictionary();
             fieldDict.put(PdfName.FT, PdfName.Tx);
             PdfFormField field = PdfFormField.makeFormField(fieldDict.makeIndirect(outputDoc), outputDoc);
-            Exception e = Assert.assertThrows(PdfException.class, () -> acroForm.addField(field));
-            Assert.assertEquals(FormsExceptionMessageConstant.FORM_FIELD_MUST_HAVE_A_NAME, e.getMessage());
+            Exception e = Assertions.assertThrows(PdfException.class, () -> acroForm.addField(field));
+            Assertions.assertEquals(FormsExceptionMessageConstant.FORM_FIELD_MUST_HAVE_A_NAME, e.getMessage());
 
             outputDoc.addNewPage();
             PdfPage page = outputDoc.getLastPage();
-            e = Assert.assertThrows(PdfException.class, () -> acroForm.addField(field, page));
-            Assert.assertEquals(FormsExceptionMessageConstant.FORM_FIELD_MUST_HAVE_A_NAME, e.getMessage());
+            e = Assertions.assertThrows(PdfException.class, () -> acroForm.addField(field, page));
+            Assertions.assertEquals(FormsExceptionMessageConstant.FORM_FIELD_MUST_HAVE_A_NAME, e.getMessage());
 
             acroForm.addField(field, page, false);
 
-            Assert.assertEquals(0, acroForm.getRootFormFields().size());
+            Assertions.assertEquals(0, acroForm.getRootFormFields().size());
         }
     }
 
@@ -348,8 +346,8 @@ public class PdfAcroFormTest extends ExtendedITextTest {
             acroForm.addField(root);
             acroForm.addField(sameRoot);
 
-            Assert.assertEquals(1, acroForm.getFields().size());
-            Assert.assertEquals(2, root.getKids().size());
+            Assertions.assertEquals(1, acroForm.getFields().size());
+            Assertions.assertEquals(2, root.getKids().size());
         }
     }
 
@@ -369,9 +367,9 @@ public class PdfAcroFormTest extends ExtendedITextTest {
             acroForm.addField(firstField);
             acroForm.addField(secondField);
 
-            Assert.assertEquals(1, acroForm.getFields().size());
-            Assert.assertEquals(2, acroForm.getField("root").getKids().size());
-            Assert.assertEquals(2, acroForm.getField("root").getChildFields().size());
+            Assertions.assertEquals(1, acroForm.getFields().size());
+            Assertions.assertEquals(2, acroForm.getField("root").getKids().size());
+            Assertions.assertEquals(2, acroForm.getField("root").getChildFields().size());
         }
     }
 
@@ -388,8 +386,8 @@ public class PdfAcroFormTest extends ExtendedITextTest {
 
             acroForm.addField(firstField);
 
-            Exception e = Assert.assertThrows(PdfException.class, () -> acroForm.addField(secondField));
-            Assert.assertEquals(MessageFormatUtil.format(FormsExceptionMessageConstant.CANNOT_MERGE_FORMFIELDS, "root"),
+            Exception e = Assertions.assertThrows(PdfException.class, () -> acroForm.addField(secondField));
+            Assertions.assertEquals(MessageFormatUtil.format(FormsExceptionMessageConstant.CANNOT_MERGE_FORMFIELDS, "root"),
                     e.getMessage());
         }
     }
@@ -409,12 +407,12 @@ public class PdfAcroFormTest extends ExtendedITextTest {
             firstField.addKid(mergedField);
             acroForm.addField(firstField);
 
-            Assert.assertEquals(1, acroForm.getFields().size());
-            Assert.assertEquals(1, acroForm.getField("root").getKids().size());
+            Assertions.assertEquals(1, acroForm.getFields().size());
+            Assertions.assertEquals(1, acroForm.getField("root").getKids().size());
 
-            Assert.assertTrue(PdfFormAnnotationUtil.isPureWidgetOrMergedField(
+            Assertions.assertTrue(PdfFormAnnotationUtil.isPureWidgetOrMergedField(
                     (PdfDictionary) acroForm.getField("root").getKids().get(0)));
-            Assert.assertFalse(PdfFormAnnotationUtil.isPureWidget(
+            Assertions.assertFalse(PdfFormAnnotationUtil.isPureWidget(
                     (PdfDictionary) acroForm.getField("root").getKids().get(0)));
         }
     }
@@ -439,17 +437,17 @@ public class PdfAcroFormTest extends ExtendedITextTest {
             rootField.addKid(firstDirtyAnnot);
             rootField.addKid(secondDirtyAnnot);
 
-            Assert.assertEquals(1, rootField.getKids().size());
-            Assert.assertEquals(2, firstDirtyAnnot.getKids().size());
+            Assertions.assertEquals(1, rootField.getKids().size());
+            Assertions.assertEquals(2, firstDirtyAnnot.getKids().size());
 
             acroForm.addField(rootField);
 
-            Assert.assertEquals(1, acroForm.getFields().size());
+            Assertions.assertEquals(1, acroForm.getFields().size());
 
             PdfArray fieldKids = acroForm.getField("root").getKids();
-            Assert.assertEquals(1, fieldKids.size());
+            Assertions.assertEquals(1, fieldKids.size());
 
-            Assert.assertFalse(PdfFormAnnotationUtil.isPureWidget((PdfDictionary) fieldKids.get(0)));
+            Assertions.assertFalse(PdfFormAnnotationUtil.isPureWidget((PdfDictionary) fieldKids.get(0)));
         }
     }
 
@@ -478,18 +476,18 @@ public class PdfAcroFormTest extends ExtendedITextTest {
             rootField.addKid(firstDirtyAnnot);
             rootField.addKid(secondDirtyAnnot);
 
-            Assert.assertEquals(1, rootField.getKids().size());
-            Assert.assertEquals(2, firstDirtyAnnot.getKids().size());
+            Assertions.assertEquals(1, rootField.getKids().size());
+            Assertions.assertEquals(2, firstDirtyAnnot.getKids().size());
 
             acroForm.addField(rootField);
 
-            Assert.assertEquals(1, acroForm.getFields().size());
+            Assertions.assertEquals(1, acroForm.getFields().size());
 
             PdfArray fieldKids = acroForm.getField("root").getKids();
-            Assert.assertEquals(2, fieldKids.size());
+            Assertions.assertEquals(2, fieldKids.size());
 
-            Assert.assertTrue(PdfFormAnnotationUtil.isPureWidget((PdfDictionary) fieldKids.get(0)));
-            Assert.assertTrue(PdfFormAnnotationUtil.isPureWidget((PdfDictionary) fieldKids.get(1)));
+            Assertions.assertTrue(PdfFormAnnotationUtil.isPureWidget((PdfDictionary) fieldKids.get(0)));
+            Assertions.assertTrue(PdfFormAnnotationUtil.isPureWidget((PdfDictionary) fieldKids.get(1)));
         }
     }
 
@@ -520,9 +518,9 @@ public class PdfAcroFormTest extends ExtendedITextTest {
             acroForm = PdfFormCreator.getAcroForm(outputDoc, true);
             acroForm.addField(thirdField);
 
-            Assert.assertEquals(1, acroForm.getFields().size());
-            Assert.assertEquals(3, acroForm.getField("root").getKids().size());
-            Assert.assertEquals(2, acroForm.getField("root").getChildFields().size());
+            Assertions.assertEquals(1, acroForm.getFields().size());
+            Assertions.assertEquals(3, acroForm.getField("root").getKids().size());
+            Assertions.assertEquals(2, acroForm.getField("root").getChildFields().size());
         }
     }
 
@@ -536,15 +534,15 @@ public class PdfAcroFormTest extends ExtendedITextTest {
                     .setWidgetRectangle(new Rectangle(100, 500, 200, 30))
                     .createText().setValue("root");
 
-            Assert.assertEquals(0, page.getAnnotsSize());
+            Assertions.assertEquals(0, page.getAnnotsSize());
             acroForm.addField(mergedField);
-            Assert.assertEquals(1, page.getAnnotsSize());
+            Assertions.assertEquals(1, page.getAnnotsSize());
 
-            Assert.assertEquals(1, acroForm.getFields().size());
+            Assertions.assertEquals(1, acroForm.getFields().size());
             PdfFormField root = acroForm.getField("root");
-            Assert.assertNull(root.getKids());
-            Assert.assertTrue(PdfFormAnnotationUtil.isPureWidgetOrMergedField(root.getPdfObject()));
-            Assert.assertFalse(PdfFormAnnotationUtil.isPureWidget(root.getPdfObject()));
+            Assertions.assertNull(root.getKids());
+            Assertions.assertTrue(PdfFormAnnotationUtil.isPureWidgetOrMergedField(root.getPdfObject()));
+            Assertions.assertFalse(PdfFormAnnotationUtil.isPureWidget(root.getPdfObject()));
         }
     }
 
@@ -561,9 +559,9 @@ public class PdfAcroFormTest extends ExtendedITextTest {
             PdfObject calculationOrder = acroForm.getPdfObject().get(PdfName.CO);
             outputDoc.close();
 
-            Assert.assertEquals(calculationOrderArray, calculationOrder);
-            Assert.assertTrue(isModified);
-            Assert.assertTrue(isReleaseForbidden);
+            Assertions.assertEquals(calculationOrderArray, calculationOrder);
+            Assertions.assertTrue(isModified);
+            Assertions.assertTrue(isReleaseForbidden);
         }
     }
 
@@ -579,9 +577,9 @@ public class PdfAcroFormTest extends ExtendedITextTest {
             PdfObject calculationOrder = acroForm.getPdfObject().get(PdfName.DA);
             outputDoc.close();
 
-            Assert.assertEquals(new PdfString("default appearance"), calculationOrder);
-            Assert.assertTrue(isModified);
-            Assert.assertTrue(isReleaseForbidden);
+            Assertions.assertEquals(new PdfString("default appearance"), calculationOrder);
+            Assertions.assertTrue(isModified);
+            Assertions.assertTrue(isReleaseForbidden);
         }
     }
 
@@ -597,9 +595,9 @@ public class PdfAcroFormTest extends ExtendedITextTest {
             PdfObject defaultJustification = acroForm.getPdfObject().get(PdfName.Q);
             outputDoc.close();
 
-            Assert.assertEquals(new PdfNumber(14), defaultJustification);
-            Assert.assertTrue(isModified);
-            Assert.assertTrue(isReleaseForbidden);
+            Assertions.assertEquals(new PdfNumber(14), defaultJustification);
+            Assertions.assertTrue(isModified);
+            Assertions.assertTrue(isReleaseForbidden);
         }
     }
 
@@ -617,9 +615,9 @@ public class PdfAcroFormTest extends ExtendedITextTest {
             PdfObject defaultResourcesDict = acroForm.getPdfObject().get(PdfName.DR);
             outputDoc.close();
 
-            Assert.assertEquals(dictionary, defaultResourcesDict);
-            Assert.assertTrue(isModified);
-            Assert.assertTrue(isReleaseForbidden);
+            Assertions.assertEquals(dictionary, defaultResourcesDict);
+            Assertions.assertTrue(isModified);
+            Assertions.assertTrue(isReleaseForbidden);
         }
     }
 
@@ -636,9 +634,9 @@ public class PdfAcroFormTest extends ExtendedITextTest {
 
             outputDoc.close();
 
-            Assert.assertEquals(new PdfBoolean(false), needAppearance);
-            Assert.assertTrue(isModified);
-            Assert.assertTrue(isReleaseForbidden);
+            Assertions.assertEquals(new PdfBoolean(false), needAppearance);
+            Assertions.assertTrue(isModified);
+            Assertions.assertTrue(isReleaseForbidden);
         }
     }
 
@@ -659,9 +657,9 @@ public class PdfAcroFormTest extends ExtendedITextTest {
 
         outputDoc.close();
 
-        Assert.assertNull(needAppearance);
-        Assert.assertTrue(isModified);
-        Assert.assertTrue(isReleaseForbidden);
+        Assertions.assertNull(needAppearance);
+        Assertions.assertTrue(isModified);
+        Assertions.assertTrue(isReleaseForbidden);
     }
 
     @Test
@@ -678,10 +676,10 @@ public class PdfAcroFormTest extends ExtendedITextTest {
             Object needAppearances = acroForm.getPdfObject().get(PdfName.NeedAppearances);
             outputDoc.close();
 
-            Assert.assertNull(needAppearances);
-            Assert.assertTrue(isGenerateAppearance);
-            Assert.assertTrue(isModified);
-            Assert.assertTrue(isReleaseForbidden);
+            Assertions.assertNull(needAppearances);
+            Assertions.assertTrue(isGenerateAppearance);
+            Assertions.assertTrue(isModified);
+            Assertions.assertTrue(isReleaseForbidden);
         }
     }
 
@@ -698,9 +696,9 @@ public class PdfAcroFormTest extends ExtendedITextTest {
             PdfObject xfaObject = acroForm.getPdfObject().get(PdfName.XFA);
             outputDoc.close();
 
-            Assert.assertEquals(array, xfaObject);
-            Assert.assertTrue(isModified);
-            Assert.assertTrue(isReleaseForbidden);
+            Assertions.assertEquals(array, xfaObject);
+            Assertions.assertTrue(isModified);
+            Assertions.assertTrue(isReleaseForbidden);
         }
     }
 
@@ -717,9 +715,9 @@ public class PdfAcroFormTest extends ExtendedITextTest {
             PdfObject xfaObject = acroForm.getPdfObject().get(PdfName.XFA);
             outputDoc.close();
 
-            Assert.assertEquals(stream, xfaObject);
-            Assert.assertTrue(isModified);
-            Assert.assertTrue(isReleaseForbidden);
+            Assertions.assertEquals(stream, xfaObject);
+            Assertions.assertTrue(isModified);
+            Assertions.assertTrue(isReleaseForbidden);
         }
     }
 
@@ -735,7 +733,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
 
             assert field != null;
             acroForm.addField(field);
-            Assert.assertEquals(1, acroForm.getRootFormFields().size());
+            Assertions.assertEquals(1, acroForm.getRootFormFields().size());
 
 
             PdfDictionary fieldDictReplace = new PdfDictionary();
@@ -744,8 +742,8 @@ public class PdfAcroFormTest extends ExtendedITextTest {
             PdfFormField fieldReplace = PdfFormField.makeFormField(fieldDictReplace.makeIndirect(outputDoc), outputDoc);
 
             acroForm.replaceField("field1", fieldReplace);
-            Assert.assertEquals(1, acroForm.getRootFormFields().size());
-            Assert.assertEquals("field2", acroForm.getField("field2").getFieldName().toUnicodeString());
+            Assertions.assertEquals(1, acroForm.getRootFormFields().size());
+            Assertions.assertEquals("field2", acroForm.getField("field2").getFieldName().toUnicodeString());
 
         }
     }
@@ -763,7 +761,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
 
             assert field != null;
             acroForm.addField(field);
-            Assert.assertEquals(1, acroForm.getRootFormFields().size());
+            Assertions.assertEquals(1, acroForm.getRootFormFields().size());
 
 
             PdfDictionary fieldDictReplace = new PdfDictionary();
@@ -772,7 +770,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
             PdfFormField fieldReplace = PdfFormField.makeFormField(fieldDictReplace.makeIndirect(outputDoc), outputDoc);
 
             acroForm.replaceField(null, fieldReplace);
-            Assert.assertEquals(1, acroForm.getRootFormFields().size());
+            Assertions.assertEquals(1, acroForm.getRootFormFields().size());
         }
 
     }
@@ -797,7 +795,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
             field.addKid(fieldChild);
 
             acroForm.addField(field);
-            Assert.assertEquals(1, acroForm.getRootFormFields().size());
+            Assertions.assertEquals(1, acroForm.getRootFormFields().size());
 
 
             PdfDictionary fieldDictReplace = new PdfDictionary();
@@ -806,8 +804,8 @@ public class PdfAcroFormTest extends ExtendedITextTest {
             PdfFormField fieldReplace = PdfFormField.makeFormField(fieldDictReplace.makeIndirect(outputDoc), outputDoc);
 
             acroForm.replaceField("field1.child1", fieldReplace);
-            Assert.assertEquals(1, acroForm.getRootFormFields().size());
-            Assert.assertEquals("field1.field2", acroForm.getField("field1.field2").getFieldName().toUnicodeString());
+            Assertions.assertEquals(1, acroForm.getRootFormFields().size());
+            Assertions.assertEquals("field1.field2", acroForm.getField("field1.field2").getFieldName().toUnicodeString());
 
         }
     }

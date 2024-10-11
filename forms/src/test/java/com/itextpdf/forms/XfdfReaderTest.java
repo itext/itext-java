@@ -33,25 +33,24 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 import org.xml.sax.SAXException;
 
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class XfdfReaderTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/XfdfReaderTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/forms/XfdfReaderTest/";
 
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
@@ -67,7 +66,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfNoFields.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfNoFields.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfNoFields.pdf",
                 sourceFolder + "cmp_xfdfNoFields.pdf", destinationFolder, "diff_"));
     }
 
@@ -81,7 +80,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfNoFieldsNoFAttributes.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfNoFieldsNoFAttributes.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfNoFieldsNoFAttributes.pdf",
                 sourceFolder + "cmp_xfdfNoFieldsNoFAttributes.pdf", destinationFolder, "diff_"));
     }
 
@@ -95,7 +94,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfNoFieldsNoIdsAttributes.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfNoFieldsNoIdsAttributes.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfNoFieldsNoIdsAttributes.pdf",
                 sourceFolder + "cmp_xfdfNoFieldsNoIdsAttributes.pdf", destinationFolder, "diff_"));
     }
 
@@ -109,7 +108,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfWithFieldsWithValue.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfWithFieldsWithValue.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfWithFieldsWithValue.pdf",
                 sourceFolder + "cmp_xfdfWithFieldsWithValue.pdf", destinationFolder, "diff_"));
     }
 
@@ -127,7 +126,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfValueRichText.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfValueRichText.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfValueRichText.pdf",
                 sourceFolder + "cmp_xfdfValueRichText.pdf", destinationFolder, "diff_"));
     }
 
@@ -144,7 +143,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "hierarchy_fields.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "hierarchy_fields.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "hierarchy_fields.pdf",
                 sourceFolder + "cmp_hierarchy_fields.pdf", destinationFolder, "diff_"));
     }
 
@@ -161,7 +160,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfWithFieldsWithValueParentAndChild.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfWithFieldsWithValueParentAndChild.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfWithFieldsWithValueParentAndChild.pdf",
                 sourceFolder + "cmp_xfdfWithFieldsWithValueParentAndChild.pdf", destinationFolder, "diff_"));
     }
 
@@ -174,7 +173,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, "xfdfAnnotationHighlightedText.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationHighlightedText.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationHighlightedText.pdf",
                 sourceFolder + "cmp_xfdfAnnotationHighlightedText.pdf", destinationFolder, "diff_"));
     }
 
@@ -188,7 +187,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfAnnotationUnderlineText.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationUnderlineText.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationUnderlineText.pdf",
                 sourceFolder + "cmp_xfdfAnnotationUnderlineText.pdf", destinationFolder, "diff_"));
     }
 
@@ -202,7 +201,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfAnnotationUnderlineTextRectWithTwoCoords.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationUnderlineTextRectWithTwoCoords.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationUnderlineTextRectWithTwoCoords.pdf",
                 sourceFolder + "cmp_xfdfAnnotationUnderlineTextRectWithTwoCoords.pdf", destinationFolder, "diff_"));
     }
 
@@ -216,7 +215,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfAnnotationUnderlinePopupAllFlags.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationUnderlinePopupAllFlags.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationUnderlinePopupAllFlags.pdf",
                 sourceFolder + "cmp_xfdfAnnotationUnderlinePopupAllFlags.pdf", destinationFolder, "diff_"));
     }
 
@@ -230,7 +229,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfAnnotationText.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationText.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationText.pdf",
                 sourceFolder + "cmp_xfdfAnnotationText.pdf", destinationFolder, "diff_"));
     }
 
@@ -244,7 +243,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfAnnotationStrikeout.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationStrikeout.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationStrikeout.pdf",
                 sourceFolder + "cmp_xfdfAnnotationStrikeout.pdf", destinationFolder, "diff_"));
     }
 
@@ -258,7 +257,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfAnnotationSquigglyText.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationSquigglyText.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationSquigglyText.pdf",
                 sourceFolder + "cmp_xfdfAnnotationSquigglyText.pdf", destinationFolder, "diff_"));
     }
 
@@ -276,7 +275,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfAnnotationLine.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationLine.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationLine.pdf",
                 sourceFolder + "cmp_xfdfAnnotationLine.pdf", destinationFolder, "diff_"));
     }
 
@@ -290,7 +289,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfAnnotationCircle.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationCircle.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationCircle.pdf",
                 sourceFolder + "cmp_xfdfAnnotationCircle.pdf", destinationFolder, "diff_"));
     }
 
@@ -304,7 +303,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfAnnotationSquare.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationSquare.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationSquare.pdf",
                 sourceFolder + "cmp_xfdfAnnotationSquare.pdf", destinationFolder, "diff_"));
     }
 
@@ -318,7 +317,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfAnnotationCaret.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationCaret.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationCaret.pdf",
                 sourceFolder + "cmp_xfdfAnnotationCaret.pdf", destinationFolder, "diff_"));
     }
 
@@ -332,7 +331,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfAnnotationPolygon.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationPolygon.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationPolygon.pdf",
                 sourceFolder + "cmp_xfdfAnnotationPolygon.pdf", destinationFolder, "diff_"));
     }
 
@@ -346,7 +345,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfAnnotationPolyline.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationPolyline.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationPolyline.pdf",
                 sourceFolder + "cmp_xfdfAnnotationPolyline.pdf", destinationFolder, "diff_"));
     }
 
@@ -360,7 +359,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfAnnotationStamp.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationStamp.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationStamp.pdf",
                 sourceFolder + "cmp_xfdfAnnotationStamp.pdf", destinationFolder, "diff_"));
     }
 
@@ -375,7 +374,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfAnnotationInk.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationInk.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationInk.pdf",
                 sourceFolder + "cmp_xfdfAnnotationInk.pdf", destinationFolder, "diff_"));
     }
 
@@ -389,7 +388,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfAnnotationFreeText.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationFreeText.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationFreeText.pdf",
                 sourceFolder + "cmp_xfdfAnnotationFreeText.pdf", destinationFolder, "diff_"));
     }
 
@@ -404,7 +403,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfAnnotationFileAttachment.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationFileAttachment.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationFileAttachment.pdf",
                 sourceFolder + "cmp_xfdfAnnotationFileAttachment.pdf", destinationFolder, "diff_"));
     }
 
@@ -419,7 +418,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfAnnotationSound.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationSound.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationSound.pdf",
                 sourceFolder + "cmp_xfdfAnnotationSound.pdf", destinationFolder, "diff_"));
     }
 
@@ -433,7 +432,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfAnnotationLink.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationLink.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationLink.pdf",
                 sourceFolder + "cmp_xfdfAnnotationLink.pdf", destinationFolder, "diff_"));
     }
 
@@ -448,7 +447,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfAnnotationRedact.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationRedact.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationRedact.pdf",
                 sourceFolder + "cmp_xfdfAnnotationRedact.pdf", destinationFolder, "diff_"));
     }
 
@@ -463,7 +462,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfAnnotationProjection.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationProjection.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationProjection.pdf",
                 sourceFolder + "cmp_xfdfAnnotationProjection.pdf", destinationFolder, "diff_"));
     }
 
@@ -477,7 +476,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfAnnotationLinkAllParams.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationLinkAllParams.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationLinkAllParams.pdf",
                 sourceFolder + "cmp_xfdfAnnotationLinkAllParams.pdf", destinationFolder, "diff_"));
     }
 
@@ -494,7 +493,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfAnnotationReplaceText.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationReplaceText.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationReplaceText.pdf",
                 sourceFolder + "cmp_xfdfAnnotationReplaceText.pdf", destinationFolder, "diff_"));
     }
 
@@ -512,7 +511,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfAnnotationArrow.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationArrow.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationArrow.pdf",
                 sourceFolder + "cmp_xfdfAnnotationArrow.pdf", destinationFolder, "diff_"));
     }
 
@@ -527,7 +526,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfAnnotationCallout.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationCallout.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationCallout.pdf",
                 sourceFolder + "cmp_xfdfAnnotationCallout.pdf", destinationFolder, "diff_"));
     }
 
@@ -544,7 +543,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfAnnotationCloud.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationCloud.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationCloud.pdf",
                 sourceFolder + "cmp_xfdfAnnotationCloud.pdf", destinationFolder, "diff_"));
     }
 
@@ -561,7 +560,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfAnnotationCloudNested.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationCloudNested.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationCloudNested.pdf",
                 sourceFolder + "cmp_xfdfAnnotationCloudNested.pdf", destinationFolder, "diff_"));
     }
 
@@ -576,7 +575,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfAnnotationTextBoxAllParams.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationTextBoxAllParams.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationTextBoxAllParams.pdf",
                 sourceFolder + "cmp_xfdfAnnotationTextBoxAllParams.pdf", destinationFolder, "diff_"));
     }
 
@@ -591,7 +590,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfJavaScriptForms.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfJavaScriptForms.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfJavaScriptForms.pdf",
                 sourceFolder + "cmp_xfdfJavaScriptForms.pdf", destinationFolder, "diff_"));
     }
 
@@ -605,7 +604,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfFormsFieldParams.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfFormsFieldParams.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfFormsFieldParams.pdf",
                 sourceFolder + "cmp_xfdfFormsFieldParams.pdf", destinationFolder, "diff_"));
     }
 
@@ -620,7 +619,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfAnnotationAttrColor.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationAttrColor.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationAttrColor.pdf",
                 sourceFolder + "cmp_xfdfAnnotationAttrColor.pdf", destinationFolder, "diff_"));
     }
 
@@ -634,7 +633,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfAnnotationAttrFlagsOpacity.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationAttrFlagsOpacity.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationAttrFlagsOpacity.pdf",
                 sourceFolder + "cmp_xfdfAnnotationAttrFlagsOpacity.pdf", destinationFolder, "diff_"));
     }
 
@@ -651,7 +650,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfAnnotationAttrTitle.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationAttrTitle.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationAttrTitle.pdf",
                 sourceFolder + "cmp_xfdfAnnotationAttrTitle.pdf", destinationFolder, "diff_"));
     }
 
@@ -666,7 +665,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfReferenceFor3DMeasurement.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfReferenceFor3DMeasurement.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfReferenceFor3DMeasurement.pdf",
                 sourceFolder + "cmp_xfdfReferenceFor3DMeasurement.pdf", destinationFolder, "diff_"));
     }
 
@@ -681,7 +680,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfReferenceFor3DAngular.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfReferenceFor3DAngular.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfReferenceFor3DAngular.pdf",
                 sourceFolder + "cmp_xfdfReferenceFor3DAngular.pdf", destinationFolder, "diff_"));
     }
 
@@ -696,7 +695,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfReferenceFor3DRadial.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfReferenceFor3DRadial.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfReferenceFor3DRadial.pdf",
                 sourceFolder + "cmp_xfdfReferenceFor3DRadial.pdf", destinationFolder, "diff_"));
     }
 
@@ -711,7 +710,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfSubelementContents.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfSubelementContents.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfSubelementContents.pdf",
                 sourceFolder + "cmp_xfdfSubelementContents.pdf", destinationFolder, "diff_"));
     }
 
@@ -726,7 +725,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfSubelementOverlayAppearance.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfSubelementOverlayAppearance.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfSubelementOverlayAppearance.pdf",
                 sourceFolder + "cmp_xfdfSubelementOverlayAppearance.pdf", destinationFolder, "diff_"));
     }
 
@@ -741,7 +740,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfButton.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfButton.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfButton.pdf",
                 sourceFolder + "cmp_xfdfButton.pdf", destinationFolder, "diff_"));
     }
 
@@ -756,7 +755,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfCheckBox.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfCheckBox.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfCheckBox.pdf",
                 sourceFolder + "cmp_xfdfCheckBox.pdf", destinationFolder, "diff_"));
     }
 
@@ -771,7 +770,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfList.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfList.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfList.pdf",
                 sourceFolder + "cmp_xfdfList.pdf", destinationFolder, "diff_"));
     }
 
@@ -786,7 +785,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
         xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfDropDown.pdf");
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfDropDown.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfDropDown.pdf",
                 sourceFolder + "cmp_xfdfDropDown.pdf", destinationFolder, "diff_"));
     }
 
@@ -802,7 +801,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
             XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
             xfdfObject.mergeToPdf(document, sourceFolder + "xfdfAnnotationsTemplate.pdf");
         }
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfBorderStyleAttributes.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfBorderStyleAttributes.pdf",
                 sourceFolder + "cmp_xfdfBorderStyleAttributes.pdf", destinationFolder, "diff_"));
     }
 
@@ -819,7 +818,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
             XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
             xfdfObject.mergeToPdf(document, sourceFolder + "xfdfAnnotationsTemplate.pdf");
         }
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationAttributes.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationAttributes.pdf",
                 sourceFolder + "cmp_xfdfAnnotationAttributes.pdf", destinationFolder, "diff_"));
     }
 
@@ -837,7 +836,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
             XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
             xfdfObject.mergeToPdf(document, sourceFolder + "xfdfAnnotationsTemplate.pdf");
         }
-        Assert.assertNull(new CompareTool().compareByContent(
+        Assertions.assertNull(new CompareTool().compareByContent(
                 destinationFolder + "xfdfOnlyRequiredAnnotationAttributes.pdf",
                 sourceFolder + "cmp_xfdfOnlyRequiredAnnotationAttributes.pdf", destinationFolder, "diff_"));
     }
@@ -855,7 +854,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
             XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
             xfdfObject.mergeToPdf(document, sourceFolder + "xfdfAnnotationHighlightedText.pdf");
         }
-        Assert.assertNull(new CompareTool().compareByContent(
+        Assertions.assertNull(new CompareTool().compareByContent(
                 destinationFolder + "xfdfInReplyTo.pdf",
                 sourceFolder + "cmp_xfdfInReplyTo.pdf", destinationFolder, "diff_"));
     }

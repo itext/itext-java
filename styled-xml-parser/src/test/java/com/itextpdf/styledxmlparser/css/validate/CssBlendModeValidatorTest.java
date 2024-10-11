@@ -24,47 +24,46 @@ package com.itextpdf.styledxmlparser.css.validate;
 
 import com.itextpdf.styledxmlparser.css.validate.impl.datatype.CssBlendModeValidator;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class CssBlendModeValidatorTest extends ExtendedITextTest {
 
     @Test
     public void nullValueTest() {
         final ICssDataTypeValidator validator = new CssBlendModeValidator();
-        Assert.assertFalse(validator.isValid(null));
+        Assertions.assertFalse(validator.isValid(null));
     }
 
     @Test
     public void normalValueTest() {
         final ICssDataTypeValidator validator = new CssBlendModeValidator();
-        Assert.assertTrue(validator.isValid("normal"));
-        Assert.assertTrue(validator.isValid("multiply"));
-        Assert.assertTrue(validator.isValid("screen"));
-        Assert.assertTrue(validator.isValid("overlay"));
-        Assert.assertTrue(validator.isValid("darken"));
-        Assert.assertTrue(validator.isValid("lighten"));
-        Assert.assertTrue(validator.isValid("color-dodge"));
-        Assert.assertTrue(validator.isValid("color-burn"));
-        Assert.assertTrue(validator.isValid("hard-light"));
-        Assert.assertTrue(validator.isValid("soft-light"));
-        Assert.assertTrue(validator.isValid("difference"));
-        Assert.assertTrue(validator.isValid("exclusion"));
-        Assert.assertTrue(validator.isValid("hue"));
-        Assert.assertTrue(validator.isValid("saturation"));
-        Assert.assertTrue(validator.isValid("color"));
-        Assert.assertTrue(validator.isValid("luminosity"));
+        Assertions.assertTrue(validator.isValid("normal"));
+        Assertions.assertTrue(validator.isValid("multiply"));
+        Assertions.assertTrue(validator.isValid("screen"));
+        Assertions.assertTrue(validator.isValid("overlay"));
+        Assertions.assertTrue(validator.isValid("darken"));
+        Assertions.assertTrue(validator.isValid("lighten"));
+        Assertions.assertTrue(validator.isValid("color-dodge"));
+        Assertions.assertTrue(validator.isValid("color-burn"));
+        Assertions.assertTrue(validator.isValid("hard-light"));
+        Assertions.assertTrue(validator.isValid("soft-light"));
+        Assertions.assertTrue(validator.isValid("difference"));
+        Assertions.assertTrue(validator.isValid("exclusion"));
+        Assertions.assertTrue(validator.isValid("hue"));
+        Assertions.assertTrue(validator.isValid("saturation"));
+        Assertions.assertTrue(validator.isValid("color"));
+        Assertions.assertTrue(validator.isValid("luminosity"));
     }
 
     @Test
     public void invalidValuesTest() {
         final ICssDataTypeValidator validator = new CssBlendModeValidator();
-        Assert.assertFalse(validator.isValid(""));
-        Assert.assertFalse(validator.isValid("norma"));
-        Assert.assertFalse(validator.isValid("NORMAL"));
+        Assertions.assertFalse(validator.isValid(""));
+        Assertions.assertFalse(validator.isValid("norma"));
+        Assertions.assertFalse(validator.isValid("NORMAL"));
     }
 }

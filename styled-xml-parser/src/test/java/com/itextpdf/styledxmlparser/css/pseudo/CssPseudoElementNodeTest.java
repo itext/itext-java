@@ -25,51 +25,50 @@ package com.itextpdf.styledxmlparser.css.pseudo;
 import com.itextpdf.styledxmlparser.node.IAttribute;
 import com.itextpdf.styledxmlparser.node.IAttributes;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class CssPseudoElementNodeTest extends ExtendedITextTest {
 
     @Test
     public void getPseudoElementNameTest() {
         CssPseudoElementNode pseudoElementNode = new CssPseudoElementNode(null, "after");
 
-        Assert.assertEquals("after", pseudoElementNode.getPseudoElementName());
+        Assertions.assertEquals("after", pseudoElementNode.getPseudoElementName());
     }
 
     @Test
     public void getPseudoElementTagNameTest() {
         CssPseudoElementNode pseudoElementNode = new CssPseudoElementNode(null, "after");
 
-        Assert.assertEquals("pseudo-element::after", pseudoElementNode.name());
+        Assertions.assertEquals("pseudo-element::after", pseudoElementNode.name());
     }
 
     @Test
     public void getAttributeStringTest() {
         CssPseudoElementNode pseudoElementNode = new CssPseudoElementNode(null, "after");
 
-        Assert.assertNull(pseudoElementNode.getAttribute("after"));
+        Assertions.assertNull(pseudoElementNode.getAttribute("after"));
     }
 
     @Test
     public void getAttributesTest() {
         CssPseudoElementNode pseudoElementNode = new CssPseudoElementNode(null, "after");
 
-        Assert.assertTrue(pseudoElementNode.getAttributes() instanceof IAttributes);
-        Assert.assertFalse(pseudoElementNode.getAttributes() == pseudoElementNode.getAttributes());
+        Assertions.assertTrue(pseudoElementNode.getAttributes() instanceof IAttributes);
+        Assertions.assertFalse(pseudoElementNode.getAttributes() == pseudoElementNode.getAttributes());
     }
 
     @Test
     public void getAdditionalHtmlStylesTest() {
         CssPseudoElementNode pseudoElementNode = new CssPseudoElementNode(null, "after");
 
-        Assert.assertNull(pseudoElementNode.getAdditionalHtmlStyles());
+        Assertions.assertNull(pseudoElementNode.getAdditionalHtmlStyles());
     }
 
     @Test
@@ -80,14 +79,14 @@ public class CssPseudoElementNodeTest extends ExtendedITextTest {
         styles.put("font-size", "12px");
         styles.put("color", "red");
 
-        Assert.assertThrows(UnsupportedOperationException.class, () -> pseudoElementNode.addAdditionalHtmlStyles(styles));
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> pseudoElementNode.addAdditionalHtmlStyles(styles));
     }
 
     @Test
     public void getLangTest() {
         CssPseudoElementNode pseudoElementNode = new CssPseudoElementNode(null, "after");
 
-        Assert.assertNull(pseudoElementNode.getLang());
+        Assertions.assertNull(pseudoElementNode.getLang());
     }
 
     @Test
@@ -95,28 +94,28 @@ public class CssPseudoElementNodeTest extends ExtendedITextTest {
         CssPseudoElementNode pseudoElementNode = new CssPseudoElementNode(null, "after");
         IAttributes attributes = pseudoElementNode.getAttributes();
 
-        Assert.assertThrows(UnsupportedOperationException.class, () -> attributes.setAttribute("content", "iText"));
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> attributes.setAttribute("content", "iText"));
     }
 
     @Test
     public void attributesStubGetSizeTest() {
         CssPseudoElementNode pseudoElementNode = new CssPseudoElementNode(null, "after");
 
-        Assert.assertEquals(0, pseudoElementNode.getAttributes().size());
+        Assertions.assertEquals(0, pseudoElementNode.getAttributes().size());
     }
 
     @Test
     public void attributesStubGetAttributeTest() {
         CssPseudoElementNode pseudoElementNode = new CssPseudoElementNode(null, "after");
 
-        Assert.assertNull(pseudoElementNode.getAttributes().getAttribute("after"));
+        Assertions.assertNull(pseudoElementNode.getAttributes().getAttribute("after"));
     }
 
     @Test
     public void attributesStubIteratorTest() {
         CssPseudoElementNode pseudoElementNode = new CssPseudoElementNode(null, "after");
         for (IAttribute attr : pseudoElementNode.getAttributes()) {
-            Assert.fail("AttributesStub must return an empty iterator");
+            Assertions.fail("AttributesStub must return an empty iterator");
         }
     }
 }

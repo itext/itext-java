@@ -29,17 +29,16 @@ import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
 import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class DefaultSvgProcessorIntegrationTest extends SvgIntegrationTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/processors/impl/DefaultSvgProcessorIntegrationTest/";
@@ -56,13 +55,13 @@ public class DefaultSvgProcessorIntegrationTest extends SvgIntegrationTest {
         //Attribute comparison from the known RedCircle.svg
         Map<String, String> attrs = actual.getChildren().get(0).getAttributeMapCopy();
 
-        Assert.assertEquals("Number of parsed attributes is wrong", 12, attrs.keySet().size());
+        Assertions.assertEquals(12, attrs.keySet().size(), "Number of parsed attributes is wrong");
 
-        Assert.assertEquals("The stroke-opacity attribute doesn't correspond it's value", "1", attrs.get("stroke-opacity"));
-        Assert.assertEquals("The stroke-width attribute doesn't correspond it's value", "1.76388889", attrs.get("stroke-width"));
+        Assertions.assertEquals("1", attrs.get("stroke-opacity"), "The stroke-opacity attribute doesn't correspond it's value");
+        Assertions.assertEquals("1.76388889", attrs.get("stroke-width"), "The stroke-width attribute doesn't correspond it's value");
 
-        Assert.assertEquals("The id attribute doesn't correspond it's value", "path3699", attrs.get("id"));
-        Assert.assertEquals("The stroke-dasharray attribute doesn't correspond it's value", "none", attrs.get("stroke-dasharray"));
+        Assertions.assertEquals("path3699", attrs.get("id"), "The id attribute doesn't correspond it's value");
+        Assertions.assertEquals("none", attrs.get("stroke-dasharray"), "The stroke-dasharray attribute doesn't correspond it's value");
     }
 
     @Test
@@ -73,7 +72,7 @@ public class DefaultSvgProcessorIntegrationTest extends SvgIntegrationTest {
         IDocumentNode root = xmlParser.parse(svg, null);
         ISvgProcessorResult processorResult = new DefaultSvgProcessor().process(root, null);
         Map<String, ISvgNodeRenderer> actual = processorResult.getNamedObjects();
-        Assert.assertEquals(1, actual.size());
-        Assert.assertTrue(actual.containsKey("MyRect"));
+        Assertions.assertEquals(1, actual.size());
+        Assertions.assertTrue(actual.containsKey("MyRect"));
     }
 }

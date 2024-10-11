@@ -30,33 +30,33 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfCopyTest extends ExtendedITextTest {
 
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfCopyTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfCopyTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -78,8 +78,8 @@ public class PdfCopyTest extends ExtendedITextTest {
 
         PdfDictionary sig = (PdfDictionary) pdfDocument.getPdfObject(13);
         PdfDictionary sigRef = sig.getAsArray(PdfName.Reference).getAsDictionary(0);
-        Assert.assertTrue(PdfName.SigRef.equals(sigRef.getAsName(PdfName.Type)));
-        Assert.assertTrue(sigRef.get(PdfName.Data).isNull());
+        Assertions.assertTrue(PdfName.SigRef.equals(sigRef.getAsName(PdfName.Type)));
+        Assertions.assertTrue(sigRef.get(PdfName.Data).isNull());
     }
 
     @Test
@@ -104,7 +104,7 @@ public class PdfCopyTest extends ExtendedITextTest {
 
         PdfReader reader = CompareTool.createOutputReader(destinationFolder + "copying1_2.pdf");
         PdfDocument pdfDocument = new PdfDocument(reader);
-        assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        assertFalse(reader.hasRebuiltXref(), "Rebuilt");
         PdfDictionary trailer = pdfDocument.getTrailer();
         PdfDictionary info = trailer.getAsDictionary(PdfName.Info);
         PdfName b = info.getAsName(new PdfName("a"));
@@ -136,7 +136,7 @@ public class PdfCopyTest extends ExtendedITextTest {
 
         PdfReader reader = CompareTool.createOutputReader(destinationFolder + "copying2_2.pdf");
         PdfDocument pdfDocument = new PdfDocument(reader);
-        assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        assertFalse(reader.hasRebuiltXref(), "Rebuilt");
         for (int i = 0; i < 5; i++) {
             byte[] bytes = pdfDocument.getPage(i + 1).getContentBytes();
             assertEquals("%page " + String.valueOf(i * 2 + 1) + "\n", new String(bytes));
@@ -162,7 +162,7 @@ public class PdfCopyTest extends ExtendedITextTest {
 
         PdfReader reader = CompareTool.createOutputReader(destinationFolder + "copying3_1.pdf");
         pdfDoc = new PdfDocument(reader);
-        assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        assertFalse(reader.hasRebuiltXref(), "Rebuilt");
 
         PdfDictionary dic0 = pdfDoc.getPage(1).getPdfObject().getAsDictionary(new PdfName("HelloWorld"));
         assertEquals(4, dic0.getIndirectReference().getObjNumber());
@@ -325,9 +325,9 @@ public class PdfCopyTest extends ExtendedITextTest {
         PdfDictionary destSelfContainedDictR = destSelfContainedDict.getAsDictionary(randEntry1);
         PdfDictionary destSelfContainedDictS = destSelfContainedDict.getAsDictionary(randEntry2);
 
-        Assert.assertEquals(destSelfContainedDict.getIndirectReference(),
+        Assertions.assertEquals(destSelfContainedDict.getIndirectReference(),
                 destSelfContainedDictR.getIndirectReference());
-        Assert.assertEquals(destSelfContainedDict.getIndirectReference(),
+        Assertions.assertEquals(destSelfContainedDict.getIndirectReference(),
                 destSelfContainedDictS.getIndirectReference());
 
         destDoc.close();
@@ -352,12 +352,12 @@ public class PdfCopyTest extends ExtendedITextTest {
 
         int targetOutlines = targetPdf.getOutlines(false).getAllChildren().size();
 
-        Assert.assertEquals(sourcePdfOutlines, targetOutlines);
+        Assertions.assertEquals(sourcePdfOutlines, targetOutlines);
 
         sourcePdf.close();
         targetPdf.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
     @Test
@@ -375,12 +375,12 @@ public class PdfCopyTest extends ExtendedITextTest {
         linkAnotPdf.copyPagesTo(1, 2, targetPdf);
 
         List<PdfAnnotation> annotations = getPdfAnnotations(targetPdf);
-        Assert.assertEquals("The number of merged annotations are not the same.", 0,  annotations.size());
+        Assertions.assertEquals(0,  annotations.size(), "The number of merged annotations are not the same.");
 
         linkAnotPdf.close();
         targetPdf.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
     @Test
@@ -397,7 +397,7 @@ public class PdfCopyTest extends ExtendedITextTest {
         pdfFile.close();
         copiedFile.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
     }
 
     @Test
@@ -413,7 +413,7 @@ public class PdfCopyTest extends ExtendedITextTest {
         inPdf.close();
         outPdf.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
     private List<PdfAnnotation> getPdfAnnotations(PdfDocument pdfDoc) {

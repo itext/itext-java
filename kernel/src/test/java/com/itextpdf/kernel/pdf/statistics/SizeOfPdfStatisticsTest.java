@@ -31,30 +31,29 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class SizeOfPdfStatisticsTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/statistics/SizeOfPdfStatisticsTest/";
 
     private static SizeOfPdfStatisticsHandler handler = new SizeOfPdfStatisticsHandler();
 
-    @Before
+    @BeforeEach
     public void registerHandler() {
         EventManager.getInstance().register(handler);
     }
 
-    @After
+    @AfterEach
     public void unregisterHandler() {
         EventManager.getInstance().unregister(handler);
         handler.clearSizeOfPdfEvents();
@@ -69,8 +68,8 @@ public class SizeOfPdfStatisticsTest extends ExtendedITextTest {
 
         List<SizeOfPdfStatisticsEvent> sizeOfPdfEvents = handler.getSizeOfPdfEvents();
 
-        Assert.assertEquals(1, sizeOfPdfEvents.size());
-        Assert.assertEquals(outputStream.getAmountOfWrittenBytes(), sizeOfPdfEvents.get(0).getAmountOfBytes());
+        Assertions.assertEquals(1, sizeOfPdfEvents.size());
+        Assertions.assertEquals(outputStream.getAmountOfWrittenBytes(), sizeOfPdfEvents.get(0).getAmountOfBytes());
     }
 
     @Test
@@ -83,19 +82,19 @@ public class SizeOfPdfStatisticsTest extends ExtendedITextTest {
 
         List<SizeOfPdfStatisticsEvent> sizeOfPdfEvents = handler.getSizeOfPdfEvents();
 
-        Assert.assertEquals(1, sizeOfPdfEvents.size());
-        Assert.assertEquals(outputStream.getAmountOfWrittenBytes(), sizeOfPdfEvents.get(0).getAmountOfBytes());
+        Assertions.assertEquals(1, sizeOfPdfEvents.size());
+        Assertions.assertEquals(outputStream.getAmountOfWrittenBytes(), sizeOfPdfEvents.get(0).getAmountOfBytes());
     }
 
     @Test
     public void pdfDocumentWithReaderTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "document.pdf"))) {
-            Assert.assertNotNull(document.getPage(1));
+            Assertions.assertNotNull(document.getPage(1));
         }
 
         List<SizeOfPdfStatisticsEvent> sizeOfPdfEvents = handler.getSizeOfPdfEvents();
 
-        Assert.assertTrue(sizeOfPdfEvents.isEmpty());
+        Assertions.assertTrue(sizeOfPdfEvents.isEmpty());
     }
 
     @Test
@@ -120,10 +119,10 @@ public class SizeOfPdfStatisticsTest extends ExtendedITextTest {
 
         List<SizeOfPdfStatisticsEvent> sizeOfPdfEvents = handler.getSizeOfPdfEvents();
 
-        Assert.assertEquals(3, sizeOfPdfEvents.size());
-        Assert.assertEquals(outputStream1.getAmountOfWrittenBytes(), sizeOfPdfEvents.get(0).getAmountOfBytes());
-        Assert.assertEquals(outputStream2.getAmountOfWrittenBytes(), sizeOfPdfEvents.get(1).getAmountOfBytes());
-        Assert.assertEquals(outputStream3.getAmountOfWrittenBytes(), sizeOfPdfEvents.get(2).getAmountOfBytes());
+        Assertions.assertEquals(3, sizeOfPdfEvents.size());
+        Assertions.assertEquals(outputStream1.getAmountOfWrittenBytes(), sizeOfPdfEvents.get(0).getAmountOfBytes());
+        Assertions.assertEquals(outputStream2.getAmountOfWrittenBytes(), sizeOfPdfEvents.get(1).getAmountOfBytes());
+        Assertions.assertEquals(outputStream3.getAmountOfWrittenBytes(), sizeOfPdfEvents.get(2).getAmountOfBytes());
     }
 
     private static class SizeOfPdfStatisticsHandler implements IEventHandler {

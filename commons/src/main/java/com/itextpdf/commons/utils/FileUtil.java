@@ -211,8 +211,8 @@ public final class FileUtil {
      *
      * @throws FileNotFoundException if file not found.
      */
-    public static java.io.OutputStream getBufferedOutputStream(String filename) throws FileNotFoundException {
-        return new BufferedOutputStream(new FileOutputStream(filename));
+    public static OutputStream getBufferedOutputStream(String filename) throws IOException {
+        return new BufferedOutputStream(getFileOutputStream(filename));
     }
 
     /**
@@ -267,10 +267,10 @@ public final class FileUtil {
      *
      * @return {@code FileOutputStream} instance.
      *
-     * @throws FileNotFoundException in case file not found.
+     @throws IOException in file reading errors.
      */
-    public static FileOutputStream getFileOutputStream(File tempFile) throws FileNotFoundException {
-        return new FileOutputStream(tempFile);
+    public static OutputStream getFileOutputStream(File tempFile) throws IOException {
+        return Files.newOutputStream(tempFile.toPath());
     }
 
     /**

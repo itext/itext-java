@@ -25,18 +25,15 @@ package com.itextpdf.layout.renderer;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.properties.grid.GridFlow;
 import com.itextpdf.layout.properties.Property;
-import com.itextpdf.layout.renderer.Grid.GridOrder;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class GridUnitTest extends ExtendedITextTest {
 
     @Test
@@ -50,7 +47,7 @@ public class GridUnitTest extends ExtendedITextTest {
                 new TextRenderer(new Text("Three")),
                 new TextRenderer(new Text("Four"))
         )).columns(3).rows(3).flow(GridFlow.ROW).build();
-        Assert.assertEquals(4, grid.getUniqueGridCells(Grid.GridOrder.ROW).size());
+        Assertions.assertEquals(4, grid.getUniqueGridCells(Grid.GridOrder.ROW).size());
     }
 
     @Test
@@ -72,13 +69,13 @@ public class GridUnitTest extends ExtendedITextTest {
                 cell5,
                 cell6
         )).columns(3).rows(3).flow(GridFlow.ROW).build();
-        Assert.assertEquals(cell1, grid.getRows()[0][0].getValue());
-        Assert.assertEquals(wideCell, grid.getRows()[0][1].getValue());
-        Assert.assertEquals(wideCell, grid.getRows()[0][2].getValue());
-        Assert.assertEquals(cell3, grid.getRows()[1][0].getValue());
-        Assert.assertEquals(cell4, grid.getRows()[1][1].getValue());
-        Assert.assertEquals(cell5, grid.getRows()[1][2].getValue());
-        Assert.assertEquals(cell6, grid.getRows()[2][0].getValue());
+        Assertions.assertEquals(cell1, grid.getRows()[0][0].getValue());
+        Assertions.assertEquals(wideCell, grid.getRows()[0][1].getValue());
+        Assertions.assertEquals(wideCell, grid.getRows()[0][2].getValue());
+        Assertions.assertEquals(cell3, grid.getRows()[1][0].getValue());
+        Assertions.assertEquals(cell4, grid.getRows()[1][1].getValue());
+        Assertions.assertEquals(cell5, grid.getRows()[1][2].getValue());
+        Assertions.assertEquals(cell6, grid.getRows()[2][0].getValue());
     }
 
     @Test
@@ -100,13 +97,13 @@ public class GridUnitTest extends ExtendedITextTest {
                 cell5,
                 cell6
         )).columns(3).rows(3).flow(GridFlow.ROW_DENSE).build();
-        Assert.assertEquals(cell1, grid.getRows()[0][0].getValue());
-        Assert.assertEquals(wideCell, grid.getRows()[0][1].getValue());
-        Assert.assertEquals(wideCell, grid.getRows()[0][2].getValue());
-        Assert.assertEquals(cell3, grid.getRows()[1][0].getValue());
-        Assert.assertEquals(cell4, grid.getRows()[1][1].getValue());
-        Assert.assertEquals(cell5, grid.getRows()[1][2].getValue());
-        Assert.assertEquals(cell6, grid.getRows()[2][0].getValue());
+        Assertions.assertEquals(cell1, grid.getRows()[0][0].getValue());
+        Assertions.assertEquals(wideCell, grid.getRows()[0][1].getValue());
+        Assertions.assertEquals(wideCell, grid.getRows()[0][2].getValue());
+        Assertions.assertEquals(cell3, grid.getRows()[1][0].getValue());
+        Assertions.assertEquals(cell4, grid.getRows()[1][1].getValue());
+        Assertions.assertEquals(cell5, grid.getRows()[1][2].getValue());
+        Assertions.assertEquals(cell6, grid.getRows()[2][0].getValue());
     }
 
     @Test
@@ -125,12 +122,12 @@ public class GridUnitTest extends ExtendedITextTest {
                 cell5,
                 cell6
         )).columns(3).rows(3).flow(GridFlow.COLUMN).build();
-        Assert.assertEquals(cell1, grid.getRows()[0][0].getValue());
-        Assert.assertEquals(cell2, grid.getRows()[1][0].getValue());
-        Assert.assertEquals(cell3, grid.getRows()[2][0].getValue());
-        Assert.assertEquals(cell4, grid.getRows()[0][1].getValue());
-        Assert.assertEquals(cell5, grid.getRows()[1][1].getValue());
-        Assert.assertEquals(cell6, grid.getRows()[2][1].getValue());
+        Assertions.assertEquals(cell1, grid.getRows()[0][0].getValue());
+        Assertions.assertEquals(cell2, grid.getRows()[1][0].getValue());
+        Assertions.assertEquals(cell3, grid.getRows()[2][0].getValue());
+        Assertions.assertEquals(cell4, grid.getRows()[0][1].getValue());
+        Assertions.assertEquals(cell5, grid.getRows()[1][1].getValue());
+        Assertions.assertEquals(cell6, grid.getRows()[2][1].getValue());
     }
 
     @Test
@@ -152,13 +149,13 @@ public class GridUnitTest extends ExtendedITextTest {
                 cell5,
                 cell6
         )).columns(3).rows(3).flow(GridFlow.COLUMN).build();
-        Assert.assertEquals(wideCell, grid.getRows()[0][0].getValue());
-        Assert.assertEquals(cell1, grid.getRows()[1][0].getValue());
-        Assert.assertEquals(cell4, grid.getRows()[1][1].getValue());
-        Assert.assertEquals(cell3, grid.getRows()[2][0].getValue());
-        Assert.assertEquals(wideCell, grid.getRows()[0][1].getValue());
-        Assert.assertEquals(cell5, grid.getRows()[2][1].getValue());
-        Assert.assertEquals(cell6, grid.getRows()[0][2].getValue());
+        Assertions.assertEquals(wideCell, grid.getRows()[0][0].getValue());
+        Assertions.assertEquals(cell1, grid.getRows()[1][0].getValue());
+        Assertions.assertEquals(cell4, grid.getRows()[1][1].getValue());
+        Assertions.assertEquals(cell3, grid.getRows()[2][0].getValue());
+        Assertions.assertEquals(wideCell, grid.getRows()[0][1].getValue());
+        Assertions.assertEquals(cell5, grid.getRows()[2][1].getValue());
+        Assertions.assertEquals(cell6, grid.getRows()[0][2].getValue());
     }
 
     @Test
@@ -180,12 +177,12 @@ public class GridUnitTest extends ExtendedITextTest {
                 cell5,
                 cell6
         )).columns(3).rows(3).flow(GridFlow.COLUMN).build();
-        Assert.assertEquals(cell1, grid.getRows()[0][0].getValue());
-        Assert.assertEquals(tallCell, grid.getRows()[1][0].getValue());
-        Assert.assertEquals(tallCell, grid.getRows()[2][0].getValue());
-        Assert.assertEquals(cell3, grid.getRows()[0][1].getValue());
-        Assert.assertEquals(cell4, grid.getRows()[1][1].getValue());
-        Assert.assertEquals(cell5, grid.getRows()[2][1].getValue());
-        Assert.assertEquals(cell6, grid.getRows()[0][2].getValue());
+        Assertions.assertEquals(cell1, grid.getRows()[0][0].getValue());
+        Assertions.assertEquals(tallCell, grid.getRows()[1][0].getValue());
+        Assertions.assertEquals(tallCell, grid.getRows()[2][0].getValue());
+        Assertions.assertEquals(cell3, grid.getRows()[0][1].getValue());
+        Assertions.assertEquals(cell4, grid.getRows()[1][1].getValue());
+        Assertions.assertEquals(cell5, grid.getRows()[2][1].getValue());
+        Assertions.assertEquals(cell6, grid.getRows()[0][2].getValue());
     }
 }

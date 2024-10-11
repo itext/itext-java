@@ -25,12 +25,11 @@ package com.itextpdf.io;
 import com.itextpdf.io.util.ArrayUtil;
 import com.itextpdf.io.util.ResourceUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class UtilitiesTest extends ExtendedITextTest {
     @Test
     public void testShortener() {
@@ -38,11 +37,11 @@ public class UtilitiesTest extends ExtendedITextTest {
         byte[] dest = new byte[]{1, 2, 3, 4, 5};
         byte[] test = ArrayUtil.shortenArray(src, 5);
 
-        Assert.assertArrayEquals(dest, test);
+        Assertions.assertArrayEquals(dest, test);
     }
 
     @Test
     public void invalidResource() {
-        Assert.assertNull(ResourceUtil.getResourceStream("some-random-resource.zzz"));
+        Assertions.assertNull(ResourceUtil.getResourceStream("some-random-resource.zzz"));
     }
 }

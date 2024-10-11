@@ -22,19 +22,21 @@
  */
 package com.itextpdf.pdfua;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.pdf.DocumentProperties;
-import com.itextpdf.kernel.pdf.IConformanceLevel;
-import com.itextpdf.kernel.pdf.IPdfPageFactory;
+import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfDocumentInfo;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.PdfUAConformance;
+import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfViewerPreferences;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
-import com.itextpdf.kernel.utils.ValidationContainer;
+import com.itextpdf.kernel.validation.ValidationContainer;
 import com.itextpdf.pdfua.checkers.PdfUA1Checker;
-import com.itextpdf.pdfua.exceptions.PdfUALogMessageConstants;
+import com.itextpdf.pdfua.logs.PdfUALogMessageConstants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,11 +47,7 @@ import org.slf4j.LoggerFactory;
  * It will add necessary validation to guide the user to create a PDF/UA compliant document.
  */
 public class PdfUADocument extends PdfDocument {
-
-    private static final IPdfPageFactory pdfPageFactory = new PdfUAPageFactory();
     private static final Logger LOGGER = LoggerFactory.getLogger(PdfUADocument.class);
-    private PdfUAConfig config;
-    private boolean warnedOnPageFlush = false;
 
     /**
      * Creates a PdfUADocument instance.
@@ -70,7 +68,14 @@ public class PdfUADocument extends PdfDocument {
      */
     public PdfUADocument(PdfWriter writer, DocumentProperties properties, PdfUAConfig config) {
         super(configureWriterProperties(writer), properties);
+        this.pdfConformance = new PdfConformance(config.getConformance());
+
         setupUAConfiguration(config);
+        final ValidationContainer validationContainer = new ValidationContainer();
+        final PdfUA1Checker checker = new PdfUA1Checker(this);
+        validationContainer.addChecker(checker);
+        this.getDiContainer().register(ValidationContainer.class, validationContainer);
+        this.pdfPageFactory = new PdfUAPageFactory(checker);
     }
 
     /**
@@ -81,8 +86,7 @@ public class PdfUADocument extends PdfDocument {
      * @param config The configuration for the PDF/UA document.
      */
     public PdfUADocument(PdfReader reader, PdfWriter writer, PdfUAConfig config) {
-        super(reader, configureWriterProperties(writer));
-        setupUAConfiguration(config);
+        this(reader, writer, new StampingProperties(), config);
     }
 
     /**
@@ -94,70 +98,36 @@ public class PdfUADocument extends PdfDocument {
      * @param config     The configuration for the PDF/UA document.
      */
     public PdfUADocument(PdfReader reader, PdfWriter writer, StampingProperties properties, PdfUAConfig config) {
-        super(reader, configureWriterProperties(writer), properties);
-        setupUAConfiguration(config);
-    }
-
-    /**
-     * {inheritDoc}
-     */
-    @Override
-    public IConformanceLevel getConformanceLevel() {
-        return config.getConformanceLevel();
-    }
-
-    /**
-     * @return The PageFactory for the PDF/UA document.
-     */
-    @Override
-    protected IPdfPageFactory getPageFactory() {
-        return pdfPageFactory;
-    }
-
-    /**
-     * Returns if the document is in the closing state.
-     *
-     * @return true if the document is closing, false otherwise.
-     */
-    boolean isClosing(){
-        return this.isClosing;
-    }
-
-    /**
-     * Warns the user that the page is being flushed.
-     * Will only warn once.
-     */
-    void warnOnPageFlush() {
-        if (!warnedOnPageFlush) {
-            LOGGER.warn(PdfUALogMessageConstants.PAGE_FLUSHING_DISABLED);
-            warnedOnPageFlush = true;
+        super(reader, writer, properties);
+        if (!getConformance().isPdfUA()) {
+            LOGGER.warn(PdfUALogMessageConstants.PDF_TO_PDF_UA_CONVERSION_IS_NOT_SUPPORTED);
         }
+
+        setupUAConfiguration(config);
+
+        final ValidationContainer validationContainer = new ValidationContainer();
+        final PdfUA1Checker checker = new PdfUA1Checker(this);
+        validationContainer.addChecker(checker);
+        this.getDiContainer().register(ValidationContainer.class, validationContainer);
+        this.pdfPageFactory = new PdfUAPageFactory(checker);
     }
 
-    /**
-     * Disables the warning for page flushing.
-     */
-    public void disablePageFlushingWarning() {
-        warnedOnPageFlush = true;
+    private static PdfWriter configureWriterProperties(PdfWriter writer) {
+        writer.getProperties().addPdfUaXmpMetadata(PdfUAConformance.PDF_UA_1);
+        if (writer.getPdfVersion() != null && !writer.getPdfVersion().equals(PdfVersion.PDF_1_7)) {
+            LoggerFactory.getLogger(PdfUADocument.class).warn(MessageFormatUtil.format(
+                    PdfUALogMessageConstants.WRITER_PROPERTIES_PDF_VERSION_WAS_OVERRIDDEN, PdfVersion.PDF_1_7));
+            writer.getProperties().setPdfVersion(PdfVersion.PDF_1_7);
+        }
+        return writer;
     }
 
     private void setupUAConfiguration(PdfUAConfig config) {
         //basic configuration
-        this.config = config;
         this.setTagged();
         this.getCatalog().setViewerPreferences(new PdfViewerPreferences().setDisplayDocTitle(true));
         this.getCatalog().setLang(new PdfString(config.getLanguage()));
         final PdfDocumentInfo info = this.getDocumentInfo();
         info.setTitle(config.getTitle());
-        //validation
-        final ValidationContainer validationContainer = new ValidationContainer();
-        validationContainer.addChecker(new PdfUA1Checker(this));
-        this.getDiContainer().register(ValidationContainer.class, validationContainer);
     }
-
-    private static PdfWriter configureWriterProperties(PdfWriter writer) {
-        writer.getProperties().addUAXmpMetadata();
-        return writer;
-    }
-
 }

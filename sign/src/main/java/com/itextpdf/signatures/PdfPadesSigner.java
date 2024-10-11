@@ -26,7 +26,7 @@ import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.forms.PdfSigFieldLock;
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -40,7 +40,6 @@ import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -69,8 +68,6 @@ public class PdfPadesSigner {
     private int estimatedSize = 0;
     private String timestampSignatureName;
     private String temporaryDirectoryPath = null;
-    private AccessPermissions accessPermissions = AccessPermissions.UNSPECIFIED;
-    private PdfSigFieldLock fieldLock = null;
     private IExternalDigest externalDigest = new BouncyCastleDigest();
     private StampingProperties stampingProperties = new StampingProperties().useAppendMode();
     private StampingProperties stampingPropertiesWithMetaInfo = (StampingProperties) new StampingProperties()
@@ -304,30 +301,6 @@ public class PdfPadesSigner {
     }
 
     /**
-     * Set certification level which specifies DocMDP level which is expected to be set.
-     *
-     * @param accessPermissions {@link AccessPermissions} certification level
-     *
-     * @return same instance of {@link PdfPadesSigner}
-     */
-    public PdfPadesSigner setCertificationLevel(AccessPermissions accessPermissions) {
-        this.accessPermissions = accessPermissions;
-        return this;
-    }
-
-    /**
-     * Set FieldMDP rules to be applied for this signature.
-     *
-     * @param fieldLock {@link PdfSigFieldLock} field lock dictionary.
-     *
-     * @return same instance of {@link PdfPadesSigner}
-     */
-    public PdfPadesSigner setSignatureFieldLock(PdfSigFieldLock fieldLock) {
-        this.fieldLock = fieldLock;
-        return this;
-    }
-
-    /**
      * Set the name to be used for timestamp signature creation.
      * <p>
      * This setter is only relevant if
@@ -487,7 +460,7 @@ public class PdfPadesSigner {
         }
     }
 
-    OutputStream createOutputStream() throws FileNotFoundException {
+    OutputStream createOutputStream() throws IOException {
         if (temporaryDirectoryPath != null) {
             return FileUtil.getFileOutputStream(getNextTempFile());
         }
@@ -523,8 +496,6 @@ public class PdfPadesSigner {
             throws GeneralSecurityException, IOException {
         Certificate[] fullChain = issuingCertificateRetriever.retrieveMissingCertificates(chain);
         PdfSigner signer = createPdfSigner(signerProperties, isFinal);
-        signer.setCertificationLevel(accessPermissions);
-        signer.setFieldLockDict(fieldLock);
         try {
             signer.signDetached(externalDigest, externalSignature, fullChain, null, null, tsaClient,
                     estimatedSize, CryptoStandard.CADES);

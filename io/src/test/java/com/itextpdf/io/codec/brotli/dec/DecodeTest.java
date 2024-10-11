@@ -6,21 +6,20 @@
 
 package com.itextpdf.io.codec.brotli.dec;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 /**
  * Tests for {@link Decode}.
  */
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class DecodeTest extends ExtendedITextTest{
 
   private byte[] decompress(byte[] data, boolean byByte) throws IOException {

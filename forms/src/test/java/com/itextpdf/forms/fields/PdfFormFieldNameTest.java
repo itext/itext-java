@@ -33,32 +33,31 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfFormFieldNameTest extends ExtendedITextTest {
 
     private PdfDocument outputDoc;
     private PdfAcroForm acroForm;
 
-    @Before
+    @BeforeEach
     public void init() {
         outputDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         outputDoc.addNewPage();
         acroForm = PdfFormCreator.getAcroForm(outputDoc, true);
     }
 
-    @After
+    @AfterEach
     public void shutdown() {
         outputDoc.close();
     }
@@ -79,12 +78,12 @@ public class PdfFormFieldNameTest extends ExtendedITextTest {
         PdfFormField child2RecoveredField = acroForm.getField("root.child1.child2");
         //ASSERT
 
-        Assert.assertEquals(root, rootRecoveredField);
-        Assert.assertEquals("root", rootRecoveredField.getFieldName().toString());
-        Assert.assertEquals(child1, child1RecoveredField);
-        Assert.assertEquals("root.child1", child1RecoveredField.getFieldName().toString());
-        Assert.assertEquals(child2, child2RecoveredField);
-        Assert.assertEquals("root.child1.child2", child2RecoveredField.getFieldName().toString());
+        Assertions.assertEquals(root, rootRecoveredField);
+        Assertions.assertEquals("root", rootRecoveredField.getFieldName().toString());
+        Assertions.assertEquals(child1, child1RecoveredField);
+        Assertions.assertEquals("root.child1", child1RecoveredField.getFieldName().toString());
+        Assertions.assertEquals(child2, child2RecoveredField);
+        Assertions.assertEquals("root.child1.child2", child2RecoveredField.getFieldName().toString());
     }
 
     @Test
@@ -102,12 +101,12 @@ public class PdfFormFieldNameTest extends ExtendedITextTest {
         PdfFormField child1RecoveredField = acroForm.getField(".child1");
         PdfFormField child2RecoveredField = acroForm.getField(".child1.child2");
         //ASSERT
-        Assert.assertEquals(root, rootRecoveredField);
-        Assert.assertEquals("", rootRecoveredField.getFieldName().toString());
-        Assert.assertEquals(child1, child1RecoveredField);
-        Assert.assertEquals(".child1", child1RecoveredField.getFieldName().toString());
-        Assert.assertEquals(child2, child2RecoveredField);
-        Assert.assertEquals(".child1.child2", child2RecoveredField.getFieldName().toString());
+        Assertions.assertEquals(root, rootRecoveredField);
+        Assertions.assertEquals("", rootRecoveredField.getFieldName().toString());
+        Assertions.assertEquals(child1, child1RecoveredField);
+        Assertions.assertEquals(".child1", child1RecoveredField.getFieldName().toString());
+        Assertions.assertEquals(child2, child2RecoveredField);
+        Assertions.assertEquals(".child1.child2", child2RecoveredField.getFieldName().toString());
     }
 
     @Test
@@ -122,10 +121,10 @@ public class PdfFormFieldNameTest extends ExtendedITextTest {
         PdfFormField rootRecoveredField = acroForm.getField("ro\tot");
         PdfFormField child1RecoveredField = acroForm.getField("ro\tot.child 1");
         //ASSERT
-        Assert.assertEquals(root, rootRecoveredField);
-        Assert.assertEquals("ro\tot", rootRecoveredField.getFieldName().toString());
-        Assert.assertEquals(child1, child1RecoveredField);
-        Assert.assertEquals("ro\tot.child 1", child1RecoveredField.getFieldName().toString());
+        Assertions.assertEquals(root, rootRecoveredField);
+        Assertions.assertEquals("ro\tot", rootRecoveredField.getFieldName().toString());
+        Assertions.assertEquals(child1, child1RecoveredField);
+        Assertions.assertEquals("ro\tot.child 1", child1RecoveredField.getFieldName().toString());
     }
 
     @Test
@@ -143,12 +142,12 @@ public class PdfFormFieldNameTest extends ExtendedITextTest {
         PdfFormField child1RecoveredField = acroForm.getField("root.");
         PdfFormField child2RecoveredField = acroForm.getField("root..child2");
         //ASSERT
-        Assert.assertEquals(root, rootRecoveredField);
-        Assert.assertEquals("root", rootRecoveredField.getFieldName().toString());
-        Assert.assertEquals(child1, child1RecoveredField);
-        Assert.assertEquals("root.", child1RecoveredField.getFieldName().toString());
-        Assert.assertEquals(child2, child2RecoveredField);
-        Assert.assertEquals("root..child2", child2RecoveredField.getFieldName().toString());
+        Assertions.assertEquals(root, rootRecoveredField);
+        Assertions.assertEquals("root", rootRecoveredField.getFieldName().toString());
+        Assertions.assertEquals(child1, child1RecoveredField);
+        Assertions.assertEquals("root.", child1RecoveredField.getFieldName().toString());
+        Assertions.assertEquals(child2, child2RecoveredField);
+        Assertions.assertEquals("root..child2", child2RecoveredField.getFieldName().toString());
 
     }
 
@@ -167,12 +166,12 @@ public class PdfFormFieldNameTest extends ExtendedITextTest {
         PdfFormField child1RecoveredField = acroForm.getField("root.");
         PdfFormField child2RecoveredField = acroForm.getField("root..");
         //ASSERT
-        Assert.assertEquals(root, rootRecoveredField);
-        Assert.assertEquals("root", rootRecoveredField.getFieldName().toString());
-        Assert.assertEquals(child1, child1RecoveredField);
-        Assert.assertEquals("root.", child1RecoveredField.getFieldName().toString());
-        Assert.assertEquals(child2, child2RecoveredField);
-        Assert.assertEquals("root..", child2RecoveredField.getFieldName().toString());
+        Assertions.assertEquals(root, rootRecoveredField);
+        Assertions.assertEquals("root", rootRecoveredField.getFieldName().toString());
+        Assertions.assertEquals(child1, child1RecoveredField);
+        Assertions.assertEquals("root.", child1RecoveredField.getFieldName().toString());
+        Assertions.assertEquals(child2, child2RecoveredField);
+        Assertions.assertEquals("root..", child2RecoveredField.getFieldName().toString());
     }
 
     @Test
@@ -193,14 +192,14 @@ public class PdfFormFieldNameTest extends ExtendedITextTest {
         PdfFormField child2RecoveredField = acroForm.getField("root..");
         PdfFormField child3RecoveredField = acroForm.getField("root...child3");
         //ASSERT
-        Assert.assertEquals(root, rootRecoveredField);
-        Assert.assertEquals("root", rootRecoveredField.getFieldName().toString());
-        Assert.assertEquals(child1, child1RecoveredField);
-        Assert.assertEquals("root.", child1RecoveredField.getFieldName().toString());
-        Assert.assertEquals(child2, child2RecoveredField);
-        Assert.assertEquals("root..", child2RecoveredField.getFieldName().toString());
-        Assert.assertEquals(child3, child3RecoveredField);
-        Assert.assertEquals("root...child3", child3RecoveredField.getFieldName().toString());
+        Assertions.assertEquals(root, rootRecoveredField);
+        Assertions.assertEquals("root", rootRecoveredField.getFieldName().toString());
+        Assertions.assertEquals(child1, child1RecoveredField);
+        Assertions.assertEquals("root.", child1RecoveredField.getFieldName().toString());
+        Assertions.assertEquals(child2, child2RecoveredField);
+        Assertions.assertEquals("root..", child2RecoveredField.getFieldName().toString());
+        Assertions.assertEquals(child3, child3RecoveredField);
+        Assertions.assertEquals("root...child3", child3RecoveredField.getFieldName().toString());
 
     }
 
@@ -223,14 +222,14 @@ public class PdfFormFieldNameTest extends ExtendedITextTest {
         PdfFormField child2RecoveredField = acroForm.getField("root..child2");
         PdfFormField child3RecoveredField = acroForm.getField("root..child2.");
         //ASSERT
-        Assert.assertEquals(root, rootRecoveredField);
-        Assert.assertEquals("root", rootRecoveredField.getFieldName().toString());
-        Assert.assertEquals(child1, child1RecoveredField);
-        Assert.assertEquals("root.", child1RecoveredField.getFieldName().toString());
-        Assert.assertEquals(child2, child2RecoveredField);
-        Assert.assertEquals("root..child2", child2RecoveredField.getFieldName().toString());
-        Assert.assertEquals(child3, child3RecoveredField);
-        Assert.assertEquals("root..child2.", child3RecoveredField.getFieldName().toString());
+        Assertions.assertEquals(root, rootRecoveredField);
+        Assertions.assertEquals("root", rootRecoveredField.getFieldName().toString());
+        Assertions.assertEquals(child1, child1RecoveredField);
+        Assertions.assertEquals("root.", child1RecoveredField.getFieldName().toString());
+        Assertions.assertEquals(child2, child2RecoveredField);
+        Assertions.assertEquals("root..child2", child2RecoveredField.getFieldName().toString());
+        Assertions.assertEquals(child3, child3RecoveredField);
+        Assertions.assertEquals("root..child2.", child3RecoveredField.getFieldName().toString());
     }
 
     @Test
@@ -252,15 +251,15 @@ public class PdfFormFieldNameTest extends ExtendedITextTest {
         PdfFormField child2RecoveredField = acroForm.getField(".child1.");
         PdfFormField child3RecoveredField = acroForm.getField(".child1..child3");
         //ASSERT
-        Assert.assertEquals(root, rootRecoveredField);
-        Assert.assertEquals("", rootRecoveredField.getFieldName().toString());
+        Assertions.assertEquals(root, rootRecoveredField);
+        Assertions.assertEquals("", rootRecoveredField.getFieldName().toString());
 
-        Assert.assertEquals(child1, child1RecoveredField);
-        Assert.assertEquals(".child1", child1RecoveredField.getFieldName().toString());
-        Assert.assertEquals(child2, child2RecoveredField);
-        Assert.assertEquals(".child1.", child2RecoveredField.getFieldName().toString());
-        Assert.assertEquals(child3, child3RecoveredField);
-        Assert.assertEquals(".child1..child3", child3RecoveredField.getFieldName().toString());
+        Assertions.assertEquals(child1, child1RecoveredField);
+        Assertions.assertEquals(".child1", child1RecoveredField.getFieldName().toString());
+        Assertions.assertEquals(child2, child2RecoveredField);
+        Assertions.assertEquals(".child1.", child2RecoveredField.getFieldName().toString());
+        Assertions.assertEquals(child3, child3RecoveredField);
+        Assertions.assertEquals(".child1..child3", child3RecoveredField.getFieldName().toString());
     }
 
 
@@ -280,8 +279,8 @@ public class PdfFormFieldNameTest extends ExtendedITextTest {
 
         //ASSERT
         PdfFormField rootRecoveredField = acroForm.getField("root");
-        Assert.assertFalse(rootRecoveredField.getChildFields().contains(child1));
-        Assert.assertTrue(rootRecoveredField.getChildFields().contains(child2));
+        Assertions.assertFalse(rootRecoveredField.getChildFields().contains(child1));
+        Assertions.assertTrue(rootRecoveredField.getChildFields().contains(child2));
     }
 
     @Test
@@ -302,8 +301,8 @@ public class PdfFormFieldNameTest extends ExtendedITextTest {
 
         //ASSERT
         PdfFormField rootRecoveredField = acroForm.getField("root");
-        Assert.assertTrue(rootRecoveredField.getChildFields().contains(child1));
-        Assert.assertFalse(rootRecoveredField.getChildFields().contains(child2));
+        Assertions.assertTrue(rootRecoveredField.getChildFields().contains(child1));
+        Assertions.assertFalse(rootRecoveredField.getChildFields().contains(child2));
     }
 
     @Test
@@ -324,8 +323,8 @@ public class PdfFormFieldNameTest extends ExtendedITextTest {
 
         //ASSERT
         PdfFormField rootRecoveredField = acroForm.getField("root");
-        Assert.assertTrue(rootRecoveredField.getChildFields().contains(child1));
-        Assert.assertFalse(rootRecoveredField.getChildFields().contains(child2));
+        Assertions.assertTrue(rootRecoveredField.getChildFields().contains(child1));
+        Assertions.assertFalse(rootRecoveredField.getChildFields().contains(child2));
     }
 
     @Test
@@ -347,9 +346,9 @@ public class PdfFormFieldNameTest extends ExtendedITextTest {
 
         //ASSERT
         PdfFormField rootRecoveredField = acroForm.getField("");
-        Assert.assertTrue(rootRecoveredField.getChildFields().contains(child1));
-        Assert.assertFalse(rootRecoveredField.getChildFields().contains(child2));
-        Assert.assertEquals(sizeBeforeRemoval - 1, acroForm.getAllFormFields().size());
+        Assertions.assertTrue(rootRecoveredField.getChildFields().contains(child1));
+        Assertions.assertFalse(rootRecoveredField.getChildFields().contains(child2));
+        Assertions.assertEquals(sizeBeforeRemoval - 1, acroForm.getAllFormFields().size());
 
     }
 
@@ -370,7 +369,7 @@ public class PdfFormFieldNameTest extends ExtendedITextTest {
         acroForm.removeField("");
 
         //ASSERT
-        Assert.assertEquals(0, acroForm.getAllFormFields().size());
+        Assertions.assertEquals(0, acroForm.getAllFormFields().size());
     }
 
 
@@ -384,7 +383,7 @@ public class PdfFormFieldNameTest extends ExtendedITextTest {
         //ACT
         acroForm.renameField("root.child1", "");
         //ASSERT
-        Assert.assertEquals("root.", child1.getFieldName().toUnicodeString());
+        Assertions.assertEquals("root.", child1.getFieldName().toUnicodeString());
     }
 
     @Test
@@ -398,7 +397,7 @@ public class PdfFormFieldNameTest extends ExtendedITextTest {
         acroForm.renameField("root", "");
         acroForm.renameField(".newName", "");
         //ASSERT
-        Assert.assertEquals(".", child1.getFieldName().toUnicodeString());
+        Assertions.assertEquals(".", child1.getFieldName().toUnicodeString());
     }
 
 
@@ -415,7 +414,7 @@ public class PdfFormFieldNameTest extends ExtendedITextTest {
         acroForm.addField(root);
         //ACT
         acroForm.renameField("root.", "");
-        Assert.assertEquals("root.newName", child1.getFieldName().toUnicodeString());
+        Assertions.assertEquals("root.newName", child1.getFieldName().toUnicodeString());
     }
 
     @Test
@@ -433,7 +432,7 @@ public class PdfFormFieldNameTest extends ExtendedITextTest {
         acroForm.renameField("root", "");
         acroForm.renameField("root.newName", "");
         //ASSERT
-        Assert.assertEquals(".newName", child1.getFieldName().toUnicodeString());
+        Assertions.assertEquals(".newName", child1.getFieldName().toUnicodeString());
     }
 
     @Test
@@ -448,7 +447,7 @@ public class PdfFormFieldNameTest extends ExtendedITextTest {
         //ACT
         acroForm.renameField("root..", "newName");
         //ASSERT
-        Assert.assertEquals("root..newName", child2.getFieldName().toUnicodeString());
+        Assertions.assertEquals("root..newName", child2.getFieldName().toUnicodeString());
     }
 
     @Test
@@ -463,7 +462,7 @@ public class PdfFormFieldNameTest extends ExtendedITextTest {
         //ACT
         acroForm.renameField("..", "newName");
         //ASSERT
-        Assert.assertEquals("..newName", child2.getFieldName().toUnicodeString());
+        Assertions.assertEquals("..newName", child2.getFieldName().toUnicodeString());
     }
 
     @Test
@@ -477,14 +476,14 @@ public class PdfFormFieldNameTest extends ExtendedITextTest {
         acroForm.addField(root);
         //ACT
         acroForm.renameField("", "newName");
-        Assert.assertNull(acroForm.getField(""));
-        Assert.assertNotNull(acroForm.getField("newName"));
+        Assertions.assertNull(acroForm.getField(""));
+        Assertions.assertNotNull(acroForm.getField("newName"));
 
         acroForm.renameField("newName.", "newName");
-        Assert.assertEquals("newName.newName", child1.getFieldName().toUnicodeString());
+        Assertions.assertEquals("newName.newName", child1.getFieldName().toUnicodeString());
         //ASSERT
         acroForm.renameField("newName.newName.", "newName");
-        Assert.assertEquals("newName.newName.newName", child2.getFieldName().toUnicodeString());
+        Assertions.assertEquals("newName.newName.newName", child2.getFieldName().toUnicodeString());
     }
 
     @Test
@@ -497,7 +496,7 @@ public class PdfFormFieldNameTest extends ExtendedITextTest {
         //ACT
         for (int i = 0; i < 100; i++) {
             acroForm.renameField("root." + (i - 1), "" + i);
-            Assert.assertEquals("root." + i, child1.getFieldName().toUnicodeString());
+            Assertions.assertEquals("root." + i, child1.getFieldName().toUnicodeString());
         }
     }
 
@@ -509,8 +508,8 @@ public class PdfFormFieldNameTest extends ExtendedITextTest {
         root.addKid(child1);
         acroForm.addField(root);
         PdfFormField copy = acroForm.copyField("root.");
-        Assert.assertNotNull( copy);
-        Assert.assertEquals("root.", copy.getFieldName().toUnicodeString());
+        Assertions.assertNotNull( copy);
+        Assertions.assertEquals("root.", copy.getFieldName().toUnicodeString());
     }
 
     @Test
@@ -522,7 +521,7 @@ public class PdfFormFieldNameTest extends ExtendedITextTest {
         root.addKid(child1);
         acroForm.addField(root);
         PdfFormField copy = acroForm.copyField("root..");
-        Assert.assertNotNull(copy);
+        Assertions.assertNotNull(copy);
     }
 
 
@@ -535,8 +534,8 @@ public class PdfFormFieldNameTest extends ExtendedITextTest {
 
         PdfFormField toReplace = addDefaultTextFormField(outputDoc, "toReplace");
         acroForm.replaceField("root.child", toReplace);
-        Assert.assertNull(acroForm.getField("toReplace"));
-        Assert.assertNotNull(acroForm.getField("root.toReplace"));
+        Assertions.assertNull(acroForm.getField("toReplace"));
+        Assertions.assertNotNull(acroForm.getField("root.toReplace"));
     }
 
     @Test
@@ -548,8 +547,8 @@ public class PdfFormFieldNameTest extends ExtendedITextTest {
 
         PdfFormField toReplace = addDefaultTextFormField(outputDoc, "toReplace");
         acroForm.replaceField("root.", toReplace);
-        Assert.assertNull(acroForm.getField("toReplace"));
-        Assert.assertNotNull(acroForm.getField("root.toReplace"));
+        Assertions.assertNull(acroForm.getField("toReplace"));
+        Assertions.assertNotNull(acroForm.getField("root.toReplace"));
     }
 
     @Test
@@ -574,10 +573,10 @@ public class PdfFormFieldNameTest extends ExtendedITextTest {
             PdfPageFormCopier pdfPageFormCopier = new PdfPageFormCopier();
             loaded.copyPagesTo(1, 1, newDoc, pdfPageFormCopier);
             PdfAcroForm form = PdfFormCreator.getAcroForm(outputDoc, false);
-            Assert.assertNotNull(form);
-            Assert.assertEquals(2, form.getAllFormFields().size());
-            Assert.assertNotNull(form.getField("root."));
-            Assert.assertNotNull(form.getField("root"));
+            Assertions.assertNotNull(form);
+            Assertions.assertEquals(2, form.getAllFormFields().size());
+            Assertions.assertNotNull(form.getField("root."));
+            Assertions.assertNotNull(form.getField("root"));
         }
     }
 
@@ -604,10 +603,10 @@ public class PdfFormFieldNameTest extends ExtendedITextTest {
             PdfPageFormCopier pdfPageFormCopier = new PdfPageFormCopier();
             loaded.copyPagesTo(1, 1, newDoc, pdfPageFormCopier);
             PdfAcroForm form = PdfFormCreator.getAcroForm(outputDoc, false);
-            Assert.assertNotNull(form);
-            Assert.assertEquals(2, form.getAllFormFields().size());
-            Assert.assertNotNull(form.getField("."));
-            Assert.assertNotNull(form.getField(""));
+            Assertions.assertNotNull(form);
+            Assertions.assertEquals(2, form.getAllFormFields().size());
+            Assertions.assertNotNull(form.getField("."));
+            Assertions.assertNotNull(form.getField(""));
         }
     }
 
@@ -637,10 +636,10 @@ public class PdfFormFieldNameTest extends ExtendedITextTest {
             PdfPageFormCopier pdfPageFormCopier = new PdfPageFormCopier();
             loaded.copyPagesTo(1, 1, newDoc, pdfPageFormCopier);
             PdfAcroForm form = PdfFormCreator.getAcroForm(outputDoc, false);
-            Assert.assertNotNull(form);
-            Assert.assertEquals(2, form.getAllFormFields().size());
-            Assert.assertNotNull(form.getField("root."));
-            Assert.assertNotNull(form.getField("root"));
+            Assertions.assertNotNull(form);
+            Assertions.assertEquals(2, form.getAllFormFields().size());
+            Assertions.assertNotNull(form.getField("root."));
+            Assertions.assertNotNull(form.getField("root"));
         }
     }
 
@@ -652,7 +651,7 @@ public class PdfFormFieldNameTest extends ExtendedITextTest {
         root.addKid(child1);
         root.addKid(child2);
         acroForm.addField(root);
-        Assert.assertEquals(2, root.getChildFields().size());
+        Assertions.assertEquals(2, root.getChildFields().size());
     }
 
     @Test
@@ -663,7 +662,7 @@ public class PdfFormFieldNameTest extends ExtendedITextTest {
         root.addKid(child1);
         root.addKid(child2);
         acroForm.addField(root);
-        Assert.assertEquals(2, root.getChildFields().size());
+        Assertions.assertEquals(2, root.getChildFields().size());
     }
 
     private static PdfFormField addDefaultTextFormField(PdfDocument doc, String name) {

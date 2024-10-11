@@ -33,12 +33,10 @@ import com.itextpdf.svg.css.impl.SvgStyleResolver;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.processors.impl.SvgProcessorContext;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-@Category(UnitTest.class)
+@org.junit.jupiter.api.Tag("UnitTest")
 
 public class SvgFontProcessorTest extends ExtendedITextTest {
     @Test
@@ -57,6 +55,6 @@ public class SvgFontProcessorTest extends ExtendedITextTest {
         SvgFontProcessor svgFontProcessor = new SvgFontProcessor(context);
         svgFontProcessor.addFontFaceFonts(cssResolver);
         FontInfo info = (FontInfo) context.getTempFonts().getFonts().toArray()[0];
-        Assert.assertEquals("Courier", info.getFontName());
+        Assertions.assertEquals("Courier", info.getFontName());
     }
 }

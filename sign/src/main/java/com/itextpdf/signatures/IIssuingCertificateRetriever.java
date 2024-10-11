@@ -42,14 +42,24 @@ public interface IIssuingCertificateRetriever {
     Certificate[] retrieveMissingCertificates(Certificate[] chain);
 
     /**
-     * Retrieves certificates that can be used to verify the signature on the CRL response using CRL
-     * Authority Information Access (AIA) Extension.
+     * Retrieves the certificate chain for the certificate that should be used to verify the signature on the
+     * CRL response using CRL Authority Information Access (AIA) Extension and known certificates.
      *
      * @param crl CRL response to retrieve issuer for.
      *
      * @return certificates retrieved from CRL AIA extension or an empty list in case certificates cannot be retrieved.
      */
     Certificate[] getCrlIssuerCertificates(CRL crl);
+
+    /**
+     * Retrieves the certificate chaind for the certificates that could be used to verify the signature on the
+     * CRL response using CRL Authority Information Access (AIA) Extension and known certificates.
+     *
+     * @param crl CRL response to retrieve issuer for.
+     *
+     * @return certificates retrieved from CRL AIA extension or an empty list in case certificates cannot be retrieved.
+     */
+    Certificate[][] getCrlIssuerCertificatesByName(CRL crl);
 
     /**
      * Sets trusted certificate list to be used for the missing certificates retrieving by the issuer name.

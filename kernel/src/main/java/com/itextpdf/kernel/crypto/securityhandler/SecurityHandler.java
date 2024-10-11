@@ -31,6 +31,7 @@ import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 
 import java.security.MessageDigest;
+import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,9 +92,39 @@ public abstract class SecurityHandler {
         }
     }
 
+    /**
+     * Gets a stream wrapper, responsible for encryption.
+     *
+     * @param os {@link java.io.OutputStream} to be wrapped
+     *
+     * @return {@link OutputStreamEncryption}, responsible for encryption.
+     */
     public abstract OutputStreamEncryption getEncryptionStream(java.io.OutputStream os);
 
+    /**
+     * Gets decryptor object.
+     *
+     * @return {@link IDecryptor}
+     */
     public abstract IDecryptor getDecryptor();
+
+    /**
+     * Gets encryption key for a particular object/generation.
+     *
+     * @return encryption key for a particular object/generation.
+     */
+    public byte[] getNextObjectKey() {
+        return Arrays.copyOf(nextObjectKey, nextObjectKey.length);
+    }
+
+    /**
+     * Gets global encryption key.
+     *
+     * @return global encryption key.
+     */
+    public byte[] getMkey() {
+        return Arrays.copyOf(mkey, mkey.length);
+    }
 
     private void safeInitMessageDigest() {
         try {

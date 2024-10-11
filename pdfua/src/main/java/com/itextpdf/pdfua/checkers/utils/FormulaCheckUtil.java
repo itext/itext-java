@@ -67,11 +67,13 @@ public final class FormulaCheckUtil {
             super(context);
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
-        public void nextElement(IStructureNode elem) {
+        public boolean accept(IStructureNode node) {
+            return node != null;
+        }
+
+        @Override
+        public void processElement(IStructureNode elem) {
             final PdfStructElem structElem = context.getElementIfRoleMatches(PdfName.Formula, elem);
             if (structElem == null) {
                 return;

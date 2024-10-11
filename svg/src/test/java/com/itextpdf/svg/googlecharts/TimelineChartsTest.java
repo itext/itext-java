@@ -28,19 +28,18 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.svg.utils.TestUtils;
 import com.itextpdf.test.ITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class TimelineChartsTest extends SvgIntegrationTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/googlecharts/TimelineChartsTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/svg/googlecharts/TimelineChartsTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         ITextTest.createDestinationFolder(destinationFolder);
     }
@@ -56,7 +55,7 @@ public class TimelineChartsTest extends SvgIntegrationTest {
         TestUtils.convertSVGtoPDF(destinationFolder + "timelineChart.pdf",
                 sourceFolder + "timelineChart.svg", 1, pageSize);
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "timelineChart.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "timelineChart.pdf",
                 sourceFolder + "cmp_timelineChart.pdf", destinationFolder, "diff_"));
     }
 

@@ -23,6 +23,9 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.commons.actions.contexts.IMetaInfo;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+
+import java.util.HashMap;
 
 /**
  * Class with additional properties for {@link PdfDocument} processing.
@@ -32,6 +35,8 @@ public class DocumentProperties {
 
 
     protected IMetaInfo metaInfo = null;
+
+    HashMap<Class<?>, Object> dependencies = new HashMap<>();
 
     /**
      * Default constructor, use provided setters for configuration options.
@@ -66,5 +71,23 @@ public class DocumentProperties {
      */
     public boolean isEventCountingMetaInfoSet() {
         return this.metaInfo != null;
+    }
+
+    /**
+     * Register custom dependency for the document.
+     *
+     * @param clazz    Type of the dependency.
+     * @param instance The instance of the dependency.
+     * @return this {@link DocumentProperties} instance
+     */
+    public DocumentProperties registerDependency(Class<?> clazz, Object instance) {
+        if (clazz == null) {
+            throw new IllegalArgumentException(KernelExceptionMessageConstant.TYPE_SHOULD_NOT_BE_NULL);
+        }
+        if (instance == null) {
+            throw new IllegalArgumentException(KernelExceptionMessageConstant.INSTANCE_SHOULD_NOT_BE_NULL);
+        }
+        dependencies.put(clazz, instance);
+        return this;
     }
 }

@@ -53,7 +53,7 @@ import java.util.List;
  * one or more OCSP responses.
  *
  * @deprecated starting from 8.0.5.
- * {@link com.itextpdf.signatures.validation.v1.OCSPValidator} should be used instead.
+ * {@link com.itextpdf.signatures.validation.OCSPValidator} should be used instead.
  */
 @Deprecated
 public class OCSPVerifier extends RootStoreVerifier {

@@ -1058,7 +1058,7 @@ public class LineRenderer extends AbstractRenderer {
             }
             if (child instanceof TextRenderer) {
                 GlyphLine childLine = ((TextRenderer) child).line;
-                for (int i = childLine.start; i < childLine.end; i++) {
+                for (int i = childLine.getStart(); i < childLine.getEnd(); i++) {
                     if (TextUtil.isNewLine(childLine.get(i))) {
                         newLineFound = true;
                         break;
@@ -1080,7 +1080,7 @@ public class LineRenderer extends AbstractRenderer {
         final List<RendererGlyph> lineGlyphs = splitLineIntoGlyphsResult.getLineGlyphs();
         int initialPos = 0;
         for (int offset = initialPos; offset < lineGlyphs.size(); offset = initialPos) {
-            final TextRenderer renderer = lineGlyphs.get(offset).renderer;
+            final TextRenderer renderer = lineGlyphs.get(offset).getRenderer();
             final TextRenderer newRenderer = new TextRenderer(renderer).removeReversedRanges();
             toProcess.addChildRenderer(newRenderer);
 
@@ -1090,13 +1090,13 @@ public class LineRenderer extends AbstractRenderer {
             newRenderer.line = new GlyphLine(newRenderer.line);
             List<Glyph> replacementGlyphs = new ArrayList<>();
             boolean reversed = false;
-            for (int pos = offset; pos < lineGlyphs.size() && lineGlyphs.get(pos).renderer == renderer; ++pos) {
-                replacementGlyphs.add(lineGlyphs.get(pos).glyph);
+            for (int pos = offset; pos < lineGlyphs.size() && lineGlyphs.get(pos).getRenderer() == renderer; ++pos) {
+                replacementGlyphs.add(lineGlyphs.get(pos).getGlyph());
                 if (pos + 1 < lineGlyphs.size()
-                        && lineGlyphs.get(pos + 1).renderer == renderer
+                        && lineGlyphs.get(pos + 1).getRenderer() == renderer
                         && newOrder[pos] == newOrder[pos + 1] + 1
-                        && !TextUtil.isSpaceOrWhitespace(lineGlyphs.get(pos + 1).glyph)
-                        && !TextUtil.isSpaceOrWhitespace(lineGlyphs.get(pos).glyph)) {
+                        && !TextUtil.isSpaceOrWhitespace(lineGlyphs.get(pos + 1).getGlyph())
+                        && !TextUtil.isSpaceOrWhitespace(lineGlyphs.get(pos).getGlyph())) {
                     reversed = true;
                     continue;
                 }
@@ -1329,9 +1329,9 @@ public class LineRenderer extends AbstractRenderer {
                 TextRenderer textRenderer = (TextRenderer) renderer;
                 GlyphLine currentText = textRenderer.getText();
                 if (currentText != null) {
-                    int prevTextStart = currentText.start;
+                    int prevTextStart = currentText.getStart();
                     textRenderer.trimFirst();
-                    int numOfTrimmedGlyphs = textRenderer.getText().start - prevTextStart;
+                    int numOfTrimmedGlyphs = textRenderer.getText().getStart() - prevTextStart;
                     totalNumberOfTrimmedGlyphs += numOfTrimmedGlyphs;
                 }
                 trimFinished = textRenderer.length() > 0;
@@ -1527,7 +1527,7 @@ public class LineRenderer extends AbstractRenderer {
                 }
                 if (child instanceof TextRenderer) {
                     GlyphLine text = ((TextRenderer) child).getText();
-                    for (int i = text.start; i < text.end; i++) {
+                    for (int i = text.getStart(); i < text.getEnd(); i++) {
                         Glyph glyph = text.get(i);
                         if (TextUtil.isNewLine(glyph)) {
                             newLineFound = true;
@@ -1621,12 +1621,48 @@ public class LineRenderer extends AbstractRenderer {
     }
 
     public static class RendererGlyph {
-        public Glyph glyph;
-        public TextRenderer renderer;
+        private Glyph glyph;
+        private TextRenderer renderer;
 
         public RendererGlyph(Glyph glyph, TextRenderer textRenderer) {
             this.glyph = glyph;
             this.renderer = textRenderer;
+        }
+
+        /**
+         * Sets the glyph of the object.
+         *
+         * @param glyph glyph
+         */
+        public void setGlyph(Glyph glyph) {
+            this.glyph = glyph;
+        }
+
+        /**
+         * Retrieves the glyph of the object.
+         *
+         * @return glyph
+         */
+        public Glyph getGlyph() {
+            return glyph;
+        }
+
+        /**
+         * Sets the renderer of the object.
+         *
+         * @param renderer renderer
+         */
+        public void setRenderer(TextRenderer renderer) {
+            this.renderer = renderer;
+        }
+
+        /**
+         * Retrieves the renderer of the object.
+         *
+         * @return renderer
+         */
+        public TextRenderer getRenderer() {
+            return renderer;
         }
     }
 

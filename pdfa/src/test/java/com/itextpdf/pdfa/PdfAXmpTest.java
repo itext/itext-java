@@ -24,11 +24,12 @@ package com.itextpdf.pdfa;
 
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.kernel.pdf.PdfViewerPreferences;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
@@ -40,26 +41,25 @@ import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.kernel.xmp.options.PropertyOptions;
 import com.itextpdf.kernel.xmp.options.SerializeOptions;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfAXmpTest extends ExtendedITextTest {
 
     public static final String cmpFolder = "./src/test/resources/com/itextpdf/pdfa/cmp/PdfAXmpTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/pdfa/PdfAXmpTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
@@ -71,7 +71,7 @@ public class PdfAXmpTest extends ExtendedITextTest {
 
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
-        PdfADocument doc = new PdfADocument(new PdfWriter(outFile), PdfAConformanceLevel.PDF_A_1B, outputIntent);
+        PdfADocument doc = new PdfADocument(new PdfWriter(outFile), PdfAConformance.PDF_A_1B, outputIntent);
         doc.addNewPage();
 
         doc.getDocumentInfo().setKeywords("key1, key2 , key3;key4,key5");
@@ -79,9 +79,9 @@ public class PdfAXmpTest extends ExtendedITextTest {
         doc.close();
 
         CompareTool ct = new CompareTool();
-        Assert.assertNull(ct.compareByContent(outFile, cmpFile, destinationFolder));
-        Assert.assertNull(ct.compareDocumentInfo(outFile, cmpFile));
-        Assert.assertNull(ct.compareXmp(outFile, cmpFile, true));
+        Assertions.assertNull(ct.compareByContent(outFile, cmpFile, destinationFolder));
+        Assertions.assertNull(ct.compareDocumentInfo(outFile, cmpFile));
+        Assertions.assertNull(ct.compareXmp(outFile, cmpFile, true));
     }
 
     @Test
@@ -91,7 +91,7 @@ public class PdfAXmpTest extends ExtendedITextTest {
 
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
-        PdfADocument doc = new PdfADocument(new PdfWriter(outFile), PdfAConformanceLevel.PDF_A_2B, outputIntent);
+        PdfADocument doc = new PdfADocument(new PdfWriter(outFile), PdfAConformance.PDF_A_2B, outputIntent);
         doc.addNewPage();
 
         doc.getDocumentInfo().setKeywords("key1, key2 , key3;key4,key5");
@@ -99,27 +99,27 @@ public class PdfAXmpTest extends ExtendedITextTest {
         doc.close();
 
         CompareTool ct = new CompareTool();
-        Assert.assertNull(ct.compareByContent(outFile, cmpFile, destinationFolder));
-        Assert.assertNull(ct.compareDocumentInfo(outFile, cmpFile));
-        Assert.assertNull(ct.compareXmp(outFile, cmpFile, true));
+        Assertions.assertNull(ct.compareByContent(outFile, cmpFile, destinationFolder));
+        Assertions.assertNull(ct.compareDocumentInfo(outFile, cmpFile));
+        Assertions.assertNull(ct.compareXmp(outFile, cmpFile, true));
     }
 
     @Test
     public void saveAndReadDocumentWithCanonicalXmpMetadata() throws IOException, XMPException {
         String outFile = destinationFolder + "saveAndReadDocumentWithCanonicalXmpMetadata.pdf";
         String cmpFile = cmpFolder + "cmp_saveAndReadDocumentWithCanonicalXmpMetadata.pdf";
-        PdfAConformanceLevel conformanceLevel = PdfAConformanceLevel.PDF_A_2B;
+        PdfAConformance conformance = PdfAConformance.PDF_A_2B;
         PdfOutputIntent outputIntent;
 
         try (InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm")) {
             outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
         }
 
-        try (PdfADocument doc = new PdfADocument(new PdfWriter(outFile), conformanceLevel, outputIntent)) {
+        try (PdfADocument doc = new PdfADocument(new PdfWriter(outFile), conformance, outputIntent)) {
             doc.addNewPage();
             XMPMeta xmp = XMPMetaFactory.create();
-            xmp.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, conformanceLevel.getPart(), new PropertyOptions().setSchemaNode(true));
-            xmp.setProperty(XMPConst.NS_PDFA_ID, XMPConst.CONFORMANCE, conformanceLevel.getConformance(), new PropertyOptions().setSchemaNode(true));
+            xmp.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, conformance.getPart(), new PropertyOptions().setSchemaNode(true));
+            xmp.setProperty(XMPConst.NS_PDFA_ID, XMPConst.CONFORMANCE, conformance.getLevel(), new PropertyOptions().setSchemaNode(true));
             SerializeOptions options = new SerializeOptions().setUseCanonicalFormat(true).setUseCompactFormat(false);
             doc.setXmpMetadata(xmp, options);
             doc.setTagged();
@@ -127,11 +127,11 @@ public class PdfAXmpTest extends ExtendedITextTest {
         // Closing document and reopening it to flush it XMP metadata ModifyDate
         try (PdfDocument doc = new PdfDocument(new PdfReader(outFile));
              PdfDocument cmpDoc = new PdfDocument(new PdfReader(cmpFile))) {
-            byte[] rdf = doc.getXmpMetadata();
-            byte[] expectedRdf = cmpDoc.getXmpMetadata();
+            byte[] rdf = doc.getXmpMetadataBytes();
+            byte[] expectedRdf = cmpDoc.getXmpMetadataBytes();
             // Comparing angle brackets, since it's the main difference between canonical and compact format.
-            Assert.assertEquals(count(expectedRdf, (byte)'<'), count(rdf, (byte)'<'));
-            Assert.assertNull(new CompareTool().compareXmp(cmpFile, outFile, true));
+            Assertions.assertEquals(count(expectedRdf, (byte)'<'), count(rdf, (byte)'<'));
+            Assertions.assertNull(new CompareTool().compareXmp(cmpFile, outFile, true));
         }
     }
 
@@ -146,7 +146,7 @@ public class PdfAXmpTest extends ExtendedITextTest {
         }
 
         CompareTool ct = new CompareTool();
-        Assert.assertNull(ct.compareXmp(outFile, cmpFile, true));
+        Assertions.assertNull(ct.compareXmp(outFile, cmpFile, true));
 
     }
 
@@ -157,16 +157,15 @@ public class PdfAXmpTest extends ExtendedITextTest {
 
         // check whether the pdfuaid NS URI was properly encoded as a URI with rdf:resource
         PdfDocument readDoc = new PdfDocument(new PdfReader(new ByteArrayInputStream(baos.toByteArray())));
-        String xmpString = new String(readDoc.getXmpMetadata(), StandardCharsets.UTF_8);
-        Assert.assertTrue(
-                "Did not find expected namespaceURI definition",
-                xmpString.contains("<pdfaSchema:namespaceURI rdf:resource=\"http://www.aiim.org/pdfua/ns/id/\"/>")
-        );
+        String xmpString = new String(readDoc.getXmpMetadataBytes(), StandardCharsets.UTF_8);
+        Assertions.assertTrue(
+                xmpString.contains("<pdfaSchema:namespaceURI rdf:resource=\"http://www.aiim.org/pdfua/ns/id/\"/>"),
+                "Did not find expected namespaceURI definition");
 
     }
 
     private void generatePdfAWithUA(OutputStream os) throws IOException {
-        WriterProperties wp = new WriterProperties().addUAXmpMetadata();
+        WriterProperties wp = new WriterProperties().addPdfUaXmpMetadata(PdfUAConformance.PDF_UA_1);
         try (PdfWriter w = new PdfWriter(os, wp)) {
             PdfOutputIntent outputIntent;
             try (InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm")) {
@@ -177,7 +176,8 @@ public class PdfAXmpTest extends ExtendedITextTest {
                         is
                 );
             }
-            PdfDocument pdfDoc = new PdfADocument(w, PdfAConformanceLevel.PDF_A_2A, outputIntent).setTagged();
+            PdfDocument pdfDoc = new PdfADocument(w, PdfAConformance.PDF_A_2A, outputIntent);
+            pdfDoc.setTagged();
             pdfDoc.getDocumentInfo().setTitle("Test document");
             pdfDoc.getCatalog().setViewerPreferences(new PdfViewerPreferences().setDisplayDocTitle(true));
             pdfDoc.getCatalog().setLang(new PdfString("en"));

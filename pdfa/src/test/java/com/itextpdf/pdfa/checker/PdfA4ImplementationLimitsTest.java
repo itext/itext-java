@@ -22,7 +22,7 @@
  */
 package com.itextpdf.pdfa.checker;
 
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -32,48 +32,41 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
-import com.itextpdf.kernel.pdf.function.PdfType2Function;
 import com.itextpdf.kernel.pdf.function.PdfType4Function;
-import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
-import com.itextpdf.pdfa.logs.PdfAConformanceLogMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.LogMessage;
-import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfA4ImplementationLimitsTest extends ExtendedITextTest {
-    private PdfA4Checker pdfA4Checker = new PdfA4Checker(PdfAConformanceLevel.PDF_A_4);
+    private PdfA4Checker pdfA4Checker = new PdfA4Checker(PdfAConformance.PDF_A_4);
 
-    @Before
+    @BeforeEach
     public void before() {
         pdfA4Checker.setFullCheckMode(true);
     }
 
     @Test
     public void independentLongStringTest() {
-        final int maxAllowedLength = new PdfA2Checker(PdfAConformanceLevel.PDF_A_2B).getMaxStringLength();
+        final int maxAllowedLength = new PdfA2Checker(PdfAConformance.PDF_A_2B).getMaxStringLength();
         final int testLength = maxAllowedLength + 1;
 
         PdfString longString = PdfACheckerTestUtils.getLongString(testLength);
 
         //An exception should not be thrown because pdf/a-4 spec allows any length strings
         pdfA4Checker.checkPdfObject(longString);
-        Assert.assertEquals(testLength, longString.toString().length());
+        Assertions.assertEquals(testLength, longString.toString().length());
     }
 
     @Test
     public void longStringInContentStreamTest() {
-        final int maxAllowedLength = new PdfA2Checker(PdfAConformanceLevel.PDF_A_2B).getMaxStringLength();
+        final int maxAllowedLength = new PdfA2Checker(PdfAConformance.PDF_A_2B).getMaxStringLength();
         final int testLength = maxAllowedLength + 1;
 
         PdfString longString = PdfACheckerTestUtils.getLongString(testLength);
@@ -82,15 +75,15 @@ public class PdfA4ImplementationLimitsTest extends ExtendedITextTest {
         PdfStream stream = new PdfStream(newContent);
         //An exception should not be thrown because pdf/a-4 spec allows any length strings
         pdfA4Checker.checkContentStream(stream);
-        Assert.assertEquals(testLength, longString.toString().length());
+        Assertions.assertEquals(testLength, longString.toString().length());
     }
 
     @Test
     public void independentLargeRealTest() {
-        PdfNumber largeNumber = new PdfNumber(new PdfA2Checker(PdfAConformanceLevel.PDF_A_2B).getMaxRealValue());
+        PdfNumber largeNumber = new PdfNumber(new PdfA2Checker(PdfAConformance.PDF_A_2B).getMaxRealValue());
         // An exception shall not be thrown pdf/a-4 has no number limits
         pdfA4Checker.checkPdfObject(largeNumber);
-        Assert.assertEquals(Float.MAX_VALUE, largeNumber.floatValue(), 0.001f);
+        Assertions.assertEquals(Float.MAX_VALUE, largeNumber.floatValue(), 0.001f);
     }
 
     @Test

@@ -22,42 +22,45 @@
  */
 package com.itextpdf.kernel.utils;
 
-import com.itextpdf.kernel.pdf.IsoKey;
-import com.itextpdf.kernel.pdf.PdfResources;
-import com.itextpdf.kernel.pdf.PdfStream;
+import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.validation.IValidationChecker;
+import com.itextpdf.kernel.validation.IValidationContext;
+import com.itextpdf.kernel.validation.ValidationContainer;
+import com.itextpdf.kernel.validation.ValidationType;
+import com.itextpdf.kernel.validation.context.FontValidationContext;
+import com.itextpdf.kernel.validation.context.PdfDocumentValidationContext;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class ValidationContainerTest extends ExtendedITextTest {
     @Test
     public void validateObjectTest() {
         ValidationContainer container = new ValidationContainer();
-        container.validate(null, IsoKey.FONT, null, null, null);
+        container.validate(new FontValidationContext(null, null));
         final CustomValidationChecker checker = new CustomValidationChecker();
         container.addChecker(checker);
-        Assert.assertTrue(container.containsChecker(checker));
+        Assertions.assertTrue(container.containsChecker(checker));
 
-        Assert.assertFalse(checker.objectValidationPerformed);
-        container.validate(null, IsoKey.FONT, null, null, null);
-        Assert.assertTrue(checker.objectValidationPerformed);
+        Assertions.assertFalse(checker.objectValidationPerformed);
+        container.validate(new FontValidationContext(null, null));
+        Assertions.assertTrue(checker.objectValidationPerformed);
     }
 
     @Test
     public void validateDocumentTest() {
         ValidationContainer container = new ValidationContainer();
-        ValidationContext context = new ValidationContext().withPdfDocument(null);
+        PdfDocumentValidationContext context = new PdfDocumentValidationContext(null, null);
         container.validate(context);
         final CustomValidationChecker checker = new CustomValidationChecker();
         container.addChecker(checker);
 
-        Assert.assertFalse(checker.documentValidationPerformed);
+        Assertions.assertFalse(checker.documentValidationPerformed);
         container.validate(context);
-        Assert.assertTrue(checker.documentValidationPerformed);
+        Assertions.assertTrue(checker.documentValidationPerformed);
     }
 
     private static class CustomValidationChecker implements IValidationChecker {
@@ -65,14 +68,17 @@ public class ValidationContainerTest extends ExtendedITextTest {
         public boolean objectValidationPerformed = false;
 
         @Override
-        public void validateDocument(ValidationContext validationContext) {
-            documentValidationPerformed = true;
+        public void validate(IValidationContext validationContext) {
+            if (validationContext.getType() == ValidationType.PDF_DOCUMENT) {
+                documentValidationPerformed = true;
+            } else {
+                objectValidationPerformed = true;
+            }
         }
 
         @Override
-        public void validateObject(Object obj, IsoKey key, PdfResources resources, PdfStream contentStream,
-                Object extra) {
-            objectValidationPerformed = true;
+        public boolean isPdfObjectReadyToFlush(PdfObject object) {
+            return true;
         }
     }
 }

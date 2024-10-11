@@ -28,20 +28,19 @@ import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class TagStructureContextUnitTest extends ExtendedITextTest {
 
     @Test
     public void noTagStructureInNonTaggedDocumentTest() {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> new TagStructureContext(pdfDocument));
-        Assert.assertEquals(KernelExceptionMessageConstant.MUST_BE_A_TAGGED_DOCUMENT, exception.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.MUST_BE_A_TAGGED_DOCUMENT, exception.getMessage());
     }
 }

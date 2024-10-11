@@ -24,8 +24,11 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.MemoryLimitsAwareException;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 
 import java.util.HashSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@link MemoryLimitsAwareHandler} handles memory allocation and prevents decompressed
@@ -38,6 +41,7 @@ import java.util.HashSet;
  */
 public class MemoryLimitsAwareHandler {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(MemoryLimitsAwareHandler.class);
 
     private static final int SINGLE_SCALE_COEFFICIENT = 100;
     private static final int SUM_SCALE_COEFFICIENT = 500;
@@ -86,6 +90,25 @@ public class MemoryLimitsAwareHandler {
         this.maxSizeOfDecompressedPdfStreamsSum = maxSizeOfDecompressedPdfStreamsSum;
         this.maxNumberOfElementsInXrefStructure = maxNumberOfElementsInXrefStructure;
         this.maxXObjectsSizePerPage = maxXObjectsSizePerPage;
+    }
+
+    /**
+     * Creates a new instance of {@link MemoryLimitsAwareHandler} by copying settings from this instance
+     * of {@link MemoryLimitsAwareHandler}.
+     *
+     * @return a new instance of {@link MemoryLimitsAwareHandler}.
+     */
+    public MemoryLimitsAwareHandler createNewInstance() {
+        MemoryLimitsAwareHandler to = new MemoryLimitsAwareHandler();
+        to.maxSizeOfSingleDecompressedPdfStream = this.maxSizeOfSingleDecompressedPdfStream;
+        to.maxSizeOfDecompressedPdfStreamsSum = this.maxSizeOfDecompressedPdfStreamsSum;
+        to.maxNumberOfElementsInXrefStructure = this.maxNumberOfElementsInXrefStructure;
+        to.maxXObjectsSizePerPage = this.maxXObjectsSizePerPage;
+        if (this.getClass() != MemoryLimitsAwareHandler.class) {
+            LOGGER.warn(KernelLogMessageConstant.MEMORYLIMITAWAREHANDLER_OVERRIDE_CREATENEWINSTANCE_METHOD);
+        }
+
+        return to;
     }
 
     /**

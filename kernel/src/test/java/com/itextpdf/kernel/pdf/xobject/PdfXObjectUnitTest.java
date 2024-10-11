@@ -26,29 +26,28 @@ import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfXObjectUnitTest extends ExtendedITextTest {
 
     @Test
     public void noSubTypeProvidedTest() {
         PdfStream pdfStream = new PdfStream();
-        Exception exception = Assert.assertThrows(UnsupportedOperationException.class,
+        Exception exception = Assertions.assertThrows(UnsupportedOperationException.class,
                 () -> PdfXObject.makeXObject(pdfStream));
-        Assert.assertEquals(KernelExceptionMessageConstant.UNSUPPORTED_XOBJECT_TYPE, exception.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.UNSUPPORTED_XOBJECT_TYPE, exception.getMessage());
     }
 
     @Test
     public void unsupportedSubTypeIsSet() {
         PdfStream pdfStream = new PdfStream();
         pdfStream.put(PdfName.Subtype, new PdfName("Unsupported SubType"));
-        Exception exception = Assert.assertThrows(UnsupportedOperationException.class,
+        Exception exception = Assertions.assertThrows(UnsupportedOperationException.class,
                 () -> PdfXObject.makeXObject(pdfStream));
-        Assert.assertEquals(KernelExceptionMessageConstant.UNSUPPORTED_XOBJECT_TYPE, exception.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.UNSUPPORTED_XOBJECT_TYPE, exception.getMessage());
     }
 }

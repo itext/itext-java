@@ -26,13 +26,12 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfWinTest extends ExtendedITextTest {
 
     @Test
@@ -44,8 +43,8 @@ public class PdfWinTest extends ExtendedITextTest {
         PdfWin win = new PdfWin(dict);
         PdfDictionary pdfWinObj = win.getPdfObject();
 
-        Assert.assertEquals(1, pdfWinObj.size());
-        Assert.assertEquals(somePath, pdfWinObj.getAsString(PdfName.F).toString());
+        Assertions.assertEquals(1, pdfWinObj.size());
+        Assertions.assertEquals(somePath, pdfWinObj.getAsString(PdfName.F).toString());
     }
 
     @Test
@@ -55,8 +54,8 @@ public class PdfWinTest extends ExtendedITextTest {
         PdfWin win = new PdfWin(new PdfString(somePath));
         PdfDictionary pdfWinObj = win.getPdfObject();
 
-        Assert.assertEquals(1, pdfWinObj.size());
-        Assert.assertEquals(somePath, pdfWinObj.getAsString(PdfName.F).toString());
+        Assertions.assertEquals(1, pdfWinObj.size());
+        Assertions.assertEquals(somePath, pdfWinObj.getAsString(PdfName.F).toString());
     }
 
     @Test
@@ -71,11 +70,11 @@ public class PdfWinTest extends ExtendedITextTest {
 
         PdfDictionary pdfWinObj = win.getPdfObject();
 
-        Assert.assertEquals(4, pdfWinObj.size());
-        Assert.assertEquals(somePath, pdfWinObj.getAsString(PdfName.F).toString());
-        Assert.assertEquals(defaultDirectory, pdfWinObj.getAsString(PdfName.D).toString());
-        Assert.assertEquals(operation, pdfWinObj.getAsString(PdfName.O).toString());
-        Assert.assertEquals(parameter, pdfWinObj.getAsString(PdfName.P).toString());
+        Assertions.assertEquals(4, pdfWinObj.size());
+        Assertions.assertEquals(somePath, pdfWinObj.getAsString(PdfName.F).toString());
+        Assertions.assertEquals(defaultDirectory, pdfWinObj.getAsString(PdfName.D).toString());
+        Assertions.assertEquals(operation, pdfWinObj.getAsString(PdfName.O).toString());
+        Assertions.assertEquals(parameter, pdfWinObj.getAsString(PdfName.P).toString());
     }
 
     @Test
@@ -84,6 +83,6 @@ public class PdfWinTest extends ExtendedITextTest {
 
         PdfWin win = new PdfWin(new PdfString(somePath));
 
-        Assert.assertFalse(win.isWrappedObjectMustBeIndirect());
+        Assertions.assertFalse(win.isWrappedObjectMustBeIndirect());
     }
 }

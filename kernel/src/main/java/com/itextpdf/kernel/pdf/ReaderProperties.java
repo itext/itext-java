@@ -26,22 +26,37 @@ import com.itextpdf.kernel.security.IExternalDecryptionProcess;
 
 import java.security.Key;
 import java.security.cert.Certificate;
+import java.util.Arrays;
 
+/**
+ * The class representing various properties used to read PDF documents.
+ */
 public class ReaderProperties {
 
-
-    //added by ujihara for decryption
     protected byte[] password;
-
-    //added by Aiken Sam for certificate decryption
     protected Key certificateKey;
-    //added by Aiken Sam for certificate decryption
     protected Certificate certificate;
-    //added by Aiken Sam for certificate decryption
     protected String certificateKeyProvider;
     protected IExternalDecryptionProcess externalDecryptionProcess;
-
     protected MemoryLimitsAwareHandler memoryLimitsAwareHandler;
+
+    /**
+     * Creates an instance of {@link ReaderProperties}.
+     */
+    public ReaderProperties() {
+        // Empty constructor
+    }
+
+    ReaderProperties(ReaderProperties readerProperties) {
+        this.password = readerProperties.password == null ? null :
+                Arrays.copyOf(readerProperties.password, readerProperties.password.length);
+        this.certificateKey = readerProperties.certificateKey;
+        this.certificate = readerProperties.certificate;
+        this.certificateKeyProvider = readerProperties.certificateKeyProvider;
+        this.externalDecryptionProcess = readerProperties.externalDecryptionProcess;
+        this.memoryLimitsAwareHandler = readerProperties.memoryLimitsAwareHandler == null ? null :
+                readerProperties.memoryLimitsAwareHandler.createNewInstance();
+    }
 
     /**
      * Defines the password which will be used if the document is encrypted with standard encryption.
@@ -95,14 +110,6 @@ public class ReaderProperties {
         return this;
     }
 
-    private void clearEncryptionParams() {
-        this.password = null;
-        this.certificate = null;
-        this.certificateKey = null;
-        this.certificateKeyProvider = null;
-        this.externalDecryptionProcess = null;
-    }
-
     /**
      * Sets the memory handler which will be used to handle decompressed PDF streams.
      *
@@ -114,4 +121,11 @@ public class ReaderProperties {
         return this;
     }
 
+    private void clearEncryptionParams() {
+        this.password = null;
+        this.certificate = null;
+        this.certificateKey = null;
+        this.certificateKeyProvider = null;
+        this.externalDecryptionProcess = null;
+    }
 }

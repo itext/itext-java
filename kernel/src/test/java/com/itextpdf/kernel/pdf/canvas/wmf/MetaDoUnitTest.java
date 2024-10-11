@@ -30,16 +30,15 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class MetaDoUnitTest extends ExtendedITextTest {
 
     @Test
@@ -50,8 +49,8 @@ public class MetaDoUnitTest extends ExtendedITextTest {
         // InputStream value shall be start with 0x9AC6CDD7
         InputStream inputStream = new ByteArrayInputStream(new byte[] {});
         MetaDo metaDo = new MetaDo(inputStream, pdfCanvas);
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> metaDo.readAll());
-        Assert.assertEquals(KernelExceptionMessageConstant.NOT_A_PLACEABLE_WINDOWS_METAFILE, exception.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.NOT_A_PLACEABLE_WINDOWS_METAFILE, exception.getMessage());
     }
 }

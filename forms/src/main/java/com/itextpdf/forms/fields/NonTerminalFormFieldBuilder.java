@@ -46,7 +46,7 @@ public class NonTerminalFormFieldBuilder extends FormFieldBuilder<NonTerminalFor
      */
     public PdfFormField createNonTerminalFormField() {
         PdfFormField field = PdfFormCreator.createFormField(getDocument());
-        field.pdfConformanceLevel = getGenericConformanceLevel();
+        field.pdfConformance = getConformance();
         field.setFieldName(getFormFieldName());
         return field;
     }

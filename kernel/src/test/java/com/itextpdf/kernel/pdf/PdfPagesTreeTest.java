@@ -22,17 +22,19 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.commons.datastructures.NullUnlimitedList;
+import com.itextpdf.commons.datastructures.SimpleArrayList;
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.kernel.pdf.PdfPagesTree.NullUnlimitedList;
+import com.itextpdf.kernel.di.pagetree.DefaultPageTreeListFactory;
+import com.itextpdf.kernel.di.pagetree.IPageTreeListFactory;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfPagesTreeTest extends ExtendedITextTest {
     @Test
     public void generateTreeDocHasNoPagesTest() {
@@ -41,35 +43,57 @@ public class PdfPagesTreeTest extends ExtendedITextTest {
     }
 
     @Test
-    public void nullUnlimitedListAddTest() {
-        NullUnlimitedList<String> list = new NullUnlimitedList<>();
-        list.add("hey");
-        list.add("bye");
-        Assert.assertEquals(2, list.size());
-        list.add(-1, "hello");
-        list.add(3, "goodbye");
-        Assert.assertEquals(2, list.size());
+    public void defaultImplementationIsExpectedInstance() {
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        pdfDoc.getCatalog().put(PdfName.Count, new PdfNumber(10));
+        IPageTreeListFactory factory = pdfDoc.getDiContainer().getInstance(IPageTreeListFactory.class);
+        Assertions.assertTrue(factory instanceof DefaultPageTreeListFactory);
+    }
+
+
+    @Test
+    public void defaultImplementationWritingOnlyReturnArrayList() {
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        IPageTreeListFactory factory = pdfDoc.getDiContainer().getInstance(IPageTreeListFactory.class);
+        Assertions.assertTrue(factory.<Object>createList(null) instanceof SimpleArrayList<?>);
     }
 
     @Test
-    public void nullUnlimitedListIndexOfTest() {
-        NullUnlimitedList<String> list = new NullUnlimitedList<>();
-        list.add("hey");
-        list.add(null);
-        list.add("bye");
-        list.add(null);
-        Assert.assertEquals(4, list.size());
-        Assert.assertEquals(1, list.indexOf(null));
+    public void defaultImplementationReadingAndModifyingNullUnlimitedList() {
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        IPageTreeListFactory factory = pdfDoc.getDiContainer().getInstance(IPageTreeListFactory.class);
+        PdfDictionary dict = new PdfDictionary();
+        dict.put(PdfName.Count, new PdfNumber(Integer.MAX_VALUE));
+        Assertions.assertTrue(factory.<Object>createList(dict) instanceof NullUnlimitedList<?>);
     }
 
+
     @Test
-    public void nullUnlimitedListRemoveTest() {
-        NullUnlimitedList<String> list = new NullUnlimitedList<>();
-        list.add("hey");
-        list.add("bye");
-        Assert.assertEquals(2, list.size());
-        list.remove(-1);
-        list.remove(2);
-        Assert.assertEquals(2, list.size());
+    public void defaultImplementationReadingAndModifyingArrayList() {
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        IPageTreeListFactory factory = pdfDoc.getDiContainer().getInstance(IPageTreeListFactory.class);
+        PdfDictionary dict = new PdfDictionary();
+        dict.put(PdfName.Count, new PdfNumber(10));
+        Assertions.assertTrue(factory.<Object>createList(dict) instanceof SimpleArrayList<?>);
+    }
+
+
+    @Test
+    public void defaultImplementationReadingAndModifyingArrayListNegative() {
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        IPageTreeListFactory factory = pdfDoc.getDiContainer().getInstance(IPageTreeListFactory.class);
+        PdfDictionary dict = new PdfDictionary();
+        dict.put(PdfName.Count, new PdfNumber(-10));
+        Assertions.assertTrue(factory.<Object>createList(dict) instanceof NullUnlimitedList<?>);
+    }
+
+
+    @Test
+    public void defaultImplementationReadingAndModifyingArrayListNull() {
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        IPageTreeListFactory factory = pdfDoc.getDiContainer().getInstance(IPageTreeListFactory.class);
+        PdfDictionary dict = new PdfDictionary();
+        dict.put(PdfName.Count, new PdfNull());
+        Assertions.assertTrue(factory.<Object>createList(dict) instanceof NullUnlimitedList<?>);
     }
 }

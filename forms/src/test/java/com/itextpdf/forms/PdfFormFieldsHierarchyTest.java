@@ -29,23 +29,21 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.util.Map;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfFormFieldsHierarchyTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/PdfFormFieldsHierarchyTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/forms/PdfFormFieldsHierarchyTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
@@ -72,7 +70,7 @@ public class PdfFormFieldsHierarchyTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder);
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -93,7 +91,7 @@ public class PdfFormFieldsHierarchyTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(inPdf,
+        Assertions.assertNull(new CompareTool().compareByContent(inPdf,
                 sourceFolder + "cmp_autosizeInheritedDAFormFields.pdf", destinationFolder, "diff_"));
     }
 
@@ -112,7 +110,7 @@ public class PdfFormFieldsHierarchyTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(inPdf,
+        Assertions.assertNull(new CompareTool().compareByContent(inPdf,
                 sourceFolder + "cmp_autosizeInheritedDAFormFieldsWithKids.pdf", destinationFolder, inPdf));
     }
 
@@ -134,7 +132,7 @@ public class PdfFormFieldsHierarchyTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(fileName, sourceFolder + "cmp_" + name + ".pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(fileName, sourceFolder + "cmp_" + name + ".pdf",
                 destinationFolder + name, "diff_"));
     }
 }

@@ -33,22 +33,20 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 import java.io.IOException;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfFormCopyTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/PdfFormCopyTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/forms/PdfFormCopyTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
@@ -76,7 +74,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_copyFields01.pdf", destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_copyFields01.pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -93,7 +91,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_copyFields02.pdf", destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_copyFields02.pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -110,7 +108,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_copyFields03.pdf", destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_copyFields03.pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -131,7 +129,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_copyLargeFile.pdf", destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_copyLargeFile.pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -149,8 +147,8 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         srcDoc.copyPagesTo(1, srcDoc.getNumberOfPages(), destDoc, formCopier);
 
         PdfAcroForm form = PdfFormCreator.getAcroForm(destDoc, false);
-        Assert.assertEquals(1, form.getFields().size());
-        Assert.assertNotNull(form.getField("Name1"));
+        Assertions.assertEquals(1, form.getFields().size());
+        Assertions.assertNotNull(form.getField("Name1"));
 
         destDoc.close();
     }
@@ -166,7 +164,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         destDoc.addPage(srcDoc.getFirstPage().copyTo(destDoc, new PdfPageFormCopier()));
         destDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_copyFields05.pdf", destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_copyFields05.pdf", destinationFolder, "diff_"));
     }
 
 
@@ -197,7 +195,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         destDoc.close();
         srcDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_copyMultipleSubfieldsTest01.pdf", destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_copyMultipleSubfieldsTest01.pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -224,7 +222,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         destDoc.close();
         srcDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_copyMultipleSubfieldsTest02.pdf", destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_copyMultipleSubfieldsTest02.pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -251,7 +249,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         destDoc.close();
         srcDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_copyMultipleSubfieldsTest03.pdf", destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_copyMultipleSubfieldsTest03.pdf", destinationFolder, "diff_"));
     }
 
 
@@ -282,7 +280,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         destDoc.close();
         srcDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_copyMultipleSubfieldsSmartModeTest01.pdf", destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_copyMultipleSubfieldsSmartModeTest01.pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -304,7 +302,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         destDoc.close();
         srcDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_copyFields06.pdf", destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_copyFields06.pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -326,7 +324,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         }
         destDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_copyFields07.pdf", destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_copyFields07.pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -354,7 +352,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         pdfDoc.close();
 
         // comparing with cmp_copyFields01.pdf on purpose: result should be the same as in the first test
-        Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_copyFields01.pdf", destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_copyFields01.pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -373,7 +371,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         }
         destDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_copyFields09.pdf", destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_copyFields09.pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -390,7 +388,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         }
         destDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_copyFields10.pdf", destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_copyFields10.pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -412,7 +410,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
 
         destDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_copyFields11.pdf", destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_copyFields11.pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -434,7 +432,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
 
         destDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_copyFields12.pdf", destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_copyFields12.pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -458,7 +456,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         destDoc.close();
         srcDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_copyFields13.pdf", destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_copyFields13.pdf", destinationFolder, "diff_"));
     }
 
 
@@ -471,7 +469,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         target.initializeOutlines();
         source.copyPagesTo(1, source.getNumberOfPages(), target, new PdfPageFormCopier());
         target.close();
-        Assert.assertNull(new CompareTool().compareByContent(destFile, sourceFolder + "cmp_AnnotationSampleStandard_copy.pdf", destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destFile, sourceFolder + "cmp_AnnotationSampleStandard_copy.pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -482,7 +480,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         PdfDocument merged = new PdfDocument(new PdfWriter(destFilename));
         src.copyPagesTo(1, 1, merged, new PdfPageFormCopier());
         merged.close();
-        Assert.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_unnamedFieldsHierarchyTest.pdf", destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_unnamedFieldsHierarchyTest.pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -512,7 +510,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         destDoc.close();
         srcDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destFilename, cmpFileName, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destFilename, cmpFileName, destinationFolder, "diff_"));
     }
 
     @Test
@@ -540,7 +538,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         destDoc.close();
         srcDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destFilename, cmpFileName, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destFilename, cmpFileName, destinationFolder, "diff_"));
     }
 
     @Test
@@ -566,7 +564,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         destDoc.close();
         srcDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destFilename, cmpFileName, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destFilename, cmpFileName, destinationFolder, "diff_"));
     }
 
     @Test
@@ -590,7 +588,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
             sourceDoc1.copyPagesTo(1, sourceDoc1.getNumberOfPages(), resultPdfDocument, formCopier);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(destFilename, cmpFileName, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destFilename, cmpFileName, destinationFolder, "diff_"));
     }
 
     @Test
@@ -617,7 +615,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
             sourceDoc2.copyPagesTo(1, sourceDoc2.getNumberOfPages(), resultPdfDocument, formCopier);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(destFilename, cmpFileName, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destFilename, cmpFileName, destinationFolder, "diff_"));
     }
 
     @Test
@@ -644,7 +642,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
             sourceDoc1.copyPagesTo(1, sourceDoc1.getNumberOfPages(), resultPdfDocument, formCopier);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(destFilename, cmpFileName, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destFilename, cmpFileName, destinationFolder, "diff_"));
     }
 
     @Test
@@ -668,7 +666,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
             sourceDoc2.copyPagesTo(1, sourceDoc2.getNumberOfPages(), resultPdfDocument, formCopier);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(destFilename, cmpFileName, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destFilename, cmpFileName, destinationFolder, "diff_"));
     }
 
     @Test
@@ -686,7 +684,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
             pdfDoc.copyPagesTo(1, pdfDoc.getNumberOfPages(), pdfDocMerged, new PdfPageFormCopier());
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(destFilename, cmpFileName, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destFilename, cmpFileName, destinationFolder, "diff_"));
     }
 
     @Test
@@ -698,6 +696,6 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         PdfDocument resultPdfDocument = new PdfDocument(new PdfWriter(destFileName));
         sourcePdfDocument.copyPagesTo(1, sourcePdfDocument.getNumberOfPages(), resultPdfDocument, new PdfPageFormCopier());
         resultPdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destFileName, cmpFileName, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destFileName, cmpFileName, destinationFolder, "diff_"));
     }
 }

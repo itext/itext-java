@@ -38,19 +38,18 @@ import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.client.TestCrlClient;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.X509Certificate;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(BouncyCastleIntegrationTest.class)
+@Tag("BouncyCastleIntegrationTest")
 public class LtvWithTwoSignaturesTest extends ExtendedITextTest {
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
@@ -61,7 +60,7 @@ public class LtvWithTwoSignaturesTest extends ExtendedITextTest {
 
     private static final char[] password = "testpassphrase".toCharArray();
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         Security.addProvider(FACTORY.getProvider());
         createOrClearDestinationFolder(destinationFolder);
@@ -96,20 +95,20 @@ public class LtvWithTwoSignaturesTest extends ExtendedITextTest {
         PdfDictionary dssDictionary = catalogDictionary.getAsDictionary(PdfName.DSS);
 
         PdfDictionary vri = dssDictionary.getAsDictionary(PdfName.VRI);
-        Assert.assertNotNull(vri);
-        Assert.assertEquals(2, vri.size());
+        Assertions.assertNotNull(vri);
+        Assertions.assertEquals(2, vri.size());
 
         PdfArray ocsps = dssDictionary.getAsArray(PdfName.OCSPs);
-        Assert.assertNotNull(ocsps);
-        Assert.assertEquals(5, ocsps.size());
+        Assertions.assertNotNull(ocsps);
+        Assertions.assertEquals(5, ocsps.size());
 
         PdfArray certs = dssDictionary.getAsArray(PdfName.Certs);
-        Assert.assertNotNull(certs);
-        Assert.assertEquals(5, certs.size());
+        Assertions.assertNotNull(certs);
+        Assertions.assertEquals(5, certs.size());
 
         PdfArray crls = dssDictionary.getAsArray(PdfName.CRLs);
-        Assert.assertNotNull(crls);
-        Assert.assertEquals(2, crls.size());
+        Assertions.assertNotNull(crls);
+        Assertions.assertEquals(2, crls.size());
     }
 
     private void addLtvInfo(String src, String dest, String sigName, TestOcspClient testOcspClient,

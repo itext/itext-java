@@ -28,22 +28,21 @@ import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfReaderCustomFilterTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/crypto/PdfReaderCustomFilterTest/";
 
     @Test
     public void encryptedDocumentCustomFilterStandartTest() throws IOException {
         try (PdfReader reader = new PdfReader(sourceFolder + "customSecurityHandler.pdf")) {
-            Exception e = Assert.assertThrows(UnsupportedSecurityHandlerException.class, () -> new PdfDocument(reader));
-            Assert.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.UNSUPPORTED_SECURITY_HANDLER,
+            Exception e = Assertions.assertThrows(UnsupportedSecurityHandlerException.class, () -> new PdfDocument(reader));
+            Assertions.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.UNSUPPORTED_SECURITY_HANDLER,
                     "/Standart"), e.getMessage());
         }
     }

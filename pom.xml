@@ -4,7 +4,7 @@
 
   <groupId>com.itextpdf</groupId>
   <artifactId>root</artifactId>
-  <version>8.0.5</version>
+  <version>9.0.0</version>
   <packaging>pom</packaging>
 
   <name>iText</name>
@@ -85,34 +85,27 @@
   <properties>
     <argLine>-Xmx1024m</argLine>
     <bouncycastle.version>1.78</bouncycastle.version>
-    <bouncycastleintegrationtests>com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest</bouncycastleintegrationtests>
-    <bouncycastleunittests>com.itextpdf.test.annotations.type.BouncyCastleUnitTest</bouncycastleunittests>
     <dependencyCheck.version>7.0.0</dependencyCheck.version>
     <failsafe.version>3.0.0-M3</failsafe.version>
-    <integrationtests>com.itextpdf.test.annotations.type.IntegrationTest</integrationtests>
     <jacoco.version>0.8.4</jacoco.version>
     <java.version>1.8</java.version>
     <javadoc-additionalOptions />
     <javadoc-link>https://docs.oracle.com/javase/8/docs/api/</javadoc-link>
     <javadoc.version>3.7.0</javadoc.version>
-    <junit.version>4.13.2</junit.version>
+    <junit.jupiter.version>5.10.2</junit.jupiter.version>
     <junitparams.version>1.0.4</junitparams.version>
-    <logback.version>1.2.13</logback.version>
+    <logback.version>1.3.14</logback.version>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <maven.jar.version>3.1.0</maven.jar.version>
     <maven.source.version>3.0.1</maven.source.version>
-    <performancetests>com.itextpdf.test.annotations.type.PerformanceTest</performancetests>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <sampletests>com.itextpdf.test.annotations.type.SampleTest</sampletests>
     <skipTests>true</skipTests>
-    <slf4j.version>1.7.36</slf4j.version>
-    <slowtests>com.itextpdf.test.annotations.type.SlowTest</slowtests>
+    <slf4j.version>2.0.16</slf4j.version>
     <sonar.dependencyCheck.htmlReportPath>target/dependency-check-report.html</sonar.dependencyCheck.htmlReportPath>
     <sonar.dependencyCheck.reportPath>target/dependency-check-report.xml</sonar.dependencyCheck.reportPath>
     <surefire.version>3.0.0-M3</surefire.version>
-    <unittests>com.itextpdf.test.annotations.type.UnitTest</unittests>
   </properties>
 
   <dependencies>
@@ -128,15 +121,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>${junit.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>pl.pragmatists</groupId>
-      <artifactId>JUnitParams</artifactId>
-      <version>${junitparams.version}</version>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>${junit.jupiter.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -496,10 +483,8 @@
                 <onlyBinaryIncompatible>true</onlyBinaryIncompatible>
                 <ignoreMissingClasses>true</ignoreMissingClasses>
                 <excludes>
+                  <!-- Contains interfaces for bouncycastle wrappers which can be changes in any time -->
                   <exclude>com.itextpdf.commons.bouncycastle</exclude>
-                  <exclude>com.itextpdf.pdfua.exceptions.PdfUAConformanceException</exclude>
-                  <exclude>com.itextpdf.signatures.validation.v1.DocumentRevisionsValidator</exclude>
-                  <exclude>com.itextpdf.signatures.validation.v1.SignatureValidator</exclude>
                 </excludes>
                 <excludeModules>
                   <excludeModule>bouncy-castle-adapter</excludeModule>
@@ -507,6 +492,8 @@
                   <excludeModule>bouncy-castle-fips-adapter</excludeModule>
                 </excludeModules>
               </parameter>
+              <!-- TODO DEVSIX-8520 Enable japicmp after 9.0.0 release -->
+              <skip>true</skip>
             </configuration>
           </plugin>
           <plugin>
@@ -606,7 +593,7 @@
               <includes>
                 <include>**/*.java</include>
               </includes>
-              <groups>${slowtests},SlowTest,PerformanceTest,IntegrationTest,BouncyCastleIntegrationTest,SampleTest</groups>
+              <groups>SlowTest,PerformanceTest,IntegrationTest,BouncyCastleIntegrationTest,SampleTest</groups>
               <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
               <argLine>@{jacoco.agent.argLine}</argLine>
               <threadCount>1</threadCount>
@@ -629,7 +616,7 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
               <skipTests>false</skipTests>
-              <groups>${unittests},UnitTest,BouncyCastleUnitTest</groups>
+              <groups>UnitTest,BouncyCastleUnitTest</groups>
               <argLine>@{jacoco.agent.argLine}</argLine>
             </configuration>
           </plugin>
@@ -702,7 +689,7 @@
               <includes>
                 <include>**/*.java</include>
               </includes>
-              <groups>${bouncycastleintegrationtests}</groups>
+              <groups>BouncyCastleIntegrationTest</groups>
             </configuration>
             <executions>
               <execution>
@@ -730,7 +717,7 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
-              <groups>${bouncycastleunittests}</groups>
+              <groups>BouncyCastleUnitTest</groups>
             </configuration>
             <executions>
               <execution>

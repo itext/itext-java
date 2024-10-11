@@ -29,15 +29,14 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
 import java.net.MalformedURLException;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class Type3GlyphUnitTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/font/Type3GlyphUnitTest/";
@@ -47,9 +46,9 @@ public class Type3GlyphUnitTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Type3Glyph glyph = new Type3Glyph(new PdfStream(), pdfDoc);
         ImageData img = ImageDataFactory.create(SOURCE_FOLDER + "imageTest.png");
-        Exception e = Assert.assertThrows(PdfException.class,
+        Exception e = Assertions.assertThrows(PdfException.class,
                 () -> glyph.addImageWithTransformationMatrix(img, 100, 0, 0, 100, 0, 0, false));
-        Assert.assertEquals("Not colorized type3 fonts accept only mask images.", e.getMessage());
+        Assertions.assertEquals("Not colorized type3 fonts accept only mask images.", e.getMessage());
     }
 
     @Test
@@ -58,7 +57,7 @@ public class Type3GlyphUnitTest extends ExtendedITextTest {
         Type3Glyph glyph = new Type3Glyph(new PdfStream(), pdfDoc);
         ImageData img = ImageDataFactory.create(SOURCE_FOLDER + "imageTest.png");
         img.makeMask();
-        Assert.assertNull(glyph.addImageWithTransformationMatrix(img, 100, 0, 0, 100, 0, 0, true));
+        Assertions.assertNull(glyph.addImageWithTransformationMatrix(img, 100, 0, 0, 100, 0, 0, true));
     }
 
     @Test
@@ -68,7 +67,7 @@ public class Type3GlyphUnitTest extends ExtendedITextTest {
         Type3Glyph glyph = new Type3Glyph(new PdfStream(), pdfDoc);
         ImageData img = ImageDataFactory.create(SOURCE_FOLDER + "imageTest.png");
         img.makeMask();
-        Assert.assertThrows(NullPointerException.class,
+        Assertions.assertThrows(NullPointerException.class,
                 () -> glyph.addImageWithTransformationMatrix(img, 100, 0, 0, 100, 0, 0, false));
     }
 }

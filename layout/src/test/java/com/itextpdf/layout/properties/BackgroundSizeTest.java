@@ -23,23 +23,22 @@
 package com.itextpdf.layout.properties;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class BackgroundSizeTest extends ExtendedITextTest {
 
     @Test
     public void constructorTest() {
         final BackgroundSize size = new BackgroundSize();
 
-        Assert.assertFalse(size.isContain());
-        Assert.assertFalse(size.isCover());
-        Assert.assertNull(size.getBackgroundWidthSize());
-        Assert.assertNull(size.getBackgroundHeightSize());
+        Assertions.assertFalse(size.isContain());
+        Assertions.assertFalse(size.isCover());
+        Assertions.assertNull(size.getBackgroundWidthSize());
+        Assertions.assertNull(size.getBackgroundHeightSize());
     }
 
     @Test
@@ -49,10 +48,10 @@ public class BackgroundSizeTest extends ExtendedITextTest {
         size.setBackgroundSizeToValues(UnitValue.createPointValue(10), UnitValue.createPointValue(10));
         size.setBackgroundSizeToCover();
 
-        Assert.assertFalse(size.isContain());
-        Assert.assertTrue(size.isCover());
-        Assert.assertNull(size.getBackgroundWidthSize());
-        Assert.assertNull(size.getBackgroundHeightSize());
+        Assertions.assertFalse(size.isContain());
+        Assertions.assertTrue(size.isCover());
+        Assertions.assertNull(size.getBackgroundWidthSize());
+        Assertions.assertNull(size.getBackgroundHeightSize());
     }
 
     @Test
@@ -62,9 +61,9 @@ public class BackgroundSizeTest extends ExtendedITextTest {
         size.setBackgroundSizeToValues(UnitValue.createPointValue(10), UnitValue.createPointValue(10));
         size.setBackgroundSizeToContain();
 
-        Assert.assertTrue(size.isContain());
-        Assert.assertFalse(size.isCover());
-        Assert.assertNull(size.getBackgroundWidthSize());
-        Assert.assertNull(size.getBackgroundHeightSize());
+        Assertions.assertTrue(size.isContain());
+        Assertions.assertFalse(size.isCover());
+        Assertions.assertNull(size.getBackgroundWidthSize());
+        Assertions.assertNull(size.getBackgroundHeightSize());
     }
 }

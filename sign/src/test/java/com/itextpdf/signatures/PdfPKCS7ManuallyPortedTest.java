@@ -23,16 +23,15 @@
 package com.itextpdf.signatures;
 
 import com.itextpdf.kernel.exceptions.PdfException;
-import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 // The behavior is different on .NET
-@Category(BouncyCastleUnitTest.class)
+@Tag("BouncyCastleUnitTest")
 public class PdfPKCS7ManuallyPortedTest extends PdfPKCS7BasicTest {
 
     @Test
@@ -40,7 +39,7 @@ public class PdfPKCS7ManuallyPortedTest extends PdfPKCS7BasicTest {
             throws IOException, GeneralSecurityException {
         // ED25519 is not available in FIPS approved mode
         if (BOUNCY_CASTLE_FACTORY.isInApprovedOnlyMode()) {
-            Assert.assertThrows(PdfException.class,
+            Assertions.assertThrows(PdfException.class,
                     () -> verifyIsoExtensionExample("Ed25519", "sample-ed25519-sha512.pdf"));
         } else {
             verifyIsoExtensionExample("Ed25519", "sample-ed25519-sha512.pdf");
@@ -67,4 +66,14 @@ public class PdfPKCS7ManuallyPortedTest extends PdfPKCS7BasicTest {
         verifyIsoExtensionExample("RSASSA-PSS", "sample-pss-sha3_256.pdf");
     }
 
+    @Test
+    public void verifyEd448SignatureTest() throws IOException, GeneralSecurityException {
+        // Ed448 is not available in BCFIPS approved mode
+        if (BOUNCY_CASTLE_FACTORY.isInApprovedOnlyMode()) {
+            Assertions.assertThrows(PdfException.class,
+                    () -> verifyIsoExtensionExample("Ed448", "sample-ed448-shake256.pdf"));
+        } else {
+            verifyIsoExtensionExample("Ed448", "sample-ed448-shake256.pdf");
+        }
+    }
 }

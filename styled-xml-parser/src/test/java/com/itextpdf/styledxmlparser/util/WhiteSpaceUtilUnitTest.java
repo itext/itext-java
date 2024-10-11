@@ -23,12 +23,11 @@
 package com.itextpdf.styledxmlparser.util;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class WhiteSpaceUtilUnitTest extends ExtendedITextTest {
 
     @Test
@@ -36,7 +35,7 @@ public class WhiteSpaceUtilUnitTest extends ExtendedITextTest {
         String toCollapse = "A   B";
         String actual = WhiteSpaceUtil.collapseConsecutiveSpaces(toCollapse);
         String expected = "A B";
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -44,7 +43,7 @@ public class WhiteSpaceUtilUnitTest extends ExtendedITextTest {
         String toCollapse = "A   B   ";
         String actual = WhiteSpaceUtil.collapseConsecutiveSpaces(toCollapse);
         String expected = "A B ";
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -52,7 +51,7 @@ public class WhiteSpaceUtilUnitTest extends ExtendedITextTest {
         String toCollapse = "   A B";
         String actual = WhiteSpaceUtil.collapseConsecutiveSpaces(toCollapse);
         String expected = " A B";
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -60,7 +59,7 @@ public class WhiteSpaceUtilUnitTest extends ExtendedITextTest {
         String toCollapse = "   A   B   ";
         String actual = WhiteSpaceUtil.collapseConsecutiveSpaces(toCollapse);
         String expected = " A B ";
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -68,7 +67,7 @@ public class WhiteSpaceUtilUnitTest extends ExtendedITextTest {
         String toCollapse = "\n   A B  \n";
         String actual = WhiteSpaceUtil.collapseConsecutiveSpaces(toCollapse);
         String expected = " A B ";
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -76,6 +75,6 @@ public class WhiteSpaceUtilUnitTest extends ExtendedITextTest {
         String toCollapse = "\t  A B  \t";
         String actual = WhiteSpaceUtil.collapseConsecutiveSpaces(toCollapse);
         String expected = " A B ";
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 }

@@ -27,14 +27,13 @@ import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.layout.font.selectorstrategy.FirstMatchFontSelectorStrategy.FirstMathFontSelectorStrategyFactory;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class FirstMatchFontSelectorStrategyTest extends ExtendedITextTest {
     @Test
     public void twoDiacriticsInRowTest() {
@@ -42,9 +41,9 @@ public class FirstMatchFontSelectorStrategyTest extends ExtendedITextTest {
 
         final List<Tuple2<GlyphLine, PdfFont>> result = strategy.getGlyphLines(
                 "L with accent: \u004f\u0301\u0302 abc");
-        Assert.assertEquals(2, result.size());
-        Assert.assertEquals("L with accent: ", result.get(0).getFirst().toString());
-        Assert.assertEquals("\u004f\u0301\u0302 abc", result.get(1).getFirst().toString());
+        Assertions.assertEquals(2, result.size());
+        Assertions.assertEquals("L with accent: ", result.get(0).getFirst().toString());
+        Assertions.assertEquals("\u004f\u0301\u0302 abc", result.get(1).getFirst().toString());
     }
 
     @Test
@@ -53,10 +52,10 @@ public class FirstMatchFontSelectorStrategyTest extends ExtendedITextTest {
 
         final List<Tuple2<GlyphLine, PdfFont>> result = strategy.getGlyphLines(
                 "L with accent: \u004f\u0302 abc");
-        Assert.assertEquals(2, result.size());
-        Assert.assertEquals("L with accent: ", result.get(0).getFirst().toString());
-        Assert.assertEquals("\u004f\u0302 abc", result.get(1).getFirst().toString());
-        Assert.assertNotEquals(result.get(0).getSecond(), result.get(1).getSecond());
+        Assertions.assertEquals(2, result.size());
+        Assertions.assertEquals("L with accent: ", result.get(0).getFirst().toString());
+        Assertions.assertEquals("\u004f\u0302 abc", result.get(1).getFirst().toString());
+        Assertions.assertNotEquals(result.get(0).getSecond(), result.get(1).getSecond());
     }
 
     @Test
@@ -65,15 +64,15 @@ public class FirstMatchFontSelectorStrategyTest extends ExtendedITextTest {
 
         final List<Tuple2<GlyphLine, PdfFont>> result = strategy.getGlyphLines(
                 "Ми\u0301ръ (mírə)");
-        Assert.assertEquals(6, result.size());
-        Assert.assertEquals("Ми", result.get(0).getFirst().toString());
-        Assert.assertEquals("\u0301", result.get(1).getFirst().toString());
-        Assert.assertEquals("ръ (", result.get(2).getFirst().toString());
-        Assert.assertEquals("mír", result.get(3).getFirst().toString());
-        Assert.assertEquals("ə", result.get(4).getFirst().toString());
-        Assert.assertEquals(")", result.get(5).getFirst().toString());
-        Assert.assertEquals(result.get(0).getSecond(), result.get(2).getSecond());
-        Assert.assertEquals(result.get(2).getSecond(), result.get(3).getSecond());
+        Assertions.assertEquals(6, result.size());
+        Assertions.assertEquals("Ми", result.get(0).getFirst().toString());
+        Assertions.assertEquals("\u0301", result.get(1).getFirst().toString());
+        Assertions.assertEquals("ръ (", result.get(2).getFirst().toString());
+        Assertions.assertEquals("mír", result.get(3).getFirst().toString());
+        Assertions.assertEquals("ə", result.get(4).getFirst().toString());
+        Assertions.assertEquals(")", result.get(5).getFirst().toString());
+        Assertions.assertEquals(result.get(0).getSecond(), result.get(2).getSecond());
+        Assertions.assertEquals(result.get(2).getSecond(), result.get(3).getSecond());
     }
 
     @Test
@@ -82,12 +81,12 @@ public class FirstMatchFontSelectorStrategyTest extends ExtendedITextTest {
 
         final List<Tuple2<GlyphLine, PdfFont>> result = strategy.getGlyphLines(
                 "L with accent: \u004f\u0302 abc");
-        Assert.assertEquals(3, result.size());
-        Assert.assertEquals("L with accent: \u004f", result.get(0).getFirst().toString());
-        Assert.assertEquals("", result.get(1).getFirst().toString());
-        Assert.assertEquals(" abc", result.get(2).getFirst().toString());
-        Assert.assertEquals(result.get(0).getSecond(), result.get(2).getSecond());
-        Assert.assertEquals(result.get(0).getSecond(), result.get(1).getSecond());
+        Assertions.assertEquals(3, result.size());
+        Assertions.assertEquals("L with accent: \u004f", result.get(0).getFirst().toString());
+        Assertions.assertEquals("", result.get(1).getFirst().toString());
+        Assertions.assertEquals(" abc", result.get(2).getFirst().toString());
+        Assertions.assertEquals(result.get(0).getSecond(), result.get(2).getSecond());
+        Assertions.assertEquals(result.get(0).getSecond(), result.get(1).getSecond());
     }
 
     @Test
@@ -96,8 +95,8 @@ public class FirstMatchFontSelectorStrategyTest extends ExtendedITextTest {
 
         final List<Tuple2<GlyphLine, PdfFont>> result = strategy.getGlyphLines(
                 "L with accent: \u004f\u0302 abc");
-        Assert.assertEquals(1, result.size());
-        Assert.assertEquals("L with accent: \u004f\u0302 abc", result.get(0).getFirst().toString());
+        Assertions.assertEquals(1, result.size());
+        Assertions.assertEquals("L with accent: \u004f\u0302 abc", result.get(0).getFirst().toString());
     }
 
     @Test
@@ -107,11 +106,11 @@ public class FirstMatchFontSelectorStrategyTest extends ExtendedITextTest {
         // this text contains three successive surrogate pairs
         final List<Tuple2<GlyphLine, PdfFont>> result = strategy.getGlyphLines(
                 "text \uD800\uDF10\uD800\uDF00\uD800\uDF11 text");
-        Assert.assertEquals(3, result.size());
-        Assert.assertEquals("text ", result.get(0).getFirst().toString());
-        Assert.assertEquals("\uD800\uDF10\uD800\uDF00\uD800\uDF11 ", result.get(1).getFirst().toString());
-        Assert.assertEquals("text", result.get(2).getFirst().toString());
-        Assert.assertEquals(result.get(0).getSecond(), result.get(2).getSecond());
+        Assertions.assertEquals(3, result.size());
+        Assertions.assertEquals("text ", result.get(0).getFirst().toString());
+        Assertions.assertEquals("\uD800\uDF10\uD800\uDF00\uD800\uDF11 ", result.get(1).getFirst().toString());
+        Assertions.assertEquals("text", result.get(2).getFirst().toString());
+        Assertions.assertEquals(result.get(0).getSecond(), result.get(2).getSecond());
     }
 
     @Test
@@ -119,8 +118,8 @@ public class FirstMatchFontSelectorStrategyTest extends ExtendedITextTest {
         IFontSelectorStrategy strategy = FontSelectorTestsUtil.createStrategyWithLimitedThreeFonts(new FirstMathFontSelectorStrategyFactory());
 
         final List<Tuple2<GlyphLine, PdfFont>> result = strategy.getGlyphLines("abcdefxyz");
-        Assert.assertEquals(1, result.size());
-        Assert.assertEquals("abcdefxyz", result.get(0).getFirst().toString());
+        Assertions.assertEquals(1, result.size());
+        Assertions.assertEquals("abcdefxyz", result.get(0).getFirst().toString());
     }
 
     @Test
@@ -128,7 +127,7 @@ public class FirstMatchFontSelectorStrategyTest extends ExtendedITextTest {
         IFontSelectorStrategy strategy = FontSelectorTestsUtil.createStrategyWithLimitedThreeFonts(new FirstMathFontSelectorStrategyFactory());
 
         final List<Tuple2<GlyphLine, PdfFont>> result = strategy.getGlyphLines(" axadefa ");
-        Assert.assertEquals(1, result.size());
-        Assert.assertEquals(" axadefa ", result.get(0).getFirst().toString());
+        Assertions.assertEquals(1, result.size());
+        Assertions.assertEquals(" axadefa ", result.get(0).getFirst().toString());
     }
 }

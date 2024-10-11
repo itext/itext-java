@@ -33,6 +33,8 @@ public class PdfALogMessageConstant {
     public static final String PDFA_OBJECT_FLUSHING_WAS_NOT_PERFORMED =
             "Object flushing was not performed. Object in PDF/A mode can only be flushed if the document is closed or "
                     + "if this object has already been checked for compliance with PDF/A rules.";
+    public static final String WRITER_PROPERTIES_PDF_VERSION_WAS_OVERRIDDEN =
+            "Pdf version from writer properties isn't compatible with specified PDF/A conformance, it was overridden to {0} version.";
 
     private PdfALogMessageConstant() {
         //Private constructor will prevent the instantiation of this class directly

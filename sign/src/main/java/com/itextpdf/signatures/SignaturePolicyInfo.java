@@ -30,6 +30,7 @@ import com.itextpdf.commons.bouncycastle.asn1.esf.ISigPolicyQualifierInfo;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISignaturePolicyId;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISignaturePolicyIdentifier;
 import com.itextpdf.commons.utils.Base64;
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
 
 /**
  * Class that encapsulates the signature policy information

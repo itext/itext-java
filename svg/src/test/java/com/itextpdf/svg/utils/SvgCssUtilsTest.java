@@ -28,16 +28,14 @@ import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
 import com.itextpdf.styledxmlparser.jsoup.parser.Tag;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-@Category(UnitTest.class)
+@org.junit.jupiter.api.Tag("UnitTest")
 public class SvgCssUtilsTest extends ExtendedITextTest {
 
     @Test
@@ -51,7 +49,7 @@ public class SvgCssUtilsTest extends ExtendedITextTest {
 
         List<String> actual = SvgCssUtils.splitValueList(input);
 
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -68,7 +66,7 @@ public class SvgCssUtilsTest extends ExtendedITextTest {
 
         List<String> actual = SvgCssUtils.splitValueList(input);
 
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -82,7 +80,7 @@ public class SvgCssUtilsTest extends ExtendedITextTest {
 
         List<String> actual = SvgCssUtils.splitValueList(input);
 
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -96,7 +94,7 @@ public class SvgCssUtilsTest extends ExtendedITextTest {
 
         List<String> actual = SvgCssUtils.splitValueList(input);
 
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -110,7 +108,7 @@ public class SvgCssUtilsTest extends ExtendedITextTest {
 
         List<String> actual = SvgCssUtils.splitValueList(input);
 
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -124,7 +122,7 @@ public class SvgCssUtilsTest extends ExtendedITextTest {
 
         List<String> actual = SvgCssUtils.splitValueList(input);
 
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -138,21 +136,21 @@ public class SvgCssUtilsTest extends ExtendedITextTest {
 
         List<String> actual = SvgCssUtils.splitValueList(input);
 
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
     public void nullSplitValueTest() {
         List<String> actual = SvgCssUtils.splitValueList(null);
 
-        Assert.assertTrue(actual.isEmpty());
+        Assertions.assertTrue(actual.isEmpty());
     }
 
     @Test
     public void emptySplitValueTest() {
         List<String> actual = SvgCssUtils.splitValueList("");
 
-        Assert.assertTrue(actual.isEmpty());
+        Assertions.assertTrue(actual.isEmpty());
     }
 
     @Test
@@ -160,7 +158,7 @@ public class SvgCssUtilsTest extends ExtendedITextTest {
         String expected = "0.5";
         String actual = SvgCssUtils.convertFloatToString(0.5f);
 
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -168,6 +166,6 @@ public class SvgCssUtilsTest extends ExtendedITextTest {
         String expected = "0.1234567";
         String actual = SvgCssUtils.convertFloatToString(0.1234567f);
 
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 }

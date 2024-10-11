@@ -35,44 +35,25 @@ import com.itextpdf.layout.properties.*;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.util.Arrays;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(Parameterized.class)
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class FlexContainerColumnTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/FlexContainerColumnTest/";
     public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/FlexContainerColumnTest/";
 
-    private AlignmentPropertyValue alignItemsValue;
-    private JustifyContent justifyContentValue;
-    private FlexWrapPropertyValue wrapValue;
-    private FlexDirectionPropertyValue directionValue;
-    private Integer comparisonPdfId;
-
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(DESTINATION_FOLDER);
     }
 
-    public FlexContainerColumnTest(Object alignItemsValue, Object justifyContentValue, Object wrapValue,
-                             Object directionValue, Object comparisonPdfId) {
-        this.alignItemsValue = (AlignmentPropertyValue) alignItemsValue;
-        this.justifyContentValue = (JustifyContent) justifyContentValue;
-        this.wrapValue = (FlexWrapPropertyValue) wrapValue;
-        this.directionValue = (FlexDirectionPropertyValue) directionValue;
-        this.comparisonPdfId = (Integer) comparisonPdfId;
-    }
-
-    @Parameterized.Parameters(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
     public static Iterable<Object[]> alignItemsAndJustifyContentProperties() {
         return Arrays.asList(new Object[][]{
                 {AlignmentPropertyValue.FLEX_END, JustifyContent.FLEX_END, FlexWrapPropertyValue.NOWRAP,
@@ -92,17 +73,20 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
         });
     }
 
-    @Test
-    public void defaultFlexContainerTest() throws IOException, InterruptedException {
+    @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
+    @MethodSource("alignItemsAndJustifyContentProperties")
+    public void defaultFlexContainerTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
+            FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId)
+            throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "defaultFlexContainerTest" + comparisonPdfId + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_defaultFlexContainerTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
-        Div flexContainer = createFlexContainer();
+        Div flexContainer = createFlexContainer(alignItemsValue, justifyContentValue, wrapValue, directionValue);
         flexContainer.setProperty(Property.MARGIN_TOP, UnitValue.createPointValue(50));
-        flexContainer.setProperty(Property.BORDER, new SolidBorder(2));
+        flexContainer.setBorder(new SolidBorder(2));
         flexContainer.setProperty(Property.PADDING_LEFT, UnitValue.createPointValue(40));
         flexContainer.setProperty(Property.BACKGROUND, new Background(ColorConstants.LIGHT_GRAY));
 
@@ -117,20 +101,22 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
-    @Test
-    public void flexContainerFixedHeightWidthTest() throws IOException, InterruptedException {
+    @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
+    @MethodSource("alignItemsAndJustifyContentProperties")
+    public void flexContainerFixedHeightWidthTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
+            FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "flexContainerFixedHeightWidthTest" + comparisonPdfId + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerFixedHeightWidthTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
-        Div flexContainer = createFlexContainer();
+        Div flexContainer = createFlexContainer(alignItemsValue, justifyContentValue, wrapValue, directionValue);
         flexContainer.setProperty(Property.MARGIN_TOP, UnitValue.createPointValue(50));
-        flexContainer.setProperty(Property.BORDER, new SolidBorder(2));
+        flexContainer.setBorder(new SolidBorder(2));
         flexContainer.setProperty(Property.PADDING_LEFT, UnitValue.createPointValue(40));
         flexContainer.setProperty(Property.BACKGROUND, new Background(ColorConstants.LIGHT_GRAY));
         flexContainer.setProperty(Property.WIDTH, UnitValue.createPointValue(450));
@@ -147,19 +133,21 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
-    @Test
-    public void flexContainerDifferentChildrenTest() throws IOException, InterruptedException {
+    @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
+    @MethodSource("alignItemsAndJustifyContentProperties")
+    public void flexContainerDifferentChildrenTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
+            FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "flexContainerDifferentChildrenTest" + comparisonPdfId + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerDifferentChildrenTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
-        Div flexContainer = createFlexContainer();
-        flexContainer.setProperty(Property.BORDER, new SolidBorder(2));
+        Div flexContainer = createFlexContainer(alignItemsValue, justifyContentValue, wrapValue, directionValue);
+        flexContainer.setBorder(new SolidBorder(2));
         flexContainer.setProperty(Property.BACKGROUND, new Background(ColorConstants.LIGHT_GRAY));
 
         Div innerDiv = new Div();
@@ -181,20 +169,22 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
-    @Test
+    @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
+    @MethodSource("alignItemsAndJustifyContentProperties")
     @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA), ignore = true)
-    public void flexContainerDifferentChildrenDontFitVerticallyTest() throws IOException, InterruptedException {
+    public void flexContainerDifferentChildrenDontFitVerticallyTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
+            FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "flexContainerDifferentChildrenDontFitHorizontallyTest" + comparisonPdfId + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerDifferentChildrenDontFitHorizontallyTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
-        Div flexContainer = createFlexContainer();
-        flexContainer.setProperty(Property.BORDER, new SolidBorder(2));
+        Div flexContainer = createFlexContainer(alignItemsValue, justifyContentValue, wrapValue, directionValue);
+        flexContainer.setBorder(new SolidBorder(2));
         flexContainer.setProperty(Property.BACKGROUND, new Background(ColorConstants.LIGHT_GRAY));
         flexContainer.setProperty(Property.HEIGHT, UnitValue.createPointValue(300));
 
@@ -216,19 +206,21 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
-    @Test
-    public void flexContainerDifferentChildrenWithGrowTest() throws IOException, InterruptedException {
+    @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
+    @MethodSource("alignItemsAndJustifyContentProperties")
+    public void flexContainerDifferentChildrenWithGrowTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
+            FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "flexContainerDifferentChildrenWithGrowTest" + comparisonPdfId + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerDifferentChildrenWithGrowTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
-        Div flexContainer = createFlexContainer();
-        flexContainer.setProperty(Property.BORDER, new SolidBorder(2));
+        Div flexContainer = createFlexContainer(alignItemsValue, justifyContentValue, wrapValue, directionValue);
+        flexContainer.setBorder(new SolidBorder(2));
         flexContainer.setProperty(Property.BACKGROUND, new Background(ColorConstants.LIGHT_GRAY));
 
         Div innerDiv = new Div();
@@ -256,19 +248,21 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
-    @Test
-    public void flexContainerDifferentChildrenWithFlexBasisTest() throws IOException, InterruptedException {
+    @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
+    @MethodSource("alignItemsAndJustifyContentProperties")
+    public void flexContainerDifferentChildrenWithFlexBasisTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
+            FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "flexContainerDifferentChildrenWithFlexBasisTest" + comparisonPdfId + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerDifferentChildrenWithFlexBasisTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
-        Div flexContainer = createFlexContainer();
-        flexContainer.setProperty(Property.BORDER, new SolidBorder(2));
+        Div flexContainer = createFlexContainer(alignItemsValue, justifyContentValue, wrapValue, directionValue);
+        flexContainer.setBorder(new SolidBorder(2));
         flexContainer.setProperty(Property.BACKGROUND, new Background(ColorConstants.LIGHT_GRAY));
 
         Table table = new Table(UnitValue.createPercentArray(new float[] {50, 50}));
@@ -291,20 +285,22 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
-    @Test
-    public void flexContainerDifferentChildrenWithFlexShrinkTest() throws IOException, InterruptedException {
+    @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
+    @MethodSource("alignItemsAndJustifyContentProperties")
+    public void flexContainerDifferentChildrenWithFlexShrinkTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
+            FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "flexContainerDifferentChildrenWithFlexShrinkTest" + comparisonPdfId + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerDifferentChildrenWithFlexShrinkTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
-        Div flexContainer = createFlexContainer();
+        Div flexContainer = createFlexContainer(alignItemsValue, justifyContentValue, wrapValue, directionValue);
         flexContainer.setHeight(450);
-        flexContainer.setProperty(Property.BORDER, new SolidBorder(2));
+        flexContainer.setBorder(new SolidBorder(2));
         flexContainer.setProperty(Property.BACKGROUND, new Background(ColorConstants.LIGHT_GRAY));
 
         Table table = new Table(UnitValue.createPercentArray(new float[] {50, 50}));
@@ -330,19 +326,21 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
-    @Test
-    public void flexContainerInsideFlexContainerTest() throws IOException, InterruptedException {
+    @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
+    @MethodSource("alignItemsAndJustifyContentProperties")
+    public void flexContainerInsideFlexContainerTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
+            FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "flexContainerInsideFlexContainerTest" + comparisonPdfId + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerInsideFlexContainerTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
-        Div flexContainer = createFlexContainer();
-        flexContainer.setProperty(Property.BORDER, new SolidBorder(2));
+        Div flexContainer = createFlexContainer(alignItemsValue, justifyContentValue, wrapValue, directionValue);
+        flexContainer.setBorder(new SolidBorder(2));
         flexContainer.setProperty(Property.BACKGROUND, new Background(ColorConstants.LIGHT_GRAY));
 
         Div innerFlex = new FlexContainer();
@@ -359,19 +357,21 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
-    @Test
-    public void multipleFlexContainersInsideFlexContainerTest() throws IOException, InterruptedException {
+    @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
+    @MethodSource("alignItemsAndJustifyContentProperties")
+    public void multipleFlexContainersInsideFlexContainerTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
+            FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "multipleFlexContainersInsideFlexContainerTest" + comparisonPdfId + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_multipleFlexContainersInsideFlexContainerTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
-        Div flexContainer = createFlexContainer();
-        flexContainer.setProperty(Property.BORDER, new SolidBorder(2));
+        Div flexContainer = createFlexContainer(alignItemsValue, justifyContentValue, wrapValue, directionValue);
+        flexContainer.setBorder(new SolidBorder(2));
         flexContainer.setProperty(Property.BACKGROUND, new Background(ColorConstants.LIGHT_GRAY));
 
         Div innerFlex1 = new FlexContainer();
@@ -397,19 +397,21 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
-    @Test
-    public void flexContainerRotationAngleTest() throws IOException, InterruptedException {
+    @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
+    @MethodSource("alignItemsAndJustifyContentProperties")
+    public void flexContainerRotationAngleTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
+            FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "flexContainerRotationAngleTest" + comparisonPdfId + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerRotationAngleTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
-        Div flexContainer = createFlexContainer();
-        flexContainer.setProperty(Property.BORDER, new SolidBorder(2));
+        Div flexContainer = createFlexContainer(alignItemsValue, justifyContentValue, wrapValue, directionValue);
+        flexContainer.setBorder(new SolidBorder(2));
         flexContainer.setProperty(Property.BACKGROUND, new Background(ColorConstants.LIGHT_GRAY));
         flexContainer.setProperty(Property.ROTATION_ANGLE, 20f);
 
@@ -428,19 +430,21 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
-    @Test
-    public void flexItemBoxSizingTest() throws IOException, InterruptedException {
+    @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
+    @MethodSource("alignItemsAndJustifyContentProperties")
+    public void flexItemBoxSizingTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
+            FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "flexItemBoxSizingTest" + comparisonPdfId + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_flexItemBoxSizingTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
-        Div flexContainer = createFlexContainer();
-        flexContainer.setProperty(Property.BORDER, new SolidBorder(ColorConstants.BLUE, 30));
+        Div flexContainer = createFlexContainer(alignItemsValue, justifyContentValue, wrapValue, directionValue);
+        flexContainer.setBorder(new SolidBorder(ColorConstants.BLUE, 30));
         flexContainer.setProperty(Property.BACKGROUND, new Background(ColorConstants.LIGHT_GRAY));
         flexContainer.setWidth(250);
         flexContainer.setHeight(400);
@@ -476,19 +480,21 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
         document.add(flexContainer);
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
-    @Test
-    public void flexContainerBoxSizingTest() throws IOException, InterruptedException {
+    @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
+    @MethodSource("alignItemsAndJustifyContentProperties")
+    public void flexContainerBoxSizingTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
+            FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "flexContainerBoxSizingTest" + comparisonPdfId + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerBoxSizingTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
-        Div flexContainer = createFlexContainer();
-        flexContainer.setProperty(Property.BORDER, new SolidBorder(ColorConstants.BLUE, 30));
+        Div flexContainer = createFlexContainer(alignItemsValue, justifyContentValue, wrapValue, directionValue);
+        flexContainer.setBorder(new SolidBorder(ColorConstants.BLUE, 30));
         flexContainer.setProperty(Property.BACKGROUND, new Background(ColorConstants.LIGHT_GRAY));
         flexContainer.setWidth(450);
         flexContainer.setProperty(Property.BOX_SIZING, BoxSizingPropertyValue.BORDER_BOX);
@@ -505,17 +511,19 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
         document.add(flexContainer);
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
-    @Test
+    @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
+    @MethodSource("alignItemsAndJustifyContentProperties")
     @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA), ignore = true)
-    public void flexContainerPaginationTest() throws IOException, InterruptedException {
+    public void flexContainerPaginationTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
+            FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "flexContainerPaginationTest" + comparisonPdfId + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerPaginationTest" + comparisonPdfId + ".pdf";
         try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
 
-            Div flexContainer = createFlexContainer();
+            Div flexContainer = createFlexContainer(alignItemsValue, justifyContentValue, wrapValue, directionValue);
             flexContainer.deleteOwnProperty(Property.HEIGHT);
             flexContainer.setBorder(new SolidBorder(ColorConstants.BLUE, 10));
 
@@ -537,16 +545,18 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
             document.add(flexContainer);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
-    @Test
-    public void flexContainerWithFixedHeightPaginationTest() throws IOException, InterruptedException {
+    @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
+    @MethodSource("alignItemsAndJustifyContentProperties")
+    public void flexContainerWithFixedHeightPaginationTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
+            FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "flexContainerWithFixedHeightPagination" + comparisonPdfId + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerWithFixedHeightPagination" + comparisonPdfId + ".pdf";
         try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
 
-            Div flexContainer = createFlexContainer();
+            Div flexContainer = createFlexContainer(alignItemsValue, justifyContentValue, wrapValue, directionValue);
             flexContainer.setHeight(1000);
             flexContainer.setBorder(new SolidBorder(ColorConstants.PINK, 10));
 
@@ -568,18 +578,20 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
             document.add(flexContainer);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
-    @Test
+    @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
+    @MethodSource("alignItemsAndJustifyContentProperties")
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT), ignore = true)
-    public void flexContainerInsideDivPaginationTest() throws IOException, InterruptedException {
+    public void flexContainerInsideDivPaginationTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
+            FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "flexContainerInsideDivPaginationTest" + comparisonPdfId + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerInsideDivPaginationTest" + comparisonPdfId + ".pdf";
         try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
 
             Div div = new Div().setHeight(1800).setWidth(350).setBorder(new SolidBorder(ColorConstants.RED, 20));
-            Div flexContainer = createFlexContainer();
+            Div flexContainer = createFlexContainer(alignItemsValue, justifyContentValue, wrapValue, directionValue);
             flexContainer.deleteOwnProperty(Property.HEIGHT);
             flexContainer.setBorder(new SolidBorder(ColorConstants.BLUE, 10));
 
@@ -602,18 +614,20 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
             document.add(div);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
-    @Test
+    @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
+    @MethodSource("alignItemsAndJustifyContentProperties")
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT), ignore = true)
-    public void flexContainerInsideDivTest() throws IOException, InterruptedException {
+    public void flexContainerInsideDivTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
+            FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "flexContainerInsideDivTest" + comparisonPdfId + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerInsideDivTest" + comparisonPdfId + ".pdf";
         try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
 
             Div div = new Div().setHeight(400).setWidth(140).setBorder(new SolidBorder(ColorConstants.PINK, 10));
-            Div flexContainer = createFlexContainer();
+            Div flexContainer = createFlexContainer(alignItemsValue, justifyContentValue, wrapValue, directionValue);
             flexContainer.deleteOwnProperty(Property.HEIGHT);
             flexContainer.setBorder(new SolidBorder(ColorConstants.YELLOW, 5));
 
@@ -631,10 +645,11 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
             document.add(div);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
-    private FlexContainer createFlexContainer() {
+    private FlexContainer createFlexContainer(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
+            FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue) {
         FlexContainer flexContainer = new FlexContainer();
         flexContainer.setProperty(Property.ALIGN_ITEMS, alignItemsValue);
         flexContainer.setProperty(Property.JUSTIFY_CONTENT, justifyContentValue);
@@ -648,7 +663,7 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
 
     private static Div createNewDiv() {
         Div newDiv = new Div();
-        newDiv.setProperty(Property.BORDER, new SolidBorder(1));
+        newDiv.setBorder(new SolidBorder(1));
         newDiv.setProperty(Property.WIDTH, UnitValue.createPointValue(50));
         newDiv.setProperty(Property.HEIGHT, UnitValue.createPointValue(100));
         return newDiv;

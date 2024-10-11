@@ -25,6 +25,7 @@ package com.itextpdf.bouncycastlefips.cert.ocsp;
 import com.itextpdf.bouncycastlefips.asn1.x500.X500NameBCFips;
 import com.itextpdf.commons.bouncycastle.asn1.x500.IX500Name;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IRespID;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IResponderID;
 
 import java.util.Objects;
 import org.bouncycastle.cert.ocsp.RespID;
@@ -51,6 +52,14 @@ public class RespIDBCFips implements IRespID {
      */
     public RespIDBCFips(IX500Name x500Name) {
         this(new RespID(((X500NameBCFips) x500Name).getX500Name()));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IResponderID toASN1Primitive() {
+        return new ResponderIDBCFips(respID.toASN1Primitive());
     }
 
     /**
@@ -92,4 +101,5 @@ public class RespIDBCFips implements IRespID {
     public String toString() {
         return respID.toString();
     }
+
 }

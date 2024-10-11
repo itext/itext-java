@@ -26,7 +26,7 @@ import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.DeflaterOutputStream;
-import com.itextpdf.io.source.OutputStream;
+import com.itextpdf.io.source.HighPrecisionOutputStream;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
@@ -36,7 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
-public class PdfOutputStream extends OutputStream<PdfOutputStream> {
+public class PdfOutputStream extends HighPrecisionOutputStream<PdfOutputStream> {
 
 
     private static final byte[] stream = ByteUtils.getIsoBytes("stream\n");

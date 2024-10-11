@@ -77,7 +77,7 @@ public class PdfRevisionsReader {
                     raf.createSourceView(), 0, raf.length());
 
             try (InputStream inputStream = new RASInputStream(source);
-                    PdfReader newReader = new PdfReader(inputStream);
+                    PdfReader newReader = new PdfReader(inputStream, reader.getPropertiesCopy());
                     PdfDocument newDocument = new PdfDocument(newReader,
                             new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
                 newDocument.getXref().unmarkReadingCompleted();

@@ -34,7 +34,11 @@ import java.security.cert.X509Certificate;
 
 /**
  * An exception that is thrown when something is wrong with a certificate.
+ *
+ * @deprecated starting from 9.0.0 since all the classes that use this one are also deprecated in favour of
+ * new signature validation logic in the {@link com.itextpdf.signatures.validation} package.
  */
+@Deprecated
 public class VerificationException extends GeneralSecurityException {
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 

@@ -27,13 +27,11 @@ import com.itextpdf.styledxmlparser.jsoup.parser.Tag;
 import com.itextpdf.styledxmlparser.node.IElementNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-@Category(UnitTest.class)
+@org.junit.jupiter.api.Tag("UnitTest")
 public class CssPseudoElementUtilTest extends ExtendedITextTest {
 
     @Test
@@ -41,17 +39,17 @@ public class CssPseudoElementUtilTest extends ExtendedITextTest {
         String beforePseudoElemName = CssPseudoElementUtil.createPseudoElementTagName("before");
         String expected = "pseudo-element::before";
 
-        Assert.assertEquals(expected, beforePseudoElemName);
+        Assertions.assertEquals(expected, beforePseudoElemName);
     }
 
     @Test
     public void hasBeforeAfterElementsNullScenarioTest() {
-        Assert.assertFalse(CssPseudoElementUtil.hasBeforeAfterElements(null));
+        Assertions.assertFalse(CssPseudoElementUtil.hasBeforeAfterElements(null));
     }
 
     @Test
     public void hasBeforeAfterElementsInstanceOfTest() {
-        Assert.assertFalse(CssPseudoElementUtil
+        Assertions.assertFalse(CssPseudoElementUtil
                 .hasBeforeAfterElements(new CssPseudoElementNode(null, "")));
     }
 
@@ -60,7 +58,7 @@ public class CssPseudoElementUtilTest extends ExtendedITextTest {
         Element element = new Element(Tag.valueOf("pseudo-element::"), "");
         IElementNode node = new JsoupElementNode(element);
 
-        Assert.assertFalse(CssPseudoElementUtil.hasBeforeAfterElements(node));
+        Assertions.assertFalse(CssPseudoElementUtil.hasBeforeAfterElements(node));
     }
 
     @Test
@@ -68,7 +66,7 @@ public class CssPseudoElementUtilTest extends ExtendedITextTest {
         Element element = new Element(Tag.valueOf("after"), "");
         IElementNode node = new JsoupElementNode(element);
 
-        Assert.assertTrue(CssPseudoElementUtil.hasBeforeAfterElements(node));
+        Assertions.assertTrue(CssPseudoElementUtil.hasBeforeAfterElements(node));
     }
 
     @Test
@@ -76,6 +74,6 @@ public class CssPseudoElementUtilTest extends ExtendedITextTest {
         Element element = new Element(Tag.valueOf("before"), "");
         IElementNode node = new JsoupElementNode(element);
 
-        Assert.assertTrue(CssPseudoElementUtil.hasBeforeAfterElements(node));
+        Assertions.assertTrue(CssPseudoElementUtil.hasBeforeAfterElements(node));
     }
 }

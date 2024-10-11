@@ -39,7 +39,6 @@ import com.itextpdf.signatures.testutils.client.AdvancedTestCrlClient;
 import com.itextpdf.signatures.testutils.client.AdvancedTestOcspClient;
 import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -54,11 +53,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(BouncyCastleIntegrationTest.class)
+@Tag("BouncyCastleIntegrationTest")
 public class PdfPadesWithTimestampCertificateTest extends ExtendedITextTest {
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
@@ -69,7 +68,7 @@ public class PdfPadesWithTimestampCertificateTest extends ExtendedITextTest {
 
     private static final char[] PASSWORD = "testpassphrase".toCharArray();
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         Security.addProvider(FACTORY.getProvider());
         createOrClearDestinationFolder(destinationFolder);
@@ -97,7 +96,7 @@ public class PdfPadesWithTimestampCertificateTest extends ExtendedITextTest {
 
         TestTsaClient testTsa = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
         
-        AdvancedTestOcspClient ocspClient = new AdvancedTestOcspClient(null);
+        AdvancedTestOcspClient ocspClient = new AdvancedTestOcspClient();
         ocspClient.addBuilderForCertIssuer((X509Certificate) tsaChain[0], caCert, caPrivateKey);
         ocspClient.addBuilderForCertIssuer((X509Certificate) tsaChain[1], caCert, caPrivateKey);
         padesSigner.setOcspClient(ocspClient);
@@ -129,7 +128,7 @@ public class PdfPadesWithTimestampCertificateTest extends ExtendedITextTest {
     private SignerProperties createSignerProperties() {
         SignerProperties signerProperties = new SignerProperties();
         signerProperties.setFieldName("Signature1");
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance(signerProperties.getFieldName())
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID)
                 .setContent("Approval test signature.\nCreated by iText.");
         signerProperties.setPageRect(new Rectangle(50, 650, 200, 100))
                 .setSignatureAppearance(appearance);

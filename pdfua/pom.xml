@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.itextpdf</groupId>
     <artifactId>root</artifactId>
-    <version>8.0.5</version>
+    <version>9.0.0</version>
   </parent>
 
   <artifactId>pdfua</artifactId>
@@ -17,6 +17,11 @@
     <dependency>
       <groupId>com.itextpdf</groupId>
       <artifactId>kernel</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.itextpdf</groupId>
+      <artifactId>commons</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

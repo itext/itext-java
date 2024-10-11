@@ -60,10 +60,6 @@ public final class FormProperty {
     /** The Constant FORM_FIELD_LABEL. */
     public static final int FORM_FIELD_LABEL = PROPERTY_START + 10;
 
-    /** The Constant FORM_ACCESSIBILITY_LANGUAGE. */
-    @Deprecated()
-    public static final int FORM_ACCESSIBILITY_LANGUAGE = PROPERTY_START + 11;
-
     /** The Constant FORM_FIELD_RADIO_GROUP_NAME. */
     public static final int FORM_FIELD_RADIO_GROUP_NAME = PROPERTY_START + 12;
 
@@ -77,6 +73,15 @@ public final class FormProperty {
 
     /** The Constant FORM_CONFORMANCE_LEVEL. */
     public static final int FORM_CONFORMANCE_LEVEL = PROPERTY_START + 15;
+
+    /** The Constant LIST_BOX_TOP_INDEX representing the index of the first visible option in a scrollable list. */
+    public static final int LIST_BOX_TOP_INDEX = PROPERTY_START + 16;
+
+    /** The Constant TEXT_FIELD_COMB_FLAG representing {@code Comb} flag for the text field. */
+    public static final int TEXT_FIELD_COMB_FLAG = PROPERTY_START + 17;
+
+    /** The Constant TEXT_FIELD_MAX_LEN representing the maximum length of the field's text, in characters. */
+    public static final int TEXT_FIELD_MAX_LEN = PROPERTY_START + 18;
     
     private FormProperty() {
         // Empty constructor.

@@ -26,8 +26,7 @@ import com.itextpdf.io.colors.IccProfile;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfTrueTypeFont;
-import com.itextpdf.kernel.pdf.IsoKey;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfCatalog;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -37,19 +36,36 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfOutline;
 import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfXrefTable;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
-import com.itextpdf.kernel.utils.IValidationChecker;
-import com.itextpdf.kernel.utils.ValidationContext;
+import com.itextpdf.kernel.validation.IValidationChecker;
+import com.itextpdf.kernel.validation.IValidationContext;
+import com.itextpdf.kernel.validation.ValidationType;
+import com.itextpdf.kernel.validation.context.AbstractColorValidationContext;
+import com.itextpdf.kernel.validation.context.CanvasStackValidationContext;
+import com.itextpdf.kernel.validation.context.CryptoValidationContext;
+import com.itextpdf.kernel.validation.context.FontValidationContext;
+import com.itextpdf.kernel.validation.context.IContentStreamValidationParameter;
+import com.itextpdf.kernel.validation.context.IGraphicStateValidationParameter;
+import com.itextpdf.kernel.validation.context.InlineImageValidationContext;
+import com.itextpdf.kernel.validation.context.PdfDocumentValidationContext;
+import com.itextpdf.kernel.validation.context.PdfObjectValidationContext;
+import com.itextpdf.kernel.validation.context.PdfPageValidationContext;
+import com.itextpdf.kernel.validation.context.RenderingIntentValidationContext;
+import com.itextpdf.kernel.validation.context.SignTypeValidationContext;
+import com.itextpdf.kernel.validation.context.SignatureValidationContext;
+import com.itextpdf.kernel.validation.context.TagStructElementValidationContext;
+import com.itextpdf.kernel.validation.context.XrefTableValidationContext;
+import com.itextpdf.pdfa.logs.PdfALogMessageConstant;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.slf4j.LoggerFactory;
 
 /**
  * An abstract class that will run through all necessary checks defined in the
@@ -108,18 +124,11 @@ public abstract class PdfAChecker implements IValidationChecker {
      */
     public static final int maxGsStackDepth = 28;
 
-    protected PdfAConformanceLevel conformanceLevel;
+    protected PdfAConformance conformance;
     protected PdfStream pdfAOutputIntentDestProfile;
     protected String pdfAOutputIntentColorSpace;
 
     protected int gsStackDepth = 0;
-
-    @Deprecated
-    protected boolean rgbIsUsed = false;
-    @Deprecated
-    protected boolean cmykIsUsed = false;
-    @Deprecated
-    protected boolean grayIsUsed = false;
 
     protected Set<PdfObject> rgbUsedObjects = new HashSet<>();
     protected Set<PdfObject> cmykUsedObjects = new HashSet<>();
@@ -138,14 +147,16 @@ public abstract class PdfAChecker implements IValidationChecker {
     protected Map<PdfObject, PdfColorSpace> checkedObjectsColorspace = new HashMap<>();
 
     private boolean fullCheckMode = false;
+    private boolean alreadyLoggedThatPageFlushingWasNotPerformed = false;
+    private boolean alreadyLoggedThatObjectFlushingWasNotPerformed = false;
 
     /**
-     * Creates a PdfAChecker with the required conformance level.
+     * Creates a PdfAChecker with the required conformance.
      *
-     * @param conformanceLevel the required conformance level
+     * @param aConformance the required conformance
      */
-    protected PdfAChecker(PdfAConformanceLevel conformanceLevel) {
-        this.conformanceLevel = conformanceLevel;
+    protected PdfAChecker(PdfAConformance aConformance) {
+        this.conformance = aConformance;
     }
 
     /**
@@ -172,76 +183,111 @@ public abstract class PdfAChecker implements IValidationChecker {
         }
         checkPages(catalog.getDocument());
         checkOpenAction(catalogDict.get(PdfName.OpenAction));
-        checkColorsUsages();
     }
 
-
-    public void validateDocument(ValidationContext validationContext) {
-        for (PdfFont pdfFont : validationContext.getFonts()) {
-            checkFont(pdfFont);
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public void validate(IValidationContext context) {
+        CanvasGraphicsState gState = null;
+        if (context instanceof IGraphicStateValidationParameter) {
+            gState = ((IGraphicStateValidationParameter) context).getGraphicsState();
         }
-        PdfCatalog catalog = validationContext.getPdfDocument().getCatalog();
-        checkDocument(catalog);
-    }
-
-    public void validateObject(Object obj, IsoKey key, PdfResources resources, PdfStream contentStream,
-            Object extra) {
-
-        CanvasGraphicsState gState;
-        PdfDictionary currentColorSpaces = null;
-        if (resources != null) {
-            currentColorSpaces = resources.getPdfObject().getAsDictionary(PdfName.ColorSpace);
+        PdfStream contentStream = null;
+        if (context instanceof IContentStreamValidationParameter) {
+            contentStream = ((IContentStreamValidationParameter) context).getContentStream();
         }
-        switch (key) {
+
+        switch (context.getType()) {
+            case PDF_DOCUMENT:
+                PdfDocumentValidationContext pdfDocContext = (PdfDocumentValidationContext) context;
+                for (PdfFont pdfFont : pdfDocContext.getDocumentFonts()) {
+                    checkFont(pdfFont);
+                }
+                checkDocument(pdfDocContext.getPdfDocument().getCatalog());
+                break;
             case CANVAS_STACK:
-                checkCanvasStack((char) obj);
-                break;
-            case PDF_OBJECT:
-                checkPdfObject((PdfObject) obj);
-                break;
-            case RENDERING_INTENT:
-                checkRenderingIntent((PdfName) obj);
-                break;
-            case INLINE_IMAGE:
-                checkInlineImage((PdfStream) obj, currentColorSpaces);
-                break;
-            case EXTENDED_GRAPHICS_STATE:
-                gState = (CanvasGraphicsState) obj;
-                checkExtGState(gState, contentStream);
+                checkCanvasStack(((CanvasStackValidationContext) context).getOperator());
                 break;
             case FILL_COLOR:
-                gState = (CanvasGraphicsState) obj;
-                checkColor(gState, gState.getFillColor(), currentColorSpaces, true, contentStream);
-                break;
-            case PAGE:
-                checkSinglePage((PdfPage) obj);
-                break;
             case STROKE_COLOR:
-                gState = (CanvasGraphicsState) obj;
-                checkColor(gState, gState.getStrokeColor(), currentColorSpaces, false, contentStream);
+                boolean isFill = ValidationType.FILL_COLOR == context.getType();
+                final Color color = isFill ? gState.getFillColor() : gState.getStrokeColor();
+                AbstractColorValidationContext colorContext = (AbstractColorValidationContext) context;
+                checkColor(gState, color, colorContext.getCurrentColorSpaces(), isFill, contentStream);
+                break;
+            case EXTENDED_GRAPHICS_STATE:
+                checkExtGState(gState, contentStream);
+                break;
+            case INLINE_IMAGE:
+                InlineImageValidationContext imageContext = (InlineImageValidationContext) context;
+                checkInlineImage(imageContext.getImage(), imageContext.getCurrentColorSpaces());
+                break;
+            case PDF_PAGE:
+                PdfPageValidationContext pageContext = (PdfPageValidationContext) context;
+                checkSinglePage(pageContext.getPage());
+                break;
+            case PDF_OBJECT:
+                PdfObjectValidationContext objContext = (PdfObjectValidationContext) context;
+                checkPdfObject(objContext.getObject());
+                break;
+            case RENDERING_INTENT:
+                RenderingIntentValidationContext intentContext = (RenderingIntentValidationContext) context;
+                checkRenderingIntent(intentContext.getIntent());
                 break;
             case TAG_STRUCTURE_ELEMENT:
-                checkTagStructureElement((PdfObject) obj);
+                TagStructElementValidationContext tagContext = (TagStructElementValidationContext) context;
+                checkTagStructureElement(tagContext.getObject());
                 break;
             case FONT_GLYPHS:
-                checkFontGlyphs(((CanvasGraphicsState) obj).getFont(), contentStream);
+                checkFontGlyphs(gState.getFont(), contentStream);
                 break;
             case XREF_TABLE:
-                checkXrefTable((PdfXrefTable) obj);
+                XrefTableValidationContext xrefContext = (XrefTableValidationContext) context;
+                checkXrefTable(xrefContext.getXrefTable());
                 break;
             case SIGNATURE:
-                checkSignature((PdfDictionary) obj);
+                SignatureValidationContext signContext = (SignatureValidationContext) context;
+                checkSignature(signContext.getSignature());
                 break;
             case SIGNATURE_TYPE:
-                checkSignatureType(((Boolean) obj).booleanValue());
+                SignTypeValidationContext signTypeContext = (SignTypeValidationContext) context;
+                checkSignatureType(signTypeContext.isCAdES());
                 break;
             case CRYPTO:
-                checkCrypto((PdfObject) obj);
+                CryptoValidationContext cryptoContext = (CryptoValidationContext) context;
+                checkCrypto(cryptoContext.getCrypto());
                 break;
             case FONT:
-                checkText((String) obj, (PdfFont) extra);
+                FontValidationContext fontContext = (FontValidationContext) context;
+                checkText(fontContext.getText(), fontContext.getFont());
                 break;
         }
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public boolean isPdfObjectReadyToFlush(PdfObject object) {
+        if (checkedObjects.contains(object)) {
+            return true;
+        }
+
+        if (object instanceof PdfDictionary && PdfName.Page.equals(((PdfDictionary) object).getAsName(PdfName.Type))) {
+            if (!alreadyLoggedThatPageFlushingWasNotPerformed) {
+                alreadyLoggedThatPageFlushingWasNotPerformed = true;
+                // This log message will be printed once for one instance of the document.
+                LoggerFactory.getLogger(PdfAChecker.class).warn(PdfALogMessageConstant.PDFA_PAGE_FLUSHING_WAS_NOT_PERFORMED);
+            }
+        } else if (!alreadyLoggedThatObjectFlushingWasNotPerformed) {
+            alreadyLoggedThatObjectFlushingWasNotPerformed = true;
+            // This log message will be printed once for one instance of the document.
+            LoggerFactory.getLogger(PdfAChecker.class).warn(PdfALogMessageConstant.PDFA_OBJECT_FLUSHING_WAS_NOT_PERFORMED);
+
+        }
+        return false;
     }
 
     /**
@@ -250,6 +296,7 @@ public abstract class PdfAChecker implements IValidationChecker {
      * @param page the page that must be checked
      */
     public void checkSinglePage(PdfPage page) {
+        setPdfAOutputIntentColorSpace(page.getDocument().getCatalog().getPdfObject());
         checkPage(page);
     }
 
@@ -292,12 +339,12 @@ public abstract class PdfAChecker implements IValidationChecker {
     }
 
     /**
-     * Gets the {@link PdfAConformanceLevel} for this file.
+     * Gets the {@link PdfAConformance} for this file.
      *
-     * @return the defined conformance level for this document.
+     * @return the defined conformance for this document.
      */
-    public PdfAConformanceLevel getConformanceLevel() {
-        return conformanceLevel;
+    public PdfAConformance getAConformance() {
+        return conformance;
     }
 
     /**
@@ -323,17 +370,6 @@ public abstract class PdfAChecker implements IValidationChecker {
     }
 
     /**
-     * Remembers which objects have already been checked, in order to avoid
-     * redundant checks.
-     *
-     * @param object the object to check
-     * @return whether or not the object has already been checked
-     */
-    public boolean objectIsChecked(PdfObject object) {
-        return checkedObjects.contains(object);
-    }
-
-    /**
      * This method checks compliance of the tag structure elements, such as struct elements
      * or parent tree entries.
      *
@@ -355,16 +391,11 @@ public abstract class PdfAChecker implements IValidationChecker {
     }
 
     /**
-     * This method checks compliance of the signature type
+     * This method checks compliance of the signature type.
      *
-     * @param isCAdES true is CAdES sig type is used, false otherwise.
-     *
-     * @deprecated Will become abstract in the next major release.
+     * @param isCAdES {@code true} if CAdES signature type is used, {@code false} otherwise
      */
-    @Deprecated
-    public void checkSignatureType(boolean isCAdES) {
-
-    }
+    public abstract void checkSignatureType(boolean isCAdES);
 
     /**
      * This method checks compliance with the graphics state architectural
@@ -386,35 +417,15 @@ public abstract class PdfAChecker implements IValidationChecker {
     /**
      * This method checks compliance with the color restrictions imposed by the
      * available color spaces in the document.
-     * This method will be abstract in update 7.2
-     *
-     * @param color the color to check
-     * @param currentColorSpaces a {@link PdfDictionary} containing the color spaces used in the document
-     * @param fill whether the color is used for fill or stroke operations
-     * @param contentStream current content stream
-     *
-     * @deprecated in favor of {@code checkColor(CanvasGraphicsState gState, Color color,
-     *                                      PdfDictionary currentColorSpaces, Boolean fill, PdfStream contentStream)}
-     */
-    @Deprecated
-    public abstract void checkColor(Color color, PdfDictionary currentColorSpaces, Boolean fill,
-                                    PdfStream contentStream);
-
-    /**
-     * This method checks compliance with the color restrictions imposed by the
-     * available color spaces in the document.
      *
      * @param gState canvas graphics state
      * @param color the color to check
      * @param currentColorSpaces a {@link PdfDictionary} containing the color spaces used in the document
      * @param fill whether the color is used for fill or stroke operations
      * @param contentStream current content stream
-     *
-     * @deprecated This method will be abstract in next major release
      */
-    @Deprecated
-    public void checkColor(CanvasGraphicsState gState, Color color, PdfDictionary currentColorSpaces,
-                                    Boolean fill, PdfStream contentStream) {}
+    public abstract void checkColor(CanvasGraphicsState gState, Color color, PdfDictionary currentColorSpaces,
+                                    Boolean fill, PdfStream contentStream);
 
     /**
      * This method performs a range of checks on the given color space, depending
@@ -425,31 +436,9 @@ public abstract class PdfAChecker implements IValidationChecker {
      * @param currentColorSpaces a {@link PdfDictionary} containing the color spaces used in the document
      * @param checkAlternate whether or not to also check the parent color space
      * @param fill whether the color space is used for fill or stroke operations
-     *
-     * @deprecated Will become abstract in the next major release.
      */
-    @Deprecated
-    public void checkColorSpace(PdfColorSpace colorSpace, PdfObject pdfObject, PdfDictionary currentColorSpaces,
-            boolean checkAlternate, Boolean fill) {
-    }
-
-    /**
-     * This method performs a range of checks on the given color space, depending
-     * on the type and properties of that color space.
-     *
-     * @param colorSpace the color space to check
-     * @param currentColorSpaces a {@link PdfDictionary} containing the color spaces used in the document
-     * @param checkAlternate whether or not to also check the parent color space
-     * @param fill whether the color space is used for fill or stroke operations
-     *
-     * @deprecated in favor of {@code checkColorSpace(PdfColorSpace colorSpace, PdfObject object, PdfDictionary
-     * currentColorSpaces, boolean checkAlternate, Boolean fill)}
-     */
-    @Deprecated
-    public void checkColorSpace(PdfColorSpace colorSpace, PdfDictionary currentColorSpaces,
-            boolean checkAlternate, Boolean fill) {
-        checkColorSpace(colorSpace, null, currentColorSpaces, checkAlternate, fill);
-    }
+    public abstract void checkColorSpace(PdfColorSpace colorSpace, PdfObject pdfObject, PdfDictionary currentColorSpaces,
+            boolean checkAlternate, Boolean fill);
 
     /**
      * Set Pdf A output intent color space.
@@ -514,25 +503,17 @@ public abstract class PdfAChecker implements IValidationChecker {
     /**
      * Verify the conformity of encryption usage.
      *
-     * @param crypto Encryption object to verify.
-     *
-     * @deprecated Will become abstract in the next major release.
+     * @param crypto encryption object to verify
      */
-    @Deprecated
-    public void checkCrypto(PdfObject crypto) {
-    }
+    public abstract void checkCrypto(PdfObject crypto);
 
     /**
      * Verify the conformity of the text written by the specified font.
      *
-     * @param text Text to verify.
-     * @param font Font to verify the text against.
-     *
-     * @deprecated Will become abstract in the next major release.
+     * @param text text to verify
+     * @param font font to verify the text against
      */
-    @Deprecated
-    public void checkText(String text, PdfFont font) {
-    }
+    public abstract void checkText(String text, PdfFont font);
 
     /**
      * Attest content stream conformance with appropriate specification.
@@ -624,24 +605,12 @@ public abstract class PdfAChecker implements IValidationChecker {
     protected abstract void checkCatalogValidEntries(PdfDictionary catalogDict);
 
     /**
-     * Verify the conformity of used color spaces.
-     *
-     * @deprecated in favor of {@code checkPageColorsUsages(PdfDictionary pageDict, PdfDictionary pageResources)}
-     */
-    @Deprecated
-    protected abstract void checkColorsUsages();
-
-    /**
      * Verify the conformity of used color spaces on the page.
      *
-     * @param pageDict the {@link PdfDictionary} contains contents for colors to be checked.
-     * @param pageResources the {@link PdfDictionary} contains resources for colors to be checked.
-     *
-     * @deprecated Will become abstract in the next major release.
+     * @param pageDict the {@link PdfDictionary} contains contents for colors to be checked
+     * @param pageResources the {@link PdfDictionary} contains resources for colors to be checked
      */
-    @Deprecated
-    protected void checkPageColorsUsages(PdfDictionary pageDict, PdfDictionary pageResources) {
-    }
+    protected abstract void checkPageColorsUsages(PdfDictionary pageDict, PdfDictionary pageResources);
 
     /**
      * Verify the conformity of the given image.
@@ -774,14 +743,9 @@ public abstract class PdfAChecker implements IValidationChecker {
     /**
      * Verify the conformity of the pdf catalog.
      *
-     * @param catalog the {@link PdfCatalog} of trailer to check.
-     *
-     * @deprecated Will become abstract in the next major release.
+     * @param catalog the {@link PdfCatalog} of trailer to check
      */
-    @Deprecated
-    protected void checkCatalog(PdfCatalog catalog) {
-
-    }
+    protected abstract void checkCatalog(PdfCatalog catalog);
 
     /**
      * Verify the conformity of the page transparency.
@@ -790,18 +754,6 @@ public abstract class PdfAChecker implements IValidationChecker {
      * @param pageResources the {@link PdfDictionary} contains resources for transparency to be checked
      */
     protected abstract void checkPageTransparency(PdfDictionary pageDict, PdfDictionary pageResources);
-
-    /**
-     * Verify the conformity of the resources dictionary.
-     *
-     * @param resources the {@link PdfDictionary} to be checked
-     *
-     * @deprecated in favor of {@code checkResources(PdfDictionary resources, PdfObject pdfObject)}
-     */
-    @Deprecated
-    protected void checkResources(PdfDictionary resources) {
-        checkResources(resources, null);
-    }
 
     /**
      * Verify the conformity of the resources dictionary.
@@ -869,15 +821,15 @@ public abstract class PdfAChecker implements IValidationChecker {
     }
 
     /**
-     * Checks conformance level of PDF/A standard.
+     * Checks conformance of PDF/A standard.
      *
-     * @param conformanceLevel the {@link PdfAConformanceLevel} to be checked
-     * @return true if the specified conformanceLevel is <code>a</code> for PDF/A-1, PDF/A-2 or PDF/A-3
+     * @param aConformance the {@link PdfAConformance} to be checked
+     * @return true if the specified aConformance is <code>a</code> for PDF/A-1, PDF/A-2 or PDF/A-3
      */
-    protected static boolean checkStructure(PdfAConformanceLevel conformanceLevel) {
-        return conformanceLevel == PdfAConformanceLevel.PDF_A_1A
-                || conformanceLevel == PdfAConformanceLevel.PDF_A_2A
-                || conformanceLevel == PdfAConformanceLevel.PDF_A_3A;
+    protected static boolean checkStructure(PdfAConformance aConformance) {
+        return aConformance == PdfAConformance.PDF_A_1A
+                || aConformance == PdfAConformance.PDF_A_2A
+                || aConformance == PdfAConformance.PDF_A_3A;
     }
 
     /**

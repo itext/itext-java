@@ -26,13 +26,12 @@ import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class SkewYTransformationTest extends ExtendedITextTest {
 
     @Test
@@ -40,23 +39,23 @@ public class SkewYTransformationTest extends ExtendedITextTest {
         AffineTransform expected = new AffineTransform(1d, Math.tan(Math.toRadians(143)), 0d, 1d, 0d, 0d);
         AffineTransform actual = TransformUtils.parseTransform("skewY(143)");
 
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
     public void noSkewYValuesTest() {
-        Exception e = Assert.assertThrows(SvgProcessingException.class,
+        Exception e = Assertions.assertThrows(SvgProcessingException.class,
                 () -> TransformUtils.parseTransform("skewY()")
         );
-        Assert.assertEquals(SvgExceptionMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES, e.getMessage());
+        Assertions.assertEquals(SvgExceptionMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES, e.getMessage());
     }
 
     @Test
     public void twoSkewYValuesTest() {
-        Exception e = Assert.assertThrows(SvgProcessingException.class,
+        Exception e = Assertions.assertThrows(SvgProcessingException.class,
                 () -> TransformUtils.parseTransform("skewY(1 2)")
         );
-        Assert.assertEquals(SvgExceptionMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES, e.getMessage());
+        Assertions.assertEquals(SvgExceptionMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES, e.getMessage());
     }
 
     @Test
@@ -64,7 +63,7 @@ public class SkewYTransformationTest extends ExtendedITextTest {
         AffineTransform expected = new AffineTransform(1d, Math.tan(Math.toRadians(-26)), 0d, 1d, 0d, 0d);
         AffineTransform actual = TransformUtils.parseTransform("skewY(-26)");
 
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -72,6 +71,6 @@ public class SkewYTransformationTest extends ExtendedITextTest {
         AffineTransform expected = new AffineTransform(1d, Math.tan(Math.toRadians(90)), 0d, 1d, 0d, 0d);
         AffineTransform actual = TransformUtils.parseTransform("skewY(90)");
 
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 }

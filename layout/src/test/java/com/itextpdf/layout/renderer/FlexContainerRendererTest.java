@@ -36,15 +36,14 @@ import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class FlexContainerRendererTest extends ExtendedITextTest {
-    private static float EPS = 0.0001F;
+    private static final float EPS = 0.0001F;
 
     @Test
     public void widthNotSetTest() {
@@ -53,8 +52,8 @@ public class FlexContainerRendererTest extends ExtendedITextTest {
 
         flexRenderer.addChild(divRenderer);
 
-        Assert.assertEquals(0F, flexRenderer.getMinMaxWidth().getMinWidth(), EPS);
-        Assert.assertEquals(0F, flexRenderer.getMinMaxWidth().getMaxWidth(), EPS);
+        Assertions.assertEquals(0F, flexRenderer.getMinMaxWidth().getMinWidth(), EPS);
+        Assertions.assertEquals(0F, flexRenderer.getMinMaxWidth().getMaxWidth(), EPS);
     }
 
     @Test
@@ -65,8 +64,8 @@ public class FlexContainerRendererTest extends ExtendedITextTest {
 
         flexRenderer.addChild(divRenderer);
 
-        Assert.assertEquals(50F, flexRenderer.getMinMaxWidth().getMinWidth(), EPS);
-        Assert.assertEquals(50F, flexRenderer.getMinMaxWidth().getMaxWidth(), EPS);
+        Assertions.assertEquals(50F, flexRenderer.getMinMaxWidth().getMinWidth(), EPS);
+        Assertions.assertEquals(50F, flexRenderer.getMinMaxWidth().getMaxWidth(), EPS);
     }
 
     @Test
@@ -86,8 +85,8 @@ public class FlexContainerRendererTest extends ExtendedITextTest {
         flexRenderer.addChild(divRenderer3);
         flexRenderer.addChild(divRenderer4);
 
-        Assert.assertEquals(125F, flexRenderer.getMinMaxWidth().getMinWidth(), EPS);
-        Assert.assertEquals(125F, flexRenderer.getMinMaxWidth().getMaxWidth(), EPS);
+        Assertions.assertEquals(125F, flexRenderer.getMinMaxWidth().getMinWidth(), EPS);
+        Assertions.assertEquals(125F, flexRenderer.getMinMaxWidth().getMaxWidth(), EPS);
     }
 
     @Test
@@ -95,7 +94,11 @@ public class FlexContainerRendererTest extends ExtendedITextTest {
         FlexContainerRenderer flexRenderer = new FlexContainerRenderer(new Div());
         DivRenderer divRenderer1 = new DivRenderer(new Div());
         divRenderer1.setProperty(Property.WIDTH, UnitValue.createPointValue(50));
-        divRenderer1.setProperty(Property.BORDER, new SolidBorder(5));
+        SolidBorder border = new SolidBorder(5);
+        divRenderer1.setProperty(Property.BORDER_TOP, border);
+        divRenderer1.setProperty(Property.BORDER_RIGHT, border);
+        divRenderer1.setProperty(Property.BORDER_BOTTOM, border);
+        divRenderer1.setProperty(Property.BORDER_LEFT, border);
         DivRenderer divRenderer2 = new DivRenderer(new Div());
         divRenderer2.setProperty(Property.WIDTH, UnitValue.createPointValue(40));
         divRenderer2.setProperty(Property.MARGIN_LEFT, UnitValue.createPointValue(10));
@@ -110,8 +113,8 @@ public class FlexContainerRendererTest extends ExtendedITextTest {
         flexRenderer.addChild(divRenderer3);
         flexRenderer.addChild(divRenderer4);
 
-        Assert.assertEquals(165F, flexRenderer.getMinMaxWidth().getMinWidth(), EPS);
-        Assert.assertEquals(165F, flexRenderer.getMinMaxWidth().getMaxWidth(), EPS);
+        Assertions.assertEquals(165F, flexRenderer.getMinMaxWidth().getMinWidth(), EPS);
+        Assertions.assertEquals(165F, flexRenderer.getMinMaxWidth().getMaxWidth(), EPS);
     }
 
     @Test
@@ -121,7 +124,11 @@ public class FlexContainerRendererTest extends ExtendedITextTest {
 
         DivRenderer divRenderer1 = new DivRenderer(new Div());
         divRenderer1.setProperty(Property.WIDTH, UnitValue.createPointValue(50));
-        divRenderer1.setProperty(Property.BORDER, new SolidBorder(5));
+        SolidBorder border = new SolidBorder(5);
+        divRenderer1.setProperty(Property.BORDER_TOP, border);
+        divRenderer1.setProperty(Property.BORDER_RIGHT, border);
+        divRenderer1.setProperty(Property.BORDER_BOTTOM, border);
+        divRenderer1.setProperty(Property.BORDER_LEFT, border);
         DivRenderer divRenderer2 = new DivRenderer(new Div());
         divRenderer2.setProperty(Property.WIDTH, UnitValue.createPointValue(40));
         divRenderer2.setProperty(Property.MARGIN_LEFT, UnitValue.createPointValue(10));
@@ -136,8 +143,8 @@ public class FlexContainerRendererTest extends ExtendedITextTest {
         flexRenderer.addChild(divRenderer3);
         flexRenderer.addChild(divRenderer4);
 
-        Assert.assertEquals(50F, flexRenderer.getMinMaxWidth().getMinWidth(), EPS);
-        Assert.assertEquals(50F, flexRenderer.getMinMaxWidth().getMaxWidth(), EPS);
+        Assertions.assertEquals(50F, flexRenderer.getMinMaxWidth().getMinWidth(), EPS);
+        Assertions.assertEquals(50F, flexRenderer.getMinMaxWidth().getMaxWidth(), EPS);
     }
 
     @Test
@@ -159,8 +166,8 @@ public class FlexContainerRendererTest extends ExtendedITextTest {
         flexRenderer.addChild(divRenderer3);
         flexRenderer.addChild(divRenderer4);
 
-        Assert.assertEquals(104.892334F, flexRenderer.getMinMaxWidth().getMinWidth(), EPS);
-        Assert.assertEquals(104.892334F, flexRenderer.getMinMaxWidth().getMaxWidth(), EPS);
+        Assertions.assertEquals(104.892334F, flexRenderer.getMinMaxWidth().getMinWidth(), EPS);
+        Assertions.assertEquals(104.892334F, flexRenderer.getMinMaxWidth().getMaxWidth(), EPS);
     }
 
     @Test
@@ -182,8 +189,8 @@ public class FlexContainerRendererTest extends ExtendedITextTest {
         flexRenderer.addChild(divRenderer3);
         flexRenderer.addChild(divRenderer4);
 
-        Assert.assertEquals(71F, flexRenderer.getMinMaxWidth().getMinWidth(), EPS);
-        Assert.assertEquals(125F, flexRenderer.getMinMaxWidth().getMaxWidth(), EPS);
+        Assertions.assertEquals(71F, flexRenderer.getMinMaxWidth().getMinWidth(), EPS);
+        Assertions.assertEquals(125F, flexRenderer.getMinMaxWidth().getMaxWidth(), EPS);
     }
 
 
@@ -193,7 +200,7 @@ public class FlexContainerRendererTest extends ExtendedITextTest {
         splitRenderer.occupiedArea = new LayoutArea(0, new Rectangle(0, 0));
 
         LayoutResult nothing = new LayoutResult(LayoutResult.NOTHING, null, splitRenderer, null);
-        Assert.assertNotNull(new FlexContainerRenderer(new Div())
+        Assertions.assertNotNull(new FlexContainerRenderer(new Div())
                 .getOccupiedAreaInCaseNothingWasWrappedWithFull(nothing, splitRenderer));
     }
 
@@ -216,8 +223,8 @@ public class FlexContainerRendererTest extends ExtendedITextTest {
         flexRenderer.addChild(divRenderer3);
         flexRenderer.addChild(divRenderer4);
 
-        Assert.assertEquals(150F, flexRenderer.getMinMaxWidth().getMinWidth(), EPS);
-        Assert.assertEquals(150F, flexRenderer.getMinMaxWidth().getMaxWidth(), EPS);
+        Assertions.assertEquals(150F, flexRenderer.getMinMaxWidth().getMinWidth(), EPS);
+        Assertions.assertEquals(150F, flexRenderer.getMinMaxWidth().getMaxWidth(), EPS);
     }
 
     @Test
@@ -239,8 +246,8 @@ public class FlexContainerRendererTest extends ExtendedITextTest {
         flexRenderer.addChild(divRenderer3);
         flexRenderer.addChild(divRenderer4);
 
-        Assert.assertEquals(125F, flexRenderer.getMinMaxWidth().getMinWidth(), EPS);
-        Assert.assertEquals(150F, flexRenderer.getMinMaxWidth().getMaxWidth(), EPS);
+        Assertions.assertEquals(125F, flexRenderer.getMinMaxWidth().getMinWidth(), EPS);
+        Assertions.assertEquals(150F, flexRenderer.getMinMaxWidth().getMaxWidth(), EPS);
     }
 
     @Test
@@ -262,8 +269,8 @@ public class FlexContainerRendererTest extends ExtendedITextTest {
         flexRenderer.addChild(divRenderer3);
         flexRenderer.addChild(divRenderer4);
 
-        Assert.assertEquals(100F, flexRenderer.getMinMaxWidth().getMinWidth(), EPS);
-        Assert.assertEquals(100F, flexRenderer.getMinMaxWidth().getMaxWidth(), EPS);
+        Assertions.assertEquals(100F, flexRenderer.getMinMaxWidth().getMinWidth(), EPS);
+        Assertions.assertEquals(100F, flexRenderer.getMinMaxWidth().getMaxWidth(), EPS);
     }
 
     @Test
@@ -275,7 +282,7 @@ public class FlexContainerRendererTest extends ExtendedITextTest {
             // Nothing is overridden
         };
 
-        Assert.assertEquals(FlexContainerRenderer.class, flexContainerRenderer.getNextRenderer().getClass());
+        Assertions.assertEquals(FlexContainerRenderer.class, flexContainerRenderer.getNextRenderer().getClass());
     }
 
     @Test
@@ -300,8 +307,8 @@ public class FlexContainerRendererTest extends ExtendedITextTest {
                 new LayoutArea(0, new Rectangle(200, 0))));
 
         // Test that hypotheticalCrossSizes can contain more than 1 value
-        Assert.assertNotNull(flexRendererChild.getHypotheticalCrossSize(125F));
-        Assert.assertNotNull(flexRendererChild.getHypotheticalCrossSize(150F));
+        Assertions.assertNotNull(flexRendererChild.getHypotheticalCrossSize(125F));
+        Assertions.assertNotNull(flexRendererChild.getHypotheticalCrossSize(150F));
     }
 
     @Test
@@ -309,7 +316,11 @@ public class FlexContainerRendererTest extends ExtendedITextTest {
         FlexContainerRenderer flexRenderer = new FlexContainerRenderer(new Div());
         flexRenderer.setProperty(Property.FLEX_WRAP, FlexWrapPropertyValue.WRAP);
         flexRenderer.setProperty(Property.MAX_WIDTH, UnitValue.createPointValue(100));
-        flexRenderer.setProperty(Property.BORDER, new SolidBorder(5));
+        SolidBorder border = new SolidBorder(5);
+        flexRenderer.setProperty(Property.BORDER_TOP, border);
+        flexRenderer.setProperty(Property.BORDER_RIGHT, border);
+        flexRenderer.setProperty(Property.BORDER_BOTTOM, border);
+        flexRenderer.setProperty(Property.BORDER_LEFT, border);
 
         // line 1
         DivRenderer divRenderer1 = new DivRenderer(new Div());
@@ -335,14 +346,14 @@ public class FlexContainerRendererTest extends ExtendedITextTest {
         flexRenderer.layout(new LayoutContext(new LayoutArea(0, new Rectangle(100, 100))));
 
         MinMaxWidth minMaxWidth = flexRenderer.getMinMaxWidth();
-        Assert.assertEquals(75F, minMaxWidth.getChildrenMinWidth(), EPS);
-        Assert.assertEquals(85F, minMaxWidth.getMinWidth(), EPS);
-        Assert.assertEquals(100F, minMaxWidth.getChildrenMaxWidth(), EPS);
-        Assert.assertEquals(110F, minMaxWidth.getMaxWidth(), EPS);
+        Assertions.assertEquals(75F, minMaxWidth.getChildrenMinWidth(), EPS);
+        Assertions.assertEquals(85F, minMaxWidth.getMinWidth(), EPS);
+        Assertions.assertEquals(100F, minMaxWidth.getChildrenMaxWidth(), EPS);
+        Assertions.assertEquals(110F, minMaxWidth.getMaxWidth(), EPS);
 
         flexRenderer.deleteOwnProperty(Property.MAX_WIDTH);
         minMaxWidth = flexRenderer.getMinMaxWidth();
-        Assert.assertEquals(90F, minMaxWidth.getChildrenMaxWidth(), EPS);
-        Assert.assertEquals(100F, minMaxWidth.getMaxWidth(), EPS);
+        Assertions.assertEquals(90F, minMaxWidth.getChildrenMaxWidth(), EPS);
+        Assertions.assertEquals(100F, minMaxWidth.getMaxWidth(), EPS);
     }
 }

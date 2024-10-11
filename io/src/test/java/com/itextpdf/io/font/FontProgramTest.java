@@ -27,33 +27,32 @@ import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 import java.io.IOException;
 
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class FontProgramTest extends ExtendedITextTest {
     private static final String notExistingFont = "some-font.ttf";
 
     @Test
     public void exceptionMessageTest() throws IOException {
-        Exception e = Assert.assertThrows(java.io.IOException.class,
+        Exception e = Assertions.assertThrows(java.io.IOException.class,
                 () -> FontProgramFactory.createFont(notExistingFont)
         );
-        Assert.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.NOT_FOUND_AS_FILE_OR_RESOURCE, notExistingFont), e.getMessage());
+        Assertions.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.NOT_FOUND_AS_FILE_OR_RESOURCE, notExistingFont), e.getMessage());
     }
 
     @Test
     public void boldTest() throws IOException {
         FontProgram fp = FontProgramFactory.createFont(StandardFonts.HELVETICA);
         fp.setBold(true);
-        Assert.assertTrue("Bold expected", (fp.getPdfFontFlags() & (1 << 18)) != 0);
+        Assertions.assertTrue((fp.getPdfFontFlags() & (1 << 18)) != 0, "Bold expected");
         fp.setBold(false);
-        Assert.assertTrue("Not Bold expected", (fp.getPdfFontFlags() & (1 << 18)) == 0);
+        Assertions.assertTrue((fp.getPdfFontFlags() & (1 << 18)) == 0, "Not Bold expected");
     }
 
     @Test
@@ -63,9 +62,9 @@ public class FontProgramTest extends ExtendedITextTest {
         FontCache.clearSavedFonts();
         FontProgramFactory.registerFontDirectory("./src/test/resources/com/itextpdf/io/font/otf/");
 
-        Assert.assertEquals(43, FontProgramFactory.getRegisteredFonts().size());
-        Assert.assertNull(FontCache.getFont("./src/test/resources/com/itextpdf/io/font/otf/FreeSansBold.ttf"));
-        Assert.assertTrue(FontProgramFactory.getRegisteredFonts().contains("free sans lihavoitu"));
+        Assertions.assertEquals(43, FontProgramFactory.getRegisteredFonts().size());
+        Assertions.assertNull(FontCache.getFont("./src/test/resources/com/itextpdf/io/font/otf/FreeSansBold.ttf"));
+        Assertions.assertTrue(FontProgramFactory.getRegisteredFonts().contains("free sans lihavoitu"));
     }
 
     @Test
@@ -73,8 +72,8 @@ public class FontProgramTest extends ExtendedITextTest {
         FontProgramFactory.registerFontDirectory("./src/test/resources/com/itextpdf/io/font/type1/");
         FontProgram computerModern = FontProgramFactory.createRegisteredFont("computer modern");
         FontProgram cmr10 = FontProgramFactory.createRegisteredFont("cmr10");
-        Assert.assertNotNull(computerModern);
-        Assert.assertNotNull(cmr10);
+        Assertions.assertNotNull(computerModern);
+        Assertions.assertNotNull(cmr10);
     }
 
     @Test
@@ -84,17 +83,17 @@ public class FontProgramTest extends ExtendedITextTest {
         FontProgram fp = FontProgramFactory.createFont("KozMinPro-Regular", "UniJIS-UCS2-HW-H", true);
         Glyph glyph = fp.getGlyph(space);
 
-        Assert.assertArrayEquals(new char[] {space}, glyph.getUnicodeChars());
-        Assert.assertEquals(32, glyph.getUnicode());
-        Assert.assertEquals(231, glyph.getCode());
-        Assert.assertEquals(500, glyph.getWidth());
+        Assertions.assertArrayEquals(new char[] {space}, glyph.getUnicodeChars());
+        Assertions.assertEquals(32, glyph.getUnicode());
+        Assertions.assertEquals(231, glyph.getCode());
+        Assertions.assertEquals(500, glyph.getWidth());
 
         fp = FontProgramFactory.createFont("KozMinPro-Regular", null, true);
         glyph = fp.getGlyph(space);
 
-        Assert.assertArrayEquals(new char[] {space}, glyph.getUnicodeChars());
-        Assert.assertEquals(32, glyph.getUnicode());
-        Assert.assertEquals(1, glyph.getCode());
-        Assert.assertEquals(278, glyph.getWidth());
+        Assertions.assertArrayEquals(new char[] {space}, glyph.getUnicodeChars());
+        Assertions.assertEquals(32, glyph.getUnicode());
+        Assertions.assertEquals(1, glyph.getCode());
+        Assertions.assertEquals(278, glyph.getWidth());
     }
 }

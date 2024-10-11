@@ -29,15 +29,14 @@ import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.InputStream;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class GifTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/io/image/GifTest/";
 
@@ -46,16 +45,16 @@ public class GifTest extends ExtendedITextTest {
         try (InputStream file = FileUtil.getInputStreamForFile(sourceFolder + "WP_20140410_001.gif")) {
             byte[] fileContent = StreamUtil.inputStreamToArray(file);
             ImageData img = ImageDataFactory.createGif(fileContent).getFrames().get(0);
-            Assert.assertTrue(img.isRawImage());
-            Assert.assertEquals(ImageType.GIF, img.getOriginalType());
+            Assertions.assertTrue(img.isRawImage());
+            Assertions.assertEquals(ImageType.GIF, img.getOriginalType());
         }
     }
 
     @Test
     public void gifImageFrameOutOfBoundsTest() throws java.io.IOException {
-        Exception e = Assert.assertThrows(IOException.class,
+        Exception e = Assertions.assertThrows(IOException.class,
                 () -> ImageDataFactory.createGifFrame(UrlUtil.toURL(sourceFolder + "image-2frames.gif"), 3));
-        Assert.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.CANNOT_FIND_FRAME, 2), e.getMessage());
+        Assertions.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.CANNOT_FIND_FRAME, 2), e.getMessage());
     }
 
     @Test
@@ -64,11 +63,11 @@ public class GifTest extends ExtendedITextTest {
         try (InputStream file = FileUtil.getInputStreamForFile(imageFilePath)) {
             byte[] fileContent = StreamUtil.inputStreamToArray(file);
             ImageData img = ImageDataFactory.createGifFrame(fileContent, 2);
-            Assert.assertEquals(100, (int)img.getWidth());
-            Assert.assertEquals(100, (int)img.getHeight());
+            Assertions.assertEquals(100, (int)img.getWidth());
+            Assertions.assertEquals(100, (int)img.getHeight());
 
             ImageData imgFromUrl = ImageDataFactory.createGifFrame(UrlUtil.toURL(imageFilePath), 2);
-            Assert.assertArrayEquals(img.getData(), imgFromUrl.getData());
+            Assertions.assertArrayEquals(img.getData(), imgFromUrl.getData());
         }
     }
 
@@ -78,12 +77,12 @@ public class GifTest extends ExtendedITextTest {
         try (InputStream file = FileUtil.getInputStreamForFile(imageFilePath)) {
             byte[] fileContent = StreamUtil.inputStreamToArray(file);
             List<ImageData> frames = ImageDataFactory.createGifFrames(fileContent);
-            Assert.assertEquals(2, frames.size());
-            Assert.assertNotEquals(frames.get(0).getData(), frames.get(1).getData());
+            Assertions.assertEquals(2, frames.size());
+            Assertions.assertNotEquals(frames.get(0).getData(), frames.get(1).getData());
 
             List<ImageData> framesFromUrl = ImageDataFactory.createGifFrames(UrlUtil.toURL(imageFilePath));
-            Assert.assertArrayEquals(frames.get(0).getData(), framesFromUrl.get(0).getData());
-            Assert.assertArrayEquals(frames.get(1).getData(), framesFromUrl.get(1).getData());
+            Assertions.assertArrayEquals(frames.get(0).getData(), framesFromUrl.get(0).getData());
+            Assertions.assertArrayEquals(frames.get(1).getData(), framesFromUrl.get(1).getData());
         }
     }
 }

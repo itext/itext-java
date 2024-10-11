@@ -23,19 +23,18 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfEncodingsTest extends ExtendedITextTest {
 
     @Test
     public void convertToBytesNoEncodingTest() {
-        Assert.assertArrayEquals(new byte[]{(byte) 194}, PdfEncodings.convertToBytes('Â', null));
-        Assert.assertArrayEquals(new byte[]{(byte) 194}, PdfEncodings.convertToBytes('Â', ""));
-        Assert.assertArrayEquals(new byte[]{(byte) 194}, PdfEncodings.convertToBytes('Â', "symboltt"));
+        Assertions.assertArrayEquals(new byte[]{(byte) 194}, PdfEncodings.convertToBytes('Â', null));
+        Assertions.assertArrayEquals(new byte[]{(byte) 194}, PdfEncodings.convertToBytes('Â', ""));
+        Assertions.assertArrayEquals(new byte[]{(byte) 194}, PdfEncodings.convertToBytes('Â', "symboltt"));
     }
 }

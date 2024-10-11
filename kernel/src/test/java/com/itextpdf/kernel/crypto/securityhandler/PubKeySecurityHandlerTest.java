@@ -29,14 +29,13 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
 import java.io.OutputStream;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(BouncyCastleUnitTest.class)
+@Tag("BouncyCastleUnitTest")
 public class PubKeySecurityHandlerTest extends ExtendedITextTest {
     
     @Test
@@ -44,7 +43,7 @@ public class PubKeySecurityHandlerTest extends ExtendedITextTest {
             ignore = true))
     public void computeGlobalKeyDecryptTest() {
         PubKeySecurityHandler securityHandler = new TestSecurityHandler();
-        Assert.assertEquals(20, securityHandler.computeGlobalKey("SHA1", false).length);
+        Assertions.assertEquals(20, securityHandler.computeGlobalKey("SHA1", false).length);
     }
     
     private static class TestSecurityHandler extends PubKeySecurityHandler {

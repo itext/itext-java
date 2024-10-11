@@ -27,36 +27,35 @@ import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
+import com.itextpdf.kernel.validation.ValidationContainer;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.pdfa.checker.PdfA1Checker;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfAIndirectObjectsCountLimitTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
 
     @Test
     public void validAmountOfIndirectObjectsTest() throws IOException {
-        PdfA1Checker testChecker = new PdfA1Checker(PdfAConformanceLevel.PDF_A_1B) {
+        PdfA1Checker testChecker = new PdfA1Checker(PdfAConformance.PDF_A_1B) {
             @Override
             protected long getMaxNumberOfIndirectObjects() {
                 return 10;
@@ -67,11 +66,13 @@ public class PdfAIndirectObjectsCountLimitTest extends ExtendedITextTest {
                 InputStream icm = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
                 OutputStream fos = new ByteArrayOutputStream();
                 Document document = new Document(new PdfADocument(new PdfWriter(fos),
-                        PdfAConformanceLevel.PDF_A_1B,
+                        PdfAConformance.PDF_A_1B,
                         getOutputIntent(icm)));
         ) {
             PdfADocument pdfa = (PdfADocument) document.getPdfDocument();
-            pdfa.checker = testChecker;
+            final ValidationContainer container = new ValidationContainer();
+            container.addChecker(testChecker);
+            pdfa.getDiContainer().register(ValidationContainer.class, container);
             document.add(buildContent());
 
             // generated document contains exactly 10 indirect objects. Given 10 is the allowed
@@ -81,7 +82,7 @@ public class PdfAIndirectObjectsCountLimitTest extends ExtendedITextTest {
 
     @Test
     public void invalidAmountOfIndirectObjectsTest() throws IOException {
-        PdfA1Checker testChecker = new PdfA1Checker(PdfAConformanceLevel.PDF_A_1B) {
+        PdfA1Checker testChecker = new PdfA1Checker(PdfAConformance.PDF_A_1B) {
             @Override
             protected long getMaxNumberOfIndirectObjects() {
                 return 9;
@@ -93,23 +94,25 @@ public class PdfAIndirectObjectsCountLimitTest extends ExtendedITextTest {
                 OutputStream fos = new ByteArrayOutputStream();
         ) {
             Document document = new Document(new PdfADocument(new PdfWriter(fos),
-                    PdfAConformanceLevel.PDF_A_1B,
+                    PdfAConformance.PDF_A_1B,
                     getOutputIntent(icm)));
             PdfADocument pdfa = (PdfADocument) document.getPdfDocument();
-            pdfa.checker = testChecker;
+            final ValidationContainer container = new ValidationContainer();
+            container.addChecker(testChecker);
+            pdfa.getDiContainer().register(ValidationContainer.class, container);
             document.add(buildContent());
 
             // generated document contains exactly 10 indirect objects. Given 9 is the allowed
             // limit per "mock specification" conformance exception should be thrown as the limit
             // is exceeded
-            Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> document.close());
-            Assert.assertEquals(PdfaExceptionMessageConstant.MAXIMUM_NUMBER_OF_INDIRECT_OBJECTS_EXCEEDED, e.getMessage());
+            Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> document.close());
+            Assertions.assertEquals(PdfaExceptionMessageConstant.MAXIMUM_NUMBER_OF_INDIRECT_OBJECTS_EXCEEDED, e.getMessage());
         }
     }
 
     @Test
     public void invalidAmountOfIndirectObjectsAppendModeTest() throws IOException {
-        PdfA1Checker testChecker = new PdfA1Checker(PdfAConformanceLevel.PDF_A_1B) {
+        PdfA1Checker testChecker = new PdfA1Checker(PdfAConformance.PDF_A_1B) {
             @Override
             protected long getMaxNumberOfIndirectObjects() {
                 return 11;
@@ -121,13 +124,15 @@ public class PdfAIndirectObjectsCountLimitTest extends ExtendedITextTest {
                 OutputStream fos = new ByteArrayOutputStream();
         ) {
             PdfADocument pdfa = new PdfADocument(new PdfReader(fis), new PdfWriter(fos), new StampingProperties().useAppendMode());
-            pdfa.checker = testChecker;
+            final ValidationContainer container = new ValidationContainer();
+            container.addChecker(testChecker);
+            pdfa.getDiContainer().register(ValidationContainer.class, container);
             pdfa.addNewPage();
 
             // during closing of pdfa object exception will be thrown as new document will contain
             // 12 indirect objects and limit per "mock specification" conformance will be exceeded
-            Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> pdfa.close());
-            Assert.assertEquals(PdfaExceptionMessageConstant.MAXIMUM_NUMBER_OF_INDIRECT_OBJECTS_EXCEEDED, e.getMessage());
+            Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> pdfa.close());
+            Assertions.assertEquals(PdfaExceptionMessageConstant.MAXIMUM_NUMBER_OF_INDIRECT_OBJECTS_EXCEEDED, e.getMessage());
         }
     }
 

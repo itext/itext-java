@@ -40,6 +40,7 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfViewerPreferences;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -52,36 +53,36 @@ import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.kernel.utils.ValidationContainer;
+import com.itextpdf.kernel.validation.ValidationContainer;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.pdfua.PdfUAConfig;
+import com.itextpdf.pdfua.PdfUADocument;
 import com.itextpdf.pdfua.PdfUATestPdfDocument;
 import com.itextpdf.pdfua.UaValidationTestFramework;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
-import com.itextpdf.pdfua.exceptions.PdfUALogMessageConstants;
+import com.itextpdf.pdfua.logs.PdfUALogMessageConstants;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfUATest extends ExtendedITextTest {
 
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfua/PdfUATest/";
@@ -93,52 +94,31 @@ public class PdfUATest extends ExtendedITextTest {
 
     private UaValidationTestFramework framework;
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
-    @Before
+    @BeforeEach
     public void initializeFramework() {
         framework = new UaValidationTestFramework(DESTINATION_FOLDER);
     }
 
     @Test
-    public void flushingOnPageWarningDisabledDoesntLog() throws IOException, InterruptedException {
-        String outPdf = DESTINATION_FOLDER + "flushingOnPageCloseLogsWarningDisabledTest.pdf";
-        String cmpPdf = SOURCE_FOLDER + "cmp_flushingOnPageCloseLogsWarningDisabledTest.pdf";
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(outPdf));
-        pdfDoc.disablePageFlushingWarning();
-        Document document = new Document(pdfDoc);
-        PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.PREFER_EMBEDDED);
-        document.setFont(font);
-        for (int i = 0; i < 40; i++) {
-            document.add(new Paragraph("Hello World!"));
-        }
-        pdfDoc.getPage(1).flush();
-        pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
-
-    }
-
-
-    @Test
     public void checkPoint01_007_suspectsHasEntryTrue() {
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(new ByteArrayOutputStream()));
+        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         PdfDictionary markInfo = (PdfDictionary) pdfDoc.getCatalog().getPdfObject().get(PdfName.MarkInfo);
-        Assert.assertNotNull(markInfo);
+        Assertions.assertNotNull(markInfo);
         markInfo.put(PdfName.Suspects, new PdfBoolean(true));
-        Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> pdfDoc.close());
-        Assert.assertEquals(PdfUAExceptionMessageConstants.SUSPECTS_ENTRY_IN_MARK_INFO_DICTIONARY_SHALL_NOT_HAVE_A_VALUE_OF_TRUE,
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> pdfDoc.close());
+        Assertions.assertEquals(PdfUAExceptionMessageConstants.SUSPECTS_ENTRY_IN_MARK_INFO_DICTIONARY_SHALL_NOT_HAVE_A_VALUE_OF_TRUE,
                 e.getMessage());
     }
 
 
     @Test
     public void checkPoint01_007_suspectsHasEntryFalse() {
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(new ByteArrayOutputStream()));
+        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         PdfDictionary markInfo = (PdfDictionary) pdfDoc.getCatalog().getPdfObject().get(PdfName.MarkInfo);
         markInfo.put(PdfName.Suspects, new PdfBoolean(false));
         AssertUtil.doesNotThrow(() -> pdfDoc.close());
@@ -147,8 +127,7 @@ public class PdfUATest extends ExtendedITextTest {
     @Test
     public void checkPoint01_007_suspectsHasNoEntry() {
         // suspects entry is optional so it is ok to not have it according to the spec
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(new ByteArrayOutputStream()));
+        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         AssertUtil.doesNotThrow(() -> pdfDoc.close());
     }
 
@@ -156,13 +135,12 @@ public class PdfUATest extends ExtendedITextTest {
     @Test
     public void emptyPageDocument() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "emptyPageDocument.pdf";
-        try (PdfDocument pdfDocument = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf))) {
+        try (PdfDocument pdfDocument = new PdfUATestPdfDocument(new PdfWriter(outPdf))) {
             pdfDocument.addNewPage();
         }
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, SOURCE_FOLDER + "cmp_emptyPageDocument.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, SOURCE_FOLDER + "cmp_emptyPageDocument.pdf",
                 DESTINATION_FOLDER, "diff_"));
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
     @Test
@@ -173,15 +151,14 @@ public class PdfUATest extends ExtendedITextTest {
         PdfPage page = pdfDocument.addNewPage();
         PdfFileSpec spec = PdfFileSpec.createExternalFileSpec(pdfDocument, "sample.wav");
         PdfScreenAnnotation screen = new PdfScreenAnnotation(new Rectangle(100, 100));
-        PdfAction action = PdfAction.createRendition("sample.wav",
-                spec, "audio/x-wav", screen);
+        PdfAction action = PdfAction.createRendition("sample.wav", spec, "audio/x-wav", screen);
         screen.setAction(action);
         screen.setContents("screen annotation");
         page.addAnnotation(screen);
         AssertUtil.doesNotThrow(() -> {
             page.flush();
         });
-        Assert.assertThrows(PdfUAConformanceException.class, () -> pdfDocument.close());
+        Assertions.assertThrows(PdfUAConformanceException.class, () -> pdfDocument.close());
 
     }
 
@@ -189,7 +166,7 @@ public class PdfUATest extends ExtendedITextTest {
     public void documentWithNoLangEntryTest() throws IOException {
         final String outPdf = DESTINATION_FOLDER + "documentWithNoLangEntryTest.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf,
-                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+                new WriterProperties().addPdfUaXmpMetadata(PdfUAConformance.PDF_UA_1).setPdfVersion(PdfVersion.PDF_1_7)));
         pdfDoc.setTagged();
         ValidationContainer validationContainer = new ValidationContainer();
         validationContainer.addChecker(new PdfUA1Checker(pdfDoc));
@@ -199,8 +176,8 @@ public class PdfUATest extends ExtendedITextTest {
         PdfDocumentInfo info = pdfDoc.getDocumentInfo();
         info.setTitle("English pangram");
 
-        Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> pdfDoc.close());
-        Assert.assertEquals(PdfUAExceptionMessageConstants.DOCUMENT_SHALL_CONTAIN_VALID_LANG_ENTRY,
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> pdfDoc.close());
+        Assertions.assertEquals(PdfUAExceptionMessageConstants.DOCUMENT_SHALL_CONTAIN_VALID_LANG_ENTRY,
                 e.getMessage());
     }
 
@@ -208,7 +185,7 @@ public class PdfUATest extends ExtendedITextTest {
     public void documentWithEmptyStringLangEntryTest() throws IOException {
         final String outPdf = DESTINATION_FOLDER + "documentWithEmptyStringLangEntryTest.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf,
-                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+                new WriterProperties().addPdfUaXmpMetadata(PdfUAConformance.PDF_UA_1).setPdfVersion(PdfVersion.PDF_1_7)));
         pdfDoc.setTagged();
         ValidationContainer validationContainer = new ValidationContainer();
         validationContainer.addChecker(new PdfUA1Checker(pdfDoc));
@@ -217,35 +194,26 @@ public class PdfUATest extends ExtendedITextTest {
         pdfDoc.getCatalog().setViewerPreferences(new PdfViewerPreferences().setDisplayDocTitle(true));
         PdfDocumentInfo info = pdfDoc.getDocumentInfo();
         info.setTitle("English pangram");
-        Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> pdfDoc.close());
-        Assert.assertEquals(PdfUAExceptionMessageConstants.DOCUMENT_SHALL_CONTAIN_VALID_LANG_ENTRY,
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> pdfDoc.close());
+        Assertions.assertEquals(PdfUAExceptionMessageConstants.DOCUMENT_SHALL_CONTAIN_VALID_LANG_ENTRY,
                 e.getMessage());
     }
 
     @Test
     public void documentWithComplexLangEntryTest() throws IOException, InterruptedException {
         final String outPdf = DESTINATION_FOLDER + "documentWithComplexLangEntryTest.pdf";
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf,
-                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
-        pdfDoc.setTagged();
-        ValidationContainer validationContainer = new ValidationContainer();
-        validationContainer.addChecker(new PdfUA1Checker(pdfDoc));
-        pdfDoc.getDiContainer().register(ValidationContainer.class, validationContainer);
-        pdfDoc.getCatalog().setLang(new PdfString("qaa-Qaaa-QM-x-southern"));
-        pdfDoc.getCatalog().setViewerPreferences(new PdfViewerPreferences().setDisplayDocTitle(true));
-        PdfDocumentInfo info = pdfDoc.getDocumentInfo();
-        info.setTitle("English pangram");
+        PdfDocument pdfDoc = new PdfUADocument(new PdfWriter(outPdf), new PdfUAConfig(PdfUAConformance.PDF_UA_1, "English pangram", "qaa-Qaaa-QM-x-southern"));
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, SOURCE_FOLDER + "cmp_documentWithComplexLangEntryTest.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, SOURCE_FOLDER + "cmp_documentWithComplexLangEntryTest.pdf",
                 DESTINATION_FOLDER, "diff_"));
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
     @Test
     public void documentWithoutViewerPreferencesTest() throws IOException {
         final String outPdf = DESTINATION_FOLDER + "documentWithoutViewerPreferencesTest.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf,
-                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+                new WriterProperties().addPdfUaXmpMetadata(PdfUAConformance.PDF_UA_1).setPdfVersion(PdfVersion.PDF_1_7)));
         pdfDoc.setTagged();
         ValidationContainer validationContainer = new ValidationContainer();
         validationContainer.addChecker(new PdfUA1Checker(pdfDoc));
@@ -255,8 +223,8 @@ public class PdfUATest extends ExtendedITextTest {
         PdfDocumentInfo info = pdfDoc.getDocumentInfo();
         info.setTitle("English pangram");
 
-        Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> pdfDoc.close());
-        Assert.assertEquals(PdfUAExceptionMessageConstants.MISSING_VIEWER_PREFERENCES,
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> pdfDoc.close());
+        Assertions.assertEquals(PdfUAExceptionMessageConstants.MISSING_VIEWER_PREFERENCES,
                 e.getMessage());
     }
 
@@ -264,7 +232,7 @@ public class PdfUATest extends ExtendedITextTest {
     public void documentWithEmptyViewerPreferencesTest() throws IOException {
         final String outPdf = DESTINATION_FOLDER + "documentWithEmptyViewerPreferencesTest.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf,
-                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+                new WriterProperties().addPdfUaXmpMetadata(PdfUAConformance.PDF_UA_1).setPdfVersion(PdfVersion.PDF_1_7)));
         pdfDoc.setTagged();
         ValidationContainer validationContainer = new ValidationContainer();
         validationContainer.addChecker(new PdfUA1Checker(pdfDoc));
@@ -275,8 +243,8 @@ public class PdfUATest extends ExtendedITextTest {
         PdfDocumentInfo info = pdfDoc.getDocumentInfo();
         info.setTitle("English pangram");
 
-        Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> pdfDoc.close());
-        Assert.assertEquals(PdfUAExceptionMessageConstants.MISSING_VIEWER_PREFERENCES,
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> pdfDoc.close());
+        Assertions.assertEquals(PdfUAExceptionMessageConstants.MISSING_VIEWER_PREFERENCES,
                 e.getMessage());
     }
 
@@ -284,7 +252,7 @@ public class PdfUATest extends ExtendedITextTest {
     public void documentWithInvalidViewerPreferencesTest() throws IOException {
         final String outPdf = DESTINATION_FOLDER + "documentWithEmptyViewerPreferencesTest.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf,
-                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+                new WriterProperties().addPdfUaXmpMetadata(PdfUAConformance.PDF_UA_1).setPdfVersion(PdfVersion.PDF_1_7)));
         pdfDoc.setTagged();
         ValidationContainer validationContainer = new ValidationContainer();
         validationContainer.addChecker(new PdfUA1Checker(pdfDoc));
@@ -295,13 +263,13 @@ public class PdfUATest extends ExtendedITextTest {
         PdfDocumentInfo info = pdfDoc.getDocumentInfo();
         info.setTitle("English pangram");
 
-        Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> pdfDoc.close());
-        Assert.assertEquals(PdfUAExceptionMessageConstants.VIEWER_PREFERENCES_IS_FALSE,
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> pdfDoc.close());
+        Assertions.assertEquals(PdfUAExceptionMessageConstants.VIEWER_PREFERENCES_IS_FALSE,
                 e.getMessage());
     }
 
     @Test
-    public void checkNameEntryShouldPresentInAllOCGDictionariesTest() throws FileNotFoundException {
+    public void checkNameEntryShouldPresentInAllOCGDictionariesTest() throws IOException {
         framework.addBeforeGenerationHook((pdfDocument) -> {
             pdfDocument.addNewPage();
             PdfDictionary ocProperties = new PdfDictionary();
@@ -314,12 +282,11 @@ public class PdfUATest extends ExtendedITextTest {
             ocProperties.put(PdfName.Configs, configs);
             pdfDocument.getCatalog().put(PdfName.OCProperties, ocProperties);
         });
-        framework.assertBothFail("pdfuaOCGPropertiesCheck01",
-                PdfUAExceptionMessageConstants.NAME_ENTRY_IS_MISSING_OR_EMPTY_IN_OCG);
+        framework.assertBothFail("pdfuaOCGPropertiesCheck01", PdfUAExceptionMessageConstants.NAME_ENTRY_IS_MISSING_OR_EMPTY_IN_OCG);
     }
 
     @Test
-    public void checkAsKeyInContentConfigDictTest() throws FileNotFoundException {
+    public void checkAsKeyInContentConfigDictTest() throws IOException {
         framework.addBeforeGenerationHook((pdfDocument) -> {
             pdfDocument.addNewPage();
             PdfDictionary ocProperties = new PdfDictionary();
@@ -331,12 +298,11 @@ public class PdfUATest extends ExtendedITextTest {
             ocProperties.put(PdfName.Configs, configs);
             pdfDocument.getCatalog().put(PdfName.OCProperties, ocProperties);
         });
-        framework.assertBothFail("pdfuaOCGPropertiesCheck02",
-                PdfUAExceptionMessageConstants.OCG_SHALL_NOT_CONTAIN_AS_ENTRY);
+        framework.assertBothFail("pdfuaOCGPropertiesCheck02", PdfUAExceptionMessageConstants.OCG_SHALL_NOT_CONTAIN_AS_ENTRY);
     }
 
     @Test
-    public void nameEntryisEmptyTest() throws FileNotFoundException {
+    public void nameEntryisEmptyTest() throws IOException {
         framework.addBeforeGenerationHook((pdfDocument) -> {
             PdfDictionary ocProperties = new PdfDictionary();
             PdfDictionary d = new PdfDictionary();
@@ -350,12 +316,11 @@ public class PdfUATest extends ExtendedITextTest {
 
             pdfDocument.getCatalog().put(PdfName.OCProperties, ocProperties);
         });
-        framework.assertBothFail("pdfuaOCGPropertiesCheck03",
-                PdfUAExceptionMessageConstants.NAME_ENTRY_IS_MISSING_OR_EMPTY_IN_OCG);
+        framework.assertBothFail("pdfuaOCGPropertiesCheck03", PdfUAExceptionMessageConstants.NAME_ENTRY_IS_MISSING_OR_EMPTY_IN_OCG);
     }
 
     @Test
-    public void configsEntryisNotAnArrayTest() throws FileNotFoundException {
+    public void configsEntryisNotAnArrayTest() throws IOException {
         framework.addBeforeGenerationHook((pdfDocument) -> {
             PdfDictionary ocProperties = new PdfDictionary();
             PdfDictionary d = new PdfDictionary();
@@ -366,8 +331,7 @@ public class PdfUATest extends ExtendedITextTest {
 
             pdfDocument.getCatalog().put(PdfName.OCProperties, ocProperties);
         });
-        framework.assertBothFail("pdfuaOCGPropertiesCheck04",
-                PdfUAExceptionMessageConstants.OCG_PROPERTIES_CONFIG_SHALL_BE_AN_ARRAY);
+        framework.assertBothFail("pdfuaOCGPropertiesCheck04", PdfUAExceptionMessageConstants.OCG_PROPERTIES_CONFIG_SHALL_BE_AN_ARRAY);
     }
 
     @Test
@@ -425,25 +389,20 @@ public class PdfUATest extends ExtendedITextTest {
         PdfCanvas canvas = new PdfCanvas(page1);
 
         PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.PREFER_EMBEDDED);
-        canvas.beginText()
-                .setFontAndSize(font, 12)
-                .setTextMatrix(1, 0, 0, 1, 32, 512);
+        canvas.beginText().setFontAndSize(font, 12).setTextMatrix(1, 0, 0, 1, 32, 512);
 
-        DefaultAccessibilityProperties paraProps
-                = new DefaultAccessibilityProperties(StandardRoles.P);
+        DefaultAccessibilityProperties paraProps = new DefaultAccessibilityProperties(StandardRoles.P);
         tagPointer.addTag(paraProps).addTag(StandardRoles.SPAN);
 
         tagPointer.getProperties().setStructureElementIdString("hello-element");
-        canvas.openTag(tagPointer.getTagReference())
-                .showText("Hello ")
-                .closeTag();
+        canvas.openTag(tagPointer.getTagReference()).showText("Hello ").closeTag();
         tagPointer.moveToParent().addTag(StandardRoles.SPAN);
 
         tagPointer.getProperties().setStructureElementIdString("world-element");
 
-        Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> tagPointer.getProperties().setStructureElementIdString("hello-element"));
-        Assert.assertEquals(MessageFormatUtil.format(
-                PdfUAExceptionMessageConstants.NON_UNIQUE_ID_ENTRY_IN_STRUCT_TREE_ROOT, "hello-element"),
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> tagPointer.getProperties().setStructureElementIdString("hello-element"));
+        Assertions.assertEquals(MessageFormatUtil.format(
+                        PdfUAExceptionMessageConstants.NON_UNIQUE_ID_ENTRY_IN_STRUCT_TREE_ROOT, "hello-element"),
                 e.getMessage());
     }
 
@@ -458,15 +417,15 @@ public class PdfUATest extends ExtendedITextTest {
             pdfDocument.getDiContainer().register(ValidationContainer.class, validationContainer);
         }
         //Vera pdf doesn't complain on this document
-        Assert.assertNull(new VeraPdfValidator().validate(dest)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(dest)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
     @Test
     public void manualPdfUaCreation() throws IOException, InterruptedException {
-
         final String outPdf = DESTINATION_FOLDER + "manualPdfUaCreation.pdf";
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf,
-                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+        final WriterProperties properties = new WriterProperties().addPdfUaXmpMetadata(PdfUAConformance.PDF_UA_1)
+                .setPdfVersion(PdfVersion.PDF_1_7);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf, properties));
         Document document = new Document(pdfDoc, PageSize.A4.rotate());
 
         //TAGGED PDF
@@ -522,8 +481,8 @@ public class PdfUATest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, SOURCE_FOLDER + "cmp_manualPdfUaCreation.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, SOURCE_FOLDER + "cmp_manualPdfUaCreation.pdf",
                 DESTINATION_FOLDER, "diff_"));
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 }

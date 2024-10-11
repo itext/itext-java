@@ -29,13 +29,12 @@ import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(BouncyCastleUnitTest.class)
+@Tag("BouncyCastleUnitTest")
 public class CryptoUtilTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
@@ -43,23 +42,23 @@ public class CryptoUtilTest extends ExtendedITextTest {
     public void createBerStreamTest() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         IASN1OutputStream stream = CryptoUtil.createAsn1OutputStream(baos, FACTORY.createASN1Encoding().getBer());
-        Assert.assertNotNull(stream);
+        Assertions.assertNotNull(stream);
     }
 
     @Test
     public void createDerStreamTest() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         IASN1OutputStream stream = CryptoUtil.createAsn1OutputStream(baos, FACTORY.createASN1Encoding().getDer());
-        Assert.assertNotNull(stream);
+        Assertions.assertNotNull(stream);
     }
 
     @Test
     public void createUnsupportedEncodingStreamTest() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        Exception e = Assert.assertThrows(UnsupportedOperationException.class,
+        Exception e = Assertions.assertThrows(UnsupportedOperationException.class,
                 () -> CryptoUtil.createAsn1OutputStream(baos, "DL")
         );
-        Assert.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.UNSUPPORTED_ASN1_ENCODING, "DL"),
+        Assertions.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.UNSUPPORTED_ASN1_ENCODING, "DL"),
                 e.getMessage());
     }
 }

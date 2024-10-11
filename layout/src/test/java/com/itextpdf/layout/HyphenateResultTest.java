@@ -25,12 +25,11 @@ package com.itextpdf.layout;
 import com.itextpdf.layout.hyphenation.Hyphenation;
 import com.itextpdf.layout.hyphenation.HyphenationConfig;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class HyphenateResultTest extends ExtendedITextTest {
 
     @Test
@@ -111,9 +110,9 @@ public class HyphenateResultTest extends ExtendedITextTest {
         HyphenationConfig config = new HyphenationConfig(lang, country, 3, 3);
         Hyphenation result = config.hyphenate(testWorld);
         if (result != null) {
-            Assert.assertArrayEquals(expectedHyphenatePoints, result.getHyphenationPoints());
+            Assertions.assertArrayEquals(expectedHyphenatePoints, result.getHyphenationPoints());
         } else {
-            Assert.assertNull(expectedHyphenatePoints);
+            Assertions.assertNull(expectedHyphenatePoints);
         }
     }
 }

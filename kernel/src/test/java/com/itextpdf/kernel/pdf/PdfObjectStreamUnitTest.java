@@ -26,13 +26,12 @@ import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfObjectStreamUnitTest extends ExtendedITextTest {
 
     @Test
@@ -45,9 +44,9 @@ public class PdfObjectStreamUnitTest extends ExtendedITextTest {
         for (int i = 0; i < PdfObjectStream.MAX_OBJ_STREAM_SIZE; i++) {
             pdfObjectStream.addObject(number);
         }
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> pdfObjectStream.addObject(number));
-        Assert.assertEquals(KernelExceptionMessageConstant.PDF_OBJECT_STREAM_REACH_MAX_SIZE,
+        Assertions.assertEquals(KernelExceptionMessageConstant.PDF_OBJECT_STREAM_REACH_MAX_SIZE,
                 exception.getMessage());
     }
 
@@ -60,6 +59,6 @@ public class PdfObjectStreamUnitTest extends ExtendedITextTest {
         for (int i = 0; i <= PdfObjectStream.MAX_OBJ_STREAM_SIZE - 1; i++) {
             pdfObjectStream.addObject(number);
         }
-        Assert.assertTrue("We don't expect to reach this line, since no exception should have been thrown", true);
+        Assertions.assertTrue(true, "We don't expect to reach this line, since no exception should have been thrown");
     }
 }

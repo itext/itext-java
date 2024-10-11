@@ -50,23 +50,22 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.util.Arrays;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class GridContainerLayoutTest extends ExtendedITextTest {
 
     public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/GridContainerTest/";
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/GridContainerTest/";
 
-    @Before
+    @BeforeEach
     public void setup() {
         createDestinationFolder(DESTINATION_FOLDER);
     }
@@ -91,7 +90,7 @@ public class GridContainerLayoutTest extends ExtendedITextTest {
         document.add(gridcontainer1);
 
         document.close();
-        Assert.assertNull(new CompareTool().compareByContent(fileName, SOURCE_FOLDER + "cmp_border.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(fileName, SOURCE_FOLDER + "cmp_border.pdf",
                 DESTINATION_FOLDER, "diff"));
     }
 
@@ -111,7 +110,7 @@ public class GridContainerLayoutTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(fileName, SOURCE_FOLDER + "cmp_margin.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(fileName, SOURCE_FOLDER + "cmp_margin.pdf",
                 DESTINATION_FOLDER, "diff"));
     }
 
@@ -132,7 +131,7 @@ public class GridContainerLayoutTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(fileName, SOURCE_FOLDER + "cmp_padding.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(fileName, SOURCE_FOLDER + "cmp_padding.pdf",
                 DESTINATION_FOLDER, "diff"));
     }
 
@@ -150,7 +149,7 @@ public class GridContainerLayoutTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(fileName, SOURCE_FOLDER + "cmp_background.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(fileName, SOURCE_FOLDER + "cmp_background.pdf",
                 DESTINATION_FOLDER, "diff"));
     }
 
@@ -175,7 +174,7 @@ public class GridContainerLayoutTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(fileName, SOURCE_FOLDER + "cmp_backgroundWithImage.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(fileName, SOURCE_FOLDER + "cmp_backgroundWithImage.pdf",
                 DESTINATION_FOLDER, "diff"));
     }
 
@@ -199,7 +198,7 @@ public class GridContainerLayoutTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(fileName, SOURCE_FOLDER + "cmp_emptyGridContainer.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(fileName, SOURCE_FOLDER + "cmp_emptyGridContainer.pdf",
                 DESTINATION_FOLDER, "diff"));
     }
 
@@ -223,7 +222,7 @@ public class GridContainerLayoutTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(fileName, SOURCE_FOLDER + "cmp_overflowGridContainer.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(fileName, SOURCE_FOLDER + "cmp_overflowGridContainer.pdf",
                 DESTINATION_FOLDER, "diff"));
     }
 
@@ -242,7 +241,7 @@ public class GridContainerLayoutTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(fileName, SOURCE_FOLDER + "cmp_nothingResult.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(fileName, SOURCE_FOLDER + "cmp_nothingResult.pdf",
                 DESTINATION_FOLDER, "diff"));
     }
 

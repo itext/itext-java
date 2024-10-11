@@ -34,30 +34,29 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class AddScreenAnnotationTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/annot/AddScreenAnnotationTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/annot/AddScreenAnnotationTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -77,7 +76,7 @@ public class AddScreenAnnotationTest extends ExtendedITextTest {
 
         String errorMessage = new CompareTool().compareByContent(filename, cmp, destinationFolder);
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -98,7 +97,7 @@ public class AddScreenAnnotationTest extends ExtendedITextTest {
 
         String errorMessage = new CompareTool().compareByContent(filename, cmp, destinationFolder);
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -118,7 +117,7 @@ public class AddScreenAnnotationTest extends ExtendedITextTest {
 
         String errorMessage = new CompareTool().compareByContent(filename, cmp, destinationFolder);
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -136,7 +135,7 @@ public class AddScreenAnnotationTest extends ExtendedITextTest {
 
         String errorMessage = new CompareTool().compareByContent(filename, cmp, destinationFolder);
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 

@@ -23,7 +23,61 @@
 package com.itextpdf.io.font.otf;
 
 public class LanguageRecord {
-    public String tag;
-    public int featureRequired;
-    public int[] features;
+    private String tag;
+    private int featureRequired;
+    private int[] features;
+
+    /**
+     * Retrieves the tag of the language record.
+     *
+     * @return tag of record
+     */
+    public String getTag() {
+        return tag;
+    }
+
+    /**
+     * Sets the tag of the language record.
+     *
+     * @param tag tag of record
+     */
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
+    /**
+     * Retrieves the feature required of the language record.
+     *
+     * @return feature required
+     */
+    public int getFeatureRequired() {
+        return featureRequired;
+    }
+
+    /**
+     * Sets the feature required of the language record.
+     *
+     * @param featureRequired feature required
+     */
+    public void setFeatureRequired(int featureRequired) {
+        this.featureRequired = featureRequired;
+    }
+
+    /**
+     * Retrieves the features of the language record.
+     *
+     * @return features
+     */
+    public int[] getFeatures() {
+        return features;
+    }
+
+    /**
+     * Sets the features of the language record.
+     *
+     * @param features features
+     */
+    public void setFeatures(int[] features) {
+        this.features = features;
+    }
 }

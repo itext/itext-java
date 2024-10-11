@@ -26,13 +26,12 @@ import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.styledxmlparser.exceptions.StyledXmlParserExceptionMessage;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class CssSelectorParserTest extends ExtendedITextTest {
 
     @Test
@@ -40,9 +39,9 @@ public class CssSelectorParserTest extends ExtendedITextTest {
         String space = " ";
         String selectorWithSpaceAtTheBeginning = space + ".spaceBefore";
 
-        Exception expectedException = Assert.assertThrows(IllegalArgumentException.class,
+        Exception expectedException = Assertions.assertThrows(IllegalArgumentException.class,
                 () -> CssSelectorParser.parseSelectorItems(selectorWithSpaceAtTheBeginning));
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 MessageFormatUtil.format(StyledXmlParserExceptionMessage.INVALID_TOKEN_AT_THE_BEGINNING_OF_SELECTOR,
                         space),
                 expectedException.getMessage());

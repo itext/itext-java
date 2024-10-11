@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.crypto.pdfencryption;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.EncryptionConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -33,21 +34,21 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.security.Security;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-@Category(BouncyCastleIntegrationTest.class)
+@Tag("BouncyCastleIntegrationTest")
 public class UnicodeBasedPasswordEncryptionTest extends ExtendedITextTest {
 
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/crypto/pdfencryption/UnicodeBasedPasswordEncryptionTest/";
@@ -171,12 +172,13 @@ public class UnicodeBasedPasswordEncryptionTest extends ExtendedITextTest {
         }
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
+        Security.addProvider(BouncyCastleFactoryCreator.getFactory().getProvider());
         createOrClearDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -215,7 +217,7 @@ public class UnicodeBasedPasswordEncryptionTest extends ExtendedITextTest {
 
         encryptionUtil.checkDecryptedWithPasswordContent(destinationFolder + filename, ownerPassword, PdfEncryptionTestUtils.PAGE_TEXT_CONTENT);
 
-        CompareTool compareTool = new CompareTool().enableEncryptionCompare();
+        CompareTool compareTool = new CompareTool().enableEncryptionCompare(false);
         String compareResult = compareTool.compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_", ownerPassword, ownerPassword);
         if (compareResult != null) {
             fail(compareResult);

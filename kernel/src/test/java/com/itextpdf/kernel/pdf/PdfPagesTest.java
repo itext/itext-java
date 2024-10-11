@@ -41,7 +41,6 @@ import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -51,24 +50,24 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfPagesTest extends ExtendedITextTest {
     public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/PdfPagesTest/";
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/PdfPagesTest/";
     private static final PdfName PageNum = new PdfName("PageNum");
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() {
         createDestinationFolder(DESTINATION_FOLDER);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(DESTINATION_FOLDER);
     }
@@ -89,7 +88,7 @@ public class PdfPagesTest extends ExtendedITextTest {
         AssertUtil.doesNotThrow(() -> pdfDoc.addPage(1, page));
 
         // we don't expect that Count will be different from real number of pages
-        Assert.assertThrows(NullPointerException.class, () -> pdfDoc.close());
+        Assertions.assertThrows(NullPointerException.class, () -> pdfDoc.close());
     }
 
     @Test
@@ -136,7 +135,7 @@ public class PdfPagesTest extends ExtendedITextTest {
             pdfDoc.movePage(i, n + 1);
         }
         pdfDoc.close();
-        Assert.assertNull(new CompareTool()
+        Assertions.assertNull(new CompareTool()
                 .compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename, DESTINATION_FOLDER,
                         "diff"));
     }
@@ -170,10 +169,10 @@ public class PdfPagesTest extends ExtendedITextTest {
 
         int testPageXref = document.getPage(1000).getPdfObject().getIndirectReference().getObjNumber();
         document.movePage(1000, 1000);
-        Assert.assertEquals(testPageXref, document.getPage(1000).getPdfObject().getIndirectReference().getObjNumber());
+        Assertions.assertEquals(testPageXref, document.getPage(1000).getPdfObject().getIndirectReference().getObjNumber());
 
         for (int i = 0; i < pages.length; i++) {
-            Assert.assertTrue("Move page", document.movePage(pages[i], i + 1));
+            Assertions.assertTrue(document.movePage(pages[i], i + 1), "Move page");
         }
         document.close();
 
@@ -214,7 +213,7 @@ public class PdfPagesTest extends ExtendedITextTest {
                     pdfDoc.movePage(j, i);
                 }
             }
-            Assert.assertTrue(verifyIntegrity(pdfDoc.getCatalog().getPageTree()) == -1);
+            Assertions.assertTrue(verifyIntegrity(pdfDoc.getCatalog().getPageTree()) == -1);
         }
         pdfDoc.close();
 
@@ -232,10 +231,10 @@ public class PdfPagesTest extends ExtendedITextTest {
         page.flush();
         pdfDoc.removePage(page);
 
-        Exception e = Assert.assertThrows(PdfException.class,
+        Exception e = Assertions.assertThrows(PdfException.class,
                 () -> pdfDoc.addPage(1, page)
         );
-        Assert.assertEquals(KernelExceptionMessageConstant.FLUSHED_PAGE_CANNOT_BE_ADDED_OR_INSERTED, e.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.FLUSHED_PAGE_CANNOT_BE_ADDED_OR_INSERTED, e.getMessage());
     }
 
     @Test
@@ -249,10 +248,10 @@ public class PdfPagesTest extends ExtendedITextTest {
         page.flush();
         pdfDoc.removePage(page);
 
-        Exception e = Assert.assertThrows(PdfException.class,
+        Exception e = Assertions.assertThrows(PdfException.class,
                 () -> pdfDoc.addPage(page)
         );
-        Assert.assertEquals(KernelExceptionMessageConstant.FLUSHED_PAGE_CANNOT_BE_ADDED_OR_INSERTED, e.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.FLUSHED_PAGE_CANNOT_BE_ADDED_OR_INSERTED, e.getMessage());
     }
 
     @Test
@@ -276,8 +275,8 @@ public class PdfPagesTest extends ExtendedITextTest {
             page.flush();
         }
 
-        Assert.assertTrue("Remove last page", pdfDoc.removePage(pdfDoc.getPage(pageCount)));
-        Assert.assertFalse("Free reference", pdfDoc.getXref().get(removedPageObjectNumber).checkState(PdfObject.FREE));
+        Assertions.assertTrue(pdfDoc.removePage(pdfDoc.getPage(pageCount)), "Remove last page");
+        Assertions.assertFalse(pdfDoc.getXref().get(removedPageObjectNumber).checkState(PdfObject.FREE), "Free reference");
 
         pdfDoc.close();
         verifyPagesOrder(DESTINATION_FOLDER + filename, pageCount - 1);
@@ -290,10 +289,10 @@ public class PdfPagesTest extends ExtendedITextTest {
             pdfDocument.addNewPage();
             pdfDocument.getPage(1).flush();
 
-            Exception e = Assert.assertThrows(PdfException.class,
+            Exception e = Assertions.assertThrows(PdfException.class,
                     () -> pdfDocument.removePage(1)
             );
-            Assert.assertEquals(KernelExceptionMessageConstant.FLUSHED_PAGE_CANNOT_BE_REMOVED, e.getMessage());
+            Assertions.assertEquals(KernelExceptionMessageConstant.FLUSHED_PAGE_CANNOT_BE_REMOVED, e.getMessage());
         }
     }
 
@@ -304,10 +303,10 @@ public class PdfPagesTest extends ExtendedITextTest {
             pdfDocument.addNewPage();
             pdfDocument.getPage(1).flush();
 
-            Exception e = Assert.assertThrows(PdfException.class,
+            Exception e = Assertions.assertThrows(PdfException.class,
                     () -> pdfDocument.removePage(1)
             );
-            Assert.assertEquals(KernelExceptionMessageConstant.FLUSHED_PAGE_CANNOT_BE_REMOVED, e.getMessage());
+            Assertions.assertEquals(KernelExceptionMessageConstant.FLUSHED_PAGE_CANNOT_BE_REMOVED, e.getMessage());
         }
     }
 
@@ -316,9 +315,9 @@ public class PdfPagesTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + "simpleInheritedResources.pdf"));
         PdfPage page = pdfDocument.getPage(1);
         PdfDictionary dict = page.getResources().getResource(PdfName.ExtGState);
-        Assert.assertEquals(2, dict.size());
+        Assertions.assertEquals(2, dict.size());
         PdfExtGState gState = new PdfExtGState((PdfDictionary) dict.get(new PdfName("Gs1")));
-        Assert.assertEquals(10, gState.getLineWidth().intValue());
+        Assertions.assertEquals(10, gState.getLineWidth().intValue());
     }
 
     @Test
@@ -345,7 +344,7 @@ public class PdfPagesTest extends ExtendedITextTest {
         }
 
         // ensure resources XObject entry is read correctly
-        Assert.assertEquals(2, formXObjects.size());
+        Assertions.assertEquals(2, formXObjects.size());
     }
 
     @Test
@@ -362,9 +361,9 @@ public class PdfPagesTest extends ExtendedITextTest {
                 SOURCE_FOLDER + "cmp_" + "updateInheritedResources.pdf",
                 DESTINATION_FOLDER, "diff");
 
-        Assert.assertEquals(3, gsCount);
-        Assert.assertEquals("Gs3", newGsName.getValue());
-        Assert.assertNull(compareResult);
+        Assertions.assertEquals(3, gsCount);
+        Assertions.assertEquals("Gs3", newGsName.getValue());
+        Assertions.assertNull(compareResult);
     }
 
     @Test
@@ -381,7 +380,7 @@ public class PdfPagesTest extends ExtendedITextTest {
                 DESTINATION_FOLDER + "reorderInheritedFontResources.pdf",
                 SOURCE_FOLDER + "cmp_reorderInheritedFontResources.pdf",
                 DESTINATION_FOLDER, "diff_reorderInheritedFontResources_");
-        Assert.assertNull(compareResult);
+        Assertions.assertNull(compareResult);
     }
 
     @Test
@@ -400,9 +399,9 @@ public class PdfPagesTest extends ExtendedITextTest {
 
         for (PdfObject pageObject : pageDictionaries) {
             PdfDictionary pageDictionary = (PdfDictionary) pageObject;
-            Assert.assertEquals(PdfName.Page, pageDictionary.get(PdfName.Type));
+            Assertions.assertEquals(PdfName.Page, pageDictionary.get(PdfName.Type));
             PdfPage page = pdfDoc.getPage(pageDictionary);
-            Assert.assertEquals(pageDictionary, page.getPdfObject());
+            Assertions.assertEquals(pageDictionary, page.getPdfObject());
         }
         pdfDoc.close();
     }
@@ -417,7 +416,7 @@ public class PdfPagesTest extends ExtendedITextTest {
             pdfDoc.removePage(1);
         }
 
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareByContent(outPdf, SOURCE_FOLDER + "cmp_" + testName, DESTINATION_FOLDER));
     }
 
@@ -428,10 +427,10 @@ public class PdfPagesTest extends ExtendedITextTest {
 
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(filename));
 
-        Assert.assertEquals(0, pdfDoc.getPage(1).getPageSize().getLeft(), eps);
-        Assert.assertEquals(0, pdfDoc.getPage(1).getPageSize().getBottom(), eps);
-        Assert.assertEquals(595, pdfDoc.getPage(1).getPageSize().getRight(), eps);
-        Assert.assertEquals(842, pdfDoc.getPage(1).getPageSize().getTop(), eps);
+        Assertions.assertEquals(0, pdfDoc.getPage(1).getPageSize().getLeft(), eps);
+        Assertions.assertEquals(0, pdfDoc.getPage(1).getPageSize().getBottom(), eps);
+        Assertions.assertEquals(595, pdfDoc.getPage(1).getPageSize().getRight(), eps);
+        Assertions.assertEquals(842, pdfDoc.getPage(1).getPageSize().getTop(), eps);
 
         pdfDoc.close();
     }
@@ -446,7 +445,7 @@ public class PdfPagesTest extends ExtendedITextTest {
                 .setThumbnailImage(new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + imageSrc)));
         new PdfCanvas(page).setFillColor(ColorConstants.RED).rectangle(100, 100, 400, 400).fill();
         pdfDoc.close();
-        Assert.assertNull(new CompareTool()
+        Assertions.assertNull(new CompareTool()
                 .compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename, DESTINATION_FOLDER,
                         "diff"));
     }
@@ -456,7 +455,7 @@ public class PdfPagesTest extends ExtendedITextTest {
         String filename = "singlePageDocumentWithRotation.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + filename));
         PdfPage page = pdfDoc.getPage(1);
-        Assert.assertEquals("Inherited value is invalid", 90, page.getRotation());
+        Assertions.assertEquals(90, page.getRotation(), "Inherited value is invalid");
     }
 
     @Test
@@ -468,7 +467,7 @@ public class PdfPagesTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
         pdfDoc.close();
 
-        Assert.assertTrue(testPageTreeParentsValid(src) && testPageTreeParentsValid(dest));
+        Assertions.assertTrue(testPageTreeParentsValid(src) && testPageTreeParentsValid(dest));
     }
 
     @Test
@@ -483,13 +482,13 @@ public class PdfPagesTest extends ExtendedITextTest {
         pdfDoc = new PdfDocument(CompareTool.createOutputReader(dest));
         PdfObject pageDictWithInvalidContents = pdfDoc.getPdfObject(10);
         PdfArray invalidContentsArray = ((PdfDictionary) pageDictWithInvalidContents).getAsArray(PdfName.Contents);
-        Assert.assertEquals(5, invalidContentsArray.size());
+        Assertions.assertEquals(5, invalidContentsArray.size());
 
-        Assert.assertFalse(invalidContentsArray.get(0).isStream());
-        Assert.assertFalse(invalidContentsArray.get(1).isStream());
-        Assert.assertFalse(invalidContentsArray.get(2).isStream());
-        Assert.assertFalse(invalidContentsArray.get(3).isStream());
-        Assert.assertTrue(invalidContentsArray.get(4).isStream());
+        Assertions.assertFalse(invalidContentsArray.get(0).isStream());
+        Assertions.assertFalse(invalidContentsArray.get(1).isStream());
+        Assertions.assertFalse(invalidContentsArray.get(2).isStream());
+        Assertions.assertFalse(invalidContentsArray.get(3).isStream());
+        Assertions.assertTrue(invalidContentsArray.get(4).isStream());
     }
 
     private boolean testPageTreeParentsValid(String src) throws com.itextpdf.io.exceptions.IOException, java.io.IOException {
@@ -533,8 +532,8 @@ public class PdfPagesTest extends ExtendedITextTest {
         outputPdf.close();
         inputPdf.close();
 
-        Assert.assertNotNull(outputPdf.getXref());
-        Assert.assertEquals(500, outputPdf.getXref().size() - inputPdf.getXref().size());
+        Assertions.assertNotNull(outputPdf.getXref());
+        Assertions.assertEquals(500, outputPdf.getXref().size() - inputPdf.getXref().size());
     }
 
     @Test
@@ -549,7 +548,7 @@ public class PdfPagesTest extends ExtendedITextTest {
         PdfPage pageOne = pdfDoc.getPage(1);
         Rectangle actual = pageOne.getPageSize();
 
-        Assert.assertTrue(expected.equalsWithEpsilon(actual));
+        Assertions.assertTrue(expected.equalsWithEpsilon(actual));
 
     }
 
@@ -559,8 +558,8 @@ public class PdfPagesTest extends ExtendedITextTest {
              PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         ) {
             PdfDocument pdfDocument = new PdfDocument(reader, writer);
-            Exception e = Assert.assertThrows(PdfException.class, () -> pdfDocument.close());
-            Assert.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.INVALID_PAGE_STRUCTURE, 2), e.getMessage());
+            Exception e = Assertions.assertThrows(PdfException.class, () -> pdfDocument.close());
+            Assertions.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.INVALID_PAGE_STRUCTURE, 2), e.getMessage());
         }
     }
 
@@ -570,10 +569,10 @@ public class PdfPagesTest extends ExtendedITextTest {
              PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
              PdfDocument pdfDocument = new PdfDocument(reader, writer, new StampingProperties().useAppendMode());
         ) {
-            Assert.assertEquals(2, pdfDocument.getNumberOfPages());
-            Assert.assertNotNull(pdfDocument.getPage(1));
-            Exception e = Assert.assertThrows(PdfException.class, () -> pdfDocument.getPage(2));
-            Assert.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.INVALID_PAGE_STRUCTURE, 2), e.getMessage());
+            Assertions.assertEquals(2, pdfDocument.getNumberOfPages());
+            Assertions.assertNotNull(pdfDocument.getPage(1));
+            Exception e = Assertions.assertThrows(PdfException.class, () -> pdfDocument.getPage(2));
+            Assertions.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.INVALID_PAGE_STRUCTURE, 2), e.getMessage());
         }
     }
 
@@ -594,8 +593,8 @@ public class PdfPagesTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(reader);
         PdfPage pageOne = pdfDoc.getPage(1);
 
-        Exception e = Assert.assertThrows(PdfException.class, () -> pageOne.getPageSize());
-        Assert.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.WRONG_MEDIA_BOX_SIZE_TOO_FEW_ARGUMENTS, 3), e.getMessage());
+        Exception e = Assertions.assertThrows(PdfException.class, () -> pageOne.getPageSize());
+        Assertions.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.WRONG_MEDIA_BOX_SIZE_TOO_FEW_ARGUMENTS, 3), e.getMessage());
     }
 
     @Test
@@ -614,7 +613,7 @@ public class PdfPagesTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertTrue(page.getPdfObject().isModified());
+        Assertions.assertTrue(page.getPdfObject().isModified());
     }
 
     @Test
@@ -623,7 +622,7 @@ public class PdfPagesTest extends ExtendedITextTest {
         CustomPdfReader reader = new CustomPdfReader(srcFile);
         PdfDocument document = new PdfDocument(reader);
         document.close();
-        Assert.assertFalse(reader.pagesAreRead);
+        Assertions.assertFalse(reader.pagesAreRead);
     }
 
     @Test
@@ -639,8 +638,8 @@ public class PdfPagesTest extends ExtendedITextTest {
 
             // We do expect that the following line will not throw any NPE
             PdfPage copiedPage = documentToMerge.getPage(1).copyTo(resultantDocument);
-            Assert.assertEquals(1, copiedPage.getAnnotations().size());
-            Assert.assertNull(copiedPage.getAnnotations().get(0).getSubtype());
+            Assertions.assertEquals(1, copiedPage.getAnnotations().size());
+            Assertions.assertNull(copiedPage.getAnnotations().get(0).getSubtype());
 
             resultantDocument.addPage(copiedPage);
         }
@@ -660,8 +659,8 @@ public class PdfPagesTest extends ExtendedITextTest {
             reader.numOfPagesRead = 0;
         }
 
-        Assert.assertEquals(111, document.getNumberOfPages());
-        Assert.assertEquals(10, maxAmountOfPagesReadAtATime);
+        Assertions.assertEquals(111, document.getNumberOfPages());
+        Assertions.assertEquals(10, maxAmountOfPagesReadAtATime);
 
         document.close();
     }
@@ -678,13 +677,13 @@ public class PdfPagesTest extends ExtendedITextTest {
         PdfArray pageIndRefArray = ((PdfDictionary) pdfPages.getPdfObject()).getAsArray(PdfName.Kids);
 
         document.getPage(amountOfPages);
-        Assert.assertEquals(1, getAmountOfReadPages(pageIndRefArray));
+        Assertions.assertEquals(1, getAmountOfReadPages(pageIndRefArray));
 
         document.getPage(amountOfPages / 2);
-        Assert.assertEquals(2, getAmountOfReadPages(pageIndRefArray));
+        Assertions.assertEquals(2, getAmountOfReadPages(pageIndRefArray));
 
         document.getPage(1);
-        Assert.assertEquals(3, getAmountOfReadPages(pageIndRefArray));
+        Assertions.assertEquals(3, getAmountOfReadPages(pageIndRefArray));
 
         document.close();
     }
@@ -696,7 +695,7 @@ public class PdfPagesTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_implicitPagesTreeRebuilding.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFileName), CompareTool.createTestPdfWriter(outFileName));
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName,cmpFileName, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName,cmpFileName, DESTINATION_FOLDER));
     }
 
     @Test
@@ -759,27 +758,27 @@ public class PdfPagesTest extends ExtendedITextTest {
         for (int i = 0; i < totalPageCount; i++) {
             pdfDocument.addNewPage();
         }
-        Assert.assertEquals(2, pdfDocument.getCatalog().getPageTree().getParents().size());
-        Assert.assertEquals(PdfPagesTree.DEFAULT_LEAF_SIZE,
+        Assertions.assertEquals(2, pdfDocument.getCatalog().getPageTree().getParents().size());
+        Assertions.assertEquals(PdfPagesTree.DEFAULT_LEAF_SIZE,
                 pdfDocument.getCatalog().getPageTree().getParents().get(0).getCount());
 
         // Leave only one page in the first pages tree
         for (int i = PdfPagesTree.DEFAULT_LEAF_SIZE - 1; i >= 1; i--) {
             pdfDocument.removePage(i);
         }
-        Assert.assertEquals(2, pdfDocument.getCatalog().getPageTree().getParents().size());
-        Assert.assertEquals(1,
+        Assertions.assertEquals(2, pdfDocument.getCatalog().getPageTree().getParents().size());
+        Assertions.assertEquals(1,
                 pdfDocument.getCatalog().getPageTree().getParents().get(0).getCount());
 
         // TODO DEVSIX-5575 remove expected exception and add proper assertions
-        Assert.assertThrows(NullPointerException.class, () -> pdfDocument.close());
+        Assertions.assertThrows(NullPointerException.class, () -> pdfDocument.close());
     }
 
     private static void findAndAssertNullPages(PdfDocument pdfDocument, Set<Integer> nullPages) {
         for (Integer nullPage : nullPages) {
             int pageNum = (int)nullPage;
-            Exception  exception = Assert.assertThrows(PdfException.class,()-> pdfDocument.getPage(pageNum));
-            Assert.assertEquals(exception.getMessage() , MessageFormatUtil.format(
+            Exception  exception = Assertions.assertThrows(PdfException.class,()-> pdfDocument.getPage(pageNum));
+            Assertions.assertEquals(exception.getMessage() , MessageFormatUtil.format(
                     IoLogMessageConstant.PAGE_TREE_IS_BROKEN_FAILED_TO_RETRIEVE_PAGE, pageNum));
         }
     }
@@ -797,16 +796,16 @@ public class PdfPagesTest extends ExtendedITextTest {
     private static void verifyPagesOrder(String filename, int numOfPages) throws IOException {
         PdfReader reader = CompareTool.createOutputReader(filename);
         PdfDocument pdfDocument = new PdfDocument(reader);
-        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        Assertions.assertEquals(Boolean.FALSE, reader.hasRebuiltXref(), "Rebuilt");
 
         for (int i = 1; i <= pdfDocument.getNumberOfPages(); i++) {
             PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
-            Assert.assertNotNull(page);
+            Assertions.assertNotNull(page);
             PdfNumber number = page.getAsNumber(PageNum);
-            Assert.assertEquals("Page number", i, number.intValue());
+            Assertions.assertEquals(i, number.intValue(), "Page number");
         }
 
-        Assert.assertEquals("Number of pages", numOfPages, pdfDocument.getNumberOfPages());
+        Assertions.assertEquals(numOfPages, pdfDocument.getNumberOfPages(), "Number of pages");
         pdfDocument.close();
     }
 

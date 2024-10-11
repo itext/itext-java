@@ -25,19 +25,18 @@ package com.itextpdf.layout.splitting;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class DefaultSplitCharacterTest extends ExtendedITextTest {
     static List<Glyph> glyphs = new ArrayList<>();
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() {
         glyphs.add(new Glyph(1, '-'));
         glyphs.add(new Glyph(1, '5'));
@@ -62,27 +61,27 @@ public class DefaultSplitCharacterTest extends ExtendedITextTest {
 
     @Test
     public void beginCharacterTest() {
-        Assert.assertFalse(isPsplitCharacter(0));
+        Assertions.assertFalse(isPsplitCharacter(0));
     }
 
     @Test
     public void middleCharacterTest() {
-        Assert.assertTrue(isPsplitCharacter(4));
+        Assertions.assertTrue(isPsplitCharacter(4));
     }
 
     @Test
     public void lastCharacterTest() {
-        Assert.assertTrue(isPsplitCharacter(8));
+        Assertions.assertTrue(isPsplitCharacter(8));
     }
 
     @Test
     public void firstMiddleCharacterTest() {
-        Assert.assertTrue(isPsplitCharacter(9));
+        Assertions.assertTrue(isPsplitCharacter(9));
     }
 
     @Test
     public void lastMiddleCharacterTest() {
-        Assert.assertTrue(isPsplitCharacter(14));
+        Assertions.assertTrue(isPsplitCharacter(14));
     }
 
     private static boolean isPsplitCharacter(int glyphPos) {

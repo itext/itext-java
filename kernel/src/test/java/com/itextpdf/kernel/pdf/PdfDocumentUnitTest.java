@@ -33,25 +33,26 @@ import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.layer.PdfLayer;
 import com.itextpdf.kernel.pdf.layer.PdfOCProperties;
-import com.itextpdf.kernel.utils.IValidationChecker;
-import com.itextpdf.kernel.utils.ValidationContainer;
-import com.itextpdf.kernel.utils.ValidationContext;
+import com.itextpdf.kernel.validation.IValidationChecker;
+import com.itextpdf.kernel.validation.IValidationContext;
+import com.itextpdf.kernel.validation.ValidationContainer;
+import com.itextpdf.kernel.validation.ValidationType;
+import com.itextpdf.kernel.validation.context.PdfDocumentValidationContext;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-@Category(BouncyCastleUnitTest.class)
+@Tag("BouncyCastleUnitTest")
 public class PdfDocumentUnitTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/PdfDocumentUnitTest/";
@@ -73,13 +74,13 @@ public class PdfDocumentUnitTest extends ExtendedITextTest {
         encoding.put(PdfName.Differences, differences);
 
 
-        Assert.assertNull(initialFontDict.getIndirectReference());
+        Assertions.assertNull(initialFontDict.getIndirectReference());
         try (PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
             // prevent no pages exception on close
             doc.addNewPage();
 
             PdfType3Font font1 = (PdfType3Font) doc.getFont(initialFontDict);
-            Assert.assertNotNull(font1);
+            Assertions.assertNotNull(font1);
 
             // prevent no glyphs for type3 font on close
             font1.addGlyph('a', 0, 0, 0, 0, 0);
@@ -209,74 +210,14 @@ public class PdfDocumentUnitTest extends ExtendedITextTest {
                 outDocument.flushCopiedObjects(fromDocument);
                 fromDocument.copyPagesTo(2, 2, outDocument);
 
-                Assert.assertNotNull(outDocument.getCatalog());
+                Assertions.assertNotNull(outDocument.getCatalog());
                 PdfOCProperties ocProperties = outDocument.getCatalog().getOCProperties(false);
-                Assert.assertNotNull(ocProperties);
-                Assert.assertEquals(1, ocProperties.getLayers().size());
+                Assertions.assertNotNull(ocProperties);
+                Assertions.assertEquals(1, ocProperties.getLayers().size());
                 PdfLayer layer = ocProperties.getLayers().get(0);
-                Assert.assertTrue(layer.getPdfObject().isFlushed());
+                Assertions.assertTrue(layer.getPdfObject().isFlushed());
             }
         }
-    }
-
-    @Test
-    public void pdfDocumentInstanceNoWriterInfoAndConformanceLevelInitialization() throws IOException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + "pdfWithMetadata.pdf"));
-
-        Assert.assertNull(pdfDocument.info);
-        Assert.assertNull(pdfDocument.reader.pdfAConformanceLevel);
-
-        pdfDocument.close();
-
-        Assert.assertNull(pdfDocument.info);
-        Assert.assertNull(pdfDocument.reader.pdfAConformanceLevel);
-    }
-
-    @Test
-    public void pdfDocumentInstanceWriterInfoAndConformanceLevelInitialization() throws IOException {
-        PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(SOURCE_FOLDER + "pdfWithMetadata.pdf"), new PdfWriter(new ByteArrayOutputStream()));
-
-        Assert.assertNotNull(pdfDocument.info);
-        Assert.assertNull(pdfDocument.reader.pdfAConformanceLevel);
-
-        pdfDocument.close();
-
-        Assert.assertNotNull(pdfDocument.info);
-        Assert.assertNull(pdfDocument.reader.pdfAConformanceLevel);
-    }
-
-    @Test
-    public void extendedPdfDocumentNoWriterInfoAndConformanceLevelInitialization() throws IOException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + "pdfWithMetadata.pdf")) {
-            // This class instance extends pdfDocument
-        };
-
-        // TODO DEVSIX-5292 These fields shouldn't be initialized during the document's opening
-        Assert.assertNotNull(pdfDocument.info);
-        Assert.assertNotNull(pdfDocument.reader.pdfAConformanceLevel);
-
-        pdfDocument.close();
-
-        Assert.assertNotNull(pdfDocument.info);
-        Assert.assertNotNull(pdfDocument.reader.pdfAConformanceLevel);
-    }
-
-    @Test
-    public void extendedPdfDocumentWriterInfoAndConformanceLevelInitialization() throws IOException {
-        PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(SOURCE_FOLDER + "pdfWithMetadata.pdf"), new PdfWriter(new ByteArrayOutputStream())) {
-            // This class instance extends pdfDocument
-        };
-
-        Assert.assertNotNull(pdfDocument.info);
-        // TODO DEVSIX-5292 pdfAConformanceLevel shouldn't be initialized during the document's opening
-        Assert.assertNotNull(pdfDocument.reader.pdfAConformanceLevel);
-
-        pdfDocument.close();
-
-        Assert.assertNotNull(pdfDocument.info);
-        Assert.assertNotNull(pdfDocument.reader.pdfAConformanceLevel);
     }
 
     @Test
@@ -284,37 +225,31 @@ public class PdfDocumentUnitTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + "pdfWithMetadata.pdf"));
         pdfDocument.close();
 
-        Assert.assertThrows(PdfException.class, () -> pdfDocument.getDocumentInfo());
+        Assertions.assertThrows(PdfException.class, () -> pdfDocument.getDocumentInfo());
     }
 
     @Test
-    public void getDocumentInfoNotInitializedTest() throws IOException {
+    public void getDocumentInfoInitializationTest() throws IOException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + "pdfWithMetadata.pdf"));
-
-        Assert.assertNull(pdfDocument.info);
-        Assert.assertNotNull(pdfDocument.getDocumentInfo());
-
+        Assertions.assertNotNull(pdfDocument.getDocumentInfo());
         pdfDocument.close();
     }
 
     @Test
-    public void getPdfAConformanceLevelNotInitializedTest() throws IOException {
+    public void getPdfAConformanceLevelInitializationTest() throws IOException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + "pdfWithMetadata.pdf"));
-
-        Assert.assertNull(pdfDocument.reader.pdfAConformanceLevel);
-        Assert.assertNotNull(pdfDocument.reader.getPdfAConformanceLevel());
-
+        Assertions.assertTrue(pdfDocument.reader.getPdfConformance().isPdfAOrUa());
         pdfDocument.close();
     }
 
     private static void assertLayerNames(PdfDocument outDocument, List<String> layerNames) {
-        Assert.assertNotNull(outDocument.getCatalog());
+        Assertions.assertNotNull(outDocument.getCatalog());
         PdfOCProperties ocProperties = outDocument.getCatalog().getOCProperties(true);
-        Assert.assertNotNull(ocProperties);
-        Assert.assertEquals(layerNames.size(), ocProperties.getLayers().size());
+        Assertions.assertNotNull(ocProperties);
+        Assertions.assertEquals(layerNames.size(), ocProperties.getLayers().size());
         for (int i = 0; i < layerNames.size(); i++) {
             PdfLayer layer = ocProperties.getLayers().get(i);
-            Assert.assertNotNull(layer);
+            Assertions.assertNotNull(layer);
             PdfDocumentUnitTest.assertLayerNameEqual(layerNames.get(i), layer);
         }
     }
@@ -348,18 +283,18 @@ public class PdfDocumentUnitTest extends ExtendedITextTest {
 
     private static void assertLayerNameEqual(String name, PdfLayer layer) {
         PdfDictionary layerDictionary = layer.getPdfObject();
-        Assert.assertNotNull(layerDictionary);
-        Assert.assertNotNull(layerDictionary.get(PdfName.Name));
+        Assertions.assertNotNull(layerDictionary);
+        Assertions.assertNotNull(layerDictionary.get(PdfName.Name));
         String layerNameString = layerDictionary.get(PdfName.Name).toString();
-        Assert.assertEquals(name, layerNameString);
+        Assertions.assertEquals(name, layerNameString);
     }
 
     @Test
     public void cannotGetTagStructureForUntaggedDocumentTest() {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> pdfDoc.getTagStructureContext());
-        Assert.assertEquals(KernelExceptionMessageConstant.MUST_BE_A_TAGGED_DOCUMENT, exception.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.MUST_BE_A_TAGGED_DOCUMENT, exception.getMessage());
     }
 
     @Test
@@ -367,9 +302,9 @@ public class PdfDocumentUnitTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         pdfDoc.addNewPage(1);
         pdfDoc.close();
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> pdfDoc.addNewPage(2));
-        Assert.assertEquals(KernelExceptionMessageConstant.DOCUMENT_CLOSED_IT_IS_IMPOSSIBLE_TO_EXECUTE_ACTION,
+        Assertions.assertEquals(KernelExceptionMessageConstant.DOCUMENT_CLOSED_IT_IS_IMPOSSIBLE_TO_EXECUTE_ACTION,
                 exception.getMessage());
     }
 
@@ -377,9 +312,9 @@ public class PdfDocumentUnitTest extends ExtendedITextTest {
     public void cannotMovePageToZeroPositionTest() {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         pdfDoc.addNewPage();
-        Exception exception = Assert.assertThrows(IndexOutOfBoundsException.class,
+        Exception exception = Assertions.assertThrows(IndexOutOfBoundsException.class,
                 () -> pdfDoc.movePage(1, 0));
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 MessageFormatUtil.format(KernelExceptionMessageConstant.REQUESTED_PAGE_NUMBER_IS_OUT_OF_BOUNDS, 0),
                 exception.getMessage());
     }
@@ -388,9 +323,9 @@ public class PdfDocumentUnitTest extends ExtendedITextTest {
     public void cannotMovePageToNegativePosition() {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         pdfDoc.addNewPage();
-        Exception exception = Assert.assertThrows(IndexOutOfBoundsException.class,
+        Exception exception = Assertions.assertThrows(IndexOutOfBoundsException.class,
                 () -> pdfDoc.movePage(1, -1));
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 MessageFormatUtil.format(KernelExceptionMessageConstant.REQUESTED_PAGE_NUMBER_IS_OUT_OF_BOUNDS, -1),
                 exception.getMessage());
     }
@@ -399,9 +334,9 @@ public class PdfDocumentUnitTest extends ExtendedITextTest {
     public void cannotMovePageToOneMorePositionThanPagesNumberTest() {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         pdfDoc.addNewPage();
-        Exception exception = Assert.assertThrows(IndexOutOfBoundsException.class,
+        Exception exception = Assertions.assertThrows(IndexOutOfBoundsException.class,
                 () -> pdfDoc.movePage(1, 3));
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 MessageFormatUtil.format(KernelExceptionMessageConstant.REQUESTED_PAGE_NUMBER_IS_OUT_OF_BOUNDS, 3),
                 exception.getMessage());
     }
@@ -411,9 +346,9 @@ public class PdfDocumentUnitTest extends ExtendedITextTest {
         PdfDocument pdfDoc1 = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         PdfDocument pdfDoc2 = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         pdfDoc1.addNewPage(1);
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> pdfDoc2.checkAndAddPage(1, pdfDoc1.getPage(1)));
-        Assert.assertEquals(MessageFormatUtil.format(
+        Assertions.assertEquals(MessageFormatUtil.format(
                 KernelExceptionMessageConstant.PAGE_CANNOT_BE_ADDED_TO_DOCUMENT_BECAUSE_IT_BELONGS_TO_ANOTHER_DOCUMENT,
                 pdfDoc1, 1, pdfDoc2), exception.getMessage());
     }
@@ -423,9 +358,9 @@ public class PdfDocumentUnitTest extends ExtendedITextTest {
         PdfDocument pdfDoc1 = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         PdfDocument pdfDoc2 = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         pdfDoc1.addNewPage(1);
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> pdfDoc2.checkAndAddPage(pdfDoc1.getPage(1)));
-        Assert.assertEquals(MessageFormatUtil.format(
+        Assertions.assertEquals(MessageFormatUtil.format(
                 KernelExceptionMessageConstant.PAGE_CANNOT_BE_ADDED_TO_DOCUMENT_BECAUSE_IT_BELONGS_TO_ANOTHER_DOCUMENT,
                 pdfDoc1, 1, pdfDoc2), exception.getMessage());
     }
@@ -433,9 +368,9 @@ public class PdfDocumentUnitTest extends ExtendedITextTest {
     @Test
     public void cannotSetEncryptedPayloadInReadingModeTest() throws IOException {
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "setEncryptedPayloadInReadingModeTest.pdf"));
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> pdfDoc.setEncryptedPayload(null));
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 KernelExceptionMessageConstant.CANNOT_SET_ENCRYPTED_PAYLOAD_TO_DOCUMENT_OPENED_IN_READING_MODE,
                 exception.getMessage());
     }
@@ -449,16 +384,17 @@ public class PdfDocumentUnitTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(), writerProperties));
         PdfFileSpec fs = PdfFileSpec
                 .createExternalFileSpec(pdfDoc, SOURCE_FOLDER + "testPath");
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> pdfDoc.setEncryptedPayload(fs));
-        Assert.assertEquals(KernelExceptionMessageConstant.CANNOT_SET_ENCRYPTED_PAYLOAD_TO_ENCRYPTED_DOCUMENT,
+        Assertions.assertEquals(KernelExceptionMessageConstant.CANNOT_SET_ENCRYPTED_PAYLOAD_TO_ENCRYPTED_DOCUMENT,
                 exception.getMessage());
     }
 
     @Test
     public void checkEmptyIsoConformanceTest() {
         try (PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
-            AssertUtil.doesNotThrow(() -> doc.checkIsoConformance());
+            IValidationContext validationContext = new PdfDocumentValidationContext(doc, doc.getDocumentFonts());
+            AssertUtil.doesNotThrow(() -> doc.checkIsoConformance(validationContext));
         }
     }
 
@@ -469,25 +405,26 @@ public class PdfDocumentUnitTest extends ExtendedITextTest {
             final CustomValidationChecker checker = new CustomValidationChecker();
             container.addChecker(checker);
             doc.getDiContainer().register(ValidationContainer.class, container);
-            Assert.assertFalse(checker.documentValidationPerformed);
-            doc.checkIsoConformance();
-            Assert.assertTrue(checker.documentValidationPerformed);
+            Assertions.assertFalse(checker.documentValidationPerformed);
+            IValidationContext validationContext = new PdfDocumentValidationContext(doc, doc.getDocumentFonts());
+            doc.checkIsoConformance(validationContext);
+            Assertions.assertTrue(checker.documentValidationPerformed);
         }
     }
 
     private static class CustomValidationChecker implements IValidationChecker {
         public boolean documentValidationPerformed = false;
-        public boolean objectValidationPerformed = false;
 
         @Override
-        public void validateDocument(ValidationContext validationContext) {
-            documentValidationPerformed = true;
+        public void validate(IValidationContext validationContext) {
+            if (validationContext.getType() == ValidationType.PDF_DOCUMENT) {
+                documentValidationPerformed = true;
+            }
         }
 
         @Override
-        public void validateObject(Object obj, IsoKey key, PdfResources resources, PdfStream contentStream,
-                Object extra) {
-            objectValidationPerformed = true;
+        public boolean isPdfObjectReadyToFlush(PdfObject object) {
+            return true;
         }
     }
 }

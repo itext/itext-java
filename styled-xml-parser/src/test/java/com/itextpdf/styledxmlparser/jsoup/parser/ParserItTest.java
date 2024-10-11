@@ -24,16 +24,15 @@ package com.itextpdf.styledxmlparser.jsoup.parser;
 
 import com.itextpdf.styledxmlparser.jsoup.nodes.Document;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 /**
  * Longer running Parser tests.
  */
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class ParserItTest extends ExtendedITextTest {
 
     @Test
@@ -75,9 +74,9 @@ public class ParserItTest extends ExtendedITextTest {
         Document doc = Parser.parseBodyFragment(longBody.toString(), "");
 
         // Assert
-        Assert.assertEquals(2, doc.body().childNodeSize());
-        Assert.assertEquals(25000, doc.select("dd").size());
-        Assert.assertTrue((System.nanoTime() - start) / 1000000 < 20000); // I get ~ 1.5 seconds, but others have reported slower
+        Assertions.assertEquals(2, doc.body().childNodeSize());
+        Assertions.assertEquals(25000, doc.select("dd").size());
+        Assertions.assertTrue((System.nanoTime() - start) / 1000000 < 20000); // I get ~ 1.5 seconds, but others have reported slower
         // was originally much longer, or stack overflow.
     }
 }

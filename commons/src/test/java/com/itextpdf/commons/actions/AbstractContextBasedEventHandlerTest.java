@@ -28,13 +28,12 @@ import com.itextpdf.commons.actions.sequence.SequenceId;
 import com.itextpdf.commons.ecosystem.ITextTestEvent;
 import com.itextpdf.commons.ecosystem.TestMetaInfo;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class AbstractContextBasedEventHandlerTest extends ExtendedITextTest {
 
     @Test
@@ -43,7 +42,7 @@ public class AbstractContextBasedEventHandlerTest extends ExtendedITextTest {
         handler.onEvent(new ITextTestEvent(new SequenceId(), null,
                 "test-event",
                 ProductNameConstant.ITEXT_CORE));
-        Assert.assertTrue(handler.wasInvoked());
+        Assertions.assertTrue(handler.wasInvoked());
     }
 
     @Test
@@ -52,7 +51,7 @@ public class AbstractContextBasedEventHandlerTest extends ExtendedITextTest {
         handler.onEvent(new ITextTestEvent(new SequenceId(), null,
                 "test-event",
                 ProductNameConstant.PDF_HTML));
-        Assert.assertTrue(handler.wasInvoked());
+        Assertions.assertTrue(handler.wasInvoked());
     }
 
     @Test
@@ -61,14 +60,14 @@ public class AbstractContextBasedEventHandlerTest extends ExtendedITextTest {
         handler.onEvent(new ITextTestEvent(new SequenceId(), new TestMetaInfo("meta info from iTextCore"),
                 "test-event",
                 ProductNameConstant.ITEXT_CORE));
-        Assert.assertTrue(handler.wasInvoked());
+        Assertions.assertTrue(handler.wasInvoked());
     }
 
     @Test
     public void notITextEventIsIgnoredTest() {
         TestEventHandler handler = new TestEventHandler(UnknownContext.PERMISSIVE);
         handler.onEvent(new UnknownEvent());
-        Assert.assertFalse(handler.wasInvoked());
+        Assertions.assertFalse(handler.wasInvoked());
     }
 
     private static class TestEventHandler extends AbstractContextBasedEventHandler {

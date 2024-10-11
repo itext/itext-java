@@ -46,6 +46,7 @@ import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -406,7 +407,6 @@ public class SignatureUtil {
     }
 
     private static class ContentsChecker extends PdfReader {
-
         public static final int OBJECT_HEADER_OFFSET = 6;
         private long rangeExclusionStart;
         private long rangeExlusionEnd;
@@ -417,8 +417,7 @@ public class SignatureUtil {
 
         private boolean rangeIsCorrect = false;
 
-
-        public ContentsChecker(IRandomAccessSource byteSource, PdfDocument doc ) throws IOException {
+        public ContentsChecker(IRandomAccessSource byteSource, PdfDocument doc) throws IOException {
             super(byteSource, null);
             pdfDocument = doc;
         }
@@ -427,9 +426,27 @@ public class SignatureUtil {
             rangeIsCorrect = false;
             PdfDictionary signature = (PdfDictionary) signatureField.getValue();
             int[] byteRange = ((PdfArray) signature.get(PdfName.ByteRange)).toIntArray();
-            if (4 != byteRange.length || 0 != byteRange[0]
-                    || tokens.getSafeFile().length() != byteRange[2] + byteRange[3]) {
+            if (4 != byteRange.length || 0 != byteRange[0]) {
                 return false;
+            }
+            if (tokens.getSafeFile().length() < byteRange[2] + byteRange[3]) {
+                return false;
+            } else {
+                // We allow up to 4 EOL bytes to not be included into byte range.
+                tokens.seek(byteRange[2] + byteRange[3]);
+                try {
+                    String remainingBytes = tokens.readString(5);
+                    if (remainingBytes.length() > 4) {
+                        return false;
+                    }
+                    for (byte b : remainingBytes.getBytes(StandardCharsets.UTF_8)) {
+                        if (b != '\n' && b != '\r') {
+                            return false;
+                        }
+                    }
+                } catch (IOException e) {
+                    return false;
+                }
             }
 
             rangeExclusionStart = byteRange[1];

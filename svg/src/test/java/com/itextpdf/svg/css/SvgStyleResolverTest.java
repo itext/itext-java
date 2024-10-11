@@ -43,17 +43,15 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-@Category(UnitTest.class)
+@org.junit.jupiter.api.Tag("UnitTest")
 public class SvgStyleResolverTest extends ExtendedITextTest{
     private static final String baseUri = "./src/test/resources/com/itextpdf/svg/css/SvgStyleResolver/";
 
@@ -89,7 +87,7 @@ public class SvgStyleResolverTest extends ExtendedITextTest{
         expected.put("font-size", "12pt");
 
 
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -118,7 +116,7 @@ public class SvgStyleResolverTest extends ExtendedITextTest{
         // Attribute from external stylesheet
         expectedAttr.put(SvgConstants.Attributes.FILL, "black");
 
-        Assert.assertEquals(expectedAttr, attr);
+        Assertions.assertEquals(expectedAttr, attr);
     }
 
     @Test
@@ -148,7 +146,7 @@ public class SvgStyleResolverTest extends ExtendedITextTest{
         expectedAttr.put(SvgConstants.Attributes.FONT_SIZE,  "12pt");
         expectedAttr.put("type", "text/css");
 
-        Assert.assertEquals(expectedAttr, attr);
+        Assertions.assertEquals(expectedAttr, attr);
     }
 
     @Test
@@ -180,7 +178,7 @@ public class SvgStyleResolverTest extends ExtendedITextTest{
         final String url = attr.get("xlink:href");
 
         // Both variants(namely with triple and single slashes) are valid.
-        Assert.assertTrue(expectedUrl.equals(url) || expectedUrlAnotherValidVersion.equals(url));
+        Assertions.assertTrue(expectedUrl.equals(url) || expectedUrlAnotherValidVersion.equals(url));
     }
 
     @Test
@@ -197,7 +195,7 @@ public class SvgStyleResolverTest extends ExtendedITextTest{
         SvgStyleResolver sr = new SvgStyleResolver(node, processorContext);
         Map<String, String> attr = sr.resolveStyles(node, new SvgCssContext());
 
-        Assert.assertEquals("#testid", attr.get("xlink:href"));
+        Assertions.assertEquals("#testid", attr.get("xlink:href"));
     }
 
     @Test
@@ -208,7 +206,7 @@ public class SvgStyleResolverTest extends ExtendedITextTest{
         INode svgNode = new JsoupElementNode(svg);
         Map<String, String> resolvedStyles = styleResolver.resolveStyles(svgNode, new SvgCssContext());
 
-        Assert.assertEquals("white", resolvedStyles.get(SvgConstants.Attributes.STROKE));
+        Assertions.assertEquals("white", resolvedStyles.get(SvgConstants.Attributes.STROKE));
     }
 
     @Test
@@ -237,7 +235,7 @@ public class SvgStyleResolverTest extends ExtendedITextTest{
         expected.put("stroke-opacity", "1");
         expected.put("font-size", "12pt");
 
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -254,7 +252,7 @@ public class SvgStyleResolverTest extends ExtendedITextTest{
         SvgProcessorContext context = new SvgProcessorContext(new SvgConverterProperties());
         SvgStyleResolver resolver = new SvgStyleResolver(jSoupStyle, context);
         List<CssFontFaceRule> fontFaceRuleList = resolver.getFonts();
-        Assert.assertEquals(1, fontFaceRuleList.size());
-        Assert.assertEquals(2, fontFaceRuleList.get(0).getProperties().size());
+        Assertions.assertEquals(1, fontFaceRuleList.size());
+        Assertions.assertEquals(2, fontFaceRuleList.get(0).getProperties().size());
     }
 }

@@ -25,15 +25,14 @@ package com.itextpdf.io.source;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.IOException;
 import java.io.InputStream;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class RandomAccessSourceFactoryTest extends ExtendedITextTest {
 
     private final static String SOURCE_FILE = "./src/test/resources/com/itextpdf/io/source/RAF.txt";
@@ -51,18 +50,18 @@ public class RandomAccessSourceFactoryTest extends ExtendedITextTest {
 
             extractedRandomAccessSource.close();
 
-            Exception e = Assert.assertThrows(IllegalStateException.class, () -> rasInputStream.read());
-            Assert.assertEquals(IoExceptionMessageConstant.ALREADY_CLOSED, e.getMessage());
+            Exception e = Assertions.assertThrows(IllegalStateException.class, () -> rasInputStream.read());
+            Assertions.assertEquals(IoExceptionMessageConstant.ALREADY_CLOSED, e.getMessage());
 
-            e = Assert.assertThrows(IllegalStateException.class,
+            e = Assertions.assertThrows(IllegalStateException.class,
                     () -> randomAccessSource.get(0));
-            Assert.assertEquals(IoExceptionMessageConstant.ALREADY_CLOSED, e.getMessage());
-            e = Assert.assertThrows(IllegalStateException.class,
+            Assertions.assertEquals(IoExceptionMessageConstant.ALREADY_CLOSED, e.getMessage());
+            e = Assertions.assertThrows(IllegalStateException.class,
                     () -> randomAccessSource.get(0, new byte[10], 0, 10));
-            Assert.assertEquals(IoExceptionMessageConstant.ALREADY_CLOSED, e.getMessage());
-            e = Assert.assertThrows(IllegalStateException.class,
+            Assertions.assertEquals(IoExceptionMessageConstant.ALREADY_CLOSED, e.getMessage());
+            e = Assertions.assertThrows(IllegalStateException.class,
                     () -> randomAccessSource.length());
-            Assert.assertEquals(IoExceptionMessageConstant.ALREADY_CLOSED, e.getMessage());
+            Assertions.assertEquals(IoExceptionMessageConstant.ALREADY_CLOSED, e.getMessage());
         }
     }
 
@@ -76,9 +75,9 @@ public class RandomAccessSourceFactoryTest extends ExtendedITextTest {
             IRandomAccessSource extractedRandomAccessSource = new RandomAccessSourceFactory()
                     .extractOrCreateSource(rasInputStream);
 
-            Assert.assertEquals(72, rasInputStream.read());
-            Assert.assertEquals(72, extractedRandomAccessSource.get(0));
-            Assert.assertEquals(extractedRandomAccessSource, rasInputStream.getSource());
+            Assertions.assertEquals(72, rasInputStream.read());
+            Assertions.assertEquals(72, extractedRandomAccessSource.get(0));
+            Assertions.assertEquals(extractedRandomAccessSource, rasInputStream.getSource());
         }
     }
 }

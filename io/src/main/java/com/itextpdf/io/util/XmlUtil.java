@@ -33,7 +33,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 /**
  * This file is a helper class for internal usage only.
- * Be aware that its API and functionality may be changed in future.
+ * Be aware that its API and functionality may be changed in the future.
  */
 public final class XmlUtil {
 

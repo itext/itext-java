@@ -24,12 +24,11 @@ package com.itextpdf.layout.layout;
 
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class LayoutAreaTest extends ExtendedITextTest {
 
     @Test
@@ -39,12 +38,12 @@ public class LayoutAreaTest extends ExtendedITextTest {
         LayoutArea cloneAsLayoutArea = ((LayoutArea) originalRootLayoutArea).clone();
         RootLayoutArea cloneAsRootLayoutArea = (RootLayoutArea) originalRootLayoutArea.clone();
 
-        Assert.assertTrue((originalRootLayoutArea).getBBox() != cloneAsLayoutArea.getBBox());
+        Assertions.assertTrue((originalRootLayoutArea).getBBox() != cloneAsLayoutArea.getBBox());
 
-        Assert.assertEquals(RootLayoutArea.class, cloneAsRootLayoutArea.getClass());
+        Assertions.assertEquals(RootLayoutArea.class, cloneAsRootLayoutArea.getClass());
 
-        Assert.assertEquals(RootLayoutArea.class, cloneAsLayoutArea.getClass());
-        Assert.assertFalse(((RootLayoutArea) cloneAsLayoutArea).isEmptyArea());
+        Assertions.assertEquals(RootLayoutArea.class, cloneAsLayoutArea.getClass());
+        Assertions.assertFalse(((RootLayoutArea) cloneAsLayoutArea).isEmptyArea());
     }
 
 

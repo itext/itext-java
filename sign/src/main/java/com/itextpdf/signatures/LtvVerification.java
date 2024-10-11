@@ -34,6 +34,7 @@ import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationExcept
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteBuffer;
+import com.itextpdf.kernel.crypto.OID.X509Extensions;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.CompressionConstants;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -47,7 +48,6 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfVersion;
-import com.itextpdf.signatures.OID.X509Extensions;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.logs.SignLogMessageConstant;
 
@@ -56,21 +56,20 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.CRLException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
-import java.security.cert.CRLException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -254,11 +253,13 @@ public class LtvVerification {
         }
         if (certInclude == CertificateInclusion.YES) {
             for (X509Certificate processedCert : processedCerts) {
-                validationData.certs.add(processedCert.getEncoded());
+                List<byte[]> certs = validationData.getCerts();
+                certs.add(processedCert.getEncoded());
+                validationData.setCerts(certs);
             }
         }
         
-        if (validationData.crls.size() == 0 && validationData.ocsps.size() == 0) {
+        if (validationData.getCrls().isEmpty() && validationData.getOcsps().isEmpty()) {
             return false;
         }
         validated.put(getSignatureHashKey(signatureName), validationData);
@@ -287,14 +288,20 @@ public class LtvVerification {
         ValidationData vd = new ValidationData();
         if (ocsps != null) {
             for (byte[] ocsp : ocsps) {
-                vd.ocsps.add(LtvVerification.buildOCSPResponse(ocsp));
+                List<byte[]> ocspsArr = vd.getOcsps();
+                ocspsArr.add(LtvVerification.buildOCSPResponse(ocsp));
+                vd.setOcsps(ocspsArr);
             }
         }
         if (crls != null) {
-            vd.crls.addAll(crls);
+            List<byte[]> crlsArr = vd.getCrls();
+            crlsArr.addAll(crls);
+            vd.setCrls(crlsArr);
         }
         if (certs != null) {
-            vd.certs.addAll(certs);
+            List<byte[]> certsArr = vd.getCerts();
+            certsArr.addAll(certs);
+            vd.setCerts(certsArr);
         }
         validated.put(getSignatureHashKey(signatureName), vd);
         return true;
@@ -304,7 +311,7 @@ public class LtvVerification {
      * Merges the validation with any validation already in the document or creates a new one.
      */
     public void merge() {
-        if (used || validated.size() == 0) {
+        if (used || validated.isEmpty()) {
             return;
         }
         used = true;
@@ -392,7 +399,9 @@ public class LtvVerification {
             ocspEnc = ocsp.getEncoded(cert, getParent(cert, certificateChain), null);
             if (ocspEnc != null && BOUNCY_CASTLE_FACTORY.createCertificateStatus().getGood().equals(
                     OcspClientBouncyCastle.getCertificateStatus(ocspEnc))) {
-                validationData.ocsps.add(LtvVerification.buildOCSPResponse(ocspEnc));
+                List<byte[]> ocsps = validationData.getOcsps();
+                ocsps.add(LtvVerification.buildOCSPResponse(ocspEnc));
+                validationData.setOcsps(ocsps);
                 revocationDataAdded = true;
                 LOGGER.info("OCSP added");
                 if (certOption == CertificateOption.ALL_CERTIFICATES) {
@@ -409,16 +418,18 @@ public class LtvVerification {
             Collection<byte[]> cims = crl.getEncoded(cert, null);
             if (cims != null) {
                 for (byte[] cim : cims) {
+                    revocationDataAdded = true;
                     boolean dup = false;
-                    for (byte[] b : validationData.crls) {
+                    for (byte[] b : validationData.getCrls()) {
                         if (Arrays.equals(b, cim)) {
                             dup = true;
                             break;
                         }
                     }
                     if (!dup) {
-                        validationData.crls.add(cim);
-                        revocationDataAdded = true;
+                        List<byte[]> crls = validationData.getCrls();
+                        crls.add(cim);
+                        validationData.setCrls(crls);
                         LOGGER.info("CRL added");
                         if (certOption == CertificateOption.ALL_CERTIFICATES) {
                             Certificate[] certsList = issuingCertificateRetriever.getCrlIssuerCertificates(
@@ -568,7 +579,7 @@ public class LtvVerification {
             PdfArray crl = new PdfArray();
             PdfArray cert = new PdfArray();
             PdfDictionary vri = new PdfDictionary();
-            for (byte[] b : validated.get(vkey).crls) {
+            for (byte[] b : validated.get(vkey).getCrls()) {
                 PdfStream ps = new PdfStream(b);
                 ps.setCompressionLevel(CompressionConstants.DEFAULT_COMPRESSION);
                 ps.makeIndirect(document);
@@ -576,14 +587,14 @@ public class LtvVerification {
                 crls.add(ps);
                 crls.setModified();
             }
-            for (byte[] b : validated.get(vkey).ocsps) {
+            for (byte[] b : validated.get(vkey).getOcsps()) {
                 PdfStream ps = new PdfStream(b);
                 ps.setCompressionLevel(CompressionConstants.DEFAULT_COMPRESSION);
                 ocsp.add(ps);
                 ocsps.add(ps);
                 ocsps.setModified();
             }
-            for (byte[] b : validated.get(vkey).certs) {
+            for (byte[] b : validated.get(vkey).getCerts()) {
                 PdfStream ps = new PdfStream(b);
                 ps.setCompressionLevel(CompressionConstants.DEFAULT_COMPRESSION);
                 ps.makeIndirect(document);
@@ -591,15 +602,15 @@ public class LtvVerification {
                 certs.add(ps);
                 certs.setModified();
             }
-            if (ocsp.size() > 0) {
+            if (!ocsp.isEmpty()) {
                 ocsp.makeIndirect(document);
                 vri.put(PdfName.OCSP, ocsp);
             }
-            if (crl.size() > 0) {
+            if (!crl.isEmpty()) {
                 crl.makeIndirect(document);
                 vri.put(PdfName.CRL, crl);
             }
-            if (cert.size() > 0) {
+            if (!cert.isEmpty()) {
                 cert.makeIndirect(document);
                 vri.put(PdfName.Cert, cert);
             }
@@ -609,15 +620,15 @@ public class LtvVerification {
         vrim.makeIndirect(document);
         vrim.setModified();
         dss.put(PdfName.VRI, vrim);
-        if (ocsps.size() > 0) {
+        if (!ocsps.isEmpty()) {
             ocsps.makeIndirect(document);
             dss.put(PdfName.OCSPs, ocsps);
         }
-        if (crls.size() > 0) {
+        if (!crls.isEmpty()) {
             crls.makeIndirect(document);
             dss.put(PdfName.CRLs, crls);
         }
-        if (certs.size() > 0) {
+        if (!certs.isEmpty()) {
             certs.makeIndirect(document);
             dss.put(PdfName.Certs, certs);
         }
@@ -628,9 +639,63 @@ public class LtvVerification {
     }
 
     private static class ValidationData {
-        public List<byte[]> crls = new ArrayList<>();
-        public List<byte[]> ocsps = new ArrayList<>();
-        public List<byte[]> certs = new ArrayList<>();
+        private List<byte[]> crls = new ArrayList<>();
+        private List<byte[]> ocsps = new ArrayList<>();
+        private List<byte[]> certs = new ArrayList<>();
+
+        /**
+         * Sets the crls byte array.
+         *
+         * @param crls crls
+         */
+        public void setCrls(List<byte[]> crls) {
+            this.crls = crls;
+        }
+
+        /**
+         * Retrieves Crls byte array.
+         *
+         * @return crls
+         */
+        public List<byte[]> getCrls() {
+            return crls;
+        }
+
+        /**
+         * Sets the ocsps array.
+         *
+         * @param ocsps ocsps
+         */
+        public void setOcsps(List<byte[]> ocsps) {
+            this.ocsps = ocsps;
+        }
+
+        /**
+         * Retrieves ocsps byte array.
+         *
+         * @return ocsps
+         */
+        public List<byte[]> getOcsps() {
+            return ocsps;
+        }
+
+        /**
+         * Sets the certs byte array.
+         *
+         * @param certs certs
+         */
+        public void setCerts(List<byte[]> certs) {
+            this.certs = certs;
+        }
+
+        /**
+         * Retrieves cert byte array.
+         *
+         * @return cert
+         */
+        public List<byte[]> getCerts() {
+            return certs;
+        }
     }
 
     private Certificate[] retrieveMissingCertificates(Certificate[] certChain) {
@@ -644,5 +709,6 @@ public class LtvVerification {
         }
         return restoredChain.values().toArray(new Certificate[0]);
     }
+
 
 }

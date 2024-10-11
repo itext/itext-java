@@ -22,8 +22,14 @@
  */
 package com.itextpdf.nativeimage;
 
+import com.itextpdf.commons.datastructures.ISimpleList;
+import com.itextpdf.commons.datastructures.SimpleArrayList;
+import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.kernel.di.pagetree.IPageTreeListFactory;
+import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 
+import com.itextpdf.kernel.pdf.PdfWriter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -31,5 +37,13 @@ class KernelTest {
     @Test
     void staticPdfNames() {
         Assertions.assertTrue(PdfName.staticNames.size() > 800);
+    }
+
+    @Test
+    void testDefaultPagesFactory(){
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        IPageTreeListFactory factory = pdfDocument.getDiContainer().getInstance(IPageTreeListFactory.class);
+        ISimpleList<String> f = factory.createList(null);
+        Assertions.assertInstanceOf(SimpleArrayList.class, f);
     }
 }

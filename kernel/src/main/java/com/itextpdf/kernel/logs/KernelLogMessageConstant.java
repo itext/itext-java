@@ -98,6 +98,18 @@ public final class KernelLogMessageConstant {
     public static final String XOBJECT_STRUCT_PARENT_INDEX_MISSED_AND_RECREATED =
             "XObject has no StructParents index in its stream, so index is recreated";
 
+    //TODO DEVSIX-8490 remove this log message when implemented
+    public static final String DUPLICATE_ENTRIES_IN_ORDER_ARRAY_REMOVED = "Duplicated entries in order array are " +
+            "removed";
+
+    public static final String FINGERPRINT_DISABLED_BUT_NO_REQUIRED_LICENCE = "Fingerprint disabling is only " +
+            "available in non AGPL mode. Fingerprint will be added at the end of the document.";
+    public static final String ALGORITHM_NOT_FROM_SPEC =
+            "Requested algorithm might not be supported by the pdf specification.";
+
+    public static final String MEMORYLIMITAWAREHANDLER_OVERRIDE_CREATENEWINSTANCE_METHOD =
+            "MemoryLimitsAwareHandler#createNewInstance method must be overriden.";
+
     private KernelLogMessageConstant() {
         //Private constructor will prevent the instantiation of this class directly
     }

@@ -36,12 +36,10 @@ import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-@Category(UnitTest.class)
+@org.junit.jupiter.api.Tag("UnitTest")
 public class DefaultSvgNodeRendererFactoryTest extends ExtendedITextTest {
 
     private final ISvgNodeRendererFactory fact = new DummySvgNodeFactory();
@@ -62,8 +60,8 @@ public class DefaultSvgNodeRendererFactoryTest extends ExtendedITextTest {
         Element protectedElement = new Element(Tag.valueOf("argumented"), "");
         IElementNode tag = new JsoupElementNode(protectedElement);
         ISvgNodeRenderer renderer = fact.createSvgNodeRendererForTag(tag, null);
-        Assert.assertTrue(renderer instanceof DummyArgumentedConstructorSvgNodeRenderer);
-        Assert.assertEquals(15, ((DummyArgumentedConstructorSvgNodeRenderer) renderer).number);
+        Assertions.assertTrue(renderer instanceof DummyArgumentedConstructorSvgNodeRenderer);
+        Assertions.assertEquals(15, ((DummyArgumentedConstructorSvgNodeRenderer) renderer).number);
     }
 
     @Test
@@ -71,7 +69,7 @@ public class DefaultSvgNodeRendererFactoryTest extends ExtendedITextTest {
         Element element = new Element(Tag.valueOf("dummy"), "");
         IElementNode tag = new JsoupElementNode(element);
         ISvgNodeRenderer childRenderer = fact.createSvgNodeRendererForTag(tag, null);
-        Assert.assertTrue(childRenderer instanceof DummySvgNodeRenderer);
+        Assertions.assertTrue(childRenderer instanceof DummySvgNodeRenderer);
     }
 
     private static class LocalSvgNodeRendererFactory extends DefaultSvgNodeRendererFactory {
@@ -94,7 +92,7 @@ public class DefaultSvgNodeRendererFactoryTest extends ExtendedITextTest {
         Element element = new Element(Tag.valueOf("test"), "");
         IElementNode tag = new JsoupElementNode(element);
         ISvgNodeRenderer rend = factory.createSvgNodeRendererForTag(tag, null);
-        Assert.assertTrue(rend instanceof DummyProcessableSvgNodeRenderer);
+        Assertions.assertTrue(rend instanceof DummyProcessableSvgNodeRenderer);
     }
 
     @Test
@@ -106,6 +104,6 @@ public class DefaultSvgNodeRendererFactoryTest extends ExtendedITextTest {
         ISvgNodeRenderer parentRenderer = fact.createSvgNodeRendererForTag(parentTag, null);
         ISvgNodeRenderer childRenderer = fact.createSvgNodeRendererForTag(childTag, parentRenderer);
 
-        Assert.assertEquals(parentRenderer, childRenderer.getParent());
+        Assertions.assertEquals(parentRenderer, childRenderer.getParent());
     }
 }

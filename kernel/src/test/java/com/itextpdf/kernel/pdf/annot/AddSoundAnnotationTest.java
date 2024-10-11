@@ -30,17 +30,16 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.io.InputStream;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class AddSoundAnnotationTest extends ExtendedITextTest {
 
     public static final String sourceFolder =
@@ -50,12 +49,12 @@ public class AddSoundAnnotationTest extends ExtendedITextTest {
 
     private static final String RIFF_TAG = "RIFF";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -80,7 +79,7 @@ public class AddSoundAnnotationTest extends ExtendedITextTest {
 
         String errorMessage = new CompareTool().compareByContent(filename, cmp, destinationFolder);
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -105,7 +104,7 @@ public class AddSoundAnnotationTest extends ExtendedITextTest {
 
         String errorMessage = new CompareTool().compareByContent(filename, cmpPdf, destinationFolder);
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -133,7 +132,7 @@ public class AddSoundAnnotationTest extends ExtendedITextTest {
 
         String errorMessage = new CompareTool().compareByContent(filename, cmpPdf, destinationFolder);
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -155,7 +154,7 @@ public class AddSoundAnnotationTest extends ExtendedITextTest {
 
         String errorMessage = new CompareTool().compareByContent(filename, cmpPdf, destinationFolder);
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -177,7 +176,7 @@ public class AddSoundAnnotationTest extends ExtendedITextTest {
 
         String errorMessage = new CompareTool().compareByContent(filename, cmpPdf, destinationFolder);
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 

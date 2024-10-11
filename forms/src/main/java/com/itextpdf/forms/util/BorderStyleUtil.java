@@ -43,11 +43,8 @@ public final class BorderStyleUtil {
      * @param annotation the annotation to set border characteristics to.
      */
     public static void applyBorderProperty(IPropertyContainer container, PdfFormAnnotation annotation) {
-        Border border = container.<Border>getProperty(Property.BORDER);
-        if (border == null) {
-            // For now, we set left border to an annotation, but appropriate borders for an element will be drawn.
-            border = container.<Border>getProperty(Property.BORDER_LEFT);
-        }
+        // For now, we set left border to an annotation, but appropriate borders for an element will be drawn.
+        Border border = container.<Border>getProperty(Property.BORDER_LEFT);
         if (border != null) {
             annotation.setBorderStyle(transformBorderTypeToBorderStyleDictionary(border.getType()));
             annotation.setBorderColor(border.getColor());

@@ -25,6 +25,7 @@ package com.itextpdf.layout.element;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
+import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
 import com.itextpdf.layout.tagging.IAccessibleElement;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.renderer.IRenderer;
@@ -45,7 +46,7 @@ public class Text extends AbstractElement<Text> implements ILeafElement, IAccess
      */
     public Text(String text) {
         if (null == text) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(LayoutExceptionMessageConstant.TEXT_CONTENT_CANNOT_BE_NULL);
         }
         this.text = text;
     }

@@ -26,7 +26,6 @@ import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
-import com.itextpdf.kernel.pdf.IsoKey;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfIndirectReference;
@@ -38,6 +37,7 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfStream;
+import com.itextpdf.kernel.validation.context.TagStructElementValidationContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -375,7 +375,7 @@ class ParentTreeHandler {
         if (!parentsOfMcrs.isEmpty()) {
             parentsOfMcrs.makeIndirect(structTreeRoot.getDocument());
             parentTree.addEntry(pageStructParentIndex, parentsOfMcrs);
-            structTreeRoot.getDocument().checkIsoConformance(parentsOfMcrs, IsoKey.TAG_STRUCTURE_ELEMENT);
+            structTreeRoot.getDocument().checkIsoConformance(new TagStructElementValidationContext(parentsOfMcrs));
             parentsOfMcrs.flush();
             return true;
         }

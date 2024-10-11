@@ -43,42 +43,42 @@ public class GposLookupType5 extends OpenTableLookup {
 
     @Override
     public boolean transformOne(GlyphLine line) {
-        if (line.idx >= line.end)
+        if (line.getIdx() >= line.getEnd())
             return false;
-        if (openReader.isSkip(line.get(line.idx).getCode(), lookupFlag)) {
-            line.idx++;
+        if (openReader.isSkip(line.get(line.getIdx()).getCode(), lookupFlag)) {
+            line.setIdx(line.getIdx()+1);
             return false;
         }
 
         boolean changed = false;
         GlyphIndexer ligatureGlyphIndexer = null;
         for (MarkToLigature mb : marksligatures) {
-            OtfMarkRecord omr = mb.marks.get(line.get(line.idx).getCode());
+            OtfMarkRecord omr = mb.marks.get(line.get(line.getIdx()).getCode());
             if (omr == null)
                 continue;
             if (ligatureGlyphIndexer == null) {
                 ligatureGlyphIndexer = new GlyphIndexer();
-                ligatureGlyphIndexer.idx = line.idx;
-                ligatureGlyphIndexer.line = line;
+                ligatureGlyphIndexer.setIdx(line.getIdx());
+                ligatureGlyphIndexer.setLine(line);
                 while (true) {
                     ligatureGlyphIndexer.previousGlyph(openReader, lookupFlag);
-                    if (ligatureGlyphIndexer.glyph == null) {
+                    if (ligatureGlyphIndexer.getGlyph() == null) {
                         break;
                     }
                     // not mark => ligature glyph
-                    if (!mb.marks.containsKey(ligatureGlyphIndexer.glyph.getCode())) {
+                    if (!mb.marks.containsKey(ligatureGlyphIndexer.getGlyph().getCode())) {
                         break;
                     }
                 }
-                if (ligatureGlyphIndexer.glyph == null) {
+                if (ligatureGlyphIndexer.getGlyph() == null) {
                     break;
                 }
             }
-            List<GposAnchor[]> componentAnchors = mb.ligatures.get(ligatureGlyphIndexer.glyph.getCode());
+            List<GposAnchor[]> componentAnchors = mb.ligatures.get(ligatureGlyphIndexer.getGlyph().getCode());
             if (componentAnchors == null) {
                 continue;
             }
-            int markClass = omr.markClass;
+            int markClass = omr.getMarkClass();
             // TODO DEVSIX-3732 For complex cases like (glyph1, glyph2, mark, glyph3) and
             //  (glyph1, mark, glyph2, glyph3) when the base glyphs compose a ligature and the mark
             //  is attached to the ligature afterwards, mark should be placed in the corresponding anchor
@@ -95,11 +95,11 @@ public class GposLookupType5 extends OpenTableLookup {
             for (int component = componentAnchors.size() - 1; component >= 0; component--) {
                 if (componentAnchors.get(component)[markClass] != null) {
                     GposAnchor baseAnchor = componentAnchors.get(component)[markClass];
-                    GposAnchor markAnchor = omr.anchor;
-                    line.set(line.idx, new Glyph(line.get(line.idx),
-                            baseAnchor.XCoordinate - markAnchor.XCoordinate,
-                            baseAnchor.YCoordinate - markAnchor.YCoordinate,
-                            0, 0, ligatureGlyphIndexer.idx - line.idx));
+                    GposAnchor markAnchor = omr.getAnchor();
+                    line.set(line.getIdx(), new Glyph(line.get(line.getIdx()),
+                            baseAnchor.getXCoordinate() - markAnchor.getXCoordinate(),
+                            baseAnchor.getYCoordinate() - markAnchor.getYCoordinate(),
+                            0, 0, ligatureGlyphIndexer.getIdx() - line.getIdx()));
                     changed = true;
                     break;
                 }
@@ -108,7 +108,7 @@ public class GposLookupType5 extends OpenTableLookup {
             break;
         }
 
-        line.idx++;
+        line.setIdx(line.getIdx()+1);
         return changed;
     }
 

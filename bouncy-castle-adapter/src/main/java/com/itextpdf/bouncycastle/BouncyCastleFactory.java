@@ -114,6 +114,7 @@ import com.itextpdf.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilderBC;
 import com.itextpdf.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilderBC;
 import com.itextpdf.bouncycastle.cms.jcajce.JceKeyAgreeEnvelopedRecipientBC;
 import com.itextpdf.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipientBC;
+import com.itextpdf.bouncycastle.crypto.modes.GCMBlockCipherBC;
 import com.itextpdf.bouncycastle.openssl.PEMParserBC;
 import com.itextpdf.bouncycastle.openssl.jcajce.JcaPEMKeyConverterBC;
 import com.itextpdf.bouncycastle.openssl.jcajce.JceOpenSSLPKCS8DecryptorProviderBuilderBC;
@@ -221,6 +222,7 @@ import com.itextpdf.commons.bouncycastle.cms.jcajce.IJcaSignerInfoGeneratorBuild
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJcaSimpleSignerInfoVerifierBuilder;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJceKeyAgreeEnvelopedRecipient;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJceKeyTransEnvelopedRecipient;
+import com.itextpdf.commons.bouncycastle.crypto.modes.IGCMBlockCipher;
 import com.itextpdf.commons.bouncycastle.openssl.IPEMParser;
 import com.itextpdf.commons.bouncycastle.openssl.jcajce.IJcaPEMKeyConverter;
 import com.itextpdf.commons.bouncycastle.openssl.jcajce.IJceOpenSSLPKCS8DecryptorProviderBuilder;
@@ -245,6 +247,7 @@ import java.io.Reader;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.PublicKey;
@@ -257,6 +260,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import javax.crypto.Cipher;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import org.bouncycastle.asn1.ASN1BitString;
 import org.bouncycastle.asn1.ASN1Enumerated;
 import org.bouncycastle.asn1.ASN1GeneralizedTime;
@@ -314,6 +319,11 @@ import org.bouncycastle.cms.CMSTypedData;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.cms.jcajce.JceKeyAgreeEnvelopedRecipient;
 import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
+import org.bouncycastle.crypto.digests.SHA256Digest;
+import org.bouncycastle.crypto.generators.HKDFBytesGenerator;
+import org.bouncycastle.crypto.params.HKDFParameters;
+import org.bouncycastle.crypto.engines.AESEngine;
+import org.bouncycastle.crypto.modes.GCMBlockCipher;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
@@ -1580,6 +1590,15 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
      * {@inheritDoc}
      */
     @Override
+    public IX500Name createX500Name(IASN1Sequence s) {
+        return new X500NameBC(X500Name.getInstance(((ASN1SequenceBC) s).getASN1Sequence()));
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public IRespID createRespID(IX500Name x500Name) {
         return new RespIDBC(x500Name);
     }
@@ -1846,8 +1865,64 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
         return cipher.doFinal(abyte0);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void isEncryptionFeatureSupported(int encryptionType, boolean withCertificate) {
         //All features supported
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] generateHKDF(byte[] inputKey, byte[] salt, byte[] info) {
+        HKDFBytesGenerator hkdfBytesGenerator = new HKDFBytesGenerator(new SHA256Digest());
+        HKDFParameters hkdfParameters = new HKDFParameters(inputKey, salt, info);
+        hkdfBytesGenerator.init(hkdfParameters);
+        byte[] hkdf = new byte[32];
+        hkdfBytesGenerator.generateBytes(hkdf, 0, 32);
+
+        return hkdf;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] generateHMACSHA256Token(byte[] key, byte[] data) throws NoSuchAlgorithmException, InvalidKeyException {
+        Mac mac = Mac.getInstance("HMacSHA256", this.getProvider());
+        mac.init(new SecretKeySpec(key, "RawBytes"));
+        return mac.doFinal(data);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] generateEncryptedKeyWithAES256NoPad(byte[] key, byte[] kek) throws GeneralSecurityException {
+        Cipher cipher = Cipher.getInstance("AESWrap", this.getProvider());
+        cipher.init(Cipher.WRAP_MODE, new SecretKeySpec(kek, "AESWrap"));
+        return cipher.wrap(new SecretKeySpec(key, "AESWrap"));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] generateDecryptedKeyWithAES256NoPad(byte[] key, byte[] kek) throws GeneralSecurityException {
+        Cipher cipher = Cipher.getInstance("AESWrap", this.getProvider());
+        cipher.init(Cipher.UNWRAP_MODE, new SecretKeySpec(kek, "AESWrap"));
+        return cipher.unwrap(key, "AESWrap", Cipher.SECRET_KEY).getEncoded();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IGCMBlockCipher createGCMBlockCipher() {
+        GCMBlockCipher cipher = (GCMBlockCipher) GCMBlockCipher.newInstance(AESEngine.newInstance());
+        return new GCMBlockCipherBC(cipher);
     }
 }
