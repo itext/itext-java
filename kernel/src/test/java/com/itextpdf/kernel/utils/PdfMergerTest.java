@@ -107,6 +107,27 @@ public class PdfMergerTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
+    })
+    public void mergeDocumentOutlinesWithExplicitRemoteDestinationTest() throws IOException, InterruptedException {
+        String resultFile = destinationFolder + "mergeDocumentWithRemoteGoToTest.pdf";
+        String filename1 = sourceFolder + "docWithRemoteGoTo.pdf";
+        String filename2 = sourceFolder + "doc1.pdf";
+        PdfDocument sourceDocument1 = new PdfDocument(new PdfReader(filename1));
+        PdfDocument sourceDocument2 = new PdfDocument(new PdfReader(filename2));
+
+        PdfMerger resultDocument = new PdfMerger(new PdfDocument(CompareTool.createTestPdfWriter(resultFile)));
+        resultDocument.merge(sourceDocument1, 1, 1);
+        resultDocument.merge(sourceDocument2, 1, 1);
+        resultDocument.close();
+        sourceDocument1.close();
+        sourceDocument2.close();
+
+        Assertions.assertNull(new CompareTool().compareByContent(resultFile, sourceFolder + "cmp_mergeDocumentWithRemoteGoToTest.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
     public void mergeDocumentWithCycleRefInAcroFormTest() throws IOException, InterruptedException {
         String filename1 = sourceFolder + "doc1.pdf";
         String filename2 = sourceFolder + "pdfWithCycleRefInAnnotationParent.pdf";

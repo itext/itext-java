@@ -710,15 +710,13 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         PdfDestination d = null;
         if (dest.isArray()) {
             PdfObject pageObject = ((PdfArray) dest).get(0);
-            for (PdfPage oldPage : page2page.keySet()) {
-                if (oldPage.getPdfObject() == pageObject) {
-                    // in the copiedArray old page ref will be correctly replaced by the new page ref
-                    // as this page is already copied
-                    final PdfArray copiedArray = (PdfArray) dest.copyTo(toDocument, false,
-                            NullCopyFilter.getInstance());
-                    d = new PdfExplicitDestination(copiedArray);
-                    break;
-                }
+            //12.3.2.2 Explicit destinations
+            if (pageObject.isNumber()) {
+                //Handle remote and embedded destinations
+                d = createDestinationFromPageNum(dest, toDocument);
+            } else {
+                //Handle all other destinations
+                d = createDestinationFromPageRef(dest, page2page, toDocument, pageObject);
             }
         } else if (dest.isString() || dest.isName()) {
             PdfNameTree destsTree = getNameTree(PdfName.Dests);
@@ -762,6 +760,26 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
             getDocument().getCatalog().getPdfObject().put(PdfName.OCProperties, pdfDictionary);
         }
         return getPdfObject().getAsDictionary(PdfName.OCProperties);
+    }
+
+    private PdfDestination createDestinationFromPageNum(PdfObject dest, PdfDocument toDocument) {
+        return new PdfExplicitDestination((PdfArray) dest.copyTo(toDocument, false,
+                NullCopyFilter.getInstance()));
+    }
+
+    private static PdfDestination createDestinationFromPageRef(PdfObject dest, Map<PdfPage, PdfPage> page2page,
+            PdfDocument toDocument, PdfObject pageObject) {
+        for (PdfPage oldPage : page2page.keySet()) {
+            if (oldPage.getPdfObject() == pageObject) {
+                // in the copiedArray old page ref will be correctly replaced by the new page ref
+                // as this page is already copied
+                final PdfArray copiedArray = (PdfArray) dest.copyTo(toDocument, false,
+                        NullCopyFilter.getInstance());
+                return new PdfExplicitDestination(copiedArray);
+            }
+        }
+
+        return null;
     }
 
     private boolean isEqualSameNameDestExist(Map<PdfPage, PdfPage> page2page, PdfDocument toDocument,
