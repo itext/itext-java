@@ -27,12 +27,11 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class BarcodeUnitTest extends ExtendedITextTest {
 
     private static final double EPS = 0.0001;
@@ -47,8 +46,8 @@ public class BarcodeUnitTest extends ExtendedITextTest {
         barcode.setCode("123456789");
         barcode.setGenerateChecksum(true);
         Rectangle barcodeSize = barcode.getBarcodeSize();
-        Assert.assertEquals(33.656, barcodeSize.getHeight(), EPS);
-        Assert.assertEquals(101.6, barcodeSize.getWidth(), EPS);
+        Assertions.assertEquals(33.656, barcodeSize.getHeight(), EPS);
+        Assertions.assertEquals(101.6, barcodeSize.getWidth(), EPS);
     }
 
     @Test
@@ -61,7 +60,7 @@ public class BarcodeUnitTest extends ExtendedITextTest {
         barcode.setCode("123456789");
         barcode.setGenerateChecksum(false);
         Rectangle barcodeSize = barcode.getBarcodeSize();
-        Assert.assertEquals(33.656, barcodeSize.getHeight(), EPS);
-        Assert.assertEquals(92.0, barcodeSize.getWidth(), EPS);
+        Assertions.assertEquals(33.656, barcodeSize.getHeight(), EPS);
+        Assertions.assertEquals(92.0, barcodeSize.getWidth(), EPS);
     }
 }

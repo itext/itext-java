@@ -1,0 +1,3 @@
+This software uses the following test resources under the following licenses:
+| NotoSansMyanmar-Regular.ttf | OFL-1.1 | LICENSE-OFL.txt |
+| DejaVuSans.ttf | BitstreamCopyright | BitstreamCopyright.txt |

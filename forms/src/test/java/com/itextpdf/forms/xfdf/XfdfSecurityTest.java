@@ -27,17 +27,16 @@ import com.itextpdf.kernel.utils.DefaultSafeXmlParserFactory;
 import com.itextpdf.kernel.utils.XmlProcessorCreator;
 import com.itextpdf.test.ExceptionTestUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class XfdfSecurityTest extends ExtendedITextTest {
 
     private static final String XFDF_WITH_XXE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> \n"
@@ -59,10 +58,10 @@ public class XfdfSecurityTest extends ExtendedITextTest {
             throws IOException {
         XmlProcessorCreator.setXmlParserFactory(null);
         try (InputStream inputStream = new ByteArrayInputStream(XFDF_WITH_XXE.getBytes(StandardCharsets.UTF_8))) {
-            Exception e = Assert.assertThrows(PdfException.class,
+            Exception e = Assertions.assertThrows(PdfException.class,
                     () -> XfdfFileUtils.createXfdfDocumentFromStream(inputStream)
             );
-            Assert.assertEquals(ExceptionTestUtil.getDoctypeIsDisallowedExceptionMessage(), e.getMessage());
+            Assertions.assertEquals(ExceptionTestUtil.getDoctypeIsDisallowedExceptionMessage(), e.getMessage());
         }
     }
 
@@ -71,10 +70,10 @@ public class XfdfSecurityTest extends ExtendedITextTest {
             throws IOException {
         XmlProcessorCreator.setXmlParserFactory(new SecurityTestXmlParserFactory());
         try (InputStream inputStream = new ByteArrayInputStream(XFDF_WITH_XXE.getBytes(StandardCharsets.UTF_8))) {
-            Exception e = Assert.assertThrows(PdfException.class,
+            Exception e = Assertions.assertThrows(PdfException.class,
                     () -> XfdfFileUtils.createXfdfDocumentFromStream(inputStream)
             );
-            Assert.assertEquals("Test message", e.getMessage());
+            Assertions.assertEquals("Test message", e.getMessage());
         }
     }
 
@@ -82,9 +81,9 @@ public class XfdfSecurityTest extends ExtendedITextTest {
     public void customXmlParserCreateNewXfdfDocumentExceptionTest()
             throws IOException {
         XmlProcessorCreator.setXmlParserFactory(new ExceptionTestXmlParserFactory());
-        Exception e = Assert.assertThrows(PdfException.class,
+        Exception e = Assertions.assertThrows(PdfException.class,
                 () -> XfdfFileUtils.createNewXfdfDocument()
         );
-        Assert.assertEquals(ExceptionTestUtil.getXxeTestMessage(), e.getMessage());
+        Assertions.assertEquals(ExceptionTestUtil.getXxeTestMessage(), e.getMessage());
     }
 }

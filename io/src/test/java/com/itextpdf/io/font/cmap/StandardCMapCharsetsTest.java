@@ -27,13 +27,12 @@ import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class StandardCMapCharsetsTest extends ExtendedITextTest {
 
     private static final String TEST_STRING_WITH_DIFFERENT_UNICODES = "eр؊\u0E84\uA515뀏";
@@ -55,7 +54,7 @@ public class StandardCMapCharsetsTest extends ExtendedITextTest {
             byte[] actual = encoder.encodeUnicodeCodePoint(cp);
             buffer.append(actual);
         }
-        Assert.assertArrayEquals(BYTES_REPRESENTATION_OF_TEST_STRING, buffer.toByteArray());
+        Assertions.assertArrayEquals(BYTES_REPRESENTATION_OF_TEST_STRING, buffer.toByteArray());
     }
     @Test
     public void ucs2TryToEncodeSymbolNotFromBmpStringTest() {
@@ -64,9 +63,9 @@ public class StandardCMapCharsetsTest extends ExtendedITextTest {
         // It is U+10437 symbol (Deseret Small Letter Yee)
         String str = "\uD801\uDC37";
         int cp = TextUtil.convertToUtf32(str)[0];
-        Exception e = Assert.assertThrows(ITextException.class, () ->
+        Exception e = Assertions.assertThrows(ITextException.class, () ->
                 encoder.encodeUnicodeCodePoint(cp));
-        Assert.assertEquals(IoExceptionMessageConstant.ONLY_BMP_ENCODING, e.getMessage());
+        Assertions.assertEquals(IoExceptionMessageConstant.ONLY_BMP_ENCODING, e.getMessage());
     }
     @Test
     public void ucs2EncodingCodePointTest() {
@@ -74,7 +73,7 @@ public class StandardCMapCharsetsTest extends ExtendedITextTest {
         // U+0E84 (Lao Letter Kho Tam) from BMP
         int codePoint = 3716;
         byte[] actual = encoder.encodeUnicodeCodePoint(codePoint);
-        Assert.assertArrayEquals(new byte[] {14, (byte)0x84}, actual);
+        Assertions.assertArrayEquals(new byte[] {14, (byte)0x84}, actual);
     }
 
     @Test
@@ -85,7 +84,7 @@ public class StandardCMapCharsetsTest extends ExtendedITextTest {
             byte[] actual = encoder.encodeUnicodeCodePoint(cp);
             buffer.append(actual);
         }
-        Assert.assertArrayEquals(BYTES_REPRESENTATION_OF_TEST_STRING, buffer.toByteArray());
+        Assertions.assertArrayEquals(BYTES_REPRESENTATION_OF_TEST_STRING, buffer.toByteArray());
         // UTF-16 represents full BMP, so all symbols should be correctly processed
     }
     @Test
@@ -95,7 +94,7 @@ public class StandardCMapCharsetsTest extends ExtendedITextTest {
         // It is U+10437 symbol (Deseret Small Letter Yee)
         String str = "\uD801\uDC37";
         byte[] actual = encoder.encodeUnicodeCodePoint(TextUtil.convertToUtf32(str)[0]);
-        Assert.assertArrayEquals(new byte[] {(byte)0xD8, 1, (byte)0xDC, 55}, actual);
+        Assertions.assertArrayEquals(new byte[] {(byte)0xD8, 1, (byte)0xDC, 55}, actual);
     }
 
     @Test
@@ -103,8 +102,8 @@ public class StandardCMapCharsetsTest extends ExtendedITextTest {
         CMapCharsetEncoder encoder = StandardCMapCharsets.getEncoder("UniGB-UCS2-H");
         // It is U+10437 symbol (Deseret Small Letter Yee) outside BMP
         int codePoint = 66615;
-        Exception e = Assert.assertThrows(ITextException.class, () -> encoder.encodeUnicodeCodePoint(codePoint));
-        Assert.assertEquals(IoExceptionMessageConstant.ONLY_BMP_ENCODING, e.getMessage());
+        Exception e = Assertions.assertThrows(ITextException.class, () -> encoder.encodeUnicodeCodePoint(codePoint));
+        Assertions.assertEquals(IoExceptionMessageConstant.ONLY_BMP_ENCODING, e.getMessage());
     }
 
     @Test
@@ -113,7 +112,7 @@ public class StandardCMapCharsetsTest extends ExtendedITextTest {
         // U+0E84 (Lao Letter Kho Tam) from BMP
         int codePoint = 3716;
         byte[] actual = encoder.encodeUnicodeCodePoint(codePoint);
-        Assert.assertArrayEquals(new byte[] {14, (byte)0x84}, actual);
+        Assertions.assertArrayEquals(new byte[] {14, (byte)0x84}, actual);
     }
 
     @Test
@@ -122,7 +121,7 @@ public class StandardCMapCharsetsTest extends ExtendedITextTest {
         // It is U+10437 symbol (Deseret Small Letter Yee) outside BMP
         int codePoint = 66615;
         byte[] actual = encoder.encodeUnicodeCodePoint(codePoint);
-        Assert.assertArrayEquals(new byte[] {(byte)0xD8, 1, (byte)0xDC, 55}, actual);
+        Assertions.assertArrayEquals(new byte[] {(byte)0xD8, 1, (byte)0xDC, 55}, actual);
     }
 
     @Test
@@ -130,7 +129,7 @@ public class StandardCMapCharsetsTest extends ExtendedITextTest {
         try {
             StandardCMapCharsets.disableCharsetEncoders();
             CMapCharsetEncoder encoder = StandardCMapCharsets.getEncoder("UniGB-UTF16-H");
-            Assert.assertNull(encoder);
+            Assertions.assertNull(encoder);
         } finally {
             StandardCMapCharsets.enableCharsetEncoders();
         }
@@ -141,11 +140,11 @@ public class StandardCMapCharsetsTest extends ExtendedITextTest {
         try {
             StandardCMapCharsets.disableCharsetEncoders();
             CMapCharsetEncoder encoder = StandardCMapCharsets.getEncoder("UniGB-UTF16-H");
-            Assert.assertNull(encoder);
+            Assertions.assertNull(encoder);
         } finally {
             StandardCMapCharsets.enableCharsetEncoders();
             CMapCharsetEncoder encoder = StandardCMapCharsets.getEncoder("UniGB-UTF16-H");
-            Assert.assertNotNull(encoder);
+            Assertions.assertNotNull(encoder);
         }
     }
 }

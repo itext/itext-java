@@ -26,12 +26,11 @@ import com.itextpdf.styledxmlparser.jsoup.Jsoup;
 import com.itextpdf.styledxmlparser.jsoup.select.Elements;
 import com.itextpdf.styledxmlparser.jsoup.select.NodeFilter;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class LeafNodeTest extends ExtendedITextTest {
 
     @Test
@@ -39,38 +38,38 @@ public class LeafNodeTest extends ExtendedITextTest {
         // test to make sure we're not setting attributes on all nodes right away
         String body = "<p>One <!-- Two --> Three<![CDATA[Four]]></p>";
         Document doc = Jsoup.parse(body);
-        Assert.assertTrue(hasAnyAttributes(doc)); // should have one - the base uri on the doc
+        Assertions.assertTrue(hasAnyAttributes(doc)); // should have one - the base uri on the doc
 
         Element html = doc.child(0);
-        Assert.assertFalse(hasAnyAttributes(html));
+        Assertions.assertFalse(hasAnyAttributes(html));
 
         String s = doc.outerHtml();
-        Assert.assertFalse(hasAnyAttributes(html));
+        Assertions.assertFalse(hasAnyAttributes(html));
 
         Elements els = doc.select("p");
         Element p = els.first();
-        Assert.assertEquals(1, els.size());
-        Assert.assertFalse(hasAnyAttributes(html));
+        Assertions.assertEquals(1, els.size());
+        Assertions.assertFalse(hasAnyAttributes(html));
 
         els = doc.select("p.none");
-        Assert.assertFalse(hasAnyAttributes(html));
+        Assertions.assertFalse(hasAnyAttributes(html));
 
         String id = p.id();
-        Assert.assertEquals("", id);
-        Assert.assertFalse(p.hasClass("Foobs"));
-        Assert.assertFalse(hasAnyAttributes(html));
+        Assertions.assertEquals("", id);
+        Assertions.assertFalse(p.hasClass("Foobs"));
+        Assertions.assertFalse(hasAnyAttributes(html));
 
         p.addClass("Foobs");
-        Assert.assertTrue(p.hasClass("Foobs"));
-        Assert.assertTrue(hasAnyAttributes(html));
-        Assert.assertTrue(hasAnyAttributes(p));
+        Assertions.assertTrue(p.hasClass("Foobs"));
+        Assertions.assertTrue(hasAnyAttributes(html));
+        Assertions.assertTrue(hasAnyAttributes(p));
 
         Attributes attributes = p.attributes();
-        Assert.assertTrue(attributes.hasKey("class"));
+        Assertions.assertTrue(attributes.hasKey("class"));
         p.clearAttributes();
-        Assert.assertFalse(hasAnyAttributes(p));
-        Assert.assertFalse(hasAnyAttributes(html));
-        Assert.assertFalse(attributes.hasKey("class"));
+        Assertions.assertFalse(hasAnyAttributes(p));
+        Assertions.assertFalse(hasAnyAttributes(html));
+        Assertions.assertFalse(attributes.hasKey("class"));
     }
 
     private boolean hasAnyAttributes(Node node) {

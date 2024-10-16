@@ -35,12 +35,14 @@ import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfSignatureFormField;
 import com.itextpdf.forms.fields.SignatureFormFieldBuilder;
+import com.itextpdf.forms.form.element.SignatureFieldAppearance;
 import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.EncryptionConstants;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -54,7 +56,6 @@ import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
-import com.itextpdf.pdfa.PdfAAgnosticPdfDocument;
 import com.itextpdf.pdfa.PdfADocument;
 import com.itextpdf.signatures.PdfSigner.ISignatureEvent;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
@@ -62,7 +63,6 @@ import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -73,13 +73,13 @@ import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.Calendar;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-@Category(BouncyCastleUnitTest.class)
+@Tag("BouncyCastleUnitTest")
 public class PdfSignerUnitTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
@@ -96,13 +96,13 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
     private PrivateKey pk;
 
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         Security.addProvider(FACTORY.getProvider());
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
-    @Before
+    @BeforeEach
     public void init()
             throws IOException, CertificateException, AbstractPKCSException, AbstractOperatorCreationException {
         pk = PemFileHelper.readFirstKey(CERTS_SRC + "signCertRsa01.pem", PASSWORD);
@@ -117,17 +117,19 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
                 new ByteArrayInputStream(createEncryptedDocumentWithoutWidgetAnnotation()),
                 new ReaderProperties().setPassword(OWNER)), new ByteArrayOutputStream(), new StampingProperties());
         signer.cryptoDictionary = new PdfSignature();
-        signer.setPageRect(new Rectangle(100, 100, 0, 0));
+        SignerProperties signerProperties = new SignerProperties()
+                .setPageRect(new Rectangle(100, 100, 0, 0));
+        signer.setSignerProperties(signerProperties);
 
         PdfAcroForm acroForm = PdfFormCreator.getAcroForm(signer.document, true);
-        signer.createNewSignatureFormField(acroForm, signer.fieldName);
-        PdfFormField formField = acroForm.getField(signer.fieldName);
+        signer.createNewSignatureFormField(acroForm, signerProperties.getFieldName());
+        PdfFormField formField = acroForm.getField(signerProperties.getFieldName());
 
         PdfDictionary formFieldDictionary = formField.getPdfObject();
-        Assert.assertNotNull(formFieldDictionary);
-        Assert.assertTrue(formFieldDictionary.containsKey(PdfName.AP));
+        Assertions.assertNotNull(formFieldDictionary);
+        Assertions.assertTrue(formFieldDictionary.containsKey(PdfName.AP));
         PdfFormXObject ap = new PdfFormXObject(formFieldDictionary.getAsDictionary(PdfName.AP).getAsStream(PdfName.N));
-        Assert.assertTrue(new Rectangle(0, 0).equalsWithEpsilon(ap.getBBox().toRectangle()));
+        Assertions.assertTrue(new Rectangle(0, 0).equalsWithEpsilon(ap.getBBox().toRectangle()));
     }
 
     @Test
@@ -138,17 +140,19 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
                 new PdfReader(new ByteArrayInputStream(createEncryptedDocumentWithoutWidgetAnnotation()),
                         new ReaderProperties().setPassword(OWNER)), new ByteArrayOutputStream(), new StampingProperties());
         signer.cryptoDictionary = new PdfSignature();
-        signer.setPageRect(new Rectangle(100, 100, 10, 10));
         PdfSigFieldLock fieldLock = new PdfSigFieldLock();
-        signer.fieldLock = fieldLock;
+        SignerProperties signerProperties = new SignerProperties()
+                .setPageRect(new Rectangle(100, 100, 10, 10))
+                .setFieldLockDict(fieldLock);
+        signer.setSignerProperties(signerProperties);
 
         PdfAcroForm acroForm = PdfFormCreator.getAcroForm(signer.document, true);
-        Assert.assertEquals(fieldLock, signer.createNewSignatureFormField(acroForm, signer.fieldName));
-        PdfFormField formField = acroForm.getField(signer.fieldName);
+        Assertions.assertEquals(fieldLock, signer.createNewSignatureFormField(acroForm, signerProperties.getFieldName()));
+        PdfFormField formField = acroForm.getField(signerProperties.getFieldName());
 
         PdfDictionary formFieldDictionary = formField.getPdfObject();
-        Assert.assertNotNull(formFieldDictionary);
-        Assert.assertTrue(formFieldDictionary.containsKey(PdfName.AP));
+        Assertions.assertNotNull(formFieldDictionary);
+        Assertions.assertTrue(formFieldDictionary.containsKey(PdfName.AP));
     }
 
     @Test
@@ -158,12 +162,14 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
                 new ByteArrayOutputStream(),
                 new StampingProperties());
         signer.cryptoDictionary = new PdfSignature();
-        signer.setPageRect(new Rectangle(100, 100, 10, 10));
-        signer.fieldLock = new PdfSigFieldLock();
+        SignerProperties signerProperties = new SignerProperties()
+                .setPageRect(new Rectangle(100, 100, 10, 10))
+                .setFieldLockDict(new PdfSigFieldLock());
+        signer.setSignerProperties(signerProperties);
 
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, FACTORY.getProviderName());
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
-        Assert.assertTrue(signer.closed);
+        Assertions.assertTrue(signer.closed);
     }
 
     @Test
@@ -175,10 +181,10 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, FACTORY.getProviderName());
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
 
-        Exception e = Assert.assertThrows(PdfException.class, () ->
+        Exception e = Assertions.assertThrows(PdfException.class, () ->
                 signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0,
                         PdfSigner.CryptoStandard.CADES));
-        Assert.assertEquals(SignExceptionMessageConstant.THIS_INSTANCE_OF_PDF_SIGNER_ALREADY_CLOSED, e.getMessage());
+        Assertions.assertEquals(SignExceptionMessageConstant.THIS_INSTANCE_OF_PDF_SIGNER_ALREADY_CLOSED, e.getMessage());
     }
 
     @Test
@@ -190,9 +196,9 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, FACTORY.getProviderName());
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
 
-        Exception e = Assert.assertThrows(PdfException.class, () ->
+        Exception e = Assertions.assertThrows(PdfException.class, () ->
                 signer.signExternalContainer(new ExternalBlankSignatureContainer(new PdfDictionary()), 0));
-        Assert.assertEquals(SignExceptionMessageConstant.THIS_INSTANCE_OF_PDF_SIGNER_ALREADY_CLOSED, e.getMessage());
+        Assertions.assertEquals(SignExceptionMessageConstant.THIS_INSTANCE_OF_PDF_SIGNER_ALREADY_CLOSED, e.getMessage());
     }
 
     @Test
@@ -210,21 +216,23 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
                 new PdfReader(new ByteArrayInputStream(outputStream.toByteArray()), new ReaderProperties().setPassword(OWNER)),
                 new ByteArrayOutputStream(), new StampingProperties());
         signer.cryptoDictionary = new PdfSignature();
-        signer.setPageRect(new Rectangle(100, 100, 0, 0));
+        SignerProperties signerProperties = new SignerProperties()
+                .setPageRect(new Rectangle(100, 100, 0, 0));
+        signer.setSignerProperties(signerProperties);
 
         widgetAnnotation = (PdfWidgetAnnotation) signer.document.getPage(1).getAnnotations().get(0);
         PdfAcroForm acroForm = PdfFormCreator.getAcroForm(signer.document, true);
         PdfFormField formField = new ExtendedPdfSignatureFormField(widgetAnnotation, signer.document);
-        formField.setFieldName(signer.fieldName);
+        formField.setFieldName(signerProperties.getFieldName());
         acroForm.addField(formField);
         signer.populateExistingSignatureFormField(acroForm);
-        formField = acroForm.getField(signer.fieldName);
+        formField = acroForm.getField(signerProperties.getFieldName());
 
         PdfDictionary formFieldDictionary = formField.getPdfObject();
-        Assert.assertNotNull(formFieldDictionary);
-        Assert.assertTrue(formFieldDictionary.containsKey(PdfName.AP));
+        Assertions.assertNotNull(formFieldDictionary);
+        Assertions.assertTrue(formFieldDictionary.containsKey(PdfName.AP));
         PdfFormXObject ap = new PdfFormXObject(formFieldDictionary.getAsDictionary(PdfName.AP).getAsStream(PdfName.N));
-        Assert.assertTrue(new Rectangle(0, 0).equalsWithEpsilon(ap.getBBox().toRectangle()));
+        Assertions.assertTrue(new Rectangle(0, 0).equalsWithEpsilon(ap.getBBox().toRectangle()));
     }
 
     @Test
@@ -243,20 +251,56 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
                 new ByteArrayOutputStream(), new StampingProperties());
         signer.cryptoDictionary = new PdfSignature();
         PdfSigFieldLock fieldLock = new PdfSigFieldLock();
-        signer.fieldLock = fieldLock;
-        signer.setPageRect(new Rectangle(100, 100, 10, 10));
+        SignerProperties signerProperties = new SignerProperties()
+                .setPageRect(new Rectangle(100, 100, 10, 10))
+                .setFieldLockDict(fieldLock);
+        signer.setSignerProperties(signerProperties);
 
         widgetAnnotation = (PdfWidgetAnnotation) signer.document.getPage(1).getAnnotations().get(0);
         PdfAcroForm acroForm = PdfFormCreator.getAcroForm(signer.document, true);
         PdfFormField formField = new ExtendedPdfSignatureFormField(widgetAnnotation, signer.document);
-        formField.setFieldName(signer.fieldName);
+        formField.setFieldName(signerProperties.getFieldName());
         acroForm.addField(formField);
-        Assert.assertEquals(signer.populateExistingSignatureFormField(acroForm), fieldLock);
-        formField = acroForm.getField(signer.fieldName);
+        Assertions.assertEquals(signer.populateExistingSignatureFormField(acroForm), fieldLock);
+        formField = acroForm.getField(signerProperties.getFieldName());
 
         PdfDictionary formFieldDictionary = formField.getPdfObject();
-        Assert.assertNotNull(formFieldDictionary);
-        Assert.assertTrue(formFieldDictionary.containsKey(PdfName.AP));
+        Assertions.assertNotNull(formFieldDictionary);
+        Assertions.assertTrue(formFieldDictionary.containsKey(PdfName.AP));
+    }
+
+    @Test
+    public void setAlternativeName() throws IOException, GeneralSecurityException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PdfDocument document = new PdfDocument(new PdfWriter(outputStream, new WriterProperties()));
+        document.setTagged();
+        document.addNewPage();
+        document.close();
+
+        ByteArrayOutputStream signedOutputStream = new ByteArrayOutputStream();
+        PdfSigner signer = new PdfSigner(
+                new PdfReader(new ByteArrayInputStream(outputStream.toByteArray())), signedOutputStream,
+                new StampingProperties());
+        SignerProperties signerProperties = new SignerProperties()
+                .setFieldName("Signature1")
+                .setPageNumber(1)
+                .setPageRect(new Rectangle(100, 100, 10, 10));
+        signer.setSignerProperties(signerProperties);
+
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID);
+        appearance.setContent("Some text");
+        appearance.getAccessibilityProperties().setAlternateDescription("Alternate description");
+        signerProperties.setSignatureAppearance(appearance);
+
+        IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, FACTORY.getProviderName());
+        signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
+
+        signer.document.close();
+
+        PdfDocument signedDocument = new PdfDocument(new PdfReader(new ByteArrayInputStream(signedOutputStream.toByteArray())), new PdfWriter(new ByteArrayOutputStream()));
+        PdfAcroForm acroForm = PdfFormCreator.getAcroForm(signedDocument, true);
+        PdfFormField formField = acroForm.getField(signerProperties.getFieldName());
+        Assertions.assertEquals("Alternate description", formField.getPdfObject().get(PdfName.TU).toString());
     }
 
     @Test
@@ -265,9 +309,9 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
         PdfSigner signer = new PdfSigner(
                 new PdfReader(new ByteArrayInputStream(createSimpleDocument())),
                 new ByteArrayOutputStream(), DESTINATION_FOLDER + tempFileName, new StampingProperties());
-        Assert.assertNotNull(signer.tempFile);
-        Assert.assertEquals(tempFileName, signer.tempFile.getName());
-        Assert.assertNull(signer.temporaryOS);
+        Assertions.assertNotNull(signer.tempFile);
+        Assertions.assertEquals(tempFileName, signer.tempFile.getName());
+        Assertions.assertNull(signer.temporaryOS);
     }
 
 
@@ -277,8 +321,10 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PdfSigner signer = new PdfSigner(reader, outputStream, new StampingProperties());
 
-        signer.setFieldName(null);
-        Assert.assertEquals("Signature1", signer.getFieldName());
+        SignerProperties signerProperties = new SignerProperties()
+                .setFieldName(null);
+        signer.setSignerProperties(signerProperties);
+        Assertions.assertEquals("Signature1", signer.getSignerProperties().getFieldName());
     }
 
     @Test
@@ -288,9 +334,10 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
         PdfSigner signer = new PdfSigner(reader, outputStream, new StampingProperties());
 
         String testName = "test_name";
-        signer.setFieldName(testName);
-        signer.setFieldName(null);
-        Assert.assertEquals(testName, signer.getFieldName());
+        SignerProperties signerProperties = new SignerProperties().setFieldName(testName);
+        signer.setSignerProperties(signerProperties);
+        signerProperties.setFieldName(null);
+        Assertions.assertEquals(testName, signer.getSignerProperties().getFieldName());
     }
 
     @Test
@@ -298,8 +345,10 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(new ByteArrayInputStream(createDocumentWithEmptyField()));
         PdfSigner signer = new PdfSigner(reader, new ByteArrayOutputStream(), new StampingProperties());
 
-        Exception e = Assert.assertThrows(IllegalArgumentException.class, () -> signer.setFieldName("test_field"));
-        Assert.assertEquals(SignExceptionMessageConstant.FIELD_TYPE_IS_NOT_A_SIGNATURE_FIELD_TYPE, e.getMessage());
+        SignerProperties signerProperties = new SignerProperties().setFieldName("test_field");
+        Exception e = Assertions.assertThrows(IllegalArgumentException.class,
+                () -> signer.setSignerProperties(signerProperties));
+        Assertions.assertEquals(SignExceptionMessageConstant.FIELD_TYPE_IS_NOT_A_SIGNATURE_FIELD_TYPE, e.getMessage());
 
         reader.close();
     }
@@ -312,8 +361,10 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
                 new ByteArrayInputStream(createDocumentWithSignatureWithTestValueField(fieldName, fieldValue)));
         PdfSigner signer = new PdfSigner(reader, new ByteArrayOutputStream(), new StampingProperties());
 
-        Exception e = Assert.assertThrows(IllegalArgumentException.class, () -> signer.setFieldName(fieldName));
-        Assert.assertEquals(SignExceptionMessageConstant.FIELD_ALREADY_SIGNED, e.getMessage());
+        SignerProperties signerProperties = new SignerProperties().setFieldName(fieldName);
+        Exception e = Assertions.assertThrows(IllegalArgumentException.class,
+                () -> signer.setSignerProperties(signerProperties));
+        Assertions.assertEquals(SignExceptionMessageConstant.FIELD_ALREADY_SIGNED, e.getMessage());
 
         reader.close();
     }
@@ -324,8 +375,9 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(new ByteArrayInputStream(createDocumentWithSignatureField(fieldName)));
         PdfSigner signer = new PdfSigner(reader, new ByteArrayOutputStream(), new StampingProperties());
 
-        signer.setFieldName(fieldName);
-        Assert.assertEquals(fieldName, signer.getFieldName());
+        SignerProperties signerProperties = new SignerProperties().setFieldName(fieldName);
+        signer.setSignerProperties(signerProperties);
+        Assertions.assertEquals(fieldName, signer.getSignerProperties().getFieldName());
 
         reader.close();
     }

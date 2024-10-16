@@ -24,11 +24,13 @@ package com.itextpdf.io.image;
 
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
+import com.itextpdf.io.image.Jpeg2000ImageData.ColorSpecBox;
 import com.itextpdf.io.util.StreamUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 final class Jpeg2000ImageHelper {
 
@@ -78,7 +80,7 @@ final class Jpeg2000ImageHelper {
             Jpeg2000Box box = new Jpeg2000Box();
             box.length = cio_read(4, jpeg2000Stream);
             if (box.length == 0x0000000c) {
-                jp2.parameters.isJp2 = true;
+                jp2.parameters.setJp2(true);
                 box.type = cio_read(4, jpeg2000Stream);
                 if (JP2_JP != box.type) {
                     throw new IOException(IoExceptionMessageConstant.EXPECTED_JP_MARKER);
@@ -94,7 +96,7 @@ final class Jpeg2000ImageHelper {
                 StreamUtil.skip(jpeg2000Stream, 8);
                 for (int i = 4; i < box.length / 4; ++i) {
                     if (cio_read(4, jpeg2000Stream) == JPX_JPXB) {
-                        jp2.parameters.isJpxBaseline = true;
+                        jp2.parameters.setJpxBaseline(true);
                     }
                 }
 
@@ -114,18 +116,20 @@ final class Jpeg2000ImageHelper {
                 }
                 jp2.setHeight(cio_read(4, jpeg2000Stream));
                 jp2.setWidth(cio_read(4, jpeg2000Stream));
-                jp2.parameters.numOfComps = cio_read(2, jpeg2000Stream);
+                jp2.parameters.setNumOfComps(cio_read(2, jpeg2000Stream));
                 jp2.setBpc(cio_read(1, jpeg2000Stream));
                 StreamUtil.skip(jpeg2000Stream, 3);
                 jp2_read_boxhdr(box, jpeg2000Stream);
                 if (box.type == JP2_BPCC) {
-                    jp2.parameters.bpcBoxData = new byte[box.length - 8];
-                    jpeg2000Stream.read(jp2.parameters.bpcBoxData, 0, box.length - 8);
+                    jp2.parameters.setBpcBoxData(new byte[box.length - 8]);
+                    jpeg2000Stream.read(jp2.parameters.getBpcBoxData(), 0, box.length - 8);
                 } else if (box.type == JP2_COLR) {
                     do {
-                        if (jp2.parameters.colorSpecBoxes == null)
-                            jp2.parameters.colorSpecBoxes = new ArrayList<Jpeg2000ImageData.ColorSpecBox>();
-                        jp2.parameters.colorSpecBoxes.add(jp2_read_colr(box, jpeg2000Stream));
+                        if (jp2.parameters.getColorSpecBoxes() == null)
+                            jp2.parameters.setColorSpecBoxes(new ArrayList<>());
+                        List<ColorSpecBox> colorSpecBoxes = jp2.parameters.getColorSpecBoxes();
+                        colorSpecBoxes.add(jp2_read_colr(box, jpeg2000Stream));
+                        jp2.parameters.setColorSpecBoxes(colorSpecBoxes);
                         try {
                             jp2_read_boxhdr(box, jpeg2000Stream);
                         } catch (ZeroBoxSizeException ioe) {

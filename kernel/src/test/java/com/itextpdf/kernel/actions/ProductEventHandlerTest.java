@@ -29,14 +29,13 @@ import com.itextpdf.kernel.actions.ecosystem.ITextTestEvent;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class ProductEventHandlerTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/actions/";
@@ -51,14 +50,14 @@ public class ProductEventHandlerTest extends ExtendedITextTest {
             EventManager.getInstance().onEvent(new ITextTestEvent(document.getDocumentIdWrapper(), null, "test-event",
                     ProductNameConstant.ITEXT_CORE));
 
-            Assert.assertEquals(alreadyRegisteredEvents + 1, handler.publicGetEvents(document.getDocumentIdWrapper()).size());
+            Assertions.assertEquals(alreadyRegisteredEvents + 1, handler.publicGetEvents(document.getDocumentIdWrapper()).size());
 
 
             AbstractProductProcessITextEvent event = handler.publicGetEvents(document.getDocumentIdWrapper()).get(alreadyRegisteredEvents);
-            Assert.assertEquals(document.getDocumentIdWrapper(), event.getSequenceId());
-            Assert.assertEquals("test-event", event.getEventType());
-            Assert.assertEquals(ProductNameConstant.ITEXT_CORE, event.getProductName());
-            Assert.assertNotNull(event.getProductData());
+            Assertions.assertEquals(document.getDocumentIdWrapper(), event.getSequenceId());
+            Assertions.assertEquals("test-event", event.getEventType());
+            Assertions.assertEquals(ProductNameConstant.ITEXT_CORE, event.getProductName());
+            Assertions.assertNotNull(event.getProductData());
         }
     }
 }

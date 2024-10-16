@@ -57,92 +57,92 @@ public class MetaState {
     /**
      * Stack of saved states.
      */
-    public Stack<MetaState> savedStates;
+    private Stack<MetaState> savedStates;
 
     /**
      * List of MetaObjects.
      */
-    public List<MetaObject> MetaObjects;
+    private List<MetaObject> metaObjects;
 
     /**
      * Current Point.
      */
-    public Point currentPoint;
+    private Point currentPoint;
 
     /**
      * Current Pen.
      */
-    public MetaPen currentPen;
+    private MetaPen currentPen;
 
     /**
      * Current Brush.
      */
-    public MetaBrush currentBrush;
+    private MetaBrush currentBrush;
 
     /**
      * Current Font.
      */
-    public MetaFont currentFont;
+    private MetaFont currentFont;
 
     /**
      * The current background color. Default value is DeviceRgb#WHITE.
      */
-    public Color currentBackgroundColor = ColorConstants.WHITE;
+    private Color currentBackgroundColor = ColorConstants.WHITE;
 
     /**
      * Current text color. Default value is DeviceRgb#BLACK.
      */
-    public Color currentTextColor = ColorConstants.BLACK;
+    private Color currentTextColor = ColorConstants.BLACK;
 
     /**
      * The current background mode. Default value is OPAQUE.
      */
-    public int backgroundMode = OPAQUE;
+    private int backgroundMode = OPAQUE;
 
     /**
      * Current polygon fill mode. Default value is ALTERNATE.
      */
-    public int polyFillMode = ALTERNATE;
+    private int polyFillMode = ALTERNATE;
 
     /**
      * Curent line join. Default value is 1.
      */
-    public int lineJoin = 1;
+    private int lineJoin = 1;
 
     /**
      * Current text alignment.
      */
-    public int textAlign;
+    private int textAlign;
 
     /**
      * Current offset for Wx.
      */
-    public int offsetWx;
+    private int offsetWx;
 
     /**
      * Current offset for Wy.
      */
-    public int offsetWy;
+    private int offsetWy;
 
     /**
      * Current extent for Wx.
      */
-    public int extentWx;
+    private int extentWx;
 
     /**
      * Current extent for Wy.
      */
-    public int extentWy;
+    private int extentWy;
 
     /**
      * Current x value for scaling.
      */
-    public float scalingX;
+    private float scalingX;
 
     /**
      * Current y value for scaling.
      */
-    public float scalingY;
+    private float scalingY;
 
 
     /**
@@ -150,7 +150,7 @@ public class MetaState {
      */
     public MetaState() {
         savedStates = new Stack<>();
-        MetaObjects = new ArrayList<>();
+        metaObjects = new ArrayList<>();
         currentPoint = new Point(0, 0);
         currentPen = new MetaPen();
         currentBrush = new MetaBrush();
@@ -173,7 +173,7 @@ public class MetaState {
      */
     public void setMetaState(MetaState state) {
         savedStates = state.savedStates;
-        MetaObjects = state.MetaObjects;
+        metaObjects = state.metaObjects;
         currentPoint = state.currentPoint;
         currentPen = state.currentPen;
         currentBrush = state.currentBrush;
@@ -198,13 +198,13 @@ public class MetaState {
      * @param object MetaObject to be added
      */
     public void addMetaObject(MetaObject object) {
-        for (int k = 0; k < MetaObjects.size(); ++k) {
-            if (MetaObjects.get(k) == null) {
-                MetaObjects.set(k, object);
+        for (int k = 0; k < metaObjects.size(); ++k) {
+            if (metaObjects.get(k) == null) {
+                metaObjects.set(k, object);
                 return;
             }
         }
-        MetaObjects.add(object);
+        metaObjects.add(object);
     }
 
     /**
@@ -214,7 +214,7 @@ public class MetaState {
      * @param cb PdfCanvas to prepare
      */
     public void selectMetaObject(int index, PdfCanvas cb) {
-        MetaObject obj = MetaObjects.get(index);
+        MetaObject obj = metaObjects.get(index);
         if (obj == null)
             return;
         int style;
@@ -273,7 +273,7 @@ public class MetaState {
      * @param index index of the MetaObject to delete
      */
     public void deleteMetaObject(int index) {
-        MetaObjects.set(index, null);
+        metaObjects.set(index, null);
     }
 
     /**

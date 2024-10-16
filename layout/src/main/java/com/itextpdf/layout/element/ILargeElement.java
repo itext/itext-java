@@ -50,8 +50,11 @@ public interface ILargeElement extends IElement {
     void flush();
 
     /**
-     * Flushes the content which has just been added to the document.
-     * This is a method for internal usage and is called automatically by the document.
+     * Writes to the output document the content which has just been added to it.
+     *
+     * <p>
+     * This method is called automatically for the newly added {@link ILargeElement} to be immediately placed
+     * in the page contents after it is added to the {@link Document}, so it shouldn't be used in any other places.
      */
     void flushContent();
 

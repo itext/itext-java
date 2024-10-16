@@ -26,17 +26,16 @@ import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class ImageTypeDetectorTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/image/ImageTypeDetectorTest/";
@@ -71,7 +70,7 @@ public class ImageTypeDetectorTest extends ExtendedITextTest {
     public void testNullUrl() throws MalformedURLException {
         URL url = UrlUtil.toURL("not existing path");
 
-        Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class,
+        Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
                 () -> ImageTypeDetector.detectImageType(url)
         );
     }
@@ -108,7 +107,7 @@ public class ImageTypeDetectorTest extends ExtendedITextTest {
 
         // A common exception is expected instead of com.itextpdf.io.exceptions.IOException, because in .NET
         // the thrown exception is different
-        Assert.assertThrows(Exception.class, () -> ImageTypeDetector.detectImageType(stream));
+        Assertions.assertThrows(Exception.class, () -> ImageTypeDetector.detectImageType(stream));
     }
 
     @Test
@@ -142,14 +141,14 @@ public class ImageTypeDetectorTest extends ExtendedITextTest {
     }
 
     private static void testURL(URL location, ImageType expectedType) {
-        Assert.assertEquals(expectedType, ImageTypeDetector.detectImageType(location));
+        Assertions.assertEquals(expectedType, ImageTypeDetector.detectImageType(location));
     }
 
     private static void testStream(InputStream stream, ImageType expectedType) {
-        Assert.assertEquals(expectedType, ImageTypeDetector.detectImageType(stream));
+        Assertions.assertEquals(expectedType, ImageTypeDetector.detectImageType(stream));
     }
 
     private static void testBytes(byte[] bytes, ImageType expectedType) {
-        Assert.assertEquals(expectedType, ImageTypeDetector.detectImageType(bytes));
+        Assertions.assertEquals(expectedType, ImageTypeDetector.detectImageType(bytes));
     }
 }

@@ -24,16 +24,15 @@ package com.itextpdf.commons.actions.contexts;
 
 import com.itextpdf.commons.actions.NamespaceConstant;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class ContextManagerTest extends ExtendedITextTest {
 
     @Test
@@ -41,7 +40,7 @@ public class ContextManagerTest extends ExtendedITextTest {
         String outerNamespaces = NamespaceConstant.ITEXT.toLowerCase();
         String innerNamespaces = NamespaceConstant.PDF_HTML.toLowerCase();
 
-        Assert.assertTrue(innerNamespaces.startsWith(outerNamespaces));
+        Assertions.assertTrue(innerNamespaces.startsWith(outerNamespaces));
 
         ContextManager managerOuterBeforeInner = new ContextManager();
         managerOuterBeforeInner
@@ -49,9 +48,9 @@ public class ContextManagerTest extends ExtendedITextTest {
         managerOuterBeforeInner
                 .registerGenericContext(Collections.singletonList(innerNamespaces), Collections.<String>emptyList());
 
-        Assert.assertEquals(outerNamespaces,
+        Assertions.assertEquals(outerNamespaces,
                 managerOuterBeforeInner.getRecognisedNamespace(outerNamespaces));
-        Assert.assertEquals(innerNamespaces,
+        Assertions.assertEquals(innerNamespaces,
                 managerOuterBeforeInner.getRecognisedNamespace(innerNamespaces));
 
         ContextManager managerInnerBeforeOuter = new ContextManager();
@@ -60,9 +59,9 @@ public class ContextManagerTest extends ExtendedITextTest {
         managerInnerBeforeOuter
                 .registerGenericContext(Collections.singletonList(outerNamespaces), Collections.<String>emptyList());
 
-        Assert.assertEquals(outerNamespaces,
+        Assertions.assertEquals(outerNamespaces,
                 managerInnerBeforeOuter.getRecognisedNamespace(outerNamespaces));
-        Assert.assertEquals(innerNamespaces,
+        Assertions.assertEquals(innerNamespaces,
                 managerInnerBeforeOuter.getRecognisedNamespace(innerNamespaces));
     }
 
@@ -70,7 +69,7 @@ public class ContextManagerTest extends ExtendedITextTest {
     public void notRegisteredNamespaceTest() {
         String notRegisteredNamespace = "com.hello.world";
 
-        Assert.assertNull(ContextManager.getInstance().getRecognisedNamespace(notRegisteredNamespace));
+        Assertions.assertNull(ContextManager.getInstance().getRecognisedNamespace(notRegisteredNamespace));
     }
 
     @Test
@@ -83,27 +82,27 @@ public class ContextManagerTest extends ExtendedITextTest {
         );
 
         ContextManager manager = new ContextManager();
-        Assert.assertNull(manager.getRecognisedNamespace(testNamespace));
-        Assert.assertNull(manager.getRecognisedNamespace(testNamespaceWithCapitals));
+        Assertions.assertNull(manager.getRecognisedNamespace(testNamespace));
+        Assertions.assertNull(manager.getRecognisedNamespace(testNamespaceWithCapitals));
 
         manager.registerGenericContext(testNamespaces, Arrays.asList("myProduct"));
 
-        Assert.assertEquals(testNamespace,
+        Assertions.assertEquals(testNamespace,
                 manager.getRecognisedNamespace(testNamespace + ".MyClass"));
-        Assert.assertEquals(testNamespaceWithCapitals.toLowerCase(),
+        Assertions.assertEquals(testNamespaceWithCapitals.toLowerCase(),
                 manager.getRecognisedNamespace(testNamespaceWithCapitals + ".MyClass"));
 
         manager.unregisterContext(testNamespaces);
 
-        Assert.assertNull(manager.getRecognisedNamespace(testNamespace));
-        Assert.assertNull(manager.getRecognisedNamespace(testNamespaceWithCapitals));
+        Assertions.assertNull(manager.getRecognisedNamespace(testNamespace));
+        Assertions.assertNull(manager.getRecognisedNamespace(testNamespaceWithCapitals));
     }
 
     @Test
     public void registeredNamespaceTest() {
         String registeredNamespace = NamespaceConstant.CORE_LAYOUT + "custompackage";
 
-        Assert.assertEquals(NamespaceConstant.CORE_LAYOUT.toLowerCase(),
+        Assertions.assertEquals(NamespaceConstant.CORE_LAYOUT.toLowerCase(),
                 ContextManager.getInstance().getRecognisedNamespace(registeredNamespace));
     }
 }

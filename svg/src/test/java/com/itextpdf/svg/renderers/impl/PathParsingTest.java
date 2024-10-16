@@ -25,16 +25,15 @@ package com.itextpdf.svg.renderers.impl;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.HashMap;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.util.Collection;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PathParsingTest extends ExtendedITextTest {
 
     @Test
@@ -42,7 +41,7 @@ public class PathParsingTest extends ExtendedITextTest {
         PathSvgNodeRenderer path = new PathSvgNodeRenderer();
         path.setAttribute(SvgConstants.Attributes.D, "");
         Collection<String> ops = path.parsePathOperations();
-        Assert.assertTrue(ops.isEmpty());
+        Assertions.assertTrue(ops.isEmpty());
     }
 
     @Test
@@ -50,7 +49,7 @@ public class PathParsingTest extends ExtendedITextTest {
         PathSvgNodeRenderer path = new PathSvgNodeRenderer();
         path.setAttributesAndStyles(new HashMap<>());
         Collection<String> ops = path.parsePathOperations();
-        Assert.assertTrue(ops.isEmpty());
+        Assertions.assertTrue(ops.isEmpty());
     }
 
     @Test
@@ -58,7 +57,7 @@ public class PathParsingTest extends ExtendedITextTest {
         PathSvgNodeRenderer path = new PathSvgNodeRenderer();
         path.setAttribute(SvgConstants.Attributes.D, "  ");
         Collection<String> ops = path.parsePathOperations();
-        Assert.assertTrue(ops.isEmpty());
+        Assertions.assertTrue(ops.isEmpty());
     }
 
     @Test
@@ -66,7 +65,7 @@ public class PathParsingTest extends ExtendedITextTest {
         PathSvgNodeRenderer path = new PathSvgNodeRenderer();
         path.setAttribute(SvgConstants.Attributes.D, "b 1 1");
 
-        Assert.assertThrows(SvgProcessingException.class, () -> path.parsePathOperations());
+        Assertions.assertThrows(SvgProcessingException.class, () -> path.parsePathOperations());
     }
 
     @Test
@@ -74,7 +73,7 @@ public class PathParsingTest extends ExtendedITextTest {
         PathSvgNodeRenderer path = new PathSvgNodeRenderer();
         path.setAttribute(SvgConstants.Attributes.D, "m 200 100 l 50 50 x");
 
-        Assert.assertThrows(SvgProcessingException.class, () -> path.parsePathOperations());
+        Assertions.assertThrows(SvgProcessingException.class, () -> path.parsePathOperations());
     }
 
     @Test
@@ -82,7 +81,7 @@ public class PathParsingTest extends ExtendedITextTest {
         PathSvgNodeRenderer path = new PathSvgNodeRenderer();
         path.setAttribute(SvgConstants.Attributes.D, "  \t\n m 200 100 l 50 50");
         Collection<String> ops = path.parsePathOperations();
-        Assert.assertEquals(2, ops.size());
+        Assertions.assertEquals(2, ops.size());
     }
 
     @Test
@@ -90,7 +89,7 @@ public class PathParsingTest extends ExtendedITextTest {
         PathSvgNodeRenderer path = new PathSvgNodeRenderer();
         path.setAttribute(SvgConstants.Attributes.D, "m 200 100 l 50 50  m 200 100 l 50 50  \t\n ");
         Collection<String> ops = path.parsePathOperations();
-        Assert.assertEquals(4, ops.size());
+        Assertions.assertEquals(4, ops.size());
     }
 
     @Test
@@ -98,7 +97,7 @@ public class PathParsingTest extends ExtendedITextTest {
         PathSvgNodeRenderer path = new PathSvgNodeRenderer();
         path.setAttribute(SvgConstants.Attributes.D, "m200,100L50,50L200,100");
         Collection<String> ops = path.parsePathOperations();
-        Assert.assertEquals(3, ops.size());
+        Assertions.assertEquals(3, ops.size());
     }
 
     @Test
@@ -107,7 +106,7 @@ public class PathParsingTest extends ExtendedITextTest {
         path.setAttribute(SvgConstants.Attributes.D, "m200,100L50,50L200,100");
         Collection<String> ops = path.parsePathOperations();
         for (String op : ops) {
-            Assert.assertFalse(op.contains(","));
+            Assertions.assertFalse(op.contains(","));
         }
     }
 
@@ -116,7 +115,7 @@ public class PathParsingTest extends ExtendedITextTest {
         PathSvgNodeRenderer path = new PathSvgNodeRenderer();
         path.setAttribute(SvgConstants.Attributes.D, "m 200 l m");
         Collection<String> ops = path.parsePathOperations();
-        Assert.assertEquals(3, ops.size());
+        Assertions.assertEquals(3, ops.size());
     }
 
     @Test
@@ -124,8 +123,8 @@ public class PathParsingTest extends ExtendedITextTest {
         PathSvgNodeRenderer path = new PathSvgNodeRenderer();
         path.setAttribute(SvgConstants.Attributes.D, "m2.35.96");
         Collection<String> ops = path.parsePathOperations();
-        Assert.assertEquals(1, ops.size());
-        Assert.assertTrue(ops.contains("m 2.35 .96"));
+        Assertions.assertEquals(1, ops.size());
+        Assertions.assertTrue(ops.contains("m 2.35 .96"));
     }
 
     @Test
@@ -133,8 +132,8 @@ public class PathParsingTest extends ExtendedITextTest {
         PathSvgNodeRenderer path = new PathSvgNodeRenderer();
         path.setAttribute(SvgConstants.Attributes.D, "m40-50");
         Collection<String> ops = path.parsePathOperations();
-        Assert.assertEquals(1, ops.size());
-        Assert.assertTrue(ops.contains("m 40 -50"));
+        Assertions.assertEquals(1, ops.size());
+        Assertions.assertTrue(ops.contains("m 40 -50"));
     }
 
     @Test
@@ -144,7 +143,7 @@ public class PathParsingTest extends ExtendedITextTest {
 
         String expected = "2.35 .96";
         String actual = path.separateDecimalPoints(input);
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -154,7 +153,7 @@ public class PathParsingTest extends ExtendedITextTest {
 
         String expected = "2.35 .96 3.25 .25";
         String actual = path.separateDecimalPoints(input);
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -164,7 +163,7 @@ public class PathParsingTest extends ExtendedITextTest {
 
         String expected = "2.35 .96 3.25\t.25";
         String actual = path.separateDecimalPoints(input);
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -174,7 +173,7 @@ public class PathParsingTest extends ExtendedITextTest {
 
         String expected = "2.35 .96 3.25 -.25";
         String actual = path.separateDecimalPoints(input);
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -184,7 +183,7 @@ public class PathParsingTest extends ExtendedITextTest {
 
         String expected = "40 -50";
         String actual = path.separateDecimalPoints(input);
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -194,7 +193,7 @@ public class PathParsingTest extends ExtendedITextTest {
 
         String expected = "C 268.88888888888886 67.97916666666663e+10 331.1111111111111 -2.842170943040401e-14 393.3333333333333 -2.842170943040401e-14";
         String actual = path.separateDecimalPoints(input);
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -204,6 +203,6 @@ public class PathParsingTest extends ExtendedITextTest {
 
         String expected = "C 268.88888888888886 67.97916666666663e+10 331.1111111111111 -2.842170943040401E-14 393.3333333333333 -2.842170943040401E-14";
         String actual = path.separateDecimalPoints(input);
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 }

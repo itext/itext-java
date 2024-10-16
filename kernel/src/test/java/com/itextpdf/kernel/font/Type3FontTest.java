@@ -23,13 +23,12 @@
 package com.itextpdf.kernel.font;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class Type3FontTest extends ExtendedITextTest {
 
     @Test
@@ -38,7 +37,7 @@ public class Type3FontTest extends ExtendedITextTest {
 
         font.addGlyph(1, 1, 600, null, null);
 
-        Assert.assertEquals(1, font.getNumberOfGlyphs());
+        Assertions.assertEquals(1, font.getNumberOfGlyphs());
     }
 
     @Test
@@ -48,9 +47,9 @@ public class Type3FontTest extends ExtendedITextTest {
         font.addGlyph(1, 1, 600, null, null);
         font.addGlyph(2, 2, 600, null, null);
 
-        Assert.assertEquals(2, font.getNumberOfGlyphs());
-        Assert.assertEquals(1, font.getGlyphByCode(1).getUnicode());
-        Assert.assertEquals(2, font.getGlyphByCode(2).getUnicode());
+        Assertions.assertEquals(2, font.getNumberOfGlyphs());
+        Assertions.assertEquals(1, font.getGlyphByCode(1).getUnicode());
+        Assertions.assertEquals(2, font.getGlyphByCode(2).getUnicode());
     }
 
     @Test
@@ -60,9 +59,9 @@ public class Type3FontTest extends ExtendedITextTest {
         font.addGlyph(1, -1, 600, null, null);
         font.addGlyph(2, -1, 700, null, null);
 
-        Assert.assertEquals(2, font.getNumberOfGlyphs());
-        Assert.assertEquals(600, font.getGlyphByCode(1).getWidth());
-        Assert.assertEquals(700, font.getGlyphByCode(2).getWidth());
+        Assertions.assertEquals(2, font.getNumberOfGlyphs());
+        Assertions.assertEquals(600, font.getGlyphByCode(1).getWidth());
+        Assertions.assertEquals(700, font.getGlyphByCode(2).getWidth());
     }
 
     @Test
@@ -72,8 +71,8 @@ public class Type3FontTest extends ExtendedITextTest {
         font.addGlyph(1, 1, 600, null, null);
         font.addGlyph(2, 1, 600, null, null);
 
-        Assert.assertEquals(1, font.getNumberOfGlyphs());
-        Assert.assertEquals(2, font.getGlyph(1).getCode());
+        Assertions.assertEquals(1, font.getNumberOfGlyphs());
+        Assertions.assertEquals(2, font.getGlyph(1).getCode());
     }
 
     @Test
@@ -83,8 +82,8 @@ public class Type3FontTest extends ExtendedITextTest {
         font.addGlyph(1, -1, 600, null, null);
         font.addGlyph(1, -1, 700, null, null);
 
-        Assert.assertEquals(1, font.getNumberOfGlyphs());
-        Assert.assertEquals(700, font.getGlyphByCode(1).getWidth());
+        Assertions.assertEquals(1, font.getNumberOfGlyphs());
+        Assertions.assertEquals(700, font.getGlyphByCode(1).getWidth());
     }
 
     @Test
@@ -94,9 +93,9 @@ public class Type3FontTest extends ExtendedITextTest {
         font.addGlyph(1, -1, 600, null, null);
         font.addGlyph(1, 100, 600, null, null);
 
-        Assert.assertEquals(1, font.getNumberOfGlyphs());
-        Assert.assertEquals(1, font.getGlyph(100).getCode());
-        Assert.assertEquals(100, font.getGlyphByCode(1).getUnicode());
+        Assertions.assertEquals(1, font.getNumberOfGlyphs());
+        Assertions.assertEquals(1, font.getGlyph(100).getCode());
+        Assertions.assertEquals(100, font.getGlyphByCode(1).getUnicode());
     }
 
     @Test
@@ -106,9 +105,9 @@ public class Type3FontTest extends ExtendedITextTest {
         font.addGlyph(1, 100, 600, null, null);
         font.addGlyph(1, -1, 600, null, null);
 
-        Assert.assertNull(font.getGlyph(-1));
-        Assert.assertNull(font.getGlyph(100));
-        Assert.assertEquals(1, font.getNumberOfGlyphs());
-        Assert.assertEquals(-1, font.getGlyphByCode(1).getUnicode());
+        Assertions.assertNull(font.getGlyph(-1));
+        Assertions.assertNull(font.getGlyph(100));
+        Assertions.assertEquals(1, font.getNumberOfGlyphs());
+        Assertions.assertEquals(-1, font.getGlyphByCode(1).getUnicode());
     }
 }

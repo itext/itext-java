@@ -56,18 +56,17 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfFontTest extends ExtendedITextTest {
     public static final int PageCount = 1;
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfFontTest/";
@@ -77,12 +76,12 @@ public class PdfFontTest extends ExtendedITextTest {
     static final String author = "Alexander Chingarev";
     static final String creator = "iText";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -101,8 +100,8 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
         PdfFont type0Font = PdfFontFactory.createFont("KozMinPro-Regular", "UniJIS-UCS2-H");
-        Assert.assertTrue("Type0Font expected", type0Font instanceof PdfType0Font);
-        Assert.assertTrue("CidFont expected", type0Font.getFontProgram() instanceof CidFont);
+        Assertions.assertTrue(type0Font instanceof PdfType0Font, "Type0Font expected");
+        Assertions.assertTrue(type0Font.getFontProgram() instanceof CidFont, "CidFont expected");
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
@@ -116,7 +115,7 @@ public class PdfFontTest extends ExtendedITextTest {
         canvas.release();
         page.flush();
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -134,8 +133,8 @@ public class PdfFontTest extends ExtendedITextTest {
                 setTitle(title);
         PdfFont type0Font = PdfFontFactory.createFont("KozMinPro-Regular",
                 "83pv-RKSJ-H", EmbeddingStrategy.PREFER_EMBEDDED);
-        Assert.assertTrue("Type0Font expected", type0Font instanceof PdfType0Font);
-        Assert.assertTrue("CidFont expected", type0Font.getFontProgram() instanceof CidFont);
+        Assertions.assertTrue(type0Font instanceof PdfType0Font, "Type0Font expected");
+        Assertions.assertTrue(type0Font.getFontProgram() instanceof CidFont, "CidFont expected");
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
@@ -148,7 +147,7 @@ public class PdfFontTest extends ExtendedITextTest {
         canvas.release();
         page.flush();
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -163,8 +162,8 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
         PdfFont type0Font = PdfFontFactory.createFont("STSong-Light", "UniGB-UTF16-H");
-        Assert.assertTrue("Type0Font expected", type0Font instanceof PdfType0Font);
-        Assert.assertTrue("CidFont expected", type0Font.getFontProgram() instanceof CidFont);
+        Assertions.assertTrue(type0Font instanceof PdfType0Font, "Type0Font expected");
+        Assertions.assertTrue(type0Font.getFontProgram() instanceof CidFont, "CidFont expected");
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
@@ -178,7 +177,7 @@ public class PdfFontTest extends ExtendedITextTest {
         canvas.release();
         page.flush();
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
 
@@ -194,8 +193,8 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
         PdfFont type0Font = PdfFontFactory.createFont("STSong-Light", "Adobe-GB1-4");
-        Assert.assertTrue("Type0Font expected", type0Font instanceof PdfType0Font);
-        Assert.assertTrue("CidFont expected", type0Font.getFontProgram() instanceof CidFont);
+        Assertions.assertTrue(type0Font instanceof PdfType0Font, "Type0Font expected");
+        Assertions.assertTrue(type0Font.getFontProgram() instanceof CidFont, "CidFont expected");
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
@@ -209,7 +208,7 @@ public class PdfFontTest extends ExtendedITextTest {
         canvas.release();
         page.flush();
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -228,8 +227,8 @@ public class PdfFontTest extends ExtendedITextTest {
         String font = fontsFolder + "abserif4_5.ttf";
         PdfFont type0Font = PdfFontFactory.createFont(font, "Identity-H");
 //        type0Font.setSubset(false);
-        Assert.assertTrue("PdfType0Font expected", type0Font instanceof PdfType0Font);
-        Assert.assertTrue("TrueType expected", type0Font.getFontProgram() instanceof TrueTypeFont);
+        Assertions.assertTrue(type0Font instanceof PdfType0Font, "PdfType0Font expected");
+        Assertions.assertTrue(type0Font.getFontProgram() instanceof TrueTypeFont, "TrueType expected");
         PdfPage page = pdfDoc.addNewPage();
         new PdfCanvas(page)
                 .saveState()
@@ -255,8 +254,8 @@ public class PdfFontTest extends ExtendedITextTest {
 
         byte[] ttf = StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile(font));
         type0Font = PdfFontFactory.createFont(ttf, "Identity-H");
-        Assert.assertTrue("PdfType0Font expected", type0Font instanceof PdfType0Font);
-        Assert.assertTrue("TrueType expected", type0Font.getFontProgram() instanceof TrueTypeFont);
+        Assertions.assertTrue(type0Font instanceof PdfType0Font, "PdfType0Font expected");
+        Assertions.assertTrue(type0Font.getFontProgram() instanceof TrueTypeFont, "TrueType expected");
         page = pdfDoc.addNewPage();
         new PdfCanvas(page)
                 .saveState()
@@ -271,7 +270,7 @@ public class PdfFontTest extends ExtendedITextTest {
         page.flush();
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -296,13 +295,13 @@ public class PdfFontTest extends ExtendedITextTest {
         a.lineTo(595, 5);
         a.closePathFillStroke();
 
-        Assert.assertEquals(600.0, getContentWidth(type3, 'A'), 1e-5);
+        Assertions.assertEquals(600.0, getContentWidth(type3, 'A'), 1e-5);
 
         Type3Glyph space = type3.addGlyph(' ', 600, 0, 0, 600, 700);
         space.setLineWidth(10);
         space.closePathFillStroke();
 
-        Assert.assertEquals(600.0, getContentWidth(type3, ' '), 1e-5);
+        Assertions.assertEquals(600.0, getContentWidth(type3, ' '), 1e-5);
 
         Type3Glyph e = type3.addGlyph('E', 600, 0, 0, 600, 700);
         e.setLineWidth(100);
@@ -313,7 +312,7 @@ public class PdfFontTest extends ExtendedITextTest {
         e.lineTo(595, 695);
         e.stroke();
 
-        Assert.assertEquals(600.0, getContentWidth(type3, 'E'), 1e-5);
+        Assertions.assertEquals(600.0, getContentWidth(type3, 'E'), 1e-5);
 
         Type3Glyph tilde = type3.addGlyph('~', 600, 0, 0, 600, 700);
         tilde.setLineWidth(100);
@@ -321,7 +320,7 @@ public class PdfFontTest extends ExtendedITextTest {
         tilde.lineTo(5, 5);
         tilde.stroke();
 
-        Assert.assertEquals(600.0, getContentWidth(type3, '~'), 1e-5);
+        Assertions.assertEquals(600.0, getContentWidth(type3, '~'), 1e-5);
 
         Type3Glyph symbol233 = type3.addGlyph('\u00E9', 600, 0, 0, 600, 700);
         symbol233.setLineWidth(100);
@@ -329,7 +328,7 @@ public class PdfFontTest extends ExtendedITextTest {
         symbol233.lineTo(5, 340);
         symbol233.stroke();
 
-        Assert.assertEquals(600.0, getContentWidth(type3, '\u00E9'), 1e-5);
+        Assertions.assertEquals(600.0, getContentWidth(type3, '\u00E9'), 1e-5);
 
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
@@ -349,7 +348,7 @@ public class PdfFontTest extends ExtendedITextTest {
         pdfDoc.close();
 
         // reading and comparing text
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -363,7 +362,7 @@ public class PdfFontTest extends ExtendedITextTest {
             //should be another glyph defined in ToUnicode mapping
             Glyph glyph = pdfType3Font.getGlyph(32);
 
-            Assert.assertEquals(0, glyph.getWidth());
+            Assertions.assertEquals(0, glyph.getWidth());
         }
     }
 
@@ -433,7 +432,7 @@ public class PdfFontTest extends ExtendedITextTest {
         pdfDoc.close();
 
         // reading and comparing text
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -453,7 +452,7 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         PdfFont pdfFont = PdfFontFactory.createFont(StandardFonts.HELVETICA);
-        Assert.assertTrue("PdfType1Font expected", pdfFont instanceof PdfType1Font);
+        Assertions.assertTrue(pdfFont instanceof PdfType1Font, "PdfType1Font expected");
         canvas.saveState()
                 .beginText()
                 .moveText(36, 700)
@@ -466,7 +465,7 @@ public class PdfFontTest extends ExtendedITextTest {
         page.flush();
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -483,7 +482,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 setTitle(title);
 
         PdfFont pdfFont = PdfFontFactory.createFont(StandardFonts.HELVETICA_OBLIQUE);
-        Assert.assertTrue("PdfType1Font expected", pdfFont instanceof PdfType1Font);
+        Assertions.assertTrue(pdfFont instanceof PdfType1Font, "PdfType1Font expected");
 
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
@@ -500,7 +499,7 @@ public class PdfFontTest extends ExtendedITextTest {
         page.flush();
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -518,7 +517,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 setTitle(title);
 
         PdfFont pdfFont = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLDOBLIQUE);
-        Assert.assertTrue("PdfType1Font expected", pdfFont instanceof PdfType1Font);
+        Assertions.assertTrue(pdfFont instanceof PdfType1Font, "PdfType1Font expected");
 
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
@@ -535,7 +534,7 @@ public class PdfFontTest extends ExtendedITextTest {
         page.flush();
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -552,7 +551,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 setTitle(title);
 
         PdfFont pdfFont = PdfFontFactory.createFont(StandardFonts.COURIER_BOLD);
-        Assert.assertTrue("PdfType1Font expected", pdfFont instanceof PdfType1Font);
+        Assertions.assertTrue(pdfFont instanceof PdfType1Font, "PdfType1Font expected");
 
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
@@ -569,7 +568,7 @@ public class PdfFontTest extends ExtendedITextTest {
         page.flush();
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -587,7 +586,7 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfFont pdfType1Font = PdfFontFactory.createFont(FontProgramFactory.createType1Font(
                 fontsFolder + "cmr10.afm", fontsFolder + "cmr10.pfb"),
                 FontEncoding.FONT_SPECIFIC, EmbeddingStrategy.PREFER_EMBEDDED);
-        Assert.assertTrue("PdfType1Font expected", pdfType1Font instanceof PdfType1Font);
+        Assertions.assertTrue(pdfType1Font instanceof PdfType1Font, "PdfType1Font expected");
 
         new PdfCanvas(pdfDoc.addNewPage())
                 .saveState()
@@ -603,7 +602,7 @@ public class PdfFontTest extends ExtendedITextTest {
         byte[] pfb = StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile(fontsFolder + "cmr10.pfb"));
         pdfType1Font = PdfFontFactory.createFont(FontProgramFactory.createType1Font(afm, pfb),
                 FontEncoding.FONT_SPECIFIC, EmbeddingStrategy.PREFER_EMBEDDED);
-        Assert.assertTrue("PdfType1Font expected", pdfType1Font instanceof PdfType1Font);
+        Assertions.assertTrue(pdfType1Font instanceof PdfType1Font, "PdfType1Font expected");
 
         new PdfCanvas(pdfDoc.addNewPage())
                 .saveState()
@@ -617,7 +616,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -650,7 +649,7 @@ public class PdfFontTest extends ExtendedITextTest {
         page.flush();
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
 
@@ -668,7 +667,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String font = fontsFolder + "abserif4_5.ttf";
         PdfFont pdfTrueTypeFont = PdfFontFactory.createFont(font, PdfEncodings.WINANSI,
                 EmbeddingStrategy.FORCE_EMBEDDED);
-        Assert.assertTrue("PdfTrueTypeFont expected", pdfTrueTypeFont instanceof PdfTrueTypeFont);
+        Assertions.assertTrue(pdfTrueTypeFont instanceof PdfTrueTypeFont, "PdfTrueTypeFont expected");
         pdfTrueTypeFont.setSubset(true);
         PdfPage page = pdfDoc.addNewPage();
         new PdfCanvas(page)
@@ -686,7 +685,7 @@ public class PdfFontTest extends ExtendedITextTest {
         byte[] ttf = StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile(font));
         pdfTrueTypeFont = PdfFontFactory.createFont(ttf, PdfEncodings.WINANSI,
                 EmbeddingStrategy.FORCE_EMBEDDED);
-        Assert.assertTrue("PdfTrueTypeFont expected", pdfTrueTypeFont instanceof PdfTrueTypeFont);
+        Assertions.assertTrue(pdfTrueTypeFont instanceof PdfTrueTypeFont, "PdfTrueTypeFont expected");
         pdfTrueTypeFont.setSubset(true);
         page = pdfDoc.addNewPage();
         new PdfCanvas(page)
@@ -702,7 +701,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -719,7 +718,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String font = fontsFolder + "abserif4_5.ttf";
         PdfFont pdfTrueTypeFont = PdfFontFactory.createFont(font, PdfEncodings.WINANSI,
                 EmbeddingStrategy.FORCE_NOT_EMBEDDED);
-        Assert.assertTrue("PdfTrueTypeFont expected", pdfTrueTypeFont instanceof PdfTrueTypeFont);
+        Assertions.assertTrue(pdfTrueTypeFont instanceof PdfTrueTypeFont, "PdfTrueTypeFont expected");
         pdfTrueTypeFont.setSubset(true);
         PdfPage page = pdfDoc.addNewPage();
         new PdfCanvas(page)
@@ -737,7 +736,7 @@ public class PdfFontTest extends ExtendedITextTest {
         byte[] ttf = StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile(font));
         pdfTrueTypeFont = PdfFontFactory.createFont(ttf, PdfEncodings.WINANSI,
                 EmbeddingStrategy.FORCE_NOT_EMBEDDED);
-        Assert.assertTrue("PdfTrueTypeFont expected", pdfTrueTypeFont instanceof PdfTrueTypeFont);
+        Assertions.assertTrue(pdfTrueTypeFont instanceof PdfTrueTypeFont, "PdfTrueTypeFont expected");
         pdfTrueTypeFont.setSubset(true);
         page = pdfDoc.addNewPage();
         new PdfCanvas(page)
@@ -753,7 +752,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -773,7 +772,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         PdfFont pdfTrueTypeFont = PdfFontFactory.createFont(font, PdfEncodings.WINANSI,
                 EmbeddingStrategy.FORCE_EMBEDDED);
-        Assert.assertTrue("PdfTrueTypeFont expected", pdfTrueTypeFont instanceof PdfTrueTypeFont);
+        Assertions.assertTrue(pdfTrueTypeFont instanceof PdfTrueTypeFont, "PdfTrueTypeFont expected");
         pdfTrueTypeFont.setSubset(true);
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
@@ -792,7 +791,7 @@ public class PdfFontTest extends ExtendedITextTest {
         byte[] ttf = StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile(font));
         pdfTrueTypeFont = PdfFontFactory.createFont(ttf, PdfEncodings.WINANSI,
                 EmbeddingStrategy.FORCE_EMBEDDED);
-        Assert.assertTrue("PdfTrueTypeFont expected", pdfTrueTypeFont instanceof PdfTrueTypeFont);
+        Assertions.assertTrue(pdfTrueTypeFont instanceof PdfTrueTypeFont, "PdfTrueTypeFont expected");
         pdfTrueTypeFont.setSubset(true);
         page = pdfDoc.addNewPage();
         canvas = new PdfCanvas(page);
@@ -809,7 +808,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -843,10 +842,10 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfDocument generatedDoc = new PdfDocument(CompareTool.createOutputReader(filename));
         PdfFont pdfFont = PdfFontFactory.createFont(generatedDoc.getPage(1).getResources().getResource(PdfName.Font).getAsDictionary(new PdfName("F1")));
         PdfDictionary descriptor = pdfFont.getPdfObject().getAsArray(PdfName.DescendantFonts).getAsDictionary(0).getAsDictionary(PdfName.FontDescriptor);
-        Assert.assertFalse("CIDSet is deprecated in PDF 2.0 and should not be written", descriptor.containsKey(PdfName.CIDSet));
+        Assertions.assertFalse(descriptor.containsKey(PdfName.CIDSet), "CIDSet is deprecated in PDF 2.0 and should not be written");
         generatedDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -865,7 +864,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String font = fontsFolder + "Puritan2.otf";
 
         PdfFont pdfFont = PdfFontFactory.createFont(font, "Identity-H");
-        Assert.assertTrue("PdfType0Font expected", pdfFont instanceof PdfType0Font);
+        Assertions.assertTrue(pdfFont instanceof PdfType0Font, "PdfType0Font expected");
         pdfFont.setSubset(true);
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
@@ -883,7 +882,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         byte[] ttf = StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile(font));
         pdfFont = PdfFontFactory.createFont(ttf, "Identity-H");
-        Assert.assertTrue("PdfTrueTypeFont expected", pdfFont instanceof PdfType0Font);
+        Assertions.assertTrue(pdfFont instanceof PdfType0Font, "PdfTrueTypeFont expected");
         pdfFont.setSubset(true);
         page = pdfDoc.addNewPage();
         canvas = new PdfCanvas(page);
@@ -900,7 +899,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -940,8 +939,8 @@ public class PdfFontTest extends ExtendedITextTest {
             page.flush();
             numberOfGlyphs = pdfType3Font.getNumberOfGlyphs();
         }
-        Assert.assertEquals(6, numberOfGlyphs);
-        Assert.assertNull(new CompareTool().compareByContent(outputFileName, cmpOutputFileName, destinationFolder, "diff_"));
+        Assertions.assertEquals(6, numberOfGlyphs);
+        Assertions.assertNull(new CompareTool().compareByContent(outputFileName, cmpOutputFileName, destinationFolder, "diff_"));
     }
 
     @Test
@@ -983,8 +982,8 @@ public class PdfFontTest extends ExtendedITextTest {
             numberOfGlyphs = pdfType3Font.getNumberOfGlyphs();
         }
 
-        Assert.assertEquals(6, numberOfGlyphs);
-        Assert.assertNull(new CompareTool().compareByContent(outputFileName, cmpOutputFileName, destinationFolder, "diff_"));
+        Assertions.assertEquals(6, numberOfGlyphs);
+        Assertions.assertNull(new CompareTool().compareByContent(outputFileName, cmpOutputFileName, destinationFolder, "diff_"));
     }
 
     @Test
@@ -1018,7 +1017,7 @@ public class PdfFontTest extends ExtendedITextTest {
             finalGlyphsNumber = pdfType3Font.getNumberOfGlyphs();
         }
 
-        Assert.assertEquals(initialGlyphsNumber + 1, finalGlyphsNumber);
+        Assertions.assertEquals(initialGlyphsNumber + 1, finalGlyphsNumber);
     }
 
     @Test
@@ -1055,7 +1054,7 @@ public class PdfFontTest extends ExtendedITextTest {
         page.flush();
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -1090,7 +1089,7 @@ public class PdfFontTest extends ExtendedITextTest {
         canvas.release();
         page.flush();
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -1127,7 +1126,7 @@ public class PdfFontTest extends ExtendedITextTest {
         page.flush();
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -1158,7 +1157,7 @@ public class PdfFontTest extends ExtendedITextTest {
         page.flush();
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -1193,7 +1192,7 @@ public class PdfFontTest extends ExtendedITextTest {
         page.flush();
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -1230,7 +1229,7 @@ public class PdfFontTest extends ExtendedITextTest {
         page.flush();
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -1267,7 +1266,7 @@ public class PdfFontTest extends ExtendedITextTest {
         page.flush();
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -1301,7 +1300,7 @@ public class PdfFontTest extends ExtendedITextTest {
         page.flush();
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -1337,7 +1336,7 @@ public class PdfFontTest extends ExtendedITextTest {
         page.flush();
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -1367,7 +1366,7 @@ public class PdfFontTest extends ExtendedITextTest {
         page.flush();
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -1393,7 +1392,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 .endText()
                 .restoreState();
         PdfFont pdfType1Font2 = pdfDoc.getFont(pdfDictionary);
-        Assert.assertEquals(pdfType1Font, pdfType1Font2);
+        Assertions.assertEquals(pdfType1Font, pdfType1Font2);
         canvas
                 .saveState()
                 .beginText()
@@ -1407,7 +1406,7 @@ public class PdfFontTest extends ExtendedITextTest {
         page.flush();
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -1419,7 +1418,7 @@ public class PdfFontTest extends ExtendedITextTest {
         } catch (com.itextpdf.io.exceptions.IOException e) {
             message = e.getMessage();
         }
-        Assert.assertEquals("Invalid afm or pfm font file.", message);
+        Assertions.assertEquals("Invalid afm or pfm font file.", message);
     }
 
     @Test
@@ -1431,7 +1430,7 @@ public class PdfFontTest extends ExtendedITextTest {
         } catch (com.itextpdf.io.exceptions.IOException e) {
             message = e.getMessage();
         }
-        Assert.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.IS_NOT_AN_AFM_OR_PFM_FONT_FILE, font), message);
+        Assertions.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.IS_NOT_AN_AFM_OR_PFM_FONT_FILE, font), message);
 
     }
 
@@ -1443,14 +1442,14 @@ public class PdfFontTest extends ExtendedITextTest {
         byte[] afm = StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile(fontsFolder + "cmr10.afm"));
         PdfFont font = PdfFontFactory.createFont(FontProgramFactory.createType1Font(afm, afm, false), null);
         byte[] streamContent = ((Type1Font) ((PdfType1Font) font).getFontProgram()).getFontStreamBytes();
-        Assert.assertTrue("Empty stream content expected", streamContent == null);
+        Assertions.assertTrue(streamContent == null, "Empty stream content expected");
     }
 
     @Test
     public void autoDetect1() throws IOException {
         byte[] afm = StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile(fontsFolder + "cmr10.afm"));
 
-        Assert.assertTrue("Type1 font expected", FontProgramFactory.createFont(afm, false) instanceof Type1Font);
+        Assertions.assertTrue(FontProgramFactory.createFont(afm, false) instanceof Type1Font, "Type1 font expected");
     }
 
     @Test
@@ -1458,25 +1457,25 @@ public class PdfFontTest extends ExtendedITextTest {
         byte[] afm = StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile(fontsFolder + "cmr10.afm"));
         byte[] pfb = StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile(fontsFolder + "cmr10.pfb"));
 
-        Assert.assertTrue("Type1 font expected", FontProgramFactory.createType1Font(afm, pfb) instanceof Type1Font);
+        Assertions.assertTrue(FontProgramFactory.createType1Font(afm, pfb) instanceof Type1Font, "Type1 font expected");
     }
 
     @Test
     public void autoDetect3() throws IOException {
         byte[] otf = StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile(fontsFolder + "Puritan2.otf"));
-        Assert.assertTrue("TrueType (OTF) font expected", FontProgramFactory.createFont(otf) instanceof TrueTypeFont);
+        Assertions.assertTrue(FontProgramFactory.createFont(otf) instanceof TrueTypeFont, "TrueType (OTF) font expected");
     }
 
     @Test
     public void autoDetect4() throws IOException {
         byte[] ttf = StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile(fontsFolder + "abserif4_5.ttf"));
-        Assert.assertTrue("TrueType (TTF) expected", FontProgramFactory.createFont(ttf) instanceof TrueTypeFont);
+        Assertions.assertTrue(FontProgramFactory.createFont(ttf) instanceof TrueTypeFont, "TrueType (TTF) expected");
     }
 
     @Test
     public void autoDetect5() throws IOException {
         byte[] ttf = StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile(fontsFolder + "abserif4_5.ttf"));
-        Assert.assertTrue("TrueType (TTF) expected", FontProgramFactory.createFont(ttf) instanceof TrueTypeFont);
+        Assertions.assertTrue(FontProgramFactory.createFont(ttf) instanceof TrueTypeFont, "TrueType (TTF) expected");
     }
 
     @Test
@@ -1501,7 +1500,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 .restoreState();
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -1556,7 +1555,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -1611,7 +1610,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -1637,7 +1636,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 .restoreState();
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -1663,7 +1662,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 .restoreState();
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
 
@@ -1688,7 +1687,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 .restoreState();
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -1712,7 +1711,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 .restoreState();
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -1740,7 +1739,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 .restoreState();
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -1764,7 +1763,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 .restoreState();
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -1787,7 +1786,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 .restoreState();
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder));
     }
 
     @Test
@@ -1811,7 +1810,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 .restoreState();
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder));
     }
 
     @Test
@@ -1821,8 +1820,8 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfDocument doc = new PdfDocument(new PdfReader(src));
         PdfFont font = PdfFontFactory.createFont((PdfDictionary) doc.getPdfObject(335));
         doc.close();
-        Assert.assertEquals(PdfName.MMType1, font.getPdfObject().getAsName(PdfName.Subtype));
-        Assert.assertEquals(PdfType1Font.class, font.getClass());
+        Assertions.assertEquals(PdfName.MMType1, font.getPdfObject().getAsName(PdfName.Subtype));
+        Assertions.assertEquals(PdfType1Font.class, font.getClass());
 
     }
 
@@ -1846,7 +1845,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 .restoreState();
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
 
@@ -1897,13 +1896,13 @@ public class PdfFontTest extends ExtendedITextTest {
         canvas.release();
         page.flush();
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
     public void testCheckTTCSize() throws IOException {
         TrueTypeCollection collection = new TrueTypeCollection(fontsFolder + "uming.ttc");
-        Assert.assertTrue(collection.getTTCSize() == 4);
+        Assertions.assertTrue(collection.getTTCSize() == 4);
     }
 
     @Test
@@ -1915,7 +1914,7 @@ public class PdfFontTest extends ExtendedITextTest {
         for (String name : PdfFontFactory.getRegisteredFonts()) {
             PdfFont pdfFont = PdfFontFactory.createRegisteredFont(name);
             if (pdfFont == null)
-                Assert.assertTrue("Font {" + name + "} can't be empty", false);
+                Assertions.assertTrue(false, "Font {" + name + "} can't be empty");
         }
 
         pdfDoc.addNewPage();
@@ -1932,7 +1931,7 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfFont pdfFont = PdfFontFactory.createRegisteredFont("notoSerifRegular");
         //clear font cache for other tests
         FontProgramFactory.clearRegisteredFonts();
-        Assert.assertTrue(pdfFont instanceof PdfType0Font);
+        Assertions.assertTrue(pdfFont instanceof PdfType0Font);
         pdfDoc.addNewPage();
         pdfDoc.close();
     }
@@ -1941,51 +1940,51 @@ public class PdfFontTest extends ExtendedITextTest {
     public void testSplitString() throws IOException {
         PdfFont font = PdfFontFactory.createFont();
         List<String> list1 = font.splitString("Hello", 12f, 10);
-        Assert.assertTrue(list1.size() == 3);
+        Assertions.assertTrue(list1.size() == 3);
 
         List<String> list2 = font.splitString("Digitally signed by Dmitry Trusevich\nDate: 2015.10.25 14:43:56 MSK\nReason: Test 1\nLocation: Ghent", 12f, 176);
-        Assert.assertTrue(list2.size() == 5);
+        Assertions.assertTrue(list2.size() == 5);
     }
 
     @Test
     public void otfByStringNames() {
         FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor(fontsFolder + "Puritan2.otf");
-        Assert.assertEquals(descriptor.getFontName(), "Puritan2");
-        Assert.assertEquals(descriptor.getFullNameLowerCase(), "Puritan 2.0 Regular".toLowerCase());
-        Assert.assertEquals(descriptor.getFamilyNameLowerCase(), "Puritan 2.0".toLowerCase());
-        Assert.assertEquals(descriptor.getStyle(), "Normal");
-        Assert.assertEquals(descriptor.getFontWeight(), 400);
+        Assertions.assertEquals(descriptor.getFontName(), "Puritan2");
+        Assertions.assertEquals(descriptor.getFullNameLowerCase(), "Puritan 2.0 Regular".toLowerCase());
+        Assertions.assertEquals(descriptor.getFamilyNameLowerCase(), "Puritan 2.0".toLowerCase());
+        Assertions.assertEquals(descriptor.getStyle(), "Normal");
+        Assertions.assertEquals(descriptor.getFontWeight(), 400);
 
     }
 
     @Test
     public void otfByStreamNames() throws Exception {
         FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor(StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile(fontsFolder + "Puritan2.otf")));
-        Assert.assertEquals(descriptor.getFontName(), "Puritan2");
-        Assert.assertEquals(descriptor.getFullNameLowerCase(), "Puritan 2.0 Regular".toLowerCase());
-        Assert.assertEquals(descriptor.getFamilyNameLowerCase(), "Puritan 2.0".toLowerCase());
-        Assert.assertEquals(descriptor.getStyle(), "Normal");
-        Assert.assertEquals(descriptor.getFontWeight(), 400);
+        Assertions.assertEquals(descriptor.getFontName(), "Puritan2");
+        Assertions.assertEquals(descriptor.getFullNameLowerCase(), "Puritan 2.0 Regular".toLowerCase());
+        Assertions.assertEquals(descriptor.getFamilyNameLowerCase(), "Puritan 2.0".toLowerCase());
+        Assertions.assertEquals(descriptor.getStyle(), "Normal");
+        Assertions.assertEquals(descriptor.getFontWeight(), 400);
     }
 
     @Test
     public void ttfByStringNames() {
         FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor(fontsFolder + "abserif4_5.ttf");
-        Assert.assertEquals(descriptor.getFontName(), "AboriginalSerif");
-        Assert.assertEquals(descriptor.getFullNameLowerCase(), "Aboriginal Serif".toLowerCase());
-        Assert.assertEquals(descriptor.getFamilyNameLowerCase(), "Aboriginal Serif".toLowerCase());
-        Assert.assertEquals(descriptor.getStyle(), "Regular");
-        Assert.assertEquals(descriptor.getFontWeight(), 400);
+        Assertions.assertEquals(descriptor.getFontName(), "AboriginalSerif");
+        Assertions.assertEquals(descriptor.getFullNameLowerCase(), "Aboriginal Serif".toLowerCase());
+        Assertions.assertEquals(descriptor.getFamilyNameLowerCase(), "Aboriginal Serif".toLowerCase());
+        Assertions.assertEquals(descriptor.getStyle(), "Regular");
+        Assertions.assertEquals(descriptor.getFontWeight(), 400);
     }
 
     @Test
     public void ttfByStreamNames() throws Exception {
         FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor(StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile(fontsFolder + "abserif4_5.ttf")));
-        Assert.assertEquals(descriptor.getFontName(), "AboriginalSerif");
-        Assert.assertEquals(descriptor.getFullNameLowerCase(), "Aboriginal Serif".toLowerCase());
-        Assert.assertEquals(descriptor.getFamilyNameLowerCase(), "Aboriginal Serif".toLowerCase());
-        Assert.assertEquals(descriptor.getStyle(), "Regular");
-        Assert.assertEquals(descriptor.getFontWeight(), 400);
+        Assertions.assertEquals(descriptor.getFontName(), "AboriginalSerif");
+        Assertions.assertEquals(descriptor.getFullNameLowerCase(), "Aboriginal Serif".toLowerCase());
+        Assertions.assertEquals(descriptor.getFamilyNameLowerCase(), "Aboriginal Serif".toLowerCase());
+        Assertions.assertEquals(descriptor.getStyle(), "Regular");
+        Assertions.assertEquals(descriptor.getFontWeight(), 400);
     }
 
     @Test
@@ -1993,8 +1992,8 @@ public class PdfFontTest extends ExtendedITextTest {
         String inputFileName = sourceFolder + "type3Font.pdf";
 
         try(PdfDocument pdfDoc = new PdfDocument(new PdfReader(inputFileName))) {
-            Assert.assertNotNull(pdfDoc.getDefaultFont());
-            Assert.assertNull(pdfDoc.getDefaultFont().getPdfObject().getIndirectReference());
+            Assertions.assertNotNull(pdfDoc.getDefaultFont());
+            Assertions.assertNull(pdfDoc.getDefaultFont().getPdfObject().getIndirectReference());
         }
     }
 
@@ -2020,7 +2019,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 .restoreState();
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder));
     }
 
     @Test
@@ -2054,7 +2053,7 @@ public class PdfFontTest extends ExtendedITextTest {
             }
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff_"));
     }
 
     @Test
@@ -2072,8 +2071,8 @@ public class PdfFontTest extends ExtendedITextTest {
                     .moveText(36, 700)
                     .setFontAndSize(PdfFontFactory.createFont("KozMinPro-Regular", "UniJIS-UCS2-HW-H",
                             EmbeddingStrategy.PREFER_EMBEDDED, true), 12);
-            Exception e = Assert.assertThrows(ITextException.class, () -> canvas.showText(msg));
-            Assert.assertEquals(IoExceptionMessageConstant.ONLY_BMP_ENCODING, e.getMessage());
+            Exception e = Assertions.assertThrows(ITextException.class, () -> canvas.showText(msg));
+            Assertions.assertEquals(IoExceptionMessageConstant.ONLY_BMP_ENCODING, e.getMessage());
         }
     }
 
@@ -2098,7 +2097,7 @@ public class PdfFontTest extends ExtendedITextTest {
                     .restoreState();
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff_"));
     }
 
     private float getContentWidth(PdfType3Font type3, char glyph) {

@@ -47,7 +47,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.itextpdf.kernel.pdf.tagutils.TagTreeIterator;
-import com.itextpdf.kernel.pdf.tagutils.TagTreeIteratorAvoidDuplicatesApprover;
 import com.itextpdf.kernel.pdf.tagutils.TagTreeIteratorFlusher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -322,19 +321,6 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         return getParentTreeHandler().findMcrByMcid(pageDict, mcid);
     }
 
-
-    public PdfMcr findMcrByMcid(PdfDocument document, int mcid) {
-        int amountOfPages = document.getNumberOfPages();
-        for (int i = 1; i <= amountOfPages; ++i) {
-            PdfPage page = document.getPage(i);
-            PdfMcr mcr = findMcrByMcid(page.getPdfObject(), mcid);
-            if (mcr != null) {
-                return mcr;
-            }
-        }
-        return null;
-    }
-
     public PdfObjRef findObjRefByStructParentIndex(PdfDictionary pageDict, int structParentIndex) {
         return getParentTreeHandler().findObjRefByStructParentIndex(pageDict, structParentIndex);
     }
@@ -526,8 +512,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
     }
 
     private static void flushAllKids(PdfStructTreeRoot elem) {
-        TagTreeIterator iterator = new TagTreeIterator(
-                elem, new TagTreeIteratorAvoidDuplicatesApprover(), TagTreeIterator.TreeTraversalOrder.POST_ORDER);
+        TagTreeIterator iterator = new TagTreeIterator(elem, TagTreeIterator.TreeTraversalOrder.POST_ORDER);
         iterator.addHandler(new TagTreeIteratorFlusher());
         iterator.traverse();
     }

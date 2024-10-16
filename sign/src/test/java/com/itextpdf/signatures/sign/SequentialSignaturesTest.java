@@ -27,6 +27,8 @@ import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.FileUtil;
+import com.itextpdf.forms.form.element.SignatureFieldAppearance;
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.CompressionConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -34,29 +36,27 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.signatures.BouncyCastleDigest;
-import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.IExternalSignature;
-import com.itextpdf.signatures.PdfSignatureAppearance;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PdfSigner.CryptoStandard;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.SignerProperties;
 import com.itextpdf.signatures.TestSignUtils;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-@Category(BouncyCastleIntegrationTest.class)
+@Tag("BouncyCastleIntegrationTest")
 public class SequentialSignaturesTest extends ExtendedITextTest {
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
@@ -67,7 +67,7 @@ public class SequentialSignaturesTest extends ExtendedITextTest {
 
     private static final char[] password = "testpassphrase".toCharArray();
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         Security.addProvider(FACTORY.getProvider());
         createOrClearDestinationFolder(destinationFolder);
@@ -88,17 +88,20 @@ public class SequentialSignaturesTest extends ExtendedITextTest {
 
         String signatureName = "Signature2";
         PdfSigner signer = new PdfSigner(new PdfReader(srcFileName), FileUtil.getFileOutputStream(outFileName), new StampingProperties().useAppendMode());
-        signer.setFieldName(signatureName);
-        signer.getSignatureAppearance()
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID)
+                .setContent("Approval test signature.\nCreated by iText.");
+        SignerProperties signerProperties = new SignerProperties()
+                .setFieldName(signatureName)
                 .setPageRect(new Rectangle(50, 350, 200, 100))
                 .setReason("Test")
                 .setLocation("TestCity")
-                .setLayer2Text("Approval test signature.\nCreated by iText.");
+                .setSignatureAppearance(appearance);
+        signer.setSignerProperties(signerProperties);
 
         signer.signDetached(new BouncyCastleDigest(), pks, signChain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
 
         TestSignUtils.basicCheckSignedDoc(outFileName, signatureName);
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
     }
 
     @Test
@@ -123,14 +126,16 @@ public class SequentialSignaturesTest extends ExtendedITextTest {
         PdfDocument document = signer.getDocument();
         document.getWriter().setCompressionLevel(CompressionConstants.NO_COMPRESSION);
 
-        signer.setFieldName(signatureName);
-        PdfSignatureAppearance appearance = signer.getSignatureAppearance();
-        appearance.setPageNumber(1);
-        signer.getSignatureAppearance()
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID)
+                .setContent("Approval test signature #2.\nCreated by iText.");
+        SignerProperties signerProperties = new SignerProperties()
+                .setFieldName(signatureName)
+                .setPageNumber(1)
                 .setPageRect(new Rectangle(50, 550, 200, 100))
                 .setReason("Test2")
                 .setLocation("TestCity2")
-                .setLayer2Text("Approval test signature #2.\nCreated by iText.");
+                .setSignatureAppearance(appearance);
+        signer.setSignerProperties(signerProperties);
 
         signer.signDetached(new BouncyCastleDigest(), pks, signChain, null, null,
                 null, 0, CryptoStandard.CADES);
@@ -151,9 +156,9 @@ public class SequentialSignaturesTest extends ExtendedITextTest {
             // as the original signature validation failed by Adobe because of struct tree change. If the fix
             // would make this tree unchanged, then the assertion should be adjusted with comparing the tree of
             // objects in StructTreeRoot to ensure that it won't be changed.
-            Assert.assertNotEquals(resourceStrElemNumber, outStrElemNumber);
+            Assertions.assertNotEquals(resourceStrElemNumber, outStrElemNumber);
         }
 
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
     }
 }

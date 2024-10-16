@@ -23,6 +23,7 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.commons.actions.EventManager;
+import com.itextpdf.commons.actions.IEventHandler;
 import com.itextpdf.commons.actions.confirmations.ConfirmEvent;
 import com.itextpdf.commons.actions.confirmations.EventConfirmationType;
 import com.itextpdf.commons.actions.data.ProductData;
@@ -30,15 +31,13 @@ import com.itextpdf.commons.actions.sequence.SequenceId;
 import com.itextpdf.commons.utils.DIContainer;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.kernel.actions.data.ITextCoreProductData;
 import com.itextpdf.kernel.actions.events.FlushPdfDocumentEvent;
 import com.itextpdf.kernel.actions.events.ITextCoreProductEvent;
 import com.itextpdf.kernel.colors.Color;
-import com.itextpdf.kernel.events.EventDispatcher;
-import com.itextpdf.kernel.events.IEventDispatcher;
-import com.itextpdf.kernel.events.PdfDocumentEvent;
 import com.itextpdf.kernel.exceptions.BadPasswordException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.MemoryLimitsAwareException;
@@ -52,8 +51,10 @@ import com.itextpdf.kernel.numbering.RomanNumbering;
 import com.itextpdf.kernel.pdf.PdfReader.StrictnessLevel;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
-import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.collection.PdfCollection;
+import com.itextpdf.kernel.pdf.event.AbstractPdfDocumentEvent;
+import com.itextpdf.kernel.pdf.event.AbstractPdfDocumentEventHandler;
+import com.itextpdf.kernel.pdf.event.PdfDocumentEvent;
 import com.itextpdf.kernel.pdf.filespec.PdfEncryptedPayloadFileSpecFactory;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
@@ -61,24 +62,27 @@ import com.itextpdf.kernel.pdf.statistics.NumberOfPagesStatisticsEvent;
 import com.itextpdf.kernel.pdf.statistics.SizeOfPdfStatisticsEvent;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
-import com.itextpdf.kernel.utils.ValidationContainer;
-import com.itextpdf.kernel.utils.ValidationContext;
+import com.itextpdf.kernel.validation.IValidationContext;
+import com.itextpdf.kernel.validation.ValidationContainer;
+import com.itextpdf.kernel.validation.context.CryptoValidationContext;
+import com.itextpdf.kernel.validation.context.PdfDocumentValidationContext;
 import com.itextpdf.kernel.xmp.PdfConst;
 import com.itextpdf.kernel.xmp.XMPConst;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
-import com.itextpdf.kernel.xmp.options.PropertyOptions;
 import com.itextpdf.kernel.xmp.options.SerializeOptions;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -89,25 +93,27 @@ import org.slf4j.LoggerFactory;
 /**
  * Main enter point to work with PDF document.
  */
-public class PdfDocument implements IEventDispatcher, Closeable {
-    //
+public class PdfDocument implements Closeable {
     private static final PdfName[] PDF_NAMES_TO_REMOVE_FROM_ORIGINAL_TRAILER = new PdfName[] {
-        PdfName.Encrypt,
-        PdfName.Size,
-        PdfName.Prev,
-        PdfName.Root,
-        PdfName.Info,
-        PdfName.ID,
-        PdfName.XRefStm,
+            PdfName.Encrypt,
+            PdfName.Size,
+            PdfName.Prev,
+            PdfName.Root,
+            PdfName.Info,
+            PdfName.ID,
+            PdfName.XRefStm,
+            PdfName.AuthCode
     };
 
-    private static final IPdfPageFactory pdfPageFactory = new PdfPageFactory();
+    private static final Logger LOGGER = LoggerFactory.getLogger(PdfDocument.class);
+
     protected final StampingProperties properties;
     /**
      * List of indirect objects used in the document.
      */
     final PdfXrefTable xref = new PdfXrefTable();
     private final Map<PdfIndirectReference, PdfFont> documentFonts = new HashMap<>();
+    private final Set<IEventHandler> documentHandlers = new LinkedHashSet<>();
     private final SequenceId documentId;
     /**
      * To be adjusted destinations.
@@ -116,7 +122,6 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      */
     private final List<DestinationMutationInfo> pendingDestinationMutations =
             new ArrayList<DestinationMutationInfo>();
-    protected EventDispatcher eventDispatcher = new EventDispatcher();
     /**
      * PdfWriter associated with the document.
      * Not null if document opened either in writing or stamping mode.
@@ -129,10 +134,6 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      */
     protected PdfReader reader = null;
     /**
-     * XMP Metadata for the document.
-     */
-    protected byte[] xmpMetadata = null;
-    /**
      * Document catalog.
      */
     protected PdfCatalog catalog = null;
@@ -141,13 +142,10 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      */
     protected PdfDictionary trailer = null;
     /**
-     * Document info.
-     */
-    protected PdfDocumentInfo info = null;
-    /**
      * Document version.
      */
     protected PdfVersion pdfVersion = PdfVersion.PDF_1_7;
+    protected PdfConformance pdfConformance = PdfConformance.PDF_NONE_CONFORMANCE;
     protected FingerPrint fingerPrint;
     protected SerializeOptions serializeOptions = new SerializeOptions();
     protected PdfStructTreeRoot structTreeRoot;
@@ -161,6 +159,10 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      */
     protected boolean flushUnusedObjects = false;
     protected TagStructureContext tagStructureContext;
+
+    protected DocumentInfoHelper documentInfoHelper = new DocumentInfoHelper();
+    protected DefaultFontStrategy defaultFontStrategy = new DefaultFontStrategy(this);
+    protected IPdfPageFactory pdfPageFactory = new PdfPageFactory();
     /**
      * Cache of already serialized objects from this document for smart mode.
      */
@@ -182,8 +184,20 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      * The original modified (second) id when the document is read initially.
      */
     private PdfString modifiedDocumentId;
-    private PdfFont defaultFont = null;
     private EncryptedEmbeddedStreamsHandler encryptedEmbeddedStreamsHandler;
+    /**
+     * Document info.
+     */
+    private PdfDocumentInfo info = null;
+    /**
+     * XMP Metadata bytes for the document.
+     */
+    private byte[] xmpMetadataBytes = null;
+    /**
+     * XMP Metadata which is used to prevent bytes deserialization for a few times on the same bytes.
+     */
+    private XMPMeta xmpMetadata = null;
+
 
     private final DIContainer diContainer = new DIContainer();
 
@@ -208,9 +222,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         }
         documentId = new SequenceId();
         this.reader = reader;
-        // default values of the StampingProperties doesn't affect anything
-        this.properties = new StampingProperties();
-        this.properties.setEventCountingMetaInfo(properties.metaInfo);
+        this.properties = new StampingProperties(properties);
         open(null);
     }
 
@@ -237,9 +249,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         }
         documentId = new SequenceId();
         this.writer = writer;
-        // default values of the StampingProperties doesn't affect anything
-        this.properties = new StampingProperties();
-        this.properties.setEventCountingMetaInfo(properties.metaInfo);
+        this.properties = new StampingProperties(properties);
         open(writer.properties.pdfVersion);
     }
 
@@ -275,80 +285,155 @@ public class PdfDocument implements IEventDispatcher, Closeable {
 
         boolean writerHasEncryption = writerHasEncryption();
         if (properties.appendMode && writerHasEncryption) {
-            Logger logger = LoggerFactory.getLogger(PdfDocument.class);
-            logger.warn(IoLogMessageConstant.WRITER_ENCRYPTION_IS_IGNORED_APPEND);
+            LOGGER.warn(IoLogMessageConstant.WRITER_ENCRYPTION_IS_IGNORED_APPEND);
         }
         if (properties.preserveEncryption && writerHasEncryption) {
-            Logger logger = LoggerFactory.getLogger(PdfDocument.class);
-            logger.warn(IoLogMessageConstant.WRITER_ENCRYPTION_IS_IGNORED_PRESERVE);
+            LOGGER.warn(IoLogMessageConstant.WRITER_ENCRYPTION_IS_IGNORED_PRESERVE);
         }
 
         open(writer.properties.pdfVersion);
     }
 
     /**
-     * Sets the XMP Metadata.
+     * Checks if the document closing has been started or not.
      *
-     * @param xmpMeta          the xmpMetadata to set
+     * @return {@code true} if closing process has been started, otherwise {@code false}
+     */
+    public boolean isClosing() {
+        return isClosing;
+    }
+
+    /**
+     * Sets the XMP Metadata.
+     * <p>
+     * The XMP Metadata values are synchronized with information dictionary.
+     *
+     * @param xmpMeta the xmpMetadata to set
      * @param serializeOptions serialization options
      *
      * @throws XMPException on serialization errors
      */
     public void setXmpMetadata(XMPMeta xmpMeta, SerializeOptions serializeOptions) throws XMPException {
         this.serializeOptions = serializeOptions;
-        setXmpMetadata(XMPMetaFactory.serializeToBuffer(xmpMeta, serializeOptions));
-    }
-
-    /**
-     * Use this method to set the XMP Metadata.
-     *
-     * @param xmpMetadata The xmpMetadata to set.
-     */
-    protected void setXmpMetadata(byte[] xmpMetadata) {
-        this.xmpMetadata = xmpMetadata;
+        this.xmpMetadataBytes = XMPMetaFactory.serializeToBuffer(xmpMeta, serializeOptions);
+        this.xmpMetadata = xmpMeta;
     }
 
     /**
      * Sets the XMP Metadata.
+     * <p>
+     * The XMP Metadata values are synchronized with information dictionary.
+     * <p>
+     * {@link PdfDocument#serializeOptions} will be used for serialization, they
+     * can be changed by {@link PdfDocument#setSerializeOptions(SerializeOptions)}.
      *
      * @param xmpMeta the xmpMetadata to set
      *
      * @throws XMPException on serialization errors
      */
     public void setXmpMetadata(XMPMeta xmpMeta) throws XMPException {
-        serializeOptions.setPadding(2000);
         setXmpMetadata(xmpMeta, serializeOptions);
     }
 
     /**
-     * Gets XMPMetadata.
+     * Sets the XMP Metadata.
+     * <p>
+     * The XMP Metadata values are synchronized with information dictionary.
      *
-     * @return the XMPMetadata
+     * @param xmpMetadata the xmpMetadata bytes to set
      */
-    public byte[] getXmpMetadata() {
+    protected void setXmpMetadata(byte[] xmpMetadata) {
+        this.xmpMetadataBytes = xmpMetadata;
+        this.xmpMetadata = null;
+        try {
+            getXmpMetadata();
+        } catch (XMPException e) {
+            LOGGER.error(IoLogMessageConstant.EXCEPTION_WHILE_UPDATING_XMPMETADATA, e);
+        }
+    }
+
+    /**
+     * Gets XMP Metadata.
+     * <p>
+     * XMP Metadata is lazy initialized. It will be initialized during the first call of this method.
+     * <p>
+     * To update XMP Metadata of the document, use {@link PdfDocument#setXmpMetadata(XMPMeta)} method.
+     *
+     * @return existed XMP Metadata
+     *
+     * @throws XMPException on serialization errors
+     */
+    public XMPMeta getXmpMetadata() throws XMPException {
         return getXmpMetadata(false);
     }
 
     /**
-     * Gets XMPMetadata or create a new one.
+     * Gets XMP Metadata or create a new one.
+     * <p>
+     * XMP Metadata is lazy initialized. It will be initialized during the first call of this method.
+     * <p>
+     * To update XMP Metadata of the document, use {@link PdfDocument#setXmpMetadata(XMPMeta)} method.
      *
-     * @param createNew if true, create a new empty XMPMetadata if it did not present.
+     * @param createNew if true, create a new empty XMP Metadata if it did not present
      *
-     * @return existed or newly created XMPMetadata byte array.
+     * @return existed or newly created XMP Metadata
+     *
+     * @throws XMPException on serialization errors
      */
-    public byte[] getXmpMetadata(boolean createNew) {
-        if (xmpMetadata == null && createNew) {
+    public XMPMeta getXmpMetadata(boolean createNew) throws XMPException {
+        if (xmpMetadata == null) {
+            final byte[] bytes = getXmpMetadataBytes(createNew);
+            xmpMetadata = bytes == null ? null : XMPMetaFactory.parseFromBuffer(bytes);
+        }
+        return xmpMetadata;
+    }
+
+    /**
+     * Gets XMP Metadata.
+     * <p>
+     * XMP Metadata is lazy initialized. It will be initialized during the first call of this method.
+     * <p>
+     * To update XMP Metadata of the document, use {@link PdfDocument#setXmpMetadata(XMPMeta)} method.
+     *
+     * @return existed XMP Metadata bytes
+     */
+    public byte[] getXmpMetadataBytes() {
+        return getXmpMetadataBytes(false);
+    }
+
+    /**
+     * Gets XMP Metadata or create a new one.
+     * <p>
+     * XMP Metadata is lazy initialized. It will be initialized during the first call of this method.
+     * <p>
+     * To update XMP Metadata of the document, use {@link PdfDocument#setXmpMetadata(XMPMeta)} method.
+     *
+     * @param createNew if true, create a new empty XMP Metadata if it did not present
+     *
+     * @return existed or newly created XMP Metadata byte array
+     */
+    public byte[] getXmpMetadataBytes(boolean createNew) {
+        checkClosingStatus();
+        if (xmpMetadataBytes == null) {
+            PdfStream xmpMetadataStream = catalog.getPdfObject().getAsStream(PdfName.Metadata);
+            if (xmpMetadataStream != null) {
+                xmpMetadataBytes = xmpMetadataStream.getBytes();
+            }
+        }
+        if (createNew && xmpMetadataBytes == null) {
             XMPMeta xmpMeta = XMPMetaFactory.create();
             xmpMeta.setObjectName(XMPConst.TAG_XMPMETA);
             xmpMeta.setObjectName("");
-            addCustomMetadataExtensions(xmpMeta);
             try {
                 xmpMeta.setProperty(XMPConst.NS_DC, PdfConst.Format, "application/pdf");
                 setXmpMetadata(xmpMeta);
             } catch (XMPException ignored) {
             }
         }
-        return xmpMetadata;
+        if (xmpMetadataBytes == null) {
+            return null;
+        }
+        return Arrays.copyOf(xmpMetadataBytes, xmpMetadataBytes.length);
     }
 
     /**
@@ -671,17 +756,22 @@ public class PdfDocument implements IEventDispatcher, Closeable {
 
     /**
      * Gets document information dictionary.
+     * <p>
      * {@link PdfDocument#info} is lazy initialized. It will be initialized during the first call of this method.
+     * <p>
+     * The information dictionary values are synchronized with document XMP Metadata.
      *
      * @return document information dictionary.
      */
     public PdfDocumentInfo getDocumentInfo() {
         checkClosingStatus();
         if (info == null) {
-            PdfObject infoDict = trailer.get(PdfName.Info);
-            info = new PdfDocumentInfo(
-                    infoDict instanceof PdfDictionary ? (PdfDictionary) infoDict : new PdfDictionary(), this);
-            XmpMetaInfoConverter.appendMetadataToInfo(xmpMetadata, info);
+            PdfDictionary infoDict = trailer == null ? null : trailer.getAsDictionary(PdfName.Info);
+            info = new PdfDocumentInfo(infoDict == null ? new PdfDictionary() : infoDict, this);
+            try {
+                XmpMetaInfoConverter.appendMetadataToInfo(getXmpMetadata(), info);
+            } catch (XMPException ignored) {
+            }
         }
         return info;
     }
@@ -691,7 +781,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      * <p>
      * In order to set originalDocumentId  {@link WriterProperties#setInitialDocumentId} should be used
      *
-     * @return original dccument id
+     * @return original document id
      */
     public PdfString getOriginalDocumentId() {
         return originalDocumentId;
@@ -730,51 +820,53 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     }
 
     /**
-     * {@inheritDoc}
+     * Adds new event handler.
+     *
+     * @param type a type of event to be handled
+     * @param handler event handler
      */
-    @Override
-    public void addEventHandler(String type, com.itextpdf.kernel.events.IEventHandler handler) {
-        eventDispatcher.addEventHandler(type, handler);
+    public void addEventHandler(String type, AbstractPdfDocumentEventHandler handler) {
+        handler.addType(type);
+        documentHandlers.add(handler);
     }
 
     /**
-     * {@inheritDoc}
+     * Dispatches an event.
+     *
+     * @param event the {@link AbstractPdfDocumentEvent} to be dispatched
      */
-    @Override
-    public void dispatchEvent(com.itextpdf.kernel.events.Event event) {
-        eventDispatcher.dispatchEvent(event);
+    public void dispatchEvent(AbstractPdfDocumentEvent event) {
+        event.setDocument(this);
+        for (final IEventHandler handler : documentHandlers) {
+            handler.onEvent(event);
+        }
     }
 
     /**
-     * {@inheritDoc}
+     * Checks if provided event handler assigned for this document.
+     *
+     * @param handler the {@link AbstractPdfDocumentEventHandler} to check
+     *
+     * @return {@code true} if event handler is assigned for this document, {@code false} otherwise
      */
-    @Override
-    public void dispatchEvent(com.itextpdf.kernel.events.Event event, boolean delayed) {
-        eventDispatcher.dispatchEvent(event, delayed);
+    public boolean hasEventHandler(AbstractPdfDocumentEventHandler handler) {
+        return documentHandlers.contains(handler);
     }
 
     /**
-     * {@inheritDoc}
+     * Removes event handler.
+     *
+     * @param handler {@link AbstractPdfDocumentEventHandler} event handler to remove for this document
      */
-    @Override
-    public boolean hasEventHandler(String type) {
-        return eventDispatcher.hasEventHandler(type);
+    public void removeEventHandler(AbstractPdfDocumentEventHandler handler) {
+        documentHandlers.remove(handler);
     }
 
     /**
-     * {@inheritDoc}
+     * Removes all event handlers for this document.
      */
-    @Override
-    public void removeEventHandler(String type, com.itextpdf.kernel.events.IEventHandler handler) {
-        eventDispatcher.removeEventHandler(type, handler);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void removeAllHandlers() {
-        eventDispatcher.removeAllHandlers();
+        documentHandlers.clear();
     }
 
     /**
@@ -857,6 +949,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                         ITextCoreProductData.getInstance()));
                 // The event will prepare document for flushing, i.e. will set an appropriate producer line
                 manager.onEvent(new FlushPdfDocumentEvent(this));
+                dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.START_DOCUMENT_CLOSING));
 
                 updateXmpMetadata();
                 // In PDF 2.0, all the values except CreationDate and ModDate are deprecated. Remove them now
@@ -865,16 +958,16 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                         getDocumentInfo().getPdfObject().remove(deprecatedKey);
                     }
                 }
-                if (getXmpMetadata() != null) {
+                if (getXmpMetadataBytes() != null) {
                     PdfStream xmp = catalog.getPdfObject().getAsStream(PdfName.Metadata);
                     if (isAppendMode() && xmp != null && !xmp.isFlushed() && xmp.getIndirectReference() != null) {
                         // Use existing object for append mode
-                        xmp.setData(xmpMetadata);
+                        xmp.setData(getXmpMetadataBytes());
                         xmp.setModified();
                     } else {
                         // Create new object
                         xmp = (PdfStream) new PdfStream().makeIndirect(this);
-                        xmp.getOutputStream().write(xmpMetadata);
+                        xmp.getOutputStream().write(getXmpMetadataBytes());
                         catalog.getPdfObject().put(PdfName.Metadata, xmp);
                         catalog.setModified();
                     }
@@ -891,7 +984,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                     catalog.getPdfObject().put(PdfName.OCProperties, catalog.getOCProperties(false).getPdfObject());
                 }
 
-                checkIsoConformance();
+                checkIsoConformance(new PdfDocumentValidationContext(this, getDocumentFonts()));
 
                 if (getNumberOfPages() == 0) {
                     // Add new page here, not in PdfPagesTree#generateTree method, so that any page
@@ -901,6 +994,14 @@ public class PdfDocument implements IEventDispatcher, Closeable {
 
                 PdfObject crypto = null;
                 final Set<PdfIndirectReference> forbiddenToFlush = new HashSet<>();
+                documentInfoHelper.adjustDocumentInfo(getDocumentInfo());
+                // The following 2 operators prevent the possible inconsistency between root and info
+                // entries existing in the trailer object and corresponding fields. This inconsistency
+                // may appear when user gets trailer and explicitly sets new root or info dictionaries.
+                if (documentInfoHelper.shouldAddDocumentInfoToTrailer()) {
+                    trailer.put(PdfName.Info, getDocumentInfo().getPdfObject());
+                }
+                trailer.put(PdfName.Root, catalog.getPdfObject());
                 if (properties.appendMode) {
                     if (structTreeRoot != null) {
                         tryFlushTagStructure(true);
@@ -921,10 +1022,12 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                     }
 
                     PdfObject pageRoot = catalog.getPageTree().generateTree();
-                    flushInfoDictionary(properties.appendMode);
                     if (catalog.getPdfObject().isModified() || pageRoot.isModified()) {
                         catalog.put(PdfName.Pages, pageRoot);
                         catalog.getPdfObject().flush(false);
+                    }
+                    if (getDocumentInfo().getPdfObject().isModified()) {
+                        getDocumentInfo().getPdfObject().flush(false);
                     }
                     flushFonts();
 
@@ -973,8 +1076,8 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                     if (structTreeRoot != null) {
                         tryFlushTagStructure(false);
                     }
-                    flushInfoDictionary(properties.appendMode);
                     catalog.getPdfObject().flush(false);
+                    getDocumentInfo().getPdfObject().flush(false);
                     flushFonts();
 
                     if (writer.crypto != null) {
@@ -1003,17 +1106,12 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                 // To avoid encryption of XrefStream and Encryption dictionary remove crypto.
                 // NOTE. No need in reverting, because it is the last operation with the document.
                 writer.crypto = null;
-                checkIsoConformance(crypto, IsoKey.CRYPTO);
+                checkIsoConformance(new CryptoValidationContext(crypto));
 
                 if (!properties.appendMode && crypto != null) {
                     // no need to flush crypto in append mode, it shall not have changed in this case
                     crypto.flush(false);
                 }
-
-                // The following operator prevents the possible inconsistency between root and info
-                // entries existing in the trailer object and corresponding fields. This inconsistency
-                // may appear when user gets trailer and explicitly sets new root or info dictionaries.
-                trailer.put(PdfName.Root, catalog.getPdfObject());
 
                 //By this time original and modified document ids should always be not null due to initializing in
                 // either writer properties, or in the writer init section on document open or from pdfreader. So we
@@ -1023,21 +1121,22 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                 xref.writeXrefTableAndTrailer(this, fileId, crypto);
                 writer.flush();
                 if (writer.getOutputStream() instanceof CountOutputStream) {
-                    long amountOfBytes = ((CountOutputStream) writer.getOutputStream()).getAmountOfWrittenBytes();
+                    final long amountOfBytes = ((CountOutputStream) writer.getOutputStream()).getAmountOfWrittenBytes();
+                    manager.onEvent(new SizeOfPdfStatisticsEvent(amountOfBytes, ITextCoreProductData.getInstance()));
+                } else if (writer.getOutputStream() instanceof ByteArrayOutputStream) {
+                    final long amountOfBytes = ((ByteArrayOutputStream) writer.getOutputStream()).size();
                     manager.onEvent(new SizeOfPdfStatisticsEvent(amountOfBytes, ITextCoreProductData.getInstance()));
                 }
             }
             catalog.getPageTree().clearPageRefs();
-            removeAllHandlers();
         } catch (IOException e) {
             throw new PdfException(KernelExceptionMessageConstant.CANNOT_CLOSE_DOCUMENT, e, this);
         } finally {
             if (writer != null && isCloseWriter()) {
                 try {
-                    writer.close();
+                    writer.finish();
                 } catch (Exception e) {
-                    Logger logger = LoggerFactory.getLogger(PdfDocument.class);
-                    logger.error(IoLogMessageConstant.PDF_WRITER_CLOSING_FAILED, e);
+                    LOGGER.error(IoLogMessageConstant.PDF_WRITER_CLOSING_FAILED, e);
                 }
             }
 
@@ -1045,8 +1144,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                 try {
                     reader.close();
                 } catch (Exception e) {
-                    Logger logger = LoggerFactory.getLogger(PdfDocument.class);
-                    logger.error(IoLogMessageConstant.PDF_READER_CLOSING_FAILED, e);
+                    LOGGER.error(IoLogMessageConstant.PDF_READER_CLOSING_FAILED, e);
                 }
             }
 
@@ -1153,15 +1251,14 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     public List<PdfPage> copyPagesTo(int pageFrom, int pageTo, PdfDocument toDocument, int insertBeforePage) {
         return copyPagesTo(pageFrom, pageTo, toDocument, insertBeforePage, null);
     }
-
-
+    
     /**
-     * Get the {@link IConformanceLevel}
+     * Get the {@link PdfConformance}
      *
-     * @return the {@link IConformanceLevel}  will be null if the document does not have a conformance level specified
+     * @return the document conformance
      */
-    public IConformanceLevel getConformanceLevel() {
-        return null;
+    public PdfConformance getConformance() {
+        return pdfConformance;
     }
 
     /**
@@ -1355,8 +1452,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                     ((IPdfPageFormCopier) copier).recreateAcroformToProcessCopiedFields(toDocument);
                 }
             } else {
-                Logger logger = LoggerFactory.getLogger(PdfDocument.class);
-                logger.warn(IoLogMessageConstant.NOT_TAGGED_PAGES_IN_TAGGED_DOCUMENT);
+                LOGGER.warn(IoLogMessageConstant.NOT_TAGGED_PAGES_IN_TAGGED_DOCUMENT);
             }
         }
         if (catalog.isOutlineMode()) {
@@ -1523,7 +1619,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     public void addNamedDestination(PdfString key, PdfObject value) {
         checkClosingStatus();
         if (value.isArray() && ((PdfArray) value).get(0).isNumber()) {
-            LoggerFactory.getLogger(PdfDocument.class).warn(IoLogMessageConstant.INVALID_DESTINATION_TYPE);
+            LOGGER.warn(IoLogMessageConstant.INVALID_DESTINATION_TYPE);
         }
         catalog.addNamedDestination(key, value);
     }
@@ -1577,39 +1673,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         outputIntents.add(outputIntent.getPdfObject());
     }
 
-    /**
-     * Checks whether PDF document conforms a specific standard.
-     *
-     * @param obj An object to conform.
-     * @param key type of object to conform.
-     */
-    public void checkIsoConformance(Object obj, IsoKey key) {
-        checkIsoConformance(obj, key, null, null);
-    }
-
-    /**
-     * Checks whether PDF document conforms a specific standard.
-     *
-     * @param obj           an object to conform.
-     * @param key           type of object to conform.
-     * @param resources     {@link PdfResources} associated with an object to check.
-     * @param contentStream current content stream
-     */
-    public void checkIsoConformance(Object obj, IsoKey key, PdfResources resources, PdfStream contentStream) {
-        checkIsoConformance(obj, key, resources, contentStream, null);
-    }
-
-    /**
-     * Checks whether PDF document conforms a specific standard.
-     *
-     * @param obj           an object to conform.
-     * @param key           type of object to conform.
-     * @param resources     {@link PdfResources} associated with an object to check.
-     * @param contentStream current content stream.
-     * @param extra         extra data required for the check.
-     */
-    public void checkIsoConformance(Object obj, IsoKey key, PdfResources resources, PdfStream contentStream,
-            Object extra) {
+    public void checkIsoConformance(IValidationContext validationContext) {
         if (!this.getDiContainer().isRegistered(ValidationContainer.class)) {
             return;
         }
@@ -1617,17 +1681,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         if (container == null) {
             return;
         }
-        container.validate(obj, key, resources, contentStream, extra);
-    }
-
-    /**
-     * Checks whether PDF document conforms a specific standard.
-     * Shall be overridden.
-     *
-     * @param gState    a {@link CanvasGraphicsState} object to conform.
-     * @param resources {@link PdfResources} associated with an object to check.
-     */
-    public void checkShowTextIsoConformance(CanvasGraphicsState gState, PdfResources resources) {
+        container.validate(validationContext);
     }
 
     /**
@@ -1658,8 +1712,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      */
     public void addAssociatedFile(String description, PdfFileSpec fs) {
         if (null == ((PdfDictionary) fs.getPdfObject()).get(PdfName.AFRelationship)) {
-            Logger logger = LoggerFactory.getLogger(PdfDocument.class);
-            logger.error(IoLogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
+            LOGGER.error(IoLogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
         }
 
         PdfArray afArray = catalog.getPdfObject().getAsArray(PdfName.AF);
@@ -1714,7 +1767,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                         }
                     }
                 } catch (PdfException e) {
-                    LoggerFactory.getLogger(getClass()).error(e.getMessage());
+                    LOGGER.error(e.getMessage());
                 }
             }
         }
@@ -1737,8 +1790,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
             throw new PdfException(KernelExceptionMessageConstant.CANNOT_SET_ENCRYPTED_PAYLOAD_TO_ENCRYPTED_DOCUMENT);
         }
         if (!PdfName.EncryptedPayload.equals(((PdfDictionary) fs.getPdfObject()).get(PdfName.AFRelationship))) {
-            LoggerFactory.getLogger(getClass())
-                    .error(IoLogMessageConstant.ENCRYPTED_PAYLOAD_FILE_SPEC_SHALL_HAVE_AFRELATIONSHIP_FILED_EQUAL_TO_ENCRYPTED_PAYLOAD);
+            LOGGER.error(IoLogMessageConstant.ENCRYPTED_PAYLOAD_FILE_SPEC_SHALL_HAVE_AFRELATIONSHIP_FILED_EQUAL_TO_ENCRYPTED_PAYLOAD);
         }
         PdfEncryptedPayload encryptedPayload = PdfEncryptedPayload.extractFrom(fs);
         if (encryptedPayload == null) {
@@ -1747,8 +1799,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         }
         PdfCollection collection = getCatalog().getCollection();
         if (collection != null) {
-            LoggerFactory.getLogger(getClass())
-                    .warn(IoLogMessageConstant.COLLECTION_DICTIONARY_ALREADY_EXISTS_IT_WILL_BE_MODIFIED);
+            LOGGER.warn(IoLogMessageConstant.COLLECTION_DICTIONARY_ALREADY_EXISTS_IT_WILL_BE_MODIFIED);
         } else {
             collection = new PdfCollection();
             getCatalog().setCollection(collection);
@@ -1868,19 +1919,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      * @return instance of {@link PdfFont} or {@code null} on error.
      */
     public PdfFont getDefaultFont() {
-        if (defaultFont == null) {
-            try {
-                defaultFont = PdfFontFactory.createFont();
-                if (writer != null) {
-                    defaultFont.makeIndirect(this);
-                }
-            } catch (IOException e) {
-                Logger logger = LoggerFactory.getLogger(PdfDocument.class);
-                logger.error(IoLogMessageConstant.EXCEPTION_WHILE_CREATING_DEFAULT_FONT, e);
-                defaultFont = null;
-            }
-        }
-        return defaultFont;
+        return defaultFontStrategy.getFont();
     }
 
     /**
@@ -1995,34 +2034,6 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     }
 
     /**
-     * Checks whether PDF document conforms to a specific standard.
-     */
-    protected void checkIsoConformance() {
-        if (!this.getDiContainer().isRegistered(ValidationContainer.class)) {
-            return;
-        }
-        ValidationContainer container = this.getDiContainer().getInstance(ValidationContainer.class);
-        if (container == null) {
-            return;
-        }
-        ValidationContext context = new ValidationContext()
-                .withPdfDocument(this)
-                .withFonts(getDocumentFonts());
-        container.validate(context);
-    }
-
-    /**
-     * Mark an object with {@link PdfObject#MUST_BE_FLUSHED}.
-     *
-     * @param pdfObject an object to mark.
-     */
-    protected void markObjectAsMustBeFlushed(PdfObject pdfObject) {
-        if (pdfObject.getIndirectReference() != null) {
-            pdfObject.getIndirectReference().setState(PdfObject.MUST_BE_FLUSHED);
-        }
-    }
-
-    /**
      * Flush an object.
      *
      * @param pdfObject     object to flush.
@@ -2031,7 +2042,18 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      * @throws IOException on error.
      */
     protected void flushObject(PdfObject pdfObject, boolean canBeInObjStm) throws IOException {
-        writer.flushObject(pdfObject, canBeInObjStm);
+        boolean flushAllowed = true;
+        if (!isClosing && this.getDiContainer().isRegistered(ValidationContainer.class)) {
+            ValidationContainer container = this.getDiContainer().getInstance(ValidationContainer.class);
+            if (container != null) {
+                flushAllowed = container.isPdfObjectChecked(pdfObject);
+            }
+        }
+        if (isClosing || flushAllowed) {
+            writer.flushObject(pdfObject, canBeInObjStm);
+        } else if (pdfObject.getIndirectReference() != null)  {
+            pdfObject.getIndirectReference().setState(PdfObject.MUST_BE_FLUSHED);
+        }
     }
 
     /**
@@ -2042,6 +2064,11 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      *                      or {@code null} otherwise
      */
     protected void open(PdfVersion newPdfVersion) {
+        if (properties != null){
+            for (Class<?> aClass : properties.dependencies.keySet()) {
+                diContainer.register(aClass, properties.dependencies.get(aClass));
+            }
+        }
         this.fingerPrint = new FingerPrint();
         this.encryptedEmbeddedStreamsHandler = new EncryptedEmbeddedStreamsHandler(this);
 
@@ -2077,16 +2104,6 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                 }
                 catalog = new PdfCatalog(catalogDictionary);
                 updatePdfVersionFromCatalog();
-                PdfStream xmpMetadataStream = catalog.getPdfObject().getAsStream(PdfName.Metadata);
-                if (xmpMetadataStream != null) {
-                    xmpMetadata = xmpMetadataStream.getBytes();
-                    if (!this.getClass().equals(PdfDocument.class)) {
-                        // TODO DEVSIX-5292 If somebody extends PdfDocument we have to initialize document info
-                        //  and conformance level to provide compatibility. This code block shall be removed
-                        reader.getPdfAConformanceLevel();
-                        getDocumentInfo();
-                    }
-                }
 
                 PdfDictionary str = catalog.getPdfObject().getAsDictionary(PdfName.StructTreeRoot);
                 if (str != null) {
@@ -2096,11 +2113,17 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                     throw new PdfException(
                             KernelExceptionMessageConstant.APPEND_MODE_REQUIRES_A_DOCUMENT_WITHOUT_ERRORS_EVEN_IF_RECOVERY_IS_POSSIBLE);
                 }
+                pdfConformance = reader.getPdfConformance();
             }
             xref.initFreeReferencesList(this);
             if (writer != null) {
+                if (writer.properties.addPdfAXmpMetadata != null || writer.properties.addPdfUaXmpMetadata != null) {
+                    pdfConformance = new PdfConformance(writer.properties.addPdfAXmpMetadata,
+                            writer.properties.addPdfUaXmpMetadata);
+                }
+                enableByteArrayWritingMode();
                 if (reader != null && reader.hasXrefStm() && writer.properties.isFullCompression == null) {
-                    writer.properties.isFullCompression = true;
+                    writer.properties.isFullCompression = Boolean.TRUE;
                 }
                 if (reader != null && !reader.isOpenedWithFullPermission()) {
                     throw new BadPasswordException(BadPasswordException.PdfReaderNotOpenedWithOwnerPassword);
@@ -2111,7 +2134,8 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                 writer.document = this;
                 if (reader == null) {
                     catalog = new PdfCatalog(this);
-                    info = new PdfDocumentInfo(this).addCreationDate();
+                    // initialize document info
+                    getDocumentInfo().addCreationDate();
                 }
                 getDocumentInfo().addModDate();
 
@@ -2120,7 +2144,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                 }
                 // We keep the original trailer of the document to preserve the original document keys,
                 // but we have to remove all standard keys that can occur in the trailer to avoid invalid pdfs
-                if (trailer.size() > 0) {
+                if (!trailer.isEmpty()) {
                     for (final PdfName key : PdfDocument.PDF_NAMES_TO_REMOVE_FROM_ORIGINAL_TRAILER) {
                         trailer.remove(key);
                     }
@@ -2176,6 +2200,10 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                 overrideFullCompressionInWriterProperties(writer.properties, reader.hasXrefStm());
 
                 writer.crypto = reader.decrypt;
+                if (writer.crypto != null) {
+                    writer.crypto.checkEncryptionRequirements(this);
+                    writer.crypto.configureEncryptionParametersFromWriter(this);
+                }
 
                 if (newPdfVersion != null) {
                     // In PDF 1.4, a PDF version can also be specified in the Version entry of the document catalog,
@@ -2210,16 +2238,8 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                     if (!embeddedStreamsSavedOnReading && writer.crypto.isEmbeddedFilesOnly()) {
                         encryptedEmbeddedStreamsHandler.storeAllEmbeddedStreams();
                     }
-                    if (writer.crypto.getCryptoMode() < EncryptionConstants.ENCRYPTION_AES_256) {
-                        VersionConforming.validatePdfVersionForDeprecatedFeatureLogWarn(this, PdfVersion.PDF_2_0,
-                                VersionConforming.DEPRECATED_ENCRYPTION_ALGORITHMS);
-                    } else if (writer.crypto.getCryptoMode() == EncryptionConstants.ENCRYPTION_AES_256) {
-                        PdfNumber r = writer.crypto.getPdfObject().getAsNumber(PdfName.R);
-                        if (r != null && r.intValue() == 5) {
-                            VersionConforming.validatePdfVersionForDeprecatedFeatureLogWarn(this, PdfVersion.PDF_2_0,
-                                    VersionConforming.DEPRECATED_AES256_REVISION);
-                        }
-                    }
+                    writer.crypto.checkEncryptionRequirements(this);
+                    writer.crypto.configureEncryptionParametersFromWriter(this);
                 }
             }
             if (EventConfirmationType.ON_DEMAND == event.getConfirmationType()) {
@@ -2232,31 +2252,6 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     }
 
     /**
-     * Adds custom XMP metadata extension. Useful for PDF/UA, ZUGFeRD, etc.
-     *
-     * @param xmpMeta {@link XMPMeta} to add custom metadata to.
-     */
-    protected void addCustomMetadataExtensions(XMPMeta xmpMeta) {
-    }
-
-    /**
-     * Flush info dictionary if needed.
-     *
-     * @param appendMode <code>true</code> if the document is edited in append mode.
-     */
-    protected void flushInfoDictionary(boolean appendMode) {
-        PdfObject infoDictObj = getDocumentInfo().getPdfObject();
-        if (!appendMode || infoDictObj.isModified()) {
-            infoDictObj.flush(false);
-        }
-
-        // The following operator prevents the possible inconsistency between root and info
-        // entries existing in the trailer object and corresponding fields. This inconsistency
-        // may appear when user gets trailer and explicitly sets new root or info dictionaries.
-        trailer.put(PdfName.Info, infoDictObj);
-    }
-
-    /**
      * Updates XMP metadata.
      * Shall be overridden.
      */
@@ -2264,13 +2259,13 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         try {
             // We add PDF producer info in any case, and the valid way to do it for PDF 2.0 in only in metadata, not
             // in the info dictionary.
-            if (xmpMetadata != null || writer.properties.addXmpMetadata
+            if (getXmpMetadataBytes() != null || writer.properties.addXmpMetadata
                     || pdfVersion.compareTo(PdfVersion.PDF_2_0) >= 0) {
-                setXmpMetadata(updateDefaultXmpMetadata());
+                final XMPMeta xmpMeta = updateDefaultXmpMetadata();
+                setXmpMetadata(xmpMeta);
             }
         } catch (XMPException e) {
-            Logger logger = LoggerFactory.getLogger(PdfDocument.class);
-            logger.error(IoLogMessageConstant.EXCEPTION_WHILE_UPDATING_XMPMETADATA, e);
+            LOGGER.error(IoLogMessageConstant.EXCEPTION_WHILE_UPDATING_XMPMETADATA, e);
         }
     }
 
@@ -2282,15 +2277,9 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      * @throws XMPException if the file is not well-formed XML or if parsing fails.
      */
     protected XMPMeta updateDefaultXmpMetadata() throws XMPException {
-        XMPMeta xmpMeta = XMPMetaFactory.parseFromBuffer(getXmpMetadata(true));
+        XMPMeta xmpMeta = getXmpMetadata(true);
         XmpMetaInfoConverter.appendDocumentInfoToMetadata(getDocumentInfo(), xmpMeta);
-
-        if (isTagged() && writer.properties.addUAXmpMetadata && !isXmpMetaHasProperty(xmpMeta, XMPConst.NS_PDFUA_ID,
-                XMPConst.PART)) {
-            xmpMeta.setPropertyInteger(XMPConst.NS_PDFUA_ID, XMPConst.PART, 1,
-                    new PropertyOptions(PropertyOptions.SEPARATE_NODE));
-        }
-
+        PdfConformance.setConformanceToXmp(xmpMeta, pdfConformance);
         return xmpMeta;
     }
 
@@ -2391,8 +2380,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         } catch (Exception e) {
             structTreeRoot = null;
             structParentIndex = -1;
-            Logger logger = LoggerFactory.getLogger(PdfDocument.class);
-            logger.error(IoLogMessageConstant.TAG_STRUCTURE_INIT_FAILED, e);
+            LOGGER.error(IoLogMessageConstant.TAG_STRUCTURE_INIT_FAILED, e);
         }
     }
 
@@ -2415,6 +2403,19 @@ public class PdfDocument implements IEventDispatcher, Closeable {
 
     boolean hasAcroForm() {
         return getCatalog().getPdfObject().containsKey(PdfName.AcroForm);
+    }
+
+    private void enableByteArrayWritingMode() {
+        if (properties.appendMode || properties.preserveEncryption) {
+            if (reader.decrypt != null && reader.decrypt.getMacContainer() != null) {
+                writer.enableByteArrayWritingMode();
+            }
+        } else if (writer.properties.encryptionProperties != null &&
+                writer.properties.encryptionProperties.macProperties != null &&
+                writer.properties.pdfVersion != null &&
+                PdfVersion.PDF_2_0.compareTo(writer.properties.pdfVersion) <= 0) {
+            writer.enableByteArrayWritingMode();
+        }
     }
 
     private void tryFlushTagStructure(boolean isAppendMode) {
@@ -2606,8 +2607,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
 
     private void processReadingError(String errorMessage) {
         if (StrictnessLevel.CONSERVATIVE.isStricter(reader.getStrictnessLevel())) {
-            Logger logger = LoggerFactory.getLogger(PdfDocument.class);
-            logger.error(errorMessage);
+            LOGGER.error(errorMessage);
         } else {
             throw new PdfException(errorMessage);
         }
@@ -2616,17 +2616,11 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     private static void overrideFullCompressionInWriterProperties(WriterProperties properties,
             boolean readerHasXrefStream) {
         if (Boolean.TRUE == properties.isFullCompression && !readerHasXrefStream) {
-            Logger logger = LoggerFactory.getLogger(PdfDocument.class);
-            logger.warn(KernelLogMessageConstant.FULL_COMPRESSION_APPEND_MODE_XREF_TABLE_INCONSISTENCY);
+            LOGGER.warn(KernelLogMessageConstant.FULL_COMPRESSION_APPEND_MODE_XREF_TABLE_INCONSISTENCY);
         } else if (Boolean.FALSE == properties.isFullCompression && readerHasXrefStream) {
-            Logger logger = LoggerFactory.getLogger(PdfDocument.class);
-            logger.warn(KernelLogMessageConstant.FULL_COMPRESSION_APPEND_MODE_XREF_STREAM_INCONSISTENCY);
+            LOGGER.warn(KernelLogMessageConstant.FULL_COMPRESSION_APPEND_MODE_XREF_STREAM_INCONSISTENCY);
         }
         properties.isFullCompression = readerHasXrefStream;
-    }
-
-    private static boolean isXmpMetaHasProperty(XMPMeta xmpMeta, String schemaNS, String propName) throws XMPException {
-        return xmpMeta.getProperty(schemaNS, propName) != null;
     }
 
     private static class DestinationMutationInfo {

@@ -54,18 +54,17 @@ import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfUALayoutTest extends ExtendedITextTest {
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfua/PdfUALayoutTest/";
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfua/PdfUALayoutTest/";
@@ -73,12 +72,12 @@ public class PdfUALayoutTest extends ExtendedITextTest {
 
     private UaValidationTestFramework framework;
 
-    @Before
+    @BeforeEach
     public void initializeFramework() {
         framework = new UaValidationTestFramework(DESTINATION_FOLDER);
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
@@ -96,12 +95,12 @@ public class PdfUALayoutTest extends ExtendedITextTest {
         doc.add(new Paragraph("Simple layout PDF/UA-1 test").setFont(font));
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
     public void simpleParagraphWithUnderlineTest() throws IOException, InterruptedException {
-        String outPdf = DESTINATION_FOLDER + "simpleParagraphTest.pdf";
+        String outPdf = DESTINATION_FOLDER + "simpleParagraphUnderlinesTest.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_simpleParagraphWithUnderlineTest.pdf";
 
         PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
@@ -112,7 +111,7 @@ public class PdfUALayoutTest extends ExtendedITextTest {
         doc.add(new Paragraph("Simple layout PDF/UA-1 with underline test").setFont(font).setUnderline());
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -132,7 +131,7 @@ public class PdfUALayoutTest extends ExtendedITextTest {
 
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -150,7 +149,7 @@ public class PdfUALayoutTest extends ExtendedITextTest {
         doc.add(table);
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test

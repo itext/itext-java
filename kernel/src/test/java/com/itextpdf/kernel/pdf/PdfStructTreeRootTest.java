@@ -27,7 +27,6 @@ import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -35,18 +34,18 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfStructTreeRootTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfStructTreeRootTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfStructTreeRootTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
@@ -86,7 +85,7 @@ public class PdfStructTreeRootTest extends ExtendedITextTest {
         structTreeRoot.flush();
 
         for (PdfStructElem kidsOfStructTreeRootKid : kidsOfStructTreeRootKids) {
-            Assert.assertTrue(kidsOfStructTreeRootKid.isFlushed());
+            Assertions.assertTrue(kidsOfStructTreeRootKid.isFlushed());
         }
     }
 
@@ -105,7 +104,7 @@ public class PdfStructTreeRootTest extends ExtendedITextTest {
         // we've retrieved the ID tree but not used it -> it should be left out in the resulting file
         PdfReader r = new PdfReader(new ByteArrayInputStream(os.toByteArray()));
         PdfDocument readPdfDoc = new PdfDocument(r);
-        Assert.assertFalse(readPdfDoc.getStructTreeRoot().getPdfObject().containsKey(PdfName.IDTree));
+        Assertions.assertFalse(readPdfDoc.getStructTreeRoot().getPdfObject().containsKey(PdfName.IDTree));
     }
 
     @Test

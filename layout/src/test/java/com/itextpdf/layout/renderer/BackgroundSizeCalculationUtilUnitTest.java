@@ -26,14 +26,13 @@ import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.layout.properties.BackgroundImage;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.net.MalformedURLException;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class BackgroundSizeCalculationUtilUnitTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/BackgroundImageTest/";
@@ -46,7 +45,7 @@ public class BackgroundSizeCalculationUtilUnitTest extends ExtendedITextTest {
 
         float[] widthAndHeight = BackgroundSizeCalculationUtil.calculateBackgroundImageSize(backgroundImage, 200f, 300f);
 
-        Assert.assertArrayEquals(new float[] {45f, 45f}, widthAndHeight, delta);
+        Assertions.assertArrayEquals(new float[] {45f, 45f}, widthAndHeight, delta);
     }
 
     @Test
@@ -57,7 +56,7 @@ public class BackgroundSizeCalculationUtilUnitTest extends ExtendedITextTest {
 
         float[] widthAndHeight = BackgroundSizeCalculationUtil.calculateBackgroundImageSize(backgroundImage, 200f, 300f);
 
-        Assert.assertArrayEquals(new float[] {300f, 300f}, widthAndHeight, delta);
+        Assertions.assertArrayEquals(new float[] {300f, 300f}, widthAndHeight, delta);
     }
 
     @Test
@@ -68,7 +67,7 @@ public class BackgroundSizeCalculationUtilUnitTest extends ExtendedITextTest {
 
         float[] widthAndHeight = BackgroundSizeCalculationUtil.calculateBackgroundImageSize(backgroundImage, 200f, 300f);
 
-        Assert.assertArrayEquals(new float[] {200f, 200.000015f}, widthAndHeight, delta);
+        Assertions.assertArrayEquals(new float[] {200f, 200.000015f}, widthAndHeight, delta);
     }
 
     @Test
@@ -79,7 +78,7 @@ public class BackgroundSizeCalculationUtilUnitTest extends ExtendedITextTest {
 
         float[] widthAndHeight = BackgroundSizeCalculationUtil.calculateBackgroundImageSize(backgroundImage, 200f, 300f);
 
-        Assert.assertArrayEquals(new float[] {200f, 112.5f}, widthAndHeight, delta);
+        Assertions.assertArrayEquals(new float[] {200f, 112.5f}, widthAndHeight, delta);
     }
 
     @Test
@@ -90,6 +89,6 @@ public class BackgroundSizeCalculationUtilUnitTest extends ExtendedITextTest {
 
         float[] widthAndHeight = BackgroundSizeCalculationUtil.calculateBackgroundImageSize(backgroundImage, 200f, 300f);
 
-        Assert.assertArrayEquals(new float[] {533.3333f, 300f}, widthAndHeight, delta);
+        Assertions.assertArrayEquals(new float[] {533.3333f, 300f}, widthAndHeight, delta);
     }
 }

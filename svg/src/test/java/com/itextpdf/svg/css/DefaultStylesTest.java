@@ -34,17 +34,15 @@ import com.itextpdf.svg.dummy.sdk.ExceptionInputStream;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.processors.impl.SvgProcessorContext;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Map;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-@Category(UnitTest.class)
+@org.junit.jupiter.api.Tag("UnitTest")
 public class DefaultStylesTest extends ExtendedITextTest {
 
     @Test
@@ -54,13 +52,13 @@ public class DefaultStylesTest extends ExtendedITextTest {
         INode svgNode = new JsoupElementNode(svg);
         Map<String, String> resolvedStyles = styleResolver.resolveStyles(svgNode, new SvgCssContext());
 
-        Assert.assertEquals("1", resolvedStyles.get(SvgConstants.Attributes.STROKE_OPACITY));
-        Assert.assertEquals("1px", resolvedStyles.get(SvgConstants.Attributes.STROKE_WIDTH));
-        Assert.assertEquals(SvgConstants.Values.NONE, resolvedStyles.get(SvgConstants.Attributes.STROKE));
-        Assert.assertEquals(SvgConstants.Values.BUTT, resolvedStyles.get(SvgConstants.Attributes.STROKE_LINECAP));
-        Assert.assertEquals("0", resolvedStyles.get(SvgConstants.Attributes.STROKE_DASHOFFSET));
-        Assert.assertEquals(SvgConstants.Values.NONE, resolvedStyles.get(SvgConstants.Attributes.STROKE_DASHARRAY));
-        Assert.assertEquals("4", resolvedStyles.get(SvgConstants.Attributes.STROKE_MITERLIMIT));
+        Assertions.assertEquals("1", resolvedStyles.get(SvgConstants.Attributes.STROKE_OPACITY));
+        Assertions.assertEquals("1px", resolvedStyles.get(SvgConstants.Attributes.STROKE_WIDTH));
+        Assertions.assertEquals(SvgConstants.Values.NONE, resolvedStyles.get(SvgConstants.Attributes.STROKE));
+        Assertions.assertEquals(SvgConstants.Values.BUTT, resolvedStyles.get(SvgConstants.Attributes.STROKE_LINECAP));
+        Assertions.assertEquals("0", resolvedStyles.get(SvgConstants.Attributes.STROKE_DASHOFFSET));
+        Assertions.assertEquals(SvgConstants.Values.NONE, resolvedStyles.get(SvgConstants.Attributes.STROKE_DASHARRAY));
+        Assertions.assertEquals("4", resolvedStyles.get(SvgConstants.Attributes.STROKE_MITERLIMIT));
     }
 
     @Test
@@ -70,9 +68,9 @@ public class DefaultStylesTest extends ExtendedITextTest {
         INode svgNode = new JsoupElementNode(svg);
         Map<String, String> resolvedStyles = styleResolver.resolveStyles(svgNode, new SvgCssContext());
 
-        Assert.assertEquals("black", resolvedStyles.get(SvgConstants.Attributes.FILL));
-        Assert.assertEquals(SvgConstants.Values.FILL_RULE_NONZERO, resolvedStyles.get(SvgConstants.Attributes.FILL_RULE));
-        Assert.assertEquals("1", resolvedStyles.get(SvgConstants.Attributes.FILL_OPACITY));
+        Assertions.assertEquals("black", resolvedStyles.get(SvgConstants.Attributes.FILL));
+        Assertions.assertEquals(SvgConstants.Values.FILL_RULE_NONZERO, resolvedStyles.get(SvgConstants.Attributes.FILL_RULE));
+        Assertions.assertEquals("1", resolvedStyles.get(SvgConstants.Attributes.FILL_OPACITY));
     }
 
     @Test
@@ -82,8 +80,8 @@ public class DefaultStylesTest extends ExtendedITextTest {
         INode svgNode = new JsoupElementNode(svg);
         Map<String, String> resolvedStyles = styleResolver.resolveStyles(svgNode, new SvgCssContext());
 
-        Assert.assertEquals("helvetica", resolvedStyles.get(SvgConstants.Attributes.FONT_FAMILY));
-        Assert.assertEquals("9pt", resolvedStyles.get(SvgConstants.Attributes.FONT_SIZE));
+        Assertions.assertEquals("helvetica", resolvedStyles.get(SvgConstants.Attributes.FONT_FAMILY));
+        Assertions.assertEquals("9pt", resolvedStyles.get(SvgConstants.Attributes.FONT_SIZE));
     }
 
     @Test
@@ -94,13 +92,13 @@ public class DefaultStylesTest extends ExtendedITextTest {
         INode svgNode = new JsoupElementNode(svg);
         Map<String, String> resolvedStyles = styleResolver.resolveStyles(svgNode, new SvgCssContext());
 
-        Assert.assertEquals(1, resolvedStyles.size());
-        Assert.assertEquals("12pt", resolvedStyles.get(Attributes.FONT_SIZE));
+        Assertions.assertEquals(1, resolvedStyles.size());
+        Assertions.assertEquals("12pt", resolvedStyles.get(Attributes.FONT_SIZE));
     }
 
     @Test
     public void emptyStylesFallbackTest() throws IOException {
-        Assert.assertThrows(IOException.class, () -> new SvgStyleResolver(new ExceptionInputStream(),
+        Assertions.assertThrows(IOException.class, () -> new SvgStyleResolver(new ExceptionInputStream(),
                         new SvgProcessorContext(new SvgConverterProperties())));
     }
 }

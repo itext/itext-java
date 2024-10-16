@@ -30,13 +30,12 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfFormCreatorTest extends ExtendedITextTest {
     @Test
     public void getAcroFormTest() {
@@ -52,7 +51,7 @@ public class PdfFormCreatorTest extends ExtendedITextTest {
         
         try (PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
             PdfAcroForm acroForm = PdfFormCreator.getAcroForm(document, true);
-            Assert.assertNull(acroForm);
+            Assertions.assertNull(acroForm);
         } finally {
             PdfFormCreator.setFactory(new PdfFormFactory());
         }
@@ -75,7 +74,7 @@ public class PdfFormCreatorTest extends ExtendedITextTest {
         try (PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
             PdfFormField text =
                     new TextFormFieldBuilder(document, "name").setWidgetRectangle(new Rectangle(100, 100)).createText();
-            Assert.assertEquals(ColorConstants.RED, text.getColor());
+            Assertions.assertEquals(ColorConstants.RED, text.getColor());
         } finally {
             PdfFormCreator.setFactory(new PdfFormFactory());
         }

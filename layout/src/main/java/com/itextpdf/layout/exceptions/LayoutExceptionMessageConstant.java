@@ -61,6 +61,7 @@ public final class LayoutExceptionMessageConstant {
             = "Automatic repetitions in the grid template cannot be combined with intrinsic or flexible sizes.";
     public static final String FLEXIBLE_ARENT_ALLOWED_AS_MINIMUM_IN_MINMAX
             = "Flexible values aren't allowed as minimum in minmax grid function.";
+    public static final String TEXT_CONTENT_CANNOT_BE_NULL = "Text content cannot be null.";
 
     private LayoutExceptionMessageConstant(){}
 }

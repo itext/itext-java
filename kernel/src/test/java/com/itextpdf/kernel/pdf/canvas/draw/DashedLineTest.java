@@ -34,24 +34,23 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.parser.data.TextRenderInfo;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.CharacterRenderInfo;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Stack;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class DashedLineTest extends ExtendedITextTest {
 
     @Test
     public void defaultDashedLineTest01() {
         DashedLine dashedLine = new DashedLine();
 
-        Assert.assertEquals(ColorConstants.BLACK, dashedLine.getColor());
-        Assert.assertEquals(1, dashedLine.getLineWidth(), 0.0001);
+        Assertions.assertEquals(ColorConstants.BLACK, dashedLine.getColor());
+        Assertions.assertEquals(1, dashedLine.getLineWidth(), 0.0001);
     }
 
 
@@ -59,21 +58,21 @@ public class DashedLineTest extends ExtendedITextTest {
     public void dashedLineWithSetWidthTest01() {
         DashedLine dashedLine = new DashedLine(20);
 
-        Assert.assertEquals(ColorConstants.BLACK, dashedLine.getColor());
-        Assert.assertEquals(20, dashedLine.getLineWidth(), 0.0001);
+        Assertions.assertEquals(ColorConstants.BLACK, dashedLine.getColor());
+        Assertions.assertEquals(20, dashedLine.getLineWidth(), 0.0001);
     }
 
     @Test
     public void dashedLineSettersTest01() {
         DashedLine dashedLine = new DashedLine(15);
-        Assert.assertEquals(ColorConstants.BLACK, dashedLine.getColor());
-        Assert.assertEquals(15, dashedLine.getLineWidth(), 0.0001);
+        Assertions.assertEquals(ColorConstants.BLACK, dashedLine.getColor());
+        Assertions.assertEquals(15, dashedLine.getLineWidth(), 0.0001);
 
         dashedLine.setColor(ColorConstants.RED);
-        Assert.assertEquals(ColorConstants.RED, dashedLine.getColor());
+        Assertions.assertEquals(ColorConstants.RED, dashedLine.getColor());
 
         dashedLine.setLineWidth(10);
-        Assert.assertEquals(10, dashedLine.getLineWidth(), 0.0001);
+        Assertions.assertEquals(10, dashedLine.getLineWidth(), 0.0001);
     }
 
     @Test
@@ -95,6 +94,6 @@ public class DashedLineTest extends ExtendedITextTest {
 
         byte[] writtenContentBytes = canvas.getContentStream().getBytes();
 
-        Assert.assertArrayEquals(expectedContent.getBytes(), writtenContentBytes);
+        Assertions.assertArrayEquals(expectedContent.getBytes(), writtenContentBytes);
     }
 }

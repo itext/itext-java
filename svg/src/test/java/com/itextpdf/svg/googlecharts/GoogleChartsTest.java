@@ -28,20 +28,19 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.svg.utils.TestUtils;
 import com.itextpdf.test.ITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class GoogleChartsTest extends SvgIntegrationTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/googlecharts/GoogleChartsTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/svg/googlecharts/GoogleChartsTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         ITextTest.createDestinationFolder(destinationFolder);
     }
@@ -62,7 +61,7 @@ public class GoogleChartsTest extends SvgIntegrationTest {
         TestUtils.convertSVGtoPDF(destinationFolder + "areaChart.pdf",
                 sourceFolder + "areaChart.svg", 1, pageSize);
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "areaChart.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "areaChart.pdf",
                 sourceFolder + "cmp_areaChart.pdf", destinationFolder, "diff_"));
     }
 
@@ -72,7 +71,7 @@ public class GoogleChartsTest extends SvgIntegrationTest {
         TestUtils.convertSVGtoPDF(destinationFolder + "bubbleChart.pdf",
                 sourceFolder + "bubbleChart.svg", 1, pageSize);
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "bubbleChart.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "bubbleChart.pdf",
                 sourceFolder + "cmp_bubbleChart.pdf", destinationFolder, "diff_"));
     }
 
@@ -83,7 +82,7 @@ public class GoogleChartsTest extends SvgIntegrationTest {
         TestUtils.convertSVGtoPDF(destinationFolder + "calendarChart.pdf",
                 sourceFolder + "calendarChart.svg", 1, pageSize);
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "calendarChart.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "calendarChart.pdf",
                 sourceFolder + "cmp_calendarChart.pdf", destinationFolder, "diff_"));
     }
 
@@ -98,7 +97,7 @@ public class GoogleChartsTest extends SvgIntegrationTest {
         TestUtils.convertSVGtoPDF(destinationFolder + "comboChart.pdf",
                 sourceFolder + "comboChart.svg", 1, pageSize);
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "comboChart.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "comboChart.pdf",
                 sourceFolder + "cmp_comboChart.pdf", destinationFolder, "diff_"));
     }
 

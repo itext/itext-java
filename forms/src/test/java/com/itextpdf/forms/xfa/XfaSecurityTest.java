@@ -22,29 +22,26 @@
  */
 package com.itextpdf.forms.xfa;
 
-import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.utils.DefaultSafeXmlParserFactory;
 import com.itextpdf.kernel.utils.XmlProcessorCreator;
 import com.itextpdf.test.ExceptionTestUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class XfaSecurityTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/forms/xfa/XfaSecurityTest/";
@@ -58,7 +55,7 @@ public class XfaSecurityTest extends ExtendedITextTest {
             + "         uuid=\"36ac5111-55c5-4172-b0c1-0cbd783e2fcf\">\n"
             + "</xdp:xdp>\n";
 
-    @Before
+    @BeforeEach
     public void resetXmlParserFactoryToDefault() {
         XmlProcessorCreator.setXmlParserFactory(null);
     }
@@ -84,10 +81,10 @@ public class XfaSecurityTest extends ExtendedITextTest {
         XmlProcessorCreator.setXmlParserFactory(new SecurityTestXmlParserFactory());
         try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(inFileName),
                 new PdfWriter(new ByteArrayOutputStream()))) {
-            Exception e = Assert.assertThrows(PdfException.class,
+            Exception e = Assertions.assertThrows(PdfException.class,
                     () -> PdfFormCreator.getAcroForm(pdfDoc, true)
             );
-            Assert.assertEquals(ExceptionTestUtil.getXxeTestMessage(), e.getMessage());
+            Assertions.assertEquals(ExceptionTestUtil.getXxeTestMessage(), e.getMessage());
         }
     }
 
@@ -95,16 +92,16 @@ public class XfaSecurityTest extends ExtendedITextTest {
     public void xfaExternalFileXfaFormTest() throws IOException {
         String inFileName = SOURCE_FOLDER + "xfaExternalFile.pdf";
         try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(inFileName))) {
-            Exception e = Assert.assertThrows(PdfException.class, () -> new XfaForm(pdfDoc));
-            Assert.assertEquals(DTD_EXCEPTION_MESSAGE, e.getMessage());
+            Exception e = Assertions.assertThrows(PdfException.class, () -> new XfaForm(pdfDoc));
+            Assertions.assertEquals(DTD_EXCEPTION_MESSAGE, e.getMessage());
         }
     }
 
     @Test
     public void xfaWithDtdXfaFormTest() throws IOException {
         try (InputStream inputStream = new ByteArrayInputStream(XFA_WITH_DTD_XML.getBytes(StandardCharsets.UTF_8))) {
-            Exception e = Assert.assertThrows(PdfException.class, () -> new XfaForm(inputStream));
-            Assert.assertEquals(DTD_EXCEPTION_MESSAGE, e.getMessage());
+            Exception e = Assertions.assertThrows(PdfException.class, () -> new XfaForm(inputStream));
+            Assertions.assertEquals(DTD_EXCEPTION_MESSAGE, e.getMessage());
         }
     }
 
@@ -112,18 +109,18 @@ public class XfaSecurityTest extends ExtendedITextTest {
     public void fillXfaFormTest() throws IOException {
         try (InputStream inputStream = new ByteArrayInputStream(XFA_WITH_DTD_XML.getBytes(StandardCharsets.UTF_8))) {
             XfaForm form = new XfaForm();
-            Exception e = Assert.assertThrows(PdfException.class, () -> form.fillXfaForm(inputStream, true));
-            Assert.assertEquals(DTD_EXCEPTION_MESSAGE, e.getMessage());
+            Exception e = Assertions.assertThrows(PdfException.class, () -> form.fillXfaForm(inputStream, true));
+            Assertions.assertEquals(DTD_EXCEPTION_MESSAGE, e.getMessage());
         }
     }
 
     private void xfaSecurityExceptionTest(String inputFileName) throws IOException {
         try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(inputFileName),
                 new PdfWriter(new ByteArrayOutputStream()))) {
-            Exception e = Assert.assertThrows(PdfException.class,
+            Exception e = Assertions.assertThrows(PdfException.class,
                     () -> PdfFormCreator.getAcroForm(pdfDoc, true)
             );
-            Assert.assertEquals(DTD_EXCEPTION_MESSAGE, e.getMessage());
+            Assertions.assertEquals(DTD_EXCEPTION_MESSAGE, e.getMessage());
         }
     }
 }

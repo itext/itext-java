@@ -27,19 +27,15 @@ import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.stream.Collectors;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfType0FontIntegrationTest extends ExtendedITextTest {
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/PdfType0FontIntegrationTest/";
     private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/fonts/";
@@ -53,12 +49,12 @@ public class PdfType0FontIntegrationTest extends ExtendedITextTest {
     private static final String JAPANESE =
             "5た うぞせツそぇBぁデぢつっず信えいすてナおドぅだトヅでぉミ(:テかちぜ)じぃあづ";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(DESTINATION_FOLDER);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(DESTINATION_FOLDER);
     }
@@ -86,7 +82,7 @@ public class PdfType0FontIntegrationTest extends ExtendedITextTest {
         canvas.release();
 
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, DESTINATION_FOLDER));
     }
 
     @Test
@@ -115,7 +111,7 @@ public class PdfType0FontIntegrationTest extends ExtendedITextTest {
         canvas.release();
 
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, DESTINATION_FOLDER));
     }
 
     @Test
@@ -144,6 +140,58 @@ public class PdfType0FontIntegrationTest extends ExtendedITextTest {
         canvas.release();
 
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void cmapPlatform0PlatEnc3Format4FontTest() throws IOException, InterruptedException {
+        String filename = DESTINATION_FOLDER + "cmapPlatform0PlatEnc3Format4FontTest.pdf";
+        String cmpFilename = SOURCE_FOLDER + "cmp_cmapPlatform0PlatEnc3Format4FontTest.pdf";
+
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+
+        PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "glyphs.ttf");
+
+        PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+        canvas.saveState()
+                .beginText()
+                .setFontAndSize(font, 20)
+                .moveText(36, 700)
+                .showText("===fff===iii===ﬁ")
+                .endText()
+                .restoreState();
+        canvas.rectangle(100, 500, 100, 100).fill();
+        canvas.release();
+
+        pdfDoc.close();
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void cmapPlatform0PlatEnc3Format6FontTest() throws IOException, InterruptedException {
+        String filename = DESTINATION_FOLDER + "cmapPlatform0PlatEnc3Format6FontTest.pdf";
+        String cmpFilename = SOURCE_FOLDER + "cmp_cmapPlatform0PlatEnc3Format6FontTest.pdf";
+
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+
+        PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "glyphs-fmt-6.ttf");
+
+        PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+        canvas.saveState()
+                .beginText()
+                .setFontAndSize(font, 20)
+                .moveText(36, 700)
+                .showText("===fff===iii===")
+                .endText()
+                .restoreState();
+        canvas.rectangle(100, 500, 100, 100).fill();
+        canvas.release();
+
+        pdfDoc.close();
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpFilename, DESTINATION_FOLDER));
     }
 }

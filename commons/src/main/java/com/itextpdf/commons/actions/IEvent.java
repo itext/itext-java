@@ -24,7 +24,6 @@ package com.itextpdf.commons.actions;
 
 /**
  * Base marker interface for any generated event of any source.
- *
  */
 public interface IEvent {
 }

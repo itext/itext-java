@@ -23,6 +23,42 @@
 package com.itextpdf.io.font.otf;
 
 public class TagAndLocation {
-    public String tag;
-    public int location;
+    private String tag;
+    private int location;
+
+    /**
+     * Retrieves the tag of the object.
+     *
+     * @return tag
+     */
+    public String getTag() {
+        return tag;
+    }
+
+    /**
+     * Sets the tag of the object.
+     *
+     * @param tag tag
+     */
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
+    /**
+     * Retrieves the location of the object.
+     *
+     * @return location
+     */
+    public int getLocation() {
+        return location;
+    }
+
+    /**
+     * Sets the location of the object.
+     *
+     * @param location location
+     */
+    public void setLocation(int location) {
+        this.location = location;
+    }
 }

@@ -45,20 +45,18 @@ import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class FixedPositionTest extends ExtendedITextTest {
 
     public static final String SOURCE_FOLDER =
@@ -68,7 +66,7 @@ public class FixedPositionTest extends ExtendedITextTest {
     public static final String IMG_FOLDER =
             "./src/test/resources/com/itextpdf/forms/form/element/SignatureFieldAppearanceTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() {
         createDestinationFolder(DESTINATION_FOLDER);
     }
@@ -97,7 +95,7 @@ public class FixedPositionTest extends ExtendedITextTest {
 
             document.close();
         }
-        Assert.assertNull(new CompareTool().compareByContent(outputFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outputFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -122,7 +120,7 @@ public class FixedPositionTest extends ExtendedITextTest {
 
             document.close();
         }
-        Assert.assertNull(new CompareTool().compareByContent(outputFileName, cmpFileName, DESTINATION_FOLDER,
+        Assertions.assertNull(new CompareTool().compareByContent(outputFileName, cmpFileName, DESTINATION_FOLDER,
                 "diff"));
     }
 
@@ -148,7 +146,7 @@ public class FixedPositionTest extends ExtendedITextTest {
 
             document.close();
         }
-        Assert.assertNull(new CompareTool().compareByContent(outputFileName, cmpFileName, DESTINATION_FOLDER,
+        Assertions.assertNull(new CompareTool().compareByContent(outputFileName, cmpFileName, DESTINATION_FOLDER,
                 "diff"));
     }
 
@@ -176,7 +174,7 @@ public class FixedPositionTest extends ExtendedITextTest {
 
             document.close();
         }
-        Assert.assertNull(new CompareTool().compareByContent(outputFileName, cmpFileName, DESTINATION_FOLDER,
+        Assertions.assertNull(new CompareTool().compareByContent(outputFileName, cmpFileName, DESTINATION_FOLDER,
                 "diff"));
     }
 
@@ -201,7 +199,7 @@ public class FixedPositionTest extends ExtendedITextTest {
             }
             document.close();
         }
-        Assert.assertNull(new CompareTool().compareByContent(outputFileName, cmpFileName, DESTINATION_FOLDER,
+        Assertions.assertNull(new CompareTool().compareByContent(outputFileName, cmpFileName, DESTINATION_FOLDER,
                 "diff"));
     }
 
@@ -233,7 +231,7 @@ public class FixedPositionTest extends ExtendedITextTest {
             }
             document.close();
         }
-        Assert.assertNull(new CompareTool().compareByContent(outputFileName, cmpFileName, DESTINATION_FOLDER,
+        Assertions.assertNull(new CompareTool().compareByContent(outputFileName, cmpFileName, DESTINATION_FOLDER,
                 "diff"));
     }
 
@@ -265,7 +263,7 @@ public class FixedPositionTest extends ExtendedITextTest {
             }
             document.close();
         }
-        Assert.assertNull(new CompareTool().compareByContent(outputFileName, cmpFileName, DESTINATION_FOLDER,
+        Assertions.assertNull(new CompareTool().compareByContent(outputFileName, cmpFileName, DESTINATION_FOLDER,
                 "diff"));
     }
 
@@ -294,7 +292,7 @@ public class FixedPositionTest extends ExtendedITextTest {
             }
             document.close();
         }
-        Assert.assertNull(new CompareTool().compareByContent(outputFileName, cmpFileName, DESTINATION_FOLDER,
+        Assertions.assertNull(new CompareTool().compareByContent(outputFileName, cmpFileName, DESTINATION_FOLDER,
                 "diff"));
     }
 
@@ -322,7 +320,7 @@ public class FixedPositionTest extends ExtendedITextTest {
             }
             document.close();
         }
-        Assert.assertNull(new CompareTool().compareByContent(outputFileName, cmpFileName, DESTINATION_FOLDER,
+        Assertions.assertNull(new CompareTool().compareByContent(outputFileName, cmpFileName, DESTINATION_FOLDER,
                 "diff"));
     }
 

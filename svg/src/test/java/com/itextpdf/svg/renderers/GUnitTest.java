@@ -23,23 +23,22 @@
 package com.itextpdf.svg.renderers;
 
 import com.itextpdf.test.ITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class GUnitTest extends SvgIntegrationTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/gunit/";
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/renderers/impl/gunit/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         ITextTest.createDestinationFolder(DESTINATION_FOLDER);
     }
@@ -57,7 +56,7 @@ public class GUnitTest extends SvgIntegrationTest {
                 }
             }
         }
-        if(assertionErrorsThrown.size() != 0) Assert.fail("At least one compare file was not identical with the result");
+        if(assertionErrorsThrown.size() != 0) Assertions.fail("At least one compare file was not identical with the result");
     }
 
     @Test

@@ -47,6 +47,10 @@ public final class EncryptionConstants {
      */
     public static final int ENCRYPTION_AES_256 = 3;
     /**
+     * Type of encryption. Advanced Encryption Standard-Galois/Counter Mode (AES-GCM) encryption algorithm.
+     */
+    public static final int ENCRYPTION_AES_GCM = 4;
+    /**
      * Add this to the mode to keep the metadata in clear text.
      */
     public static final int DO_NOT_ENCRYPT_METADATA = 8;

@@ -43,24 +43,24 @@ public class GposLookupType1 extends OpenTableLookup {
 
     @Override
     public boolean transformOne(GlyphLine line) {
-        if (line.idx >= line.end) {
+        if (line.getIdx() >= line.getEnd()) {
             return false;
         }
-        if (openReader.isSkip(line.get(line.idx).getCode(), lookupFlag)) {
-            line.idx++;
+        if (openReader.isSkip(line.get(line.getIdx()).getCode(), lookupFlag)) {
+            line.setIdx(line.getIdx()+1);
             return false;
         }
-        int glyphCode = line.get(line.idx).getCode();
+        int glyphCode = line.get(line.getIdx()).getCode();
         boolean positionApplied = false;
         GposValueRecord valueRecord = valueRecordMap.get(glyphCode);
         if (valueRecord != null) {
-            Glyph newGlyph = new Glyph(line.get(line.idx));
-            newGlyph.setXAdvance((short)(newGlyph.getXAdvance() + valueRecord.XAdvance));
-            newGlyph.setYAdvance((short)(newGlyph.getYAdvance() + valueRecord.YAdvance));
-            line.set(line.idx, newGlyph);
+            Glyph newGlyph = new Glyph(line.get(line.getIdx()));
+            newGlyph.setXAdvance((short)(newGlyph.getXAdvance() + valueRecord.getXAdvance()));
+            newGlyph.setYAdvance((short)(newGlyph.getYAdvance() + valueRecord.getYAdvance()));
+            line.set(line.getIdx(), newGlyph);
             positionApplied = true;
         }
-        line.idx++;
+        line.setIdx(line.getIdx()+1);
         return positionApplied;
     }
 

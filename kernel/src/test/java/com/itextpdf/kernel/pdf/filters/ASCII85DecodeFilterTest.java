@@ -24,16 +24,15 @@ package com.itextpdf.kernel.pdf.filters;
 
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class ASCII85DecodeFilterTest extends ExtendedITextTest {
     public static final String SOURCE_FILE =
             "./src/test/resources/com/itextpdf/kernel/pdf/filters/ASCII85.bin";
@@ -54,7 +53,7 @@ public class ASCII85DecodeFilterTest extends ExtendedITextTest {
         ASCII85DecodeFilter filter = new ASCII85DecodeFilter();
         String decoded = new String(filter.decode(bytes, null, null, new PdfDictionary()));
 
-        Assert.assertEquals(expectedResult, decoded);
+        Assertions.assertEquals(expectedResult, decoded);
     }
 
     @Test
@@ -66,6 +65,6 @@ public class ASCII85DecodeFilterTest extends ExtendedITextTest {
         ASCII85DecodeFilter filter = new ASCII85DecodeFilter();
         String decoded = new String(filter.decode(bytes, null, null, new PdfDictionary()));
 
-        Assert.assertEquals(expectedResult, decoded);
+        Assertions.assertEquals(expectedResult, decoded);
     }
 }

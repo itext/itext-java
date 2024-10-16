@@ -26,15 +26,14 @@ import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.IOException;
 import java.io.InputStream;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class BmpTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/io/image/";
@@ -42,18 +41,18 @@ public class BmpTest extends ExtendedITextTest {
     @Test
     public void openBmp1() throws IOException {
         ImageData img = ImageDataFactory.create(sourceFolder + "WP_20140410_001.bmp");
-        Assert.assertEquals(2592, img.getWidth(), 0);
-        Assert.assertEquals(1456, img.getHeight(), 0);
-        Assert.assertEquals(8, img.getBpc());
+        Assertions.assertEquals(2592, img.getWidth(), 0);
+        Assertions.assertEquals(1456, img.getHeight(), 0);
+        Assertions.assertEquals(8, img.getBpc());
     }
 
     @Test
     public void openBmp2() throws IOException {
         // Test this a more specific entry point
         ImageData img = ImageDataFactory.createBmp(UrlUtil.toURL(sourceFolder + "WP_20140410_001_gray.bmp"), false);
-        Assert.assertEquals(2592, img.getWidth(), 0);
-        Assert.assertEquals(1456, img.getHeight(), 0);
-        Assert.assertEquals(8, img.getBpc());
+        Assertions.assertEquals(2592, img.getWidth(), 0);
+        Assertions.assertEquals(1456, img.getHeight(), 0);
+        Assertions.assertEquals(8, img.getBpc());
     }
 
     @Test
@@ -63,9 +62,9 @@ public class BmpTest extends ExtendedITextTest {
             byte[] imageBytes = StreamUtil.inputStreamToArray(fis);
             // Test this a more specific entry point
             ImageData img = ImageDataFactory.createBmp(imageBytes, false);
-            Assert.assertEquals(2592, img.getWidth(), 0);
-            Assert.assertEquals(1456, img.getHeight(), 0);
-            Assert.assertEquals(1, img.getBpc());
+            Assertions.assertEquals(2592, img.getWidth(), 0);
+            Assertions.assertEquals(1456, img.getHeight(), 0);
+            Assertions.assertEquals(1, img.getBpc());
         }
     }
 }

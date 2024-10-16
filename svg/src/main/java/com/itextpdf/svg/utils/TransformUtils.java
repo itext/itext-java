@@ -149,6 +149,9 @@ public final class TransformUtils {
             String trim = tokenizer.nextToken().trim();
 
             if (trim != null && !trim.isEmpty()) {
+                if (trim.startsWith(",")) {
+                    trim = trim.substring(1).trim();
+                }
                 list.add(trim + ")");
             }
         }

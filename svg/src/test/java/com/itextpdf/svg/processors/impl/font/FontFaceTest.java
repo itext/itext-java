@@ -36,23 +36,22 @@ import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.File;
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class FontFaceTest extends SvgIntegrationTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/processors/impl/font/FontFaceTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/svg/processors/impl/font/FontFaceTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         ITextTest.createDestinationFolder(destinationFolder);
     }
@@ -155,7 +154,7 @@ public class FontFaceTest extends SvgIntegrationTest {
             return;
         }
 
-        Assert.fail("In w3c test suite this font is labeled as invalid, "
+        Assertions.fail("In w3c test suite this font is labeled as invalid, "
                 + "so the invalid negative value is expected while creating a glyph.");
     }
 
@@ -197,7 +196,7 @@ public class FontFaceTest extends SvgIntegrationTest {
             return;
         }
 
-        Assert.fail("In w3c test suite this font is labeled as invalid, "
+        Assertions.fail("In w3c test suite this font is labeled as invalid, "
                 + "so the invalid negative value is expected while creating a glyph.");
     }
 
@@ -226,7 +225,7 @@ public class FontFaceTest extends SvgIntegrationTest {
     }
 
     @Test
-    @Ignore("DEVSIX-1759 - unicode in font family and different result in dotnet")
+    @Disabled("DEVSIX-1759 - unicode in font family and different result in dotnet")
     public void fontFamilyTest01() throws IOException, InterruptedException {
         runTest("fontFamilyTest01");
     }

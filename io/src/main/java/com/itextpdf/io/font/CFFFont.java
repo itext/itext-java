@@ -345,7 +345,16 @@ public class CFFFont {
     }
 
     protected static abstract class OffsetItem extends Item {
-        public int value;
+        private int offset;
+
+        /**
+         * Retrieves offset of an OffsetItem object.
+         *
+         * @return offset value
+         */
+        public int getOffset() {
+            return offset;
+        }
 
         /**
          * Set the value of an offset item that was initially unknown.
@@ -353,7 +362,7 @@ public class CFFFont {
          *
          * @param offset offset to set
          */
-        public void set(int offset) { this.value = offset; }
+        public void setOffset(int offset) { this.offset = offset; }
     }
 
 
@@ -361,8 +370,9 @@ public class CFFFont {
      */
 
     protected static final class RangeItem extends Item {
-        public int offset, length;
-        private RandomAccessFileOrArray buf;
+        private final int offset;
+        private final int length;
+        private final RandomAccessFileOrArray buf;
         public RangeItem(RandomAccessFileOrArray buf, int offset, int length) {
             this.offset = offset;
             this.length = length;
@@ -394,8 +404,8 @@ public class CFFFont {
      * variable-size representation.
      */
     protected static final class IndexOffsetItem extends OffsetItem {
-        public final int size;
-        public IndexOffsetItem(int size, int value) {this.size=size; this.value=value;}
+        private final int size;
+        public IndexOffsetItem(int size, int value) {this.size=size; this.setOffset(value);}
         public IndexOffsetItem(int size) {this.size=size; }
 
         @Override
@@ -407,7 +417,7 @@ public class CFFFont {
         public void emit(byte[] buffer) {
             if (size >= 1 && size <= 4) {
                 for (int i = 0; i < size; i++) {
-                    buffer[myOffset + i] = (byte) (value >>> ((size - 1 - i) << 3) & 0xFF);
+                    buffer[myOffset + i] = (byte) (super.getOffset() >>> ((size - 1 - i) << 3) & 0xFF);
                 }
             }
         }
@@ -418,8 +428,8 @@ public class CFFFont {
     }
 
     protected static final class IndexMarkerItem extends Item {
-        private OffsetItem offItem;
-        private IndexBaseItem indexBase;
+        private final OffsetItem offItem;
+        private final IndexBaseItem indexBase;
         public IndexMarkerItem(OffsetItem offItem, IndexBaseItem indexBase) {
             this.offItem   = offItem;
             this.indexBase = indexBase;
@@ -427,13 +437,13 @@ public class CFFFont {
         @Override
         public void xref() {
             //System.err.println("index marker item, base="+indexBase.myOffset+" my="+this.myOffset);
-            offItem.set(this.myOffset-indexBase.myOffset+1);
+            offItem.setOffset(this.myOffset-indexBase.myOffset+1);
         }
     }
 
     protected static final class SubrMarkerItem extends Item {
-        private OffsetItem offItem;
-        private IndexBaseItem indexBase;
+        private final OffsetItem offItem;
+        private final IndexBaseItem indexBase;
         public SubrMarkerItem(OffsetItem offItem, IndexBaseItem indexBase) {
             this.offItem   = offItem;
             this.indexBase = indexBase;
@@ -441,7 +451,7 @@ public class CFFFont {
         @Override
         public void xref() {
             //System.err.println("index marker item, base="+indexBase.myOffset+" my="+this.myOffset);
-            offItem.set(this.myOffset-indexBase.myOffset);
+            offItem.setOffset(this.myOffset-indexBase.myOffset);
         }
     }
 
@@ -463,10 +473,10 @@ public class CFFFont {
         public void emit(byte[] buffer) {
             if (size==5) {
                 buffer[myOffset]   = 29;
-                buffer[myOffset+1] = (byte) (value >>> 24 & 0xff);
-                buffer[myOffset+2] = (byte) (value >>> 16 & 0xff);
-                buffer[myOffset+3] = (byte) (value >>>  8 & 0xff);
-                buffer[myOffset+4] = (byte) (value >>>  0 & 0xff);
+                buffer[myOffset+1] = (byte) (super.getOffset() >>> 24 & 0xff);
+                buffer[myOffset+2] = (byte) (super.getOffset() >>> 16 & 0xff);
+                buffer[myOffset+3] = (byte) (super.getOffset() >>>  8 & 0xff);
+                buffer[myOffset+4] = (byte) (super.getOffset() >>>  0 & 0xff);
             }
         }
     }
@@ -475,7 +485,7 @@ public class CFFFont {
      */
 
     protected static final class UInt24Item extends Item {
-        public int value;
+        private final int value;
         public UInt24Item(int value) {this.value=value;}
 
         @Override
@@ -496,7 +506,7 @@ public class CFFFont {
      */
 
     protected static final class UInt32Item extends Item {
-        public int value;
+        private final int value;
         public UInt32Item(int value) {this.value=value;}
 
         @Override
@@ -518,7 +528,7 @@ public class CFFFont {
      */
 
     protected static final class UInt16Item extends Item {
-        public char value;
+        private final char value;
         public UInt16Item(char value) {this.value = value;}
 
         @Override
@@ -541,7 +551,7 @@ public class CFFFont {
      */
 
     protected static final class UInt8Item extends Item {
-        public char value;
+        private final char value;
         public UInt8Item(char value) {this.value=value;}
 
         @Override
@@ -558,7 +568,7 @@ public class CFFFont {
     }
 
     protected static final class StringItem extends Item {
-        public String s;
+        private final String s;
         public StringItem(String s) {this.s=s;}
 
         @Override
@@ -580,9 +590,28 @@ public class CFFFont {
      */
 
     protected static final class DictNumberItem extends Item {
-        public final int value;
-        public int size = 5;
+        private final int value;
+        private int size = 5;
         public DictNumberItem(int value) {this.value=value;}
+
+        /**
+         * Retrieves the size of a DictNumberItem.
+         *
+         * @return size value
+         */
+        public int getSize() {
+            return size;
+        }
+
+        /**
+         * Sets the size of a DictNumberItem.
+         *
+         * @param size size value
+         */
+        public void setSize(int size) {
+            this.size = size;
+        }
+
         @Override
         public void increment(int[] currentOffset) {
             super.increment(currentOffset);
@@ -610,7 +639,7 @@ public class CFFFont {
         public MarkerItem(OffsetItem pointerToMarker) {p=pointerToMarker;}
         @Override
         public void xref() {
-            p.set(this.myOffset);
+            p.setOffset(this.myOffset);
         }
     }
 
@@ -652,7 +681,7 @@ public class CFFFont {
     {
         int j;
         for (j=0; j<fonts.length; j++)
-            if (fontName.equals(fonts[j].name)) break;
+            if (fontName.equals(fonts[j].getName())) break;
         if (j==fonts.length) return null;
 
         LinkedList<Item> l = new LinkedList<Item>();
@@ -669,9 +698,9 @@ public class CFFFont {
         l.addLast(new RangeItem(buf,0,hdrSize));
 
         int nglyphs=-1, nstrings=-1;
-        if ( ! fonts[j].isCID ) {
+        if ( ! fonts[j].isCID() ) {
             // count the glyphs
-            seek(fonts[j].charstringsOffset);
+            seek(fonts[j].getCharstringsOffset());
             nglyphs = getCard16();
             seek(stringIndexOffset);
             nstrings = getCard16()+standardStrings.length;
@@ -686,8 +715,8 @@ public class CFFFont {
         l.addLast(new UInt8Item((char)1));
         // first offset
         l.addLast(new UInt8Item((char)1));
-        l.addLast(new UInt8Item((char)( 1+fonts[j].name.length() )));
-        l.addLast(new StringItem(fonts[j].name));
+        l.addLast(new UInt8Item((char)( 1+fonts[j].getName().length() )));
+        l.addLast(new StringItem(fonts[j].getName()));
 
         // create the topdict Index
 
@@ -717,7 +746,7 @@ public class CFFFont {
         OffsetItem fdarrayRef     = new DictOffsetItem();
         OffsetItem fdselectRef    = new DictOffsetItem();
 
-        if ( !fonts[j].isCID ) {
+        if ( !fonts[j].isCID() ) {
 
             // create a ROS key
             l.addLast(new DictNumberItem(nstrings));
@@ -764,9 +793,9 @@ public class CFFFont {
                     || "FDArray".equals(key)
                     || "charset".equals(key)
                     || "CharStrings".equals(key)
-                    ) {
+            ) {
 
-            // just drop them
+                // just drop them
             } else {
                 l.addLast(new RangeItem(buf,p1,p2-p1));
             }
@@ -778,10 +807,10 @@ public class CFFFont {
         // We need 3 more strings: Registry, Ordering, and a FontName for one FD.
         // The total length is at most "Adobe"+"Identity"+63 = 76
 
-        if (fonts[j].isCID) {
+        if (fonts[j].isCID()) {
             l.addLast(getEntireIndexRange(stringIndexOffset));
         } else {
-            String fdFontName = fonts[j].name+"-OneRange";
+            String fdFontName = fonts[j].getName()+"-OneRange";
             if (fdFontName.length() > 127)
                 fdFontName = fdFontName.substring(0,127);
             String extraStrings = "Adobe"+"Identity"+fdFontName;
@@ -823,7 +852,7 @@ public class CFFFont {
 
         // deal with fdarray, fdselect, and the font descriptors
 
-        if (fonts[j].isCID) {
+        if (fonts[j].isCID()) {
             // copy the FDArray, FDSelect, charset
         } else {
             // create FDSelect
@@ -875,7 +904,7 @@ public class CFFFont {
             //l.addLast(new UInt8Item((char)12));
             //l.addLast(new UInt8Item((char)38)); // FontName
 
-            l.addLast(new DictNumberItem(fonts[j].privateLength));
+            l.addLast(new DictNumberItem(fonts[j].getPrivateLength()));
             OffsetItem privateRef = new DictOffsetItem();
             l.addLast(privateRef);
             // Private
@@ -889,17 +918,17 @@ public class CFFFont {
             // copy the private dict and the local subroutines.
             // the length of the private dict seems to NOT include
             // the local subroutines.
-            l.addLast(new RangeItem(buf,fonts[j].privateOffset,fonts[j].privateLength));
-            if (fonts[j].privateSubrs >= 0) {
+            l.addLast(new RangeItem(buf,fonts[j].getPrivateOffset(),fonts[j].getPrivateLength()));
+            if (fonts[j].getPrivateSubrs() >= 0) {
                 //System.err.println("has subrs="+fonts[j].privateSubrs+" ,len="+fonts[j].privateLength);
-                l.addLast(getEntireIndexRange(fonts[j].privateSubrs));
+                l.addLast(getEntireIndexRange(fonts[j].getPrivateSubrs()));
             }
         }
 
         // copy the charstring index
 
         l.addLast(new MarkerItem(charstringsRef));
-        l.addLast(getEntireIndexRange(fonts[j].charstringsOffset));
+        l.addLast(getEntireIndexRange(fonts[j].getCharstringsOffset()));
 
         // now create the new CFF font
 
@@ -931,14 +960,14 @@ public class CFFFont {
     public boolean isCID(String fontName) {
         int j;
         for (j=0; j<fonts.length; j++)
-            if (fontName.equals(fonts[j].name)) return fonts[j].isCID;
+            if (fontName.equals(fonts[j].getName())) return fonts[j].isCID();
         return false;
     }
 
     public boolean exists(String fontName) {
         int j;
         for (j=0; j<fonts.length; j++)
-            if (fontName.equals(fonts[j].name)) return true;
+            if (fontName.equals(fonts[j].getName())) return true;
         return false;
     }
 
@@ -946,14 +975,14 @@ public class CFFFont {
     public String[] getNames() {
         String[] names = new String[ fonts.length ];
         for (int i=0; i<fonts.length; i++)
-            names[i] = fonts[i].name;
+            names[i] = fonts[i].getName();
         return names;
     }
     /**
      * A random Access File or an array
      */
     protected RandomAccessFileOrArray buf;
-    private int offSize;
+    private final int offSize;
 
     protected int nameIndexOffset;
     protected int topdictIndexOffset;
@@ -965,43 +994,583 @@ public class CFFFont {
     protected int[] gsubrOffsets;
 
     protected final class Font {
-        public String    name;
-        public String    fullName;
-        public boolean   isCID = false;
+        private String    name;
+        private String    fullName;
+        private boolean   isCID = false;
         // only if not CID
-        public int       privateOffset     = -1;
+        private int       privateOffset     = -1;
         // only if not CID
-        public int       privateLength     = -1;
-        public int       privateSubrs      = -1;
-        public int       charstringsOffset = -1;
-        public int       encodingOffset    = -1;
-        public int       charsetOffset     = -1;
+        private int       privateLength     = -1;
+        private int       privateSubrs      = -1;
+        private int       charstringsOffset = -1;
+        private int       encodingOffset    = -1;
+        private int       charsetOffset     = -1;
         // only if CID
-        public int       fdarrayOffset     = -1;
+        private int       fdarrayOffset     = -1;
         // only if CID
-        public int       fdselectOffset    = -1;
-        public int[]     fdprivateOffsets;
-        public int[]     fdprivateLengths;
-        public int[]     fdprivateSubrs;
+        private int       fdselectOffset    = -1;
+        private int[]     fdprivateOffsets;
+        private int[]     fdprivateLengths;
+        private int[]     fdprivateSubrs;
 
         // Added by Oren & Ygal
-        public int nglyphs;
-        public int nstrings;
-        public int CharsetLength;
-        public int[]    charstringsOffsets;
-        public int[]    charset;
-        public int[] 	FDSelect;
-        public int FDSelectLength;
-        public int FDSelectFormat;
-        public int 		CharstringType = 2;
-        public int FDArrayCount;
-        public int FDArrayOffsize;
-        public int[] FDArrayOffsets;
-        public int[] PrivateSubrsOffset;
-        public int[][] PrivateSubrsOffsetsArray;
-        public int[]       SubrsOffsets;
+        private int nglyphs;
+        private int nstrings;
+        private int charsetLength;
+        private int[]    charstringsOffsets;
+        private int[]    charset;
+        private int[] 	FDSelect;
+        private int FDSelectLength;
+        private int FDSelectFormat;
+        private int charstringType = 2;
+        private int FDArrayCount;
+        private int FDArrayOffsize;
+        private int[] FDArrayOffsets;
+        private int[] privateSubrsOffset;
+        private int[][] privateSubrsOffsetsArray;
+        private int[] subrsOffsets;
 
-        public int[] gidToCid;
+        private int[] gidToCid;
+
+        /**
+         * Retrieves the name of the font.
+         *
+         * @return font name
+         */
+        public String getName() {
+            return name;
+        }
+
+        /**
+         * Sets the name of the font.
+         *
+         * @param name font name
+         */
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        /**
+         * Retrieves the full name of the font.
+         *
+         * @return full font name
+         */
+        public String getFullName() {
+            return fullName;
+        }
+
+        /**
+         * Sets the full name of the font.
+         *
+         * @param fullName full font name
+         */
+        public void setFullName(String fullName) {
+            this.fullName = fullName;
+        }
+
+        /**
+         * Retrieves whether the font is a CID font.
+         *
+         * @return true if font is CID font, false otherwise
+         */
+        public boolean isCID() {
+            return isCID;
+        }
+
+        /**
+         * Sets if font is CID font.
+         *
+         * @param CID true if font is CID font, false otherwise
+         */
+        public void setCID(boolean CID) {
+            isCID = CID;
+        }
+
+        /**
+         * Retrieves the private offset of the font.
+         *
+         * @return private offset value
+         */
+        public int getPrivateOffset() {
+            return privateOffset;
+        }
+
+        /**
+         * Sets the private offset of the font.
+         *
+         * @param privateOffset private offset value
+         */
+        public void setPrivateOffset(int privateOffset) {
+            this.privateOffset = privateOffset;
+        }
+
+        /**
+         * Retrieves the private length of the font.
+         *
+         * @return private length value
+         */
+        public int getPrivateLength() {
+            return privateLength;
+        }
+
+        /**
+         * Sets the private length of the font.
+         *
+         * @param privateLength private length value
+         */
+        public void setPrivateLength(int privateLength) {
+            this.privateLength = privateLength;
+        }
+
+        /**
+         * Retrieves the private subrs of the font.
+         *
+         * @return private subrs value
+         */
+        public int getPrivateSubrs() {
+            return privateSubrs;
+        }
+
+        /**
+         * Sets the private subrs of the font.
+         *
+         * @param privateSubrs private subrs value
+         */
+        public void setPrivateSubrs(int privateSubrs) {
+            this.privateSubrs = privateSubrs;
+        }
+
+        /**
+         * Retrieves the char string offset of the font.
+         *
+         * @return char string offset
+         */
+        public int getCharstringsOffset() {
+            return charstringsOffset;
+        }
+
+        /**
+         * Sets the char string offset of the font.
+         *
+         * @param charstringsOffset char string offset
+         */
+        public void setCharstringsOffset(int charstringsOffset) {
+            this.charstringsOffset = charstringsOffset;
+        }
+
+        /**
+         * Retrieves the encoding offset of the font.
+         *
+         * @return encoding offset
+         */
+        public int getEncodingOffset() {
+            return encodingOffset;
+        }
+
+        /**
+         * Sets the encoding offset of the font.
+         *
+         * @param encodingOffset encoding offset
+         */
+        public void setEncodingOffset(int encodingOffset) {
+            this.encodingOffset = encodingOffset;
+        }
+
+        /**
+         * Retrieves the charset offset of the font.
+         *
+         * @return charset offset
+         */
+        public int getCharsetOffset() {
+            return charsetOffset;
+        }
+
+        /**
+         * Sets the charset offset of the font.
+         *
+         * @param charsetOffset charset offset
+         */
+        public void setCharsetOffset(int charsetOffset) {
+            this.charsetOffset = charsetOffset;
+        }
+
+        /**
+         * Retrieves the font dictionary array offset of the object.
+         *
+         * @return FD array offset
+         */
+        public int getFdarrayOffset() {
+            return fdarrayOffset;
+        }
+
+        /**
+         * Sets the font dictionary array offset of the object.
+         *
+         * @param fdarrayOffset FD array offset
+         */
+        public void setFdarrayOffset(int fdarrayOffset) {
+            this.fdarrayOffset = fdarrayOffset;
+        }
+
+        /**
+         * Retrieves the font dictionary select offset of the object.
+         *
+         * @return FD select offset
+         */
+        public int getFdselectOffset() {
+            return fdselectOffset;
+        }
+
+        /**
+         * Sets the font dictionary select offset of the object.
+         *
+         * @param fdselectOffset FD select offset
+         */
+        public void setFdselectOffset(int fdselectOffset) {
+            this.fdselectOffset = fdselectOffset;
+        }
+
+        /**
+         * Retrieves the font dictionary private offsets of the object.
+         *
+         * @return FD private offsets
+         */
+        public int[] getFdprivateOffsets() {
+            return fdprivateOffsets;
+        }
+
+        /**
+         * Sets the font dictionary private offsets of the object.
+         *
+         * @param fdprivateOffsets FD private offsets
+         */
+        public void setFdprivateOffsets(int[] fdprivateOffsets) {
+            this.fdprivateOffsets = fdprivateOffsets;
+        }
+
+        /**
+         * Retrieves the font dictionary private lengths of the object.
+         *
+         * @return FD private lengths
+         */
+        public int[] getFdprivateLengths() {
+            return fdprivateLengths;
+        }
+
+        /**
+         * Sets the font dictionary private lengths of the object.
+         *
+         * @param fdprivateLengths FD private lengths
+         */
+        public void setFdprivateLengths(int[] fdprivateLengths) {
+            this.fdprivateLengths = fdprivateLengths;
+        }
+
+        /**
+         * Retrieves the font dictionary private subrs of the object.
+         *
+         * @return FD private subrs
+         */
+        public int[] getFdprivateSubrs() {
+            return fdprivateSubrs;
+        }
+
+        /**
+         * Sets the font dictionary private subrs of the object.
+         *
+         * @param fdprivateSubrs FD private subrs
+         */
+        public void setFdprivateSubrs(int[] fdprivateSubrs) {
+            this.fdprivateSubrs = fdprivateSubrs;
+        }
+
+        /**
+         * Retrieves the number of glyphs of the font.
+         *
+         * @return number of glyphs
+         */
+        public int getNglyphs() {
+            return nglyphs;
+        }
+
+        /**
+         * Sets the number of glyphs of the font.
+         *
+         * @param nglyphs number of glyphs
+         */
+        public void setNglyphs(int nglyphs) {
+            this.nglyphs = nglyphs;
+        }
+
+        /**
+         * Retrieves the number of strings of the font.
+         *
+         * @return number of strings
+         */
+        public int getNstrings() {
+            return nstrings;
+        }
+
+        /**
+         * Sets the number of strings of the font.
+         *
+         * @param nstrings number of strings
+         */
+        public void setNstrings(int nstrings) {
+            this.nstrings = nstrings;
+        }
+
+        /**
+         * Retrieves the charset length of the font.
+         *
+         * @return charset length
+         */
+        public int getCharsetLength() {
+            return charsetLength;
+        }
+
+        /**
+         * Sets the charset length of the font.
+         *
+         * @param charsetLength charset length
+         */
+        public void setCharsetLength(int charsetLength) {
+            this.charsetLength = charsetLength;
+        }
+
+        /**
+         * Retrieves the char strings offsets of the font.
+         *
+         * @return char strings offsets
+         */
+        public int[] getCharstringsOffsets() {
+            return charstringsOffsets;
+        }
+
+        /**
+         * Sets the char strings offsets of the font.
+         *
+         * @param charstringsOffsets char strings offsets
+         */
+        public void setCharstringsOffsets(int[] charstringsOffsets) {
+            this.charstringsOffsets = charstringsOffsets;
+        }
+
+        /**
+         * Retrieves the charset of the font.
+         *
+         * @return charset
+         */
+        public int[] getCharset() {
+            return charset;
+        }
+
+        /**
+         * Sets the charset of the font.
+         *
+         * @param charset charset
+         */
+        public void setCharset(int[] charset) {
+            this.charset = charset;
+        }
+
+        /**
+         * Retrieves the font dictionary select of the object.
+         *
+         * @return FD select
+         */
+        public int[] getFDSelect() {
+            return FDSelect;
+        }
+
+        /**
+         * Sets the font dictionary select of the object.
+         *
+         * @param FDSelect FD select
+         */
+        public void setFDSelect(int[] FDSelect) {
+            this.FDSelect = FDSelect;
+        }
+
+        /**
+         * Retrieves the font dictionary select length of the object.
+         *
+         * @return FD select length
+         */
+        public int getFDSelectLength() {
+            return FDSelectLength;
+        }
+
+        /**
+         * Sets the font dictionary select length of the object.
+         *
+         * @param FDSelectLength FD select length
+         */
+        public void setFDSelectLength(int FDSelectLength) {
+            this.FDSelectLength = FDSelectLength;
+        }
+
+        /**
+         * Retrieves the font dictionary select format of the object.
+         *
+         * @return FD select format
+         */
+        public int getFDSelectFormat() {
+            return FDSelectFormat;
+        }
+
+        /**
+         * Sets the font dictionary select format of the object.
+         *
+         * @param FDSelectFormat FD select format
+         */
+        public void setFDSelectFormat(int FDSelectFormat) {
+            this.FDSelectFormat = FDSelectFormat;
+        }
+
+        /**
+         * Retrieves the char string type of the font.
+         *
+         * @return char string type
+         */
+        public int getCharstringType() {
+            return charstringType;
+        }
+
+        /**
+         * Sets the char string type of the font.
+         *
+         * @param charstringType char string type
+         */
+        public void setCharstringType(int charstringType) {
+            this.charstringType = charstringType;
+        }
+
+        /**
+         * Retrieves the font dictionary array count of the object.
+         *
+         * @return FD array count
+         */
+        public int getFDArrayCount() {
+            return FDArrayCount;
+        }
+
+        /**
+         * Sets the font dictionary array count of the object.
+         *
+         * @param FDArrayCount FD array count
+         */
+        public void setFDArrayCount(int FDArrayCount) {
+            this.FDArrayCount = FDArrayCount;
+        }
+
+        /**
+         * Retrieves the font dictionary array offsize of the object.
+         *
+         * @return FD array offsize
+         */
+        public int getFDArrayOffsize() {
+            return FDArrayOffsize;
+        }
+
+        /**
+         * Sets the font dictionary array offsize of the object.
+         *
+         * @param FDArrayOffsize FD array offsize
+         */
+        public void setFDArrayOffsize(int FDArrayOffsize) {
+            this.FDArrayOffsize = FDArrayOffsize;
+        }
+
+        /**
+         * Retrieves the font dictionary array offsets of the object.
+         *
+         * @return FD array offsets
+         */
+        public int[] getFDArrayOffsets() {
+            return FDArrayOffsets;
+        }
+
+        /**
+         * Sets the font dictionary array offsets of the object.
+         *
+         * @param FDArrayOffsets FD array offsets
+         */
+        public void setFDArrayOffsets(int[] FDArrayOffsets) {
+            this.FDArrayOffsets = FDArrayOffsets;
+        }
+
+        /**
+         * Retrieves the private subrs offset of the font.
+         *
+         * @return private subrs offset
+         */
+        public int[] getPrivateSubrsOffset() {
+            return privateSubrsOffset;
+        }
+
+        /**
+         * Set the private subrs offset of the font
+         *
+         * @param privateSubrsOffset private subrs offset
+         */
+        public void setPrivateSubrsOffset(int[] privateSubrsOffset) {
+            this.privateSubrsOffset = privateSubrsOffset;
+        }
+
+        /**
+         * Retrieves the private subrs offsets array of the font.
+         *
+         * @return private subrs offsets array
+         */
+        public int[][] getPrivateSubrsOffsetsArray() {
+            return privateSubrsOffsetsArray;
+        }
+
+        /**
+         * Sets the private subrs offsets array of the font.
+         *
+         * @param privateSubrsOffsetsArray private subrs offsets array
+         */
+        public void setPrivateSubrsOffsetsArray(int[][] privateSubrsOffsetsArray) {
+            this.privateSubrsOffsetsArray = privateSubrsOffsetsArray;
+        }
+
+        /**
+         * Retrieves the subrs offsets of the font.
+         *
+         * @return subrs offsets
+         */
+        public int[] getSubrsOffsets() {
+            return subrsOffsets;
+        }
+
+        /**
+         * Sets the subrs offsets of the font.
+         *
+         * @param subrsOffsets subrs offsets
+         */
+        public void setSubrsOffsets(int[] subrsOffsets) {
+            this.subrsOffsets = subrsOffsets;
+        }
+
+        /**
+         * Retrieves the glyphs to character id array of the font.
+         *
+         * @return glyphs to character id array
+         */
+        public int[] getGidToCid() {
+            return gidToCid;
+        }
+
+        /**
+         * Sets the glyphs to character id array of the font.
+         *
+         * @param gidToCid glyphs to character id array
+         */
+        public void setGidToCid(int[] gidToCid) {
+            this.gidToCid = gidToCid;
+        }
     }
     // Changed from private to protected by Ygal&Oren
     protected Font[] fonts;
@@ -1053,9 +1622,9 @@ public class CFFFont {
         for (int j=0; j<nameOffsets.length-1; j++) {
             fonts[j] = new Font();
             seek(nameOffsets[j]);
-            fonts[j].name = "";
+            fonts[j].setName("");
             for (int k=nameOffsets[j]; k<nameOffsets[j+1]; k++) {
-                fonts[j].name += getCard8();
+                fonts[j].setName(fonts[j].getName() + getCard8());
             }
             //System.err.println("name["+j+"]=<"+fonts[j].name+">");
         }
@@ -1085,16 +1654,16 @@ public class CFFFont {
                 getDictItem();
                 if (key=="FullName") {
                     //System.err.println("getting fullname sid = "+((Integer)args[0]).intValue());
-                    fonts[j].fullName = getString((char)((Integer)args[0]).intValue());
+                    fonts[j].setFullName(getString((char)((Integer)args[0]).intValue()));
                     //System.err.println("got it");
                 } else if (key=="ROS")
-                    fonts[j].isCID = true;
+                    fonts[j].setCID(true);
                 else if (key=="Private") {
-                    fonts[j].privateLength  = (int) ((Integer)args[0]).intValue();
-                    fonts[j].privateOffset  = (int) ((Integer)args[1]).intValue();
+                    fonts[j].setPrivateLength((int) ((Integer)args[0]).intValue());
+                    fonts[j].setPrivateOffset((int) ((Integer)args[1]).intValue());
                 }
                 else if (key=="charset"){
-                    fonts[j].charsetOffset = (int) ((Integer)args[0]).intValue();
+                    fonts[j].setCharsetOffset((int) ((Integer)args[0]).intValue());
 
                 }
 //                else if (key=="Encoding"){
@@ -1105,39 +1674,39 @@ public class CFFFont {
 //                    }
 //                }
                 else if (key=="CharStrings") {
-                    fonts[j].charstringsOffset = (int) ((Integer)args[0]).intValue();
+                    fonts[j].setCharstringsOffset((int) ((Integer)args[0]).intValue());
                     //System.err.println("charstrings "+fonts[j].charstringsOffset);
                     // Added by Oren & Ygal
                     int p = getPosition();
-                    fonts[j].charstringsOffsets = getIndex(fonts[j].charstringsOffset);
+                    fonts[j].setCharstringsOffsets(getIndex(fonts[j].getCharstringsOffset()));
                     seek(p);
                 } else if (key=="FDArray")
-                    fonts[j].fdarrayOffset = (int) ((Integer)args[0]).intValue();
+                    fonts[j].setFdarrayOffset((int) ((Integer)args[0]).intValue());
                 else if (key=="FDSelect")
-                    fonts[j].fdselectOffset = (int) ((Integer)args[0]).intValue();
+                    fonts[j].setFdselectOffset((int) ((Integer)args[0]).intValue());
                 else if (key=="CharstringType")
-                    fonts[j].CharstringType = (int) ((Integer)args[0]).intValue();
+                    fonts[j].setCharstringType((int) ((Integer)args[0]).intValue());
             }
 
             // private dict
-            if (fonts[j].privateOffset >= 0) {
+            if (fonts[j].getPrivateOffset() >= 0) {
                 //System.err.println("PRIVATE::");
-                seek(fonts[j].privateOffset);
-                while (getPosition() < fonts[j].privateOffset+fonts[j].privateLength) {
+                seek(fonts[j].getPrivateOffset());
+                while (getPosition() < fonts[j].getPrivateOffset()+fonts[j].getPrivateLength()) {
                     getDictItem();
                     if (key=="Subrs")
                         //Add the private offset to the lsubrs since the offset is
                         // relative to the beginning of the PrivateDict
-                        fonts[j].privateSubrs = (int) ((Integer)args[0]).intValue()+fonts[j].privateOffset;
+                        fonts[j].setPrivateSubrs((int) ((Integer)args[0]).intValue()+fonts[j].getPrivateOffset());
                 }
             }
 
             // fdarray index
-            if (fonts[j].fdarrayOffset >= 0) {
-                int[] fdarrayOffsets = getIndex(fonts[j].fdarrayOffset);
+            if (fonts[j].getFdarrayOffset() >= 0) {
+                int[] fdarrayOffsets = getIndex(fonts[j].getFdarrayOffset());
 
-                fonts[j].fdprivateOffsets = new int[fdarrayOffsets.length-1];
-                fonts[j].fdprivateLengths = new int[fdarrayOffsets.length-1];
+                fonts[j].setFdprivateOffsets(new int[fdarrayOffsets.length-1]);
+                fonts[j].setFdprivateLengths(new int[fdarrayOffsets.length-1]);
 
                 //System.err.println("FD Font::");
 
@@ -1146,8 +1715,12 @@ public class CFFFont {
                     while (getPosition() < fdarrayOffsets[k+1]) {
                         getDictItem();
                         if (key=="Private") {
-                            fonts[j].fdprivateLengths[k]  = (int) ((Integer)args[0]).intValue();
-                            fonts[j].fdprivateOffsets[k]  = (int) ((Integer)args[1]).intValue();
+                            int[] fdprivateLengths = fonts[j].getFdprivateLengths();
+                            fdprivateLengths[k]  = (int)((Integer)args[0]).intValue();
+                            fonts[j].setFdprivateLengths(fdprivateLengths);
+                            int[] fdprivateOffsets = fonts[j].getFdprivateOffsets();
+                            fdprivateOffsets[k]  = (int)((Integer)args[1]).intValue();
+                            fonts[j].setFdprivateOffsets(fdprivateOffsets);
                         }
                     }
                 }

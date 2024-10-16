@@ -37,43 +37,41 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.pdfua.UaValidationTestFramework;
 import com.itextpdf.pdfua.UaValidationTestFramework.Generator;
-import com.itextpdf.pdfua.exceptions.PdfUALogMessageConstants;
+import com.itextpdf.pdfua.logs.PdfUALogMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfUATableTest extends ExtendedITextTest {
 
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfua/PdfUATableTest/";
 
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/FreeSans.ttf";
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
     private UaValidationTestFramework framework;
-    @Before
+    @BeforeEach
     public void initializeFramework(){
         framework = new UaValidationTestFramework(DESTINATION_FOLDER);
     }
 
     @Test
-    public void tableWithoutHeaders01() throws FileNotFoundException {
+    public void tableWithoutHeaders01() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(4);
         for (int i = 0; i < 16; i++) {
             tableBuilder.addBodyCell(new DataCellSupplier("Data 1", 1, 1, null));
@@ -84,7 +82,7 @@ public class PdfUATableTest extends ExtendedITextTest {
     }
 
     @Test
-    public void tableWithoutHeaders02() throws FileNotFoundException {
+    public void tableWithoutHeaders02() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(4);
         for (int i = 0; i < 4; i++) {
             tableBuilder.addHeaderCell(new DataCellSupplier("Data 1", 1, 1, null));
@@ -101,7 +99,7 @@ public class PdfUATableTest extends ExtendedITextTest {
     }
 
     @Test
-    public void tableWithHeaderScopeColumn01() throws FileNotFoundException {
+    public void tableWithHeaderScopeColumn01() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(4);
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 1", 1, 1, "Column"));
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 2", 1, 1, "Column"));
@@ -116,7 +114,7 @@ public class PdfUATableTest extends ExtendedITextTest {
     }
 
     @Test
-    public void tableWithHeaderScopeColumn02() throws FileNotFoundException {
+    public void tableWithHeaderScopeColumn02() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(4);
         tableBuilder.addHeaderCell(new HeaderCellSupplier(null, "Header 1", 1, 1, "Column"));
         tableBuilder.addHeaderCell(new HeaderCellSupplier(null, "Header 2", 1, 1, "Column"));
@@ -131,7 +129,7 @@ public class PdfUATableTest extends ExtendedITextTest {
     }
 
     @Test
-    public void tableWithHeaderScopeColumn03() throws FileNotFoundException {
+    public void tableWithHeaderScopeColumn03() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(4);
         tableBuilder.addFooterCell(new HeaderCellSupplier(null, "Header 1", 1, 1, "Column"));
         tableBuilder.addFooterCell(new HeaderCellSupplier(null, "Header 2", 1, 1, "Column"));
@@ -149,7 +147,7 @@ public class PdfUATableTest extends ExtendedITextTest {
     @LogMessages(messages = {
             @LogMessage(messageTemplate = IoLogMessageConstant.LAST_ROW_IS_NOT_COMPLETE, count = 2)
     })
-    public void tableWithHeaderScopeColumn04() throws FileNotFoundException {
+    public void tableWithHeaderScopeColumn04() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(4);
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 1", 1, 1, "Column"));
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 2", 1, 1, "Column"));
@@ -166,7 +164,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
 
     @Test
-    public void tableWithHeaderScopeColumn05() throws FileNotFoundException {
+    public void tableWithHeaderScopeColumn05() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(4);
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 1", 1, 1, "Column"));
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 2", 1, 1, "Column"));
@@ -181,7 +179,7 @@ public class PdfUATableTest extends ExtendedITextTest {
     }
 
     @Test
-    public void tableWithHeaderScopeColumn06() throws FileNotFoundException {
+    public void tableWithHeaderScopeColumn06() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(4);
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 1", 2, 1, "Column"));
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 2", 1, 1, "Column"));
@@ -196,7 +194,7 @@ public class PdfUATableTest extends ExtendedITextTest {
     }
 
     @Test
-    public void tableWithHeaderScopeColumn07() throws FileNotFoundException {
+    public void tableWithHeaderScopeColumn07() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(4);
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 1", 4, 1, "Column"));
         for (int i = 0; i < 12; i++) {
@@ -208,7 +206,7 @@ public class PdfUATableTest extends ExtendedITextTest {
     }
 
     @Test
-    public void tableWithHeaderScopeColumn08() throws FileNotFoundException {
+    public void tableWithHeaderScopeColumn08() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(4);
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 1", 1, 1, "Column"));
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 2", 1, 1, "Column"));
@@ -226,7 +224,7 @@ public class PdfUATableTest extends ExtendedITextTest {
     }
 
     @Test
-    public void tableWithHeaderScopeColumn09() throws FileNotFoundException {
+    public void tableWithHeaderScopeColumn09() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(4);
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 1", 1, 1, "Column"));
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 2", 1, 1, "Column"));
@@ -243,7 +241,7 @@ public class PdfUATableTest extends ExtendedITextTest {
     }
 
     @Test
-    public void tableWithHeaderScopeColumn10() throws FileNotFoundException {
+    public void tableWithHeaderScopeColumn10() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(4);
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 1", 1, 1, "Column"));
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 2", 1, 1, "Column"));
@@ -259,7 +257,7 @@ public class PdfUATableTest extends ExtendedITextTest {
     }
 
     @Test
-    public void tableWithHeaderScopeColumn11() throws FileNotFoundException {
+    public void tableWithHeaderScopeColumn11() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(4);
         tableBuilder.addFooterCell(new HeaderCellSupplier(null, "Header 1", 1, 1, "Column"));
         tableBuilder.addFooterCell(new HeaderCellSupplier(null, "Header 2", 1, 1, "Column"));
@@ -276,7 +274,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
 
     @Test
-    public void tableWithHeaderScopeColumn12() throws FileNotFoundException {
+    public void tableWithHeaderScopeColumn12() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(5);
         for (int i = 0; i < 10; i++) {
             tableBuilder.addBodyCell(new DataCellSupplier("Data 1", 1, 1, null));
@@ -296,7 +294,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
 
     @Test
-    public void tableWithHeaderScopeColumn13() throws FileNotFoundException {
+    public void tableWithHeaderScopeColumn13() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
         tableBuilder.addHeaderCell(new HeaderCellSupplier(null, "Header 1", 1, 1, "Column"));
         tableBuilder.addHeaderCell(new HeaderCellSupplier(null, "Header 2", 1, 1, "Column"));
@@ -319,7 +317,7 @@ public class PdfUATableTest extends ExtendedITextTest {
     }
 
     @Test
-    public void tableWithHeaderScopeColumn14() throws FileNotFoundException {
+    public void tableWithHeaderScopeColumn14() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(4);
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 1", 1, 1, "Column"));
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 2", 1, 1, "None"));
@@ -335,7 +333,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
 
     @Test
-    public void tableWithHeaderScopeColumn15() throws FileNotFoundException {
+    public void tableWithHeaderScopeColumn15() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(4);
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 1", 1, 1, "Column"));
         tableBuilder.addBodyCell(new DataCellSupplier("Data 1", 1, 1, null));
@@ -350,7 +348,7 @@ public class PdfUATableTest extends ExtendedITextTest {
     }
 
     @Test
-    public void tableWithHeaderScopeColumn16() throws FileNotFoundException {
+    public void tableWithHeaderScopeColumn16() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(4);
         for (int i = 0; i < 4; i++) {
             tableBuilder.addBodyCell(new DataCellSupplier("Data 1", 1, 1, null));
@@ -367,7 +365,7 @@ public class PdfUATableTest extends ExtendedITextTest {
     }
 
     @Test
-    public void tableWithHeaderRowScope01() throws FileNotFoundException {
+    public void tableWithHeaderRowScope01() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(4);
 
         tableBuilder.addHeaderCell(new HeaderCellSupplier(null, "Header 1", 1, 1, "Row"));
@@ -391,7 +389,7 @@ public class PdfUATableTest extends ExtendedITextTest {
     }
 
     @Test
-    public void tableWithHeaderRowScope02() throws FileNotFoundException {
+    public void tableWithHeaderRowScope02() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(4);
 
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 1", 1, 1, "Row"));
@@ -404,7 +402,7 @@ public class PdfUATableTest extends ExtendedITextTest {
     }
 
     @Test
-    public void tableWithHeaderRowScope03() throws FileNotFoundException {
+    public void tableWithHeaderRowScope03() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(4);
 
         tableBuilder.addBodyCell(new DataCellSupplier("Data 1", 3, 1, null));
@@ -417,7 +415,7 @@ public class PdfUATableTest extends ExtendedITextTest {
     }
 
     @Test
-    public void tableWithHeaderRowScope04() throws FileNotFoundException {
+    public void tableWithHeaderRowScope04() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(4);
 
         tableBuilder.addBodyCell(new DataCellSupplier("Data 1", 2, 1, null));
@@ -435,7 +433,7 @@ public class PdfUATableTest extends ExtendedITextTest {
     }
 
     @Test
-    public void tableWithHeaderRowScope05() throws FileNotFoundException {
+    public void tableWithHeaderRowScope05() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
 
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 1", 1, 4, "Row"));
@@ -455,7 +453,7 @@ public class PdfUATableTest extends ExtendedITextTest {
     }
 
     @Test
-    public void tableWithHeaderRowScope06() throws FileNotFoundException {
+    public void tableWithHeaderRowScope06() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
         tableBuilder.addBodyCell(new DataCellSupplier("Data 1", 1, 1, null));
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 1", 1, 4, "Row"));
@@ -500,7 +498,7 @@ public class PdfUATableTest extends ExtendedITextTest {
     }
 
     @Test
-    public void tableWithHeaderRowScope07() throws FileNotFoundException {
+    public void tableWithHeaderRowScope07() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
 
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 1", 1, 1, "Row"));
@@ -524,7 +522,7 @@ public class PdfUATableTest extends ExtendedITextTest {
     }
 
     @Test
-    public void tableWithHeaderRowScope08() throws FileNotFoundException {
+    public void tableWithHeaderRowScope08() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
 
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 1", 1, 1, "Row"));
@@ -542,7 +540,7 @@ public class PdfUATableTest extends ExtendedITextTest {
     }
 
     @Test
-    public void tableWithHeaderRowScope09() throws FileNotFoundException {
+    public void tableWithHeaderRowScope09() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
 
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 1", 1, 1, "Row"));
@@ -560,7 +558,7 @@ public class PdfUATableTest extends ExtendedITextTest {
     }
 
     @Test
-    public void tableWithHeaderBothScope01() throws FileNotFoundException {
+    public void tableWithHeaderBothScope01() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
         tableBuilder.addBodyCell(new DataCellSupplier("Data1", 1, 1, null));
         tableBuilder.addBodyCell(new DataCellSupplier("Data1", 1, 1, null));
@@ -579,7 +577,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
 
     @Test
-    public void tableWithHeaderBothScope02() throws FileNotFoundException {
+    public void tableWithHeaderBothScope02() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
         tableBuilder.addBodyCell(new DataCellSupplier("Data1", 1, 1, null));
         tableBuilder.addBodyCell(new DataCellSupplier("Data1", 1, 1, null));
@@ -600,7 +598,7 @@ public class PdfUATableTest extends ExtendedITextTest {
     }
 
     @Test
-    public void tableWithHeaderBothScope03() throws FileNotFoundException {
+    public void tableWithHeaderBothScope03() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
 
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header", 3, 1, "Both"));
@@ -616,7 +614,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
 
     @Test
-    public void tableWithId01() throws FileNotFoundException {
+    public void tableWithId01() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
         tableBuilder.addBodyCell(new HeaderCellSupplier("id1", "Header", 1, 1, "None"));
         tableBuilder.addBodyCell(new HeaderCellSupplier("id2", "Header", 1, 1, "None"));
@@ -633,7 +631,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
 
     @Test
-    public void tableWithId02() throws FileNotFoundException {
+    public void tableWithId02() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
         tableBuilder.addBodyCell(new HeaderCellSupplier("id1", "Header", 1, 1, "None"));
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header", 1, 1, "None"));
@@ -650,7 +648,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
 
     @Test
-    public void tableWithId03() throws FileNotFoundException {
+    public void tableWithId03() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
         tableBuilder.addBodyCell(new HeaderCellSupplier("id1", "Header", 1, 1, "None"));
         tableBuilder.addBodyCell(new HeaderCellSupplier("id2", "Header", 1, 1, "None"));
@@ -666,7 +664,7 @@ public class PdfUATableTest extends ExtendedITextTest {
     }
 
     @Test
-    public void tableWithId04() throws FileNotFoundException {
+    public void tableWithId04() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
         tableBuilder.addHeaderCell(new HeaderCellSupplier("id1", "Header", 1, 1, "None"));
         tableBuilder.addHeaderCell(new HeaderCellSupplier("id2", "Header", 1, 1, "None"));
@@ -682,7 +680,7 @@ public class PdfUATableTest extends ExtendedITextTest {
     }
 
     @Test
-    public void tableWithId05() throws FileNotFoundException {
+    public void tableWithId05() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
         tableBuilder.addHeaderCell(new HeaderCellSupplier("id1", "Header", 1, 1, "None"));
         tableBuilder.addHeaderCell(new HeaderCellSupplier("id2", "Header", 1, 1, "None"));
@@ -699,7 +697,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
 
     @Test
-    public void tableWithId06() throws FileNotFoundException {
+    public void tableWithId06() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
         tableBuilder.addHeaderCell(new HeaderCellSupplier("id1", "Header", 1, 1, "None"));
         tableBuilder.addHeaderCell(new HeaderCellSupplier("id2", "Header", 1, 1, "None"));
@@ -720,7 +718,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
 
     @Test
-    public void tableWithId07() throws FileNotFoundException {
+    public void tableWithId07() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
 
         tableBuilder.addBodyCell(new DataCellSupplier("Data1", 1, 1, Collections.singletonList("id1")));
@@ -741,7 +739,7 @@ public class PdfUATableTest extends ExtendedITextTest {
     }
 
     @Test
-    public void tableWithId08() throws FileNotFoundException {
+    public void tableWithId08() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
 
         tableBuilder.addBodyCell(new DataCellSupplier("Data1", 1, 1, Collections.singletonList("id1")));
@@ -759,7 +757,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
 
     @Test
-    public void tableWithId09() throws FileNotFoundException {
+    public void tableWithId09() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
 
         tableBuilder.addBodyCell(new HeaderCellSupplier("id1", "Header", 3, 1, "None"));
@@ -774,7 +772,7 @@ public class PdfUATableTest extends ExtendedITextTest {
     }
 
     @Test
-    public void tableWithId10() throws FileNotFoundException {
+    public void tableWithId10() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
 
         tableBuilder.addBodyCell(new DataCellSupplier("Data1", 1, 1, Collections.singletonList("id1")));
@@ -790,7 +788,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
 
     @Test
-    public void tableWithId11() throws FileNotFoundException {
+    public void tableWithId11() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
 
         tableBuilder.addBodyCell(new HeaderCellSupplier("id1", "Header", 1, 3, "None"));
@@ -808,7 +806,7 @@ public class PdfUATableTest extends ExtendedITextTest {
     }
 
     @Test
-    public void tableWithId12() throws FileNotFoundException {
+    public void tableWithId12() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
 
         tableBuilder.addBodyCell(new DataCellSupplier("Data1", 1, 1, Collections.singletonList("id1")));
@@ -825,7 +823,7 @@ public class PdfUATableTest extends ExtendedITextTest {
     }
 
     @Test
-    public void tableWithId13() throws FileNotFoundException {
+    public void tableWithId13() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
 
         tableBuilder.addBodyCell(new DataCellSupplier("Data1", 1, 1, Collections.singletonList("id1")));
@@ -842,7 +840,7 @@ public class PdfUATableTest extends ExtendedITextTest {
     }
 
     @Test
-    public void tableWithId14() throws FileNotFoundException {
+    public void tableWithId14() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
 
         tableBuilder.addBodyCell(new DataCellSupplier("Data1", 1, 1, Arrays.asList("id1", "id2")));
@@ -859,7 +857,7 @@ public class PdfUATableTest extends ExtendedITextTest {
     }
 
     @Test
-    public void combination01() throws FileNotFoundException {
+    public void combination01() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
 
         tableBuilder.addBodyCell(new HeaderCellSupplier("id1", "Header1", 1, 1, "None"));
@@ -878,7 +876,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {@LogMessage(messageTemplate = PdfUALogMessageConstants.PAGE_FLUSHING_DISABLED, count = 2)})
-    public void combination02() throws FileNotFoundException {
+    public void combination02() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
         for (int i = 0; i < 201; i++) {
             tableBuilder.addBodyCell(new HeaderCellSupplier("id" + i, "Header1", 1, 1, "None"));
@@ -890,7 +888,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {@LogMessage(messageTemplate = PdfUALogMessageConstants.PAGE_FLUSHING_DISABLED, count = 2)})
-    public void combination04() throws FileNotFoundException {
+    public void combination04() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
 
         for (int i = 0; i < 12; i++) {
@@ -914,7 +912,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
 
     @Test
-    public void combination05() throws FileNotFoundException {
+    public void combination05() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
 
         tableBuilder.addBodyCell(new HeaderCellSupplier("id1", "Header1", 1, 1, "None"));
@@ -932,7 +930,7 @@ public class PdfUATableTest extends ExtendedITextTest {
     }
 
     @Test
-    public void combination06() throws FileNotFoundException {
+    public void combination06() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
 
         tableBuilder.addHeaderCell(new HeaderCellSupplier("id1", "Header1", 1, 1, "None"));
@@ -950,7 +948,7 @@ public class PdfUATableTest extends ExtendedITextTest {
     }
 
     @Test
-    public void combination07() throws FileNotFoundException {
+    public void combination07() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
 
         tableBuilder.addFooterCell(new HeaderCellSupplier("id1", "Header1", 1, 1, "None"));
@@ -968,7 +966,7 @@ public class PdfUATableTest extends ExtendedITextTest {
     }
 
     @Test
-    public void combination08() throws FileNotFoundException {
+    public void combination08() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
 
         tableBuilder.addHeaderCell(new HeaderCellSupplier("id1", "Header1", 1, 1, "None"));
@@ -986,7 +984,7 @@ public class PdfUATableTest extends ExtendedITextTest {
     }
 
     @Test
-    public void combination09() throws FileNotFoundException {
+    public void combination09() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header1", 1, 1, "None"));
         tableBuilder.addBodyCell(new HeaderCellSupplier("id2", "Header2", 1, 1, "Column"));
@@ -1000,7 +998,7 @@ public class PdfUATableTest extends ExtendedITextTest {
     }
 
     @Test
-    public void roleMapping01() throws FileNotFoundException {
+    public void roleMapping01() throws IOException {
         TableBuilder tableBuilder = new TableBuilder(2);
         framework.addBeforeGenerationHook((pdfDocument -> {
             PdfStructTreeRoot root = pdfDocument.getStructTreeRoot();

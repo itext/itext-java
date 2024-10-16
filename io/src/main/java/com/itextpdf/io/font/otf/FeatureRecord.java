@@ -23,6 +23,42 @@
 package com.itextpdf.io.font.otf;
 
 public class FeatureRecord {
-    public String tag;
-    public int[] lookups;
+    private String tag;
+    private int[] lookups;
+
+    /**
+     * Retrieves the tag of the feature record.
+     *
+     * @return tag
+     */
+    public String getTag() {
+        return tag;
+    }
+
+    /**
+     * Sets the tag of the feature record.
+     *
+     * @param tag tag
+     */
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
+    /**
+     * Retrieves the lookups of the feature record.
+     *
+     * @return lookups
+     */
+    public int[] getLookups() {
+        return lookups;
+    }
+
+    /**
+     * Sets the lookups of the feature record.
+     *
+     * @param lookups lookups
+     */
+    public void setLookups(int[] lookups) {
+        this.lookups = lookups;
+    }
 }

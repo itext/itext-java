@@ -24,17 +24,16 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfDictionaryTest extends ExtendedITextTest {
 
     @Test
@@ -51,9 +50,9 @@ public class PdfDictionaryTest extends ExtendedITextTest {
 
         List<Integer> nums = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5, 6));
         for (Map.Entry<PdfName, PdfObject> e: dict.entrySet()) {
-            Assert.assertEquals(e.getKey().toString(), "/"+e.getValue());
+            Assertions.assertEquals(e.getKey().toString(), "/"+e.getValue());
             if (!nums.remove(Integer.valueOf(((PdfNumber)e.getValue()).intValue()))) {
-                Assert.fail("Element not found");
+                Assertions.fail("Element not found");
             }
         }
     }
@@ -71,7 +70,7 @@ public class PdfDictionaryTest extends ExtendedITextTest {
         dict.put(new PdfName("6"), new PdfNumber(6));
 
         for (Map.Entry<PdfName, PdfObject> e: dict.entrySet()) {
-            Assert.assertTrue(dict.entrySet().contains(e));
+            Assertions.assertTrue(dict.entrySet().contains(e));
         }
     }
 
@@ -92,11 +91,11 @@ public class PdfDictionaryTest extends ExtendedITextTest {
             toRemove.add(e);
         }
         for (Map.Entry<PdfName, PdfObject> e: toRemove) {
-            Assert.assertTrue(dict.entrySet().remove(e));
+            Assertions.assertTrue(dict.entrySet().remove(e));
         }
-        Assert.assertEquals(0, dict.entrySet().size());
-        Assert.assertEquals(0, dict.values().size());
-        Assert.assertEquals(0, dict.size());
+        Assertions.assertEquals(0, dict.entrySet().size());
+        Assertions.assertEquals(0, dict.values().size());
+        Assertions.assertEquals(0, dict.size());
     }
 
     @Test
@@ -120,12 +119,12 @@ public class PdfDictionaryTest extends ExtendedITextTest {
         dict2.put(new PdfName("6"), new PdfNumber(6));
 
         for (Map.Entry<PdfName, PdfObject> e: dict2.entrySet()) {
-            Assert.assertTrue(dict.entrySet().remove(e));
+            Assertions.assertTrue(dict.entrySet().remove(e));
         }
 
-        Assert.assertEquals(0, dict.entrySet().size());
-        Assert.assertEquals(0, dict.values().size());
-        Assert.assertEquals(0, dict.size());
+        Assertions.assertEquals(0, dict.entrySet().size());
+        Assertions.assertEquals(0, dict.values().size());
+        Assertions.assertEquals(0, dict.size());
     }
 
     @Test
@@ -146,9 +145,9 @@ public class PdfDictionaryTest extends ExtendedITextTest {
         }
 
         dict.entrySet().removeAll(toRemove);
-        Assert.assertEquals(0, dict.entrySet().size());
-        Assert.assertEquals(0, dict.values().size());
-        Assert.assertEquals(0, dict.size());
+        Assertions.assertEquals(0, dict.entrySet().size());
+        Assertions.assertEquals(0, dict.values().size());
+        Assertions.assertEquals(0, dict.size());
     }
 
     @Test
@@ -172,9 +171,9 @@ public class PdfDictionaryTest extends ExtendedITextTest {
         dict2.put(new PdfName("6"), new PdfNumber(6));
 
         dict.entrySet().removeAll(dict2.entrySet());
-        Assert.assertEquals(0, dict.entrySet().size());
-        Assert.assertEquals(0, dict.values().size());
-        Assert.assertEquals(0, dict.size());
+        Assertions.assertEquals(0, dict.entrySet().size());
+        Assertions.assertEquals(0, dict.values().size());
+        Assertions.assertEquals(0, dict.size());
     }
 
     @Test
@@ -197,9 +196,9 @@ public class PdfDictionaryTest extends ExtendedITextTest {
         }
 
         dict.entrySet().retainAll(toRemove);
-        Assert.assertEquals(4, dict.entrySet().size());
-        Assert.assertEquals(4, dict.values().size());
-        Assert.assertEquals(4, dict.size());
+        Assertions.assertEquals(4, dict.entrySet().size());
+        Assertions.assertEquals(4, dict.values().size());
+        Assertions.assertEquals(4, dict.size());
     }
 
     @Test
@@ -215,9 +214,9 @@ public class PdfDictionaryTest extends ExtendedITextTest {
         dict.put(new PdfName("6"), new PdfNumber(6));
 
         dict.entrySet().clear();
-        Assert.assertEquals(0, dict.entrySet().size());
-        Assert.assertEquals(0, dict.values().size());
-        Assert.assertEquals(0, dict.size());
+        Assertions.assertEquals(0, dict.entrySet().size());
+        Assertions.assertEquals(0, dict.values().size());
+        Assertions.assertEquals(0, dict.size());
     }
 
     @Test
@@ -234,9 +233,9 @@ public class PdfDictionaryTest extends ExtendedITextTest {
 
         List<Integer> nums = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5, 6));
         for (Map.Entry<PdfName, PdfObject> e: dict.entrySet()) {
-            Assert.assertEquals(e.getKey().toString(), "/"+e.getValue());
+            Assertions.assertEquals(e.getKey().toString(), "/"+e.getValue());
             if (!nums.remove(Integer.valueOf(((PdfNumber)e.getValue()).intValue()))) {
-                Assert.fail("Element not found");
+                Assertions.fail("Element not found");
             }
         }
     }
@@ -254,7 +253,7 @@ public class PdfDictionaryTest extends ExtendedITextTest {
         dict.put(new PdfName("6"), new PdfNumber(6));
 
         for (PdfObject v: dict.values()) {
-            Assert.assertTrue(dict.values().contains(v));
+            Assertions.assertTrue(dict.values().contains(v));
         }
     }
 
@@ -270,10 +269,10 @@ public class PdfDictionaryTest extends ExtendedITextTest {
         dict.put(new PdfName("5"), new PdfNumber(5));
         dict.put(new PdfName("6"), new PdfNumber(6));
 
-        Assert.assertTrue(dict.values().contains(dict.get(new PdfName("1"), false)));
-        Assert.assertTrue(dict.values().contains(dict.get(new PdfName("2"), false)));
-        Assert.assertTrue(dict.values().contains(dict.get(new PdfName("3")).getIndirectReference()));
-        Assert.assertTrue(dict.values().contains(dict.get(new PdfName("4")).getIndirectReference()));
+        Assertions.assertTrue(dict.values().contains(dict.get(new PdfName("1"), false)));
+        Assertions.assertTrue(dict.values().contains(dict.get(new PdfName("2"), false)));
+        Assertions.assertTrue(dict.values().contains(dict.get(new PdfName("3")).getIndirectReference()));
+        Assertions.assertTrue(dict.values().contains(dict.get(new PdfName("4")).getIndirectReference()));
     }
 
     @Test
@@ -340,7 +339,7 @@ public class PdfDictionaryTest extends ExtendedITextTest {
                 break;
             }
         }
-        Assert.assertTrue(found);
-        Assert.assertTrue(dict.containsKey(expectedToContain));
+        Assertions.assertTrue(found);
+        Assertions.assertTrue(dict.containsKey(expectedToContain));
     }
 }

@@ -32,7 +32,6 @@ import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.builder.TestTimestampTokenBuilder;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
@@ -40,11 +39,11 @@ import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(BouncyCastleUnitTest.class)
+@Tag("BouncyCastleUnitTest")
 public class TSAClientBouncyCastleTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
@@ -53,7 +52,7 @@ public class TSAClientBouncyCastleTest extends ExtendedITextTest {
         TSAClientBouncyCastle clientBouncyCastle = new TSAClientBouncyCastle("url");
         CustomItsaInfoBouncyCastle infoBouncyCastle = new CustomItsaInfoBouncyCastle();
         clientBouncyCastle.setTSAInfo(infoBouncyCastle);
-        Assert.assertEquals(infoBouncyCastle, clientBouncyCastle.tsaInfo);
+        Assertions.assertEquals(infoBouncyCastle, clientBouncyCastle.tsaInfo);
     }
 
     @Test
@@ -63,11 +62,11 @@ public class TSAClientBouncyCastleTest extends ExtendedITextTest {
         String url = "url";
 
         TSAClientBouncyCastle tsaClientBouncyCastle = new TSAClientBouncyCastle(url, userName, password);
-        Assert.assertEquals(url, tsaClientBouncyCastle.tsaURL);
-        Assert.assertEquals(userName, tsaClientBouncyCastle.tsaUsername);
-        Assert.assertEquals(password, tsaClientBouncyCastle.tsaPassword);
-        Assert.assertEquals(TSAClientBouncyCastle.DEFAULTTOKENSIZE, tsaClientBouncyCastle.getTokenSizeEstimate());
-        Assert.assertEquals(TSAClientBouncyCastle.DEFAULTHASHALGORITHM, tsaClientBouncyCastle.digestAlgorithm);
+        Assertions.assertEquals(url, tsaClientBouncyCastle.tsaURL);
+        Assertions.assertEquals(userName, tsaClientBouncyCastle.tsaUsername);
+        Assertions.assertEquals(password, tsaClientBouncyCastle.tsaPassword);
+        Assertions.assertEquals(TSAClientBouncyCastle.DEFAULTTOKENSIZE, tsaClientBouncyCastle.getTokenSizeEstimate());
+        Assertions.assertEquals(TSAClientBouncyCastle.DEFAULTHASHALGORITHM, tsaClientBouncyCastle.digestAlgorithm);
     }
 
     @Test
@@ -80,12 +79,12 @@ public class TSAClientBouncyCastleTest extends ExtendedITextTest {
 
         TSAClientBouncyCastle tsaClientBouncyCastle = new TSAClientBouncyCastle(url, userName, password,
                 tokenSize, digestAlgorithm);
-        Assert.assertEquals(url, tsaClientBouncyCastle.tsaURL);
-        Assert.assertEquals(userName, tsaClientBouncyCastle.tsaUsername);
-        Assert.assertEquals(password, tsaClientBouncyCastle.tsaPassword);
-        Assert.assertEquals(TSAClientBouncyCastle.DEFAULTTOKENSIZE, tsaClientBouncyCastle.tokenSizeEstimate);
-        Assert.assertEquals(tokenSize, tsaClientBouncyCastle.getTokenSizeEstimate());
-        Assert.assertEquals(digestAlgorithm, tsaClientBouncyCastle.digestAlgorithm);
+        Assertions.assertEquals(url, tsaClientBouncyCastle.tsaURL);
+        Assertions.assertEquals(userName, tsaClientBouncyCastle.tsaUsername);
+        Assertions.assertEquals(password, tsaClientBouncyCastle.tsaPassword);
+        Assertions.assertEquals(TSAClientBouncyCastle.DEFAULTTOKENSIZE, tsaClientBouncyCastle.tokenSizeEstimate);
+        Assertions.assertEquals(tokenSize, tsaClientBouncyCastle.getTokenSizeEstimate());
+        Assertions.assertEquals(digestAlgorithm, tsaClientBouncyCastle.digestAlgorithm);
     }
 
     @Test
@@ -93,11 +92,11 @@ public class TSAClientBouncyCastleTest extends ExtendedITextTest {
         String url = "url";
 
         TSAClientBouncyCastle tsaClientBouncyCastle = new TSAClientBouncyCastle(url);
-        Assert.assertEquals(url, tsaClientBouncyCastle.tsaURL);
-        Assert.assertNull(tsaClientBouncyCastle.tsaUsername);
-        Assert.assertNull(tsaClientBouncyCastle.tsaPassword);
-        Assert.assertEquals(TSAClientBouncyCastle.DEFAULTTOKENSIZE, tsaClientBouncyCastle.tokenSizeEstimate);
-        Assert.assertEquals(TSAClientBouncyCastle.DEFAULTHASHALGORITHM, tsaClientBouncyCastle.digestAlgorithm);
+        Assertions.assertEquals(url, tsaClientBouncyCastle.tsaURL);
+        Assertions.assertNull(tsaClientBouncyCastle.tsaUsername);
+        Assertions.assertNull(tsaClientBouncyCastle.tsaPassword);
+        Assertions.assertEquals(TSAClientBouncyCastle.DEFAULTTOKENSIZE, tsaClientBouncyCastle.tokenSizeEstimate);
+        Assertions.assertEquals(TSAClientBouncyCastle.DEFAULTHASHALGORITHM, tsaClientBouncyCastle.digestAlgorithm);
     }
 
     @Test
@@ -110,7 +109,7 @@ public class TSAClientBouncyCastleTest extends ExtendedITextTest {
 
         TSAClientBouncyCastle tsaClientBouncyCastle = new TSAClientBouncyCastle(url, userName, password,
                 tokenSizeEstimate, digestAlgorithm);
-        Assert.assertEquals(tokenSizeEstimate, tsaClientBouncyCastle.getTokenSizeEstimate());
+        Assertions.assertEquals(tokenSizeEstimate, tsaClientBouncyCastle.getTokenSizeEstimate());
     }
 
     @Test
@@ -119,7 +118,7 @@ public class TSAClientBouncyCastleTest extends ExtendedITextTest {
 
         TSAClientBouncyCastle clientBouncyCastle = new TSAClientBouncyCastle("url");
         clientBouncyCastle.setTSAReqPolicy(regPolicy);
-        Assert.assertEquals(regPolicy, clientBouncyCastle.getTSAReqPolicy());
+        Assertions.assertEquals(regPolicy, clientBouncyCastle.getTSAReqPolicy());
     }
 
     @Test
@@ -133,8 +132,8 @@ public class TSAClientBouncyCastleTest extends ExtendedITextTest {
         TSAClientBouncyCastle tsaClientBouncyCastle = new TSAClientBouncyCastle(url, userName, password,
                 tokenSizeEstimate, digestAlgorithm);
         MessageDigest digest = tsaClientBouncyCastle.getMessageDigest();
-        Assert.assertNotNull(digest);
-        Assert.assertEquals(digestAlgorithm, digest.getAlgorithm());
+        Assertions.assertNotNull(digest);
+        Assertions.assertEquals(digestAlgorithm, digest.getAlgorithm());
     }
 
     @Test
@@ -156,10 +155,10 @@ public class TSAClientBouncyCastleTest extends ExtendedITextTest {
         ITimeStampTokenInfo expectedTsTokenInfo = expectedToken.getTimeStampInfo();
         ITimeStampTokenInfo resultTsTokenInfo = itsaInfoBouncyCastle.getTimeStampTokenInfo();
 
-        Assert.assertNotNull(timestampTokenArray);
-        Assert.assertNotNull(resultTsTokenInfo);
-        Assert.assertArrayEquals(expectedTsTokenInfo.getEncoded(), resultTsTokenInfo.getEncoded());
-        Assert.assertArrayEquals(expectedToken.getEncoded(), timestampTokenArray);
+        Assertions.assertNotNull(timestampTokenArray);
+        Assertions.assertNotNull(resultTsTokenInfo);
+        Assertions.assertArrayEquals(expectedTsTokenInfo.getEncoded(), resultTsTokenInfo.getEncoded());
+        Assertions.assertArrayEquals(expectedToken.getEncoded(), timestampTokenArray);
     }
 
     @Test
@@ -173,11 +172,11 @@ public class TSAClientBouncyCastleTest extends ExtendedITextTest {
         tsaClientBouncyCastle.setTSAInfo(new CustomItsaInfoBouncyCastle());
 
         byte[] digest = tsaClientBouncyCastle.getMessageDigest().digest();
-        Exception e = Assert.assertThrows(PdfException.class,
+        Exception e = Assertions.assertThrows(PdfException.class,
                 () -> tsaClientBouncyCastle.getTimeStampToken(digest)
         );
 
-        Assert.assertEquals(MessageFormatUtil.format(SignExceptionMessageConstant.INVALID_TSA_RESPONSE, url,
+        Assertions.assertEquals(MessageFormatUtil.format(SignExceptionMessageConstant.INVALID_TSA_RESPONSE, url,
                         "128: request contains unknown algorithm"),
                 e.getMessage());
     }

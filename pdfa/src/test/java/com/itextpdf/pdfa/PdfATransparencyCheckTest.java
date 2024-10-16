@@ -28,7 +28,7 @@ import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -44,22 +44,21 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import static org.junit.Assert.fail;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
+import static org.junit.jupiter.api.Assertions.fail;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfATransparencyCheckTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
     public static final String cmpFolder = "./src/test/resources/com/itextpdf/pdfa/cmp/PdfATransparencyCheckTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/pdfa/PdfATransparencyCheckTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
@@ -67,7 +66,7 @@ public class PdfATransparencyCheckTest extends ExtendedITextTest {
     @Test
     public void textTransparencyNoOutputIntentTest() throws IOException {
         PdfWriter writer = new PdfWriter(new java.io.ByteArrayOutputStream());
-        PdfDocument pdfDocument = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_3B, null);
+        PdfDocument pdfDocument = new PdfADocument(writer, PdfAConformance.PDF_A_3B, null);
 
         PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
                 "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED);
@@ -86,8 +85,8 @@ public class PdfATransparencyCheckTest extends ExtendedITextTest {
                 .endText()
                 .restoreState();
 
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> pdfDocument.close());
-        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.THE_DOCUMENT_DOES_NOT_CONTAIN_A_PDFA_OUTPUTINTENT_BUT_PAGE_CONTAINS_TRANSPARENCY_AND_DOES_NOT_CONTAIN_BLENDING_COLOR_SPACE),
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> pdfDocument.close());
+        Assertions.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.THE_DOCUMENT_DOES_NOT_CONTAIN_A_PDFA_OUTPUTINTENT_BUT_PAGE_CONTAINS_TRANSPARENCY_AND_DOES_NOT_CONTAIN_BLENDING_COLOR_SPACE),
                 e.getMessage());
     }
 
@@ -96,7 +95,7 @@ public class PdfATransparencyCheckTest extends ExtendedITextTest {
         String outPdf = destinationFolder + "transparencyAndCS.pdf";
         String cmpPdf = cmpFolder + "cmp_transparencyAndCS.pdf";
 
-        PdfDocument pdfDocument = new PdfADocument(new PdfWriter(outPdf), PdfAConformanceLevel.PDF_A_3B, null);
+        PdfDocument pdfDocument = new PdfADocument(new PdfWriter(outPdf), PdfAConformance.PDF_A_3B, null);
         PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
                 "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED);
 
@@ -137,7 +136,7 @@ public class PdfATransparencyCheckTest extends ExtendedITextTest {
 
     @Test
     public void imageTransparencyTest() throws IOException {
-        PdfDocument pdfDoc = new PdfADocument(new PdfWriter(new java.io.ByteArrayOutputStream()), PdfAConformanceLevel.PDF_A_3B, null);
+        PdfDocument pdfDoc = new PdfADocument(new PdfWriter(new java.io.ByteArrayOutputStream()), PdfAConformance.PDF_A_3B, null);
 
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
@@ -149,15 +148,15 @@ public class PdfATransparencyCheckTest extends ExtendedITextTest {
                 new Rectangle(0, 0, page.getPageSize().getWidth() / 2, page.getPageSize().getHeight() / 2), false);
         canvas.restoreState();
 
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> pdfDoc.close());
-        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.THE_DOCUMENT_DOES_NOT_CONTAIN_A_PDFA_OUTPUTINTENT_BUT_PAGE_CONTAINS_TRANSPARENCY_AND_DOES_NOT_CONTAIN_BLENDING_COLOR_SPACE),
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> pdfDoc.close());
+        Assertions.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.THE_DOCUMENT_DOES_NOT_CONTAIN_A_PDFA_OUTPUTINTENT_BUT_PAGE_CONTAINS_TRANSPARENCY_AND_DOES_NOT_CONTAIN_BLENDING_COLOR_SPACE),
                 e.getMessage());
     }
 
     @Test
     public void nestedXObjectWithTransparencyTest() {
         PdfWriter writer = new PdfWriter(new java.io.ByteArrayOutputStream());
-        PdfDocument pdfDocument = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_3B, null);
+        PdfDocument pdfDocument = new PdfADocument(writer, PdfAConformance.PDF_A_3B, null);
         PdfFormXObject form1 = new PdfFormXObject(new Rectangle(0, 0, 50, 50));
         PdfCanvas canvas1 = new PdfCanvas(form1, pdfDocument);
         canvas1.saveState();
@@ -185,8 +184,8 @@ public class PdfATransparencyCheckTest extends ExtendedITextTest {
         canvas.addXObjectAt(form, 0, 0);
         canvas.release();
 
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> pdfDocument.close());
-        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.THE_DOCUMENT_DOES_NOT_CONTAIN_A_PDFA_OUTPUTINTENT_BUT_PAGE_CONTAINS_TRANSPARENCY_AND_DOES_NOT_CONTAIN_BLENDING_COLOR_SPACE),
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> pdfDocument.close());
+        Assertions.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.THE_DOCUMENT_DOES_NOT_CONTAIN_A_PDFA_OUTPUTINTENT_BUT_PAGE_CONTAINS_TRANSPARENCY_AND_DOES_NOT_CONTAIN_BLENDING_COLOR_SPACE),
                 e.getMessage());
     }
 
@@ -195,7 +194,7 @@ public class PdfATransparencyCheckTest extends ExtendedITextTest {
         String outPdf = destinationFolder + "transparencyObjectsAbsence.pdf";
         String cmpPdf = cmpFolder + "cmp_transparencyObjectsAbsence.pdf";
 
-        PdfDocument pdfDocument = new PdfADocument(new PdfWriter(outPdf), PdfAConformanceLevel.PDF_A_3B, null);
+        PdfDocument pdfDocument = new PdfADocument(new PdfWriter(outPdf), PdfAConformance.PDF_A_3B, null);
         PdfPage page = pdfDocument.addNewPage();
         PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
                 "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED);

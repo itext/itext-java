@@ -41,23 +41,22 @@ import com.itextpdf.layout.testutil.OrphansWidowsTestUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class OrphansWidowsTest extends ExtendedITextTest {
 
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/OrphansWidowsTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/OrphansWidowsTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
@@ -150,23 +149,23 @@ public class OrphansWidowsTest extends ExtendedITextTest {
         LayoutResult secondLayoutResult = paragraphRenderer.layout(layoutContext);
 
         // toString() comparison is used since it contains report on status, areaBreak and occupiedArea
-        Assert.assertEquals(firstLayoutResult.toString(), secondLayoutResult.toString());
+        Assertions.assertEquals(firstLayoutResult.toString(), secondLayoutResult.toString());
 
         ParagraphRenderer firstSplitRenderer = (ParagraphRenderer) firstLayoutResult.getSplitRenderer();
         ParagraphRenderer secondSplitRenderer = (ParagraphRenderer) secondLayoutResult.getSplitRenderer();
-        Assert.assertNotNull(firstSplitRenderer);
-        Assert.assertNotNull(secondSplitRenderer);
-        Assert.assertEquals(firstSplitRenderer.toString(), secondSplitRenderer.toString());
+        Assertions.assertNotNull(firstSplitRenderer);
+        Assertions.assertNotNull(secondSplitRenderer);
+        Assertions.assertEquals(firstSplitRenderer.toString(), secondSplitRenderer.toString());
 
         ParagraphRenderer firstOverflowRenderer = (ParagraphRenderer) firstLayoutResult.getOverflowRenderer();
         ParagraphRenderer secondOverflowRenderer = (ParagraphRenderer) secondLayoutResult.getOverflowRenderer();
-        Assert.assertNotNull(firstOverflowRenderer);
-        Assert.assertNotNull(secondOverflowRenderer);
+        Assertions.assertNotNull(firstOverflowRenderer);
+        Assertions.assertNotNull(secondOverflowRenderer);
         List<IRenderer> firstOverflowRendererChildren = firstOverflowRenderer.getChildRenderers();
         List<IRenderer> secondOverflowRendererChildren = secondOverflowRenderer.getChildRenderers();
-        Assert.assertNotNull(firstOverflowRendererChildren);
-        Assert.assertNotNull(secondOverflowRendererChildren);
-        Assert.assertEquals(firstOverflowRendererChildren.size(), secondOverflowRendererChildren.size());
+        Assertions.assertNotNull(firstOverflowRendererChildren);
+        Assertions.assertNotNull(secondOverflowRendererChildren);
+        Assertions.assertEquals(firstOverflowRendererChildren.size(), secondOverflowRendererChildren.size());
     }
 
     @Test
@@ -191,14 +190,14 @@ public class OrphansWidowsTest extends ExtendedITextTest {
         LayoutResult widowsControlLayoutResult = paragraphRenderer.layout(layoutContext);
 
         // toString() comparison is used since it contains report on status, areaBreak and occupiedArea
-        Assert.assertEquals(noWidowsControlLayoutResult.toString(), widowsControlLayoutResult.toString());
+        Assertions.assertEquals(noWidowsControlLayoutResult.toString(), widowsControlLayoutResult.toString());
         ParagraphRenderer firstSplitRenderer = (ParagraphRenderer) noWidowsControlLayoutResult.getSplitRenderer();
         ParagraphRenderer secondSplitRenderer = (ParagraphRenderer) widowsControlLayoutResult.getSplitRenderer();
-        Assert.assertNotNull(firstSplitRenderer);
-        Assert.assertNotNull(secondSplitRenderer);
-        Assert.assertEquals(firstSplitRenderer.toString(), secondSplitRenderer.toString());
-        Assert.assertNotNull(noWidowsControlLayoutResult.getOverflowRenderer());
-        Assert.assertNotNull(widowsControlLayoutResult.getOverflowRenderer());
+        Assertions.assertNotNull(firstSplitRenderer);
+        Assertions.assertNotNull(secondSplitRenderer);
+        Assertions.assertEquals(firstSplitRenderer.toString(), secondSplitRenderer.toString());
+        Assertions.assertNotNull(noWidowsControlLayoutResult.getOverflowRenderer());
+        Assertions.assertNotNull(widowsControlLayoutResult.getOverflowRenderer());
     }
 
     @Test
@@ -390,21 +389,21 @@ public class OrphansWidowsTest extends ExtendedITextTest {
         String outPdf = destinationFolder + fileName + ".pdf";
         String cmpPdf = sourceFolder + "cmp_" + fileName + ".pdf";
         OrphansWidowsTestUtil.produceOrphansWidowsAndMaxHeightLimitTestCase(outPdf, orphans);
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
     }
 
     private static void runCanvasSize(String fileName, boolean orphans) throws IOException, InterruptedException {
         String outPdf = destinationFolder + fileName + ".pdf";
         String cmpPdf = sourceFolder + "cmp_" + fileName + ".pdf";
         OrphansWidowsTestUtil.produceOrphansWidowsOnCanvasOfLimitedSizeTestCase(outPdf, orphans);
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
     }
 
     private static void runDivSize(String fileName, boolean orphans) throws IOException, InterruptedException {
         String outPdf = destinationFolder + fileName + ".pdf";
         String cmpPdf = sourceFolder + "cmp_" + fileName + ".pdf";
         OrphansWidowsTestUtil.produceOrphansWidowsWithinDivOfLimitedSizeTestCase(outPdf, orphans);
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
     }
 
     private static void runKeepTogether(String fileName, boolean orphans, boolean large)
@@ -412,7 +411,7 @@ public class OrphansWidowsTest extends ExtendedITextTest {
         String outPdf = destinationFolder + fileName + ".pdf";
         String cmpPdf = sourceFolder + "cmp_" + fileName + ".pdf";
         OrphansWidowsTestUtil.produceOrphansWidowsKeepTogetherTestCase(outPdf, orphans, large);
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
     }
 
     private static void runInlineImage(String fileName, boolean orphans) throws IOException, InterruptedException {
@@ -420,7 +419,7 @@ public class OrphansWidowsTest extends ExtendedITextTest {
         String cmpPdf = sourceFolder + "cmp_" + fileName + ".pdf";
         String imagePath = sourceFolder + "bulb.gif";
         OrphansWidowsTestUtil.produceOrphansWidowsInlineImageTestCase(outPdf, imagePath, orphans);
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
     }
 
     private static void runHugeInlineImage(String fileName, boolean orphans) throws IOException, InterruptedException {
@@ -428,7 +427,7 @@ public class OrphansWidowsTest extends ExtendedITextTest {
         String cmpPdf = sourceFolder + "cmp_" + fileName + ".pdf";
         String imagePath = sourceFolder + "imageA4.png";
         OrphansWidowsTestUtil.produceOrphansWidowsHugeInlineImageTestCase(outPdf, imagePath, orphans);
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
     }
 
     private static void runCustomParagraphAndRendererTest(String fileName, boolean orphans)
@@ -442,7 +441,7 @@ public class OrphansWidowsTest extends ExtendedITextTest {
             customParagraph.setWidowsControl(new ParagraphWidowsControl(3, 1, false));
         }
         OrphansWidowsTestUtil.produceOrphansWidowsTestCase(outPdf, 2, orphans, customParagraph, false);
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
     }
 
     private static void runUnexpectedWidthOfNextAreaTest(String fileName, boolean wide)
@@ -450,7 +449,7 @@ public class OrphansWidowsTest extends ExtendedITextTest {
         String outPdf = destinationFolder + fileName + ".pdf";
         String cmpPdf = sourceFolder + "cmp_" + fileName + ".pdf";
         OrphansWidowsTestUtil.produceOrphansWidowsUnexpectedWidthOfNextAreaTestCase(outPdf, wide);
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
     }
 
     private static void runInlineBlockTest(String fileName, boolean orphans)
@@ -458,7 +457,7 @@ public class OrphansWidowsTest extends ExtendedITextTest {
         String outPdf = destinationFolder + fileName + ".pdf";
         String cmpPdf = sourceFolder + "cmp_" + fileName + ".pdf";
         OrphansWidowsTestUtil.produceOrphansWidowsInlineBlockTestCase(outPdf, orphans);
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
     }
 
     private static void runInlineFloatTest(String fileName, boolean orphans)
@@ -466,7 +465,7 @@ public class OrphansWidowsTest extends ExtendedITextTest {
         String outPdf = destinationFolder + fileName + ".pdf";
         String cmpPdf = sourceFolder + "cmp_" + fileName + ".pdf";
         OrphansWidowsTestUtil.produceOrphansWidowsInlineFloatTestCase(outPdf, orphans);
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
     }
 
     private static void runFloatingDiv(String fileName, boolean orphans)
@@ -474,7 +473,7 @@ public class OrphansWidowsTest extends ExtendedITextTest {
         String outPdf = destinationFolder + fileName + ".pdf";
         String cmpPdf = sourceFolder + "cmp_" + fileName + ".pdf";
         OrphansWidowsTestUtil.produceOrphansWidowsFloatingDivTestCase(outPdf, orphans);
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
     }
 
     private static void runOrphansWidowsBiggerThanLinesCount(String fileName, boolean orphans, boolean singleLine)
@@ -482,7 +481,7 @@ public class OrphansWidowsTest extends ExtendedITextTest {
         String outPdf = destinationFolder + fileName + ".pdf";
         String cmpPdf = sourceFolder + "cmp_" + fileName + ".pdf";
         OrphansWidowsTestUtil.produceOrphansWidowsBiggerThanLinesCountTestCase(outPdf, orphans, singleLine);
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
     }
 
     private static void runMinThreeOrphansTest(String testName, int linesLeft)
@@ -529,7 +528,7 @@ public class OrphansWidowsTest extends ExtendedITextTest {
 
         OrphansWidowsTestUtil.produceOrphansAndWidowsTestCase(outPdf, testPara);
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
     }
 
     private static void runTestOnPage(String testName, Paragraph testPara, boolean orphans)
@@ -541,7 +540,7 @@ public class OrphansWidowsTest extends ExtendedITextTest {
 
         OrphansWidowsTestUtil.produceOrphansOrWidowsTestCase(outPdf, linesLeft, orphans, testPara);
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
     }
 
     private static void runTest(String testName, int linesLeft, boolean orphans, Paragraph testPara)
@@ -557,7 +556,7 @@ public class OrphansWidowsTest extends ExtendedITextTest {
         OrphansWidowsTestUtil
                 .produceOrphansWidowsTestCase(outPdf, linesLeft, orphans, testPara, marginCollapseTestCase);
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
     }
 
     private static class CustomParagraphRenderer extends ParagraphRenderer {

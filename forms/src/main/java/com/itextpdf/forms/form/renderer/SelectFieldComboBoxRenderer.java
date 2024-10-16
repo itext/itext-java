@@ -117,7 +117,7 @@ public class SelectFieldComboBoxRenderer extends AbstractSelectFieldRenderer {
 
         final ChoiceFormFieldBuilder builder = new ChoiceFormFieldBuilder(doc, name).setWidgetRectangle(area)
                 .setFont(font)
-                .setGenericConformanceLevel(getGenericConformanceLevel(doc));
+                .setConformance(getConformance(doc));
 
         applyMargins(area, false);
         final Map<Integer, Object> properties =  FormFieldRendererUtil.removeProperties(this.modelElement);
@@ -178,7 +178,7 @@ public class SelectFieldComboBoxRenderer extends AbstractSelectFieldRenderer {
 
     private IRenderer createFlatRenderer(boolean addAllOptionsToChildren) {
         AbstractSelectField selectField = (AbstractSelectField) modelElement;
-        List<SelectFieldItem> options = selectField.getItems();
+        List<SelectFieldItem> options = selectField.getOptions();
 
         Div pseudoContainer = new Div();
         for (SelectFieldItem option : options) {
@@ -281,7 +281,7 @@ public class SelectFieldComboBoxRenderer extends AbstractSelectFieldRenderer {
         IPropertyContainer propertyContainer = originalOptionRenderer.getModelElement();
         if (propertyContainer instanceof IAccessibleElement) {
             String lang = ((IAccessibleElement) propertyContainer).getAccessibilityProperties().getLanguage();
-            AccessibilityProperties properties = ((IAccessibleElement) optionFlatElement).getAccessibilityProperties();
+            AccessibilityProperties properties = optionFlatElement.getAccessibilityProperties();
             if (properties.getLanguage() == null) {
                 properties.setLanguage(lang);
             }

@@ -29,13 +29,12 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class CanvasUnitTest extends ExtendedITextTest {
 
     @Test
@@ -46,7 +45,7 @@ public class CanvasUnitTest extends ExtendedITextTest {
         Rectangle rectangle = new Rectangle(0, 0);
         Canvas canvas = new Canvas(pdfCanvas, rectangle, false);
 
-        Assert.assertEquals(pdfCanvas.getDocument(), canvas.getPdfDocument());
-        Assert.assertFalse(canvas.immediateFlush);
+        Assertions.assertEquals(pdfCanvas.getDocument(), canvas.getPdfDocument());
+        Assertions.assertFalse(canvas.immediateFlush);
     }
 }

@@ -27,28 +27,27 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfPageTest extends ExtendedITextTest {
     private PdfDocument dummyDoc;
 
-    @Before
+    @BeforeEach
     public void before() {
         dummyDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         dummyDoc.addNewPage();
     }
 
-    @After
+    @AfterEach
     public void after() {
         dummyDoc.close();
     }
@@ -59,7 +58,7 @@ public class PdfPageTest extends ExtendedITextTest {
         simulateIndirectState(pageDictionary);
         PdfPage pdfPage = new PdfPage(pageDictionary);
 
-        Assert.assertFalse(pageDictionary.isModified());
+        Assertions.assertFalse(pageDictionary.isModified());
     }
 
     @Test
@@ -69,14 +68,14 @@ public class PdfPageTest extends ExtendedITextTest {
         PdfDictionary annotDictionary = new PdfDictionary();
         pageDictionary.put(PdfName.Annots, new PdfArray(Collections.singletonList((PdfObject) annotDictionary)));
 
-        Assert.assertFalse(pageDictionary.isModified());
+        Assertions.assertFalse(pageDictionary.isModified());
 
         PdfPage pdfPage = new PdfPage(pageDictionary);
         pdfPage.removeAnnotation(PdfAnnotation.makeAnnotation(annotDictionary));
 
-        Assert.assertTrue(pdfPage.getAnnotations().isEmpty());
-        Assert.assertFalse(pageDictionary.containsKey(PdfName.Annots));
-        Assert.assertTrue(pageDictionary.isModified());
+        Assertions.assertTrue(pdfPage.getAnnotations().isEmpty());
+        Assertions.assertFalse(pageDictionary.containsKey(PdfName.Annots));
+        Assertions.assertTrue(pageDictionary.isModified());
     }
 
     @Test
@@ -89,14 +88,14 @@ public class PdfPageTest extends ExtendedITextTest {
                 Arrays.asList(annotDictionary1, (PdfObject) annotDictionary2))
         );
 
-        Assert.assertFalse(pageDictionary.isModified());
+        Assertions.assertFalse(pageDictionary.isModified());
 
         PdfPage pdfPage = new PdfPage(pageDictionary);
         pdfPage.removeAnnotation(PdfAnnotation.makeAnnotation(annotDictionary1));
 
-        Assert.assertEquals(1, pdfPage.getAnnotations().size());
-        Assert.assertEquals(annotDictionary2, pdfPage.getAnnotations().get(0).getPdfObject());
-        Assert.assertTrue(pageDictionary.isModified());
+        Assertions.assertEquals(1, pdfPage.getAnnotations().size());
+        Assertions.assertEquals(annotDictionary2, pdfPage.getAnnotations().get(0).getPdfObject());
+        Assertions.assertTrue(pageDictionary.isModified());
     }
 
     @Test
@@ -112,15 +111,15 @@ public class PdfPageTest extends ExtendedITextTest {
 
         pageDictionary.put(PdfName.Annots, annotsArray);
 
-        Assert.assertFalse(annotsArray.isModified());
+        Assertions.assertFalse(annotsArray.isModified());
 
         PdfPage pdfPage = new PdfPage(pageDictionary);
         pdfPage.removeAnnotation(PdfAnnotation.makeAnnotation(annotDictionary1));
 
-        Assert.assertEquals(1, pdfPage.getAnnotations().size());
-        Assert.assertEquals(annotDictionary2, pdfPage.getAnnotations().get(0).getPdfObject());
-        Assert.assertFalse(pageDictionary.isModified());
-        Assert.assertTrue(annotsArray.isModified());
+        Assertions.assertEquals(1, pdfPage.getAnnotations().size());
+        Assertions.assertEquals(annotDictionary2, pdfPage.getAnnotations().get(0).getPdfObject());
+        Assertions.assertFalse(pageDictionary.isModified());
+        Assertions.assertTrue(annotsArray.isModified());
     }
 
     @Test
@@ -130,7 +129,7 @@ public class PdfPageTest extends ExtendedITextTest {
         pageDictionary.put(PdfName.TrimBox, preExistingTrimBoxArr);
         simulateIndirectState(pageDictionary);
 
-        Assert.assertFalse(pageDictionary.isModified());
+        Assertions.assertFalse(pageDictionary.isModified());
 
         PdfPage pdfPage = new PdfPage(pageDictionary);
         pdfPage.setArtBox(new Rectangle(25, 40));
@@ -138,12 +137,12 @@ public class PdfPageTest extends ExtendedITextTest {
         PdfArray expectedArtBoxArr = new PdfArray(
                 Arrays.asList(new PdfNumber(0), new PdfNumber(0), new PdfNumber(25), (PdfObject) new PdfNumber(40))
         );
-        Assert.assertTrue(
+        Assertions.assertTrue(
                 new CompareTool().compareArrays(pageDictionary.getAsArray(PdfName.ArtBox), expectedArtBoxArr));
         // trimbox not removed
-        Assert.assertTrue(
+        Assertions.assertTrue(
                 new CompareTool().compareArrays(pageDictionary.getAsArray(PdfName.TrimBox), preExistingTrimBoxArr));
-        Assert.assertTrue(pageDictionary.isModified());
+        Assertions.assertTrue(pageDictionary.isModified());
     }
 
     @Test
@@ -153,7 +152,7 @@ public class PdfPageTest extends ExtendedITextTest {
         pageDictionary.put(PdfName.ArtBox, preExistingArtBoxArr);
         simulateIndirectState(pageDictionary);
 
-        Assert.assertFalse(pageDictionary.isModified());
+        Assertions.assertFalse(pageDictionary.isModified());
 
         PdfPage pdfPage = new PdfPage(pageDictionary);
         pdfPage.setTrimBox(new Rectangle(25, 40));
@@ -161,12 +160,12 @@ public class PdfPageTest extends ExtendedITextTest {
         PdfArray expectedTrimBoxArr = new PdfArray(
                 Arrays.asList(new PdfNumber(0), new PdfNumber(0), new PdfNumber(25), (PdfObject) new PdfNumber(40))
         );
-        Assert.assertTrue(
+        Assertions.assertTrue(
                 new CompareTool().compareArrays(pageDictionary.getAsArray(PdfName.TrimBox), expectedTrimBoxArr));
         // artbox not removed
-        Assert.assertTrue(
+        Assertions.assertTrue(
                 new CompareTool().compareArrays(pageDictionary.getAsArray(PdfName.ArtBox), preExistingArtBoxArr));
-        Assert.assertTrue(pageDictionary.isModified());
+        Assertions.assertTrue(pageDictionary.isModified());
     }
 
     /**

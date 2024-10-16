@@ -28,13 +28,12 @@ import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class RotateTransformationTest extends ExtendedITextTest {
 
     @Test
@@ -43,15 +42,15 @@ public class RotateTransformationTest extends ExtendedITextTest {
                 .parseAbsoluteLength("10"));
         AffineTransform actual = TransformUtils.parseTransform("rotate(10, 5, 10)");
 
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
     public void noRotateValuesTest() {
-        Exception e = Assert.assertThrows(SvgProcessingException.class,
+        Exception e = Assertions.assertThrows(SvgProcessingException.class,
                 () -> TransformUtils.parseTransform("rotate()")
         );
-        Assert.assertEquals(SvgExceptionMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES, e.getMessage());
+        Assertions.assertEquals(SvgExceptionMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES, e.getMessage());
     }
 
     @Test
@@ -59,15 +58,15 @@ public class RotateTransformationTest extends ExtendedITextTest {
         AffineTransform expected = AffineTransform.getRotateInstance(Math.toRadians(10));
         AffineTransform actual = TransformUtils.parseTransform("rotate(10)");
 
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
     public void twoRotateValuesTest() {
-        Exception e = Assert.assertThrows(SvgProcessingException.class,
+        Exception e = Assertions.assertThrows(SvgProcessingException.class,
                 () -> TransformUtils.parseTransform("rotate(23,58)")
         );
-        Assert.assertEquals(SvgExceptionMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES, e.getMessage());
+        Assertions.assertEquals(SvgExceptionMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES, e.getMessage());
     }
 
     @Test
@@ -76,15 +75,15 @@ public class RotateTransformationTest extends ExtendedITextTest {
                 .parseAbsoluteLength("57"));
         AffineTransform actual = TransformUtils.parseTransform("rotate(23, 58, 57)");
 
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
     public void tooManyRotateValuesTest() {
-        Exception e = Assert.assertThrows(SvgProcessingException.class,
+        Exception e = Assertions.assertThrows(SvgProcessingException.class,
                 () -> TransformUtils.parseTransform("rotate(1 2 3 4)")
         );
-        Assert.assertEquals(SvgExceptionMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES, e.getMessage());
+        Assertions.assertEquals(SvgExceptionMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES, e.getMessage());
     }
 
     @Test
@@ -93,7 +92,7 @@ public class RotateTransformationTest extends ExtendedITextTest {
                 .parseAbsoluteLength("-1"));
         AffineTransform actual = TransformUtils.parseTransform("rotate(-23,-58,-1)");
 
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -101,6 +100,6 @@ public class RotateTransformationTest extends ExtendedITextTest {
         AffineTransform expected = AffineTransform.getRotateInstance(Math.toRadians(90));
         AffineTransform actual = TransformUtils.parseTransform("rotate(90)");
 
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 }

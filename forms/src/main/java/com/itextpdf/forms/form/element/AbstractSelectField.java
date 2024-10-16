@@ -23,9 +23,6 @@
 package com.itextpdf.forms.form.element;
 
 import com.itextpdf.forms.form.FormProperty;
-import com.itextpdf.layout.element.IBlockElement;
-import com.itextpdf.layout.element.IElement;
-import com.itextpdf.layout.element.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,19 +41,6 @@ public abstract class AbstractSelectField extends FormField<AbstractSelectField>
      */
     protected AbstractSelectField(String id) {
         super(id);
-    }
-
-    /**
-     * Add a container with options. This might be a container for options group.
-     *
-     * @param optionElement a container with options
-     *
-     * @deprecated starting from 8.0.1.
-     */
-    @Deprecated
-    public void addOption(IBlockElement optionElement) {
-        String value = tryAndExtractText(optionElement);
-        addOption(new SelectFieldItem(value, optionElement));
     }
 
     /**
@@ -84,10 +68,9 @@ public abstract class AbstractSelectField extends FormField<AbstractSelectField>
      *
      * @return a list of options.
      */
-    public List<SelectFieldItem> getItems() {
+    public List<SelectFieldItem> getOptions() {
         return options;
     }
-
 
     /**
      * Gets the total amount of options available.
@@ -95,7 +78,7 @@ public abstract class AbstractSelectField extends FormField<AbstractSelectField>
      * @return the number of options in the element.
      */
     public int optionsCount() {
-        return this.getItems().size();
+        return this.getOptions().size();
     }
 
     /**
@@ -125,22 +108,6 @@ public abstract class AbstractSelectField extends FormField<AbstractSelectField>
     }
 
     /**
-     * Gets a list of containers with option(s). Every container might be a container for options group.
-     *
-     * @return a list of containers with options.
-     *
-     * @deprecated starting from 8.0.1.
-     */
-    @Deprecated
-    public List<IBlockElement> getOptions() {
-        List<IBlockElement> blockElements = new ArrayList<>();
-        for (SelectFieldItem option : options) {
-            blockElements.add(option.getElement());
-        }
-        return blockElements;
-    }
-
-    /**
      * Checks if the field has options with export and display values.
      *
      * @return {@code true} if the field has options with export and display values, {@code false} otherwise.
@@ -153,21 +120,4 @@ public abstract class AbstractSelectField extends FormField<AbstractSelectField>
         }
         return false;
     }
-
-    private String tryAndExtractText(IBlockElement optionElement) {
-        String label = optionElement.<String>getProperty(FormProperty.FORM_FIELD_LABEL);
-        if (label != null) {
-            return label;
-        }
-
-        for (IElement child : optionElement.getChildren()) {
-            if (child instanceof Text) {
-                return ((Text) child).getText();
-            } else if (child instanceof IBlockElement) {
-                return tryAndExtractText((IBlockElement) child);
-            }
-        }
-        return "";
-    }
 }
-

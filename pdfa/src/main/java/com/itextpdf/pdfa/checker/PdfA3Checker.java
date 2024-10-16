@@ -22,22 +22,21 @@
  */
 package com.itextpdf.pdfa.checker;
 
+import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.pdfa.logs.PdfAConformanceLogMessageConstant;
 
-import java.util.Collections;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * PdfA3Checker defines the requirements of the PDF/A-3 standard and contains a
@@ -56,13 +55,13 @@ public class PdfA3Checker extends PdfA2Checker{
                     PdfName.Unspecified)));
 
     /**
-     * Creates a PdfA3Checker with the required conformance level
+     * Creates a PdfA3Checker with the required conformance
      * 
-     * @param conformanceLevel the required conformance level, <code>a</code> or
+     * @param aConformance the required conformance, <code>a</code> or
      * <code>u</code> or <code>b</code>
      */
-    public PdfA3Checker(PdfAConformanceLevel conformanceLevel) {
-        super(conformanceLevel);
+    public PdfA3Checker(PdfAConformance aConformance) {
+        super(aConformance);
     }
 
     @Override

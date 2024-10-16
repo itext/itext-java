@@ -27,10 +27,9 @@ import com.itextpdf.styledxmlparser.jsoup.Jsoup;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Document;
 import com.itextpdf.styledxmlparser.jsoup.parser.Parser;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -39,7 +38,7 @@ import java.io.IOException;
 /**
  Tests fixes for issues raised by the OSS Fuzz project @ https://oss-fuzz.com/testcases?project=jsoup
  */
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class FuzzFixesTest extends ExtendedITextTest {
 
     @Test
@@ -47,7 +46,7 @@ public class FuzzFixesTest extends ExtendedITextTest {
         // https://github.com/jhy/jsoup/issues/1541
         String html = "b<bodY abs: abs:abs: abs:abs:abs>";
         Document doc = Jsoup.parse(html);
-        Assert.assertNotNull(doc);
+        Assertions.assertNotNull(doc);
     }
 
     @Test
@@ -55,7 +54,7 @@ public class FuzzFixesTest extends ExtendedITextTest {
         // https://github.com/jhy/jsoup/issues/1538
         File in = ParseTest.getFile("/fuzztests/1538.html"); // lots of escape chars etc.
         Document doc = Jsoup.parse(in, "UTF-8");
-        Assert.assertNotNull(doc);
+        Assertions.assertNotNull(doc);
     }
 
     @Test
@@ -63,10 +62,10 @@ public class FuzzFixesTest extends ExtendedITextTest {
         // https://github.com/jhy/jsoup/issues/1539
         File in = ParseTest.getFile("/fuzztests/1539.html"); // lots of escape chars etc.
         Document doc = Jsoup.parse(in, "UTF-8");
-        Assert.assertNotNull(doc);
+        Assertions.assertNotNull(doc);
 
         Document docXml = Jsoup.parse(FileUtil.getInputStreamForFile(in), "UTF-8", "https://example.com", Parser.xmlParser());
-        Assert.assertNotNull(docXml);
+        Assertions.assertNotNull(docXml);
     }
 
     @Test
@@ -74,10 +73,10 @@ public class FuzzFixesTest extends ExtendedITextTest {
         // https://github.com/jhy/jsoup/issues/1569
         File in = ParseTest.getFile("/fuzztests/1569.html");
         Document doc = Jsoup.parse(in, "UTF-8");
-        Assert.assertNotNull(doc);
+        Assertions.assertNotNull(doc);
 
         Document docXml = Jsoup.parse(FileUtil.getInputStreamForFile(in), "UTF-8", "https://example.com", Parser.xmlParser());
-        Assert.assertNotNull(docXml);
+        Assertions.assertNotNull(docXml);
     }
 
     @Test
@@ -85,7 +84,7 @@ public class FuzzFixesTest extends ExtendedITextTest {
         // https://github.com/jhy/jsoup/issues/1543
         File in = ParseTest.getFile("/fuzztests/1543.html");
         Document doc = Jsoup.parse(in, "UTF-8");
-        Assert.assertNotNull(doc);
+        Assertions.assertNotNull(doc);
     }
 
     @Test
@@ -93,6 +92,6 @@ public class FuzzFixesTest extends ExtendedITextTest {
         // https://github.com/jhy/jsoup/issues/1544
         File in = ParseTest.getFile("/fuzztests/1544.html");
         Document doc = Jsoup.parse(in, "UTF-8");
-        Assert.assertNotNull(doc);
+        Assertions.assertNotNull(doc);
     }
 }

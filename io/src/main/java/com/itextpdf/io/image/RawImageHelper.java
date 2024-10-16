@@ -48,13 +48,13 @@ public final class RawImageHelper {
             if (k != 0)
                 decodeparms.put("K", k);
             if ((colorSpace & RawImageData.CCITT_BLACKIS1) != 0)
-                decodeparms.put("BlackIs1", true);
+                decodeparms.put("BlackIs1", Boolean.TRUE);
             if ((colorSpace & RawImageData.CCITT_ENCODEDBYTEALIGN) != 0)
-                decodeparms.put("EncodedByteAlign", true);
+                decodeparms.put("EncodedByteAlign", Boolean.TRUE);
             if ((colorSpace & RawImageData.CCITT_ENDOFLINE) != 0)
-                decodeparms.put("EndOfLine", true);
+                decodeparms.put("EndOfLine", Boolean.TRUE);
             if ((colorSpace & RawImageData.CCITT_ENDOFBLOCK) != 0)
-                decodeparms.put("EndOfBlock", false);
+                decodeparms.put("EndOfBlock", Boolean.FALSE);
             decodeparms.put("Columns", image.getWidth());
             decodeparms.put("Rows", image.getHeight());
             image.decodeParms = decodeparms;

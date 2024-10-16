@@ -23,37 +23,36 @@
 package com.itextpdf.io.util;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 import org.apache.xerces.jaxp.DocumentBuilderFactoryImpl;
 import org.apache.xerces.jaxp.SAXParserFactoryImpl;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 import org.w3c.dom.Document;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.SAXParserFactory;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class XmlUtilTest extends ExtendedITextTest {
 
     @Test
     public void initNewXmlDocumentTest() throws Exception {
         Document doc = XmlUtil.initNewXmlDocument();
-        Assert.assertNotNull(doc);
+        Assertions.assertNotNull(doc);
     }
 
     @Test
     public void getDocumentBuilderFactoryTest() {
         DocumentBuilderFactory factory = XmlUtil.getDocumentBuilderFactory();
 
-        Assert.assertEquals(DocumentBuilderFactoryImpl.class, factory.getClass());
+        Assertions.assertEquals(DocumentBuilderFactoryImpl.class, factory.getClass());
     }
 
     @Test
     public void createSAXParserFactoryTest() {
         SAXParserFactory factory = XmlUtil.createSAXParserFactory();
 
-        Assert.assertEquals(SAXParserFactoryImpl.class, factory.getClass());
+        Assertions.assertEquals(SAXParserFactoryImpl.class, factory.getClass());
     }
 }

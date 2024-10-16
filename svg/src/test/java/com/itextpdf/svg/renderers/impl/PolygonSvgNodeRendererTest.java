@@ -33,7 +33,6 @@ import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -42,17 +41,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PolygonSvgNodeRendererTest extends SvgIntegrationTest {
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/PolygonSvgNoderendererTest/";
     private static final String destinationFolder = "./target/test/com/itextpdf/svg/renderers/impl/PolygonSvgNoderendererTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         ITextTest.createDestinationFolder(destinationFolder);
     }
@@ -73,7 +72,7 @@ public class PolygonSvgNodeRendererTest extends SvgIntegrationTest {
 
         root.draw(context);
         doc.close();
-        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareVisually(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -97,9 +96,9 @@ public class PolygonSvgNodeRendererTest extends SvgIntegrationTest {
         expectedPoints.add(new Point(0, 0));
         List<Point> attributePoints = ((PolygonSvgNodeRenderer) root).getPoints();
 
-        Assert.assertEquals(expectedPoints.size(), attributePoints.size());
+        Assertions.assertEquals(expectedPoints.size(), attributePoints.size());
         for (int x = 0; x < attributePoints.size(); x++) {
-            Assert.assertEquals(expectedPoints.get(x), attributePoints.get(x));
+            Assertions.assertEquals(expectedPoints.get(x), attributePoints.get(x));
         }
 
     }
@@ -125,9 +124,9 @@ public class PolygonSvgNodeRendererTest extends SvgIntegrationTest {
         expectedPoints.add(new Point(0, 0));
         List<Point> attributePoints = ((PolygonSvgNodeRenderer) root).getPoints();
 
-        Assert.assertEquals(expectedPoints.size(), attributePoints.size());
+        Assertions.assertEquals(expectedPoints.size(), attributePoints.size());
         for (int x = 0; x < attributePoints.size(); x++) {
-            Assert.assertEquals(expectedPoints.get(x), attributePoints.get(x));
+            Assertions.assertEquals(expectedPoints.get(x), attributePoints.get(x));
         }
 
     }
@@ -149,8 +148,8 @@ public class PolygonSvgNodeRendererTest extends SvgIntegrationTest {
         doc.close();
 
         int numPoints = ((PolygonSvgNodeRenderer) root).getPoints().size();
-        Assert.assertEquals(numPoints, 0);
-        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+        Assertions.assertEquals(numPoints, 0);
+        Assertions.assertNull(new CompareTool().compareVisually(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
     }
 
 
@@ -178,9 +177,9 @@ public class PolygonSvgNodeRendererTest extends SvgIntegrationTest {
         expectedPoints.add(new Point(75, 75));
         List<Point> attributePoints = ((PolygonSvgNodeRenderer) root).getPoints();
 
-        Assert.assertEquals(expectedPoints.size(), attributePoints.size());
+        Assertions.assertEquals(expectedPoints.size(), attributePoints.size());
         for (int x = 0; x < attributePoints.size(); x++) {
-            Assert.assertEquals(expectedPoints.get(x), attributePoints.get(x));
+            Assertions.assertEquals(expectedPoints.get(x), attributePoints.get(x));
         }
     }
 }

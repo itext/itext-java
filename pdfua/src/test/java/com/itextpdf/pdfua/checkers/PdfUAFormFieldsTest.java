@@ -23,23 +23,37 @@
 package com.itextpdf.pdfua.checkers;
 
 import com.itextpdf.forms.PdfAcroForm;
-import com.itextpdf.forms.fields.*;
-import com.itextpdf.forms.form.element.SignatureFieldAppearance;
+import com.itextpdf.forms.fields.ChoiceFormFieldBuilder;
+import com.itextpdf.forms.fields.PdfButtonFormField;
+import com.itextpdf.forms.fields.PdfChoiceFormField;
+import com.itextpdf.forms.fields.PdfFormAnnotation;
+import com.itextpdf.forms.fields.PdfSignatureFormField;
+import com.itextpdf.forms.fields.PdfTextFormField;
+import com.itextpdf.forms.fields.PushButtonFormFieldBuilder;
+import com.itextpdf.forms.fields.RadioFormFieldBuilder;
+import com.itextpdf.forms.fields.SignatureFormFieldBuilder;
+import com.itextpdf.forms.fields.TextFormFieldBuilder;
 import com.itextpdf.forms.fields.properties.CheckBoxType;
 import com.itextpdf.forms.fields.properties.SignedAppearanceText;
 import com.itextpdf.forms.form.element.Button;
-import com.itextpdf.forms.form.element.ComboBoxField;
 import com.itextpdf.forms.form.element.CheckBox;
-import com.itextpdf.forms.form.element.SelectFieldItem;
-import com.itextpdf.forms.form.element.TextArea;
+import com.itextpdf.forms.form.element.ComboBoxField;
+import com.itextpdf.forms.form.element.InputField;
 import com.itextpdf.forms.form.element.ListBoxField;
 import com.itextpdf.forms.form.element.Radio;
-import com.itextpdf.forms.form.element.InputField;
+import com.itextpdf.forms.form.element.SelectFieldItem;
+import com.itextpdf.forms.form.element.SignatureFieldAppearance;
+import com.itextpdf.forms.form.element.TextArea;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.*;
+import com.itextpdf.kernel.pdf.PdfConformance;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfStream;
+import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
@@ -50,18 +64,15 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.pdfua.UaValidationTestFramework;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfUAFormFieldsTest extends ExtendedITextTest {
 
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/FreeSans.ttf";
@@ -69,18 +80,18 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
 
     private UaValidationTestFramework framework;
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
     }
 
     @Test
-    public void testCheckBox() throws FileNotFoundException {
+    public void testCheckBox() throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -91,12 +102,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testCheckBoxWithCustomAppearance() throws FileNotFoundException {
+    public void testCheckBoxWithCustomAppearance() throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 CheckBox cb = new CheckBox("name");
-                cb.setPdfConformanceLevel(PdfUAConformanceLevel.PDFUA_1);
+                cb.setPdfConformance(PdfConformance.PDF_UA_1);
                 cb.setBorder(new SolidBorder(ColorConstants.MAGENTA, 2));
                 cb.setBackgroundColor(ColorConstants.YELLOW);
                 return cb;
@@ -106,12 +117,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testCheckBoxChecked() throws FileNotFoundException {
+    public void testCheckBoxChecked() throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 CheckBox cb = new CheckBox("name");
-                cb.setPdfConformanceLevel(PdfUAConformanceLevel.PDFUA_1);
+                cb.setPdfConformance(PdfConformance.PDF_UA_1);
                 cb.setChecked(true);
                 return cb;
             }
@@ -120,12 +131,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testCheckBoxCheckedAlternativeDescription() throws FileNotFoundException {
+    public void testCheckBoxCheckedAlternativeDescription() throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 CheckBox cb = new CheckBox("name");
-                cb.setPdfConformanceLevel(PdfUAConformanceLevel.PDFUA_1);
+                cb.setPdfConformance(PdfConformance.PDF_UA_1);
                 cb.getAccessibilityProperties().setAlternateDescription("Yello");
                 cb.setChecked(true);
                 return cb;
@@ -135,12 +146,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testCheckBoxCheckedCustomAppearance() throws FileNotFoundException {
+    public void testCheckBoxCheckedCustomAppearance() throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 CheckBox cb = new CheckBox("name");
-                cb.setPdfConformanceLevel(PdfUAConformanceLevel.PDFUA_1);
+                cb.setPdfConformance(PdfConformance.PDF_UA_1);
                 cb.setChecked(true);
                 cb.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
                 cb.setBackgroundColor(ColorConstants.GREEN);
@@ -158,7 +169,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             @Override
             public IBlockElement generate() {
                 CheckBox checkBox = (CheckBox) new CheckBox("name").setInteractive(true);
-                checkBox.setPdfConformanceLevel(PdfUAConformanceLevel.PDFUA_1);
+                checkBox.setPdfConformance(PdfConformance.PDF_UA_1);
                 checkBox.getAccessibilityProperties().setAlternateDescription("Alternative description");
                 return checkBox;
             }
@@ -172,7 +183,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             @Override
             public IBlockElement generate() {
                 CheckBox checkBox = (CheckBox) new CheckBox("name").setInteractive(true);
-                checkBox.setPdfConformanceLevel(PdfUAConformanceLevel.PDFUA_1);
+                checkBox.setPdfConformance(PdfConformance.PDF_UA_1);
                 checkBox.getAccessibilityProperties().setAlternateDescription("Alternative description");
                 checkBox.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
                 checkBox.setBackgroundColor(ColorConstants.GREEN);
@@ -190,7 +201,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             @Override
             public IBlockElement generate() {
                 CheckBox checkBox = (CheckBox) new CheckBox("name").setInteractive(true);
-                checkBox.setPdfConformanceLevel(PdfUAConformanceLevel.PDFUA_1);
+                checkBox.setPdfConformance(PdfConformance.PDF_UA_1);
                 checkBox.getAccessibilityProperties().setAlternateDescription("Alternative description");
                 checkBox.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
                 checkBox.setBackgroundColor(ColorConstants.GREEN);
@@ -1174,7 +1185,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testSignatureAppearance() throws FileNotFoundException {
+    public void testSignatureAppearance() throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1188,7 +1199,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testSignatureAppearanceWithSignedAppearanceText() throws FileNotFoundException {
+    public void testSignatureAppearanceWithSignedAppearanceText() throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1206,7 +1217,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testSignatureAppearanceWithCustomContent() throws FileNotFoundException {
+    public void testSignatureAppearanceWithCustomContent() throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1223,7 +1234,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testSignatureAppearanceWithSignedAppearanceAndCustomAppearanceText() throws FileNotFoundException {
+    public void testSignatureAppearanceWithSignedAppearanceAndCustomAppearanceText() throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1243,7 +1254,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testSignatureAppearanceInteractive() throws FileNotFoundException {
+    public void testSignatureAppearanceInteractive() throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1259,7 +1270,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testSignatureAppearanceWithSignedAppearanceTextInteractive() throws FileNotFoundException {
+    public void testSignatureAppearanceWithSignedAppearanceTextInteractive() throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1280,7 +1291,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testSignatureAppearanceWithCustomContentInteractive() throws FileNotFoundException {
+    public void testSignatureAppearanceWithCustomContentInteractive() throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1300,7 +1311,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
 
     @Test
     public void testSignedAndCustomAppearanceTextInteractive()
-            throws FileNotFoundException {
+            throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1322,12 +1333,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testInteractiveCheckBoxNoAlternativeDescription() throws FileNotFoundException {
+    public void testInteractiveCheckBoxNoAlternativeDescription() throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 CheckBox cb = new CheckBox("name");
-                cb.setPdfConformanceLevel(PdfUAConformanceLevel.PDFUA_1);
+                cb.setPdfConformance(PdfConformance.PDF_UA_1);
                 cb.setInteractive(true);
                 return cb;
             }
@@ -1337,7 +1348,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testInteractiveRadioButtonNoAlternativeDescription() throws FileNotFoundException {
+    public void testInteractiveRadioButtonNoAlternativeDescription() throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1351,7 +1362,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testInteractiveButtonNoAlternativeDescription() throws FileNotFoundException {
+    public void testInteractiveButtonNoAlternativeDescription() throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1366,7 +1377,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testInteractiveInputFieldNoAlternativeDescription() throws FileNotFoundException {
+    public void testInteractiveInputFieldNoAlternativeDescription() throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1381,7 +1392,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testInteractiveTextAreaNoAlternativeDescription() throws FileNotFoundException {
+    public void testInteractiveTextAreaNoAlternativeDescription() throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1396,7 +1407,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testInteractiveListBoxNoAlternativeDescription() throws FileNotFoundException {
+    public void testInteractiveListBoxNoAlternativeDescription() throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1411,7 +1422,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testInteractiveComboBoxNoAlternativeDescription() throws FileNotFoundException {
+    public void testInteractiveComboBoxNoAlternativeDescription() throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1426,7 +1437,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testInteractiveSignatureAppearanceNoAlternativeDescription() throws FileNotFoundException {
+    public void testInteractiveSignatureAppearanceNoAlternativeDescription() throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1441,12 +1452,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testCheckBoxDifferentRole() throws FileNotFoundException {
+    public void testCheckBoxDifferentRole() throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 CheckBox cb = new CheckBox("name");
-                cb.setPdfConformanceLevel(PdfUAConformanceLevel.PDFUA_1);
+                cb.setPdfConformance(PdfConformance.PDF_UA_1);
                 cb.getAccessibilityProperties().setRole(StandardRoles.FIGURE);
                 cb.getAccessibilityProperties().setAlternateDescription("Hello");
                 return cb;
@@ -1456,7 +1467,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             @Override
             public IBlockElement generate() {
                 CheckBox cb = new CheckBox("name");
-                cb.setPdfConformanceLevel(PdfUAConformanceLevel.PDFUA_1);
+                cb.setPdfConformance(PdfConformance.PDF_UA_1);
                 cb.getAccessibilityProperties().setRole(StandardRoles.ARTIFACT);
                 return cb;
             }
@@ -1465,7 +1476,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testRadioButtonDifferentRole() throws FileNotFoundException {
+    public void testRadioButtonDifferentRole() throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1498,7 +1509,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testButtonDifferentRole() throws FileNotFoundException {
+    public void testButtonDifferentRole() throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1524,7 +1535,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testInputFieldDifferentRole() throws FileNotFoundException {
+    public void testInputFieldDifferentRole() throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1561,7 +1572,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testTextAreaDifferentRole() throws FileNotFoundException {
+    public void testTextAreaDifferentRole() throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1595,7 +1606,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testListBoxDifferentRole() throws FileNotFoundException {
+    public void testListBoxDifferentRole() throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1621,7 +1632,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testComboBoxDifferentRole() throws FileNotFoundException {
+    public void testComboBoxDifferentRole() throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1648,7 +1659,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testSignatureAppearanceDifferentRole() throws FileNotFoundException {
+    public void testSignatureAppearanceDifferentRole() throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1675,13 +1686,13 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testTextBuilderWithTu() throws FileNotFoundException {
+    public void testTextBuilderWithTu() throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) ->{
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
             PdfTextFormField field = new TextFormFieldBuilder(pdfDoc,"hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setGenericConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
+                    .setConformance(PdfConformance.PDF_UA_1)
                     .createText();
             field.setValue("Some value");
             field.setAlternativeName("Some tu entry value");
@@ -1691,13 +1702,13 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testTextBuilderNoTu() throws FileNotFoundException {
+    public void testTextBuilderNoTu() throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) ->{
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
             PdfTextFormField field = new TextFormFieldBuilder(pdfDoc,"hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setGenericConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
+                    .setConformance(PdfConformance.PDF_UA_1)
                     .createText();
             field.setValue("Some value");
             form.addField(field);
@@ -1706,13 +1717,13 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testChoiceBuilderWithTu() throws FileNotFoundException {
+    public void testChoiceBuilderWithTu() throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) ->{
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
             PdfChoiceFormField field = new ChoiceFormFieldBuilder(pdfDoc,"hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setGenericConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
+                    .setConformance(PdfConformance.PDF_UA_1)
                     .createComboBox();
             field.setAlternativeName("Some tu entry value");
             form.addField(field);
@@ -1721,13 +1732,13 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testChoiceBuilderNoTu() throws FileNotFoundException {
+    public void testChoiceBuilderNoTu() throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) ->{
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
             PdfChoiceFormField field = new ChoiceFormFieldBuilder(pdfDoc,"hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setGenericConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
+                    .setConformance(PdfConformance.PDF_UA_1)
                     .createComboBox();
             form.addField(field);
         });
@@ -1735,13 +1746,13 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testButtonBuilderWithTu() throws FileNotFoundException {
+    public void testButtonBuilderWithTu() throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) ->{
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
             PdfButtonFormField field = new PushButtonFormFieldBuilder(pdfDoc,"hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setGenericConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
+                    .setConformance(PdfConformance.PDF_UA_1)
                     .createPushButton();
             field.setAlternativeName("Some tu entry value");
             form.addField(field);
@@ -1750,13 +1761,13 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testButtonBuilderNoTu() throws FileNotFoundException {
+    public void testButtonBuilderNoTu() throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) ->{
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
             PdfButtonFormField field = new PushButtonFormFieldBuilder(pdfDoc,"hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setGenericConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
+                    .setConformance(PdfConformance.PDF_UA_1)
                     .createPushButton();
             form.addField(field);
         });
@@ -1764,13 +1775,13 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testButtonBuilderNoTuNotVisible() throws FileNotFoundException {
+    public void testButtonBuilderNoTuNotVisible() throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) ->{
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
             PdfButtonFormField field = new PushButtonFormFieldBuilder(pdfDoc,"hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setGenericConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
+                    .setConformance(PdfConformance.PDF_UA_1)
                     .createPushButton();
             List<PdfFormAnnotation> annList = field.getChildFormAnnotations();
             annList.get(0).setVisibility(PdfFormAnnotation.HIDDEN);
@@ -1780,7 +1791,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testRadioButtonBuilderNoTu() throws FileNotFoundException {
+    public void testRadioButtonBuilderNoTu() throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) ->{
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
             RadioFormFieldBuilder builder = new RadioFormFieldBuilder(pdfDoc, "Radio");
@@ -1800,7 +1811,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testRadioButtonBuilderWithTu() throws FileNotFoundException {
+    public void testRadioButtonBuilderWithTu() throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) ->{
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
             RadioFormFieldBuilder builder = new RadioFormFieldBuilder(pdfDoc, "Radio");
@@ -1822,13 +1833,13 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testSignatureBuilderWithTu() throws FileNotFoundException {
+    public void testSignatureBuilderWithTu() throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) ->{
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
             PdfSignatureFormField field = new SignatureFormFieldBuilder(pdfDoc,"hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setGenericConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
+                    .setConformance(PdfConformance.PDF_UA_1)
                     .createSignature();
             field.setValue("some value");
             field.setAlternativeName("Some tu entry value");
@@ -1838,13 +1849,13 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testSignatureBuilderNoTu() throws FileNotFoundException {
+    public void testSignatureBuilderNoTu() throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) ->{
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
             PdfSignatureFormField field = new SignatureFormFieldBuilder(pdfDoc,"hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setGenericConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
+                    .setConformance(PdfConformance.PDF_UA_1)
                     .createSignature();
             field.setValue("some value");
             form.addField(field);
@@ -1859,7 +1870,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             PdfTextFormField field = new TextFormFieldBuilder(pdfDoc,"hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setGenericConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
+                    .setConformance(PdfConformance.PDF_UA_1)
                     .createText();
             field.setValue("Some value");
             pdfDoc.getTagStructureContext().getAutoTaggingPointer().addTag(

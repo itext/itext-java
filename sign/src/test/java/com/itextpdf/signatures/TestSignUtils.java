@@ -51,7 +51,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
 public final class TestSignUtils {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
@@ -72,17 +72,17 @@ public final class TestSignUtils {
             Map<String, Integer> realNumberOfOcsp = createOcspMap(ocsps);
 
             if (expectedCerts != null) {
-                Assert.assertEquals("Certs entry in DSS dictionary isn't correct", realCertificates.size(),
-                        expectedCerts.size());
+                Assertions.assertEquals(realCertificates.size(), expectedCerts.size(),
+                        "Certs entry in DSS dictionary isn't correct");
                 // Order agnostic list comparison.
                 for (String expectedCert : expectedCerts) {
-                    Assert.assertTrue(realCertificates.stream().anyMatch(cert -> cert.equals(expectedCert)));
+                    Assertions.assertTrue(realCertificates.stream().anyMatch(cert -> cert.equals(expectedCert)));
                 }
             }
-            Assert.assertTrue("CRLs entry in DSS dictionary isn't correct",
-                    MapUtil.equals(expectedNumberOfCrls, realNumberOfCrls));
-            Assert.assertTrue("OCSPs entry in DSS dictionary isn't correct",
-                    MapUtil.equals(expectedNumberOfOcsp, realNumberOfOcsp));
+            Assertions.assertTrue(MapUtil.equals(expectedNumberOfCrls, realNumberOfCrls),
+                    "CRLs entry in DSS dictionary isn't correct");
+            Assertions.assertTrue(MapUtil.equals(expectedNumberOfOcsp, realNumberOfOcsp),
+                    "OCSPs entry in DSS dictionary isn't correct");
         }
     }
 
@@ -102,7 +102,7 @@ public final class TestSignUtils {
         try (PdfDocument outDocument = new PdfDocument(new PdfReader(inputStream))) {
             SignatureUtil sigUtil = new SignatureUtil(outDocument);
             PdfPKCS7 signatureData = sigUtil.readSignatureData(signatureName);
-            Assert.assertTrue(signatureData.verifySignatureIntegrityAndAuthenticity());
+            Assertions.assertTrue(signatureData.verifySignatureIntegrityAndAuthenticity());
         }
     }
     
@@ -113,9 +113,9 @@ public final class TestSignUtils {
             SignatureUtil sigUtil = new SignatureUtil(outDocument);
             List<Certificate> actualCertificates = Arrays.asList(sigUtil.readSignatureData(signatureName).getCertificates());
             // Searching for every certificate we expect should be in the resulting document.
-            Assert.assertEquals(expectedCertificates.size(), actualCertificates.size());
+            Assertions.assertEquals(expectedCertificates.size(), actualCertificates.size());
             for (X509Certificate expectedCert : expectedCertificates) {
-                Assert.assertTrue(actualCertificates.stream().anyMatch(cert ->
+                Assertions.assertTrue(actualCertificates.stream().anyMatch(cert ->
                         ((X509Certificate) cert).getSubjectX500Principal().equals(expectedCert.getSubjectX500Principal())));
             }
         }

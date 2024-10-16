@@ -64,12 +64,11 @@ public final class HeadingsChecker {
     /**
      * Checks if layout element has correct heading.
      *
-     * @param rendererObj layout element to check
+     * @param renderer layout element to check
      *
      * @throws PdfUAConformanceException if headings sequence is incorrect
      */
-    public void checkLayoutElement(Object rendererObj) {
-        IRenderer renderer = (IRenderer) rendererObj;
+    public void checkLayoutElement(IRenderer renderer) {
         IPropertyContainer element = renderer.getModelElement();
         if (element instanceof IAccessibleElement) {
             IAccessibleElement accessibleElement = (IAccessibleElement) element;
@@ -182,11 +181,13 @@ public final class HeadingsChecker {
             checker = new HeadingsChecker(context);
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
-        public void nextElement(IStructureNode elem) {
+        public boolean accept(IStructureNode node) {
+            return node != null;
+        }
+
+        @Override
+        public void processElement(IStructureNode elem) {
             checker.checkStructElement(elem);
         }
     }

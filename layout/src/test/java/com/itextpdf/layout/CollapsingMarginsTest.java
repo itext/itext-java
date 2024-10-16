@@ -39,17 +39,16 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.renderer.DivRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class CollapsingMarginsTest extends ExtendedITextTest {
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/CollapsingMarginsTest/";
     private static final String destinationFolder = "./target/test/com/itextpdf/layout/CollapsingMarginsTest/";
@@ -64,7 +63,7 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
             "Then battle for Freedom wherever you can,\n" +
             "    And, if not shot or hanged, you'll get knighted.";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
@@ -104,7 +103,7 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -148,7 +147,7 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -189,7 +188,7 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -235,7 +234,7 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -264,7 +263,7 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -294,7 +293,7 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     private void drawPageBorders(PdfDocument pdfDocument, int pageNum) {
@@ -336,10 +335,10 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
             areas.add(new Rectangle(370, 30, 150, 600));
             div.setNextRenderer(new CustomColumnDocumentRenderer(div, areas));
 
-            Assert.assertThrows(Exception.class, () -> doc.add(div));
+            Assertions.assertThrows(Exception.class, () -> doc.add(div));
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     private static class CustomColumnDocumentRenderer extends DivRenderer {

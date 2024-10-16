@@ -33,29 +33,28 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.layer.PdfLayer;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 import java.util.List;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfLayerMembershipTest extends ExtendedITextTest{
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/layer/PdfLayerMembershipTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/layer/PdfLayerMembershipTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -83,7 +82,7 @@ public class PdfLayerMembershipTest extends ExtendedITextTest{
 
 
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + destPdf,
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + destPdf,
                 sourceFolder + cmpPdf, destinationFolder));
     }
 
@@ -111,7 +110,7 @@ public class PdfLayerMembershipTest extends ExtendedITextTest{
 
 
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + destPdf,
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + destPdf,
                 sourceFolder + cmpPdf, destinationFolder));
     }
 
@@ -137,7 +136,7 @@ public class PdfLayerMembershipTest extends ExtendedITextTest{
         PdfLayerTestUtils.addTextInsideLayer(layerMembershipAllOff, canvas, "visibilityPolicyAllOffTest", 200, 500);
 
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + destPdf,
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + destPdf,
                 sourceFolder + cmpPdf, destinationFolder));
     }
 
@@ -163,7 +162,7 @@ public class PdfLayerMembershipTest extends ExtendedITextTest{
         PdfLayerTestUtils.addTextInsideLayer(layerMembershipAllOff, canvas, "visibilityPolicyAllOffTest", 200, 500);
 
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + destPdf,
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + destPdf,
                 sourceFolder + cmpPdf, destinationFolder));
     }
 
@@ -190,7 +189,7 @@ public class PdfLayerMembershipTest extends ExtendedITextTest{
 
 
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + destPdf,
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + destPdf,
                 sourceFolder + cmpPdf, destinationFolder));
     }
 
@@ -218,7 +217,7 @@ public class PdfLayerMembershipTest extends ExtendedITextTest{
 
 
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + destPdf,
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + destPdf,
                 sourceFolder + cmpPdf, destinationFolder));
     }
 
@@ -245,7 +244,7 @@ public class PdfLayerMembershipTest extends ExtendedITextTest{
         PdfLayerTestUtils.addTextInsideLayer(layerMembershipAnyOn, canvas, "visibilityPolicyAnyOffTest", 200, 500);
 
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + destPdf,
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + destPdf,
                 sourceFolder + cmpPdf, destinationFolder));
     }
 
@@ -271,7 +270,7 @@ public class PdfLayerMembershipTest extends ExtendedITextTest{
         PdfLayerTestUtils.addTextInsideLayer(layerMembershipAnyOn, canvas, "visibilityPolicyAnyOffTest", 200, 500);
 
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + destPdf,
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + destPdf,
                 sourceFolder + cmpPdf, destinationFolder));
     }
 
@@ -310,7 +309,7 @@ public class PdfLayerMembershipTest extends ExtendedITextTest{
         PdfLayerTestUtils.addTextInsideLayer(layerMembershipAnyOn, canvas, "visualExpressionTest01", 200, 500);
 
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + destPdf,
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + destPdf,
                 sourceFolder + cmpPdf, destinationFolder));
     }
 
@@ -349,7 +348,7 @@ public class PdfLayerMembershipTest extends ExtendedITextTest{
         PdfLayerTestUtils.addTextInsideLayer(layerMembershipAnyOn, canvas, "visualExpressionTest01", 200, 500);
 
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + destPdf,
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + destPdf,
                 sourceFolder + cmpPdf, destinationFolder));
     }
 

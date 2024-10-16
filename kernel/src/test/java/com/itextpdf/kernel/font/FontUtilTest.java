@@ -32,17 +32,16 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class FontUtilTest extends ExtendedITextTest {
     @Test
     public void parseUniversalNotExistedCMapTest() {
-        Assert.assertNull(FontUtil.parseUniversalToUnicodeCMap("NotExisted"));
+        Assertions.assertNull(FontUtil.parseUniversalToUnicodeCMap("NotExisted"));
     }
 
     @Test
@@ -55,8 +54,8 @@ public class FontUtilTest extends ExtendedITextTest {
             toUnicode.makeIndirect(pdfDocument);
             toUnicode.flush();
             final CMapToUnicode cmap = FontUtil.processToUnicode(toUnicode);
-            Assert.assertNotNull(cmap);
-            Assert.assertFalse(cmap.hasByteMappings());
+            Assertions.assertNotNull(cmap);
+            Assertions.assertFalse(cmap.hasByteMappings());
         }
     }
 }

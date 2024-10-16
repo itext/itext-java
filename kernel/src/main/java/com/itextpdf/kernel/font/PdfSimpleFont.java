@@ -318,7 +318,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
     public float getContentWidth(PdfString content) {
         float width = 0;
         GlyphLine glyphLine = decodeIntoGlyphLine(content);
-        for (int i = glyphLine.start; i < glyphLine.end; i++) {
+        for (int i = glyphLine.getStart(); i < glyphLine.getEnd(); i++) {
             width += glyphLine.get(i).getWidth();
         }
         return width;
@@ -470,10 +470,10 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         addFontStream(fontDescriptor);
         int flags = fontProgram.getPdfFontFlags();
         // reset both flags
-        flags &= ~(FontDescriptorFlags.Symbolic | FontDescriptorFlags.Nonsymbolic);
+        flags &= ~(FontDescriptorFlags.SYMBOLIC | FontDescriptorFlags.NONSYMBOLIC);
         // set fontSpecific based on font encoding
         flags |= fontEncoding.isFontSpecific() ?
-                FontDescriptorFlags.Symbolic : FontDescriptorFlags.Nonsymbolic;
+                FontDescriptorFlags.SYMBOLIC : FontDescriptorFlags.NONSYMBOLIC;
 
         fontDescriptor.put(PdfName.Flags, new PdfNumber(flags));
         return fontDescriptor;

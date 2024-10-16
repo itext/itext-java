@@ -32,15 +32,14 @@ import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -48,18 +47,18 @@ import java.io.IOException;
 import java.util.Set;
 import java.util.Map;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfNameTreeTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfNameTreeTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfNameTreeTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -72,8 +71,8 @@ public class PdfNameTreeTest extends ExtendedITextTest {
         PdfNameTree javascript = pdfDocument.getCatalog().getNameTree(PdfName.JavaScript);
         Map<PdfString, PdfObject> objs2 = javascript.getNames();
         pdfDocument.close();
-        Assert.assertEquals(1, objs.size());
-        Assert.assertEquals(1, objs2.size());
+        Assertions.assertEquals(1, objs.size());
+        Assertions.assertEquals(1, objs2.size());
     }
 
     @Test
@@ -112,8 +111,8 @@ public class PdfNameTreeTest extends ExtendedITextTest {
         PdfNameTree embeddedFilesNameTree = finalDoc.getCatalog().getNameTree(PdfName.EmbeddedFiles);
         Map<PdfString, PdfObject> embeddedFilesMap = embeddedFilesNameTree.getNames();
 
-        Assert.assertTrue(embeddedFilesMap.size()>0);
-        Assert.assertTrue(embeddedFilesMap.containsKey(new PdfString("Test File")));
+        Assertions.assertTrue(embeddedFilesMap.size()>0);
+        Assertions.assertTrue(embeddedFilesMap.containsKey(new PdfString("Test File")));
     }
 
     @Test
@@ -136,7 +135,7 @@ public class PdfNameTreeTest extends ExtendedITextTest {
         PdfNameTree appearance = pdfDocument.getCatalog().getNameTree(PdfName.AP);
         Map<PdfString, PdfObject> objs = appearance.getNames();
         pdfDocument.close();
-        Assert.assertEquals(1, objs.size());
+        Assertions.assertEquals(1, objs.size());
     }
 
     @Test
@@ -170,7 +169,7 @@ public class PdfNameTreeTest extends ExtendedITextTest {
 
             System.out.println("Actual names:   " + actualNames);
 
-            Assert.assertEquals(expectedNames, actualNames);
+            Assertions.assertEquals(expectedNames, actualNames);
         }
 
        doc.close();
@@ -207,7 +206,7 @@ public class PdfNameTreeTest extends ExtendedITextTest {
         nameTree = pdfDoc.getCatalog().getNameTree(PdfName.Dests);
         Set<PdfString> actualKeys = nameTree.getNames().keySet();
 
-        Assert.assertArrayEquals(expectedKeys, actualKeys.toArray());
+        Assertions.assertArrayEquals(expectedKeys, actualKeys.toArray());
     }
 
     private static ByteArrayOutputStream createDocumentInMemory() {

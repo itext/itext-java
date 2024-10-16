@@ -32,25 +32,24 @@ import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.SvgTagSvgNodeRenderer;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class SvgProcessorResultUnitTest extends ExtendedITextTest {
 
     @Test
     public void contextParameterCannotBeNullTest() {
         Map<String, ISvgNodeRenderer> namedObjects = new HashMap<>();
         ISvgNodeRenderer root = new SvgTagSvgNodeRenderer();
-        Exception exception = Assert.assertThrows(IllegalArgumentException.class,
+        Exception exception = Assertions.assertThrows(IllegalArgumentException.class,
                 () -> new SvgProcessorResult(namedObjects, root, null));
-        Assert.assertEquals(SvgExceptionMessageConstant.PARAMETER_CANNOT_BE_NULL, exception.getMessage());
+        Assertions.assertEquals(SvgExceptionMessageConstant.PARAMETER_CANNOT_BE_NULL, exception.getMessage());
     }
 
     @Test
@@ -60,8 +59,8 @@ public class SvgProcessorResultUnitTest extends ExtendedITextTest {
         SvgProcessorContext context = new SvgProcessorContext(new SvgConverterProperties());
         SvgProcessorResult result = new SvgProcessorResult(namedObjects, root, context);
         FontProvider fontProviderFromResult = result.getFontProvider();
-        Assert.assertNotNull(fontProviderFromResult);
-        Assert.assertSame(context.getFontProvider(), fontProviderFromResult);
+        Assertions.assertNotNull(fontProviderFromResult);
+        Assertions.assertSame(context.getFontProvider(), fontProviderFromResult);
     }
 
     @Test
@@ -73,7 +72,7 @@ public class SvgProcessorResultUnitTest extends ExtendedITextTest {
         context.addTemporaryFont(fp, PdfEncodings.IDENTITY_H, "");
         SvgProcessorResult result = new SvgProcessorResult(namedObjects, root, context);
         FontSet tempFontsFromResult = result.getTempFonts();
-        Assert.assertNotNull(tempFontsFromResult);
-        Assert.assertSame(context.getTempFonts(), tempFontsFromResult);
+        Assertions.assertNotNull(tempFontsFromResult);
+        Assertions.assertSame(context.getTempFonts(), tempFontsFromResult);
     }
 }

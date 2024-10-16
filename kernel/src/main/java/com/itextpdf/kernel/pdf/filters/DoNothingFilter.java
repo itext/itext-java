@@ -31,11 +31,9 @@ import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
  * A filter that doesn't modify the stream at all
  */
 public class DoNothingFilter implements IFilterHandler {
-    private PdfName lastFilterName;
 
     @Override
     public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) {
-        lastFilterName = filterName;
         return b;
     }
 }

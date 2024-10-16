@@ -36,17 +36,16 @@ import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfRootSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
 
     @Test
@@ -67,7 +66,7 @@ public class PdfRootSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
         PdfRootSvgNodeRenderer root = new PdfRootSvgNodeRenderer(renderer);
 
         Rectangle actual = root.calculateViewPort(context);
-        Assert.assertTrue(expected.equalsWithEpsilon(actual));
+        Assertions.assertTrue(expected.equalsWithEpsilon(actual));
     }
 
     @Test
@@ -88,7 +87,7 @@ public class PdfRootSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
         PdfRootSvgNodeRenderer root = new PdfRootSvgNodeRenderer(renderer);
 
         Rectangle actual = root.calculateViewPort(context);
-        Assert.assertTrue(expected.equalsWithEpsilon(actual));
+        Assertions.assertTrue(expected.equalsWithEpsilon(actual));
     }
 
 
@@ -119,7 +118,7 @@ public class PdfRootSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
         renderer.setParent(parent);
 
         Rectangle actual = root.calculateViewPort(context);
-        Assert.assertTrue(expected.equalsWithEpsilon(actual));
+        Assertions.assertTrue(expected.equalsWithEpsilon(actual));
     }
 
     @Test
@@ -135,10 +134,10 @@ public class PdfRootSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
         SvgDrawContext context = new SvgDrawContext(null, null);
         context.pushCanvas(canvas);
 
-        Exception e = Assert.assertThrows(SvgProcessingException.class,
+        Exception e = Assertions.assertThrows(SvgProcessingException.class,
                 () -> root.draw(context)
         );
-        Assert.assertEquals(SvgExceptionMessageConstant.ROOT_SVG_NO_BBOX, e.getMessage());
+        Assertions.assertEquals(SvgExceptionMessageConstant.ROOT_SVG_NO_BBOX, e.getMessage());
     }
 
     @Test
@@ -160,6 +159,6 @@ public class PdfRootSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
 
         AffineTransform actual = root.calculateTransformation(context);
 
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 }

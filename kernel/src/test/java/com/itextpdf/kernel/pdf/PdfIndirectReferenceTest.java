@@ -23,24 +23,23 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfIndirectReferenceTest extends ExtendedITextTest {
 
     @Test
     public void baseEqualsTest() {
         PdfIndirectReference reference = new PdfIndirectReference(null, 41, 0);
-        Assert.assertTrue(reference.equals(reference));
-        Assert.assertFalse(reference.equals(null));
+        Assertions.assertTrue(reference.equals(reference));
+        Assertions.assertFalse(reference.equals(null));
         TestIndirectReference testIndirectReference = new TestIndirectReference(null, 41, 0);
-        Assert.assertFalse(reference.equals(testIndirectReference));
-        Assert.assertFalse(testIndirectReference.equals(reference));
+        Assertions.assertFalse(reference.equals(testIndirectReference));
+        Assertions.assertFalse(testIndirectReference.equals(reference));
 
     }
 
@@ -54,11 +53,11 @@ public class PdfIndirectReferenceTest extends ExtendedITextTest {
 
             PdfIndirectReference obj41Gen0 = new PdfIndirectReference(firstDoc, 41, 0);
 
-            Assert.assertTrue(obj41Gen0.equals(new PdfIndirectReference(firstDoc, 41, 0)));
-            Assert.assertFalse(obj41Gen0.equals(new PdfIndirectReference(firstDoc, 42, 0)));
-            Assert.assertFalse(obj41Gen0.equals(new PdfIndirectReference(firstDoc, 41, 1)));
-            Assert.assertFalse(obj41Gen0.equals(new PdfIndirectReference(null, 41, 0)));
-            Assert.assertFalse(obj41Gen0.equals(new PdfIndirectReference(secondDoc, 41, 0)));
+            Assertions.assertTrue(obj41Gen0.equals(new PdfIndirectReference(firstDoc, 41, 0)));
+            Assertions.assertFalse(obj41Gen0.equals(new PdfIndirectReference(firstDoc, 42, 0)));
+            Assertions.assertFalse(obj41Gen0.equals(new PdfIndirectReference(firstDoc, 41, 1)));
+            Assertions.assertFalse(obj41Gen0.equals(new PdfIndirectReference(null, 41, 0)));
+            Assertions.assertFalse(obj41Gen0.equals(new PdfIndirectReference(secondDoc, 41, 0)));
         }
     }
 
@@ -66,15 +65,15 @@ public class PdfIndirectReferenceTest extends ExtendedITextTest {
     public void equalsWithNullDocsTest() {
         PdfIndirectReference obj41Gen0 = new PdfIndirectReference(null, 41, 0);
 
-        Assert.assertTrue(obj41Gen0.equals(new PdfIndirectReference(null, 41, 0)));
-        Assert.assertFalse(obj41Gen0.equals(new PdfIndirectReference(null, 42, 0)));
-        Assert.assertFalse(obj41Gen0.equals(new PdfIndirectReference(null, 41, 1)));
+        Assertions.assertTrue(obj41Gen0.equals(new PdfIndirectReference(null, 41, 0)));
+        Assertions.assertFalse(obj41Gen0.equals(new PdfIndirectReference(null, 42, 0)));
+        Assertions.assertFalse(obj41Gen0.equals(new PdfIndirectReference(null, 41, 1)));
 
         try (PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
             // add a page to avoid exception throwing on close
             doc.addNewPage();
 
-            Assert.assertFalse(obj41Gen0.equals(new PdfIndirectReference(doc, 41, 0)));
+            Assertions.assertFalse(obj41Gen0.equals(new PdfIndirectReference(doc, 41, 0)));
         }
     }
 
@@ -82,10 +81,10 @@ public class PdfIndirectReferenceTest extends ExtendedITextTest {
     public void hashCodeTest() {
         PdfIndirectReference firstReference = new PdfIndirectReference(null, 41, 7);
         PdfIndirectReference secondReference = new PdfIndirectReference(null, 41, 7);
-        Assert.assertNotSame(firstReference, secondReference);
-        Assert.assertEquals(firstReference.hashCode(), secondReference.hashCode());
-        Assert.assertNotEquals(firstReference.hashCode(), new PdfIndirectReference(null, 42, 7).hashCode());
-        Assert.assertNotEquals(firstReference.hashCode(), new PdfIndirectReference(null, 41, 5).hashCode());
+        Assertions.assertNotSame(firstReference, secondReference);
+        Assertions.assertEquals(firstReference.hashCode(), secondReference.hashCode());
+        Assertions.assertNotEquals(firstReference.hashCode(), new PdfIndirectReference(null, 42, 7).hashCode());
+        Assertions.assertNotEquals(firstReference.hashCode(), new PdfIndirectReference(null, 41, 5).hashCode());
 
         try (PdfDocument firstDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
                 PdfDocument secondDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
@@ -95,9 +94,9 @@ public class PdfIndirectReferenceTest extends ExtendedITextTest {
 
             PdfIndirectReference obj41Gen0 = new PdfIndirectReference(firstDoc, 41, 0);
 
-            Assert.assertEquals(obj41Gen0.hashCode(), new PdfIndirectReference(firstDoc, 41, 0).hashCode());
-            Assert.assertNotEquals(obj41Gen0.hashCode(), new PdfIndirectReference(secondDoc, 41, 0).hashCode());
-            Assert.assertNotEquals(obj41Gen0.hashCode(), new PdfIndirectReference(null, 41, 0).hashCode());
+            Assertions.assertEquals(obj41Gen0.hashCode(), new PdfIndirectReference(firstDoc, 41, 0).hashCode());
+            Assertions.assertNotEquals(obj41Gen0.hashCode(), new PdfIndirectReference(secondDoc, 41, 0).hashCode());
+            Assertions.assertNotEquals(obj41Gen0.hashCode(), new PdfIndirectReference(null, 41, 0).hashCode());
         }
     }
 
@@ -111,20 +110,20 @@ public class PdfIndirectReferenceTest extends ExtendedITextTest {
 
             PdfIndirectReference obj41Gen7 = new PdfIndirectReference(firstDoc, 41, 7);
 
-            Assert.assertEquals(0, obj41Gen7.compareTo(new PdfIndirectReference(firstDoc, 41, 7)));
+            Assertions.assertEquals(0, obj41Gen7.compareTo(new PdfIndirectReference(firstDoc, 41, 7)));
 
-            Assert.assertEquals(1, obj41Gen7.compareTo(new PdfIndirectReference(firstDoc, 11, 17)));
-            Assert.assertEquals(-1, obj41Gen7.compareTo(new PdfIndirectReference(firstDoc, 51, 0)));
+            Assertions.assertEquals(1, obj41Gen7.compareTo(new PdfIndirectReference(firstDoc, 11, 17)));
+            Assertions.assertEquals(-1, obj41Gen7.compareTo(new PdfIndirectReference(firstDoc, 51, 0)));
 
-            Assert.assertEquals(-1, obj41Gen7.compareTo(new PdfIndirectReference(firstDoc, 41, 17)));
-            Assert.assertEquals(1, obj41Gen7.compareTo(new PdfIndirectReference(firstDoc, 41, 0)));
+            Assertions.assertEquals(-1, obj41Gen7.compareTo(new PdfIndirectReference(firstDoc, 41, 17)));
+            Assertions.assertEquals(1, obj41Gen7.compareTo(new PdfIndirectReference(firstDoc, 41, 0)));
 
-            Assert.assertEquals(1, obj41Gen7.compareTo(new PdfIndirectReference(null, 41, 7)));
+            Assertions.assertEquals(1, obj41Gen7.compareTo(new PdfIndirectReference(null, 41, 7)));
             // we do not expect that ids could be equal
             int docIdsCompareResult = firstDoc.getDocumentId() > secondDoc.getDocumentId() ? 1 : -1;
-            Assert.assertEquals(docIdsCompareResult,
+            Assertions.assertEquals(docIdsCompareResult,
                     obj41Gen7.compareTo(new PdfIndirectReference(secondDoc, 41, 7)));
-            Assert.assertEquals(-docIdsCompareResult,
+            Assertions.assertEquals(-docIdsCompareResult,
                     new PdfIndirectReference(secondDoc, 41, 7).compareTo(obj41Gen7));
         }
     }
@@ -133,19 +132,19 @@ public class PdfIndirectReferenceTest extends ExtendedITextTest {
     public void compareToWithNullDocsTest() {
         PdfIndirectReference obj41Gen7 = new PdfIndirectReference(null, 41, 7);
 
-        Assert.assertEquals(0, obj41Gen7.compareTo(new PdfIndirectReference(null, 41, 7)));
-        Assert.assertEquals(1, obj41Gen7.compareTo(new PdfIndirectReference(null, 11, 17)));
-        Assert.assertEquals(-1, obj41Gen7.compareTo(new PdfIndirectReference(null, 51, 0)));
-        Assert.assertEquals(-1, obj41Gen7.compareTo(new PdfIndirectReference(null, 41, 17)));
-        Assert.assertEquals(1, obj41Gen7.compareTo(new PdfIndirectReference(null, 41, 0)));
+        Assertions.assertEquals(0, obj41Gen7.compareTo(new PdfIndirectReference(null, 41, 7)));
+        Assertions.assertEquals(1, obj41Gen7.compareTo(new PdfIndirectReference(null, 11, 17)));
+        Assertions.assertEquals(-1, obj41Gen7.compareTo(new PdfIndirectReference(null, 51, 0)));
+        Assertions.assertEquals(-1, obj41Gen7.compareTo(new PdfIndirectReference(null, 41, 17)));
+        Assertions.assertEquals(1, obj41Gen7.compareTo(new PdfIndirectReference(null, 41, 0)));
 
         try (PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
             // add a page to avoid exception throwing on close
             doc.addNewPage();
 
-            Assert.assertEquals(-1, obj41Gen7.compareTo(new PdfIndirectReference(doc, 41, 7)));
-            Assert.assertEquals(1, obj41Gen7.compareTo(new PdfIndirectReference(doc, 11, 17)));
-            Assert.assertEquals(1, obj41Gen7.compareTo(new PdfIndirectReference(doc, 41, 0)));
+            Assertions.assertEquals(-1, obj41Gen7.compareTo(new PdfIndirectReference(doc, 41, 7)));
+            Assertions.assertEquals(1, obj41Gen7.compareTo(new PdfIndirectReference(doc, 11, 17)));
+            Assertions.assertEquals(1, obj41Gen7.compareTo(new PdfIndirectReference(doc, 41, 0)));
         }
     }
 

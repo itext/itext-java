@@ -36,22 +36,20 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 import java.util.Map;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class Utf8FormsTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/Utf8FormsTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/forms/Utf8FormsTest/";
     public static final String FONT = "./src/test/resources/com/itextpdf/forms/Utf8FormsTest/NotoSansCJKsc-Regular.otf";
 
-    @Before
+    @BeforeEach
     public void before() {
         createDestinationFolder(destinationFolder);
     }
@@ -65,7 +63,7 @@ public class Utf8FormsTest extends ExtendedITextTest {
         pdfDoc.close();
         for (String fldName : fields.keySet()) {
             //  لا
-            Assert.assertEquals("\u0644\u0627", fldName);
+            Assertions.assertEquals("\u0644\u0627", fldName);
         }
         pdfDoc.close();
     }
@@ -79,7 +77,7 @@ public class Utf8FormsTest extends ExtendedITextTest {
         pdfDoc.close();
         for (String fldName : fields.keySet()) {
             //  福昕 福昕UTF8
-            Assert.assertEquals("\u798F\u6615 \u798F\u6615UTF8", fields.get(fldName).getValueAsString());
+            Assertions.assertEquals("\u798F\u6615 \u798F\u6615UTF8", fields.get(fldName).getValueAsString());
         }
     }
 
@@ -99,6 +97,6 @@ public class Utf8FormsTest extends ExtendedITextTest {
         field.regenerateField();
         form.addField(field);
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "writeUtf8FieldNameAndValue.pdf", sourceFolder + "cmp_writeUtf8FieldNameAndValue.pdf", destinationFolder, "diffFieldNameAndValue_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "writeUtf8FieldNameAndValue.pdf", sourceFolder + "cmp_writeUtf8FieldNameAndValue.pdf", destinationFolder, "diffFieldNameAndValue_"));
     }
 }

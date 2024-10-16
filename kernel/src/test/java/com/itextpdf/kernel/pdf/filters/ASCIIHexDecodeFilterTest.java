@@ -25,16 +25,15 @@ package com.itextpdf.kernel.pdf.filters;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class ASCIIHexDecodeFilterTest extends ExtendedITextTest {
     public static final String SOURCE_FILE =
             "./src/test/resources/com/itextpdf/kernel/pdf/filters/ASCIIHex.bin";
@@ -53,17 +52,17 @@ public class ASCIIHexDecodeFilterTest extends ExtendedITextTest {
                 + "Etiam hendrerit scelerisque sapien tristique varius.";
 
         String decoded = new String(ASCIIHexDecodeFilter.ASCIIHexDecode(bytes));
-        Assert.assertEquals(expectedResult, decoded);
+        Assertions.assertEquals(expectedResult, decoded);
     }
 
     @Test
     public void decodingIllegalaCharacterTest() {
         byte[] bytes = "4c6f72656d20697073756d2eg>".getBytes();
 
-        Exception e = Assert.assertThrows(PdfException.class,
+        Exception e = Assertions.assertThrows(PdfException.class,
                 () -> ASCIIHexDecodeFilter.ASCIIHexDecode(bytes)
         );
-        Assert.assertEquals(KernelExceptionMessageConstant.ILLEGAL_CHARACTER_IN_ASCIIHEXDECODE, e.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.ILLEGAL_CHARACTER_IN_ASCIIHEXDECODE, e.getMessage());
     }
 
     @Test
@@ -72,6 +71,6 @@ public class ASCIIHexDecodeFilterTest extends ExtendedITextTest {
         String expectedResult = "Lorem ipsum.";
 
         String decoded = new String(ASCIIHexDecodeFilter.ASCIIHexDecode(bytes));
-        Assert.assertEquals(expectedResult, decoded);
+        Assertions.assertEquals(expectedResult, decoded);
     }
 }

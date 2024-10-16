@@ -43,62 +43,62 @@ public class GposLookupType4 extends OpenTableLookup {
 
     @Override
     public boolean transformOne(GlyphLine line) {
-        if (line.idx >= line.end) {
+        if (line.getIdx() >= line.getEnd()) {
             return false;
         }
-        if (openReader.isSkip(line.get(line.idx).getCode(), lookupFlag)) {
-            line.idx++;
+        if (openReader.isSkip(line.get(line.getIdx()).getCode(), lookupFlag)) {
+            line.setIdx(line.getIdx()+1);
             return false;
         }
 
         boolean changed = false;
         GlyphIndexer gi = null;
         for (MarkToBase mb : marksbases) {
-            OtfMarkRecord omr = mb.marks.get(line.get(line.idx).getCode());
+            OtfMarkRecord omr = mb.marks.get(line.get(line.getIdx()).getCode());
             if (omr == null)
                 continue;
             if (gi == null) {
                 gi = new GlyphIndexer();
-                gi.idx = line.idx;
-                gi.line = line;
+                gi.setIdx(line.getIdx());
+                gi.setLine(line);
                 while (true) {
                     gi.previousGlyph(openReader, lookupFlag);
-                    if (gi.glyph == null) {
+                    if (gi.getGlyph() == null) {
                         break;
                     }
                     // not mark => base glyph
-                    if (openReader.getGlyphClass(gi.glyph.getCode()) != OtfClass.GLYPH_MARK) {
+                    if (openReader.getGlyphClass(gi.getGlyph().getCode()) != OtfClass.GLYPH_MARK) {
                         break;
                     }
                 }
-                if (gi.glyph == null) {
+                if (gi.getGlyph() == null) {
                     break;
                 }
             }
-            GposAnchor[] gpas = mb.bases.get(gi.glyph.getCode());
+            GposAnchor[] gpas = mb.bases.get(gi.getGlyph().getCode());
             if (gpas == null) {
                 continue;
             }
-            int markClass = omr.markClass;
+            int markClass = omr.getMarkClass();
             int xPlacement = 0;
             int yPlacement = 0;
             GposAnchor baseAnchor = gpas[markClass];
             if (baseAnchor != null) {
-                xPlacement = baseAnchor.XCoordinate;
-                yPlacement = baseAnchor.YCoordinate;
+                xPlacement = baseAnchor.getXCoordinate();
+                yPlacement = baseAnchor.getYCoordinate();
             }
-            GposAnchor markAnchor = omr.anchor;
+            GposAnchor markAnchor = omr.getAnchor();
             if (markAnchor != null) {
-                xPlacement -= markAnchor.XCoordinate;
-                yPlacement -= markAnchor.YCoordinate;
+                xPlacement -= markAnchor.getXCoordinate();
+                yPlacement -= markAnchor.getYCoordinate();
             }
-            line.set(line.idx, new Glyph(line.get(line.idx),
+            line.set(line.getIdx(), new Glyph(line.get(line.getIdx()),
                     xPlacement, yPlacement,
-                    0, 0, gi.idx - line.idx));
+                    0, 0, gi.getIdx() - line.getIdx()));
             changed = true;
             break;
         }
-        line.idx++;
+        line.setIdx(line.getIdx()+1);
         return changed;
     }
 

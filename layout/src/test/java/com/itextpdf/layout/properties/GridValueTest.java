@@ -33,61 +33,60 @@ import com.itextpdf.layout.properties.grid.MinMaxValue;
 import com.itextpdf.layout.properties.grid.PercentValue;
 import com.itextpdf.layout.properties.grid.PointValue;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class GridValueTest extends ExtendedITextTest {
     @Test
     public void unitValueTest() {
         LengthValue value = new PointValue(3.2f);
-        Assert.assertEquals(value.getType(), GridValue.ValueType.POINT);
-        Assert.assertEquals(3.2f, (float) value.getValue(), 0.00001);
+        Assertions.assertEquals(value.getType(), GridValue.ValueType.POINT);
+        Assertions.assertEquals(3.2f, (float) value.getValue(), 0.00001);
 
         value = new PercentValue(30f);
-        Assert.assertEquals(value.getType(), GridValue.ValueType.PERCENT);
-        Assert.assertEquals(30, (float) value.getValue(), 0.00001);
+        Assertions.assertEquals(value.getType(), GridValue.ValueType.PERCENT);
+        Assertions.assertEquals(30, (float) value.getValue(), 0.00001);
     }
 
     @Test
     public void minMaxContentTest() {
         GridValue value = MinContentValue.VALUE;
-        Assert.assertEquals(value.getType(), GridValue.ValueType.MIN_CONTENT);
+        Assertions.assertEquals(value.getType(), GridValue.ValueType.MIN_CONTENT);
 
         value = MaxContentValue.VALUE;
-        Assert.assertEquals(value.getType(), GridValue.ValueType.MAX_CONTENT);
+        Assertions.assertEquals(value.getType(), GridValue.ValueType.MAX_CONTENT);
     }
 
     @Test
     public void autoTest() {
         GridValue value = AutoValue.VALUE;
-        Assert.assertEquals(value.getType(), GridValue.ValueType.AUTO);
+        Assertions.assertEquals(value.getType(), GridValue.ValueType.AUTO);
     }
 
     @Test
     public void flexValueTest() {
         FlexValue value = new FlexValue(1.5f);
-        Assert.assertEquals(value.getType(), GridValue.ValueType.FLEX);
-        Assert.assertEquals(1.5f, (float) value.getFlex(), 0.00001);
+        Assertions.assertEquals(value.getType(), GridValue.ValueType.FLEX);
+        Assertions.assertEquals(1.5f, (float) value.getFlex(), 0.00001);
     }
 
     @Test
     public void fitContentTest() {
         FitContentValue value = new FitContentValue(new PointValue(50.0f));
-        Assert.assertEquals(value.getType(), GridValue.ValueType.FIT_CONTENT);
-        Assert.assertEquals(new PointValue(50.0f).getValue(), value.getLength().getValue(), 0.00001);
+        Assertions.assertEquals(value.getType(), GridValue.ValueType.FIT_CONTENT);
+        Assertions.assertEquals(new PointValue(50.0f).getValue(), value.getLength().getValue(), 0.00001);
         value = new FitContentValue(UnitValue.createPercentValue(20.0f));
-        Assert.assertEquals(new PercentValue(20.0f).getValue(), value.getLength().getValue(), 0.00001);
+        Assertions.assertEquals(new PercentValue(20.0f).getValue(), value.getLength().getValue(), 0.00001);
     }
 
     @Test
     public void minMaxTest() {
         MinMaxValue value = new MinMaxValue(new PointValue(50.0f), new FlexValue(2.0f));
-        Assert.assertEquals(value.getType(), GridValue.ValueType.MINMAX);
-        Assert.assertEquals(new PointValue(50.0f).getValue(), ((PointValue)value.getMin()).getValue(), 0.00001);
-        Assert.assertEquals(new FlexValue(2.0f).getFlex(), ((FlexValue)value.getMax()).getFlex(), 0.00001);
+        Assertions.assertEquals(value.getType(), GridValue.ValueType.MINMAX);
+        Assertions.assertEquals(new PointValue(50.0f).getValue(), ((PointValue)value.getMin()).getValue(), 0.00001);
+        Assertions.assertEquals(new FlexValue(2.0f).getFlex(), ((FlexValue)value.getMax()).getFlex(), 0.00001);
     }
 }

@@ -24,125 +24,124 @@ package com.itextpdf.styledxmlparser.css.validate;
 
 import com.itextpdf.styledxmlparser.css.validate.impl.datatype.CssLengthValueValidator;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class CssLengthValueValidatorTest extends ExtendedITextTest {
 
     @Test
     public void zeroValueTest() {
         final ICssDataTypeValidator validator1 = new CssLengthValueValidator(false);
-        Assert.assertTrue(validator1.isValid("0"));
-        Assert.assertTrue(validator1.isValid("0px"));
-        Assert.assertTrue(validator1.isValid("-0px"));
+        Assertions.assertTrue(validator1.isValid("0"));
+        Assertions.assertTrue(validator1.isValid("0px"));
+        Assertions.assertTrue(validator1.isValid("-0px"));
 
         final ICssDataTypeValidator validator2 = new CssLengthValueValidator(true);
-        Assert.assertTrue(validator2.isValid("0"));
-        Assert.assertTrue(validator2.isValid("0px"));
-        Assert.assertTrue(validator2.isValid("-0"));
+        Assertions.assertTrue(validator2.isValid("0"));
+        Assertions.assertTrue(validator2.isValid("0px"));
+        Assertions.assertTrue(validator2.isValid("-0"));
 
     }
 
     @Test
     public void nullValueTest() {
         final ICssDataTypeValidator validator1 = new CssLengthValueValidator(false);
-        Assert.assertFalse(validator1.isValid(null));
+        Assertions.assertFalse(validator1.isValid(null));
 
         final ICssDataTypeValidator validator2 = new CssLengthValueValidator(true);
-        Assert.assertFalse(validator2.isValid(null));
+        Assertions.assertFalse(validator2.isValid(null));
     }
 
     @Test
     public void initialInheritUnsetValuesTest() {
         final ICssDataTypeValidator validator1 = new CssLengthValueValidator(false);
-        Assert.assertTrue(validator1.isValid("initial"));
-        Assert.assertTrue(validator1.isValid("inherit"));
-        Assert.assertTrue(validator1.isValid("unset"));
+        Assertions.assertTrue(validator1.isValid("initial"));
+        Assertions.assertTrue(validator1.isValid("inherit"));
+        Assertions.assertTrue(validator1.isValid("unset"));
 
         final ICssDataTypeValidator validator2 = new CssLengthValueValidator(true);
-        Assert.assertTrue(validator2.isValid("initial"));
-        Assert.assertTrue(validator2.isValid("inherit"));
-        Assert.assertTrue(validator2.isValid("unset"));
+        Assertions.assertTrue(validator2.isValid("initial"));
+        Assertions.assertTrue(validator2.isValid("inherit"));
+        Assertions.assertTrue(validator2.isValid("unset"));
 
     }
 
     @Test
     public void normalValueTest() {
         final ICssDataTypeValidator validator1 = new CssLengthValueValidator(false);
-        Assert.assertFalse(validator1.isValid("normal"));
+        Assertions.assertFalse(validator1.isValid("normal"));
 
         final ICssDataTypeValidator validator2 = new CssLengthValueValidator(true);
-        Assert.assertFalse(validator2.isValid("normal"));
+        Assertions.assertFalse(validator2.isValid("normal"));
     }
 
     @Test
     public void invalidValuesTest() {
         final ICssDataTypeValidator validator1 = new CssLengthValueValidator(false);
-        Assert.assertFalse(validator1.isValid(""));
-        Assert.assertFalse(validator1.isValid("dja"));
-        Assert.assertFalse(validator1.isValid("5pixels"));
+        Assertions.assertFalse(validator1.isValid(""));
+        Assertions.assertFalse(validator1.isValid("dja"));
+        Assertions.assertFalse(validator1.isValid("5pixels"));
 
         final ICssDataTypeValidator validator2 = new CssLengthValueValidator(true);
-        Assert.assertFalse(validator2.isValid(""));
-        Assert.assertFalse(validator2.isValid("dja"));
-        Assert.assertFalse(validator2.isValid("5pixels"));
+        Assertions.assertFalse(validator2.isValid(""));
+        Assertions.assertFalse(validator2.isValid("dja"));
+        Assertions.assertFalse(validator2.isValid("5pixels"));
     }
 
     @Test
     public void absoluteValuesTest() {
         final ICssDataTypeValidator validator1 = new CssLengthValueValidator(false);
-        Assert.assertFalse(validator1.isValid("12"));
-        Assert.assertTrue(validator1.isValid("12pt"));
-        Assert.assertFalse(validator1.isValid("-12pt"));
-        Assert.assertTrue(validator1.isValid("12px"));
-        Assert.assertTrue(validator1.isValid("12in"));
-        Assert.assertTrue(validator1.isValid("12cm"));
-        Assert.assertTrue(validator1.isValid("12mm"));
-        Assert.assertTrue(validator1.isValid("12pc"));
-        Assert.assertTrue(validator1.isValid("12q"));
-        Assert.assertFalse(validator1.isValid("12 pt"));
+        Assertions.assertFalse(validator1.isValid("12"));
+        Assertions.assertTrue(validator1.isValid("12pt"));
+        Assertions.assertFalse(validator1.isValid("-12pt"));
+        Assertions.assertTrue(validator1.isValid("12px"));
+        Assertions.assertTrue(validator1.isValid("12in"));
+        Assertions.assertTrue(validator1.isValid("12cm"));
+        Assertions.assertTrue(validator1.isValid("12mm"));
+        Assertions.assertTrue(validator1.isValid("12pc"));
+        Assertions.assertTrue(validator1.isValid("12q"));
+        Assertions.assertFalse(validator1.isValid("12 pt"));
 
         final ICssDataTypeValidator validator2 = new CssLengthValueValidator(true);
-        Assert.assertFalse(validator2.isValid("12"));
-        Assert.assertTrue(validator2.isValid("12pt"));
-        Assert.assertTrue(validator2.isValid("-12pt"));
-        Assert.assertTrue(validator2.isValid("12px"));
-        Assert.assertTrue(validator2.isValid("12in"));
-        Assert.assertTrue(validator2.isValid("12cm"));
-        Assert.assertTrue(validator2.isValid("12mm"));
-        Assert.assertTrue(validator2.isValid("12pc"));
-        Assert.assertTrue(validator2.isValid("12q"));
-        Assert.assertFalse(validator2.isValid("12 pt"));
+        Assertions.assertFalse(validator2.isValid("12"));
+        Assertions.assertTrue(validator2.isValid("12pt"));
+        Assertions.assertTrue(validator2.isValid("-12pt"));
+        Assertions.assertTrue(validator2.isValid("12px"));
+        Assertions.assertTrue(validator2.isValid("12in"));
+        Assertions.assertTrue(validator2.isValid("12cm"));
+        Assertions.assertTrue(validator2.isValid("12mm"));
+        Assertions.assertTrue(validator2.isValid("12pc"));
+        Assertions.assertTrue(validator2.isValid("12q"));
+        Assertions.assertFalse(validator2.isValid("12 pt"));
     }
 
     @Test
     public void relativeValuesTest() {
         final ICssDataTypeValidator validator1 = new CssLengthValueValidator(false);
-        Assert.assertTrue(validator1.isValid("12em"));
-        Assert.assertFalse(validator1.isValid("-12em"));
-        Assert.assertTrue(validator1.isValid("12rem"));
-        Assert.assertTrue(validator1.isValid("12ex"));
-        Assert.assertFalse(validator1.isValid("12 em"));
+        Assertions.assertTrue(validator1.isValid("12em"));
+        Assertions.assertFalse(validator1.isValid("-12em"));
+        Assertions.assertTrue(validator1.isValid("12rem"));
+        Assertions.assertTrue(validator1.isValid("12ex"));
+        Assertions.assertFalse(validator1.isValid("12 em"));
 
         final ICssDataTypeValidator validator2 = new CssLengthValueValidator(true);
-        Assert.assertTrue(validator2.isValid("12em"));
-        Assert.assertTrue(validator2.isValid("-12em"));
-        Assert.assertTrue(validator2.isValid("12rem"));
-        Assert.assertTrue(validator2.isValid("12ex"));
-        Assert.assertFalse(validator2.isValid("12 em"));
+        Assertions.assertTrue(validator2.isValid("12em"));
+        Assertions.assertTrue(validator2.isValid("-12em"));
+        Assertions.assertTrue(validator2.isValid("12rem"));
+        Assertions.assertTrue(validator2.isValid("12ex"));
+        Assertions.assertFalse(validator2.isValid("12 em"));
     }
 
     @Test
     public void percentValueTest() {
         final ICssDataTypeValidator validator1 = new CssLengthValueValidator(false);
-        Assert.assertFalse(validator1.isValid("12%"));
-        Assert.assertFalse(validator1.isValid("-12%"));
+        Assertions.assertFalse(validator1.isValid("12%"));
+        Assertions.assertFalse(validator1.isValid("-12%"));
         final ICssDataTypeValidator validator2 = new CssLengthValueValidator(true);
-        Assert.assertFalse(validator2.isValid("12%"));
-        Assert.assertFalse(validator2.isValid("-12%"));
+        Assertions.assertFalse(validator2.isValid("12%"));
+        Assertions.assertFalse(validator2.isValid("-12%"));
     }
 }

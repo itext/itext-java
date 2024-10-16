@@ -26,15 +26,14 @@ import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.IOException;
 import java.io.InputStream;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class Jbig2Test extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/image/Jbig2Test/";
@@ -44,23 +43,23 @@ public class Jbig2Test extends ExtendedITextTest {
         try (InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "image.jb2")) {
             byte[] inputImage = StreamUtil.inputStreamToArray(is);
             ImageData imageData = ImageDataFactory.createJbig2(inputImage, 1);
-            Assert.assertEquals(100, (int)imageData.getHeight());
-            Assert.assertEquals(100, (int)imageData.getWidth());
+            Assertions.assertEquals(100, (int)imageData.getHeight());
+            Assertions.assertEquals(100, (int)imageData.getWidth());
         }
     }
 
     @Test
     public void testReadingJbigFromUrl() throws IOException {
         ImageData imageData = ImageDataFactory.createJbig2(UrlUtil.toURL(SOURCE_FOLDER + "image.jb2"), 1);
-        Assert.assertEquals("JBIG2Decode", imageData.getFilter());
-        Assert.assertEquals(1, imageData.getBpc());
+        Assertions.assertEquals("JBIG2Decode", imageData.getFilter());
+        Assertions.assertEquals(1, imageData.getBpc());
     }
 
     @Test
     public void testCreatingJbigFromCommonMethodByUrl() throws IOException {
         ImageData imageData = ImageDataFactory.create(UrlUtil.toURL(SOURCE_FOLDER + "image.jb2"));
-        Assert.assertTrue(imageData instanceof Jbig2ImageData);
-        Assert.assertEquals(1, ((Jbig2ImageData) imageData).getPage());
+        Assertions.assertTrue(imageData instanceof Jbig2ImageData);
+        Assertions.assertEquals(1, ((Jbig2ImageData) imageData).getPage());
     }
 
     @Test
@@ -70,7 +69,7 @@ public class Jbig2Test extends ExtendedITextTest {
         try (InputStream fis = FileUtil.getInputStreamForFile(imageFilePath)) {
             byte[] imageBytes = StreamUtil.inputStreamToArray(fis);
             ImageData imageDataFromBytes = ImageDataFactory.create(imageBytes);
-            Assert.assertArrayEquals(imageDataFromBytes.getData(), imageDataFromUrl.getData());
+            Assertions.assertArrayEquals(imageDataFromBytes.getData(), imageDataFromUrl.getData());
         }
     }
 

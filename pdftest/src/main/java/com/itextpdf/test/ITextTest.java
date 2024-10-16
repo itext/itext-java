@@ -24,14 +24,14 @@ package com.itextpdf.test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
-import org.junit.Rule;
-import org.junit.rules.Timeout;
 
 /**
  * This is a generic class for testing. Subclassing it, or its subclasses is considered a good practice of
@@ -39,9 +39,6 @@ import org.junit.rules.Timeout;
  */
 @org.junit.jupiter.api.Timeout(value = 5, unit = TimeUnit.MINUTES)
 public abstract class ITextTest {
-
-    @Rule
-    public Timeout testTimeout = getTestTimeout();
 
     /**
      * Creates a folder with a given path, including all necessary nonexistent parent directories.
@@ -143,12 +140,8 @@ public abstract class ITextTest {
         System.out.println(comment + "file://" + new File(path).toURI().normalize().getPath());
     }
 
-    protected Timeout getTestTimeout() {
-        return new Timeout(5, TimeUnit.MINUTES);
-    }
-
     protected byte[] readFile(String filename) throws IOException {
-        FileInputStream input = new FileInputStream(filename);
+        InputStream input = Files.newInputStream(Paths.get(filename));
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         byte[] buffer = new byte[8192];
         int read;

@@ -46,22 +46,21 @@ import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class MinWidthTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/MinWidthTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/MinWidthTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
@@ -81,7 +80,7 @@ public class MinWidthTest extends ExtendedITextTest {
         doc.add(p);
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -101,7 +100,7 @@ public class MinWidthTest extends ExtendedITextTest {
         doc.add(d);
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -122,7 +121,7 @@ public class MinWidthTest extends ExtendedITextTest {
         doc.add(d);
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
 
@@ -145,7 +144,7 @@ public class MinWidthTest extends ExtendedITextTest {
         doc.add(d);
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -167,7 +166,7 @@ public class MinWidthTest extends ExtendedITextTest {
         doc.add(d);
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
 
@@ -189,7 +188,7 @@ public class MinWidthTest extends ExtendedITextTest {
         doc.add(d);
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -216,7 +215,7 @@ public class MinWidthTest extends ExtendedITextTest {
         doc.add(dPercent);
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -243,7 +242,7 @@ public class MinWidthTest extends ExtendedITextTest {
         doc.add(dPercent);
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -271,7 +270,7 @@ public class MinWidthTest extends ExtendedITextTest {
         doc.add(externalDiv);
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -312,7 +311,7 @@ public class MinWidthTest extends ExtendedITextTest {
         doc.add(maxTable);
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -353,7 +352,7 @@ public class MinWidthTest extends ExtendedITextTest {
         doc.add(maxTable);
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -399,7 +398,7 @@ public class MinWidthTest extends ExtendedITextTest {
         doc.add(maxTable);
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -452,7 +451,7 @@ public class MinWidthTest extends ExtendedITextTest {
         doc.add(maxTable);
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     private static float toEffectiveWidth(IBlockElement b, float fullWidth) {

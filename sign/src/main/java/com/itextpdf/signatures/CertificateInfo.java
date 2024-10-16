@@ -174,7 +174,7 @@ public class CertificateInfo {
         /**
          * A Map with values.
          */
-        public Map<String, List<String>> values = new HashMap<>();
+        private final Map<String, List<String>> values = new HashMap<>();
 
         /**
          * Constructs an X509 name.

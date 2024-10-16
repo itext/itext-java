@@ -23,55 +23,54 @@
 package com.itextpdf.io.util;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class GhostScriptHelperUnitTest extends ExtendedITextTest {
 
     @Test
     public void verifyEmptyPageList() {
         String testPageList = "";
 
-        Assert.assertFalse(GhostscriptHelper.validatePageList(testPageList));
+        Assertions.assertFalse(GhostscriptHelper.validatePageList(testPageList));
     }
 
     @Test
     public void verifyNullPageList() {
         String testPageList = null;
 
-        Assert.assertTrue(GhostscriptHelper.validatePageList(testPageList));
+        Assertions.assertTrue(GhostscriptHelper.validatePageList(testPageList));
     }
 
     @Test
     public void verifyPageListWithLeadingSpaces() {
         String testPageList = "     1";
 
-        Assert.assertFalse(GhostscriptHelper.validatePageList(testPageList));
+        Assertions.assertFalse(GhostscriptHelper.validatePageList(testPageList));
     }
 
     @Test
     public void verifyPageListWithTrailingSpaces() {
         String testPageList = "1     ";
 
-        Assert.assertFalse(GhostscriptHelper.validatePageList(testPageList));
+        Assertions.assertFalse(GhostscriptHelper.validatePageList(testPageList));
     }
 
     @Test
     public void verifyValidPageListWithSeveralPages() {
         String testPageList = "1,2,3";
 
-        Assert.assertTrue(GhostscriptHelper.validatePageList(testPageList));
+        Assertions.assertTrue(GhostscriptHelper.validatePageList(testPageList));
     }
 
     @Test
     public void verifyValidPageListOfOnePage() {
         String testPageList = "2";
 
-        Assert.assertTrue(GhostscriptHelper.validatePageList(testPageList));
+        Assertions.assertTrue(GhostscriptHelper.validatePageList(testPageList));
     }
 
     @Test
@@ -81,7 +80,7 @@ public class GhostScriptHelperUnitTest extends ExtendedITextTest {
     public void verifyPageListWithNegativePages() {
         String testPageList = "-2";
 
-        Assert.assertFalse(GhostscriptHelper.validatePageList(testPageList));
+        Assertions.assertFalse(GhostscriptHelper.validatePageList(testPageList));
     }
 
     @Test
@@ -91,7 +90,7 @@ public class GhostScriptHelperUnitTest extends ExtendedITextTest {
     public void verifyPageListWithSomeNegativePagesInTheMiddle() {
         String testPageList = "1,-2,3";
 
-        Assert.assertFalse(GhostscriptHelper.validatePageList(testPageList));
+        Assertions.assertFalse(GhostscriptHelper.validatePageList(testPageList));
     }
 
     @Test
@@ -101,21 +100,21 @@ public class GhostScriptHelperUnitTest extends ExtendedITextTest {
     public void verifyPageListWithSomeNegativePagesAtTheEnd() {
         String testPageList = "1,-2";
 
-        Assert.assertFalse(GhostscriptHelper.validatePageList(testPageList));
+        Assertions.assertFalse(GhostscriptHelper.validatePageList(testPageList));
     }
 
     @Test
     public void verifyPageListWithOnlyPageZero() {
         String testPageList = "0";
 
-        Assert.assertTrue(GhostscriptHelper.validatePageList(testPageList));
+        Assertions.assertTrue(GhostscriptHelper.validatePageList(testPageList));
     }
 
     @Test
     public void verifyPageListWithOneOfPagesBeingZero() {
         String testPageList = "3,0,2";
 
-        Assert.assertTrue(GhostscriptHelper.validatePageList(testPageList));
+        Assertions.assertTrue(GhostscriptHelper.validatePageList(testPageList));
     }
 
     @Test
@@ -123,13 +122,13 @@ public class GhostScriptHelperUnitTest extends ExtendedITextTest {
     public void verifyValidPageListWithDescendingOrder() {
         String testPageList = "3,2,1";
 
-        Assert.assertTrue(GhostscriptHelper.validatePageList(testPageList));
+        Assertions.assertTrue(GhostscriptHelper.validatePageList(testPageList));
     }
 
     @Test
     public void verifyTextInPageList() {
         String testPageList = "1,hello,2";
 
-        Assert.assertFalse(GhostscriptHelper.validatePageList(testPageList));
+        Assertions.assertFalse(GhostscriptHelper.validatePageList(testPageList));
     }
 }

@@ -23,13 +23,12 @@
 package com.itextpdf.io.util;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class IntHashtableTest extends ExtendedITextTest {
 
     @Test
@@ -38,10 +37,10 @@ public class IntHashtableTest extends ExtendedITextTest {
         IntHashtable clonedTable = (IntHashtable) hashtable.clone();
         int[] keysArray = hashtable.getKeys();
         int[] clonedKeysArray = clonedTable.getKeys();
-        Assert.assertEquals(keysArray.length, clonedKeysArray.length);
+        Assertions.assertEquals(keysArray.length, clonedKeysArray.length);
         for (int i = 0; i < keysArray.length; i++) {
-            Assert.assertEquals(keysArray[i], clonedKeysArray[i]);
-            Assert.assertEquals(hashtable.get(keysArray[i]), clonedTable.get(clonedKeysArray[i]));
+            Assertions.assertEquals(keysArray[i], clonedKeysArray[i]);
+            Assertions.assertEquals(hashtable.get(keysArray[i]), clonedTable.get(clonedKeysArray[i]));
         }
     }
 
@@ -49,7 +48,7 @@ public class IntHashtableTest extends ExtendedITextTest {
     public void countIsEqualTest() throws CloneNotSupportedException {
         IntHashtable hashtable = fillTable();
         IntHashtable clonedTable = (IntHashtable) hashtable.clone();
-        Assert.assertEquals(hashtable.count, clonedTable.count);
+        Assertions.assertEquals(hashtable.count, clonedTable.count);
     }
 
     private static IntHashtable fillTable() {

@@ -31,46 +31,45 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.File;
 import java.io.IOException;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 /**
  * This test class focuses on different types of linear gradient coordinates vector strategies.
  * Tests related to stop colors work omitted here as they would be equivalent to tests in
  * {@link LinearGradientBuilderTest}
  */
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/colors/gradients/StrategyBasedLinearGradientBuilderTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/colors/gradients/StrategyBasedLinearGradientBuilderTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
 
     @Test
     public void noSettersTest() {
-        Assert.assertNull(new StrategyBasedLinearGradientBuilder()
+        Assertions.assertNull(new StrategyBasedLinearGradientBuilder()
                 .buildColor(new Rectangle(50f, 450f, 500f, 300f), null, null));
     }
 
     @Test
     public void noRectangleTest() {
-        Assert.assertNull(new StrategyBasedLinearGradientBuilder()
+        Assertions.assertNull(new StrategyBasedLinearGradientBuilder()
                 .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
                 .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
                 .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE))
@@ -288,7 +287,7 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
                     .fillStroke();
         }
 
-        Assert.assertNull(new CompareTool()
+        Assertions.assertNull(new CompareTool()
                 .compareByContent(outPdfPath, sourceFolder + "cmp_" + fileName, destinationFolder, "diff"));
     }
 }

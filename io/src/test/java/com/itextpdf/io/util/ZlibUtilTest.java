@@ -26,22 +26,21 @@ import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.ZipFileReader;
 import com.itextpdf.io.source.DeflaterOutputStream;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class ZlibUtilTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/util/";
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/io/util/";
 
-    @Before
+    @BeforeEach
     public void setUp() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
@@ -72,7 +71,7 @@ public class ZlibUtilTest extends ExtendedITextTest {
             }
         }
 
-        Assert.assertTrue(FileUtil.fileExists(DESTINATION_FOLDER + "jzlib.fail.zz"));
-        Assert.assertTrue(FileUtil.isFileNotEmpty(DESTINATION_FOLDER + "jzlib.fail.zz"));
+        Assertions.assertTrue(FileUtil.fileExists(DESTINATION_FOLDER + "jzlib.fail.zz"));
+        Assertions.assertTrue(FileUtil.isFileNotEmpty(DESTINATION_FOLDER + "jzlib.fail.zz"));
     }
 }

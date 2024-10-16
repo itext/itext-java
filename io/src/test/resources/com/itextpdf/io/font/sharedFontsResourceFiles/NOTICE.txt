@@ -4,3 +4,4 @@ This software uses the following test resources under the following licenses:
 | NotoSansSC-Regular.otf | OFL-1.1 | OFL.txt | Based on commit 165c01b46ea533872e002e0785ff17e44f6d97d8 (30.04.2021) from repository: "https://github.com/googlefonts/noto-cjk"
 | NotoSansCJKjp-Bold.otf | OFL-1.1 | OFL.txt | Based on commit 165c01b46ea533872e002e0785ff17e44f6d97d8 (30.04.2021) from repository: "https://github.com/googlefonts/noto-cjk"
 | Puritan2 | OFL-1.1 | OFL.txt |
+| glyphs.ttf, glyphs-fmt-6.ttf | MIT | Derived from https://github.com/RazrFalcon/ttf-parser/tree/337e7d1c08b06478a84c4345f4f289fc2cb9210c/tests/fonts-src |

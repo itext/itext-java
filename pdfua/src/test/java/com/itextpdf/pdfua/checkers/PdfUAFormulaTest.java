@@ -41,17 +41,16 @@ import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfUAFormulaTest extends ExtendedITextTest {
 
 
@@ -59,12 +58,12 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/FreeSans.ttf";
     private UaValidationTestFramework framework;
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
-    @Before
+    @BeforeEach
     public void initializeFramework() {
         framework = new UaValidationTestFramework(DESTINATION_FOLDER);
     }
@@ -220,7 +219,7 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
         tagPointer.addTag(StandardRoles.FORMULA);
         canvas.openTag(tagPointer.getTagReference()).saveState().beginText().setFontAndSize(font, 12).showText("E=mc²")
                 .endText().closeTag();
-        Assert.assertThrows(PdfUAConformanceException.class, () -> {
+        Assertions.assertThrows(PdfUAConformanceException.class, () -> {
             document.close();
         });
 
@@ -260,8 +259,8 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
         tagPointer.setPageForTagging(document.getFirstPage());
         tagPointer.addTag(StandardRoles.FORMULA);
         canvas.openTag(tagPointer.getTagReference()).saveState().beginText().setFontAndSize(font, 12);
-        Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> canvas.showText("⫊"));
-        Assert.assertEquals(
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> canvas.showText("⫊"));
+        Assertions.assertEquals(
                 MessageFormatUtil.format(PdfUAExceptionMessageConstants.GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE, "⫊"),
                 e.getMessage());
     }

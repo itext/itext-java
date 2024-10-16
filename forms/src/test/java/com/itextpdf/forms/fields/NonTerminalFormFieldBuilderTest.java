@@ -32,15 +32,13 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class NonTerminalFormFieldBuilderTest extends ExtendedITextTest {
     private static final PdfDocument DUMMY_DOCUMENT = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
     private static final String DUMMY_NAME = "dummy name";
@@ -49,8 +47,8 @@ public class NonTerminalFormFieldBuilderTest extends ExtendedITextTest {
     public void constructorTest() {
         NonTerminalFormFieldBuilder builder = new NonTerminalFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
 
-        Assert.assertSame(DUMMY_DOCUMENT, builder.getDocument());
-        Assert.assertSame(DUMMY_NAME, builder.getFormFieldName());
+        Assertions.assertSame(DUMMY_DOCUMENT, builder.getDocument());
+        Assertions.assertSame(DUMMY_NAME, builder.getFormFieldName());
     }
 
     @Test
@@ -66,13 +64,13 @@ public class NonTerminalFormFieldBuilderTest extends ExtendedITextTest {
 
         List<PdfWidgetAnnotation> widgets = nonTerminalFormField.getWidgets();
 
-        Assert.assertEquals(0, widgets.size());
+        Assertions.assertEquals(0, widgets.size());
 
         putIfAbsent(expectedDictionary, PdfName.T, new PdfString(DUMMY_NAME));
 
         expectedDictionary.makeIndirect(DUMMY_DOCUMENT);
         nonTerminalFormField.makeIndirect(DUMMY_DOCUMENT);
-        Assert.assertNull(new CompareTool().compareDictionariesStructure(
+        Assertions.assertNull(new CompareTool().compareDictionariesStructure(
                 expectedDictionary, nonTerminalFormField.getPdfObject()));
     }
 

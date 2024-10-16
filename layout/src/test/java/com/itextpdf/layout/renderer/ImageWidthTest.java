@@ -35,15 +35,14 @@ import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class ImageWidthTest extends ExtendedITextTest {
 
     private static final double EPSILON = 0.01;
@@ -52,7 +51,7 @@ public class ImageWidthTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/ImageWidthTest/";
     public static final String imageFolder = "./src/test/resources/com/itextpdf/layout/ImageTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
@@ -105,7 +104,7 @@ public class ImageWidthTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -117,27 +116,27 @@ public class ImageWidthTest extends ExtendedITextTest {
 
         image.setProperty(Property.MAX_WIDTH, UnitValue.createPointValue(50));
         MinMaxWidth minMaxWidth = renderer.getMinMaxWidth();
-        Assert.assertEquals(50.0, minMaxWidth.getMaxWidth(), EPSILON);
-        Assert.assertEquals(0.0, minMaxWidth.getMaxWidth()-minMaxWidth.getMinWidth(), EPSILON);
+        Assertions.assertEquals(50.0, minMaxWidth.getMaxWidth(), EPSILON);
+        Assertions.assertEquals(0.0, minMaxWidth.getMaxWidth()-minMaxWidth.getMinWidth(), EPSILON);
 
         image.setProperty(Property.MAX_WIDTH, UnitValue.createPercentValue(50));
         minMaxWidth = renderer.getMinMaxWidth();
-        Assert.assertEquals(1024.0, minMaxWidth.getMaxWidth(), EPSILON);
+        Assertions.assertEquals(1024.0, minMaxWidth.getMaxWidth(), EPSILON);
         image.setProperty(Property.MAX_HEIGHT, UnitValue.createPointValue(100f));
         minMaxWidth = renderer.getMinMaxWidth();
-        Assert.assertEquals( 100.0 * 1024.0 / 768.0, minMaxWidth.getMaxWidth(), EPSILON);
+        Assertions.assertEquals( 100.0 * 1024.0 / 768.0, minMaxWidth.getMaxWidth(), EPSILON);
 
         image = new Image(xObject);
         renderer = new ImageRenderer(image);
         image.setProperty(Property.MIN_WIDTH, UnitValue.createPointValue(2000));
         image.setProperty(Property.MAX_WIDTH, UnitValue.createPointValue(3000));
         minMaxWidth = renderer.getMinMaxWidth();
-        Assert.assertEquals(2000.0, minMaxWidth.getMaxWidth(), EPSILON);
-        Assert.assertEquals(0.0, minMaxWidth.getMaxWidth() - minMaxWidth.getMinWidth(), EPSILON);
+        Assertions.assertEquals(2000.0, minMaxWidth.getMaxWidth(), EPSILON);
+        Assertions.assertEquals(0.0, minMaxWidth.getMaxWidth() - minMaxWidth.getMinWidth(), EPSILON);
         image.setProperty(Property.MIN_HEIGHT, UnitValue.createPointValue(100f));
         image.setProperty(Property.HEIGHT, UnitValue.createPointValue(100f));
         minMaxWidth = renderer.getMinMaxWidth();
-        Assert.assertEquals( 100.0 * 1024.0 / 768.0, minMaxWidth.getMaxWidth(), EPSILON);
+        Assertions.assertEquals( 100.0 * 1024.0 / 768.0, minMaxWidth.getMaxWidth(), EPSILON);
     }
 
 }

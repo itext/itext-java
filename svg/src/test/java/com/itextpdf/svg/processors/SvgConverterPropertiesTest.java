@@ -24,20 +24,19 @@ package com.itextpdf.svg.processors;
 
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.nio.charset.StandardCharsets;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class SvgConverterPropertiesTest extends ExtendedITextTest{
 
     @Test
     public void getCharsetNameRegressionTest() {
         String expected = StandardCharsets.UTF_8.name();
         String actual = new SvgConverterProperties().getCharset();
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 }

@@ -37,14 +37,13 @@ import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class TableWidthsTest  extends ExtendedITextTest {
 
     @Test

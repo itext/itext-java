@@ -44,21 +44,20 @@ import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.splitting.DefaultSplitCharacters;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class TargetCounterHandlerTest extends ExtendedITextTest {
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/renderer/TargetCounterHandlerTest/";
     public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/renderer/TargetCounterHandlerTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(DESTINATION_FOLDER);
     }
@@ -74,7 +73,7 @@ public class TargetCounterHandlerTest extends ExtendedITextTest {
         divRenderer.layout(layoutContext);
 
         documentRenderer.getTargetCounterHandler().prepareHandlerToRelayout();
-        Assert.assertEquals((Integer) 4, TargetCounterHandler.getPageByID(divRenderer, id));
+        Assertions.assertEquals((Integer) 4, TargetCounterHandler.getPageByID(divRenderer, id));
     }
 
     @Test
@@ -96,7 +95,7 @@ public class TargetCounterHandlerTest extends ExtendedITextTest {
         textRenderer.layout(layoutContext);
 
         documentRenderer.getTargetCounterHandler().prepareHandlerToRelayout();
-        Assert.assertEquals((Integer) 4, TargetCounterHandler.getPageByID(textRenderer, id));
+        Assertions.assertEquals((Integer) 4, TargetCounterHandler.getPageByID(textRenderer, id));
     }
 
     @Test
@@ -110,7 +109,7 @@ public class TargetCounterHandlerTest extends ExtendedITextTest {
         tableRenderer.layout(layoutContext);
 
         documentRenderer.getTargetCounterHandler().prepareHandlerToRelayout();
-        Assert.assertEquals((Integer) 4, TargetCounterHandler.getPageByID(tableRenderer, id));
+        Assertions.assertEquals((Integer) 4, TargetCounterHandler.getPageByID(tableRenderer, id));
     }
 
     @Test
@@ -124,7 +123,7 @@ public class TargetCounterHandlerTest extends ExtendedITextTest {
         paragraphRenderer.layout(layoutContext);
 
         documentRenderer.getTargetCounterHandler().prepareHandlerToRelayout();
-        Assert.assertEquals((Integer) 4, TargetCounterHandler.getPageByID(paragraphRenderer, id));
+        Assertions.assertEquals((Integer) 4, TargetCounterHandler.getPageByID(paragraphRenderer, id));
     }
 
     @Test
@@ -138,7 +137,7 @@ public class TargetCounterHandlerTest extends ExtendedITextTest {
         imageRenderer.layout(layoutContext);
 
         documentRenderer.getTargetCounterHandler().prepareHandlerToRelayout();
-        Assert.assertEquals((Integer) 4, TargetCounterHandler.getPageByID(imageRenderer, id));
+        Assertions.assertEquals((Integer) 4, TargetCounterHandler.getPageByID(imageRenderer, id));
     }
 
     @Test
@@ -152,7 +151,7 @@ public class TargetCounterHandlerTest extends ExtendedITextTest {
         lineRenderer.layout(layoutContext);
 
         documentRenderer.getTargetCounterHandler().prepareHandlerToRelayout();
-        Assert.assertEquals((Integer) 4, TargetCounterHandler.getPageByID(lineRenderer, id));
+        Assertions.assertEquals((Integer) 4, TargetCounterHandler.getPageByID(lineRenderer, id));
     }
 
     @Test
@@ -179,7 +178,7 @@ public class TargetCounterHandlerTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(targetPdf, cmpPdf, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(targetPdf, cmpPdf, DESTINATION_FOLDER, "diff"));
     }
 
     private static class TargetCounterAwareTextRenderer extends TextRenderer {

@@ -24,17 +24,16 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfDictionaryDictionaryValuesModificationTest extends ExtendedITextTest {
 
     @Test
@@ -54,11 +53,11 @@ public class PdfDictionaryDictionaryValuesModificationTest extends ExtendedIText
             toRemove.add(v);
         }
         for (PdfObject v: toRemove) {
-            Assert.assertTrue(dict.values().remove(v));
+            Assertions.assertTrue(dict.values().remove(v));
         }
-        Assert.assertEquals(0, dict.entrySet().size());
-        Assert.assertEquals(0, dict.values().size());
-        Assert.assertEquals(0, dict.size());
+        Assertions.assertEquals(0, dict.entrySet().size());
+        Assertions.assertEquals(0, dict.values().size());
+        Assertions.assertEquals(0, dict.size());
     }
 
     @Test
@@ -73,14 +72,14 @@ public class PdfDictionaryDictionaryValuesModificationTest extends ExtendedIText
         dict.put(new PdfName("5"), new PdfNumber(5));
         dict.put(new PdfName("6"), new PdfNumber(6));
 
-        Assert.assertTrue(dict.values().remove(dict.get(new PdfName("1"), false)));
-        Assert.assertTrue(dict.values().remove(dict.get(new PdfName("2"), false)));
-        Assert.assertTrue(dict.values().remove(dict.get(new PdfName("3")).getIndirectReference()));
-        Assert.assertTrue(dict.values().remove(dict.get(new PdfName("4")).getIndirectReference()));
+        Assertions.assertTrue(dict.values().remove(dict.get(new PdfName("1"), false)));
+        Assertions.assertTrue(dict.values().remove(dict.get(new PdfName("2"), false)));
+        Assertions.assertTrue(dict.values().remove(dict.get(new PdfName("3")).getIndirectReference()));
+        Assertions.assertTrue(dict.values().remove(dict.get(new PdfName("4")).getIndirectReference()));
 
-        Assert.assertEquals(2, dict.entrySet().size());
-        Assert.assertEquals(2, dict.values().size());
-        Assert.assertEquals(2, dict.size());
+        Assertions.assertEquals(2, dict.entrySet().size());
+        Assertions.assertEquals(2, dict.values().size());
+        Assertions.assertEquals(2, dict.size());
     }
 
     @Test
@@ -106,9 +105,9 @@ public class PdfDictionaryDictionaryValuesModificationTest extends ExtendedIText
         for (PdfObject v: dict2.values()) {
             dict.values().remove(v);
         }
-        Assert.assertEquals(0, dict.entrySet().size());
-        Assert.assertEquals(0, dict.values().size());
-        Assert.assertEquals(0, dict.size());
+        Assertions.assertEquals(0, dict.entrySet().size());
+        Assertions.assertEquals(0, dict.values().size());
+        Assertions.assertEquals(0, dict.size());
 
     }
 
@@ -130,9 +129,9 @@ public class PdfDictionaryDictionaryValuesModificationTest extends ExtendedIText
         }
 
         dict.values().removeAll(toRemove);
-        Assert.assertEquals(0, dict.entrySet().size());
-        Assert.assertEquals(0, dict.values().size());
-        Assert.assertEquals(0, dict.size());
+        Assertions.assertEquals(0, dict.entrySet().size());
+        Assertions.assertEquals(0, dict.values().size());
+        Assertions.assertEquals(0, dict.size());
 
     }
 
@@ -158,9 +157,9 @@ public class PdfDictionaryDictionaryValuesModificationTest extends ExtendedIText
 
         dict.values().removeAll(dict2.values());
 
-        Assert.assertEquals(0, dict.entrySet().size());
-        Assert.assertEquals(0, dict.values().size());
-        Assert.assertEquals(0, dict.size());
+        Assertions.assertEquals(0, dict.entrySet().size());
+        Assertions.assertEquals(0, dict.values().size());
+        Assertions.assertEquals(0, dict.size());
 
     }
 
@@ -184,9 +183,9 @@ public class PdfDictionaryDictionaryValuesModificationTest extends ExtendedIText
         }
 
         dict.values().retainAll(toRemove);
-        Assert.assertEquals(4, dict.entrySet().size());
-        Assert.assertEquals(4, dict.values().size());
-        Assert.assertEquals(4, dict.size());
+        Assertions.assertEquals(4, dict.entrySet().size());
+        Assertions.assertEquals(4, dict.values().size());
+        Assertions.assertEquals(4, dict.size());
 
     }
 
@@ -203,8 +202,8 @@ public class PdfDictionaryDictionaryValuesModificationTest extends ExtendedIText
         dict.put(new PdfName("6"), new PdfNumber(6));
 
         dict.values().clear();
-        Assert.assertEquals(0, dict.entrySet().size());
-        Assert.assertEquals(0, dict.values().size());
-        Assert.assertEquals(0, dict.size());
+        Assertions.assertEquals(0, dict.entrySet().size());
+        Assertions.assertEquals(0, dict.values().size());
+        Assertions.assertEquals(0, dict.size());
     }
 }

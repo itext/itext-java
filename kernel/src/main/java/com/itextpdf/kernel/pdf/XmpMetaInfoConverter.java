@@ -27,7 +27,6 @@ import com.itextpdf.kernel.xmp.PdfConst;
 import com.itextpdf.kernel.xmp.XMPConst;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
-import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.kernel.xmp.options.PropertyOptions;
 import com.itextpdf.kernel.xmp.properties.XMPProperty;
 
@@ -36,11 +35,9 @@ class XmpMetaInfoConverter {
     private XmpMetaInfoConverter() {
     }
 
-    static void appendMetadataToInfo(byte[] xmpMetadata, PdfDocumentInfo info) {
-        if (xmpMetadata != null) {
+    static void appendMetadataToInfo(XMPMeta meta, PdfDocumentInfo info) {
+        if (meta != null) {
             try {
-                XMPMeta meta = XMPMetaFactory.parseFromBuffer(xmpMetadata);
-
                 XMPProperty title = meta.getLocalizedText(XMPConst.NS_DC, PdfConst.Title, XMPConst.X_DEFAULT, XMPConst.X_DEFAULT);
                 if (title != null) {
                     info.setTitle(title.getValue());

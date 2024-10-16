@@ -42,34 +42,33 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.xml.parsers.ParserConfigurationException;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 import org.xml.sax.SAXException;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfStructElemTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfStructElemTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfStructElemTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -204,10 +203,10 @@ public class PdfStructElemTest extends ExtendedITextTest {
         document.close();
 
         document = new PdfDocument(CompareTool.createOutputReader(destinationFolder + "structElemTest03.pdf"));
-        Assert.assertEquals(2, (int) document.getNextStructParentIndex());
+        Assertions.assertEquals(2, (int) document.getNextStructParentIndex());
         PdfPage page = document.getPage(1);
-        Assert.assertEquals(0, page.getStructParentIndex());
-        Assert.assertEquals(2, page.getNextMcid());
+        Assertions.assertEquals(0, page.getStructParentIndex());
+        Assertions.assertEquals(2, page.getNextMcid());
         document.close();
     }
 
@@ -501,7 +500,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
         source.close();
 
         // we don't compare tag structures, because resultant document is not tagged
-        Assert.assertNull(new CompareTool()
+        Assertions.assertNull(new CompareTool()
                 .compareByContent(destinationFolder + "structTreeCopyingTest03.pdf",
                         sourceFolder + "cmp_structTreeCopyingTest03.pdf",
                         destinationFolder, "diff_copying_03_"));
@@ -685,11 +684,11 @@ public class PdfStructElemTest extends ExtendedITextTest {
         document1.close();
 
         PdfDocument document2 = new PdfDocument(new PdfReader(sourceFolder + "quick-brown-fox.pdf"));
-        Exception e = Assert.assertThrows(PdfException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfException.class, () -> {
             document2.copyPagesTo(1, 1, resultDoc);
         });
         // TODO DEVSIX-7005 after exception is gone add assertion for the resulting document
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 KernelExceptionMessageConstant.TAG_STRUCTURE_COPYING_FAILED_IT_MIGHT_BE_CORRUPTED_IN_ONE_OF_THE_DOCUMENTS,
                 e.getMessage()
         );
@@ -742,7 +741,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
         docToCopyTo.close();
 
         document = new PdfDocument(new PdfReader(new ByteArrayInputStream(baos.toByteArray())));
-        Assert.assertTrue(document.isTagged());
+        Assertions.assertTrue(document.isTagged());
         document.close();
     }
 

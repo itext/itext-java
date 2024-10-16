@@ -39,22 +39,21 @@ import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class TagTreePointerUnitTest extends ExtendedITextTest {
 
     @Test
     public void rootTagCannotBeRemovedTest () {
         PdfDocument pdfDoc = createTestDocument();
         TagTreePointer tagTreePointer = new TagTreePointer(pdfDoc);
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> tagTreePointer.removeTag());
-        Assert.assertEquals(KernelExceptionMessageConstant.CANNOT_REMOVE_DOCUMENT_ROOT_TAG,
+        Assertions.assertEquals(KernelExceptionMessageConstant.CANNOT_REMOVE_DOCUMENT_ROOT_TAG,
                 exception.getMessage());
     }
 
@@ -62,9 +61,9 @@ public class TagTreePointerUnitTest extends ExtendedITextTest {
     public void cannotMoveToKidWithNonExistingRoleTest() {
         PdfDocument pdfDoc = createTestDocument();
         TagTreePointer tagTreePointer = new TagTreePointer(pdfDoc);
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> tagTreePointer.moveToKid(1, "role"));
-        Assert.assertEquals(KernelExceptionMessageConstant.NO_KID_WITH_SUCH_ROLE,
+        Assertions.assertEquals(KernelExceptionMessageConstant.NO_KID_WITH_SUCH_ROLE,
                 exception.getMessage());
     }
 
@@ -72,9 +71,9 @@ public class TagTreePointerUnitTest extends ExtendedITextTest {
     public void cannotMoveToKidMcrTest01() {
         PdfDocument pdfDoc = createTestDocument();
         TagTreePointer tagTreePointer = new TagTreePointer(pdfDoc);
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> tagTreePointer.moveToKid(1, "MCR"));
-        Assert.assertEquals(KernelExceptionMessageConstant.CANNOT_MOVE_TO_MARKED_CONTENT_REFERENCE,
+        Assertions.assertEquals(KernelExceptionMessageConstant.CANNOT_MOVE_TO_MARKED_CONTENT_REFERENCE,
                 exception.getMessage());
     }
 
@@ -92,9 +91,9 @@ public class TagTreePointerUnitTest extends ExtendedITextTest {
         parent.addKid(kid1);
         parent.addKid(kid2);
         tagTreePointer.setCurrentStructElem(parent);
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> tagTreePointer.moveToKid(1));
-        Assert.assertEquals(KernelExceptionMessageConstant.CANNOT_MOVE_TO_MARKED_CONTENT_REFERENCE,
+        Assertions.assertEquals(KernelExceptionMessageConstant.CANNOT_MOVE_TO_MARKED_CONTENT_REFERENCE,
                 exception.getMessage());
     }
 
@@ -103,9 +102,9 @@ public class TagTreePointerUnitTest extends ExtendedITextTest {
         PdfDocument pdfDoc = createTestDocument();
         TagTreePointer tagTreePointer = new TagTreePointer(pdfDoc);
         PdfStructElem pdfStructElem = new PdfStructElem(pdfDoc, PdfName.MCR);
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> tagTreePointer.setCurrentStructElem(pdfStructElem));
-        Assert.assertEquals(KernelExceptionMessageConstant.STRUCTURE_ELEMENT_SHALL_CONTAIN_PARENT_OBJECT,
+        Assertions.assertEquals(KernelExceptionMessageConstant.STRUCTURE_ELEMENT_SHALL_CONTAIN_PARENT_OBJECT,
                 exception.getMessage());
     }
 
@@ -114,9 +113,9 @@ public class TagTreePointerUnitTest extends ExtendedITextTest {
         PdfDocument pdfDoc = createTestDocument();
         TagTreePointer tagTreePointer = new TagTreePointer(pdfDoc);
         PdfStructElem pdfStructElem = new PdfStructElem(pdfDoc, PdfName.MCR);
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> tagTreePointer.createNextMcidForStructElem(pdfStructElem, 1));
-        Assert.assertEquals(KernelExceptionMessageConstant.PAGE_IS_NOT_SET_FOR_THE_PDF_TAG_STRUCTURE,
+        Assertions.assertEquals(KernelExceptionMessageConstant.PAGE_IS_NOT_SET_FOR_THE_PDF_TAG_STRUCTURE,
                 exception.getMessage());
     }
 
@@ -124,9 +123,9 @@ public class TagTreePointerUnitTest extends ExtendedITextTest {
     public void cannotMoveRootToParentTest() {
         PdfDocument pdfDoc = createTestDocument();
         TagTreePointer tagTreePointer = new TagTreePointer(pdfDoc);
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> tagTreePointer.moveToParent());
-        Assert.assertEquals(KernelExceptionMessageConstant.CANNOT_MOVE_TO_PARENT_CURRENT_ELEMENT_IS_ROOT,
+        Assertions.assertEquals(KernelExceptionMessageConstant.CANNOT_MOVE_TO_PARENT_CURRENT_ELEMENT_IS_ROOT,
                 exception.getMessage());
     }
 
@@ -134,9 +133,9 @@ public class TagTreePointerUnitTest extends ExtendedITextTest {
     public void cannotRelocateRootTagTest() {
         PdfDocument pdfDoc = createTestDocument();
         TagTreePointer tagTreePointer = new TagTreePointer(pdfDoc);
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> tagTreePointer.relocate(tagTreePointer));
-        Assert.assertEquals(KernelExceptionMessageConstant.CANNOT_RELOCATE_ROOT_TAG, exception.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.CANNOT_RELOCATE_ROOT_TAG, exception.getMessage());
     }
 
     @Test
@@ -145,9 +144,9 @@ public class TagTreePointerUnitTest extends ExtendedITextTest {
         TagTreePointer tagTreePointer = new TagTreePointer(pdfDoc);
         PdfPage pdfPage = pdfDoc.addNewPage(1);
         pdfPage.flush();
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> tagTreePointer.setPageForTagging(pdfPage));
-        Assert.assertEquals(KernelExceptionMessageConstant.PAGE_ALREADY_FLUSHED, exception.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.PAGE_ALREADY_FLUSHED, exception.getMessage());
     }
 
     @Test
@@ -162,9 +161,9 @@ public class TagTreePointerUnitTest extends ExtendedITextTest {
         kid2.addKid(kid1);
 
         TagTreePointer pointer = new TagTreePointer(doc);
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> pointer.moveToKid(StandardRoles.FIGURE));
-        Assert.assertEquals(KernelExceptionMessageConstant.NO_KID_WITH_SUCH_ROLE,
+        Assertions.assertEquals(KernelExceptionMessageConstant.NO_KID_WITH_SUCH_ROLE,
                 exception.getMessage());
     }
 
@@ -183,8 +182,8 @@ public class TagTreePointerUnitTest extends ExtendedITextTest {
         pointer.moveToKid(StandardRoles.P);
 
         AssertUtil.doesNotThrow(() -> pointer.flushTag());
-        Assert.assertTrue(kid1.isFlushed());
-        Assert.assertTrue(kid2.isFlushed());
+        Assertions.assertTrue(kid1.isFlushed());
+        Assertions.assertTrue(kid2.isFlushed());
     }
 
     @Test
@@ -206,8 +205,8 @@ public class TagTreePointerUnitTest extends ExtendedITextTest {
         pointer.moveToParent().moveToKid(StandardRoles.DIV);
 
         AssertUtil.doesNotThrow(() -> pointer.flushTag());
-        Assert.assertFalse(kid1.isFlushed());
-        Assert.assertTrue(kid2.isFlushed());
+        Assertions.assertFalse(kid1.isFlushed());
+        Assertions.assertTrue(kid2.isFlushed());
     }
 
     private static PdfDocument createTestDocument() {

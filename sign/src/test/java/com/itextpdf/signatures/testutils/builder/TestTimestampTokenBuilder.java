@@ -37,7 +37,7 @@ import com.itextpdf.commons.bouncycastle.tsp.ITimeStampToken;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampTokenGenerator;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.commons.utils.SystemUtil;
-import com.itextpdf.signatures.DigestAlgorithms;
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
 
 import java.io.IOException;
 import java.math.BigInteger;

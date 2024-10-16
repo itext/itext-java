@@ -30,26 +30,25 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import java.io.IOException;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class SmartModeTest extends ExtendedITextTest {
 
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/SmartModeTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/SmartModeTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -83,11 +82,11 @@ public class SmartModeTest extends ExtendedITextTest {
         PdfIndirectReference page3ResFontObj = assertDoc.getPage(3).getPdfObject().getAsDictionary(PdfName.Resources)
                 .getAsDictionary(PdfName.Font).getIndirectReference();
 
-        Assert.assertTrue(page1ResFontObj.equals(page2ResFontObj));
-        Assert.assertTrue(page1ResFontObj.equals(page3ResFontObj));
+        Assertions.assertTrue(page1ResFontObj.equals(page2ResFontObj));
+        Assertions.assertTrue(page1ResFontObj.equals(page3ResFontObj));
         assertDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFile, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFile, destinationFolder));
     }
 
     @Test
@@ -116,7 +115,7 @@ public class SmartModeTest extends ExtendedITextTest {
                 } catch (NullPointerException expected) {
                     // Smart mode makes it possible to share objects coming from different source documents.
                     // Flushing one object documents might make it impossible to modify further copied objects.
-                    Assert.assertEquals(2, i);
+                    Assertions.assertEquals(2, i);
                     exceptionCaught = true;
                     break;
                 }
@@ -132,7 +131,7 @@ public class SmartModeTest extends ExtendedITextTest {
         }
 
         if (!exceptionCaught) {
-            Assert.fail();
+            Assertions.fail();
         }
     }
 
@@ -193,12 +192,12 @@ public class SmartModeTest extends ExtendedITextTest {
         PdfIndirectReference page3ResFontObj = assertDoc.getPage(3).getPdfObject().getAsDictionary(PdfName.Resources)
                 .getAsDictionary(PdfName.Font).getIndirectReference();
 
-        Assert.assertFalse(page1ResFontObj.equals(page2ResFontObj));
-        Assert.assertFalse(page1ResFontObj.equals(page3ResFontObj));
-        Assert.assertFalse(page2ResFontObj.equals(page3ResFontObj));
+        Assertions.assertFalse(page1ResFontObj.equals(page2ResFontObj));
+        Assertions.assertFalse(page1ResFontObj.equals(page3ResFontObj));
+        Assertions.assertFalse(page2ResFontObj.equals(page3ResFontObj));
         assertDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFile, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFile, destinationFolder));
     }
 
     @Test
@@ -224,7 +223,7 @@ public class SmartModeTest extends ExtendedITextTest {
         copyPdfX.close();
         origPdf.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder));
     }
 
     @Test
@@ -249,10 +248,10 @@ public class SmartModeTest extends ExtendedITextTest {
                     .getAsDictionary(PdfName.XObject)
                     .getAsStream(new PdfName("Im0")).getIndirectReference();
 
-            Assert.assertEquals(page1ImgRes, page2ImgRes);
+            Assertions.assertEquals(page1ImgRes, page2ImgRes);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFile, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFile, destinationFolder));
     }
 
     @Test
@@ -283,7 +282,7 @@ public class SmartModeTest extends ExtendedITextTest {
 
             // It's expected that indirect arrays are not processed by smart mode.
             // Smart mode only merges duplicate dictionaries and streams.
-            Assert.assertEquals(page1CsRes, page2CsRes);
+            Assertions.assertEquals(page1CsRes, page2CsRes);
 
             PdfIndirectReference page1CsStm = newDoc.getPage(1).getPdfObject()
                     .getAsDictionary(PdfName.Resources)
@@ -295,10 +294,10 @@ public class SmartModeTest extends ExtendedITextTest {
                     .getAsDictionary(PdfName.ColorSpace).getAsArray(new PdfName("CS0"))
                     .getAsStream(1).getIndirectReference();
 
-            Assert.assertEquals(page1CsStm, page2CsStm);
+            Assertions.assertEquals(page1CsStm, page2CsStm);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFile, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFile, destinationFolder));
     }
 
     @Test
@@ -325,10 +324,10 @@ public class SmartModeTest extends ExtendedITextTest {
                     .getAsDictionary(PdfName.ExtGState)
                     .getAsDictionary(new PdfName("Gs1")).getIndirectReference();
 
-            Assert.assertEquals(page1GsRes, page2GsRes);
+            Assertions.assertEquals(page1GsRes, page2GsRes);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFile, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFile, destinationFolder));
     }
 
     @Test
@@ -344,12 +343,12 @@ public class SmartModeTest extends ExtendedITextTest {
                 pdfSrc.copyPagesTo(1, pdfSrc.getNumberOfPages(), pdfDest);
             }
 
-            Assert.assertNotNull(pdfDest.getStructTreeRoot()
+            Assertions.assertNotNull(pdfDest.getStructTreeRoot()
                     .getKidsObject().getAsDictionary(0).getAsArray(PdfName.K)
                     .getAsDictionary(0).get(PdfName.K));
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(dstFile, cmpFile, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(dstFile, cmpFile, destinationFolder));
     }
 
     @Test
@@ -372,12 +371,12 @@ public class SmartModeTest extends ExtendedITextTest {
             for (int i = 2; i <= 10; i++) {
                 PdfIndirectReference pageObj = pdfDest.getPage(i).getPdfObject().getIndirectReference();
 
-                Assert.assertNotEquals(expectedPageObj, pageObj);
+                Assertions.assertNotEquals(expectedPageObj, pageObj);
 
                 PdfIndirectReference pageContentStm = pdfDest.getPage(i).getPdfObject()
                         .getAsStream(PdfName.Contents).getIndirectReference();
 
-                Assert.assertEquals(expectedContStm, pageContentStm);
+                Assertions.assertEquals(expectedContStm, pageContentStm);
             }
         }
     }
@@ -401,12 +400,12 @@ public class SmartModeTest extends ExtendedITextTest {
             for (int i = 2; i <= 10; i++) {
                 PdfIndirectReference pageObj = pdfDest.getPage(i).getPdfObject().getIndirectReference();
 
-                Assert.assertNotEquals(expectedPageObj, pageObj);
+                Assertions.assertNotEquals(expectedPageObj, pageObj);
 
                 PdfIndirectReference pageContentStm = pdfDest.getPage(i).getPdfObject()
                         .getAsStream(PdfName.Contents).getIndirectReference();
 
-                Assert.assertEquals(expectedContStm, pageContentStm);
+                Assertions.assertEquals(expectedContStm, pageContentStm);
             }
         }
     }
@@ -433,7 +432,7 @@ public class SmartModeTest extends ExtendedITextTest {
                         .getAsDictionary(PdfName.XObject)
                         .getAsStream(new PdfName("Im1")).getIndirectReference();
 
-                Assert.assertEquals(expectedImgRes, pagesImgRes);
+                Assertions.assertEquals(expectedImgRes, pagesImgRes);
             }
         }
     }
@@ -456,7 +455,7 @@ public class SmartModeTest extends ExtendedITextTest {
                     .getAsDictionary(new PdfName("Key2")).getIndirectReference();
 
             // Currently smart mode copying doesn't affect any other objects except streams and dictionaries
-            Assert.assertNotEquals(key1Ref, key2Ref);
+            Assertions.assertNotEquals(key1Ref, key2Ref);
         }
     }
 
@@ -496,9 +495,9 @@ public class SmartModeTest extends ExtendedITextTest {
                     .getAsArray(new PdfName("Key3")).getIndirectReference();
 
             // Currently smart mode copying doesn't affect any other objects except streams and dictionaries
-            Assert.assertEquals(key1Page1Ref, key1Page2Ref);
-            Assert.assertEquals(key2Page1Ref, key2Page2Ref);
-            Assert.assertEquals(key3Page1Ref, key3Page2Ref);
+            Assertions.assertEquals(key1Page1Ref, key1Page2Ref);
+            Assertions.assertEquals(key2Page1Ref, key2Page2Ref);
+            Assertions.assertEquals(key3Page1Ref, key3Page2Ref);
         }
     }
 
@@ -521,7 +520,7 @@ public class SmartModeTest extends ExtendedITextTest {
             }
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(dstFile, cmpFile, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(dstFile, cmpFile, destinationFolder));
     }
 
     @Test
@@ -546,7 +545,7 @@ public class SmartModeTest extends ExtendedITextTest {
                         .getAsDictionary(PdfName.XObject)
                         .getAsStream(new PdfName("Im1")).getIndirectReference();
 
-                Assert.assertEquals(expectedImgRes, pagesImgRes);
+                Assertions.assertEquals(expectedImgRes, pagesImgRes);
             }
         }
     }
@@ -573,7 +572,7 @@ public class SmartModeTest extends ExtendedITextTest {
                         .getAsDictionary(PdfName.XObject)
                         .getAsStream(new PdfName("Im1")).getIndirectReference();
 
-                Assert.assertNotEquals(expectedImgRes, pagesImgRes);
+                Assertions.assertNotEquals(expectedImgRes, pagesImgRes);
             }
         }
     }

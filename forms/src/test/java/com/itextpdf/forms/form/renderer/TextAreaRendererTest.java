@@ -31,13 +31,12 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class TextAreaRendererTest extends ExtendedITextTest {
     
     private static final double EPS = 0.0001;
@@ -47,7 +46,7 @@ public class TextAreaRendererTest extends ExtendedITextTest {
         TextAreaRenderer areaRenderer = new TextAreaRenderer(new TextArea(""));
         areaRenderer.setProperty(FormProperty.FORM_FIELD_COLS, null);
         
-        Assert.assertEquals(20, areaRenderer.getCols());
+        Assertions.assertEquals(20, areaRenderer.getCols());
     }
 
     @Test
@@ -55,7 +54,7 @@ public class TextAreaRendererTest extends ExtendedITextTest {
         TextAreaRenderer areaRenderer = new TextAreaRenderer(new TextArea(""));
         areaRenderer.setProperty(FormProperty.FORM_FIELD_COLS, 0);
 
-        Assert.assertEquals(20, areaRenderer.getCols());
+        Assertions.assertEquals(20, areaRenderer.getCols());
     }
 
     @Test
@@ -63,7 +62,7 @@ public class TextAreaRendererTest extends ExtendedITextTest {
         TextAreaRenderer areaRenderer = new TextAreaRenderer(new TextArea(""));
         areaRenderer.setProperty(FormProperty.FORM_FIELD_ROWS, null);
 
-        Assert.assertEquals(2, areaRenderer.getRows());
+        Assertions.assertEquals(2, areaRenderer.getRows());
     }
 
     @Test
@@ -71,7 +70,7 @@ public class TextAreaRendererTest extends ExtendedITextTest {
         TextAreaRenderer areaRenderer = new TextAreaRenderer(new TextArea(""));
         areaRenderer.setProperty(FormProperty.FORM_FIELD_ROWS, 0);
 
-        Assert.assertEquals(2, areaRenderer.getRows());
+        Assertions.assertEquals(2, areaRenderer.getRows());
     }
     
     @Test
@@ -79,7 +78,7 @@ public class TextAreaRendererTest extends ExtendedITextTest {
         TextAreaRenderer areaRenderer = new TextAreaRenderer(new TextArea(""));
         
         IRenderer nextRenderer = areaRenderer.getNextRenderer();
-        Assert.assertTrue(nextRenderer instanceof TextAreaRenderer);
+        Assertions.assertTrue(nextRenderer instanceof TextAreaRenderer);
     }
     
     @Test
@@ -88,9 +87,9 @@ public class TextAreaRendererTest extends ExtendedITextTest {
         areaRenderer.setProperty(Property.FONT_SIZE, UnitValue.createPointValue(10));
         MinMaxWidth minMaxWidth = new MinMaxWidth();
         
-        Assert.assertTrue(areaRenderer.callSetMinMaxWidthBasedOnFixedWidth(minMaxWidth));
-        Assert.assertEquals(122, minMaxWidth.getChildrenMaxWidth(), EPS);
-        Assert.assertEquals(122, minMaxWidth.getChildrenMinWidth(), EPS);
+        Assertions.assertTrue(areaRenderer.callSetMinMaxWidthBasedOnFixedWidth(minMaxWidth));
+        Assertions.assertEquals(122, minMaxWidth.getChildrenMaxWidth(), EPS);
+        Assertions.assertEquals(122, minMaxWidth.getChildrenMinWidth(), EPS);
     }
 
     @Test
@@ -100,9 +99,9 @@ public class TextAreaRendererTest extends ExtendedITextTest {
         areaRenderer.setProperty(Property.FONT_SIZE, UnitValue.createPointValue(10));
         MinMaxWidth minMaxWidth = new MinMaxWidth();
 
-        Assert.assertTrue(areaRenderer.callSetMinMaxWidthBasedOnFixedWidth(minMaxWidth));
-        Assert.assertEquals(122, minMaxWidth.getChildrenMaxWidth(), EPS);
-        Assert.assertEquals(122, minMaxWidth.getChildrenMinWidth(), EPS);
+        Assertions.assertTrue(areaRenderer.callSetMinMaxWidthBasedOnFixedWidth(minMaxWidth));
+        Assertions.assertEquals(122, minMaxWidth.getChildrenMaxWidth(), EPS);
+        Assertions.assertEquals(122, minMaxWidth.getChildrenMinWidth(), EPS);
     }
 
     @Test
@@ -112,9 +111,9 @@ public class TextAreaRendererTest extends ExtendedITextTest {
         areaRenderer.setProperty(Property.FONT_SIZE, UnitValue.createPointValue(10));
         MinMaxWidth minMaxWidth = new MinMaxWidth();
 
-        Assert.assertTrue(areaRenderer.callSetMinMaxWidthBasedOnFixedWidth(minMaxWidth));
-        Assert.assertEquals(122, minMaxWidth.getChildrenMaxWidth(), EPS);
-        Assert.assertEquals(122, minMaxWidth.getChildrenMinWidth(), EPS);
+        Assertions.assertTrue(areaRenderer.callSetMinMaxWidthBasedOnFixedWidth(minMaxWidth));
+        Assertions.assertEquals(122, minMaxWidth.getChildrenMaxWidth(), EPS);
+        Assertions.assertEquals(122, minMaxWidth.getChildrenMinWidth(), EPS);
     }
 
     @Test
@@ -122,7 +121,7 @@ public class TextAreaRendererTest extends ExtendedITextTest {
         CustomTextAreaRenderer areaRenderer = new CustomTextAreaRenderer(new TextArea(""));
         Float lastY = areaRenderer.callGetLastYLineRecursively();
 
-        Assert.assertNull(lastY);
+        Assertions.assertNull(lastY);
     }
 
     @Test
@@ -131,7 +130,7 @@ public class TextAreaRendererTest extends ExtendedITextTest {
         areaRenderer.setOccupiedArea(new LayoutArea(1, null));
         Float lastY = areaRenderer.callGetLastYLineRecursively();
 
-        Assert.assertNull(lastY);
+        Assertions.assertNull(lastY);
     }
 
     @Test
@@ -140,7 +139,7 @@ public class TextAreaRendererTest extends ExtendedITextTest {
         areaRenderer.setOccupiedArea(new LayoutArea(1, new Rectangle(100, 100, 100, 100)));
         Float lastY = areaRenderer.callGetLastYLineRecursively();
 
-        Assert.assertEquals(100, lastY, EPS);
+        Assertions.assertEquals(100, lastY, EPS);
     }
 
     private static class CustomTextAreaRenderer extends TextAreaRenderer {

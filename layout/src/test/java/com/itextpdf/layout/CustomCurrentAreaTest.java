@@ -34,20 +34,19 @@ import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.RootLayoutArea;
 import com.itextpdf.layout.renderer.DocumentRenderer;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class CustomCurrentAreaTest extends ExtendedITextTest {
     public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/CustomCurrentAreaTest/";
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/CustomCurrentAreaTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(DESTINATION_FOLDER);
     }
@@ -68,7 +67,7 @@ public class CustomCurrentAreaTest extends ExtendedITextTest {
                             + " when looking at its layout."));
             document.add(new Table(1).addCell(new Cell().add(list)));
         }
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     private static class ClauseRenderer extends DocumentRenderer {

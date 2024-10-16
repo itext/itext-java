@@ -23,13 +23,12 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class FontEncodingTest extends ExtendedITextTest {
 
     @Test
@@ -39,7 +38,7 @@ public class FontEncodingTest extends ExtendedITextTest {
         String[] initialDifferences = (String[]) encoding.differences.clone();
         encoding.setDifference(-1, "a");
 
-        Assert.assertArrayEquals(initialDifferences, encoding.differences);
+        Assertions.assertArrayEquals(initialDifferences, encoding.differences);
     }
 
     @Test
@@ -49,7 +48,7 @@ public class FontEncodingTest extends ExtendedITextTest {
         String[] initialDifferences = (String[]) encoding.differences.clone();
         encoding.setDifference(256, "a");
 
-        Assert.assertArrayEquals(initialDifferences, encoding.differences);
+        Assertions.assertArrayEquals(initialDifferences, encoding.differences);
     }
 
     @Test
@@ -58,7 +57,7 @@ public class FontEncodingTest extends ExtendedITextTest {
 
         encoding.setDifference(0, "a");
 
-        Assert.assertEquals("a", encoding.differences[0]);
+        Assertions.assertEquals("a", encoding.differences[0]);
     }
 
     @Test
@@ -67,14 +66,14 @@ public class FontEncodingTest extends ExtendedITextTest {
 
         encoding.setDifference(255, "a");
 
-        Assert.assertEquals("a", encoding.differences[255]);
+        Assertions.assertEquals("a", encoding.differences[255]);
     }
 
     @Test
     public void getNullDifferenceTest() {
         FontEncoding encoding = FontEncoding.createEmptyFontEncoding();
 
-        Assert.assertNull(encoding.getDifference(0));
+        Assertions.assertNull(encoding.getDifference(0));
     }
 
     @Test
@@ -83,12 +82,12 @@ public class FontEncodingTest extends ExtendedITextTest {
 
         encoding.setDifference(0, "a");
 
-        Assert.assertEquals("a", encoding.getDifference(0));
+        Assertions.assertEquals("a", encoding.getDifference(0));
     }
 
     @Test
     public void fontSpecificEncodingTest() {
         FontEncoding encoding = FontEncoding.createFontSpecificEncoding();
-        Assert.assertTrue(encoding.isFontSpecific());
+        Assertions.assertTrue(encoding.isFontSpecific());
     }
 }

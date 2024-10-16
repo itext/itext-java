@@ -115,6 +115,7 @@ import com.itextpdf.commons.bouncycastle.cms.jcajce.IJcaSignerInfoGeneratorBuild
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJcaSimpleSignerInfoVerifierBuilder;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJceKeyAgreeEnvelopedRecipient;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJceKeyTransEnvelopedRecipient;
+import com.itextpdf.commons.bouncycastle.crypto.modes.IGCMBlockCipher;
 import com.itextpdf.commons.bouncycastle.openssl.IPEMParser;
 import com.itextpdf.commons.bouncycastle.openssl.jcajce.IJcaPEMKeyConverter;
 import com.itextpdf.commons.bouncycastle.openssl.jcajce.IJceOpenSSLPKCS8DecryptorProviderBuilder;
@@ -137,6 +138,8 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.PublicKey;
@@ -1383,6 +1386,15 @@ public interface IBouncyCastleFactory {
     IX500Name createX500Name(String s);
 
     /**
+     * Create X500 Name wrapper from {@link IASN1Sequence}.
+     *
+     * @param s {@link IASN1Sequence} to create X500 Name wrapper from
+     *
+     * @return created X500 Name wrapper
+     */
+    IX500Name createX500Name(IASN1Sequence s);
+
+    /**
      * Create resp ID wrapper from X500 Name wrapper.
      *
      * @param x500Name X500 Name wrapper to create resp ID wrapper from
@@ -1677,4 +1689,59 @@ public interface IBouncyCastleFactory {
      * @param withCertificate true when used with a certificate, false otherwise
      */
     void isEncryptionFeatureSupported(int encryptionAlgorithm, boolean withCertificate);
+
+    /**
+     * Generates byte array based on extract-and-expand key derivation function, using provided parameters.
+     *
+     * @param inputKey {@code byte[]} input key material
+     * @param salt {@code byte[]} salt
+     * @param info {@code byte[]} info
+     *
+     * @return {@code byte[]} key derivation function result.
+     */
+    byte[] generateHKDF(byte[] inputKey, byte[] salt, byte[] info);
+
+    /**
+     * Generates byte array based MAC token according to HMACSHA256 algorithm.
+     *
+     * @param key {@code byte[]} MAC key
+     * @param data {@code byte[]} data to be encrypted
+     *
+     * @return byte array based MAC token.
+     *
+     * @throws NoSuchAlgorithmException if there is no such algorithm.
+     * @throws InvalidKeyException if key is invalid.
+     */
+    byte[] generateHMACSHA256Token(byte[] key, byte[] data) throws NoSuchAlgorithmException, InvalidKeyException;
+
+    /**
+     * Generates encrypted key based on AES256 without padding wrapping algorithm.
+     *
+     * @param key key to be encrypted
+     * @param kek key encryption key to be used
+     *
+     * @return encrypted key.
+     *
+     * @throws GeneralSecurityException in case of encryption related exceptions.
+     */
+    byte[] generateEncryptedKeyWithAES256NoPad(byte[] key, byte[] kek) throws GeneralSecurityException;
+
+    /**
+     * Generates decrypted key based on AES256 without padding unwrapping algorithm.
+     *
+     * @param key key to be decrypted
+     * @param kek key encryption key to be used
+     *
+     * @return decrypted key.
+     *
+     * @throws GeneralSecurityException in case of encryption related exceptions.
+     */
+    byte[] generateDecryptedKeyWithAES256NoPad(byte[] key, byte[] kek) throws GeneralSecurityException;
+
+    /**
+     * Returns a Block Cipher object that implements the aes-gcm transformation.
+     *
+     * @return {@link IGCMBlockCipher} instance with provider specific implementation
+     */
+    IGCMBlockCipher createGCMBlockCipher();
 }

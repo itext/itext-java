@@ -23,116 +23,115 @@
 package com.itextpdf.styledxmlparser.css.util;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class CssTypesValidationUtilsTest extends ExtendedITextTest {
     @Test
     public void testIsAngleCorrectValues() {
-        Assert.assertTrue(CssTypesValidationUtils.isAngleValue("10deg"));
-        Assert.assertTrue(CssTypesValidationUtils.isAngleValue("-20grad"));
-        Assert.assertTrue(CssTypesValidationUtils.isAngleValue("30.5rad"));
-        Assert.assertTrue(CssTypesValidationUtils.isAngleValue("0rad"));
+        Assertions.assertTrue(CssTypesValidationUtils.isAngleValue("10deg"));
+        Assertions.assertTrue(CssTypesValidationUtils.isAngleValue("-20grad"));
+        Assertions.assertTrue(CssTypesValidationUtils.isAngleValue("30.5rad"));
+        Assertions.assertTrue(CssTypesValidationUtils.isAngleValue("0rad"));
     }
 
     @Test
     public void testIsAngleNullValue() {
-        Assert.assertFalse(CssTypesValidationUtils.isAngleValue(null));
+        Assertions.assertFalse(CssTypesValidationUtils.isAngleValue(null));
     }
 
     @Test
     public void testIsAngleIncorrectValues() {
-        Assert.assertFalse(CssTypesValidationUtils.isAngleValue("deg"));
-        Assert.assertFalse(CssTypesValidationUtils.isAngleValue("-20,6grad"));
-        Assert.assertFalse(CssTypesValidationUtils.isAngleValue("0"));
-        Assert.assertFalse(CssTypesValidationUtils.isAngleValue("10in"));
-        Assert.assertFalse(CssTypesValidationUtils.isAngleValue("10px"));
+        Assertions.assertFalse(CssTypesValidationUtils.isAngleValue("deg"));
+        Assertions.assertFalse(CssTypesValidationUtils.isAngleValue("-20,6grad"));
+        Assertions.assertFalse(CssTypesValidationUtils.isAngleValue("0"));
+        Assertions.assertFalse(CssTypesValidationUtils.isAngleValue("10in"));
+        Assertions.assertFalse(CssTypesValidationUtils.isAngleValue("10px"));
     }
 
     @Test
     public void validateMetricValue() {
-        Assert.assertTrue(CssTypesValidationUtils.isMetricValue("1px"));
-        Assert.assertTrue(CssTypesValidationUtils.isMetricValue("1in"));
-        Assert.assertTrue(CssTypesValidationUtils.isMetricValue("1cm"));
-        Assert.assertTrue(CssTypesValidationUtils.isMetricValue("1mm"));
-        Assert.assertTrue(CssTypesValidationUtils.isMetricValue("1pc"));
-        Assert.assertFalse(CssTypesValidationUtils.isMetricValue("1em"));
-        Assert.assertFalse(CssTypesValidationUtils.isMetricValue("1rem"));
-        Assert.assertFalse(CssTypesValidationUtils.isMetricValue("1ex"));
-        Assert.assertTrue(CssTypesValidationUtils.isMetricValue("1pt"));
-        Assert.assertFalse(CssTypesValidationUtils.isMetricValue("1inch"));
-        Assert.assertFalse(CssTypesValidationUtils.isMetricValue("+1m"));
+        Assertions.assertTrue(CssTypesValidationUtils.isMetricValue("1px"));
+        Assertions.assertTrue(CssTypesValidationUtils.isMetricValue("1in"));
+        Assertions.assertTrue(CssTypesValidationUtils.isMetricValue("1cm"));
+        Assertions.assertTrue(CssTypesValidationUtils.isMetricValue("1mm"));
+        Assertions.assertTrue(CssTypesValidationUtils.isMetricValue("1pc"));
+        Assertions.assertFalse(CssTypesValidationUtils.isMetricValue("1em"));
+        Assertions.assertFalse(CssTypesValidationUtils.isMetricValue("1rem"));
+        Assertions.assertFalse(CssTypesValidationUtils.isMetricValue("1ex"));
+        Assertions.assertTrue(CssTypesValidationUtils.isMetricValue("1pt"));
+        Assertions.assertFalse(CssTypesValidationUtils.isMetricValue("1inch"));
+        Assertions.assertFalse(CssTypesValidationUtils.isMetricValue("+1m"));
     }
 
     @Test
     public void isNegativeValueTest() {
         // Invalid values
-        Assert.assertFalse(CssTypesValidationUtils.isNegativeValue(null));
-        Assert.assertFalse(CssTypesValidationUtils.isNegativeValue("-..23"));
-        Assert.assertFalse(CssTypesValidationUtils.isNegativeValue("12 34"));
-        Assert.assertFalse(CssTypesValidationUtils.isNegativeValue("12reeem"));
+        Assertions.assertFalse(CssTypesValidationUtils.isNegativeValue(null));
+        Assertions.assertFalse(CssTypesValidationUtils.isNegativeValue("-..23"));
+        Assertions.assertFalse(CssTypesValidationUtils.isNegativeValue("12 34"));
+        Assertions.assertFalse(CssTypesValidationUtils.isNegativeValue("12reeem"));
 
         // Valid not negative values
-        Assert.assertFalse(CssTypesValidationUtils.isNegativeValue(".23"));
-        Assert.assertFalse(CssTypesValidationUtils.isNegativeValue("+123"));
-        Assert.assertFalse(CssTypesValidationUtils.isNegativeValue("57%"));
-        Assert.assertFalse(CssTypesValidationUtils.isNegativeValue("3.7em"));
+        Assertions.assertFalse(CssTypesValidationUtils.isNegativeValue(".23"));
+        Assertions.assertFalse(CssTypesValidationUtils.isNegativeValue("+123"));
+        Assertions.assertFalse(CssTypesValidationUtils.isNegativeValue("57%"));
+        Assertions.assertFalse(CssTypesValidationUtils.isNegativeValue("3.7em"));
 
         // Valid negative values
-        Assert.assertTrue(CssTypesValidationUtils.isNegativeValue("-1.7rem"));
-        Assert.assertTrue(CssTypesValidationUtils.isNegativeValue("-43.56%"));
-        Assert.assertTrue(CssTypesValidationUtils.isNegativeValue("-12"));
-        Assert.assertTrue(CssTypesValidationUtils.isNegativeValue("-0.123"));
-        Assert.assertTrue(CssTypesValidationUtils.isNegativeValue("-.34"));
+        Assertions.assertTrue(CssTypesValidationUtils.isNegativeValue("-1.7rem"));
+        Assertions.assertTrue(CssTypesValidationUtils.isNegativeValue("-43.56%"));
+        Assertions.assertTrue(CssTypesValidationUtils.isNegativeValue("-12"));
+        Assertions.assertTrue(CssTypesValidationUtils.isNegativeValue("-0.123"));
+        Assertions.assertTrue(CssTypesValidationUtils.isNegativeValue("-.34"));
     }
 
     @Test
     public void validateNumericValue() {
-        Assert.assertTrue(CssTypesValidationUtils.isNumber("1"));
-        Assert.assertTrue(CssTypesValidationUtils.isNumber("12"));
-        Assert.assertTrue(CssTypesValidationUtils.isNumber("1.2"));
-        Assert.assertTrue(CssTypesValidationUtils.isNumber(".12"));
-        Assert.assertFalse(CssTypesValidationUtils.isNumber("12f"));
-        Assert.assertFalse(CssTypesValidationUtils.isNumber("f1.2"));
-        Assert.assertFalse(CssTypesValidationUtils.isNumber(".12f"));
+        Assertions.assertTrue(CssTypesValidationUtils.isNumber("1"));
+        Assertions.assertTrue(CssTypesValidationUtils.isNumber("12"));
+        Assertions.assertTrue(CssTypesValidationUtils.isNumber("1.2"));
+        Assertions.assertTrue(CssTypesValidationUtils.isNumber(".12"));
+        Assertions.assertFalse(CssTypesValidationUtils.isNumber("12f"));
+        Assertions.assertFalse(CssTypesValidationUtils.isNumber("f1.2"));
+        Assertions.assertFalse(CssTypesValidationUtils.isNumber(".12f"));
     }
 
     @Test
     public void validateIntegerNumericValue() {
-        Assert.assertTrue(CssTypesValidationUtils.isIntegerNumber("1"));
-        Assert.assertTrue(CssTypesValidationUtils.isIntegerNumber("+12"));
-        Assert.assertTrue(CssTypesValidationUtils.isIntegerNumber("-12"));
-        Assert.assertFalse(CssTypesValidationUtils.isIntegerNumber(".12"));
-        Assert.assertFalse(CssTypesValidationUtils.isIntegerNumber("1.2"));
-        Assert.assertFalse(CssTypesValidationUtils.isIntegerNumber("1,2"));
-        Assert.assertFalse(CssTypesValidationUtils.isIntegerNumber("12f"));
-        Assert.assertFalse(CssTypesValidationUtils.isIntegerNumber("f1.2"));
-        Assert.assertFalse(CssTypesValidationUtils.isIntegerNumber(".12f"));
+        Assertions.assertTrue(CssTypesValidationUtils.isIntegerNumber("1"));
+        Assertions.assertTrue(CssTypesValidationUtils.isIntegerNumber("+12"));
+        Assertions.assertTrue(CssTypesValidationUtils.isIntegerNumber("-12"));
+        Assertions.assertFalse(CssTypesValidationUtils.isIntegerNumber(".12"));
+        Assertions.assertFalse(CssTypesValidationUtils.isIntegerNumber("1.2"));
+        Assertions.assertFalse(CssTypesValidationUtils.isIntegerNumber("1,2"));
+        Assertions.assertFalse(CssTypesValidationUtils.isIntegerNumber("12f"));
+        Assertions.assertFalse(CssTypesValidationUtils.isIntegerNumber("f1.2"));
+        Assertions.assertFalse(CssTypesValidationUtils.isIntegerNumber(".12f"));
     }
 
     @Test
     public void testSpacesBeforeUnitTypes() {
-        Assert.assertFalse(CssTypesValidationUtils.isAngleValue("10 deg"));
-        Assert.assertFalse(CssTypesValidationUtils.isEmValue("10 em"));
-        Assert.assertFalse(CssTypesValidationUtils.isExValue("10 ex"));
-        Assert.assertFalse(CssTypesValidationUtils.isRelativeValue("10 %"));
-        Assert.assertFalse(CssTypesValidationUtils.isRemValue("10 rem"));
-        Assert.assertFalse(CssTypesValidationUtils.isMetricValue("10 px"));
-        Assert.assertFalse(CssTypesValidationUtils.isPercentageValue("10 %"));
+        Assertions.assertFalse(CssTypesValidationUtils.isAngleValue("10 deg"));
+        Assertions.assertFalse(CssTypesValidationUtils.isEmValue("10 em"));
+        Assertions.assertFalse(CssTypesValidationUtils.isExValue("10 ex"));
+        Assertions.assertFalse(CssTypesValidationUtils.isRelativeValue("10 %"));
+        Assertions.assertFalse(CssTypesValidationUtils.isRemValue("10 rem"));
+        Assertions.assertFalse(CssTypesValidationUtils.isMetricValue("10 px"));
+        Assertions.assertFalse(CssTypesValidationUtils.isPercentageValue("10 %"));
     }
 
     @Test
     public void testSpacesAfterUnitTypes() {
-        Assert.assertTrue(CssTypesValidationUtils.isAngleValue("10deg "));
-        Assert.assertTrue(CssTypesValidationUtils.isEmValue("10em "));
-        Assert.assertTrue(CssTypesValidationUtils.isExValue("10ex "));
-        Assert.assertTrue(CssTypesValidationUtils.isRelativeValue("10% "));
-        Assert.assertTrue(CssTypesValidationUtils.isRemValue("10rem "));
-        Assert.assertTrue(CssTypesValidationUtils.isMetricValue("10px "));
-        Assert.assertTrue(CssTypesValidationUtils.isPercentageValue("10% "));
+        Assertions.assertTrue(CssTypesValidationUtils.isAngleValue("10deg "));
+        Assertions.assertTrue(CssTypesValidationUtils.isEmValue("10em "));
+        Assertions.assertTrue(CssTypesValidationUtils.isExValue("10ex "));
+        Assertions.assertTrue(CssTypesValidationUtils.isRelativeValue("10% "));
+        Assertions.assertTrue(CssTypesValidationUtils.isRemValue("10rem "));
+        Assertions.assertTrue(CssTypesValidationUtils.isMetricValue("10px "));
+        Assertions.assertTrue(CssTypesValidationUtils.isPercentageValue("10% "));
     }
 }

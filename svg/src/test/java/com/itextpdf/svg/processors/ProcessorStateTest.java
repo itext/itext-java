@@ -26,15 +26,14 @@ import com.itextpdf.svg.dummy.renderers.impl.DummySvgNodeRenderer;
 import com.itextpdf.svg.processors.impl.ProcessorState;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.EmptyStackException;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category( UnitTest.class )
+@Tag("UnitTest")
 public class ProcessorStateTest extends ExtendedITextTest{
 
     /**
@@ -46,7 +45,7 @@ public class ProcessorStateTest extends ExtendedITextTest{
         ISvgNodeRenderer renderer = new DummySvgNodeRenderer("test");
         testProcessorState.push(renderer);
 
-        Assert.assertTrue(testProcessorState.size() == 1);
+        Assertions.assertTrue(testProcessorState.size() == 1);
     }
 
     /**
@@ -59,7 +58,7 @@ public class ProcessorStateTest extends ExtendedITextTest{
         testProcessorState.push(renderer);
 
         ISvgNodeRenderer popped = testProcessorState.pop();
-        Assert.assertTrue(popped.toString().equals("test") && testProcessorState.empty());
+        Assertions.assertTrue(popped.toString().equals("test") && testProcessorState.empty());
     }
 
     /**
@@ -72,7 +71,7 @@ public class ProcessorStateTest extends ExtendedITextTest{
         testProcessorState.push(renderer);
 
         ISvgNodeRenderer viewed = testProcessorState.top();
-        Assert.assertTrue(viewed.toString().equals("test") && ! testProcessorState.empty());
+        Assertions.assertTrue(viewed.toString().equals("test") && ! testProcessorState.empty());
 
     }
 
@@ -90,14 +89,14 @@ public class ProcessorStateTest extends ExtendedITextTest{
         ISvgNodeRenderer popped = testProcessorState.pop();
         boolean result = popped.toString().equals("test02");
         result = result && testProcessorState.top().toString().equals("test01");
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     @Test
     public void processorStateTestPopEmpty() {
         ProcessorState testProcessorState = new ProcessorState();
 
-        Assert.assertThrows(EmptyStackException.class, () -> testProcessorState.pop());
+        Assertions.assertThrows(EmptyStackException.class, () -> testProcessorState.pop());
     }
 
     @Test
@@ -110,7 +109,7 @@ public class ProcessorStateTest extends ExtendedITextTest{
         ISvgNodeRenderer popped = testProcessorState.pop();
         boolean result = popped.toString().equals("test01");
         result = result && testProcessorState.top().toString().equals("test01");
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
 
@@ -118,7 +117,7 @@ public class ProcessorStateTest extends ExtendedITextTest{
     public void processorStateTestPeekEmpty() {
         ProcessorState testProcessorState = new ProcessorState();
 
-        Assert.assertThrows(EmptyStackException.class, () -> testProcessorState.pop());
+        Assertions.assertThrows(EmptyStackException.class, () -> testProcessorState.pop());
     }
 
 

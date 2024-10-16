@@ -36,14 +36,13 @@ import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.ITextExtractionStrategy;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.util.ArrayList;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -51,18 +50,18 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class GlyphBboxCalculationTest extends ExtendedITextTest {
 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/canvas/parser/GlyphBboxCalculationTest/";
     private static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/canvas/parser/GlyphBboxCalculationTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -75,7 +74,7 @@ public class GlyphBboxCalculationTest extends ExtendedITextTest {
         PdfCanvasProcessor processor = new PdfCanvasProcessor(listener);
         processor.processPageContent(pdfDocument.getPage(1));
         // font size (36) * |fontMatrix| (0.001) * glyph width (600) = 21.6
-        Assert.assertEquals(21.6, listener.glyphWidth, 1e-5);
+        Assertions.assertEquals(21.6, listener.glyphWidth, 1e-5);
     }
 
     @Test
@@ -86,7 +85,7 @@ public class GlyphBboxCalculationTest extends ExtendedITextTest {
         PdfCanvasProcessor processor = new PdfCanvasProcessor(listener);
         processor.processPageContent(pdfDocument.getPage(1));
         // font size (36) * |fontMatrix| (1) * glyph width (0.6) = 21.6
-        Assert.assertEquals(21.6, listener.glyphWidth, 1e-5);
+        Assertions.assertEquals(21.6, listener.glyphWidth, 1e-5);
     }
 
     @Test
@@ -96,7 +95,7 @@ public class GlyphBboxCalculationTest extends ExtendedITextTest {
         CharacterPositionEventListener listener = new CharacterPositionEventListener();
         PdfCanvasProcessor processor = new PdfCanvasProcessor(listener);
         processor.processPageContent(pdfDocument.getPage(1));
-        Assert.assertEquals(600, listener.firstTextRenderInfo.getFont().getFontProgram().getAvgWidth(), 0.01f);
+        Assertions.assertEquals(600, listener.firstTextRenderInfo.getFont().getFontProgram().getAvgWidth(), 0.01f);
     }
 
     @Test
@@ -118,7 +117,7 @@ public class GlyphBboxCalculationTest extends ExtendedITextTest {
                 .endText();
 
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(outputPdf, sourceFolder + "cmp_type3FontsWithIdentityFontMatrixAndMultiplier.pdf", destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outputPdf, sourceFolder + "cmp_type3FontsWithIdentityFontMatrixAndMultiplier.pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -139,8 +138,8 @@ public class GlyphBboxCalculationTest extends ExtendedITextTest {
             actualRectangles = eventListener.getRectangles();
         }
 
-        Assert.assertEquals(1, actualRectangles.size());
-        Assert.assertTrue(expectedRectangle.equalsWithEpsilon(actualRectangles.get(0)));
+        Assertions.assertEquals(1, actualRectangles.size());
+        Assertions.assertTrue(expectedRectangle.equalsWithEpsilon(actualRectangles.get(0)));
     }
 
     private static class CharacterPositionEventListener implements ITextExtractionStrategy {

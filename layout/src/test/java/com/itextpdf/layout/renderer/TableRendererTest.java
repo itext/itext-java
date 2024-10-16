@@ -36,13 +36,12 @@ import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class TableRendererTest extends ExtendedITextTest {
 
     @Test
@@ -79,8 +78,8 @@ public class TableRendererTest extends ExtendedITextTest {
 
         MinMaxWidth minMaxWidth = tableRenderer.getMinMaxWidth();
         // TODO DEVSIX-3676: currently margins and paddings are still applied as if they are in points. After the mentioned ticket is fixed, the expected values should be updated.
-        Assert.assertEquals(327.46f, minMaxWidth.getMaxWidth(), 0.001);
-        Assert.assertEquals(327.46f, minMaxWidth.getMinWidth(), 0.001);
+        Assertions.assertEquals(327.46f, minMaxWidth.getMaxWidth(), 0.001);
+        Assertions.assertEquals(327.46f, minMaxWidth.getMinWidth(), 0.001);
     }
 
     @Test
@@ -95,6 +94,6 @@ public class TableRendererTest extends ExtendedITextTest {
 
         TableRenderer[] grandChildren = children[1].split(1);
 
-        Assert.assertFalse(grandChildren[0].isOriginalNonSplitRenderer);
+        Assertions.assertFalse(grandChildren[0].isOriginalNonSplitRenderer);
     }
 }

@@ -32,7 +32,7 @@ public class ActualTextIterator implements Iterator<GlyphLine.GlyphLinePart> {
 
     public ActualTextIterator(GlyphLine glyphLine) {
         this.glyphLine = glyphLine;
-        this.pos = glyphLine.start;
+        this.pos = glyphLine.getStart();
     }
 
     public ActualTextIterator(GlyphLine glyphLine, int start, int end) {
@@ -43,30 +43,30 @@ public class ActualTextIterator implements Iterator<GlyphLine.GlyphLinePart> {
 
     @Override
     public boolean hasNext() {
-        return pos < glyphLine.end;
+        return pos < glyphLine.getEnd();
     }
 
     @Override
     public GlyphLine.GlyphLinePart next() {
         if (glyphLine.actualText == null) {
-            GlyphLine.GlyphLinePart result = new GlyphLine.GlyphLinePart(pos, glyphLine.end, null);
-            pos = glyphLine.end;
+            GlyphLine.GlyphLinePart result = new GlyphLine.GlyphLinePart(pos, glyphLine.getEnd(), null);
+            pos = glyphLine.getEnd();
             return result;
         } else {
             GlyphLine.GlyphLinePart currentResult = nextGlyphLinePart(pos);
             if (currentResult == null) {
                 return null;
             }
-            pos = currentResult.end;
+            pos = currentResult.getEnd();
 
             if (!glyphLinePartNeedsActualText(currentResult)) {
-                currentResult.actualText = null;
+                currentResult.setActualText(null);
                 // Try to add more pieces without "actual text"
-                while (pos < glyphLine.end) {
+                while (pos < glyphLine.getEnd()) {
                     GlyphLine.GlyphLinePart nextResult = nextGlyphLinePart(pos);
                     if (nextResult != null && !glyphLinePartNeedsActualText(nextResult)) {
-                        currentResult.end = nextResult.end;
-                        pos = nextResult.end;
+                        currentResult.setEnd(nextResult.getEnd());
+                        pos = nextResult.getEnd();
                     } else {
                         break;
                     }
@@ -82,24 +82,24 @@ public class ActualTextIterator implements Iterator<GlyphLine.GlyphLinePart> {
     }
 
     private GlyphLine.GlyphLinePart nextGlyphLinePart(int pos) {
-        if (pos >= glyphLine.end) {
+        if (pos >= glyphLine.getEnd()) {
             return null;
         }
         int startPos = pos;
         GlyphLine.ActualText startActualText = glyphLine.actualText.get(pos);
-        while (pos < glyphLine.end && glyphLine.actualText.get(pos) == startActualText) {
+        while (pos < glyphLine.getEnd() && glyphLine.actualText.get(pos) == startActualText) {
             pos++;
         }
-        return new GlyphLine.GlyphLinePart(startPos, pos, startActualText != null ? startActualText.value : null);
+        return new GlyphLine.GlyphLinePart(startPos, pos, startActualText != null ? startActualText.getValue() : null);
     }
 
     private boolean glyphLinePartNeedsActualText(GlyphLine.GlyphLinePart glyphLinePart) {
-        if (glyphLinePart.actualText == null) {
+        if (glyphLinePart.getActualText() == null) {
             return false;
         }
         boolean needsActualText = false;
         StringBuilder toUnicodeMapResult = new StringBuilder();
-        for (int i = glyphLinePart.start; i < glyphLinePart.end; i++) {
+        for (int i = glyphLinePart.getStart(); i < glyphLinePart.getEnd(); i++) {
             Glyph currentGlyph = glyphLine.glyphs.get(i);
             if (!currentGlyph.hasValidUnicode()) {
                 needsActualText = true;
@@ -108,6 +108,6 @@ public class ActualTextIterator implements Iterator<GlyphLine.GlyphLinePart> {
             toUnicodeMapResult.append(TextUtil.convertFromUtf32(currentGlyph.getUnicode()));
         }
 
-        return needsActualText || !toUnicodeMapResult.toString().equals(glyphLinePart.actualText);
+        return needsActualText || !toUnicodeMapResult.toString().equals(glyphLinePart.getActualText());
     }
 }

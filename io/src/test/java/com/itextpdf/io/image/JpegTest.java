@@ -26,15 +26,14 @@ import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.IOException;
 import java.io.InputStream;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class JpegTest extends ExtendedITextTest {
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/image/";
@@ -44,9 +43,9 @@ public class JpegTest extends ExtendedITextTest {
         try (InputStream fis = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "WP_20140410_001.jpg")) {
             // Test this a more specific entry point
             ImageData img = ImageDataFactory.createJpeg(StreamUtil.inputStreamToArray(fis));
-            Assert.assertEquals(2592, img.getWidth(), 0);
-            Assert.assertEquals(1456, img.getHeight(), 0);
-            Assert.assertEquals(8, img.getBpc());
+            Assertions.assertEquals(2592, img.getWidth(), 0);
+            Assertions.assertEquals(1456, img.getHeight(), 0);
+            Assertions.assertEquals(8, img.getBpc());
         }
     }
 
@@ -54,9 +53,9 @@ public class JpegTest extends ExtendedITextTest {
     public void openJpeg2() throws IOException {
         // Test this a more specific entry point
         ImageData img = ImageDataFactory.createJpeg(UrlUtil.toURL(SOURCE_FOLDER + "WP_20140410_001_gray.jpg"));
-        Assert.assertEquals(2592, img.getWidth(), 0);
-        Assert.assertEquals(1456, img.getHeight(), 0);
-        Assert.assertEquals(8, img.getBpc());
+        Assertions.assertEquals(2592, img.getWidth(), 0);
+        Assertions.assertEquals(1456, img.getHeight(), 0);
+        Assertions.assertEquals(8, img.getBpc());
     }
 
     @Test
@@ -64,33 +63,33 @@ public class JpegTest extends ExtendedITextTest {
         try (InputStream fis = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "WP_20140410_001_monochrome.jpg")) {
             // Test this a more specific entry point
             ImageData img = ImageDataFactory.create(StreamUtil.inputStreamToArray(fis));
-            Assert.assertEquals(2592, img.getWidth(), 0);
-            Assert.assertEquals(1456, img.getHeight(), 0);
-            Assert.assertEquals(8, img.getBpc());
+            Assertions.assertEquals(2592, img.getWidth(), 0);
+            Assertions.assertEquals(1456, img.getHeight(), 0);
+            Assertions.assertEquals(8, img.getBpc());
         }
     }
 
     @Test
     public void openJpeg4() throws IOException {
         ImageData img = ImageDataFactory.create(SOURCE_FOLDER + "WP_20140410_001_negate.jpg");
-        Assert.assertEquals(2592, img.getWidth(), 0);
-        Assert.assertEquals(1456, img.getHeight(), 0);
-        Assert.assertEquals(8, img.getBpc());
+        Assertions.assertEquals(2592, img.getWidth(), 0);
+        Assertions.assertEquals(1456, img.getHeight(), 0);
+        Assertions.assertEquals(8, img.getBpc());
     }
 
     @Test
     public void openJpeg5() throws IOException {
         ImageData img = ImageDataFactory.create(SOURCE_FOLDER + "WP_20140410_001_year1900.jpg");
-        Assert.assertEquals(2592, img.getWidth(), 0);
-        Assert.assertEquals(1456, img.getHeight(), 0);
-        Assert.assertEquals(8, img.getBpc());
+        Assertions.assertEquals(2592, img.getWidth(), 0);
+        Assertions.assertEquals(1456, img.getHeight(), 0);
+        Assertions.assertEquals(8, img.getBpc());
     }
 
     @Test
     public void openJpeg6() throws IOException {
         ImageData img = ImageDataFactory.create(SOURCE_FOLDER + "WP_20140410_001_year1980.jpg");
-        Assert.assertEquals(2592, img.getWidth(), 0);
-        Assert.assertEquals(1456, img.getHeight(), 0);
-        Assert.assertEquals(8, img.getBpc());
+        Assertions.assertEquals(2592, img.getWidth(), 0);
+        Assertions.assertEquals(1456, img.getHeight(), 0);
+        Assertions.assertEquals(8, img.getBpc());
     }
 }

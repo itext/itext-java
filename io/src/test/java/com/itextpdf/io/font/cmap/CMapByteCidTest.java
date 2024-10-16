@@ -23,12 +23,11 @@
 package com.itextpdf.io.font.cmap;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class CMapByteCidTest extends ExtendedITextTest {
 
     @Test
@@ -45,6 +44,6 @@ public class CMapByteCidTest extends ExtendedITextTest {
         String actual = cMapByteCid.decodeSequence(byteCodeBytes, 0, 2);
         String expected = new String(new char[]{(char) cid});
 
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 }

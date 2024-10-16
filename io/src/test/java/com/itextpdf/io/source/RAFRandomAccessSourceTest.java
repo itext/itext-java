@@ -24,16 +24,15 @@ package com.itextpdf.io.source;
 
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class RAFRandomAccessSourceTest extends ExtendedITextTest {
     private final static String SOURCE_FILE = "./src/test/resources/com/itextpdf/io/source/RAF.txt";
 
@@ -46,7 +45,7 @@ public class RAFRandomAccessSourceTest extends ExtendedITextTest {
         try (RandomAccessFile raf = FileUtil.getRandomAccessFile(file)) {
             RAFRandomAccessSource source = new RAFRandomAccessSource(raf);
             for (int i = 0; i < content.length; i++) {
-                Assert.assertEquals(content[i], source.get(i));
+                Assertions.assertEquals(content[i], source.get(i));
             }
         }
     }
@@ -58,8 +57,8 @@ public class RAFRandomAccessSourceTest extends ExtendedITextTest {
 
         try (RandomAccessFile raf = FileUtil.getRandomAccessFile(file)) {
             RAFRandomAccessSource source = new RAFRandomAccessSource(raf);
-            Assert.assertNotEquals(-1, source.get(indexOutOfBounds - 1));
-            Assert.assertEquals(-1, source.get(indexOutOfBounds));
+            Assertions.assertNotEquals(-1, source.get(indexOutOfBounds - 1));
+            Assertions.assertEquals(-1, source.get(indexOutOfBounds));
         }
     }
 
@@ -75,9 +74,9 @@ public class RAFRandomAccessSourceTest extends ExtendedITextTest {
 
             int read = source.get(beginIndex, dest, 0, length);
 
-            Assert.assertEquals(length, read);
+            Assertions.assertEquals(length, read);
             for (int i = 0; i < length; i++) {
-                Assert.assertEquals(content[beginIndex + i], dest[i]);
+                Assertions.assertEquals(content[beginIndex + i], dest[i]);
             }
         }
     }
@@ -94,9 +93,9 @@ public class RAFRandomAccessSourceTest extends ExtendedITextTest {
             byte[] dest = new byte[24];
 
             int read = source.get(beginIndex, dest, 0, length);
-            Assert.assertEquals(expectedLength, read);
+            Assertions.assertEquals(expectedLength, read);
             for (int i = 0; i < expectedLength; i++) {
-                Assert.assertEquals(content[beginIndex + i], dest[i]);
+                Assertions.assertEquals(content[beginIndex + i], dest[i]);
             }
         }
     }
@@ -114,9 +113,9 @@ public class RAFRandomAccessSourceTest extends ExtendedITextTest {
 
             int read = source.get(beginIndex, dest, offset, length);
 
-            Assert.assertEquals(length, read);
+            Assertions.assertEquals(length, read);
             for (int i = 0; i < length; i++) {
-                Assert.assertEquals(content[beginIndex + i], dest[offset + i]);
+                Assertions.assertEquals(content[beginIndex + i], dest[offset + i]);
             }
         }
     }
@@ -133,9 +132,9 @@ public class RAFRandomAccessSourceTest extends ExtendedITextTest {
 
             int read = source.get(beginIndex, dest, 0, length);
 
-            Assert.assertEquals(-1, read);
+            Assertions.assertEquals(-1, read);
             for (int i = 0; i < dest.length; i++) {
-                Assert.assertEquals(0, dest[i]);
+                Assertions.assertEquals(0, dest[i]);
             }
         }
     }

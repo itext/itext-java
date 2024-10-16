@@ -71,12 +71,12 @@ public class ComboBoxField extends AbstractSelectField {
      * @throws IndexOutOfBoundsException if the index is out of bounds.
      */
     public ComboBoxField setSelected(int index) {
-        if (index < 0 || index >= this.getItems().size()) {
+        if (index < 0 || index >= this.getOptions().size()) {
             String message = MessageFormatUtil.format(FormsExceptionMessageConstant.INDEX_OUT_OF_BOUNDS, index,
-                    this.getItems().size());
+                    this.getOptions().size());
             throw new IndexOutOfBoundsException(message);
         }
-        setSelected(this.getItems().get(index));
+        setSelected(this.getOptions().get(index));
         return this;
     }
 
@@ -91,7 +91,7 @@ public class ComboBoxField extends AbstractSelectField {
         clearSelected();
         selectedExportValue = value;
         boolean found = false;
-        for (SelectFieldItem option : this.getItems()) {
+        for (SelectFieldItem option : this.getOptions()) {
             if (option.getExportValue().equals(value)) {
                 if (!found) {
                     option.getElement().setProperty(FormProperty.FORM_FIELD_SELECTED, true);
@@ -128,7 +128,7 @@ public class ComboBoxField extends AbstractSelectField {
     @Override
     public void addOption(SelectFieldItem option) {
         boolean found = false;
-        for (SelectFieldItem item : this.getItems()) {
+        for (SelectFieldItem item : this.getOptions()) {
             if (item.getExportValue().equals(option.getExportValue())) {
                 found = true;
                 break;
@@ -150,7 +150,7 @@ public class ComboBoxField extends AbstractSelectField {
         if (selectedExportValue == null) {
             return null;
         }
-        for (SelectFieldItem option : this.getItems()) {
+        for (SelectFieldItem option : this.getOptions()) {
             if (option.getExportValue().equals(selectedExportValue)) {
                 return option;
             }
@@ -177,7 +177,7 @@ public class ComboBoxField extends AbstractSelectField {
 
     private void clearSelected() {
         this.selectedExportValue = null;
-        for (SelectFieldItem option : this.getItems()) {
+        for (SelectFieldItem option : this.getOptions()) {
             option.getElement().deleteOwnProperty(FormProperty.FORM_FIELD_SELECTED);
         }
     }

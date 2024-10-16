@@ -33,16 +33,15 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class AddTextMarkupAnnotationTest extends ExtendedITextTest {
 
     public static final String sourceFolder =
@@ -50,12 +49,12 @@ public class AddTextMarkupAnnotationTest extends ExtendedITextTest {
     public static final String destinationFolder =
             "./target/test/com/itextpdf/kernel/pdf/annot/AddTextMarkupAnnotationTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -94,7 +93,7 @@ public class AddTextMarkupAnnotationTest extends ExtendedITextTest {
                 .compareByContent(filename, sourceFolder + "cmp_textMarkupAnnotation01.pdf", destinationFolder,
                         "diff_");
         if (errorMessage != null) {
-            Assert.assertNull(errorMessage);
+            Assertions.assertNull(errorMessage);
         }
     }
 
@@ -132,7 +131,7 @@ public class AddTextMarkupAnnotationTest extends ExtendedITextTest {
                 .compareByContent(filename, sourceFolder + "cmp_textMarkupAnnotation02.pdf", destinationFolder,
                         "diff_");
         if (errorMessage != null) {
-            Assert.assertNull(errorMessage);
+            Assertions.assertNull(errorMessage);
         }
     }
 
@@ -170,7 +169,7 @@ public class AddTextMarkupAnnotationTest extends ExtendedITextTest {
                 .compareByContent(filename, sourceFolder + "cmp_textMarkupAnnotation03.pdf", destinationFolder,
                         "diff_");
         if (errorMessage != null) {
-            Assert.assertNull(errorMessage);
+            Assertions.assertNull(errorMessage);
         }
     }
 
@@ -208,7 +207,7 @@ public class AddTextMarkupAnnotationTest extends ExtendedITextTest {
                 .compareByContent(filename, sourceFolder + "cmp_textMarkupAnnotation04.pdf", destinationFolder,
                         "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 }

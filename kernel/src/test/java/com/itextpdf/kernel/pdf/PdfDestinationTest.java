@@ -37,35 +37,34 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfDestinationTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfDestinationTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfDestinationTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -215,9 +214,9 @@ public class PdfDestinationTest extends ExtendedITextTest {
         try {
             PdfAction.createGoToR(new PdfStringFS("Some fake destination"),
                     PdfStructureDestination.createFit(imgElement));
-            Assert.fail("Exception not thrown");
+            Assertions.fail("Exception not thrown");
         } catch (IllegalArgumentException e) {
-            Assert.assertEquals("Structure destinations shall specify structure element ID in remote go-to actions. Structure element that has no ID is specified instead", e.getMessage());
+            Assertions.assertEquals("Structure destinations shall specify structure element ID in remote go-to actions. Structure element that has no ID is specified instead", e.getMessage());
         }
 
         document.close();
@@ -274,7 +273,7 @@ public class PdfDestinationTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(srcFile));
         PdfObject destObj = ((PdfLinkAnnotation) pdfDocument.getPage(2).getAnnotations().get(0)).getAction().get(PdfName.D);
         PdfDestination destWrapper = PdfDestination.makeDestination(destObj);
-        Assert.assertEquals(PdfStructureDestination.class, destWrapper.getClass());
+        Assertions.assertEquals(PdfStructureDestination.class, destWrapper.getClass());
     }
 
     @Test
@@ -336,9 +335,9 @@ public class PdfDestinationTest extends ExtendedITextTest {
         try {
             PdfAction.createGoToR(new PdfStringFS("Some fake destination"),
                     PdfExplicitDestination.createFitB(document.getPage(1)));
-            Assert.fail("Exception not thrown");
+            Assertions.fail("Exception not thrown");
         } catch (IllegalArgumentException e) {
-            Assert.assertEquals("Explicit destinations shall specify page number in remote go-to actions instead of page dictionary", e.getMessage());
+            Assertions.assertEquals("Explicit destinations shall specify page number in remote go-to actions instead of page dictionary", e.getMessage());
         }
         document.close();
     }
@@ -406,7 +405,7 @@ public class PdfDestinationTest extends ExtendedITextTest {
                     .copyDestination(null, new HashMap<PdfPage, PdfPage>(), pdfDocument);
 
             // We expect null to be returned if the destination to be copied is null
-            Assert.assertNull(copiedDestination);
+            Assertions.assertNull(copiedDestination);
         }
     }
 }

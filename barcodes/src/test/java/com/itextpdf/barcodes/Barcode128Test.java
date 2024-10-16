@@ -31,28 +31,27 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class Barcode128Test extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/barcodes/";
     public static final String destinationFolder = "./target/test/com/itextpdf/barcodes/Barcode128/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -75,7 +74,7 @@ public class Barcode128Test extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -96,12 +95,12 @@ public class Barcode128Test extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
     }
 
     @Test
     public void barcodeRawValueGenerationTest01() {
-        Assert.assertEquals(new String(new byte[] {103, 17, 18, 19, 20, 21, 17, 18, 19, 20, 21}), Barcode128.getRawText("1234512345", false, Barcode128.Barcode128CodeSet.A));
+        Assertions.assertEquals(new String(new byte[] {103, 17, 18, 19, 20, 21, 17, 18, 19, 20, 21}), Barcode128.getRawText("1234512345", false, Barcode128.Barcode128CodeSet.A));
     }
 
 }

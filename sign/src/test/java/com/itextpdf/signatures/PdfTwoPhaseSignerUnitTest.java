@@ -26,6 +26,7 @@ import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -33,19 +34,18 @@ import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.Security;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-@Category(BouncyCastleUnitTest.class)
+@Tag("BouncyCastleUnitTest")
 public class PdfTwoPhaseSignerUnitTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
@@ -59,7 +59,7 @@ public class PdfTwoPhaseSignerUnitTest extends ExtendedITextTest {
     private static final char[] PASSWORD = "testpassphrase".toCharArray();
 
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         Security.addProvider(FACTORY.getProvider());
         createOrClearDestinationFolder(DESTINATION_FOLDER);
@@ -81,7 +81,7 @@ public class PdfTwoPhaseSignerUnitTest extends ExtendedITextTest {
         PdfDocument resultDoc = new PdfDocument(resultReader);
         SignatureUtil signatureUtil = new SignatureUtil(resultDoc);
         PdfSignature signature = signatureUtil.getSignature(fieldName);
-        Assert.assertEquals(estimatedSize, signature.getContents().getValueBytes().length);
+        Assertions.assertEquals(estimatedSize, signature.getContents().getValueBytes().length);
     }
 
 
@@ -103,7 +103,7 @@ public class PdfTwoPhaseSignerUnitTest extends ExtendedITextTest {
         PdfDocument resultDoc = new PdfDocument(resultReader);
         SignatureUtil signatureUtil = new SignatureUtil(resultDoc);
         PdfSignature signature = signatureUtil.getSignature(fieldName);
-        Assert.assertEquals(estimatedSize, signature.getContents().getValueBytes().length);
+        Assertions.assertEquals(estimatedSize, signature.getContents().getValueBytes().length);
     }
 
     @Test
@@ -133,7 +133,7 @@ public class PdfTwoPhaseSignerUnitTest extends ExtendedITextTest {
         PdfSignature signature = signatureUtil.getSignature(fieldName);
         byte[] content = signature.getContents().getValueBytes();
         for (int i = 0; i < testData.length; i++) {
-            Assert.assertEquals(testData[i], content[i]);
+            Assertions.assertEquals(testData[i], content[i]);
         }
     }
 

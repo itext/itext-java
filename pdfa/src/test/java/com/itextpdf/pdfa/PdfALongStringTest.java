@@ -26,7 +26,7 @@ import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
@@ -34,23 +34,22 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfALongStringTest extends ExtendedITextTest {
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
     private static final String destinationFolder = "./target/test/com/itextpdf/pdfa/PdfALongStringTest/";
     private static final String LOREM_IPSUM = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis condimentum, tortor sit amet fermentum pharetra, sem felis finibus enim, vel consectetur nunc justo at nisi. In hac habitasse platea dictumst. Donec quis suscipit eros. Nam urna purus, scelerisque in placerat in, convallis vel sapien. Suspendisse sed lacus sit amet orci ornare vulputate. In hac habitasse platea dictumst. Ut eu aliquet felis, at consectetur neque.";
     private static final int STRING_LENGTH_LIMIT = 32767;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
@@ -61,7 +60,7 @@ public class PdfALongStringTest extends ExtendedITextTest {
         String filename = destinationFolder + file;
         try (InputStream icm = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
                 OutputStream fos = FileUtil.getFileOutputStream(filename)) {
-            Document document = new Document(new PdfADocument(new PdfWriter(fos), PdfAConformanceLevel.PDF_A_3U,
+            Document document = new Document(new PdfADocument(new PdfWriter(fos), PdfAConformance.PDF_A_3U,
                     new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB ICC preference", icm))
             );
             StringBuilder stringBuilder = new StringBuilder(LOREM_IPSUM);
@@ -79,8 +78,8 @@ public class PdfALongStringTest extends ExtendedITextTest {
             // when document is closing, ISO conformance check is performed
             // this document contain a string which is longer than it is allowed
             // per specification. That is why conformance exception should be thrown
-            Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> document.close());
-            Assert.assertEquals(PdfaExceptionMessageConstant.PDF_STRING_IS_TOO_LONG, e.getMessage());
+            Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> document.close());
+            Assertions.assertEquals(PdfaExceptionMessageConstant.PDF_STRING_IS_TOO_LONG, e.getMessage());
         }
     }
 }

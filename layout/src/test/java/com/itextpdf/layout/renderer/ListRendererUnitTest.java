@@ -36,17 +36,16 @@ import com.itextpdf.layout.properties.ListSymbolPosition;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class ListRendererUnitTest extends RendererUnitTest {
 
     @Test
@@ -58,7 +57,7 @@ public class ListRendererUnitTest extends RendererUnitTest {
             // Nothing is overridden
         };
 
-        Assert.assertEquals(ListRenderer.class, listRenderer.getNextRenderer().getClass());
+        Assertions.assertEquals(ListRenderer.class, listRenderer.getNextRenderer().getClass());
     }
 
     @Test
@@ -91,7 +90,7 @@ public class ListRendererUnitTest extends RendererUnitTest {
         result.getSplitRenderer().draw(new DrawContext(document.getPdfDocument(), new PdfCanvas(pdfPage)));
 
         // only split part is drawn, list symbol is expected to be drawn only once.
-        Assert.assertEquals(1, invocationsCounter.getInvocationsCount());
+        Assertions.assertEquals(1, invocationsCounter.getInvocationsCount());
     }
 
     @Test
@@ -120,7 +119,7 @@ public class ListRendererUnitTest extends RendererUnitTest {
         Pattern regex = Pattern.compile("^.-.*?-.*$");
         java.util.List<IRenderer> childRenderers = listRenderer.getChildRenderers();
 
-        Assert.assertEquals(0, childRenderers.stream()
+        Assertions.assertEquals(0, childRenderers.stream()
                 .filter(listitem -> regex.matcher(listitem.toString()).matches()).count());
     }
 

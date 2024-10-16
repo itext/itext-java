@@ -29,48 +29,47 @@ import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfStructureAttributes;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class AccessibilityPropertiesTest extends ExtendedITextTest {
 
     @Test
     public void setAccessibilityPropertiesTest() {
         AccessibilityProperties properties = new AccessibilityProperties() {
         };
-        Assert.assertNotNull(properties.setRole(StandardRoles.DIV));
-        Assert.assertNotNull(properties.setLanguage("EN-GB"));
-        Assert.assertNotNull(properties.setActualText("actualText"));
-        Assert.assertNotNull(properties.setAlternateDescription("Description"));
-        Assert.assertNotNull(properties.setExpansion("expansion"));
-        Assert.assertNotNull(properties.setPhoneme("phoneme"));
-        Assert.assertNotNull(properties.setPhoneticAlphabet("Phonetic Alphabet"));
-        Assert.assertNotNull(properties.setNamespace(new PdfNamespace("Namespace")));
-        Assert.assertNotNull(properties.getRefsList());
-        Assert.assertNotNull(properties.clearRefs());
-        Assert.assertNotNull(properties.addAttributes(new PdfStructureAttributes("attributes")));
-        Assert.assertNotNull(properties.addAttributes(0, new PdfStructureAttributes("attributes")));
-        Assert.assertNotNull(properties.clearAttributes());
-        Assert.assertNotNull(properties.getAttributesList());
-        Assert.assertNotNull(properties.addRef(new TagTreePointer(createTestDocument())));
+        Assertions.assertNotNull(properties.setRole(StandardRoles.DIV));
+        Assertions.assertNotNull(properties.setLanguage("EN-GB"));
+        Assertions.assertNotNull(properties.setActualText("actualText"));
+        Assertions.assertNotNull(properties.setAlternateDescription("Description"));
+        Assertions.assertNotNull(properties.setExpansion("expansion"));
+        Assertions.assertNotNull(properties.setPhoneme("phoneme"));
+        Assertions.assertNotNull(properties.setPhoneticAlphabet("Phonetic Alphabet"));
+        Assertions.assertNotNull(properties.setNamespace(new PdfNamespace("Namespace")));
+        Assertions.assertNotNull(properties.getRefsList());
+        Assertions.assertNotNull(properties.clearRefs());
+        Assertions.assertNotNull(properties.addAttributes(new PdfStructureAttributes("attributes")));
+        Assertions.assertNotNull(properties.addAttributes(0, new PdfStructureAttributes("attributes")));
+        Assertions.assertNotNull(properties.clearAttributes());
+        Assertions.assertNotNull(properties.getAttributesList());
+        Assertions.assertNotNull(properties.addRef(new TagTreePointer(createTestDocument())));
     }
 
     @Test
     public void getAccessibilityPropertiesTest() {
         AccessibilityProperties properties = new AccessibilityProperties() {
         };
-        Assert.assertNull(properties.getRole());
-        Assert.assertNull(properties.getLanguage());
-        Assert.assertNull(properties.getActualText());
-        Assert.assertNull(properties.getAlternateDescription());
-        Assert.assertNull(properties.getExpansion());
-        Assert.assertNull(properties.getPhoneme());
-        Assert.assertNull(properties.getPhoneticAlphabet());
-        Assert.assertNull(properties.getNamespace());
+        Assertions.assertNull(properties.getRole());
+        Assertions.assertNull(properties.getLanguage());
+        Assertions.assertNull(properties.getActualText());
+        Assertions.assertNull(properties.getAlternateDescription());
+        Assertions.assertNull(properties.getExpansion());
+        Assertions.assertNull(properties.getPhoneme());
+        Assertions.assertNull(properties.getPhoneticAlphabet());
+        Assertions.assertNull(properties.getNamespace());
     }
 
     private static PdfDocument createTestDocument() {

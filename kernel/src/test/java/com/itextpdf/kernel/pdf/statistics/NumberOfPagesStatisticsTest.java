@@ -30,30 +30,29 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class NumberOfPagesStatisticsTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/statistics/NumberOfPagesStatisticsTest/";
 
     private static NumberOfPagesStatisticsHandler handler = new NumberOfPagesStatisticsHandler();
 
-    @Before
+    @BeforeEach
     public void registerHandler() {
         EventManager.getInstance().register(handler);
     }
 
-    @After
+    @AfterEach
     public void unregisterHandler() {
         EventManager.getInstance().unregister(handler);
         handler.clearNumberOfPagesEvents();
@@ -67,8 +66,8 @@ public class NumberOfPagesStatisticsTest extends ExtendedITextTest {
 
         List<NumberOfPagesStatisticsEvent> numberOfPagesEvents = handler.getNumberOfPagesEvents();
 
-        Assert.assertEquals(1, numberOfPagesEvents.size());
-        Assert.assertEquals(1, numberOfPagesEvents.get(0).getNumberOfPages());
+        Assertions.assertEquals(1, numberOfPagesEvents.size());
+        Assertions.assertEquals(1, numberOfPagesEvents.get(0).getNumberOfPages());
     }
 
     @Test
@@ -80,19 +79,19 @@ public class NumberOfPagesStatisticsTest extends ExtendedITextTest {
 
         List<NumberOfPagesStatisticsEvent> numberOfPagesEvents = handler.getNumberOfPagesEvents();
 
-        Assert.assertEquals(1, numberOfPagesEvents.size());
-        Assert.assertEquals(2, numberOfPagesEvents.get(0).getNumberOfPages());
+        Assertions.assertEquals(1, numberOfPagesEvents.size());
+        Assertions.assertEquals(2, numberOfPagesEvents.get(0).getNumberOfPages());
     }
 
     @Test
     public void pdfDocumentWithReaderTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "document.pdf"))) {
-            Assert.assertNotNull(document.getPage(1));
+            Assertions.assertNotNull(document.getPage(1));
         }
 
         List<NumberOfPagesStatisticsEvent> numberOfPagesEvents = handler.getNumberOfPagesEvents();
 
-        Assert.assertTrue(numberOfPagesEvents.isEmpty());
+        Assertions.assertTrue(numberOfPagesEvents.isEmpty());
     }
 
     @Test
@@ -113,10 +112,10 @@ public class NumberOfPagesStatisticsTest extends ExtendedITextTest {
 
         List<NumberOfPagesStatisticsEvent> numberOfPagesEvents = handler.getNumberOfPagesEvents();
 
-        Assert.assertEquals(3, numberOfPagesEvents.size());
-        Assert.assertEquals(100, numberOfPagesEvents.get(0).getNumberOfPages());
-        Assert.assertEquals(10, numberOfPagesEvents.get(1).getNumberOfPages());
-        Assert.assertEquals(1, numberOfPagesEvents.get(2).getNumberOfPages());
+        Assertions.assertEquals(3, numberOfPagesEvents.size());
+        Assertions.assertEquals(100, numberOfPagesEvents.get(0).getNumberOfPages());
+        Assertions.assertEquals(10, numberOfPagesEvents.get(1).getNumberOfPages());
+        Assertions.assertEquals(1, numberOfPagesEvents.get(2).getNumberOfPages());
     }
 
     private static class NumberOfPagesStatisticsHandler implements IEventHandler {

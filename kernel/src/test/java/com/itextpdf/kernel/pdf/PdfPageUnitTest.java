@@ -26,15 +26,14 @@ import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 import static com.itextpdf.kernel.pdf.PageLabelNumberingStyle.DECIMAL_ARABIC_NUMERALS;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfPageUnitTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/PdfPageUnitTest/";
@@ -43,18 +42,18 @@ public class PdfPageUnitTest extends ExtendedITextTest {
     public void cannotGetMcidIfDocIsNotTagged() {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         PdfPage pdfPage = pdfDoc.addNewPage();
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> pdfPage.getNextMcid());
-        Assert.assertEquals(KernelExceptionMessageConstant.MUST_BE_A_TAGGED_DOCUMENT, exception.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.MUST_BE_A_TAGGED_DOCUMENT, exception.getMessage());
     }
 
     @Test
     public void cannotSetPageLabelIfFirstPageLessThanOneTest() {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         PdfPage pdfPage = pdfDoc.addNewPage();
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> pdfPage.setPageLabel(DECIMAL_ARABIC_NUMERALS, "test_prefix", 0));
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 KernelExceptionMessageConstant.IN_A_PAGE_LABEL_THE_PAGE_NUMBERS_MUST_BE_GREATER_OR_EQUAL_TO_1,
                 exception.getMessage());
     }
@@ -63,9 +62,9 @@ public class PdfPageUnitTest extends ExtendedITextTest {
     public void cannotFlushTagsIfNoTagStructureIsPresentTest() {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         PdfPage pdfPage = pdfDoc.addNewPage();
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> pdfPage.tryFlushPageTags());
-        Assert.assertEquals(KernelExceptionMessageConstant.TAG_STRUCTURE_FLUSHING_FAILED_IT_MIGHT_BE_CORRUPTED,
+        Assertions.assertEquals(KernelExceptionMessageConstant.TAG_STRUCTURE_FLUSHING_FAILED_IT_MIGHT_BE_CORRUPTED,
                 exception.getMessage());
     }
 
@@ -73,10 +72,10 @@ public class PdfPageUnitTest extends ExtendedITextTest {
     public void mediaBoxAttributeIsNotPresentTest() throws IOException {
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "mediaBoxAttributeIsNotPresentTest.pdf"));
         PdfObject mediaBox = pdfDoc.getPage(1).getPdfObject().get(PdfName.MediaBox);
-        Assert.assertNull(mediaBox);
+        Assertions.assertNull(mediaBox);
         PdfPage page = pdfDoc.getPage(1);
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> page.getMediaBox());
-        Assert.assertEquals(KernelExceptionMessageConstant.CANNOT_RETRIEVE_MEDIA_BOX_ATTRIBUTE, exception.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.CANNOT_RETRIEVE_MEDIA_BOX_ATTRIBUTE, exception.getMessage());
     }
 }

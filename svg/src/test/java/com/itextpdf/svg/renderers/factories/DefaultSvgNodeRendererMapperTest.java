@@ -23,13 +23,12 @@
 package com.itextpdf.svg.renderers.factories;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class DefaultSvgNodeRendererMapperTest extends ExtendedITextTest {
 
     private DefaultSvgNodeRendererMapper mapper = new DefaultSvgNodeRendererMapper();
@@ -37,12 +36,12 @@ public class DefaultSvgNodeRendererMapperTest extends ExtendedITextTest {
     @Test
     public void mapperNotEmptyTest() {
         boolean result = mapper.getMapping().isEmpty();
-        Assert.assertFalse(result);
+        Assertions.assertFalse(result);
     }
 
     @Test
     public void ignoredTagsNotEmptyTest() {
         boolean result = mapper.getIgnoredTags().isEmpty();
-        Assert.assertFalse(result);
+        Assertions.assertFalse(result);
     }
 }

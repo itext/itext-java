@@ -39,19 +39,16 @@ import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.CompressionConstants;
 import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
-import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
-import com.itextpdf.kernel.pdf.PdfUAConformanceLevel;
-import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.action.PdfMediaClipData;
 import com.itextpdf.kernel.pdf.action.PdfRendition;
@@ -78,7 +75,6 @@ import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.Link;
@@ -89,17 +85,16 @@ import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfUAAnnotationsTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfua/PdfUAAnnotationsTest/";
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfua/PdfUAAnnotationsTest/";
@@ -107,12 +102,12 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
 
     private UaValidationTestFramework framework;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
-    @Before
+    @BeforeEach
     public void initializeFramework() {
         framework = new UaValidationTestFramework(DESTINATION_FOLDER);
     }
@@ -143,7 +138,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             PdfAcroForm acroForm = PdfFormCreator.getAcroForm(pdfDoc, true);
             PdfButtonFormField checkBox = new CheckBoxFormFieldBuilder(pdfDoc, "checkbox")
                     .setWidgetRectangle(new Rectangle(10, 650, 40, 20))
-                    .setGenericConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
+                    .setConformance(PdfConformance.PDF_UA_1)
                     .createCheckBox();
 
             checkBox.setAlternativeName("widget");
@@ -194,8 +189,8 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
 
         try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(outPdf))) {
             final IStructureNode docNode = pdfDoc.getStructTreeRoot().getKids().get(0);
-            Assert.assertEquals(PdfName.Document, docNode.getRole());
-            Assert.assertEquals(PdfName.PrinterMark, ((PdfObjRef) docNode.getKids().get(0)).getReferencedObject().get(PdfName.Subtype));
+            Assertions.assertEquals(PdfName.Document, docNode.getRole());
+            Assertions.assertEquals(PdfName.PrinterMark, ((PdfObjRef) docNode.getKids().get(0)).getReferencedObject().get(PdfName.Subtype));
         }
     }
 
@@ -275,7 +270,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
         AssertUtil.doesNotThrow(() -> {
             pdfDoc.close();
         });
-        Assert.assertNull(new CompareTool().compareByContent(outPdf,
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf,
                 SOURCE_FOLDER + "cmp_ua1StampAnnotWithAltTest.pdf",
                 DESTINATION_FOLDER, "diff_"));
     }
@@ -291,7 +286,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
         AssertUtil.doesNotThrow(() -> {
                     pdfDoc.close();
                 });
-        Assert.assertNull(new CompareTool().compareByContent(outPdf,
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf,
                 SOURCE_FOLDER + "cmp_ua1ScreenAnnotWithAltTest.pdf",
                 DESTINATION_FOLDER, "diff_"));
     }
@@ -402,7 +397,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             // The rest of the tests for widgets can be found in com.itextpdf.pdfua.checkers.PdfUAFormFieldsTest
             PdfFormField button = new PushButtonFormFieldBuilder(pdfDoc, "push button")
                     .setWidgetRectangle(new Rectangle(10, 650, 40, 20))
-                    .setGenericConformanceLevel(PdfUAConformanceLevel.PDFUA_1)
+                    .setConformance(PdfConformance.PDF_UA_1)
                     .setFont(loadFont())
                     .createPushButton();
 
@@ -587,7 +582,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
         screen.setContents("screen annotation");
         page.addAnnotation(screen);
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outPdf,
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf,
                 SOURCE_FOLDER + "cmp_screenAnnotationWithBEMediaDataTest.pdf",
                 DESTINATION_FOLDER, "diff_"));
         //Verapdf throws runtime exception, so we don't do this check here.
@@ -621,7 +616,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
         screen.setContents("screen annotation");
         page.addAnnotation(screen);
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outPdf,
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf,
                 SOURCE_FOLDER + "cmp_screenAnnotationWithMHMediaDataTest.pdf",
                 DESTINATION_FOLDER, "diff_"));
         //Verapdf throws runtime exception, so we don't do this check here.
@@ -654,10 +649,10 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
         screen.setContents("screen annotation");
         page.addAnnotation(screen);
 
-        Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> {
             pdfDoc.close();
         });
-        Assert.assertEquals(PdfUAExceptionMessageConstants.CT_OR_ALT_ENTRY_IS_MISSING_IN_MEDIA_CLIP, e.getMessage());
+        Assertions.assertEquals(PdfUAExceptionMessageConstants.CT_OR_ALT_ENTRY_IS_MISSING_IN_MEDIA_CLIP, e.getMessage());
         //Verapdf throws runtime exception, so we don't do this check here.
     }
 
@@ -723,9 +718,9 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
         PdfLinkAnnotation annot = new PdfLinkAnnotation(rect).setAction(PdfAction.createURI("https://itextpdf.com/"));
         annot.setContents("link annot");
         page.addAnnotation(annot);
-        Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> pdfDoc.close());
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> pdfDoc.close());
         // VeraPdf doesn't complain, but the document is invalid, so it is also accepted behaviour
-        Assert.assertEquals(PdfUAExceptionMessageConstants.LINK_ANNOT_IS_NOT_NESTED_WITHIN_LINK, e.getMessage());
+        Assertions.assertEquals(PdfUAExceptionMessageConstants.LINK_ANNOT_IS_NOT_NESTED_WITHIN_LINK, e.getMessage());
     }
 
     @Test

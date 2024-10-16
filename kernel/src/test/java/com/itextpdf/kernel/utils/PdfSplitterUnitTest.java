@@ -28,21 +28,20 @@ import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfSplitterUnitTest extends ExtendedITextTest {
 
     @Test
     public void splitDocumentThatIsBeingWrittenTest() {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> new PdfSplitter(pdfDocument));
-        Assert.assertEquals(KernelExceptionMessageConstant.CANNOT_SPLIT_DOCUMENT_THAT_IS_BEING_WRITTEN,
+        Assertions.assertEquals(KernelExceptionMessageConstant.CANNOT_SPLIT_DOCUMENT_THAT_IS_BEING_WRITTEN,
                 exception.getMessage());
     }
 }

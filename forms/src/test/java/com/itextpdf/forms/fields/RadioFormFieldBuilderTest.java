@@ -25,8 +25,8 @@ package com.itextpdf.forms.fields;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -38,16 +38,15 @@ import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class RadioFormFieldBuilderTest extends ExtendedITextTest {
 
     private static final PdfDocument DUMMY_DOCUMENT = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
@@ -60,8 +59,8 @@ public class RadioFormFieldBuilderTest extends ExtendedITextTest {
     @Test
     public void twoParametersConstructorTest() {
         RadioFormFieldBuilder builder = new RadioFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
-        Assert.assertSame(DUMMY_DOCUMENT, builder.getDocument());
-        Assert.assertSame(DUMMY_NAME, builder.getFormFieldName());
+        Assertions.assertSame(DUMMY_DOCUMENT, builder.getDocument());
+        Assertions.assertSame(DUMMY_NAME, builder.getFormFieldName());
     }
 
     @Test
@@ -92,10 +91,10 @@ public class RadioFormFieldBuilderTest extends ExtendedITextTest {
     @Test
     public void createRadioButtonWithEmptyAppearanceNameThrowsExceptionTest() {
         RadioFormFieldBuilder builder = new RadioFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
-        Assert.assertThrows(PdfException.class, () -> {
+        Assertions.assertThrows(PdfException.class, () -> {
             builder.createRadioButton(null, DUMMY_RECTANGLE);
         });
-        Assert.assertThrows(PdfException.class, () -> {
+        Assertions.assertThrows(PdfException.class, () -> {
             builder.createRadioButton("", DUMMY_RECTANGLE);
         });
 
@@ -126,7 +125,7 @@ public class RadioFormFieldBuilderTest extends ExtendedITextTest {
 
         compareRadioButtons(radioAnnotation, radioGroup, true);
         compareRadioButtons(radioAnnotation2, radioGroup, true);
-        Assert.assertEquals(2, radioGroup.getWidgets().size());
+        Assertions.assertEquals(2, radioGroup.getWidgets().size());
     }
 
 
@@ -144,11 +143,11 @@ public class RadioFormFieldBuilderTest extends ExtendedITextTest {
         radioGroup.addKid(radioAnnotation);
         radioGroup.addKid(radioAnnotation2);
 
-        Assert.assertEquals(PdfFormAnnotation.OFF_STATE_VALUE, radioAnnotation2.getAppearanceStates()[0]);
-        Assert.assertEquals(DUMMY_APPEARANCE_NAME,  radioAnnotation.getPdfObject().getAsName(PdfName.AS).getValue());
+        Assertions.assertEquals(PdfFormAnnotation.OFF_STATE_VALUE, radioAnnotation2.getAppearanceStates()[0]);
+        Assertions.assertEquals(DUMMY_APPEARANCE_NAME,  radioAnnotation.getPdfObject().getAsName(PdfName.AS).getValue());
         compareRadioButtons(radioAnnotation, radioGroup, true);
         compareRadioButtons(radioAnnotation2, radioGroup, true);
-        Assert.assertEquals(2, radioGroup.getWidgets().size());
+        Assertions.assertEquals(2, radioGroup.getWidgets().size());
     }
 
     @Test
@@ -164,7 +163,7 @@ public class RadioFormFieldBuilderTest extends ExtendedITextTest {
     @Test
     public void createRadioButtonWithoutWidgetThrowsExceptionTest() {
         RadioFormFieldBuilder builder = new RadioFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
-        Assert.assertThrows(PdfException.class,()->{
+        Assertions.assertThrows(PdfException.class,()->{
             PdfFormAnnotation radioAnnotation = builder
                     .createRadioButton(DUMMY_APPEARANCE_NAME, null);
         });
@@ -175,7 +174,7 @@ public class RadioFormFieldBuilderTest extends ExtendedITextTest {
         RadioFormFieldBuilder builder = new RadioFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
         PdfButtonFormField radioGroup = builder.createRadioGroup();
         PdfFormAnnotation radioAnnotation = builder
-                .setGenericConformanceLevel(PdfAConformanceLevel.PDF_A_1A)
+                .setConformance(PdfConformance.PDF_A_1A)
                 .createRadioButton(DUMMY_APPEARANCE_NAME, DUMMY_RECTANGLE);
         compareRadioButtons(radioAnnotation, radioGroup, false);
     }
@@ -186,7 +185,7 @@ public class RadioFormFieldBuilderTest extends ExtendedITextTest {
         RadioFormFieldBuilder builder = new RadioFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
         PdfButtonFormField radioGroup = builder.createRadioGroup();
         PdfFormAnnotation radioAnnotation = builder
-                .setGenericConformanceLevel(PdfAConformanceLevel.PDF_A_1A)
+                .setConformance(PdfConformance.PDF_A_1A)
                 .createRadioButton(DUMMY_APPEARANCE_NAME, DUMMY_RECTANGLE);
         radioGroup.addKid(radioAnnotation);
         compareRadioButtons(radioAnnotation, radioGroup, true);
@@ -201,7 +200,7 @@ public class RadioFormFieldBuilderTest extends ExtendedITextTest {
 
         expectedDictionary.makeIndirect(DUMMY_DOCUMENT);
         radioGroupFormField.makeIndirect(DUMMY_DOCUMENT);
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareDictionariesStructure(expectedDictionary, radioGroupFormField.getPdfObject()));
     }
 
@@ -214,7 +213,7 @@ public class RadioFormFieldBuilderTest extends ExtendedITextTest {
 
                     .createRadioButton(DUMMY_APPEARANCE_NAME, DUMMY_RECTANGLE);
             form.addField(radioGroup);
-            Assert.assertTrue(PdfFormAnnotationUtil.isPureWidget(radioAnnotation.getPdfObject()));
+            Assertions.assertTrue(PdfFormAnnotationUtil.isPureWidget(radioAnnotation.getPdfObject()));
         }
     }
 
@@ -227,8 +226,8 @@ public class RadioFormFieldBuilderTest extends ExtendedITextTest {
 
                     .createRadioButton(DUMMY_APPEARANCE_NAME, DUMMY_RECTANGLE);
             form.addField(radioGroup);
-            Assert.assertNull(radioGroup.getPdfObject().get(PdfName.Kids));
-            Assert.assertEquals(0, radioGroup.getWidgets().size());
+            Assertions.assertNull(radioGroup.getPdfObject().get(PdfName.Kids));
+            Assertions.assertEquals(0, radioGroup.getWidgets().size());
         }
     }
 
@@ -244,9 +243,9 @@ public class RadioFormFieldBuilderTest extends ExtendedITextTest {
             radioGroup.addKid(radioAnnotation);
             form.addField(radioGroup);
             //In the previous implementation the radio buttons got added as kids, we want to avoid this
-            Assert.assertNull(radioGroup.getKids());
+            Assertions.assertNull(radioGroup.getKids());
             // It should now contain one single radio button
-            Assert.assertEquals(1, radioGroup.getWidgets().size());
+            Assertions.assertEquals(1, radioGroup.getWidgets().size());
         }
     }
 
@@ -262,9 +261,9 @@ public class RadioFormFieldBuilderTest extends ExtendedITextTest {
         // if a rectangle is assigned in the builder than we should check it
         if (radioButtonFormField.getWidget().getRectangle() != null
                 && radioButtonFormField.getWidget().getRectangle().toRectangle() != null) {
-            Assert.assertEquals(1, widgets.size());
+            Assertions.assertEquals(1, widgets.size());
             PdfWidgetAnnotation annotation = widgets.get(0);
-            Assert.assertTrue(DUMMY_RECTANGLE.equalsWithEpsilon(annotation.getRectangle().toRectangle()));
+            Assertions.assertTrue(DUMMY_RECTANGLE.equalsWithEpsilon(annotation.getRectangle().toRectangle()));
             putIfAbsent(expectedDictionary, PdfName.Rect, new PdfArray(DUMMY_RECTANGLE));
 
             // if the radiobutton has been added to the radiogroup we expect the AP to be generated
@@ -273,9 +272,8 @@ public class RadioFormFieldBuilderTest extends ExtendedITextTest {
                         radioButtonFormField.getPdfObject().getAsDictionary(PdfName.AP));
             }
         }
-        if (radioButtonFormField.pdfConformanceLevel != null) {
-            putIfAbsent(expectedDictionary, PdfName.F,
-                    new PdfNumber(PdfAnnotation.PRINT));
+        if (radioButtonFormField.pdfConformance != null && radioButtonFormField.pdfConformance.isPdfAOrUa()) {
+            putIfAbsent(expectedDictionary, PdfName.F, new PdfNumber(PdfAnnotation.PRINT));
         }
         // for the AS key if it's added to the group we expect it to be off or the value if the radiogroup was selected
         // if its was not added we expect it to be the value
@@ -296,7 +294,7 @@ public class RadioFormFieldBuilderTest extends ExtendedITextTest {
         expectedDictionary.makeIndirect(DUMMY_DOCUMENT);
         radioButtonFormField.makeIndirect(DUMMY_DOCUMENT);
 
-        Assert.assertNull(new CompareTool().compareDictionariesStructure(
+        Assertions.assertNull(new CompareTool().compareDictionariesStructure(
                 expectedDictionary, radioButtonFormField.getPdfObject()));
     }
 

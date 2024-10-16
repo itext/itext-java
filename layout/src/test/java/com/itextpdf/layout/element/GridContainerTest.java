@@ -44,23 +44,22 @@ import com.itextpdf.layout.properties.grid.PercentValue;
 import com.itextpdf.layout.properties.grid.PointValue;
 import com.itextpdf.layout.properties.grid.TemplateValue;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class GridContainerTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/GridContainerTest/";
     public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/GridContainerTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(DESTINATION_FOLDER);
     }
@@ -84,13 +83,33 @@ public class GridContainerTest extends ExtendedITextTest {
             }
             document.add(grid);
         }
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void borderBoxWithNoBordersTest() throws IOException, InterruptedException {
+        String filename = DESTINATION_FOLDER + "borderBoxWithNoBordersTest.pdf";
+        String cmpName = SOURCE_FOLDER + "cmp_borderBoxWithNoBordersTest.pdf";
+
+        java.util.List<TemplateValue> templateColumns = new ArrayList<>();
+        templateColumns.add(new PointValue(150.0f));
+        templateColumns.add(new PointValue(150.0f));
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+            GridContainer grid = new GridContainer();
+            grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, templateColumns);
+            Paragraph child = new Paragraph("First");
+            child.setProperty(Property.BOX_SIZING, BoxSizingPropertyValue.BORDER_BOX);
+            grid.add(child);
+            document.add(grid);
+        }
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
     public void basicTwoColumnsTest() throws IOException, InterruptedException {
-        String filename = DESTINATION_FOLDER + "basicTwoColumnsTest.pdf";
-        String cmpName = SOURCE_FOLDER + "cmp_basicTwoColumnsTest.pdf";
+        String filename = DESTINATION_FOLDER + "borderBoxChild.pdf";
+        String cmpName = SOURCE_FOLDER + "cmp_borderBoxChild.pdf";
 
         java.util.List<TemplateValue> templateColumns = new ArrayList<>();
         templateColumns.add(new PointValue(150.0f));
@@ -107,7 +126,7 @@ public class GridContainerTest extends ExtendedITextTest {
             grid.add(paragraph3);
             document.add(grid);
         }
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -131,7 +150,7 @@ public class GridContainerTest extends ExtendedITextTest {
             grid.add(paragraph3);
             document.add(grid);
         }
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -148,7 +167,7 @@ public class GridContainerTest extends ExtendedITextTest {
             }
             document.add(grid);
         }
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -169,7 +188,7 @@ public class GridContainerTest extends ExtendedITextTest {
             grid.add(new Paragraph("test").setBorder(border));
             document.add(grid);
         }
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -198,7 +217,7 @@ public class GridContainerTest extends ExtendedITextTest {
             grid.add(new Paragraph("Four").setBorder(border));
             document.add(grid);
         }
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -227,7 +246,7 @@ public class GridContainerTest extends ExtendedITextTest {
             grid.add(new Paragraph("Four").setBorder(border));
             document.add(grid);
         }
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -260,7 +279,7 @@ public class GridContainerTest extends ExtendedITextTest {
             grid.add(new Paragraph("Eight").setBorder(border));
             document.add(grid);
         }
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -297,7 +316,7 @@ public class GridContainerTest extends ExtendedITextTest {
             grid.add(new Paragraph("Five").setBorder(border));
             document.add(grid);
         }
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -326,7 +345,7 @@ public class GridContainerTest extends ExtendedITextTest {
             grid.add(new Paragraph("Four").setBorder(border));
             document.add(grid);
         }
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -356,7 +375,7 @@ public class GridContainerTest extends ExtendedITextTest {
             grid.add(new Paragraph("Five").setBorder(border));
             document.add(grid);
         }
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -394,7 +413,7 @@ public class GridContainerTest extends ExtendedITextTest {
             grid.add(new Paragraph("Five").setBorder(border));
             document.add(grid);
         }
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -430,7 +449,7 @@ public class GridContainerTest extends ExtendedITextTest {
             grid.add(new Paragraph("Five").setBorder(border));
             document.add(grid);
         }
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -479,7 +498,7 @@ public class GridContainerTest extends ExtendedITextTest {
 
             document.add(grid);
         }
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
     
     @Test
@@ -516,7 +535,7 @@ public class GridContainerTest extends ExtendedITextTest {
             document.add(grid);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -553,7 +572,7 @@ public class GridContainerTest extends ExtendedITextTest {
             document.add(grid);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -574,7 +593,7 @@ public class GridContainerTest extends ExtendedITextTest {
             }
             document.add(grid);
         }
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -596,7 +615,7 @@ public class GridContainerTest extends ExtendedITextTest {
             }
             document.add(grid);
         }
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -631,7 +650,7 @@ public class GridContainerTest extends ExtendedITextTest {
             grid.add(new Paragraph("Six").setBorder(border));
             document.add(grid);
         }
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -662,7 +681,7 @@ public class GridContainerTest extends ExtendedITextTest {
             grid.add(new Paragraph("Five").setBorder(border).setBackgroundColor(ColorConstants.RED));
             document.add(grid);
         }
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -696,7 +715,7 @@ public class GridContainerTest extends ExtendedITextTest {
             grid.add(new Paragraph("Five").setBorder(border).setBackgroundColor(ColorConstants.RED));
             document.add(grid);
         }
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -715,7 +734,7 @@ public class GridContainerTest extends ExtendedITextTest {
             grid.add(new Paragraph("test").setBorder(border));
             document.add(grid);
         }
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -742,7 +761,7 @@ public class GridContainerTest extends ExtendedITextTest {
             grid.add(new Paragraph("Seven").setBackgroundColor(ColorConstants.CYAN));
             document.add(grid);
         }
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -775,7 +794,7 @@ public class GridContainerTest extends ExtendedITextTest {
             grid.add(new Paragraph("Nine").setBackgroundColor(ColorConstants.CYAN));
             document.add(grid);
         }
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -798,7 +817,7 @@ public class GridContainerTest extends ExtendedITextTest {
             grid.add(new Paragraph("One").setBackgroundColor(ColorConstants.CYAN));
             document.add(grid);
         }
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -818,7 +837,7 @@ public class GridContainerTest extends ExtendedITextTest {
             grid.setProperty(Property.GRID_TEMPLATE_ROWS, rowsTemplate);
             document.add(grid);
         }
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -857,7 +876,7 @@ public class GridContainerTest extends ExtendedITextTest {
             grid.add(new Paragraph("Nine").setBackgroundColor(ColorConstants.CYAN));
             document.add(grid);
         }
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -898,7 +917,7 @@ public class GridContainerTest extends ExtendedITextTest {
             grid.add(new Paragraph("Nine").setBackgroundColor(ColorConstants.CYAN));
             document.add(grid);
         }
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -918,7 +937,7 @@ public class GridContainerTest extends ExtendedITextTest {
             grid.add(new Paragraph("Tree").setBackgroundColor(ColorConstants.CYAN));
             document.add(grid);
         }
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -945,7 +964,7 @@ public class GridContainerTest extends ExtendedITextTest {
             grid.add(new Paragraph("Test5").setBorder(border));
             document.add(grid);
         }
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -972,7 +991,7 @@ public class GridContainerTest extends ExtendedITextTest {
             grid.add(new Paragraph("Test5").setBorder(border));
             document.add(grid);
         }
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -998,7 +1017,7 @@ public class GridContainerTest extends ExtendedITextTest {
             grid.add(new Paragraph("Four").setBorder(border));
             document.add(grid);
         }
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -1025,7 +1044,7 @@ public class GridContainerTest extends ExtendedITextTest {
             grid.add(new Paragraph("Four").setBorder(border));
             document.add(grid);
         }
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -1054,7 +1073,7 @@ public class GridContainerTest extends ExtendedITextTest {
             grid.add(new Paragraph("Nine").setBackgroundColor(ColorConstants.CYAN));
             document.add(grid);
         }
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -1073,7 +1092,7 @@ public class GridContainerTest extends ExtendedITextTest {
 
             document.add(div);
         }
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -1107,7 +1126,7 @@ public class GridContainerTest extends ExtendedITextTest {
             document.add(emptyDiv);
             document.add(grid);
         }
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -1144,7 +1163,7 @@ public class GridContainerTest extends ExtendedITextTest {
 
             document.add(grid);
         }
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -1179,6 +1198,6 @@ public class GridContainerTest extends ExtendedITextTest {
 
             document.add(grid);
         }
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
 }

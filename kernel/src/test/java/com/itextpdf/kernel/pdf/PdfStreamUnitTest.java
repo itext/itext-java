@@ -26,22 +26,21 @@ import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfStreamUnitTest extends ExtendedITextTest {
 
     @Test
     public void cannotCreatePdfStreamWithoutDocumentTest() {
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> new PdfStream(null, null, 1));
-        Assert.assertEquals(KernelExceptionMessageConstant.CANNOT_CREATE_PDFSTREAM_BY_INPUT_STREAM_WITHOUT_PDF_DOCUMENT,
+        Assertions.assertEquals(KernelExceptionMessageConstant.CANNOT_CREATE_PDFSTREAM_BY_INPUT_STREAM_WITHOUT_PDF_DOCUMENT,
                 exception.getMessage());
     }
 
@@ -50,9 +49,9 @@ public class PdfStreamUnitTest extends ExtendedITextTest {
         InputStream inputStream = new ByteArrayInputStream(new byte[] {});
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         PdfStream pdfStream = new PdfStream(pdfDocument, inputStream, 1);
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> pdfStream.setData(new byte[] {}, true));
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 KernelExceptionMessageConstant.CANNOT_SET_DATA_TO_PDF_STREAM_WHICH_WAS_CREATED_BY_INPUT_STREAM,
                 exception.getMessage());
     }

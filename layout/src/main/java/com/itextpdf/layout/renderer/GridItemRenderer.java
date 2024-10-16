@@ -108,7 +108,7 @@ class GridItemRenderer extends BlockRenderer {
                 }
                 break;
 
-            case Property.FILL_AVAILABLE_AREA:
+            case Property.FILL_AVAILABLE_AREA_ON_SPLIT:
                 renderer.setProperty(property, value);
                 break;
 
@@ -166,7 +166,9 @@ class GridItemRenderer extends BlockRenderer {
                 rectangle.decreaseHeight(paddingBottom.getValue());
             }
             Border borderBottom = renderer.getBorders()[AbstractRenderer.BOTTOM_SIDE];
-            rectangle.decreaseHeight(borderBottom.getWidth());
+            if (borderBottom != null) {
+                rectangle.decreaseHeight(borderBottom.getWidth());
+            }
         } else {
             renderer.applyMarginsBordersPaddings(rectangle, false);
         }

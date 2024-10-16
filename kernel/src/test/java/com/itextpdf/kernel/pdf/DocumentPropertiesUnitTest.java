@@ -24,25 +24,24 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.commons.actions.contexts.IMetaInfo;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class DocumentPropertiesUnitTest extends ExtendedITextTest {
 
     @Test
     public void setEventCountingMetaInfoTest() {
         DocumentProperties documentProperties = new DocumentProperties();
         documentProperties.setEventCountingMetaInfo(new TestMetaInfo());
-        Assert.assertTrue(documentProperties.isEventCountingMetaInfoSet());
+        Assertions.assertTrue(documentProperties.isEventCountingMetaInfoSet());
     }
 
     @Test
     public void metaInfoIsNotSetTest() {
         DocumentProperties documentProperties = new DocumentProperties();
-        Assert.assertFalse(documentProperties.isEventCountingMetaInfoSet());
+        Assertions.assertFalse(documentProperties.isEventCountingMetaInfoSet());
     }
 
     private static class TestMetaInfo implements IMetaInfo {

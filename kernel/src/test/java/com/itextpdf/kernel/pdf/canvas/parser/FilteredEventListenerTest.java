@@ -30,15 +30,14 @@ import com.itextpdf.kernel.pdf.canvas.parser.listener.FilteredEventListener;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.FilteredTextEventListener;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStrategy;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class FilteredEventListenerTest extends ExtendedITextTest {
 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/parser/FilteredEventListenerTest/";
@@ -76,7 +75,7 @@ public class FilteredEventListenerTest extends ExtendedITextTest {
 
         for (int i = 0; i < regions.length; i++) {
             String actualText = extractionStrategies[i].getResultantText();
-            Assert.assertEquals(expectedText[i], actualText);
+            Assertions.assertEquals(expectedText[i], actualText);
         }
     }
 
@@ -100,6 +99,6 @@ public class FilteredEventListenerTest extends ExtendedITextTest {
         String expectedText = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1),
                 new FilteredTextEventListener(new LocationTextExtractionStrategy(), regionFilters));
 
-        Assert.assertEquals(expectedText, actualText);
+        Assertions.assertEquals(expectedText, actualText);
     }
 }

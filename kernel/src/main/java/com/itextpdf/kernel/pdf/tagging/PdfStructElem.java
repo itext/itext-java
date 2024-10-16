@@ -23,9 +23,8 @@
 package com.itextpdf.kernel.pdf.tagging;
 
 import com.itextpdf.io.logs.IoLogMessageConstant;
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
-import com.itextpdf.kernel.pdf.IsoKey;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -40,12 +39,13 @@ import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.VersionConforming;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.itextpdf.kernel.validation.context.TagStructElementValidationContext;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A wrapper for structure element dictionaries (ISO-32000 14.7.2 "Structure Hierarchy").
@@ -518,7 +518,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IS
 
         PdfDocument doc = getDocument();
         if (doc != null) {
-            doc.checkIsoConformance(getPdfObject(), IsoKey.TAG_STRUCTURE_ELEMENT);
+            doc.checkIsoConformance(new TagStructElementValidationContext(getPdfObject()));
         }
         super.flush();
     }

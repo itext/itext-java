@@ -30,8 +30,9 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * This class contains variety of methods allowing to convert iText
- * abstractions into the abstractions of the Clipper library and vise versa.
+ * This class contains a variety of methods allowing the conversion of iText
+ * abstractions into abstractions of the Clipper library, and vice versa.
+ *
  * <p>
  * For example:
  * <ul>
@@ -41,17 +42,78 @@ import java.util.List;
  * </ul>
  */
 public final class ClipperBridge {
+    private static final long MAX_ALLOWED_VALUE = 0x3FFFFFFFFFFFFFL;
 
     /**
      * Since the clipper library uses integer coordinates, we should convert
      * our floating point numbers into fixed point numbers by multiplying by
      * this coefficient. Vary it to adjust the preciseness of the calculations.
+     *
+     * <p>
+     * Note that if this value is specified, it will be used for all ClipperBridge instances and
+     * dynamic float multiplier calculation will be disabled.
+     *
      */
-    //TODO DEVSIX-5770 make this constant a single non-static configuration
-    public static double floatMultiplier = Math.pow(10, 14);
+    public static Double floatMultiplier;
 
-    private ClipperBridge() {
-        //empty constructor
+    private double approximatedFloatMultiplier = Math.pow(10, 14);
+
+    /**
+     * Creates new {@link ClipperBridge} instance with default float multiplier value which is 10^14.
+     *
+     * <p>
+     * Since the clipper library uses integer coordinates, we should convert our floating point numbers into fixed
+     * point numbers by multiplying by float multiplier coefficient. It is possible to vary it to adjust the preciseness
+     * of the calculations: if static {@link #floatMultiplier} is specified, it will be used for all ClipperBridge
+     * instances and default value will be ignored.
+     */
+    public ClipperBridge() {
+        // Empty constructor.
+    }
+
+    /**
+     * Creates new {@link ClipperBridge} instance with adjusted float multiplier value. This instance will work
+     * correctly with the provided paths only.
+     *
+     * <p>
+     * Since the clipper library uses integer coordinates, we should convert our floating point numbers into fixed
+     * point numbers by multiplying by float multiplier coefficient. It is calculated automatically, however
+     * it is possible to vary it to adjust the preciseness of the calculations: if static {@link #floatMultiplier} is
+     * specified, it will be used for all ClipperBridge instances and automatic calculation won't work.
+     *
+     * @param paths paths to calculate multiplier coefficient to convert floating point numbers into fixed point numbers
+     */
+    public ClipperBridge(com.itextpdf.kernel.geom.Path... paths) {
+        if (floatMultiplier == null) {
+            List<com.itextpdf.kernel.geom.Point> pointsList = new ArrayList<>();
+            for (com.itextpdf.kernel.geom.Path path : paths) {
+                for (Subpath subpath : path.getSubpaths()) {
+                    if (!subpath.isSinglePointClosed() && !subpath.isSinglePointOpen()) {
+                        pointsList.addAll(subpath.getPiecewiseLinearApproximation());
+                    }
+                }
+            }
+            calculateFloatMultiplier(pointsList.toArray(new com.itextpdf.kernel.geom.Point[0]));
+        }
+    }
+
+    /**
+     * Creates new {@link ClipperBridge} instance with adjusted float multiplier value. This instance will work
+     * correctly with the provided point only.
+     *
+     * <p>
+     * Since the clipper library uses integer coordinates, we should convert our floating point numbers into fixed
+     * point numbers by multiplying by float multiplier coefficient. It is calculated automatically, however
+     * it is possible to vary it to adjust the preciseness of the calculations: if static {@link #floatMultiplier} is
+     * specified, it will be used for all ClipperBridge instances and automatic calculation won't work.
+     *
+     * @param points points to calculate multiplier coefficient to convert floating point numbers
+     *               into fixed point numbers
+     */
+    public ClipperBridge(com.itextpdf.kernel.geom.Point[]... points) {
+        if (floatMultiplier == null) {
+            calculateFloatMultiplier(points);
+        }
     }
 
     /**
@@ -61,7 +123,7 @@ public final class ClipperBridge {
      * @param result {@link PolyTree} object to convert
      * @return resultant {@link com.itextpdf.kernel.geom.Path} object
      */
-    public static com.itextpdf.kernel.geom.Path convertToPath(PolyTree result) {
+    public com.itextpdf.kernel.geom.Path convertToPath(PolyTree result) {
         com.itextpdf.kernel.geom.Path path = new com.itextpdf.kernel.geom.Path();
         PolyNode node = result.getFirst();
 
@@ -79,7 +141,7 @@ public final class ClipperBridge {
      * @param path The {@link com.itextpdf.kernel.geom.Path} object to be added to the {@link IClipper}.
      * @param polyType See {@link IClipper.PolyType}.
      */
-    public static void addPath(IClipper clipper, com.itextpdf.kernel.geom.Path path, IClipper.PolyType polyType) {
+    public void addPath(IClipper clipper, com.itextpdf.kernel.geom.Path path, IClipper.PolyType polyType) {
         for (Subpath subpath : path.getSubpaths()) {
             if (!subpath.isSinglePointClosed() && !subpath.isSinglePointOpen()) {
                 List<com.itextpdf.kernel.geom.Point> linearApproxPoints = subpath.getPiecewiseLinearApproximation();
@@ -101,7 +163,8 @@ public final class ClipperBridge {
      *                 {@link IClipper.EndType#OPEN_ROUND}
      * @return {@link java.util.List} consisting of all degenerate iText {@link Subpath}s of the path.
      */
-    public static List<Subpath> addPath(ClipperOffset offset, com.itextpdf.kernel.geom.Path path, IClipper.JoinType joinType, IClipper.EndType endType) {
+    public List<Subpath> addPath(ClipperOffset offset, com.itextpdf.kernel.geom.Path path, IClipper.JoinType joinType,
+                                 IClipper.EndType endType) {
         List<Subpath> degenerateSubpaths = new ArrayList<>();
 
         for (Subpath subpath : path.getSubpaths()) {
@@ -135,13 +198,13 @@ public final class ClipperBridge {
      * @param points the list of {@link Point.LongPoint} objects to convert
      * @return the resultant list of {@link com.itextpdf.kernel.geom.Point} objects.
      */
-    public static List<com.itextpdf.kernel.geom.Point> convertToFloatPoints(List<Point.LongPoint> points) {
+    public List<com.itextpdf.kernel.geom.Point> convertToFloatPoints(List<Point.LongPoint> points) {
         List<com.itextpdf.kernel.geom.Point> convertedPoints = new ArrayList<>(points.size());
 
         for (Point.LongPoint point : points) {
             convertedPoints.add(new com.itextpdf.kernel.geom.Point(
-                    point.getX() / floatMultiplier,
-                    point.getY() / floatMultiplier
+                    point.getX() / getFloatMultiplier(),
+                    point.getY() / getFloatMultiplier()
             ));
         }
 
@@ -155,13 +218,13 @@ public final class ClipperBridge {
      * @param points the list of {@link com.itextpdf.kernel.geom.Point} objects to convert
      * @return the resultant list of {@link Point.LongPoint} objects.
      */
-    public static List<Point.LongPoint> convertToLongPoints(List<com.itextpdf.kernel.geom.Point> points) {
+    public List<Point.LongPoint> convertToLongPoints(List<com.itextpdf.kernel.geom.Point> points) {
         List<Point.LongPoint> convertedPoints = new ArrayList<>(points.size());
 
         for (com.itextpdf.kernel.geom.Point point : points) {
             convertedPoints.add(new Point.LongPoint(
-                    floatMultiplier * point.getX(),
-                    floatMultiplier * point.getY()
+                    getFloatMultiplier() * point.getX(),
+                    getFloatMultiplier() * point.getY()
             ));
         }
 
@@ -238,7 +301,8 @@ public final class ClipperBridge {
      *                 path is a subject of clipping or a part of the clipping polygon.
      * @return true if polygon path was successfully added, false otherwise.
      */
-    public static boolean addPolygonToClipper(IClipper clipper, com.itextpdf.kernel.geom.Point[] polyVertices, IClipper.PolyType polyType) {
+    public boolean addPolygonToClipper(IClipper clipper, com.itextpdf.kernel.geom.Point[] polyVertices,
+                                       IClipper.PolyType polyType) {
         return clipper.addPath(new Path(convertToLongPoints(new ArrayList<>(Arrays.asList(polyVertices)))), polyType, true);
     }
 
@@ -257,7 +321,7 @@ public final class ClipperBridge {
      *                     to clipper path and added to the clipper instance.
      * @return true if polyline path was successfully added, false otherwise.
      */
-    public static boolean addPolylineSubjectToClipper(IClipper clipper, com.itextpdf.kernel.geom.Point[] lineVertices) {
+    public boolean addPolylineSubjectToClipper(IClipper clipper, com.itextpdf.kernel.geom.Point[] lineVertices) {
         return clipper.addPath(new Path(convertToLongPoints(new ArrayList<>(Arrays.asList(lineVertices)))), IClipper.PolyType.SUBJECT, false);
     }
 
@@ -267,8 +331,8 @@ public final class ClipperBridge {
      *
      * @return the width of the rectangle.
      */
-    public static float longRectCalculateWidth(LongRect rect) {
-        return (float) (Math.abs(rect.left - rect.right) / ClipperBridge.floatMultiplier);
+    public float longRectCalculateWidth(LongRect rect) {
+        return (float) (Math.abs(rect.left - rect.right) / getFloatMultiplier());
     }
 
     /**
@@ -277,11 +341,23 @@ public final class ClipperBridge {
      *
      * @return the height of the rectangle.
      */
-    public static float longRectCalculateHeight(LongRect rect) {
-        return (float) (Math.abs(rect.top - rect.bottom) / ClipperBridge.floatMultiplier);
+    public float longRectCalculateHeight(LongRect rect) {
+        return (float) (Math.abs(rect.top - rect.bottom) / getFloatMultiplier());
     }
 
-    static void addContour(com.itextpdf.kernel.geom.Path path, List<Point.LongPoint> contour, boolean close) {
+    /**
+     * Gets multiplier coefficient for converting our floating point numbers into fixed point numbers.
+     *
+     * @return multiplier coefficient for converting our floating point numbers into fixed point numbers
+     */
+    public double getFloatMultiplier() {
+        if (floatMultiplier == null) {
+            return approximatedFloatMultiplier;
+        }
+        return (double) floatMultiplier;
+    }
+
+    void addContour(com.itextpdf.kernel.geom.Path path, List<Point.LongPoint> contour, boolean close) {
         List<com.itextpdf.kernel.geom.Point> floatContour = convertToFloatPoints(contour);
         com.itextpdf.kernel.geom.Point point = floatContour.get(0);
         path.moveTo((float) point.getX(), (float) point.getY());
@@ -293,6 +369,21 @@ public final class ClipperBridge {
 
         if (close) {
             path.closeSubpath();
+        }
+    }
+
+    private void calculateFloatMultiplier(com.itextpdf.kernel.geom.Point[]... points) {
+        double maxPoint = 0;
+        for (com.itextpdf.kernel.geom.Point[] pointsArray : points) {
+            for (com.itextpdf.kernel.geom.Point point : pointsArray) {
+                maxPoint = Math.max(maxPoint, Math.abs(point.getX()));
+                maxPoint = Math.max(maxPoint, Math.abs(point.getY()));
+            }
+        }
+        // The significand of the double type is approximately 15 to 17 decimal digits for most platforms.
+        double epsilon = 1E-16;
+        if (maxPoint > epsilon) {
+            this.approximatedFloatMultiplier = Math.floor(MAX_ALLOWED_VALUE / maxPoint);
         }
     }
 }

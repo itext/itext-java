@@ -27,12 +27,11 @@ import com.itextpdf.styledxmlparser.jsoup.nodes.Document;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Node;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class TraversorTest extends ExtendedITextTest {
     // Note: NodeTraversor.traverse(new NodeVisitor) is tested in
     // ElementsTest#traverse()
@@ -54,7 +53,7 @@ public class TraversorTest extends ExtendedITextTest {
                 return FilterResult.CONTINUE;
             }
         }, doc.select("div"));
-        Assert.assertEquals("<div><p><#text></#text></p></div><div><#text></#text></div>", accum.toString());
+        Assertions.assertEquals("<div><p><#text></#text></p></div><div><#text></#text></div>", accum.toString());
     }
 
     @Test
@@ -75,7 +74,7 @@ public class TraversorTest extends ExtendedITextTest {
                 return FilterResult.CONTINUE;
             }
         }, doc.select("div"));
-        Assert.assertEquals("<div><p></p></div><div><#text></#text></div>", accum.toString());
+        Assertions.assertEquals("<div><p></p></div><div><#text></#text></div>", accum.toString());
     }
 
     @Test
@@ -98,7 +97,7 @@ public class TraversorTest extends ExtendedITextTest {
                 return FilterResult.CONTINUE;
             }
         }, doc.select("div"));
-        Assert.assertEquals("<div></div><div><#text></#text></div>", accum.toString());
+        Assertions.assertEquals("<div></div><div><#text></#text></div>", accum.toString());
     }
 
     @Test
@@ -117,7 +116,7 @@ public class TraversorTest extends ExtendedITextTest {
                 return ("b".equals(node.nodeName())) ? FilterResult.REMOVE : FilterResult.CONTINUE;
             }
         }, doc.select("div"));
-        Assert.assertEquals("<div></div>\n<div>\n There be \n</div>", doc.select("body").html());
+        Assertions.assertEquals("<div></div>\n<div>\n There be \n</div>", doc.select("body").html());
     }
 
     @Test
@@ -138,7 +137,7 @@ public class TraversorTest extends ExtendedITextTest {
                 return ("p".equals(node.nodeName())) ? FilterResult.STOP : FilterResult.CONTINUE;
             }
         }, doc.select("div"));
-        Assert.assertEquals("<div><p><#text></#text></p>", accum.toString());
+        Assertions.assertEquals("<div><p><#text></#text></p>", accum.toString());
     }
 
     @Test public void replaceElement() {
@@ -164,8 +163,8 @@ public class TraversorTest extends ExtendedITextTest {
         }, doc);
 
         Element p = doc.selectFirst("p");
-        Assert.assertNotNull(p);
-        Assert.assertEquals("<p>One <u>two</u> <u>three</u> four.</p>", p.outerHtml());
+        Assertions.assertNotNull(p);
+        Assertions.assertEquals("<p>One <u>two</u> <u>three</u> four.</p>", p.outerHtml());
     }
 
     @Test public void canAddChildren() {
@@ -190,7 +189,7 @@ public class TraversorTest extends ExtendedITextTest {
             }
         }, doc);
 
-        Assert.assertEquals("<div>\n" +
+        Assertions.assertEquals("<div>\n" +
             " <p><span>0</span><span>1</span></p>\n" +
             " <p><span>2</span><span>3</span></p>\n" +
             "</div>", doc.body().html());

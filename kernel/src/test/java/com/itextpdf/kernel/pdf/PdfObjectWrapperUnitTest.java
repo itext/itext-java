@@ -25,23 +25,22 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfObjectWrapperUnitTest extends ExtendedITextTest {
 
     @Test
     public void directObjectsCouldNotBeWrappedTest01() {
         PdfDictionary pdfDictionary = new PdfDictionary();
-        Assert.assertNull(pdfDictionary.getIndirectReference());
+        Assertions.assertNull(pdfDictionary.getIndirectReference());
         // PdfCatalog is one of PdfObjectWrapper implementations. The issue could be reproduced on any of them, not only on this one
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> new PdfCatalog(pdfDictionary));
-        Assert.assertEquals(KernelExceptionMessageConstant.OBJECT_MUST_BE_INDIRECT_TO_WORK_WITH_THIS_WRAPPER,
+        Assertions.assertEquals(KernelExceptionMessageConstant.OBJECT_MUST_BE_INDIRECT_TO_WORK_WITH_THIS_WRAPPER,
                 exception.getMessage());
     }
 }

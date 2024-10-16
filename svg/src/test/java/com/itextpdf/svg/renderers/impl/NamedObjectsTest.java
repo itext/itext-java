@@ -31,16 +31,15 @@ import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class NamedObjectsTest extends SvgIntegrationTest {
 
     @Test
@@ -51,7 +50,7 @@ public class NamedObjectsTest extends SvgIntegrationTest {
         INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile("./src/test/resources/com/itextpdf/svg/renderers/impl/NamedObjectsTest/names.svg"));
         ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg, null);
 
-        Assert.assertTrue(result.getNamedObjects().get("name_svg") instanceof SvgTagSvgNodeRenderer);
-        Assert.assertTrue(result.getNamedObjects().get("name_rect") instanceof RectangleSvgNodeRenderer);
+        Assertions.assertTrue(result.getNamedObjects().get("name_svg") instanceof SvgTagSvgNodeRenderer);
+        Assertions.assertTrue(result.getNamedObjects().get("name_rect") instanceof RectangleSvgNodeRenderer);
     }
 }

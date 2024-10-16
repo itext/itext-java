@@ -26,8 +26,12 @@ import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
 import com.itextpdf.commons.utils.FileUtil;
+import com.itextpdf.forms.form.element.SignatureFieldAppearance;
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
+import com.itextpdf.kernel.crypto.OID;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -35,19 +39,16 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.signatures.BouncyCastleDigest;
-import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.PdfPKCS7;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
-import com.itextpdf.signatures.SecurityIDs;
 import com.itextpdf.signatures.SignatureUtil;
-import com.itextpdf.signatures.logs.SignLogMessageConstant;
+import com.itextpdf.signatures.SignerProperties;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -59,7 +60,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
 import java.security.KeyException;
-import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
@@ -74,13 +74,13 @@ import org.bouncycastle.asn1.eac.EACObjectIdentifiers;
 import org.bouncycastle.asn1.edec.EdECObjectIdentifiers;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
-import org.junit.Assert;
-import org.junit.Assume;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-@Category(BouncyCastleIntegrationTest.class)
+@Tag("BouncyCastleIntegrationTest")
 public class IsoSignatureExtensionsRoundtripTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
@@ -92,9 +92,9 @@ public class IsoSignatureExtensionsRoundtripTest extends ExtendedITextTest {
     private static final String SOURCE_FILE = SOURCE_FOLDER + "helloWorldDoc.pdf";
     private static final String SIGNATURE_FIELD = "Signature";
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
-        Assume.assumeFalse(BOUNCY_CASTLE_FACTORY.isInApprovedOnlyMode());
+        Assumptions.assumeFalse(BOUNCY_CASTLE_FACTORY.isInApprovedOnlyMode());
         Security.addProvider(BOUNCY_CASTLE_FACTORY.getProvider());
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
@@ -106,13 +106,7 @@ public class IsoSignatureExtensionsRoundtripTest extends ExtendedITextTest {
 
     @Test
     public void testEd448() throws Exception {
-        if ("BC".equals(BOUNCY_CASTLE_FACTORY.getProviderName())) {
-            doRoundTrip("ed448", DigestAlgorithms.SHAKE256, EdECObjectIdentifiers.id_Ed448);
-        } else {
-            // SHAKE256 is currently not supported in BCFIPS
-            Exception e = Assert.assertThrows(NoSuchAlgorithmException.class, () ->
-                    doRoundTrip("ed448", DigestAlgorithms.SHAKE256, EdECObjectIdentifiers.id_Ed448));
-        }
+        doRoundTrip("ed448", DigestAlgorithms.SHAKE256, EdECObjectIdentifiers.id_Ed448);
     }
 
     @Test
@@ -121,28 +115,28 @@ public class IsoSignatureExtensionsRoundtripTest extends ExtendedITextTest {
     }
     
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = SignLogMessageConstant.ALGORITHM_NOT_FROM_SPEC, count = 3), ignore = true)
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.ALGORITHM_NOT_FROM_SPEC, count = 3), ignore = true)
     public void testPlainBrainpoolP384r1WithSha384() throws Exception {
         if ("BC".equals(BOUNCY_CASTLE_FACTORY.getProviderName())) {
             doRoundTrip("plainBrainpoolP384r1", DigestAlgorithms.SHA384, "PLAIN-ECDSA",
                     BSIObjectIdentifiers.ecdsa_plain_SHA384);
         } else {
             // PLAIN_ECDSA is currently not supported in BCFIPS
-            Assert.assertThrows(PdfException.class,
+            Assertions.assertThrows(PdfException.class,
                     () -> doRoundTrip("plainBrainpoolP384r1", DigestAlgorithms.SHA384,
                             "PLAIN-ECDSA", BSIObjectIdentifiers.ecdsa_plain_SHA384));
         }
     }
     
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = SignLogMessageConstant.ALGORITHM_NOT_FROM_SPEC, count = 3), ignore = true)
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.ALGORITHM_NOT_FROM_SPEC, count = 3), ignore = true)
     public void testCvcBrainpoolP384r1WithSha384() throws Exception {
         if ("BC".equals(BOUNCY_CASTLE_FACTORY.getProviderName())) {
             doRoundTrip("cvcBrainpoolP384r1", DigestAlgorithms.SHA384, "CVC-ECDSA",
                     EACObjectIdentifiers.id_TA_ECDSA_SHA_384);
         } else {
             // CVC_ECDSA is currently not supported in BCFIPS
-            Assert.assertThrows(PdfException.class,
+            Assertions.assertThrows(PdfException.class,
                     () -> doRoundTrip("cvcBrainpoolP384r1", DigestAlgorithms.SHA384,
                             "CVC-ECDSA", EACObjectIdentifiers.id_TA_ECDSA_SHA_384));
         }
@@ -162,12 +156,12 @@ public class IsoSignatureExtensionsRoundtripTest extends ExtendedITextTest {
     public void testRsaWithSha3_512() throws Exception {
         // For now we use a generic OID, but NISTObjectIdentifiers.id_rsassa_pkcs1_v1_5_with_sha3_512 would
         // be more appropriate
-        doRoundTrip("rsa", DigestAlgorithms.SHA3_512, new ASN1ObjectIdentifier(SecurityIDs.ID_RSA_WITH_SHA3_512));
+        doRoundTrip("rsa", DigestAlgorithms.SHA3_512, new ASN1ObjectIdentifier(OID.RSA_WITH_SHA3_512));
     }
 
     @Test
     public void testRsaSsaPssWithSha3_256() throws Exception {
-        doRoundTrip("rsa", DigestAlgorithms.SHA3_256, "RSASSA-PSS", new ASN1ObjectIdentifier(SecurityIDs.ID_RSASSA_PSS));
+        doRoundTrip("rsa", DigestAlgorithms.SHA3_256, "RSASSA-PSS", new ASN1ObjectIdentifier(OID.RSASSA_PSS));
     }
 
     @Test
@@ -177,10 +171,10 @@ public class IsoSignatureExtensionsRoundtripTest extends ExtendedITextTest {
 
     @Test
     public void testEd25519ForceSha512WhenSigning() {
-        Exception e = Assert.assertThrows(PdfException.class, () ->
+        Exception e = Assertions.assertThrows(PdfException.class, () ->
             doSign("ed25519", DigestAlgorithms.SHA1, null, new ByteArrayOutputStream())
         );
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 "Ed25519 requires the document to be digested using SHA-512, not SHA1", e.getMessage()
         );
     }
@@ -188,15 +182,15 @@ public class IsoSignatureExtensionsRoundtripTest extends ExtendedITextTest {
     @Test
     public void testEd448ForceShake256WhenSigning() {
         if ("BC".equals(BOUNCY_CASTLE_FACTORY.getProviderName())) {
-            Exception e = Assert.assertThrows(PdfException.class, () ->
+            Exception e = Assertions.assertThrows(PdfException.class, () ->
                     doSign("ed448", DigestAlgorithms.SHA1, null, new ByteArrayOutputStream())
             );
-            Assert.assertEquals(
+            Assertions.assertEquals(
                     "Ed448 requires the document to be digested using 512-bit SHAKE256, not SHA1", e.getMessage()
             );
         } else {
             // SHAKE256 is currently not supported in BCFIPS
-            Exception e = Assert.assertThrows(PdfException.class, () ->
+            Exception e = Assertions.assertThrows(PdfException.class, () ->
                     doSign("ed448", DigestAlgorithms.SHA1, null, new ByteArrayOutputStream()));
         }
     }
@@ -205,8 +199,8 @@ public class IsoSignatureExtensionsRoundtripTest extends ExtendedITextTest {
     public void testEd25519ForceSha512WhenValidating() {
         // file contains an Ed25519 signature where the document digest is computed using SHA-1
         String referenceFile = Paths.get(SOURCE_FOLDER, "bad-digest-ed25519.pdf").toString();
-        Exception e = Assert.assertThrows(PdfException.class, () -> doVerify(referenceFile, null));
-        Assert.assertEquals(
+        Exception e = Assertions.assertThrows(PdfException.class, () -> doVerify(referenceFile, null));
+        Assertions.assertEquals(
                 "Ed25519 requires the document to be digested using SHA-512, not SHA1",
                 e.getCause().getCause().getMessage()
         );
@@ -216,8 +210,8 @@ public class IsoSignatureExtensionsRoundtripTest extends ExtendedITextTest {
     public void testEd448ForceShake256WhenValidating() {
         // file contains an Ed448 signature where the document digest is computed using SHA-1
         String referenceFile = Paths.get(SOURCE_FOLDER, "bad-digest-ed448.pdf").toString();
-        Exception e = Assert.assertThrows(PdfException.class, () -> doVerify(referenceFile, null));
-        Assert.assertEquals(
+        Exception e = Assertions.assertThrows(PdfException.class, () -> doVerify(referenceFile, null));
+        Assertions.assertEquals(
                 "Ed448 requires the document to be digested using 512-bit SHAKE256, not SHA1",
                 e.getCause().getCause().getMessage()
         );
@@ -240,14 +234,8 @@ public class IsoSignatureExtensionsRoundtripTest extends ExtendedITextTest {
     @Test
     public void testEd448ExtensionDeclarations() throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        if ("BC".equals(BOUNCY_CASTLE_FACTORY.getProviderName())) {
-            doSign("ed448", DigestAlgorithms.SHAKE256, null, baos);
-            checkIsoExtensions(baos.toByteArray(), Arrays.asList(32001, 32002));
-        } else {
-            // SHAKE256 is currently not supported in BCFIPS
-            Exception e = Assert.assertThrows(NoSuchAlgorithmException.class, () ->
-                    doSign("ed448", DigestAlgorithms.SHAKE256, null, baos));
-        }
+        doSign("ed448", DigestAlgorithms.SHAKE256, null, baos);
+        checkIsoExtensions(baos.toByteArray(), Arrays.asList(32001, 32002));
     }
 
     @Test
@@ -271,7 +259,8 @@ public class IsoSignatureExtensionsRoundtripTest extends ExtendedITextTest {
             );
 
             PdfSigner signer = new PdfSigner(new PdfReader(in1), baos1, new StampingProperties());
-            signer.setFieldName("Signature1");
+            SignerProperties signerProperties = new SignerProperties().setFieldName("Signature1");
+            signer.setSignerProperties(signerProperties);
             signer.signDetached(
                     new BouncyCastleDigest(), pks, signChain1, null, null, null, 0,
                     PdfSigner.CryptoStandard.CMS);
@@ -284,7 +273,8 @@ public class IsoSignatureExtensionsRoundtripTest extends ExtendedITextTest {
             );
 
             PdfSigner signer = new PdfSigner(new PdfReader(in2), baos2, new StampingProperties());
-            signer.setFieldName("Signature2");
+            SignerProperties signerProperties = new SignerProperties().setFieldName("Signature2");
+            signer.setSignerProperties(signerProperties);
             signer.signDetached(
                     new BouncyCastleDigest(), pks, signChain2, null, null, null, 0,
                     PdfSigner.CryptoStandard.CMS);
@@ -322,12 +312,15 @@ public class IsoSignatureExtensionsRoundtripTest extends ExtendedITextTest {
         IExternalSignature pks = new PrivateKeySignature(signPrivateKey, digestAlgo, signatureAlgo, BOUNCY_CASTLE_FACTORY.getProviderName(), null);
 
         PdfSigner signer = new PdfSigner(new PdfReader(SOURCE_FILE), os, new StampingProperties());
-        signer.setFieldName(SIGNATURE_FIELD);
-        signer.getSignatureAppearance()
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID)
+                .setContent("Approval test signature.\nCreated by iText.");
+        SignerProperties signerProperties = new SignerProperties()
+                .setFieldName(SIGNATURE_FIELD)
                 .setPageRect(new Rectangle(50, 650, 200, 100))
                 .setReason("Test")
                 .setLocation("TestCity")
-                .setLayer2Text("Approval test signature.\nCreated by iText.");
+                .setSignatureAppearance(appearance);
+        signer.setSignerProperties(signerProperties);
 
         signer.signDetached(
                 new BouncyCastleDigest(), pks, signChain, null, null, null, 0,
@@ -339,10 +332,10 @@ public class IsoSignatureExtensionsRoundtripTest extends ExtendedITextTest {
         try (PdfReader r = new PdfReader(fileName); PdfDocument pdfDoc = new PdfDocument(r)) {
             SignatureUtil u = new SignatureUtil(pdfDoc);
             PdfPKCS7 data = u.readSignatureData(SIGNATURE_FIELD, BOUNCY_CASTLE_FACTORY.getProviderName());
-            Assert.assertTrue(data.verifySignatureIntegrityAndAuthenticity());
+            Assertions.assertTrue(data.verifySignatureIntegrityAndAuthenticity());
             if (expectedSigAlgoIdentifier != null) {
                 ASN1ObjectIdentifier oid = new ASN1ObjectIdentifier(data.getSignatureMechanismOid());
-                Assert.assertEquals(expectedSigAlgoIdentifier, oid);
+                Assertions.assertEquals(expectedSigAlgoIdentifier, oid);
             }
         }
     }
@@ -356,7 +349,7 @@ public class IsoSignatureExtensionsRoundtripTest extends ExtendedITextTest {
                     .getPdfObject()
                     .getAsDictionary(PdfName.Extensions)
                     .getAsArray(PdfName.ISO_);
-            Assert.assertEquals(expectedLevels.size(), isoExtensions.size());
+            Assertions.assertEquals(expectedLevels.size(), isoExtensions.size());
 
             Set<Integer> actualLevels = new HashSet<>();
             for (int i = 0; i < isoExtensions.size(); i++) {
@@ -365,7 +358,7 @@ public class IsoSignatureExtensionsRoundtripTest extends ExtendedITextTest {
             }
 
             Set<Integer> expectedLevelSet = new HashSet<>(expectedLevels);
-            Assert.assertEquals(expectedLevelSet, actualLevels);
+            Assertions.assertEquals(expectedLevelSet, actualLevels);
         }
     }
 

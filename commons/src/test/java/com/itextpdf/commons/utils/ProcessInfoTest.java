@@ -23,13 +23,12 @@
 package com.itextpdf.commons.utils;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class ProcessInfoTest extends ExtendedITextTest {
 
     @Test
@@ -37,7 +36,7 @@ public class ProcessInfoTest extends ExtendedITextTest {
         int exitCode = 1;
         ProcessInfo processInfo = new ProcessInfo(exitCode, null,  null);
 
-        Assert.assertEquals(exitCode, processInfo.getExitCode());
+        Assertions.assertEquals(exitCode, processInfo.getExitCode());
     }
 
     @Test
@@ -45,7 +44,7 @@ public class ProcessInfoTest extends ExtendedITextTest {
         String stdOutput = "output";
         ProcessInfo processInfo = new ProcessInfo(0, stdOutput,  null);
 
-        Assert.assertEquals(stdOutput, processInfo.getProcessStdOutput());
+        Assertions.assertEquals(stdOutput, processInfo.getProcessStdOutput());
     }
 
     @Test
@@ -53,6 +52,6 @@ public class ProcessInfoTest extends ExtendedITextTest {
         String stdOutput = "output";
         ProcessInfo processInfo = new ProcessInfo(0, null,  stdOutput);
 
-        Assert.assertEquals(stdOutput, processInfo.getProcessErrOutput());
+        Assertions.assertEquals(stdOutput, processInfo.getProcessErrOutput());
     }
 }

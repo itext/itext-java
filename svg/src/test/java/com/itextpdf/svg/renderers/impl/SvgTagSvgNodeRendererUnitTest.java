@@ -30,14 +30,13 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class SvgTagSvgNodeRendererUnitTest extends ExtendedITextTest {
 
     @Test
@@ -60,19 +59,19 @@ public class SvgTagSvgNodeRendererUnitTest extends ExtendedITextTest {
         renderer.setParent(parent);
 
         Rectangle actual = renderer.calculateViewPort(context);
-        Assert.assertTrue(expected.equalsWithEpsilon(actual));
+        Assertions.assertTrue(expected.equalsWithEpsilon(actual));
     }
 
     @Test
     public void equalsOtherObjectNegativeTest() {
         SvgTagSvgNodeRenderer one = new SvgTagSvgNodeRenderer();
         CircleSvgNodeRenderer two = new CircleSvgNodeRenderer();
-        Assert.assertFalse(one.equals(two));
+        Assertions.assertFalse(one.equals(two));
     }
 
     @Test
     public void noObjectBoundingBoxTest() {
         SvgTagSvgNodeRenderer renderer = new SvgTagSvgNodeRenderer();
-        Assert.assertNull(renderer.getObjectBoundingBox(null));
+        Assertions.assertNull(renderer.getObjectBoundingBox(null));
     }
 }

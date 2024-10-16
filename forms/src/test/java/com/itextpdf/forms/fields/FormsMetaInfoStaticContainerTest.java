@@ -25,12 +25,11 @@ package com.itextpdf.forms.fields;
 import com.itextpdf.commons.actions.contexts.IMetaInfo;
 import com.itextpdf.layout.renderer.MetaInfoContainer;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class FormsMetaInfoStaticContainerTest extends ExtendedITextTest {
 
     @Test
@@ -39,15 +38,15 @@ public class FormsMetaInfoStaticContainerTest extends ExtendedITextTest {
         MetaInfoContainer metaInfo2 = new MetaInfoContainer(new IMetaInfo() {});
 
         FormsMetaInfoStaticContainer.useMetaInfoDuringTheAction(metaInfo1, () -> {
-            Assert.assertSame(metaInfo1, FormsMetaInfoStaticContainer.getMetaInfoForLayout());
+            Assertions.assertSame(metaInfo1, FormsMetaInfoStaticContainer.getMetaInfoForLayout());
 
             FormsMetaInfoStaticContainer.useMetaInfoDuringTheAction(metaInfo2,
-                    () -> Assert.assertSame(metaInfo2, FormsMetaInfoStaticContainer.getMetaInfoForLayout()));
+                    () -> Assertions.assertSame(metaInfo2, FormsMetaInfoStaticContainer.getMetaInfoForLayout()));
 
-            Assert.assertNull(FormsMetaInfoStaticContainer.getMetaInfoForLayout());
+            Assertions.assertNull(FormsMetaInfoStaticContainer.getMetaInfoForLayout());
         });
 
-        Assert.assertNull(FormsMetaInfoStaticContainer.getMetaInfoForLayout());
+        Assertions.assertNull(FormsMetaInfoStaticContainer.getMetaInfoForLayout());
     }
 
     @Test
@@ -60,9 +59,9 @@ public class FormsMetaInfoStaticContainerTest extends ExtendedITextTest {
         thread.start();
         thread.join();
 
-        Assert.assertFalse(metaInfoCheckClass1.isCheckFailed());
-        Assert.assertFalse(metaInfoCheckClass2.isCheckFailed());
-        Assert.assertFalse(metaInfoCheckClass3.isCheckFailed());
+        Assertions.assertFalse(metaInfoCheckClass1.isCheckFailed());
+        Assertions.assertFalse(metaInfoCheckClass2.isCheckFailed());
+        Assertions.assertFalse(metaInfoCheckClass3.isCheckFailed());
     }
 
     private static class MetaInfoCheckClass {

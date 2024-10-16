@@ -33,15 +33,14 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.IOException;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class LinkDocumentIdEventTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/actions/";
 
@@ -69,16 +68,16 @@ public class LinkDocumentIdEventTest extends ExtendedITextTest {
 
             new LinkDocumentIdEvent(document, sequenceId).doAction();
 
-            Assert.assertEquals(initialSequenceEventsNumber, access.publicGetEvents(sequenceId).size());
+            Assertions.assertEquals(initialSequenceEventsNumber, access.publicGetEvents(sequenceId).size());
 
             List<AbstractProductProcessITextEvent> actualDocumentEvents = access.publicGetEvents(document.getDocumentIdWrapper());
-            Assert.assertEquals(initialDocumentEventsNumber + 3, actualDocumentEvents.size());
+            Assertions.assertEquals(initialDocumentEventsNumber + 3, actualDocumentEvents.size());
 
             for (int i = initialDocumentEventsNumber; i < initialDocumentEventsNumber + 3; i++) {
                 AbstractProductProcessITextEvent sequenceEvent = actualDocumentEvents.get(i);
-                Assert.assertEquals("sequenceId-testing", sequenceEvent.getEventType());
-                Assert.assertEquals("test-product-" + (i - initialDocumentEventsNumber), sequenceEvent.getProductName());
-                Assert.assertEquals(sequenceId, sequenceEvent.getSequenceId());
+                Assertions.assertEquals("sequenceId-testing", sequenceEvent.getEventType());
+                Assertions.assertEquals("test-product-" + (i - initialDocumentEventsNumber), sequenceEvent.getProductName());
+                Assertions.assertEquals(sequenceId, sequenceEvent.getSequenceId());
             }
         }
     }
@@ -109,16 +108,16 @@ public class LinkDocumentIdEventTest extends ExtendedITextTest {
             SequenceIdManager.setSequenceId(identifiableElement, sequenceId);
             new LinkDocumentIdEvent(document, identifiableElement).doAction();
 
-            Assert.assertEquals(initialSequenceEventsNumber, access.publicGetEvents(sequenceId).size());
+            Assertions.assertEquals(initialSequenceEventsNumber, access.publicGetEvents(sequenceId).size());
 
             List<AbstractProductProcessITextEvent> actualDocumentEvents = access.publicGetEvents(document.getDocumentIdWrapper());
-            Assert.assertEquals(initialDocumentEventsNumber + 3, actualDocumentEvents.size());
+            Assertions.assertEquals(initialDocumentEventsNumber + 3, actualDocumentEvents.size());
 
             for (int i = initialDocumentEventsNumber; i < initialDocumentEventsNumber + 3; i++) {
                 AbstractProductProcessITextEvent sequenceEvent = actualDocumentEvents.get(i);
-                Assert.assertEquals("sequenceId-testing", sequenceEvent.getEventType());
-                Assert.assertEquals("test-product-" + (i - initialDocumentEventsNumber), sequenceEvent.getProductName());
-                Assert.assertEquals(sequenceId, sequenceEvent.getSequenceId());
+                Assertions.assertEquals("sequenceId-testing", sequenceEvent.getEventType());
+                Assertions.assertEquals("test-product-" + (i - initialDocumentEventsNumber), sequenceEvent.getProductName());
+                Assertions.assertEquals(sequenceId, sequenceEvent.getSequenceId());
             }
         }
     }
@@ -139,7 +138,7 @@ public class LinkDocumentIdEventTest extends ExtendedITextTest {
 
             // Check that first event will be linked to document but it was the
             // similar to stored second event, but they have different instance
-            Assert.assertEquals(3, access.publicGetEvents(document.getDocumentIdWrapper()).size());
+            Assertions.assertEquals(3, access.publicGetEvents(document.getDocumentIdWrapper()).size());
 
         }
     }

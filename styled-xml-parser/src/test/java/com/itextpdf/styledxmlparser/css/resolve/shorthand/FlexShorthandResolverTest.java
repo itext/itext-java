@@ -29,25 +29,24 @@ import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.FlexShorthandReso
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.util.Collections;
 import java.util.List;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class FlexShorthandResolverTest extends ExtendedITextTest {
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY, count = 2))
     public void emptyShorthandTest() {
         String emptyShorthand = "";
         IShorthandResolver resolver = new FlexShorthandResolver();
-        Assert.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(emptyShorthand));
+        Assertions.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(emptyShorthand));
 
         String shorthandWithSpaces = "    ";
-        Assert.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(shorthandWithSpaces));
+        Assertions.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(shorthandWithSpaces));
     }
 
     @Test
@@ -55,33 +54,33 @@ public class FlexShorthandResolverTest extends ExtendedITextTest {
         String initialShorthand = CommonCssConstants.INITIAL;
         IShorthandResolver resolver = new FlexShorthandResolver();
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(initialShorthand);
-        Assert.assertEquals(3, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.FLEX_GROW, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals(CommonCssConstants.INITIAL, resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals(CommonCssConstants.INITIAL, resolvedShorthand.get(1).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(2).getProperty());
-        Assert.assertEquals(CommonCssConstants.INITIAL, resolvedShorthand.get(2).getExpression());
+        Assertions.assertEquals(3, resolvedShorthand.size());
+        Assertions.assertEquals(CommonCssConstants.FLEX_GROW, resolvedShorthand.get(0).getProperty());
+        Assertions.assertEquals(CommonCssConstants.INITIAL, resolvedShorthand.get(0).getExpression());
+        Assertions.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(1).getProperty());
+        Assertions.assertEquals(CommonCssConstants.INITIAL, resolvedShorthand.get(1).getExpression());
+        Assertions.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(2).getProperty());
+        Assertions.assertEquals(CommonCssConstants.INITIAL, resolvedShorthand.get(2).getExpression());
 
         String inheritShorthand = CommonCssConstants.INHERIT;
         resolvedShorthand = resolver.resolveShorthand(inheritShorthand);
-        Assert.assertEquals(3, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.FLEX_GROW, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals(CommonCssConstants.INHERIT, resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals(CommonCssConstants.INHERIT, resolvedShorthand.get(1).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(2).getProperty());
-        Assert.assertEquals(CommonCssConstants.INHERIT, resolvedShorthand.get(2).getExpression());
+        Assertions.assertEquals(3, resolvedShorthand.size());
+        Assertions.assertEquals(CommonCssConstants.FLEX_GROW, resolvedShorthand.get(0).getProperty());
+        Assertions.assertEquals(CommonCssConstants.INHERIT, resolvedShorthand.get(0).getExpression());
+        Assertions.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(1).getProperty());
+        Assertions.assertEquals(CommonCssConstants.INHERIT, resolvedShorthand.get(1).getExpression());
+        Assertions.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(2).getProperty());
+        Assertions.assertEquals(CommonCssConstants.INHERIT, resolvedShorthand.get(2).getExpression());
 
         String unsetShorthand = CommonCssConstants.UNSET;
         resolvedShorthand = resolver.resolveShorthand(unsetShorthand);
-        Assert.assertEquals(3, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.FLEX_GROW, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals(CommonCssConstants.UNSET, resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals(CommonCssConstants.UNSET, resolvedShorthand.get(1).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(2).getProperty());
-        Assert.assertEquals(CommonCssConstants.UNSET, resolvedShorthand.get(2).getExpression());
+        Assertions.assertEquals(3, resolvedShorthand.size());
+        Assertions.assertEquals(CommonCssConstants.FLEX_GROW, resolvedShorthand.get(0).getProperty());
+        Assertions.assertEquals(CommonCssConstants.UNSET, resolvedShorthand.get(0).getExpression());
+        Assertions.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(1).getProperty());
+        Assertions.assertEquals(CommonCssConstants.UNSET, resolvedShorthand.get(1).getExpression());
+        Assertions.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(2).getProperty());
+        Assertions.assertEquals(CommonCssConstants.UNSET, resolvedShorthand.get(2).getExpression());
     }
 
     @Test
@@ -90,13 +89,13 @@ public class FlexShorthandResolverTest extends ExtendedITextTest {
 
         String initialWithSpacesShorthand = "  initial  ";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(initialWithSpacesShorthand);
-        Assert.assertEquals(3, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.FLEX_GROW, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals(CommonCssConstants.INITIAL, resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals(CommonCssConstants.INITIAL, resolvedShorthand.get(1).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(2).getProperty());
-        Assert.assertEquals(CommonCssConstants.INITIAL, resolvedShorthand.get(2).getExpression());
+        Assertions.assertEquals(3, resolvedShorthand.size());
+        Assertions.assertEquals(CommonCssConstants.FLEX_GROW, resolvedShorthand.get(0).getProperty());
+        Assertions.assertEquals(CommonCssConstants.INITIAL, resolvedShorthand.get(0).getExpression());
+        Assertions.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(1).getProperty());
+        Assertions.assertEquals(CommonCssConstants.INITIAL, resolvedShorthand.get(1).getExpression());
+        Assertions.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(2).getProperty());
+        Assertions.assertEquals(CommonCssConstants.INITIAL, resolvedShorthand.get(2).getExpression());
     }
 
     @Test
@@ -104,13 +103,13 @@ public class FlexShorthandResolverTest extends ExtendedITextTest {
         String initialShorthand = CommonCssConstants.AUTO;
         IShorthandResolver resolver = new FlexShorthandResolver();
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(initialShorthand);
-        Assert.assertEquals(3, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.FLEX_GROW, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals("1", resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals("1", resolvedShorthand.get(1).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(2).getProperty());
-        Assert.assertEquals(CommonCssConstants.AUTO, resolvedShorthand.get(2).getExpression());
+        Assertions.assertEquals(3, resolvedShorthand.size());
+        Assertions.assertEquals(CommonCssConstants.FLEX_GROW, resolvedShorthand.get(0).getProperty());
+        Assertions.assertEquals("1", resolvedShorthand.get(0).getExpression());
+        Assertions.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(1).getProperty());
+        Assertions.assertEquals("1", resolvedShorthand.get(1).getExpression());
+        Assertions.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(2).getProperty());
+        Assertions.assertEquals(CommonCssConstants.AUTO, resolvedShorthand.get(2).getExpression());
     }
 
     @Test
@@ -118,13 +117,13 @@ public class FlexShorthandResolverTest extends ExtendedITextTest {
         String initialShorthand = CommonCssConstants.NONE;
         IShorthandResolver resolver = new FlexShorthandResolver();
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(initialShorthand);
-        Assert.assertEquals(3, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.FLEX_GROW, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals("0", resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals("0", resolvedShorthand.get(1).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(2).getProperty());
-        Assert.assertEquals(CommonCssConstants.AUTO, resolvedShorthand.get(2).getExpression());
+        Assertions.assertEquals(3, resolvedShorthand.size());
+        Assertions.assertEquals(CommonCssConstants.FLEX_GROW, resolvedShorthand.get(0).getProperty());
+        Assertions.assertEquals("0", resolvedShorthand.get(0).getExpression());
+        Assertions.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(1).getProperty());
+        Assertions.assertEquals("0", resolvedShorthand.get(1).getExpression());
+        Assertions.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(2).getProperty());
+        Assertions.assertEquals(CommonCssConstants.AUTO, resolvedShorthand.get(2).getExpression());
     }
 
     @Test
@@ -133,13 +132,13 @@ public class FlexShorthandResolverTest extends ExtendedITextTest {
         IShorthandResolver resolver = new FlexShorthandResolver();
 
         String containsInitialShorthand = "1 initial 50px";
-        Assert.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(containsInitialShorthand));
+        Assertions.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(containsInitialShorthand));
 
         String containsInheritShorthand = "inherit 2 50px";
-        Assert.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(containsInheritShorthand));
+        Assertions.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(containsInheritShorthand));
 
         String containsUnsetShorthand = "0 2 unset";
-        Assert.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(containsUnsetShorthand));
+        Assertions.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(containsUnsetShorthand));
     }
 
     @Test
@@ -149,13 +148,13 @@ public class FlexShorthandResolverTest extends ExtendedITextTest {
         String shorthand = "5";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(3, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.FLEX_GROW, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals("5", resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals("1", resolvedShorthand.get(1).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(2).getProperty());
-        Assert.assertEquals("0", resolvedShorthand.get(2).getExpression());
+        Assertions.assertEquals(3, resolvedShorthand.size());
+        Assertions.assertEquals(CommonCssConstants.FLEX_GROW, resolvedShorthand.get(0).getProperty());
+        Assertions.assertEquals("5", resolvedShorthand.get(0).getExpression());
+        Assertions.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(1).getProperty());
+        Assertions.assertEquals("1", resolvedShorthand.get(1).getExpression());
+        Assertions.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(2).getProperty());
+        Assertions.assertEquals("0", resolvedShorthand.get(2).getExpression());
     }
 
     @Test
@@ -165,13 +164,13 @@ public class FlexShorthandResolverTest extends ExtendedITextTest {
         String shorthand = "5px";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(3, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals("5px", resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_GROW, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals("0", resolvedShorthand.get(1).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(2).getProperty());
-        Assert.assertEquals("1", resolvedShorthand.get(2).getExpression());
+        Assertions.assertEquals(3, resolvedShorthand.size());
+        Assertions.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(0).getProperty());
+        Assertions.assertEquals("5px", resolvedShorthand.get(0).getExpression());
+        Assertions.assertEquals(CommonCssConstants.FLEX_GROW, resolvedShorthand.get(1).getProperty());
+        Assertions.assertEquals("0", resolvedShorthand.get(1).getExpression());
+        Assertions.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(2).getProperty());
+        Assertions.assertEquals("1", resolvedShorthand.get(2).getExpression());
     }
 
     @Test
@@ -182,7 +181,7 @@ public class FlexShorthandResolverTest extends ExtendedITextTest {
         String shorthand = "5pixels";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(0, resolvedShorthand.size());
+        Assertions.assertEquals(0, resolvedShorthand.size());
     }
 
     @Test
@@ -192,13 +191,13 @@ public class FlexShorthandResolverTest extends ExtendedITextTest {
         String shorthand = "5 7";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(3, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.FLEX_GROW, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals("5", resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals("7", resolvedShorthand.get(1).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(2).getProperty());
-        Assert.assertEquals("0", resolvedShorthand.get(2).getExpression());
+        Assertions.assertEquals(3, resolvedShorthand.size());
+        Assertions.assertEquals(CommonCssConstants.FLEX_GROW, resolvedShorthand.get(0).getProperty());
+        Assertions.assertEquals("5", resolvedShorthand.get(0).getExpression());
+        Assertions.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(1).getProperty());
+        Assertions.assertEquals("7", resolvedShorthand.get(1).getExpression());
+        Assertions.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(2).getProperty());
+        Assertions.assertEquals("0", resolvedShorthand.get(2).getExpression());
     }
 
     @Test
@@ -208,13 +207,13 @@ public class FlexShorthandResolverTest extends ExtendedITextTest {
         String shorthand = "5 7px";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(3, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.FLEX_GROW, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals("5", resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals("7px", resolvedShorthand.get(1).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(2).getProperty());
-        Assert.assertEquals("1", resolvedShorthand.get(2).getExpression());
+        Assertions.assertEquals(3, resolvedShorthand.size());
+        Assertions.assertEquals(CommonCssConstants.FLEX_GROW, resolvedShorthand.get(0).getProperty());
+        Assertions.assertEquals("5", resolvedShorthand.get(0).getExpression());
+        Assertions.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(1).getProperty());
+        Assertions.assertEquals("7px", resolvedShorthand.get(1).getExpression());
+        Assertions.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(2).getProperty());
+        Assertions.assertEquals("1", resolvedShorthand.get(2).getExpression());
     }
 
     @Test
@@ -224,13 +223,13 @@ public class FlexShorthandResolverTest extends ExtendedITextTest {
         String shorthand = "5px 7";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(3, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals("5px", resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_GROW, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals("7", resolvedShorthand.get(1).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(2).getProperty());
-        Assert.assertEquals("1", resolvedShorthand.get(2).getExpression());
+        Assertions.assertEquals(3, resolvedShorthand.size());
+        Assertions.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(0).getProperty());
+        Assertions.assertEquals("5px", resolvedShorthand.get(0).getExpression());
+        Assertions.assertEquals(CommonCssConstants.FLEX_GROW, resolvedShorthand.get(1).getProperty());
+        Assertions.assertEquals("7", resolvedShorthand.get(1).getExpression());
+        Assertions.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(2).getProperty());
+        Assertions.assertEquals("1", resolvedShorthand.get(2).getExpression());
     }
 
     @Test
@@ -241,7 +240,7 @@ public class FlexShorthandResolverTest extends ExtendedITextTest {
         String shorthand = "5px 7px";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(0, resolvedShorthand.size());
+        Assertions.assertEquals(0, resolvedShorthand.size());
     }
 
     @Test
@@ -252,7 +251,7 @@ public class FlexShorthandResolverTest extends ExtendedITextTest {
         String shorthand = "5 invalid";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(0, resolvedShorthand.size());
+        Assertions.assertEquals(0, resolvedShorthand.size());
     }
 
     @Test
@@ -263,7 +262,7 @@ public class FlexShorthandResolverTest extends ExtendedITextTest {
         String shorthand = "invalid 5px";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(0, resolvedShorthand.size());
+        Assertions.assertEquals(0, resolvedShorthand.size());
     }
 
     @Test
@@ -273,13 +272,13 @@ public class FlexShorthandResolverTest extends ExtendedITextTest {
         String shorthand = "5 7 10px";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(3, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.FLEX_GROW, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals("5", resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals("7", resolvedShorthand.get(1).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(2).getProperty());
-        Assert.assertEquals("10px", resolvedShorthand.get(2).getExpression());
+        Assertions.assertEquals(3, resolvedShorthand.size());
+        Assertions.assertEquals(CommonCssConstants.FLEX_GROW, resolvedShorthand.get(0).getProperty());
+        Assertions.assertEquals("5", resolvedShorthand.get(0).getExpression());
+        Assertions.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(1).getProperty());
+        Assertions.assertEquals("7", resolvedShorthand.get(1).getExpression());
+        Assertions.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(2).getProperty());
+        Assertions.assertEquals("10px", resolvedShorthand.get(2).getExpression());
     }
 
     @Test
@@ -289,13 +288,13 @@ public class FlexShorthandResolverTest extends ExtendedITextTest {
         String shorthand = "5px 7 10";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(3, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.FLEX_GROW, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals("7", resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals("10", resolvedShorthand.get(1).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(2).getProperty());
-        Assert.assertEquals("5px", resolvedShorthand.get(2).getExpression());
+        Assertions.assertEquals(3, resolvedShorthand.size());
+        Assertions.assertEquals(CommonCssConstants.FLEX_GROW, resolvedShorthand.get(0).getProperty());
+        Assertions.assertEquals("7", resolvedShorthand.get(0).getExpression());
+        Assertions.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(1).getProperty());
+        Assertions.assertEquals("10", resolvedShorthand.get(1).getExpression());
+        Assertions.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(2).getProperty());
+        Assertions.assertEquals("5px", resolvedShorthand.get(2).getExpression());
     }
 
     @Test
@@ -306,7 +305,7 @@ public class FlexShorthandResolverTest extends ExtendedITextTest {
         String shorthand = "5 7 10";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(0, resolvedShorthand.size());
+        Assertions.assertEquals(0, resolvedShorthand.size());
     }
 
     @Test
@@ -317,7 +316,7 @@ public class FlexShorthandResolverTest extends ExtendedITextTest {
         String shorthand = "5 7px 10";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(0, resolvedShorthand.size());
+        Assertions.assertEquals(0, resolvedShorthand.size());
     }
 
     @Test
@@ -328,7 +327,7 @@ public class FlexShorthandResolverTest extends ExtendedITextTest {
         String shorthand = "5px 7px 10px";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(0, resolvedShorthand.size());
+        Assertions.assertEquals(0, resolvedShorthand.size());
     }
 
     @Test
@@ -339,7 +338,7 @@ public class FlexShorthandResolverTest extends ExtendedITextTest {
         String shorthand = "5px 7 10px";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(0, resolvedShorthand.size());
+        Assertions.assertEquals(0, resolvedShorthand.size());
     }
 
     @Test
@@ -350,7 +349,7 @@ public class FlexShorthandResolverTest extends ExtendedITextTest {
         String shorthand = "invalid 7 10";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(0, resolvedShorthand.size());
+        Assertions.assertEquals(0, resolvedShorthand.size());
     }
 
     @Test
@@ -361,6 +360,6 @@ public class FlexShorthandResolverTest extends ExtendedITextTest {
         String shorthand = "5 7 10 13";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(Collections.<CssDeclaration>emptyList(), resolvedShorthand);
+        Assertions.assertEquals(Collections.<CssDeclaration>emptyList(), resolvedShorthand);
     }
 }

@@ -73,26 +73,25 @@ import com.itextpdf.layout.properties.HorizontalAlignment;
 import com.itextpdf.layout.properties.ListNumberingType;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import static org.junit.Assert.fail;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.fail;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfUA2Test extends ExtendedITextTest {
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/PdfUA2Test/";
     public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/PdfUA2Test/";
     public static final String FONT_FOLDER = "./src/test/resources/com/itextpdf/layout/fonts/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
@@ -110,14 +109,14 @@ public class PdfUA2Test extends ExtendedITextTest {
                     "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
 
             Paragraph paragraph = new Paragraph("Hello PdfUA2").setFont(font);
-            byte[] byteMetaData = pdfDocument.getXmpMetadata();
+            byte[] byteMetaData = pdfDocument.getXmpMetadataBytes();
             documentMetaData = new String(byteMetaData);
             document.add(paragraph);
         }
         // There is a typo in the specification and the Schema namespace must contain http
-        Assert.assertTrue(documentMetaData.contains("http://www.aiim.org/pdfua/ns/id/"));
-        Assert.assertTrue(documentMetaData.contains("pdfuaid:part=\"2\""));
-        Assert.assertTrue(documentMetaData.contains("pdfuaid:rev=\"2024\""));
+        Assertions.assertTrue(documentMetaData.contains("http://www.aiim.org/pdfua/ns/id/"));
+        Assertions.assertTrue(documentMetaData.contains("pdfuaid:part=\"2\""));
+        Assertions.assertTrue(documentMetaData.contains("pdfuaid:rev=\"2024\""));
         compareAndValidate(outFile, cmpFile);
     }
 
@@ -139,7 +138,7 @@ public class PdfUA2Test extends ExtendedITextTest {
             PdfStructTreeRoot structTreeRoot = pdfDocument.getStructTreeRoot();
 
             // We check that the paragraph remains one in the structure when it spans two pages.
-            Assert.assertEquals(1, structTreeRoot.getKids().get(0).getKids().size());
+            Assertions.assertEquals(1, structTreeRoot.getKids().get(0).getKids().size());
         }
         compareAndValidate(outFile, cmpFile);
     }
@@ -163,7 +162,7 @@ public class PdfUA2Test extends ExtendedITextTest {
             PdfStructTreeRoot structTreeRoot = pdfDocument.getStructTreeRoot();
 
             // We check that there are no children because the paragraph has the Artifact role, and it is not real content.
-            Assert.assertEquals(0, structTreeRoot.getKids().get(0).getKids().size());
+            Assertions.assertEquals(0, structTreeRoot.getKids().get(0).getKids().size());
         }
         compareAndValidate(outFile, cmpFile);
     }
@@ -182,8 +181,8 @@ public class PdfUA2Test extends ExtendedITextTest {
             Paragraph paragraph = new Paragraph("Hello PdfUA2").setFont(font);
             paragraph.getAccessibilityProperties().setRole("Custom Role");
 
-            Exception e = Assert.assertThrows(PdfException.class, ()-> document.add(paragraph));
-            Assert.assertEquals(MessageFormatUtil.format(
+            Exception e = Assertions.assertThrows(PdfException.class, ()-> document.add(paragraph));
+            Assertions.assertEquals(MessageFormatUtil.format(
                     KernelExceptionMessageConstant.ROLE_IN_NAMESPACE_IS_NOT_MAPPED_TO_ANY_STANDARD_ROLE, "Custom Role",
                     "http://iso.org/pdf2/ssn"), e.getMessage());
         }
@@ -236,9 +235,9 @@ public class PdfUA2Test extends ExtendedITextTest {
 
             PdfStructTreeRoot structTreeRoot = pdfDocument.getStructTreeRoot();
             IStructureNode articleNode =  structTreeRoot.getKids().get(0).getKids().get(0);
-            Assert.assertEquals(1, articleNode.getKids().size());
+            Assertions.assertEquals(1, articleNode.getKids().size());
             String childElementSection = articleNode.getKids().get(0).getRole().toString();
-            Assert.assertEquals("/Title", childElementSection);
+            Assertions.assertEquals("/Title", childElementSection);
         }
         compareAndValidate(outFile, cmpFile);
     }
@@ -267,9 +266,9 @@ public class PdfUA2Test extends ExtendedITextTest {
 
             PdfStructTreeRoot structTreeRoot = pdfDocument.getStructTreeRoot();
             IStructureNode sectionNode =  structTreeRoot.getKids().get(0).getKids().get(0);
-            Assert.assertEquals(1, sectionNode.getKids().size());
+            Assertions.assertEquals(1, sectionNode.getKids().size());
             String childElementSection = sectionNode.getKids().get(0).getRole().toString();
-            Assert.assertEquals("/H2", childElementSection);
+            Assertions.assertEquals("/H2", childElementSection);
         }
         compareAndValidate(outFile, cmpFile);
     }
@@ -300,8 +299,8 @@ public class PdfUA2Test extends ExtendedITextTest {
 
             pointer.moveToParent().moveToKid(StandardRoles.TOCI);
             // We check that TOCI contains the previously added Paragraph ref
-            Assert.assertEquals(1, pointer.getProperties().getRefsList().size());
-            Assert.assertEquals(StandardRoles.P, pointer.getProperties().getRefsList().get(0).getRole());
+            Assertions.assertEquals(1, pointer.getProperties().getRefsList().size());
+            Assertions.assertEquals(StandardRoles.P, pointer.getProperties().getRefsList().get(0).getRole());
         }
         compareAndValidate(outFile, cmpFile);
     }
@@ -358,8 +357,8 @@ public class PdfUA2Test extends ExtendedITextTest {
             document.add(p2);
 
             PdfStructTreeRoot structTreeRoot = pdfDocument.getStructTreeRoot();
-            Assert.assertEquals("/P", structTreeRoot.getKids().get(0).getKids().get(0).getRole().toString());
-            Assert.assertEquals("/P", structTreeRoot.getKids().get(0).getKids().get(1).getRole().toString());
+            Assertions.assertEquals("/P", structTreeRoot.getKids().get(0).getKids().get(0).getRole().toString());
+            Assertions.assertEquals("/P", structTreeRoot.getKids().get(0).getKids().get(1).getRole().toString());
         }
         compareAndValidate(outFile, cmpFile);
     }
@@ -390,9 +389,9 @@ public class PdfUA2Test extends ExtendedITextTest {
             document.add(h6);
 
             PdfStructTreeRoot structTreeRoot = pdfDocument.getStructTreeRoot();
-            Assert.assertEquals("/H1", structTreeRoot.getKids().get(0).getKids().get(0).getRole().toString());
-            Assert.assertEquals("/H3", structTreeRoot.getKids().get(0).getKids().get(1).getRole().toString());
-            Assert.assertEquals("/H6", structTreeRoot.getKids().get(0).getKids().get(2).getRole().toString());
+            Assertions.assertEquals("/H1", structTreeRoot.getKids().get(0).getKids().get(0).getRole().toString());
+            Assertions.assertEquals("/H3", structTreeRoot.getKids().get(0).getKids().get(1).getRole().toString());
+            Assertions.assertEquals("/H6", structTreeRoot.getKids().get(0).getKids().get(2).getRole().toString());
         }
         compareAndValidate(outFile, cmpFile);
     }
@@ -532,7 +531,7 @@ public class PdfUA2Test extends ExtendedITextTest {
 
             IStructureNode tableNode = structTreeRoot.getKids().get(0).getKids().get(0);
             String tableChildRole  =  tableNode.getKids().get(0).getRole().toString();
-            Assert.assertEquals("/Caption" , tableChildRole);
+            Assertions.assertEquals("/Caption" , tableChildRole);
         }
         compareAndValidate(outFile, cmpFile);
     }
@@ -843,9 +842,9 @@ public class PdfUA2Test extends ExtendedITextTest {
 
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(outFile))) {
             PdfOutline outline = pdfDocument.getOutlines(false);
-            Assert.assertEquals("header1", outline.getAllChildren().get(0)
+            Assertions.assertEquals("header1", outline.getAllChildren().get(0)
                     .getDestination().getPdfObject().toString());
-            Assert.assertEquals("header1.1", outline.getAllChildren().get(0).getAllChildren().get(0)
+            Assertions.assertEquals("header1.1", outline.getAllChildren().get(0).getAllChildren().get(0)
                     .getDestination().getPdfObject().toString());
         }
     }

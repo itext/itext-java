@@ -30,22 +30,21 @@ import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.utils.checkers.FontCheckUtil.CharacterChecker;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class FontCheckUtilTest extends ExtendedITextTest {
     private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/fonts/";
 
     @Test
     public void checkFontAvailable() throws IOException {
         PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA);
-        Assert.assertEquals(-1, FontCheckUtil.checkGlyphsOfText("123", font, new CharacterChecker() {
+        Assertions.assertEquals(-1, FontCheckUtil.checkGlyphsOfText("123", font, new CharacterChecker() {
             @Override
             public boolean check(int ch, PdfFont fontToCheck) {
                 return !fontToCheck.containsGlyph(ch);
@@ -57,7 +56,7 @@ public class FontCheckUtilTest extends ExtendedITextTest {
     @Test
     public void checkFontNotAvailable() throws IOException {
         PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA);
-        Assert.assertEquals(2, FontCheckUtil.checkGlyphsOfText("hi⫊", font, new CharacterChecker() {
+        Assertions.assertEquals(2, FontCheckUtil.checkGlyphsOfText("hi⫊", font, new CharacterChecker() {
             @Override
             public boolean check(int ch, PdfFont fontToCheck) {
                 return !fontToCheck.containsGlyph(ch);
@@ -80,7 +79,7 @@ public class FontCheckUtilTest extends ExtendedITextTest {
                 }
             }
         });
-        Assert.assertEquals(1, index);
+        Assertions.assertEquals(1, index);
     }
 
     @Test
@@ -98,6 +97,6 @@ public class FontCheckUtilTest extends ExtendedITextTest {
                 }
             }
         });
-        Assert.assertEquals(-1, index);
+        Assertions.assertEquals(-1, index);
     }
 }

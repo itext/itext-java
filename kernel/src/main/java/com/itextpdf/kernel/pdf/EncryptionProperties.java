@@ -22,6 +22,9 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.kernel.mac.MacProperties;
+import com.itextpdf.kernel.mac.MacProperties.MacDigestAlgorithm;
+
 import java.security.SecureRandom;
 import java.security.cert.Certificate;
 
@@ -41,6 +44,13 @@ public class EncryptionProperties {
     // PublicKeyEncryption properties
     protected Certificate[] publicCertificates;
     protected int[] publicKeyEncryptPermissions;
+
+    /**
+     * {@link MacProperties} class to configure MAC integrity protection properties.
+     */
+    protected MacProperties macProperties;
+
+    static final MacProperties DEFAULT_MAC_PROPERTIES = new MacProperties(MacDigestAlgorithm.SHA3_512);
 
     /**
      * Sets the encryption options for the document.
@@ -78,6 +88,48 @@ public class EncryptionProperties {
      */
     public EncryptionProperties setStandardEncryption(byte[] userPassword, byte[] ownerPassword, int permissions,
             int encryptionAlgorithm) {
+        return setStandardEncryption(userPassword, ownerPassword, permissions, encryptionAlgorithm,
+                DEFAULT_MAC_PROPERTIES);
+    }
+
+    /**
+     * Sets the encryption options for the document.
+     *
+     * @param userPassword        the user password. Can be null or of zero length, which is equal to
+     *                            omitting the user password
+     * @param ownerPassword       the owner password. If it's null or empty, iText will generate
+     *                            a random string to be used as the owner password
+     * @param permissions         the user permissions. The open permissions for the document can be
+     *                            {@link EncryptionConstants#ALLOW_PRINTING},
+     *                            {@link EncryptionConstants#ALLOW_MODIFY_CONTENTS},
+     *                            {@link EncryptionConstants#ALLOW_COPY},
+     *                            {@link EncryptionConstants#ALLOW_MODIFY_ANNOTATIONS},
+     *                            {@link EncryptionConstants#ALLOW_FILL_IN},
+     *                            {@link EncryptionConstants#ALLOW_SCREENREADERS},
+     *                            {@link EncryptionConstants#ALLOW_ASSEMBLY} and
+     *                            {@link EncryptionConstants#ALLOW_DEGRADED_PRINTING}.
+     *                            The permissions can be combined by ORing them
+     * @param encryptionAlgorithm the type of encryption. It can be one of
+     *                            {@link EncryptionConstants#STANDARD_ENCRYPTION_40},
+     *                            {@link EncryptionConstants#STANDARD_ENCRYPTION_128},
+     *                            {@link EncryptionConstants#ENCRYPTION_AES_128} or
+     *                            {@link EncryptionConstants#ENCRYPTION_AES_256}.
+     *                            Optionally {@link EncryptionConstants#DO_NOT_ENCRYPT_METADATA} can be OEed
+     *                            to output the metadata in cleartext.
+     *                            {@link EncryptionConstants#EMBEDDED_FILES_ONLY} can be ORed as well.
+     *                            Please be aware that the passed encryption types may override permissions:
+     *                            {@link EncryptionConstants#STANDARD_ENCRYPTION_40} implicitly sets
+     *                            {@link EncryptionConstants#DO_NOT_ENCRYPT_METADATA} and
+     *                            {@link EncryptionConstants#EMBEDDED_FILES_ONLY} as false;
+     *                            {@link EncryptionConstants#STANDARD_ENCRYPTION_128} implicitly sets
+     *                            {@link EncryptionConstants#EMBEDDED_FILES_ONLY} as false;
+     * @param macProperties {@link MacProperties} class to configure MAC integrity protection properties.
+     *                                           Pass {@code null} if you want to disable MAC protection for any reason
+     *
+     * @return this {@link EncryptionProperties}
+     */
+    public EncryptionProperties setStandardEncryption(byte[] userPassword, byte[] ownerPassword, int permissions,
+            int encryptionAlgorithm, MacProperties macProperties) {
         clearEncryption();
         this.userPassword = userPassword;
         if (ownerPassword != null) {
@@ -88,6 +140,7 @@ public class EncryptionProperties {
         }
         this.standardEncryptPermissions = permissions;
         this.encryptionAlgorithm = encryptionAlgorithm;
+        this.macProperties = macProperties;
 
         return this;
     }
@@ -124,14 +177,18 @@ public class EncryptionProperties {
      *                            {@link EncryptionConstants#EMBEDDED_FILES_ONLY} as false;
      *                            {@link EncryptionConstants#STANDARD_ENCRYPTION_128} implicitly sets
      *                            {@link EncryptionConstants#EMBEDDED_FILES_ONLY} as false;
+     * @param macProperties {@link MacProperties} class to configure MAC integrity protection properties.
+     *                                           Pass {@code null} if you want to disable MAC protection for any reason
+     *
      * @return this {@link EncryptionProperties}
      */
     public EncryptionProperties setPublicKeyEncryption(Certificate[] certs, int[] permissions,
-            int encryptionAlgorithm) {
+            int encryptionAlgorithm, MacProperties macProperties) {
         clearEncryption();
         this.publicCertificates = certs;
         this.publicKeyEncryptPermissions = permissions;
         this.encryptionAlgorithm = encryptionAlgorithm;
+        this.macProperties = macProperties;
 
         return this;
     }
@@ -149,6 +206,7 @@ public class EncryptionProperties {
         this.publicKeyEncryptPermissions = null;
         this.userPassword = null;
         this.ownerPassword = null;
+        this.macProperties = null;
     }
 
     private static void randomBytes(byte[] bytes) {

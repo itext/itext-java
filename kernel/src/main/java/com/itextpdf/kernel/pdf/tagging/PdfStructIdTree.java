@@ -22,15 +22,13 @@
  */
 package com.itextpdf.kernel.pdf.tagging;
 
-import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.pdf.GenericNameTree;
-import com.itextpdf.kernel.pdf.IsoKey;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfIndirectReference;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.validation.context.DuplicateIdEntryValidationContext;
 
 
 /**
@@ -84,6 +82,6 @@ public class PdfStructIdTree extends GenericNameTree {
 
     @Override
     public void addEntry(PdfString key, PdfObject value) {
-        super.addEntry(key, value, pdfDoc -> pdfDoc.checkIsoConformance(key, IsoKey.DUPLICATE_ID_ENTRY));
+        super.addEntry(key, value, pdfDoc -> pdfDoc.checkIsoConformance(new DuplicateIdEntryValidationContext(key)));
     }
 }

@@ -26,15 +26,14 @@ import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class MaskTest extends SvgIntegrationTest {
 
   private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/MaskTest/";
@@ -42,12 +41,12 @@ public class MaskTest extends SvgIntegrationTest {
 
   private ISvgConverterProperties properties;
 
-  @BeforeClass
+  @BeforeAll
   public static void beforeClass() {
     ITextTest.createDestinationFolder(DESTINATION_FOLDER);
   }
 
-  @Before
+  @BeforeEach
   public void before() {
     properties = new SvgConverterProperties().setBaseUri(SOURCE_FOLDER);
   }

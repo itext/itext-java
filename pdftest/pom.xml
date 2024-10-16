@@ -1,27 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
-
   <parent>
     <groupId>com.itextpdf.android</groupId>
     <artifactId>root-android</artifactId>
-    <version>8.0.5</version>
+    <version>9.0.0</version>
   </parent>
-
   <artifactId>pdftest-android</artifactId>
-
   <name>iText - pdftest</name>
   <url>https://itextpdf.com/</url>
-
   <properties>
     <sonar.skip>true</sonar.skip>
     <verapdf.version>1.25.125</verapdf.version>
-    <junit.jupiter.version>5.10.2</junit.jupiter.version>
   </properties>
-
   <dependencyManagement>
-  <dependencies>
-      <!-- remove when VeraPdf uses the same or a newer version -->
+    <dependencies>
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-databind</artifactId>
@@ -41,22 +35,11 @@
       <version>${logback.version}</version>
     </dependency>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>${junit.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
       <version>${junit.jupiter.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.junit.vintage</groupId>
-      <artifactId>junit-vintage-engine</artifactId>
-      <version>${junit.jupiter.version}</version>
-    </dependency>
   </dependencies>
-
   <repositories>
     <repository>
       <snapshots>
@@ -67,7 +50,6 @@
       <url>https://artifactory.openpreservation.org/artifactory/vera-dev</url>
     </repository>
   </repositories>
-
   <build>
     <plugins>
       <plugin>

@@ -23,15 +23,14 @@
 package com.itextpdf.commons.exceptions;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class AggregatedExceptionTest extends ExtendedITextTest {
 
     @Test
@@ -42,8 +41,8 @@ public class AggregatedExceptionTest extends ExtendedITextTest {
         exceptions.add(new CustomException("Message 3"));
 
         AggregatedException exception = new AggregatedException("General message", exceptions);
-        Assert.assertEquals(exceptions, exception.getAggregatedExceptions());
-        Assert.assertEquals("General message:\n"
+        Assertions.assertEquals(exceptions, exception.getAggregatedExceptions());
+        Assertions.assertEquals("General message:\n"
                 + "0) Message 1\n"
                 + "1) Message 2\n"
                 + "2) Message 3\n", exception.getMessage());
@@ -57,7 +56,7 @@ public class AggregatedExceptionTest extends ExtendedITextTest {
         exceptions.add(new CustomException("Message 3"));
 
         AggregatedException exception = new AggregatedException(exceptions);
-        Assert.assertEquals("Aggregated message:\n"
+        Assertions.assertEquals("Aggregated message:\n"
                 + "0) Message 1\n"
                 + "1) Message 2\n"
                 + "2) Message 3\n", exception.getMessage());

@@ -43,7 +43,6 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -54,13 +53,13 @@ import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.spec.PKCS8EncodedKeySpec;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(BouncyCastleIntegrationTest.class)
+@Tag("BouncyCastleIntegrationTest")
 public class PdfEncryptingTest extends ExtendedITextTest {
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/kernel/crypto/PdfEncryptingTest/certs/";
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/crypto/PdfEncryptingTest/";
@@ -71,13 +70,13 @@ public class PdfEncryptingTest extends ExtendedITextTest {
 
     private static final String PROVIDER_NAME = BouncyCastleFactoryCreator.getFactory().getProviderName();
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpBeforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
         Security.addProvider(BouncyCastleFactoryCreator.getFactory().getProvider());
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(DESTINATION_FOLDER);
     }
@@ -122,7 +121,7 @@ public class PdfEncryptingTest extends ExtendedITextTest {
     public void encryptWithCertificateAes256Rsa() throws GeneralSecurityException, IOException, InterruptedException {
         if (BouncyCastleFactoryCreator.getFactory().isInApprovedOnlyMode()) {
             // RSA PKCS1.5 encryption disallowed
-            Assert.assertThrows(AbstractFipsUnapprovedOperationError.class,
+            Assertions.assertThrows(AbstractFipsUnapprovedOperationError.class,
                     () -> encryptWithCertificate("encryptWithCertificateAes256Rsa.pdf", "SHA256withRSA.crt"));
         } else {
             encryptWithCertificate("encryptWithCertificateAes256Rsa.pdf", "SHA256withRSA.crt");
@@ -132,21 +131,21 @@ public class PdfEncryptingTest extends ExtendedITextTest {
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT), ignore = true)
     public void encryptWithCertificateAes256EcdsaP256() {
-        String exceptionTest = Assert.assertThrows(PdfException.class,
+        String exceptionTest = Assertions.assertThrows(PdfException.class,
                 () -> encryptWithCertificate("encryptWithCertificateAes256EcdsaP256.pdf", "SHA256withECDSA_P256.crt"))
                 .getMessage();
-        Assert.assertEquals(MessageFormatUtil.format(
+        Assertions.assertEquals(MessageFormatUtil.format(
                 KernelExceptionMessageConstant.ALGORITHM_IS_NOT_SUPPORTED, "1.2.840.10045.2.1"), exceptionTest);
     }
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT), ignore = true)
     public void encryptWithCertificateAes256EcdsaBrainpoolP256R1() {
-        String exceptionTest = Assert.assertThrows(PdfException.class,
+        String exceptionTest = Assertions.assertThrows(PdfException.class,
                 () -> encryptWithCertificate(
                         "encryptWithCertificateAes256EcdsaBrainpoolP256R1.pdf", "SHA256withECDSA_brainpoolP256r1.crt"))
                 .getMessage();
-        Assert.assertEquals(MessageFormatUtil.format(
+        Assertions.assertEquals(MessageFormatUtil.format(
                 KernelExceptionMessageConstant.ALGORITHM_IS_NOT_SUPPORTED, "1.2.840.10045.2.1"), exceptionTest);
     }
 
@@ -162,7 +161,7 @@ public class PdfEncryptingTest extends ExtendedITextTest {
                 PdfDocument document = new PdfDocument(writer)) {
             writeTextToDocument(document);
         }
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + fileName,
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + fileName,
                 SOURCE_FOLDER + "cmp_" + fileName, DESTINATION_FOLDER, "diff", USER_PASSWORD, USER_PASSWORD));
     }
 
@@ -179,7 +178,7 @@ public class PdfEncryptingTest extends ExtendedITextTest {
         PrivateKey privateKey = readPrivateKey("SHA256withRSA.key", "RSA");
         compareTool.getCmpReaderProperties().setPublicKeySecurityParams(certificate, privateKey, PROVIDER_NAME, null);
         compareTool.getOutReaderProperties().setPublicKeySecurityParams(certificate, privateKey, PROVIDER_NAME, null);
-        Assert.assertNull(compareTool
+        Assertions.assertNull(compareTool
                 .compareByContent(DESTINATION_FOLDER + fileName, SOURCE_FOLDER + "cmp_" + fileName, DESTINATION_FOLDER,
                         "diff"));
     }

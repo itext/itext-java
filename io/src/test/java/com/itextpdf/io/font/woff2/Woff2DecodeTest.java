@@ -25,15 +25,14 @@ package com.itextpdf.io.font.woff2;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.exceptions.FontCompressionException;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public abstract class Woff2DecodeTest extends ExtendedITextTest {
     protected static boolean DEBUG = true;
 
@@ -51,12 +50,12 @@ public abstract class Woff2DecodeTest extends ExtendedITextTest {
         try {
             in = readFile(sourceFolder + inFile);
             if (isFontValid) {
-                Assert.assertTrue(Woff2Converter.isWoff2Font(in));
+                Assertions.assertTrue(Woff2Converter.isWoff2Font(in));
             }
             out = Woff2Converter.convert(in);
             cmp = readFile(sourceFolder + cmpFile);
-            Assert.assertTrue("Only valid fonts should reach this", isFontValid);
-            Assert.assertArrayEquals(cmp, out);
+            Assertions.assertTrue(isFontValid, "Only valid fonts should reach this");
+            Assertions.assertArrayEquals(cmp, out);
         } catch (FontCompressionException e) {
             if (isFontValid) {
                 throw e;

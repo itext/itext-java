@@ -24,10 +24,17 @@ package com.itextpdf.kernel.pdf.layer;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
-import com.itextpdf.kernel.pdf.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfIndirectReference;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfObjectWrapper;
+import com.itextpdf.kernel.pdf.PdfString;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -35,6 +42,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class represents /OCProperties entry if pdf catalog and manages
@@ -48,6 +57,12 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
     static final String OC_CONFIG_NAME_PATTERN = "OCConfigName";
 
     private List<PdfLayer> layers = new ArrayList<>();
+
+    //TODO DEVSIX-8490 remove this field when implemented
+    private Set<PdfIndirectReference> references;
+
+    //TODO DEVSIX-8490 remove this field when implemented
+    private boolean isDuplicateRemoved;
 
     /**
      * Creates a new PdfOCProperties instance.
@@ -395,8 +410,17 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
             }
 
             PdfArray orderArray = d.getAsArray(PdfName.Order);
-            if (orderArray != null && !orderArray.isEmpty())
+            if (orderArray != null && !orderArray.isEmpty()) {
+                references = new HashSet<>();
+                isDuplicateRemoved = false;
                 readOrderFromDictionary(null, orderArray, layerMap);
+                //TODO DEVSIX-8490 remove this check when implemented
+                if (isDuplicateRemoved) {
+                    Logger logger = LoggerFactory.getLogger(PdfOCProperties.class);
+                    logger.warn(KernelLogMessageConstant.DUPLICATE_ENTRIES_IN_ORDER_ARRAY_REMOVED);
+                }
+            }
+
         }
 
         // Add the layers which should not be displayed on the panel to the order list
@@ -414,7 +438,27 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
             PdfObject item = orderArray.get(i);
             if (item.getType() == PdfObject.DICTIONARY) {
                 PdfLayer layer = layerMap.get(item.getIndirectReference());
-                if (layer != null) {
+                if (layer == null) {
+                    continue;
+                }
+
+                //TODO DEVSIX-8490 remove this check and it statement when implemented
+                if (references.contains(layer.getIndirectReference())) {
+                    //We want to check if this duplicate layer has childLayers, if it has - throw an exception,
+                    // else just don't add this layer.
+                    if (i + 1 < orderArray.size() && orderArray.get(i + 1).getType() == PdfObject.ARRAY) {
+                        final PdfArray nextArray = orderArray.getAsArray(i + 1);
+                        if (nextArray.size() > 0 && nextArray.get(0).getType() != PdfObject.STRING) {
+                            PdfIndirectReference ref = layer.getIndirectReference();
+                            throw new PdfException(MessageFormatUtil.format(
+                                    KernelExceptionMessageConstant.UNABLE_TO_REMOVE_DUPLICATE_LAYER
+                                    , ref.toString()));
+                        }
+                    }
+
+                    isDuplicateRemoved = true;
+                } else {
+                    references.add(layer.getIndirectReference());
                     layers.add(layer);
                     layer.onPanel = true;
                     if (parent != null)

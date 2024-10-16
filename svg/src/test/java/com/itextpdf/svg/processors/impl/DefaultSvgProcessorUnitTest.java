@@ -48,14 +48,12 @@ import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-@Category(UnitTest.class)
+@org.junit.jupiter.api.Tag("UnitTest")
 public class DefaultSvgProcessorUnitTest extends ExtendedITextTest {
 
     //Main success scenario
@@ -81,7 +79,7 @@ public class DefaultSvgProcessorUnitTest extends ExtendedITextTest {
         rootExpected.addChild(new DummySvgNodeRenderer("circle"));
         rootExpected.addChild(new DummySvgNodeRenderer("path"));
         //Compare
-        Assert.assertEquals(rootActual, rootExpected);
+        Assertions.assertEquals(rootActual, rootExpected);
     }
 
     @Test()
@@ -113,7 +111,7 @@ public class DefaultSvgProcessorUnitTest extends ExtendedITextTest {
 
         rootExpected.addChild(nestedSvgRend);
         //Compare
-        Assert.assertEquals(rootActual, rootExpected);
+        Assertions.assertEquals(rootActual, rootExpected);
     }
 
     //Edge cases
@@ -137,7 +135,7 @@ public class DefaultSvgProcessorUnitTest extends ExtendedITextTest {
         ISvgNodeRenderer rootActual = processor.process(root, props).getRootRenderer();
         //setup expected
         ISvgNodeRenderer rootExpected = new DummySvgNodeRenderer("svg");
-        Assert.assertEquals(rootExpected, rootActual);
+        Assertions.assertEquals(rootExpected, rootActual);
     }
 
     @Test
@@ -156,7 +154,7 @@ public class DefaultSvgProcessorUnitTest extends ExtendedITextTest {
         //setup expected
         IBranchSvgNodeRenderer rootExpected = new DummyBranchSvgNodeRenderer("svg");
         rootExpected.addChild(new DummySvgNodeRenderer("circle"));
-        Assert.assertEquals(rootActual, rootExpected);
+        Assertions.assertEquals(rootActual, rootExpected);
     }
 
     @Test
@@ -169,17 +167,17 @@ public class DefaultSvgProcessorUnitTest extends ExtendedITextTest {
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
         ISvgConverterProperties props = new DummySvgConverterProperties();
 
-        Exception e = Assert.assertThrows(SvgProcessingException.class,
+        Exception e = Assertions.assertThrows(SvgProcessingException.class,
                 () -> processor.process(root, props).getRootRenderer()
         );
-        Assert.assertEquals(SvgExceptionMessageConstant.NO_ROOT, e.getMessage());
+        Assertions.assertEquals(SvgExceptionMessageConstant.NO_ROOT, e.getMessage());
     }
 
     @Test
     public void dummyProcessingTestNullInput() {
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
 
-        Assert.assertThrows(SvgProcessingException.class, () -> processor.process(null, null));
+        Assertions.assertThrows(SvgProcessingException.class, () -> processor.process(null, null));
     }
 
     @Test
@@ -195,8 +193,8 @@ public class DefaultSvgProcessorUnitTest extends ExtendedITextTest {
 
         ISvgNodeRenderer rootRenderer = processor.process(root, convProps).getRootRenderer();
 
-        Assert.assertTrue(rootRenderer instanceof SvgTagSvgNodeRenderer);
-        Assert.assertEquals(0, ((SvgTagSvgNodeRenderer) rootRenderer).getChildren().size());
+        Assertions.assertTrue(rootRenderer instanceof SvgTagSvgNodeRenderer);
+        Assertions.assertEquals(0, ((SvgTagSvgNodeRenderer) rootRenderer).getChildren().size());
     }
 
     @Test
@@ -216,20 +214,20 @@ public class DefaultSvgProcessorUnitTest extends ExtendedITextTest {
 
         ISvgNodeRenderer rootRenderer = processor.process(root, convProps).getRootRenderer();
 
-        Assert.assertTrue(rootRenderer instanceof SvgTagSvgNodeRenderer);
+        Assertions.assertTrue(rootRenderer instanceof SvgTagSvgNodeRenderer);
 
         List<ISvgNodeRenderer> children = ((SvgTagSvgNodeRenderer) rootRenderer).getChildren();
 
-        Assert.assertEquals(2, children.size());
-        Assert.assertTrue(children.get(0) instanceof CircleSvgNodeRenderer);
-        Assert.assertTrue(children.get(1) instanceof PathSvgNodeRenderer);
+        Assertions.assertEquals(2, children.size());
+        Assertions.assertTrue(children.get(0) instanceof CircleSvgNodeRenderer);
+        Assertions.assertTrue(children.get(1) instanceof PathSvgNodeRenderer);
     }
 
     @Test
     public void findFirstElementNullTest() {
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
         IElementNode actual = processor.findFirstElement(null, "name");
-        Assert.assertNull(actual);
+        Assertions.assertNull(actual);
     }
 
     @Test
@@ -262,7 +260,7 @@ public class DefaultSvgProcessorUnitTest extends ExtendedITextTest {
         String url = imageRendered.getAttribute(SvgConstants.Attributes.XLINK_HREF);
 
         // Both variants(namely with triple and single slashes) are valid.
-        Assert.assertTrue(expectedURL.equals(url) || expectedURLAnotherValidVersion.equals(url));
+        Assertions.assertTrue(expectedURL.equals(url) || expectedURLAnotherValidVersion.equals(url));
     }
 
     @Test
@@ -280,7 +278,7 @@ public class DefaultSvgProcessorUnitTest extends ExtendedITextTest {
         String url = imageRendered.getAttribute(SvgConstants.Attributes.XLINK_HREF);
 
         // Both variants(namely with triple and single slashes) are valid.
-        Assert.assertTrue(expectedURL.equals(url) || expectedURLAnotherValidVersion.equals(url));
+        Assertions.assertTrue(expectedURL.equals(url) || expectedURLAnotherValidVersion.equals(url));
     }
 
     private INode createSvgContainingImage() {

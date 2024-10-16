@@ -23,12 +23,11 @@
 package com.itextpdf.styledxmlparser.css.media;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class MediaExpressionTest extends ExtendedITextTest {
     @Test
     public void mediaExpressionTestTest01() {
@@ -39,8 +38,8 @@ public class MediaExpressionTest extends ExtendedITextTest {
         deviceDescription.setWidth(600);
         deviceDescription.setHeight(600);
 
-        Assert.assertTrue(minHeight.matches(deviceDescription));
-        Assert.assertTrue(minWidth.matches(deviceDescription));
+        Assertions.assertTrue(minHeight.matches(deviceDescription));
+        Assertions.assertTrue(minWidth.matches(deviceDescription));
     }
 
     @Test
@@ -52,8 +51,8 @@ public class MediaExpressionTest extends ExtendedITextTest {
         deviceDescription.setWidth(450);
         deviceDescription.setHeight(450);
 
-        Assert.assertTrue(maxHeight.matches(deviceDescription));
-        Assert.assertTrue(maxWidth.matches(deviceDescription));
+        Assertions.assertTrue(maxHeight.matches(deviceDescription));
+        Assertions.assertTrue(maxWidth.matches(deviceDescription));
     }
 
     @Test
@@ -78,14 +77,14 @@ public class MediaExpressionTest extends ExtendedITextTest {
         deviceDescription.setWidth(32);
         deviceDescription.setHeight(20);
 
-        Assert.assertTrue(resolution.matches(deviceDescription));
-        Assert.assertTrue(orientation.matches(deviceDescription));
-        Assert.assertTrue(grid.matches(deviceDescription));
-        Assert.assertTrue(colorIndex.matches(deviceDescription));
-        Assert.assertTrue(monochrome.matches(deviceDescription));
-        Assert.assertTrue(scan.matches(deviceDescription));
-        Assert.assertTrue(color.matches(deviceDescription));
-        Assert.assertTrue(minAspectRatio.matches(deviceDescription));
+        Assertions.assertTrue(resolution.matches(deviceDescription));
+        Assertions.assertTrue(orientation.matches(deviceDescription));
+        Assertions.assertTrue(grid.matches(deviceDescription));
+        Assertions.assertTrue(colorIndex.matches(deviceDescription));
+        Assertions.assertTrue(monochrome.matches(deviceDescription));
+        Assertions.assertTrue(scan.matches(deviceDescription));
+        Assertions.assertTrue(color.matches(deviceDescription));
+        Assertions.assertTrue(minAspectRatio.matches(deviceDescription));
     }
 
     @Test
@@ -102,10 +101,10 @@ public class MediaExpressionTest extends ExtendedITextTest {
         deviceDescription.setWidth(32);
         deviceDescription.setHeight(20);
 
-        Assert.assertTrue(minAspectRatio.matches(deviceDescription));
-        Assert.assertTrue(minColorIndex.matches(deviceDescription));
-        Assert.assertTrue(minColor.matches(deviceDescription));
-        Assert.assertTrue(minResolution.matches(deviceDescription));
+        Assertions.assertTrue(minAspectRatio.matches(deviceDescription));
+        Assertions.assertTrue(minColorIndex.matches(deviceDescription));
+        Assertions.assertTrue(minColor.matches(deviceDescription));
+        Assertions.assertTrue(minResolution.matches(deviceDescription));
     }
 
     @Test
@@ -125,12 +124,12 @@ public class MediaExpressionTest extends ExtendedITextTest {
         deviceDescription.setMonochrome(0);
         deviceDescription.setResolution(150);
 
-        Assert.assertTrue(maxMonochrome.matches(deviceDescription));
-        Assert.assertTrue(maxHeight.matches(deviceDescription));
-        Assert.assertTrue(maxWidth.matches(deviceDescription));
-        Assert.assertFalse(maxColorIndex.matches(deviceDescription));
-        Assert.assertFalse(maxColor.matches(deviceDescription));
-        Assert.assertTrue(maxResolution.matches(deviceDescription));
+        Assertions.assertTrue(maxMonochrome.matches(deviceDescription));
+        Assertions.assertTrue(maxHeight.matches(deviceDescription));
+        Assertions.assertTrue(maxWidth.matches(deviceDescription));
+        Assertions.assertFalse(maxColorIndex.matches(deviceDescription));
+        Assertions.assertFalse(maxColor.matches(deviceDescription));
+        Assertions.assertTrue(maxResolution.matches(deviceDescription));
     }
 
     @Test
@@ -152,13 +151,13 @@ public class MediaExpressionTest extends ExtendedITextTest {
         deviceDescription.setHeight(2.00000000f);
         deviceDescription.setColorIndex(15000);
 
-        Assert.assertTrue(aspectRatio.matches(deviceDescription));
-        Assert.assertTrue(minMonochrome.matches(deviceDescription));
-        Assert.assertFalse(minColorIndex.matches(deviceDescription));
-        Assert.assertFalse(minColor.matches(deviceDescription));
-        Assert.assertFalse(resolution.matches(deviceDescription));
-        Assert.assertFalse(defaultExpression.matches(deviceDescription));
-        Assert.assertFalse(colorIndex.matches(deviceDescription));
+        Assertions.assertTrue(aspectRatio.matches(deviceDescription));
+        Assertions.assertTrue(minMonochrome.matches(deviceDescription));
+        Assertions.assertFalse(minColorIndex.matches(deviceDescription));
+        Assertions.assertFalse(minColor.matches(deviceDescription));
+        Assertions.assertFalse(resolution.matches(deviceDescription));
+        Assertions.assertFalse(defaultExpression.matches(deviceDescription));
+        Assertions.assertFalse(colorIndex.matches(deviceDescription));
     }
 }
 

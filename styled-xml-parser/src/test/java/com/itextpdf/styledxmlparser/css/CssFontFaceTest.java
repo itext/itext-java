@@ -25,15 +25,14 @@ package com.itextpdf.styledxmlparser.css;
 import com.itextpdf.styledxmlparser.css.font.CssFontFace;
 import com.itextpdf.styledxmlparser.css.font.CssFontFace.CssFontFaceSrc;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class CssFontFaceTest extends ExtendedITextTest {
 
     @Test
@@ -44,12 +43,12 @@ public class CssFontFaceTest extends ExtendedITextTest {
 
         CssFontFace fontFace = CssFontFace.create(properties);
 
-        Assert.assertNotNull(fontFace);
-        Assert.assertEquals("droid italic", fontFace.getFontFamily());
+        Assertions.assertNotNull(fontFace);
+        Assertions.assertEquals("droid italic", fontFace.getFontFamily());
         List<CssFontFaceSrc> sources = fontFace.getSources();
-        Assert.assertNotNull(sources);
-        Assert.assertEquals(1, sources.size());
-        Assert.assertEquals("web-fonts/droid-serif-italic.ttf", sources.get(0).getSrc());
+        Assertions.assertNotNull(sources);
+        Assertions.assertEquals(1, sources.size());
+        Assertions.assertEquals("web-fonts/droid-serif-italic.ttf", sources.get(0).getSrc());
     }
 
     @Test
@@ -60,7 +59,7 @@ public class CssFontFaceTest extends ExtendedITextTest {
 
         CssFontFace fontFace = CssFontFace.create(properties);
 
-        Assert.assertNull(fontFace);
+        Assertions.assertNull(fontFace);
     }
 
     @Test
@@ -71,7 +70,7 @@ public class CssFontFaceTest extends ExtendedITextTest {
 
         CssFontFace fontFace = CssFontFace.create(properties);
 
-        Assert.assertNull(fontFace);
+        Assertions.assertNull(fontFace);
     }
 
 }

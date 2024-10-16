@@ -27,21 +27,19 @@ import com.itextpdf.styledxmlparser.jsoup.Jsoup;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Document;
 import com.itextpdf.styledxmlparser.jsoup.parser.Tag;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 
-@Category(UnitTest.class)
+@org.junit.jupiter.api.Tag("UnitTest")
 public class CssTest extends ExtendedITextTest {
 
 	private Document html = null;
 	private static String htmlString;
 
-	@BeforeClass
+	@BeforeAll
 	public static void initClass() {
 		StringBuilder sb = new StringBuilder("<html><head></head><body>");
 
@@ -71,7 +69,7 @@ public class CssTest extends ExtendedITextTest {
 		htmlString = sb.toString();
 	}
 
-	@Before
+	@BeforeEach
 	public void init() {
 		html  = Jsoup.parse(htmlString);
 	}
@@ -195,17 +193,17 @@ public class CssTest extends ExtendedITextTest {
 	@Test
 	public void empty() {
 		final Elements sel = html.select(":empty");
-		Assert.assertEquals(3, sel.size());
-	    Assert.assertEquals("head", sel.get(0).tagName());
-		Assert.assertEquals("br", sel.get(1).tagName());
-		Assert.assertEquals("p", sel.get(2).tagName());
+		Assertions.assertEquals(3, sel.size());
+	    Assertions.assertEquals("head", sel.get(0).tagName());
+		Assertions.assertEquals("br", sel.get(1).tagName());
+		Assertions.assertEquals("p", sel.get(2).tagName());
 	}
 
 	@Test
 	public void onlyChild() {
 		final Elements sel = html.select("span :only-child");
-		Assert.assertEquals(1, sel.size());
-		Assert.assertEquals("br", sel.get(0).tagName());
+		Assertions.assertEquals(1, sel.size());
+		Assertions.assertEquals("br", sel.get(0).tagName());
 
 		check(html.select("#only :only-child"), "only");
 	}
@@ -213,35 +211,35 @@ public class CssTest extends ExtendedITextTest {
 	@Test
 	public void onlyOfType() {
 		final Elements sel = html.select(":only-of-type");
-		Assert.assertEquals(6, sel.size());
-		Assert.assertEquals("head", sel.get(0).tagName());
-		Assert.assertEquals("body", sel.get(1).tagName());
-		Assert.assertEquals("span", sel.get(2).tagName());
-		Assert.assertEquals("br", sel.get(3).tagName());
-		Assert.assertEquals("p", sel.get(4).tagName());
-		Assert.assertTrue(sel.get(4).hasClass("empty"));
-		Assert.assertEquals("em", sel.get(5).tagName());
+		Assertions.assertEquals(6, sel.size());
+		Assertions.assertEquals("head", sel.get(0).tagName());
+		Assertions.assertEquals("body", sel.get(1).tagName());
+		Assertions.assertEquals("span", sel.get(2).tagName());
+		Assertions.assertEquals("br", sel.get(3).tagName());
+		Assertions.assertEquals("p", sel.get(4).tagName());
+		Assertions.assertTrue(sel.get(4).hasClass("empty"));
+		Assertions.assertEquals("em", sel.get(5).tagName());
 	}
 
 	protected void check(Elements result, String...expectedContent ) {
-		Assert.assertEquals(expectedContent.length, result.size());
+		Assertions.assertEquals(expectedContent.length, result.size());
 		for (int i = 0; i < expectedContent.length; i++) {
-			Assert.assertNotNull(result.get(i));
-			Assert.assertEquals(expectedContent[i], result.get(i).ownText());
+			Assertions.assertNotNull(result.get(i));
+			Assertions.assertEquals(expectedContent[i], result.get(i).ownText());
 		}
 	}
 
 	@Test
 	public void root() {
 		Elements sel = html.select(":root");
-		Assert.assertEquals(1, sel.size());
-		Assert.assertNotNull(sel.get(0));
-		Assert.assertEquals(Tag.valueOf("html"), sel.get(0).tag());
+		Assertions.assertEquals(1, sel.size());
+		Assertions.assertNotNull(sel.get(0));
+		Assertions.assertEquals(Tag.valueOf("html"), sel.get(0).tag());
 
 		Elements sel2 = html.select("body").select(":root");
-		Assert.assertEquals(1, sel2.size());
-		Assert.assertNotNull(sel2.get(0));
-		Assert.assertEquals(Tag.valueOf("body"), sel2.get(0).tag());
+		Assertions.assertEquals(1, sel2.size());
+		Assertions.assertNotNull(sel2.get(0));
+		Assertions.assertEquals(Tag.valueOf("body"), sel2.get(0).tag());
 	}
 
 }

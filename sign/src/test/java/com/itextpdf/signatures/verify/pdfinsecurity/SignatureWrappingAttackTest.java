@@ -29,22 +29,21 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.signatures.PdfPKCS7;
 import com.itextpdf.signatures.SignatureUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.Security;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(BouncyCastleIntegrationTest.class)
+@Tag("BouncyCastleIntegrationTest")
 public class SignatureWrappingAttackTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/verify/pdfinsecurity/SignatureWrappingAttackTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         Security.addProvider(FACTORY.getProvider());
     }
@@ -57,8 +56,8 @@ public class SignatureWrappingAttackTest extends ExtendedITextTest {
         PdfDocument document = new PdfDocument(new PdfReader(filePath));
         SignatureUtil sigUtil = new SignatureUtil(document);
         PdfPKCS7 pdfPKCS7 = sigUtil.readSignatureData(signatureName);
-        Assert.assertTrue(pdfPKCS7.verifySignatureIntegrityAndAuthenticity());
-        Assert.assertFalse(sigUtil.signatureCoversWholeDocument(signatureName));
+        Assertions.assertTrue(pdfPKCS7.verifySignatureIntegrityAndAuthenticity());
+        Assertions.assertFalse(sigUtil.signatureCoversWholeDocument(signatureName));
         document.close();
     }
 }

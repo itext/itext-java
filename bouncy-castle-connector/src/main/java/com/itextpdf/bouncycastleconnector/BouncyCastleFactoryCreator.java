@@ -42,7 +42,7 @@ public final class BouncyCastleFactoryCreator {
 
     private static IBouncyCastleFactory factory;
     
-    private static Map<String, Supplier<IBouncyCastleFactory>> factories = new LinkedHashMap<>();
+    private static final Map<String, Supplier<IBouncyCastleFactory>> FACTORIES = new LinkedHashMap<>();
     
     private static final String FACTORY_ENVIRONMENT_VARIABLE_NAME = "ITEXT_BOUNCY_CASTLE_FACTORY_NAME";
 
@@ -52,12 +52,12 @@ public final class BouncyCastleFactoryCreator {
         populateFactoriesMap();
         
         String factoryName = SystemUtil.getPropertyOrEnvironmentVariable(FACTORY_ENVIRONMENT_VARIABLE_NAME);
-        Supplier<IBouncyCastleFactory> systemVariableFactoryCreator = factories.get(factoryName);
+        Supplier<IBouncyCastleFactory> systemVariableFactoryCreator = FACTORIES.get(factoryName);
         if (systemVariableFactoryCreator != null) {
             tryCreateFactory(systemVariableFactoryCreator);
         }
         
-        for (Supplier<IBouncyCastleFactory> factorySupplier : factories.values()) {
+        for (Supplier<IBouncyCastleFactory> factorySupplier : FACTORIES.values()) {
             if (factory != null) {
                 break;
             }
@@ -105,6 +105,6 @@ public final class BouncyCastleFactoryCreator {
     }
 
     private static void populateFactoriesMap() {
-        factories.put("bouncy-castle", () -> new BouncyCastleFactory());
+        FACTORIES.put("bouncy-castle", () -> new BouncyCastleFactory());
     }
 }

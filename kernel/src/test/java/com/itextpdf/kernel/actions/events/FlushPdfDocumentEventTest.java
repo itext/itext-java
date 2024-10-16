@@ -42,15 +42,14 @@ import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class FlushPdfDocumentEventTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/actions/";
@@ -67,9 +66,9 @@ public class FlushPdfDocumentEventTest extends ExtendedITextTest {
             new FlushPdfDocumentEvent(document).doAction();
 
             AbstractProductProcessITextEvent reportedEvent = access.publicGetEvents(document.getDocumentIdWrapper()).get(initialLength);
-            Assert.assertTrue(reportedEvent instanceof ConfirmedEventWrapper);
+            Assertions.assertTrue(reportedEvent instanceof ConfirmedEventWrapper);
             ConfirmedEventWrapper wrappedEvent = (ConfirmedEventWrapper) reportedEvent;
-            Assert.assertEquals(event, wrappedEvent.getEvent());
+            Assertions.assertEquals(event, wrappedEvent.getEvent());
         }
     }
 
@@ -91,7 +90,7 @@ public class FlushPdfDocumentEventTest extends ExtendedITextTest {
             new FlushPdfDocumentEvent(document).doAction();
 
             AbstractProductProcessITextEvent reportedEvent = access.publicGetEvents(document.getDocumentIdWrapper()).get(initialLength);
-            Assert.assertFalse(reportedEvent instanceof ConfirmedEventWrapper);
+            Assertions.assertFalse(reportedEvent instanceof ConfirmedEventWrapper);
         }
     }
 
@@ -106,16 +105,16 @@ public class FlushPdfDocumentEventTest extends ExtendedITextTest {
             EventManager.getInstance().onEvent(event);
 
             AbstractProductProcessITextEvent reportedEvent = access.publicGetEvents(document.getDocumentIdWrapper()).get(initialLength);
-            Assert.assertFalse(reportedEvent instanceof ConfirmedEventWrapper);
-            Assert.assertEquals(event, reportedEvent);
+            Assertions.assertFalse(reportedEvent instanceof ConfirmedEventWrapper);
+            Assertions.assertEquals(event, reportedEvent);
 
             EventManager.getInstance().onEvent(new ConfirmEvent(document.getDocumentIdWrapper(), event));
             new FlushPdfDocumentEvent(document).doAction();
 
             AbstractProductProcessITextEvent confirmedEvent = access.publicGetEvents(document.getDocumentIdWrapper()).get(initialLength);
-            Assert.assertTrue(confirmedEvent instanceof ConfirmedEventWrapper);
+            Assertions.assertTrue(confirmedEvent instanceof ConfirmedEventWrapper);
             ConfirmedEventWrapper wrappedEvent = (ConfirmedEventWrapper) confirmedEvent;
-            Assert.assertEquals(event, wrappedEvent.getEvent());
+            Assertions.assertEquals(event, wrappedEvent.getEvent());
         }
     }
 
@@ -145,7 +144,7 @@ public class FlushPdfDocumentEventTest extends ExtendedITextTest {
     public void doActionNullEventMapTest() throws IOException {
         try (PdfDocument document = new DummyPdfDocument(new PdfReader(SOURCE_FOLDER + "hello.pdf"))) {
             AssertUtil.doesNotThrow(() -> new FlushPdfDocumentEvent(document).doAction());
-            Assert.assertTrue(document.getDocumentInfo().getProducer()
+            Assertions.assertTrue(document.getDocumentInfo().getProducer()
                     .contains("Apryse Group NV (no registered products)"));
         }
     }
@@ -162,7 +161,7 @@ public class FlushPdfDocumentEventTest extends ExtendedITextTest {
         try (PdfDocument pdf = new PdfDocument(new PdfReader(new ByteArrayInputStream(baos.toByteArray())))) {
             String producerLine = pdf.getDocumentInfo().getProducer();
             String modifiedByItext = "modified using iText\u00ae Core";
-            Assert.assertEquals(producerLine.indexOf(modifiedByItext), producerLine.lastIndexOf(modifiedByItext));
+            Assertions.assertEquals(producerLine.indexOf(modifiedByItext), producerLine.lastIndexOf(modifiedByItext));
         }
     }
 

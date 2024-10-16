@@ -30,21 +30,20 @@ import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.nio.charset.StandardCharsets;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class EllipseSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/EllipseSvgNodeRendererIntegrationTest/";
     public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/renderers/impl/EllipseSvgNodeRendererIntegrationTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         ITextTest.createDestinationFolder(DESTINATION_FOLDER);
     }
@@ -165,7 +164,7 @@ public class EllipseSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
                 + "125.24 259.13 123.22 257.11 123.22 254.63 c\n"
                 + "123.22 252.14 125.24 250.13 127.72 250.13 c\n"
                 + "130.21 250.13 132.22 252.14 132.22 254.63 c";
-        Assert.assertTrue(pageContentBytes.contains(expectedResult));
+        Assertions.assertTrue(pageContentBytes.contains(expectedResult));
     }
 
     @Test

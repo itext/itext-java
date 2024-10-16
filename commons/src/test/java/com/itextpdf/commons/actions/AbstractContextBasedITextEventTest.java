@@ -26,15 +26,13 @@ import com.itextpdf.commons.actions.contexts.IMetaInfo;
 import com.itextpdf.commons.actions.data.CommonsProductData;
 import com.itextpdf.commons.actions.data.ProductData;
 import com.itextpdf.commons.ecosystem.TestMetaInfo;
-import com.itextpdf.commons.exceptions.CommonsExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class AbstractContextBasedITextEventTest extends ExtendedITextTest {
 
     @Test
@@ -44,7 +42,7 @@ public class AbstractContextBasedITextEventTest extends ExtendedITextTest {
 
         TestMetaInfo metaInfoAfter = new TestMetaInfo("meta-info-after");
         e.setMetaInfo(metaInfoAfter);
-        Assert.assertSame(metaInfoAfter, e.getMetaInfo());
+        Assertions.assertSame(metaInfoAfter, e.getMetaInfo());
     }
 
     @Test
@@ -54,9 +52,9 @@ public class AbstractContextBasedITextEventTest extends ExtendedITextTest {
         BasicAbstractContextBasedITextEvent e =
                 new BasicAbstractContextBasedITextEvent(CommonsProductData.getInstance(), metaInfoBefore);
 
-        Assert.assertSame(metaInfoBefore, e.getMetaInfo());
+        Assertions.assertSame(metaInfoBefore, e.getMetaInfo());
 
-        Assert.assertFalse(e.setMetaInfo(metaInfoAfter));
+        Assertions.assertFalse(e.setMetaInfo(metaInfoAfter));
     }
 
     private static class BasicAbstractContextBasedITextEvent extends AbstractContextBasedITextEvent {

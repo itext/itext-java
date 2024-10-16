@@ -23,12 +23,11 @@
 package com.itextpdf.kernel.colors;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class WebColorsTest extends ExtendedITextTest {
 
     private static final double RGB_MAX_VAL = 255.0;
@@ -41,7 +40,7 @@ public class WebColorsTest extends ExtendedITextTest {
 
         DeviceRgb resultRgb = WebColors.getRGBColor(colorName);
 
-        Assert.assertEquals(cmpRgb, resultRgb);
+        Assertions.assertEquals(cmpRgb, resultRgb);
     }
 
     @Test
@@ -51,7 +50,7 @@ public class WebColorsTest extends ExtendedITextTest {
 
         DeviceRgb resultRgb = WebColors.getRGBColor(colorName);
 
-        Assert.assertEquals(cmpRgb, resultRgb);
+        Assertions.assertEquals(cmpRgb, resultRgb);
     }
 
     @Test
@@ -62,7 +61,7 @@ public class WebColorsTest extends ExtendedITextTest {
 
         float[] resultRgba = WebColors.getRGBAColor(colorName);
 
-        Assert.assertArrayEquals(cmpRgba, resultRgba, delta);
+        Assertions.assertArrayEquals(cmpRgba, resultRgba, delta);
     }
 
     @Test
@@ -74,7 +73,7 @@ public class WebColorsTest extends ExtendedITextTest {
 
         float[] resultRgba = WebColors.getRGBAColor(hashHex);
 
-        Assert.assertArrayEquals(cmpRgba, resultRgba, delta);
+        Assertions.assertArrayEquals(cmpRgba, resultRgba, delta);
 
     }
     @Test
@@ -86,7 +85,7 @@ public class WebColorsTest extends ExtendedITextTest {
 
         float[] resultRgba = WebColors.getRGBAColor(hexString);
 
-        Assert.assertArrayEquals(cmpRgba, resultRgba, delta);
+        Assertions.assertArrayEquals(cmpRgba, resultRgba, delta);
     }
 
     @Test
@@ -98,7 +97,7 @@ public class WebColorsTest extends ExtendedITextTest {
 
         float[] resultRgba = WebColors.getRGBAColor(hexString);
 
-        Assert.assertArrayEquals(cmpRgba, resultRgba, delta);
+        Assertions.assertArrayEquals(cmpRgba, resultRgba, delta);
     }
 
     @Test
@@ -107,7 +106,7 @@ public class WebColorsTest extends ExtendedITextTest {
 
         float[] resultRgba = WebColors.getRGBAColor(hexString);
 
-        Assert.assertNull(resultRgba);
+        Assertions.assertNull(resultRgba);
     }
 
     @Test
@@ -119,7 +118,7 @@ public class WebColorsTest extends ExtendedITextTest {
 
         float[] resultRgba = WebColors.getRGBAColor(rgbString);
 
-        Assert.assertArrayEquals(cmpRgba, resultRgba, delta);
+        Assertions.assertArrayEquals(cmpRgba, resultRgba, delta);
     }
 
 
@@ -132,7 +131,7 @@ public class WebColorsTest extends ExtendedITextTest {
 
         float[] resultRgba = WebColors.getRGBAColor(rgbaString);
 
-        Assert.assertArrayEquals(cmpRgba, resultRgba, delta);
+        Assertions.assertArrayEquals(cmpRgba, resultRgba, delta);
     }
 
     @Test
@@ -144,7 +143,7 @@ public class WebColorsTest extends ExtendedITextTest {
 
         float[] resultCmyk = WebColors.getCMYKArray(cmykString);
 
-        Assert.assertArrayEquals(cmpCmyk, resultCmyk, delta);
+        Assertions.assertArrayEquals(cmpCmyk, resultCmyk, delta);
     }
 
     @Test
@@ -156,7 +155,7 @@ public class WebColorsTest extends ExtendedITextTest {
 
         float[] resultCmyk = WebColors.getCMYKArray(cmykString);
 
-        Assert.assertArrayEquals(cmpCmyk, resultCmyk, delta);
+        Assertions.assertArrayEquals(cmpCmyk, resultCmyk, delta);
     }
 
 
@@ -169,7 +168,7 @@ public class WebColorsTest extends ExtendedITextTest {
 
         float[] resultCmyk = WebColors.getCMYKArray(cmykString);
 
-        Assert.assertArrayEquals(cmpCmyk, resultCmyk, delta);
+        Assertions.assertArrayEquals(cmpCmyk, resultCmyk, delta);
     }
 
     @Test
@@ -180,7 +179,7 @@ public class WebColorsTest extends ExtendedITextTest {
 
         float[] resultCmyk = WebColors.getCMYKArray(cmykString);
 
-        Assert.assertArrayEquals(cmpCmyk, resultCmyk, delta);
+        Assertions.assertArrayEquals(cmpCmyk, resultCmyk, delta);
     }
 
     @Test
@@ -189,20 +188,20 @@ public class WebColorsTest extends ExtendedITextTest {
 
         float[] resultCmyk = WebColors.getCMYKArray(cmykString);
 
-        Assert.assertNull(resultCmyk);
+        Assertions.assertNull(resultCmyk);
     }
 
     @Test
     public void getCMYKColorWithExceptionDuringParsing() {
         float[] resultCmyk = WebColors.getCMYKArray(null);
-        Assert.assertNull(resultCmyk);
+        Assertions.assertNull(resultCmyk);
     }
 
 
     @Test
     public void getRGBAColorWithExceptionDuringParsing() {
         float[] resultCmyk = WebColors.getRGBAColor(null);
-        Assert.assertNull(resultCmyk);
+        Assertions.assertNull(resultCmyk);
     }
 
 
@@ -216,7 +215,7 @@ public class WebColorsTest extends ExtendedITextTest {
 
         DeviceCmyk resultCmyk = WebColors.getCMYKColor(cmykString);
 
-        Assert.assertArrayEquals(cmpCmyk, resultCmyk.colorValue, delta);
+        Assertions.assertArrayEquals(cmpCmyk, resultCmyk.colorValue, delta);
     }
 
     @Test
@@ -227,7 +226,7 @@ public class WebColorsTest extends ExtendedITextTest {
 
         DeviceCmyk resultCmyk = WebColors.getCMYKColor(cmykString);
 
-        Assert.assertArrayEquals(cmpCmyk, resultCmyk.colorValue, delta);
+        Assertions.assertArrayEquals(cmpCmyk, resultCmyk.colorValue, delta);
     }
 
     @Test
@@ -238,6 +237,6 @@ public class WebColorsTest extends ExtendedITextTest {
 
         DeviceCmyk resultCmyk = WebColors.getCMYKColor(cmykString);
 
-        Assert.assertArrayEquals(cmpCmyk, resultCmyk.colorValue, delta);
+        Assertions.assertArrayEquals(cmpCmyk, resultCmyk.colorValue, delta);
     }
 }

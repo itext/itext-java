@@ -25,16 +25,15 @@ package com.itextpdf.io.image;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class ImageDataFactoryTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/image/ImageDataFactoryTest/";
@@ -45,7 +44,7 @@ public class ImageDataFactoryTest extends ExtendedITextTest {
         byte data[] = new byte[1];
         ImageData raw = ImageDataFactory.create(1, 1, 1, 8, data, null);
 
-        Assert.assertEquals(1, raw.getColorEncodingComponentsNumber());
+        Assertions.assertEquals(1, raw.getColorEncodingComponentsNumber());
     }
 
     @Test
@@ -54,7 +53,7 @@ public class ImageDataFactoryTest extends ExtendedITextTest {
         ImageData raw = ImageDataFactory.create(1, 1, 1, 8, data, null);
         raw.setColorEncodingComponentsNumber(3);
 
-        Assert.assertEquals(3, raw.getColorEncodingComponentsNumber());
+        Assertions.assertEquals(3, raw.getColorEncodingComponentsNumber());
     }
 
     @Test
@@ -62,7 +61,7 @@ public class ImageDataFactoryTest extends ExtendedITextTest {
         byte data[] = new byte[1];
         ImageData raw = ImageDataFactory.create(1, 1, false, 0x100, 1, data, null);
 
-        Assert.assertEquals(1, raw.getColorEncodingComponentsNumber());
+        Assertions.assertEquals(1, raw.getColorEncodingComponentsNumber());
     }
 
     @Test
@@ -87,13 +86,13 @@ public class ImageDataFactoryTest extends ExtendedITextTest {
 
     @Test
     public void testImageTypeSupportWmfType() {
-        Assert.assertFalse(ImageDataFactory.isSupportedType(ImageType.WMF));
+        Assertions.assertFalse(ImageDataFactory.isSupportedType(ImageType.WMF));
     }
 
     private void testImageTypeSupport(URL location, boolean expectedResult) throws IOException {
-        Assert.assertEquals(expectedResult, ImageDataFactory.isSupportedType(location));
+        Assertions.assertEquals(expectedResult, ImageDataFactory.isSupportedType(location));
         try (InputStream inputStream = UrlUtil.openStream(location)) {
-            Assert.assertEquals(expectedResult, ImageDataFactory.isSupportedType(StreamUtil.inputStreamToArray(inputStream)));
+            Assertions.assertEquals(expectedResult, ImageDataFactory.isSupportedType(StreamUtil.inputStreamToArray(inputStream)));
         }
     }
 

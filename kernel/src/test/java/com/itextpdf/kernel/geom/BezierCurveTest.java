@@ -23,15 +23,14 @@
 package com.itextpdf.kernel.geom;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.Arrays;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class BezierCurveTest extends ExtendedITextTest {
 
     @Test
@@ -54,11 +53,11 @@ public class BezierCurveTest extends ExtendedITextTest {
                 new Point(16.979065f, 1.267128f), new Point(18.180115f, 2.538719f),
                 new Point(19.391418f, 4.102364f), new Point(20f, 5f));
 
-        Assert.assertEquals(expectedApproximation.size(), approximation.size());
+        Assertions.assertEquals(expectedApproximation.size(), approximation.size());
 
         for (int i = 0; i < expectedApproximation.size(); ++i) {
-            Assert.assertEquals(expectedApproximation.get(i).getX(), approximation.get(i).getX(), 0.001f);
-            Assert.assertEquals(expectedApproximation.get(i).getY(), approximation.get(i).getY(), 0.001f);
+            Assertions.assertEquals(expectedApproximation.get(i).getX(), approximation.get(i).getX(), 0.001f);
+            Assertions.assertEquals(expectedApproximation.get(i).getY(), approximation.get(i).getY(), 0.001f);
         }
     }
 
@@ -78,11 +77,11 @@ public class BezierCurveTest extends ExtendedITextTest {
                 new Point(2.026978f, -3.769684f), new Point(1.497437f, -2.986908f),
                 new Point(0.601685f, -1.262970f), new Point(0f, 0f));
 
-        Assert.assertEquals(expectedApproximation.size(), approximation.size());
+        Assertions.assertEquals(expectedApproximation.size(), approximation.size());
 
         for (int i = 0; i < expectedApproximation.size(); ++i) {
-            Assert.assertEquals(expectedApproximation.get(i).getX(), approximation.get(i).getX(), 0.001f);
-            Assert.assertEquals(expectedApproximation.get(i).getY(), approximation.get(i).getY(), 0.001f);
+            Assertions.assertEquals(expectedApproximation.get(i).getX(), approximation.get(i).getX(), 0.001f);
+            Assertions.assertEquals(expectedApproximation.get(i).getY(), approximation.get(i).getY(), 0.001f);
         }
     }
 
@@ -102,11 +101,11 @@ public class BezierCurveTest extends ExtendedITextTest {
                 new Point(13.888580f, -3.828888f), new Point(15.040771f, -2.459717f),
                 new Point(17.852783f, 1.702881f), new Point(20f, 5f));
 
-        Assert.assertEquals(expectedApproximation.size(), approximation.size());
+        Assertions.assertEquals(expectedApproximation.size(), approximation.size());
 
         for (int i = 0; i < expectedApproximation.size(); ++i) {
-            Assert.assertEquals(expectedApproximation.get(i).getX(), approximation.get(i).getX(), 0.001f);
-            Assert.assertEquals(expectedApproximation.get(i).getY(), approximation.get(i).getY(), 0.001f);
+            Assertions.assertEquals(expectedApproximation.get(i).getX(), approximation.get(i).getX(), 0.001f);
+            Assertions.assertEquals(expectedApproximation.get(i).getY(), approximation.get(i).getY(), 0.001f);
         }
     }
 
@@ -124,11 +123,11 @@ public class BezierCurveTest extends ExtendedITextTest {
             List<Point> expectedApproximation = Arrays.asList(new Point(0.000000f, 0.000000f),
                     new Point(0.75f, 1.875f), new Point(0.000000f, 0.000000f));
 
-            Assert.assertEquals(expectedApproximation.size(), approximation.size());
+            Assertions.assertEquals(expectedApproximation.size(), approximation.size());
 
             for (int i = 0; i < expectedApproximation.size(); ++i) {
-                Assert.assertEquals(expectedApproximation.get(i).getX(), approximation.get(i).getX(), 0.001f);
-                Assert.assertEquals(expectedApproximation.get(i).getY(), approximation.get(i).getY(), 0.001f);
+                Assertions.assertEquals(expectedApproximation.get(i).getX(), approximation.get(i).getX(), 0.001f);
+                Assertions.assertEquals(expectedApproximation.get(i).getY(), approximation.get(i).getY(), 0.001f);
             }
         } finally {
             BezierCurve.distanceToleranceManhattan = oldDistanceToleranceManhattan;

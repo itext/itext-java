@@ -43,27 +43,7 @@ public class PdfMerger {
      * @param pdfDocument the document into which source documents will be merged
      */
     public PdfMerger(PdfDocument pdfDocument) {
-        this(pdfDocument, true, true);
-    }
-
-    /**
-     * This class is used to merge a number of existing documents into one.
-     *
-     * @param pdfDocument the document into which source documents will be merged
-     * @param mergeTags if true, then tags from the source document are copied even if destination document is not set as
-     *                  tagged. Note, that if false, tag structure is still could be copied if the destination document
-     *                  is explicitly marked as tagged with {@link PdfDocument#setTagged()}
-     * @param mergeOutlines if true, then outlines from the source document are copied even if in destination document
-     *                      outlines are not initialized. Note, that if false, outlines are still could be copied if the
-     *                      destination document outlines were explicitly initialized with {@link PdfDocument#initializeOutlines()}
-     *
-     * @deprecated use <code>PdfMerger(PdfDocument, PdfMergerProperties)</code> constructor
-     */
-    @Deprecated
-    public PdfMerger(PdfDocument pdfDocument, boolean mergeTags, boolean mergeOutlines) {
-        this.pdfDocument = pdfDocument;
-        this.properties = new PdfMergerProperties();
-        this.properties.setMergeTags(mergeTags).setMergeOutlines(mergeOutlines);
+        this(pdfDocument, new PdfMergerProperties().setMergeTags(true).setMergeOutlines(true));
     }
 
     /**

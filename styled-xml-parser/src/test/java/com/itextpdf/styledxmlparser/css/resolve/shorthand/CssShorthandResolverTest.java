@@ -25,7 +25,6 @@ package com.itextpdf.styledxmlparser.css.resolve.shorthand;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.Set;
 import java.util.HashSet;
@@ -33,13 +32,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class CssShorthandResolverTest extends ExtendedITextTest {
 
     @Test
@@ -532,7 +531,7 @@ public class CssShorthandResolverTest extends ExtendedITextTest {
         ));
 
         IShorthandResolver resolver = ShorthandResolverFactory.getShorthandResolver(com.itextpdf.styledxmlparser.css.CommonCssConstants.LIST_STYLE);
-        Assert.assertNotNull(resolver);
+        Assertions.assertNotNull(resolver);
         List<CssDeclaration> resolvedShorthandProps = resolver.resolveShorthand(shorthandExpression);
         compareResolvedProps(resolvedShorthandProps, expectedResolvedProperties);
     }
@@ -547,7 +546,7 @@ public class CssShorthandResolverTest extends ExtendedITextTest {
         ));
 
         IShorthandResolver resolver = ShorthandResolverFactory.getShorthandResolver(com.itextpdf.styledxmlparser.css.CommonCssConstants.LIST_STYLE);
-        Assert.assertNotNull(resolver);
+        Assertions.assertNotNull(resolver);
         List<CssDeclaration> resolvedShorthandProps = resolver.resolveShorthand(shorthandExpression);
         compareResolvedProps(resolvedShorthandProps, expectedResolvedProperties);
     }
@@ -562,7 +561,7 @@ public class CssShorthandResolverTest extends ExtendedITextTest {
         ));
 
         IShorthandResolver resolver = ShorthandResolverFactory.getShorthandResolver(com.itextpdf.styledxmlparser.css.CommonCssConstants.LIST_STYLE);
-        Assert.assertNotNull(resolver);
+        Assertions.assertNotNull(resolver);
         List<CssDeclaration> resolvedShorthandProps = resolver.resolveShorthand(shorthandExpression);
         compareResolvedProps(resolvedShorthandProps, expectedResolvedProperties);
     }
@@ -580,7 +579,7 @@ public class CssShorthandResolverTest extends ExtendedITextTest {
         ));
 
         IShorthandResolver resolver = ShorthandResolverFactory.getShorthandResolver(com.itextpdf.styledxmlparser.css.CommonCssConstants.FONT);
-        Assert.assertNotNull(resolver);
+        Assertions.assertNotNull(resolver);
         List<CssDeclaration> resolvedShorthandProps = resolver.resolveShorthand(shorthandExpression);
         compareResolvedProps(resolvedShorthandProps, expectedResolvedProperties);
     }
@@ -598,7 +597,7 @@ public class CssShorthandResolverTest extends ExtendedITextTest {
         ));
 
         IShorthandResolver resolver = ShorthandResolverFactory.getShorthandResolver(com.itextpdf.styledxmlparser.css.CommonCssConstants.FONT);
-        Assert.assertNotNull(resolver);
+        Assertions.assertNotNull(resolver);
         List<CssDeclaration> resolvedShorthandProps = resolver.resolveShorthand(shorthandExpression);
         compareResolvedProps(resolvedShorthandProps, expectedResolvedProperties);
     }
@@ -616,7 +615,7 @@ public class CssShorthandResolverTest extends ExtendedITextTest {
         ));
 
         IShorthandResolver resolver = ShorthandResolverFactory.getShorthandResolver(com.itextpdf.styledxmlparser.css.CommonCssConstants.FONT);
-        Assert.assertNotNull(resolver);
+        Assertions.assertNotNull(resolver);
         List<CssDeclaration> resolvedShorthandProps = resolver.resolveShorthand(shorthandExpression);
         compareResolvedProps(resolvedShorthandProps, expectedResolvedProperties);
     }
@@ -634,7 +633,7 @@ public class CssShorthandResolverTest extends ExtendedITextTest {
         ));
 
         IShorthandResolver resolver = ShorthandResolverFactory.getShorthandResolver(com.itextpdf.styledxmlparser.css.CommonCssConstants.FONT);
-        Assert.assertNotNull(resolver);
+        Assertions.assertNotNull(resolver);
         List<CssDeclaration> resolvedShorthandProps = resolver.resolveShorthand(shorthandExpression);
         compareResolvedProps(resolvedShorthandProps, expectedResolvedProperties);
     }
@@ -652,7 +651,7 @@ public class CssShorthandResolverTest extends ExtendedITextTest {
         ));
 
         IShorthandResolver resolver = ShorthandResolverFactory.getShorthandResolver(com.itextpdf.styledxmlparser.css.CommonCssConstants.FONT);
-        Assert.assertNotNull(resolver);
+        Assertions.assertNotNull(resolver);
         List<CssDeclaration> resolvedShorthandProps = resolver.resolveShorthand(shorthandExpression);
         compareResolvedProps(resolvedShorthandProps, expectedResolvedProperties);
     }
@@ -670,7 +669,7 @@ public class CssShorthandResolverTest extends ExtendedITextTest {
         ));
 
         IShorthandResolver resolver = ShorthandResolverFactory.getShorthandResolver(com.itextpdf.styledxmlparser.css.CommonCssConstants.FONT);
-        Assert.assertNotNull(resolver);
+        Assertions.assertNotNull(resolver);
         List<CssDeclaration> resolvedShorthandProps = resolver.resolveShorthand(shorthandExpression);
         compareResolvedProps(resolvedShorthandProps, expectedResolvedProperties);
     }
@@ -688,7 +687,7 @@ public class CssShorthandResolverTest extends ExtendedITextTest {
         ));
 
         IShorthandResolver resolver = ShorthandResolverFactory.getShorthandResolver(com.itextpdf.styledxmlparser.css.CommonCssConstants.FONT);
-        Assert.assertNotNull(resolver);
+        Assertions.assertNotNull(resolver);
         List<CssDeclaration> resolvedShorthandProps = resolver.resolveShorthand(shorthandExpression);
         compareResolvedProps(resolvedShorthandProps, expectedResolvedProperties);
     }
@@ -706,7 +705,7 @@ public class CssShorthandResolverTest extends ExtendedITextTest {
         ));
 
         IShorthandResolver resolver = ShorthandResolverFactory.getShorthandResolver(com.itextpdf.styledxmlparser.css.CommonCssConstants.FONT);
-        Assert.assertNotNull(resolver);
+        Assertions.assertNotNull(resolver);
         List<CssDeclaration> resolvedShorthandProps = resolver.resolveShorthand(shorthandExpression);
         compareResolvedProps(resolvedShorthandProps, expectedResolvedProperties);
     }
@@ -724,7 +723,7 @@ public class CssShorthandResolverTest extends ExtendedITextTest {
         ));
 
         IShorthandResolver resolver = ShorthandResolverFactory.getShorthandResolver(com.itextpdf.styledxmlparser.css.CommonCssConstants.FONT);
-        Assert.assertNotNull(resolver);
+        Assertions.assertNotNull(resolver);
         List<CssDeclaration> resolvedShorthandProps = resolver.resolveShorthand(shorthandExpression);
         compareResolvedProps(resolvedShorthandProps, expectedResolvedProperties);
     }
@@ -758,7 +757,7 @@ public class CssShorthandResolverTest extends ExtendedITextTest {
         }
 
         if (areDifferent) {
-            Assert.fail(sb.toString());
+            Assertions.fail(sb.toString());
         }
     }
 }

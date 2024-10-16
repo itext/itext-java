@@ -62,17 +62,9 @@ public final class MinMaxWidthUtils {
     }
     
     public static float getBorderWidth(IPropertyContainer element) {
-        Border border = element.<Border>getProperty(Property.BORDER);
         Border rightBorder = element.<Border>getProperty(Property.BORDER_RIGHT);
         Border leftBorder = element.<Border>getProperty(Property.BORDER_LEFT);
-        
-        if (!element.hasOwnProperty(Property.BORDER_RIGHT)) {
-            rightBorder = border;
-        }
-        if (!element.hasOwnProperty(Property.BORDER_LEFT)) {
-            leftBorder = border;
-        }
-        
+
         float rightBorderWidth = rightBorder != null ? rightBorder.getWidth() : 0;
         float leftBorderWidth = leftBorder != null ? leftBorder.getWidth() : 0;
         return rightBorderWidth + leftBorderWidth;

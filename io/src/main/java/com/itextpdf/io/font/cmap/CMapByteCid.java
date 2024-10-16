@@ -32,16 +32,52 @@ public class CMapByteCid extends AbstractCMap {
 
     protected static class Cursor {
 
-        public int offset;
-        public int length;
+        private int offset;
+        private int length;
 
         public Cursor(int offset, int length) {
             this.offset = offset;
             this.length = length;
         }
+
+        /**
+         * Retrieves the offset of the object.
+         *
+         * @return offset value
+         */
+        public int getOffset() {
+            return offset;
+        }
+
+        /**
+         * Sets the offset of the object.
+         *
+         * @param offset offset value
+         */
+        public void setOffset(int offset) {
+            this.offset = offset;
+        }
+
+        /**
+         * Retrieves the length of the object.
+         *
+         * @return length value
+         */
+        public int getLength() {
+            return length;
+        }
+
+        /**
+         * Sets the length value of the object.
+         *
+         * @param length length value
+         */
+        public void setLength(int length) {
+            this.length = length;
+        }
     }
 
-    private List<int[]> planes = new ArrayList<>();
+    private final List<int[]> planes = new ArrayList<>();
 
     public CMapByteCid() {
         planes.add(new int[256]);
@@ -73,11 +109,12 @@ public class CMapByteCid extends AbstractCMap {
     }
 
     protected int decodeSingle(byte[] cidBytes, Cursor cursor) {
-        int end = cursor.offset + cursor.length;
+        int end = cursor.getOffset() + cursor.getLength();
         int currentPlane = 0;
-        while (cursor.offset < end) {
-            int one = cidBytes[cursor.offset++] & 0xff;
-            cursor.length--;
+        while (cursor.getOffset() < end) {
+            int one = cidBytes[cursor.getOffset()] & 0xff;
+            cursor.setOffset(cursor.getOffset() + 1);
+            cursor.setLength(cursor.getLength() - 1);
             int[] plane = planes.get(currentPlane);
             int cid = plane[one];
             if ((cid & 0x8000) == 0) {

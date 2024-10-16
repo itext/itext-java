@@ -25,6 +25,7 @@ package com.itextpdf.bouncycastle.cert.ocsp;
 import com.itextpdf.bouncycastle.asn1.x500.X500NameBC;
 import com.itextpdf.commons.bouncycastle.asn1.x500.IX500Name;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IRespID;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IResponderID;
 
 import java.util.Objects;
 import org.bouncycastle.cert.ocsp.RespID;
@@ -61,6 +62,15 @@ public class RespIDBC implements IRespID {
     public RespID getRespID() {
         return respID;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IResponderID toASN1Primitive() {
+        return new ResponderIDBC(respID.toASN1Primitive());
+    }
+
 
     /**
      * Indicates whether some other object is "equal to" this one. Compares wrapped objects.

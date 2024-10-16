@@ -23,24 +23,23 @@
 package com.itextpdf.signatures;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.security.KeyStoreException;
 import java.security.cert.X509Certificate;
 import java.util.Iterator;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class SignUtilsManualTest extends ExtendedITextTest {
 
     @Test
-    @org.junit.Ignore
+    @org.junit.jupiter.api.Disabled
     public void removeCertificatesIteratorTest() throws KeyStoreException {
         Iterable<X509Certificate> iterable = SignUtils.getCertificates(KeyStoreUtil.loadCacertsKeyStore());
         Iterator<X509Certificate> it = iterable.iterator();
-        Exception e = Assert.assertThrows(UnsupportedOperationException.class, it::remove);
-        Assert.assertEquals("remove", e.getMessage());
+        Exception e = Assertions.assertThrows(UnsupportedOperationException.class, it::remove);
+        Assertions.assertEquals("remove", e.getMessage());
     }
 }

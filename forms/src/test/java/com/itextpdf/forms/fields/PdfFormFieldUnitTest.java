@@ -34,20 +34,19 @@ import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.renderer.MetaInfoContainer;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfFormFieldUnitTest extends ExtendedITextTest {
 
     @Test
     public void cannotGetRectangleIfKidsIsNullTest() {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         PdfFormField pdfFormField = PdfFormCreator.createFormField(pdfDocument);
-        Assert.assertNull(pdfFormField.getFirstFormAnnotation());
+        Assertions.assertNull(pdfFormField.getFirstFormAnnotation());
     }
 
     @Test
@@ -58,7 +57,7 @@ public class PdfFormFieldUnitTest extends ExtendedITextTest {
         FormsMetaInfoStaticContainer.useMetaInfoDuringTheAction(metaInfoContainer,
                 () -> PdfFormAnnotation.setMetaInfoToCanvas(canvas));
 
-        Assert.assertSame(metaInfoContainer, canvas.<MetaInfoContainer>getProperty(Property.META_INFO));
+        Assertions.assertSame(metaInfoContainer, canvas.<MetaInfoContainer>getProperty(Property.META_INFO));
     }
 
     @Test
@@ -66,7 +65,7 @@ public class PdfFormFieldUnitTest extends ExtendedITextTest {
         Canvas canvas = createCanvas();
         PdfFormAnnotation.setMetaInfoToCanvas(canvas);
 
-        Assert.assertNull(canvas.<MetaInfoContainer>getProperty(Property.META_INFO));
+        Assertions.assertNull(canvas.<MetaInfoContainer>getProperty(Property.META_INFO));
     }
 
     private static Canvas createCanvas() {

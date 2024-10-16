@@ -24,9 +24,8 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -36,11 +35,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.api.Assertions;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfDeveloperExtensionTest extends ExtendedITextTest {
 
 
@@ -151,13 +148,53 @@ public class PdfDeveloperExtensionTest extends ExtendedITextTest {
         );
     }
 
-    private void assertSimpleExtension(byte[] docData, PdfName prefix, int expectedLevel) throws IOException {
+    @Test
+    public void removeSingleValuedExtensionTest() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(baos))) {
+            pdfDoc.getCatalog().addDeveloperExtension(SIMPLE_EXTENSION_L5);
+            pdfDoc.getCatalog().removeDeveloperExtension(SIMPLE_EXTENSION_L5);
+        }
+
+        assertNoExtensionWithPrefix(
+                baos.toByteArray(),
+                SIMPLE_EXTENSION_L5.getPrefix()
+        );
+    }
+
+    @Test
+    public void removeMultivaluedExtensionTest() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(baos))) {
+            pdfDoc.getCatalog().addDeveloperExtension(MULTI_EXTENSION_1);
+            pdfDoc.getCatalog().addDeveloperExtension(MULTI_EXTENSION_2);
+            pdfDoc.getCatalog().removeDeveloperExtension(MULTI_EXTENSION_2);
+        }
+
+        assertMultiExtension(
+                baos.toByteArray(),
+                MULTI_EXTENSION_1.getPrefix(),
+                Arrays.asList(MULTI_EXTENSION_1.getExtensionLevel())
+        );
+    }
+
+    private void assertSimpleExtension(byte[] docData, PdfName prefix, int expectedLevel) throws IOException {
         try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(new ByteArrayInputStream(docData)))) {
             PdfDictionary extDict = pdfDoc.getCatalog().getPdfObject()
                     .getAsDictionary(PdfName.Extensions)
                     .getAsDictionary(prefix);
-            assertEquals(expectedLevel, extDict.getAsNumber(PdfName.ExtensionLevel).intValue());
+            Assertions.assertEquals(expectedLevel, extDict.getAsNumber(PdfName.ExtensionLevel).intValue());
+        }
+    }
+
+    private void assertNoExtensionWithPrefix(byte[] docData, PdfName prefix) throws IOException {
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(new ByteArrayInputStream(docData)))) {
+            PdfDictionary extDict = pdfDoc.getCatalog().getPdfObject()
+                    .getAsDictionary(PdfName.Extensions)
+                    .getAsDictionary(prefix);
+            Assertions.assertNull(extDict);
         }
     }
 
@@ -172,8 +209,8 @@ public class PdfDeveloperExtensionTest extends ExtendedITextTest {
                 int level = exts
                         .getAsDictionary(i)
                         .getAsInt(PdfName.ExtensionLevel).intValue();
-                assertTrue("Level " + level + " is not in expected level list", expectedLevels.contains(level));
-                assertFalse("Level " + level + " appears multiple times", seen.contains(level));
+                Assertions.assertTrue(expectedLevels.contains(level), "Level " + level + " is not in expected level list");
+                Assertions.assertFalse(seen.contains(level), "Level " + level + " appears multiple times");
                 seen.add(level);
             }
         }

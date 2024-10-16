@@ -31,19 +31,18 @@ import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class LinearGradientSvgNodeRendererTest extends SvgIntegrationTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/LinearGradientSvgNodeRendererTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/svg/renderers/impl/LinearGradientSvgNodeRendererTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         ITextTest.createOrClearDestinationFolder(destinationFolder);
     }
@@ -361,7 +360,6 @@ public class LinearGradientSvgNodeRendererTest extends SvgIntegrationTest {
     }
 
     @Test
-    // TODO DEVSIX-4143 change cmp file after fixing
     public void textXOffset() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "textXOffset");
     }
@@ -532,7 +530,6 @@ public class LinearGradientSvgNodeRendererTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO change cmp after DEVSIX-4143 is fixed (bug with only one absolute coordinate in tspan)
     public void matrixTransformInGradientWithObjectBoundingBoxUnitsTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "matrixTransformInGradientWithObjectBoundingBoxUnits");
     }

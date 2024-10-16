@@ -76,7 +76,7 @@ public class FontUtil {
                 CMapParser.parseCid("", cMapToUnicode, lb);
             } catch (Exception e) {
                 LOGGER.error(IoLogMessageConstant.UNKNOWN_ERROR_WHILE_PROCESSING_CMAP, e);
-                cMapToUnicode = CMapToUnicode.EmptyCMapToUnicodeMap;
+                cMapToUnicode = CMapToUnicode.EMPTY_CMAP;
             }
         } else if (PdfName.IdentityH.equals(toUnicode)) {
             cMapToUnicode = CMapToUnicode.getIdentity();

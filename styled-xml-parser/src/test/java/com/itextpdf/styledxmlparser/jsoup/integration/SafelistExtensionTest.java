@@ -28,15 +28,14 @@ import com.itextpdf.styledxmlparser.jsoup.nodes.Attribute;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
 import com.itextpdf.styledxmlparser.jsoup.safety.Safelist;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 /**
  Check that we can extend Safelist methods
  */
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class SafelistExtensionTest extends ExtendedITextTest {
     @Test public void canCustomizeSafeTests() {
         OpenSafelist openSafelist = new OpenSafelist(Safelist.relaxed());
@@ -47,8 +46,8 @@ public class SafelistExtensionTest extends ExtendedITextTest {
         String openClean = Jsoup.clean(html, openSafelist);
         String clean = Jsoup.clean(html, safelist);
 
-        Assert.assertEquals("<p><opentag openattr=\"\">Hello</opentag></p>", TextUtil.stripNewlines(openClean));
-        Assert.assertEquals("<p>Hello</p>", clean);
+        Assertions.assertEquals("<p><opentag openattr=\"\">Hello</opentag></p>", TextUtil.stripNewlines(openClean));
+        Assertions.assertEquals("<p>Hello</p>", clean);
     }
 
     // passes tags and attributes starting with "open"

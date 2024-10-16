@@ -30,15 +30,14 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.canvas.parser.data.TextRenderInfo;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.CharacterRenderInfo;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 import java.util.Stack;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class CharacterRenderInfoTest extends ExtendedITextTest {
 
     @Test
@@ -47,7 +46,7 @@ public class CharacterRenderInfoTest extends ExtendedITextTest {
 
         CharacterRenderInfo characterRenderInfo = new CharacterRenderInfo(tri);
 
-        Assert.assertTrue(characterRenderInfo.getBoundingBox().equalsWithEpsilon(new Rectangle(-8.616f, 0f, 11.1f, 19.344f)));
+        Assertions.assertTrue(characterRenderInfo.getBoundingBox().equalsWithEpsilon(new Rectangle(-8.616f, 0f, 11.1f, 19.344f)));
     }
 
     private static TextRenderInfo initTRI(String text, double angle) throws IOException {

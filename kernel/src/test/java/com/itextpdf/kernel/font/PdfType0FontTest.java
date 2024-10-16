@@ -31,18 +31,17 @@ import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfType0FontTest extends ExtendedITextTest {
 
     public static final String DESTINATION_FOLDER = "./target/test/resources/com/itextpdf/kernel/font/PdfType0FontTest/";
@@ -56,24 +55,24 @@ public class PdfType0FontTest extends ExtendedITextTest {
 
         CMapEncoding cmap = type0Font.getCmap();
 
-        Assert.assertNotNull(cmap);
-        Assert.assertTrue(cmap.isDirect());
-        Assert.assertFalse(cmap.hasUniMap());
-        Assert.assertNull(cmap.getUniMapName());
-        Assert.assertEquals("Adobe", cmap.getRegistry());
-        Assert.assertEquals("Identity", cmap.getOrdering());
-        Assert.assertEquals(0, cmap.getSupplement());
-        Assert.assertEquals(PdfEncodings.IDENTITY_H, cmap.getCmapName());
+        Assertions.assertNotNull(cmap);
+        Assertions.assertTrue(cmap.isDirect());
+        Assertions.assertFalse(cmap.hasUniMap());
+        Assertions.assertNull(cmap.getUniMapName());
+        Assertions.assertEquals("Adobe", cmap.getRegistry());
+        Assertions.assertEquals("Identity", cmap.getOrdering());
+        Assertions.assertEquals(0, cmap.getSupplement());
+        Assertions.assertEquals(PdfEncodings.IDENTITY_H, cmap.getCmapName());
     }
 
     @Test
     public void unsupportedCmapTest() throws IOException {
         TrueTypeFont ttf = new TrueTypeFont(SOURCE_FOLDER + "NotoSerif-Regular_v1.7.ttf");
 
-        Exception e = Assert.assertThrows(PdfException.class,
+        Exception e = Assertions.assertThrows(PdfException.class,
                 () -> new PdfType0Font(ttf, PdfEncodings.WINANSI)
         );
-        Assert.assertEquals(KernelExceptionMessageConstant.ONLY_IDENTITY_CMAPS_SUPPORTS_WITH_TRUETYPE, e.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.ONLY_IDENTITY_CMAPS_SUPPORTS_WITH_TRUETYPE, e.getMessage());
     }
 
     @Test
@@ -89,14 +88,14 @@ public class PdfType0FontTest extends ExtendedITextTest {
 
         CMapEncoding cmap = type0Font.getCmap();
 
-        Assert.assertNotNull(cmap);
-        Assert.assertTrue(cmap.isDirect());
-        Assert.assertFalse(cmap.hasUniMap());
-        Assert.assertNull(cmap.getUniMapName());
-        Assert.assertEquals("Adobe", cmap.getRegistry());
-        Assert.assertEquals("Identity", cmap.getOrdering());
-        Assert.assertEquals(0, cmap.getSupplement());
-        Assert.assertEquals(PdfEncodings.IDENTITY_H, cmap.getCmapName());
+        Assertions.assertNotNull(cmap);
+        Assertions.assertTrue(cmap.isDirect());
+        Assertions.assertFalse(cmap.hasUniMap());
+        Assertions.assertNull(cmap.getUniMapName());
+        Assertions.assertEquals("Adobe", cmap.getRegistry());
+        Assertions.assertEquals("Identity", cmap.getOrdering());
+        Assertions.assertEquals(0, cmap.getSupplement());
+        Assertions.assertEquals(PdfEncodings.IDENTITY_H, cmap.getCmapName());
     }
 
     @Test
@@ -108,25 +107,25 @@ public class PdfType0FontTest extends ExtendedITextTest {
 
         List<Glyph> glyphs = new ArrayList<>();
         type0Font.appendGlyphs(textWithThreeSurrogatePairs, 0, textWithThreeSurrogatePairs.length() - 1, glyphs);
-        Assert.assertEquals(3, glyphs.size());
+        Assertions.assertEquals(3, glyphs.size());
     }
 
     @Test
     public void getUniMapFromOrderingTest() {
-        Assert.assertEquals("UniCNS-UTF16-H", PdfType0Font.getUniMapFromOrdering("CNS1", true));
-        Assert.assertEquals("UniCNS-UTF16-V", PdfType0Font.getUniMapFromOrdering("CNS1", false));
+        Assertions.assertEquals("UniCNS-UTF16-H", PdfType0Font.getUniMapFromOrdering("CNS1", true));
+        Assertions.assertEquals("UniCNS-UTF16-V", PdfType0Font.getUniMapFromOrdering("CNS1", false));
 
-        Assert.assertEquals("UniJIS-UTF16-H", PdfType0Font.getUniMapFromOrdering("Japan1", true));
-        Assert.assertEquals("UniJIS-UTF16-V", PdfType0Font.getUniMapFromOrdering("Japan1", false));
+        Assertions.assertEquals("UniJIS-UTF16-H", PdfType0Font.getUniMapFromOrdering("Japan1", true));
+        Assertions.assertEquals("UniJIS-UTF16-V", PdfType0Font.getUniMapFromOrdering("Japan1", false));
 
-        Assert.assertEquals("UniKS-UTF16-H", PdfType0Font.getUniMapFromOrdering("Korea1", true));
-        Assert.assertEquals("UniKS-UTF16-V", PdfType0Font.getUniMapFromOrdering("Korea1", false));
+        Assertions.assertEquals("UniKS-UTF16-H", PdfType0Font.getUniMapFromOrdering("Korea1", true));
+        Assertions.assertEquals("UniKS-UTF16-V", PdfType0Font.getUniMapFromOrdering("Korea1", false));
 
-        Assert.assertEquals("UniGB-UTF16-H", PdfType0Font.getUniMapFromOrdering("GB1", true));
-        Assert.assertEquals("UniGB-UTF16-V", PdfType0Font.getUniMapFromOrdering("GB1", false));
+        Assertions.assertEquals("UniGB-UTF16-H", PdfType0Font.getUniMapFromOrdering("GB1", true));
+        Assertions.assertEquals("UniGB-UTF16-V", PdfType0Font.getUniMapFromOrdering("GB1", false));
 
-        Assert.assertEquals("Identity-H", PdfType0Font.getUniMapFromOrdering("Identity", true));
-        Assert.assertEquals("Identity-V", PdfType0Font.getUniMapFromOrdering("Identity", false));
+        Assertions.assertEquals("Identity-H", PdfType0Font.getUniMapFromOrdering("Identity", true));
+        Assertions.assertEquals("Identity-V", PdfType0Font.getUniMapFromOrdering("Identity", false));
     }
 
     @Test
@@ -139,8 +138,8 @@ public class PdfType0FontTest extends ExtendedITextTest {
         fontDict.put(PdfName.DescendantFonts, descendantFonts);
 
 
-        Exception e = Assert.assertThrows(PdfException.class, () -> new PdfType0Font(fontDict));
-        Assert.assertEquals(KernelExceptionMessageConstant.ORDERING_SHOULD_BE_DETERMINED, e.getMessage());
+        Exception e = Assertions.assertThrows(PdfException.class, () -> new PdfType0Font(fontDict));
+        Assertions.assertEquals(KernelExceptionMessageConstant.ORDERING_SHOULD_BE_DETERMINED, e.getMessage());
     }
 
 
@@ -160,7 +159,7 @@ public class PdfType0FontTest extends ExtendedITextTest {
         PdfFont font = PdfFontFactory.createFont("STSong-Light", "UniGB-UCS2-H", PdfFontFactory.EmbeddingStrategy.PREFER_NOT_EMBEDDED);
         GlyphLine line = new GlyphLine(constructGlyphListFromString("\u5341\u950a\u57cb\u4f0f", font));
         byte[] result = font.convertToBytes(line);
-        Assert.assertArrayEquals(expected, result);
+        Assertions.assertArrayEquals(expected, result);
     }
 
 }

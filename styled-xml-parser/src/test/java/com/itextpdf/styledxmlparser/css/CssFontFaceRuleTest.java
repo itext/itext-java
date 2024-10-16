@@ -24,15 +24,14 @@ package com.itextpdf.styledxmlparser.css;
 
 import com.itextpdf.layout.font.Range;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class CssFontFaceRuleTest extends ExtendedITextTest {
 
     @Test
@@ -47,7 +46,7 @@ public class CssFontFaceRuleTest extends ExtendedITextTest {
                              "    font-family: test-font-family;\n" +
                              "    font-weight: bold;\n" +
                              "}";
-        Assert.assertEquals(expectedCss, fontFaceRule.toString());
+        Assertions.assertEquals(expectedCss, fontFaceRule.toString());
     }
 
     @Test
@@ -57,8 +56,8 @@ public class CssFontFaceRuleTest extends ExtendedITextTest {
         declarations.add(new CssDeclaration("unicode-range", "U+75"));
         fontFaceRule.addBodyCssDeclarations(declarations);
         Range range = fontFaceRule.resolveUnicodeRange();
-        Assert.assertNotNull(range);
-        Assert.assertTrue(range.contains(117));
+        Assertions.assertNotNull(range);
+        Assertions.assertTrue(range.contains(117));
     }
 
 }

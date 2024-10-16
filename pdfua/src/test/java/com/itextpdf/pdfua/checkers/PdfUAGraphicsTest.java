@@ -27,9 +27,7 @@ import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
@@ -49,19 +47,17 @@ import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfUAGraphicsTest extends ExtendedITextTest {
 
 
@@ -75,26 +71,25 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
 
     private UaValidationTestFramework framework;
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
-    @Before
+    @BeforeEach
     public void initializeFramework() {
         framework = new UaValidationTestFramework(DESTINATION_FOLDER);
     }
 
     @Test
     public void imageWithoutAlternativeDescription_ThrowsInLayout() throws MalformedURLException {
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream(),
-                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Document document = new Document(pdfDoc);
         Image img = new Image(ImageDataFactory.create(DOG));
-        Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> {
             document.add(img);
         });
-        Assert.assertEquals(PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT, e.getMessage());
+        Assertions.assertEquals(PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT, e.getMessage());
     }
 
     @Test
@@ -104,21 +99,20 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
 
     @Test
     public void imageWithEmptyAlternativeDescription_ThrowsInLayout() throws MalformedURLException {
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream(),
-                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Document document = new Document(pdfDoc);
 
         Image img = new Image(ImageDataFactory.create(DOG));
         img.getAccessibilityProperties().setAlternateDescription("");
 
-        Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> {
             document.add(img);
         });
-        Assert.assertEquals(PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT, e.getMessage());
+        Assertions.assertEquals(PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT, e.getMessage());
     }
 
     @Test
-    public void imageCustomRole_Ok() throws FileNotFoundException {
+    public void imageCustomRole_Ok() throws IOException {
         framework.addBeforeGenerationHook((pdfDocument) -> {
             PdfStructTreeRoot root = pdfDocument.getStructTreeRoot();
             root.addRoleMapping("CustomImage", StandardRoles.FIGURE);
@@ -141,7 +135,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void imageCustomDoubleMapping_Ok() throws FileNotFoundException {
+    public void imageCustomDoubleMapping_Ok() throws IOException {
         framework.addBeforeGenerationHook((pdfDocument) -> {
             PdfStructTreeRoot root = pdfDocument.getStructTreeRoot();
             root.addRoleMapping("CustomImage", StandardRoles.FIGURE);
@@ -165,7 +159,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void imageCustomRoleNoAlternateDescription_Throws() throws FileNotFoundException {
+    public void imageCustomRoleNoAlternateDescription_Throws() throws IOException {
         framework.addBeforeGenerationHook((pdfDocument) -> {
             PdfStructTreeRoot root = pdfDocument.getStructTreeRoot();
             root.addRoleMapping("CustomImage", StandardRoles.FIGURE);
@@ -187,7 +181,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void imageCustomDoubleMapping_Throws() throws FileNotFoundException {
+    public void imageCustomDoubleMapping_Throws() throws IOException {
         framework.addBeforeGenerationHook((pdfDocument) -> {
             PdfStructTreeRoot root = pdfDocument.getStructTreeRoot();
             root.addRoleMapping("CustomImage", StandardRoles.FIGURE);
@@ -212,14 +206,13 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
     @Test
     public void imageWithValidAlternativeDescription_OK() throws IOException, InterruptedException {
         final String OUTPUT_FILE = DESTINATION_FOLDER + "imageWithValidAlternativeDescription_OK.pdf";
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(OUTPUT_FILE,
-                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(OUTPUT_FILE));
         Document document = new Document(pdfDoc);
         Image img = new Image(ImageDataFactory.create(DOG));
         img.getAccessibilityProperties().setAlternateDescription("Alternative description");
         document.add(img);
         document.close();
-        Assert.assertNull(new CompareTool().compareByContent(OUTPUT_FILE,
+        Assertions.assertNull(new CompareTool().compareByContent(OUTPUT_FILE,
                 SOURCE_FOLDER + "cmp_imageWithValidAlternativeDescription_OK.pdf",
                 DESTINATION_FOLDER, "diff_"));
     }
@@ -227,14 +220,13 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
     @Test
     public void imageWithValidActualText_OK() throws IOException, InterruptedException {
         final String OUTPUT_FILE = DESTINATION_FOLDER + "imageWithValidActualText_OK.pdf";
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(OUTPUT_FILE,
-                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(OUTPUT_FILE));
         Document document = new Document(pdfDoc);
         Image img = new Image(ImageDataFactory.create(DOG));
         img.getAccessibilityProperties().setActualText("Actual text");
         document.add(img);
         document.close();
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareByContent(OUTPUT_FILE, SOURCE_FOLDER + "cmp_imageWithValidActualText_OK.pdf",
                         DESTINATION_FOLDER, "diff_"));
     }
@@ -242,8 +234,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
     @Test
     public void imageWithCaption_OK() throws IOException, InterruptedException {
         final String OUTPUT_FILE = DESTINATION_FOLDER + "imageWithCaption_OK.pdf";
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(OUTPUT_FILE,
-                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(OUTPUT_FILE));
         Document document = new Document(pdfDoc);
 
         Div imgWithCaption = new Div();
@@ -261,15 +252,14 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
 
         document.add(imgWithCaption);
         document.close();
-        Assert.assertNull(
+        Assertions.assertNull(
                 new CompareTool().compareByContent(OUTPUT_FILE, SOURCE_FOLDER + "cmp_imageWithCaption_OK.pdf",
                         DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
     public void imageWithCaptionWithoutAlternateDescription_Throws() throws IOException {
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream(),
-                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Document document = new Document(pdfDoc);
 
         Div imgWithCaption = new Div();
@@ -284,29 +274,27 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
 
         // will not throw in layout but will throw on close this is expected
         document.add(imgWithCaption);
-        Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> {
             document.close();
         });
-        Assert.assertEquals(PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT, e.getMessage());
+        Assertions.assertEquals(PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT, e.getMessage());
     }
 
     @Test
     public void imageWithoutActualText_ThrowsInLayout() throws MalformedURLException {
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream(),
-                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Document document = new Document(pdfDoc);
         Image img = new Image(ImageDataFactory.create(DOG));
         img.getAccessibilityProperties().setActualText(null);
-        Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> {
             document.add(img);
         });
-        Assert.assertEquals(PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT, e.getMessage());
+        Assertions.assertEquals(PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT, e.getMessage());
     }
 
     @Test
     public void imageWithEmptyActualText_ThrowsInLayout() throws MalformedURLException {
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream(),
-                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Document document = new Document(pdfDoc);
 
         Image img = new Image(ImageDataFactory.create(DOG));
@@ -318,8 +306,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
     @Test
     public void imageDirectlyOnCanvas_OK() throws IOException, InterruptedException {
         String OUTPUT_FILE = DESTINATION_FOLDER + "imageDirectlyOnCanvas_OK.pdf";
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(OUTPUT_FILE,
-                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(OUTPUT_FILE));
         Document document = new Document(pdfDoc);
 
         Image img = new Image(ImageDataFactory.create(DOG));
@@ -354,8 +341,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
     @Test
     public void imageDirectlyOnCanvasWithoutAlternateDescription_ThrowsOnClose()
             throws IOException {
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream(),
-                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
 
         TagTreePointer pointerForImage = new TagTreePointer(pdfDoc);
         PdfPage page = pdfDoc.addNewPage();
@@ -365,17 +351,16 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
         canvas.openTag(tmp.getTagReference());
         canvas.addImageAt(ImageDataFactory.create(DOG), 200, 200, false);
         canvas.closeTag();
-        Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> {
             pdfDoc.close();
         });
-        Assert.assertEquals(PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT, e.getMessage());
+        Assertions.assertEquals(PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT, e.getMessage());
     }
 
     @Test
     public void imageDirectlyOnCanvasWithEmptyActualText_OK()
             throws IOException {
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream(),
-                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
 
         TagTreePointer pointerForImage = new TagTreePointer(pdfDoc);
         PdfPage page = pdfDoc.addNewPage();
@@ -391,13 +376,12 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
 
     @Test
     public void testOverflowImage() throws IOException {
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream(),
-                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Image img = new Image(ImageDataFactory.create(DOG));
         Document document = new Document(pdfDoc);
         document.add(new Div().setHeight(730).setBackgroundColor(ColorConstants.CYAN));
 
-        Assert.assertThrows(PdfUAConformanceException.class, () -> {
+        Assertions.assertThrows(PdfUAConformanceException.class, () -> {
             document.add(img);
         });
 
@@ -405,8 +389,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
 
     @Test
     public void testEmbeddedImageInTable() throws MalformedURLException {
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream(),
-                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Image img = new Image(ImageDataFactory.create(DOG));
         Document document = new Document(pdfDoc);
         Table table = new Table(2);
@@ -415,33 +398,31 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
         }
         table.addCell(img);
 
-        Assert.assertThrows(PdfUAConformanceException.class, () -> {
+        Assertions.assertThrows(PdfUAConformanceException.class, () -> {
             document.add(table);
         });
     }
 
     @Test
     public void testEmbeddedImageInDiv() throws MalformedURLException {
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream(),
-                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Image img = new Image(ImageDataFactory.create(DOG));
         Document document = new Document(pdfDoc);
         Div div = new Div();
         div.add(img);
-        Assert.assertThrows(PdfUAConformanceException.class, () -> {
+        Assertions.assertThrows(PdfUAConformanceException.class, () -> {
             document.add(div);
         });
     }
 
     @Test
     public void testEmbeddedImageInParagraph() throws MalformedURLException {
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream(),
-                new WriterProperties().addUAXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)));
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Image img = new Image(ImageDataFactory.create(DOG));
         Document document = new Document(pdfDoc);
         Div div = new Div();
         div.add(img);
-        Assert.assertThrows(PdfUAConformanceException.class, () -> {
+        Assertions.assertThrows(PdfUAConformanceException.class, () -> {
             document.add(div);
         });
     }

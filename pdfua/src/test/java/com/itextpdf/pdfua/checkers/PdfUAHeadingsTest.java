@@ -44,21 +44,19 @@ import com.itextpdf.pdfua.UaValidationTestFramework;
 import com.itextpdf.pdfua.UaValidationTestFramework.Generator;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
-import com.itextpdf.pdfua.exceptions.PdfUALogMessageConstants;
+import com.itextpdf.pdfua.logs.PdfUALogMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfUAHeadingsTest extends ExtendedITextTest {
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfua/PdfUAHeadingsTest/";
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfua/PdfUAHeadingsTest/";
@@ -66,12 +64,12 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
 
     private UaValidationTestFramework framework;
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
-    @Before
+    @BeforeEach
     public void initializeFramework() {
         framework = new UaValidationTestFramework(DESTINATION_FOLDER);
     }
@@ -364,7 +362,7 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void directWritingToCanvasTest() throws FileNotFoundException {
+    public void directWritingToCanvasTest() throws IOException {
         String outPdf = DESTINATION_FOLDER + "directWritingToCanvasTest.pdf";
 
         PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
@@ -379,8 +377,8 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
         canvas.openTag(tmp.getTagReference());
         canvas.writeLiteral("Heading level 3");
         canvas.closeTag();
-        Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> pdfDoc.close());
-        Assert.assertEquals(PdfUAExceptionMessageConstants.H1_IS_SKIPPED, e.getMessage());
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> pdfDoc.close());
+        Assertions.assertEquals(PdfUAExceptionMessageConstants.H1_IS_SKIPPED, e.getMessage());
     }
 
     // -------- Positive tests --------
@@ -439,7 +437,7 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
             }
         }
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -631,7 +629,7 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
         doc.add(div);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
         // VeraPdf here throw exception that "A node contains more than one H tag", because
         // it seems that VeraPdf consider div as a not grouping element. See usualHTest2 test
         // with the same code, but div role is replaced by section role

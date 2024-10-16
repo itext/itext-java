@@ -24,13 +24,12 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.commons.actions.contexts.IMetaInfo;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class MetaInfoContainerUnitTest extends ExtendedITextTest {
 
     @Test
@@ -38,14 +37,14 @@ public class MetaInfoContainerUnitTest extends ExtendedITextTest {
         TestMetaInfo metaInfo = new TestMetaInfo();
         MetaInfoContainer metaInfoContainer = new MetaInfoContainer(metaInfo);
 
-        Assert.assertSame(metaInfo, metaInfoContainer.getMetaInfo());
+        Assertions.assertSame(metaInfo, metaInfoContainer.getMetaInfo());
     }
 
     @Test
     public void getNullMetaInfoTest() {
         MetaInfoContainer metaInfoContainer = new MetaInfoContainer(null);
 
-        Assert.assertNull(metaInfoContainer.getMetaInfo());
+        Assertions.assertNull(metaInfoContainer.getMetaInfo());
     }
 
     private static class TestMetaInfo implements IMetaInfo {

@@ -48,8 +48,8 @@ public class AdvancedTestOcspClient extends OcspClientBouncyCastle {
 
     private final Map<String, TestOcspResponseBuilder> subjectNameToResponseBuilder = new LinkedHashMap<>();
     
-    public AdvancedTestOcspClient(OCSPVerifier verifier) {
-        super(verifier);
+    public AdvancedTestOcspClient() {
+        super();
     }
 
     @Override

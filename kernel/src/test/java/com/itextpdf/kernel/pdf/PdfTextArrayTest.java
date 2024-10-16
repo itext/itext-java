@@ -24,22 +24,21 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfTextArrayTest extends ExtendedITextTest {
 
     @Test
     public void addNZeroTest() {
         PdfTextArray textArray = new PdfTextArray();
-        Assert.assertFalse(textArray.add(0.0f));
-        Assert.assertTrue(textArray.isEmpty());
+        Assertions.assertFalse(textArray.add(0.0f));
+        Assertions.assertTrue(textArray.isEmpty());
     }
 
     @Test
@@ -48,22 +47,22 @@ public class PdfTextArrayTest extends ExtendedITextTest {
         float number = 10;
         textArray.add(number);
         textArray.add(number * -1);
-        Assert.assertTrue(textArray.isEmpty());
+        Assertions.assertTrue(textArray.isEmpty());
     }
 
     @Test
     public void addEmptyStringTest() {
         PdfTextArray textArray = new PdfTextArray();
-        Assert.assertFalse(textArray.add(""));
-        Assert.assertTrue(textArray.isEmpty());
+        Assertions.assertFalse(textArray.add(""));
+        Assertions.assertTrue(textArray.isEmpty());
     }
 
     @Test
     public void addNewStringTest() {
         PdfTextArray textArray = new PdfTextArray();
         String content = "content";
-        Assert.assertTrue(textArray.add(content));
-        Assert.assertEquals(new PdfString(content), textArray.get(0));
+        Assertions.assertTrue(textArray.add(content));
+        Assertions.assertEquals(new PdfString(content), textArray.get(0));
     }
 
     @Test
@@ -73,7 +72,7 @@ public class PdfTextArrayTest extends ExtendedITextTest {
         for (String string : stringArray)
             textArray.add(string);
         PdfString expected = new PdfString(stringArray[0] + stringArray[1]);
-        Assert.assertEquals(expected, textArray.get(0));
+        Assertions.assertEquals(expected, textArray.get(0));
     }
 
     @Test
@@ -81,14 +80,14 @@ public class PdfTextArrayTest extends ExtendedITextTest {
         PdfTextArray textArray = new PdfTextArray();
         String string = "font";
         textArray.add(string, PdfFontFactory.createFont());
-        Assert.assertEquals(new PdfString(string), textArray.get(0));
+        Assertions.assertEquals(new PdfString(string), textArray.get(0));
     }
 
     @Test
     public void addAllNullTest() {
         PdfTextArray textArray = new PdfTextArray();
         textArray.addAll((PdfArray) null);
-        Assert.assertTrue(textArray.isEmpty());
+        Assertions.assertTrue(textArray.isEmpty());
     }
 
     @Test
@@ -98,7 +97,7 @@ public class PdfTextArrayTest extends ExtendedITextTest {
         float b = 10f;
         textArray.add(new PdfNumber(a));
         textArray.add(new PdfNumber(b));
-        Assert.assertEquals(a + b, textArray.getAsNumber(0).floatValue(), 0.0001);
+        Assertions.assertEquals(a + b, textArray.getAsNumber(0).floatValue(), 0.0001);
     }
 
     @Test
@@ -109,7 +108,7 @@ public class PdfTextArrayTest extends ExtendedITextTest {
 
         PdfTextArray textArray = new PdfTextArray();
         textArray.addAll(collection);
-        Assert.assertEquals(collection.list, textArray.list);
+        Assertions.assertEquals(collection.list, textArray.list);
     }
 
     @Test
@@ -126,7 +125,7 @@ public class PdfTextArrayTest extends ExtendedITextTest {
         PdfArray expected = new PdfArray();
         expected.add(new PdfString("test"));
         expected.add(new PdfString("test"));
-        Assert.assertEquals(expected.list, textArray.list);
+        Assertions.assertEquals(expected.list, textArray.list);
     }
 
     @Test
@@ -140,7 +139,7 @@ public class PdfTextArrayTest extends ExtendedITextTest {
         PdfArray expected = new PdfArray();
         expected.add(new PdfNumber(13));
         expected.add(new PdfString("test"));
-        Assert.assertEquals(expected.list, textArray.list);
+        Assertions.assertEquals(expected.list, textArray.list);
     }
 
 

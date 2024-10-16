@@ -33,11 +33,101 @@ import java.util.List;
 public class Jpeg2000ImageData extends ImageData {
 
     public static class Parameters {
-        public int numOfComps;
-        public List<ColorSpecBox> colorSpecBoxes = null;
-        public boolean isJp2 = false;
-        public boolean isJpxBaseline = false;
-        public byte[] bpcBoxData;
+        private int numOfComps;
+        private List<ColorSpecBox> colorSpecBoxes = null;
+        private boolean isJp2 = false;
+        private boolean isJpxBaseline = false;
+        private byte[] bpcBoxData;
+
+        /**
+         * Retrieves number of components of the object.
+         *
+         * @return number of components
+         */
+        public int getNumOfComps() {
+            return numOfComps;
+        }
+
+        /**
+         * Sets number of components of the object.
+         *
+         * @param numOfComps number of components
+         */
+        public void setNumOfComps(int numOfComps) {
+            this.numOfComps = numOfComps;
+        }
+
+        /**
+         * Retrieves the color spec boxes of the object.
+         *
+         * @return color spec boxes
+         */
+        public List<ColorSpecBox> getColorSpecBoxes() {
+            return colorSpecBoxes;
+        }
+
+        /**
+         * Sets the color spec boxes of the object.
+         *
+         * @param colorSpecBoxes color spec boxes
+         */
+        public void setColorSpecBoxes(List<ColorSpecBox> colorSpecBoxes) {
+            this.colorSpecBoxes = colorSpecBoxes;
+        }
+
+        /**
+         * Retrieves whether the object is a Jp2.
+         *
+         * @return true if it is a jp2, otherwise false
+         */
+        public boolean isJp2() {
+            return isJp2;
+        }
+
+        /**
+         * Sets whether the object is a jp2.
+         *
+         * @param jp2 true is it is a jp2, otherwise false
+         */
+        public void setJp2(boolean jp2) {
+            isJp2 = jp2;
+        }
+
+        /**
+         * Retrieves whether jpx is baseline.
+         *
+         * @return true if jpx is baseline, false otherwise
+         */
+        public boolean isJpxBaseline() {
+            return isJpxBaseline;
+        }
+
+        /**
+         * Sets whether jpx is baseline.
+         *
+         * @param jpxBaseline true if jpx is baseline, false otherwise
+         */
+        public void setJpxBaseline(boolean jpxBaseline) {
+            isJpxBaseline = jpxBaseline;
+        }
+
+        /**
+         * Retrieves the bits per component of the box data.
+         *
+         * @return bits per component
+         */
+        public byte[] getBpcBoxData() {
+            return bpcBoxData;
+        }
+
+        /**
+         * Sets the bits per component of the box data.
+         *
+         * @param bpcBoxData bits per component
+         */
+        public void setBpcBoxData(byte[] bpcBoxData) {
+            this.bpcBoxData = bpcBoxData;
+        }
     }
 
     public static class ColorSpecBox extends ArrayList<Integer> {

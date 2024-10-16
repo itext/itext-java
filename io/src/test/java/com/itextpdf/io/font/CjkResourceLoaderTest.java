@@ -27,15 +27,14 @@ import com.itextpdf.io.font.cmap.CMapCidToCodepoint;
 import com.itextpdf.io.font.cmap.CMapCidUni;
 import com.itextpdf.io.font.cmap.CMapCodepointToCid;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.util.Map;
 import java.util.Set;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class CjkResourceLoaderTest extends ExtendedITextTest {
 
     @Test
@@ -43,34 +42,34 @@ public class CjkResourceLoaderTest extends ExtendedITextTest {
         String expected = "HeiseiMin-W3";
 
         String compatibleCidFont = CjkResourceLoader.getCompatibleCidFont("78-RKSJ-V");
-        Assert.assertEquals(expected, compatibleCidFont);
+        Assertions.assertEquals(expected, compatibleCidFont);
     }
 
     @Test
     public void getCompatibleCmaps() {
         Set<String> compatibleCmaps = CjkResourceLoader.getCompatibleCmaps("HeiseiKakuGo-W5");
-        Assert.assertEquals(66, compatibleCmaps.size());
-        Assert.assertTrue(compatibleCmaps.contains("78-RKSJ-V"));
+        Assertions.assertEquals(66, compatibleCmaps.size());
+        Assertions.assertTrue(compatibleCmaps.contains("78-RKSJ-V"));
     }
 
     @Test
     public void getRegistryNames() {
         Map<String, Set<String>> registryNames = CjkResourceLoader.getRegistryNames();
-        Assert.assertEquals(9, registryNames.size());
-        Assert.assertTrue(registryNames.containsKey("Adobe_Japan1"));
-        Assert.assertTrue(registryNames.get("Adobe_Japan1").contains("78-RKSJ-V"));
+        Assertions.assertEquals(9, registryNames.size());
+        Assertions.assertTrue(registryNames.containsKey("Adobe_Japan1"));
+        Assertions.assertTrue(registryNames.get("Adobe_Japan1").contains("78-RKSJ-V"));
     }
 
     @Test
     public void getCid2UniCMap() {
         CMapCidUni cid2UniCmap = CjkResourceLoader.getCid2UniCmap("UniJIS-UTF16-H");
-        Assert.assertEquals(0x00b5, cid2UniCmap.lookup(159));
+        Assertions.assertEquals(0x00b5, cid2UniCmap.lookup(159));
     }
 
     @Test
     public void getUni2CidCMap() {
         CMapCodepointToCid uni2CidCmap = CjkResourceLoader.getCodepointToCidCmap("UniJIS-UTF16-H");
-        Assert.assertEquals(159, uni2CidCmap.lookup(0x00b5));
+        Assertions.assertEquals(159, uni2CidCmap.lookup(0x00b5));
     }
 
     @Test
@@ -83,7 +82,7 @@ public class CjkResourceLoaderTest extends ExtendedITextTest {
         String actual = byte2CidCmap.decodeSequence(byteCodeBytes, 0, 2);
         String expected = new String(new char[]{cid});
 
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -94,6 +93,6 @@ public class CjkResourceLoaderTest extends ExtendedITextTest {
 
         byte[] actual = cid2Byte.lookup(cid);
         byte[] expected = {(byte) ((byteCode & 0xFF00) >> 8), (byte) (byteCode & 0xFF)};
-        Assert.assertArrayEquals(expected, actual);
+        Assertions.assertArrayEquals(expected, actual);
     }
 }

@@ -23,7 +23,7 @@
 package com.itextpdf.pdfa;
 
 import com.itextpdf.commons.utils.FileUtil;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
@@ -34,22 +34,19 @@ import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfA4EmbeddedFilesCheckTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfa/";
     public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfa/PdfA4EmbeddedFilesCheckTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
@@ -62,11 +59,11 @@ public class PdfA4EmbeddedFilesCheckTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "pdfA4fWithoutEmbeddedFilesTest.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4F, createOutputIntent());
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4F, createOutputIntent());
         doc.addNewPage();
 
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(PdfaExceptionMessageConstant.NAME_DICTIONARY_SHALL_CONTAIN_EMBEDDED_FILES_KEY, e.getMessage());
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> doc.close());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.NAME_DICTIONARY_SHALL_CONTAIN_EMBEDDED_FILES_KEY, e.getMessage());
     }
 
     @Test
@@ -74,7 +71,7 @@ public class PdfA4EmbeddedFilesCheckTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "pdfA4fWithEmbeddedFilesWithoutFTest.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4F, createOutputIntent());
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4F, createOutputIntent());
         doc.addNewPage();
 
         PdfFileSpec fs = PdfFileSpec.createEmbeddedFileSpec(
@@ -83,8 +80,8 @@ public class PdfA4EmbeddedFilesCheckTest extends ExtendedITextTest {
         fsDict.remove(PdfName.F);
         doc.addFileAttachment("file.txt", fs);
 
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(PdfAConformanceException.FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_F_KEY_AND_UF_KEY, e.getMessage());
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> doc.close());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_F_KEY_AND_UF_KEY, e.getMessage());
     }
 
     @Test
@@ -92,7 +89,7 @@ public class PdfA4EmbeddedFilesCheckTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "pdfA4fWithEmbeddedFilesWithoutUFTest.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4F, createOutputIntent());
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4F, createOutputIntent());
         doc.addNewPage();
 
         PdfFileSpec fs = PdfFileSpec.createEmbeddedFileSpec(
@@ -101,8 +98,8 @@ public class PdfA4EmbeddedFilesCheckTest extends ExtendedITextTest {
         fsDict.remove(PdfName.UF);
         doc.addFileAttachment("file.txt", fs);
 
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(PdfAConformanceException.FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_F_KEY_AND_UF_KEY, e.getMessage());
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> doc.close());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_F_KEY_AND_UF_KEY, e.getMessage());
     }
 
     @Test
@@ -110,7 +107,7 @@ public class PdfA4EmbeddedFilesCheckTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "pdfA4fWithEmbeddedFilesWithoutAFRTest.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4F, createOutputIntent());
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4F, createOutputIntent());
         doc.addNewPage();
 
         PdfFileSpec fs = PdfFileSpec.createEmbeddedFileSpec(
@@ -119,8 +116,8 @@ public class PdfA4EmbeddedFilesCheckTest extends ExtendedITextTest {
         fsDict.remove(PdfName.AFRelationship);
         doc.addFileAttachment("file.txt", fs);
 
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(PdfaExceptionMessageConstant.FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_AFRELATIONSHIP_KEY, e.getMessage());
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> doc.close());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_AFRELATIONSHIP_KEY, e.getMessage());
     }
 
     @Test
@@ -128,7 +125,7 @@ public class PdfA4EmbeddedFilesCheckTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "pdfA4eWithEmbeddedFilesWithoutFTest.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4E, createOutputIntent());
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4E, createOutputIntent());
         doc.addNewPage();
 
         PdfFileSpec fs = PdfFileSpec.createEmbeddedFileSpec(
@@ -137,8 +134,8 @@ public class PdfA4EmbeddedFilesCheckTest extends ExtendedITextTest {
         fsDict.remove(PdfName.F);
         doc.addFileAttachment("file.txt", fs);
 
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(PdfAConformanceException.FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_F_KEY_AND_UF_KEY, e.getMessage());
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> doc.close());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_F_KEY_AND_UF_KEY, e.getMessage());
     }
 
     @Test
@@ -146,7 +143,7 @@ public class PdfA4EmbeddedFilesCheckTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "pdfA4WithEmbeddedFilesWithoutAFRTest.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, createOutputIntent());
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4, createOutputIntent());
         doc.addNewPage();
 
         PdfFileSpec fs = PdfFileSpec.createEmbeddedFileSpec(
@@ -155,8 +152,8 @@ public class PdfA4EmbeddedFilesCheckTest extends ExtendedITextTest {
         fsDict.remove(PdfName.AFRelationship);
         doc.addFileAttachment("file.txt", fs);
 
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(PdfaExceptionMessageConstant.FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_AFRELATIONSHIP_KEY, e.getMessage());
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> doc.close());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_AFRELATIONSHIP_KEY, e.getMessage());
     }
 
     private PdfOutputIntent createOutputIntent() throws IOException {

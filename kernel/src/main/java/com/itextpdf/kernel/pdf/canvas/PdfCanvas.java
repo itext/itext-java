@@ -43,7 +43,7 @@ import com.itextpdf.kernel.font.PdfType0Font;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.geom.Vector;
-import com.itextpdf.kernel.pdf.IsoKey;
+import com.itextpdf.kernel.pdf.PageContentRotationHelper;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -60,7 +60,7 @@ import com.itextpdf.kernel.pdf.canvas.wmf.WmfImageHelper;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
-import com.itextpdf.kernel.pdf.colorspace.PdfShading;
+import com.itextpdf.kernel.pdf.colorspace.shading.AbstractPdfShading;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.pdf.layer.IPdfOCG;
@@ -70,6 +70,16 @@ import com.itextpdf.kernel.pdf.tagutils.TagReference;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
+import com.itextpdf.kernel.validation.context.CanvasBmcValidationContext;
+import com.itextpdf.kernel.validation.context.CanvasStackValidationContext;
+import com.itextpdf.kernel.validation.context.CanvasWritingContentValidationContext;
+import com.itextpdf.kernel.validation.context.ExtendedGStateValidationContext;
+import com.itextpdf.kernel.validation.context.FillColorValidationContext;
+import com.itextpdf.kernel.validation.context.FontGlyphsGStateValidationContext;
+import com.itextpdf.kernel.validation.context.FontValidationContext;
+import com.itextpdf.kernel.validation.context.InlineImageValidationContext;
+import com.itextpdf.kernel.validation.context.RenderingIntentValidationContext;
+import com.itextpdf.kernel.validation.context.StrokeColorValidationContext;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -234,9 +244,9 @@ public class PdfCanvas {
             contentStream.getOutputStream().writeBytes(ByteUtils.getIsoBytes("Q\n"));
         }
         if (page.getRotation() != 0 && page.isIgnorePageRotationForContent()
-                && (wrapOldContent || !page.isPageRotationInverseMatrixWritten())) {
+                && (wrapOldContent || !PageContentRotationHelper.isPageRotationInverseMatrixWritten(page))) {
             applyRotation(page);
-            page.setPageRotationInverseMatrixWritten();
+            PageContentRotationHelper.setPageRotationInverseMatrixWritten(page);
         }
         this.drawingOnPage = true;
     }
@@ -315,7 +325,7 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas saveState() {
-        document.checkIsoConformance('q', IsoKey.CANVAS_STACK);
+        document.checkIsoConformance(new CanvasStackValidationContext('q'));
         gsStack.push(currentGs);
         currentGs = new CanvasGraphicsState(currentGs);
         contentStream.getOutputStream().writeBytes(q);
@@ -328,7 +338,7 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas restoreState() {
-        document.checkIsoConformance('Q', IsoKey.CANVAS_STACK);
+        document.checkIsoConformance(new CanvasStackValidationContext('Q'));
         if (gsStack.isEmpty()) {
             throw new PdfException(KernelExceptionMessageConstant.UNBALANCED_SAVE_RESTORE_STATE_OPERATORS);
         }
@@ -723,7 +733,7 @@ public class PdfCanvas {
      */
     public PdfCanvas showText(GlyphLine text, Iterator<GlyphLine.GlyphLinePart> iterator) {
         checkDefaultDeviceGrayBlackColor(getColorKeyForText());
-        document.checkIsoConformance(currentGs, IsoKey.FONT_GLYPHS, null, contentStream);
+        document.checkIsoConformance(new FontGlyphsGStateValidationContext(currentGs, contentStream));
         this.checkIsoConformanceWritingOnContent();
         PdfFont font;
         if ((font = currentGs.getFont()) == null) {
@@ -731,7 +741,7 @@ public class PdfCanvas {
                     KernelExceptionMessageConstant.FONT_AND_SIZE_MUST_BE_SET_BEFORE_WRITING_ANY_TEXT, currentGs);
         }
 
-        document.checkIsoConformance(text.toString(), IsoKey.FONT, null, null, currentGs.getFont());
+        document.checkIsoConformance(new FontValidationContext(text.toString(), currentGs.getFont()));
 
         final float fontSize = FontProgram.convertTextSpaceToGlyphSpace(currentGs.getFontSize());
         float charSpacing = currentGs.getCharSpacing();
@@ -739,15 +749,16 @@ public class PdfCanvas {
         List<GlyphLine.GlyphLinePart> glyphLineParts = iteratorToList(iterator);
         for (int partIndex = 0; partIndex < glyphLineParts.size(); ++partIndex) {
             GlyphLine.GlyphLinePart glyphLinePart = glyphLineParts.get(partIndex);
-            if (glyphLinePart.actualText != null) {
+            if (glyphLinePart.getActualText() != null) {
                 PdfDictionary properties = new PdfDictionary();
-                properties.put(PdfName.ActualText, new PdfString(glyphLinePart.actualText, PdfEncodings.UNICODE_BIG).setHexWriting(true));
+                properties.put(PdfName.ActualText, new PdfString(glyphLinePart.getActualText(),
+                        PdfEncodings.UNICODE_BIG).setHexWriting(true));
                 beginMarkedContent(PdfName.Span, properties);
-            } else if (glyphLinePart.reversed) {
+            } else if (glyphLinePart.isReversed()) {
                 beginMarkedContent(PdfName.ReversedChars);
             }
-            int sub = glyphLinePart.start;
-            for (int i = glyphLinePart.start; i < glyphLinePart.end; i++) {
+            int sub = glyphLinePart.getStart();
+            for (int i = glyphLinePart.getStart(); i < glyphLinePart.getEnd(); i++) {
                 Glyph glyph = text.get(i);
                 if (glyph.hasOffsets()) {
                     if (i - 1 - sub >= 0) {
@@ -827,18 +838,18 @@ public class PdfCanvas {
                     sub = i + 1;
                 }
             }
-            if (glyphLinePart.end - sub > 0) {
-                font.writeText(text, sub, glyphLinePart.end - 1, contentStream.getOutputStream());
+            if (glyphLinePart.getEnd() - sub > 0) {
+                font.writeText(text, sub, glyphLinePart.getEnd() - 1, contentStream.getOutputStream());
                 contentStream.getOutputStream().writeBytes(Tj);
             }
-            if (glyphLinePart.actualText != null) {
+            if (glyphLinePart.getActualText() != null) {
                 endMarkedContent();
-            } else if (glyphLinePart.reversed) {
+            } else if (glyphLinePart.isReversed()) {
                 endMarkedContent();
             }
-            if (glyphLinePart.end > sub && partIndex + 1 < glyphLineParts.size()) {
+            if (glyphLinePart.getEnd() > sub && partIndex + 1 < glyphLineParts.size()) {
                 contentStream.getOutputStream()
-                        .writeFloat(getSubrangeWidth(text, sub, glyphLinePart.end - 1), true)
+                        .writeFloat(getSubrangeWidth(text, sub, glyphLinePart.getEnd() - 1), true)
                         .writeSpace()
                         .writeFloat(0)
                         .writeSpace()
@@ -909,7 +920,7 @@ public class PdfCanvas {
      */
     public PdfCanvas showText(PdfArray textArray) {
         checkDefaultDeviceGrayBlackColor(getColorKeyForText());
-        document.checkIsoConformance(currentGs, IsoKey.FONT_GLYPHS, null, contentStream);
+        document.checkIsoConformance(new FontGlyphsGStateValidationContext(currentGs, contentStream));
         this.checkIsoConformanceWritingOnContent();
         if (currentGs.getFont() == null) {
             throw new PdfException(
@@ -923,7 +934,7 @@ public class PdfCanvas {
                 text.append(obj);
             }
         }
-        document.checkIsoConformance(text.toString(), IsoKey.FONT, null, null, currentGs.getFont());
+        document.checkIsoConformance(new FontValidationContext(text.toString(), currentGs.getFont()));
 
         contentStream.getOutputStream().writeBytes(ByteUtils.getIsoBytes("["));
         for (PdfObject obj : textArray) {
@@ -1269,7 +1280,7 @@ public class PdfCanvas {
      * @param shading a shading object to be painted
      * @return current canvas.
      */
-    public PdfCanvas paintShading(PdfShading shading) {
+    public PdfCanvas paintShading(AbstractPdfShading shading) {
         PdfName shadingName = resources.addShading(shading);
         contentStream.getOutputStream().write((PdfObject) shadingName).writeSpace().writeBytes(sh);
         return this;
@@ -1583,7 +1594,7 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas setRenderingIntent(PdfName renderingIntent) {
-        document.checkIsoConformance(renderingIntent, IsoKey.RENDERING_INTENT);
+        document.checkIsoConformance(new RenderingIntentValidationContext(renderingIntent));
         if (renderingIntent.equals(currentGs.getRenderingIntent()))
             return this;
         currentGs.setRenderingIntent(renderingIntent);
@@ -1703,7 +1714,11 @@ public class PdfCanvas {
             }
             contentStream.getOutputStream().writeFloats(colorValue).writeSpace().writeBytes(fill ? scn : SCN);
         }
-        document.checkIsoConformance(currentGs, fill ? IsoKey.FILL_COLOR : IsoKey.STROKE_COLOR, resources, contentStream);
+        if (fill) {
+            document.checkIsoConformance(new FillColorValidationContext(currentGs, resources, contentStream));
+        } else {
+            document.checkIsoConformance(new StrokeColorValidationContext(currentGs, resources, contentStream));
+        }
         return this;
     }
 
@@ -1920,6 +1935,7 @@ public class PdfCanvas {
      * @see #concatMatrix(double, double, double, double, double, double)
      */
     public PdfXObject addImageWithTransformationMatrix(ImageData image, float a, float b, float c, float d, float e, float f) {
+        checkIsoConformanceWritingOnContent();
         return addImageWithTransformationMatrix(image, a, b, c, d, e, f, false);
     }
 
@@ -1941,6 +1957,7 @@ public class PdfCanvas {
      * @see #concatMatrix(double, double, double, double, double, double)
      */
     public PdfXObject addImageWithTransformationMatrix(ImageData image, float a, float b, float c, float d, float e, float f, boolean asInline) {
+        checkIsoConformanceWritingOnContent();
         if (image.getOriginalType() == ImageType.WMF) {
             WmfImageHelper wmf = new WmfImageHelper(image);
             PdfXObject xObject = wmf.createFormXObject(document);
@@ -1975,6 +1992,7 @@ public class PdfCanvas {
      * @see PdfXObject#calculateProportionallyFitRectangleWithHeight(PdfXObject, float, float, float)
      */
     public PdfXObject addImageFittedIntoRectangle(ImageData image, Rectangle rect, boolean asInline) {
+        checkIsoConformanceWritingOnContent();
         return addImageWithTransformationMatrix(image, rect.getWidth(), 0, 0, rect.getHeight(),
                 rect.getX(), rect.getY(), asInline);
     }
@@ -1989,6 +2007,7 @@ public class PdfCanvas {
      * @return the created imageXObject or null in case of in-line image (asInline = true)
      */
     public PdfXObject addImageAt(ImageData image, float x, float y, boolean asInline) {
+        checkIsoConformanceWritingOnContent();
         if (image.getOriginalType() == ImageType.WMF) {
             WmfImageHelper wmf = new WmfImageHelper(image);
             PdfXObject xObject = wmf.createFormXObject(document);
@@ -2024,6 +2043,7 @@ public class PdfCanvas {
      * @see #concatMatrix(double, double, double, double, double, double)
      */
     public PdfCanvas addXObjectWithTransformationMatrix(PdfXObject xObject, float a, float b, float c, float d, float e, float f) {
+        checkIsoConformanceWritingOnContent();
         if (xObject instanceof PdfFormXObject) {
             return addFormWithTransformationMatrix((PdfFormXObject) xObject, a, b, c, d, e, f, true);
         } else if (xObject instanceof PdfImageXObject) {
@@ -2042,6 +2062,7 @@ public class PdfCanvas {
      * @return the current canvas
      */
     public PdfCanvas addXObjectAt(PdfXObject xObject, float x, float y) {
+        checkIsoConformanceWritingOnContent();
         if (xObject instanceof PdfFormXObject) {
             return addFormAt((PdfFormXObject) xObject, x, y);
         } else if (xObject instanceof PdfImageXObject) {
@@ -2061,6 +2082,7 @@ public class PdfCanvas {
      * @see PdfXObject#calculateProportionallyFitRectangleWithHeight(PdfXObject, float, float, float)
      */
     public PdfCanvas addXObjectFittedIntoRectangle(PdfXObject xObject, Rectangle rect) {
+        checkIsoConformanceWritingOnContent();
         if (xObject instanceof PdfFormXObject) {
             return addFormFittedIntoRectangle((PdfFormXObject) xObject, rect);
         } else if (xObject instanceof PdfImageXObject) {
@@ -2081,6 +2103,7 @@ public class PdfCanvas {
      * @return the current canvas
      */
     public PdfCanvas addXObject(PdfXObject xObject) {
+        checkIsoConformanceWritingOnContent();
         if (xObject instanceof PdfFormXObject) {
             return addFormWithTransformationMatrix((PdfFormXObject) xObject, 1, 0, 0, 1, 0, 0, false);
         } else if (xObject instanceof PdfImageXObject) {
@@ -2101,7 +2124,7 @@ public class PdfCanvas {
             currentGs.updateFromExtGState(extGState, document);
         PdfName name = resources.addExtGState(extGState);
         contentStream.getOutputStream().write(name).writeSpace().writeBytes(gs);
-        document.checkIsoConformance(currentGs, IsoKey.EXTENDED_GRAPHICS_STATE, null, contentStream);
+        document.checkIsoConformance(new ExtendedGStateValidationContext(currentGs, contentStream));
         return this;
     }
 
@@ -2146,7 +2169,7 @@ public class PdfCanvas {
         }
         final Tuple2<PdfName, PdfDictionary> tuple2 = new Tuple2<>(tag, properties);
         if (this.drawingOnPage){
-            document.checkIsoConformance(tagStructureStack, IsoKey.CANVAS_BEGIN_MARKED_CONTENT, null, null, tuple2);
+            document.checkIsoConformance(new CanvasBmcValidationContext(tagStructureStack, tuple2));
         }
         tagStructureStack.push(tuple2);
         return this;
@@ -2260,12 +2283,14 @@ public class PdfCanvas {
      * @param f            an element of the transformation matrix
      */
     protected void addInlineImage(PdfImageXObject imageXObject, float a, float b, float c, float d, float e, float f) {
-        document.checkIsoConformance(imageXObject.getPdfObject(), IsoKey.INLINE_IMAGE, resources, contentStream);
+        document.checkIsoConformance(new InlineImageValidationContext(imageXObject.getPdfObject(), resources));
+        checkIsoConformanceWritingOnContent();
         saveState();
         concatMatrix(a, b, c, d, e, f);
         PdfOutputStream os = contentStream.getOutputStream();
         os.writeBytes(BI);
         byte[] imageBytes = imageXObject.getPdfObject().getBytes(false);
+        saveColorSpaceToPageResourcesIfNeeded(imageXObject.getPdfObject());
         for (Map.Entry<PdfName, PdfObject> entry : imageXObject.getPdfObject().entrySet()) {
             PdfName key = entry.getKey();
             if (!PdfName.Type.equals(key) && !PdfName.Subtype.equals(key) && !PdfName.Length.equals(key)) {
@@ -2280,6 +2305,24 @@ public class PdfCanvas {
         os.writeBytes(ID);
         os.writeBytes(imageBytes).writeNewLine().writeBytes(EI).writeNewLine();
         restoreState();
+    }
+
+    private void saveColorSpaceToPageResourcesIfNeeded(PdfStream image) {
+        PdfObject colorSpace = image.get(PdfName.ColorSpace);
+        //The colour space specified by the ColorSpace (or CS) entry shall be one of the standard device colour spaces
+        //(DeviceGray, DeviceRGB, or DeviceCMYK).
+        if (colorSpace == null
+         || colorSpace.equals(PdfName.DeviceGray)
+         || colorSpace.equals(PdfName.DeviceRGB)
+         || colorSpace.equals(PdfName.DeviceCMYK)) {
+            return;
+        }
+        //PDF 1.2: the value of the ColorSpace entry may also be the name of a colour space in the ColorSpace
+        //subdictionary of the current resource dictionary. In this case, the name may designate any colour space
+        //that can be used with an image XObject.
+        PdfName name = resources.addColorSpace(colorSpace);
+        image.remove(PdfName.ColorSpace);
+        image.put(PdfName.ColorSpace, name);
     }
 
     /**
@@ -2418,20 +2461,20 @@ public class PdfCanvas {
      * @param text the text to write.
      */
     private void showTextInt(String text) {
-        document.checkIsoConformance(currentGs, IsoKey.FONT_GLYPHS, null, contentStream);
+        document.checkIsoConformance(new FontGlyphsGStateValidationContext(currentGs, contentStream));
         if (currentGs.getFont() == null) {
             throw new PdfException(
                     KernelExceptionMessageConstant.FONT_AND_SIZE_MUST_BE_SET_BEFORE_WRITING_ANY_TEXT, currentGs);
         }
         this.checkIsoConformanceWritingOnContent();
-        document.checkIsoConformance(text, IsoKey.FONT, null, null, currentGs.getFont());
+        document.checkIsoConformance(new FontValidationContext(text, currentGs.getFont()));
 
         currentGs.getFont().writeText(text, contentStream.getOutputStream());
     }
 
     private void checkIsoConformanceWritingOnContent(){
         if (this.drawingOnPage){
-            document.checkIsoConformance(tagStructureStack, IsoKey.CANVAS_WRITING_CONTENT);
+            document.checkIsoConformance(new CanvasWritingContentValidationContext(tagStructureStack));
         }
     }
 
@@ -2509,11 +2552,11 @@ public class PdfCanvas {
             // But it's still important to do not check fill color if it's not used and vice versa
             if (currentGs.getFillColor() == DeviceGray.BLACK &&
                     (checkColorMode == CheckColorMode.FILL || checkColorMode == CheckColorMode.FILL_AND_STROKE)) {
-                document.checkIsoConformance(currentGs, IsoKey.FILL_COLOR, resources, contentStream);
+                document.checkIsoConformance(new FillColorValidationContext(currentGs, resources, contentStream));
                 defaultDeviceGrayBlackColorCheckRequired = false;
             } else if (currentGs.getStrokeColor() == DeviceGray.BLACK &&
                     (checkColorMode == CheckColorMode.STROKE || checkColorMode == CheckColorMode.FILL_AND_STROKE)) {
-                document.checkIsoConformance(currentGs, IsoKey.STROKE_COLOR, resources, contentStream);
+                document.checkIsoConformance(new StrokeColorValidationContext(currentGs, resources, contentStream));
                 defaultDeviceGrayBlackColorCheckRequired = false;
             } else {
                 // Nothing

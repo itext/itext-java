@@ -44,22 +44,20 @@ import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 import java.io.IOException;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class InputButtonTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER =
             "./src/test/resources/com/itextpdf/forms/form/element/InputButtonTest/";
     public static final String DESTINATION_FOLDER =
             "./target/test/com/itextpdf/forms/form/element/InputButtonTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
@@ -71,19 +69,19 @@ public class InputButtonTest extends ExtendedITextTest {
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             Button formInputButton = new Button("form input button");
-            formInputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
+            formInputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             formInputButton.setSingleLineValue("form input button");
             document.add(formInputButton);
 
             document.add(new Paragraph(""));
 
             Button flattenInputButton = new Button("flatten input button");
-            flattenInputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            flattenInputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenInputButton.setSingleLineValue("flatten input button");
             document.add(flattenInputButton);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -93,7 +91,7 @@ public class InputButtonTest extends ExtendedITextTest {
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             Button formInputButton = new Button("form input button");
-            formInputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
+            formInputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             formInputButton.setSingleLineValue("form input button");
             formInputButton.setFontColor(ColorConstants.BLUE);
             formInputButton.setBackgroundColor(ColorConstants.YELLOW);
@@ -103,7 +101,7 @@ public class InputButtonTest extends ExtendedITextTest {
             document.add(new Paragraph(""));
 
             Button flattenInputButton = new Button("flatten input button");
-            flattenInputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            flattenInputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenInputButton.setSingleLineValue("flatten input button");
             flattenInputButton.setFontColor(ColorConstants.BLUE);
             flattenInputButton.setBackgroundColor(ColorConstants.YELLOW);
@@ -111,7 +109,7 @@ public class InputButtonTest extends ExtendedITextTest {
             document.add(flattenInputButton);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -122,7 +120,7 @@ public class InputButtonTest extends ExtendedITextTest {
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             // Create push button using html element
             Button formInputButton = new Button("button");
-            formInputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
+            formInputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             formInputButton.setSingleLineValue("html input button");
             formInputButton.setFontColor(ColorConstants.BLUE);
             formInputButton.setBackgroundColor(ColorConstants.YELLOW);
@@ -141,7 +139,7 @@ public class InputButtonTest extends ExtendedITextTest {
             form.addField(button);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -151,14 +149,14 @@ public class InputButtonTest extends ExtendedITextTest {
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             Button formInputButton = new Button("button");
-            formInputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
+            formInputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             formInputButton.setProperty(Property.WIDTH, UnitValue.createPointValue(280));
             formInputButton.setProperty(Property.HEIGHT, UnitValue.createPointValue(30));
             formInputButton.setSingleLineValue("text with default font size longer than button width won't be split");
             document.add(formInputButton);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -172,14 +170,14 @@ public class InputButtonTest extends ExtendedITextTest {
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             Button formInputButton = new Button("button");
-            formInputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
+            formInputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             formInputButton.setProperty(Property.WIDTH, UnitValue.createPointValue(280));
             formInputButton.setProperty(Property.HEIGHT, UnitValue.createPointValue(30));
             formInputButton.setSingleLineValue("text with line break\n which will be split");
             document.add(formInputButton);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -189,7 +187,7 @@ public class InputButtonTest extends ExtendedITextTest {
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             Button formInputButton = new Button("button");
-            formInputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
+            formInputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             formInputButton.setProperty(Property.PADDING_BOTTOM, UnitValue.createPointValue(15));
             formInputButton.setProperty(Property.PADDING_TOP, UnitValue.createPointValue(15));
             formInputButton.setFontSize(50);
@@ -197,7 +195,7 @@ public class InputButtonTest extends ExtendedITextTest {
             document.add(formInputButton);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -208,7 +206,7 @@ public class InputButtonTest extends ExtendedITextTest {
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             Div div = new Div().setBackgroundColor(ColorConstants.PINK);
             Button formInputButton = new Button("button");
-            formInputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
+            formInputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             formInputButton.setProperty(Property.PADDING_BOTTOM, UnitValue.createPointValue(20));
             formInputButton.setProperty(Property.PADDING_TOP, UnitValue.createPointValue(20));
             formInputButton.setProperty(Property.PADDING_LEFT, UnitValue.createPointValue(20));
@@ -224,6 +222,6 @@ public class InputButtonTest extends ExtendedITextTest {
             document.add(div);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 }

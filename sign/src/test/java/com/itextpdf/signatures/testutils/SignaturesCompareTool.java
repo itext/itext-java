@@ -68,6 +68,7 @@ public class SignaturesCompareTool {
     private static final String OID_ADBE_REVOCATION_INFO_ARCHIVAL = "1.2.840.113583.1.1.8";
     private static final String OID_OCSP_RESPONSE = "1.3.6.1.5.5.7.48.1.1";
     private static final String OID_OCSP_NONCE_EXTENSION = "1.3.6.1.5.5.7.48.1.2";
+    private static final String ID_ATTR_PDF_MAC_DATA = "1.0.32004.1.2";
 
     private static final IASN1Dump DUMP = BOUNCY_CASTLE_FACTORY.createASN1Dump();
 
@@ -79,6 +80,7 @@ public class SignaturesCompareTool {
         tempSet.add(OID_TST_INFO);
         tempSet.add(OID_SIGNING_TIME);
         tempSet.add(OID_OCSP_NONCE_EXTENSION);
+        tempSet.add(ID_ATTR_PDF_MAC_DATA);
         IGNORED_OIDS = Collections.unmodifiableSet(tempSet);
     }
 

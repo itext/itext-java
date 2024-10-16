@@ -37,23 +37,24 @@ import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.properties.FloatPropertyValue;
+import com.itextpdf.layout.properties.Leading;
 import com.itextpdf.layout.properties.LineHeight;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.RenderingMode;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.LineRenderer.LineSplitIntoGlyphsData;
+import com.itextpdf.layout.renderer.LineRenderer.RendererGlyph;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class LineRendererUnitTest extends RendererUnitTest {
 
     private static final double EPS = 1e-5;
@@ -64,13 +65,13 @@ public class LineRendererUnitTest extends RendererUnitTest {
         IRenderer dummy1 = createLayoutedTextRenderer("Hello", dummyDocument);
         IRenderer dummy2 = createLayoutedTextRenderer("world", dummyDocument);
         IRenderer dummyImage = createLayoutedImageRenderer(100, 100, dummyDocument);
-        Assert.assertEquals(0, dummy1.getOccupiedArea().getBBox().getX(), EPS);
-        Assert.assertEquals(0, dummy2.getOccupiedArea().getBBox().getX(), EPS);
-        Assert.assertEquals(0, dummyImage.getOccupiedArea().getBBox().getX(), EPS);
+        Assertions.assertEquals(0, dummy1.getOccupiedArea().getBBox().getX(), EPS);
+        Assertions.assertEquals(0, dummy2.getOccupiedArea().getBBox().getX(), EPS);
+        Assertions.assertEquals(0, dummyImage.getOccupiedArea().getBBox().getX(), EPS);
         LineRenderer.adjustChildPositionsAfterReordering(Arrays.asList(dummy1, dummyImage, dummy2), 10);
-        Assert.assertEquals(10, dummy1.getOccupiedArea().getBBox().getX(), EPS);
-        Assert.assertEquals(37.3359985, dummyImage.getOccupiedArea().getBBox().getX(), EPS);
-        Assert.assertEquals(137.3359985, dummy2.getOccupiedArea().getBBox().getX(), EPS);
+        Assertions.assertEquals(10, dummy1.getOccupiedArea().getBBox().getX(), EPS);
+        Assertions.assertEquals(37.3359985, dummyImage.getOccupiedArea().getBBox().getX(), EPS);
+        Assertions.assertEquals(137.3359985, dummy2.getOccupiedArea().getBBox().getX(), EPS);
     }
 
     @Test
@@ -84,12 +85,12 @@ public class LineRendererUnitTest extends RendererUnitTest {
         dummy1.setProperty(Property.PADDING_LEFT, UnitValue.createPercentValue(10));
         dummy1.setProperty(Property.PADDING_RIGHT, UnitValue.createPercentValue(10));
         IRenderer dummy2 = createLayoutedTextRenderer("world", dummyDocument);
-        Assert.assertEquals(0, dummy1.getOccupiedArea().getBBox().getX(), EPS);
-        Assert.assertEquals(0, dummy2.getOccupiedArea().getBBox().getX(), EPS);
+        Assertions.assertEquals(0, dummy1.getOccupiedArea().getBBox().getX(), EPS);
+        Assertions.assertEquals(0, dummy2.getOccupiedArea().getBBox().getX(), EPS);
         LineRenderer.adjustChildPositionsAfterReordering(Arrays.asList(dummy1, dummy2), 10);
-        Assert.assertEquals(10, dummy1.getOccupiedArea().getBBox().getX(), EPS);
+        Assertions.assertEquals(10, dummy1.getOccupiedArea().getBBox().getX(), EPS);
         // If margins and paddings are specified in percents, we treat them as point values for now
-        Assert.assertEquals(77.3359985, dummy2.getOccupiedArea().getBBox().getX(), EPS);
+        Assertions.assertEquals(77.3359985, dummy2.getOccupiedArea().getBBox().getX(), EPS);
     }
 
     @Test
@@ -99,14 +100,14 @@ public class LineRendererUnitTest extends RendererUnitTest {
         IRenderer dummy2 = createLayoutedTextRenderer("world", dummyDocument);
         IRenderer dummyImage = createLayoutedImageRenderer(100, 100, dummyDocument);
         dummyImage.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
-        Assert.assertEquals(0, dummy1.getOccupiedArea().getBBox().getX(), EPS);
-        Assert.assertEquals(0, dummy2.getOccupiedArea().getBBox().getX(), EPS);
-        Assert.assertEquals(0, dummyImage.getOccupiedArea().getBBox().getX(), EPS);
+        Assertions.assertEquals(0, dummy1.getOccupiedArea().getBBox().getX(), EPS);
+        Assertions.assertEquals(0, dummy2.getOccupiedArea().getBBox().getX(), EPS);
+        Assertions.assertEquals(0, dummyImage.getOccupiedArea().getBBox().getX(), EPS);
         LineRenderer.adjustChildPositionsAfterReordering(Arrays.asList(dummy1, dummyImage, dummy2), 10);
-        Assert.assertEquals(10, dummy1.getOccupiedArea().getBBox().getX(), EPS);
+        Assertions.assertEquals(10, dummy1.getOccupiedArea().getBBox().getX(), EPS);
         // Floating renderer is not repositioned
-        Assert.assertEquals(0, dummyImage.getOccupiedArea().getBBox().getX(), EPS);
-        Assert.assertEquals(37.3359985, dummy2.getOccupiedArea().getBBox().getX(), EPS);
+        Assertions.assertEquals(0, dummyImage.getOccupiedArea().getBBox().getX(), EPS);
+        Assertions.assertEquals(37.3359985, dummy2.getOccupiedArea().getBBox().getX(), EPS);
     }
 
     @Test
@@ -119,9 +120,9 @@ public class LineRendererUnitTest extends RendererUnitTest {
         lineRenderer.addChild(inlineBlockRenderer);
         LayoutResult result = lineRenderer.layout(new LayoutContext(createLayoutArea(1000, 1000)));
         // In case there is an inline block child with large min-width, the inline block child will be force placed (not layouted properly)
-        Assert.assertEquals(LayoutResult.FULL, result.getStatus());
-        Assert.assertEquals(0, result.getOccupiedArea().getBBox().getHeight(), EPS);
-        Assert.assertEquals(true, inlineBlockRenderer.getPropertyAsBoolean(Property.FORCED_PLACEMENT));
+        Assertions.assertEquals(LayoutResult.FULL, result.getStatus());
+        Assertions.assertEquals(0, result.getOccupiedArea().getBBox().getHeight(), EPS);
+        Assertions.assertEquals(true, inlineBlockRenderer.getPropertyAsBoolean(Property.FORCED_PLACEMENT));
     }
 
     @Test
@@ -144,8 +145,8 @@ public class LineRendererUnitTest extends RendererUnitTest {
         lineRenderer.addChild(childTextRenderer);
         lineRenderer.adjustChildrenYLine();
 
-        Assert.assertEquals(100f, lineRenderer.getOccupiedAreaBBox().getBottom(), EPS);
-        Assert.assertEquals(100f, childTextRenderer.getOccupiedAreaBBox().getBottom(), EPS);
+        Assertions.assertEquals(100f, lineRenderer.getOccupiedAreaBBox().getBottom(), EPS);
+        Assertions.assertEquals(100f, childTextRenderer.getOccupiedAreaBBox().getBottom(), EPS);
     }
 
     @Test
@@ -168,9 +169,9 @@ public class LineRendererUnitTest extends RendererUnitTest {
 
         lineRenderer.adjustChildrenYLine();
 
-        Assert.assertEquals(50f, lineRenderer.getOccupiedAreaBBox().getBottom(), EPS);
+        Assertions.assertEquals(50f, lineRenderer.getOccupiedAreaBBox().getBottom(), EPS);
         //image should be on the baseline top 250 - maxAscent 150 = 100
-        Assert.assertEquals(100.0, childImageRenderer.getOccupiedAreaBBox().getBottom(), EPS);
+        Assertions.assertEquals(100.0, childImageRenderer.getOccupiedAreaBBox().getBottom(), EPS);
     }
 
     @Test
@@ -185,7 +186,7 @@ public class LineRendererUnitTest extends RendererUnitTest {
         lineRenderer.addChild(textRenderer1);
         lineRenderer.addChild(textRenderer2);
 
-        Assert.assertTrue(lineRenderer.hasChildRendererInHtmlMode());
+        Assertions.assertTrue(lineRenderer.hasChildRendererInHtmlMode());
     }
 
     @Test
@@ -200,13 +201,13 @@ public class LineRendererUnitTest extends RendererUnitTest {
         lineRenderer.addChild(textRenderer1);
         lineRenderer.addChild(textRenderer2);
 
-        Assert.assertFalse(lineRenderer.hasChildRendererInHtmlMode());
+        Assertions.assertFalse(lineRenderer.hasChildRendererInHtmlMode());
     }
 
     @Test
     public void hasChildRendererInHtmlModeNoChildrenTest() {
         LineRenderer lineRenderer = new LineRenderer();
-        Assert.assertFalse(lineRenderer.hasChildRendererInHtmlMode());
+        Assertions.assertFalse(lineRenderer.hasChildRendererInHtmlMode());
     }
 
     @Test
@@ -220,8 +221,8 @@ public class LineRendererUnitTest extends RendererUnitTest {
 
         lineRenderer.layout(new LayoutContext(createLayoutArea(1000, 1000)));
 
-        Assert.assertEquals(0f, lineRenderer.maxAscent, 0f);
-        Assert.assertEquals(0f, lineRenderer.maxDescent, 0f);
+        Assertions.assertEquals(0f, lineRenderer.maxAscent, 0f);
+        Assertions.assertEquals(0f, lineRenderer.maxDescent, 0f);
     }
 
     @Test
@@ -244,8 +245,8 @@ public class LineRendererUnitTest extends RendererUnitTest {
 
         lineRenderer.layout(new LayoutContext(createLayoutArea(1000, 1000)));
 
-        Assert.assertEquals(10.3392f, lineRenderer.maxAscent, EPS);
-        Assert.assertEquals(-2.98079f, lineRenderer.maxDescent, EPS);
+        Assertions.assertEquals(10.3392f, lineRenderer.maxAscent, EPS);
+        Assertions.assertEquals(-2.98079f, lineRenderer.maxDescent, EPS);
     }
 
     @Test
@@ -267,8 +268,8 @@ public class LineRendererUnitTest extends RendererUnitTest {
 
         lineRenderer.layout(new LayoutContext(createLayoutArea(1000, 1000)));
 
-        Assert.assertEquals(28.67920f, lineRenderer.maxAscent, EPS);
-        Assert.assertEquals(-21.32080f, lineRenderer.maxDescent, EPS);
+        Assertions.assertEquals(28.67920f, lineRenderer.maxAscent, EPS);
+        Assertions.assertEquals(-21.32080f, lineRenderer.maxDescent, EPS);
     }
 
     @Test
@@ -291,7 +292,7 @@ public class LineRendererUnitTest extends RendererUnitTest {
 
         Rectangle bboxLineHeightNotSet = layoutResLineHeightNotSet.getOccupiedArea().getBBox();
         Rectangle bboxLineHeightNormal = layoutResLineHeightNormal.getOccupiedArea().getBBox();
-        Assert.assertTrue(bboxLineHeightNotSet.equalsWithEpsilon(bboxLineHeightNormal));
+        Assertions.assertTrue(bboxLineHeightNotSet.equalsWithEpsilon(bboxLineHeightNormal));
     }
 
     @Test
@@ -325,7 +326,7 @@ public class LineRendererUnitTest extends RendererUnitTest {
         float countedMinWidth = lineRenderer.getMinMaxWidth().getMinWidth();
         LayoutResult result = lineRenderer.layout(new LayoutContext(layoutArea));
 
-        Assert.assertEquals(result.getOccupiedArea().getBBox().getWidth(), countedMinWidth, 0.0001);
+        Assertions.assertEquals(result.getOccupiedArea().getBBox().getWidth(), countedMinWidth, 0.0001);
     }
 
     @Test
@@ -352,13 +353,13 @@ public class LineRendererUnitTest extends RendererUnitTest {
 
 
         LineSplitIntoGlyphsData splitIntoGlyphsData = LineRenderer.splitLineIntoGlyphs(toSplit);
-        Assert.assertEquals(Arrays.asList(dummyImage1, dummyImage2), splitIntoGlyphsData.getStarterNonTextRenderers());
-        Assert.assertEquals(Arrays.asList(dummyImage3), splitIntoGlyphsData.getInsertAfterAndRemove(dummy1));
-        Assert.assertNull(splitIntoGlyphsData.getInsertAfterAndRemove(dummy1));
-        Assert.assertNull(splitIntoGlyphsData.getInsertAfterAndRemove(dummy2));
-        Assert.assertEquals(Arrays.asList(dummyImage4, dummyImage5), splitIntoGlyphsData.getInsertAfterAndRemove(dummy3));
-        Assert.assertNull(splitIntoGlyphsData.getInsertAfterAndRemove(dummy3));
-        Assert.assertEquals(13, splitIntoGlyphsData.getLineGlyphs().size());
+        Assertions.assertEquals(Arrays.asList(dummyImage1, dummyImage2), splitIntoGlyphsData.getStarterNonTextRenderers());
+        Assertions.assertEquals(Arrays.asList(dummyImage3), splitIntoGlyphsData.getInsertAfterAndRemove(dummy1));
+        Assertions.assertNull(splitIntoGlyphsData.getInsertAfterAndRemove(dummy1));
+        Assertions.assertNull(splitIntoGlyphsData.getInsertAfterAndRemove(dummy2));
+        Assertions.assertEquals(Arrays.asList(dummyImage4, dummyImage5), splitIntoGlyphsData.getInsertAfterAndRemove(dummy3));
+        Assertions.assertNull(splitIntoGlyphsData.getInsertAfterAndRemove(dummy3));
+        Assertions.assertEquals(13, splitIntoGlyphsData.getLineGlyphs().size());
     }
 
     @Test
@@ -386,12 +387,12 @@ public class LineRendererUnitTest extends RendererUnitTest {
 
 
         LineSplitIntoGlyphsData splitIntoGlyphsData = LineRenderer.splitLineIntoGlyphs(toSplit);
-        Assert.assertEquals(Arrays.asList(dummyImage1, dummyImage2), splitIntoGlyphsData.getStarterNonTextRenderers());
-        Assert.assertEquals(Arrays.asList(dummyImage3), splitIntoGlyphsData.getInsertAfterAndRemove(dummy1));
-        Assert.assertNull(splitIntoGlyphsData.getInsertAfterAndRemove(dummy1));
-        Assert.assertNull(splitIntoGlyphsData.getInsertAfterAndRemove(dummy2));
-        Assert.assertNull(splitIntoGlyphsData.getInsertAfterAndRemove(dummy3));
-        Assert.assertEquals(7, splitIntoGlyphsData.getLineGlyphs().size());
+        Assertions.assertEquals(Arrays.asList(dummyImage1, dummyImage2), splitIntoGlyphsData.getStarterNonTextRenderers());
+        Assertions.assertEquals(Arrays.asList(dummyImage3), splitIntoGlyphsData.getInsertAfterAndRemove(dummy1));
+        Assertions.assertNull(splitIntoGlyphsData.getInsertAfterAndRemove(dummy1));
+        Assertions.assertNull(splitIntoGlyphsData.getInsertAfterAndRemove(dummy2));
+        Assertions.assertNull(splitIntoGlyphsData.getInsertAfterAndRemove(dummy3));
+        Assertions.assertEquals(7, splitIntoGlyphsData.getLineGlyphs().size());
     }
 
     @Test
@@ -423,20 +424,73 @@ public class LineRendererUnitTest extends RendererUnitTest {
         // validate that all non text renderers are in place and all text renderers contains
         // the right revers ranges
         List<IRenderer> childRenderers = toSplit.getChildRenderers();
-        Assert.assertEquals(8, childRenderers.size());
-        Assert.assertSame(dummyImage1, childRenderers.get(0));
-        Assert.assertSame(dummyImage2, childRenderers.get(1));
+        Assertions.assertEquals(8, childRenderers.size());
+        Assertions.assertSame(dummyImage1, childRenderers.get(0));
+        Assertions.assertSame(dummyImage2, childRenderers.get(1));
         List<int[]> firstReverseRanges = ((TextRenderer) childRenderers.get(2)).getReversedRanges();
-        Assert.assertEquals(1, firstReverseRanges.size());
-        Assert.assertArrayEquals(new int[]{2, 4}, firstReverseRanges.get(0));
-        Assert.assertSame(dummyImage3, childRenderers.get(3));
+        Assertions.assertEquals(1, firstReverseRanges.size());
+        Assertions.assertArrayEquals(new int[]{2, 4}, firstReverseRanges.get(0));
+        Assertions.assertSame(dummyImage3, childRenderers.get(3));
         List<int[]> secondReverseRanges = ((TextRenderer) childRenderers.get(4)).getReversedRanges();
-        Assert.assertEquals(2, secondReverseRanges.size());
-        Assert.assertArrayEquals(new int[]{0, 1}, secondReverseRanges.get(0));
-        Assert.assertArrayEquals(new int[]{2, 3}, secondReverseRanges.get(1));
+        Assertions.assertEquals(2, secondReverseRanges.size());
+        Assertions.assertArrayEquals(new int[]{0, 1}, secondReverseRanges.get(0));
+        Assertions.assertArrayEquals(new int[]{2, 3}, secondReverseRanges.get(1));
         List<int[]> thirdReverseRanges = ((TextRenderer) childRenderers.get(5)).getReversedRanges();
-        Assert.assertNull(thirdReverseRanges);
-        Assert.assertSame(dummyImage4, childRenderers.get(6));
-        Assert.assertSame(dummyImage5, childRenderers.get(7));
+        Assertions.assertNull(thirdReverseRanges);
+        Assertions.assertSame(dummyImage4, childRenderers.get(6));
+        Assertions.assertSame(dummyImage5, childRenderers.get(7));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, count = 2)})
+    public void percentFontSizeNotSupportedTest() {
+        LineRenderer lineRenderer = new LineRenderer();
+        Leading leading = new Leading(Leading.MULTIPLIED, 1);
+        lineRenderer.setProperty(Property.FONT_SIZE, UnitValue.createPercentValue(35));
+        float topLeadingIndent = lineRenderer.getTopLeadingIndent(leading);
+        float bottomLeadingIndent = lineRenderer.getBottomLeadingIndent(leading);
+        Assertions.assertEquals(0.0, topLeadingIndent);
+        Assertions.assertEquals(7.0, bottomLeadingIndent);
+    }
+
+    @Test
+    public void leadingTypeUnsupportedTest() {
+        LineRenderer lineRenderer = new LineRenderer();
+        Leading leading = new Leading(new Leading(3, 3).getType(), 1);
+        Assertions.assertThrows(IllegalStateException.class, () -> lineRenderer.getTopLeadingIndent(leading));
+        Assertions.assertThrows(IllegalStateException.class, () -> lineRenderer.getBottomLeadingIndent(leading));
+    }
+
+    @Test
+    public void getGlyphTest() {
+        Document dummyDocument = createDummyDocument();
+        TextRenderer textRenderer = createLayoutedTextRenderer("hello", dummyDocument);
+        RendererGlyph rendererGlyph = new RendererGlyph(null, textRenderer);
+
+        rendererGlyph.setGlyph(new Glyph('\n', 0, '\n'));
+        Glyph glyph = rendererGlyph.getGlyph();
+
+        Assertions.assertEquals(1, glyph.getChars().length);
+        Assertions.assertEquals(0, glyph.getWidth());
+        Assertions.assertEquals(10, glyph.getUnicode());
+        Assertions.assertEquals(10, glyph.getCode());
+        Assertions.assertFalse(glyph.isMark());
+    }
+
+    @Test
+    public void getRendererTest() {
+        Document dummyDocument = createDummyDocument();
+        RendererGlyph rendererGlyph = new RendererGlyph(new Glyph('\n', 0, '\n'), null);
+
+        TextRenderer textRenderer = createLayoutedTextRenderer("hello", dummyDocument);
+        rendererGlyph.setRenderer(textRenderer);
+
+        TextRenderer renderer = rendererGlyph.getRenderer();
+
+        Assertions.assertEquals("hello", renderer.getText().toString());
+        Assertions.assertEquals(0, renderer.getText().getStart());
+        Assertions.assertEquals(5, renderer.getText().getEnd());
+        Assertions.assertEquals(0, renderer.getText().getIdx());
     }
 }

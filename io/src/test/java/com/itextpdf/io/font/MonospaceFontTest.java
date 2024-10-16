@@ -23,31 +23,30 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class MonospaceFontTest extends ExtendedITextTest {
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/io/font/MonospaceFontTest/";
 
     @Test
     public void openMono() throws java.io.IOException {
         TrueTypeFont font = new TrueTypeFont(sourceFolder + "DejaVuSansMono.ttf");
-        Assert.assertNotNull(font.getGlyph('A'));
+        Assertions.assertNotNull(font.getGlyph('A'));
     }
 
     @Test
     public void openSans() throws java.io.IOException {
         TrueTypeFont font = new TrueTypeFont(sourceFolder + "DejaVuSans.ttf");
-        Assert.assertNotNull(font.getGlyph('A'));
+        Assertions.assertNotNull(font.getGlyph('A'));
     }
 
     @Test
     public void openSerif() throws java.io.IOException {
         TrueTypeFont font = new TrueTypeFont(sourceFolder + "DejaVuSerif.ttf");
-        Assert.assertNotNull(font.getGlyph('A'));
+        Assertions.assertNotNull(font.getGlyph('A'));
     }
 
 }

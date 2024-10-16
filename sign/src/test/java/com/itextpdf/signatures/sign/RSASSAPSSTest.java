@@ -24,43 +24,41 @@ package com.itextpdf.signatures.sign;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
-import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
+import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
+import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.FileUtil;
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
+import com.itextpdf.kernel.crypto.OID;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.signatures.BouncyCastleDigest;
-import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.IApplicableSignatureParams;
 import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.PdfPKCS7;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
 import com.itextpdf.signatures.RSASSAPSSMechanismParams;
-import com.itextpdf.signatures.SecurityIDs;
 import com.itextpdf.signatures.SignatureUtil;
+import com.itextpdf.signatures.SignerProperties;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
-import java.security.KeyException;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-@Category(BouncyCastleUnitTest.class)
+@Tag("BouncyCastleUnitTest")
 public class RSASSAPSSTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
@@ -70,14 +68,15 @@ public class RSASSAPSSTest extends ExtendedITextTest {
     private static final String SIGNATURE_FIELD = "Signature";
     private static final char[] SAMPLE_KEY_PASSPHRASE = "pdfpdfpdfsecretsecret".toCharArray();
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         Security.addProvider(FACTORY.getProvider());
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
-    public void signWithRsaSsaPssTest() throws GeneralSecurityException, IOException {
+    public void signWithRsaSsaPssTest()
+            throws GeneralSecurityException, IOException, AbstractOperatorCreationException, AbstractPKCSException {
         String digestName = "SHA256";
 
         String outFileName = "simplePssSignature.pdf";
@@ -88,7 +87,7 @@ public class RSASSAPSSTest extends ExtendedITextTest {
                 RSASSAPSSMechanismParams.createForDigestAlgorithm(digestName)
         );
 
-        Assert.assertNull(
+        Assertions.assertNull(
                 SignaturesCompareTool.compareSignatures(
                         Paths.get(DESTINATION_FOLDER, outFileName).toString(),
                         Paths.get(SOURCE_FOLDER, cmpFileName).toString()
@@ -97,7 +96,8 @@ public class RSASSAPSSTest extends ExtendedITextTest {
     }
 
     @Test
-    public void signWithRsaSsaPssAlternativeNomenclatureTest() throws GeneralSecurityException, IOException {
+    public void signWithRsaSsaPssAlternativeNomenclatureTest()
+            throws GeneralSecurityException, IOException, AbstractOperatorCreationException, AbstractPKCSException {
         String digestName = "SHA256";
         String outFileName = "simplePssAlternativeNomenclatureSignature.pdf";
         String cmpFileName = "cmp_simplePssSignature.pdf";
@@ -109,7 +109,7 @@ public class RSASSAPSSTest extends ExtendedITextTest {
                 RSASSAPSSMechanismParams.createForDigestAlgorithm(digestName)
         );
 
-        Assert.assertNull(
+        Assertions.assertNull(
                 SignaturesCompareTool.compareSignatures(
                         Paths.get(DESTINATION_FOLDER, outFileName).toString(),
                         Paths.get(SOURCE_FOLDER, cmpFileName).toString()
@@ -118,7 +118,8 @@ public class RSASSAPSSTest extends ExtendedITextTest {
     }
 
     @Test
-    public void signWithRsaSsaSha384PssTest() throws GeneralSecurityException, IOException {
+    public void signWithRsaSsaSha384PssTest()
+            throws GeneralSecurityException, IOException, AbstractOperatorCreationException, AbstractPKCSException {
         String digestName = "SHA384";
 
         String outFileName = "simplePssSignatureSha384.pdf";
@@ -130,7 +131,8 @@ public class RSASSAPSSTest extends ExtendedITextTest {
     }
 
     @Test
-    public void signWithRsaSsaCustomSaltLengthTest() throws GeneralSecurityException, IOException {
+    public void signWithRsaSsaCustomSaltLengthTest()
+            throws GeneralSecurityException, IOException, AbstractOperatorCreationException, AbstractPKCSException {
         String digestName = "SHA256";
 
         String outFileName = "customSaltLength.pdf";
@@ -149,8 +151,8 @@ public class RSASSAPSSTest extends ExtendedITextTest {
                 Paths.get(DESTINATION_FOLDER, outFileName).toString(),
                 Paths.get(SOURCE_FOLDER, cmpFileName).toString()
         );
-        Assert.assertTrue(cmpOut.contains("out: Integer(40)"));
-        Assert.assertTrue(cmpOut.contains("cmp: Integer(32)"));
+        Assertions.assertTrue(cmpOut.contains("out: Integer(40)"));
+        Assertions.assertTrue(cmpOut.contains("cmp: Integer(32)"));
     }
 
     @Test
@@ -162,32 +164,29 @@ public class RSASSAPSSTest extends ExtendedITextTest {
 
             SignatureUtil u = new SignatureUtil(pdfDoc);
             String provider = FACTORY.getProviderName();
-            PdfException pdfException = Assert.assertThrows(
-                    PdfException.class,
-                    () -> u.readSignatureData(SIGNATURE_FIELD, provider)
-            );
+            Assertions.assertThrows(PdfException.class, () -> u.readSignatureData(SIGNATURE_FIELD, provider));
         }
     }
 
     private void doRoundTrip(String digestAlgo, String signatureAlgo, String outFileName, IApplicableSignatureParams params)
-            throws GeneralSecurityException, IOException {
+            throws GeneralSecurityException, IOException, AbstractOperatorCreationException, AbstractPKCSException {
         String outFile = Paths.get(DESTINATION_FOLDER, outFileName).toString();
         doSign(digestAlgo, signatureAlgo, outFile, params);
         doVerify(outFile);
     }
 
     private void doSign(String digestAlgo, String signatureAlgo, String outFile, IApplicableSignatureParams params)
-            throws IOException, GeneralSecurityException {
+            throws IOException, GeneralSecurityException, AbstractOperatorCreationException, AbstractPKCSException {
         // write to a file for easier inspection when debugging
         try (OutputStream fos = FileUtil.getFileOutputStream(outFile)) {
-            Certificate root = readCertificate(Paths.get(SOURCE_FOLDER, "ca.crt"));
-            Certificate signerCert = readCertificate(Paths.get(SOURCE_FOLDER, "rsa.crt"));
+            Certificate root = PemFileHelper.readFirstChain(SOURCE_FOLDER + "ca.pem")[0];
+            Certificate signerCert = PemFileHelper.readFirstChain(SOURCE_FOLDER + "rsa.pem")[0];
             Certificate[] signChain = new Certificate[]{signerCert, root};
-            PrivateKey signPrivateKey = readPrivateKey(Paths.get(SOURCE_FOLDER, "rsa.key.pem"));
+            PrivateKey signPrivateKey = PemFileHelper.readFirstKey(SOURCE_FOLDER + "rsa.key.pem", SAMPLE_KEY_PASSPHRASE);
             IExternalSignature pks = new PrivateKeySignature(signPrivateKey, digestAlgo, signatureAlgo, FACTORY.getProviderName(), params);
 
             PdfSigner signer = new PdfSigner(new PdfReader(SOURCE_FILE), fos, new StampingProperties());
-            signer.setFieldName(SIGNATURE_FIELD);
+            signer.setSignerProperties(new SignerProperties().setFieldName(SIGNATURE_FIELD));
             signer.signDetached(
                     new BouncyCastleDigest(), pks, signChain, null, null, null, 0,
                     PdfSigner.CryptoStandard.CMS);
@@ -198,22 +197,8 @@ public class RSASSAPSSTest extends ExtendedITextTest {
         try (PdfReader r = new PdfReader(fileName); PdfDocument pdfDoc = new PdfDocument(r)) {
             SignatureUtil u = new SignatureUtil(pdfDoc);
             PdfPKCS7 data = u.readSignatureData(SIGNATURE_FIELD, FACTORY.getProviderName());
-            Assert.assertEquals(SecurityIDs.ID_RSASSA_PSS, data.getSignatureMechanismOid());
-            Assert.assertTrue(data.verifySignatureIntegrityAndAuthenticity());
+            Assertions.assertEquals(OID.RSASSA_PSS, data.getSignatureMechanismOid());
+            Assertions.assertTrue(data.verifySignatureIntegrityAndAuthenticity());
         }
-    }
-
-    private PrivateKey readPrivateKey(Path path) throws GeneralSecurityException {
-        try {
-            return PemFileHelper.readFirstKey(path.toString(), SAMPLE_KEY_PASSPHRASE);
-        } catch (Exception e) {
-            throw new KeyException(e);
-        }
-    }
-
-    private Certificate readCertificate(Path path) throws IOException, GeneralSecurityException {
-        byte[] content = Files.readAllBytes(path);
-        IX509CertificateHolder certHolder = FACTORY.createX509CertificateHolder(content);
-        return FACTORY.createJcaX509CertificateConverter().getCertificate(certHolder);
     }
 }

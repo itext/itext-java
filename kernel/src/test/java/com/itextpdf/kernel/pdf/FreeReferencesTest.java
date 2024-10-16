@@ -27,30 +27,29 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class FreeReferencesTest extends ExtendedITextTest {
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/FreeReferencesTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/FreeReferencesTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -174,12 +173,12 @@ public class FreeReferencesTest extends ExtendedITextTest {
 
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + src), new PdfWriter(destinationFolder + out));
         PdfObject contentsObj = pdfDocument.getPage(1).getPdfObject().remove(PdfName.Contents);
-        Assert.assertTrue(contentsObj instanceof PdfIndirectReference);
+        Assertions.assertTrue(contentsObj instanceof PdfIndirectReference);
 
         PdfIndirectReference contentsRef = (PdfIndirectReference) contentsObj;
         contentsRef.setFree();
         PdfObject freedContentsRefRefersTo = contentsRef.getRefersTo();
-        Assert.assertNull(freedContentsRefRefersTo);
+        Assertions.assertNull(freedContentsRefRefersTo);
         pdfDocument.close();
 
         String[] xrefString = extractXrefTableAsStrings(out);
@@ -289,12 +288,12 @@ public class FreeReferencesTest extends ExtendedITextTest {
                 new StampingProperties().useAppendMode());
         PdfObject contentsObj = pdfDocument.getPage(1).getPdfObject().remove(PdfName.Contents);
         pdfDocument.getPage(1).setModified();
-        Assert.assertTrue(contentsObj instanceof PdfIndirectReference);
+        Assertions.assertTrue(contentsObj instanceof PdfIndirectReference);
 
         PdfIndirectReference contentsRef = (PdfIndirectReference) contentsObj;
         contentsRef.setFree();
         PdfObject freedContentsRefRefersTo = contentsRef.getRefersTo();
-        Assert.assertNull(freedContentsRefRefersTo);
+        Assertions.assertNull(freedContentsRefRefersTo);
         pdfDocument.close();
 
         String[] xrefString = extractXrefTableAsStrings(out);
@@ -392,8 +391,8 @@ public class FreeReferencesTest extends ExtendedITextTest {
                 .makeIndirect(pdfDocument)
                 .flush();
 
-        Assert.assertTrue(a1.get(1, false) instanceof PdfIndirectReference);
-        Assert.assertTrue(((PdfIndirectReference)a1.get(1, false)).isFree());
+        Assertions.assertTrue(a1.get(1, false) instanceof PdfIndirectReference);
+        Assertions.assertTrue(((PdfIndirectReference)a1.get(1, false)).isFree());
         a1.flush();
 
         pdfDocument.close();
@@ -440,7 +439,7 @@ public class FreeReferencesTest extends ExtendedITextTest {
         a1.flush();
         a2.getIndirectReference().setFree();
 
-        Assert.assertFalse(a2.getIndirectReference().isFree());
+        Assertions.assertFalse(a2.getIndirectReference().isFree());
 
         List<PdfObject> objects = Arrays.asList(new PdfObject[]{new PdfString("The answer to life is "), new PdfNumber(42)});
         new PdfArray(objects)
@@ -492,7 +491,7 @@ public class FreeReferencesTest extends ExtendedITextTest {
         a2.flush();
         a2.getIndirectReference().setFree();
 
-        Assert.assertFalse(a2.getIndirectReference().isFree());
+        Assertions.assertFalse(a2.getIndirectReference().isFree());
 
         List<PdfObject> objects = Arrays.asList(new PdfObject[]{new PdfString("The answer to life is "), new PdfNumber(42)});
         new PdfArray(objects)
@@ -873,7 +872,7 @@ public class FreeReferencesTest extends ExtendedITextTest {
 
         pdfDocument = new PdfDocument(CompareTool.createOutputReader(destinationFolder + out));
         PdfObject contentsObj = pdfDocument.getPage(1).getPdfObject().get(PdfName.Contents);
-        Assert.assertEquals(PdfNull.PDF_NULL, contentsObj);
+        Assertions.assertEquals(PdfNull.PDF_NULL, contentsObj);
         pdfDocument.close();
 
         String[] xrefString = extractXrefTableAsStrings(out);
@@ -1486,7 +1485,7 @@ public class FreeReferencesTest extends ExtendedITextTest {
 
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + src), new PdfWriter(destinationFolder + out));
         PdfObject contentsObj = pdfDocument.getPage(1).getPdfObject().remove(PdfName.Contents);
-        Assert.assertTrue(contentsObj instanceof PdfIndirectReference);
+        Assertions.assertTrue(contentsObj instanceof PdfIndirectReference);
 
         PdfIndirectReference contentsRef = (PdfIndirectReference) contentsObj;
         contentsRef.setFree();
@@ -1524,8 +1523,8 @@ public class FreeReferencesTest extends ExtendedITextTest {
 
         int actualNumberOfObj = doc.getNumberOfPdfObjects();
 
-        Assert.assertEquals(68, actualNumberOfObj);
-        Assert.assertNull(doc.getPdfObject(7));
+        Assertions.assertEquals(68, actualNumberOfObj);
+        Assertions.assertNull(doc.getPdfObject(7));
 
         PdfXrefTable xref = doc.getXref();
 
@@ -1537,17 +1536,17 @@ public class FreeReferencesTest extends ExtendedITextTest {
             }
         }
 
-        Assert.assertEquals(31, freeRefsCount);
+        Assertions.assertEquals(31, freeRefsCount);
 
         doc.close();
     }
 
     private void compareXrefTables(String[] xrefString, String[] expected) {
-        Assert.assertEquals(expected.length, xrefString.length);
+        Assertions.assertEquals(expected.length, xrefString.length);
         for (int i = 0; i < xrefString.length; ++i) {
             if (!compareXrefSection(xrefString[i], expected[i])) {
                 // XrefTables are different. Use Assert method in order to show differences gracefully.
-                Assert.assertArrayEquals(expected, xrefString);
+                Assertions.assertArrayEquals(expected, xrefString);
             }
         }
     }

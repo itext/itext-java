@@ -42,14 +42,13 @@ import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
 import com.itextpdf.layout.testutil.TestConfigurationEvent;
 import com.itextpdf.layout.testutil.TestProductEvent;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class DocumentTest extends ExtendedITextTest {
 
     private static final TestConfigurationEvent CONFIGURATION_ACCESS = new TestConfigurationEvent();
@@ -61,9 +60,9 @@ public class DocumentTest extends ExtendedITextTest {
         Paragraph paragraph = new Paragraph("test");
         document.add(paragraph);
         document.close();
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> document.checkClosingStatus());
-        Assert.assertEquals(LayoutExceptionMessageConstant.DOCUMENT_CLOSED_IT_IS_IMPOSSIBLE_TO_EXECUTE_ACTION,
+        Assertions.assertEquals(LayoutExceptionMessageConstant.DOCUMENT_CLOSED_IT_IS_IMPOSSIBLE_TO_EXECUTE_ACTION,
                 exception.getMessage());
     }
 
@@ -80,10 +79,10 @@ public class DocumentTest extends ExtendedITextTest {
             List<AbstractProductProcessITextEvent> events = CONFIGURATION_ACCESS.getPublicEvents(
                     doc.getPdfDocument().getDocumentIdWrapper());
             // Second event was linked by adding block element method
-            Assert.assertEquals(2, events.size());
+            Assertions.assertEquals(2, events.size());
 
-            Assert.assertTrue(events.get(0) instanceof ITextCoreProductEvent);
-            Assert.assertTrue(events.get(1) instanceof TestProductEvent);
+            Assertions.assertTrue(events.get(0) instanceof ITextCoreProductEvent);
+            Assertions.assertTrue(events.get(1) instanceof TestProductEvent);
         }
     }
 
@@ -99,9 +98,9 @@ public class DocumentTest extends ExtendedITextTest {
 
             List<AbstractProductProcessITextEvent> events = CONFIGURATION_ACCESS.getPublicEvents(
                     doc.getPdfDocument().getDocumentIdWrapper());
-            Assert.assertEquals(1, events.size());
+            Assertions.assertEquals(1, events.size());
 
-            Assert.assertTrue(events.get(0) instanceof ITextCoreProductEvent);
+            Assertions.assertTrue(events.get(0) instanceof ITextCoreProductEvent);
         }
     }
 
@@ -118,10 +117,10 @@ public class DocumentTest extends ExtendedITextTest {
             List<AbstractProductProcessITextEvent> events = CONFIGURATION_ACCESS.getPublicEvents(
                     doc.getPdfDocument().getDocumentIdWrapper());
             // Second event was linked by adding block element
-            Assert.assertEquals(2, events.size());
+            Assertions.assertEquals(2, events.size());
 
-            Assert.assertTrue(events.get(0) instanceof ITextCoreProductEvent);
-            Assert.assertTrue(events.get(1) instanceof TestProductEvent);
+            Assertions.assertTrue(events.get(0) instanceof ITextCoreProductEvent);
+            Assertions.assertTrue(events.get(1) instanceof TestProductEvent);
         }
     }
 }

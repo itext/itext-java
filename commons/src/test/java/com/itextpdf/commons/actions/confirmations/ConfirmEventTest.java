@@ -26,13 +26,12 @@ import com.itextpdf.commons.ecosystem.ITextTestEvent;
 import com.itextpdf.commons.ecosystem.TestMetaInfo;
 import com.itextpdf.commons.actions.sequence.SequenceId;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class ConfirmEventTest extends ExtendedITextTest {
     @Test
     public void constructorWithSequenceIdTest() {
@@ -40,13 +39,13 @@ public class ConfirmEventTest extends ExtendedITextTest {
         ITextTestEvent iTextTestEvent = new ITextTestEvent(new SequenceId(), new TestMetaInfo(""), "eventType", "productName");
         ConfirmEvent confirmEvent = new ConfirmEvent(sequenceId, iTextTestEvent);
 
-        Assert.assertSame(iTextTestEvent, confirmEvent.getConfirmedEvent());
-        Assert.assertEquals("eventType", confirmEvent.getEventType());
-        Assert.assertEquals("productName", confirmEvent.getProductName());
-        Assert.assertSame(sequenceId, confirmEvent.getSequenceId());
-        Assert.assertEquals(EventConfirmationType.UNCONFIRMABLE, confirmEvent.getConfirmationType());
-        Assert.assertNotNull(confirmEvent.getProductData());
-        Assert.assertEquals(ITextTestEvent.class, confirmEvent.getClassFromContext());
+        Assertions.assertSame(iTextTestEvent, confirmEvent.getConfirmedEvent());
+        Assertions.assertEquals("eventType", confirmEvent.getEventType());
+        Assertions.assertEquals("productName", confirmEvent.getProductName());
+        Assertions.assertSame(sequenceId, confirmEvent.getSequenceId());
+        Assertions.assertEquals(EventConfirmationType.UNCONFIRMABLE, confirmEvent.getConfirmationType());
+        Assertions.assertNotNull(confirmEvent.getProductData());
+        Assertions.assertEquals(ITextTestEvent.class, confirmEvent.getClassFromContext());
     }
 
     @Test
@@ -54,13 +53,13 @@ public class ConfirmEventTest extends ExtendedITextTest {
         ITextTestEvent iTextTestEvent = new ITextTestEvent(new SequenceId(), new TestMetaInfo(""), "eventType", "productName");
         ConfirmEvent confirmEvent = new ConfirmEvent(iTextTestEvent);
 
-        Assert.assertSame(iTextTestEvent, confirmEvent.getConfirmedEvent());
-        Assert.assertEquals("eventType", confirmEvent.getEventType());
-        Assert.assertEquals("productName", confirmEvent.getProductName());
-        Assert.assertSame(iTextTestEvent.getSequenceId(), confirmEvent.getSequenceId());
-        Assert.assertEquals(EventConfirmationType.UNCONFIRMABLE, confirmEvent.getConfirmationType());
-        Assert.assertNotNull(confirmEvent.getProductData());
-        Assert.assertEquals(ITextTestEvent.class, confirmEvent.getClassFromContext());
+        Assertions.assertSame(iTextTestEvent, confirmEvent.getConfirmedEvent());
+        Assertions.assertEquals("eventType", confirmEvent.getEventType());
+        Assertions.assertEquals("productName", confirmEvent.getProductName());
+        Assertions.assertSame(iTextTestEvent.getSequenceId(), confirmEvent.getSequenceId());
+        Assertions.assertEquals(EventConfirmationType.UNCONFIRMABLE, confirmEvent.getConfirmationType());
+        Assertions.assertNotNull(confirmEvent.getProductData());
+        Assertions.assertEquals(ITextTestEvent.class, confirmEvent.getClassFromContext());
     }
 
     @Test
@@ -69,14 +68,14 @@ public class ConfirmEventTest extends ExtendedITextTest {
         ConfirmEvent child = new ConfirmEvent(iTextTestEvent.getSequenceId(), iTextTestEvent);
         ConfirmEvent confirmEvent = new ConfirmEvent(child);
 
-        Assert.assertSame(iTextTestEvent, confirmEvent.getConfirmedEvent());
+        Assertions.assertSame(iTextTestEvent, confirmEvent.getConfirmedEvent());
 
-        Assert.assertSame(iTextTestEvent, confirmEvent.getConfirmedEvent());
-        Assert.assertEquals("eventType", confirmEvent.getEventType());
-        Assert.assertEquals("productName", confirmEvent.getProductName());
-        Assert.assertSame(iTextTestEvent.getSequenceId(), confirmEvent.getSequenceId());
-        Assert.assertEquals(EventConfirmationType.UNCONFIRMABLE, confirmEvent.getConfirmationType());
-        Assert.assertNotNull(confirmEvent.getProductData());
-        Assert.assertEquals(ITextTestEvent.class, confirmEvent.getClassFromContext());
+        Assertions.assertSame(iTextTestEvent, confirmEvent.getConfirmedEvent());
+        Assertions.assertEquals("eventType", confirmEvent.getEventType());
+        Assertions.assertEquals("productName", confirmEvent.getProductName());
+        Assertions.assertSame(iTextTestEvent.getSequenceId(), confirmEvent.getSequenceId());
+        Assertions.assertEquals(EventConfirmationType.UNCONFIRMABLE, confirmEvent.getConfirmationType());
+        Assertions.assertNotNull(confirmEvent.getProductData());
+        Assertions.assertEquals(ITextTestEvent.class, confirmEvent.getClassFromContext());
     }
 }

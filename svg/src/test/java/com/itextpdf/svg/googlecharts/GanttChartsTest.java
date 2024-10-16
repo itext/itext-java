@@ -28,19 +28,18 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.svg.utils.TestUtils;
 import com.itextpdf.test.ITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class GanttChartsTest extends SvgIntegrationTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/googlecharts/GanttChartsTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/svg/googlecharts/GanttChartsTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         ITextTest.createDestinationFolder(destinationFolder);
     }
@@ -51,7 +50,7 @@ public class GanttChartsTest extends SvgIntegrationTest {
         TestUtils.convertSVGtoPDF(destinationFolder + "ganttChart.pdf",
                 sourceFolder + "ganttChart.svg", 1, pageSize);
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "ganttChart.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "ganttChart.pdf",
                 sourceFolder + "cmp_ganttChart.pdf", destinationFolder, "diff_"));
     }
 
@@ -61,7 +60,7 @@ public class GanttChartsTest extends SvgIntegrationTest {
         TestUtils.convertSVGtoPDF(destinationFolder + "gantt2Chart.pdf",
                 sourceFolder + "gantt2Chart.svg", 1, pageSize);
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "gantt2Chart.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "gantt2Chart.pdf",
                 sourceFolder + "cmp_gantt2Chart.pdf", destinationFolder, "diff_"));
     }
 
@@ -71,7 +70,7 @@ public class GanttChartsTest extends SvgIntegrationTest {
         TestUtils.convertSVGtoPDF(destinationFolder + "gantt3Chart.pdf",
                 sourceFolder + "gantt3Chart.svg", 1, pageSize);
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "gantt3Chart.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "gantt3Chart.pdf",
                 sourceFolder + "cmp_gantt3Chart.pdf", destinationFolder, "diff_"));
     }
 
@@ -81,7 +80,7 @@ public class GanttChartsTest extends SvgIntegrationTest {
         TestUtils.convertSVGtoPDF(destinationFolder + "gantt4Chart.pdf",
                 sourceFolder + "gantt4Chart.svg", 1, pageSize);
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "gantt4Chart.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "gantt4Chart.pdf",
                 sourceFolder + "cmp_gantt4Chart.pdf", destinationFolder, "diff_"));
     }
 }

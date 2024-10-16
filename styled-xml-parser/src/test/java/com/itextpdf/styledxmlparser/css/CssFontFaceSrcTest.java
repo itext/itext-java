@@ -30,19 +30,18 @@ import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.regex.Matcher;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class CssFontFaceSrcTest extends ExtendedITextTest {
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/styledxmlparser/css/CssFontFaceSrcTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
     }
 
@@ -55,48 +54,48 @@ public class CssFontFaceSrcTest extends ExtendedITextTest {
         CssFontFaceRule fontFaceRule = (CssFontFaceRule)styleSheet.getStatements().get(0);
         CssDeclaration src = fontFaceRule.getProperties().get(0);
 
-        Assert.assertEquals("src expected", "src", src.getProperty());
+        Assertions.assertEquals("src", src.getProperty(), "src expected");
 
         String[] sources = src.getExpression().split(",");
 
-        Assert.assertEquals("27 sources expected", 27 , sources.length);
+        Assertions.assertEquals(27 , sources.length, "27 sources expected");
 
         for (int i = 0; i < sources.length; i++) {
             Matcher m = CssFontFace.CssFontFaceSrc.UrlPattern.matcher(sources[i]);
 
-            Assert.assertTrue("Expression doesn't match pattern: " + sources[i], m.matches());
+            Assertions.assertTrue(m.matches(), "Expression doesn't match pattern: " + sources[i]);
 
             String format = m.group(CssFontFace.CssFontFaceSrc.FormatGroup);
             String source2 = MessageFormatUtil.format("{0}({1}){2}", m.group(CssFontFace.CssFontFaceSrc.TypeGroup), m.group(CssFontFace.CssFontFaceSrc.UrlGroup), format != null ? MessageFormatUtil.format(" format({0})", format) : "");
             String url = CssFontFace.CssFontFaceSrc.unquote(m.group(CssFontFace.CssFontFaceSrc.UrlGroup));
 
-            Assert.assertTrue("Invalid url: " + url, url.startsWith(fontSrc));
+            Assertions.assertTrue(url.startsWith(fontSrc), "Invalid url: " + url);
 
-            Assert.assertTrue("Invalid format: " + format, format == null || CssFontFace.CssFontFaceSrc.parseFormat(format) != CssFontFace.FontFormat.None);
+            Assertions.assertTrue(format == null || CssFontFace.CssFontFaceSrc.parseFormat(format) != CssFontFace.FontFormat.None, "Invalid format: " + format);
 
-            Assert.assertEquals("Group check fails: ", sources[i], source2);
+            Assertions.assertEquals(sources[i], source2, "Group check fails: ");
 
             CssFontFace.CssFontFaceSrc fontFaceSrc = CssFontFace.CssFontFaceSrc.create(sources[i]);
 
-            Assert.assertTrue("Invalid url: " + fontSrc, fontFaceSrc.getSrc().startsWith(fontSrc));
+            Assertions.assertTrue(fontFaceSrc.getSrc().startsWith(fontSrc), "Invalid url: " + fontSrc);
 
             String type = "url";
             if (fontFaceSrc.isLocal()) {
                 type = "local";
             }
-            Assert.assertTrue("Type '" + type + "' expected: " + sources[i], sources[i].startsWith(type));
+            Assertions.assertTrue(sources[i].startsWith(type), "Type '" + type + "' expected: " + sources[i]);
             switch (fontFaceSrc.getFormat()) {
                 case OpenType:
-                    Assert.assertTrue("Format " + fontFaceSrc.getFormat()  + " expected: " + sources[i], sources[i].contains("opentype"));
+                    Assertions.assertTrue(sources[i].contains("opentype"), "Format " + fontFaceSrc.getFormat()  + " expected: " + sources[i]);
                     break;
                 case TrueType:
-                    Assert.assertTrue("Format " + fontFaceSrc.getFormat()  + " expected: " + sources[i], sources[i].contains("truetype"));
+                    Assertions.assertTrue(sources[i].contains("truetype"), "Format " + fontFaceSrc.getFormat()  + " expected: " + sources[i]);
                     break;
                 case SVG:
-                    Assert.assertTrue("Format " + fontFaceSrc.getFormat() + " expected: " + sources[i], sources[i].contains("svg"));
+                    Assertions.assertTrue(sources[i].contains("svg"), "Format " + fontFaceSrc.getFormat() + " expected: " + sources[i]);
                     break;
                 case None:
-                    Assert.assertFalse("Format " + fontFaceSrc.getFormat()  + " expected: " +  sources[i], sources[i].contains("format("));
+                    Assertions.assertFalse(sources[i].contains("format("), "Format " + fontFaceSrc.getFormat()  + " expected: " +  sources[i]);
                     break;
             }
 
@@ -110,20 +109,20 @@ public class CssFontFaceSrcTest extends ExtendedITextTest {
         CssFontFaceRule fontFaceRule = (CssFontFaceRule)styleSheet.getStatements().get(0);
         CssDeclaration src = fontFaceRule.getProperties().get(0);
 
-        Assert.assertEquals("src expected", "src", src.getProperty());
+        Assertions.assertEquals("src", src.getProperty(), "src expected");
 
         String[] sources = CssFontFace.splitSourcesSequence(src.getExpression());
 
-        Assert.assertEquals("8 sources expected", 8, sources.length);
+        Assertions.assertEquals(8, sources.length, "8 sources expected");
 
         for (int i = 0; i < 6; i++) {
             Matcher m = CssFontFace.CssFontFaceSrc.UrlPattern.matcher(sources[i]);
-            Assert.assertTrue("Expression doesn't match pattern: " + sources[i], m.matches());
+            Assertions.assertTrue(m.matches(), "Expression doesn't match pattern: " + sources[i]);
         }
 
         for (int i = 6; i < sources.length; i++) {
             Matcher m = CssFontFace.CssFontFaceSrc.UrlPattern.matcher(sources[i]);
-            Assert.assertFalse("Expression matches pattern (though it shouldn't!): " + sources[i], m.matches());
+            Assertions.assertFalse(m.matches(), "Expression matches pattern (though it shouldn't!): " + sources[i]);
         }
     }
 }

@@ -23,21 +23,20 @@
 package com.itextpdf.svg.renderers;
 
 import com.itextpdf.test.ITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 import java.io.IOException;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class OpacityTest extends SvgIntegrationTest {
 
   private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/OpacityTest/";
   private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/renderers/impl/OpacityTest/";
 
-  @BeforeClass
+  @BeforeAll
   public static void beforeClass() {
     ITextTest.createDestinationFolder(DESTINATION_FOLDER);
   }
@@ -66,7 +65,7 @@ public class OpacityTest extends SvgIntegrationTest {
   @Test
   //TODO DEVSIX-2678
   public void testFillOpacityWithComma() throws IOException, InterruptedException {
-    Assert.assertThrows(NumberFormatException.class,
+    Assertions.assertThrows(NumberFormatException.class,
             () -> convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "testFillOpacityWithComma")
     );
   }
@@ -74,7 +73,7 @@ public class OpacityTest extends SvgIntegrationTest {
   @Test
   //TODO DEVSIX-2678
   public void testFillOpacityWithPercents() throws IOException, InterruptedException {
-    Assert.assertThrows(NumberFormatException.class,
+    Assertions.assertThrows(NumberFormatException.class,
             () -> convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "testFillOpacityWithPercents")
     );
   }
@@ -88,7 +87,7 @@ public class OpacityTest extends SvgIntegrationTest {
   @Test
   //TODO DEVSIX-2679
   public void testStrokeOpacityWithComma() throws IOException, InterruptedException {
-    Assert.assertThrows(Exception.class,
+    Assertions.assertThrows(Exception.class,
             () -> convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "testStrokeOpacityWithComma")
     );
   }
@@ -96,7 +95,7 @@ public class OpacityTest extends SvgIntegrationTest {
   @Test
   //TODO DEVSIX-2679
   public void testStrokeOpacityWithPercents() throws IOException, InterruptedException {
-    Assert.assertThrows(NumberFormatException.class,
+    Assertions.assertThrows(NumberFormatException.class,
             () -> convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "testStrokeOpacityWithPercents")
     );
   }

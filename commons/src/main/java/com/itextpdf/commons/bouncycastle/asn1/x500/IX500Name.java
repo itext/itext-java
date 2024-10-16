@@ -29,4 +29,10 @@ import com.itextpdf.commons.bouncycastle.asn1.IASN1Encodable;
  * to switch between bouncy-castle and bouncy-castle FIPS implementations.
  */
 public interface IX500Name extends IASN1Encodable {
+    /**
+     * Gets the RFC2253 name.
+     *
+     * @return the RFC2253 name
+     */
+    String getName();
 }

@@ -22,8 +22,8 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.commons.actions.sequence.AbstractIdentifiableElement;
+import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.layout.borders.Border;
@@ -443,7 +443,10 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> ext
      * @return this Element.
      */
     public T setBorder(Border border) {
-        setProperty(Property.BORDER, border);
+        setProperty(Property.BORDER_TOP, border);
+        setProperty(Property.BORDER_RIGHT, border);
+        setProperty(Property.BORDER_BOTTOM, border);
+        setProperty(Property.BORDER_LEFT, border);
         return (T) (Object) this;
     }
 
@@ -498,7 +501,10 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> ext
      * @return this Element.
      */
     public T setBorderRadius(BorderRadius borderRadius) {
-        setProperty(Property.BORDER_RADIUS, borderRadius);
+        setProperty(Property.BORDER_BOTTOM_LEFT_RADIUS, borderRadius);
+        setProperty(Property.BORDER_BOTTOM_RIGHT_RADIUS, borderRadius);
+        setProperty(Property.BORDER_TOP_LEFT_RADIUS, borderRadius);
+        setProperty(Property.BORDER_TOP_RIGHT_RADIUS, borderRadius);
         return (T) (Object) this;
     }
 
@@ -638,23 +644,23 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> ext
     }
 
     /**
-     * Switch on the simulation of bold style for a font.
+     * Simulates bold style for a font.
      * Be aware that using correct bold font is highly preferred over this option.
      *
      * @return this element
      */
-    public T setBold() {
+    public T simulateBold() {
         setProperty(Property.BOLD_SIMULATION, true);
         return (T) (Object) this;
     }
 
     /**
-     * Switch on the simulation of italic style for a font.
+     * Simulates italic style for a font.
      * Be aware that using correct italic (oblique) font is highly preferred over this option.
      *
      * @return this element
      */
-    public T setItalic() {
+    public T simulateItalic() {
         setProperty(Property.ITALIC_SIMULATION, true);
         return (T) (Object) this;
     }

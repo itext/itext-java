@@ -47,11 +47,76 @@ public  class DmParams {
         this.errorBlock = errorBlock;
     }
 
-    public int height;
-    public int width;
-    public int heightSection;
-    public int widthSection;
-    public int dataSize;
-    public int dataBlock;
-    public int errorBlock;
+    private final int height;
+
+    private final int width;
+
+    private final int heightSection;
+    private final int widthSection;
+    private final int dataSize;
+    private final int dataBlock;
+    private final int errorBlock;
+
+    /**
+     * Retrieves the height of DmParams object.
+     *
+     * @return total height value
+     */
+    public int getHeight() {
+        return height;
+    }
+
+    /**
+     * Retrieves the width of DmParams object.
+     *
+     * @return total width value
+     */
+    public int getWidth() {
+        return width;
+    }
+
+    /**
+     * Retrieves the height of a single section.
+     *
+     * @return total height value
+     */
+    public int getHeightSection() {
+        return heightSection;
+    }
+
+    /**
+     * Retrieves the width of a single section.
+     *
+     * @return total width value
+     */
+    public int getWidthSection() {
+        return widthSection;
+    }
+
+    /**
+     * Retrieves the size of the data.
+     *
+     * @return data size value
+     */
+    public int getDataSize() {
+        return dataSize;
+    }
+
+    /**
+     * Retrieves the size of the data block.
+     *
+     * @return data block size value
+     */
+    public int getDataBlock() {
+        return dataBlock;
+    }
+
+    /**
+     * Retrieves the size of the error block.
+     *
+     * @return error block size value
+     */
+    public int getErrorBlock() {
+        return errorBlock;
+    }
 }

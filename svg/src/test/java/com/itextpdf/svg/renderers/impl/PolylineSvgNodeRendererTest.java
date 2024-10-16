@@ -34,7 +34,6 @@ import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -43,17 +42,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PolylineSvgNodeRendererTest extends SvgIntegrationTest {
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/PolylineSvgNodeRendererTest/";
     private static final String destinationFolder = "./target/test/com/itextpdf/svg/renderers/impl/PolylineSvgNodeRendererTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         ITextTest.createDestinationFolder(destinationFolder);
     }
@@ -74,7 +73,7 @@ public class PolylineSvgNodeRendererTest extends SvgIntegrationTest {
 
         root.draw(context);
         doc.close();
-        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareVisually(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -89,7 +88,7 @@ public class PolylineSvgNodeRendererTest extends SvgIntegrationTest {
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
 
-        Assert.assertThrows(StyledXMLParserException.class, () -> root.draw(context));
+        Assertions.assertThrows(StyledXMLParserException.class, () -> root.draw(context));
     }
 
     @Test
@@ -104,7 +103,7 @@ public class PolylineSvgNodeRendererTest extends SvgIntegrationTest {
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
 
-        Assert.assertThrows(SvgProcessingException.class, () -> root.draw(context));
+        Assertions.assertThrows(SvgProcessingException.class, () -> root.draw(context));
     }
 
     @Test
@@ -124,8 +123,8 @@ public class PolylineSvgNodeRendererTest extends SvgIntegrationTest {
         doc.close();
 
         int numPoints = ((PolylineSvgNodeRenderer) root).getPoints().size();
-        Assert.assertEquals(numPoints, 0);
-        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+        Assertions.assertEquals(numPoints, 0);
+        Assertions.assertNull(new CompareTool().compareVisually(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -148,9 +147,9 @@ public class PolylineSvgNodeRendererTest extends SvgIntegrationTest {
         expectedPoints.add(new Point(225, 225));
         List<Point> attributePoints = ((PolylineSvgNodeRenderer) root).getPoints();
 
-        Assert.assertEquals(expectedPoints.size(), attributePoints.size());
+        Assertions.assertEquals(expectedPoints.size(), attributePoints.size());
         for (int x = 0; x < attributePoints.size(); x++) {
-            Assert.assertEquals(expectedPoints.get(x), attributePoints.get(x));
+            Assertions.assertEquals(expectedPoints.get(x), attributePoints.get(x));
         }
 
     }

@@ -34,24 +34,23 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.parser.data.TextRenderInfo;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.CharacterRenderInfo;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Stack;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class SolidLineTest extends ExtendedITextTest {
 
     @Test
     public void defaultSolidLineTest01() {
         SolidLine solidLine = new SolidLine();
 
-        Assert.assertEquals(ColorConstants.BLACK, solidLine.getColor());
-        Assert.assertEquals(1, solidLine.getLineWidth(), 0.0001);
+        Assertions.assertEquals(ColorConstants.BLACK, solidLine.getColor());
+        Assertions.assertEquals(1, solidLine.getLineWidth(), 0.0001);
     }
 
 
@@ -59,22 +58,22 @@ public class SolidLineTest extends ExtendedITextTest {
     public void solidLineWithSetWidthTest01() {
         SolidLine solidLine = new SolidLine(20);
 
-        Assert.assertEquals(ColorConstants.BLACK, solidLine.getColor());
-        Assert.assertEquals(20, solidLine.getLineWidth(), 0.0001);
+        Assertions.assertEquals(ColorConstants.BLACK, solidLine.getColor());
+        Assertions.assertEquals(20, solidLine.getLineWidth(), 0.0001);
     }
 
 
     @Test
     public void solidLineSettersTest01() {
         SolidLine solidLine = new SolidLine(15);
-        Assert.assertEquals(ColorConstants.BLACK, solidLine.getColor());
-        Assert.assertEquals(15, solidLine.getLineWidth(), 0.0001);
+        Assertions.assertEquals(ColorConstants.BLACK, solidLine.getColor());
+        Assertions.assertEquals(15, solidLine.getLineWidth(), 0.0001);
 
         solidLine.setColor(ColorConstants.RED);
-        Assert.assertEquals(ColorConstants.RED, solidLine.getColor());
+        Assertions.assertEquals(ColorConstants.RED, solidLine.getColor());
 
         solidLine.setLineWidth(10);
-        Assert.assertEquals(10, solidLine.getLineWidth(), 0.0001);
+        Assertions.assertEquals(10, solidLine.getLineWidth(), 0.0001);
     }
 
     @Test
@@ -95,6 +94,6 @@ public class SolidLineTest extends ExtendedITextTest {
 
         byte[] writtenContentBytes = canvas.getContentStream().getBytes();
 
-        Assert.assertArrayEquals(expectedContent.getBytes(), writtenContentBytes);
+        Assertions.assertArrayEquals(expectedContent.getBytes(), writtenContentBytes);
     }
 }

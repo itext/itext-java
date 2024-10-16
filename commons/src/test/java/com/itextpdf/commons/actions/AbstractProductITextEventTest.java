@@ -23,17 +23,16 @@
 package com.itextpdf.commons.actions;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class AbstractProductITextEventTest extends ExtendedITextTest {
     @Test
     public void nullProductDataTest() {
         Exception exception =
-                Assert.assertThrows(IllegalStateException.class, () -> new AbstractProductITextEvent(null) {});
-        Assert.assertEquals("ProductData shouldn't be null.", exception.getMessage());
+                Assertions.assertThrows(IllegalStateException.class, () -> new AbstractProductITextEvent(null) {});
+        Assertions.assertEquals("ProductData shouldn't be null.", exception.getMessage());
     }
 }

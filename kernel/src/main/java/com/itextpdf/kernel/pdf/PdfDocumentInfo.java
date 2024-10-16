@@ -28,11 +28,11 @@ import java.util.Map;
 
 public class PdfDocumentInfo {
 
-    static final PdfName PDF20_DEPRECATED_KEYS[] = new PdfName[] {PdfName.Title, PdfName.Author, PdfName.Subject, PdfName.Keywords,
-            PdfName.Creator, PdfName.Producer, PdfName.Trapped};
+    static final PdfName[] PDF20_DEPRECATED_KEYS = new PdfName[] {PdfName.Title, PdfName.Author, PdfName.Subject,
+            PdfName.Keywords, PdfName.Creator, PdfName.Producer, PdfName.Trapped};
 
 
-    private PdfDictionary infoDictionary;
+    private final PdfDictionary infoDictionary;
 
     /**
      * Create a PdfDocumentInfo based on the passed PdfDictionary.
@@ -44,15 +44,6 @@ public class PdfDocumentInfo {
         if (pdfDocument.getWriter() != null) {
             infoDictionary.makeIndirect(pdfDocument);
         }
-    }
-
-    /**
-     * Create a default, empty PdfDocumentInfo and link it to the passed PdfDocument
-     *
-     * @param pdfDocument document the info will belong to
-     */
-    PdfDocumentInfo(PdfDocument pdfDocument) {
-        this(new PdfDictionary(), pdfDocument);
     }
 
     public PdfDocumentInfo setTitle(String title) {

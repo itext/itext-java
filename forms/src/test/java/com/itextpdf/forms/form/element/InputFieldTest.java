@@ -45,22 +45,21 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class InputFieldTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER =
             "./src/test/resources/com/itextpdf/forms/form/element/InputFieldTest/";
     public static final String DESTINATION_FOLDER =
             "./target/test/com/itextpdf/forms/form/element/InputFieldTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
@@ -72,17 +71,17 @@ public class InputFieldTest extends ExtendedITextTest {
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             InputField formInputField = new InputField("form input field");
-            formInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
+            formInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             formInputField.setProperty(FormProperty.FORM_FIELD_VALUE, "form input field");
             document.add(formInputField);
 
             InputField flattenInputField = new InputField("flatten input field");
-            flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenInputField.setProperty(FormProperty.FORM_FIELD_VALUE, "flatten input field");
             document.add(flattenInputField);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -94,11 +93,11 @@ public class InputFieldTest extends ExtendedITextTest {
             InputField flattenInputField = new InputField("no value input field");
             flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, null);
             flattenInputField.setProperty(FormProperty.FORM_FIELD_VALUE, null);
-            flattenInputField.setProperty(Property.BORDER, new SolidBorder(2f));
+            flattenInputField.setBorder(new SolidBorder(2f));
             document.add(flattenInputField);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -114,13 +113,13 @@ public class InputFieldTest extends ExtendedITextTest {
             document.add(div);
 
             InputField flattenInputField = new InputField("input field does not fit");
-            flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenInputField.setProperty(FormProperty.FORM_FIELD_VALUE, "input field does not fit");
-            flattenInputField.setProperty(Property.BORDER, new SolidBorder(2f));
+            flattenInputField.setBorder(new SolidBorder(2f));
             document.add(flattenInputField);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -131,15 +130,15 @@ public class InputFieldTest extends ExtendedITextTest {
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             document.getPdfDocument().setTagged();
             InputField flattenInputField = new InputField("input field with lang");
-            flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
+            flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             flattenInputField.setProperty(FormProperty.FORM_FIELD_VALUE, "input field with lang");
 
-            flattenInputField.setProperty(FormProperty.FORM_ACCESSIBILITY_LANGUAGE, "random_lang");
-            flattenInputField.setProperty(Property.BORDER, new SolidBorder(2f));
+            flattenInputField.getAccessibilityProperties().setLanguage("random_lang");
+            flattenInputField.setBorder(new SolidBorder(2f));
             document.add(flattenInputField);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -150,15 +149,15 @@ public class InputFieldTest extends ExtendedITextTest {
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             document.getPdfDocument().setTagged();
             InputField flattenInputField = new InputField("input field with null lang");
-            flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
+            flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             flattenInputField.setProperty(FormProperty.FORM_FIELD_VALUE, "input field with null lang");
 
-            flattenInputField.setProperty(FormProperty.FORM_ACCESSIBILITY_LANGUAGE, null);
-            flattenInputField.setProperty(Property.BORDER, new SolidBorder(2f));
+            flattenInputField.getAccessibilityProperties().setLanguage(null);
+            flattenInputField.setBorder(new SolidBorder(2f));
             document.add(flattenInputField);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -168,21 +167,21 @@ public class InputFieldTest extends ExtendedITextTest {
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             InputField formInputField = new InputField("form input field with password");
-            formInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
+            formInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             formInputField.setProperty(FormProperty.FORM_FIELD_VALUE, "form input field with password");
-            formInputField.setProperty(Property.BORDER, new SolidBorder(2f));
-            formInputField.setProperty(FormProperty.FORM_FIELD_PASSWORD_FLAG, true);
+            formInputField.setBorder(new SolidBorder(2f));
+            formInputField.setProperty(FormProperty.FORM_FIELD_PASSWORD_FLAG, Boolean.TRUE);
             document.add(formInputField);
 
             InputField flattenInputField = new InputField("flatten input field with password");
-            flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenInputField.setProperty(FormProperty.FORM_FIELD_VALUE, "flatten input field with password");
-            flattenInputField.setProperty(Property.BORDER, new SolidBorder(2f));
-            flattenInputField.setProperty(FormProperty.FORM_FIELD_PASSWORD_FLAG, true);
+            flattenInputField.setBorder(new SolidBorder(2f));
+            flattenInputField.setProperty(FormProperty.FORM_FIELD_PASSWORD_FLAG, Boolean.TRUE);
             document.add(flattenInputField);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -192,14 +191,14 @@ public class InputFieldTest extends ExtendedITextTest {
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             InputField flattenInputField = new InputField("flatten input field with height");
-            flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenInputField.setProperty(FormProperty.FORM_FIELD_VALUE, "flatten input field with height");
             flattenInputField.setProperty(Property.HEIGHT, new UnitValue(UnitValue.POINT, 100));
-            flattenInputField.setProperty(Property.BORDER, new SolidBorder(2f));
+            flattenInputField.setBorder(new SolidBorder(2f));
             document.add(flattenInputField);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -209,14 +208,14 @@ public class InputFieldTest extends ExtendedITextTest {
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             InputField flattenInputField = new InputField("flatten input field with height");
-            flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenInputField.setProperty(FormProperty.FORM_FIELD_VALUE, "flatten input field with height");
             flattenInputField.setProperty(Property.MIN_HEIGHT, new UnitValue(UnitValue.POINT, 100));
-            flattenInputField.setProperty(Property.BORDER, new SolidBorder(2f));
+            flattenInputField.setBorder(new SolidBorder(2f));
             document.add(flattenInputField);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -226,14 +225,14 @@ public class InputFieldTest extends ExtendedITextTest {
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             InputField flattenInputField = new InputField("flatten input field with height");
-            flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenInputField.setProperty(FormProperty.FORM_FIELD_VALUE, "flatten input field with height");
             flattenInputField.setProperty(Property.MAX_HEIGHT, new UnitValue(UnitValue.POINT, 10));
-            flattenInputField.setProperty(Property.BORDER, new SolidBorder(2f));
+            flattenInputField.setBorder(new SolidBorder(2f));
             document.add(flattenInputField);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -249,7 +248,7 @@ public class InputFieldTest extends ExtendedITextTest {
             document.add(flattenInputField);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -265,7 +264,7 @@ public class InputFieldTest extends ExtendedITextTest {
             document.add(flattenInputField);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -312,12 +311,12 @@ public class InputFieldTest extends ExtendedITextTest {
             document.add(inputField270);
 
             InputField inputField45 = new InputField("1");
-            Exception exception = Assert.assertThrows(IllegalArgumentException.class,
+            Exception exception = Assertions.assertThrows(IllegalArgumentException.class,
                     () -> inputField45.setRotation(45));
-            Assert.assertEquals(FormsExceptionMessageConstant.INVALID_ROTATION_VALUE, exception.getMessage());
+            Assertions.assertEquals(FormsExceptionMessageConstant.INVALID_ROTATION_VALUE, exception.getMessage());
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -363,7 +362,7 @@ public class InputFieldTest extends ExtendedITextTest {
             document.add(flattenInputField2);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -379,7 +378,7 @@ public class InputFieldTest extends ExtendedITextTest {
             inputField.setValue("Some value");
             document.add(inputField);
         }
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -403,7 +402,7 @@ public class InputFieldTest extends ExtendedITextTest {
                 }
             }
         }
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -428,6 +427,6 @@ public class InputFieldTest extends ExtendedITextTest {
                 form = PdfAcroForm.getAcroForm(document, true);
             }
         }
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 }

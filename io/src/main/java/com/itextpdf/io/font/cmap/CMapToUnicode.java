@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  */
 public class CMapToUnicode extends AbstractCMap {
 
-    public static CMapToUnicode EmptyCMapToUnicodeMap = new CMapToUnicode(true);
+    public static final CMapToUnicode EMPTY_CMAP = new CMapToUnicode(true);
 
     private final Map<Integer, char[]> byteMappings;
 

@@ -37,16 +37,15 @@ import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfCanvasParserTest extends ExtendedITextTest {
 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/parser/PdfCanvasParserTest/";
@@ -77,7 +76,7 @@ public class PdfCanvasParserTest extends ExtendedITextTest {
 
         PdfArray cmpArray = new PdfArray(expected);
 
-        Assert.assertTrue(new CompareTool().compareArrays(cmpArray,
+        Assertions.assertTrue(new CompareTool().compareArrays(cmpArray,
                 (((PdfDictionary) actual.get(1)).getAsArray(new PdfName("ColorantsDef")))));
     }
 
@@ -95,9 +94,9 @@ public class PdfCanvasParserTest extends ExtendedITextTest {
         PdfResources resources = pdfDocument.getPage(1).getResources();
         PdfCanvasParser ps = new PdfCanvasParser(tokeniser, resources);
 
-         Exception exception = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class,
+         Exception exception = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
                 () -> ps.parse(null));
-        Assert.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.UNEXPECTED_TOKEN, ">>"),
+        Assertions.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.UNEXPECTED_TOKEN, ">>"),
                 exception.getCause().getMessage());
     }
 }

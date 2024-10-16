@@ -32,29 +32,28 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfCanvasGlyphlineShowTextTest extends ExtendedITextTest {
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/canvas/PdfCanvasGlyphlineShowTextTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/canvas/PdfCanvasGlyphlineShowTextTest/";
     public static final String fontsFolder = "./src/test/resources/com/itextpdf/kernel/pdf/fonts/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -95,7 +94,7 @@ public class PdfCanvasGlyphlineShowTextTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
     }
 
     private Glyph applyGlyphParameters(char glyphUni, int anchorDelta, int xPlacement, int yPlacement, PdfFont font) {

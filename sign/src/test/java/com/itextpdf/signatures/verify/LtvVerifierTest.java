@@ -34,20 +34,19 @@ import com.itextpdf.signatures.VerificationOK;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.ITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.Provider;
 import java.security.Security;
 import java.util.List;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(BouncyCastleIntegrationTest.class)
+@Tag("BouncyCastleIntegrationTest")
 public class LtvVerifierTest extends ExtendedITextTest {
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/verify/LtvVerifierTest/";
     private static final String certsSrc = "./src/test/resources/com/itextpdf/signatures/certs/";
@@ -57,13 +56,13 @@ public class LtvVerifierTest extends ExtendedITextTest {
 
     private static final Provider PROVIDER = FACTORY.getProvider();
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         Security.addProvider(PROVIDER);
         ITextTest.removeCryptographyRestrictions();
     }
 
-    @AfterClass
+    @AfterAll
     public static void after() {
         ITextTest.restoreCryptographyRestrictions();
     }
@@ -78,7 +77,7 @@ public class LtvVerifierTest extends ExtendedITextTest {
         verifier.setRootStore(PemFileHelper.initStore(certsSrc + "rootStore.pem", password, PROVIDER));
         List<VerificationOK> verificationMessages = verifier.verify(null);
 
-        Assert.assertEquals(7, verificationMessages.size());
+        Assertions.assertEquals(7, verificationMessages.size());
     }
     @Test
     public void validLtvDocTest02()
@@ -93,7 +92,7 @@ public class LtvVerifierTest extends ExtendedITextTest {
         verifier.setRootStore(PemFileHelper.initStore(certsSrc + "rootStore.pem", password, PROVIDER));
         List<VerificationOK> verificationMessages = verifier.verify(null);
 
-        Assert.assertEquals(7, verificationMessages.size());
+        Assertions.assertEquals(7, verificationMessages.size());
     }
 
 }

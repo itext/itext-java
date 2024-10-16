@@ -31,23 +31,22 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.Security;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(BouncyCastleIntegrationTest.class)
+@Tag("BouncyCastleIntegrationTest")
 public class LtvVerifierIntegrationTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/LtvVerifierIntegrationTest/";
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         Security.addProvider(BOUNCY_CASTLE_FACTORY.getProvider());
     }
@@ -71,7 +70,7 @@ public class LtvVerifierIntegrationTest extends ExtendedITextTest {
             LtvVerifier verifier = new LtvVerifier(pdfDocument);
             verifier.setVerifyRootCertificate(false);
             List<VerificationOK> verificationOKList = verifier.verifySignature();
-            Assert.assertTrue(verificationOKList.isEmpty());
+            Assertions.assertTrue(verificationOKList.isEmpty());
         }
     }
 
@@ -91,8 +90,8 @@ public class LtvVerifierIntegrationTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(src))) {
             LtvVerifier verifier = new LtvVerifier(pdfDocument);
             verifier.setVerifyRootCertificate(false);
-            Exception ex = Assert.assertThrows(VerificationException.class, () -> verifier.verifySignature());
-            Assert.assertEquals("Certificate C=BY,L=Minsk,O=iText,OU=test,CN=iTextTestRsaCert01 failed: "
+            Exception ex = Assertions.assertThrows(VerificationException.class, () -> verifier.verifySignature());
+            Assertions.assertEquals("Certificate C=BY,L=Minsk,O=iText,OU=test,CN=iTextTestRsaCert01 failed: "
                     + "Couldn't verify with CRL or OCSP or trusted anchor", ex.getMessage());
         }
     }
@@ -129,16 +128,16 @@ public class LtvVerifierIntegrationTest extends ExtendedITextTest {
 
             List<VerificationOK> verificationOKList = verifier.verifySignature();
 
-            Assert.assertEquals(2, verificationOKList.size());
+            Assertions.assertEquals(2, verificationOKList.size());
             VerificationOK verificationOK = verificationOKList.get(0);
-            Assert.assertEquals("C=BY,L=Minsk,O=iText,OU=test,CN=iTextTestRsaCert01",
+            Assertions.assertEquals("C=BY,L=Minsk,O=iText,OU=test,CN=iTextTestRsaCert01",
                     BOUNCY_CASTLE_FACTORY.createX500Name(verificationOK.certificate).toString());
-            Assert.assertEquals("Valid OCSPs Found: 1", verificationOK.message);
+            Assertions.assertEquals("Valid OCSPs Found: 1", verificationOK.message);
 
             verificationOK = verificationOKList.get(1);
-            Assert.assertEquals("C=BY,L=Minsk,O=iText,OU=test,CN=iTextTestRoot",
+            Assertions.assertEquals("C=BY,L=Minsk,O=iText,OU=test,CN=iTextTestRoot",
                     BOUNCY_CASTLE_FACTORY.createX500Name(verificationOK.certificate).toString());
-            Assert.assertEquals("Root certificate passed without checking", verificationOK.message);
+            Assertions.assertEquals("Root certificate passed without checking", verificationOK.message);
         }
     }
 
@@ -171,8 +170,8 @@ public class LtvVerifierIntegrationTest extends ExtendedITextTest {
             // The second is main revision which verifying we want to test.
             verifier.switchToPreviousRevision();
 
-            Exception ex = Assert.assertThrows(VerificationException.class, () -> verifier.verifySignature());
-            Assert.assertEquals("Certificate C=BY,L=Minsk,O=iText,OU=test,CN=iTextTestRoot failed: "
+            Exception ex = Assertions.assertThrows(VerificationException.class, () -> verifier.verifySignature());
+            Assertions.assertEquals("Certificate C=BY,L=Minsk,O=iText,OU=test,CN=iTextTestRoot failed: "
                     + "Couldn't verify with CRL or OCSP or trusted anchor", ex.getMessage());
         }
     }
@@ -206,8 +205,8 @@ public class LtvVerifierIntegrationTest extends ExtendedITextTest {
             // The second is main revision which verifying we want to test.
             verifier.switchToPreviousRevision();
 
-            Exception ex = Assert.assertThrows(VerificationException.class, () -> verifier.verifySignature());
-            Assert.assertEquals("Certificate C=BY,L=Minsk,O=iText,OU=test,CN=iTextTestIntermediateRsa01 failed: "
+            Exception ex = Assertions.assertThrows(VerificationException.class, () -> verifier.verifySignature());
+            Assertions.assertEquals("Certificate C=BY,L=Minsk,O=iText,OU=test,CN=iTextTestIntermediateRsa01 failed: "
                     + "Couldn't verify with CRL or OCSP or trusted anchor", ex.getMessage());
         }
     }
@@ -247,21 +246,21 @@ public class LtvVerifierIntegrationTest extends ExtendedITextTest {
 
             List<VerificationOK> verificationOKList = verifier.verifySignature();
 
-            Assert.assertEquals(3, verificationOKList.size());
+            Assertions.assertEquals(3, verificationOKList.size());
             VerificationOK verificationOK = verificationOKList.get(0);
-            Assert.assertEquals("C=BY,L=Minsk,O=iText,OU=test,CN=iTextTestRsaCert01",
+            Assertions.assertEquals("C=BY,L=Minsk,O=iText,OU=test,CN=iTextTestRsaCert01",
                     BOUNCY_CASTLE_FACTORY.createX500Name(verificationOK.certificate).toString());
-            Assert.assertEquals("Valid OCSPs Found: 1", verificationOK.message);
+            Assertions.assertEquals("Valid OCSPs Found: 1", verificationOK.message);
 
             verificationOK = verificationOKList.get(1);
-            Assert.assertEquals("C=BY,L=Minsk,O=iText,OU=test,CN=iTextTestRoot",
+            Assertions.assertEquals("C=BY,L=Minsk,O=iText,OU=test,CN=iTextTestRoot",
                     BOUNCY_CASTLE_FACTORY.createX500Name(verificationOK.certificate).toString());
-            Assert.assertEquals("Root certificate in final revision", verificationOK.message);
+            Assertions.assertEquals("Root certificate in final revision", verificationOK.message);
 
             verificationOK = verificationOKList.get(2);
-            Assert.assertEquals("C=BY,L=Minsk,O=iText,OU=test,CN=iTextTestRoot",
+            Assertions.assertEquals("C=BY,L=Minsk,O=iText,OU=test,CN=iTextTestRoot",
                     BOUNCY_CASTLE_FACTORY.createX500Name(verificationOK.certificate).toString());
-            Assert.assertEquals("Root certificate passed without checking", verificationOK.message);
+            Assertions.assertEquals("Root certificate passed without checking", verificationOK.message);
         }
     }
 
@@ -273,13 +272,13 @@ public class LtvVerifierIntegrationTest extends ExtendedITextTest {
 
             LtvVerifier ltvVerifier = new LtvVerifier(pdfDoc);
 
-            Assert.assertEquals("timestampSig2", ltvVerifier.signatureName);
+            Assertions.assertEquals("timestampSig2", ltvVerifier.signatureName);
             ltvVerifier.switchToPreviousRevision();
-            Assert.assertEquals("Signature2", ltvVerifier.signatureName);
+            Assertions.assertEquals("Signature2", ltvVerifier.signatureName);
             ltvVerifier.switchToPreviousRevision();
-            Assert.assertEquals("timestampSig1", ltvVerifier.signatureName);
+            Assertions.assertEquals("timestampSig1", ltvVerifier.signatureName);
             ltvVerifier.switchToPreviousRevision();
-            Assert.assertEquals("Signature1", ltvVerifier.signatureName);
+            Assertions.assertEquals("Signature1", ltvVerifier.signatureName);
             ltvVerifier.switchToPreviousRevision();
         }
     }

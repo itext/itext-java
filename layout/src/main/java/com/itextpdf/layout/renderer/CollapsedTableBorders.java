@@ -239,7 +239,8 @@ class CollapsedTableBorders extends TableBorders {
     }
     //endregion
 
-    protected void buildBordersArrays(CellRenderer cell, int row, int col, int[] rowspansToDeduct) {
+    @Override
+    protected void buildBordersArrays(CellRenderer cell, int row, int col) {
         // We should check if the row number is less than horizontal borders array size. It can happen if the cell with
         // big rowspan doesn't fit current area and is going to be placed partial.
         if (row > horizontalBorders.size()) {
@@ -266,7 +267,7 @@ class CollapsedTableBorders extends TableBorders {
             // process only valid cells which hasn't been processed yet
             if (j >= 0 && nextCellRow != rows.size() && nextCellRow > row) {
                 CellRenderer nextCell = rows.get(nextCellRow)[j];
-                buildBordersArrays(nextCell, nextCellRow, true);
+                buildBordersArrays(nextCell, nextCellRow);
             }
 
         }
@@ -283,7 +284,7 @@ class CollapsedTableBorders extends TableBorders {
             CellRenderer nextCell = rows.get(nextCellRow)[col + j];
             // otherwise the border was considered previously
             if (row == nextCellRow - (int) nextCell.getPropertyAsInteger(Property.ROWSPAN)) {
-                buildBordersArrays(nextCell, nextCellRow, true);
+                buildBordersArrays(nextCell, nextCellRow);
             }
             j += (int) nextCell.getPropertyAsInteger(Property.COLSPAN);
         }
@@ -296,15 +297,15 @@ class CollapsedTableBorders extends TableBorders {
             }
             if (nextCellRow != rows.size()) {
                 CellRenderer nextCell = rows.get(nextCellRow)[col + currCellColspan];
-                buildBordersArrays(nextCell, nextCellRow, true);
+                buildBordersArrays(nextCell, nextCellRow);
             }
         }
         // consider current cell
-        buildBordersArrays(cell, row, false);
+        buildBordersArrays(cell, row);
 
     }
 
-    protected void buildBordersArrays(CellRenderer cell, int row, boolean isNeighbourCell) {
+    protected void buildBordersArrays(CellRenderer cell, int row) {
         int colspan = (int) cell.getPropertyAsInteger(Property.COLSPAN);
         int rowspan = (int) cell.getPropertyAsInteger(Property.ROWSPAN);
         int colN = ((Cell) cell.getModelElement()).getCol();

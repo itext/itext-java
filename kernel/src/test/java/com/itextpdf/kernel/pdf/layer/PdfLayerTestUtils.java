@@ -34,7 +34,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
 class PdfLayerTestUtils {
 
@@ -77,7 +77,7 @@ class PdfLayerTestUtils {
             try (PdfDocument cmpDoc = new PdfDocument(CompareTool.createOutputReader(cmpPdf))) {
                 PdfDictionary outOCP = outDoc.getCatalog().getPdfObject().getAsDictionary(PdfName.OCProperties);
                 PdfDictionary cmpOCP = cmpDoc.getCatalog().getPdfObject().getAsDictionary(PdfName.OCProperties);
-                Assert.assertNull(new CompareTool().compareDictionariesStructure(outOCP, cmpOCP));
+                Assertions.assertNull(new CompareTool().compareDictionariesStructure(outOCP, cmpOCP));
             }
         }
     }

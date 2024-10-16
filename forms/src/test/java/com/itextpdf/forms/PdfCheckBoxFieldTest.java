@@ -43,24 +43,23 @@ import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfCheckBoxFieldTest extends ExtendedITextTest {
 
     public static final String destinationFolder = "./target/test/com/itextpdf/forms/PdfCheckBoxFieldTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/PdfCheckBoxFieldTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
@@ -79,7 +78,7 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -107,7 +106,7 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -125,7 +124,7 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -157,7 +156,7 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -176,7 +175,7 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -196,7 +195,7 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -216,7 +215,7 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
     
@@ -243,7 +242,7 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
             form.getField("checkField").setValue("Yes");
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
     }
 
     @Test
@@ -275,7 +274,7 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
             form.addField(checkBox1);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
     }
 
     @Test
@@ -293,7 +292,7 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
             checkBoxField.setValue("1");
             checkBoxField.setValue("2");
         }
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
     }
 
     @Test
@@ -307,7 +306,7 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
             checkBoxField.setValue("3");
             checkBoxField.getFirstFormAnnotation().setCheckBoxAppearanceOnStateName("3");
         }
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
     }
 
     @Test
@@ -322,7 +321,7 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
             checkBoxField.getFirstFormAnnotation().setCheckBoxAppearanceOnStateName("3");
             checkBoxField.getFirstFormAnnotation().setCheckBoxAppearanceOnStateName("1");
         }
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
     }
 
     @Test
@@ -338,25 +337,25 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
 
             // Default case
             widget.setCheckBoxAppearanceOnStateName("initial");
-            Assert.assertTrue(Arrays.asList(widget.getAppearanceStates()).contains("initial"));
-            Assert.assertEquals("Off", widget.getPdfObject().getAsName(PdfName.AS).getValue());
+            Assertions.assertTrue(Arrays.asList(widget.getAppearanceStates()).contains("initial"));
+            Assertions.assertEquals("Off", widget.getPdfObject().getAsName(PdfName.AS).getValue());
 
             // Setting value changes on state name and appearance state for widget
             checkBox.setValue("value");
-            Assert.assertTrue(Arrays.asList(widget.getAppearanceStates()).contains("value"));
-            Assert.assertEquals("value", widget.getPdfObject().getAsName(PdfName.AS).getValue());
+            Assertions.assertTrue(Arrays.asList(widget.getAppearanceStates()).contains("value"));
+            Assertions.assertEquals("value", widget.getPdfObject().getAsName(PdfName.AS).getValue());
 
             // Setting value generates normal appearance and changes appearance state for widget
             widget.getWidget().setNormalAppearance(new PdfDictionary());
             checkBox.setValue("new_value");
             List<String> appearanceStates = Arrays.asList(widget.getAppearanceStates());
-            Assert.assertTrue(appearanceStates.contains("new_value"));
-            Assert.assertTrue(appearanceStates.contains("Off"));
-            Assert.assertEquals("new_value", widget.getPdfObject().getAsName(PdfName.AS).getValue());
+            Assertions.assertTrue(appearanceStates.contains("new_value"));
+            Assertions.assertTrue(appearanceStates.contains("Off"));
+            Assertions.assertEquals("new_value", widget.getPdfObject().getAsName(PdfName.AS).getValue());
 
             acroForm.addField(checkBox);
         }
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
     }
 
     @Test
@@ -371,26 +370,26 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
             PdfFormAnnotation widget = checkBox.getFirstFormAnnotation();
             checkBox.setValue("value");
             List<String> appearanceStates = Arrays.asList(widget.getAppearanceStates());
-            Assert.assertTrue(appearanceStates.contains("value"));
-            Assert.assertTrue(appearanceStates.contains("Off"));
-            Assert.assertEquals("value", widget.getPdfObject().getAsName(PdfName.AS).getValue());
+            Assertions.assertTrue(appearanceStates.contains("value"));
+            Assertions.assertTrue(appearanceStates.contains("Off"));
+            Assertions.assertEquals("value", widget.getPdfObject().getAsName(PdfName.AS).getValue());
 
             // Setting invalid appearance name for on state does nothing
             widget.setCheckBoxAppearanceOnStateName("Off");
             appearanceStates = Arrays.asList(widget.getAppearanceStates());
-            Assert.assertTrue(appearanceStates.contains("value"));
-            Assert.assertTrue(appearanceStates.contains("Off"));
-            Assert.assertEquals("value", widget.getPdfObject().getAsName(PdfName.AS).getValue());
+            Assertions.assertTrue(appearanceStates.contains("value"));
+            Assertions.assertTrue(appearanceStates.contains("Off"));
+            Assertions.assertEquals("value", widget.getPdfObject().getAsName(PdfName.AS).getValue());
 
             widget.setCheckBoxAppearanceOnStateName("");
             appearanceStates = Arrays.asList(widget.getAppearanceStates());
-            Assert.assertTrue(appearanceStates.contains("value"));
-            Assert.assertTrue(appearanceStates.contains("Off"));
-            Assert.assertEquals("value", widget.getPdfObject().getAsName(PdfName.AS).getValue());
+            Assertions.assertTrue(appearanceStates.contains("value"));
+            Assertions.assertTrue(appearanceStates.contains("Off"));
+            Assertions.assertEquals("value", widget.getPdfObject().getAsName(PdfName.AS).getValue());
 
             acroForm.addField(checkBox);
         }
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
     }
 
     @Test
@@ -409,7 +408,7 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
             checkBox.getChildFormAnnotations().get(1).setCheckBoxAppearanceOnStateName("2");
             acroForm.addField(checkBox);
         }
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
     }
 
     @Test
@@ -423,11 +422,11 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
                     .setWidgetRectangle(new Rectangle(10, 650, 40, 20)).createCheckBox();
             checkBox.setValue("1");
             checkBox.addKid(new PdfWidgetAnnotation(new Rectangle(60, 650, 40, 20)));
-            Assert.assertNull(checkBox.getWidgets().get(1).getNormalAppearanceObject());
+            Assertions.assertNull(checkBox.getWidgets().get(1).getNormalAppearanceObject());
             checkBox.setValue("2");
             acroForm.addField(checkBox);
         }
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
     }
 
     private void addCheckBox(PdfDocument pdfDoc, float fontSize, float yPos, float checkBoxW, float checkBoxH)

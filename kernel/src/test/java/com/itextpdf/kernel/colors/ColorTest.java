@@ -33,13 +33,12 @@ import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class ColorTest extends ExtendedITextTest {
 
     private static final float EPS = 1e-4f;
@@ -49,7 +48,7 @@ public class ColorTest extends ExtendedITextTest {
         DeviceCmyk cmyk = new DeviceCmyk(0, 0, 0, 0);
         DeviceRgb rgb = new DeviceRgb(255, 255, 255);
 
-        Assert.assertArrayEquals(rgb.colorValue, Color.convertCmykToRgb(cmyk).colorValue, EPS);
+        Assertions.assertArrayEquals(rgb.colorValue, Color.convertCmykToRgb(cmyk).colorValue, EPS);
     }
 
     @Test
@@ -57,7 +56,7 @@ public class ColorTest extends ExtendedITextTest {
         DeviceCmyk cmyk = new DeviceCmyk(0, 0, 0, 0);
         DeviceRgb rgb = new DeviceRgb(255, 255, 255);
 
-        Assert.assertArrayEquals(cmyk.colorValue, Color.convertRgbToCmyk(rgb).colorValue, EPS);
+        Assertions.assertArrayEquals(cmyk.colorValue, Color.convertRgbToCmyk(rgb).colorValue, EPS);
     }
 
     @Test
@@ -65,10 +64,10 @@ public class ColorTest extends ExtendedITextTest {
         float[] colorValues = new float[] {0.0f, 0.5f, 0.1f};
         Color color = Color.makeColor(PdfColorSpace.makeColorSpace(PdfName.DeviceRGB), colorValues);
 
-        Exception e = Assert.assertThrows(PdfException.class,
+        Exception e = Assertions.assertThrows(PdfException.class,
                 () -> color.setColorValue(new float[] {0.1f, 0.2f})
         );
-        Assert.assertEquals(KernelExceptionMessageConstant.INCORRECT_NUMBER_OF_COMPONENTS, e.getMessage());
+        Assertions.assertEquals(KernelExceptionMessageConstant.INCORRECT_NUMBER_OF_COMPONENTS, e.getMessage());
     }
 
     @Test
@@ -78,9 +77,9 @@ public class ColorTest extends ExtendedITextTest {
         Color color2 = Color.makeColor(PdfColorSpace.makeColorSpace(PdfName.DeviceRGB), colorValues);
 
         boolean result = color1.equals(color2);
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
 
-        Assert.assertEquals(color1.hashCode(), color2.hashCode());
+        Assertions.assertEquals(color1.hashCode(), color2.hashCode());
     }
 
     @Test
@@ -90,9 +89,9 @@ public class ColorTest extends ExtendedITextTest {
         Color color2 = new Color(null, colorValues);
 
         boolean result = color1.equals(color2);
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
 
-        Assert.assertEquals(color1.hashCode(), color2.hashCode());
+        Assertions.assertEquals(color1.hashCode(), color2.hashCode());
     }
 
     @Test
@@ -101,9 +100,9 @@ public class ColorTest extends ExtendedITextTest {
         Color color2 = new Color(PdfColorSpace.makeColorSpace(PdfName.DeviceRGB), null);
 
         boolean result = color1.equals(color2);
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
 
-        Assert.assertEquals(color1.hashCode(), color2.hashCode());
+        Assertions.assertEquals(color1.hashCode(), color2.hashCode());
     }
 
     @Test
@@ -113,9 +112,9 @@ public class ColorTest extends ExtendedITextTest {
         Color color2 = Color.makeColor(PdfColorSpace.makeColorSpace(PdfName.DeviceGray), colorValues);
 
         boolean result = color1.equals(color2);
-        Assert.assertFalse(result);
+        Assertions.assertFalse(result);
 
-        Assert.assertNotEquals(color1.hashCode(), color2.hashCode());
+        Assertions.assertNotEquals(color1.hashCode(), color2.hashCode());
     }
 
     @Test
@@ -124,7 +123,7 @@ public class ColorTest extends ExtendedITextTest {
         Color color1 = Color.makeColor(PdfColorSpace.makeColorSpace(PdfName.DeviceRGB), colorValues);
 
         boolean result = color1.equals(null);
-        Assert.assertFalse(result);
+        Assertions.assertFalse(result);
     }
 
     @Test
@@ -134,15 +133,15 @@ public class ColorTest extends ExtendedITextTest {
         DeviceCmyk cmyk = new DeviceCmyk(0, 0, 0, 0);
 
         boolean result = color1.equals(cmyk);
-        Assert.assertFalse(result);
+        Assertions.assertFalse(result);
     }
 
     @Test
     public void nullColorSpaceTest() {
         float[] colorValues = new float[] {0.0f, 0.5f, 0.1f};
 
-        Exception e = Assert.assertThrows(PdfException.class, () -> Color.makeColor(null, colorValues));
-        Assert.assertEquals("Unknown color space.", e.getMessage());
+        Exception e = Assertions.assertThrows(PdfException.class, () -> Color.makeColor(null, colorValues));
+        Assertions.assertEquals("Unknown color space.", e.getMessage());
     }
 
     @Test
@@ -150,8 +149,8 @@ public class ColorTest extends ExtendedITextTest {
         PdfColorSpace colorSpace = PdfColorSpace.makeColorSpace(PdfName.DeviceGray);
         Color color = Color.makeColor(colorSpace);
 
-        Assert.assertTrue(color instanceof DeviceGray);
-        Assert.assertArrayEquals(new float[] {0.0f}, color.getColorValue(), EPS);
+        Assertions.assertTrue(color instanceof DeviceGray);
+        Assertions.assertArrayEquals(new float[] {0.0f}, color.getColorValue(), EPS);
     }
 
     @Test
@@ -160,8 +159,8 @@ public class ColorTest extends ExtendedITextTest {
         PdfColorSpace colorSpace = PdfColorSpace.makeColorSpace(PdfName.DeviceGray);
         Color color = Color.makeColor(colorSpace, colorValues);
 
-        Assert.assertTrue(color instanceof DeviceGray);
-        Assert.assertArrayEquals(new float[] {0.7f}, color.getColorValue(), EPS);
+        Assertions.assertTrue(color instanceof DeviceGray);
+        Assertions.assertArrayEquals(new float[] {0.7f}, color.getColorValue(), EPS);
     }
 
     @Test
@@ -169,8 +168,8 @@ public class ColorTest extends ExtendedITextTest {
         PdfColorSpace colorSpace = PdfColorSpace.makeColorSpace(PdfName.DeviceCMYK);
         Color color = Color.makeColor(colorSpace);
 
-        Assert.assertTrue(color instanceof DeviceCmyk);
-        Assert.assertArrayEquals(new float[] {0.0f, 0.0f, 0.0f, 1.0f}, color.getColorValue(), EPS);
+        Assertions.assertTrue(color instanceof DeviceCmyk);
+        Assertions.assertArrayEquals(new float[] {0.0f, 0.0f, 0.0f, 1.0f}, color.getColorValue(), EPS);
     }
 
     @Test
@@ -179,14 +178,14 @@ public class ColorTest extends ExtendedITextTest {
         PdfColorSpace colorSpace = PdfColorSpace.makeColorSpace(PdfName.DeviceCMYK);
         Color color = Color.makeColor(colorSpace, colorValues);
 
-        Assert.assertTrue(color instanceof DeviceCmyk);
-        Assert.assertArrayEquals(colorValues, color.getColorValue(), EPS);
+        Assertions.assertTrue(color instanceof DeviceCmyk);
+        Assertions.assertArrayEquals(colorValues, color.getColorValue(), EPS);
     }
 
     @Test
     public void unknownDeviceCsTest() {
-        Exception e = Assert.assertThrows(PdfException.class, () -> Color.makeColor(new CustomDeviceCs(null)));
-        Assert.assertEquals("Unknown color space.", e.getMessage());
+        Exception e = Assertions.assertThrows(PdfException.class, () -> Color.makeColor(new CustomDeviceCs(null)));
+        Assertions.assertEquals("Unknown color space.", e.getMessage());
     }
 
     @Test
@@ -200,8 +199,8 @@ public class ColorTest extends ExtendedITextTest {
 
         Color color = Color.makeColor(colorSpace);
 
-        Assert.assertTrue(color instanceof CalGray);
-        Assert.assertArrayEquals(new float[] {0.0f}, color.getColorValue(), EPS);
+        Assertions.assertTrue(color instanceof CalGray);
+        Assertions.assertArrayEquals(new float[] {0.0f}, color.getColorValue(), EPS);
     }
 
     @Test
@@ -216,8 +215,8 @@ public class ColorTest extends ExtendedITextTest {
 
         Color color = Color.makeColor(colorSpace, colorValues);
 
-        Assert.assertTrue(color instanceof CalGray);
-        Assert.assertArrayEquals(new float[] {0.7f}, color.getColorValue(), EPS);
+        Assertions.assertTrue(color instanceof CalGray);
+        Assertions.assertArrayEquals(new float[] {0.7f}, color.getColorValue(), EPS);
     }
 
     @Test
@@ -231,8 +230,8 @@ public class ColorTest extends ExtendedITextTest {
 
         Color color = Color.makeColor(colorSpace);
 
-        Assert.assertTrue(color instanceof CalRgb);
-        Assert.assertArrayEquals(new float[] {0.0f, 0.0f, 0.0f}, color.getColorValue(), EPS);
+        Assertions.assertTrue(color instanceof CalRgb);
+        Assertions.assertArrayEquals(new float[] {0.0f, 0.0f, 0.0f}, color.getColorValue(), EPS);
     }
 
     @Test
@@ -247,8 +246,8 @@ public class ColorTest extends ExtendedITextTest {
 
         Color color = Color.makeColor(colorSpace, colorValues);
 
-        Assert.assertTrue(color instanceof CalRgb);
-        Assert.assertArrayEquals(colorValues, color.getColorValue(), EPS);
+        Assertions.assertTrue(color instanceof CalRgb);
+        Assertions.assertArrayEquals(colorValues, color.getColorValue(), EPS);
     }
 
     @Test
@@ -262,8 +261,8 @@ public class ColorTest extends ExtendedITextTest {
 
         Color color = Color.makeColor(colorSpace);
 
-        Assert.assertTrue(color instanceof Lab);
-        Assert.assertArrayEquals(new float[] {0.0f, 0.0f, 0.0f}, color.getColorValue(), EPS);
+        Assertions.assertTrue(color instanceof Lab);
+        Assertions.assertArrayEquals(new float[] {0.0f, 0.0f, 0.0f}, color.getColorValue(), EPS);
     }
 
     @Test
@@ -278,16 +277,16 @@ public class ColorTest extends ExtendedITextTest {
 
         Color color = Color.makeColor(colorSpace, colorValues);
 
-        Assert.assertTrue(color instanceof Lab);
-        Assert.assertArrayEquals(colorValues, color.getColorValue(), EPS);
+        Assertions.assertTrue(color instanceof Lab);
+        Assertions.assertArrayEquals(colorValues, color.getColorValue(), EPS);
     }
 
     @Test
     public void unknownCieBasedCsTest() {
-        Exception e = Assert.assertThrows(PdfException.class,
+        Exception e = Assertions.assertThrows(PdfException.class,
                 () -> Color.makeColor(new CustomPdfCieBasedCs(new PdfArray()))
         );
-        Assert.assertEquals("Unknown color space.", e.getMessage());
+        Assertions.assertEquals("Unknown color space.", e.getMessage());
     }
 
     @Test
@@ -301,8 +300,8 @@ public class ColorTest extends ExtendedITextTest {
 
         Color color = Color.makeColor(colorSpace);
 
-        Assert.assertTrue(color instanceof DeviceN);
-        Assert.assertArrayEquals(new float[] {}, color.getColorValue(), EPS);
+        Assertions.assertTrue(color instanceof DeviceN);
+        Assertions.assertArrayEquals(new float[] {}, color.getColorValue(), EPS);
     }
 
     @Test
@@ -317,8 +316,8 @@ public class ColorTest extends ExtendedITextTest {
 
         Color color = Color.makeColor(colorSpace, colorValues);
 
-        Assert.assertTrue(color instanceof DeviceN);
-        Assert.assertArrayEquals(colorValues, color.getColorValue(), EPS);
+        Assertions.assertTrue(color instanceof DeviceN);
+        Assertions.assertArrayEquals(colorValues, color.getColorValue(), EPS);
     }
 
     @Test
@@ -332,8 +331,8 @@ public class ColorTest extends ExtendedITextTest {
 
         Color color = Color.makeColor(colorSpace);
 
-        Assert.assertTrue(color instanceof Indexed);
-        Assert.assertArrayEquals(new float[] {0.0f}, color.getColorValue(), EPS);
+        Assertions.assertTrue(color instanceof Indexed);
+        Assertions.assertArrayEquals(new float[] {0.0f}, color.getColorValue(), EPS);
     }
 
     @Test
@@ -348,21 +347,21 @@ public class ColorTest extends ExtendedITextTest {
 
         Color color = Color.makeColor(colorSpace, colorValues);
 
-        Assert.assertTrue(color instanceof Indexed);
-        Assert.assertArrayEquals(new float[] {1f}, color.getColorValue(), EPS);
+        Assertions.assertTrue(color instanceof Indexed);
+        Assertions.assertArrayEquals(new float[] {1f}, color.getColorValue(), EPS);
     }
 
     @Test
     public void unknownSpecialCsTest() {
-        Exception e = Assert.assertThrows(PdfException.class,
+        Exception e = Assertions.assertThrows(PdfException.class,
                 () -> Color.makeColor(new CustomPdfSpecialCs(new PdfArray()))
         );
-        Assert.assertEquals("Unknown color space.", e.getMessage());
+        Assertions.assertEquals("Unknown color space.", e.getMessage());
     }
 
     @Test
     public void createColorWithColorSpaceRgb() {
-        Assert.assertEquals(ColorConstants.BLACK, Color.createColorWithColorSpace(new float[] {
+        Assertions.assertEquals(ColorConstants.BLACK, Color.createColorWithColorSpace(new float[] {
                 0.0F, 0.0F, 0.0F
         }));
     }
@@ -370,7 +369,7 @@ public class ColorTest extends ExtendedITextTest {
 
     @Test
     public void createColorWithColorSpaceGraySpace() {
-        Assert.assertEquals(new DeviceGray(), Color.createColorWithColorSpace(new float[] {
+        Assertions.assertEquals(new DeviceGray(), Color.createColorWithColorSpace(new float[] {
                 0.0F
         }));
     }
@@ -378,7 +377,7 @@ public class ColorTest extends ExtendedITextTest {
 
     @Test
     public void createColorWithColorSpaceCmyk() {
-        Assert.assertEquals(new DeviceCmyk(), Color.createColorWithColorSpace(new float[] {
+        Assertions.assertEquals(new DeviceCmyk(), Color.createColorWithColorSpace(new float[] {
                 0.0F, 0.0F, 0.0F, 1F
         }));
     }
@@ -386,17 +385,17 @@ public class ColorTest extends ExtendedITextTest {
 
     @Test
     public void createColorWithInvalidValueNull() {
-        Assert.assertNull(Color.createColorWithColorSpace(null));
+        Assertions.assertNull(Color.createColorWithColorSpace(null));
     }
 
     @Test
     public void createColorWithInvalidNoValues() {
-        Assert.assertNull(Color.createColorWithColorSpace(new float[] {}));
+        Assertions.assertNull(Color.createColorWithColorSpace(new float[] {}));
     }
 
     @Test
     public void createColorWithInvalidMoreThen4Values() {
-        Assert.assertNull(Color.createColorWithColorSpace(new float[] {
+        Assertions.assertNull(Color.createColorWithColorSpace(new float[] {
                 0.0F, 0.0F, 0.0F, 0.0F, 0.0F,
         }));
     }

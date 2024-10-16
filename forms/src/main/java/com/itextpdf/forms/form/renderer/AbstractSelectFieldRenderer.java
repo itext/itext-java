@@ -29,8 +29,7 @@ import com.itextpdf.forms.form.element.AbstractSelectField;
 import com.itextpdf.forms.form.element.IFormField;
 import com.itextpdf.forms.form.element.SelectFieldItem;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.IConformanceLevel;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
@@ -60,7 +59,6 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
      */
     protected AbstractSelectFieldRenderer(AbstractSelectField modelElement) {
         super(modelElement);
-        addChild(createFlatRenderer());
     }
 
     /**
@@ -68,6 +66,9 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
      */
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
+        childRenderers.clear();
+        addChild(createFlatRenderer());
+
         // Resolve width here in case it's relative, while parent width is still intact.
         // If it's inline-block context, relative width is already resolved.
         Float width = retrieveWidth(layoutContext.getArea().getBBox().getWidth());
@@ -84,7 +85,7 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
         final boolean isForcedPlacement = Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT));
         LayoutResult layoutResult = super.layout(new LayoutContext(area, layoutContext.getMarginsCollapseInfo(),
                 layoutContext.getFloatRendererAreas(), layoutContext.isClippedHeight()));
-        if (isForcedPlacement){
+        if (isForcedPlacement) {
             // Restore the Property.FORCED_PLACEMENT value as it was before super.layout
             setProperty(Property.FORCED_PLACEMENT, true);
         }
@@ -148,7 +149,7 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
     }
 
     /**
-     * Gets the accessibility language.
+     * Gets the accessibility language using {@link IAccessibleElement#getAccessibilityProperties()}.
      *
      * @return the accessibility language.
      */
@@ -156,9 +157,6 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
         String language = null;
         if (this.getModelElement() instanceof IAccessibleElement) {
             language = ((IAccessibleElement) this.getModelElement()).getAccessibilityProperties().getLanguage();
-        }
-        if (language == null){
-            language = this.<String>getProperty(FormProperty.FORM_ACCESSIBILITY_LANGUAGE);
         }
         return language;
     }
@@ -240,7 +238,7 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
      * @param field   {@link AbstractSelectField} to retrieve the options from
      */
     protected void setupBuilderValues(ChoiceFormFieldBuilder builder, AbstractSelectField field) {
-        List<SelectFieldItem> options = field.getItems();
+        List<SelectFieldItem> options = field.getOptions();
         if (options.isEmpty()) {
             builder.setOptions(new String[0]);
             return;
@@ -290,41 +288,22 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
     }
 
     /**
-     * Gets the conformance level. If the conformance level is not set, the conformance level of the document is used.
+     * Gets the conformance. If the conformance is not set, the conformance of the document is used.
      *
      * @param document the document
      *
-     * @return the conformance level or null if the conformance level is not set.
-     * @deprecated since 8.0.4 will be return {@link IConformanceLevel}
+     * @return the conformance or null if the conformance is not set.
      */
-    @Deprecated
-    protected PdfAConformanceLevel getConformanceLevel(PdfDocument document) {
-        return PdfAConformanceLevel.getPDFAConformance(this.<IConformanceLevel>getProperty(
-                FormProperty.FORM_CONFORMANCE_LEVEL),document);
-    }
-
-    /**
-     * Gets the conformance level. If the conformance level is not set, the conformance level of the document is used.
-     *
-     * @param document the document
-     *
-     * @return the conformance level or null if the conformance level is not set.
-     *
-     * @deprecated since 8.0.4 will be renamed to getConformanceLevel()
-     */
-    @Deprecated
-    protected IConformanceLevel getGenericConformanceLevel(PdfDocument document) {
-        final IConformanceLevel conformanceLevel = this.<IConformanceLevel>getProperty(
-                FormProperty.FORM_CONFORMANCE_LEVEL);
-        if (conformanceLevel != null) {
-            return conformanceLevel;
+    protected PdfConformance getConformance(PdfDocument document) {
+        final PdfConformance conformance = this.<PdfConformance>getProperty(FormProperty.FORM_CONFORMANCE_LEVEL);
+        if (conformance != null) {
+            return conformance;
         }
         if (document == null) {
             return null;
         }
-        return document.getConformanceLevel();
+        return document.getConformance();
     }
-
 
     /**
      * Gets options that are marked as selected from the select field options subtree.

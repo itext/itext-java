@@ -38,23 +38,22 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 import org.xml.sax.SAXException;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class FormFieldsTaggingTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/FormFieldsTaggingTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/forms/FormFieldsTaggingTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
@@ -333,13 +332,13 @@ public class FormFieldsTaggingTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         String compareResult = compareTool.compareTagStructures(outFileName, cmpFileName);
         if (compareResult != null) {
-            Assert.fail(compareResult);
+            Assertions.fail(compareResult);
         }
 
         compareResult = compareTool.compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + outFileName);
 
         if (compareResult != null) {
-            Assert.fail(compareResult);
+            Assertions.fail(compareResult);
         }
     }
 }

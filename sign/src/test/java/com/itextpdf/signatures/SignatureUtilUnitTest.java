@@ -25,14 +25,13 @@ package com.itextpdf.signatures;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class SignatureUtilUnitTest extends ExtendedITextTest {
 
     @Test
@@ -42,6 +41,6 @@ public class SignatureUtilUnitTest extends ExtendedITextTest {
             SignatureUtil signatureUtil = new SignatureUtil(blankDoc);
             covers = signatureUtil.signatureCoversWholeDocument("sign");
         }
-        Assert.assertFalse(covers);
+        Assertions.assertFalse(covers);
     }
 }

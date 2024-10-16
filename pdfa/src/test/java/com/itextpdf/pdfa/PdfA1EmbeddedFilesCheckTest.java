@@ -23,7 +23,7 @@
 package com.itextpdf.pdfa;
 
 import com.itextpdf.commons.utils.FileUtil;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -35,18 +35,16 @@ import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfA1EmbeddedFilesCheckTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
 
@@ -55,7 +53,7 @@ public class PdfA1EmbeddedFilesCheckTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
-        PdfADocument pdfDocument = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, outputIntent);
+        PdfADocument pdfDocument = new PdfADocument(writer, PdfAConformance.PDF_A_1B, outputIntent);
 
         PdfDictionary fileNames = new PdfDictionary();
         pdfDocument.getCatalog().put(PdfName.Names, fileNames);
@@ -72,8 +70,8 @@ public class PdfA1EmbeddedFilesCheckTest extends ExtendedITextTest {
 
         pdfDocument.addNewPage();
 
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> pdfDocument.close());
-        Assert.assertEquals(PdfaExceptionMessageConstant.A_NAME_DICTIONARY_SHALL_NOT_CONTAIN_THE_EMBEDDED_FILES_KEY, e.getMessage());
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> pdfDocument.close());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.A_NAME_DICTIONARY_SHALL_NOT_CONTAIN_THE_EMBEDDED_FILES_KEY, e.getMessage());
     }
 
     @Test
@@ -81,7 +79,7 @@ public class PdfA1EmbeddedFilesCheckTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
-        PdfADocument pdfDocument = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, outputIntent);
+        PdfADocument pdfDocument = new PdfADocument(writer, PdfAConformance.PDF_A_1B, outputIntent);
 
         PdfStream stream = new PdfStream();
         pdfDocument.getCatalog().put(new PdfName("testStream"), stream);
@@ -91,8 +89,8 @@ public class PdfA1EmbeddedFilesCheckTest extends ExtendedITextTest {
 
         pdfDocument.addNewPage();
 
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> pdfDocument.close());
-        Assert.assertEquals(PdfaExceptionMessageConstant.STREAM_OBJECT_DICTIONARY_SHALL_NOT_CONTAIN_THE_F_FFILTER_OR_FDECODEPARAMS_KEYS,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> pdfDocument.close());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.STREAM_OBJECT_DICTIONARY_SHALL_NOT_CONTAIN_THE_F_FFILTER_OR_FDECODEPARAMS_KEYS,
                 e.getMessage());
     }
 
@@ -101,7 +99,7 @@ public class PdfA1EmbeddedFilesCheckTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
-        PdfADocument pdfDocument = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, outputIntent);
+        PdfADocument pdfDocument = new PdfADocument(writer, PdfAConformance.PDF_A_1B, outputIntent);
 
         PdfStream stream = new PdfStream();
         pdfDocument.getCatalog().put(new PdfName("testStream"), stream);
@@ -111,7 +109,7 @@ public class PdfA1EmbeddedFilesCheckTest extends ExtendedITextTest {
 
         pdfDocument.addNewPage();
 
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> pdfDocument.close());
-        Assert.assertEquals(PdfaExceptionMessageConstant.FILE_SPECIFICATION_DICTIONARY_SHALL_NOT_CONTAIN_THE_EF_KEY, e.getMessage());
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> pdfDocument.close());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.FILE_SPECIFICATION_DICTIONARY_SHALL_NOT_CONTAIN_THE_EF_KEY, e.getMessage());
     }
 }

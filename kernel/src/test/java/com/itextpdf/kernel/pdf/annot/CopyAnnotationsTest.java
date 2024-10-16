@@ -29,31 +29,30 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 import java.util.List;
 
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class CopyAnnotationsTest extends ExtendedITextTest {
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/annot"
             + "/CopyAnnotationsTest/";
     public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/annot/CopyAnnotationsTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(DESTINATION_FOLDER);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(DESTINATION_FOLDER);
     }
@@ -67,7 +66,7 @@ public class CopyAnnotationsTest extends ExtendedITextTest {
             }
         }
         List<PdfAnnotation> annotations = getAnnotationsFromPdf(outFile, 1);
-        Assert.assertEquals("Destination is not copied", 1, annotations.size());
+        Assertions.assertEquals(1, annotations.size(), "Destination is not copied");
     }
 
     @Test
@@ -79,7 +78,7 @@ public class CopyAnnotationsTest extends ExtendedITextTest {
             }
         }
         List<PdfAnnotation> annotations = getAnnotationsFromPdf(outFile, 1);
-        Assert.assertEquals("Not all destinations are copied", 2, annotations.size());
+        Assertions.assertEquals(2, annotations.size(), "Not all destinations are copied");
     }
 
     @Test
@@ -91,7 +90,7 @@ public class CopyAnnotationsTest extends ExtendedITextTest {
             }
         }
         List<PdfAnnotation> annotations = getAnnotationsFromPdf(outFile, 5);
-        Assert.assertTrue("Destinations are copied but should not", annotations.isEmpty());
+        Assertions.assertTrue(annotations.isEmpty(), "Destinations are copied but should not");
     }
 
     @Test
@@ -103,9 +102,9 @@ public class CopyAnnotationsTest extends ExtendedITextTest {
             }
         }
         List<PdfAnnotation> annotations = getAnnotationsFromPdf(outFile, 6);
-        Assert.assertFalse("Annotation is copied", annotations.isEmpty());
+        Assertions.assertFalse(annotations.isEmpty(), "Annotation is copied");
         String destination = (annotations.get(0)).getPdfObject().get(PdfName.Dest).toString();
-        Assert.assertEquals("Destination is different from expected", "Destination_1", destination);
+        Assertions.assertEquals("Destination_1", destination, "Destination is different from expected");
     }
 
     @Test
@@ -117,9 +116,9 @@ public class CopyAnnotationsTest extends ExtendedITextTest {
             }
         }
         List<PdfAnnotation> annotations = getAnnotationsFromPdf(outFile, 2);
-        Assert.assertFalse("Annotation is not copied", annotations.isEmpty());
+        Assertions.assertFalse(annotations.isEmpty(), "Annotation is not copied");
         String nm = annotations.get(0).getPdfObject().getAsString(PdfName.NM).toString();
-        Assert.assertEquals("File attachment name is different from expected", "FileAttachmentAnnotation1", nm);
+        Assertions.assertEquals("FileAttachmentAnnotation1", nm, "File attachment name is different from expected");
     }
 
     @Test
@@ -132,8 +131,8 @@ public class CopyAnnotationsTest extends ExtendedITextTest {
             }
         }
         List<PdfAnnotation> annotations = getAnnotationsFromPdf(outFile, 1);
-        Assert.assertFalse("Annotation is not copied", annotations.isEmpty());
-        Assert.assertEquals("Annotation is of a different subtype", PdfName.Widget, annotations.get(0).getSubtype());
+        Assertions.assertFalse(annotations.isEmpty(), "Annotation is not copied");
+        Assertions.assertEquals(PdfName.Widget, annotations.get(0).getSubtype(), "Annotation is of a different subtype");
     }
 
     @Test
@@ -147,7 +146,7 @@ public class CopyAnnotationsTest extends ExtendedITextTest {
             }
         }
         List<PdfAnnotation> annotations = getAnnotationsFromPdf(outFile, 1);
-        Assert.assertFalse("Annotation is not copied", annotations.isEmpty());
+        Assertions.assertFalse(annotations.isEmpty(), "Annotation is not copied");
     }
 
     @Test
@@ -162,7 +161,7 @@ public class CopyAnnotationsTest extends ExtendedITextTest {
             }
         }
         List<PdfAnnotation> annotations = getAnnotationsFromPdf(outFile, 1);
-        Assert.assertFalse("Annotation is not copied", annotations.isEmpty());
+        Assertions.assertFalse(annotations.isEmpty(), "Annotation is not copied");
     }
 
     @Test
@@ -176,7 +175,7 @@ public class CopyAnnotationsTest extends ExtendedITextTest {
             }
         }
         List<PdfAnnotation> annotations = getAnnotationsFromPdf(outFile, 1);
-        Assert.assertTrue("Annotation is copied", annotations.isEmpty());
+        Assertions.assertTrue(annotations.isEmpty(), "Annotation is copied");
     }
 
     @Test
@@ -193,7 +192,7 @@ public class CopyAnnotationsTest extends ExtendedITextTest {
             }
         }
         List<PdfAnnotation> annotations = getAnnotationsFromPdf(outFile, 1);
-        Assert.assertFalse("Annotation is not copied", annotations.isEmpty());
+        Assertions.assertFalse(annotations.isEmpty(), "Annotation is not copied");
     }
 
     @Test
@@ -205,7 +204,7 @@ public class CopyAnnotationsTest extends ExtendedITextTest {
             }
         }
         List<PdfAnnotation> annotations = getAnnotationsFromPdf(outFile, 1);
-        Assert.assertTrue("Annotation is copied", annotations.isEmpty());
+        Assertions.assertTrue(annotations.isEmpty(), "Annotation is copied");
     }
 
     private List<PdfAnnotation> getAnnotationsFromPdf(String outFilePath, int pageNumber) throws IOException {

@@ -31,9 +31,18 @@ import com.itextpdf.kernel.pdf.tagging.IStructureNode;
 public interface ITagTreeIteratorHandler {
 
     /**
-     * Called when the next element is reached during the traversal.
+     * Checks whether the element should be traversed.
      *
-     * @param elem the next element
+     * @param node the element to check
+     *
+     * @return {@code true} if the iteration should be continued, {@code false} otherwise
      */
-    void nextElement(IStructureNode elem);
+    boolean accept(IStructureNode node);
+
+    /**
+     * Called when the next element is reached during the traversal to process it.
+     *
+     * @param elem the element to process
+     */
+    void processElement(IStructureNode elem);
 }

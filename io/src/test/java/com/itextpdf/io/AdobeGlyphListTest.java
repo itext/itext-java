@@ -24,17 +24,16 @@ package com.itextpdf.io;
 
 import com.itextpdf.io.font.AdobeGlyphList;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class AdobeGlyphListTest extends ExtendedITextTest {
 
     @Test
     public void testGlyphListCount() {
-        Assert.assertEquals(4200, AdobeGlyphList.getNameToUnicodeLength());
-        Assert.assertEquals(3680, AdobeGlyphList.getUnicodeToNameLength());
+        Assertions.assertEquals(4200, AdobeGlyphList.getNameToUnicodeLength());
+        Assertions.assertEquals(3680, AdobeGlyphList.getUnicodeToNameLength());
     }
 }

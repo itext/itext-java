@@ -24,21 +24,20 @@ package com.itextpdf.io.util;
 
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.Calendar;
 import java.util.Date;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class DateTimeUtilTest extends ExtendedITextTest {
 
     @Test
     public void wrappingDateWithCalendarTest() {
         Date currentDate = DateTimeUtil.getCurrentTimeDate();
         Calendar currentCalendar = DateTimeUtil.getCalendar(currentDate);
-        Assert.assertEquals(0, currentCalendar.getTime().compareTo(currentDate));
+        Assertions.assertEquals(0, currentCalendar.getTime().compareTo(currentDate));
     }
 }

@@ -36,24 +36,23 @@ import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PathSvgNodeRendererTest extends SvgIntegrationTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/PathSvgNodeRendererTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/svg/renderers/impl/PathSvgNodeRendererTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         ITextTest.createDestinationFolder(destinationFolder);
     }
@@ -80,7 +79,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         String result = new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_");
 
         if (result != null && ! result.contains("No visual differences")) {
-            Assert.fail(result);
+            Assertions.fail(result);
         }
     }
 
@@ -105,7 +104,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         String result = new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_");
 
         if (result != null && ! result.contains("No visual differences")) {
-            Assert.fail(result);
+            Assertions.fail(result);
         }
     }
 
@@ -130,7 +129,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         String result = new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_");
 
         if (result != null && ! result.contains("No visual differences")) {
-            Assert.fail(result);
+            Assertions.fail(result);
         }
     }
 
@@ -155,7 +154,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         String result = new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_");
 
         if (result != null && ! result.contains("No visual differences")) {
-            Assert.fail(result);
+            Assertions.fail(result);
         }
     }
 
@@ -179,7 +178,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         String result = new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_");
 
         if (result != null && ! result.contains("No visual differences")) {
-            Assert.fail(result);
+            Assertions.fail(result);
         }
     }
 
@@ -203,7 +202,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         String result = new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_");
 
         if (result != null && ! result.contains("No visual differences")) {
-            Assert.fail(result);
+            Assertions.fail(result);
         }
     }
 
@@ -223,7 +222,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
-        Assert.assertTrue(root.getChildren().get(0) instanceof PathSvgNodeRenderer);
+        Assertions.assertTrue(root.getChildren().get(0) instanceof PathSvgNodeRenderer);
         root.getChildren().get(0).draw(context);
         doc.close();
     }
@@ -244,7 +243,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
-        Assert.assertTrue(root.getChildren().get(0) instanceof PathSvgNodeRenderer);
+        Assertions.assertTrue(root.getChildren().get(0) instanceof PathSvgNodeRenderer);
         root.getChildren().get(0).draw(context);
         doc.close();
     }
@@ -265,7 +264,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
-        Assert.assertTrue(root.getChildren().get(0) instanceof PathSvgNodeRenderer);
+        Assertions.assertTrue(root.getChildren().get(0) instanceof PathSvgNodeRenderer);
         root.getChildren().get(0).draw(context);
         doc.close();
     }
@@ -292,14 +291,14 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
 
     @Test
     public void invalidZOperatorTest() throws IOException, InterruptedException {
-        Assert.assertThrows(SvgProcessingException.class,
+        Assertions.assertThrows(SvgProcessingException.class,
                 () -> convertAndCompare(sourceFolder, destinationFolder, "invalidZOperatorTest01")
         );
     }
 
     @Test
     public void invalidOperatorTest() throws IOException, InterruptedException {
-        Assert.assertThrows(SvgProcessingException.class,
+        Assertions.assertThrows(SvgProcessingException.class,
                 () -> convertAndCompare(sourceFolder, destinationFolder, "invalidOperatorTest01")
         );
     }
@@ -383,7 +382,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
 
     @Test
     public void eofillUnsuportedPathTest() throws IOException, InterruptedException {
-        Assert.assertThrows(SvgProcessingException.class,
+        Assertions.assertThrows(SvgProcessingException.class,
                 () -> convertAndCompare(sourceFolder, destinationFolder, "eofillUnsuportedPathTest")
         );
     }

@@ -27,15 +27,14 @@ import com.itextpdf.commons.actions.data.ProductData;
 import com.itextpdf.commons.ecosystem.ITextTestEvent;
 import com.itextpdf.commons.actions.sequence.SequenceId;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class CopyrightToPlaceholderPopulatorTest extends ExtendedITextTest {
     private CopyrightToPlaceholderPopulator populator = new CopyrightToPlaceholderPopulator();
 
@@ -43,21 +42,21 @@ public class CopyrightToPlaceholderPopulatorTest extends ExtendedITextTest {
     public void oneEventTest() {
         List<ConfirmedEventWrapper> events = getEvents(2010);
         String result = populator.populate(events, null);
-        Assert.assertEquals("2010", result);
+        Assertions.assertEquals("2010", result);
     }
 
     @Test
     public void severalEventsTest() {
         List<ConfirmedEventWrapper> events = getEvents(2007, 2030, 2020);
         String result = populator.populate(events, null);
-        Assert.assertEquals("2030", result);
+        Assertions.assertEquals("2030", result);
     }
 
     @Test
     public void severalEventsWithSameYearTest() {
         List<ConfirmedEventWrapper> events = getEvents(2009, 1998, 2009, 1998);
         String result = populator.populate(events, null);
-        Assert.assertEquals("2009", result);
+        Assertions.assertEquals("2009", result);
     }
 
 

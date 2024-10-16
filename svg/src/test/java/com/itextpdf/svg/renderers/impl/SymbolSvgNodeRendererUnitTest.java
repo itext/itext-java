@@ -23,18 +23,17 @@
 package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class SymbolSvgNodeRendererUnitTest extends ExtendedITextTest {
 
     @Test
     public void noObjectBoundingBoxTest() {
         SymbolSvgNodeRenderer renderer = new SymbolSvgNodeRenderer();
-        Assert.assertNull(renderer.getObjectBoundingBox(null));
+        Assertions.assertNull(renderer.getObjectBoundingBox(null));
     }
 }

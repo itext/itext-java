@@ -26,13 +26,12 @@ import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class MatrixTransformationTest extends ExtendedITextTest {
 
     @Test
@@ -40,30 +39,30 @@ public class MatrixTransformationTest extends ExtendedITextTest {
         AffineTransform expected = new AffineTransform(10d, 20d, 30d, 40d, 37.5d, 45d);
         AffineTransform actual = TransformUtils.parseTransform("matrix(10 20 30 40 50 60)");
 
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
     public void noMatrixValuesTest() {
-        Exception e = Assert.assertThrows(SvgProcessingException.class,
+        Exception e = Assertions.assertThrows(SvgProcessingException.class,
                 () -> TransformUtils.parseTransform("matrix()")
         );
-        Assert.assertEquals(SvgExceptionMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES, e.getMessage());
+        Assertions.assertEquals(SvgExceptionMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES, e.getMessage());
     }
 
     @Test
     public void notEnoughMatrixValuesTest() {
-        Exception e = Assert.assertThrows(SvgProcessingException.class,
+        Exception e = Assertions.assertThrows(SvgProcessingException.class,
                 () -> TransformUtils.parseTransform("matrix(0)")
         );
-        Assert.assertEquals(SvgExceptionMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES, e.getMessage());
+        Assertions.assertEquals(SvgExceptionMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES, e.getMessage());
     }
 
     @Test
     public void tooManyMatrixValuesTest() {
-        Exception e = Assert.assertThrows(SvgProcessingException.class,
+        Exception e = Assertions.assertThrows(SvgProcessingException.class,
                 () -> TransformUtils.parseTransform("matrix(1 2 3 4 5 6 7 8)")
         );
-        Assert.assertEquals(SvgExceptionMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES, e.getMessage());
+        Assertions.assertEquals(SvgExceptionMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES, e.getMessage());
     }
 }

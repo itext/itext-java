@@ -28,6 +28,7 @@ import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 
 import java.io.Closeable;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +52,32 @@ public class PdfTokenizer implements Closeable {
         EndOfFile
     }
 
-    public static final boolean[] delims = {
+    public static final byte[] Obj = ByteUtils.getIsoBytes("obj");
+    public static final byte[] R = ByteUtils.getIsoBytes("R");
+    public static final byte[] Xref = ByteUtils.getIsoBytes("xref");
+    public static final byte[] Startxref = ByteUtils.getIsoBytes("startxref");
+    public static final byte[] Stream = ByteUtils.getIsoBytes("stream");
+    public static final byte[] Trailer = ByteUtils.getIsoBytes("trailer");
+    public static final byte[] N = ByteUtils.getIsoBytes("n");
+    public static final byte[] F = ByteUtils.getIsoBytes("f");
+    public static final byte[] Null = ByteUtils.getIsoBytes("null");
+    public static final byte[] True = ByteUtils.getIsoBytes("true");
+    public static final byte[] False = ByteUtils.getIsoBytes("false");
+
+    protected TokenType type;
+    protected int reference;
+    protected int generation;
+    protected boolean hexString;
+    protected ByteBuffer outBuf;
+
+    private final RandomAccessFileOrArray file;
+    /**
+     * Streams are closed automatically.
+     */
+    private boolean closeStream = true;
+
+
+    private static final boolean[] delims = {
             true, true, false, false, false, false, false, false, false, false,
             true, true, false, true, true, false, false, false, false, false,
             false, false, false, false, false, false, false, false, false, false,
@@ -78,31 +104,6 @@ public class PdfTokenizer implements Closeable {
             false, false, false, false, false, false, false, false, false, false,
             false, false, false, false, false, false, false, false, false, false,
             false, false, false, false, false, false, false};
-
-
-    public static final byte[] Obj = ByteUtils.getIsoBytes("obj");
-    public static final byte[] R = ByteUtils.getIsoBytes("R");
-    public static final byte[] Xref = ByteUtils.getIsoBytes("xref");
-    public static final byte[] Startxref = ByteUtils.getIsoBytes("startxref");
-    public static final byte[] Stream = ByteUtils.getIsoBytes("stream");
-    public static final byte[] Trailer = ByteUtils.getIsoBytes("trailer");
-    public static final byte[] N = ByteUtils.getIsoBytes("n");
-    public static final byte[] F = ByteUtils.getIsoBytes("f");
-    public static final byte[] Null = ByteUtils.getIsoBytes("null");
-    public static final byte[] True = ByteUtils.getIsoBytes("true");
-    public static final byte[] False = ByteUtils.getIsoBytes("false");
-
-    protected TokenType type;
-    protected int reference;
-    protected int generation;
-    protected boolean hexString;
-    protected ByteBuffer outBuf;
-
-    private final RandomAccessFileOrArray file;
-    /**
-     * Streams are closed automatically.
-     */
-    private boolean closeStream = true;
 
     /**
      * Creates a PdfTokenizer for the specified {@link RandomAccessFileOrArray}.
@@ -139,6 +140,27 @@ public class PdfTokenizer implements Closeable {
 
     public int read() throws java.io.IOException {
         return file.read();
+    }
+
+    /**
+     * Gets the next byte of pdf source without moving source position.
+     *
+     * @return the byte, or -1 if EOF is reached
+     * @throws java.io.IOException in case of any reading error.
+     */
+    public int peek() throws java.io.IOException {
+        return file.peek();
+    }
+
+    /**
+     * Gets the next {@code buffer.length} bytes of pdf source without moving source position.
+     *
+     * @param buffer buffer to store read bytes
+     * @return the number of read bytes. If it is less than {@code buffer.length} it means EOF has been reached.
+     * @throws java.io.IOException in case of any reading error.
+     */
+    public int peek(byte[] buffer) throws java.io.IOException {
+        return file.peek(buffer);
     }
 
     public String readString(int size) throws java.io.IOException {
@@ -254,10 +276,22 @@ public class PdfTokenizer implements Closeable {
         do {
             long currentPosition = file.getPosition();
             str = readString(arrLength);
-            long eofPosition = str.indexOf("%%EOF");
+            int eofPosition = str.indexOf("%%EOF");
             if (eofPosition >= 0) {
-                // 6 stands for '%%EOF' length + 1
-                return currentPosition + eofPosition + 6;
+                // Now we want to also include following EOL bytes.
+                file.seek(currentPosition + eofPosition + 5);
+                // We only allow 4 next bytes to be EOL markers.
+                String remainingBytes = readString(4);
+                int eolCount = 0;
+                for (byte b : remainingBytes.getBytes(StandardCharsets.UTF_8)) {
+                    if (b == '\n' || b == '\r') {
+                        eolCount++;
+                    } else {
+                        return currentPosition + eofPosition + eolCount + 5;
+                    }
+                }
+                // 5 stands for '%%EOF' length
+                return currentPosition + eofPosition + eolCount + 5;
             }
             // Change current position to ensure '%%EOF' is not cut in half.
             file.seek(file.getPosition() - 4);

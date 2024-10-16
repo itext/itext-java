@@ -53,7 +53,6 @@ import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.SvgTagSvgNodeRenderer;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -63,13 +62,12 @@ import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-@Category(UnitTest.class)
+@org.junit.jupiter.api.Tag("UnitTest")
 public class SvgConverterUnitTest extends ExtendedITextTest {
 
     // we cannot easily mock the PdfDocument, so we make do with as close to unit testing as we can
@@ -77,24 +75,24 @@ public class SvgConverterUnitTest extends ExtendedITextTest {
     private final String content = "<svg width=\"10\" height=\"10\"/>";
     private InputStream is;
 
-    @Before
+    @BeforeEach
     public void setup() {
         doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         doc.addNewPage();
         is = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
     }
 
-    @After
+    @AfterEach
     public void teardown() {
         doc.close();
     }
 
     private void testResourceCreated(PdfDocument doc, int pageNo) {
         PdfResources res = doc.getPage(pageNo).getResources();
-        Assert.assertEquals(1, res.getPdfObject().size());
+        Assertions.assertEquals(1, res.getPdfObject().size());
         for (PdfName name : res.getResourceNames()) {
             PdfObject obj = res.getResourceObject(PdfName.XObject, name);
-            Assert.assertTrue(obj.isStream());
+            Assertions.assertTrue(obj.isStream());
         }
     }
 
@@ -126,7 +124,7 @@ public class SvgConverterUnitTest extends ExtendedITextTest {
     public void drawStringOnPageCreatesResourceTest() {
         PdfPage page = doc.addNewPage();
         SvgConverter.drawOnPage(content, page);
-        Assert.assertEquals(0, doc.getFirstPage().getResources().getPdfObject().size());
+        Assertions.assertEquals(0, doc.getFirstPage().getResources().getPdfObject().size());
         testResourceCreated(doc, 2);
     }
 
@@ -134,7 +132,7 @@ public class SvgConverterUnitTest extends ExtendedITextTest {
     public void drawStringOnPageWithPropsCreatesResourceTest() {
         PdfPage page = doc.addNewPage();
         SvgConverter.drawOnPage(content, page, new DummySvgConverterProperties());
-        Assert.assertEquals(0, doc.getFirstPage().getResources().getPdfObject().size());
+        Assertions.assertEquals(0, doc.getFirstPage().getResources().getPdfObject().size());
         testResourceCreated(doc, 2);
     }
 
@@ -142,7 +140,7 @@ public class SvgConverterUnitTest extends ExtendedITextTest {
     public void drawStreamOnPageCreatesResourceTest() throws IOException {
         PdfPage page = doc.addNewPage();
         SvgConverter.drawOnPage(is, page);
-        Assert.assertEquals(0, doc.getFirstPage().getResources().getPdfObject().size());
+        Assertions.assertEquals(0, doc.getFirstPage().getResources().getPdfObject().size());
         testResourceCreated(doc, 2);
     }
 
@@ -150,7 +148,7 @@ public class SvgConverterUnitTest extends ExtendedITextTest {
     public void drawStreamOnPageWithPropsCreatesResourceTest() throws IOException {
         PdfPage page = doc.addNewPage();
         SvgConverter.drawOnPage(is, page, new DummySvgConverterProperties());
-        Assert.assertEquals(0, doc.getFirstPage().getResources().getPdfObject().size());
+        Assertions.assertEquals(0, doc.getFirstPage().getResources().getPdfObject().size());
         testResourceCreated(doc, 2);
     }
 
@@ -159,7 +157,7 @@ public class SvgConverterUnitTest extends ExtendedITextTest {
         PdfPage page = doc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         SvgConverter.drawOnCanvas(content, canvas);
-        Assert.assertEquals(0, doc.getFirstPage().getResources().getPdfObject().size());
+        Assertions.assertEquals(0, doc.getFirstPage().getResources().getPdfObject().size());
         testResourceCreated(doc, 2);
     }
 
@@ -168,7 +166,7 @@ public class SvgConverterUnitTest extends ExtendedITextTest {
         PdfPage page = doc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         SvgConverter.drawOnCanvas(content, canvas, new DummySvgConverterProperties());
-        Assert.assertEquals(0, doc.getFirstPage().getResources().getPdfObject().size());
+        Assertions.assertEquals(0, doc.getFirstPage().getResources().getPdfObject().size());
         testResourceCreated(doc, 2);
     }
 
@@ -177,7 +175,7 @@ public class SvgConverterUnitTest extends ExtendedITextTest {
         PdfPage page = doc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         SvgConverter.drawOnCanvas(is, canvas);
-        Assert.assertEquals(0, doc.getFirstPage().getResources().getPdfObject().size());
+        Assertions.assertEquals(0, doc.getFirstPage().getResources().getPdfObject().size());
         testResourceCreated(doc, 2);
     }
 
@@ -186,32 +184,32 @@ public class SvgConverterUnitTest extends ExtendedITextTest {
         PdfPage page = doc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         SvgConverter.drawOnCanvas(is, canvas, new DummySvgConverterProperties());
-        Assert.assertEquals(0, doc.getFirstPage().getResources().getPdfObject().size());
+        Assertions.assertEquals(0, doc.getFirstPage().getResources().getPdfObject().size());
         testResourceCreated(doc, 2);
     }
 
     @Test
     public void convertStringToXObjectCreatesNoResourceTest() {
         SvgConverter.convertToXObject(content, doc);
-        Assert.assertEquals(0, doc.getLastPage().getResources().getPdfObject().size());
+        Assertions.assertEquals(0, doc.getLastPage().getResources().getPdfObject().size());
     }
 
     @Test
     public void convertStringToXObjectWithPropsCreatesNoResourceTest() {
         SvgConverter.convertToXObject(content, doc, new DummySvgConverterProperties());
-        Assert.assertEquals(0, doc.getLastPage().getResources().getPdfObject().size());
+        Assertions.assertEquals(0, doc.getLastPage().getResources().getPdfObject().size());
     }
 
     @Test
     public void convertStreamToXObjectCreatesNoResourceTest() throws IOException {
         SvgConverter.convertToXObject(is, doc);
-        Assert.assertEquals(0, doc.getLastPage().getResources().getPdfObject().size());
+        Assertions.assertEquals(0, doc.getLastPage().getResources().getPdfObject().size());
     }
 
     @Test
     public void convertStreamToXObjectWithPropsCreatesNoResourceTest() throws IOException {
         SvgConverter.convertToXObject(is, doc, new DummySvgConverterProperties());
-        Assert.assertEquals(0, doc.getLastPage().getResources().getPdfObject().size());
+        Assertions.assertEquals(0, doc.getLastPage().getResources().getPdfObject().size());
     }
     
     @Test
@@ -219,48 +217,48 @@ public class SvgConverterUnitTest extends ExtendedITextTest {
         INode svg = new JsoupElementNode(new Element(Tag.valueOf("svg"), ""));
         DummySvgConverterProperties props = new DummySvgConverterProperties();
         IBranchSvgNodeRenderer node = (IBranchSvgNodeRenderer) SvgConverter.process(svg, props).getRootRenderer();
-        Assert.assertTrue(node instanceof DummySvgNodeRenderer);
-        Assert.assertEquals(0, node.getChildren().size());
-        Assert.assertNull(node.getParent());
+        Assertions.assertTrue(node instanceof DummySvgNodeRenderer);
+        Assertions.assertEquals(0, node.getChildren().size());
+        Assertions.assertNull(node.getParent());
     }
 
     @Test
     public void processNode() {
         INode svg = new JsoupElementNode(new Element(Tag.valueOf("svg"), ""));
         IBranchSvgNodeRenderer node = (IBranchSvgNodeRenderer) SvgConverter.process(svg, null).getRootRenderer();
-        Assert.assertTrue(node instanceof SvgTagSvgNodeRenderer);
-        Assert.assertEquals(0, node.getChildren().size());
-        Assert.assertNull(node.getParent());
+        Assertions.assertTrue(node instanceof SvgTagSvgNodeRenderer);
+        Assertions.assertEquals(0, node.getChildren().size());
+        Assertions.assertNull(node.getParent());
     }
 
     @Test
     public void parseString() {
         INode actual = SvgConverter.parse(content);
 
-        Assert.assertEquals(1, actual.childNodes().size());
+        Assertions.assertEquals(1, actual.childNodes().size());
         JsoupElementNode node = (JsoupElementNode) actual.childNodes().get(0);
-        Assert.assertEquals("svg", node.name());
-        Assert.assertEquals(0, node.childNodes().size());
+        Assertions.assertEquals("svg", node.name());
+        Assertions.assertEquals(0, node.childNodes().size());
     }
 
     @Test
     public void parseStream() throws IOException {
         INode actual = SvgConverter.parse(is);
 
-        Assert.assertEquals(1, actual.childNodes().size());
+        Assertions.assertEquals(1, actual.childNodes().size());
         JsoupElementNode node = (JsoupElementNode) actual.childNodes().get(0);
-        Assert.assertEquals("svg", node.name());
-        Assert.assertEquals(0, node.childNodes().size());
+        Assertions.assertEquals("svg", node.name());
+        Assertions.assertEquals(0, node.childNodes().size());
     }
 
     @Test
     public void parseStreamWithProps() throws IOException {
         INode actual = SvgConverter.parse(is, new DummySvgConverterProperties());
 
-        Assert.assertEquals(1, actual.childNodes().size());
+        Assertions.assertEquals(1, actual.childNodes().size());
         JsoupElementNode node = (JsoupElementNode) actual.childNodes().get(0);
-        Assert.assertEquals("svg", node.name());
-        Assert.assertEquals(0, node.childNodes().size());
+        Assertions.assertEquals("svg", node.name());
+        Assertions.assertEquals(0, node.childNodes().size());
     }
 
     @Test
@@ -268,9 +266,9 @@ public class SvgConverterUnitTest extends ExtendedITextTest {
         is = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_16LE));
         INode actual = SvgConverter.parse(is, new DummySvgConverterProperties()); // defaults to UTF-8
 
-        Assert.assertEquals(1, actual.childNodes().size());
+        Assertions.assertEquals(1, actual.childNodes().size());
         // Does not throw an exception, but produces gibberish output that gets fed into a Text element, which is not a JsoupElementNode
-        Assert.assertFalse(actual.childNodes().get(0) instanceof JsoupElementNode);
+        Assertions.assertFalse(actual.childNodes().get(0) instanceof JsoupElementNode);
     }
 
     private static class OtherCharsetDummySvgConverterProperties extends DummySvgConverterProperties {
@@ -286,27 +284,27 @@ public class SvgConverterUnitTest extends ExtendedITextTest {
         is = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_16LE));
         INode actual = SvgConverter.parse(is, new OtherCharsetDummySvgConverterProperties());
 
-        Assert.assertEquals(1, actual.childNodes().size());
+        Assertions.assertEquals(1, actual.childNodes().size());
         JsoupElementNode node = (JsoupElementNode) actual.childNodes().get(0);
-        Assert.assertEquals("svg", node.name());
-        Assert.assertEquals(0, node.childNodes().size());
+        Assertions.assertEquals("svg", node.name());
+        Assertions.assertEquals(0, node.childNodes().size());
     }
 
     @Test
     public void parseStreamErrorOtherCharset() throws IOException {
         INode actual = SvgConverter.parse(is, new OtherCharsetDummySvgConverterProperties());
 
-        Assert.assertEquals(1, actual.childNodes().size());
+        Assertions.assertEquals(1, actual.childNodes().size());
         // Does not throw an exception, but produces gibberish output that gets fed into a Text element, which is not a JsoupElementNode
-        Assert.assertFalse(actual.childNodes().get(0) instanceof JsoupElementNode);
+        Assertions.assertFalse(actual.childNodes().get(0) instanceof JsoupElementNode);
     }
 
     @Test
     public void checkNullTest(){
-        Exception e = Assert.assertThrows(SvgProcessingException.class,
+        Exception e = Assertions.assertThrows(SvgProcessingException.class,
                 () -> SvgConverter.drawOnDocument("test",null,1)
         );
-        Assert.assertEquals(SvgExceptionMessageConstant.PARAMETER_CANNOT_BE_NULL, e.getMessage());
+        Assertions.assertEquals(SvgExceptionMessageConstant.PARAMETER_CANNOT_BE_NULL, e.getMessage());
     }
 
     @Test
@@ -318,13 +316,13 @@ public class SvgConverterUnitTest extends ExtendedITextTest {
                 new SvgTagSvgNodeRenderer(), context);
 
         ResourceResolver currentResolver = SvgConverter.getResourceResolver(svgProcessorResult, properties);
-        Assert.assertEquals(initialResolver, currentResolver);
+        Assertions.assertEquals(initialResolver, currentResolver);
     }
 
     @Test
     public void createResourceResolverWithoutProcessorResultTest() {
         ISvgConverterProperties props = new SvgConverterProperties();
-        Assert.assertNotNull(SvgConverter.getResourceResolver(null, props));
+        Assertions.assertNotNull(SvgConverter.getResourceResolver(null, props));
     }
 
     @Test
@@ -333,7 +331,7 @@ public class SvgConverterUnitTest extends ExtendedITextTest {
         TestSvgProcessorResult testSvgProcessorResult = new TestSvgProcessorResult();
 
         ResourceResolver currentResolver = SvgConverter.getResourceResolver(testSvgProcessorResult, properties);
-        Assert.assertNotNull(currentResolver);
+        Assertions.assertNotNull(currentResolver);
     }
 
     @Test
@@ -341,12 +339,12 @@ public class SvgConverterUnitTest extends ExtendedITextTest {
         TestSvgProcessorResult testSvgProcessorResult = new TestSvgProcessorResult();
 
         ResourceResolver currentResolver = SvgConverter.getResourceResolver(testSvgProcessorResult, null);
-        Assert.assertNotNull(currentResolver);
+        Assertions.assertNotNull(currentResolver);
     }
 
     @Test
     public void nullBBoxInDrawTest() throws Exception {
-        Assert.assertThrows(PdfException.class, () -> {
+        Assertions.assertThrows(PdfException.class, () -> {
             PdfFormXObject object = SvgConverter.convertToXObject(content, doc);
             ((PdfDictionary)object.getPdfObject()).remove(PdfName.BBox);
             SvgConverter.draw(object, new PdfCanvas(doc, 1), 0, 0);

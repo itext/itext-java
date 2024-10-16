@@ -61,19 +61,18 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class AddMiscTypesAnnotationsTest extends ExtendedITextTest {
 
     public static final String SOURCE_FOLDER =
@@ -81,12 +80,12 @@ public class AddMiscTypesAnnotationsTest extends ExtendedITextTest {
     public static final String DESTINATION_FOLDER =
             "./target/test/com/itextpdf/kernel/pdf/annot/AddMiscTypesAnnotationsTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(DESTINATION_FOLDER);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(DESTINATION_FOLDER);
     }
@@ -109,7 +108,7 @@ public class AddMiscTypesAnnotationsTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "textAnnotation01.pdf", SOURCE_FOLDER
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "textAnnotation01.pdf", SOURCE_FOLDER
                         + "cmp_textAnnotation01.pdf",
                 DESTINATION_FOLDER, "diff_"));
     }
@@ -130,7 +129,7 @@ public class AddMiscTypesAnnotationsTest extends ExtendedITextTest {
             page.addAnnotation(annot);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -178,7 +177,7 @@ public class AddMiscTypesAnnotationsTest extends ExtendedITextTest {
         String errorMessage = compareTool.compareByContent(filename, SOURCE_FOLDER + "cmp_CaretAnnotation.pdf",
                 DESTINATION_FOLDER, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -200,7 +199,7 @@ public class AddMiscTypesAnnotationsTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "freeTextAnnotation01.pdf", SOURCE_FOLDER
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "freeTextAnnotation01.pdf", SOURCE_FOLDER
                         + "cmp_freeTextAnnotation01.pdf",
                 DESTINATION_FOLDER, "diff_"));
     }
@@ -221,7 +220,7 @@ public class AddMiscTypesAnnotationsTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "squareAndCircleAnnotations01.pdf", SOURCE_FOLDER
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "squareAndCircleAnnotations01.pdf", SOURCE_FOLDER
                         + "cmp_squareAndCircleAnnotations01.pdf",
                 DESTINATION_FOLDER, "diff_"));
     }
@@ -249,7 +248,7 @@ public class AddMiscTypesAnnotationsTest extends ExtendedITextTest {
         String errorMessage = compareTool.compareByContent(filename, SOURCE_FOLDER + "cmp_fileAttachmentAnnotation.pdf",
                 DESTINATION_FOLDER, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -290,7 +289,7 @@ public class AddMiscTypesAnnotationsTest extends ExtendedITextTest {
         String errorMessage = compareTool.compareByContent(filename, SOURCE_FOLDER + "cmp_fileAttachmentTargetTest.pdf",
                 DESTINATION_FOLDER, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -311,7 +310,7 @@ public class AddMiscTypesAnnotationsTest extends ExtendedITextTest {
         String errorMessage = compareTool.compareByContent(DESTINATION_FOLDER + fileName,
                 SOURCE_FOLDER + "cmp_" + fileName, DESTINATION_FOLDER, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -341,7 +340,7 @@ public class AddMiscTypesAnnotationsTest extends ExtendedITextTest {
         finalDoc.addFileAttachment("some_test", spec);
         finalDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(fileName, SOURCE_FOLDER + "cmp_fileAttachmentAppendModeTest.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(fileName, SOURCE_FOLDER + "cmp_fileAttachmentAppendModeTest.pdf",
                 DESTINATION_FOLDER, "diff_"));
     }
 
@@ -403,7 +402,7 @@ public class AddMiscTypesAnnotationsTest extends ExtendedITextTest {
         String errorMessage = compareTool.compareByContent(filename, SOURCE_FOLDER + "cmp_rubberStampAnnotation01.pdf",
                 DESTINATION_FOLDER, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -427,7 +426,7 @@ public class AddMiscTypesAnnotationsTest extends ExtendedITextTest {
         String errorMessage = compareTool.compareByContent(filename, SOURCE_FOLDER + "cmp_rubberStampAnnotation02.pdf",
                 DESTINATION_FOLDER, "diff_");
         if (errorMessage != null) {
-            Assert.assertNull(errorMessage);
+            Assertions.assertNull(errorMessage);
         }
     }
 
@@ -463,7 +462,7 @@ public class AddMiscTypesAnnotationsTest extends ExtendedITextTest {
         String errorMessage = compareTool.compareByContent(filename, SOURCE_FOLDER + "cmp_inkAnnotation01.pdf",
                 DESTINATION_FOLDER, "diff_");
         if (errorMessage != null) {
-            Assert.assertNull(errorMessage);
+            Assertions.assertNull(errorMessage);
         }
     }
 
@@ -504,7 +503,7 @@ public class AddMiscTypesAnnotationsTest extends ExtendedITextTest {
         String errorMessage = compareTool.compareByContent(filename, SOURCE_FOLDER + "cmp_printerMarkAnnotation01.pdf",
                 DESTINATION_FOLDER, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -548,7 +547,7 @@ public class AddMiscTypesAnnotationsTest extends ExtendedITextTest {
         String errorMessage = compareTool.compareByContent(filename, SOURCE_FOLDER + "cmp_trapNetworkAnnotation01.pdf",
                 DESTINATION_FOLDER, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -593,7 +592,7 @@ public class AddMiscTypesAnnotationsTest extends ExtendedITextTest {
         String errorMessage = compareTool.compareByContent(filename, SOURCE_FOLDER + "cmp_watermarkAnnotation01.pdf",
                 DESTINATION_FOLDER, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -662,7 +661,7 @@ public class AddMiscTypesAnnotationsTest extends ExtendedITextTest {
         String errorMessage = compareTool.compareByContent(filename, SOURCE_FOLDER + "cmp_redactionAnnotation01.pdf",
                 DESTINATION_FOLDER, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -729,7 +728,7 @@ public class AddMiscTypesAnnotationsTest extends ExtendedITextTest {
         );
 
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outPath, cmpPath, DESTINATION_FOLDER, diff));
+        Assertions.assertNull(new CompareTool().compareByContent(outPath, cmpPath, DESTINATION_FOLDER, diff));
     }
 
     @Test
@@ -741,7 +740,7 @@ public class AddMiscTypesAnnotationsTest extends ExtendedITextTest {
         PdfPage page1 = pdfDoc.getPage(1);
         List<PdfAnnotation> annots = page1.getAnnotations();
 
-        Assert.assertTrue(annots.get(0) instanceof Pdf3DAnnotation);
+        Assertions.assertTrue(annots.get(0) instanceof Pdf3DAnnotation);
     }
 
     @Test
@@ -771,7 +770,7 @@ public class AddMiscTypesAnnotationsTest extends ExtendedITextTest {
         pdfDoc.addNewPage().addAnnotation(annot);
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "add3DAnnotation01.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "add3DAnnotation01.pdf",
                 SOURCE_FOLDER + "cmp_add3DAnnotation01.pdf", DESTINATION_FOLDER, "diff_"));
 
     }

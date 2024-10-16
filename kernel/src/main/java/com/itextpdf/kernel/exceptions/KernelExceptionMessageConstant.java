@@ -79,6 +79,8 @@ public final class KernelExceptionMessageConstant {
     public static final String CANNOT_RETRIEVE_MEDIA_BOX_ATTRIBUTE = "Invalid PDF. There is no media box attribute "
             + "for page or its parents.";
     public static final String CANNOT_FIND_IMAGE_DATA_OR_EI = "Cannot find image data or EI.";
+    public static final String UNSUPPORTED_ENCODING_FOR_INLINE_IMAGE
+            = "Cannot parse inline image: {0} encoding is unsupported.";
     public static final String CANNOT_FLUSH_DOCUMENT_ROOT_TAG_BEFORE_DOCUMENT_IS_CLOSED = "Cannot flush document root "
             + "tag before document is closed.";
     public static final String CANNOT_FLUSH_OBJECT = "Cannot flush object.";
@@ -124,6 +126,10 @@ public final class KernelExceptionMessageConstant {
                     + "method.";
     public static final String CF_NOT_FOUND_ENCRYPTION = "/CF not found (encryption)";
     public static final String COLOR_SPACE_NOT_FOUND = "ColorSpace not found.";
+    public static final String CONTAINER_EMBEDDING_EXCEPTION =
+            "IOException occurred while trying to embed MAC container into document output stream.";
+    public static final String CONTAINER_GENERATION_EXCEPTION = "Exception occurred during MAC container generation.";
+    public static final String CONTAINER_PARSING_EXCEPTION = "Exception occurred during MAC container parsing.";
     public static final String CONTENT_STREAM_MUST_NOT_INVOKE_OPERATORS_THAT_SPECIFY_COLORS_OR_OTHER_COLOR_RELATED_PARAMETERS =
             "Content stream must not invoke operators that specify colors or other color related parameters in "
                     + "the graphics state.";
@@ -140,6 +146,8 @@ public final class KernelExceptionMessageConstant {
     public static final String DEFAULT_CRYPT_FILTER_NOT_FOUND_ENCRYPTION = "/DefaultCryptFilter not found "
             + "(encryption).";
     public static final String THIS_DICTIONARY_KEY_IS_NOT_A_NAME = "Dictionary key {0} is not a name.";
+    public static final String DIGEST_NOT_SUPPORTED =
+            "This digest algorithm is not supported for MAC integrity protection.";
     public static final String DICTIONARY_DOES_NOT_HAVE_SUPPORTED_FONT_DATA = "Dictionary doesn't have supported font "
             + "data.";
     public static final String DOCUMENT_CLOSED_IT_IS_IMPOSSIBLE_TO_EXECUTE_ACTION = "Document was closed. It is "
@@ -208,7 +216,7 @@ public final class KernelExceptionMessageConstant {
     public static final String INCORRECT_NUMBER_OF_COMPONENTS = "Incorrect number of components.";
     public static final String INVALID_CROSS_REFERENCE_ENTRY_IN_THIS_XREF_SUBSECTION = "Invalid cross reference entry "
             + "in this xref subsection.";
-    public static final String INVALID_INDIRECT_REFERENCE = "Invalid indirect reference {0}.";
+    public static final String INVALID_INDIRECT_REFERENCE = "Invalid indirect reference {0} {1} R.";
 
     public static final String INVALID_INPUT_FOR_TYPE_2_FUNCTION =
             "Invalid input value for PDF Type 2 Function, value should be a single number.";
@@ -259,6 +267,23 @@ public final class KernelExceptionMessageConstant {
     public static final String IO_EXCEPTION_WHILE_CREATING_FONT = "I/O exception while creating Font";
     public static final String LZW_DECODER_EXCEPTION = "LZW decoder exception.";
     public static final String LZW_FLAVOUR_NOT_SUPPORTED = "LZW flavour not supported.";
+    public static final String MAC_ALGORITHM_NOT_SUPPORTED = "This MAC algorithm is not supported.";
+    public static final String MAC_ATTRIBUTE_NOT_SPECIFIED =
+            "Signature doesn't contain unsigned MAC attribute, which is required in \"attached to signature\" mode.";
+    public static final String MAC_EXTRACTION_EXCEPTION =
+            "Exception occurred during signature parsing. It is not possible to extract MAC.";
+    public static final String MAC_LOCATION_NOT_SPECIFIED = "AuthCode dictionary doesn't contain MACLocation entry.";
+    public static final String MAC_NOT_SPECIFIED =
+            "AuthCode dictionary doesn't contain MAC entry, which is required in standalone mode.";
+    public static final String MAC_FOR_ENCRYPTION_5 =
+            "MAC integrity protection is only supported for encryption algorithms of version 5 or higher.";
+    public static final String MAC_FOR_PDF_2 = "MAC integrity protection is only supported for PDF 2.0 or higher.";
+    public static final String MAC_PERMS_WITHOUT_MAC = "Permissions bit 13 is set to zero, "
+            + "which indicates that MAC integrity protection is enabled. However MAC container wasn't found.";
+    public static final String MAC_VALIDATION_EXCEPTION = "Unexpected exception occurred during MAC token validation.";
+    public static final String MAC_VALIDATION_FAILED =
+            "MAC integrity protection was compromised. Document content was modified.";
+    public static final String MAC_VALIDATION_NO_SALT = "MAC token validation failed. Salt is not found.";
     public static final String MISSING_REQUIRED_FIELD_IN_FONT_DICTIONARY
             = "Missing required field {0} in font dictionary.";
     public static final String MUST_BE_A_TAGGED_DOCUMENT = "Must be a tagged document.";
@@ -321,6 +346,8 @@ public final class KernelExceptionMessageConstant {
     public static final String RESOURCES_DO_NOT_CONTAIN_EXTGSTATE_ENTRY_UNABLE_TO_PROCESS_THIS_OPERATOR = "Resources "
             + "do not contain ExtGState entry. Unable to process operator {0}.";
     public static final String SHADING_TYPE_NOT_FOUND = "Shading type not found.";
+    public static final String SIG_OBJ_REF_NOT_SPECIFIED =
+            "AuthCode dictionary doesn't contain SigObjRef entry, which is required in signature mode.";
     public static final String STDCF_NOT_FOUND_ENCRYPTION = "/StdCF not found (encryption)";
     public static final String STREAM_SHALL_END_WITH_ENDSTREAM = "Stream shall end with endstream keyword.";
     public static final String STRUCT_PARENT_INDEX_NOT_FOUND_IN_TAGGED_OBJECT = "StructParent index not found in "
@@ -345,6 +372,7 @@ public final class KernelExceptionMessageConstant {
             + "TagTreePointer is in invalid state: it points at removed element use TagTreePointer#moveToRoot.";
     public static final String THERE_IS_NO_ASSOCIATE_PDF_WRITER_FOR_MAKING_INDIRECTS = "There is no associate "
             + "PdfWriter for making indirects.";
+    public static final String THE_NAME_OF_THE_DIGEST_ALGORITHM_IS_NULL = "The name of the digest algorithm is null.";
     public static final String THIS_DECODE_PARAMETER_TYPE_IS_NOT_SUPPORTED = "Decode parameter type {0} is not "
             + "supported.";
     public static final String THIS_FILTER_IS_NOT_SUPPORTED = "Filter {0} is not supported.";
@@ -359,8 +387,6 @@ public final class KernelExceptionMessageConstant {
             + "operators.";
     public static final String UNBALANCED_LAYER_OPERATORS = "Unbalanced layer operators.";
     public static final String UNBALANCED_SAVE_RESTORE_STATE_OPERATORS = "Unbalanced save restore state operators.";
-    public static final String UNEXPECTED_CHARACTER_FOUND_AFTER_ID_IN_INLINE_IMAGE = "Unexpected character {0} "
-            + "found after ID in inline image.";
     public static final String UNEXPECTED_COLOR_SPACE = "Unexpected ColorSpace: {0}.";
     public static final String UNEXPECTED_END_OF_FILE = "Unexpected end of file.";
     public static final String UNEXPECTED_TOKEN = "unexpected {0} was encountered.";
@@ -377,6 +403,7 @@ public final class KernelExceptionMessageConstant {
             "When adding object reference to the tag tree, it must be connected to not flushed object.";
     public static final String WHITE_POINT_IS_INCORRECTLY_SPECIFIED = "White point is incorrectly specified.";
     public static final String WMF_IMAGE_EXCEPTION = "WMF image exception.";
+    public static final String WRAP_ALGORITHM_NOT_SUPPORTED = "This wrapping algorithm is not supported.";
     public static final String WRONG_MEDIA_BOX_SIZE_TOO_FEW_ARGUMENTS = "Wrong media box size: {0}. Need at least 4 "
             + "arguments";
     public static final String XREF_PREV_SHALL_BE_DIRECT_NUMBER_OBJECT = "Prev pointer in xref structure shall be "
@@ -445,6 +472,17 @@ public final class KernelExceptionMessageConstant {
     public static final String UNABLE_TO_READ_STREAM_BYTES ="Unable to read stream bytes because stream is null.";
     public static final String INVALID_OBJECT_STREAM_NUMBER = "Unable to read object {0} with object stream " +
             "number {1} and index {2} from object stream.";
+
+    //TODO DEVSIX-8490 remove this exception message when implemented
+    public static final String UNABLE_TO_ADD_SECOND_PARENT_LAYER = "Unable to add second parent layer to " +
+            "{0} ocg layer";
+
+    //TODO DEVSIX-8490 remove this exception message when implemented
+    public static final String UNABLE_TO_REMOVE_DUPLICATE_LAYER = "Unable to remove duplicated layer {0} " +
+            "because it has child layers.";
+
+    public static final String TYPE_SHOULD_NOT_BE_NULL = "ClassArgument type should not be null";
+    public static final String INSTANCE_SHOULD_NOT_BE_NULL = "Instance should not be null";
 
     private KernelExceptionMessageConstant() {
     }

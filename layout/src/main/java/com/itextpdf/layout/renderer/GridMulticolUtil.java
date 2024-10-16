@@ -65,44 +65,23 @@ final class GridMulticolUtil {
         result += safelyRetrieveFloatProperty(Property.MARGIN_LEFT, renderer);
         result += safelyRetrieveFloatProperty(Property.MARGIN_RIGHT, renderer);
 
-        if (!renderer.hasOwnProperty(Property.BORDER) || renderer.<Border>getProperty(Property.BORDER) == null) {
-            result += safelyRetrieveFloatProperty(Property.BORDER_LEFT, renderer);
-        }
-        if (!renderer.hasOwnProperty(Property.BORDER) || renderer.<Border>getProperty(Property.BORDER) == null) {
-            result += safelyRetrieveFloatProperty(Property.BORDER_RIGHT, renderer);
-        }
-        result += safelyRetrieveFloatProperty(Property.BORDER, renderer) * 2;
+        result += safelyRetrieveFloatProperty(Property.BORDER_LEFT, renderer);
+        result += safelyRetrieveFloatProperty(Property.BORDER_RIGHT, renderer);
 
         return result;
     }
 
-    static float updateOccupiedHeight(float initialHeight, boolean isFull, boolean isFirstLayout,
-            AbstractRenderer renderer) {
-
+    static float updateOccupiedHeight(float initialHeight, boolean isFull, AbstractRenderer renderer) {
         float result = initialHeight;
         if (isFull) {
             result += safelyRetrieveFloatProperty(Property.PADDING_BOTTOM, renderer);
             result += safelyRetrieveFloatProperty(Property.MARGIN_BOTTOM, renderer);
-            if (!renderer.hasOwnProperty(Property.BORDER) || renderer.<Border>getProperty(Property.BORDER) == null) {
-                result += safelyRetrieveFloatProperty(Property.BORDER_BOTTOM, renderer);
-            }
+            result += safelyRetrieveFloatProperty(Property.BORDER_BOTTOM, renderer);
         }
         result += safelyRetrieveFloatProperty(Property.PADDING_TOP, renderer);
-
         result += safelyRetrieveFloatProperty(Property.MARGIN_TOP, renderer);
+        result += safelyRetrieveFloatProperty(Property.BORDER_TOP, renderer);
 
-        if (!renderer.hasOwnProperty(Property.BORDER) || renderer.<Border>getProperty(Property.BORDER) == null) {
-            result += safelyRetrieveFloatProperty(Property.BORDER_TOP, renderer);
-        }
-
-        // isFirstLayout is necessary to handle the case when multicol container layouted in more
-        // than 2 pages, and on the last page layout result is full, but there is no bottom border
-        float TOP_AND_BOTTOM = isFull && isFirstLayout ? 2 : 1;
-        // Multicol container layouted in more than 3 pages, and there is a page where there are no bottom and top borders
-        if (!isFull && !isFirstLayout) {
-            TOP_AND_BOTTOM = 0;
-        }
-        result += safelyRetrieveFloatProperty(Property.BORDER, renderer) * TOP_AND_BOTTOM;
         return result;
     }
 

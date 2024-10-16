@@ -24,27 +24,26 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfDocumentInfoTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfDocumentInfoTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfDocumentInfoTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -60,9 +59,9 @@ public class PdfDocumentInfoTest extends ExtendedITextTest {
         document.close();
 
         CompareTool ct = new CompareTool();
-        Assert.assertNull(ct.compareByContent(outFile, cmpFile, destinationFolder, "diff_"));
-        Assert.assertNull(ct.compareDocumentInfo(outFile, cmpFile));
-        Assert.assertNull(ct.compareXmp(outFile, cmpFile, true));
+        Assertions.assertNull(ct.compareByContent(outFile, cmpFile, destinationFolder, "diff_"));
+        Assertions.assertNull(ct.compareDocumentInfo(outFile, cmpFile));
+        Assertions.assertNull(ct.compareXmp(outFile, cmpFile, true));
     }
 
     @Test
@@ -75,9 +74,9 @@ public class PdfDocumentInfoTest extends ExtendedITextTest {
         document.close();
 
         CompareTool ct = new CompareTool();
-        Assert.assertNull(ct.compareByContent(outFile, cmpFile, destinationFolder, "diff_"));
-        Assert.assertNull(ct.compareDocumentInfo(outFile, cmpFile));
-        Assert.assertNull(ct.compareXmp(outFile, cmpFile, true));
+        Assertions.assertNull(ct.compareByContent(outFile, cmpFile, destinationFolder, "diff_"));
+        Assertions.assertNull(ct.compareDocumentInfo(outFile, cmpFile));
+        Assertions.assertNull(ct.compareXmp(outFile, cmpFile, true));
     }
 
     @Test
@@ -93,9 +92,9 @@ public class PdfDocumentInfoTest extends ExtendedITextTest {
         document.close();
 
         CompareTool ct = new CompareTool();
-        Assert.assertNull(ct.compareByContent(outFile, cmpFile, destinationFolder, "diff_"));
-        Assert.assertNull(ct.compareDocumentInfo(outFile, cmpFile));
-        Assert.assertNull(ct.compareXmp(outFile, cmpFile, true));
+        Assertions.assertNull(ct.compareByContent(outFile, cmpFile, destinationFolder, "diff_"));
+        Assertions.assertNull(ct.compareDocumentInfo(outFile, cmpFile));
+        Assertions.assertNull(ct.compareXmp(outFile, cmpFile, true));
     }
 
     @Test
@@ -109,9 +108,9 @@ public class PdfDocumentInfoTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertEquals("Author", "Bruno Lowagie", author);
-        Assert.assertEquals("Title", "Hello World example", title);
-        Assert.assertEquals("Subject", "This example shows how to add metadata", subject);
+        Assertions.assertEquals("Bruno Lowagie", author, "Author");
+        Assertions.assertEquals("Hello World example", title, "Title");
+        Assertions.assertEquals("This example shows how to add metadata", subject, "Subject");
     }
 
     @Test
@@ -125,9 +124,9 @@ public class PdfDocumentInfoTest extends ExtendedITextTest {
         document.close();
 
         CompareTool ct = new CompareTool();
-        Assert.assertNull(ct.compareByContent(outFile, cmpFile, destinationFolder, "diff_"));
-        Assert.assertNull(ct.compareDocumentInfo(outFile, cmpFile));
-        Assert.assertNull(ct.compareXmp(outFile, cmpFile, true));
+        Assertions.assertNull(ct.compareByContent(outFile, cmpFile, destinationFolder, "diff_"));
+        Assertions.assertNull(ct.compareDocumentInfo(outFile, cmpFile));
+        Assertions.assertNull(ct.compareXmp(outFile, cmpFile, true));
     }
 
     @Test
@@ -140,12 +139,12 @@ public class PdfDocumentInfoTest extends ExtendedITextTest {
         String author = document.getDocumentInfo().getAuthor();
         document.close();
 
-        Assert.assertEquals("Author", "Bruno Lowagie; Alexey Subach", author);
+        Assertions.assertEquals("Bruno Lowagie; Alexey Subach", author, "Author");
 
         CompareTool ct = new CompareTool();
-        Assert.assertNull(ct.compareByContent(outFile, cmpFile, destinationFolder, "diff_"));
-        Assert.assertNull(ct.compareDocumentInfo(outFile, cmpFile));
-        Assert.assertNull(ct.compareXmp(outFile, cmpFile, true));
+        Assertions.assertNull(ct.compareByContent(outFile, cmpFile, destinationFolder, "diff_"));
+        Assertions.assertNull(ct.compareDocumentInfo(outFile, cmpFile));
+        Assertions.assertNull(ct.compareXmp(outFile, cmpFile, true));
     }
 
 }

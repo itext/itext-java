@@ -59,7 +59,7 @@ public class LineTo extends AbstractPathShape {
         }
         this.coordinates = new String[] {inputCoordinates[0], inputCoordinates[1]};
         if (isRelative()) {
-            this.coordinates = copier.makeCoordinatesAbsolute(coordinates, new double[]{startPoint.x, startPoint.y});
+            this.coordinates = copier.makeCoordinatesAbsolute(coordinates, new double[]{startPoint.getX(), startPoint.getY()});
         }
     }
 

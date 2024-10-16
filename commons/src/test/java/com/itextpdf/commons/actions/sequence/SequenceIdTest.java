@@ -23,19 +23,18 @@
 package com.itextpdf.commons.actions.sequence;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class SequenceIdTest extends ExtendedITextTest {
     @Test
     public void differentIdsCreatedTest() {
         SequenceId sequenceId1 = new SequenceId();
         SequenceId sequenceId2 = new SequenceId();
 
-        Assert.assertNotEquals(sequenceId1.getId(), sequenceId2.getId());
+        Assertions.assertNotEquals(sequenceId1.getId(), sequenceId2.getId());
     }
 }

@@ -36,7 +36,7 @@ import com.itextpdf.kernel.font.PdfTrueTypeFont;
 import com.itextpdf.kernel.font.PdfType3Font;
 import com.itextpdf.kernel.font.Type3Glyph;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -164,21 +164,21 @@ public class PdfA2Checker extends PdfA1Checker {
     private static final Logger logger = LoggerFactory.getLogger(PdfAChecker.class);
 
     private static final String TRANSPARENCY_ERROR_MESSAGE =
-            PdfAConformanceException.THE_DOCUMENT_DOES_NOT_CONTAIN_A_PDFA_OUTPUTINTENT_BUT_PAGE_CONTAINS_TRANSPARENCY_AND_DOES_NOT_CONTAIN_BLENDING_COLOR_SPACE;
+            PdfaExceptionMessageConstant.THE_DOCUMENT_DOES_NOT_CONTAIN_A_PDFA_OUTPUTINTENT_BUT_PAGE_CONTAINS_TRANSPARENCY_AND_DOES_NOT_CONTAIN_BLENDING_COLOR_SPACE;
 
     private boolean currentFillCsIsIccBasedCMYK = false;
     private boolean currentStrokeCsIsIccBasedCMYK = false;
 
-    private Map<PdfName, PdfArray> separationColorSpaces = new HashMap<>();
+    private final Map<PdfName, PdfArray> separationColorSpaces = new HashMap<>();
 
     /**
-     * Creates a PdfA2Checker with the required conformance level
+     * Creates a PdfA2Checker with the required conformance
      *
-     * @param conformanceLevel the required conformance level, <code>a</code> or
+     * @param aConformance the required conformance, <code>a</code> or
      *                         <code>u</code> or <code>b</code>
      */
-    public PdfA2Checker(PdfAConformanceLevel conformanceLevel) {
-        super(conformanceLevel);
+    public PdfA2Checker(PdfAConformance aConformance) {
+        super(aConformance);
     }
 
     @Override
@@ -209,15 +209,6 @@ public class PdfA2Checker extends PdfA1Checker {
         }
 
         checkImage(inlineImage, currentColorSpaces);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Deprecated
-    public void checkColor(Color color, PdfDictionary currentColorSpaces, Boolean fill, PdfStream contentStream) {
-        checkColor(null, color, currentColorSpaces, fill, contentStream);
     }
 
     /**
@@ -488,7 +479,7 @@ public class PdfA2Checker extends PdfA1Checker {
 
         checkAnnotationAgainstActions(annotDic);
 
-        if (checkStructure(conformanceLevel)) {
+        if (checkStructure(conformance)) {
             if (contentAnnotations.contains(subtype) && !annotDic.containsKey(PdfName.Contents)) {
                 logger.warn(MessageFormatUtil.format(
                         PdfAConformanceLogMessageConstant.ANNOTATION_OF_TYPE_0_SHOULD_HAVE_CONTENTS_KEY, subtype.getValue()));
@@ -605,7 +596,7 @@ public class PdfA2Checker extends PdfA1Checker {
     protected void checkCatalogAAConformance(PdfDictionary dict) {
         if (dict.containsKey(PdfName.AA)) {
             throw new PdfAConformanceException(
-                    PdfAConformanceException.A_CATALOG_DICTIONARY_SHALL_NOT_CONTAIN_AA_ENTRY);
+                    PdfaExceptionMessageConstant.A_CATALOG_DICTIONARY_SHALL_NOT_CONTAIN_AA_ENTRY);
         }
     }
 
@@ -807,17 +798,17 @@ public class PdfA2Checker extends PdfA1Checker {
      */
     @Override
     protected void checkPageColorsUsages(PdfDictionary pageDict, PdfDictionary pageResources) {
-        if ((rgbIsUsed || cmykIsUsed || grayIsUsed || !rgbUsedObjects.isEmpty() || !cmykUsedObjects.isEmpty() ||
-                !grayUsedObjects.isEmpty()) && pdfAOutputIntentColorSpace == null) {
+        if ((!rgbUsedObjects.isEmpty() || !cmykUsedObjects.isEmpty() || !grayUsedObjects.isEmpty())
+                && pdfAOutputIntentColorSpace == null) {
             throw new PdfAConformanceException(PdfaExceptionMessageConstant.IF_DEVICE_RGB_CMYK_GRAY_USED_IN_FILE_THAT_FILE_SHALL_CONTAIN_PDFA_OUTPUTINTENT_OR_DEFAULT_RGB_CMYK_GRAY_IN_USAGE_CONTEXT);
         }
 
-        if (rgbIsUsed || !rgbUsedObjects.isEmpty()) {
+        if (!rgbUsedObjects.isEmpty()) {
             if (!ICC_COLOR_SPACE_RGB.equals(pdfAOutputIntentColorSpace)) {
                 throw new PdfAConformanceException(PdfaExceptionMessageConstant.DEVICERGB_MAY_BE_USED_ONLY_IF_THE_FILE_HAS_A_RGB_PDFA_OUTPUT_INTENT_OR_DEFAULTRGB_IN_USAGE_CONTEXT);
             }
         }
-        if (cmykIsUsed || !cmykUsedObjects.isEmpty()) {
+        if (!cmykUsedObjects.isEmpty()) {
             if (!ICC_COLOR_SPACE_CMYK.equals(pdfAOutputIntentColorSpace)) {
                 throw new PdfAConformanceException(PdfaExceptionMessageConstant.DEVICECMYK_MAY_BE_USED_ONLY_IF_THE_FILE_HAS_A_CMYK_PDFA_OUTPUT_INTENT_OR_DEFAULTCMYK_IN_USAGE_CONTEXT);
             }
@@ -911,17 +902,17 @@ public class PdfA2Checker extends PdfA1Checker {
              *
              * But, all the test files used in iText5 failed on this check, so may be my assumption is wrong.
              */
-            if (!params.isJp2 /*|| !params.isJpxBaseline*/) {
+            if (!params.isJp2() /*|| !params.isJpxBaseline*/) {
                 throw new PdfAConformanceException(PdfaExceptionMessageConstant.ONLY_JPX_BASELINE_SET_OF_FEATURES_SHALL_BE_USED);
             }
 
-            if (params.numOfComps != 1 && params.numOfComps != 3 && params.numOfComps != 4) {
+            if (params.getNumOfComps() != 1 && params.getNumOfComps() != 3 && params.getNumOfComps() != 4) {
                 throw new PdfAConformanceException(PdfaExceptionMessageConstant.THE_NUMBER_OF_COLOUR_CHANNELS_IN_THE_JPEG2000_DATA_SHALL_BE_1_3_OR_4);
             }
 
-            if (params.colorSpecBoxes != null && params.colorSpecBoxes.size() > 1) {
+            if (params.getColorSpecBoxes() != null && params.getColorSpecBoxes().size() > 1) {
                 int numOfApprox0x01 = 0;
-                for (Jpeg2000ImageData.ColorSpecBox colorSpecBox : params.colorSpecBoxes) {
+                for (Jpeg2000ImageData.ColorSpecBox colorSpecBox : params.getColorSpecBoxes()) {
                     if (colorSpecBox.getApprox() == 1) {
                         ++numOfApprox0x01;
                         if (numOfApprox0x01 == 1 &&
@@ -965,7 +956,7 @@ public class PdfA2Checker extends PdfA1Checker {
             // The Bits Per Component box specifies the bit depth of each component.
             // If the bit depth of all components in the codestream is the same (in both sign and precision),
             // then this box shall not be found. Otherwise, this box specifies the bit depth of each individual component.
-            if (params.bpcBoxData != null) {
+            if (params.getBpcBoxData() != null) {
                 throw new PdfAConformanceException(PdfaExceptionMessageConstant.ALL_COLOUR_CHANNELS_IN_THE_JPEG2000_DATA_SHALL_HAVE_THE_SAME_BIT_DEPTH);
             }
         }
@@ -979,12 +970,12 @@ public class PdfA2Checker extends PdfA1Checker {
     }
 
     /**
-     * For pdf/a-2+ checkers use the {@code checkFormXObject(PdfStream form, PdfStream contentStream)} method
+     * For pdf/a-2+ checkers this method is overridden to use
+     * {@link #checkFormXObject(PdfStream form, PdfStream contentStream)} method.
      *
      * @param form the {@link PdfStream} to check
      */
     @Override
-    @Deprecated
     protected void checkFormXObject(PdfStream form) {
         checkFormXObject(form, null);
     }
@@ -1046,7 +1037,8 @@ public class PdfA2Checker extends PdfA1Checker {
      */
     protected void checkContentConfigurationDictAgainstAsKey(PdfDictionary config) {
         if (config.containsKey(PdfName.AS)) {
-            throw new PdfAConformanceException(PdfAConformanceException.THE_AS_KEY_SHALL_NOT_APPEAR_IN_ANY_OPTIONAL_CONTENT_CONFIGURATION_DICTIONARY);
+            throw new PdfAConformanceException(PdfaExceptionMessageConstant.
+                    THE_AS_KEY_SHALL_NOT_APPEAR_IN_ANY_OPTIONAL_CONTENT_CONFIGURATION_DICTIONARY);
         }
     }
 
@@ -1066,7 +1058,7 @@ public class PdfA2Checker extends PdfA1Checker {
      */
     protected void checkBlendMode(PdfName blendMode) {
         if (!allowedBlendModes.contains(blendMode)) {
-            throw new PdfAConformanceException(PdfAConformanceException.ONLY_STANDARD_BLEND_MODES_SHALL_BE_USED_FOR_THE_VALUE_OF_THE_BM_KEY_IN_AN_EXTENDED_GRAPHIC_STATE_DICTIONARY);
+            throw new PdfAConformanceException(PdfaExceptionMessageConstant.ONLY_STANDARD_BLEND_MODES_SHALL_BE_USED_FOR_THE_VALUE_OF_THE_BM_KEY_IN_AN_EXTENDED_GRAPHIC_STATE_DICTIONARY);
         }
     }
 

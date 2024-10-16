@@ -27,13 +27,12 @@ import com.itextpdf.layout.element.Cell;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class CellRendererUnitTest extends ExtendedITextTest {
 
     @Test
@@ -45,6 +44,6 @@ public class CellRendererUnitTest extends ExtendedITextTest {
             // Nothing is overridden
         };
 
-        Assert.assertEquals(CellRenderer.class, cellRenderer.getNextRenderer().getClass());
+        Assertions.assertEquals(CellRenderer.class, cellRenderer.getNextRenderer().getClass());
     }
 }

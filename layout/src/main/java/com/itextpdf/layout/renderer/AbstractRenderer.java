@@ -1069,11 +1069,11 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     /**
-     * Performs the drawing operation for the border of this renderer, if
-     * defined by any of the {@link Property#BORDER} values in either the layout
-     * element or this {@link IRenderer} itself.
+     * Performs the drawing operation for the border of this renderer, if defined by the {@link Property#BORDER_TOP},
+     * {@link Property#BORDER_RIGHT}, {@link Property#BORDER_BOTTOM} and {@link Property#BORDER_LEFT} values in either
+     * the layout element or this {@link IRenderer} itself.
      *
-     * @param drawContext the context (canvas, document, etc) of this drawing operation.
+     * @param drawContext the context (canvas, document, etc.) of this drawing operation
      */
     public void drawBorder(DrawContext drawContext) {
         Border[] borders = getBorders();
@@ -1393,8 +1393,8 @@ public abstract class AbstractRenderer implements IRenderer {
             Div outlines = new Div().setNeutralRole();
             if (transformProp != null)
                 outlines.setProperty(Property.TRANSFORM, transformProp);
-            outlines.setProperty(Property.BORDER, outlineProp);
-            float offset = outlines.<Border>getProperty(Property.BORDER).getWidth();
+            outlines.setBorder(outlineProp);
+            float offset = outlineProp.getWidth();
             if (abstractChild.getPropertyAsFloat(Property.OUTLINE_OFFSET) != null)
                 offset += (float) abstractChild.getPropertyAsFloat(Property.OUTLINE_OFFSET);
             DivRenderer div = new DivRenderer(outlines);
@@ -1402,8 +1402,12 @@ public abstract class AbstractRenderer implements IRenderer {
             Rectangle divOccupiedArea = abstractChild.applyMargins(abstractChild.occupiedArea.clone().getBBox(), false).moveLeft(offset).moveDown(offset);
             divOccupiedArea.setWidth(divOccupiedArea.getWidth() + 2 * offset).setHeight(divOccupiedArea.getHeight() + 2 * offset);
             div.occupiedArea = new LayoutArea(abstractChild.getOccupiedArea().getPageNumber(), divOccupiedArea);
-            float outlineWidth = div.<Border>getProperty(Property.BORDER).getWidth();
-            if (divOccupiedArea.getWidth() >= outlineWidth * 2 && divOccupiedArea.getHeight() >= outlineWidth * 2) {
+            float outlineWidthTop = div.<Border>getProperty(Property.BORDER_TOP).getWidth();
+            float outlineWidthBottom = div.<Border>getProperty(Property.BORDER_BOTTOM).getWidth();
+            float outlineWidthLeft = div.<Border>getProperty(Property.BORDER_LEFT).getWidth();
+            float outlineWidthRight = div.<Border>getProperty(Property.BORDER_RIGHT).getWidth();
+            if (divOccupiedArea.getWidth() >= (outlineWidthLeft + outlineWidthRight) &&
+                    divOccupiedArea.getHeight() >= (outlineWidthTop + outlineWidthBottom)) {
                 waitingDrawing.add(div);
             }
             if (abstractChild.isRelativePosition())
@@ -1997,7 +2001,8 @@ public abstract class AbstractRenderer implements IRenderer {
             PdfLinkAnnotation link = this.<PdfLinkAnnotation>getProperty(Property.LINK_ANNOTATION);
             if (link == null) {
                 link = (PdfLinkAnnotation) new PdfLinkAnnotation(new Rectangle(0, 0, 0, 0)).setFlags(PdfAnnotation.PRINT);
-                Border border = this.<Border>getProperty(Property.BORDER);
+                // For now, we set left border to an annotation, but appropriate borders for an element will be drawn.
+                Border border = this.<Border>getProperty(Property.BORDER_LEFT);
                 if (border != null) {
                     link.setBorder(new PdfArray(new float[]{0, 0, border.getWidth()}));
                 } else {
@@ -2556,28 +2561,11 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     static Border[] getBorders(IRenderer renderer) {
-        Border border = renderer.<Border>getProperty(Property.BORDER);
         Border topBorder = renderer.<Border>getProperty(Property.BORDER_TOP);
         Border rightBorder = renderer.<Border>getProperty(Property.BORDER_RIGHT);
         Border bottomBorder = renderer.<Border>getProperty(Property.BORDER_BOTTOM);
         Border leftBorder = renderer.<Border>getProperty(Property.BORDER_LEFT);
-
-        Border[] borders = {topBorder, rightBorder, bottomBorder, leftBorder};
-
-        if (!hasOwnOrModelProperty(renderer, Property.BORDER_TOP)) {
-            borders[0] = border;
-        }
-        if (!hasOwnOrModelProperty(renderer, Property.BORDER_RIGHT)) {
-            borders[1] = border;
-        }
-        if (!hasOwnOrModelProperty(renderer, Property.BORDER_BOTTOM)) {
-            borders[2] = border;
-        }
-        if (!hasOwnOrModelProperty(renderer, Property.BORDER_LEFT)) {
-            borders[3] = border;
-        }
-
-        return borders;
+        return new Border[]{topBorder, rightBorder, bottomBorder, leftBorder};
     }
 
     void applyAbsolutePositionIfNeeded(LayoutContext layoutContext) {
@@ -2828,28 +2816,12 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     private static BorderRadius[] getBorderRadii(IRenderer renderer) {
-        BorderRadius radius = renderer.<BorderRadius>getProperty(Property.BORDER_RADIUS);
         BorderRadius topLeftRadius = renderer.<BorderRadius>getProperty(Property.BORDER_TOP_LEFT_RADIUS);
         BorderRadius topRightRadius = renderer.<BorderRadius>getProperty(Property.BORDER_TOP_RIGHT_RADIUS);
         BorderRadius bottomRightRadius = renderer.<BorderRadius>getProperty(Property.BORDER_BOTTOM_RIGHT_RADIUS);
         BorderRadius bottomLeftRadius = renderer.<BorderRadius>getProperty(Property.BORDER_BOTTOM_LEFT_RADIUS);
 
-        BorderRadius[] borderRadii = {topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius};
-
-        if (!hasOwnOrModelProperty(renderer, Property.BORDER_TOP_LEFT_RADIUS)) {
-            borderRadii[0] = radius;
-        }
-        if (!hasOwnOrModelProperty(renderer, Property.BORDER_TOP_RIGHT_RADIUS)) {
-            borderRadii[1] = radius;
-        }
-        if (!hasOwnOrModelProperty(renderer, Property.BORDER_BOTTOM_RIGHT_RADIUS)) {
-            borderRadii[2] = radius;
-        }
-        if (!hasOwnOrModelProperty(renderer, Property.BORDER_BOTTOM_LEFT_RADIUS)) {
-            borderRadii[3] = radius;
-        }
-
-        return borderRadii;
+        return new BorderRadius[]{topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius};
     }
 
     private static UnitValue[] getPaddings(IRenderer renderer) {

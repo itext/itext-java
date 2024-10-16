@@ -23,19 +23,18 @@
 package com.itextpdf.kernel.geom;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class LineSegmentTest extends ExtendedITextTest {
     @Test
     public void containsPointNullTest() {
         LineSegment lineSegment = new LineSegment(new Vector(20.3246f, 769.4974f, 1.0f),
                 new Vector(151.22923f, 769.4974f, 1.0f));
 
-        Assert.assertFalse(lineSegment.containsPoint(null));
+        Assertions.assertFalse(lineSegment.containsPoint(null));
     }
 
     @Test
@@ -44,7 +43,7 @@ public class LineSegmentTest extends ExtendedITextTest {
         LineSegment lineSegment = new LineSegment(pointToCheck,
                 new Vector(151.22923f, 769.4974f, 1.0f));
 
-        Assert.assertTrue(lineSegment.containsPoint(pointToCheck));
+        Assertions.assertTrue(lineSegment.containsPoint(pointToCheck));
     }
 
     @Test
@@ -53,7 +52,7 @@ public class LineSegmentTest extends ExtendedITextTest {
         LineSegment lineSegment = new LineSegment(new Vector(120.3246f, 769.4974f, 1.0f),
                 new Vector(151.22923f, 769.4974f, 1.0f));
 
-        Assert.assertFalse(lineSegment.containsPoint(pointToCheck));
+        Assertions.assertFalse(lineSegment.containsPoint(pointToCheck));
     }
 
     @Test
@@ -62,7 +61,7 @@ public class LineSegmentTest extends ExtendedITextTest {
         LineSegment lineSegment = new LineSegment(new Vector(120.3246f, 769.4974f, 1.0f),
                 new Vector(151.22923f, 769.4974f, 1.0f));
 
-        Assert.assertFalse(lineSegment.containsPoint(pointToCheck));
+        Assertions.assertFalse(lineSegment.containsPoint(pointToCheck));
     }
 
     @Test
@@ -70,7 +69,7 @@ public class LineSegmentTest extends ExtendedITextTest {
         LineSegment lineSegment = new LineSegment(new Vector(100.3246f, 769.4974f, 1.0f),
                 new Vector(151.22923f, 769.4974f, 1.0f));
 
-        Assert.assertFalse(lineSegment.containsSegment(null));
+        Assertions.assertFalse(lineSegment.containsSegment(null));
     }
 
     @Test
@@ -81,7 +80,7 @@ public class LineSegmentTest extends ExtendedITextTest {
         LineSegment segmentToCheck = new LineSegment(new Vector(110.3246f, 769.4974f, 1.0f),
                 new Vector(140.22923f, 769.4974f, 1.0f));
 
-        Assert.assertTrue(lineSegment.containsSegment(segmentToCheck));
+        Assertions.assertTrue(lineSegment.containsSegment(segmentToCheck));
     }
 
     @Test
@@ -92,6 +91,6 @@ public class LineSegmentTest extends ExtendedITextTest {
         LineSegment segmentToCheck = new LineSegment(new Vector(110.3246f, 769.4974f, 1.0f),
                 new Vector(115.22923f, 769.4974f, 1.0f));
 
-        Assert.assertFalse(lineSegment.containsSegment(segmentToCheck));
+        Assertions.assertFalse(lineSegment.containsSegment(segmentToCheck));
     }
 }

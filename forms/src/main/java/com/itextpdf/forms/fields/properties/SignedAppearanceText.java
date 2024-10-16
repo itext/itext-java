@@ -79,7 +79,10 @@ public class SignedAppearanceText {
      * @return this same {@link SignedAppearanceText} instance.
      */
     public SignedAppearanceText setReasonLine(String reason) {
-        this.reason = reason.trim();
+        if (reason != null) {
+            reason = reason.trim();
+        }
+        this.reason = reason;
         return this;
     }
 
@@ -99,12 +102,15 @@ public class SignedAppearanceText {
      * Note, that this location won't be passed to the signature dictionary. If none is set, value set by
      * {@code PdfSigner#setLocation} will be used.
      *
-     * @param location new signing location.
+     * @param location new signing location
      *
-     * @return this same {@link SignedAppearanceText} instance.
+     * @return this same {@link SignedAppearanceText} instance
      */
     public SignedAppearanceText setLocationLine(String location) {
-        this.location = location.trim();
+        if (location != null) {
+            location = location.trim();
+        }
+        this.location = location;
         return this;
     }
 
@@ -114,19 +120,22 @@ public class SignedAppearanceText {
      * <p>
      * Note, that the signer name will be replaced by the one from the signing certificate during the actual signing.
      *
-     * @param signedBy name of the signer.
+     * @param signedBy name of the signer
      *
-     * @return this same {@link SignedAppearanceText} instance.
+     * @return this same {@link SignedAppearanceText} instance
      */
     public SignedAppearanceText setSignedBy(String signedBy) {
-        this.signedBy = signedBy.trim();
+        if (signedBy != null) {
+            signedBy = signedBy.trim();
+        }
+        this.signedBy = signedBy;
         return this;
     }
 
     /**
      * Gets the name of the signer from the certificate.
      *
-     * @return signedBy name of the signer.
+     * @return signedBy name of the signer
      */
     public String getSignedBy() {
         return signedBy;
@@ -147,8 +156,9 @@ public class SignedAppearanceText {
      * <p>
      * Note, that the signing date will be replaced by the one from the {@code PdfSigner} during the signing.
      *
-     * @param signDate new signature date.
-     * @return this same {@link SignedAppearanceText} instance.
+     * @param signDate new signature date
+     *
+     * @return this same {@link SignedAppearanceText} instance
      */
     public SignedAppearanceText setSignDate(java.util.Calendar signDate) {
         this.signDate = signDate;
@@ -159,7 +169,7 @@ public class SignedAppearanceText {
     /**
      * Generates the signature description text based on the provided parameters.
      *
-     * @return signature description.
+     * @return signature description
      */
     public String generateDescriptionText() {
         final StringBuilder buf = new StringBuilder();

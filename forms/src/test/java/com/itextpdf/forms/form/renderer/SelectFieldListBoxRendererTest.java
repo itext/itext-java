@@ -26,18 +26,17 @@ import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.AbstractSelectField;
 import com.itextpdf.forms.form.element.ListBoxField;
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class SelectFieldListBoxRendererTest extends ExtendedITextTest {
     
     @Test
@@ -45,7 +44,7 @@ public class SelectFieldListBoxRendererTest extends ExtendedITextTest {
         SelectFieldListBoxRenderer listBoxRenderer = new SelectFieldListBoxRenderer(new ListBoxField("", 0, false));
         IRenderer nextRenderer = listBoxRenderer.getNextRenderer();
         
-        Assert.assertTrue(nextRenderer instanceof SelectFieldListBoxRenderer);
+        Assertions.assertTrue(nextRenderer instanceof SelectFieldListBoxRenderer);
     }
     
     @Test
@@ -54,28 +53,29 @@ public class SelectFieldListBoxRendererTest extends ExtendedITextTest {
                 new CustomSelectFieldListBoxRenderer(new ListBoxField("", 0, false));
         boolean lastY = listBoxRenderer.callAllowLastYLineRecursiveExtraction();
         
-        Assert.assertFalse(lastY);
+        Assertions.assertFalse(lastY);
     }
 
     @Test
     public void pdfAConformanceLevelTest() {
         SelectFieldListBoxRenderer renderer = new SelectFieldListBoxRenderer(new ListBoxField("", 1, false));
-        Assert.assertNull(renderer.getGenericConformanceLevel(null));
+        Assertions.assertNull(renderer.getConformance(null));
     }
 
     @Test
     public void pdfAConformanceLevelWithDocumentTest() {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         SelectFieldListBoxRenderer renderer = new SelectFieldListBoxRenderer(new ListBoxField("", 1, false));
-        Assert.assertNull(renderer.getGenericConformanceLevel(pdfDocument));
+        Assertions.assertNotNull(renderer.getConformance(pdfDocument));
+        Assertions.assertFalse(renderer.getConformance(pdfDocument).isPdfAOrUa());
     }
 
     @Test
     public void pdfAConformanceLevelWithConformanceLevelTest() {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         SelectFieldListBoxRenderer renderer = new SelectFieldListBoxRenderer(new ListBoxField("", 1, false));
-        renderer.setProperty(FormProperty.FORM_CONFORMANCE_LEVEL, PdfAConformanceLevel.PDF_A_1B);
-        Assert.assertEquals(PdfAConformanceLevel.PDF_A_1B, renderer.getGenericConformanceLevel(pdfDocument));
+        renderer.setProperty(FormProperty.FORM_CONFORMANCE_LEVEL, PdfConformance.PDF_A_1B);
+        Assertions.assertEquals(PdfConformance.PDF_A_1B, renderer.getConformance(pdfDocument));
     }
     
     private static class CustomSelectFieldListBoxRenderer extends SelectFieldListBoxRenderer {

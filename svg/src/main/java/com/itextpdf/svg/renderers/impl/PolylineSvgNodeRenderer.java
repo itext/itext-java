@@ -38,7 +38,6 @@ import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.utils.SvgCoordinateUtils;
 import com.itextpdf.svg.utils.SvgCssUtils;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -153,8 +152,8 @@ public class PolylineSvgNodeRenderer extends AbstractSvgNodeRenderer implements 
             point = points.get(points.size() - 1);
         }
         if (point != null) {
-            String moveX = SvgCssUtils.convertDoubleToString(CssUtils.convertPtsToPx(point.x));
-            String moveY = SvgCssUtils.convertDoubleToString(CssUtils.convertPtsToPx(point.y));
+            String moveX = SvgCssUtils.convertDoubleToString(CssUtils.convertPtsToPx(point.getX()));
+            String moveY = SvgCssUtils.convertDoubleToString(CssUtils.convertPtsToPx(point.getY()));
             MarkerSvgNodeRenderer.drawMarker(context, moveX, moveY, markerVertexType, this);
         }
     }

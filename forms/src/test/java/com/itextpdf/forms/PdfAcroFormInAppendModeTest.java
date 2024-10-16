@@ -35,15 +35,14 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfAcroFormInAppendModeTest extends ExtendedITextTest {
     private static final String TEST_NAME = "PdfAcroFormInAppendModeTest/";
     private static final String DESTINATION_DIR = "./target/test/com/itextpdf/forms/" + TEST_NAME;
@@ -53,7 +52,7 @@ public class PdfAcroFormInAppendModeTest extends ExtendedITextTest {
     private static final String INPUT_FILE_WITH_INDIRECT_FIELDS_ARRAY =
             SOURCE_DIR + "inputFileWithIndirectFieldsArray.pdf";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(DESTINATION_DIR);
     }
@@ -195,7 +194,7 @@ public class PdfAcroFormInAppendModeTest extends ExtendedITextTest {
     }
 
     private static void compareWithCmp(String outputFile) throws IOException, InterruptedException {
-        Assert.assertNull(new CompareTool()
+        Assertions.assertNull(new CompareTool()
                 .compareByContent(DESTINATION_DIR + outputFile, SOURCE_DIR + "cmp_" + outputFile, DESTINATION_DIR,
                         "diff_"));
     }

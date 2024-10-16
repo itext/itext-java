@@ -27,7 +27,7 @@ import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.CompressionConstants;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -54,22 +54,21 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfa/";
     private static final String CMP_FOLDER = SOURCE_FOLDER + "cmp/PdfA4AnnotationCheckTest/";
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfa/PdfA4AnnotationCheckTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() throws FileNotFoundException {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
@@ -77,42 +76,42 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
     @Test
     public void pdfA4ForbiddenAnnotations1Test() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, createOutputIntent());
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4, createOutputIntent());
         PdfPage page = doc.addNewPage();
 
         PdfAnnotation annot = new PdfFileAttachmentAnnotation(new Rectangle(100, 100, 100, 100));
         page.addAnnotation(annot);
 
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.ANNOTATION_TYPE_0_IS_NOT_PERMITTED,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> doc.close());
+        Assertions.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.ANNOTATION_TYPE_0_IS_NOT_PERMITTED,
                 PdfName.FileAttachment.getValue()), e.getMessage());
     }
 
     @Test
     public void pdfA4ForbiddenAnnotations2Test() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, createOutputIntent());
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4, createOutputIntent());
         PdfPage page = doc.addNewPage();
 
         PdfAnnotation annot = new PdfSoundAnnotation(new Rectangle(100, 100, 100, 100), new PdfStream());
         page.addAnnotation(annot);
 
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.ANNOTATION_TYPE_0_IS_NOT_PERMITTED,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> doc.close());
+        Assertions.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.ANNOTATION_TYPE_0_IS_NOT_PERMITTED,
                 PdfName.Sound.getValue()), e.getMessage());
     }
 
     @Test
     public void pdfA4ForbiddenAnnotations3Test() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, createOutputIntent());
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4, createOutputIntent());
         PdfPage page = doc.addNewPage();
 
         PdfAnnotation annot = new Pdf3DAnnotation(new Rectangle(100, 100, 100, 100), new PdfArray());
         page.addAnnotation(annot);
 
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.ANNOTATION_TYPE_0_IS_NOT_PERMITTED,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> doc.close());
+        Assertions.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.ANNOTATION_TYPE_0_IS_NOT_PERMITTED,
                 PdfName._3D.getValue()), e.getMessage());
     }
 
@@ -122,7 +121,7 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
         String cmpPdf = CMP_FOLDER + "cmp_pdfA4AllowedAnnotations1Test.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        try (PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, createOutputIntent())) {
+        try (PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4, createOutputIntent())) {
             PdfPage page = doc.addNewPage();
 
             PdfAnnotation annot = new PdfLinkAnnotation(new Rectangle(100, 100, 100, 100));
@@ -136,28 +135,28 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
     @Test
     public void pdfA4eForbiddenAnnotations1Test() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4E, createOutputIntent());
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4E, createOutputIntent());
         PdfPage page = doc.addNewPage();
 
         PdfAnnotation annot = new PdfFileAttachmentAnnotation(new Rectangle(100, 100, 100, 100));
         page.addAnnotation(annot);
 
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.ANNOTATION_TYPE_0_IS_NOT_PERMITTED,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> doc.close());
+        Assertions.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.ANNOTATION_TYPE_0_IS_NOT_PERMITTED,
                 PdfName.FileAttachment.getValue()), e.getMessage());
     }
 
     @Test
     public void pdfA4eForbiddenAnnotations2Test() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4E, createOutputIntent());
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4E, createOutputIntent());
         PdfPage page = doc.addNewPage();
 
         PdfAnnotation annot = new PdfSoundAnnotation(new Rectangle(100, 100, 100, 100), new PdfStream());
         page.addAnnotation(annot);
 
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.ANNOTATION_TYPE_0_IS_NOT_PERMITTED,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> doc.close());
+        Assertions.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.ANNOTATION_TYPE_0_IS_NOT_PERMITTED,
                 PdfName.Sound.getValue()), e.getMessage());
     }
 
@@ -167,7 +166,7 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
         String cmpPdf = CMP_FOLDER + "cmp_pdfA4eAllowedAnnotations1Test.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        try (PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4E, createOutputIntent())) {
+        try (PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4E, createOutputIntent())) {
             PdfPage page = doc.addNewPage();
 
             PdfAnnotation annot = new PdfLinkAnnotation(new Rectangle(100, 100, 100, 100));
@@ -184,7 +183,7 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
         String cmpPdf = CMP_FOLDER + "cmp_pdfA4eAllowedAnnotations2Test.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        try (PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4E, createOutputIntent())) {
+        try (PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4E, createOutputIntent())) {
             PdfPage page = doc.addNewPage();
 
             PdfStream stream3D = new PdfStream(doc, FileUtil.getInputStreamForFile(CMP_FOLDER + "teapot.u3d"));
@@ -215,7 +214,7 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
     @Test
     public void pdfA4fForbiddenAnnotations1Test() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4F, createOutputIntent());
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4F, createOutputIntent());
         PdfPage page = doc.addNewPage();
 
         addSimpleEmbeddedFile(doc);
@@ -223,15 +222,15 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
         PdfAnnotation annot = new PdfSoundAnnotation(new Rectangle(100, 100, 100, 100), new PdfStream());
         page.addAnnotation(annot);
 
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.ANNOTATION_TYPE_0_IS_NOT_PERMITTED,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> doc.close());
+        Assertions.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.ANNOTATION_TYPE_0_IS_NOT_PERMITTED,
                 PdfName.Sound.getValue()), e.getMessage());
     }
 
     @Test
     public void pdfA4fForbiddenAnnotations2Test() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4F, createOutputIntent());
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4F, createOutputIntent());
         PdfPage page = doc.addNewPage();
 
         addSimpleEmbeddedFile(doc);
@@ -239,15 +238,15 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
         PdfAnnotation annot = new Pdf3DAnnotation(new Rectangle(100, 100, 100, 100), new PdfArray());
         page.addAnnotation(annot);
 
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.ANNOTATION_TYPE_0_IS_NOT_PERMITTED,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> doc.close());
+        Assertions.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.ANNOTATION_TYPE_0_IS_NOT_PERMITTED,
                 PdfName._3D.getValue()), e.getMessage());
     }
 
     @Test
     public void pdfA4fForbiddenAnnotations3Test() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4F, createOutputIntent());
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4F, createOutputIntent());
         PdfPage page = doc.addNewPage();
 
         addSimpleEmbeddedFile(doc);
@@ -255,15 +254,15 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
         PdfAnnotation annot = new PdfScreenAnnotation(new Rectangle(100, 100, 100, 100));
         page.addAnnotation(annot);
 
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.ANNOTATION_TYPE_0_IS_NOT_PERMITTED,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> doc.close());
+        Assertions.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.ANNOTATION_TYPE_0_IS_NOT_PERMITTED,
                 PdfName.Screen.getValue()), e.getMessage());
     }
 
     @Test
     public void pdfA4fForbiddenAnnotations4Test() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4F, createOutputIntent());
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4F, createOutputIntent());
         PdfPage page = doc.addNewPage();
 
         addSimpleEmbeddedFile(doc);
@@ -272,8 +271,8 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
         annot.getPdfObject().put(PdfName.Subtype, PdfName.RichMedia);
         page.addAnnotation(annot);
 
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.ANNOTATION_TYPE_0_IS_NOT_PERMITTED,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> doc.close());
+        Assertions.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.ANNOTATION_TYPE_0_IS_NOT_PERMITTED,
                 PdfName.RichMedia.getValue()), e.getMessage());
     }
 
@@ -283,7 +282,7 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
         String cmpPdf = CMP_FOLDER + "cmp_pdfA4fAllowedAnnotations1Test.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        try (PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4F, createOutputIntent())) {
+        try (PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4F, createOutputIntent())) {
             PdfPage page = doc.addNewPage();
 
             addSimpleEmbeddedFile(doc);
@@ -303,7 +302,7 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
         String cmpPdf = CMP_FOLDER + "cmp_pdfA4fAllowedAnnotations2Test.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        try (PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4F, createOutputIntent())) {
+        try (PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4F, createOutputIntent())) {
             PdfPage page = doc.addNewPage();
 
             addSimpleEmbeddedFile(doc);
@@ -322,7 +321,7 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
         String cmpPdf = CMP_FOLDER + "cmp_pdfA4AllowedAnnotWithoutApTest.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        try (PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, createOutputIntent())) {
+        try (PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4, createOutputIntent())) {
             PdfPage page = doc.addNewPage();
 
             PdfAnnotation annot = new PdfProjectionAnnotation(new Rectangle(100, 100, 100, 100));
@@ -336,7 +335,7 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
     @Test
     public void pdfA4ForbiddenAKeyWidgetAnnotationTest() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4F, createOutputIntent());
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4F, createOutputIntent());
         PdfPage page = doc.addNewPage();
 
         addSimpleEmbeddedFile(doc);
@@ -346,8 +345,8 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
         annot.setFlag(PdfAnnotation.PRINT);
         page.addAnnotation(annot);
 
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(PdfaExceptionMessageConstant.WIDGET_ANNOTATION_DICTIONARY_OR_FIELD_DICTIONARY_SHALL_NOT_INCLUDE_A_ENTRY,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> doc.close());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.WIDGET_ANNOTATION_DICTIONARY_OR_FIELD_DICTIONARY_SHALL_NOT_INCLUDE_A_ENTRY,
                 e.getMessage());
     }
 
@@ -357,7 +356,7 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
         String cmpPdf = CMP_FOLDER + "cmp_pdfA4AllowedAAKeyWidgetAnnotationTest.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        try (PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, createOutputIntent())) {
+        try (PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4, createOutputIntent())) {
             PdfPage page = doc.addNewPage();
 
             PdfAnnotation annot = new PdfWidgetAnnotation(new Rectangle(100, 100, 100, 100));
@@ -372,7 +371,7 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
     @Test
     public void pdfA4BtnAppearanceContainsNStreamWidgetAnnotationTest() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4F, createOutputIntent());
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4F, createOutputIntent());
         PdfPage page = doc.addNewPage();
 
         addSimpleEmbeddedFile(doc);
@@ -383,15 +382,15 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
         annot.getPdfObject().put(PdfName.FT, PdfName.Btn);
         page.addAnnotation(annot);
 
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(PdfaExceptionMessageConstant.APPEARANCE_DICTIONARY_OF_WIDGET_SUBTYPE_AND_BTN_FIELD_TYPE_SHALL_CONTAIN_ONLY_THE_N_KEY_WITH_DICTIONARY_VALUE,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> doc.close());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.APPEARANCE_DICTIONARY_OF_WIDGET_SUBTYPE_AND_BTN_FIELD_TYPE_SHALL_CONTAIN_ONLY_THE_N_KEY_WITH_DICTIONARY_VALUE,
                 e.getMessage());
     }
 
     @Test
     public void pdfA4AppearanceContainsNDictWidgetAnnotationTest() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4F, createOutputIntent());
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4F, createOutputIntent());
         PdfPage page = doc.addNewPage();
 
         addSimpleEmbeddedFile(doc);
@@ -402,15 +401,15 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
         annot.getPdfObject().put(PdfName.FT, PdfName.Tx);
         page.addAnnotation(annot);
 
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(PdfaExceptionMessageConstant.APPEARANCE_DICTIONARY_SHALL_CONTAIN_ONLY_THE_N_KEY_WITH_STREAM_VALUE,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> doc.close());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.APPEARANCE_DICTIONARY_SHALL_CONTAIN_ONLY_THE_N_KEY_WITH_STREAM_VALUE,
                 e.getMessage());
     }
 
     @Test
     public void pdfA4AppearanceContainsOtherKeyWidgetAnnotationTest() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4F, createOutputIntent());
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4F, createOutputIntent());
         PdfPage page = doc.addNewPage();
 
         addSimpleEmbeddedFile(doc);
@@ -421,8 +420,8 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
         annot.getPdfObject().put(PdfName.FT, PdfName.Btn);
         page.addAnnotation(annot);
 
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(PdfaExceptionMessageConstant.APPEARANCE_DICTIONARY_OF_WIDGET_SUBTYPE_AND_BTN_FIELD_TYPE_SHALL_CONTAIN_ONLY_THE_N_KEY_WITH_DICTIONARY_VALUE,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> doc.close());
+        Assertions.assertEquals(PdfaExceptionMessageConstant.APPEARANCE_DICTIONARY_OF_WIDGET_SUBTYPE_AND_BTN_FIELD_TYPE_SHALL_CONTAIN_ONLY_THE_N_KEY_WITH_DICTIONARY_VALUE,
                 e.getMessage());
     }
 
@@ -432,7 +431,7 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "pdfA4ForbiddenAAKeyAnnotationTest.pdf";
         String cmpPdf = CMP_FOLDER + "cmp_pdfA4ForbiddenAAKeyAnnotationTest.pdf";
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, createOutputIntent());
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4, createOutputIntent());
         PdfPage page = doc.addNewPage();
 
         PdfAnnotation annot = new PdfLinkAnnotation(new Rectangle(100, 100, 100, 100));
@@ -448,7 +447,7 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
     private void compareResult(String outPdf, String cmpPdf) throws IOException, InterruptedException {
         String result = new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_");
         if (result != null) {
-            Assert.fail(result);
+            Assertions.fail(result);
         }
     }
 

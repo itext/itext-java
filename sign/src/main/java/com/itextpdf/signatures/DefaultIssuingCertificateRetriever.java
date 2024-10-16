@@ -60,6 +60,11 @@ class DefaultIssuingCertificateRetriever implements IIssuingCertificateRetriever
         return new Certificate[0];
     }
 
+    @Override
+    public Certificate[][] getCrlIssuerCertificatesByName(CRL crl) {
+        return new Certificate[0][];
+    }
+
     /**
      * {@inheritDoc}
      *

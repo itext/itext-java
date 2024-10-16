@@ -28,13 +28,12 @@ import com.itextpdf.svg.renderers.impl.GroupSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.RectangleSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.UseSvgNodeRenderer;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class SvgNodeRendererInheritanceResolverUnitTest extends ExtendedITextTest{
 
     @Test
@@ -54,8 +53,8 @@ public class SvgNodeRendererInheritanceResolverUnitTest extends ExtendedITextTes
 
         SvgNodeRendererInheritanceResolver.applyInheritanceToSubTree(newRoot,subTree, null);
 
-        Assert.assertEquals(expectedFillAttribute,subTree.getAttribute(SvgConstants.Attributes.FILL));
-        Assert.assertEquals(expectedFillAttribute,rect.getAttribute(SvgConstants.Attributes.FILL));
-        Assert.assertEquals(expectedFillAttribute,circle.getAttribute(SvgConstants.Attributes.FILL));
+        Assertions.assertEquals(expectedFillAttribute,subTree.getAttribute(SvgConstants.Attributes.FILL));
+        Assertions.assertEquals(expectedFillAttribute,rect.getAttribute(SvgConstants.Attributes.FILL));
+        Assertions.assertEquals(expectedFillAttribute,circle.getAttribute(SvgConstants.Attributes.FILL));
     }
 }

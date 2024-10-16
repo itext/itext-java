@@ -26,24 +26,42 @@ import com.itextpdf.commons.actions.data.ProductData;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
  * Data container for debugging information. This class keeps a record of every registered product that
- * was involved in the creation of a certain PDF file. This information can then be used to log to the
- * logger or to the file.
+ * was involved in the creation of a certain PDF file.
  */
 public class FingerPrint {
 
     private Set<ProductData> productDataSet;
+
+    private boolean fingerPrintEnabled = true;
 
     /**
      * Default constructor. Initializes the productDataSet.
      */
     public FingerPrint() {
         this.productDataSet = new LinkedHashSet<>();
+    }
+
+    /**
+     * This method is used to disable iText fingerprint.
+     * IText fingerPrint can only be disabled if all products are in non AGPL mode.
+     *
+     */
+    public void disableFingerPrint() {
+        fingerPrintEnabled = false;
+    }
+
+    /**
+     * This method is used to check iText fingerprint state.
+     *
+     * @return true if fingerprint will be added to the document
+     */
+    public boolean isFingerPrintEnabled() {
+        return fingerPrintEnabled;
     }
 
     /**

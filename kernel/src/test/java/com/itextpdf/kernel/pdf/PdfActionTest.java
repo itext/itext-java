@@ -32,31 +32,30 @@ import com.itextpdf.kernel.pdf.annot.PdfLineAnnotation;
 import com.itextpdf.kernel.pdf.filespec.PdfStringFS;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfActionTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfActionTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfActionTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
@@ -89,7 +88,7 @@ public class PdfActionTest extends ExtendedITextTest {
         String uri = "http://itextpdf.com/";
 
         document.getCatalog().setOpenAction(PdfAction.createURI(new URI(uri)));
-        Assert.assertEquals(new PdfString(uri),
+        Assertions.assertEquals(new PdfString(uri),
                 document.getCatalog().getPdfObject().getAsDictionary(PdfName.OpenAction).get(PdfName.URI));
         document.close();
 
@@ -111,7 +110,7 @@ public class PdfActionTest extends ExtendedITextTest {
         document.getPage(2).setAdditionalAction(PdfName.O, PdfAction.createSound(sound1));
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
                 sourceFolder + "cmp_" + fileName, destinationFolder, "diff_"));
     }
 
@@ -131,7 +130,7 @@ public class PdfActionTest extends ExtendedITextTest {
                 .setAdditionalAction(PdfName.O, PdfAction.createSound(sound1,1f, false, true, false));
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
                 sourceFolder + "cmp_" + fileName, destinationFolder, "diff_"));
     }
 
@@ -149,9 +148,9 @@ public class PdfActionTest extends ExtendedITextTest {
         try {
             document.getPage(2)
                     .setAdditionalAction(PdfName.O, PdfAction.createSound(sound1, 1.1f, false, false, false));
-            Assert.fail("Exception not thrown");
+            Assertions.fail("Exception not thrown");
         } catch (Exception e) {
-            Assert.assertEquals("volume", e.getMessage());
+            Assertions.assertEquals("volume", e.getMessage());
         }
         document.close();
     }
@@ -170,9 +169,9 @@ public class PdfActionTest extends ExtendedITextTest {
         try {
             document.getPage(2)
                     .setAdditionalAction(PdfName.O, PdfAction.createSound(sound1, -1.1f, false, false, false));
-            Assert.fail("Exception not thrown");
+            Assertions.fail("Exception not thrown");
         } catch (Exception e) {
-            Assert.assertEquals("volume", e.getMessage());
+            Assertions.assertEquals("volume", e.getMessage());
         }
         document.close();
     }
@@ -201,7 +200,7 @@ public class PdfActionTest extends ExtendedITextTest {
         document.getPage(1).setAdditionalAction(PdfName.O, PdfAction.createSetOcgState(ocgStates));
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
                 sourceFolder + "cmp_" + fileName, destinationFolder, "diff_"));
     }
 
@@ -213,7 +212,7 @@ public class PdfActionTest extends ExtendedITextTest {
         document.getPage(1).setAdditionalAction(PdfName.O, PdfAction.createLaunch(new PdfStringFS("launch.sh")));
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
                 sourceFolder + "cmp_" + fileName, destinationFolder, "diff_"));
     }
 
@@ -226,7 +225,7 @@ public class PdfActionTest extends ExtendedITextTest {
                 PdfAction.createLaunch(new PdfStringFS("launch.sh"), true));
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
                 sourceFolder + "cmp_" + fileName, destinationFolder, "diff_"));
     }
 
@@ -240,7 +239,7 @@ public class PdfActionTest extends ExtendedITextTest {
         document.getPage(1).setAdditionalAction(PdfName.O, PdfAction.createHide(annotation, true));
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
                 sourceFolder + "cmp_" + fileName, destinationFolder, "diff_"));
     }
 
@@ -256,7 +255,7 @@ public class PdfActionTest extends ExtendedITextTest {
         document.getPage(1).setAdditionalAction(PdfName.O, PdfAction.createHide(annotations, true));
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
                 sourceFolder + "cmp_" + fileName, destinationFolder, "diff_"));
     }
 
@@ -268,7 +267,7 @@ public class PdfActionTest extends ExtendedITextTest {
         document.getPage(1).setAdditionalAction(PdfName.O, PdfAction.createHide("name", true));
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
                 sourceFolder + "cmp_" + fileName, destinationFolder, "diff_"));
     }
 
@@ -280,7 +279,7 @@ public class PdfActionTest extends ExtendedITextTest {
         document.getPage(1).setAdditionalAction(PdfName.O, PdfAction.createHide(new String[] {"name1", "name2"}, true));
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
                 sourceFolder + "cmp_" + fileName, destinationFolder, "diff_"));
     }
 
@@ -292,7 +291,7 @@ public class PdfActionTest extends ExtendedITextTest {
         document.getPage(1).setAdditionalAction(PdfName.O, PdfAction.createNamed(PdfName.LastPage));
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
                 sourceFolder + "cmp_" + fileName, destinationFolder, "diff_"));
     }
 
@@ -305,7 +304,7 @@ public class PdfActionTest extends ExtendedITextTest {
         document.getPage(1).setAdditionalAction(PdfName.O, PdfAction.createJavaScript(javaScriptRotatePages));
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
                 sourceFolder + "cmp_" + fileName, destinationFolder, "diff_"));
     }
 
@@ -326,7 +325,7 @@ public class PdfActionTest extends ExtendedITextTest {
         document.getPage(2).setAdditionalAction(PdfName.O, action);
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
                 sourceFolder + "cmp_" + fileName, destinationFolder, "diff_"));
     }
 
@@ -348,7 +347,7 @@ public class PdfActionTest extends ExtendedITextTest {
         document.getPage(2).setAdditionalAction(PdfName.O, action);
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
                 sourceFolder + "cmp_" + fileName, destinationFolder, "diff_"));
     }
 

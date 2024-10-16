@@ -43,7 +43,6 @@ import com.itextpdf.layout.font.RangeBuilder;
 import com.itextpdf.layout.font.selectorstrategy.BestMatchFontSelectorStrategy.BestMatchFontSelectorStrategyFactory;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -55,19 +54,19 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class FontSelectorTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/FontSelectorTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/FontSelectorTest/";
     public static final String fontsFolder = "./src/test/resources/com/itextpdf/layout/fonts/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
@@ -79,9 +78,9 @@ public class FontSelectorTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_" + fileName + ".pdf";
 
         FontProvider sel = new FontProvider();
-        Assert.assertTrue(sel.addFont(fontsFolder + "NotoSans-Regular.ttf"));
-        Assert.assertTrue(sel.addFont(fontsFolder + "FreeSans.ttf"));
-        Assert.assertTrue(sel.getFontSet().addFont(fontsFolder + "Puritan2.otf", PdfEncodings.IDENTITY_H, "Puritan42"));
+        Assertions.assertTrue(sel.addFont(fontsFolder + "NotoSans-Regular.ttf"));
+        Assertions.assertTrue(sel.addFont(fontsFolder + "FreeSans.ttf"));
+        Assertions.assertTrue(sel.getFontSet().addFont(fontsFolder + "Puritan2.otf", PdfEncodings.IDENTITY_H, "Puritan42"));
 
 
         String s = "Hello world! Здравствуй мир! Hello world! Здравствуй мир!";
@@ -95,7 +94,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         doc.add(paragraph);
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
     }
 
     @Test
@@ -105,9 +104,9 @@ public class FontSelectorTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_" + fileName + ".pdf";
 
         FontProvider sel = new FontProvider();
-        Assert.assertTrue(sel.addFont(fontsFolder + "Puritan2.otf"));
-        Assert.assertTrue(sel.addFont(fontsFolder + "NotoSans-Regular.ttf"));
-        Assert.assertTrue(sel.addFont(fontsFolder + "FreeSans.ttf"));
+        Assertions.assertTrue(sel.addFont(fontsFolder + "Puritan2.otf"));
+        Assertions.assertTrue(sel.addFont(fontsFolder + "NotoSans-Regular.ttf"));
+        Assertions.assertTrue(sel.addFont(fontsFolder + "FreeSans.ttf"));
 
 
         String s = "Hello world! Здравствуй мир! Hello world! Здравствуй мир!";
@@ -121,7 +120,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         doc.add(paragraph);
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
     }
 
     @Test
@@ -132,9 +131,9 @@ public class FontSelectorTest extends ExtendedITextTest {
 
         FontProvider sel = new FontProvider();
 
-        Assert.assertTrue(sel.addFont(fontsFolder + "FreeSans.ttf"));
-        Assert.assertTrue(sel.addFont(fontsFolder + "NotoSans-Regular.ttf"));
-        Assert.assertTrue(sel.addFont(fontsFolder + "Puritan2.otf"));
+        Assertions.assertTrue(sel.addFont(fontsFolder + "FreeSans.ttf"));
+        Assertions.assertTrue(sel.addFont(fontsFolder + "NotoSans-Regular.ttf"));
+        Assertions.assertTrue(sel.addFont(fontsFolder + "Puritan2.otf"));
 
 
         String s = "Hello world! Здравствуй мир! Hello world! Здравствуй мир!";
@@ -148,7 +147,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         doc.add(paragraph);
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
     }
 
     @Test
@@ -159,9 +158,9 @@ public class FontSelectorTest extends ExtendedITextTest {
 
         FontProvider sel = new FontProvider();
 
-        Assert.assertTrue(sel.addFont(fontsFolder + "FreeSans.ttf"));
-        Assert.assertTrue(sel.addFont(fontsFolder + "NotoSans-Regular.ttf"));
-        Assert.assertTrue(sel.addFont(fontsFolder + "Puritan2.otf"));
+        Assertions.assertTrue(sel.addFont(fontsFolder + "FreeSans.ttf"));
+        Assertions.assertTrue(sel.addFont(fontsFolder + "NotoSans-Regular.ttf"));
+        Assertions.assertTrue(sel.addFont(fontsFolder + "Puritan2.otf"));
 
 
         String s = "Hello world! Здравствуй мир! Hello world! Здравствуй мир!";
@@ -172,13 +171,13 @@ public class FontSelectorTest extends ExtendedITextTest {
         doc.setProperty(Property.FONT, "'Puritan', \"FreeSans\"");
         Text text = new Text(s).setBackgroundColor(ColorConstants.LIGHT_GRAY);
         Paragraph paragraph = new Paragraph(text);
-        Exception exception = Assert.assertThrows(IllegalStateException.class, () -> {
+        Exception exception = Assertions.assertThrows(IllegalStateException.class, () -> {
             doc.add(paragraph);
             doc.close();
-            Assert.assertNull(
+            Assertions.assertNull(
                     new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
         });
-        Assert.assertEquals("Invalid FONT property value type.", exception.getMessage());
+        Assertions.assertEquals("Invalid FONT property value type.", exception.getMessage());
     }
 
     @Test
@@ -188,7 +187,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_" + fileName + ".pdf";
 
         FontProvider sel = new FontProvider();
-        Assert.assertTrue(sel.addFont(fontsFolder + "Puritan2.otf"));
+        Assertions.assertTrue(sel.addFont(fontsFolder + "Puritan2.otf"));
 
         String s = "Hello мир!";
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)));
@@ -201,7 +200,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         doc.add(paragraph);
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
     }
 
     @Test
@@ -231,7 +230,7 @@ public class FontSelectorTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
     }
 
     @Test
@@ -258,7 +257,7 @@ public class FontSelectorTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
     }
 
     @Test
@@ -286,7 +285,7 @@ public class FontSelectorTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
     }
 
     @Test
@@ -312,71 +311,71 @@ public class FontSelectorTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
     }
 
     @Test
     public void searchNames() {
         FontProvider sel = new FontProvider();
-        Assert.assertTrue(sel.addFont(fontsFolder + "NotoSans-Regular.ttf"));
-        Assert.assertTrue(sel.addFont(fontsFolder + "FreeSans.ttf"));
-        Assert.assertTrue(sel.getFontSet().addFont(fontsFolder + "Puritan2.otf", PdfEncodings.IDENTITY_H, "Puritan42"));
+        Assertions.assertTrue(sel.addFont(fontsFolder + "NotoSans-Regular.ttf"));
+        Assertions.assertTrue(sel.addFont(fontsFolder + "FreeSans.ttf"));
+        Assertions.assertTrue(sel.getFontSet().addFont(fontsFolder + "Puritan2.otf", PdfEncodings.IDENTITY_H, "Puritan42"));
         Collection<FontInfo> fonts = sel.getFontSet().get("puritan2");
-        Assert.assertTrue("Puritan not found!", fonts.size() != 0);
+        Assertions.assertTrue(fonts.size() != 0, "Puritan not found!");
 
         FontInfo puritan = getFirst(fonts);
 
-        Assert.assertFalse("Replace existed font", sel.getFontSet().addFont(puritan, "Puritan42"));
-        Assert.assertFalse("Replace existed font", sel.getFontSet().addFont(puritan));
+        Assertions.assertFalse(sel.getFontSet().addFont(puritan, "Puritan42"), "Replace existed font");
+        Assertions.assertFalse(sel.getFontSet().addFont(puritan), "Replace existed font");
 
-        Assert.assertTrue("NotoSans not found!", sel.getFontSet().contains("NotoSans"));
-        Assert.assertTrue("NotoSans not found!", sel.getFontSet().contains("Noto Sans"));
-        Assert.assertTrue("FreeSans not found!", sel.getFontSet().contains("FreeSans"));
-        Assert.assertTrue("FreeSans not found!", sel.getFontSet().contains("Free Sans"));
-        Assert.assertTrue("Puritan 2.0 not found!", sel.getFontSet().contains("puritan 2.0 regular"));
-        Assert.assertTrue("Puritan 2.0 not found!", sel.getFontSet().contains("puritan2"));
-        Assert.assertFalse("Puritan42 found!", sel.getFontSet().contains("puritan42"));
+        Assertions.assertTrue(sel.getFontSet().contains("NotoSans"), "NotoSans not found!");
+        Assertions.assertTrue(sel.getFontSet().contains("Noto Sans"), "NotoSans not found!");
+        Assertions.assertTrue(sel.getFontSet().contains("FreeSans"), "FreeSans not found!");
+        Assertions.assertTrue(sel.getFontSet().contains("Free Sans"), "FreeSans not found!");
+        Assertions.assertTrue(sel.getFontSet().contains("puritan 2.0 regular"), "Puritan 2.0 not found!");
+        Assertions.assertTrue(sel.getFontSet().contains("puritan2"), "Puritan 2.0 not found!");
+        Assertions.assertFalse(sel.getFontSet().contains("puritan42"), "Puritan42 found!");
 
-        Assert.assertEquals("Puritan 2.0 not found!", puritan, getFirst(sel.getFontSet().get("puritan 2.0 regular")));
-        Assert.assertEquals("Puritan 2.0 not found!", puritan, getFirst(sel.getFontSet().get("puritan2")));
-        Assert.assertTrue("Puritan42 found!", getFirst(sel.getFontSet().get("puritan42")) == null);
+        Assertions.assertEquals(puritan, getFirst(sel.getFontSet().get("puritan 2.0 regular")), "Puritan 2.0 not found!");
+        Assertions.assertEquals(puritan, getFirst(sel.getFontSet().get("puritan2")), "Puritan 2.0 not found!");
+        Assertions.assertTrue(getFirst(sel.getFontSet().get("puritan42")) == null, "Puritan42 found!");
     }
 
     @Test
     public void searchNames2() {
         FontProvider sel = new FontProvider();
-        Assert.assertTrue(sel.getFontSet().addFont(fontsFolder + "NotoSans-Regular.ttf"));
-        Assert.assertTrue(sel.getFontSet().addFont(fontsFolder + "FreeSans.ttf"));
-        Assert.assertTrue(sel.getFontSet().addFont(fontsFolder + "Puritan2.otf", PdfEncodings.IDENTITY_H, "Puritan42"));
+        Assertions.assertTrue(sel.getFontSet().addFont(fontsFolder + "NotoSans-Regular.ttf"));
+        Assertions.assertTrue(sel.getFontSet().addFont(fontsFolder + "FreeSans.ttf"));
+        Assertions.assertTrue(sel.getFontSet().addFont(fontsFolder + "Puritan2.otf", PdfEncodings.IDENTITY_H, "Puritan42"));
 
 
         Collection<FontInfo> fonts = sel.getFontSet().get("puritan2");
-        Assert.assertTrue("Puritan not found!", fonts.size() != 0);
+        Assertions.assertTrue(fonts.size() != 0, "Puritan not found!");
         FontInfo puritan = getFirst(fonts);
 
         fonts = sel.getFontSet().get("NotoSans");
-        Assert.assertTrue("NotoSans not found!", fonts.size() != 0);
+        Assertions.assertTrue(fonts.size() != 0, "NotoSans not found!");
         FontInfo notoSans = getFirst(fonts);
 
         fonts = sel.getFontSet().get("FreeSans");
-        Assert.assertTrue("FreeSans not found!", fonts.size() != 0);
+        Assertions.assertTrue(fonts.size() != 0, "FreeSans not found!");
         FontInfo freeSans = getFirst(fonts);
 
-        Assert.assertTrue("NotoSans not found!", sel.getFontSet().contains("NotoSans"));
-        Assert.assertTrue("NotoSans not found!", sel.getFontSet().contains("Noto Sans"));
-        Assert.assertTrue("FreeSans not found!", sel.getFontSet().contains("FreeSans"));
-        Assert.assertTrue("FreeSans not found!", sel.getFontSet().contains("Free Sans"));
-        Assert.assertTrue("Puritan 2.0 not found!", sel.getFontSet().contains("puritan 2.0 regular"));
-        Assert.assertTrue("Puritan 2.0 not found!", sel.getFontSet().contains("puritan2"));
-        Assert.assertFalse("Puritan42 found!", sel.getFontSet().contains("puritan42"));
+        Assertions.assertTrue(sel.getFontSet().contains("NotoSans"), "NotoSans not found!");
+        Assertions.assertTrue(sel.getFontSet().contains("Noto Sans"), "NotoSans not found!");
+        Assertions.assertTrue(sel.getFontSet().contains("FreeSans"), "FreeSans not found!");
+        Assertions.assertTrue(sel.getFontSet().contains("Free Sans"), "FreeSans not found!");
+        Assertions.assertTrue(sel.getFontSet().contains("puritan 2.0 regular"), "Puritan 2.0 not found!");
+        Assertions.assertTrue(sel.getFontSet().contains("puritan2"), "Puritan 2.0 not found!");
+        Assertions.assertFalse(sel.getFontSet().contains("puritan42"), "Puritan42 found!");
 
-        Assert.assertEquals("NotoSans not found!", notoSans, getFirst(sel.getFontSet().get("NotoSans")));
-        Assert.assertEquals("NotoSans not found!", notoSans, getFirst(sel.getFontSet().get("Noto Sans")));
-        Assert.assertEquals("FreeSans not found!", freeSans, getFirst(sel.getFontSet().get("FreeSans")));
-        Assert.assertEquals("FreeSans not found!", freeSans, getFirst(sel.getFontSet().get("Free Sans")));
-        Assert.assertEquals("Puritan 2.0 not found!", puritan, getFirst(sel.getFontSet().get("puritan 2.0 regular")));
-        Assert.assertEquals("Puritan 2.0 not found!", puritan, getFirst(sel.getFontSet().get("puritan2")));
-        Assert.assertTrue("Puritan42 found!", getFirst(sel.getFontSet().get("puritan42")) == null);
+        Assertions.assertEquals(notoSans, getFirst(sel.getFontSet().get("NotoSans")), "NotoSans not found!");
+        Assertions.assertEquals(notoSans, getFirst(sel.getFontSet().get("Noto Sans")), "NotoSans not found!");
+        Assertions.assertEquals(freeSans, getFirst(sel.getFontSet().get("FreeSans")), "FreeSans not found!");
+        Assertions.assertEquals(freeSans, getFirst(sel.getFontSet().get("Free Sans")), "FreeSans not found!");
+        Assertions.assertEquals(puritan, getFirst(sel.getFontSet().get("puritan 2.0 regular")), "Puritan 2.0 not found!");
+        Assertions.assertEquals(puritan, getFirst(sel.getFontSet().get("puritan2")), "Puritan 2.0 not found!");
+        Assertions.assertTrue(getFirst(sel.getFontSet().get("puritan42")) == null, "Puritan42 found!");
     }
 
     @Test
@@ -406,12 +405,12 @@ public class FontSelectorTest extends ExtendedITextTest {
             actualAliases.add(fontInfo.getAlias());
         }
         Set<String> expectedAliases = aliasToFontName.keySet();
-        Assert.assertTrue(actualAliases.containsAll(expectedAliases) && expectedAliases.containsAll(actualAliases));
+        Assertions.assertTrue(actualAliases.containsAll(expectedAliases) && expectedAliases.containsAll(actualAliases));
 
         for (String fontAlias : expectedAliases) {
             PdfFont pdfFont = provider.getPdfFont(provider.getFontSelector(Collections.singletonList(fontAlias), new FontCharacteristics()).bestMatch());
             String fontName = pdfFont.getFontProgram().getFontNames().getFontName();
-            Assert.assertTrue(aliasToFontName.get(fontAlias).contains(fontName));
+            Assertions.assertTrue(aliasToFontName.get(fontAlias).contains(fontName));
         }
     }
 
@@ -439,7 +438,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         doc.close();
 
         // Text shall be written in Puritan 2.0
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
 
@@ -450,9 +449,9 @@ public class FontSelectorTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_" + fileName + ".pdf";
 
         FontProvider sel = new FontProvider();
-        Assert.assertTrue(sel.getFontSet().addFont(fontsFolder + "NotoSans-Regular.ttf", null, "FontAlias", new RangeBuilder(0, 255).create()));
-        Assert.assertTrue(sel.getFontSet().addFont(fontsFolder + "FreeSans.ttf", null, "FontAlias", new RangeBuilder(1024, 1279).create()));
-        Assert.assertTrue(sel.getFontSet().size() == 2);
+        Assertions.assertTrue(sel.getFontSet().addFont(fontsFolder + "NotoSans-Regular.ttf", null, "FontAlias", new RangeBuilder(0, 255).create()));
+        Assertions.assertTrue(sel.getFontSet().addFont(fontsFolder + "FreeSans.ttf", null, "FontAlias", new RangeBuilder(1024, 1279).create()));
+        Assertions.assertTrue(sel.getFontSet().size() == 2);
 
         String s = "Hello world! Здравствуй мир! Hello world! Здравствуй мир!";
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)));
@@ -465,7 +464,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         doc.add(paragraph);
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
     }
 
     @Test
@@ -475,8 +474,8 @@ public class FontSelectorTest extends ExtendedITextTest {
 
         FontProvider sel = new FontProvider();
         sel.setFontSelectorStrategyFactory(new BestMatchFontSelectorStrategyFactory());
-        Assert.assertTrue(sel.getFontSet().addFont(fontsFolder + "NotoSansCJKjp-Bold.otf", null, "FontAlias", new RangeBuilder(117, 117).create())); // just 'u' letter
-        Assert.assertTrue(sel.getFontSet().addFont(fontsFolder + "FreeSans.ttf", null, "FontAlias", new RangeBuilder(106, 113).create()));// 'j', 'm' and 'p' are in that interval
+        Assertions.assertTrue(sel.getFontSet().addFont(fontsFolder + "NotoSansCJKjp-Bold.otf", null, "FontAlias", new RangeBuilder(117, 117).create())); // just 'u' letter
+        Assertions.assertTrue(sel.getFontSet().addFont(fontsFolder + "FreeSans.ttf", null, "FontAlias", new RangeBuilder(106, 113).create()));// 'j', 'm' and 'p' are in that interval
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -488,7 +487,7 @@ public class FontSelectorTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -499,11 +498,11 @@ public class FontSelectorTest extends ExtendedITextTest {
         FontProvider sel = new FontProvider();
         sel.setFontSelectorStrategyFactory(new BestMatchFontSelectorStrategyFactory());
         // 'a', 'b' and 'c' are in that interval
-        Assert.assertTrue(sel.getFontSet().addFont(fontsFolder + "NotoSansCJKjp-Bold.otf", null, "FontAlias", new RangeBuilder(97, 99).create()));
+        Assertions.assertTrue(sel.getFontSet().addFont(fontsFolder + "NotoSansCJKjp-Bold.otf", null, "FontAlias", new RangeBuilder(97, 99).create()));
         // 'd', 'e' and 'f' are in that interval
-        Assert.assertTrue(sel.getFontSet().addFont(fontsFolder + "FreeSans.ttf", null, "FontAlias", new RangeBuilder(100, 102).create()));
+        Assertions.assertTrue(sel.getFontSet().addFont(fontsFolder + "FreeSans.ttf", null, "FontAlias", new RangeBuilder(100, 102).create()));
         // 'x', 'y' and 'z' are in that interval
-        Assert.assertTrue(sel.getFontSet().addFont(fontsFolder + "Puritan2.otf", null, "FontAlias", new RangeBuilder(120, 122).create()));
+        Assertions.assertTrue(sel.getFontSet().addFont(fontsFolder + "Puritan2.otf", null, "FontAlias", new RangeBuilder(120, 122).create()));
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -515,7 +514,7 @@ public class FontSelectorTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -526,9 +525,9 @@ public class FontSelectorTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_" + fileName + ".pdf";
 
         FontProvider sel = new FontProvider();
-        Assert.assertTrue(sel.getFontSet().addFont(fontsFolder + "NotoSans-Regular.ttf", null, "FontAlias", new RangeBuilder(0, 255).create()));
-        Assert.assertTrue(sel.getFontSet().addFont(fontsFolder + "NotoSans-Regular.ttf", null, "FontAlias", new RangeBuilder(1024, 1279).create()));
-        Assert.assertTrue(sel.getFontSet().size() == 2);
+        Assertions.assertTrue(sel.getFontSet().addFont(fontsFolder + "NotoSans-Regular.ttf", null, "FontAlias", new RangeBuilder(0, 255).create()));
+        Assertions.assertTrue(sel.getFontSet().addFont(fontsFolder + "NotoSans-Regular.ttf", null, "FontAlias", new RangeBuilder(1024, 1279).create()));
+        Assertions.assertTrue(sel.getFontSet().size() == 2);
 
         String s = "Hello world! Здравствуй мир! Hello world! Здравствуй мир!";
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)));
@@ -541,7 +540,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         doc.add(paragraph);
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
     }
 
     @Test
@@ -552,9 +551,9 @@ public class FontSelectorTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_" + fileName + ".pdf";
 
         FontProvider sel = new FontProvider();
-        Assert.assertTrue(sel.getFontSet().addFont(fontsFolder + "NotoSans-Regular.ttf", null, "FontAlias"));
-        Assert.assertFalse(sel.getFontSet().addFont(fontsFolder + "NotoSans-Regular.ttf", null, "FontAlias"));
-        Assert.assertTrue(sel.getFontSet().size() == 1);
+        Assertions.assertTrue(sel.getFontSet().addFont(fontsFolder + "NotoSans-Regular.ttf", null, "FontAlias"));
+        Assertions.assertFalse(sel.getFontSet().addFont(fontsFolder + "NotoSans-Regular.ttf", null, "FontAlias"));
+        Assertions.assertTrue(sel.getFontSet().size() == 1);
 
         String s = "Hello world! Здравствуй мир! Hello world! Здравствуй мир!";
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)));
@@ -567,7 +566,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         doc.add(paragraph);
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
     }
 
     @Test
@@ -1013,7 +1012,7 @@ public class FontSelectorTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
     @Test
@@ -1044,7 +1043,7 @@ public class FontSelectorTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
     @Test
@@ -1061,7 +1060,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         FontCharacteristics fc = new FontCharacteristics();
         fc.setFontWeight((short) 400);
 
-        Assert.assertEquals("OpenSans-Bold", new FontSelector(set.getFonts(), fontFamilies, fc).bestMatch().getDescriptor().getFontName());
+        Assertions.assertEquals("OpenSans-Bold", new FontSelector(set.getFonts(), fontFamilies, fc).bestMatch().getDescriptor().getFontName());
     }
 
     @Test
@@ -1078,13 +1077,13 @@ public class FontSelectorTest extends ExtendedITextTest {
         FontCharacteristics fc = new FontCharacteristics();
         fc.setFontWeight((short) 100);
 
-        Assert.assertEquals("OpenSans-Light",
+        Assertions.assertEquals("OpenSans-Light",
                 new FontSelector(set.getFonts(), fontFamilies, fc).bestMatch().getDescriptor().getFontName());
 
         fc = new FontCharacteristics();
         fc.setFontWeight((short) 600);
 
-        Assert.assertEquals("OpenSans-SemiBold",
+        Assertions.assertEquals("OpenSans-SemiBold",
                 new FontSelector(set.getFonts(), fontFamilies, fc).bestMatch().getDescriptor().getFontName());
     }
 
@@ -1103,7 +1102,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         FontCharacteristics fc = new FontCharacteristics();
         fc.setFontWeight((short) 700);
 
-        Assert.assertEquals("OpenSans-Light",
+        Assertions.assertEquals("OpenSans-Light",
                 new FontSelector(set.getFonts(), fontFamilies, fc).bestMatch().getDescriptor().getFontName());
     }
 
@@ -1121,7 +1120,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         FontCharacteristics fc = new FontCharacteristics();
 
         //Expected font is Courier
-        Assert.assertEquals("Helvetica",
+        Assertions.assertEquals("Helvetica",
                 new FontSelector(set.getFonts(), fontFamilies, fc).bestMatch().getDescriptor().getFontName());
     }
 
@@ -1139,7 +1138,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         FontCharacteristics fc = new FontCharacteristics();
         fc.setFontWeight((short) 300); // Between hairline (200) and regular (400)
 
-        Assert.assertEquals("Lato-Hairline",
+        Assertions.assertEquals("Lato-Hairline",
                 new FontSelector(set.getFonts(), fontFamilies, fc).bestMatch().getDescriptor().getFontName());
     }
 
@@ -1155,7 +1154,7 @@ public class FontSelectorTest extends ExtendedITextTest {
 
         FontSelector fontSelector = new FontSelector(set.getFonts(), fontFamilies, fc);
 
-        Assert.assertTrue("Font is not recognized as monospace.", fontSelector.bestMatch().getDescriptor().isMonospace());
+        Assertions.assertTrue(fontSelector.bestMatch().getDescriptor().isMonospace(), "Font is not recognized as monospace.");
     }
 
     private void checkSelector(Collection<FontInfo> fontInfoCollection, String fontFamily,
@@ -1255,7 +1254,7 @@ public class FontSelectorTest extends ExtendedITextTest {
 
 
     private void assertSelectedFont(Collection<FontInfo> fontInfoCollection, List<String> fontFamilies, FontCharacteristics fc, String expectedFontName) {
-        Assert.assertEquals(expectedFontName, new FontSelector(fontInfoCollection, fontFamilies, fc).bestMatch().getDescriptor().getFontName());
+        Assertions.assertEquals(expectedFontName, new FontSelector(fontInfoCollection, fontFamilies, fc).bestMatch().getDescriptor().getFontName());
     }
 
     private static FontSet getStandardFontSet() {

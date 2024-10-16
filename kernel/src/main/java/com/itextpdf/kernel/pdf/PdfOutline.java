@@ -39,11 +39,11 @@ public class PdfOutline {
     /**
      * A flag for displaying the outline item’s text with italic font.
      */
-    public static int FLAG_ITALIC = 1;
+    public static final int FLAG_ITALIC = 1;
     /**
      * A flag for displaying the outline item’s text with bold font.
      */
-    public static int FLAG_BOLD = 2;
+    public static final int FLAG_BOLD = 2;
 
     private List<PdfOutline> children = new ArrayList<>();
     private String title;

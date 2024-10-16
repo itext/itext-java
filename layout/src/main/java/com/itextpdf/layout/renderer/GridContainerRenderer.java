@@ -178,10 +178,10 @@ public class GridContainerRenderer extends BlockRenderer {
 
             // Adjust cell BBox to the remaining part of the layout bbox
             // This way we can lay out elements partially
-            cellBBox.setHeight(cellBBox.getTop() - actualBBox.getBottom())
-                    .setY(actualBBox.getY());
+            cellBBox.setHeight(cellBBox.getTop() - layoutContext.getArea().getBBox().getBottom())
+                  .setY(layoutContext.getArea().getBBox().getY());
 
-            cellToRender.setProperty(Property.FILL_AVAILABLE_AREA, Boolean.TRUE);
+            cellToRender.setProperty(Property.FILL_AVAILABLE_AREA_ON_SPLIT, Boolean.TRUE);
             LayoutResult cellResult = cellToRender.layout(cellContext);
             notLayoutedRow = Math.min(notLayoutedRow, processLayoutResult(layoutResult, cell, cellResult));
         }
@@ -267,13 +267,13 @@ public class GridContainerRenderer extends BlockRenderer {
         LayoutArea area = layoutContext.getArea().clone();
         final Rectangle areaBBox = area.getBBox();
 
-        final float totalContainerHeight = GridMulticolUtil.updateOccupiedHeight(containerHeight, isFull, isFirstLayout, this);
+        final float totalContainerHeight = GridMulticolUtil.updateOccupiedHeight(containerHeight, isFull, this);
         if (totalContainerHeight < areaBBox.getHeight() || isFull) {
             Float height = retrieveHeight();
             if (height == null) {
                 areaBBox.setHeight(totalContainerHeight);
             } else {
-                height = GridMulticolUtil.updateOccupiedHeight((float) height, isFull, isFirstLayout, this);
+                height = GridMulticolUtil.updateOccupiedHeight((float) height, isFull, this);
                 areaBBox.setHeight((float) height);
             }
         }

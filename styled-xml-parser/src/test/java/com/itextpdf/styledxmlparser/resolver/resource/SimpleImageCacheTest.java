@@ -25,16 +25,15 @@ package com.itextpdf.styledxmlparser.resolver.resource;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class SimpleImageCacheTest extends ExtendedITextTest {
 
-    @Before
+    @BeforeEach
     public void before() {
         ImageXObjectStub.resetNumbering();
     }
@@ -44,10 +43,10 @@ public class SimpleImageCacheTest extends ExtendedITextTest {
         SimpleImageCache cache = new SimpleImageCache();
         String imgSrc = "src1.jpg";
         ImageXObjectStub imageData = new ImageXObjectStub();
-        Assert.assertEquals(0, cache.size());
+        Assertions.assertEquals(0, cache.size());
         cache.putImage(imgSrc, imageData);
-        Assert.assertEquals(1, cache.size());
-        Assert.assertEquals(imageData, cache.getImage(imgSrc));
+        Assertions.assertEquals(1, cache.size());
+        Assertions.assertEquals(imageData, cache.getImage(imgSrc));
     }
 
     @Test
@@ -65,22 +64,22 @@ public class SimpleImageCacheTest extends ExtendedITextTest {
         cache.putImage(imgSrc[0], imgData[0]);
         cache.putImage(imgSrc[1], imgData[1]);
         cache.putImage(imgSrc[2], imgData[2]);
-        Assert.assertEquals(3, cache.size());
+        Assertions.assertEquals(3, cache.size());
 
         cache.getImage(imgSrc[0]);
         cache.getImage(imgSrc[1]);
         cache.getImage(imgSrc[2]);
 
         cache.putImage(imgSrc[3], imgData[3]);
-        Assert.assertEquals(4, cache.size());
+        Assertions.assertEquals(4, cache.size());
 
         cache.putImage(imgSrc[4], imgData[4]);
-        Assert.assertEquals(4, cache.size());
-        Assert.assertNull(cache.getImage(imgSrc[3]));
-        Assert.assertEquals(imgData[0], cache.getImage(imgSrc[0]));
-        Assert.assertEquals(imgData[1], cache.getImage(imgSrc[1]));
-        Assert.assertEquals(imgData[2], cache.getImage(imgSrc[2]));
-        Assert.assertEquals(imgData[4], cache.getImage(imgSrc[4]));
+        Assertions.assertEquals(4, cache.size());
+        Assertions.assertNull(cache.getImage(imgSrc[3]));
+        Assertions.assertEquals(imgData[0], cache.getImage(imgSrc[0]));
+        Assertions.assertEquals(imgData[1], cache.getImage(imgSrc[1]));
+        Assertions.assertEquals(imgData[2], cache.getImage(imgSrc[2]));
+        Assertions.assertEquals(imgData[4], cache.getImage(imgSrc[4]));
 
         cache.getImage(imgSrc[0]);
         cache.getImage(imgSrc[1]);
@@ -88,39 +87,39 @@ public class SimpleImageCacheTest extends ExtendedITextTest {
         cache.getImage(imgSrc[4]);
 
         cache.putImage(imgSrc[5], imgData[5]);
-        Assert.assertEquals(4, cache.size());
-        Assert.assertNull(cache.getImage(imgSrc[4]));
-        Assert.assertEquals(imgData[0], cache.getImage(imgSrc[0]));
-        Assert.assertEquals(imgData[1], cache.getImage(imgSrc[1]));
-        Assert.assertEquals(imgData[2], cache.getImage(imgSrc[2]));
-        Assert.assertEquals(imgData[5], cache.getImage(imgSrc[5]));
+        Assertions.assertEquals(4, cache.size());
+        Assertions.assertNull(cache.getImage(imgSrc[4]));
+        Assertions.assertEquals(imgData[0], cache.getImage(imgSrc[0]));
+        Assertions.assertEquals(imgData[1], cache.getImage(imgSrc[1]));
+        Assertions.assertEquals(imgData[2], cache.getImage(imgSrc[2]));
+        Assertions.assertEquals(imgData[5], cache.getImage(imgSrc[5]));
 
 
         cache.putImage(imgSrc[3], imgData[3]);
-        Assert.assertEquals(4, cache.size());
-        Assert.assertEquals(imgData[3], cache.getImage(imgSrc[3]));
-        Assert.assertNull(cache.getImage(imgSrc[5]));
+        Assertions.assertEquals(4, cache.size());
+        Assertions.assertEquals(imgData[3], cache.getImage(imgSrc[3]));
+        Assertions.assertNull(cache.getImage(imgSrc[5]));
 
         cache.putImage(imgSrc[5], imgData[5]);
-        Assert.assertEquals(4, cache.size());
-        Assert.assertEquals(imgData[5], cache.getImage(imgSrc[5]));
-        Assert.assertNull(cache.getImage(imgSrc[3]));
+        Assertions.assertEquals(4, cache.size());
+        Assertions.assertEquals(imgData[5], cache.getImage(imgSrc[5]));
+        Assertions.assertNull(cache.getImage(imgSrc[3]));
 
         cache.putImage(imgSrc[3], imgData[3]);
-        Assert.assertEquals(4, cache.size());
-        Assert.assertEquals(imgData[3], cache.getImage(imgSrc[3]));
-        Assert.assertNull(cache.getImage(imgSrc[5]));
+        Assertions.assertEquals(4, cache.size());
+        Assertions.assertEquals(imgData[3], cache.getImage(imgSrc[3]));
+        Assertions.assertNull(cache.getImage(imgSrc[5]));
 
         cache.putImage(imgSrc[5], imgData[5]);
-        Assert.assertEquals(4, cache.size());
-        Assert.assertEquals(imgData[5], cache.getImage(imgSrc[5]));
-        Assert.assertEquals(imgData[3], cache.getImage(imgSrc[3]));
+        Assertions.assertEquals(4, cache.size());
+        Assertions.assertEquals(imgData[5], cache.getImage(imgSrc[5]));
+        Assertions.assertEquals(imgData[3], cache.getImage(imgSrc[3]));
 
 
-        Assert.assertEquals(imgData[1], cache.getImage(imgSrc[1]));
-        Assert.assertEquals(imgData[2], cache.getImage(imgSrc[2]));
-        Assert.assertNull(cache.getImage(imgSrc[0]));
-        Assert.assertNull(cache.getImage(imgSrc[4]));
+        Assertions.assertEquals(imgData[1], cache.getImage(imgSrc[1]));
+        Assertions.assertEquals(imgData[2], cache.getImage(imgSrc[2]));
+        Assertions.assertNull(cache.getImage(imgSrc[0]));
+        Assertions.assertNull(cache.getImage(imgSrc[4]));
 
     }
 
@@ -134,7 +133,7 @@ public class SimpleImageCacheTest extends ExtendedITextTest {
         for (int i = 0; i <= 9; i++) {
             cache.putImage("src" + i + 10 + ".jpg", new ImageXObjectStub());
 
-            Assert.assertNull(cache.getImage("src" + i + ".jpg"));
+            Assertions.assertNull(cache.getImage("src" + i + ".jpg"));
         }
     }
 

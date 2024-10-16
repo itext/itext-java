@@ -69,26 +69,25 @@ import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.layout.element.Link;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import static org.junit.Assert.fail;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
+import static org.junit.jupiter.api.Assertions.fail;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfUA2AnnotationsTest extends ExtendedITextTest {
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/PdfUA2AnnotationsTest/";
     public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/PdfUA2AnnotationsTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
@@ -197,7 +196,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
 
     @Test
     public void pdfUA2RubberStampNoContentsAnnotationsTest() throws IOException, XMPException {
-        String outFile = DESTINATION_FOLDER + "pdfuaRubberstampAnnotationTest.pdf";
+        String outFile = DESTINATION_FOLDER + "pdfuaRubberstampNoContentAnnotationTest.pdf";
 
         try (PdfDocument pdfDocument = new PdfDocument(
                 new PdfWriter(outFile, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)))) {
@@ -462,9 +461,9 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
 
             for (int i = 0; i < pdfDocument.getNumberOfPages(); i++) {
                 PdfDictionary pageObject = pdfDocument.getPage(i+1).getPdfObject();
-                Assert.assertTrue(pageObject.containsKey(PdfName.Tabs));
+                Assertions.assertTrue(pageObject.containsKey(PdfName.Tabs));
                 PdfObject pageT = pageObject.get(PdfName.Tabs);
-                Assert.assertEquals(PdfName.S, pageT);
+                Assertions.assertEquals(PdfName.S, pageT);
             }
         }
         compareAndValidate(outFile, cmpFile);

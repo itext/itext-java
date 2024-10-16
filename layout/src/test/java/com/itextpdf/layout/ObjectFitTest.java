@@ -37,21 +37,20 @@ import com.itextpdf.layout.properties.ObjectFit;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class ObjectFitTest extends ExtendedITextTest {
 
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/ObjectFitTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/ObjectFitTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
@@ -64,7 +63,7 @@ public class ObjectFitTest extends ExtendedITextTest {
 
         generateDocumentWithObjectFit(ObjectFit.FILL, outFileName);
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -75,7 +74,7 @@ public class ObjectFitTest extends ExtendedITextTest {
 
         generateDocumentWithObjectFit(ObjectFit.COVER, outFileName);
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -86,7 +85,7 @@ public class ObjectFitTest extends ExtendedITextTest {
 
         generateDocumentWithObjectFit(ObjectFit.CONTAIN, outFileName);
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -97,7 +96,7 @@ public class ObjectFitTest extends ExtendedITextTest {
 
         generateDocumentWithObjectFit(ObjectFit.SCALE_DOWN, outFileName);
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -108,7 +107,7 @@ public class ObjectFitTest extends ExtendedITextTest {
 
         generateDocumentWithObjectFit(ObjectFit.NONE, outFileName);
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -132,7 +131,7 @@ public class ObjectFitTest extends ExtendedITextTest {
             doc.add(p);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -163,7 +162,7 @@ public class ObjectFitTest extends ExtendedITextTest {
             doc.add(p);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -190,7 +189,7 @@ public class ObjectFitTest extends ExtendedITextTest {
             doc.add(p);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -221,7 +220,7 @@ public class ObjectFitTest extends ExtendedITextTest {
             doc.add(p);
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     private void generateDocumentWithObjectFit(ObjectFit objectFit, String outFileName) throws IOException {

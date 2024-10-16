@@ -26,14 +26,13 @@ import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.IShorthandResolver;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.util.List;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class GridShorthandResolverTest extends ExtendedITextTest {
     /**
      * Creates grid shorthand resolver.
@@ -48,13 +47,13 @@ public class GridShorthandResolverTest extends ExtendedITextTest {
         String shorthand = "[header-top] 'a a a' [header-bottom] [main-top] 'b b b' 1fr [main-bottom] / auto 1fr auto";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(3, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.GRID_TEMPLATE_ROWS, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals(CommonCssConstants.GRID_TEMPLATE_COLUMNS, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals(CommonCssConstants.GRID_TEMPLATE_AREAS, resolvedShorthand.get(2).getProperty());
-        Assert.assertEquals("[header-top] [header-bottom] [main-top] 1fr [main-bottom]", resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals("auto 1fr auto", resolvedShorthand.get(1).getExpression());
-        Assert.assertEquals("'a a a' 'b b b'", resolvedShorthand.get(2).getExpression());
+        Assertions.assertEquals(3, resolvedShorthand.size());
+        Assertions.assertEquals(CommonCssConstants.GRID_TEMPLATE_ROWS, resolvedShorthand.get(0).getProperty());
+        Assertions.assertEquals(CommonCssConstants.GRID_TEMPLATE_COLUMNS, resolvedShorthand.get(1).getProperty());
+        Assertions.assertEquals(CommonCssConstants.GRID_TEMPLATE_AREAS, resolvedShorthand.get(2).getProperty());
+        Assertions.assertEquals("[header-top] [header-bottom] [main-top] 1fr [main-bottom]", resolvedShorthand.get(0).getExpression());
+        Assertions.assertEquals("auto 1fr auto", resolvedShorthand.get(1).getExpression());
+        Assertions.assertEquals("'a a a' 'b b b'", resolvedShorthand.get(2).getExpression());
     }
 
     @Test
@@ -64,13 +63,13 @@ public class GridShorthandResolverTest extends ExtendedITextTest {
         String shorthand = "20% 100px 1fr / auto-flow dense 50px";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(3, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.GRID_TEMPLATE_ROWS, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals(CommonCssConstants.GRID_AUTO_FLOW, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals(CommonCssConstants.GRID_AUTO_COLUMNS, resolvedShorthand.get(2).getProperty());
-        Assert.assertEquals("20% 100px 1fr", resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals("column dense", resolvedShorthand.get(1).getExpression());
-        Assert.assertEquals("50px", resolvedShorthand.get(2).getExpression());
+        Assertions.assertEquals(3, resolvedShorthand.size());
+        Assertions.assertEquals(CommonCssConstants.GRID_TEMPLATE_ROWS, resolvedShorthand.get(0).getProperty());
+        Assertions.assertEquals(CommonCssConstants.GRID_AUTO_FLOW, resolvedShorthand.get(1).getProperty());
+        Assertions.assertEquals(CommonCssConstants.GRID_AUTO_COLUMNS, resolvedShorthand.get(2).getProperty());
+        Assertions.assertEquals("20% 100px 1fr", resolvedShorthand.get(0).getExpression());
+        Assertions.assertEquals("column dense", resolvedShorthand.get(1).getExpression());
+        Assertions.assertEquals("50px", resolvedShorthand.get(2).getExpression());
     }
 
     @Test
@@ -80,13 +79,13 @@ public class GridShorthandResolverTest extends ExtendedITextTest {
         String shorthand = "auto-flow dense auto / 1fr auto minmax(100px, 1fr)";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(3, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.GRID_AUTO_FLOW, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals(CommonCssConstants.GRID_AUTO_ROWS, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals(CommonCssConstants.GRID_TEMPLATE_COLUMNS, resolvedShorthand.get(2).getProperty());
-        Assert.assertEquals("dense", resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals("auto", resolvedShorthand.get(1).getExpression());
-        Assert.assertEquals("1fr auto minmax(100px,1fr)", resolvedShorthand.get(2).getExpression());
+        Assertions.assertEquals(3, resolvedShorthand.size());
+        Assertions.assertEquals(CommonCssConstants.GRID_AUTO_FLOW, resolvedShorthand.get(0).getProperty());
+        Assertions.assertEquals(CommonCssConstants.GRID_AUTO_ROWS, resolvedShorthand.get(1).getProperty());
+        Assertions.assertEquals(CommonCssConstants.GRID_TEMPLATE_COLUMNS, resolvedShorthand.get(2).getProperty());
+        Assertions.assertEquals("dense", resolvedShorthand.get(0).getExpression());
+        Assertions.assertEquals("auto", resolvedShorthand.get(1).getExpression());
+        Assertions.assertEquals("1fr auto minmax(100px,1fr)", resolvedShorthand.get(2).getExpression());
     }
 
     @Test
@@ -96,11 +95,11 @@ public class GridShorthandResolverTest extends ExtendedITextTest {
         String shorthand = "auto-flow dense / 1fr auto minmax(100px, 1fr)";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(2, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.GRID_AUTO_FLOW, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals(CommonCssConstants.GRID_TEMPLATE_COLUMNS, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals("dense", resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals("1fr auto minmax(100px,1fr)", resolvedShorthand.get(1).getExpression());
+        Assertions.assertEquals(2, resolvedShorthand.size());
+        Assertions.assertEquals(CommonCssConstants.GRID_AUTO_FLOW, resolvedShorthand.get(0).getProperty());
+        Assertions.assertEquals(CommonCssConstants.GRID_TEMPLATE_COLUMNS, resolvedShorthand.get(1).getProperty());
+        Assertions.assertEquals("dense", resolvedShorthand.get(0).getExpression());
+        Assertions.assertEquals("1fr auto minmax(100px,1fr)", resolvedShorthand.get(1).getExpression());
     }
 
     @Test
@@ -110,10 +109,10 @@ public class GridShorthandResolverTest extends ExtendedITextTest {
         String shorthand = "1fr auto minmax(100px, 1fr) / auto-flow dense";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(2, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.GRID_TEMPLATE_ROWS, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals(CommonCssConstants.GRID_AUTO_FLOW, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals("1fr auto minmax(100px,1fr)", resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals("column dense", resolvedShorthand.get(1).getExpression());
+        Assertions.assertEquals(2, resolvedShorthand.size());
+        Assertions.assertEquals(CommonCssConstants.GRID_TEMPLATE_ROWS, resolvedShorthand.get(0).getProperty());
+        Assertions.assertEquals(CommonCssConstants.GRID_AUTO_FLOW, resolvedShorthand.get(1).getProperty());
+        Assertions.assertEquals("1fr auto minmax(100px,1fr)", resolvedShorthand.get(0).getExpression());
+        Assertions.assertEquals("column dense", resolvedShorthand.get(1).getExpression());
     }
 }

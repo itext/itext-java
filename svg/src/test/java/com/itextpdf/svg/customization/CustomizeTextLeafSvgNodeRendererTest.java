@@ -42,16 +42,16 @@ import com.itextpdf.svg.renderers.impl.TextLeafSvgNodeRenderer;
 import com.itextpdf.test.ITextTest;
 
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class CustomizeTextLeafSvgNodeRendererTest extends SvgIntegrationTest {
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/customization/CustomizeTextLeafSvgNodeRendererTest/";
     public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/customization/CustomizeTextLeafSvgNodeRendererTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         ITextTest.createDestinationFolder(DESTINATION_FOLDER);
     }
@@ -73,7 +73,7 @@ public class CustomizeTextLeafSvgNodeRendererTest extends SvgIntegrationTest {
         new PdfCanvas(doc.getPage(1)).addXObjectFittedIntoRectangle(form, new Rectangle(100, 100, 240, 80));
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + pdfFilename, SOURCE_FOLDER + "cmp_" + pdfFilename, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + pdfFilename, SOURCE_FOLDER + "cmp_" + pdfFilename, DESTINATION_FOLDER, "diff_"));
     }
 
     private static class CustomTextLeafOverridingSvgNodeRendererFactory extends DefaultSvgNodeRendererFactory {

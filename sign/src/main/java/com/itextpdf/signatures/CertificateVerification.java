@@ -25,30 +25,33 @@ package com.itextpdf.signatures;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampToken;
 import com.itextpdf.commons.utils.DateTimeUtil;
+import com.itextpdf.kernel.crypto.OID;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.logs.SignLogMessageConstant;
-
-import java.security.cert.CertificateEncodingException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.security.KeyStore;
 import java.security.cert.CRL;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
-
+import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class consists of some methods that allow you to verify certificates.
+ *
+ * @deprecated starting from 9.0.0.
+ *             {@link com.itextpdf.signatures.validation.CertificateChainValidator} should be used instead.
  */
+@Deprecated
 public class CertificateVerification {
     public static final String HAS_UNSUPPORTED_EXTENSIONS = "Has unsupported critical extension";
     public static final String CERTIFICATE_REVOKED = "Certificate revoked";
-
 
     /**
      * The Logger instance.
@@ -77,7 +80,7 @@ public class CertificateVerification {
      * if no error
      */
     public static String verifyCertificate(X509Certificate cert, Collection<CRL> crls, Calendar calendar) {
-        if (SignUtils.hasUnsupportedCriticalExtension(cert)) {
+        if (hasUnsupportedCriticalExtension(cert)) {
             return CertificateVerification.HAS_UNSUPPORTED_EXTENSIONS;
         }
         try {
@@ -260,6 +263,31 @@ public class CertificateVerification {
         }
 
         logExceptionMessages(exceptionsThrown);
+        return false;
+    }
+
+    /**
+     * Check if the provided certificate has a critical extension that iText doesn't support.
+     *
+     * @param cert X509Certificate instance to check
+     *
+     * @return {@code true} if there are unsupported critical extensions, false if there are none
+     */
+    protected static boolean hasUnsupportedCriticalExtension(X509Certificate cert) {
+        if (cert == null) {
+            throw new IllegalArgumentException("X509Certificate can't be null.");
+        }
+
+        Set<String> criticalExtensionsSet = cert.getCriticalExtensionOIDs();
+        if (criticalExtensionsSet != null) {
+            for (String oid : criticalExtensionsSet) {
+                if (OID.X509Extensions.SUPPORTED_CRITICAL_EXTENSIONS.contains(oid)) {
+                    continue;
+                }
+                return true;
+            }
+        }
+
         return false;
     }
 

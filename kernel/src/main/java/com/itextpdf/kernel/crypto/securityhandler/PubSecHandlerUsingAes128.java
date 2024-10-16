@@ -91,7 +91,6 @@ public class PubSecHandlerUsingAes128 extends PubKeySecurityHandler {
         encryptionDictionary.put(PdfName.Filter, PdfName.Adobe_PubSec);
         encryptionDictionary.put(PdfName.SubFilter, PdfName.Adbe_pkcs7_s5);
 
-        encryptionDictionary.put(PdfName.R, new PdfNumber(4));
         encryptionDictionary.put(PdfName.V, new PdfNumber(4));
 
         PdfArray recipients = createRecipientsArray();

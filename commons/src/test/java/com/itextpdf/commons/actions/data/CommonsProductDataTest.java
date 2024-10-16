@@ -23,24 +23,23 @@
 package com.itextpdf.commons.actions.data;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class CommonsProductDataTest extends ExtendedITextTest {
     @Test
     public void getInstanceTest() {
         ProductData commonsProductData = CommonsProductData.getInstance();
 
-        Assert.assertEquals(CommonsProductData.COMMONS_PUBLIC_PRODUCT_NAME, commonsProductData.getPublicProductName());
-        Assert.assertEquals(CommonsProductData.COMMONS_PRODUCT_NAME, commonsProductData.getProductName());
-        Assert.assertEquals(CommonsProductData.COMMONS_VERSION, commonsProductData.getVersion());
-        Assert.assertEquals(CommonsProductData.MINIMAL_COMPATIBLE_LICENSEKEY_VERSION,
+        Assertions.assertEquals(CommonsProductData.COMMONS_PUBLIC_PRODUCT_NAME, commonsProductData.getPublicProductName());
+        Assertions.assertEquals(CommonsProductData.COMMONS_PRODUCT_NAME, commonsProductData.getProductName());
+        Assertions.assertEquals(CommonsProductData.COMMONS_VERSION, commonsProductData.getVersion());
+        Assertions.assertEquals(CommonsProductData.MINIMAL_COMPATIBLE_LICENSEKEY_VERSION,
                 commonsProductData.getMinCompatibleLicensingModuleVersion());
-        Assert.assertEquals(CommonsProductData.COMMONS_COPYRIGHT_SINCE, commonsProductData.getSinceCopyrightYear());
-        Assert.assertEquals(CommonsProductData.COMMONS_COPYRIGHT_TO, commonsProductData.getToCopyrightYear());
+        Assertions.assertEquals(CommonsProductData.COMMONS_COPYRIGHT_SINCE, commonsProductData.getSinceCopyrightYear());
+        Assertions.assertEquals(CommonsProductData.COMMONS_COPYRIGHT_TO, commonsProductData.getToCopyrightYear());
     }
 }

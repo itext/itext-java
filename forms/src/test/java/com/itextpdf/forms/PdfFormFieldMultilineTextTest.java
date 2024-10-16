@@ -38,28 +38,27 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.util.Map;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfFormFieldMultilineTextTest extends ExtendedITextTest {
 
     public static final String destinationFolder = "./target/test/com/itextpdf/forms/PdfFormFieldMultilineTextTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/PdfFormFieldMultilineTextTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
     }
 
@@ -90,7 +89,7 @@ public class PdfFormFieldMultilineTextTest extends ExtendedITextTest {
                 .compareByContent(filename, sourceFolder + "cmp_multilineFormFieldTest.pdf", destinationFolder,
                         "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -115,7 +114,7 @@ public class PdfFormFieldMultilineTextTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -140,7 +139,7 @@ public class PdfFormFieldMultilineTextTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -164,7 +163,7 @@ public class PdfFormFieldMultilineTextTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -193,7 +192,7 @@ public class PdfFormFieldMultilineTextTest extends ExtendedITextTest {
                 .compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder,
                         "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -227,7 +226,7 @@ public class PdfFormFieldMultilineTextTest extends ExtendedITextTest {
                 .compareByContent(filename, sourceFolder + "cmp_borderWidthIndentMultilineTest.pdf", destinationFolder,
                         "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -251,7 +250,7 @@ public class PdfFormFieldMultilineTextTest extends ExtendedITextTest {
         acroForm.addField(form);
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "formFieldWithStringTest.pdf",
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "formFieldWithStringTest.pdf",
                 sourceFolder + "cmp_formFieldWithStringTest.pdf", destinationFolder, "diff_"));
     }
 
@@ -277,7 +276,7 @@ public class PdfFormFieldMultilineTextTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_multilineTextFieldLeadingSpacesAreNotTrimmed.pdf", destinationFolder, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 
@@ -303,7 +302,7 @@ public class PdfFormFieldMultilineTextTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_multilineTextFieldRedundantSpacesAreTrimmedTest.pdf", destinationFolder, "diff_");
         if (errorMessage != null) {
-            Assert.fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 }

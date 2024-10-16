@@ -24,18 +24,17 @@ package com.itextpdf.io.font;
 
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.nio.charset.StandardCharsets;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class FontCacheTest extends ExtendedITextTest {
 
-    @Before
+    @BeforeEach
     public void before() {
         FontCache.clearSavedFonts();
     }
@@ -43,14 +42,14 @@ public class FontCacheTest extends ExtendedITextTest {
     @Test
     public void clearFontCacheTest() {
         String fontName = "FreeSans.ttf";
-        Assert.assertNull(FontCache.getFont(fontName));
+        Assertions.assertNull(FontCache.getFont(fontName));
 
         FontProgram fontProgram = new FontProgramMock();
         FontCache.saveFont(fontProgram, fontName);
-        Assert.assertEquals(fontProgram, FontCache.getFont(fontName));
+        Assertions.assertEquals(fontProgram, FontCache.getFont(fontName));
 
         FontCache.clearSavedFonts();
-        Assert.assertNull(FontCache.getFont(fontName));
+        Assertions.assertNull(FontCache.getFont(fontName));
     }
 
     @Test
@@ -60,14 +59,14 @@ public class FontCacheTest extends ExtendedITextTest {
         FontCacheKey ttc0 = FontCacheKey.create(fontName, 0);
         FontCacheKey ttc1 = FontCacheKey.create(fontName, 1);
 
-        Assert.assertNull(FontCache.getFont(ttc0));
-        Assert.assertNull(FontCache.getFont(ttc1));
+        Assertions.assertNull(FontCache.getFont(ttc0));
+        Assertions.assertNull(FontCache.getFont(ttc1));
 
         FontProgram fontProgram = new FontProgramMock();
         FontCache.saveFont(fontProgram, ttc1);
 
-        Assert.assertNull(FontCache.getFont(ttc0));
-        Assert.assertEquals(fontProgram, FontCache.getFont(ttc1));
+        Assertions.assertNull(FontCache.getFont(ttc0));
+        Assertions.assertEquals(fontProgram, FontCache.getFont(ttc1));
     }
 
     @Test
@@ -80,18 +79,18 @@ public class FontCacheTest extends ExtendedITextTest {
         FontCacheKey otherTtc0 = FontCacheKey.create(otherFontBytes, 1);
         FontCacheKey normal = FontCacheKey.create(normalFontBytes);
 
-        Assert.assertNull(FontCache.getFont(ttc0));
-        Assert.assertNull(FontCache.getFont(otherTtc0));
-        Assert.assertNull(FontCache.getFont(normal));
+        Assertions.assertNull(FontCache.getFont(ttc0));
+        Assertions.assertNull(FontCache.getFont(otherTtc0));
+        Assertions.assertNull(FontCache.getFont(normal));
 
         FontProgram otherTtc0MockFontProgram = new FontProgramMock();
         FontProgram normalMockFontProgram = new FontProgramMock();
         FontCache.saveFont(otherTtc0MockFontProgram, otherTtc0);
         FontCache.saveFont(normalMockFontProgram, normal);
 
-        Assert.assertNull(FontCache.getFont(ttc0));
-        Assert.assertEquals(otherTtc0MockFontProgram, FontCache.getFont(otherTtc0));
-        Assert.assertEquals(normalMockFontProgram, FontCache.getFont(normal));
+        Assertions.assertNull(FontCache.getFont(ttc0));
+        Assertions.assertEquals(otherTtc0MockFontProgram, FontCache.getFont(otherTtc0));
+        Assertions.assertEquals(normalMockFontProgram, FontCache.getFont(normal));
     }
 
     private static class FontProgramMock extends FontProgram {

@@ -28,6 +28,7 @@ import com.itextpdf.commons.bouncycastle.asn1.IASN1ObjectIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1OctetString;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Sequence;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1TaggedObject;
+import com.itextpdf.kernel.crypto.OID;
 
 /**
  * This class represents the signed content.
@@ -39,7 +40,7 @@ public class EncapsulatedContentInfo {
     /**
      * Object identifier of the content field
      */
-    private String eContentType = "1.2.840.113549.1.7.1";
+    private String eContentType = OID.PKCS7_DATA;
     /**
      * Optional.
      *

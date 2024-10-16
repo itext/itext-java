@@ -85,6 +85,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Adobe_PubSec = createDirectName("Adobe.PubSec");
     public static final PdfName AESV2 = createDirectName("AESV2");
     public static final PdfName AESV3 = createDirectName("AESV3");
+    public static final PdfName AESV4 = createDirectName("AESV4");
     public static final PdfName AF = createDirectName("AF");
     public static final PdfName AFRelationship = createDirectName("AFRelationship");
     public static final PdfName After = createDirectName("After");
@@ -123,7 +124,9 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName ASCIIHexDecode = createDirectName("ASCIIHexDecode");
     public static final PdfName Aside = createDirectName("Aside");
     public static final PdfName AsIs = createDirectName("AsIs");
+    public static final PdfName AttachedToSig = createDirectName("AttachedToSig");
     public static final PdfName AuthEvent = createDirectName("AuthEvent");
+    public static final PdfName AuthCode = createDirectName("AuthCode");
     public static final PdfName Author = createDirectName("Author");
     public static final PdfName B = createDirectName("B");
     public static final PdfName BackgroundColor = createDirectName("BackgroundColor");
@@ -465,6 +468,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName JS = createDirectName("JS");
     public static final PdfName Justify = createDirectName("Justify");
     public static final PdfName K = createDirectName("K");
+    public static final PdfName KDFSalt = createDirectName("KDFSalt");
     public static final PdfName Keywords = createDirectName("Keywords");
     public static final PdfName Kids = createDirectName("Kids");
     public static final PdfName L2R = createDirectName("L2R");
@@ -510,6 +514,8 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName LW = createDirectName("LW");
     public static final PdfName LZWDecode = createDirectName("LZWDecode");
     public static final PdfName M = createDirectName("M");
+    public static final PdfName MAC = createDirectName("MAC");
+    public static final PdfName MACLocation = createDirectName("MACLocation");
     public static final PdfName MacExpertEncoding = createDirectName("MacExpertEncoding");
     public static final PdfName MacRomanEncoding = createDirectName("MacRomanEncoding");
     public static final PdfName Marked = createDirectName("Marked");
@@ -748,6 +754,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName SigFieldLock = createDirectName("SigFieldLock");
     public static final PdfName SigFlags = createDirectName("SigFlags");
     public static final PdfName Signed = createDirectName("Signed");
+    public static final PdfName SigObjRef = createDirectName("SigObjRef");
     public static final PdfName SigRef = createDirectName("SigRef");
     public static final PdfName Simplex = createDirectName("Simplex");
     public static final PdfName SinglePage = createDirectName("SinglePage");
@@ -767,6 +774,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName SpaceAfter = createDirectName("SpaceAfter");
     public static final PdfName Square = createDirectName("Square");
     public static final PdfName Squiggly = createDirectName("Squiggly");
+    public static final PdfName Standalone = createDirectName("Standalone");
     public static final PdfName St = createDirectName("St");
     public static final PdfName Stamp = createDirectName("Stamp");
     public static final PdfName StampImage = createDirectName("StampImage");
@@ -937,7 +945,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     /**
      * map strings to all known static names
      */
-    public static Map<String, PdfName> staticNames;
+    public static final Map<String, PdfName> staticNames;
 
     /**
      * Use reflection to cache all the public static final names so

@@ -29,6 +29,7 @@ import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.AbstractSelectField;
 import com.itextpdf.forms.form.element.ListBoxField;
+import com.itextpdf.forms.form.element.SelectFieldItem;
 import com.itextpdf.forms.util.BorderStyleUtil;
 import com.itextpdf.forms.util.FormFieldRendererUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
@@ -40,7 +41,6 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.layout.element.Div;
-import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.layout.LayoutContext;
@@ -125,11 +125,13 @@ public class SelectFieldListBoxRenderer extends AbstractSelectFieldRenderer {
     @Override
     protected IRenderer createFlatRenderer() {
         AbstractSelectField selectField = (AbstractSelectField) modelElement;
-        List<IBlockElement> options = selectField.getOptions();
+        List<SelectFieldItem> options = selectField.getOptions();
 
         Div optionsContainer = new Div();
-        for (IBlockElement option : options) {
-            optionsContainer.add(option);
+        int topIndex = (int) this.<Integer>getProperty(FormProperty.LIST_BOX_TOP_INDEX, 0);
+        List<SelectFieldItem> visibleOptions = topIndex > 0 ? options.subList(topIndex, options.size()) : options;
+        for (SelectFieldItem option : visibleOptions) {
+            optionsContainer.add(option.getElement());
         }
         String lang = getLang();
         if (lang != null) {
@@ -206,7 +208,7 @@ public class SelectFieldListBoxRenderer extends AbstractSelectFieldRenderer {
         ListBoxField lbModelElement = (ListBoxField) modelElement;
         List<String> selectedOptions = lbModelElement.getSelectedStrings();
         ChoiceFormFieldBuilder builder = new ChoiceFormFieldBuilder(doc, getModelId())
-                .setGenericConformanceLevel(getGenericConformanceLevel(doc))
+                .setConformance(getConformance(doc))
                 .setFont(font)
                 .setWidgetRectangle(area);
         setupBuilderValues(builder, lbModelElement);
@@ -216,6 +218,11 @@ public class SelectFieldListBoxRenderer extends AbstractSelectFieldRenderer {
         choiceField.setFontSize(fontSize.getValue());
         choiceField.setMultiSelect(isMultiple());
         choiceField.setListSelected(selectedOptions.toArray(new String[selectedOptions.size()]));
+
+        Integer topIndex = modelElement.<Integer>getOwnProperty(FormProperty.LIST_BOX_TOP_INDEX);
+        if (topIndex != null) {
+            choiceField.setTopIndex((int) topIndex);
+        }
 
         TransparentColor color = getPropertyAsTransparentColor(Property.FONT_COLOR);
         if (color != null) {
@@ -304,7 +311,13 @@ public class SelectFieldListBoxRenderer extends AbstractSelectFieldRenderer {
     }
 
     private void applySelectedStyle(IRenderer selectedOption) {
-        selectedOption.setProperty(Property.BACKGROUND, new Background(new DeviceRgb(0, 120, 215)));
+        RenderingMode mode = this.<RenderingMode>getProperty(Property.RENDERING_MODE);
+        if (RenderingMode.HTML_MODE.equals(mode) && isFlatten() &&
+                selectedOption.<Background>getProperty(Property.BACKGROUND) == null) {
+            selectedOption.setProperty(Property.BACKGROUND, new Background(new DeviceRgb(206,206,206)));
+        } else {
+            selectedOption.setProperty(Property.BACKGROUND, new Background(new DeviceRgb(169, 204, 225)));
+        }
         setFontColorRecursively(selectedOption);
     }
 
@@ -314,7 +327,7 @@ public class SelectFieldListBoxRenderer extends AbstractSelectFieldRenderer {
      * otherwise it will be not applied due to the css resolving mechanism.
      */
     private void setFontColorRecursively(IRenderer selectedOption) {
-        selectedOption.setProperty(Property.FONT_COLOR, new TransparentColor(ColorConstants.WHITE));
+        selectedOption.setProperty(Property.FONT_COLOR, new TransparentColor(ColorConstants.BLACK));
         for (IRenderer renderer : selectedOption.getChildRenderers()) {
             setFontColorRecursively(renderer);
         }

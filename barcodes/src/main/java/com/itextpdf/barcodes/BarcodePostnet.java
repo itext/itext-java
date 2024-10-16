@@ -35,8 +35,8 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
  */
 public class BarcodePostnet extends Barcode1D {
 
-    public static int TYPE_POSTNET = 1;
-    public static int TYPE_PLANET = 2;
+    public static final int TYPE_POSTNET = 1;
+    public static final int TYPE_PLANET = 2;
 
     /**
      * The bars for each character.

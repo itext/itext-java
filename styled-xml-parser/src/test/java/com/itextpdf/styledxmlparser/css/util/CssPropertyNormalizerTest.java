@@ -23,13 +23,12 @@
 package com.itextpdf.styledxmlparser.css.util;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class CssPropertyNormalizerTest extends ExtendedITextTest {
 
     @Test
@@ -60,6 +59,6 @@ public class CssPropertyNormalizerTest extends ExtendedITextTest {
 
     private void test(String input, String expectedOutput) {
         String result = CssPropertyNormalizer.normalize(input);
-        Assert.assertEquals(expectedOutput, result);
+        Assertions.assertEquals(expectedOutput, result);
     }
 }

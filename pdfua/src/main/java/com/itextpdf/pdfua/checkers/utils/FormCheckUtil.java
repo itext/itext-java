@@ -55,23 +55,25 @@ public class FormCheckUtil {
             super(context);
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
-        public void nextElement(IStructureNode elem) {
+        public boolean accept(IStructureNode node) {
+            return node != null;
+        }
+
+        @Override
+        public void processElement(IStructureNode elem) {
             PdfStructElem form = context.getElementIfRoleMatches(PdfName.Form, elem);
-            if (form == null){
+            if (form == null) {
                 return;
             }
 
             PdfDictionary formField = getInteractiveKidForm(form);
-            if (formField == null){
+            if (formField == null) {
                 return;
             }
 
             // Check is not applicable for hidden annotations
-            if (!AnnotationCheckUtil.isAnnotationVisible(formField)){
+            if (!AnnotationCheckUtil.isAnnotationVisible(formField)) {
                 return;
             }
 

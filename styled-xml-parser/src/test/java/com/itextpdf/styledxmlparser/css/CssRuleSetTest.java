@@ -25,14 +25,13 @@ package com.itextpdf.styledxmlparser.css;
 import com.itextpdf.styledxmlparser.css.parse.CssRuleSetParser;
 import com.itextpdf.styledxmlparser.css.selector.CssSelector;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class CssRuleSetTest extends ExtendedITextTest {
 
     @Test
@@ -66,11 +65,11 @@ public class CssRuleSetTest extends ExtendedITextTest {
         CssRuleSet cssRuleSet = new CssRuleSet(selector, declarations);
         List<CssDeclaration> normalDeclarations = cssRuleSet.getNormalDeclarations();
         for (int i = 0; i < expectedNormal.length; i++) {
-            Assert.assertEquals(expectedNormal[i], normalDeclarations.get(i).toString());
+            Assertions.assertEquals(expectedNormal[i], normalDeclarations.get(i).toString());
         }
         List<CssDeclaration> importantDeclarations = cssRuleSet.getImportantDeclarations();
         for (int i = 0; i < expectedImportant.length; i++) {
-            Assert.assertEquals(expectedImportant[i], importantDeclarations.get(i).toString());
+            Assertions.assertEquals(expectedImportant[i], importantDeclarations.get(i).toString());
         }
     }
 }

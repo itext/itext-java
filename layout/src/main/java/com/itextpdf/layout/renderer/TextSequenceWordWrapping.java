@@ -211,7 +211,7 @@ final class TextSequenceWordWrapping {
                     }
                     if (textLayoutResult.isContainsPossibleBreak()
                             && textLayoutResult.getStatus() != LayoutResult.NOTHING) {
-                        textRenderer.setIndexOfFirstCharacterToBeForcedToOverflow(textRenderer.line.end);
+                        textRenderer.setIndexOfFirstCharacterToBeForcedToOverflow(textRenderer.line.getEnd());
                         LayoutArea layoutArea = textRenderer.getOccupiedArea().clone();
                         layoutArea.getBBox()
                                 .increaseHeight(OCCUPIED_AREA_RELAYOUT_EPS)
@@ -299,8 +299,9 @@ final class TextSequenceWordWrapping {
                 GlyphLine splitText = splitTextRenderer.text;
                 if (splitTextRenderer.length() > 0) {
                     fittingLengthWithTrailingRightSideSpaces = splitTextRenderer.length();
-                    while (splitText.end + amountOfTrailingRightSideSpaces < splitText.size()
-                            && TextUtil.isWhitespace(splitText.get(splitText.end + amountOfTrailingRightSideSpaces))) {
+                    while (splitText.getEnd() + amountOfTrailingRightSideSpaces < splitText.size()
+                            && TextUtil.isWhitespace(splitText.get(splitText.getEnd()
+                            + amountOfTrailingRightSideSpaces))) {
                         fittingLengthWithTrailingRightSideSpaces++;
                         amountOfTrailingRightSideSpaces++;
                     }
@@ -313,10 +314,10 @@ final class TextSequenceWordWrapping {
                 if (breakPoints != null && breakPoints.size() > 0 && breakPoints.get(0) != -1) {
                     int possibleBreakPointPosition = TextRenderer.findPossibleBreaksSplitPosition(
                             textRenderer.getSpecialScriptsWordBreakPoints(),
-                            fittingLengthWithTrailingRightSideSpaces + textRenderer.text.start, false);
+                            fittingLengthWithTrailingRightSideSpaces + textRenderer.text.getStart(), false);
                     if (possibleBreakPointPosition > -1) {
                         splitPosition = breakPoints.get(possibleBreakPointPosition) - amountOfTrailingRightSideSpaces;
-                        needToSplitRendererContainingLastFullyFittingWord = splitPosition != textRenderer.text.end;
+                        needToSplitRendererContainingLastFullyFittingWord = splitPosition != textRenderer.text.getEnd();
                         if (!needToSplitRendererContainingLastFullyFittingWord) {
                             analyzedTextRendererIndex++;
                         }
@@ -370,7 +371,7 @@ final class TextSequenceWordWrapping {
             if (needToSplitRendererContainingLastFullyFittingWord) {
                 int amountOfFitOnTheFirstLayout =
                         fittingLengthWithTrailingRightSideSpaces - amountOfTrailingRightSideSpaces
-                                + childRenderer.text.start;
+                                + childRenderer.text.getStart();
                 if (amountOfFitOnTheFirstLayout != splitPosition) {
                     LayoutArea layoutArea = childRenderer.getOccupiedArea().clone();
                     layoutArea.getBBox()
@@ -682,15 +683,15 @@ final class TextSequenceWordWrapping {
         while (actualTextIterator.hasNext()) {
             GlyphLine.GlyphLinePart part = actualTextIterator.next();
             int amountOfCharsWithinCurrentActualTextOrGlyph = 0;
-            if (part.actualText != null) {
-                amountOfCharsWithinCurrentActualTextOrGlyph = part.actualText.length();
+            if (part.getActualText() != null) {
+                amountOfCharsWithinCurrentActualTextOrGlyph = part.getActualText().length();
                 int nextAmountOfChars = amountOfCharsWithinCurrentActualTextOrGlyph
                         + amountOfCharsBetweenTextStartAndCurrentActualTextStartOrGlyph;
                 amountOfCharsBetweenTextStartAndActualTextChunk.add(nextAmountOfChars);
-                glyphLineBasedIndicesOfActualTextChunkEnds.add(part.end);
+                glyphLineBasedIndicesOfActualTextChunkEnds.add(part.getEnd());
                 amountOfCharsBetweenTextStartAndCurrentActualTextStartOrGlyph = nextAmountOfChars;
             } else {
-                for (int j = part.start; j < part.end; j++) {
+                for (int j = part.getStart(); j < part.getEnd(); j++) {
                     char[] chars = glyphLine.get(j).getChars();
                     amountOfCharsWithinCurrentActualTextOrGlyph = chars != null ? chars.length : 0;
                     int nextAmountOfChars = amountOfCharsWithinCurrentActualTextOrGlyph

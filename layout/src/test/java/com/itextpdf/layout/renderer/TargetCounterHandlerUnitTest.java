@@ -28,12 +28,11 @@ import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class TargetCounterHandlerUnitTest extends ExtendedITextTest {
 
     @Test
@@ -68,7 +67,7 @@ public class TargetCounterHandlerUnitTest extends ExtendedITextTest {
         TargetCounterHandler.addPageByID(renderer);
 
         Integer page = TargetCounterHandler.getPageByID(renderer, id);
-        Assert.assertNull(page);
+        Assertions.assertNull(page);
     }
 
     @Test
@@ -100,7 +99,7 @@ public class TargetCounterHandlerUnitTest extends ExtendedITextTest {
         renderer.setParent(documentRenderer);
         renderer.setProperty(Property.ID, id);
 
-        Assert.assertFalse(TargetCounterHandler.isValueDefinedForThisId(renderer, id));
+        Assertions.assertFalse(TargetCounterHandler.isValueDefinedForThisId(renderer, id));
     }
 
     @Test
@@ -119,7 +118,7 @@ public class TargetCounterHandlerUnitTest extends ExtendedITextTest {
         TargetCounterHandler.addPageByID(renderer);
 
         Integer page = TargetCounterHandler.getPageByID(renderer, id);
-        Assert.assertNull(page);
+        Assertions.assertNull(page);
     }
 
     @Test
@@ -141,7 +140,7 @@ public class TargetCounterHandlerUnitTest extends ExtendedITextTest {
 
         documentRenderer.getTargetCounterHandler().prepareHandlerToRelayout();
         Integer page = TargetCounterHandler.getPageByID(renderer, id);
-        Assert.assertEquals((Integer) 8, page);
+        Assertions.assertEquals((Integer) 8, page);
     }
 
     @Test
@@ -163,7 +162,7 @@ public class TargetCounterHandlerUnitTest extends ExtendedITextTest {
 
         documentRenderer.getTargetCounterHandler().prepareHandlerToRelayout();
         Integer page = TargetCounterHandler.getPageByID(renderer, id);
-        Assert.assertEquals((Integer) 2, page);
+        Assertions.assertEquals((Integer) 2, page);
     }
 
     @Test
@@ -184,12 +183,12 @@ public class TargetCounterHandlerUnitTest extends ExtendedITextTest {
 
         documentRenderer.getTargetCounterHandler().prepareHandlerToRelayout();
         Integer page = TargetCounterHandler.getPageByID(renderer, id);
-        Assert.assertEquals((Integer) expectedPage, page);
+        Assertions.assertEquals((Integer) expectedPage, page);
 
         IRenderer anotherRenderer = new TextRenderer(new Text("another_renderer"));
         anotherRenderer.setParent(documentRenderer);
         page = TargetCounterHandler.getPageByID(anotherRenderer, id);
-        Assert.assertEquals((Integer) expectedPage, page);
+        Assertions.assertEquals((Integer) expectedPage, page);
     }
 
     @Test
@@ -207,11 +206,11 @@ public class TargetCounterHandlerUnitTest extends ExtendedITextTest {
         };
         renderer.setParent(documentRenderer);
         renderer.setProperty(Property.ID, id);
-        Assert.assertFalse(documentRenderer.isRelayoutRequired());
+        Assertions.assertFalse(documentRenderer.isRelayoutRequired());
         TargetCounterHandler.addPageByID(renderer);
-        Assert.assertTrue(documentRenderer.isRelayoutRequired());
+        Assertions.assertTrue(documentRenderer.isRelayoutRequired());
         documentRenderer.getTargetCounterHandler().prepareHandlerToRelayout();
-        Assert.assertFalse(documentRenderer.isRelayoutRequired());
+        Assertions.assertFalse(documentRenderer.isRelayoutRequired());
     }
 
     @Test
@@ -231,7 +230,7 @@ public class TargetCounterHandlerUnitTest extends ExtendedITextTest {
         renderer.setProperty(Property.ID, id);
         TargetCounterHandler.addPageByID(renderer);
         TargetCounterHandler copy = new TargetCounterHandler(documentRenderer.getTargetCounterHandler());
-        Assert.assertTrue(copy.isRelayoutRequired());
+        Assertions.assertTrue(copy.isRelayoutRequired());
     }
 
     @Test
@@ -251,7 +250,7 @@ public class TargetCounterHandlerUnitTest extends ExtendedITextTest {
         renderer.setParent(documentRenderer);
         renderer.setProperty(Property.ID, id);
         TargetCounterHandler.addPageByID(renderer);
-        Assert.assertTrue(TargetCounterHandler.isValueDefinedForThisId(renderer, id));
-        Assert.assertFalse(TargetCounterHandler.isValueDefinedForThisId(renderer, notAddedId));
+        Assertions.assertTrue(TargetCounterHandler.isValueDefinedForThisId(renderer, id));
+        Assertions.assertFalse(TargetCounterHandler.isValueDefinedForThisId(renderer, notAddedId));
     }
 }

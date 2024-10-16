@@ -28,84 +28,83 @@ import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs.CalGray;
 import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs.CalRgb;
 import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs.Lab;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfCieBasedCsUnitTest extends ExtendedITextTest {
 
     @Test
     public void whitePointOfCalGrayIsIncorrectEmptyTest() {
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> new CalGray(new float[] {}));
-        Assert.assertEquals(KernelExceptionMessageConstant.WHITE_POINT_IS_INCORRECTLY_SPECIFIED,
+        Assertions.assertEquals(KernelExceptionMessageConstant.WHITE_POINT_IS_INCORRECTLY_SPECIFIED,
                 exception.getMessage());
     }
 
     @Test
     public void whitePointOfCalRgbIsIncorrectEmptyTest() {
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> new CalRgb(new float[] {}));
-        Assert.assertEquals(KernelExceptionMessageConstant.WHITE_POINT_IS_INCORRECTLY_SPECIFIED,
+        Assertions.assertEquals(KernelExceptionMessageConstant.WHITE_POINT_IS_INCORRECTLY_SPECIFIED,
                 exception.getMessage());
     }
 
     @Test
     public void whitePointOfLabIsIncorrectEmptyTest() {
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> new Lab(new float[] {}));
-        Assert.assertEquals(KernelExceptionMessageConstant.WHITE_POINT_IS_INCORRECTLY_SPECIFIED,
+        Assertions.assertEquals(KernelExceptionMessageConstant.WHITE_POINT_IS_INCORRECTLY_SPECIFIED,
                 exception.getMessage());
     }
 
     @Test
     public void whitePointOfCalGrayIsIncorrectTooLittlePointsTest() {
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> new CalGray(new float[] {1, 2}));
-        Assert.assertEquals(KernelExceptionMessageConstant.WHITE_POINT_IS_INCORRECTLY_SPECIFIED,
+        Assertions.assertEquals(KernelExceptionMessageConstant.WHITE_POINT_IS_INCORRECTLY_SPECIFIED,
                 exception.getMessage());
     }
 
     @Test
     public void whitePointOfCalRgbIsIncorrectTooLittlePointsTest() {
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> new CalRgb(new float[] {1, 2}));
-        Assert.assertEquals(KernelExceptionMessageConstant.WHITE_POINT_IS_INCORRECTLY_SPECIFIED,
+        Assertions.assertEquals(KernelExceptionMessageConstant.WHITE_POINT_IS_INCORRECTLY_SPECIFIED,
                 exception.getMessage());
     }
 
     @Test
     public void whitePointOfLabIsIncorrectTooLittlePointsTest() {
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> new Lab(new float[] {1, 2}));
-        Assert.assertEquals(KernelExceptionMessageConstant.WHITE_POINT_IS_INCORRECTLY_SPECIFIED,
+        Assertions.assertEquals(KernelExceptionMessageConstant.WHITE_POINT_IS_INCORRECTLY_SPECIFIED,
                 exception.getMessage());
     }
 
     @Test
     public void whitePointOfCalGrayIsIncorrectTooMuchPointsTest() {
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> new CalGray(new float[] {1, 2, 3, 4}));
-        Assert.assertEquals(KernelExceptionMessageConstant.WHITE_POINT_IS_INCORRECTLY_SPECIFIED,
+        Assertions.assertEquals(KernelExceptionMessageConstant.WHITE_POINT_IS_INCORRECTLY_SPECIFIED,
                 exception.getMessage());
     }
 
     @Test
     public void whitePointOfCalRgbIsIncorrectTooMuchPointsTest() {
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> new CalRgb(new float[] {1, 2, 3, 4}));
-        Assert.assertEquals(KernelExceptionMessageConstant.WHITE_POINT_IS_INCORRECTLY_SPECIFIED,
+        Assertions.assertEquals(KernelExceptionMessageConstant.WHITE_POINT_IS_INCORRECTLY_SPECIFIED,
                 exception.getMessage());
     }
 
     @Test
     public void whitePointOfLabIsIncorrectTooMuchPointsTest() {
-        Exception exception = Assert.assertThrows(PdfException.class,
+        Exception exception = Assertions.assertThrows(PdfException.class,
                 () -> new Lab(new float[] {1, 2, 3, 4}));
-        Assert.assertEquals(KernelExceptionMessageConstant.WHITE_POINT_IS_INCORRECTLY_SPECIFIED,
+        Assertions.assertEquals(KernelExceptionMessageConstant.WHITE_POINT_IS_INCORRECTLY_SPECIFIED,
                 exception.getMessage());
     }
 }

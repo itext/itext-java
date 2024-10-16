@@ -42,36 +42,35 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfAnnotationCopyingTest extends ExtendedITextTest {
 
     public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/PdfAnnotationCopyingTest/";
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/PdfAnnotationCopyingTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(DESTINATION_FOLDER);
     }
 
     @Test
-    @Ignore("Unignore when DEVSIX-3585 would be implemented")
+    @Disabled("Unignore when DEVSIX-3585 would be implemented")
     public void testCopyingPageWithAnnotationContainingPopupKey() throws IOException {
         String inFilePath = SOURCE_FOLDER + "annotation-with-popup.pdf";
         String outFilePath = DESTINATION_FOLDER + "copy-annotation-with-popup.pdf";
@@ -90,32 +89,31 @@ public class PdfAnnotationCopyingTest extends ExtendedITextTest {
         outDocument = new PdfDocument(new PdfReader(outFilePath));
         for (int pageNum = 1; pageNum <= outDocument.getNumberOfPages(); pageNum++) {
             PdfPage page = outDocument.getPage(pageNum);
-            Assert.assertEquals(2, page.getAnnotsSize());
-            Assert.assertEquals(2, page.getAnnotations().size());
+            Assertions.assertEquals(2, page.getAnnotsSize());
+            Assertions.assertEquals(2, page.getAnnotations().size());
             boolean foundMarkupAnnotation = false;
             for (PdfAnnotation annotation : page.getAnnotations()) {
                 PdfDictionary annotationPageDict = annotation.getPageObject();
                 if (annotationPageDict != null) {
-                    Assert.assertSame(page.getPdfObject(), annotationPageDict);
+                    Assertions.assertSame(page.getPdfObject(), annotationPageDict);
                 }
                 if (annotation instanceof PdfMarkupAnnotation) {
                     foundMarkupAnnotation = true;
                     PdfPopupAnnotation popup = ((PdfMarkupAnnotation) annotation).getPopup();
-                    Assert.assertTrue(MessageFormatUtil.format(
-                            "Popup reference must point to annotation present on the same page (# {0})", pageNum),
-                            page.containsAnnotation(popup));
+                    Assertions.assertTrue(page.containsAnnotation(popup), MessageFormatUtil.format(
+                            "Popup reference must point to annotation present on the same page (# {0})", pageNum));
                     PdfDictionary parentAnnotation = popup.getParentObject();
-                    Assert.assertSame("Popup annotation parent must point to the annotation that specified it as Popup",
-                            annotation.getPdfObject(), parentAnnotation);
+                    Assertions.assertSame(annotation.getPdfObject(), parentAnnotation,
+                            "Popup annotation parent must point to the annotation that specified it as Popup");
                 }
             }
-            Assert.assertTrue("Markup annotation expected to be present but not found", foundMarkupAnnotation);
+            Assertions.assertTrue(foundMarkupAnnotation, "Markup annotation expected to be present but not found");
         }
         outDocument.close();
     }
 
     @Test
-    @Ignore("Unignore when DEVSIX-3585 would be implemented")
+    @Disabled("Unignore when DEVSIX-3585 would be implemented")
     public void testCopyingPageWithAnnotationContainingIrtKey() throws IOException {
         String inFilePath = SOURCE_FOLDER + "annotation-with-irt.pdf";
         String outFilePath = DESTINATION_FOLDER + "copy-annotation-with-irt.pdf";
@@ -134,22 +132,22 @@ public class PdfAnnotationCopyingTest extends ExtendedITextTest {
         outDocument = new PdfDocument(new PdfReader(outFilePath));
         for (int pageNum = 1; pageNum <= outDocument.getNumberOfPages(); pageNum++) {
             PdfPage page = outDocument.getPage(pageNum);
-            Assert.assertEquals(4, page.getAnnotsSize());
-            Assert.assertEquals(4, page.getAnnotations().size());
+            Assertions.assertEquals(4, page.getAnnotsSize());
+            Assertions.assertEquals(4, page.getAnnotations().size());
             boolean foundMarkupAnnotation = false;
             for (PdfAnnotation annotation : page.getAnnotations()) {
                 PdfDictionary annotationPageDict = annotation.getPageObject();
                 if (annotationPageDict != null) {
-                    Assert.assertSame(page.getPdfObject(), annotationPageDict);
+                    Assertions.assertSame(page.getPdfObject(), annotationPageDict);
                 }
                 if (annotation instanceof PdfMarkupAnnotation) {
                     foundMarkupAnnotation = true;
                     PdfDictionary inReplyTo = ((PdfMarkupAnnotation) annotation).getInReplyToObject();
-                    Assert.assertTrue("IRT reference must point to annotation present on the same page",
-                            page.containsAnnotation(PdfAnnotation.makeAnnotation(inReplyTo)));
+                    Assertions.assertTrue(page.containsAnnotation(PdfAnnotation.makeAnnotation(inReplyTo)),
+                            "IRT reference must point to annotation present on the same page");
                 }
             }
-            Assert.assertTrue("Markup annotation expected to be present but not found", foundMarkupAnnotation);
+            Assertions.assertTrue(foundMarkupAnnotation, "Markup annotation expected to be present but not found");
         }
         outDocument.close();
     }
@@ -162,7 +160,7 @@ public class PdfAnnotationCopyingTest extends ExtendedITextTest {
         PdfWriter writer = CompareTool.createTestPdfWriter(outFilePath).setSmartMode(true);
         copyLinksGoToActionTest(writer, true, false);
 
-        Assert.assertNull(new CompareTool().compareByContent(outFilePath, cmpFilePath, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outFilePath, cmpFilePath, DESTINATION_FOLDER));
     }
 
     @Test
@@ -173,7 +171,7 @@ public class PdfAnnotationCopyingTest extends ExtendedITextTest {
         PdfWriter writer = CompareTool.createTestPdfWriter(outFilePath).setSmartMode(true);
         copyLinksGoToActionTest(writer, false, false);
 
-        Assert.assertNull(new CompareTool().compareByContent(outFilePath, cmpFilePath, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outFilePath, cmpFilePath, DESTINATION_FOLDER));
     }
 
     @Test
@@ -184,7 +182,7 @@ public class PdfAnnotationCopyingTest extends ExtendedITextTest {
         PdfWriter writer = CompareTool.createTestPdfWriter(outFilePath).setSmartMode(true);
         copyLinksGoToActionTest(writer, false, true);
 
-        Assert.assertNull(new CompareTool().compareByContent(outFilePath, cmpFilePath, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outFilePath, cmpFilePath, DESTINATION_FOLDER));
     }
 
     @Test
@@ -243,7 +241,7 @@ public class PdfAnnotationCopyingTest extends ExtendedITextTest {
             }
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFilePath, cmpFilePath, DESTINATION_FOLDER));
+        Assertions.assertNull(new CompareTool().compareByContent(outFilePath, cmpFilePath, DESTINATION_FOLDER));
     }
 
     private ByteArrayOutputStream createPdfWithGoToAnnot(boolean isTheSameLink, boolean diffDisplayOptions) {

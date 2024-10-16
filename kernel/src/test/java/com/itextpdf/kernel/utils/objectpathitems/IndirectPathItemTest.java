@@ -27,20 +27,19 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfIndirectReference;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class IndirectPathItemTest extends ExtendedITextTest {
 
     private PdfDocument testCmp;
     private PdfDocument testOut;
 
-    @Before
+    @BeforeEach
     public void setUpPdfDocuments() {
         testCmp = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         testCmp.addNewPage();
@@ -51,7 +50,7 @@ public class IndirectPathItemTest extends ExtendedITextTest {
         testOut.addNewPage();
     }
 
-    @After
+    @AfterEach
     public void closePdfDocuments() {
         testCmp.close();
         testOut.close();
@@ -64,8 +63,8 @@ public class IndirectPathItemTest extends ExtendedITextTest {
 
         IndirectPathItem indirectPathItem = new IndirectPathItem(cmpIndirect, outIndirect);
 
-        Assert.assertEquals(cmpIndirect, indirectPathItem.getCmpObject());
-        Assert.assertEquals(outIndirect, indirectPathItem.getOutObject());
+        Assertions.assertEquals(cmpIndirect, indirectPathItem.getCmpObject());
+        Assertions.assertEquals(outIndirect, indirectPathItem.getOutObject());
     }
 
     @Test
@@ -77,8 +76,8 @@ public class IndirectPathItemTest extends ExtendedITextTest {
         IndirectPathItem indirectPathItem2 = new IndirectPathItem(cmpIndirect, outIndirect);
 
         boolean result = indirectPathItem1.equals(indirectPathItem2);
-        Assert.assertTrue(result);
-        Assert.assertEquals(indirectPathItem1.hashCode(), indirectPathItem2.hashCode());
+        Assertions.assertTrue(result);
+        Assertions.assertEquals(indirectPathItem1.hashCode(), indirectPathItem2.hashCode());
     }
 
     @Test
@@ -92,8 +91,8 @@ public class IndirectPathItemTest extends ExtendedITextTest {
         IndirectPathItem indirectPathItem2 = new IndirectPathItem(cmpIndirect2, outIndirect2);
 
         boolean result = indirectPathItem1.equals(indirectPathItem2);
-        Assert.assertFalse(result);
-        Assert.assertNotEquals(indirectPathItem1.hashCode(), indirectPathItem2.hashCode());
+        Assertions.assertFalse(result);
+        Assertions.assertNotEquals(indirectPathItem1.hashCode(), indirectPathItem2.hashCode());
     }
 
     @Test
@@ -107,7 +106,7 @@ public class IndirectPathItemTest extends ExtendedITextTest {
         IndirectPathItem indirectPathItem2 = new IndirectPathItem(cmpIndirect2, outIndirect2);
 
         boolean result = indirectPathItem1.equals(indirectPathItem2);
-        Assert.assertFalse(result);
-        Assert.assertNotEquals(indirectPathItem1.hashCode(), indirectPathItem2.hashCode());
+        Assertions.assertFalse(result);
+        Assertions.assertNotEquals(indirectPathItem1.hashCode(), indirectPathItem2.hashCode());
     }
 }

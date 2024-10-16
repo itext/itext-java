@@ -43,6 +43,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import com.itextpdf.kernel.pdf.tagutils.TagTreeIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -629,11 +631,14 @@ class StructureTreeCopier {
     }
 
     private static List<PdfDictionary> retrieveParents(PdfMcr mcr, boolean all) {
-        List<PdfDictionary> parents = new ArrayList<>();
-        IStructureNode firstParent = mcr.getParent();
+        final Set<PdfDictionary> parents = new LinkedHashSet<>();
+        final IStructureNode firstParent = mcr.getParent();
         PdfDictionary previous = null;
         PdfDictionary current = firstParent instanceof PdfStructElem ? ((PdfStructElem) firstParent).getPdfObject() : null;
-        while (current != null && !PdfName.StructTreeRoot.equals(current.getAsName(PdfName.Type))) {
+
+        while (current != null
+               && !PdfName.StructTreeRoot.equals(current.getAsName(PdfName.Type))
+               && !parents.contains(current)) {
             if (all) {
                 parents.add(current);
             }
@@ -643,7 +648,7 @@ class StructureTreeCopier {
         if (!all) {
             parents.add(previous);
         }
-        return parents;
+        return new ArrayList<>(parents);
     }
 
     static class LastClonedAncestor {

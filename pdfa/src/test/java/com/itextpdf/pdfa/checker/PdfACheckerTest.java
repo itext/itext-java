@@ -26,7 +26,7 @@ import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfTrueTypeFont;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfCatalog;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -47,24 +47,23 @@ import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.pdfa.PdfADocument;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfACheckerTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfa/pdfs/";
 
     private PdfAChecker pdfAChecker;
 
-    @Before
+    @BeforeEach
     public void before() {
         pdfAChecker = new EmptyPdfAChecker();
         pdfAChecker.setFullCheckMode(true);
@@ -102,17 +101,23 @@ public class PdfACheckerTest extends ExtendedITextTest {
     @Test()
     //TODO adapt after DEVSIX-5759 is fixed
     public void checkContentStreamPdfAText() throws IOException {
-        PdfA1Checker testChecker = new PdfA1Checker(PdfAConformanceLevel.PDF_A_1B);
+        PdfA1Checker testChecker = new PdfA1Checker(PdfAConformance.PDF_A_1B);
         PdfADocument pdfa = new PdfADocument(new PdfReader(new File(SOURCE_FOLDER + "InlineImagesPdfA.pdf")), new PdfWriter(new ByteArrayOutputStream()).setSmartMode(true));
         PdfStream firstContentStream = pdfa.getPage(1).getFirstContentStream();
         testChecker.setFullCheckMode(true);
-        Assert.assertThrows("NullPointer was not thrown on inline image.", NullPointerException.class, ()-> testChecker.checkContentStream(firstContentStream));
+        Assertions.assertThrows(NullPointerException.class, () -> testChecker.checkContentStream(firstContentStream),
+                "NullPointer was not thrown on inline image.");
     }
 
     private static class EmptyPdfAChecker extends PdfAChecker {
 
         protected EmptyPdfAChecker() {
             super(null);
+        }
+
+        @Override
+        public void checkSignatureType(boolean isCAdES) {
+
         }
 
         @Override
@@ -126,7 +131,7 @@ public class PdfACheckerTest extends ExtendedITextTest {
         }
 
         @Override
-        public void checkColor(Color color, PdfDictionary currentColorSpaces, Boolean fill, PdfStream contentStream) {
+        public void checkColor(CanvasGraphicsState gState, Color color, PdfDictionary currentColorSpaces, Boolean fill, PdfStream contentStream) {
 
         }
 
@@ -158,6 +163,16 @@ public class PdfACheckerTest extends ExtendedITextTest {
 
         @Override
         public void checkXrefTable(PdfXrefTable xrefTable) {
+
+        }
+
+        @Override
+        public void checkCrypto(PdfObject crypto) {
+
+        }
+
+        @Override
+        public void checkText(String text, PdfFont font) {
 
         }
 
@@ -202,7 +217,7 @@ public class PdfACheckerTest extends ExtendedITextTest {
         }
 
         @Override
-        protected void checkColorsUsages() {
+        protected void checkPageColorsUsages(PdfDictionary pageDict, PdfDictionary pageResources) {
 
         }
 

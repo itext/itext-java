@@ -23,33 +23,32 @@
 package com.itextpdf.commons.datastructures;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class BiMapTest extends ExtendedITextTest {
 
     @Test
     public void sizeTest01() {
         BiMap<String, Integer> map = new BiMap<String, Integer>();
-        Assert.assertEquals(0, map.size());
+        Assertions.assertEquals(0, map.size());
     }
 
     @Test
     public void sizeTest02() {
         BiMap<String, Integer> map = new BiMap<String, Integer>();
         map.put("a", 1);
-        Assert.assertEquals(1, map.size());
+        Assertions.assertEquals(1, map.size());
     }
 
     @Test
     public void isEmptyTest01() {
         BiMap<String, Integer> map = new BiMap<String, Integer>();
         map.put("a", 1);
-        Assert.assertFalse(map.isEmpty());
+        Assertions.assertFalse(map.isEmpty());
     }
 
 
@@ -57,8 +56,8 @@ public class BiMapTest extends ExtendedITextTest {
     public void putTest() {
         BiMap<String, Integer> map = new BiMap<String, Integer>();
         map.put("a", 1);
-        Assert.assertEquals(1, (int) map.getByKey("a"));
-        Assert.assertEquals("a", map.getByValue(1));
+        Assertions.assertEquals(1, (int) map.getByKey("a"));
+        Assertions.assertEquals("a", map.getByValue(1));
     }
 
     @Test
@@ -66,8 +65,8 @@ public class BiMapTest extends ExtendedITextTest {
         BiMap<String, Integer> map = new BiMap<String, Integer>();
         map.put("a", 1);
         map.put("a", 2);
-        Assert.assertEquals(2, (int) map.getByKey("a"));
-        Assert.assertEquals("a", map.getByValue(2));
+        Assertions.assertEquals(2, (int) map.getByKey("a"));
+        Assertions.assertEquals("a", map.getByValue(2));
     }
 
     @Test
@@ -75,8 +74,8 @@ public class BiMapTest extends ExtendedITextTest {
         BiMap<String, Integer> map = new BiMap<String, Integer>();
         map.put("a", 1);
         map.put("b", 1);
-        Assert.assertEquals(1, (int) map.getByKey("b"));
-        Assert.assertEquals("b", map.getByValue(1));
+        Assertions.assertEquals(1, (int) map.getByKey("b"));
+        Assertions.assertEquals("b", map.getByValue(1));
     }
 
     @Test
@@ -84,8 +83,8 @@ public class BiMapTest extends ExtendedITextTest {
         BiMap<String, Integer> map = new BiMap<String, Integer>();
         map.put("a", 1);
         map.put("a", 1);
-        Assert.assertEquals(1, (int) map.getByKey("a"));
-        Assert.assertEquals("a", map.getByValue(1));
+        Assertions.assertEquals(1, (int) map.getByKey("a"));
+        Assertions.assertEquals("a", map.getByValue(1));
     }
 
     @Test
@@ -94,13 +93,13 @@ public class BiMapTest extends ExtendedITextTest {
         map.put("a", 1);
         map.put("b", 2);
         map.put("c", 3);
-        Assert.assertEquals(1, (int) map.getByKey("a"));
-        Assert.assertEquals("a", map.getByValue(1));
-        Assert.assertEquals(2, (int) map.getByKey("b"));
-        Assert.assertEquals("b", map.getByValue(2));
-        Assert.assertEquals(3, (int) map.getByKey("c"));
-        Assert.assertEquals("c", map.getByValue(3));
-        Assert.assertEquals(3, map.size());
+        Assertions.assertEquals(1, (int) map.getByKey("a"));
+        Assertions.assertEquals("a", map.getByValue(1));
+        Assertions.assertEquals(2, (int) map.getByKey("b"));
+        Assertions.assertEquals("b", map.getByValue(2));
+        Assertions.assertEquals(3, (int) map.getByKey("c"));
+        Assertions.assertEquals("c", map.getByValue(3));
+        Assertions.assertEquals(3, map.size());
     }
 
 
@@ -109,35 +108,35 @@ public class BiMapTest extends ExtendedITextTest {
         BiMap<String, Integer> map = new BiMap<String, Integer>();
         map.put("a", 1);
         map.clear();
-        Assert.assertEquals(0, map.size());
+        Assertions.assertEquals(0, map.size());
     }
 
     @Test
     public void containsKeyTest() {
         BiMap<String, Integer> map = new BiMap<String, Integer>();
         map.put("a", 1);
-        Assert.assertTrue(map.containsKey("a"));
+        Assertions.assertTrue(map.containsKey("a"));
     }
 
     @Test
     public void containsValueTest() {
         BiMap<String, Integer> map = new BiMap<String, Integer>();
         map.put("a", 1);
-        Assert.assertTrue(map.containsValue(1));
+        Assertions.assertTrue(map.containsValue(1));
     }
 
     @Test
     public void getByValue() {
         BiMap<String, Integer> map = new BiMap<String, Integer>();
         map.put("a", 1);
-        Assert.assertEquals(1, (int) map.getByKey("a"));
+        Assertions.assertEquals(1, (int) map.getByKey("a"));
     }
 
     @Test
     public void getByKey() {
         BiMap<String, Integer> map = new BiMap<String, Integer>();
         map.put("a", 1);
-        Assert.assertEquals("a", map.getByValue(1));
+        Assertions.assertEquals("a", map.getByValue(1));
     }
 
     @Test
@@ -145,7 +144,7 @@ public class BiMapTest extends ExtendedITextTest {
         BiMap<String, Integer> map = new BiMap<String, Integer>();
         map.put("a", 1);
         map.removeByKey("a");
-        Assert.assertEquals(0, map.size());
+        Assertions.assertEquals(0, map.size());
     }
 
     @Test
@@ -153,7 +152,7 @@ public class BiMapTest extends ExtendedITextTest {
         BiMap<String, Integer> map = new BiMap<String, Integer>();
         map.put("a", 1);
         map.removeByValue(1);
-        Assert.assertEquals(0, map.size());
+        Assertions.assertEquals(0, map.size());
     }
 
     @Test
@@ -161,7 +160,7 @@ public class BiMapTest extends ExtendedITextTest {
         BiMap<String, Integer> map = new BiMap<String, Integer>();
         map.removeByKey("a");
         map.removeByValue(1);
-        Assert.assertEquals(0, map.size());
+        Assertions.assertEquals(0, map.size());
     }
 
 }

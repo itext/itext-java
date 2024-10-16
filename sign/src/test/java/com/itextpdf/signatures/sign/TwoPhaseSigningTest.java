@@ -30,19 +30,19 @@ import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
+import com.itextpdf.kernel.crypto.OID;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.signatures.BouncyCastleDigest;
-import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.PdfPKCS7;
 import com.itextpdf.signatures.PdfSignature;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PdfTwoPhaseSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
-import com.itextpdf.signatures.SecurityIDs;
 import com.itextpdf.signatures.SignatureUtil;
 import com.itextpdf.signatures.SignerProperties;
 import com.itextpdf.signatures.cms.AlgorithmIdentifier;
@@ -52,31 +52,35 @@ import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.DERNull;
-import org.bouncycastle.asn1.x509.DigestInfo;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.*;
+import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.DERNull;
+import org.bouncycastle.asn1.x509.DigestInfo;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-@Category(BouncyCastleIntegrationTest.class)
+@Tag("BouncyCastleIntegrationTest")
 public class TwoPhaseSigningTest extends ExtendedITextTest {
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
@@ -89,20 +93,20 @@ public class TwoPhaseSigningTest extends ExtendedITextTest {
     private static final String SIMPLE_DOC_PATH = SOURCE_FOLDER + "SimpleDoc.pdf";
 
     private static final String DIGEST_ALGORITHM = DigestAlgorithms.SHA384;
-    private static final String DIGEST_ALGORITHM_OID = SecurityIDs.ID_SHA384;
+    private static final String DIGEST_ALGORITHM_OID = OID.SHA_384;
 
     public static final String FIELD_NAME = "Signature1";
 
     private PrivateKey pk;
     private X509Certificate[] chain;
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         Security.addProvider(FACTORY.getProvider());
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
-    @Before
+    @BeforeEach
     public void init()
             throws IOException, CertificateException, AbstractPKCSException, AbstractOperatorCreationException {
         pk = PemFileHelper.readFirstKey(CERTS_SRC + "signCertRsa01.pem", PASSWORD);
@@ -123,11 +127,11 @@ public class TwoPhaseSigningTest extends ExtendedITextTest {
             signer.prepareDocumentForSignature(new SignerProperties(), DIGEST_ALGORITHM, PdfName.Adobe_PPKLite,
                     PdfName.Adbe_pkcs7_detached, 5000, false);
 
-            Exception e = Assert.assertThrows(PdfException.class, () -> {
+            Exception e = Assertions.assertThrows(PdfException.class, () -> {
                 byte[] digest = signer.prepareDocumentForSignature(new SignerProperties(),DIGEST_ALGORITHM, PdfName.Adobe_PPKLite,
                         PdfName.Adbe_pkcs7_detached, 5000, false);
             });
-            Assert.assertEquals(SignExceptionMessageConstant.THIS_INSTANCE_OF_PDF_SIGNER_ALREADY_CLOSED, e.getMessage());
+            Assertions.assertEquals(SignExceptionMessageConstant.THIS_INSTANCE_OF_PDF_SIGNER_ALREADY_CLOSED, e.getMessage());
         }
     }
 
@@ -139,10 +143,10 @@ public class TwoPhaseSigningTest extends ExtendedITextTest {
                      new PdfDocument(new PdfReader(new File(SOURCE_FOLDER + "2PhasePreparedSignature.pdf")));
              OutputStream signedDoc = new ByteArrayOutputStream()) {
             // add signature
-            Exception e = Assert.assertThrows(PdfException.class, () ->
+            Exception e = Assertions.assertThrows(PdfException.class, () ->
                     PdfTwoPhaseSigner.addSignatureToPreparedDocument(preparedDoc, "wrong" + FIELD_NAME, signedDoc, signData));
 
-            Assert.assertEquals(MessageFormatUtil.format(
+            Assertions.assertEquals(MessageFormatUtil.format(
                     SignExceptionMessageConstant.THERE_IS_NO_FIELD_IN_THE_DOCUMENT_WITH_SUCH_NAME,
                     "wrong" + FIELD_NAME), e.getMessage());
         }
@@ -156,10 +160,10 @@ public class TwoPhaseSigningTest extends ExtendedITextTest {
                      new PdfDocument(new PdfReader(new File(SOURCE_FOLDER + "2PhasePreparedSignature.pdf")));
              OutputStream signedDoc = new ByteArrayOutputStream()) {
             // add signature
-            Exception e = Assert.assertThrows(PdfException.class, () ->
+            Exception e = Assertions.assertThrows(PdfException.class, () ->
                     PdfTwoPhaseSigner.addSignatureToPreparedDocument(preparedDoc, FIELD_NAME, signedDoc, signData));
 
-            Assert.assertEquals(SignExceptionMessageConstant.AVAILABLE_SPACE_IS_NOT_ENOUGH_FOR_SIGNATURE,
+            Assertions.assertEquals(SignExceptionMessageConstant.AVAILABLE_SPACE_IS_NOT_ENOUGH_FOR_SIGNATURE,
                     e.getMessage());
         }
     }
@@ -178,10 +182,10 @@ public class TwoPhaseSigningTest extends ExtendedITextTest {
             try (OutputStream outputStreamPhase2 = FileUtil.getFileOutputStream(DESTINATION_FOLDER + "2PhaseCompleteCycle.pdf");
                  PdfDocument doc = new PdfDocument(new PdfReader(new ByteArrayInputStream(outputStream.toByteArray())))) {
 
-                Exception e = Assert.assertThrows(PdfException.class, () ->
+                Exception e = Assertions.assertThrows(PdfException.class, () ->
                         PdfTwoPhaseSigner.addSignatureToPreparedDocument(doc, FIELD_NAME, outputStreamPhase2, signData));
 
-                Assert.assertEquals(MessageFormatUtil.format(SignExceptionMessageConstant.
+                Assertions.assertEquals(MessageFormatUtil.format(SignExceptionMessageConstant.
                         SIGNATURE_WITH_THIS_NAME_IS_NOT_THE_LAST_IT_DOES_NOT_COVER_WHOLE_DOCUMENT, FIELD_NAME), e.getMessage());
             }
         }
@@ -210,8 +214,8 @@ public class TwoPhaseSigningTest extends ExtendedITextTest {
                 signatureUtil = new SignatureUtil(outDocument);
                 PdfSignature outSignature = signatureUtil.getSignature(fieldName);
                 try {
-                    Assert.assertTrue(signatureUtil.signatureCoversWholeDocument(FIELD_NAME));
-                    Assert.assertArrayEquals(cmpSignature.getContents().getValueBytes(), outSignature.getContents().getValueBytes());
+                    Assertions.assertTrue(signatureUtil.signatureCoversWholeDocument(FIELD_NAME));
+                    Assertions.assertArrayEquals(cmpSignature.getContents().getValueBytes(), outSignature.getContents().getValueBytes());
                 } catch (Exception e) {
                     OutputStream fs = FileUtil.getFileOutputStream(DESTINATION_FOLDER + "testPreparation.pdf");
                     fs.write(outputStream.toByteArray());
@@ -241,7 +245,7 @@ public class TwoPhaseSigningTest extends ExtendedITextTest {
                  PdfDocument doc = new PdfDocument(new PdfReader(new ByteArrayInputStream(outputStream.toByteArray())))) {
                 PdfTwoPhaseSigner.addSignatureToPreparedDocument(doc, fieldName, outputStreamPhase2, signData);
             }
-            Assert.assertNull(SignaturesCompareTool.compareSignatures(DESTINATION_FOLDER + "2PhaseCompleteCycle.pdf",
+            Assertions.assertNull(SignaturesCompareTool.compareSignatures(DESTINATION_FOLDER + "2PhaseCompleteCycle.pdf",
                     SOURCE_FOLDER + "cmp_2PhaseCompleteCycle.pdf"));
         }
     }
@@ -261,12 +265,12 @@ public class TwoPhaseSigningTest extends ExtendedITextTest {
             PdfTwoPhaseSigner.addSignatureToPreparedDocument(preparedDoc, FIELD_NAME, signedDoc, signData);
         }
 
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(DESTINATION_FOLDER + "2PhaseCompletion.pdf",
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(DESTINATION_FOLDER + "2PhaseCompletion.pdf",
                 SOURCE_FOLDER + "cmp_2PhaseCompleteCycle.pdf"));
     }
 
     @Test
-    @org.junit.Ignore
+    @org.junit.jupiter.api.Disabled
     public void testWithCMS() throws IOException, GeneralSecurityException {
         String signatureName = "Signature1";
 
@@ -304,10 +308,10 @@ public class TwoPhaseSigningTest extends ExtendedITextTest {
                 SignatureUtil su = new SignatureUtil(finalDoc);
 
                 PdfPKCS7 cms = su.readSignatureData(signatureName);
-                Assert.assertTrue("Signature should be valid", cms.verifySignatureIntegrityAndAuthenticity());
+                Assertions.assertTrue(cms.verifySignatureIntegrityAndAuthenticity(), "Signature should be valid");
             }
             // compare result
-            Assert.assertNull(SignaturesCompareTool.compareSignatures(signedDocumentName,
+            Assertions.assertNull(SignaturesCompareTool.compareSignatures(signedDocumentName,
                     SOURCE_FOLDER + "cmp_2PhaseCompleteCycleCMS.pdf"));
         }
     }
@@ -347,7 +351,7 @@ public class TwoPhaseSigningTest extends ExtendedITextTest {
             CMSContainer cms = new CMSContainer();
             SignerInfo signerInfo = new SignerInfo();
 
-            //signerInfo.setSigningCertificateAndAddToSignedAttributes(chain[0], SecurityIDs.ID_SHA384);
+            //signerInfo.setSigningCertificateAndAddToSignedAttributes(chain[0], OID.ID_SHA384);
             signerInfo.setSigningCertificate(chain[0]);
             // in the two phase scenario,; we don't have the private key! So we start from the signing certificate
 

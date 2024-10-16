@@ -29,16 +29,15 @@ import com.itextpdf.kernel.pdf.canvas.parser.filter.TextRegionEventFilter;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.FilteredEventListener;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStrategy;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class BidiTextExtractionTest extends ExtendedITextTest {
 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/parser/BidiTextExtractionTest/";
@@ -53,7 +52,7 @@ public class BidiTextExtractionTest extends ExtendedITextTest {
 
         String actualText = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1), new LocationTextExtractionStrategy().setRightToLeftRunDirection(true));
 
-        Assert.assertEquals(expected, actualText);
+        Assertions.assertEquals(expected, actualText);
     }
 
     @Test
@@ -86,7 +85,7 @@ public class BidiTextExtractionTest extends ExtendedITextTest {
 
         for (int i = 0; i < regions.length; i++) {
             String actualText = extractionStrategies[i].getResultantText();
-            Assert.assertEquals(expectedText[i], actualText);
+            Assertions.assertEquals(expectedText[i], actualText);
         }
     }
 
@@ -102,7 +101,7 @@ public class BidiTextExtractionTest extends ExtendedITextTest {
 
         String actualText = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1), new LocationTextExtractionStrategy());
 
-        Assert.assertEquals(expectedText, actualText);
+        Assertions.assertEquals(expectedText, actualText);
     }
 
     @Test
@@ -115,11 +114,11 @@ public class BidiTextExtractionTest extends ExtendedITextTest {
 
         String actualText = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1), new LocationTextExtractionStrategy().setRightToLeftRunDirection(true));
 
-        Assert.assertEquals(expectedText, actualText);
+        Assertions.assertEquals(expectedText, actualText);
     }
 
     @Test
-    @Ignore("see DEVSIX-854")
+    @Disabled("see DEVSIX-854")
     // Not correct since iText cannot detect reordering automatically when no /ReversedChars is present.
     public void test05() throws IOException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "in05.pdf"));
@@ -128,7 +127,7 @@ public class BidiTextExtractionTest extends ExtendedITextTest {
 
         String actualText = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1), new LocationTextExtractionStrategy().setRightToLeftRunDirection(true));
 
-        Assert.assertEquals(expectedText, actualText);
+        Assertions.assertEquals(expectedText, actualText);
     }
 
 }

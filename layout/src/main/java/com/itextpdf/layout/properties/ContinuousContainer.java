@@ -23,7 +23,6 @@
 package com.itextpdf.layout.properties;
 
 import com.itextpdf.layout.IPropertyContainer;
-import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.renderer.AbstractRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 
@@ -43,7 +42,7 @@ public final class ContinuousContainer {
      */
     private static final int[] PROPERTIES_NEEDED_FOR_CONTINUOUS_CONTAINER = {Property.MARGIN_BOTTOM,
             Property.BORDER_BOTTOM,
-            Property.PADDING_BOTTOM, Property.BORDER};
+            Property.PADDING_BOTTOM};
     private final HashMap<Integer, Object> properties = new HashMap<>();
 
 
@@ -108,11 +107,6 @@ public final class ContinuousContainer {
     public void reApplyProperties(AbstractRenderer blockRenderer) {
         for (int property : PROPERTIES_NEEDED_FOR_CONTINUOUS_CONTAINER) {
             blockRenderer.setProperty(property, properties.get(property));
-        }
-        final Border allBorders = (Border) properties.get(Property.BORDER);
-        final Border bottomBorder = (Border) properties.get(Property.BORDER_BOTTOM);
-        if (allBorders != null && bottomBorder == null) {
-            blockRenderer.setProperty(Property.BORDER_BOTTOM, allBorders);
         }
     }
 
