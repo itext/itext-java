@@ -55,6 +55,7 @@ public class AlignmentTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/AlignmentTest/";
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/AlignmentTest/";
+    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/layout/fonts/";
 
     @BeforeAll
     public static void beforeClass() {
@@ -607,6 +608,33 @@ public class AlignmentTest extends ExtendedITextTest {
             div.add(innerDiv).add(innerDiv);
 
             doc.add(div);
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void justifiedAlignmentWithZeroFreeSpaceTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "justifiedAlignmentWithZeroFreeSpaceTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_justifiedAlignmentWithZeroFreeSpaceTest.pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName))) {
+            Document document = new Document(pdfDoc);
+
+            PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "NotoSansCJKjp-Regular.otf");
+
+            Text t1 = new Text("期期期")
+                    .setFont(font);
+
+            Text t2 = new Text("期期期")
+                    .setFont(font);
+
+            Paragraph p = new Paragraph(t1).add(t2)
+                    .setSpacingRatio(1)
+                    .setWidth(60)
+                    .setTextAlignment(TextAlignment.JUSTIFIED);
+
+            document.add(p);
         }
 
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));

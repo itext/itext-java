@@ -817,7 +817,7 @@ public class LineRenderer extends AbstractRenderer {
         float baseFactor = freeWidth / (ratio * numberOfSpaces + (1 - ratio) * (baseCharsCount - 1));
 
         //Prevent a NaN when trying to justify a single word with spacing_ratio == 1.0
-        if (Float.isInfinite(baseFactor)) {
+        if (Float.isInfinite(baseFactor) || Float.isNaN(baseFactor)) {
             baseFactor = 0;
         }
         float wordSpacing = ratio * baseFactor;
