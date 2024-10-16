@@ -59,44 +59,6 @@ public class DeviceRgbTest extends ExtendedITextTest {
         Assertions.assertEquals(multiplier * (150f / 255), darkerRgbColor.getColorValue()[2], 0.0001);
     }
 
-    // Android-Conversion-Skip-Block-Start (java.awt library isn't available on Android)
-    @Test
-    public void colorByAWTColorConstantTest() {
-        // RED
-        DeviceRgb rgbColor = new DeviceRgb(java.awt.Color.RED);
-        float[] rgbColorValue = rgbColor.getColorValue();
-
-        Assertions.assertEquals(1, rgbColorValue[0], 0.0001);
-        Assertions.assertEquals(0, rgbColorValue[1], 0.0001);
-        Assertions.assertEquals(0, rgbColorValue[2], 0.0001);
-
-        // GREEN
-        rgbColor = new DeviceRgb(java.awt.Color.GREEN);
-        rgbColorValue = rgbColor.getColorValue();
-
-        Assertions.assertEquals(0, rgbColorValue[0], 0.0001);
-        Assertions.assertEquals(1, rgbColorValue[1], 0.0001);
-        Assertions.assertEquals(0, rgbColorValue[2], 0.0001);
-
-        // BLUE
-        rgbColor = new DeviceRgb(java.awt.Color.BLUE);
-        rgbColorValue = rgbColor.getColorValue();
-
-        Assertions.assertEquals(0, rgbColorValue[0], 0.0001);
-        Assertions.assertEquals(0, rgbColorValue[1], 0.0001);
-        Assertions.assertEquals(1, rgbColorValue[2], 0.0001);
-    }
-
-    @Test
-    public void colorByAWTColorTest() {
-        java.awt.Color color = new java.awt.Color(50, 100, 150);
-        DeviceRgb rgbColor = new DeviceRgb(color);
-        float[] rgbColorValue = rgbColor.getColorValue();
-        Assertions.assertEquals(50f / 255, rgbColorValue[0], 0.0001);
-        Assertions.assertEquals(100f / 255, rgbColorValue[1], 0.0001);
-        Assertions.assertEquals(150f / 255, rgbColorValue[2], 0.0001);
-    }
-    // Android-Conversion-Skip-Block-End
 
     @Test
     @LogMessages(messages = {

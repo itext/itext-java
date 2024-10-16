@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Tag;
 public class KeyStoreUtilUnitTest extends ExtendedITextTest {
 
     @Test
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-6446 fix differences in java.security)
+    @org.junit.jupiter.api.Disabled
     public void loadCacertsKeyStoreSUNTest() {
         KeyStore keyStore = KeyStoreUtil.loadCacertsKeyStore("SUN");
         Assertions.assertEquals("JKS", keyStore.getType());
@@ -42,7 +42,7 @@ public class KeyStoreUtilUnitTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-6446 fix differences in java.security)
+    @org.junit.jupiter.api.Disabled
     public void loadCaCertsKeyStoreNoSuchProviderTest() {
         PdfException e = Assertions.assertThrows(PdfException.class,
                 () -> KeyStoreUtil.loadCacertsKeyStore("unknown provider"));
@@ -50,7 +50,7 @@ public class KeyStoreUtilUnitTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-6446 fix differences in java.security)
+    @org.junit.jupiter.api.Disabled
     public void loadCaCertsKeyStoreJKSNotFoundTest() {
         PdfException e = Assertions.assertThrows(PdfException.class,
                 () -> KeyStoreUtil.loadCacertsKeyStore("SunPCSC"));
@@ -58,7 +58,7 @@ public class KeyStoreUtilUnitTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-6446 fix differences in java.security)
+    @org.junit.jupiter.api.Disabled
     public void loadCaCertsKeyStoreNullTest() {
         KeyStore keyStore = KeyStoreUtil.loadCacertsKeyStore(null);
         Assertions.assertEquals("JKS", keyStore.getType());
@@ -66,7 +66,7 @@ public class KeyStoreUtilUnitTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-6446 fix differences in java.security)
+    @org.junit.jupiter.api.Disabled
     public void loadCaCertsKeyStoreEmptyTest() {
         PdfException e = Assertions.assertThrows(PdfException.class,
                 () -> KeyStoreUtil.loadCacertsKeyStore(""));

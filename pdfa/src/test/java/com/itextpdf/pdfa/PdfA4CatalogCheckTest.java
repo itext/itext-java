@@ -48,7 +48,6 @@ import com.itextpdf.layout.element.List;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -83,7 +82,6 @@ public class PdfA4CatalogCheckTest  extends ExtendedITextTest {
 
         doc.close();
 
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -106,7 +104,6 @@ public class PdfA4CatalogCheckTest  extends ExtendedITextTest {
         document.close();
 
         Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -196,7 +193,6 @@ public class PdfA4CatalogCheckTest  extends ExtendedITextTest {
         // This is required to check if ModDate is inside Info dictionary
         Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
 
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -225,7 +221,6 @@ public class PdfA4CatalogCheckTest  extends ExtendedITextTest {
             doc.addNewPage();
         }
 
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -235,7 +230,6 @@ public class PdfA4CatalogCheckTest  extends ExtendedITextTest {
         PdfReader reader = new PdfReader(sourceFolder + "pdfs/simplePdfA4.pdf");
         PdfDocument document = new PdfADocument(reader, writer);
         document.close();
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -341,7 +335,6 @@ public class PdfA4CatalogCheckTest  extends ExtendedITextTest {
 
         Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
 
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test

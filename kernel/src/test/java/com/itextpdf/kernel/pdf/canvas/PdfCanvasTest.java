@@ -1054,31 +1054,6 @@ public class PdfCanvasTest extends ExtendedITextTest {
                 DESTINATION_FOLDER, "diff_"));
     }
 
-    // Android-Conversion-Skip-Block-Start (java.awt library isn't available on Android)
-    @Test
-    public void awtImagesTest01() throws IOException, InterruptedException {
-        String filename = "awtImagesTest01.pdf";
-        PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename));
-
-        PdfPage page = document.addNewPage();
-        PdfCanvas canvas = new PdfCanvas(page);
-
-        int x = 36;
-        int y = 700;
-        int width = 100;
-        for (String image : RESOURCES) {
-            java.awt.Image awtImage = java.awt.Toolkit.getDefaultToolkit().createImage(SOURCE_FOLDER + image);
-            ImageData imageData = ImageDataFactory.create(awtImage, null);
-            canvas.addImageFittedIntoRectangle(imageData, new Rectangle(x, y, width, (width / imageData.getWidth()) * imageData.getHeight()), false);
-            y -= 150;
-        }
-
-        document.close();
-
-        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename,
-                DESTINATION_FOLDER, "diff_"));
-    }
-    // Android-Conversion-Skip-Block-End
 
     @Test
     public void canvasInitializationPageNoContentsKey() throws IOException, InterruptedException {

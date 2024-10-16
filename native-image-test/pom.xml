@@ -1,83 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
-
   <parent>
-    <groupId>com.itextpdf</groupId>
-    <artifactId>root</artifactId>
+    <groupId>com.itextpdf.android</groupId>
+    <artifactId>root-android</artifactId>
     <version>9.0.0</version>
   </parent>
-
-  <artifactId>native-image-test</artifactId>
-
+  <artifactId>native-image-test-android</artifactId>
   <name>native-image-test</name>
   <description>Native image tests.</description>
   <url>https://itextpdf.com/</url>
-
   <properties>
     <itext.version>${project.parent.version}</itext.version>
-    <native.maven.plugin.version>0.10.1</native.maven.plugin.version>
+    <unittests></unittests>
     <junit.jupiter.version>5.10.2</junit.jupiter.version>
+    <native.maven.plugin.version>0.10.1</native.maven.plugin.version>
     <junit.platform.version>1.10.2</junit.platform.version>
-    <!-- This is to suppress the parent value. In junit 5 there is no category and
-    test filtering mechanism is a bit different (@Tag should be used) -->
-    <unittests />
   </properties>
-
   <dependencies>
-    <!-- itext core deps-->
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>font-asian</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>font-asian-android</artifactId>
       <version>${itext.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>bouncy-castle-adapter</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>bouncy-castle-adapter-android</artifactId>
       <version>${itext.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>forms</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>forms-android</artifactId>
       <version>${itext.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>hyph</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>hyph-android</artifactId>
       <version>${itext.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>io</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>io-android</artifactId>
       <version>${itext.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>kernel</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>kernel-android</artifactId>
       <version>${itext.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>layout</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>layout-android</artifactId>
       <version>${itext.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>sign</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>sign-android</artifactId>
       <version>${itext.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>commons</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>commons-android</artifactId>
       <version>${itext.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>svg</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>svg-android</artifactId>
       <version>${itext.version}</version>
     </dependency>
-
-    <!-- junit deps-->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
@@ -91,7 +82,6 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
   <profiles>
     <profile>
       <id>native</id>
@@ -111,25 +101,21 @@
             <executions>
               <execution>
                 <id>test-native</id>
+                <phase>test</phase>
                 <goals>
                   <goal>test</goal>
                 </goals>
-                <phase>test</phase>
               </execution>
             </executions>
             <configuration>
               <buildArgs>
-                <arg>
-                  --initialize-at-build-time=org.junit.validator.PublicClassValidator
+                <arg>--initialize-at-build-time=org.junit.validator.PublicClassValidator
                   -H:ResourceConfigurationFiles=${basedir}/src/test/resources/resource-config.json
-                  <!-- Graalvm requires VisualStudio 2022 on Windows but it also works with earlier versions.
-                       So this is a workaround to run tests on TC agents having earlier VS versions installed. -->
-                  -H:-CheckToolchain
-                </arg>
+                  
+                  -H:-CheckToolchain</arg>
               </buildArgs>
               <skipTests>false</skipTests>
               <metadataRepository>
-                <!-- Disable repo to not load metadata from reachability metadata repo after we finally merge our metadata there-->
                 <enabled>false</enabled>
               </metadataRepository>
             </configuration>

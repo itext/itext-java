@@ -39,7 +39,6 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.grid.PointValue;
 import com.itextpdf.layout.properties.grid.TemplateValue;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -174,7 +173,6 @@ public class PdfUATaggedGridContainerTest extends ExtendedITextTest {
     }
 
     private void validateOutputPdf(String outputPdf) {
-        Assertions.assertNull(new VeraPdfValidator().validate(outputPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
     private GridContainer createGridBoxWithText() {

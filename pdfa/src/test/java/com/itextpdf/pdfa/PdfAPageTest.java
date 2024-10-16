@@ -40,7 +40,6 @@ import com.itextpdf.pdfa.logs.PdfALogMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
@@ -89,7 +88,6 @@ public class PdfAPageTest extends ExtendedITextTest {
         // During the closing event was called on each document page
         Assertions.assertEquals(pageCount, eventHandler.getCounter());
 
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -119,7 +117,6 @@ public class PdfAPageTest extends ExtendedITextTest {
 
         Assertions.assertEquals(pageCount, eventHandler.getCounter());
 
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -147,7 +144,6 @@ public class PdfAPageTest extends ExtendedITextTest {
 
         Assertions.assertEquals(pageCount, eventHandler.getCounter());
 
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -175,7 +171,6 @@ public class PdfAPageTest extends ExtendedITextTest {
 
         Assertions.assertEquals(pageCount, eventHandler.getCounter());
 
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -205,7 +200,6 @@ public class PdfAPageTest extends ExtendedITextTest {
 
         Assertions.assertEquals(pageCount, eventHandler.getCounter());
 
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     static class EndPageEventHandler extends AbstractPdfDocumentEventHandler {

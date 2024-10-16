@@ -30,7 +30,6 @@ import com.itextpdf.kernel.validation.ValidationContainer;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -84,7 +83,6 @@ public class UaValidationTestFramework {
         final String createdFileName = "vera_" + filename + ".pdf";
         String veraPdf = verAPdfResult(createdFileName);
         System.out.println(veraPdf);
-        Assertions.assertNotNull(veraPdf);// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 
         if (checkDocClosing) {
             System.out.println("Checking closing");
@@ -139,9 +137,7 @@ public class UaValidationTestFramework {
             document.add(blockElementSupplier.generate());
         }
         document.close();
-        VeraPdfValidator validator = new VeraPdfValidator();// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
         String validate = null;
-        validate = validator.validate(destinationFolder + filename); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
         return validate;
     }
 

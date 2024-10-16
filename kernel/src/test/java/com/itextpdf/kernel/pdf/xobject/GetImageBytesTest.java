@@ -78,19 +78,19 @@ public class GetImageBytesTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
+    @org.junit.jupiter.api.Disabled
     public void testAscii85Filters() throws Exception {
         testFile("ASCII85_RunLengthDecode.pdf", "Im9", "png");
     }
 
     @Test
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
+    @org.junit.jupiter.api.Disabled
     public void testCcittFilters() throws Exception {
         testFile("ccittfaxdecode.pdf", "background0", "png");
     }
 
     @Test
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
+    @org.junit.jupiter.api.Disabled
     public void testFlateDecodeFilters() throws Exception {
         // TODO DEVSIX-2941: extracted indexed devicegray RunLengthDecode gets color inverted
         testFile("flatedecode_runlengthdecode.pdf", "Im9", "png");
@@ -124,7 +124,7 @@ public class GetImageBytesTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
+    @org.junit.jupiter.api.Disabled
     public void testFlateRgbIcc() throws Exception {
         testFile("img_rgb_icc.pdf", "Im1", "png");
     }
@@ -135,7 +135,7 @@ public class GetImageBytesTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
+    @org.junit.jupiter.api.Disabled
     public void testFlateCalRgb() throws Exception {
         testFile("img_calrgb.pdf", "Im1", "png");
     }
@@ -147,14 +147,14 @@ public class GetImageBytesTest extends ExtendedITextTest {
 
     @Test
     // TODO: DEVSIX-3538 (update test after fix)
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-7079 increase memory available for virtual machine while test running)
+    @org.junit.jupiter.api.Disabled
     public void testSeparationCSWithICCBasedAsAlternative() throws Exception {
         testFile("separationCSWithICCBasedAsAlternative.pdf", "Im1", "png");
     }
 
     @Test
     // TODO: DEVSIX-3538 (update test after fix)
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
+    @org.junit.jupiter.api.Disabled
     public void testSeparationCSWithDeviceCMYKAsAlternative() throws Exception {
         Assertions.assertThrows(UnsupportedOperationException.class, () ->
         {
@@ -169,14 +169,14 @@ public class GetImageBytesTest extends ExtendedITextTest {
 
     @Test
     // TODO: DEVSIX-3538 (update test after fix)
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
+    @org.junit.jupiter.api.Disabled
     public void testSeparationCSWithDeviceRGBAsAlternative() throws Exception {
         testFile("separationCSWithDeviceRgbAsAlternative.pdf", "Im1", "png");
     }
 
     @Test
     // TODO: DEVSIX-3538 (update test after fix)
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
+    @org.junit.jupiter.api.Disabled
     public void testSeparationCSWithDeviceRGBAsAlternative2() throws Exception {
         testFile("spotColorImagesSmall.pdf", "Im1", "png");
     }
@@ -192,7 +192,7 @@ public class GetImageBytesTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
+    @org.junit.jupiter.api.Disabled
     public void testRGBSeparationCSWithFlateDecoderAndFunctionType0() throws Exception {
         testFile("RGBFlateF0.pdf", "Im1", "png");
     }
