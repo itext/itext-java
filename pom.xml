@@ -495,8 +495,6 @@
                   <excludeModule>bouncy-castle-fips-adapter</excludeModule>
                 </excludeModules>
               </parameter>
-              <!-- TODO DEVSIX-8520 Enable japicmp after 9.0.0 release -->
-              <skip>true</skip>
             </configuration>
           </plugin>
           <plugin>
